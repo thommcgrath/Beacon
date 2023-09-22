@@ -13,6 +13,7 @@ $breadcrumbs->AddComponent('Ark', 'Ark: Survival Evolved');
 $breadcrumbs->AddComponent('Mods', 'Mods');
 echo $breadcrumbs->Render();
 
+$showCommunityLegend = false;
 ?><h1>Supported Mods</h1>
 <p>Beacon supports mods, both officially and unofficially! This page lists the Ark mods that Beacon already supports. If you want to add mod items to your own copy of Beacon, <a href="/help/adding_blueprints_to_beacon">here's how</a>. If you are a mod developer and want to add your mod to Beacon for all users to enjoy, <a href="/help/registering_your_mod_with_beacon">it's pretty simple</a>.</p>
 <table class="generic">
@@ -30,7 +31,7 @@ echo $breadcrumbs->Render();
 				$name = $rows->Field('name');
 				$type = $rows->Field('type');
 				$nameHtml = '<a href="/Games/Ark/Mods/' . htmlentities(urlencode($marketplaceId)) . '">' . htmlentities($name) . '</a>';
-				
+
 				$marketplaceUrl = '';
 				switch ($marketplace) {
 				case 'Steam':
@@ -40,7 +41,7 @@ echo $breadcrumbs->Render();
 					$marketplaceUrl = 'https://steamcommunity.com/sharedfiles/filedetails/?id=' . urlencode($marketplaceId);
 					break;
 				}
-				
+
 				$typeHtml = '';
 				switch ($type) {
 				case 0:
@@ -52,9 +53,10 @@ echo $breadcrumbs->Render();
 				case 2:
 					$nameHtml = htmlentities($name);
 					$typeHtml = '<span class="tag grey">Community</span>';
+					$showCommunityLegend = true;
 					break;
 				}
-				
+
 				?><tr>
 			<td><?php echo $nameHtml; ?><span class="mini-only"><br><?php echo $typeHtml; ?></span></td>
 			<td class="text-center w-0 nowrap not-mini"><?php echo $typeHtml; ?></td>
@@ -75,7 +77,7 @@ echo $breadcrumbs->Render();
 			<td class="w-0 p-1 nowrap text-center"><span class="tag blue">Mod Author</span></td>
 			<td class="w-100 p-1">Data is maintained by the mod author using Beacon's mod tools.</td>
 		</tr>
-		<?php if (BeaconCommon::ShowBeacon2Features(null)) { ?><tr>
+		<?php if ($showCommunityLegend) { ?><tr>
 			<td class="w-0 p-1 nowrap text-center"><span class="tag grey">Community</span></td>
 			<td class="w-100 p-1">Data comes from Beacon's <a href="/help/adding_blueprints_to_beacon#using-mod-discovery">Mod Discovery</a> tool.</td>
 		</tr><?php } ?>

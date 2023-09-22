@@ -13,53 +13,70 @@ if ($computed_hash !== $provided_hash) {
 	exit;
 }
 
+$curl = curl_init('https://api.github.com/repos/thommcgrath/beacon/branches');
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Safari/605.1.15');
+$response = curl_exec($curl);
+$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+curl_close($curl);
+
+if ($status !== 200) {
+	echo "Unable to branches\n";
+	echo "$response\n";
+	if (BeaconCommon::InProduction()) {
+		BeaconCommon::PostSlackMessage('Webhook was unable to get branches.');
+	}
+	exit;
+}
+
+$branches = [];
 try {
-	$body = json_decode($body, true);
+	$branches = json_decode($response, true);
 } catch (Exception $e) {
 	echo $e->getMessage();
-	exit;
-}
-
-if (is_null($body)) {
-	echo "Body is null.\n";
-	exit;
-}
-
-if (isset($body['commits']) === false) {
-	echo "No commits.\n";
+	if (BeaconCommon::InProduction()) {
+		BeaconCommon::PostSlackMessage('Webhook was unable to decode branches: ' . $response);
+	}
 	exit;
 }
 
 $database = BeaconCommon::Database();
+
+$existingHashes = [];
+$rows = $database->Query('SELECT branch, hash FROM public.endpoint_git_hashes;');
+while (!$rows->EOF()) {
+	$existingHashes[$rows->Field('branch')] = $rows->Field('hash');
+	$rows->MoveNext();
+}
+
 $database->BeginTransaction();
-foreach ($body['commits'] as $commit) {
-	$hash = $commit['id'];
-	
-	$curl = curl_init('https://api.github.com/repos/thommcgrath/Beacon/commits/' . $hash . '/branches-where-head');
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Safari/605.1.15');
-	$response = curl_exec($curl);
-	$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
-	
-	if ($status !== 200) {
-		echo "Unable to get info about commit $hash: $status.\n";
-		echo "$response\n";
-		if (BeaconCommon::InProduction()) {
-			BeaconCommon::PostSlackMessage('Webhook was unable to get information about commit ' . $hash . '.');
+foreach ($branches as $branch) {
+	try {
+		$branchName = $branch['name'];
+		$branchHash = $branch['commit']['sha'];
+		if (array_key_exists($branchName, $existingHashes)) {
+			if ($existingHashes[$branchName] !== $branchHash) {
+				$database->Query('UPDATE public.endpoint_git_hashes SET hash = $2 WHERE branch = $1;', $branchName, $branchHash);
+			}
+			unset($existingHashes[$branchName]);
+		} else {
+			$database->Query('INSERT INTO public.endpoint_git_hashes (branch, hash) VALUES ($1, $2);', $branchName, $branchHash);
 		}
+	} catch (Exception $e) {
 		$database->Rollback();
+		echo $e->getMessage();
+		if (BeaconCommon::InProduction()) {
+			BeaconCommon::PostSlackMessage('Webhook was unable to update branch hashes: ' . $e->getMessage());
+		}
 		exit;
 	}
-	
-	$branches = json_decode($response, true);
-	foreach ($branches as $branch) {
-		$database->Query('INSERT INTO public.endpoint_git_hashes (branch, hash) VALUES ($1, $2) ON CONFLICT (branch) DO UPDATE SET hash = EXCLUDED.hash;', $branch['name'], $hash);
-	}
+}
+foreach ($existingHashes as $branchName => $branchHash) {
+	$database->Query('DELETE FROM public.endpoint_git_hashes WHERE branch = $1;', $branchName);
 }
 $database->Commit();
 
-echo "Success.\n";
+echo "Success\n";
 exit;
 
 ?>

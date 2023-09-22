@@ -9,7 +9,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	public const kPublishStatusApproved = 'Approved';
 	public const kPublishStatusApprovedPrivate = 'Approved But Private';
 	public const kPublishStatusDenied = 'Denied';
-	
+
 	protected string $projectId;
 	protected string $gameId;
 	protected array $gameSpecific;
@@ -28,7 +28,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	protected string $storagePath;
 	protected bool $deleted;
 	protected array $content = [];
-	
+
 	protected function __construct(BeaconRecordSet $row) {
 		$this->projectId = $row->Field('project_id');
 		$this->gameId = $row->Field('game_id');
@@ -48,7 +48,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$this->storagePath = $row->Field('storage_path');
 		$this->deleted = $row->Field('deleted');
 	}
-	
+
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = new DatabaseSchema('public', 'projects', [
 			new DatabaseObjectProperty('projectId', ['primaryKey' => true, 'columnName' => 'project_id']),
@@ -73,7 +73,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		]);
 		return $schema;
 	}
-	
+
 	protected static function NewInstance(BeaconRecordSet $rows): Project {
 		$gameId = $rows->Field('game_id');
 		switch ($gameId) {
@@ -87,14 +87,14 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			throw new Exception('Unknown game ' . $gameId);
 		}
 	}
-	
+
 	public static function Fetch(string $uuid): ?static {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
-			
+
 		$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ' AND ' . $schema->Accessor('role') . ' = ' . $schema->Setter('role', '$2');
 		$values = [$uuid, 'Owner'];
-		
+
 		//header('Fetch: ' . $sql);
 		$rows = $database->Query($sql, $values);
 		if (is_null($rows) || $rows->RecordCount() !== 1) {
@@ -102,15 +102,15 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		}
 		return static::NewInstance($rows);
 	}
-	
+
 	public static function FetchForUser(string $projectId, User|string $userId): ?static {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
-		
+
 		if (!is_string($userId)) {
 			$userId = $userId->UserId();
 		}
-		
+
 		$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ' AND ' . $schema->Accessor('userId') . ' = ' . $schema->Setter('userId', '$2');
 		$values = [$projectId, $userId];
 		$rows = $database->Query($sql, $values);
@@ -119,11 +119,11 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		}
 		return static::NewInstance($rows);
 	}
-	
+
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$table = $schema->Table();
-		
+
 		$sort_column = $schema->Accessor('lastUpdate');
 		$sort_direction = 'DESC';
 		if (isset($filters['sort'])) {
@@ -148,25 +148,25 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$sort_direction = (strtolower($filters['direction']) === 'desc' ? 'DESC' : 'ASC');
 		}
 		$parameters->orderBy = "{$sort_column} {$sort_direction}";
-		
+
 		if (isset($filters['userId']) && empty($filters['userId']) === false) {
 			$parameters->AddFromFilter($schema, $filters, 'userId');
 		} else {
 			$parameters->clauses[] = $schema->Accessor('role') . " = 'Owner'";
 		}
-		
+
 		$parameters->AddFromFilter($schema, $filters, 'communityStatus');
 		$parameters->AddFromFilter($schema, $filters, 'consoleSafe');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
 		$parameters->AddFromFilter($schema, $filters, 'name');
 		$parameters->AddFromFilter($schema, $filters, 'role');
-		
+
 		$deleted = $filters['deleted'] ?? $filters['isDeleted'] ?? false;
 		if (is_null($deleted) === false) {
 			$parameters->clauses[] = $schema->Comparison('deleted', '=', $parameters->placeholder++);
 			$parameters->values[] = filter_var($deleted, FILTER_VALIDATE_BOOLEAN);
 		}
-		
+
 		if (isset($filters['search']) && empty($filters['search']) === false) {
 			$search = new BeaconSearch();
 			$results = $search->Search($filters['search'], null, 100, 'Document');
@@ -181,7 +181,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				$parameters->clauses[] = $schema->Comparison('projectId', '=', "'00000000-0000-0000-0000-000000000000'");
 			}
 		}
-		
+
 		$namespaces = ['Ark' => 'Ark', 'SDTD' => '7DaysToDie'];
 		$namespaceClauses = [];
 		foreach ($namespaces as $namespace => $identifier) {
@@ -199,11 +199,11 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$parameters->clauses[] = '(' . implode(' OR ', $namespaceClauses) . ')';
 		}
 	}
-	
+
 	protected static function ExtendSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		//
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		return [
 			'projectId' => $this->projectId,
@@ -220,19 +220,19 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			'isDeleted' => $this->deleted,
 		];
 	}
-		
+
 	public function ProjectId(): string {
 		return $this->projectId;
 	}
-	
+
 	public function PusherChannelName(): string {
 		return 'project-' . strtolower(str_replace('-', '', $this->projectId));
 	}
-	
+
 	public function GameId(): string {
 		return $this->gameId;
 	}
-	
+
 	public function GameURLComponent(): string {
 		switch ($this->gameId) {
 		case 'Ark':
@@ -241,75 +241,75 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			return '7dtd';
 		}
 	}
-	
+
 	public function UserId(): string {
 		return $this->userId;
 	}
-	
+
 	public function Role(): string {
 		return $this->role;
 	}
-	
+
 	public function Permissions(): int {
 		return $this->permissions;
 	}
-	
+
 	public function EncryptedPassword(): ?string {
 		return $this->encryptedPassword;
 	}
-	
+
 	public function Fingerprint(): ?string {
 		return $this->fingerprint;
 	}
-	
+
 	public function Name(): string {
 		return $this->name;
 	}
-	
+
 	// Deprecated
 	public function Title(): string {
 		return $this->name;
 	}
-	
+
 	public function Description(): string {
 		return $this->description;
 	}
-	
+
 	public function ConsoleSafe(): bool {
 		return $this->consoleSafe;
 	}
-	
+
 	public function LastUpdate(): int {
 		return $this->lastUpdate;
 	}
-	
+
 	public function Revision(): int {
 		return $this->revision;
 	}
-	
+
 	public function DownloadCount(): int {
 		return $this->downloadCount;
 	}
-	
+
 	public function IncrementDownloadCount(bool $autosave = true): void {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query("UPDATE public.projects SET download_count = download_count + 1 WHERE project_id = $1;", $this->projectId);
 		$database->Commit();
 	}
-	
+
 	public function IsPublic(): bool {
 		return $this->communityStatus == self::kPublishStatusApproved;
 	}
-	
+
 	public function PublishStatus(): string {
 		return $this->communityStatus;
 	}
-	
+
 	public function SetPublishStatus(string $desired_status): void {
 		$database = BeaconCommon::Database();
 		$schema = static::DatabaseSchema();
-		
+
 		$results = $database->Query('SELECT published FROM ' . $schema->Table() . ' WHERE project_id = $1;', $this->projectId);
 		$current_status = $results->Field('published');
 		$new_status = $current_status;
@@ -350,7 +350,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 						],
 						'fields' => []
 					];
-					
+
 					$user = User::Fetch($this->userId);
 					if (is_null($user) === false) {
 						if ($user->IsAnonymous()) {
@@ -363,7 +363,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 							'value' => $username
 						];
 					}
-					
+
 					$obj = [
 						'text' => 'Request to publish project',
 						'attachments' => array($attachment)
@@ -385,28 +385,28 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		}
 		$this->communityStatus = $new_status;
 	}
-	
+
 	public function PreloadContent($version_id = null): string {
 		$content_key = (is_null($version_id) === true ? '' : $version_id);
 		if (array_key_exists($content_key, $this->content) === true) {
 			return $content_key;
 		}
-		
+
 		$this->content[$content_key] = BeaconCloudStorage::GetFile($this->CloudStoragePath(), true, $version_id);
 		return $content_key;
 	}
-	
+
 	public static function IsBinaryProjectFormat(string $content): bool {
 		return bin2hex(substr($content, 0, 8)) === '3029a1c4fab67728';
 	}
-	
+
 	public function Content(bool $compressOutput = false, bool $parsed = true, $version_id = null): string|array {
 		try {
 			$content_key = $this->PreloadContent($version_id);
 		} catch (Exception $err) {
 			return '';
 		}
-		
+
 		$content = $this->content[$content_key];
 		$compressOutput = $compressOutput && ($parsed === false);
 		if (static::IsBinaryProjectFormat($content)) {
@@ -435,26 +435,26 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			return $content;
 		}
 	}
-	
+
 	public function CloudStoragePath(): string {
 		if (is_null($this->storagePath)) {
 			$this->storagePath = '/Projects/' . strtolower($projectId) . '.beacon';
 		}
 		return $this->storagePath;
 	}
-	
+
 	public function IsDeleted(): bool {
 		return $this->deleted;
 	}
-	
+
 	public static function Save(User $user, array $manifest): ?static {
 		$projectId = $manifest['projectId'] ?? '';
 		if (BeaconUUID::Validate($projectId) === false) {
 			throw new Exception('ProjectId should be a UUID.', 400);
 		}
-		
+
 		$newMemberList = $manifest['members'];
-		
+
 		$database = BeaconCommon::Database();
 		$project = static::FetchForUser($projectId, $user->UserId());
 		$members = [];
@@ -462,20 +462,20 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			if ($project->Permissions() <= 10) {
 				throw new Exception('You are not authorized to write to this project.', 403);
 			}
-			
+
 			// Only accept users who are already in the member list
 			$rows = $database->Query('SELECT user_id, role, fingerprint FROM project_members WHERE project_id = $1;', $projectId);
 			while (!$rows->EOF()) {
 				$userId = $rows->Field('user_id');
 				$fingerprint = $rows->Field('fingerprint');
 				$role = $rows->Field('role');
-				
+
 				if (array_key_exists($userId, $newMemberList)) {
 					$member = $newMemberList[$userId];
 					if (BeaconCommon::HasAllKeys($member, 'role', 'encryptedPassword', 'fingerprint') === false) {
 						throw new Exception('Member ' . $userId . ' must have keys role, encryptedPassword, and fingerprint.', 400);
 					}
-					
+
 					if ($role !== $member['role'] || $fingerprint !== $member['fingerprint']) {
 						$members[] = [
 							'userId' => $userId,
@@ -485,14 +485,14 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 						];
 					}
 				}
-				
+
 				$rows->MoveNext();
 			}
 		} else {
 			if (array_key_exists($user->UserId(), $newMemberList) === false) {
 				throw new Exception('Member list must contain an entry for user ' . $user->UserId(), 400);
 			}
-			
+
 			// Only accept the owner
 			$member = $newMemberList[$user->UserId()];
 			if (BeaconCommon::HasAllKeys($member, 'encryptedPassword', 'fingerprint') === false) {
@@ -505,19 +505,19 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				'fingerprint' => $member['fingerprint'],
 			];
 		}
-		
+
 		$projectName = $manifest['name'] ?? '';
 		$errorDetails['name'] = $projectName;
 		if (empty($projectName)) {
 			throw new Exception('Project name should not be empty.', 400);
 		}
-		
+
 		$projectOwnerId = $user->UserId();
 		if (is_null($project) === false && $project->Role() !== 'Owner') {
 			$ownerProject = static::Fetch($projectId);
 			$projectOwnerId = $ownerProject->UserId();
 		}
-		
+
 		$existingProjects = static::Search(['name' => $projectName, 'userId' => $projectOwnerId, 'role' => 'Owner'], true);
 		if (count($existingProjects) > 0) {
 			$nameError = true;
@@ -533,7 +533,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				throw new Exception('There is already a project with this name. Please choose another.', 400);
 			}
 		}
-		
+
 		$now = new DateTime();
 		$description = $manifest['description'] ?? '';
 		$gameId = $manifest['gameId'] ?? '';
@@ -553,40 +553,40 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		} else {
 			$columns['revision'] = $project->Revision() + 1;
 		}
-		
+
 		switch ($gameId) {
 		case 'Ark':
 			$columns['game_specific']['map'] = $manifest['map'] ?? 1;
 			$columns['game_specific']['difficulty'] = $manifest['difficulty'] ?? 4.0;
 			$columns['game_specific']['include_editors'] = $manifest['editors'] ?? [];
-			
+
 			$mods = $manifest['modSelections'] ?? [];
 			$enabledModIds = [];
 			foreach ($mods as $modId => $enabled) {
 				if ($enabled === false) {
 					continue;
 				}
-				
+
 				$enabledModIds[] = $modId;
 				if ($columns['console_safe'] !== true) {
 					continue;
 				}
-				
-				$mod = Ark\ContentPack::Fetch($modId);
-				if (is_null($mod) || $mod->ConsoleSafe() === true) {
+
+				$mod = ContentPack::Fetch($modId);
+				if (is_null($mod) || $mod->IsConsoleSafe() === true) {
 					continue;
 				}
-				
+
 				$columns['console_safe'] = false;
 			}
-			
+
 			break;
 		case '7DaysToDie':
 			break;
 		default:
 			throw new Exception('Unknown game ' . $gameId . '.', 400);
 		}
-		
+
 		$columns['game_specific'] = json_encode($columns['game_specific']);
 		$database->BeginTransaction();
 		if (is_null($project)) {
@@ -598,10 +598,10 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$database->Query('INSERT INTO public.project_members (project_id, user_id, role, encrypted_password, fingerprint) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (project_id, user_id) DO UPDATE SET role = EXCLUDED.role, encrypted_password = EXCLUDED.encrypted_password, fingerprint = EXCLUDED.fingerprint;', $projectId, $member['userId'], $member['role'], $member['encryptedPassword'], $member['fingerprint']);
 		}
 		$database->Commit();
-		
+
 		return static::Fetch($projectId);
 	}
-	
+
 	public function Versions(): array {
 		$versions = BeaconCloudStorage::VersionsForFile($this->storagePath);
 		if ($versions === false) {
@@ -619,7 +619,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		}
 		return $versions;
 	}
-	
+
 	public function Delete(): void {
 		$database = BeaconCommon::Database();
 		if ($this->role === 'Owner') {
@@ -645,5 +645,5 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		}
 	}
 }
-	
+
 ?>
