@@ -8,7 +8,7 @@ class ProjectMember implements JsonSerializable {
 	public const kRoleAdmin = 'Admin';
 	public const kRoleEditor = 'Editor';
 	public const kRoleGuest = 'Guest';
-	
+
 	protected string $projectId;
 	protected string $userId;
 	protected string $username;
@@ -17,18 +17,18 @@ class ProjectMember implements JsonSerializable {
 	protected int $permissions;
 	protected ?string $encryptedPassword;
 	protected ?string $fingerprint;
-	
+
 	protected function __construct(BeaconRecordSet $row) {
 		$this->projectId = $row->Field('project_id');
 		$this->userId = $row->Field('user_id');
-		$this->username = $row->Field('username');
+		$this->username = $row->Field('username') ?? 'Anonymous';
 		$this->publicKey = $row->Field('public_key');
 		$this->role = $row->Field('role');
 		$this->permissions = $row->Field('permissions');
 		$this->encryptedPassword = $row->Field('encrypted_password');
 		$this->fingerprint = $row->Field('fingerprint');
 	}
-	
+
 	public static function Create(string $projectId, string $userId, string $role, ?string $encryptedPassword, ?string $fingerprint): ?static {
 		$database = BeaconCommon::Database();
 		try {
@@ -41,7 +41,7 @@ class ProjectMember implements JsonSerializable {
 		}
 		return static::Fetch($projectId, $userId);
 	}
-	
+
 	public static function Fetch(string $projectId, string $userId): ?static {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT project_members.project_id, project_members.role, public.project_role_permissions(project_members.role) AS permissions, project_members.encrypted_password, project_members.fingerprint, users.user_id, users.public_key, users.username FROM public.project_members INNER JOIN public.users ON (project_members.user_id = users.user_id) WHERE project_members.project_id = $1 AND project_members.user_id = $2;', $projectId, $userId);
@@ -50,7 +50,7 @@ class ProjectMember implements JsonSerializable {
 		}
 		return new static($rows);
 	}
-	
+
 	public static function List(string $projectId): array {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT project_members.project_id, project_members.role, public.project_role_permissions(project_members.role) AS permissions, project_members.encrypted_password, project_members.fingerprint, users.user_id, users.public_key, users.username FROM public.project_members INNER JOIN public.users ON (project_members.user_id = users.user_id) WHERE project_members.project_id = $1 ORDER BY users.username;', $projectId);
@@ -61,7 +61,7 @@ class ProjectMember implements JsonSerializable {
 		}
 		return $guests;
 	}
-	
+
 	public function Delete(): bool {
 		try {
 			$database = BeaconCommon::Database();
@@ -74,39 +74,39 @@ class ProjectMember implements JsonSerializable {
 			return false;
 		}
 	}
-	
+
 	public function ProjectId(): string {
 		return $this->projectId;
 	}
-	
+
 	public function UserId(): string {
 		return $this->userId;
 	}
-	
+
 	public function Username(): string {
 		return $this->username;
 	}
-	
+
 	public function PublicKey(): string {
 		return $this->publicKey;
 	}
-	
+
 	public function Role(): string {
 		return $this->role;
 	}
-	
+
 	public function Permissions(): int {
 		return $this->permissions;
 	}
-	
+
 	public function EncryptedPassword(): ?string {
 		return $this->encryptedPassword;
 	}
-	
+
 	public function Fingerprint(): ?string {
 		return $this->fingerprint;
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		return [
 			'projectId' => $this->projectId,
@@ -119,7 +119,7 @@ class ProjectMember implements JsonSerializable {
 			'fingerprint' => $this->fingerprint,
 		];
 	}
-	
+
 	public static function GenerateFingerprint(string $userId, string $username, string $publicKey, string $password): string {
 		$userId = hex2bin(str_replace('-', '', $userId));
 		if (str_starts_with($publicKey, '-----BEGIN PUBLIC KEY-----')) {
@@ -130,7 +130,7 @@ class ProjectMember implements JsonSerializable {
 		} else {
 			$publicKey = hex2bin($publicKey);
 		}
-		
+
 		$pieces = [
 			base64_decode('com2R8j7FkwXzwOUoMs6qNUXXATzZrfuqG7xjo9Lp3c='),
 			$userId,
@@ -138,7 +138,7 @@ class ProjectMember implements JsonSerializable {
 			$password,
 			$publicKey
 		];
-		
+
 		return base64_encode(hash('sha3-256', implode('', $pieces), true));
 	}
 }
