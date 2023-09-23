@@ -8,7 +8,7 @@ http_response_code(500);
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
-use BeaconAPI\v4\User;
+use BeaconAPI\v4\{License, User};
 
 BeaconCommon::StartSession();
 
@@ -49,7 +49,7 @@ if (count($bundles) === 0) {
 $database = BeaconCommon::Database();
 if (isset($_COOKIE['beacon_affiliate'])) {
 	$client_reference_id = $_COOKIE['beacon_affiliate'];
-	
+
 	$rows = $database->Query('SELECT purchase_id, code FROM affiliate_tracking WHERE client_reference_id = $1;', $client_reference_id);
 	if ($rows->RecordCount() === 1 && is_null($rows->Field('purchase_id')) === false) {
 		// need a new id
@@ -144,18 +144,18 @@ while (!$results->EOF()) {
 	$price_id = $results->Field('price_id');
 	$game_id = $results->Field('game_id');
 	$tag = $results->Field('tag');
-	
+
 	$product_map[$product_id] = [
 		'PriceId' => $price_id,
 		'GameId' => $game_id,
 		'Tag' => $tag
 	];
-	
+
 	$products[$game_id][$tag] = [
 		'ProductId' => $product_id,
 		'PriceId' => $price_id
 	];
-	
+
 	$results->MoveNext();
 }
 
@@ -165,15 +165,15 @@ $includeArkSA = isset($products['ArkSA']['Base']);
 $lines = [];
 foreach ($bundles as $bundle) {
 	$bundle = new CartBundle($bundle);
-	
+
 	$wantsArk = $includeArk ? $bundle->getQuantity($products['Ark']['Base']['ProductId']) > 0 : false;
 	$wantsArkSAYears = $includeArkSA ? $bundle->getQuantity($products['ArkSA']['Base']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Upgrade']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Renewal']['ProductId']) : 0;
-	
+
 	if ($bundle->isGift()) {
 		if ($wantsArk) {
 			$lines[$products['Ark']['Base']['PriceId']] = ($lines[$products['Ark']['Base']['PriceId']] ?? 0) + 1;
 		}
-		
+
 		if ($wantsArkSAYears > 0) {
 			if ($wantsArk) {
 				$lines[$products['ArkSA']['Upgrade']['PriceId']] = ($lines[$products['ArkSA']['Upgrade']['PriceId']] ?? 0) + 1;
@@ -187,11 +187,11 @@ foreach ($bundles as $bundle) {
 	} else {
 		$ownsArk = $includeArk && findLicense($licenses, $products['Ark']['Base']['ProductId']) !== null;
 		$ownsArkSA = $includeArkSA && findLicense($licenses, $products['ArkSA']['Base']['ProductId']) !== null;
-		
+
 		if ($wantsArk && !$ownsArk) {
 			$lines[$products['Ark']['Base']['PriceId']] = ($lines[$products['Ark']['Base']['PriceId']] ?? 0) + 1;
 		}
-		
+
 		if ($wantsArkSAYears > 0) {
 			if ($ownsArkSA) {
 				$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + $wantsArkSAYears;
@@ -227,7 +227,7 @@ $session = $api->CreateCheckoutSession($payment);
 if (is_null($session)) {
 	http_response_code(400);
 	echo json_encode(['error' => true, 'message' => 'Was not able to create the checkout session.'], JSON_PRETTY_PRINT);
-	
+
 	$attachments = [
 		[
 			'title' => 'Cart Details',
@@ -245,9 +245,9 @@ if (is_null($session)) {
 			'ts' => time()
 		]
 	];
-	
+
 	BeaconCommon::PostSlackRaw(json_encode(['text' => 'There was an error starting a checkout session.', 'attachments' => $attachments]));
-	
+
 	exit;
 }
 
@@ -262,13 +262,13 @@ function createLineItem(string $uuid, string $currency, int $quantity) {
 	if ($quantity <= 0) {
 		return null;
 	}
-	
+
 	$database = BeaconCommon::Database();
 	$rows = $database->Query('SELECT price_id FROM product_prices WHERE product_id = $1 AND currency = $2;', $uuid, $currency);
 	if ($rows->RecordCount() === 0) {
 		return null;
 	}
-	
+
 	return [
 		'price' => $rows->Field('price_id'),
 		'quantity' => $quantity
@@ -277,11 +277,11 @@ function createLineItem(string $uuid, string $currency, int $quantity) {
 
 class CartBundle {
 	protected $source;
-	
+
 	public function __construct(array $source) {
 		$this->source = $source;
 	}
-	
+
 	public function getQuantity(string $productId): int {
 		if (array_key_exists($productId, $this->source['products'])) {
 			return $this->source['products'][$productId];
@@ -289,7 +289,7 @@ class CartBundle {
 			return 0;
 		}
 	}
-	
+
 	public function isGift(): bool {
 		return $this->source['isGift'];
 	}
@@ -297,7 +297,7 @@ class CartBundle {
 
 function findLicense(array $licenses, string $productId): ?array {
 	foreach ($licenses as $license) {
-		if ($license['product_id'] === $productId) {
+		if ((is_array($license) && $license['product_id'] === $productId) || ($license instanceof License && $license->Product() === $productId)) {
 			return $license;
 		}
 	}
