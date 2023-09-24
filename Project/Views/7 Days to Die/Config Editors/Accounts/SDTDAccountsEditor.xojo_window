@@ -25,12 +25,103 @@ Begin SDTDConfigEditor SDTDAccountsEditor
    Transparent     =   True
    Visible         =   True
    Width           =   800
+   Begin AccountsEditor Editor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   500
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      ViewIcon        =   0
+      ViewTitle       =   "Untitled"
+      Visible         =   True
+      Width           =   800
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Hidden()
+		  If (Self.Editor Is Nil) = False Then
+		    Self.Editor.SwitchedFrom()
+		  End If
+		  RaiseEvent Hidden()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetupUI()
+		  If (Self.Editor Is Nil) = False Then
+		    Self.Editor.UpdateUI
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+		  RaiseEvent Shown(UserData, FireSetupUI)
+		  If (Self.Editor Is Nil) = False Then
+		    Self.Editor.SwitchedTo(UserData)
+		  End If
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Function InternalName() As String
+		  Return SDTD.Configs.NameAccounts
+		End Function
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Hidden()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+	#tag EndHook
+
+
 #tag EndWindowCode
 
+#tag Events Editor
+	#tag Event
+		Function GetConfigLabel() As String
+		  Return Self.ConfigLabel
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GetProject() As Beacon.Project
+		  Return Self.Project
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Modified = Self.Editor.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Modified"

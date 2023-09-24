@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin DesktopWindow ArkLinkAccountDialog
+Begin DesktopWindow LinkAccountDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF
    Composite       =   False
@@ -228,7 +228,7 @@ End
 		    Parent = Parent.TrueWindow
 		  End If
 		  
-		  Var Win As New ArkLinkAccountDialog(Tokens)
+		  Var Win As New LinkAccountDialog(Tokens)
 		  Win.ShowModal(Parent)
 		  Var SelectedToken As BeaconAPI.ProviderToken = Win.mSelectedToken
 		  Win.Close
