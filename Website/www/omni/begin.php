@@ -297,7 +297,7 @@ class CartBundle {
 
 function findLicense(array $licenses, string $productId): ?array {
 	foreach ($licenses as $license) {
-		if ((is_array($license) && $license['product_id'] === $productId) || ($license instanceof License && $license->Product() === $productId)) {
+		if ((is_array($license) && $license['product_id'] === $productId) || ($license instanceof License && $license->ProductId() === $productId)) {
 			return $license;
 		}
 	}
