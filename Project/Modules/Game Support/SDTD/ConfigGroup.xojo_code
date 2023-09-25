@@ -43,18 +43,6 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function InternalName() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsDefaultImported() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ManagedKeys() As SDTD.ConfigOption()
 		  // Returns all the keys that this group could provide
 		  
@@ -72,24 +60,6 @@ Inherits Beacon.ConfigGroup
 		Sub Migrate(SavedWithVersion As Integer, Project As SDTD.Project)
 		  RaiseEvent Migrate(SavedWithVersion, Project)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RunWhenBanned() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsConfigSets() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsMerging() As Boolean
-		  Return False
-		End Function
 	#tag EndMethod
 
 

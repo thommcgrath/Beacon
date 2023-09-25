@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Project
 Inherits Beacon.Project
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused PlainData
@@ -12,12 +12,64 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
+		Function LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
+		  Var SetDict As New Dictionary
+		  For Each Entry As DictionaryEntry In PlainData
+		    Try
+		      Var InternalName As String = Entry.Key
+		      Var GroupData As Dictionary = Entry.Value
+		      
+		      Select Case InternalName
+		      Case SDTD.Configs.NameProjectSettings
+		      Else
+		        Var EncryptedGroupData As Dictionary
+		        If EncryptedData.HasKey(InternalName) Then
+		          Try
+		            EncryptedGroupData = EncryptedData.Value(InternalName)
+		          Catch EncGroupDataErr As RuntimeException
+		          End Try
+		        End If
+		        
+		        Var Instance As SDTD.ConfigGroup = SDTD.Configs.CreateInstance(InternalName, GroupData, EncryptedGroupData)
+		        If (Instance Is Nil) = False Then
+		          SetDict.Value(InternalName) = Instance
+		        End If
+		      End Select
+		    Catch Err As RuntimeException
+		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.ProjectId + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
+		    End Try
+		  Next
+		  Return SetDict
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
 		  #Pragma Unused EncryptedData
 		  #Pragma Unused SaveDataVersion
 		  #Pragma Unused SavedWithVersion
 		  
 		  Self.mGameVersion = PlainData.Value("gameVersion")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SaveConfigSet(SetDict As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		  For Each Entry As DictionaryEntry In SetDict
+		    Var Group As SDTD.ConfigGroup = Entry.Value
+		    
+		    Var GroupData As Dictionary = Group.SaveData()
+		    If GroupData Is Nil Then
+		      Continue
+		    End If
+		    
+		    If GroupData.HasAllKeys("Plain", "Encrypted") Then
+		      PlainData.Value(Group.InternalName) = GroupData.Value("Plain")
+		      EncryptedData.Value(Group.InternalName) = GroupData.Value("Encrypted")
+		    Else
+		      PlainData.Value(Group.InternalName) = GroupData
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 

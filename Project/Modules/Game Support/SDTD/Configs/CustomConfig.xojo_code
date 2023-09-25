@@ -1,7 +1,52 @@
 #tag Class
 Protected Class CustomConfig
 Inherits SDTD.ConfigGroup
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag Event
+		Sub CopyFrom(Other As SDTD.ConfigGroup)
+		  If Other Is Nil Or (Other IsA SDTD.Configs.CustomConfig) = False Then
+		    Return
+		  End If
+		  
+		  Var Source As SDTD.Configs.CustomConfig = SDTD.Configs.CustomConfig(Other)
+		  Self.mSalt = Source.mSalt
+		  Self.mFileContents = New Dictionary
+		  For Each Entry As DictionaryEntry In Source.mFileContents
+		    Self.mFileContents.Value(Entry.Key) = Entry.Value
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function GenerateConfigValues(Project As SDTD.Project, Profile As SDTD.ServerProfile) As SDTD.ConfigValue()
+		  Var DataSource As SDTD.DataSource = SDTD.DataSource.Pool.Get(False)
+		  Var Values() As SDTD.ConfigValue
+		  
+		  // ServerConfigXml
+		  Var ServerConfigXml As XmlDocument = Self.PrepareServerConfigXml()
+		  If (ServerConfigXml Is Nil) = False Then
+		    Var Nodes As XmlNodeList = ServerConfigXml.XQL("//property")
+		    Var Bound As Integer = Nodes.Length - 1
+		    For Idx As Integer = 0 To Bound
+		      Var Node As XmlNode = Nodes.Item(Idx)
+		      Var Key As String = Node.GetAttribute("name")
+		      Var Value As String = Node.GetAttribute("value")
+		      
+		      Var Options() As SDTD.ConfigOption = DataSource.GetConfigOptions(SDTD.ConfigFileServerConfigXml, Key, Project.GameVersion, Project.ContentPacks)
+		      Var Option As SDTD.ConfigOption
+		      If Options.Count > 0 Then
+		        Option = Options(0)
+		      Else
+		        Option = New SDTD.ConfigOption(SDTD.ConfigFileServerConfigXml, Key)
+		      End If
+		      Values.Add(New SDTD.ConfigValue(Option, Value))
+		    Next
+		  End If
+		  
+		  Return Values
+		End Function
+	#tag EndEvent
+
 	#tag Event
 		Function HasContent() As Boolean
 		  For Each Entry As DictionaryEntry In Self.mFileContents
@@ -15,37 +60,46 @@ Inherits SDTD.ConfigGroup
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  Var Rainbow As Dictionary
-		  If EncryptedData.HasKey("Rainbow") Then
-		    Try
-		      Rainbow = EncryptedData.Value("Rainbow")
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If EncryptedData.HasKey("Salt") Then
-		    Self.mSalt = DecodeBase64MBS(EncryptedData.Value("Salt").StringValue)
-		  End If
-		  
-		  For Each Entry As DictionaryEntry In SaveData
-		    If Entry.Key = "Salt" Then
-		      Continue
+		  If (EncryptedData Is Nil) = False Then
+		    If EncryptedData.HasKey("rainbow") Then
+		      Try
+		        Rainbow = EncryptedData.Value("rainbow")
+		      Catch Err As RuntimeException
+		      End Try
 		    End If
-		    
-		    Self.mFileContents.Value(Entry.Key) = Self.DecodeContent(Entry.Value.StringValue, Rainbow)
-		  Next
+		    If EncryptedData.HasKey("salt") Then
+		      Self.mSalt = DecodeBase64MBS(EncryptedData.Value("salt").StringValue)
+		    End If
+		  End If
+		  If Rainbow Is Nil Then
+		    Rainbow = New Dictionary
+		  End If
+		  
+		  If SaveData.HasKey("files") Then
+		    Var Files As Dictionary = SaveData.Value("files")
+		    Self.mFileContents = New Dictionary
+		    For Each Entry As DictionaryEntry In Files
+		      Self.mFileContents.Value(Entry.Key) = Self.DecodeContent(Entry.Value.StringValue, Rainbow)
+		    Next
+		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  Var Rainbow As New Dictionary
+		  Var Files As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mFileContents
-		    SaveData.Value(Entry.Key) = Self.EncodeContent(Entry.Value.StringValue, Rainbow)
+		    Files.Value(Entry.Key) = Self.EncodeContent(Entry.Value.StringValue, Rainbow)
 		  Next
+		  SaveData.Value("files") = Files
 		  
 		  If Rainbow.KeyCount > 0 Then
-		    EncryptedData.Value("Salt") = EncodeBase64MBS(Self.mSalt)
-		    EncryptedData.Value("Rainbow") = Rainbow
+		    If Self.mSalt.IsEmpty Then
+		      Self.mSalt = Crypto.GenerateRandomBytes(32)
+		    End If
+		    EncryptedData.Value("salt") = EncodeBase64MBS(Self.mSalt)
+		    EncryptedData.Value("rainbow") = Rainbow
 		  End If
 		End Sub
 	#tag EndEvent
@@ -64,7 +118,7 @@ Inherits SDTD.ConfigGroup
 		    #Pragma Unused Rainbow
 		  #endif
 		  
-		  Return Input
+		  Return DecodeBase64MBS(Input).DefineEncoding(Encodings.UTF8)
 		End Function
 	#tag EndMethod
 
@@ -80,7 +134,7 @@ Inherits SDTD.ConfigGroup
 		    #Pragma Unused Rainbow
 		  #endif
 		  
-		  Return Input
+		  Return EncodeBase64MBS(Input)
 		End Function
 	#tag EndMethod
 
@@ -96,6 +150,50 @@ Inherits SDTD.ConfigGroup
 	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return SDTD.Configs.NameCustomConfig
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function PrepareServerConfigXml() As XmlDocument
+		  If Self.mFileContents.HasKey(SDTD.ConfigFileServerConfigXml) = False Then
+		    Return Nil
+		  End If
+		  
+		  Var KeyValueMatcher As New RegEx
+		  KeyValueMatcher.SearchPattern = "^(\S+)=(.+)$"
+		  
+		  Var PropertyLines() As String
+		  Var Lines() As String = Self.mFileContents.Value(SDTD.ConfigFileServerConfigXml).StringValue.Trim.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
+		  For Each Line As String In Lines
+		    If Line.BeginsWith("#") Or Line.BeginsWith("//") Then
+		      Continue
+		    End If
+		    
+		    Line = Line.Trim
+		    If Line.BeginsWith("<property") Then
+		      PropertyLines.Add(Line)
+		      Continue
+		    End If
+		    
+		    Var Matches As RegExMatch = KeyValueMatcher.Search(Line)
+		    If Matches Is Nil Then
+		      Continue
+		    End If
+		    
+		    PropertyLines.Add("<property name=""" + EncodingToHTMLMBS(Matches.SubExpressionString(1)) + """ value=""" + EncodingToHTMLMBS(Matches.SubExpressionString(2)) + """ />")
+		  Next
+		  
+		  If PropertyLines.Count = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Var XmlString As String = "<?xml version=""1.0""?><ServerSettings>" + String.FromArray(PropertyLines, "") + "</ServerSettings>"
+		  Try
+		    Return New XmlDocument(XmlString)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Preparing ServerConfig.xml custom content.")
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 
