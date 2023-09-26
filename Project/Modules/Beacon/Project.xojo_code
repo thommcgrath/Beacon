@@ -1828,6 +1828,12 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function Validate() As Beacon.ProjectValidationResults
 		  Var Issues As New Beacon.ProjectValidationResults
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets()
+		  For Each Set As Beacon.ConfigSet In Sets
+		    For Each Config As Beacon.ConfigGroup In Self.ImplementedConfigs(Set)
+		      Config.Validate(Set.ConfigSetId, Issues, Self)
+		    Next
+		  Next
 		  RaiseEvent Validate(Issues)
 		  Return Issues
 		End Function

@@ -684,7 +684,11 @@ End
 		  Var ConfigName As String = Parts(1)
 		  Self.ActiveConfigSet = Self.Project.FindConfigSet(ConfigSet)
 		  Self.CurrentConfigName = ConfigName
-		  Self.CurrentPanel.GoToIssue(Issue)
+		  
+		  Var Panel As SDTDConfigEditor = Self.CurrentPanel
+		  If (Panel Is Nil) = False Then
+		    Panel.GoToIssue(Issue)
+		  End If
 		End Sub
 	#tag EndMethod
 

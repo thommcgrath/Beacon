@@ -280,13 +280,6 @@ Inherits Beacon.Project
 		  If Self.mMapMask = CType(0, UInt64) Then
 		    Issues.Add(New Beacon.Issue("MapMask", "No map has been selected."))
 		  End If
-		  
-		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets()
-		  For Each Set As Beacon.ConfigSet In Sets
-		    For Each Config As Ark.ConfigGroup In Self.ImplementedConfigs(Set)
-		      Config.Validate(Set.ConfigSetId, Issues, Self)
-		    Next
-		  Next
 		End Sub
 	#tag EndEvent
 

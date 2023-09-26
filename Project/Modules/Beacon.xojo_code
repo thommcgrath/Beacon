@@ -1352,6 +1352,18 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function XmlMessage(Extends Err As XmlException) As String
+		  Var ErrNum As Integer = Err.ErrorNumber
+		  
+		  If ErrNum = 2 Then
+		    Return "Syntax error"
+		  Else
+		    Return Err.Message
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Note, Name = Difficulty
 		OverrideOfficialDifficulty determines the steps dino levels will take. For example, when set to 5.0,

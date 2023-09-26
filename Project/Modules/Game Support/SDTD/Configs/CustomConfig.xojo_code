@@ -23,24 +23,29 @@ Inherits SDTD.ConfigGroup
 		  Var Values() As SDTD.ConfigValue
 		  
 		  // ServerConfigXml
-		  Var ServerConfigXml As XmlDocument = Self.PrepareServerConfigXml()
-		  If (ServerConfigXml Is Nil) = False Then
-		    Var Nodes As XmlNodeList = ServerConfigXml.XQL("//property")
-		    Var Bound As Integer = Nodes.Length - 1
-		    For Idx As Integer = 0 To Bound
-		      Var Node As XmlNode = Nodes.Item(Idx)
-		      Var Key As String = Node.GetAttribute("name")
-		      Var Value As String = Node.GetAttribute("value")
-		      
-		      Var Options() As SDTD.ConfigOption = DataSource.GetConfigOptions(SDTD.ConfigFileServerConfigXml, Key, Project.GameVersion, Project.ContentPacks)
-		      Var Option As SDTD.ConfigOption
-		      If Options.Count > 0 Then
-		        Option = Options(0)
-		      Else
-		        Option = New SDTD.ConfigOption(SDTD.ConfigFileServerConfigXml, Key)
-		      End If
-		      Values.Add(New SDTD.ConfigValue(Option, Value))
-		    Next
+		  Var ServerConfigSource As String = Self.PrepareXml(Self.mFileContents.Lookup(SDTD.ConfigFileServerConfigXml, "").StringValue)
+		  If ServerConfigSource.IsEmpty = False Then
+		    Try
+		      Var Xml As New XmlDocument(ServerConfigSource)
+		      Var Nodes As XmlNodeList = Xml.XQL("/ServerSettings/property")
+		      Var Bound As Integer = Nodes.Length - 1
+		      For Idx As Integer = 0 To Bound
+		        Var Node As XmlNode = Nodes.Item(Idx)
+		        Var Key As String = Node.GetAttribute("name")
+		        Var Value As String = Node.GetAttribute("value")
+		        
+		        Var Options() As SDTD.ConfigOption = DataSource.GetConfigOptions(SDTD.ConfigFileServerConfigXml, Key, Project.GameVersion, Project.ContentPacks)
+		        Var Option As SDTD.ConfigOption
+		        If Options.Count > 0 Then
+		          Option = Options(0)
+		        Else
+		          Option = New SDTD.ConfigOption(SDTD.ConfigFileServerConfigXml, Key)
+		        End If
+		        Values.Add(New SDTD.ConfigValue(Option, Value))
+		      Next
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
 		  End If
 		  
 		  Return Values
@@ -82,6 +87,31 @@ Inherits SDTD.ConfigGroup
 		      Self.mFileContents.Value(Entry.Key) = Self.DecodeContent(Entry.Value.StringValue, Rainbow)
 		    Next
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  #Pragma Unused Project
+		  
+		  Var Filenames() As String = Array(SDTD.ConfigFileServerConfigXml)
+		  For Each Filename As String In Filenames
+		    Var Source As String = Self.PrepareXml(Self.mFileContents.Lookup(Filename, "").StringValue)
+		    If Source.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    Try
+		      Var Xml As New XmlDocument(Source)
+		      #Pragma Unused Xml
+		    Catch Err As RuntimeException
+		      If Err IsA XmlException Then
+		        Issues.Add(New Beacon.Issue(Location, XmlException(Err).XmlMessage, Err))
+		      Else
+		        Issues.Add(New Beacon.Issue(Location, "Could not use " + Filename + ": " + Err.Message, Err))
+		      End If
+		    End Try
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -209,57 +239,8 @@ Inherits SDTD.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function PrepareServerConfigXml() As XmlDocument
-		  If Self.mFileContents.HasKey(SDTD.ConfigFileServerConfigXml) = False Then
-		    Return Nil
-		  End If
-		  
-		  Var Contents As String = Self.mFileContents.Value(SDTD.ConfigFileServerConfigXml).StringValue.Trim
-		  Contents = Contents.ReplaceAll("<" + Self.EncryptedTag + ">", "").ReplaceAll("</" + Self.EncryptedTag + ">", "")
-		  
-		  // Try it first as a true XML file
-		  #Pragma BreakOnExceptions False
-		  Try
-		    Return New XmlDocument(Contents)
-		  Catch Err As RuntimeException
-		  End Try
-		  #Pragma BreakOnExceptions Default
-		  
-		  Var KeyValueMatcher As New RegEx
-		  KeyValueMatcher.SearchPattern = "^(\S+)=(.+)$"
-		  
-		  Var PropertyLines() As String
-		  Var Lines() As String = Contents.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
-		  For Each Line As String In Lines
-		    If Line.BeginsWith("#") Or Line.BeginsWith("//") Then
-		      Continue
-		    End If
-		    
-		    Line = Line.Trim
-		    If Line.BeginsWith("<property") Then
-		      PropertyLines.Add(Line)
-		      Continue
-		    End If
-		    
-		    Var Matches As RegExMatch = KeyValueMatcher.Search(Line)
-		    If Matches Is Nil Then
-		      Continue
-		    End If
-		    
-		    PropertyLines.Add("<property name=""" + EncodingToHTMLMBS(Matches.SubExpressionString(1)) + """ value=""" + EncodingToHTMLMBS(Matches.SubExpressionString(2)) + """ />")
-		  Next
-		  
-		  If PropertyLines.Count = 0 Then
-		    Return Nil
-		  End If
-		  
-		  Var XmlString As String = "<?xml version=""1.0""?><ServerSettings>" + String.FromArray(PropertyLines, "") + "</ServerSettings>"
-		  Try
-		    Return New XmlDocument(XmlString)
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Preparing ServerConfig.xml custom content.")
-		    Return Nil
-		  End Try
+		Private Shared Function PrepareXml(Source As String) As String
+		  Return Source.Trim.ReplaceAll("<" + EncryptedTag + ">", "").ReplaceAll("</" + EncryptedTag + ">", "")
 		End Function
 	#tag EndMethod
 
@@ -300,6 +281,9 @@ Inherits SDTD.ConfigGroup
 
 
 	#tag Constant, Name = EncryptedTag, Type = String, Dynamic = False, Default = \"Beacon:Encrypted", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = LineCommentPrefix, Type = String, Dynamic = False, Default = \"//", Scope = Public
 	#tag EndConstant
 
 

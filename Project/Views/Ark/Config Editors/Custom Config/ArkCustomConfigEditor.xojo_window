@@ -385,8 +385,8 @@ End
 		    Next
 		    Var EndPos As Integer = Source.IndexOf(StartPos, Tag)
 		    If EndPos = -1 Then
-		      Source = Source + Tag
 		      EndPos = Source.Length
+		      Source = Source + Tag
 		    End If
 		    
 		    Var ContentLen As Integer = EndPos - StartPos

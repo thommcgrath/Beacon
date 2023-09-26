@@ -153,17 +153,44 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectionIsCommented() As Boolean
-		  #if SDTD.Enabled
-		    #if DebugBuild
-		      #Pragma Warning "These comments are wrong"
-		    #else
-		      #Pragma Error "These comments are wrong"
-		    #endif
-		  #endif
+		  Var Pos As Integer = Self.ConfigArea.SelectionStart
+		  If Pos = Self.ConfigArea.Length Then
+		    If Pos = 0 Then
+		      // No content
+		      Return False
+		    End If
+		    
+		    // Using the style information won't help
+		    Var Source As String = Self.ConfigArea.Text
+		    
+		    // Make sure there is a potential comment at all
+		    If Source.Contains("<!--") = False Then
+		      Return False
+		    End If
+		    
+		    // Look backwards until <!-- or --> is found
+		    Var CharCount As Integer = Source.Length
+		    Var Bound As Integer = CharCount - 1
+		    For Idx As Integer = Bound DownTo 0
+		      Var RemainingChars As Integer = CharCount - Idx
+		      Var Tail As String = Source.Middle(Idx, Min(RemainingChars, 4))
+		      If Tail.BeginsWith("<!--") Then
+		        Return True
+		      ElseIf Tail.BeginsWith("-->") Then
+		        Return False
+		      End If
+		    Next
+		    
+		    // How did we get here?
+		    Return False
+		  End If
 		  
-		  Var FirstLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionStart)
-		  Var FirstLine As String = Self.ConfigArea.Line(FirstLineNum)
-		  Return FirstLine.BeginsWith("//")
+		  Var Style As ScintillaStyleMBS = Self.ConfigArea.StyleAt(Pos)
+		  If Style Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Style.Name = "SCE_H_COMMENT"
 		End Function
 	#tag EndMethod
 
@@ -220,31 +247,45 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ToggleComment()
-		  Var FirstLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionStart)
-		  Var LastLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionEnd)
-		  Var AddComment As Boolean = Not Self.SelectionIsCommented
+		  Var StartTag As String = "<!--"
+		  Var EndTag As String = "-->"
+		  Var StartTagLen As Integer = StartTag.Length
+		  Var EndTagLen As Integer = EndTag.Length
+		  Var Source As String = Self.ConfigArea.Text
 		  
-		  Var NewLines() As String
-		  For LineNum As Integer = FirstLineNum To LastLineNum
-		    Var Line As String = Self.ConfigArea.Line(LineNum)
-		    If Line.BeginsWith("//") = True And AddComment = False Then
-		      Line = Line.Middle(2).Trim
-		    ElseIf Line.BeginsWith("//") = False And AddComment = True Then
-		      Line = "// " + Line.Trim
-		    Else
-		      Line = Line.Trim
+		  If Self.SelectionIsCommented Then
+		    Var StartPos As Integer = Self.ConfigArea.SelectionStart
+		    For I As Integer = StartPos DownTo StartTagLen
+		      If Source.Middle((I - StartTagLen), StartTagLen) = StartTag Then
+		        StartPos = I
+		        Exit For I
+		      End If
+		    Next
+		    Var EndPos As Integer = Source.IndexOf(StartPos, EndTag)
+		    If EndPos = -1 Then
+		      EndPos = Source.Length
+		      Source = Source + EndTag
 		    End If
-		    NewLines.Add(Line)
-		  Next LineNum
-		  
-		  Var EOL As String = Self.ConfigArea.Text.DetectLineEnding
-		  Self.ConfigArea.SelectionStart = Self.ConfigArea.LineStart(FirstLineNum)
-		  Self.ConfigArea.SelectionEnd = Self.ConfigArea.LineEndPosition(LastLineNum)
-		  Self.ConfigArea.ReplaceSelection(String.FromArray(NewLines, EOL))
-		  
-		  // Select again when done
-		  Self.ConfigArea.SelectionStart = Self.ConfigArea.LineStart(FirstLineNum)
-		  Self.ConfigArea.SelectionEnd = Self.ConfigArea.LineEndPosition(LastLineNum)
+		    
+		    Var ContentLen As Integer = EndPos - StartPos
+		    Var Prefix As String = Source.Left(StartPos - StartTagLen)
+		    Var Content As String = Source.Middle(StartPos, ContentLen).Trim
+		    Var Suffix As String = Source.Middle(EndPos + EndTagLen)
+		    
+		    Self.ConfigArea.Text = Prefix + Content + Suffix
+		    Self.ConfigArea.SelectionStart = Prefix.Length
+		    Self.ConfigArea.SelectionLength = Content.Length
+		  Else
+		    Var Start As Integer = Self.ConfigArea.SelectionStart
+		    Var Length As Integer = Self.ConfigArea.SelectionLength
+		    Var Prefix As String = Source.Left(Start)
+		    Var Content As String = Source.Middle(Start, Length)
+		    Var Suffix As String = Source.Right(Source.Length - (Start + Length))
+		    
+		    Self.ConfigArea.Text = Prefix + StartTag + " " + Content + " " + EndTag + Suffix
+		    Self.ConfigArea.SelectionStart = Prefix.Length + StartTagLen + 1
+		    Self.ConfigArea.SelectionLength = Content.Length
+		  End If
 		  
 		  Self.UpdateCommentButton()
 		End Sub
@@ -268,8 +309,8 @@ End
 		    Next
 		    Var EndPos As Integer = Source.IndexOf(StartPos, EndTag)
 		    If EndPos = -1 Then
-		      Source = Source + EndTag
 		      EndPos = Source.Length
+		      Source = Source + EndTag
 		    End If
 		    
 		    Var ContentLen As Integer = EndPos - StartPos
