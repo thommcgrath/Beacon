@@ -95,9 +95,6 @@ Inherits SDTD.ConfigGroup
 		  SaveData.Value("files") = Files
 		  
 		  If Rainbow.KeyCount > 0 Then
-		    If Self.mSalt.IsEmpty Then
-		      Self.mSalt = Crypto.GenerateRandomBytes(32)
-		    End If
 		    EncryptedData.Value("salt") = EncodeBase64MBS(Self.mSalt)
 		    EncryptedData.Value("rainbow") = Rainbow
 		  End If
@@ -114,11 +111,40 @@ Inherits SDTD.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function DecodeContent(Input As String, Rainbow As Dictionary) As String
-		  #if Not SDTD.Enabled
-		    #Pragma Unused Rainbow
-		  #endif
+		  Var StartLen As Integer = Self.EncryptedTag.Length + 2
+		  Var EndLen As Integer = StartLen + 1
+		  Var StartPos As Integer = 0
 		  
-		  Return DecodeBase64MBS(Input).DefineEncoding(Encodings.UTF8)
+		  Input = DecodeBase64MBS(Input).DefineEncoding(Encodings.UTF8)
+		  
+		  Do
+		    Var OuterStartPos As Integer = Input.IndexOf(StartPos, "<" + Self.EncryptedTag + ">")
+		    If OuterStartPos = -1 Then
+		      Exit
+		    End If
+		    
+		    Var InnerStartPos As Integer = OuterStartPos + StartLen
+		    Var InnerEndPos As Integer = Input.IndexOf(InnerStartPos, "</" + Self.EncryptedTag + ">")
+		    If InnerEndPos = -1 Or InnerEndPos = InnerStartPos Then
+		      Exit
+		    End If
+		    
+		    Var OuterEndPos As Integer = InnerEndPos + EndLen
+		    Var InnerLen As Integer = InnerEndPos - InnerStartPos
+		    Var OuterLen As Integer = OuterEndPos - OuterEndPos
+		    Var Hash As String = Input.Middle(InnerStartPos, InnerLen)
+		    Var Decrypted As String
+		    If (Rainbow Is Nil) = False And Rainbow.HasKey(Hash) Then
+		      Decrypted = Rainbow.Value(Hash)
+		    End If
+		    
+		    Var Prefix As String = Input.Left(InnerStartPos)
+		    Var Suffix As String = Input.Middle(InnerEndPos)
+		    Input = Prefix + Decrypted + Suffix
+		    StartPos = Prefix.Length + Decrypted.Length + EndLen
+		  Loop
+		  
+		  Return Input
 		End Function
 	#tag EndMethod
 
@@ -130,9 +156,38 @@ Inherits SDTD.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function EncodeContent(Input As String, Rainbow As Dictionary) As String
-		  #if Not SDTD.Enabled
-		    #Pragma Unused Rainbow
-		  #endif
+		  Var StartLen As Integer = Self.EncryptedTag.Length + 2
+		  Var EndLen As Integer = StartLen + 1
+		  Var StartPos As Integer = 0
+		  
+		  Do
+		    Var OuterStartPos As Integer = Input.IndexOf(StartPos, "<" + Self.EncryptedTag + ">")
+		    If OuterStartPos = -1 Then
+		      Exit
+		    End If
+		    
+		    Var InnerStartPos As Integer = OuterStartPos + StartLen
+		    Var InnerEndPos As Integer = Input.IndexOf(InnerStartPos, "</" + Self.EncryptedTag + ">")
+		    If InnerEndPos = -1 Or InnerEndPos = InnerStartPos Then
+		      Exit
+		    End If
+		    
+		    If Self.mSalt.IsEmpty Then
+		      Self.mSalt = Crypto.GenerateRandomBytes(32)
+		    End If
+		    
+		    Var OuterEndPos As Integer = InnerEndPos + EndLen
+		    Var InnerLen As Integer = InnerEndPos - InnerStartPos
+		    Var OuterLen As Integer = OuterEndPos - OuterEndPos
+		    Var Decrypted As String = Input.Middle(InnerStartPos, InnerLen)
+		    Var Hash As String = EncodeHex(Crypto.HMAC(Self.mSalt, Decrypted, Crypto.HashAlgorithms.SHA2_512)).Lowercase
+		    Rainbow.Value(Hash) = Decrypted
+		    
+		    Var Prefix As String = Input.Left(InnerStartPos)
+		    Var Suffix As String = Input.Middle(InnerEndPos)
+		    Input = Prefix + Hash + Suffix
+		    StartPos = Prefix.Length + Hash.Length + EndLen
+		  Loop
 		  
 		  Return EncodeBase64MBS(Input)
 		End Function
@@ -159,11 +214,22 @@ Inherits SDTD.ConfigGroup
 		    Return Nil
 		  End If
 		  
+		  Var Contents As String = Self.mFileContents.Value(SDTD.ConfigFileServerConfigXml).StringValue.Trim
+		  Contents = Contents.ReplaceAll("<" + Self.EncryptedTag + ">", "").ReplaceAll("</" + Self.EncryptedTag + ">", "")
+		  
+		  // Try it first as a true XML file
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Return New XmlDocument(Contents)
+		  Catch Err As RuntimeException
+		  End Try
+		  #Pragma BreakOnExceptions Default
+		  
 		  Var KeyValueMatcher As New RegEx
 		  KeyValueMatcher.SearchPattern = "^(\S+)=(.+)$"
 		  
 		  Var PropertyLines() As String
-		  Var Lines() As String = Self.mFileContents.Value(SDTD.ConfigFileServerConfigXml).StringValue.Trim.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
+		  Var Lines() As String = Contents.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
 		  For Each Line As String In Lines
 		    If Line.BeginsWith("#") Or Line.BeginsWith("//") Then
 		      Continue
@@ -233,7 +299,7 @@ Inherits SDTD.ConfigGroup
 	#tag EndProperty
 
 
-	#tag Constant, Name = EncryptedTag, Type = String, Dynamic = False, Default = \"BeaconEncrypted", Scope = Public
+	#tag Constant, Name = EncryptedTag, Type = String, Dynamic = False, Default = \"Beacon:Encrypted", Scope = Public
 	#tag EndConstant
 
 

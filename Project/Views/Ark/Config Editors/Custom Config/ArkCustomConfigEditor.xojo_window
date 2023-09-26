@@ -480,9 +480,12 @@ End
 		  Var TagLen As Integer = Tag.Length
 		  
 		  Do
+		    If Pos > Source.Length Then
+		      Exit
+		    End If
 		    Pos = Source.IndexOf(Pos, Tag)
 		    If Pos = -1 Then
-		      Return
+		      Exit
 		    End If
 		    
 		    Var StartPos As Integer = Pos + TagLen

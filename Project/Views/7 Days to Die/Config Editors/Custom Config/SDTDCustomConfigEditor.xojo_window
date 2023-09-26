@@ -252,28 +252,30 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ToggleEncryption()
-		  Var Tag As String = SDTD.Configs.CustomConfig.EncryptedTag
-		  Var TagLen As Integer = Tag.Length
+		  Var StartTag As String = "<" + SDTD.Configs.CustomConfig.EncryptedTag + ">"
+		  Var EndTag As String = "</" + SDTD.Configs.CustomConfig.EncryptedTag + ">"
+		  Var StartTagLen As Integer = StartTag.Length
+		  Var EndTagLen As Integer = EndTag.Length
 		  Var Source As String = Self.ConfigArea.Text
 		  
 		  If Self.SelectionIsEncrypted Then
 		    Var StartPos As Integer = Self.ConfigArea.SelectionStart
-		    For I As Integer = StartPos DownTo TagLen
-		      If Source.Middle((I - TagLen), TagLen) = Tag Then
+		    For I As Integer = StartPos DownTo StartTagLen
+		      If Source.Middle((I - StartTagLen), StartTagLen) = StartTag Then
 		        StartPos = I
 		        Exit For I
 		      End If
 		    Next
-		    Var EndPos As Integer = Source.IndexOf(StartPos, Tag)
+		    Var EndPos As Integer = Source.IndexOf(StartPos, EndTag)
 		    If EndPos = -1 Then
-		      Source = Source + Tag
+		      Source = Source + EndTag
 		      EndPos = Source.Length
 		    End If
 		    
 		    Var ContentLen As Integer = EndPos - StartPos
-		    Var Prefix As String = Source.Left(StartPos - TagLen)
+		    Var Prefix As String = Source.Left(StartPos - StartTagLen)
 		    Var Content As String = Source.Middle(StartPos, ContentLen)
-		    Var Suffix As String = Source.Middle(EndPos + TagLen)
+		    Var Suffix As String = Source.Middle(EndPos + EndTagLen)
 		    
 		    Self.ConfigArea.Text = Prefix + Content + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length
@@ -285,8 +287,8 @@ End
 		    Var Content As String = Source.Middle(Start, Length)
 		    Var Suffix As String = Source.Right(Source.Length - (Start + Length))
 		    
-		    Self.ConfigArea.Text = Prefix + Tag + Content + Tag + Suffix
-		    Self.ConfigArea.SelectionStart = Prefix.Length + TagLen
+		    Self.ConfigArea.Text = Prefix + StartTag + Content + EndTag + Suffix
+		    Self.ConfigArea.SelectionStart = Prefix.Length + StartTagLen
 		    Self.ConfigArea.SelectionLength = Content.Length
 		  End If
 		End Sub
@@ -349,24 +351,30 @@ End
 		  
 		  Var Pos As Integer
 		  Var Source As String = Self.ConfigArea.Text
-		  Var Tag As String = SDTD.Configs.CustomConfig.EncryptedTag
-		  Var TagLen As Integer = Tag.Length
+		  Var StartTag As String = "<" + SDTD.Configs.CustomConfig.EncryptedTag + ">"
+		  Var EndTag As String = "</" + SDTD.Configs.CustomConfig.EncryptedTag + ">"
+		  Var StartTagLen As Integer = StartTag.Length
+		  Var EndTagLen As Integer = EndTag.Length
 		  
 		  Do
-		    Pos = Source.IndexOf(Pos, Tag)
-		    If Pos = -1 Then
-		      Return
+		    If Pos > Source.Length Then
+		      Exit
 		    End If
 		    
-		    Var StartPos As Integer = Pos + TagLen
-		    Var EndPos As Integer = Source.IndexOf(StartPos, Tag)
+		    Pos = Source.IndexOf(Pos, StartTag)
+		    If Pos = -1 Then
+		      Exit
+		    End If
+		    
+		    Var StartPos As Integer = Pos + StartTagLen
+		    Var EndPos As Integer = Source.IndexOf(StartPos, EndTag)
 		    If EndPos = -1 Then
 		      EndPos = Source.Length
 		    End If
 		    
 		    Self.mEncryptedRanges.Add(New Beacon.Range(StartPos, EndPos))
 		    
-		    Pos = EndPos + TagLen
+		    Pos = EndPos + EndTagLen
 		  Loop
 		  
 		  Self.UpdateEncryptButton()
