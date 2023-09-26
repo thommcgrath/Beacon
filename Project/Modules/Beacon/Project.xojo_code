@@ -1148,6 +1148,20 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		  For Each Set As Beacon.ConfigSet In Sets
+		    Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		    If SetDict Is Nil Then
+		      Continue
+		    End If
+		    For Each GroupEntry As DictionaryEntry In SetDict
+		      Var Group As Beacon.ConfigGroup = GroupEntry.Value
+		      If Group.Modified Then
+		        Return True
+		      End If
+		    Next
+		  Next
+		  
 		  Return False
 		End Function
 	#tag EndMethod
@@ -1163,6 +1177,18 @@ Implements ObservationKit.Observable
 		    
 		    For Each Set As Beacon.ConfigSet In Self.mConfigSets
 		      Set.Modified = False
+		    Next
+		    
+		    Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		    For Each Set As Beacon.ConfigSet In Sets
+		      Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		      If SetDict Is Nil Then
+		        Continue
+		      End If
+		      For Each GroupEntry As DictionaryEntry In SetDict
+		        Var Group As Beacon.ConfigGroup = GroupEntry.Value
+		        Group.Modified = False
+		      Next
 		    Next
 		  End If
 		End Sub

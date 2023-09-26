@@ -803,48 +803,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Modified() As Boolean
-		  If Super.Modified Then
-		    Return True
-		  End If
-		  
-		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
-		  For Each Set As Beacon.ConfigSet In Sets
-		    Var SetDict As Dictionary = Self.ConfigSetData(Set)
-		    If SetDict Is Nil Then
-		      Continue
-		    End If
-		    For Each GroupEntry As DictionaryEntry In SetDict
-		      Var Group As Ark.ConfigGroup = GroupEntry.Value
-		      If Group.Modified Then
-		        Return True
-		      End If
-		    Next
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Modified(Assigns Value As Boolean)
-		  Super.Modified = Value
-		  
-		  If Value = False Then
-		    Var Sets() As Beacon.ConfigSet = Self.ConfigSets
-		    For Each Set As Beacon.ConfigSet In Sets
-		      Var SetDict As Dictionary = Self.ConfigSetData(Set)
-		      If SetDict Is Nil Then
-		        Continue
-		      End If
-		      For Each GroupEntry As DictionaryEntry In SetDict
-		        Var Group As Ark.ConfigGroup = GroupEntry.Value
-		        Group.Modified = False
-		      Next
-		    Next
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ProcessEmbeddedContent()
 		  Self.mEmbeddedBlueprints = New Dictionary
 		  Super.ProcessEmbeddedContent()

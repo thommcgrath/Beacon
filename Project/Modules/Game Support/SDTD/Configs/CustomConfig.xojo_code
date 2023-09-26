@@ -263,9 +263,11 @@ Inherits SDTD.ConfigGroup
 		  If Value.IsEmpty Then
 		    If Self.mFileContents.HasKey(Filename) THen
 		      Self.mFileContents.Remove(Filename)
+		      Self.Modified = True
 		    End If
 		  Else
 		    Self.mFileContents.Value(Filename) = Value
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
