@@ -11,7 +11,7 @@ Begin ArkConfigEditor ArkServersEditor
    Enabled         =   True
    EraseBackground =   "True"
    HasBackgroundColor=   False
-   Height          =   506
+   Height          =   500
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -26,7 +26,7 @@ Begin ArkConfigEditor ArkServersEditor
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   856
+   Width           =   800
    Begin ServersListbox ServerList
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
@@ -55,7 +55,7 @@ Begin ArkConfigEditor ArkServersEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   424
+      Height          =   418
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -95,7 +95,7 @@ Begin ArkConfigEditor ArkServersEditor
       Backdrop        =   0
       ContentHeight   =   0
       Enabled         =   True
-      Height          =   506
+      Height          =   500
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   299
