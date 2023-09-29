@@ -1,21 +1,30 @@
 #tag Class
 Protected Class ImportThread
 Inherits Beacon.Thread
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Run()
 		  Var Files As New Dictionary
-		  Var Filenames() As String = Self.mData.Filenames
-		  #Pragma BreakOnExceptions Off
-		  For Each Filename As String In Filenames
-		    Self.Status = "Parsing " + Filename + "…"
-		    Try
-		      Var Doc As New XmlDocument(Self.mData.File(Filename))
-		      Files.Value(Filename) = Doc
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
-		  #Pragma BreakOnExceptions Default
+		  Try
+		    Var ServerConfigXmlContent As String = Self.mData.File(SDTD.ConfigFileServerConfigXml)
+		    Var Doc As New XmlDocument(ServerConfigXmlContent
+		    Files.Value(SDTD.ConfigFileServerConfigXml) = Doc
+		    
+		    Var PropertyNodes AS XMLNodeList = Doc.XQL("/ServerSettings/property[@name = 'AdminFileName']")
+		    If PropertyNodes.Length = 1 Then
+		      Var AdminFilename As String = PropertyNodes.Item(0).GetAttribute("value")
+		      Var AdminFileContent As String = Self.mData.File("Saves/" + AdminFilename)
+		      If AdminFileContent.IsEmpty = False Then
+		        Files.Value(SDTD.ConfigFileServerAdminXml) = New XmlDocument(AdminFileContent)
+		      End If
+		    End If
+		    
+		    Var WebPermissionsContent As String = Self.mData.File("Saves/" + SDTD.ConfigFileWebPermissionsXml)
+		    If WebPermissionsContent.IsEmpty = False Then
+		      Files.Value(SDTD.ConfigFileWebPermissionsXml) = New XmlDocument(WebPermissionsContent)
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
 		  
 		  Self.Status = "Building Beacon project…"
 		  Try

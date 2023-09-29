@@ -159,7 +159,6 @@ Inherits SDTD.ConfigGroup
 		      Exit
 		    End If
 		    
-		    Var OuterEndPos As Integer = InnerEndPos + EndLen
 		    Var InnerLen As Integer = InnerEndPos - InnerStartPos
 		    Var Hash As String = Input.Middle(InnerStartPos, InnerLen)
 		    Var Decrypted As String
@@ -205,7 +204,6 @@ Inherits SDTD.ConfigGroup
 		      Self.mSalt = Crypto.GenerateRandomBytes(32)
 		    End If
 		    
-		    Var OuterEndPos As Integer = InnerEndPos + EndLen
 		    Var InnerLen As Integer = InnerEndPos - InnerStartPos
 		    Var Decrypted As String = Input.Middle(InnerStartPos, InnerLen)
 		    Var Hash As String = EncodeHex(Crypto.HMAC(Self.mSalt, Decrypted, Crypto.HashAlgorithms.SHA2_512)).Lowercase

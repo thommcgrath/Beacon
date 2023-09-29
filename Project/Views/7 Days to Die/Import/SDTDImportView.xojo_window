@@ -46,7 +46,7 @@ Begin DocumentImportView SDTDImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   6
+      Value           =   2
       Visible         =   True
       Width           =   720
       Begin DocumentImportSourcePicker SourcePicker
@@ -265,6 +265,35 @@ Begin DocumentImportView SDTDImportView
          Visible         =   True
          Width           =   680
       End
+      Begin SDTDNitradoDiscoveryView NitradoView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
    End
    Begin Timer DiscoveryWatcher
       Enabled         =   True
@@ -442,6 +471,9 @@ End
 	#tag Constant, Name = PageLocal, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageNitrado, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PagePicker, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
@@ -460,6 +492,8 @@ End
 		    Self.SourcePicker.ActionButtonEnabled = True
 		  Case Self.PageLocal
 		    Self.LocalView.Begin
+		  Case Self.PageNitrado
+		    Self.NitradoView.Begin
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -483,6 +517,7 @@ End
 		  Case Me.SourceLocal
 		    Self.Views.SelectedPanelIndex = Self.PageLocal
 		  Case Me.SourceNitrado
+		    Self.Views.SelectedPanelIndex = Self.PageNitrado
 		  Case Me.SourceOtherProject
 		  End Select
 		End Sub
@@ -530,6 +565,33 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.Finish()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NitradoView
+	#tag Event
+		Sub Finished(Data() As Beacon.DiscoveredData)
+		  Self.ImportFrom(Data)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = Self.PagePicker
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		  Me.Height = NewHeight
 		End Sub
 	#tag EndEvent
 #tag EndEvents

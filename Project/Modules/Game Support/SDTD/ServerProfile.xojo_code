@@ -84,6 +84,12 @@ Inherits Beacon.ServerProfile
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Platform(Assigns Value As Integer)
+		  Super.Platform = Value
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event ReadFromDictionary(Dict As Dictionary)
