@@ -132,7 +132,7 @@ Begin DocumentImportView SDTDImportView
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   3
          TabPanelIndex   =   7
          TabStop         =   True
          Tooltip         =   ""
@@ -164,7 +164,7 @@ Begin DocumentImportView SDTDImportView
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   7
          TabStop         =   True
          Tooltip         =   ""
@@ -217,7 +217,7 @@ Begin DocumentImportView SDTDImportView
          RequiresSelection=   False
          RowSelectionType=   0
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   7
          TabStop         =   True
          Tooltip         =   ""
@@ -252,7 +252,7 @@ Begin DocumentImportView SDTDImportView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   3
+         TabIndex        =   0
          TabPanelIndex   =   7
          TabStop         =   True
          Text            =   "Import Status"

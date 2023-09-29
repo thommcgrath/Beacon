@@ -7,7 +7,7 @@ Inherits Beacon.Thread
 		  Var Files As New Dictionary
 		  Try
 		    Var ServerConfigXmlContent As String = Self.mData.File(SDTD.ConfigFileServerConfigXml)
-		    Var Doc As New XmlDocument(ServerConfigXmlContent
+		    Var Doc As New XmlDocument(ServerConfigXmlContent)
 		    Files.Value(SDTD.ConfigFileServerConfigXml) = Doc
 		    
 		    Var PropertyNodes AS XMLNodeList = Doc.XQL("/ServerSettings/property[@name = 'AdminFileName']")

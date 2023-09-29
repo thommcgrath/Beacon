@@ -328,13 +328,13 @@ End
 		    Var PlatformText As String = "Unknown"
 		    Select Case Server.Profile.Platform
 		    Case Beacon.ServerProfile.PlatformPC
-		      PlatformText = "Steam & Epic"
+		      PlatformText = "Steam"
 		    Case Beacon.ServerProfile.PlatformPlayStation
 		      PlatformText = "PlayStation"
 		    Case Beacon.ServerProfile.PlatformSwitch
 		      PlatformText = "Switch"
 		    Case Beacon.ServerProfile.PlatformXbox
-		      PlatformText = "Xbox & Windows Store"
+		      PlatformText = "Xbox"
 		    End Select
 		    
 		    Self.List.AddRow("", Server.Profile.Name, SDTD.NitradoServerProfile(Server.Profile).Address, PlatformText)

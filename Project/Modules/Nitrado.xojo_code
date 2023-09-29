@@ -1,15 +1,17 @@
 #tag Module
 Protected Module Nitrado
 	#tag Method, Flags = &h1
-		Protected Function PortlistsForGroup(AuthToken As String, Group As String) As String()
+		Protected Function PortlistsForProducts(AuthToken As String, ParamArray Products() As String) As String()
 		  If GameLists Is Nil Then
 		    GameLists = New Dictionary
 		  End If
 		  
-		  Var Shortcodes() As String
+		  Products.Sort
+		  Var CacheKey As String = AuthToken + ":" + String.FromArray(Products, ",")
 		  
-		  If GameLists.HasKey(AuthToken + ":" + Group) Then
-		    Shortcodes = GameLists.Value(AuthToken + ":" + Group)
+		  Var Shortcodes() As String
+		  If GameLists.HasKey(CacheKey) Then
+		    Shortcodes = GameLists.Value(CacheKey)
 		    Return Shortcodes
 		  End If
 		  
@@ -39,11 +41,11 @@ Protected Module Nitrado
 		  Var Bound As Integer = GameList.LastRowIndex
 		  For Idx As Integer = 0 To Bound
 		    Var Game As JSONItem = GameList.ChildAt(Idx)
-		    If Game.Value("group") = Group Then
-		      Shortcodes.Add(Game.Value("portlistShort"))
+		    If Products.IndexOf(Game.Value("product").StringValue) > -1 Then
+		      Shortcodes.Add(Game.Value("portlistShort").StringValue)
 		    End If
 		  Next
-		  GameLists.Value(AuthToken + ":" + Group) = Shortcodes
+		  GameLists.Value(CacheKey) = Shortcodes
 		  Return Shortcodes
 		End Function
 	#tag EndMethod

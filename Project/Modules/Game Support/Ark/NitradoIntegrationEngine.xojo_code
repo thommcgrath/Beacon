@@ -280,6 +280,13 @@ Inherits Ark.IntegrationEngine
 		    Return Servers
 		  End If
 		  
+		  // Get a list of the servers that match
+		  Var Portlists() As String = Nitrado.PortlistsForProducts(Self.mProviderToken.AccessToken, "ark", "arksotf", "arkosg")
+		  Var ArkMobileIndex As Integer = Portlists.IndexOf("arkmobile")
+		  If ArkMobileIndex > -1 Then
+		    Portlists.RemoveAt(ArkMobileIndex)
+		  End If
+		  
 		  Var Services() As Variant = Data.Value("services")
 		  For Each Service As Variant In Services
 		    If IsNull(Service) Or Service.Type <> Variant.TypeObject Or (Service.ObjectValue IsA Dictionary) = False Then
@@ -296,8 +303,8 @@ Inherits Ark.IntegrationEngine
 		      Var Profile As Ark.NitradoServerProfile
 		      Try
 		        Var Details As Dictionary = Dict.Value("details")
-		        Var GameName As String = Details.Value("game")
-		        If GameName.BeginsWith("ARK: Survival Evolved") = False Then
+		        Var GamePortlist As String = Details.Value("portlist_short")
+		        If Portlists.IndexOf(GamePortlist) = -1 Then
 		          Continue
 		        End If
 		        
@@ -347,6 +354,7 @@ Inherits Ark.IntegrationEngine
 		      Case "arkswitch", "arkswitchjp"
 		        Profile.Platform = Beacon.ServerProfile.PlatformSwitch
 		      Else
+		        // Something new
 		        Profile.Platform = Beacon.ServerProfile.PlatformUnknown
 		      End Select
 		      

@@ -53,7 +53,7 @@ Inherits SDTD.IntegrationEngine
 		  End If
 		  
 		  // Get a list of the servers that match
-		  Var Portlists() As String = Nitrado.PortlistsForGroup(Self.mProviderToken.AccessToken, "7dtd")
+		  Var Portlists() As String = Nitrado.PortlistsForProducts(Self.mProviderToken.AccessToken, "7dtd")
 		  
 		  Var Services() As Variant = Data.Value("services")
 		  For Each Service As Variant In Services
