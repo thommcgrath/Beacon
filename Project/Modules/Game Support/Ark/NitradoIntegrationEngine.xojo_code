@@ -893,7 +893,9 @@ Inherits Ark.IntegrationEngine
 		      Catch Err As RuntimeException
 		      End Try
 		    End If
-		    If TempMessage <> "" Then
+		    If TempMessage = "Nitrado Error: The service is currently in state 4 but it expecting state 2,3." Then
+		      Message = TempMessage + " The service may be expired."
+		    ElseIf TempMessage.IsEmpty = False Then
 		      Message = TempMessage
 		    Else
 		      Message = "Error: Nitrado responded with an error but no message."
