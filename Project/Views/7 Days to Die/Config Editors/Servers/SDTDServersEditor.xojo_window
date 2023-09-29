@@ -226,6 +226,40 @@ End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Hidden()
+		  Var Container As SDTDServerViewContainer = Self.CurrentView
+		  If (Container Is Nil) = False Then
+		    Container.SwitchedFrom()
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Opening()
+		  Self.ServerList.UpdateList()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetupUI()
+		  Self.ServerList.UpdateList()
+		  Self.UpdateRefreshButton()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+		  #Pragma Unused FireSetupUI
+		  
+		  Var Container As SDTDServerViewContainer = Self.CurrentView
+		  If (Container Is Nil) = False Then
+		    Container.SwitchedTo(UserData)
+		  End If
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As SDTD.Project)
 		  Self.mViews = New Dictionary

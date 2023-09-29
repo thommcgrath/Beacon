@@ -9,13 +9,13 @@ Begin SDTDServerViewContainer SDTDMultiServerView
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   600
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
+   LockBottom      =   True
    LockLeft        =   True
-   LockRight       =   False
+   LockRight       =   True
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
@@ -24,20 +24,125 @@ Begin SDTDServerViewContainer SDTDMultiServerView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   600
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      BackgroundColor =   ""
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   600
+   End
+   Begin SDTDCommonServerSettingsView SettingsView
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   559
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   True
+      Visible         =   True
+      Width           =   600
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.SettingsView.RefreshUI()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As SDTD.Project, Profiles() As SDTD.ServerProfile)
-		  
+		  Self.mProject = Project
+		  Self.mProfiles = Profiles
 		End Sub
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mProfiles() As SDTD.ServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProject As SDTD.Project
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", "Multiple Servers"))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SettingsView
+	#tag Event
+		Function GetProject() As SDTD.Project
+		  Return Self.mProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Profiles = Self.mProfiles
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Modified = Me.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Modified"

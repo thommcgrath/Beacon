@@ -515,6 +515,19 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function GenerateRandomKey(CharacterCount As Integer = 12, Pool As String = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") As String
+		  Var Rand As Random = System.Random
+		  Var PoolMax As Integer = Pool.Length - 1
+		  Var Chars() As String
+		  For Idx As Integer = 1 To CharacterCount
+		    Var Offset As Integer = Rand.InRange(0, PoolMax)
+		    Chars.Add(Pool.Middle(Offset, 1))
+		  Next
+		  Return String.FromArray(Chars, "")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function GetClipboardData(Extends Board As Clipboard, Type As String) As Variant
 		  If Board.RawDataAvailable(Type) Then

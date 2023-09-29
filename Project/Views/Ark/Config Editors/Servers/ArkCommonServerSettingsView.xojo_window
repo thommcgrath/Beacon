@@ -24,7 +24,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   648
+   Width           =   600
    Begin UITweaks.ResizedLabel ServerNameLabel
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -97,7 +97,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   460
+      Width           =   412
    End
    Begin UITweaks.ResizedLabel ConfigSetLabel
       AllowAutoDeactivate=   True
@@ -163,7 +163,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   368
+      Width           =   320
    End
    Begin UITweaks.ResizedPushButton ConfigSetChooseButton
       AllowAutoDeactivate=   True
@@ -179,7 +179,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   548
+      Left            =   500
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -259,7 +259,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Top             =   186
       Transparent     =   True
       Visible         =   True
-      Width           =   460
+      Width           =   412
    End
    Begin UITweaks.ResizedLabel MessageDurationLabel
       AllowAutoDeactivate=   True
@@ -367,7 +367,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   320
+      Width           =   272
    End
    Begin UITweaks.ResizedTextField AdminPasswordField
       AllowAutoDeactivate=   True
@@ -408,7 +408,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   408
+      Width           =   360
    End
    Begin UITweaks.ResizedTextField ServerPasswordField
       AllowAutoDeactivate=   True
@@ -449,7 +449,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   408
+      Width           =   360
    End
    Begin UITweaks.ResizedTextField SpectatorPasswordField
       AllowAutoDeactivate=   True
@@ -490,7 +490,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   408
+      Width           =   360
    End
    Begin UITweaks.ResizedLabel AdminPasswordLabel
       AllowAutoDeactivate=   True
@@ -775,7 +775,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   199
+      Width           =   151
    End
    Begin ProfileColorChooser ColorChooser
       AllowAutoDeactivate=   True
@@ -911,7 +911,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   460
+      Width           =   412
    End
 End
 #tag EndDesktopWindow

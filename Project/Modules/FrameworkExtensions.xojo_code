@@ -611,6 +611,18 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub SetText(Extends Box As DesktopComboBox, Text As String)
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Box.SelectRowWithText(Text)
+		  Catch Err As RuntimeException
+		    Box.SelectedRowIndex = -1
+		    Box.Text = Text
+		  End Try
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SQLDateTimeWithOffset(Extends Source As DateTime) As String
 		  Var Zone As TimeZone = Source.Timezone

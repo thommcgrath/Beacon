@@ -161,7 +161,6 @@ Inherits SDTD.ConfigGroup
 		    
 		    Var OuterEndPos As Integer = InnerEndPos + EndLen
 		    Var InnerLen As Integer = InnerEndPos - InnerStartPos
-		    Var OuterLen As Integer = OuterEndPos - OuterEndPos
 		    Var Hash As String = Input.Middle(InnerStartPos, InnerLen)
 		    Var Decrypted As String
 		    If (Rainbow Is Nil) = False And Rainbow.HasKey(Hash) Then
@@ -208,7 +207,6 @@ Inherits SDTD.ConfigGroup
 		    
 		    Var OuterEndPos As Integer = InnerEndPos + EndLen
 		    Var InnerLen As Integer = InnerEndPos - InnerStartPos
-		    Var OuterLen As Integer = OuterEndPos - OuterEndPos
 		    Var Decrypted As String = Input.Middle(InnerStartPos, InnerLen)
 		    Var Hash As String = EncodeHex(Crypto.HMAC(Self.mSalt, Decrypted, Crypto.HashAlgorithms.SHA2_512)).Lowercase
 		    Rainbow.Value(Hash) = Decrypted

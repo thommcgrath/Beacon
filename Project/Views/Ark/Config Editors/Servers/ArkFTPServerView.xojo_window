@@ -9,7 +9,7 @@ Begin ArkServerViewContainer ArkFTPServerView
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   612
+   Height          =   600
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -28,7 +28,7 @@ Begin ArkServerViewContainer ArkFTPServerView
    Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   571
+      Height          =   559
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -66,7 +66,7 @@ Begin ArkServerViewContainer ArkFTPServerView
          HasBorder       =   True
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
-         Height          =   531
+         Height          =   519
          HideSelection   =   True
          Index           =   -2147483648
          InitialParent   =   "Pages"
@@ -108,7 +108,7 @@ Begin ArkServerViewContainer ArkFTPServerView
          Composited      =   False
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   571
+         Height          =   559
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0

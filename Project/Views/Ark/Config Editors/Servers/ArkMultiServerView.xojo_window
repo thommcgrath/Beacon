@@ -9,7 +9,7 @@ Begin ArkServerViewContainer ArkMultiServerView
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   434
+   Height          =   600
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -69,7 +69,7 @@ Begin ArkServerViewContainer ArkMultiServerView
       Composited      =   False
       Enabled         =   True
       HasBackgroundColor=   False
-      Height          =   393
+      Height          =   559
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0

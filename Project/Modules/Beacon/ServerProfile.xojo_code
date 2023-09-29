@@ -153,6 +153,17 @@ Protected Class ServerProfile
 		    Case "GameServerApp"
 		      Return New Ark.GSAServerProfile(Dict, Project)
 		    End Select
+		  Case SDTD.Identifier
+		    Select Case Provider
+		    Case "Nitrado"
+		      Return New SDTD.NitradoServerProfile(Dict, Project)
+		    Case "FTP"
+		      Return New SDTD.FTPServerProfile(Dict, Project)
+		    Case "Local", "Simple"
+		      Return New SDTD.LocalServerProfile(Dict, Project)
+		    Case "GameServerApp"
+		      Return New SDTD.GSAServerProfile(Dict, Project)
+		    End Select
 		  End Select
 		End Function
 	#tag EndMethod
@@ -657,6 +668,14 @@ Protected Class ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ProviderTokenId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ExternalAccountId"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

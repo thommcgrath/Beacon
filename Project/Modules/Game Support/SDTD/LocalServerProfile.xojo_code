@@ -1,7 +1,7 @@
 #tag Class
 Protected Class LocalServerProfile
 Inherits SDTD.ServerProfile
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  Var SaveInfo As Dictionary = Dict.Value("Paths")
@@ -15,7 +15,7 @@ Inherits SDTD.ServerProfile
 	#tag EndEvent
 
 	#tag Event
-		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		Sub UpdateDetailsFrom(Profile As SDTD.ServerProfile)
 		  If Not Profile IsA SDTD.LocalServerProfile Then
 		    Return
 		  End If
@@ -43,9 +43,8 @@ Inherits SDTD.ServerProfile
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  // Do not call Super.Constructor()
-		  
 		  Self.mFiles = New Dictionary
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
@@ -73,6 +72,14 @@ Inherits SDTD.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ExternalAccountId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -190,14 +197,6 @@ Inherits SDTD.ServerProfile
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mFiles"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

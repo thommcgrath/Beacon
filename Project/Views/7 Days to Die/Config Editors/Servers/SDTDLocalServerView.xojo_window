@@ -9,13 +9,13 @@ Begin SDTDServerViewContainer SDTDLocalServerView
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   600
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
+   LockBottom      =   True
    LockLeft        =   True
-   LockRight       =   False
+   LockRight       =   True
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
@@ -24,20 +24,233 @@ Begin SDTDServerViewContainer SDTDLocalServerView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   600
+   Begin OmniBar ControlToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      BackgroundColor =   ""
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   600
+   End
+   Begin DesktopPagePanel Pages
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   559
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   3
+      Panels          =   ""
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   False
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   False
+      Value           =   0
+      Visible         =   True
+      Width           =   600
+      Begin SDTDCommonServerSettingsView SettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
+      Begin BeaconTextArea AdminNotesField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   True
+         AllowStyledText =   True
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         Height          =   519
+         HideSelection   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Multiline       =   True
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   61
+         Transparent     =   False
+         Underline       =   False
+         UnicodeMode     =   1
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   560
+      End
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
+		  
+		  Self.SettingsView.RefreshUI()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As SDTD.Project, Profile As SDTD.LocalServerProfile)
-		  
+		  Self.mProject = Project
+		  Self.mProfile = Profile
 		End Sub
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mProfile As SDTD.LocalServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProject As SDTD.Project
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events ControlToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
+		  Me.Append(OmniBarItem.CreateTab("PageFiles", "Files"))
+		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
+		  Me.Item("PageGeneral").Toggled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "PageGeneral"
+		    Self.Pages.SelectedPanelIndex = 0
+		  Case "PageFiles"
+		    Self.Pages.SelectedPanelIndex = 1
+		  Case "PageNotes"
+		    Self.Pages.SelectedPanelIndex = 2
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Pages
+	#tag Event
+		Sub PanelChanged()
+		  For Idx As Integer = 0 To Self.ControlToolbar.LastIndex
+		    Self.ControlToolbar.Item(Idx).Toggled = Me.SelectedPanelIndex = Idx
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SettingsView
+	#tag Event
+		Function GetProject() As SDTD.Project
+		  Return Self.mProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Profile = Self.mProfile
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Modified = Me.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AdminNotesField
+	#tag Event
+		Sub TextChanged()
+		  Self.mProfile.AdminNotes = Me.Text
+		  Self.Modified = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Modified"
