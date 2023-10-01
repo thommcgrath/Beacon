@@ -1,5 +1,6 @@
 #tag Class
 Protected Class ConfigOption
+Implements Beacon.GameSetting
 	#tag Method, Flags = &h0
 		Function ConfigOptionId() As String
 		  Return Self.mConfigOptionId

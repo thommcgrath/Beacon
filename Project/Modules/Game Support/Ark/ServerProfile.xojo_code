@@ -73,9 +73,23 @@ Inherits Beacon.ServerProfile
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor(Provider As String, ProfileId As String, Name As String, Nickname As String, SecondaryName As String)
+		  // Making the constructor public
+		  Super.Constructor(Provider, ProfileId, Name, Nickname, SecondaryName)
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function DefaultName() As String
 		  Return "An Unnamed " + FullName + " Server"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameId() As String
+		  Return Ark.Identifier
 		End Function
 	#tag EndMethod
 
@@ -221,6 +235,14 @@ Inherits Beacon.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ExternalAccountId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ProviderTokenId"
 			Visible=false

@@ -57,11 +57,13 @@ Protected Class ServerProfile
 		  
 		  Self.Name = Dict.Value("Name")
 		  Self.NickName = Dict.Lookup("Nickname", "")
+		  Self.SecondaryName = Dict.Lookup("Secondary Name", "")
 		  Self.Enabled = Dict.Value("Enabled")
 		  Self.mProfileID = Dict.Value("Profile ID")
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
 		  Self.mAdminNotes = Dict.Lookup("Admin Notes", "")
 		  Self.mProfileColor = CType(Dict.Lookup("Color", 0).IntegerValue, Beacon.ServerProfile.Colors)
+		  Self.mProvider = Dict.Value("Provider")
 		  Self.mProviderServiceID = Dict.Lookup("Provider Service ID", Nil)
 		  Self.mProviderTokenId = Dict.Lookup("Provider Token Id", "")
 		  
@@ -108,6 +110,16 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub Constructor(Provider As String, ProfileId As String, Name As String, Nickname As String, SecondaryName As String)
+		  Self.mProvider = Provider
+		  Self.mProfileId = ProfileId
+		  Self.mName = Name
+		  Self.mNickname = Nickname
+		  Self.mSecondaryName = SecondaryName
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function DefaultName() As String
 		  Return "An Unnamed Server"
 		End Function
@@ -139,32 +151,19 @@ Protected Class ServerProfile
 		    Return Nil
 		  End If
 		  
-		  Var Provider As String = Dict.Value("Provider")
 		  Var GameId As String = Dict.Lookup("Game", Ark.Identifier)
 		  Select Case GameId
 		  Case Ark.Identifier
-		    Select Case Provider
-		    Case "Nitrado"
-		      Return New Ark.NitradoServerProfile(Dict, Project)
-		    Case "FTP"
-		      Return New Ark.FTPServerProfile(Dict, Project)
-		    Case "Local", "Simple"
-		      Return New Ark.LocalServerProfile(Dict, Project)
-		    Case "GameServerApp"
-		      Return New Ark.GSAServerProfile(Dict, Project)
-		    End Select
+		    Return New Ark.ServerProfile(Dict, Project)
 		  Case SDTD.Identifier
-		    Select Case Provider
-		    Case "Nitrado"
-		      Return New SDTD.NitradoServerProfile(Dict, Project)
-		    Case "FTP"
-		      Return New SDTD.FTPServerProfile(Dict, Project)
-		    Case "Local", "Simple"
-		      Return New SDTD.LocalServerProfile(Dict, Project)
-		    Case "GameServerApp"
-		      Return New SDTD.GSAServerProfile(Dict, Project)
-		    End Select
+		    Return New SDTD.ServerProfile(Dict, Project)
 		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameId() As String
+		  
 		End Function
 	#tag EndMethod
 
@@ -227,11 +226,11 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ProfileID() As String
-		  If Self.mProfileID = "" Then
-		    Self.mProfileID = Beacon.UUID.v4
+		Function ProfileId() As String
+		  If Self.mProfileId = "" Then
+		    Self.mProfileId = Beacon.UUID.v4
 		  End If
-		  Return Self.mProfileID
+		  Return Self.mProfileId
 		End Function
 	#tag EndMethod
 
@@ -239,18 +238,20 @@ Protected Class ServerProfile
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
 		  RaiseEvent WriteToDictionary(Dict)
-		  If Dict.HasAllKeys("Provider", "Game") = False Then
+		  If Dict.HasAllKeys("Game") = False Then
 		    Var Err As New KeyNotFoundException
 		    Err.Message = "No provider and/or game was set in ServerProfile.WriteToDictionary"
 		    Raise Err
 		  End If
 		  Dict.Value("Name") = Self.Name
 		  Dict.Value("Nickname") = Self.Nickname
+		  Dict.Value("Secondary Name") = Self.mSecondaryName
 		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
 		  Dict.Value("Enabled") = Self.Enabled
 		  Dict.Value("Platform") = Self.mPlatform
 		  Dict.Value("Admin Notes") = Self.mAdminNotes
 		  Dict.Value("Color") = CType(Self.mProfileColor, Integer)
+		  Dict.Value("Provider") = Self.mProvider
 		  Dict.Value("Provider Token Id") = Self.mProviderTokenId
 		  If Self.mExternalAccountId.IsEmpty = False Then
 		    Dict.Value("External Account") = Self.mExternalAccountId
@@ -262,12 +263,6 @@ Protected Class ServerProfile
 		    Dict.Value("Provider Service ID") = Self.mProviderServiceID
 		  End If
 		  Return Dict
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SecondaryName() As String
-		  
 		End Function
 	#tag EndMethod
 
@@ -416,15 +411,23 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProfileID As String
+		Private mProfileId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProviderServiceID As Variant
+		Private mProvider As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProviderServiceId As Variant
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProviderTokenId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSecondaryName As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -474,6 +477,25 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mPlatform
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mPlatform = Value Then
+			    Return
+			  End If
+			  
+			  Self.mPlatform = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		Platform As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mProfileColor
 			End Get
 		#tag EndGetter
@@ -486,6 +508,25 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		ProfileColor As Beacon.ServerProfile.Colors
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mProvider
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mProvider = Value Then
+			    Return
+			  End If
+			  
+			  Self.mProvider = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		Provider As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -522,6 +563,25 @@ Protected Class ServerProfile
 		ProviderTokenId As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSecondaryName
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mSecondaryName.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
+			    Return
+			  End If
+			  
+			  Self.mSecondaryName = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		SecondaryName As String
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = PlatformPC, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
@@ -533,6 +593,9 @@ Protected Class ServerProfile
 	#tag EndConstant
 
 	#tag Constant, Name = PlatformUnknown, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformUnsupported, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PlatformXbox, Type = Double, Dynamic = False, Default = \"2", Scope = Public
@@ -681,6 +744,22 @@ Protected Class ServerProfile
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Provider"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Platform"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

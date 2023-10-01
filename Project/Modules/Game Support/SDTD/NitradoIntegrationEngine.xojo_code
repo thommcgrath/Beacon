@@ -1,7 +1,7 @@
 #tag Class
 Protected Class NitradoIntegrationEngine
 Inherits SDTD.IntegrationEngine
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Begin()
 		  Var Token As Variant = Beacon.Cache.Fetch(Profile.ProviderTokenId)
@@ -53,7 +53,7 @@ Inherits SDTD.IntegrationEngine
 		  End If
 		  
 		  // Get a list of the servers that match
-		  Var Portlists() As String = Nitrado.PortlistsForProducts(Self.mProviderToken.AccessToken, "7dtd")
+		  Var Portlists() As String = Nitrado.PortlistsForProducts(Self.mProviderToken, "7dtd")
 		  
 		  Var Services() As Variant = Data.Value("services")
 		  For Each Service As Variant In Services

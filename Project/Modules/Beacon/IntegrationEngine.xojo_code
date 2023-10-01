@@ -1,5 +1,6 @@
 #tag Class
 Protected Class IntegrationEngine
+Implements Beacon.LogProducer
 	#tag Method, Flags = &h0
 		Function AnalyzeEnabled() As Boolean
 		  Return (Self.mOptions And (CType(Self.OptionAnalyze, UInt64) Or CType(Self.OptionReview, UInt64))) = (CType(Self.OptionAnalyze, UInt64) Or CType(Self.OptionReview, UInt64))
@@ -950,7 +951,7 @@ Protected Class IntegrationEngine
 	#tag EndConstant
 
 
-	#tag Enum, Name = DownloadFailureMode, Flags = &h1
+	#tag Enum, Name = DownloadFailureMode, Type = Integer, Flags = &h0
 		Required
 		  MissingAllowed
 		ErrorsAllowed

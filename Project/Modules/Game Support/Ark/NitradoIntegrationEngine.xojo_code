@@ -281,7 +281,7 @@ Inherits Ark.IntegrationEngine
 		  End If
 		  
 		  // Get a list of the servers that match
-		  Var Portlists() As String = Nitrado.PortlistsForProducts(Self.mProviderToken.AccessToken, "ark", "arksotf", "arkosg")
+		  Var Portlists() As String = Nitrado.PortlistsForProducts(Self.mProviderToken, "ark", "arksotf", "arkosg")
 		  Var ArkMobileIndex As Integer = Portlists.IndexOf("arkmobile")
 		  If ArkMobileIndex > -1 Then
 		    Portlists.RemoveAt(ArkMobileIndex)
