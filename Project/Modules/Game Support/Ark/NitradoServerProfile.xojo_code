@@ -1,6 +1,7 @@
 #tag Class
 Protected Class NitradoServerProfile
 Inherits Ark.ServerProfile
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit))
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  Self.Address = Dict.Value("Address")
@@ -81,7 +82,7 @@ Inherits Ark.ServerProfile
 			Set
 			  If Self.mAddress.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mAddress = Value
-			    Self.Modified = True
+			    Self.mModified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -98,7 +99,7 @@ Inherits Ark.ServerProfile
 			Set
 			  If Self.mConfigPath.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mConfigPath = Value
-			    Self.Modified = True
+			    Self.mModified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -129,6 +130,46 @@ Inherits Ark.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Provider"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Platform"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SecondaryName"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ExternalAccountId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ProviderTokenId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Nickname"
 			Visible=false

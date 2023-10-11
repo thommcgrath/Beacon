@@ -84,21 +84,21 @@ Inherits SDTD.ConfigGroup
 		        If SupportedOnPlatform = False Then
 		          Continue
 		        End If
-		      ElseIf Profile.Platform <> Beacon.ServerProfile.PlatformUnknown Then
+		      ElseIf Profile.Platform <> Beacon.PlatformUnknown Then
 		        Var RequiredPlatform As Variant = Key.Constraint("platform")
 		        Var SupportedOnPlatform As Boolean = True
 		        If IsNull(RequiredPlatform) = False Then
 		          Select Case RequiredPlatform.StringValue
 		          Case "pc", "steam", "epic"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformPC)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPC)
 		          Case "xbox"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformXbox)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox)
 		          Case "ps"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPlayStation)
 		          Case "switch"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformSwitch)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformSwitch)
 		          Case "console"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformXbox Or Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox Or Profile.Platform = Beacon.PlatformPlayStation)
 		          End Select
 		          If SupportedOnPlatform = False Then
 		            Continue

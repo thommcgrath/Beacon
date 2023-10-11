@@ -1,6 +1,7 @@
 #tag Class
 Protected Class GSADiscoveredData
 Inherits Ark.DiscoveredData
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit))
 	#tag Method, Flags = &h0
 		Function CommandLineOptions() As Dictionary
 		  If Self.mLoaded = False Then

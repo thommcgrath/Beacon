@@ -1,6 +1,7 @@
 #tag Class
 Protected Class LocalServerProfile
 Inherits Ark.ServerProfile
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit))
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  If Dict.HasKey(Ark.ConfigFileGame) Then
@@ -84,7 +85,7 @@ Inherits Ark.ServerProfile
 			Set
 			  If Self.mGameIniFile <> Value Then
 			    Self.mGameIniFile = Value
-			    Self.Modified = True
+			    Self.mModified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -101,7 +102,7 @@ Inherits Ark.ServerProfile
 			Set
 			  If Self.mGameUserSettingsIniFile <> Value Then
 			    Self.mGameUserSettingsIniFile = Value
-			    Self.Modified = True
+			    Self.mModified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -118,6 +119,46 @@ Inherits Ark.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Provider"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Platform"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SecondaryName"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ExternalAccountId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ProviderTokenId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Nickname"
 			Visible=false

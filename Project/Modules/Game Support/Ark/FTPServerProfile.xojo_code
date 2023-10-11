@@ -1,10 +1,11 @@
 #tag Class
 Protected Class FTPServerProfile
 Inherits Ark.ServerProfile
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit ) )
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Game.ini Path", "GameUserSettings.ini Path") Then
-		    Var Err As KeyNotFoundException
+		    Var Err As New KeyNotFoundException
 		    Err.Message = "Missing FTPServerProfile keys"
 		    Raise Err
 		  End If
@@ -16,7 +17,6 @@ Inherits Ark.ServerProfile
 		  Self.mGameIniPath = Dict.Value("Game.ini Path")
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
 		  Self.mMode = Dict.Lookup("Mode", Beacon.FTPModeOptionalTLS)
-		  Self.mMask = Dict.Lookup("Mask", 0)
 		  Self.mVerifyHost = Dict.Lookup("Verify Host", True)
 		  Self.mPrivateKey = Dict.Lookup("Private Key", "")
 		End Sub
@@ -32,7 +32,6 @@ Inherits Ark.ServerProfile
 		  Dict.Value("Game.ini Path") = Self.mGameIniPath
 		  Dict.Value("GameUserSettings.ini Path") = Self.mGameUserSettingsIniPath
 		  Dict.Value("Mode") = Self.mMode
-		  Dict.Value("Mask") = Self.mMask
 		  Dict.Value("Verify Host") = Self.mVerifyHost
 		  
 		  If Self.mPrivateKey.IsEmpty = False Then
@@ -83,17 +82,70 @@ Inherits Ark.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Mask() As UInt64
-		  Return Self.mMask
+		Function Host() As String
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  Return Self.mHost
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Mask(Assigns Value As UInt64)
-		  If Self.mMask <> Value Then
-		    Self.mMask = Value
+		Sub Host(Assigns Value As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  If Self.mHost.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mHost = Value
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsPrivateKeyInternal() As Boolean
+		  Return Self.mPrivateKey.BeginsWith("---")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub IsPrivateKeyInternal(Assigns Value As Boolean)
+		  If Value = Self.IsPrivateKeyInternal Then
+		    Return
+		  End If
+		  
+		  Var PrivateKeyFile As FolderItem = Self.PrivateKeyFile
+		  If PrivateKeyFile Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.PrivateKeyFile(Value) = PrivateKeyFile
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Mode() As String
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  Return Self.mMode
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Mode(Assigns Value As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  Select Case Value
+		  Case Beacon.FTPModeOptionalTLS, Beacon.FTPModeExplicitTLS, Beacon.FTPModeSSH, Beacon.FTPModeImplicitTLS, Beacon.FTPModeInsecure
+		    // Whitelist
+		  Else
+		    Value = Beacon.FTPModeOptionalTLS
+		  End Select
+		  
+		  If Self.mMode.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mMode = Value
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -109,6 +161,50 @@ Inherits Ark.ServerProfile
 		  
 		  Return Self.ServerID.Compare(Ark.FTPServerProfile(Other).ServerID, ComparisonOptions.CaseSensitive)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Password() As String
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  Return Self.mPassword
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Password(Assigns Value As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  If Self.mPassword.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mPassword = Value
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Port() As Integer
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  If Self.mPort = 0 Then
+		    Self.mPort = 21
+		  End If
+		  Return Self.mPort
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Port(Assigns Value As Integer)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  If Value = 0 Then
+		    Value = 21
+		  End If
+		  If Self.mPort <> Value Then
+		    Self.mPort = Value
+		    Self.Modified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -192,6 +288,44 @@ Inherits Ark.ServerProfile
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Username() As String
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  Return Self.mUsername
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Username(Assigns Value As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  If Self.mUsername.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mUsername = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function VerifyHost() As Boolean
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  Return Self.mVerifyHost
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub VerifyHost(Assigns Value As Boolean)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  If Self.mVerifyHost <> Value Then
+		    Self.mVerifyHost = Value
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -203,7 +337,7 @@ Inherits Ark.ServerProfile
 			Set
 			  If Self.mGameIniPath.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mGameIniPath = Value
-			    Self.Modified = True
+			    Self.mModified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -220,51 +354,11 @@ Inherits Ark.ServerProfile
 			Set
 			  If Self.mGameUserSettingsIniPath.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mGameUserSettingsIniPath = Value
-			    Self.Modified = True
+			    Self.mModified = True
 			  End If
 			End Set
 		#tag EndSetter
 		GameUserSettingsIniPath As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mHost
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mHost.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-			    Self.mHost = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		Host As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mPrivateKey.BeginsWith("---")
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value = Self.IsPrivateKeyInternal Then
-			    Return
-			  End If
-			  
-			  Var PrivateKeyFile As FolderItem = Self.PrivateKeyFile
-			  If PrivateKeyFile Is Nil Then
-			    Return
-			  End If
-			  
-			  Self.PrivateKeyFile(Value) = PrivateKeyFile
-			End Set
-		#tag EndSetter
-		IsPrivateKeyInternal As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -280,38 +374,8 @@ Inherits Ark.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMask As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mMode As String
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mMode
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Select Case Value
-			  Case Beacon.FTPModeOptionalTLS, Beacon.FTPModeExplicitTLS, Beacon.FTPModeSSH, Beacon.FTPModeImplicitTLS, Beacon.FTPModeInsecure
-			    // Whitelist
-			  Else
-			    Value = Beacon.FTPModeOptionalTLS
-			  End Select
-			  
-			  If Self.mMode.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
-			    Return
-			  End If
-			  
-			  Self.mMode = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		Mode As String
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mPassword As String
@@ -337,176 +401,8 @@ Inherits Ark.ServerProfile
 		Private mVerifyHost As Boolean
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mPassword
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mPassword.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-			    Self.mPassword = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		Password As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If Self.mPort = 0 Then
-			    Self.mPort = 21
-			  End If
-			  Return Self.mPort
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value = 0 Then
-			    Value = 21
-			  End If
-			  If Self.mPort <> Value Then
-			    Self.mPort = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		Port As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mUsername
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mUsername.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-			    Self.mUsername = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		Username As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mVerifyHost
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mVerifyHost <> Value Then
-			    Self.mVerifyHost = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		VerifyHost As Boolean
-	#tag EndComputedProperty
-
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="ProviderTokenId"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Nickname"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Mask"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="UInt64"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ProfileColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Beacon.ServerProfile.Colors"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Blue"
-				"2 - Brown"
-				"3 - Grey"
-				"4 - Green"
-				"5 - Indigo"
-				"6 - Orange"
-				"7 - Pink"
-				"8 - Purple"
-				"9 - Red"
-				"10 - Teal"
-				"11 - Yellow"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AdminNotes"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackupFolderName"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MessageDuration"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsConsole"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Modified"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GameIniPath"
 			Visible=false
@@ -517,14 +413,6 @@ Inherits Ark.ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GameUserSettingsIniPath"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Host"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
@@ -556,22 +444,6 @@ Inherits Ark.ServerProfile
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Password"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Port"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
@@ -585,38 +457,6 @@ Inherits Ark.ServerProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Username"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Mode"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="VerifyHost"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsPrivateKeyInternal"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

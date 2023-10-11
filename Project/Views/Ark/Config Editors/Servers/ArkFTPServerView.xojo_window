@@ -420,40 +420,29 @@ End
 		  #Pragma Unused UserData
 		  
 		  Self.mSettingUp = True
-		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
-		  Self.ConnectionView.Mode = Self.mProfile.Mode
-		  Self.ConnectionView.Host = Self.mProfile.Host
-		  Self.ConnectionView.Port = Self.mProfile.Port
-		  Self.ConnectionView.Username = Self.mProfile.Username
-		  Self.ConnectionView.Password = Self.mProfile.Password
-		  Self.ConnectionView.VerifyTLSCertificate = Self.mProfile.VerifyHost
-		  Self.ConnectionView.UsePublicKeyAuth = (Self.mProfile.PrivateKeyFile Is Nil) = False
-		  Self.ConnectionView.PrivateKeyFile = Self.mProfile.PrivateKeyFile
-		  Self.ConnectionView.InternalizeKey = Self.mProfile.IsPrivateKeyInternal
-		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
-		  Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniPath
+		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
+		  Self.GameIniPathField.Text = Self.Profile.GameIniPath
+		  Self.GameUserSettingsIniPathField.Text = Self.Profile.GameUserSettingsIniPath
+		  
+		  Var Config As Beacon.HostConfig = Self.Profile.HostConfig
+		  If (Config Is Nil) = False And Config IsA FTP.HostConfig Then
+		    Var FTPConfig As FTP.HostConfig = FTP.HostConfig(Config)
+		    Self.ConnectionView.Mode = FTPConfig.Mode
+		    Self.ConnectionView.Host = FTPConfig.Host
+		    Self.ConnectionView.Port = FTPConfig.Port
+		    Self.ConnectionView.Username = FTPConfig.Username
+		    Self.ConnectionView.Password = FTPConfig.Password
+		    Self.ConnectionView.VerifyTLSCertificate = FTPConfig.VerifyHost
+		    Self.ConnectionView.UsePublicKeyAuth = (FTPConfig.PrivateKeyFile Is Nil) = False
+		    Self.ConnectionView.PrivateKeyFile = FTPConfig.PrivateKeyFile
+		    Self.ConnectionView.InternalizeKey = FTPConfig.IsPrivateKeyInternal
+		  End If
 		  
 		  Self.SettingsView.RefreshUI()
 		  Self.mSettingUp = False
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Document As Ark.Project, Profile As Ark.FTPServerProfile)
-		  Self.mDocument = Document
-		  Self.mProfile = Profile
-		End Sub
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mDocument As Ark.Project
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProfile As Ark.FTPServerProfile
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean
@@ -478,8 +467,8 @@ End
 		    Return
 		  End If
 		  
-		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Modified = Self.mProfile.Modified
+		  Self.Profile.AdminNotes = Me.Text
+		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -495,12 +484,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GetProject() As Ark.Project
-		  Return Self.mDocument
+		  Return Self.Project
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.Profile = Self.mProfile
+		  Me.Profile = Self.Profile
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -519,18 +508,26 @@ End
 		  
 		  Self.mSettingUp = True
 		  
-		  Self.mProfile.Mode = Me.Mode
-		  Self.mProfile.Host = Me.Host
-		  Self.mProfile.Port = Me.Port
-		  Self.mProfile.Username = Me.Username
-		  Self.mProfile.Password = Me.Password
-		  Self.mProfile.VerifyHost = Me.VerifyTLSCertificate
+		  Var Config As FTP.HostConfig
+		  If (Self.Profile.HostConfig Is Nil) = False And Self.Profile.HostConfig IsA FTP.HostConfig Then
+		    Config = FTP.HostConfig(Self.Profile.HostConfig)
+		  Else
+		    Config = New FTP.HostConfig
+		    Self.Profile.HostConfig = Config
+		  End If
+		  
+		  Config.Mode = Me.Mode
+		  Config.Host = Me.Host
+		  Config.Port = Me.Port
+		  Config.Username = Me.Username
+		  Config.Password = Me.Password
+		  Config.VerifyHost = Me.VerifyTLSCertificate
 		  
 		  If Me.UsePublicKeyAuth Then
-		    Self.mProfile.PrivateKeyFile(Me.InternalizeKey) = Me.PrivateKeyFile
-		    Me.PrivateKeyFile = Self.mProfile.PrivateKeyFile // Just to make sure the path shows correctly
+		    Config.PrivateKeyFile(Me.InternalizeKey) = Me.PrivateKeyFile
+		    Me.PrivateKeyFile = Config.PrivateKeyFile // Just to make sure the path shows correctly
 		  Else
-		    Self.mProfile.PrivateKeyFile = Nil
+		    Config.PrivateKeyFile = Nil
 		  End If
 		  
 		  Self.mSettingUp = False
@@ -542,16 +539,16 @@ End
 #tag Events GameIniPathField
 	#tag Event
 		Sub TextChanged()
-		  Self.mProfile.GameIniPath = Me.Text
-		  Self.Modified = Self.mProfile.Modified
+		  Self.Profile.GameIniPath = Me.Text
+		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events GameUserSettingsIniPathField
 	#tag Event
 		Sub TextChanged()
-		  Self.mProfile.GameUserSettingsIniPath = Me.Text
-		  Self.Modified = Self.mProfile.Modified
+		  Self.Profile.GameUserSettingsIniPath = Me.Text
+		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents

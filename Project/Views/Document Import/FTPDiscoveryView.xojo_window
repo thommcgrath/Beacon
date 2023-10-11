@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ArkDiscoveryView ArkFTPDiscoveryView
+Begin DiscoveryView FTPDiscoveryView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -7,9 +7,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   450
    Index           =   -2147483648
@@ -39,7 +37,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   3
+      PanelCount      =   2
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -85,70 +83,6 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Visible         =   True
          Width           =   560
       End
-      Begin DesktopLabel DiscoveringMessage
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Connecting to server…"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   199
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin DesktopProgressBar DiscoveringProgress
-         Active          =   False
-         AllowAutoDeactivate=   True
-         AllowTabStop    =   True
-         Enabled         =   True
-         Height          =   20
-         Indeterminate   =   False
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumValue    =   100
-         PanelIndex      =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         Tooltip         =   ""
-         Top             =   231
-         Transparent     =   False
-         Value           =   0.0
-         Visible         =   True
-         Width           =   560
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
-      End
       Begin DesktopLabel BrowseMessage
          AllowAutoDeactivate=   True
          Bold            =   True
@@ -170,9 +104,9 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Scope           =   2
          Selectable      =   False
          TabIndex        =   0
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "Please locate your Game.ini file"
+         Text            =   "Choose your config file"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -205,7 +139,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   7
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   410
@@ -237,7 +171,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   6
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   410
@@ -269,7 +203,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Modified        =   False
          Scope           =   2
          TabIndex        =   3
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   53
@@ -294,7 +228,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          PanelIndex      =   0
          Scope           =   2
          TabIndex        =   8
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          Tooltip         =   ""
          Top             =   414
          Transparent     =   False
@@ -391,7 +325,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   1
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   52
@@ -421,7 +355,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   5
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   397
@@ -451,7 +385,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   2
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   53
@@ -481,7 +415,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   4
-         TabPanelIndex   =   3
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   53
@@ -620,15 +554,6 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Width           =   141
       End
    End
-   Begin Timer StatusWatcher
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Period          =   50
-      RunMode         =   0
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
    Begin ClipboardWatcher URLWatcher
       Enabled         =   True
       Index           =   -2147483648
@@ -649,34 +574,40 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New FTP.HostingProvider
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  RaiseEvent Open
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Resize()
-		  Var ProgressGroup As New ControlGroup(Self.DiscoveringMessage, Self.DiscoveringProgress)
-		  ProgressGroup.Top = Self.ViewPanel.Top + ((Self.ViewPanel.Height - ProgressGroup.Height) / 2.5)
-		End Sub
-	#tag EndEvent
-
 
 	#tag Method, Flags = &h21
-		Private Sub mEngine_Discovered(Sender As Ark.FTPIntegrationEngine, Data() As Beacon.DiscoveredData)
-		  #Pragma Unused Sender
+		Private Sub ListedFiles(Filenames() As String)
+		  // Directories should be suffixed with /
 		  
-		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
-		  Self.ShouldFinish(Data)
+		  Self.Browser.Enabled = True
+		  Self.BrowseSpinner.Visible = False
+		  
+		  Var Children() As String
+		  For Each Filename As String In Filenames
+		    If Filename = "." Or Filename = ".." Then
+		      Continue
+		    End If
+		    
+		    Children.Add(Filename)
+		  Next
+		  Self.Browser.AppendChildren(Children)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mEngine_FileListError(Sender As Ark.FTPIntegrationEngine, Err As RuntimeException)
-		  #Pragma Unused Sender
-		  
-		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
+		Private Sub ListError(Err As RuntimeException)
 		  Self.Browser.Enabled = True
 		  Self.BrowseSpinner.Visible = False
 		  
@@ -693,51 +624,89 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mEngine_FilesListed(Sender As Ark.FTPIntegrationEngine, Path As String, Files() As Beacon.FTPFileListing)
-		  #Pragma Unused Sender
-		  #Pragma Unused Path
+		Private Sub ListFiles(Path As String)
+		  Var Thread As New Beacon.Thread
+		  Thread.UserData = Path
+		  AddHandler Thread.Run, WeakAddressOf ListThread_Run
+		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf ListThread_UserInterfaceUpdate
 		  
-		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
-		  Self.Browser.Enabled = True
-		  Self.BrowseSpinner.Visible = False
-		  
-		  Var Children() As String
-		  For Each File As Beacon.FTPFileListing In Files
-		    If File.Filename = "." Or File.Filename = ".." Then
-		      Continue
-		    End If
-		    
-		    Var Child As String = File.Filename
-		    If File.IsDirectory Then
-		      Child = Child + "/"
-		    End If
-		    Children.Add(Child)
-		  Next
-		  Self.Browser.AppendChildren(Children)
+		  Self.Browser.Enabled = False
+		  Self.BrowseSpinner.Visible = True
+		  Thread.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mEngine_Wait(Sender As Ark.FTPIntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
-		  #Pragma Unused Sender
-		  
-		  Select Case Controller.Action
-		  Case "Locate Game.ini"
-		    // Beacon could not find anything, so we need to show a file browser
-		    Self.mActiveController = Controller
-		    Self.mBrowserRoot = Dictionary(Controller.UserData).Value("Root")
-		    Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
-		    Self.Browser.Reset()
-		    Return True
-		  End Select
-		End Function
+		Private Sub ListThread_Run(Sender As Beacon.Thread)
+		  Try
+		    Var Filenames() As String = Self.Provider.ListFiles(Nil, Self.mProfile, Sender.UserData.StringValue)
+		    Var Dict As New Dictionary
+		    Dict.Value("Event") = "Finished"
+		    Dict.Value("Filenames") = Filenames
+		    Sender.AddUserInterfaceUpdate(Dict)
+		  Catch Err As RuntimeException
+		    Var Dict As New Dictionary
+		    Dict.Value("Event") = "Error"
+		    Dict.Value("Error") = Err
+		    Sender.AddUserInterfaceUpdate(Dict)
+		  End Try
+		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ListThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		  #Pragma Unused Sender
+		  
+		  For Each Update As Dictionary In Updates
+		    Try
+		      If Update.HasKey("Event") Then
+		        Select Case Update.Value("Event")
+		        Case "Finished"
+		          Var Filenames() As String = Update.Value("Filenames")
+		          Self.ListedFiles(Filenames)
+		        Case "Error"
+		          Var Error As RuntimeException = Update.Value("Error")
+		          Self.ListError(Error)
+		        End Select
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Processing discovery thread interface update")
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event CreateServerProfile(Name As String) As Beacon.ServerProfile
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event Satisfied(Path As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event UsePath(Profile As Beacon.ServerProfile, CurrentPath As String) As Boolean
+	#tag EndHook
+
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.BrowseMessage.Text
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.BrowseMessage.Text = Value
+			End Set
+		#tag EndSetter
+		Instructions As String
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mActiveController As Beacon.TaskWaitController
@@ -748,18 +717,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngine As Ark.FTPIntegrationEngine
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProfile As Ark.FTPServerProfile
+		Private mProfile As Beacon.ServerProfile
 	#tag EndProperty
 
 
-	#tag Constant, Name = PageBrowse, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageDiscovering, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = PageBrowse, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageGeneral, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -771,33 +733,22 @@ End
 #tag Events ViewPanel
 	#tag Event
 		Sub PanelChanged()
-		  If Me.SelectedPanelIndex = Self.PageDiscovering Then
-		    Self.StatusWatcher.RunMode = Timer.RunModes.Multiple
-		  Else
-		    Self.StatusWatcher.RunMode = Timer.RunModes.Off
-		  End If
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events BrowseActionButton
 	#tag Event
 		Sub Pressed()
-		  Var GameIniPath As String = Self.Browser.CurrentPath
-		  Var Components() As String = GameIniPath.Split("/")
-		  If Components.LastIndex <= 2 Then
-		    Self.ShowAlert("FTP Access Too Restrictive", "Beacon needs to be able to access this server's ""Logs"" folder too, to learn more about the server than the config files can provide. The path to this server's Game.ini does not allow access to other directories needed within Ark's ""Saved"" directory.")
+		  Var CurrentPath As String = Self.Browser.CurrentPath
+		  Var Confirmed As Boolean = RaiseEvent UsePath(Self.mProfile, CurrentPath)
+		  If Not Confirmed Then
 		    Return
 		  End If
-		  Components.RemoveAt(Components.LastIndex) // Remove Game.ini
-		  Components.RemoveAt(Components.LastIndex) // Remove WindowsServer
-		  Components.RemoveAt(Components.LastIndex) // Remove Config
 		  
-		  // Should now equal the "Saved" directory
-		  Dictionary(Self.mActiveController.UserData).Value("path") = Components.Join("/")
-		  Self.mActiveController.Cancelled = False
-		  Self.mActiveController.ShouldResume = True
-		  
-		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
+		  Var Profiles() As Beacon.ServerProfile
+		  Profiles.Add(Self.mProfile)
+		  Self.ShouldFinish(Profiles)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -811,30 +762,20 @@ End
 #tag Events Browser
 	#tag Event
 		Sub NeedsChildrenForPath(Path As String)
-		  If Self.mEngine = Nil Then
-		    Return
-		  End If
-		  
-		  Self.Browser.Enabled = False
-		  Self.BrowseSpinner.Visible = True
-		  
 		  Var Empty() As String
 		  Me.AppendChildren(Empty)
-		  
-		  Self.mEngine.ListFiles(Path)
+		  Self.ListFiles(Path)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PathSelected(Path As String)
-		  Self.BrowseActionButton.Enabled = Path.EndsWith(Ark.ConfigFileGame)
+		  Self.BrowseActionButton.Enabled = RaiseEvent Satisfied(Path)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerCancelButton
 	#tag Event
 		Sub Pressed()
-		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
-		  
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
@@ -842,13 +783,18 @@ End
 #tag Events ServerActionButton
 	#tag Event
 		Sub Pressed()
-		  Self.mProfile = New Ark.FTPServerProfile()
-		  Self.mProfile.Host = Self.SettingsView.Host
-		  Self.mProfile.Port = Self.SettingsView.Port
-		  Self.mProfile.Username = Self.SettingsView.Username
-		  Self.mProfile.Password = Self.SettingsView.Password
-		  Self.mProfile.VerifyHost = Self.SettingsView.VerifyTLSCertificate
-		  Self.mProfile.Mode = Self.SettingsView.Mode
+		  Var Profile As Beacon.ServerProfile = RaiseEvent CreateServerProfile(Language.DefaultServerName(Self.GameId))
+		  If Profile Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Config As New FTP.HostConfig
+		  Config.Host = Self.SettingsView.Host
+		  Config.Port = Self.SettingsView.Port
+		  Config.Username = Self.SettingsView.Username
+		  Config.Password = Self.SettingsView.Password
+		  Config.VerifyHost = Self.SettingsView.VerifyTLSCertificate
+		  Config.Mode = Self.SettingsView.Mode
 		  
 		  If Self.SettingsView.UsePublicKeyAuth Then
 		    Var PrivateKeyFile As FolderItem = Self.SettingsView.PrivateKeyFile
@@ -857,20 +803,17 @@ End
 		    End If
 		    
 		    If Self.SettingsView.InternalizeKey Then
-		      Self.mProfile.PrivateKeyFile = Self.SettingsView.PrivateKeyFile.Read(Encodings.UTF8)
+		      Config.PrivateKeyFile = Self.SettingsView.PrivateKeyFile.Read(Encodings.UTF8)
 		    Else
-		      Self.mProfile.PrivateKeyFile = Self.SettingsView.PrivateKeyFile
+		      Config.PrivateKeyFile = Self.SettingsView.PrivateKeyFile
 		    End If
 		  End If
 		  
-		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
+		  Profile.HostConfig = Config
+		  Self.mProfile = Profile
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
 		  
-		  Self.mEngine = New Ark.FTPIntegrationEngine(Self.mProfile)
-		  AddHandler mEngine.Wait, WeakAddressOf mEngine_Wait
-		  AddHandler mEngine.Discovered, WeakAddressOf mEngine_Discovered
-		  AddHandler mEngine.FilesListed, WeakAddressOf mEngine_FilesListed
-		  AddHandler mEngine.FileListError, WeakAddressOf mEngine_FileListError
-		  Self.mEngine.BeginDiscovery(Self.Project)
+		  Self.ListFiles("")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -908,23 +851,6 @@ End
 		  End If
 		  
 		  Call Self.SettingsView.ImportFileZillaSpec(SpecFile)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events StatusWatcher
-	#tag Event
-		Sub Action()
-		  If Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering And Self.mEngine <> Nil Then
-		    If Self.mEngine.Errored And Self.mEngine.Finished Then
-		      Me.RunMode = Timer.RunModes.Off
-		      
-		      Var ErrorMessage As String = Self.mEngine.Logs(True)
-		      Self.ShowAlert("There was a problem connecting to the FTP server", ErrorMessage)
-		      Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
-		    Else
-		      Self.DiscoveringMessage.Text = Self.mEngine.Logs(True)
-		    End If
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -975,14 +901,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Composited"
-		Visible=true
-		Group="Window Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
@@ -991,75 +909,19 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Tooltip"
+		Name="Name"
 		Visible=true
-		Group="Appearance"
+		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowAutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AllowFocusRing"
+		Name="Super"
 		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackgroundColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="ColorGroup"
-		EditorType="ColorGroup"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackgroundColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Backdrop"
-		Visible=true
-		Group="Background"
+		Group="ID"
 		InitialValue=""
-		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Enabled"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
+		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1071,11 +933,11 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="InitialParent"
-		Visible=false
-		Group="Position"
-		InitialValue=""
-		Type="String"
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="300"
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1119,32 +981,8 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		InitialValue=""
-		Type="String"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		InitialValue=""
-		Type="String"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="TabIndex"
 		Visible=true
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabPanelIndex"
-		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
@@ -1167,9 +1005,33 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Transparent"
+		Name="Tooltip"
 		Visible=true
-		Group="Behavior"
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Enabled"
+		Visible=true
+		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
@@ -1183,10 +1045,82 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Width"
+		Name="BackgroundColor"
 		Visible=true
-		Group="Size"
-		InitialValue="300"
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Transparent"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Instructions"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Choose your config file"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="InitialParent"
+		Visible=false
+		Group="Position"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="TabPanelIndex"
+		Visible=false
+		Group="Position"
+		InitialValue="0"
 		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty

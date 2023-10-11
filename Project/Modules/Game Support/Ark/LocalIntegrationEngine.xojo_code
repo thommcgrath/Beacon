@@ -1,6 +1,7 @@
 #tag Class
 Protected Class LocalIntegrationEngine
 Inherits Ark.IntegrationEngine
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit))
 	#tag Event
 		Sub DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
 		  #Pragma Unused FailureMode
@@ -65,7 +66,7 @@ Inherits Ark.IntegrationEngine
 	#tag Method, Flags = &h0
 		Sub Constructor(Profile As Beacon.ServerProfile)
 		  // Simply changing the scope of the constructor
-		  Super.Constructor(Profile)
+		  Super.Constructor(Nil, Profile)
 		End Sub
 	#tag EndMethod
 

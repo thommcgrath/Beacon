@@ -1,6 +1,7 @@
 #tag Class
 Protected Class GSAIntegrationEngine
 Inherits Ark.IntegrationEngine
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit))
 	#tag Event
 		Function ApplySettings(Organizer As Ark.ConfigOrganizer) As Boolean
 		  If (Profile IsA Ark.GSAServerProfile) = False Then
@@ -258,7 +259,7 @@ Inherits Ark.IntegrationEngine
 	#tag Method, Flags = &h0
 		Sub Constructor(Profile As Beacon.ServerProfile)
 		  // Simply changing the scope of the constructor
-		  Super.Constructor(Profile)
+		  Super.Constructor(Nil, Profile)
 		End Sub
 	#tag EndMethod
 

@@ -717,7 +717,7 @@ End
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
+		    Var Engine As Beacon.DeployIntegration = Entry.Key
 		    Engine.Terminate
 		  Next
 		  
@@ -783,7 +783,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ActiveWaitController() As Beacon.TaskWaitController
-		  Var Engine As Beacon.IntegrationEngine = Self.SelectedEngine
+		  Var Engine As Beacon.DeployIntegration = Self.SelectedEngine
 		  If Engine = Nil Then
 		    Return Nil
 		  End If
@@ -813,23 +813,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Engine As Beacon.IntegrationEngine
-		    Select Case Profile
-		    Case IsA Ark.NitradoServerProfile
-		      Engine = New Ark.NitradoIntegrationEngine(Profile)
-		    Case IsA Ark.FTPServerProfile
-		      Engine = New Ark.FTPIntegrationEngine(Profile)
-		    Case IsA Ark.LocalServerProfile
-		      Engine = New Ark.LocalIntegrationEngine(Profile)
-		    Case IsA Ark.GSAServerProfile
-		      Engine = New Ark.GSAIntegrationEngine(Profile)
-		    End Select
-		    If Engine Is Nil Then
-		      Var ProfileInfo As Introspection.TypeInfo = Introspection.GetType(Profile)
-		      ProfileProblems.Value("profile """ + Profile.Name + """") = "Unknown profile class: " + ProfileInfo.FullName
-		      Continue
-		    End If
-		    
+		    Var Engine As New Beacon.DeployIntegration(Profile)
 		    AddHandler Engine.Wait, WeakAddressOf Engine_Wait
 		    
 		    Self.Engines.Value(Engine) = Profile
@@ -851,8 +835,8 @@ End
 		  // Prompt for the stop message
 		  Var StopMessage As String
 		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    If Not Engine.SupportsStopMessage Then
+		    Var Engine As Beacon.DeployIntegration = Entry.Key
+		    If Not Engine.Provider.SupportsStopMessage Then
 		      Continue
 		    End If
 		    
@@ -887,20 +871,20 @@ End
 		  // Start the engines!
 		  Var Options As UInt64
 		  If Self.CreateBackupCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionBackup, UInt64)
+		    Options = Options Or CType(Beacon.DeployIntegration.OptionBackup, UInt64)
 		  End If
 		  If Self.ReviewChangesCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionReview, UInt64)
+		    Options = Options Or CType(Beacon.DeployIntegration.OptionReview, UInt64)
 		  End If
 		  If Self.RunAdvisorCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionAnalyze, UInt64)
+		    Options = Options Or CType(Beacon.DeployIntegration.OptionAnalyze, UInt64)
 		  End If
 		  If Self.NukeConfigCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionNuke, UInt64)
+		    Options = Options Or CType(Beacon.DeployIntegration.OptionNuke, UInt64)
 		  End If
 		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    Engine.BeginDeploy(Self.DeployLabel, Self.Project, App.IdentityManager.CurrentIdentity, StopMessage, Options)
+		    Var Engine As Beacon.DeployIntegration = Entry.Key
+		    Engine.Begin(Self.DeployLabel, Self.Project, App.IdentityManager.CurrentIdentity, StopMessage, Options)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -930,7 +914,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Engine_Wait(Sender As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
+		Private Function Engine_Wait(Sender As Beacon.DeployIntegration, Controller As Beacon.TaskWaitController) As Boolean
 		  Select Case Controller.Action
 		  Case "Backup"
 		    Try
@@ -988,28 +972,24 @@ End
 		  Case "Needs Expert Mode"
 		    Var Message As String = Sender.Name + " must be converted into expert mode"
 		    Var Explanation As String
-		    #if Ark.NitradoIntegrationEngine.GuidedModeSupportEnabled
-		      Var UserData As Dictionary = Controller.UserData
-		      Var OffendingKey As String = UserData.Lookup("OffendingKey", "")
-		      Var ContentLength As Integer = UserData.Lookup("ContentLength", 0)
-		      If ContentLength = 0 Then
-		        If OffendingKey.IsEmpty = False Then
-		          Explanation = "The config key '" + OffendingKey + "' needs to be placed in your GameUserSettings.ini file but Nitrado does not have a built-in config for it."
-		        Else
-		          Explanation = "There are one or more settings that need to be placed in your GameUserSettings.ini file, but Nitrado does not have a built-in config for them."
-		        End If
-		        Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		    Var UserData As Dictionary = Controller.UserData
+		    Var OffendingKey As String = UserData.Lookup("OffendingKey", "")
+		    Var ContentLength As Integer = UserData.Lookup("ContentLength", 0)
+		    If ContentLength = 0 Then
+		      If OffendingKey.IsEmpty = False Then
+		        Explanation = "The config key '" + OffendingKey + "' needs to be placed in your GameUserSettings.ini file but Nitrado does not have a built-in config for it."
 		      Else
-		        If OffendingKey.IsEmpty = False Then
-		          Explanation = "The config key '" + OffendingKey + "' needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
-		        Else
-		          Explanation = "There is a config key that needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
-		        End If
-		        Explanation = Explanation + " In order to build your ini files correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		        Explanation = "There are one or more settings that need to be placed in your GameUserSettings.ini file, but Nitrado does not have a built-in config for them."
 		      End If
-		    #else
-		      Explanation = "Beacon cannot manage Nitrado's beginner mode settings. If you choose to continue, Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
-		    #endif
+		      Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		    Else
+		      If OffendingKey.IsEmpty = False Then
+		        Explanation = "The config key '" + OffendingKey + "' needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		      Else
+		        Explanation = "There is a config key that needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		      End If
+		      Explanation = Explanation + " In order to build your ini files correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		    End If
 		    
 		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, "Turn on expert mode", "Cancel", "Learn More")
 		    Select Case Choice
@@ -1037,12 +1017,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SelectedEngine() As Beacon.IntegrationEngine
+		Private Function SelectedEngine() As Beacon.DeployIntegration
 		  If Self.ServerList.SelectedRowIndex = -1 Then
 		    Return Nil
 		  End If
 		  
-		  Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
+		  Var Engine As Beacon.DeployIntegration = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
 		  Return Engine
 		End Function
 	#tag EndMethod
@@ -1059,7 +1039,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
+		  Var Engine As Beacon.DeployIntegration = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
 		  Var ShouldScroll As Boolean = True// = Self.LogsArea.VerticalScrollPosition = Self.LogsArea.
 		  Self.LogsArea.Text = Engine.Logs
 		  If ShouldScroll Then
@@ -1417,13 +1397,13 @@ End
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
 		    Var Label As String = Profile.Name
 		    
-		    Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(I, 1)
+		    Var Engine As Beacon.DeployIntegration = Self.ServerList.CellTagAt(I, 1)
 		    If IsNull(Engine) = False Then
 		      If Engine.Cancelled Then
 		        AnyCancelled = True
 		      End If
 		      
-		      Label = Label + EndOfLine + Engine.Status
+		      Label = Label + EndOfLine + Engine.StatusMessage
 		      
 		      If Engine.Finished then
 		        If Engine.Errored Then

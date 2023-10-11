@@ -2,6 +2,13 @@
 Protected Class SDTDDiscoveryView
 Inherits DiscoveryView
 	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Event
+		Function GameId() As String
+		  Return SDTD.Identifier
+		End Function
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h1
 		Protected Function Project() As SDTD.Project
 		  Var Temp As Beacon.Project = Super.Project

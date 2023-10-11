@@ -1,6 +1,14 @@
 #tag Module
 Protected Module Language
 	#tag Method, Flags = &h1
+		Protected Function DefaultServerName(GameId As String) As String
+		  Var GameName As String = Language.GameName(GameId)
+		  Var GameArticle As String = Language.GameArticle(GameId)
+		  Return GameArticle.Titlecase + " " + GameName + " Server"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function EnglishOxfordList(Items() As Beacon.NamedItem, Conjunction As String = "and") As String
 		  Var Names() As String
 		  Names.ResizeTo(Items.LastIndex)
@@ -115,6 +123,17 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function GameArticle(GameId As String) As String
+		  Select Case GameId
+		  Case Ark.Identifier
+		    Return "an"
+		  Case SDTD.Identifier
+		    Return "a"
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function GameName(GameId As String) As String
 		  Select Case GameId
 		  Case Ark.Identifier
@@ -181,6 +200,23 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
 		  Return Quantity.ToString(Locale.Current, "#,##0") + " " + If(Quantity = 1, Singular, Plural)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ProviderName(ProviderId As String) As String
+		  Select Case ProviderId
+		  Case Nitrado.Identifier
+		    Return "Nitrado"
+		  Case GameServerApp.Identifier
+		    Return "GameServerApp.com"
+		  Case FTP.Identifier
+		    Return "FTP"
+		  Case Local.Identifier
+		    Return "Local"
+		  Else
+		    Return ProviderId
+		  End Select
 		End Function
 	#tag EndMethod
 

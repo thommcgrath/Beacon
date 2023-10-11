@@ -68,104 +68,14 @@ Private Class APIRequest
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Delete(Url As String) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("DELETE", Url)
-		  Return Request.Run
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Delete(Url As String, Token As BeaconAPI.ProviderToken) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("DELETE", Url, Token)
-		  Return Request.Run
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Get(Url As String) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("GET", Url)
-		  Return Request.Run
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Get(Url As String, Token As BeaconAPI.ProviderToken) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("GET", Url, Token)
-		  Return Request.Run
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Get(Url As String, Token As BeaconAPI.ProviderToken, Headers As Dictionary) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("GET", Url, Token, Headers)
-		  Return Request.Run
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Get(Url As String, Headers As Dictionary) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("GET", Url, Headers)
-		  Return Request.Run
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Headers() As Dictionary
 		  Return Self.mHeaders.Clone
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Post(Url As String, Token As BeaconAPI.ProviderToken, Headers As Dictionary, ContentType As String, Content As MemoryBlock) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("POST", Url, Token, Headers, ContentType, Content)
-		  Return Request.Run()
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Post(Url As String, Token As BeaconAPI.ProviderToken, ContentType As String, Content As MemoryBlock) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("POST", Url, Token, Nil, ContentType, Content)
-		  Return Request.Run()
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Put(Url As String, Token As BeaconAPI.ProviderToken, Headers As Dictionary, ContentType As String, Content As MemoryBlock) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("PUT", Url, Token, Headers, ContentType, Content)
-		  Return Request.Run()
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Put(Url As String, Token As BeaconAPI.ProviderToken, ContentType As String, Content As MemoryBlock) As Nitrado.APIResponse
-		  Var Request As New Nitrado.APIRequest("PUT", Url, Token, Nil, ContentType, Content)
-		  Return Request.Run()
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function RequestMethod() As String
 		  Return Self.mMethod
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Run() As Nitrado.APIResponse
-		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  For Each Entry As DictionaryEntry In Self.mHeaders
-		    Socket.RequestHeader(Entry.Key) = Entry.Value
-		  Next
-		  
-		  If (Self.mContent Is Nil) = False And Self.mContent.Size > 0 And Self.mHeaders.HasKey("Content-Type") Then
-		    Socket.SetRequestContent(Content, Self.mHeaders.Value("Content-Type"))
-		  End If
-		  
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Socket.Send(Self.mMethod, Self.mUrl)
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
-		  Return Nitrado.APIResponse.FromSocket(Socket)
 		End Function
 	#tag EndMethod
 

@@ -1,15 +1,207 @@
 #tag Class
 Protected Class FTPServerProfile
 Inherits SDTD.ServerProfile
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit))
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Host() As String
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Host(Assigns Value As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsPrivateKeyInternal() As Boolean
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub IsPrivateKeyInternal(Assigns Value As Boolean)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Mode() As String
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Mode(Assigns Value As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Password() As String
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Password(Assigns Value As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Port() As Integer
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Port(Assigns Value As Integer)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PrivateKeyFile() As FolderItem
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PrivateKeyFile(Assigns PrivateKey As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PrivateKeyFile(Internalize As Boolean = False, Assigns PrivateKey As FolderItem)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Username() As String
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Username(Assigns Value As String)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function VerifyHost() As Boolean
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub VerifyHost(Assigns Value As Boolean)
+		  // Part of the Beacon.FTPServerProfile interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Provider"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Platform"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SecondaryName"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Description"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Map"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MapSeed"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MapSize"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ExternalAccountId"
 			Visible=false

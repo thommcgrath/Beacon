@@ -105,16 +105,19 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Document As Ark.Project, Profiles() As Ark.ServerProfile)
-		  Self.mDocument = Document
+		Sub Constructor(Project As Ark.Project, Profiles() As Ark.ServerProfile)
 		  Self.mProfiles = Profiles
+		  Super.Constructor(Project, Nil)
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Constructor(Project As Ark.Project, Profile As Ark.ServerProfile)
+		  // Hide this constructor
+		  Super.Constructor(Project, Profile)
+		End Sub
+	#tag EndMethod
 
-	#tag Property, Flags = &h21
-		Private mDocument As Ark.Project
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProfiles() As Ark.ServerProfile
@@ -138,7 +141,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GetProject() As Ark.Project
-		  Return Self.mDocument
+		  Return Self.Project
 		End Function
 	#tag EndEvent
 	#tag Event

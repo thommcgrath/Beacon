@@ -52,8 +52,38 @@ Inherits DesktopContainer
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function GameId() As String
+		  If Self.mGameId.IsEmpty Then
+		    Self.mGameId = RaiseEvent GameId()
+		  End If
+		  Return Self.mGameId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function Project() As Beacon.Project
 		  Return RaiseEvent GetDestinationProject()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Provider() As Beacon.HostingProvider
+		  If Self.mProvider Is Nil Then
+		    Self.mProvider = RaiseEvent CreateHostingProvider()
+		  End If
+		  Return Self.mProvider
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ProviderName() As String
+		  If Self.mProviderName.IsEmpty Then
+		    Var Provider As Beacon.HostingProvider = Self.Provider
+		    If (Provider Is Nil) = False Then
+		      Self.mProviderName = Language.ProviderName(Provider.Identifier)
+		    End If
+		  End If
+		  Return Self.mProviderName
 		End Function
 	#tag EndMethod
 
@@ -78,18 +108,18 @@ Inherits DesktopContainer
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Data() As Beacon.DiscoveredData)
+		Protected Sub ShouldFinish(Profiles() As Beacon.ServerProfile)
 		  If Self.mClosed Then
 		    Return
 		  End If
 		  
-		  RaiseEvent Finished(Data)
+		  RaiseEvent Finished(Profiles)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(ParamArray Data() As Beacon.DiscoveredData)
-		  Self.ShouldFinish(Data)
+		Protected Sub ShouldFinish(ParamArray Profiles() As Beacon.ServerProfile)
+		  Self.ShouldFinish(Profiles)
 		End Sub
 	#tag EndMethod
 
@@ -103,7 +133,15 @@ Inherits DesktopContainer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Finished(Data() As Beacon.DiscoveredData)
+		Event CreateHostingProvider() As Beacon.HostingProvider
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Finished(Profiles() As Beacon.ServerProfile)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GameId() As String
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -133,6 +171,18 @@ Inherits DesktopContainer
 
 	#tag Property, Flags = &h21
 		Private mDesiredHeight As Integer = 64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProvider As Beacon.HostingProvider
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProviderName As String
 	#tag EndProperty
 
 

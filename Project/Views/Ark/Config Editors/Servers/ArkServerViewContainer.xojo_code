@@ -2,6 +2,36 @@
 Protected Class ArkServerViewContainer
 Inherits BeaconSubview
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
+	#tag Method, Flags = &h0
+		Sub Constructor(Project As Ark.Project, Profile As Ark.ServerProfile)
+		  Self.mProject = Project
+		  Self.mProfile = Profile
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Profile() As Ark.ServerProfile
+		  Return Self.mProfile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Project() As Ark.Project
+		  Return Self.mProject
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mProfile As Ark.ServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProject As Ark.Project
+	#tag EndProperty
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Modified"

@@ -72,6 +72,7 @@ Begin SDTDServerViewContainer SDTDLocalServerView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   False
@@ -100,7 +101,9 @@ Begin SDTDServerViewContainer SDTDLocalServerView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
+         SettingUp       =   False
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
@@ -175,7 +178,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Project As SDTD.Project, Profile As SDTD.LocalServerProfile)
+		Sub Constructor(Project As SDTD.Project, Profile As SDTD.ServerProfile)
 		  Self.mProject = Project
 		  Self.mProfile = Profile
 		End Sub
@@ -183,7 +186,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mProfile As SDTD.LocalServerProfile
+		Private mProfile As SDTD.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1026,11 +1026,22 @@ End
 		  Self.SharedRewriter.Profile = Self.mCurrentProfile
 		  
 		  Try
-		    If Profile IsA Ark.LocalServerProfile Then
-		      Var LocalProfile As Ark.LocalServerProfile = Ark.LocalServerProfile(Profile)
-		      If (LocalProfile.GameIniFile Is Nil) = False And LocalProfile.GameIniFile.Exists And (LocalProfile.GameUserSettingsIniFile Is Nil) = False And LocalProfile.GameUserSettingsIniFile.Exists Then
-		        Self.SharedRewriter.InitialGameIniContent = LocalProfile.GameIniFile.Read
-		        Self.SharedRewriter.InitialGameUserSettingsIniContent = LocalProfile.GameUserSettingsIniFile.Read
+		    If Profile.ProviderId = Local.Identifier Then
+		      Var GameIniPath As String = Profile.GameIniPath
+		      Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
+		      
+		      If GameIniPath.IsEmpty = False Then
+		        Var GameIniFile As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(GameIniPath)
+		        If (GameIniFile Is Nil) = False And GameIniFile.Exists Then
+		          Self.SharedRewriter.InitialGameIniContent = GameIniFile.Read
+		        End If
+		      End If
+		      
+		      If GameUserSettingsIniPath.IsEmpty = False Then
+		        Var GameUserSettingsIniFile As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(GameUserSettingsIniPath)
+		        If (GameUserSettingsIniFile Is Nil) = False And GameUserSettingsIniFile.Exists Then
+		          Self.SharedRewriter.InitialGameUserSettingsIniContent = GameUserSettingsIniFile.Read
+		        End If
 		      End If
 		    End If
 		  Catch Err As RuntimeException

@@ -1,191 +1,48 @@
 #tag Class
 Protected Class ImportThread
 Inherits Beacon.Thread
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
-		  Self.Status = "Loading config files…"
-		  Self.Invalidate
+		  Self.mCancelled = False
+		  Self.mCreatedProject = Nil
+		  Self.mError = Nil
 		  
-		  Var LineEnding As String = Self.LineEndingChar()
-		  
-		  // Normalize line endings
-		  Var Content As String
-		  If (Self.mData Is Nil) = False Then
-		    Var Blocks() As String
-		    
-		    Var GameUserSettingsIniContent As String = Self.mData.GameUserSettingsIniContent.ReplaceLineEndings(LineEnding)
-		    If GameUserSettingsIniContent.IsEmpty = False Then
-		      If GameUserSettingsIniContent.BeginsWith("[") = False Then
-		        GameUserSettingsIniContent = "[" + Ark.HeaderServerSettings + "]" + LineEnding + GameUserSettingsIniContent
-		      End If
-		      Blocks.Add(GameUserSettingsIniContent)
-		    End If
-		    
-		    Var GameIniContent As String = Self.mData.GameIniContent.ReplaceLineEndings(LineEnding)
-		    If GameIniContent.IsEmpty = False Then
-		      If GameIniContent.BeginsWith("[") = False Then
-		        GameIniContent = "[" + Ark.HeaderShooterGame + "]" + LineEnding + GameIniContent
-		      End If
-		      Blocks.Add(GameIniContent)
-		    End If
-		    
-		    Content = Blocks.Join(LineEnding)
+		  If Self.mProgress Is Nil Then
+		    Self.mProgress = New Beacon.DummyProgressDisplayer
 		  End If
 		  
-		  // Fix smart quotes
-		  Content = Content.SanitizeIni
-		  
-		  // The UWP/Windows Store version uses Ark.HeaderShooterGameUWP instead of Ark.HeaderShooterGame because it's inbred
-		  If Content.IndexOf("[" + Ark.HeaderShooterGameUWP + "]") > -1 Then
-		    Content = Content.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
-		    Self.mData.GameIniContent = Self.mData.GameIniContent.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
-		  End If
-		  
-		  Self.mCharactersProcessed = 0
-		  Self.mCharactersTotal = Content.Length
-		  
-		  Self.Status = "Parsing config files…"
-		  Self.Invalidate
-		  
-		  Var CurrentHeader As String
-		  Var MessageOfTheDayMode As Boolean = False
-		  Var ParsedData As New Dictionary
-		  Var Lines() As String = Content.Split(LineEnding)
-		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.LastIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
-		  For Each Line As String In Lines
+		  Try
+		    Var Project As Ark.Project = Self.RunSynchronous(Self.mData, Self.mDestinationProject, Self.mProgress)
 		    If Self.mCancelled Then
 		      Return
 		    End If
 		    
-		    Var CharacterCount As Integer = Line.Length + LineEnding.Length
-		    
-		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
-		      CurrentHeader = Line.Middle(1, Line.Length - 2)
-		      MessageOfTheDayMode = (CurrentHeader = "MessageOfTheDay")
-		    End If
-		    
-		    If MessageOfTheDayMode Then
-		      Try
-		        If Line.BeginsWith("Duration=") Then
-		          Var Duration As Integer = Integer.FromString(Line.Middle(9))
-		          ParsedData.Value("Duration") = Duration
-		          ParsedData.Value("MessageOfTheDay.Duration") = Duration
-		        Else
-		          Var Message As String
-		          If Line.BeginsWith("Message=") Then
-		            Line = Line.Middle(8)
-		          Else
-		            Message = ParsedData.Lookup("MessageOfTheDay.Message", "")
-		          End If
-		          If Message.IsEmpty Then
-		            Message = Line
-		          Else
-		            Message = Message + LineEnding + Line
-		          End If
-		          ParsedData.Value("Message") = Message
-		          ParsedData.Value("MessageOfTheDay.Message") = Message
-		        End If
-		      Catch Err As RuntimeException
-		      End Try
-		      
-		      Self.AddCharactersParsed(CharacterCount)
-		      Continue
-		    End If
-		    
-		    If Line.IsEmpty Or Line.BeginsWith(";") Then
-		      Self.AddCharactersParsed(CharacterCount)
-		      Continue
-		    End If
-		    
-		    Try
-		      Var Value As Variant = Self.Import(Line + LineEnding)
-		      If Value = Nil Then
-		        Continue
-		      End If
-		      If Value.Type <> Variant.TypeObject Or Value IsA Beacon.KeyValuePair = False Then
-		        Continue
-		      End If
-		      
-		      Var Key As String = Beacon.KeyValuePair(Value).Key
-		      Var ExtendedKey As String = CurrentHeader + "." + Key
-		      Value = Beacon.KeyValuePair(Value).Value
-		      
-		      If ParsedData.HasKey(Key) Then
-		        Var ExistingValue As Variant = ParsedData.Value(Key)
-		        
-		        Var ValueArray() As Variant
-		        If ExistingValue.IsArray Then
-		          ValueArray = ExistingValue
-		        Else
-		          ValueArray.Add(ExistingValue)
-		        End If
-		        ValueArray.Add(Value)
-		        ParsedData.Value(Key) = ValueArray
-		      Else
-		        ParsedData.Value(Key) = Value
-		      End If
-		      
-		      If ParsedData.HasKey(ExtendedKey) Then
-		        Var ExistingValue As Variant = ParsedData.Value(ExtendedKey)
-		        
-		        Var ValueArray() As Variant
-		        If ExistingValue.IsArray Then
-		          ValueArray = ExistingValue
-		        Else
-		          ValueArray.Add(ExistingValue)
-		        End If
-		        ValueArray.Add(Value)
-		        ParsedData.Value(ExtendedKey) = ValueArray
-		      Else
-		        ParsedData.Value(ExtendedKey) = Value
-		      End If
-		    Catch Err As RuntimeException
-		      // Don't let an error halt processing, skip and move on
-		    End Try
-		    
-		    Var Progress As Integer = Round(Self.Progress * 100)
-		    Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
-		    
-		    Self.Sleep(10)
-		  Next
-		  
-		  Self.mCharactersProcessed = Self.mCharactersTotal
-		  
-		  Self.Status = "Building Beacon project…"
-		  Try
-		    Var CommandLineOptions As Dictionary
-		    If (Self.mData Is Nil) = False Then
-		      CommandLineOptions = Self.mData.CommandLineOptions
-		    End If
-		    Self.mCreatedProject = Self.BuildProject(ParsedData, CommandLineOptions)
-		  Catch Err As RuntimeException
-		  End Try
-		  Self.Status = "Finished"
-		  
-		  Self.mFinished = True
-		  
-		  Exception TEE As ThreadEndException
+		    Self.mCreatedProject = Project
 		    Self.mFinished = True
+		  Catch Err As RuntimeException
+		    Self.mFinished = True
+		    Self.mError = Err
+		  End Try
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddCharactersParsed(CharacterCount As Integer)
-		  Self.mCharactersProcessed = Self.mCharactersProcessed + CharacterCount
-		  Var Progress As Integer = Round(Self.Progress * 100)
-		  Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
-		  Self.Invalidate
+		Private Shared Sub AddCharactersParsed(CharacterCount As Integer, TotalCharacters As Integer, Progress As Beacon.ProgressDisplayer, ByRef CharactersProcessed As Integer)
+		  CharactersProcessed = CharactersProcessed + CharacterCount
+		  Var Percent As Double = CharactersProcessed / TotalCharacters
+		  Progress.Progress = Percent
+		  Progress.Detail = "Parsing files (" + Percent.ToString(Locale.Current, "0%") + "%)…"
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function BuildProject(ParsedData As Dictionary, CommandLineOptions As Dictionary) As Ark.Project
+		Private Shared Function BuildProject(Data As Ark.DiscoveredData, DestinationProject As Ark.Project, Progress As Beacon.ProgressDisplayer, ParsedData As Dictionary, CommandLineOptions As Dictionary) As Ark.Project
 		  Var Profile As Ark.ServerProfile
-		  If (Self.mData Is Nil) = False And (Self.mData.Profile Is Nil) = False Then
-		    Profile = Self.mData.Profile
+		  If (Data Is Nil) = False And (Data.Profile Is Nil) = False Then
+		    Profile = Data.Profile
 		  End If
 		  
 		  Var Project As New Ark.Project
@@ -210,7 +67,7 @@ Inherits Beacon.Thread
 		    CommandLineOptions = New Dictionary
 		  End If
 		  
-		  If (Self.mData Is Nil) = False And Self.mData.IsPrimitivePlus Then
+		  If (Data Is Nil) = False And Data.IsPrimitivePlus Then
 		    Project.ContentPackEnabled("68d1be8b-a66e-41a2-b0b4-cb2a724fc80b") = True
 		  End If
 		  
@@ -225,8 +82,8 @@ Inherits Beacon.Thread
 		    Next
 		  End If
 		  
-		  If (Self.mDestinationProject Is Nil) = False Then
-		    Var DestinationPacks As Beacon.StringList = Self.mDestinationProject.ContentPacks
+		  If (DestinationProject Is Nil) = False Then
+		    Var DestinationPacks As Beacon.StringList = DestinationProject.ContentPacks
 		    For Each PackUUID As String In DestinationPacks
 		      Project.ContentPackEnabled(PackUUID) = True
 		    Next PackUUID
@@ -248,8 +105,8 @@ Inherits Beacon.Thread
 		      DifficultyValue = ParsedData.DoubleValue("OverrideOfficialDifficulty")
 		    ElseIf ParsedData.HasKey("DifficultyOffset") Then
 		      DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
-		    ElseIf (Self.mDestinationProject Is Nil) = False Then
-		      DifficultyValue = Self.mDestinationProject.Difficulty.DifficultyValue
+		    ElseIf (DestinationProject Is Nil) = False Then
+		      DifficultyValue = DestinationProject.Difficulty.DifficultyValue
 		      ImpliedDifficulty = True
 		    Else
 		      DifficultyValue = DifficultyScale
@@ -312,7 +169,7 @@ Inherits Beacon.Thread
 		      Continue For ConfigName
 		    End If
 		    
-		    Self.Status = "Building Beacon project… (" + Language.LabelForConfig(ConfigName) + ")"
+		    Progress.Message = "Building Beacon project… (" + Language.LabelForConfig(ConfigName) + ")"
 		    Var Group As Ark.ConfigGroup
 		    Try
 		      Group = Ark.Configs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Project)
@@ -325,9 +182,9 @@ Inherits Beacon.Thread
 		  Next
 		  
 		  // Now split the content into values and remove the ones controlled by the imported groups
-		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(Ark.Configs.NameCustomConfig) + ")"
-		  Var CustomConfigOrganizer As New Ark.ConfigOrganizer(Ark.ConfigFileGame, Ark.HeaderShooterGame, Self.mData.GameIniContent)
-		  CustomConfigOrganizer.Add(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, Self.mData.GameUserSettingsIniContent)
+		  Progress.Message = "Building Beacon project… (" + Language.LabelForConfig(Ark.Configs.NameCustomConfig) + ")"
+		  Var CustomConfigOrganizer As New Ark.ConfigOrganizer(Ark.ConfigFileGame, Ark.HeaderShooterGame, Data.GameIniContent)
+		  CustomConfigOrganizer.Add(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, Data.GameUserSettingsIniContent)
 		  For Each Config As Ark.ConfigGroup In Configs
 		    Var ManagedKeys() As Ark.ConfigOption = Config.ManagedKeys()
 		    CustomConfigOrganizer.Remove(ManagedKeys)
@@ -363,26 +220,23 @@ Inherits Beacon.Thread
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub Constructor()
-		  
+	#tag Method, Flags = &h0
+		Sub Constructor(Data As Ark.DiscoveredData, DestinationProject As Ark.Project)
+		  Self.mData = Data
+		  Self.mDestinationProject = DestinationProject
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Data As Ark.DiscoveredData, DestinationProject As Ark.Project)
-		  Self.mUpdateTimer = New Timer
-		  Self.mUpdateTimer.RunMode = Timer.RunModes.Off
-		  Self.mUpdateTimer.Period = 0
-		  #if TargetDesktop
-		    AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
-		  #else
-		    AddHandler Self.mUpdateTimer.Run, WeakAddressOf Self.mUpdateTimer_Action
-		  #endif
-		  
-		  Self.mData = Data
-		  Self.mDestinationProject = DestinationProject
-		End Sub
+		Function Error() As RuntimeException
+		  Return Self.mError
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Errored() As Boolean
+		  Return (Self.mError Is Nil) = False
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -392,12 +246,12 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Import(Content As String) As Variant
+		Private Shared Function Import(Content As String, TotalCharacters As Integer, Progress As Beacon.ProgressDisplayer, ByRef CharactersProcessed As Integer) As Variant
 		  Var Parser As New Ark.ConfigParser
 		  Var Value As Variant
 		  Var Characters() As String = Content.Split("")
 		  For Each Char As String In Characters
-		    If Self.mCancelled Then
+		    If Progress.CancelPressed Then
 		      Return Nil
 		    End If
 		    
@@ -405,24 +259,12 @@ Inherits Beacon.Thread
 		      Value = Parser.Value
 		      Exit
 		    End If
-		    Self.mCharactersProcessed = Self.mCharactersProcessed + 1
-		    Self.Invalidate
+		    
+		    AddCharactersParsed(1, TotalCharacters, Progress, CharactersProcessed)
 		  Next
 		  
-		  Return Self.ToXojoType(Value)
+		  Return ToXojoType(Value)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Invalidate()
-		  If Self.mFinished Then
-		    Return
-		  End If
-		  
-		  If Self.mUpdateTimer.RunMode = Timer.RunModes.Off Then
-		    Self.mUpdateTimer.RunMode = Timer.RunModes.Single
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -431,32 +273,35 @@ Inherits Beacon.Thread
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub mUpdateTimer_Action(Sender As Timer)
-		  #Pragma Unused Sender
-		  
-		  RaiseEvent UpdateUI
-		  
-		  If Self.mFinished Then
-		    RaiseEvent Finished(Self.mCreatedProject)
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Name() As String
-		  If (Self.mData Is Nil) = False And (Self.mData.Profile Is Nil) = False And Self.mData.Profile.Name.IsEmpty = False Then
-		    Return Self.mData.Profile.Name
-		  Else
-		    Return "Untitled Importer"
+		  Var Name As String
+		  If (Self.mData Is Nil) = False And (Self.mData.Profile Is Nil) = False Then
+		    Name = Self.mData.Profile.Name
 		  End If
+		  If Name.IsEmpty Then
+		    Name = "Untitled Importer"
+		  End If
+		  Return Name
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Progress() As Double
-		  Return Self.mCharactersProcessed / Self.mCharactersTotal
+		Function Progress() As Beacon.ProgressDisplayer
+		  Return Self.mProgress
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Progress(Assigns Displayer As Beacon.ProgressDisplayer)
+		  Var OldDisplayer As Beacon.ProgressDisplayer = Self.mProgress
+		  Self.mProgress = Displayer
+		  If (OldDisplayer Is Nil) = False And (Self.mProgress Is Nil) = False Then
+		    Self.mProgress.Detail = OldDisplayer.Detail
+		    Self.mProgress.Message = OldDisplayer.Message
+		    Self.mProgress.Progress = OldDisplayer.Progress
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -466,18 +311,164 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As String
-		  Return Self.mStatusMessage
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Status(Assigns Value As String)
-		  If Self.mStatusMessage.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Raw) <> 0 Then
-		    Self.mStatusMessage = Value
-		    Self.Invalidate
+		Shared Function RunSynchronous(Data As Ark.DiscoveredData, DestinationProject As Ark.Project, Progress As Beacon.ProgressDisplayer) As Ark.Project
+		  Progress.Message = "Importing…"
+		  Progress.Detail = "Cleaning up files…"
+		  Progress.Progress = Nil
+		  Progress.ShowSubProgress = False
+		  
+		  Var LineEnding As String = LineEndingChar()
+		  
+		  // Normalize line endings
+		  Var Content As String
+		  If (Data Is Nil) = False Then
+		    Var Blocks() As String
+		    
+		    Var GameUserSettingsIniContent As String = Data.GameUserSettingsIniContent.ReplaceLineEndings(LineEnding)
+		    If GameUserSettingsIniContent.IsEmpty = False Then
+		      If GameUserSettingsIniContent.BeginsWith("[") = False Then
+		        GameUserSettingsIniContent = "[" + Ark.HeaderServerSettings + "]" + LineEnding + GameUserSettingsIniContent
+		      End If
+		      Blocks.Add(GameUserSettingsIniContent)
+		    End If
+		    
+		    Var GameIniContent As String = Data.GameIniContent.ReplaceLineEndings(LineEnding)
+		    If GameIniContent.IsEmpty = False Then
+		      If GameIniContent.BeginsWith("[") = False Then
+		        GameIniContent = "[" + Ark.HeaderShooterGame + "]" + LineEnding + GameIniContent
+		      End If
+		      Blocks.Add(GameIniContent)
+		    End If
+		    
+		    Content = Blocks.Join(LineEnding)
 		  End If
-		End Sub
+		  
+		  // Fix smart quotes
+		  Content = Content.SanitizeIni
+		  
+		  // The UWP/Windows Store version uses Ark.HeaderShooterGameUWP instead of Ark.HeaderShooterGame because it's inbred
+		  If Content.IndexOf("[" + Ark.HeaderShooterGameUWP + "]") > -1 Then
+		    Content = Content.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
+		    Data.GameIniContent = Data.GameIniContent.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
+		  End If
+		  
+		  Var CharactersProcessed As Integer
+		  Var CharactersTotal As Integer = Content.Length
+		  Var CurrentHeader As String
+		  Var MessageOfTheDayMode As Boolean = False
+		  Var ParsedData As New Dictionary
+		  Var Lines() As String = Content.Split(LineEnding)
+		  CharactersTotal = CharactersTotal + ((Lines.LastIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
+		  
+		  Progress.Detail = "Parsing files…"
+		  AddCharactersParsed(0, CharactersTotal, Progress, CharactersProcessed)
+		  
+		  For Each Line As String In Lines
+		    If Progress.CancelPressed Then
+		      Return Nil
+		    End If
+		    
+		    Var CharacterCount As Integer = Line.Length + LineEnding.Length
+		    
+		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
+		      CurrentHeader = Line.Middle(1, Line.Length - 2)
+		      MessageOfTheDayMode = (CurrentHeader = "MessageOfTheDay")
+		    End If
+		    
+		    If MessageOfTheDayMode Then
+		      Try
+		        If Line.BeginsWith("Duration=") Then
+		          Var Duration As Integer = Integer.FromString(Line.Middle(9))
+		          ParsedData.Value("Duration") = Duration
+		          ParsedData.Value("MessageOfTheDay.Duration") = Duration
+		        Else
+		          Var Message As String
+		          If Line.BeginsWith("Message=") Then
+		            Line = Line.Middle(8)
+		          Else
+		            Message = ParsedData.Lookup("MessageOfTheDay.Message", "")
+		          End If
+		          If Message.IsEmpty Then
+		            Message = Line
+		          Else
+		            Message = Message + LineEnding + Line
+		          End If
+		          ParsedData.Value("Message") = Message
+		          ParsedData.Value("MessageOfTheDay.Message") = Message
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		      
+		      AddCharactersParsed(CharacterCount, CharactersTotal, Progress, CharactersProcessed)
+		      Continue
+		    End If
+		    
+		    If Line.IsEmpty Or Line.BeginsWith(";") Then
+		      AddCharactersParsed(CharacterCount, CharactersTotal, Progress, CharactersProcessed)
+		      Continue
+		    End If
+		    
+		    Try
+		      Var Value As Variant = Import(Line + LineEnding, CharactersTotal, Progress, CharactersProcessed)
+		      If Value = Nil Then
+		        Continue
+		      End If
+		      If Value.Type <> Variant.TypeObject Or Value IsA Beacon.KeyValuePair = False Then
+		        Continue
+		      End If
+		      
+		      Var Key As String = Beacon.KeyValuePair(Value).Key
+		      Var ExtendedKey As String = CurrentHeader + "." + Key
+		      Value = Beacon.KeyValuePair(Value).Value
+		      
+		      If ParsedData.HasKey(Key) Then
+		        Var ExistingValue As Variant = ParsedData.Value(Key)
+		        
+		        Var ValueArray() As Variant
+		        If ExistingValue.IsArray Then
+		          ValueArray = ExistingValue
+		        Else
+		          ValueArray.Add(ExistingValue)
+		        End If
+		        ValueArray.Add(Value)
+		        ParsedData.Value(Key) = ValueArray
+		      Else
+		        ParsedData.Value(Key) = Value
+		      End If
+		      
+		      If ParsedData.HasKey(ExtendedKey) Then
+		        Var ExistingValue As Variant = ParsedData.Value(ExtendedKey)
+		        
+		        Var ValueArray() As Variant
+		        If ExistingValue.IsArray Then
+		          ValueArray = ExistingValue
+		        Else
+		          ValueArray.Add(ExistingValue)
+		        End If
+		        ValueArray.Add(Value)
+		        ParsedData.Value(ExtendedKey) = ValueArray
+		      Else
+		        ParsedData.Value(ExtendedKey) = Value
+		      End If
+		    Catch Err As RuntimeException
+		      // Don't let an error halt processing, skip and move on
+		    End Try
+		    
+		    Thread.SleepCurrent(10)
+		  Next
+		  CharactersProcessed = CharactersTotal
+		  
+		  Progress.Detail = "Building Beacon project…"
+		  Try
+		    Var CommandLineOptions As Dictionary
+		    If (Data Is Nil) = False Then
+		      CommandLineOptions = Data.CommandLineOptions
+		    End If
+		    Return BuildProject(Data, DestinationProject, Progress, ParsedData, CommandLineOptions)
+		  Catch Err As RuntimeException
+		  End Try
+		  Progress.Detail = "Finished"
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -561,21 +552,9 @@ Inherits Beacon.Thread
 		Event Finished(Project As Ark.Project)
 	#tag EndHook
 
-	#tag Hook, Flags = &h0
-		Event UpdateUI()
-	#tag EndHook
-
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mCharactersProcessed As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mCharactersTotal As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -591,15 +570,15 @@ Inherits Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mError As RuntimeException
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mFinished As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mStatusMessage As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUpdateTimer As Timer
+		Private mProgress As Beacon.ProgressDisplayer
 	#tag EndProperty
 
 

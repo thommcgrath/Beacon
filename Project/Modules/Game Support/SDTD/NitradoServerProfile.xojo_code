@@ -1,7 +1,7 @@
 #tag Class
 Protected Class NitradoServerProfile
 Inherits SDTD.ServerProfile
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit))
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  Self.mAddress = Dict.Value("Address")
@@ -47,7 +47,7 @@ Inherits SDTD.ServerProfile
 			Set
 			  If Self.mAddress.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mAddress = Value
-			    Self.Modified = True
+			    Self.mModified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -64,7 +64,7 @@ Inherits SDTD.ServerProfile
 			Set
 			  If Self.mConfigPath.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mConfigPath = Value
-			    Self.Modified = True
+			    Self.mModified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -95,6 +95,62 @@ Inherits SDTD.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Provider"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Platform"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SecondaryName"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Description"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Map"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MapSeed"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MapSize"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ExternalAccountId"
 			Visible=false
@@ -227,7 +283,7 @@ Inherits SDTD.ServerProfile
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ConfigPath"
@@ -235,7 +291,7 @@ Inherits SDTD.ServerProfile
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ServiceID"

@@ -1,5 +1,6 @@
 #tag Class
 Protected Class DiscoveredData
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
 		  Return Self.mProfile
@@ -7,16 +8,10 @@ Protected Class DiscoveredData
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Profile(Assigns Value As Beacon.ServerProfile)
-		  Self.mProfile = Value
+		Sub Profile(Assigns NewProfile As Beacon.ServerProfile)
+		  Self.mProfile = NewProfile
 		End Sub
 	#tag EndMethod
-
-
-	#tag Note, Name = Why
-		This class is setup as method pairs so that behaviors can be overridden
-		
-	#tag EndNote
 
 
 	#tag Property, Flags = &h21

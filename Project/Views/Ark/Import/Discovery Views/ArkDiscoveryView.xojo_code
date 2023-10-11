@@ -2,6 +2,13 @@
 Protected Class ArkDiscoveryView
 Inherits DiscoveryView
 	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Event
+		Function GameId() As String
+		  Return Ark.Identifier
+		End Function
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h1
 		Protected Function Project() As Ark.Project
 		  Var Temp As Beacon.Project = Super.Project

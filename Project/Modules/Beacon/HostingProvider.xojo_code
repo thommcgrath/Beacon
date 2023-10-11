@@ -7,7 +7,7 @@ Protected Interface HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.IntegrationEngine.DownloadFailureMode)
+		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  
 		End Sub
 	#tag EndMethod
@@ -37,7 +37,25 @@ Protected Interface HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListServers(Logger As Beacon.LogProducer, Token As BeaconAPI.ProviderToken, GameId As String) As Beacon.ServerProfile()
+		Function ListFiles(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StartingPath As String) As String()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ListServers(Logger As Beacon.LogProducer, Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchProviderToken(Token As BeaconAPI.ProviderToken) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SocketStatus() As String
 		  
 		End Function
 	#tag EndMethod
@@ -80,6 +98,12 @@ Protected Interface HostingProvider
 
 	#tag Method, Flags = &h0
 		Function SupportsStopMessage() As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Throttled() As Boolean
 		  
 		End Function
 	#tag EndMethod

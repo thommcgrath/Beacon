@@ -73,6 +73,18 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function BuildPath(ParamArray Components() As String) As String
+		  Return Beacon.BuildPath(Components)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildPath(Components() As String) As String
+		  Return String.FromArray(Components, Beacon.PathSeparator)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function BytesToString(Bytes As Double, Locale As Locale = Nil) As String
 		  If Bytes < 1024 Then
 		    Return Bytes.ToString(Locale, "#,##0") + " Bytes"
@@ -361,7 +373,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function DictionaryArrayValue(Extends Value As Variant) As Dictionary()
 		  If Value.IsNull Then
-		    Var Err As NilObjectException
+		    Var Err As New NilObjectException
 		    Err.Message = "Value is nil"
 		    Raise Err
 		  End If
@@ -494,6 +506,18 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GameSetting(Extends Provider As Beacon.HostingProvider, Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, SettingPath As String) As Variant
+		  Return Provider.GameSetting(Logger, Profile, New Beacon.GenericGameSetting(SettingPath))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GameSetting(Extends Provider As Beacon.HostingProvider, Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, SettingPath As String, Assigns Value As Variant)
+		  Provider.GameSetting(Logger, Profile, New Beacon.GenericGameSetting(SettingPath)) = Value
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
 		  Const UseMBS = False
@@ -502,6 +526,15 @@ Protected Module Beacon
 		    Var Temp As JSONMBS = JSONMBS.Convert(Source)
 		    Return Temp.ToString(Pretty)
 		  #else
+		    If Source.Type = Variant.TypeObject And Source.ObjectValue IsA JSONItem Then
+		      Var Item As JSONItem = Source
+		      Var OriginalCompact As Boolean = Item.Compact
+		      Item.Compact = Not Pretty
+		      Var Json As String = Item.ToString()
+		      Item.Compact = OriginalCompact
+		      Return Json
+		    End If
+		    
 		    Var Result As String = Xojo.GenerateJSON(Source, Pretty)
 		    #if TargetARM And XojoVersion < 2022.01
 		      If Pretty Then
@@ -1339,6 +1372,32 @@ Protected Module Beacon
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
+		Protected Function VariantToString(Value As Variant) As String
+		  #Pragma BreakOnExceptions False
+		  
+		  If Value.IsNull Then
+		    Return "Null"
+		  End If
+		  
+		  Select Case Value.Type
+		  Case Variant.TypeDouble, Variant.TypeSingle
+		    Return Value.DoubleValue.PrettyText(False)
+		  Case Variant.TypeInt32, Variant.TypeInt64
+		    Return Value.Int64Value.ToString(Locale.Raw, "0")
+		  Case Variant.TypeString, Variant.TypeText
+		    Return Value.StringValue
+		  Case Variant.TypeBoolean
+		    Return If(Value.BooleanValue, "True", "False")
+		  Else
+		    Return ""
+		  End Select
+		  
+		  Exception
+		    Return ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As String = "/", Authenticate As Boolean = False) As String
 		  #if DebugBuild And App.ForceLiveData = False
 		    Var Domain As String = "https://local.usebeacon.app"
@@ -1454,7 +1513,29 @@ Protected Module Beacon
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = PathSeparator, Type = String, Dynamic = False, Default = \"/", Scope = Protected
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"\\"
+	#tag EndConstant
+
 	#tag Constant, Name = Pi, Type = Double, Dynamic = False, Default = \"3.141592653589793", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformPC, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformPlayStation, Type = Double, Dynamic = False, Default = \"3", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformSwitch, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformUnknown, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformUnsupported, Type = Double, Dynamic = False, Default = \"-1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformXbox, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = PrettyPrintXsl, Type = String, Dynamic = False, Default = \"<\?xml version\x3D\"1.0\" encoding\x3D\"UTF-8\"\?>\n<xsl:transform version\x3D\"1.0\" xmlns:xsl\x3D\"http://www.w3.org/1999/XSL/Transform\">\n      <xsl:output method\x3D\"xml\" indent\x3D\"yes\" />\n      <xsl:template match\x3D\"/\">\n              <xsl:copy-of select\x3D\"/\" />\n      </xsl:template>\n</xsl:transform>", Scope = Protected

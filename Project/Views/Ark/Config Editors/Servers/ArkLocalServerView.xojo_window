@@ -47,7 +47,7 @@ Begin ArkServerViewContainer ArkLocalServerView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin BeaconTextArea AdminNotesField
@@ -387,25 +387,34 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
-		  If Self.mProfile.GameIniFile <> Nil Then
-		    Self.GameIniPathField.Text = Self.mProfile.GameIniFile.NativePath
+		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
+		  
+		  Var GameIniPath As String = Self.Profile.GameIniPath
+		  If GameIniPath.IsEmpty = False Then
+		    Try
+		      Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(GameIniPath)
+		      If (File Is Nil) = False Then
+		        Self.GameIniPathField.Text = File.NativePath
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
-		  If Self.mProfile.GameUserSettingsIniFile <> Nil Then
-		    Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniFile.NativePath
+		  
+		  Var GameUserSettingsIniPath As String = Self.Profile.GameUserSettingsIniPath
+		  If GameUserSettingsIniPath.IsEmpty = False Then
+		    Try
+		      Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(GameUserSettingsIniPath)
+		      If (File Is Nil) = False Then
+		        Self.GameUserSettingsIniPathField.Text = File.NativePath
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
 		  
 		  Self.SettingsView.RefreshUI()
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Document As Ark.Project, Profile As Ark.LocalServerProfile)
-		  Self.mDocument = Document
-		  Self.mProfile = Profile
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function DetectConfigType(File As FolderItem) As String
@@ -430,15 +439,6 @@ End
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
-		Private mDocument As Ark.Project
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProfile As Ark.LocalServerProfile
-	#tag EndProperty
-
-
 #tag EndWindowCode
 
 #tag Events Pages
@@ -453,8 +453,8 @@ End
 #tag Events AdminNotesField
 	#tag Event
 		Sub TextChanged()
-		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Modified = Self.mProfile.Modified
+		  Self.Profile.AdminNotes = Me.Text
+		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -475,9 +475,11 @@ End
 		    Return
 		  End If
 		  
-		  Self.mProfile.GameUserSettingsIniFile = New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
+		  Var Bookmark As New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
+		  Self.Profile.GameUserSettingsIniPath = Bookmark.SaveInfo()
+		  
 		  Self.GameUserSettingsIniPathField.Text = File.NativePath
-		  Self.Modified = Self.mProfile.Modified
+		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -498,16 +500,18 @@ End
 		    Return
 		  End If
 		  
-		  Self.mProfile.GameIniFile = New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
+		  Var Bookmark As New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
+		  Self.Profile.GameIniPath = Bookmark.SaveInfo()
+		  
 		  Self.GameIniPathField.Text = File.NativePath
-		  Self.Modified = Self.mProfile.Modified
+		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SettingsView
 	#tag Event
 		Sub Opening()
-		  Me.Profile = Self.mProfile
+		  Me.Profile = Self.Profile
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -517,7 +521,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GetProject() As Ark.Project
-		  Return Self.mDocument
+		  Return Self.Project
 		End Function
 	#tag EndEvent
 #tag EndEvents

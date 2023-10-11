@@ -1,6 +1,22 @@
 #tag Class
 Class BookmarkedFolderItem
 Inherits FolderItem
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag Method, Flags = &h0
+		Shared Function CreateSaveInfo(File As FolderItem, Raw As Boolean = False) As String
+		  If File Is Nil Then
+		    Return ""
+		  End If
+		  
+		  If File IsA BookmarkedFolderItem Then
+		    Return BookmarkedFolderItem(File).SaveInfo(Raw)
+		  End If
+		  
+		  Var Bookmark As New BookmarkedFolderItem(File)
+		  Return Bookmark.SaveInfo(Raw)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Destructor()
 		  #if TargetMacOS

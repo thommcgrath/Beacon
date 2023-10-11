@@ -818,7 +818,7 @@ End
 		      Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		    End If
 		  Else
-		    Profile = New SDTD.GenericServerProfile(Self.mProject.Title)
+		    Profile = New SDTD.ServerProfile(Local.Identifier, Self.mProject.Title)
 		    Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		  End If
 		  Self.mCurrentProfile = Profile
@@ -838,11 +838,15 @@ End
 		  Self.SharedRewriter.InputFile(SDTD.ConfigFileWebPermissionsXml) = ""
 		  
 		  Try
-		    If Profile IsA SDTD.LocalServerProfile Then
-		      Var LocalProfile As SDTD.LocalServerProfile = SDTD.LocalServerProfile(Profile)
+		    If Profile.ProviderId = Local.Identifier Then
 		      Var Filenames() As String = Self.SharedRewriter.Filenames
 		      For Each Filename As String In Filenames
-		        Var File As BookmarkedFolderItem = LocalProfile.File(Filename)
+		        Var Path As String = Profile.Path(Filename)
+		        If Path.IsEmpty Then
+		          Continue
+		        End If
+		        
+		        Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Path)
 		        If (File Is Nil) = False And File.Exists Then
 		          Self.SharedRewriter.InputFile(Filename) = File.Read
 		        End If

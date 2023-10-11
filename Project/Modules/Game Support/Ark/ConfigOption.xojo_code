@@ -246,29 +246,19 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ValuesEqual(FirstValue As String, SecondValue As String) As Boolean
+		Function ValuesEqual(FirstValue As Variant, SecondValue As Variant) As Boolean
+		  Var FirstString As String = Beacon.VariantToString(FirstValue)
+		  Var SecondString As String = Beacon.VariantToString(SecondValue)
+		  
 		  Select Case Self.mValueType
 		  Case ValueTypes.TypeNumeric
-		    #Pragma BreakOnExceptions False
-		    Var FirstNumber, SecondNumber As Double
-		    Try
-		      FirstNumber = Double.FromString(FirstValue, Locale.Raw)
-		    Catch Err As RuntimeException
-		    End Try
-		    Try
-		      SecondNumber = Double.FromString(SecondValue, Locale.Raw)
-		    Catch Err As RuntimeException
-		    End Try
-		    #Pragma BreakOnExceptions Default
-		    Return FirstNumber = SecondNumber
-		  Case ValueTypes.TypeText, ValueTypes.TypeArray, ValueTypes.TypeStructure
-		    Return FirstValue.Compare(SecondValue, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
+		    Return FirstString = SecondString
 		  Case ValueTypes.TypeBoolean
-		    Var FirstValueIsTrue As Boolean = (FirstValue = "True") Or (FirstValue = "1")
-		    Var SecondValueIsTrue As Boolean = (SecondValue = "True") Or (SecondValue = "1")
+		    Var FirstValueIsTrue As Boolean = (FirstString = "True") Or (FirstString = "1")
+		    Var SecondValueIsTrue As Boolean = (SecondString = "True") Or (SecondString = "1")
 		    Return FirstValueIsTrue = SecondValueIsTrue
 		  Else
-		    Return FirstValue.Compare(SecondValue, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
+		    Return FirstString.Compare(SecondString, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
 		  End Select
 		End Function
 	#tag EndMethod

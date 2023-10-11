@@ -289,7 +289,7 @@ Inherits Beacon.Project
 		  If Group IsA Ark.ConfigGroup Then
 		    Super.AddConfigGroup(Group, Self.ActiveConfigSet)
 		  Else
-		    Var Err As UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wrong config group subclass for project"
 		    Raise Err
 		  End If
@@ -301,7 +301,7 @@ Inherits Beacon.Project
 		  If Group IsA Ark.ConfigGroup Then
 		    Super.AddConfigGroup(Group, Set)
 		  Else
-		    Var Err As UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wrong config group subclass for project"
 		    Raise Err
 		  End If

@@ -2,7 +2,7 @@
 Protected Class ArkConfigEditor
 Inherits BeaconSubview
 Implements BeaconUI.ConfigEditorView
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) )
 	#tag Event
 		Sub Opening()
 		  RaiseEvent Opening
@@ -98,10 +98,8 @@ Implements BeaconUI.ConfigEditorView
 		  Var Parser As New Ark.ImportThread(Data, Self.mProject)
 		  Parser.Priority = Thread.NormalPriority
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
-		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  
-		  Var Win As New ImporterWindow
-		  Win.Source = Source
+		  Var Win As New ProgressWindow
 		  Win.ShowDelayed(Self.TrueWindow)
 		  
 		  If Self.mParserWindows = Nil Then
@@ -109,6 +107,7 @@ Implements BeaconUI.ConfigEditorView
 		  End If
 		  Self.mParserWindows.Value(Parser) = Win
 		  
+		  Parser.Progress = Win
 		  Parser.Start
 		End Sub
 	#tag EndMethod
@@ -127,9 +126,8 @@ Implements BeaconUI.ConfigEditorView
 	#tag Method, Flags = &h21
 		Private Sub Parser_Finished(Sender As Ark.ImportThread, Project As Ark.Project)
 		  RemoveHandler Sender.Finished, AddressOf Parser_Finished
-		  RemoveHandler Sender.UpdateUI, AddressOf Parser_UpdateUI
 		  
-		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
+		  Var Win As ProgressWindow = Self.mParserWindows.Value(Sender)
 		  Win.Close
 		  Self.mParserWindows.Remove(Sender)
 		  
@@ -174,13 +172,6 @@ Implements BeaconUI.ConfigEditorView
 		  End If
 		  
 		  Self.SetupUI()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Parser_UpdateUI(Sender As Ark.ImportThread)
-		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
-		  Win.Progress = Sender.Progress
 		End Sub
 	#tag EndMethod
 

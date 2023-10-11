@@ -66,10 +66,10 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   5
+      Value           =   2
       Visible         =   True
       Width           =   720
-      Begin ArkNitradoDiscoveryView NitradoDiscoveryView1
+      Begin MultiSelectDiscoveryView NitradoDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -98,7 +98,7 @@ Begin DocumentImportView ArkImportView
          Visible         =   True
          Width           =   720
       End
-      Begin ArkFTPDiscoveryView FTPDiscoveryView1
+      Begin FTPDiscoveryView FTPDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -111,6 +111,7 @@ Begin DocumentImportView ArkImportView
          Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
+         Instructions    =   "Please locate your Game.ini file"
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
@@ -434,35 +435,6 @@ Begin DocumentImportView ArkImportView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin ArkGSADiscoveryView GSADiscoveryView1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         Composited      =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   480
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   7
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   720
-      End
       Begin DocumentImportSourcePicker SourcePicker
          AllowAutoDeactivate=   True
          AllowedSources  =   31
@@ -527,6 +499,35 @@ Begin DocumentImportView ArkImportView
          Visible         =   False
          Width           =   80
       End
+      Begin MultiSelectDiscoveryView GSADiscoveryView1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
    End
    Begin Timer DiscoveryWatcher
       Enabled         =   True
@@ -541,6 +542,30 @@ End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Discover(Profiles() As Beacon.ServerProfile)
+		  Self.mIntegrations.ResizeTo(Profiles.LastIndex)
+		  Self.StatusList.RowCount = Profiles.Count
+		  
+		  For Idx As Integer = Self.mIntegrations.FirstRowIndex To Self.mIntegrations.LastIndex
+		    If (Profiles(Idx) IsA Ark.ServerProfile) = False Then
+		      Continue
+		    End If
+		    
+		    Var Integration As New Ark.DiscoverIntegration(Profiles(Idx))
+		    Integration.Begin()
+		    Self.mIntegrations(Idx) = Integration
+		    
+		    Self.StatusList.CellTextAt(Idx, 0) = Profiles(Idx).Name + EndOfLine + "Starting parser…"
+		    Self.StatusList.RowTagAt(Idx) = Integration
+		  Next
+		  
+		  Self.SetThreadPriorities()
+		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
+		  Self.Views.SelectedPanelIndex = Self.PageStatus
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub ImportFile(File As FolderItem)
 		  Self.QuickCancel = True
@@ -575,13 +600,13 @@ End
 
 	#tag Event
 		Sub Reset()
-		  For I As Integer = 0 To Self.mImporters.LastIndex
-		    If Self.mImporters(I) <> Nil And Not Self.mImporters(I).Finished Then
-		      Self.mImporters(I).Cancel
+		  For Idx As Integer = 0 To Self.mIntegrations.LastIndex
+		    If (Self.mIntegrations(Idx) Is Nil) = False And Not Self.mIntegrations(Idx).Finished Then
+		      Self.mIntegrations(Idx).Cancel
 		    End If
 		  Next
 		  
-		  Self.mImporters.ResizeTo(-1)
+		  Self.mIntegrations.ResizeTo(-1)
 		  
 		  If (Self.Views Is Nil) = False Then
 		    If Self.Views.SelectedPanelIndex <> 0 Then
@@ -622,9 +647,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Finish()
 		  Var Projects() As Beacon.Project
-		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
-		    If (Self.mImporters(I).Project Is Nil) = False Then
-		      Projects.Add(Self.mImporters(I).Project)
+		  For Idx As Integer = Self.mIntegrations.FirstRowIndex To Self.mIntegrations.LastIndex
+		    If (Self.mIntegrations(Idx).Project Is Nil) = False Then
+		      Projects.Add(Self.mIntegrations(Idx).Project)
 		    End If
 		  Next
 		  Self.Finish(Projects)
@@ -632,48 +657,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ImportFrom(Data() As Beacon.DiscoveredData)
-		  Self.mImporters.ResizeTo(Data.LastIndex)
-		  Self.StatusList.RowCount = Data.Count
-		  
-		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
-		    If (Data(I) IsA Ark.DiscoveredData) = False Then
-		      Continue
-		    End If
-		    
-		    Var Importer As New Ark.ImportThread(Ark.DiscoveredData(Data(I)), Self.mDestinationProject)
-		    Importer.Start
-		    Self.mImporters(I) = Importer
-		    
-		    Self.StatusList.CellTextAt(I, 0) = Data(I).Profile.Name + EndOfLine + "Starting parser…"
-		    Self.StatusList.RowTagAt(I) = Importer
-		  Next
-		  
-		  Self.SetThreadPriorities()
-		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
-		  Self.Views.SelectedPanelIndex = Self.PageStatus
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub SetThreadPriorities()
 		  // Dynamically adjusts thread priority depending on the number that are actively running
 		  
-		  Var ActiveThreads() As Ark.ImportThread
-		  For Each Importer As Ark.ImportThread In Self.mImporters
-		    If Importer Is Nil Then
+		  Var ActiveIntegrations() As Ark.DiscoverIntegration
+		  For Each Integration As Ark.DiscoverIntegration In Self.mIntegrations
+		    If Integration Is Nil Then
 		      Continue
 		    End If
 		    
-		    If Importer.ThreadState <> Thread.ThreadStates.NotRunning Then
-		      ActiveThreads.Add(Importer)
+		    If Integration.ThreadState <> Global.Thread.ThreadStates.NotRunning Then
+		      ActiveIntegrations.Add(Integration)
 		    End If
 		  Next
 		  
-		  Var Priority As Integer = If(ActiveThreads.Count > 3, Thread.LowestPriority, Thread.NormalPriority)
-		  For Each Importer As Ark.ImportThread In ActiveThreads
-		    If Importer.Priority <> Priority Then
-		      Importer.Priority = Priority
+		  Var Priority As Integer = If(ActiveIntegrations.Count > 3, Global.Thread.LowestPriority, Global.Thread.NormalPriority)
+		  For Each Integration As Ark.DiscoverIntegration In ActiveIntegrations
+		    If Integration.ThreadPriority <> Priority Then
+		      Integration.ThreadPriority = Priority
 		    End If
 		  Next
 		End Sub
@@ -694,7 +695,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mImporters() As Ark.ImportThread
+		Private mIntegrations() As Ark.DiscoverIntegration
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -765,8 +766,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData)
-		  Self.ImportFrom(Data)
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -777,6 +778,16 @@ End
 	#tag Event
 		Function GetDestinationProject() As Beacon.Project
 		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return Ark.Identifier
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New Nitrado.HostingProvider
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -791,8 +802,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData)
-		  Self.ImportFrom(Data)
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -803,6 +814,32 @@ End
 	#tag Event
 		Function GetDestinationProject() As Beacon.Project
 		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function UsePath(Profile As Beacon.ServerProfile, CurrentPath As String) As Boolean
+		  #if DebugBuild
+		    #Pragma Warning "Needs to use base path"
+		  #else
+		    #Pragma Error "Needs to use base path"
+		  #endif
+		  
+		  Ark.ServerProfile(Profile).GameIniPath = CurrentPath
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CreateServerProfile(Name As String) As Beacon.ServerProfile
+		  Return New Ark.ServerProfile(FTP.Identifier, Name)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return Ark.Identifier
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function Satisfied(Path As String) As Boolean
+		  
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -817,8 +854,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData)
-		  Self.ImportFrom(Data)
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -889,32 +926,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events GSADiscoveryView1
-	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData)
-		  Self.ImportFrom(Data)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.QuickCancel Then
-		    Self.Dismiss
-		  Else
-		    Views.SelectedPanelIndex = 0
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  Self.SetPageHeight(NewHeight)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function GetDestinationProject() As Beacon.Project
-		  Return Self.mDestinationProject
-		End Function
-	#tag EndEvent
-#tag EndEvents
 #tag Events SourcePicker
 	#tag Event
 		Sub Cancelled()
@@ -959,6 +970,42 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events GSADiscoveryView1
+	#tag Event
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New GameServerApp.HostingProvider
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return Ark.Identifier
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag Events DiscoveryWatcher
 	#tag Event
 		Sub Action()
@@ -967,12 +1014,12 @@ End
 		  Var AllFinished As Boolean = True
 		  Var ErrorCount, SuccessCount As Integer
 		  For I As Integer = 0 To Self.StatusList.LastRowIndex
-		    Var Importer As Ark.ImportThread = Self.StatusList.RowTagAt(I)
-		    AllFinished = AllFinished And Importer.Finished
-		    Self.StatusList.CellTextAt(I, 0) = Importer.Name + EndOfLine + Importer.Status
+		    Var Integration As Ark.DiscoverIntegration = Self.StatusList.RowTagAt(I)
+		    AllFinished = AllFinished And Integration.Finished
+		    Self.StatusList.CellTextAt(I, 0) = Integration.Name + EndOfLine + Integration.StatusMessage
 		    
-		    If Importer.Finished Then
-		      If Importer.Project Is Nil Then
+		    If Integration.Finished Then
+		      If Integration.Project Is Nil Then
 		        ErrorCount = ErrorCount + 1
 		      Else
 		        SuccessCount = SuccessCount + 1

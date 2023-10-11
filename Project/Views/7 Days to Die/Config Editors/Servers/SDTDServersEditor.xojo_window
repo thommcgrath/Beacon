@@ -213,6 +213,7 @@ Begin SDTDConfigEditor SDTDServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -266,59 +267,6 @@ End
 		  Super.Constructor(Project)
 		  
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Engine_Discovered(Sender As SDTD.IntegrationEngine, Data() As Beacon.DiscoveredData)
-		  #Pragma Unused Sender
-		  
-		  Var Profiles As New Dictionary
-		  Var AllProfiles() As Beacon.ServerProfile = Self.Project.ServerProfiles
-		  For Each Profile As Beacon.ServerProfile In AllProfiles
-		    Var ServiceId As Variant = Profile.ProviderServiceID
-		    If IsNull(ServiceId) Then
-		      Continue
-		    End If
-		    
-		    Profiles.Value(ServiceId) = Profile
-		  Next
-		  
-		  For Each DiscoveredData As Beacon.DiscoveredData In Data
-		    Var DiscoveredProfile As Beacon.ServerProfile = DiscoveredData.Profile
-		    Var ServiceId As Variant = DiscoveredProfile.ProviderServiceID
-		    If IsNull(ServiceId) Or Profiles.HasKey(ServiceId) = False Then
-		      Continue
-		    End If
-		    
-		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(DiscoveredProfile.ProviderTokenId, True)
-		    Var ProjectProfile As Beacon.ServerProfile = Profiles.Value(ServiceId)
-		    ProjectProfile.UpdateDetailsFrom(DiscoveredProfile)
-		    Self.Project.AddProviderToken(Token)
-		  Next
-		  Self.Modified = Self.Project.Modified
-		  
-		  Var AllFinished As Boolean = True
-		  For Each Entry As DictionaryEntry In Self.mEngines
-		    Var Engine As SDTD.IntegrationEngine = Entry.Value
-		    
-		    If Engine.Finished = False Then
-		      AllFinished = False
-		    End If
-		  Next
-		  
-		  If AllFinished Then
-		    Self.FinishRefreshingDetails()
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Engine_Wait(Sender As SDTD.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
-		  #Pragma Unused Sender
-		  Controller.Cancelled = False
-		  Controller.ShouldResume = True
-		  Return True
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -486,10 +434,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngines As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mRefreshing As Boolean
 	#tag EndProperty
 
@@ -518,8 +462,7 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Select Case Item.Name
 		  Case "AddServerButton"
-		    Var Profile As New SDTD.LocalServerProfile
-		    Profile.Name = "A 7 Days to Die Server"
+		    Var Profile As New SDTD.ServerProfile(Local.Identifier, Language.DefaultServerName(SDTD.Identifier))
 		    
 		    Self.Project.AddServerProfile(Profile)
 		    Self.ServerList.UpdateList(Profile, True)
@@ -565,15 +508,15 @@ End
 		    If Not Self.mViews.HasKey(ProfileId) Then
 		      // Create the view
 		      Var View As SDTDServerViewContainer
-		      Select Case Profile
-		      Case IsA SDTD.NitradoServerProfile
-		        View = New SDTDNitradoServerView(Self.Project, SDTD.NitradoServerProfile(Profile))
-		      Case IsA SDTD.FTPServerProfile
-		        View = New SDTDFTPServerView(Self.Project, SDTD.FTPServerProfile(Profile))
-		      Case IsA SDTD.LocalServerProfile
-		        View = New SDTDLocalServerView(Self.Project, SDTD.LocalServerProfile(Profile))
-		      Case IsA SDTD.GSAServerProfile
-		        View = New SDTDGSAServerView(Self.Project, SDTD.GSAServerProfile(Profile))
+		      Select Case Profile.ProviderId
+		      Case Nitrado.Identifier
+		        View = New SDTDNitradoServerView(Self.Project, Profile)
+		      Case FTP.Identifier
+		        View = New SDTDFTPServerView(Self.Project, Profile)
+		      Case Local.Identifier
+		        View = New SDTDLocalServerView(Self.Project, Profile)
+		      Case GameServerApp.Identifier
+		        View = New SDTDGSAServerView(Self.Project, Profile)
 		      Else
 		        Self.CurrentProfileId = ""
 		        Return
@@ -665,8 +608,8 @@ End
 		    DeployItem = New DesktopMenuItem("Deploy This Server…")
 		  End If
 		  Var DeployProfiles() As Beacon.ServerProfile
-		  Var NitradoProfiles() As SDTD.NitradoServerProfile
-		  Var LocalProfiles() As SDTD.LocalServerProfile
+		  Var NitradoProfiles() As SDTD.ServerProfile
+		  Var LocalProfiles() As SDTD.ServerProfile
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.RowSelectedAt(Idx) = False Then
 		      Continue
@@ -675,11 +618,11 @@ End
 		    If Profile.DeployCapable Then
 		      DeployProfiles.Add(Profile)
 		    End If
-		    If Profile IsA SDTD.NitradoServerProfile Then
-		      NitradoProfiles.Add(SDTD.NitradoServerProfile(Profile))
+		    If Profile.ProviderId = Nitrado.Identifier Then
+		      NitradoProfiles.Add(Profile)
 		    End If
-		    If Profile IsA SDTD.LocalServerProfile Then
-		      LocalProfiles.Add(SDTD.LocalServerProfile(Profile))
+		    If Profile.ProviderId = Local.Identifier Then
+		      LocalProfiles.Add(Profile)
 		    End If
 		  Next Idx
 		  DeployItem.Enabled = DeployProfiles.Count > 0
@@ -733,12 +676,12 @@ End
 		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
 		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)
 		  Case "Open Nitrado Dashboard"
-		    Var NitradoProfiles() As SDTD.NitradoServerProfile = HitItem.Tag
+		    Var NitradoProfiles() As SDTD.ServerProfile = HitItem.Tag
 		    For Idx As Integer = 0 To NitradoProfiles.LastIndex
-		      System.GotoURL(Beacon.WebURL("/redirect?destination=nitradodash&serviceid=" + NitradoProfiles(Idx).ServiceID.ToString(Locale.Raw, "0")))
+		      System.GotoURL(Beacon.WebURL("/redirect?destination=nitradodash&serviceid=" + Nitrado.HostConfig(NitradoProfiles(Idx).HostConfig).ServiceId.ToString(Locale.Raw, "0")))
 		    Next Idx
 		  Case "Show Config Files"
-		    Var LocalProfiles() As SDTD.LocalServerProfile = HitItem.Tag
+		    Var LocalProfiles() As SDTD.ServerProfile = HitItem.Tag
 		    For Idx As Integer = 0 To LocalProfiles.LastIndex
 		      Var File As FolderItem
 		      #if DebugBuild
@@ -766,13 +709,12 @@ End
 		Sub Run()
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  If Identity Is Nil Then
-		    Self.mEngines = New Dictionary
-		    Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": True))
+		    Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True, "Finished": True))
 		    Return
 		  End If
 		  
 		  Self.mRefreshing = True
-		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True))
 		  
 		  Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(Identity.UserId)
 		  Var Filter As New Dictionary
@@ -793,35 +735,38 @@ End
 		    End If
 		  Next
 		  
-		  Var Engines As New Dictionary
+		  Var AllProfiles() As Beacon.ServerProfile = Self.Project.ServerProfiles
+		  Var ProfileMap As New Dictionary
+		  For Each Profile As Beacon.ServerProfile in AllProfiles
+		    ProfileMap.Value(Profile.ProfileId) = Profile
+		  Next
+		  
 		  For Each Token As BeaconAPI.ProviderToken In Tokens
-		    Var Engine As SDTD.IntegrationEngine
-		    
+		    Var Provider As Beacon.HostingProvider
+		    Var Config As Beacon.HostConfig
 		    Select Case Token.Provider
 		    Case BeaconAPI.ProviderToken.ProviderNitrado
-		      Var Profile As New SDTD.NitradoServerProfile
-		      Profile.ProviderTokenId = Token.TokenId
-		      
-		      Engine = New SDTD.NitradoIntegrationEngine(Profile)
+		      Provider = New Nitrado.HostingProvider
+		      Config = New Nitrado.HostConfig
+		      Nitrado.HostConfig(Config).TokenId = Token.TokenId
 		    Case BeaconAPI.ProviderToken.ProviderGameServerApp
-		      Var Profile As New SDTD.GSAServerProfile
-		      Profile.ProviderTokenId = Token.TokenId
-		      
-		      Engine = New SDTD.GSAIntegrationEngine(Profile)
+		      Provider = New GameServerApp.HostingProvider
+		      Config = New GameServerApp.HostConfig
+		      GameServerApp.HostConfig(Config).TokenId = Token.TokenId
 		    End Select
-		    
-		    If Engine Is Nil Then
+		    If Provider Is Nil Then
 		      Continue
 		    End If
 		    
-		    Engines.Value(Token.TokenId) = Engine
-		    AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
-		    AddHandler Engine.Wait, WeakAddressOf Engine_Wait
-		    Engine.BeginDiscovery(Self.Project)
+		    Var Profiles() As Beacon.ServerProfile = Provider.ListServers(Nil, Config, SDTD.Identifier)
+		    For Each Profile As Beacon.ServerProfile In Profiles
+		      If ProfileMap.HasKey(Profile.ProfileId) Then
+		        Beacon.ServerProfile(ProfileMap.Value(Profile.ProfileId).ObjectValue).UpdateDetailsFrom(Profile)
+		      End If
+		    Next
 		  Next
 		  
-		  Self.mEngines = Engines
-		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": True))
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True, "Finished": True))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -831,10 +776,10 @@ End
 		    Var Finished As Boolean = Update.Lookup("Finished", False).BooleanValue
 		    
 		    If UpdateUI Then
-		      If Self.mEngines Is Nil Or Self.mEngines.KeyCount > 0 Or Finished = False Then
-		        Self.UpdateRefreshButton()
-		      Else
+		      If Finished Then
 		        Self.FinishRefreshingDetails()
+		      Else
+		        Self.UpdateRefreshButton()
 		      End If
 		    End If
 		  Next

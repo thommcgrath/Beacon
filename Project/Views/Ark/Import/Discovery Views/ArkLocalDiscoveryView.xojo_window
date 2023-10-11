@@ -611,19 +611,14 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Profile As New Ark.LocalServerProfile
+		  Var Profile As New Ark.ServerProfile(Local.Identifier, Language.DefaultServerName(Ark.Identifier))
 		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
-		  If Self.mGameIniFile <> Nil And Self.mGameUserSettingsIniFile <> Nil Then
-		    Profile.GameIniFile = New BookmarkedFolderItem(Self.mGameIniFile)
-		    Profile.GameUserSettingsIniFile = New BookmarkedFolderItem(Self.mGameUserSettingsIniFile)
+		  If (Self.mGameIniFile Is Nil) = False And (Self.mGameUserSettingsIniFile Is Nil) = False Then
+		    Profile.GameIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameIniFile)
+		    Profile.GameUserSettingsIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameUserSettingsIniFile)
 		  End If
 		  
-		  Var Data As New Ark.DiscoveredData
-		  Data.Profile = Profile
-		  Data.GameIniContent = Self.mGameIniContent
-		  Data.GameUserSettingsIniContent = Self.mGameUserSettingsIniContent
-		  
-		  Self.ShouldFinish(Data)
+		  Self.ShouldFinish(Profile)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

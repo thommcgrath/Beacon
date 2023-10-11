@@ -9,7 +9,14 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Sub Constructor(NitradoPaths() As String)
+		  Self.Constructor()
 		  Self.mPaths = NitradoPaths
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(NitradoPath As String)
+		  Self.Constructor(Array(NitradoPath))
 		End Sub
 	#tag EndMethod
 
@@ -29,6 +36,16 @@ Implements Beacon.GameSetting
 		Sub NitradoPaths(Assigns Paths() As String)
 		  Self.mPaths = Paths
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValuesEqual(FirstValue As Variant, SecondValue As Variant) As Boolean
+		  // For this generic implementation, keep it simple
+		  
+		  Var FirstString As String = Beacon.VariantToString(FirstValue)
+		  Var SecondString As String = Beacon.VariantToString(SecondValue)
+		  Return FirstString.Compare(SecondString, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
+		End Function
 	#tag EndMethod
 
 
@@ -75,14 +92,6 @@ Implements Beacon.GameSetting
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mPaths()"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

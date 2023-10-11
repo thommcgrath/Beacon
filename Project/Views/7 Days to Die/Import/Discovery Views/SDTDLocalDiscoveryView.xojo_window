@@ -524,30 +524,18 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Profile As New SDTD.LocalServerProfile
-		  If (Self.mServerAdminXmlFile Is Nil) = False Then
-		    Profile.File(SDTD.ConfigFileServerAdminXml) = New BookmarkedFolderItem(Self.mServerAdminXmlFile)
+		  Var Profile As New SDTD.ServerProfile(Local.Identifier, Language.DefaultServerName(SDTD.Identifier))
+		  If (Self.mServerAdminXmlFile Is Nil) = False And Self.mServerAdminXmlFile.Exists Then
+		    Profile.Path(SDTD.ConfigFileServerAdminXml) = BookmarkedFolderItem.CreateSaveInfo(Self.mServerAdminXmlFile)
 		  End If
-		  If (Self.mServerConfigXmlFile Is Nil) = False Then
-		    Profile.File(SDTD.ConfigFileServerConfigXml) = New BookmarkedFolderItem(Self.mServerConfigXmlFile)
+		  If (Self.mServerConfigXmlFile Is Nil) = False And Self.mServerConfigXmlFile.Exists Then
+		    Profile.Path(SDTD.ConfigFileServerConfigXml) = BookmarkedFolderItem.CreateSaveInfo(Self.mServerConfigXmlFile)
 		  End If
-		  If (Self.mWebPermissionsXmlFile Is Nil) = False Then
-		    Profile.File(SDTD.ConfigFileWebPermissionsXml) = New BookmarkedFolderItem(Self.mWebPermissionsXmlFile)
-		  End If
-		  
-		  Var Data As New SDTD.DiscoveredData
-		  Data.Profile = Profile
-		  If Self.mServerAdminXml.IsEmpty = False Then
-		    Data.File(SDTD.ConfigFileServerAdminXml) = Self.mServerAdminXml
-		  End If
-		  If Self.mServerConfigXml.IsEmpty = False Then
-		    Data.File(SDTD.ConfigFileServerConfigXml) = Self.mServerConfigXml
-		  End If
-		  If Self.mWebPermissionsXml.IsEmpty = False Then
-		    Data.File(SDTD.ConfigFileWebPermissionsXml) = Self.mWebPermissionsXml
+		  If (Self.mWebPermissionsXmlFile Is Nil) = False And Self.mWebPermissionsXmlFile.Exists then
+		    Profile.Path(SDTD.ConfigFileWebPermissionsXml) = BookmarkedFolderItem.CreateSaveInfo(Self.mWebPermissionsXmlFile)
 		  End If
 		  
-		  Self.ShouldFinish(Data)
+		  Self.ShouldFinish(Profile)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

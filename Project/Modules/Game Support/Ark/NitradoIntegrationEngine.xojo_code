@@ -1,7 +1,7 @@
 #tag Class
 Protected Class NitradoIntegrationEngine
 Inherits Ark.IntegrationEngine
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit))
 	#tag Event
 		Function ApplySettings(Organizer As Ark.ConfigOrganizer) As Boolean
 		  Var Keys() As Ark.ConfigOption = Organizer.DistinctKeys
@@ -235,305 +235,311 @@ Inherits Ark.IntegrationEngine
 
 	#tag Event
 		Sub CreateCheckpoint()
-		  Self.CreateCheckpoint()
+		  #if false
+		    Self.CreateCheckpoint()
+		  #endif
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Function Discover() As Beacon.DiscoveredData()
-		  Var Servers() As Beacon.DiscoveredData
-		  
-		  // Get a list of all servers
-		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  
-		  Self.Log("Finding servers…")
-		  Self.SendRequest(Socket, "GET", "https://api.nitrado.net/services")
-		  If Self.Finished Or Self.CheckError(Socket) Then
-		    Return Servers
-		  End If
-		  Var Content As String = Socket.LastString
-		  Var Status As Integer = Socket.LastHTTPStatus
-		  
-		  Var Parsed As Variant
-		  Try
-		    Parsed = Beacon.ParseJSON(Content)
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Parsed, CurrentMethodName, Socket.LastURL, Status, Content)
-		    Self.SetError("There was an exception while retrieving your server list.")
-		    Return Servers
-		  End Try
-		  
-		  // If it's not a dictionary, what else can we do
-		  If (Parsed IsA Dictionary) = False Then
-		    Return Servers
-		  End If
-		  
-		  Var Response As Dictionary = Parsed
-		  If Response.Lookup("status", "") <> "success" Or Response.HasKey("data") = False Or IsNull(Response.Value("data")) Or Response.Value("data").Type <> Variant.TypeObject Or (Response.Value("data").ObjectValue IsA Dictionary) = False Then
-		    Self.SetError("Nitrado API returned unexpected data.")
-		    Return Servers
-		  End If
-		  
-		  Var Data As Dictionary = Dictionary(Response.Value("data").ObjectValue)
-		  If Data.HasKey("services") = False Or IsNull(Data.Value("services")) Or Data.Value("services").IsArray = False Then
-		    Return Servers
-		  End If
-		  
-		  // Get a list of the servers that match
-		  Var Portlists() As String = Nitrado.PortlistsForProducts(Self.mProviderToken, "ark", "arksotf", "arkosg")
-		  Var ArkMobileIndex As Integer = Portlists.IndexOf("arkmobile")
-		  If ArkMobileIndex > -1 Then
-		    Portlists.RemoveAt(ArkMobileIndex)
-		  End If
-		  
-		  Var Services() As Variant = Data.Value("services")
-		  For Each Service As Variant In Services
-		    If IsNull(Service) Or Service.Type <> Variant.TypeObject Or (Service.ObjectValue IsA Dictionary) = False Then
-		      Continue
+		  #if false
+		    Var Servers() As Beacon.DiscoveredData
+		    
+		    // Get a list of all servers
+		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		    Socket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    
+		    Self.Log("Finding servers…")
+		    Self.SendRequest(Socket, "GET", "https://api.nitrado.net/services")
+		    If Self.Finished Or Self.CheckError(Socket) Then
+		      Return Servers
+		    End If
+		    Var Content As String = Socket.LastString
+		    Var Status As Integer = Socket.LastHTTPStatus
+		    
+		    Var Parsed As Variant
+		    Try
+		      Parsed = Beacon.ParseJSON(Content)
+		    Catch Err As RuntimeException
+		      App.LogAPIException(Parsed, CurrentMethodName, Socket.LastURL, Status, Content)
+		      Self.SetError("There was an exception while retrieving your server list.")
+		      Return Servers
+		    End Try
+		    
+		    // If it's not a dictionary, what else can we do
+		    If (Parsed IsA Dictionary) = False Then
+		      Return Servers
 		    End If
 		    
-		    Try
-		      Var Dict As Dictionary = Service
-		      
-		      If Dict.Lookup("type", "").StringValue <> "gameserver" Or Dict.Lookup("status", "").StringValue <> "active" Then
+		    Var Response As Dictionary = Parsed
+		    If Response.Lookup("status", "") <> "success" Or Response.HasKey("data") = False Or IsNull(Response.Value("data")) Or Response.Value("data").Type <> Variant.TypeObject Or (Response.Value("data").ObjectValue IsA Dictionary) = False Then
+		      Self.SetError("Nitrado API returned unexpected data.")
+		      Return Servers
+		    End If
+		    
+		    Var Data As Dictionary = Dictionary(Response.Value("data").ObjectValue)
+		    If Data.HasKey("services") = False Or IsNull(Data.Value("services")) Or Data.Value("services").IsArray = False Then
+		      Return Servers
+		    End If
+		    
+		    // Get a list of the servers that match
+		    Var Portlists() As String = Nitrado.PortlistsForProducts(Self.mProviderToken, "ark", "arksotf", "arkosg")
+		    Var ArkMobileIndex As Integer = Portlists.IndexOf("arkmobile")
+		    If ArkMobileIndex > -1 Then
+		      Portlists.RemoveAt(ArkMobileIndex)
+		    End If
+		    
+		    Var Services() As Variant = Data.Value("services")
+		    For Each Service As Variant In Services
+		      If IsNull(Service) Or Service.Type <> Variant.TypeObject Or (Service.ObjectValue IsA Dictionary) = False Then
 		        Continue
 		      End If
 		      
-		      Var Profile As Ark.NitradoServerProfile
 		      Try
-		        Var Details As Dictionary = Dict.Value("details")
-		        Var GamePortlist As String = Details.Value("portlist_short")
-		        If Portlists.IndexOf(GamePortlist) = -1 Then
+		        Var Dict As Dictionary = Service
+		        
+		        If Dict.Lookup("type", "").StringValue <> "gameserver" Or Dict.Lookup("status", "").StringValue <> "active" Then
 		          Continue
 		        End If
 		        
-		        Profile = New Ark.NitradoServerProfile
-		        Profile.ProviderTokenId = Self.mProviderToken.TokenId
-		        Profile.Name = Details.Value("name")
-		        Profile.ServiceID = Dict.Value("id")
-		        Profile.Address = Details.Value("address")
-		        
-		        If Profile.Name.BeginsWith("Gameserver - ") And Dict.HasKey("comment") And IsNull(Dict.Value("comment")) = False Then
-		          Profile.Name = Dict.Value("comment")
-		        End If
-		      Catch Err As RuntimeException
-		        Continue
-		      End Try
-		      
-		      Self.Log("Retrieving " + Profile.Name + "…")
-		      // Lookup server information
-		      Var DetailsSocket As New SimpleHTTP.SynchronousHTTPSocket
-		      DetailsSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		      Self.SendRequest(DetailsSocket, "GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw, "#") + "/gameservers")
-		      If Self.Finished Or Self.CheckError(DetailsSocket) Then
-		        Continue
-		      End If
-		      Var DetailsContent As String = DetailsSocket.LastString
-		      
-		      Var DetailsResponse As Dictionary = Beacon.ParseJSON(DetailsContent)
-		      Var DetailsData As Dictionary = DetailsResponse.Value("data")
-		      Var GameServer As Dictionary = DetailsData.Value("gameserver")
-		      Var Settings As Dictionary = GameServer.Value("settings")
-		      Var General As Dictionary = Settings.Value("general")
-		      Var Config As Dictionary = Settings.Value("config")
-		      Var MapText As String = Config.Value("map")
-		      Var MapParts() As String = MapText.Split(",")
-		      Profile.Mask = Ark.Maps.MaskForIdentifier(MapParts(MapParts.LastIndex))
-		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
-		      Var GameShortcode As String = GameServer.Value("game")
-		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
-		      
-		      Select Case GameShortcode
-		      Case "arkse", "arksotf", "arkseosg"
-		        Profile.Platform = Beacon.ServerProfile.PlatformPC
-		      Case "arkxb", "arkxbosg"
-		        Profile.Platform = Beacon.ServerProfile.PlatformXbox
-		      Case "arkps", "arkpsosg"
-		        Profile.Platform = Beacon.ServerProfile.PlatformPlayStation
-		      Case "arkswitch", "arkswitchjp"
-		        Profile.Platform = Beacon.ServerProfile.PlatformSwitch
-		      Else
-		        // Something new
-		        Profile.Platform = Beacon.ServerProfile.PlatformUnknown
-		      End Select
-		      
-		      Var Server As New Ark.NitradoDiscoveredData(Profile.ServiceID, Self.mProviderToken.AccessToken, Profile.ConfigPath, General.Lookup("PrimitivePlus", False).BooleanValue)
-		      Server.Profile = Profile
-		      Server.CommandLineOptions = Settings.Value("start-param")
-		      
-		      If GuidedModeSupportEnabled And General.Lookup("expertMode", False).BooleanValue = False Then
-		        // Build our own ini files from known keys
-		        Var AllConfigs() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False) // To retrieve all
-		        Var GuidedOrganizer As New Ark.ConfigOrganizer
-		        For Each ConfigOption As Ark.ConfigOption In AllConfigs
-		          If ConfigOption.HasNitradoEquivalent = False Then
+		        Var Profile As Ark.NitradoServerProfile
+		        Try
+		          Var Details As Dictionary = Dict.Value("details")
+		          Var GamePortlist As String = Details.Value("portlist_short")
+		          If Portlists.IndexOf(GamePortlist) = -1 Then
 		            Continue
 		          End If
 		          
-		          Var Paths() As String = ConfigOption.NitradoPaths
-		          Var Path As String = Paths(0)
-		          Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
-		          If ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
-		            Var IsTrue As Boolean = (Value = "True") Or (Value = "1")
-		            Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigOption.Constraint("nitrado.boolean.reversed"))
-		            If (Reversed Is Nil) = False And Reversed.BooleanValue Then
-		              IsTrue = Not IsTrue
-		            End If
-		            Value = If(IsTrue, "True", "False")
+		          Profile = New Ark.NitradoServerProfile
+		          Profile.ProviderTokenId = Self.mProviderToken.TokenId
+		          Profile.Name = Details.Value("name")
+		          Profile.ServiceID = Dict.Value("id")
+		          Profile.Address = Details.Value("address")
+		          
+		          If Profile.Name.BeginsWith("Gameserver - ") And Dict.HasKey("comment") And IsNull(Dict.Value("comment")) = False Then
+		            Profile.Name = Dict.Value("comment")
 		          End If
-		          Select Case ConfigOption.NitradoFormat
-		          Case Ark.ConfigOption.NitradoFormats.Value
-		            GuidedOrganizer.Add(New Ark.ConfigValue(ConfigOption, ConfigOption.Key + "=" + Value))
-		          Case Ark.ConfigOption.NitradoFormats.Line
-		            Var Lines() As String = Value.Split(EndOfLine.UNIX)
-		            For LineIdx As Integer = 0 To Lines.LastIndex
-		              GuidedOrganizer.Add(New Ark.ConfigValue(ConfigOption, Lines(LineIdx), LineIdx))
-		            Next
-		          End Select
-		        Next
+		        Catch Err As RuntimeException
+		          Continue
+		        End Try
 		        
-		        Var ExtraGameIniSuccess As Boolean
-		        Var ExtraGameIni As String = Self.GetFile(GameSpecific.Value("path") + "user-settings.ini", DownloadFailureMode.MissingAllowed, Profile, False, ExtraGameIniSuccess)
-		        If ExtraGameIniSuccess = False Or Self.Finished Then
+		        Self.Log("Retrieving " + Profile.Name + "…")
+		        // Lookup server information
+		        Var DetailsSocket As New SimpleHTTP.SynchronousHTTPSocket
+		        DetailsSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		        Self.SendRequest(DetailsSocket, "GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw, "#") + "/gameservers")
+		        If Self.Finished Or Self.CheckError(DetailsSocket) Then
 		          Continue
 		        End If
-		        GuidedOrganizer.Add(Ark.ConfigFileGame, Ark.HeaderShooterGame, ExtraGameIni)
+		        Var DetailsContent As String = DetailsSocket.LastString
 		        
-		        Server.GameIniContent = GuidedOrganizer.Build(Ark.ConfigFileGame)
-		        Server.GameUserSettingsIniContent = GuidedOrganizer.Build(Ark.ConfigFileGameUserSettings)
-		      Else
-		        // This is normally where the ini files would be downloaded, but the NitradoDiscoveredData class will handle that on demand.
-		      End If
-		      
-		      Servers.Add(Server)
-		    Catch Err As RuntimeException
-		      App.LogAPIException(Err, CurrentMethodName, Socket.LastURL, Status, Content)
-		      Continue
-		    End Try
-		  Next
-		  
-		  Return Servers
+		        Var DetailsResponse As Dictionary = Beacon.ParseJSON(DetailsContent)
+		        Var DetailsData As Dictionary = DetailsResponse.Value("data")
+		        Var GameServer As Dictionary = DetailsData.Value("gameserver")
+		        Var Settings As Dictionary = GameServer.Value("settings")
+		        Var General As Dictionary = Settings.Value("general")
+		        Var Config As Dictionary = Settings.Value("config")
+		        Var MapText As String = Config.Value("map")
+		        Var MapParts() As String = MapText.Split(",")
+		        Profile.Mask = Ark.Maps.MaskForIdentifier(MapParts(MapParts.LastIndex))
+		        Var GameSpecific As Dictionary = GameServer.Value("game_specific")
+		        Var GameShortcode As String = GameServer.Value("game")
+		        Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
+		        
+		        Select Case GameShortcode
+		        Case "arkse", "arksotf", "arkseosg"
+		          Profile.Platform = Beacon.PlatformPC
+		        Case "arkxb", "arkxbosg"
+		          Profile.Platform = Beacon.PlatformXbox
+		        Case "arkps", "arkpsosg"
+		          Profile.Platform = Beacon.PlatformPlayStation
+		        Case "arkswitch", "arkswitchjp"
+		          Profile.Platform = Beacon.PlatformSwitch
+		        Else
+		          // Something new
+		          Profile.Platform = Beacon.PlatformUnknown
+		        End Select
+		        
+		        Var Server As New Ark.NitradoDiscoveredData(Profile.ServiceID, Self.mProviderToken.AccessToken, Profile.ConfigPath, General.Lookup("PrimitivePlus", False).BooleanValue)
+		        Server.Profile = Profile
+		        Server.CommandLineOptions = Settings.Value("start-param")
+		        
+		        If GuidedModeSupportEnabled And General.Lookup("expertMode", False).BooleanValue = False Then
+		          // Build our own ini files from known keys
+		          Var AllConfigs() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False) // To retrieve all
+		          Var GuidedOrganizer As New Ark.ConfigOrganizer
+		          For Each ConfigOption As Ark.ConfigOption In AllConfigs
+		            If ConfigOption.HasNitradoEquivalent = False Then
+		              Continue
+		            End If
+		            
+		            Var Paths() As String = ConfigOption.NitradoPaths
+		            Var Path As String = Paths(0)
+		            Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
+		            If ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
+		              Var IsTrue As Boolean = (Value = "True") Or (Value = "1")
+		              Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigOption.Constraint("nitrado.boolean.reversed"))
+		              If (Reversed Is Nil) = False And Reversed.BooleanValue Then
+		                IsTrue = Not IsTrue
+		              End If
+		              Value = If(IsTrue, "True", "False")
+		            End If
+		            Select Case ConfigOption.NitradoFormat
+		            Case Ark.ConfigOption.NitradoFormats.Value
+		              GuidedOrganizer.Add(New Ark.ConfigValue(ConfigOption, ConfigOption.Key + "=" + Value))
+		            Case Ark.ConfigOption.NitradoFormats.Line
+		              Var Lines() As String = Value.Split(EndOfLine.UNIX)
+		              For LineIdx As Integer = 0 To Lines.LastIndex
+		                GuidedOrganizer.Add(New Ark.ConfigValue(ConfigOption, Lines(LineIdx), LineIdx))
+		              Next
+		            End Select
+		          Next
+		          
+		          Var ExtraGameIniSuccess As Boolean
+		          Var ExtraGameIni As String = Self.GetFile(GameSpecific.Value("path") + "user-settings.ini", DownloadFailureMode.MissingAllowed, Profile, False, ExtraGameIniSuccess)
+		          If ExtraGameIniSuccess = False Or Self.Finished Then
+		            Continue
+		          End If
+		          GuidedOrganizer.Add(Ark.ConfigFileGame, Ark.HeaderShooterGame, ExtraGameIni)
+		          
+		          Server.GameIniContent = GuidedOrganizer.Build(Ark.ConfigFileGame)
+		          Server.GameUserSettingsIniContent = GuidedOrganizer.Build(Ark.ConfigFileGameUserSettings)
+		        Else
+		          // This is normally where the ini files would be downloaded, but the NitradoDiscoveredData class will handle that on demand.
+		        End If
+		        
+		        Servers.Add(Server)
+		      Catch Err As RuntimeException
+		        App.LogAPIException(Err, CurrentMethodName, Socket.LastURL, Status, Content)
+		        Continue
+		      End Try
+		    Next
+		    
+		    Return Servers
+		  #endif
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Sub DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
-		  If (Profile IsA Ark.NitradoServerProfile) = False Then
-		    Transfer.Success = False
-		    Transfer.ErrorMessage = "Profile is not a NitradoServerProfile"
-		    Return
-		  End If
-		  
-		  Var Filename As String = Transfer.Filename
-		  Var Path As String = Transfer.Path
-		  If Path.IsEmpty Then
-		    If Filename = "user-settings.ini" Then
-		      Path = Self.mGamePath
-		    Else
-		      Path = Ark.NitradoServerProfile(Profile).ConfigPath
-		    End If
-		  End If
-		  Var FullPath As String = Path + "/" + Filename
-		  
-		  Var ServiceID As Integer = Ark.NitradoServerProfile(Profile).ServiceID
-		  
-		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  Sock.RequestHeader("Cache-Control") = "no-cache"
-		  Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath))
-		  Var Content As MemoryBlock = Sock.LastContent
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  If Status <> 200 Then
-		    Select Case FailureMode
-		    Case DownloadFailureMode.MissingAllowed
-		      Var Message As String
-		      Call Self.CheckResponseForError(Sock.LastURL, Status, Content, Sock.LastException, Message)
-		      If Status = 500 And Message = "Nitrado Error: File doesn't exist (anymore?)" Then
-		        // Bad Nitrado
-		        Status = 404
-		      End If
-		      If Status = 404 Then
-		        Transfer.Success = True
-		        Transfer.Content = ""
-		      Else
-		        Transfer.SetError(Message)
-		      End If
-		    Case DownloadFailureMode.ErrorsAllowed
-		      Transfer.Success = True
-		      Transfer.Content = ""
-		    Case DownloadFailureMode.Required
-		      Call Self.CheckSocketForError(Sock, Transfer)
-		    End Select
-		    
-		    Return
-		  End If
-		  
-		  Var SizeSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  SizeSocket.RequestHeader("Cache-Control") = "no-cache"
-		  SizeSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  Self.SendRequest(SizeSocket, "GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath))
-		  If SizeSocket.LastHTTPStatus <> 200 Then
-		    Call Self.CheckSocketForError(Sock, Transfer)
-		    Return
-		  End If
-		  Var RequiredFileSize As Integer
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(SizeSocket.LastContent)
-		    RequiredFileSize = Dictionary(Response.Value("data")).Value("size")
-		  Catch Err As RuntimeException
-		    If FailureMode <> DownloadFailureMode.ErrorsAllowed Then
-		      App.LogAPIException(Err, CurrentMethodName, SizeSocket.LastURL, SizeSocket.LastHTTPStatus, SizeSocket.LastContent)
-		      Transfer.SetError(Err.Message)
-		    End If
-		    Return
-		  End Try
-		  
-		  If RequiredFileSize <= 0 Then
-		    // Nothing to download
-		    Transfer.Content = ""
-		    Transfer.Success = True
-		    Return
-		  End If
-		  
-		  Var FetchURL As String
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    If Response.Value("status") <> "success" Then
-		      Transfer.SetError("Error: Could not download " + Filename + ".")
+		  #if false
+		    If (Profile IsA Ark.NitradoServerProfile) = False Then
+		      Transfer.Success = False
+		      Transfer.ErrorMessage = "Profile is not a NitradoServerProfile"
 		      Return
 		    End If
 		    
-		    Var Data As Dictionary = Response.Value("data")
-		    Var TokenDict As Dictionary = Data.Value("token")
-		    FetchURL = TokenDict.Value("url")
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
-		    Transfer.SetError(Err.Message)
-		    Return
-		  End Try
-		  
-		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  FetchSocket.RequestHeader("Cache-Control") = "no-cache"
-		  FetchSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  Self.SendRequest(FetchSocket, "GET", FetchURL)
-		  
-		  If Self.CheckSocketForError(FetchSocket, Transfer) Then
-		    Return
-		  End If
-		  
-		  Var DownloadedContent As MemoryBlock = FetchSocket.LastContent
-		  If (DownloadedContent Is Nil) = False Then
-		    If DownloadedContent.Size = RequiredFileSize Or FailureMode = DownloadFailureMode.ErrorsAllowed Then
-		      Transfer.Success = True
-		      Transfer.Content = DownloadedContent
-		    Else
-		      Transfer.SetError("Nitrado returned " + Beacon.BytesToString(DownloadedContent.Size) + " but told Beacon to expect " + Beacon.BytesToString(RequiredFileSize) + ".")
+		    Var Filename As String = Transfer.Filename
+		    Var Path As String = Transfer.Path
+		    If Path.IsEmpty Then
+		      If Filename = "user-settings.ini" Then
+		        Path = Self.mGamePath
+		      Else
+		        Path = Ark.NitradoServerProfile(Profile).ConfigPath
+		      End If
 		    End If
-		  Else
-		    Transfer.SetError("Nitrado returned no content")
-		  End If
+		    Var FullPath As String = Path + "/" + Filename
+		    
+		    Var ServiceID As Integer = Ark.NitradoServerProfile(Profile).ServiceID
+		    
+		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
+		    Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    Sock.RequestHeader("Cache-Control") = "no-cache"
+		    Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath))
+		    Var Content As MemoryBlock = Sock.LastContent
+		    Var Status As Integer = Sock.LastHTTPStatus
+		    
+		    If Status <> 200 Then
+		      Select Case FailureMode
+		      Case DownloadFailureMode.MissingAllowed
+		        Var Message As String
+		        Call Self.CheckResponseForError(Sock.LastURL, Status, Content, Sock.LastException, Message)
+		        If Status = 500 And Message = "Nitrado Error: File doesn't exist (anymore?)" Then
+		          // Bad Nitrado
+		          Status = 404
+		        End If
+		        If Status = 404 Then
+		          Transfer.Success = True
+		          Transfer.Content = ""
+		        Else
+		          Transfer.SetError(Message)
+		        End If
+		      Case DownloadFailureMode.ErrorsAllowed
+		        Transfer.Success = True
+		        Transfer.Content = ""
+		      Case DownloadFailureMode.Required
+		        Call Self.CheckSocketForError(Sock, Transfer)
+		      End Select
+		      
+		      Return
+		    End If
+		    
+		    Var SizeSocket As New SimpleHTTP.SynchronousHTTPSocket
+		    SizeSocket.RequestHeader("Cache-Control") = "no-cache"
+		    SizeSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    Self.SendRequest(SizeSocket, "GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath))
+		    If SizeSocket.LastHTTPStatus <> 200 Then
+		      Call Self.CheckSocketForError(Sock, Transfer)
+		      Return
+		    End If
+		    Var RequiredFileSize As Integer
+		    Try
+		      Var Response As Dictionary = Beacon.ParseJSON(SizeSocket.LastContent)
+		      RequiredFileSize = Dictionary(Response.Value("data")).Value("size")
+		    Catch Err As RuntimeException
+		      If FailureMode <> DownloadFailureMode.ErrorsAllowed Then
+		        App.LogAPIException(Err, CurrentMethodName, SizeSocket.LastURL, SizeSocket.LastHTTPStatus, SizeSocket.LastContent)
+		        Transfer.SetError(Err.Message)
+		      End If
+		      Return
+		    End Try
+		    
+		    If RequiredFileSize <= 0 Then
+		      // Nothing to download
+		      Transfer.Content = ""
+		      Transfer.Success = True
+		      Return
+		    End If
+		    
+		    Var FetchURL As String
+		    Try
+		      Var Response As Dictionary = Beacon.ParseJSON(Content)
+		      If Response.Value("status") <> "success" Then
+		        Transfer.SetError("Error: Could not download " + Filename + ".")
+		        Return
+		      End If
+		      
+		      Var Data As Dictionary = Response.Value("data")
+		      Var TokenDict As Dictionary = Data.Value("token")
+		      FetchURL = TokenDict.Value("url")
+		    Catch Err As RuntimeException
+		      App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
+		      Transfer.SetError(Err.Message)
+		      Return
+		    End Try
+		    
+		    Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
+		    FetchSocket.RequestHeader("Cache-Control") = "no-cache"
+		    FetchSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    Self.SendRequest(FetchSocket, "GET", FetchURL)
+		    
+		    If Self.CheckSocketForError(FetchSocket, Transfer) Then
+		      Return
+		    End If
+		    
+		    Var DownloadedContent As MemoryBlock = FetchSocket.LastContent
+		    If (DownloadedContent Is Nil) = False Then
+		      If DownloadedContent.Size = RequiredFileSize Or FailureMode = DownloadFailureMode.ErrorsAllowed Then
+		        Transfer.Success = True
+		        Transfer.Content = DownloadedContent
+		      Else
+		        Transfer.SetError("Nitrado returned " + Beacon.BytesToString(DownloadedContent.Size) + " but told Beacon to expect " + Beacon.BytesToString(RequiredFileSize) + ".")
+		      End If
+		    Else
+		      Transfer.SetError("Nitrado returned no content")
+		    End If
+		  #endif
 		  
 		End Sub
 	#tag EndEvent
@@ -610,244 +616,252 @@ Inherits Ark.IntegrationEngine
 
 	#tag Event
 		Sub RefreshServerStatus()
-		  If Self.mProviderToken Is Nil Then
-		    Self.SetError("Cannot check server status because there is no Nitrado account assigned to this process. Start the deploy again to authenticate again.")
-		    Return
-		  End If
-		  
-		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers")
-		  If Self.Finished Then
-		    Return
-		  ElseIf Sock.HTTPStatusCode <> 200 Then
-		    Self.mStatusCheckFailureCount = Self.mStatusCheckFailureCount + 1
-		    
-		    // 6 consecutive failures or an authentication error will report as an error
-		    If Self.mStatusCheckFailureCount >= 6 Or Sock.HTTPStatusCode = 401 Or Sock.HTTPStatusCode = 403 Then
-		      Call Self.CheckError(Sock)
-		    End
-		    Return
-		  End If
-		  Var Content As String = Sock.LastString
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    Var Data As Dictionary = Response.Value("data")
-		    Var GameServer As Dictionary = Data.Value("gameserver")
-		    
-		    Select Case GameServer.Value("status")
-		    Case "started"
-		      Self.State = Self.StateRunning
-		    Case "starting", "restarting"
-		      Self.State = Self.StateStarting
-		    Case "stopping"
-		      Self.State = Self.StateStopping
-		    Case "stopped"
-		      Self.State = Self.StateStopped
-		    Case "suspended"
-		      Self.State = Self.StateOther
-		      Self.SetError("The server is suspended. See your Nitrado control panel to reactivate your server.")
-		    Case "guardian_locked"
-		      Self.State = Self.StateOther
-		      Self.SetError("The server is currently guardian locked. Try again during allowed hours.")
-		    Case "gs_installation"
-		      Self.State = Self.StateOther
-		      Self.SetError("The server is switching games.")
-		    Case "backup_restore"
-		      Self.State = Self.StateOther
-		      Self.SetError("The server is restoring a backup.")
-		    Case "backup_creation"
-		      Self.State = Self.StateOther
-		      Self.SetError("The server is creating a backup.")
-		    Case "updating"
-		      Self.State = Self.StateStarting
-		      Self.SetError("The server is currently installing an update.")
-		    Else
-		      Self.State = Self.StateOther
-		      Self.SetError("Unknown server status: " + GameServer.Value("status").StringValue)
-		    End Select
-		    
-		    If Self.mInitialStatusQuery And Self.State <> Self.StateOther Then
-		      Self.mInitialStatusQuery = False
-		      
-		      Var Settings As Dictionary = GameServer.Value("settings")
-		      Var GeneralSettings As Dictionary = Settings.Value("general")
-		      #if GuidedModeSupportEnabled
-		        Self.mDoGuidedDeploy = GeneralSettings.Value("expertMode") = "false"
-		        Self.mGamePath = Self.GetViaDotNotation(GameServer, "game_specific.path")
-		      #else
-		        Var ExpertMode As Boolean = Self.GetViaDotNotation(Settings, "general.expertMode") = "true"
-		        If ExpertMode = False And Self.Mode = Self.ModeDeploy Then
-		          Self.SwitchToExpertMode("")
-		        End If
-		      #endif
-		      
-		      // Determine which map the server is running and update the profile if necessary
-		      Var Config As Dictionary = Settings.Value("config")
-		      Var MapText As String = Config.Value("map")
-		      Var MapParts() As String = MapText.Split(",")
-		      Self.Profile.Mask = Ark.Maps.MaskForIdentifier(MapParts(MapParts.LastIndex))
-		      
-		      // Keep track of the current settings for later
-		      Self.mCurrentSettings = Settings
-		      
-		      // Update the profile with less common changes
-		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
-		      Self.mLogFilePath = GameSpecific.Value("path") + "ShooterGame/Saved/Logs/ShooterGame.log"
-		      Ark.NitradoServerProfile(Self.Profile).ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
-		      Ark.NitradoServerProfile(Self.Profile).Address = GameServer.Value("ip") + ":" + GameServer.Value("port")
+		  #if false
+		    If Self.mProviderToken Is Nil Then
+		      Self.SetError("Cannot check server status because there is no Nitrado account assigned to this process. Start the deploy again to authenticate again.")
+		      Return
 		    End If
 		    
-		    Self.mStatusCheckFailureCount = 0
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
-		    If Self.mStatusCheckFailureCount > 0 Then
-		      Self.SetError(Err)
+		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
+		    Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers")
+		    If Self.Finished Then
+		      Return
+		    ElseIf Sock.HTTPStatusCode <> 200 Then
+		      Self.mStatusCheckFailureCount = Self.mStatusCheckFailureCount + 1
+		      
+		      // 6 consecutive failures or an authentication error will report as an error
+		      If Self.mStatusCheckFailureCount >= 6 Or Sock.HTTPStatusCode = 401 Or Sock.HTTPStatusCode = 403 Then
+		        Call Self.CheckError(Sock)
+		      End
+		      Return
 		    End If
-		    Return
-		  End Try
+		    Var Content As String = Sock.LastString
+		    Var Status As Integer = Sock.LastHTTPStatus
+		    
+		    Try
+		      Var Response As Dictionary = Beacon.ParseJSON(Content)
+		      Var Data As Dictionary = Response.Value("data")
+		      Var GameServer As Dictionary = Data.Value("gameserver")
+		      
+		      Select Case GameServer.Value("status")
+		      Case "started"
+		        Self.State = Self.StateRunning
+		      Case "starting", "restarting"
+		        Self.State = Self.StateStarting
+		      Case "stopping"
+		        Self.State = Self.StateStopping
+		      Case "stopped"
+		        Self.State = Self.StateStopped
+		      Case "suspended"
+		        Self.State = Self.StateOther
+		        Self.SetError("The server is suspended. See your Nitrado control panel to reactivate your server.")
+		      Case "guardian_locked"
+		        Self.State = Self.StateOther
+		        Self.SetError("The server is currently guardian locked. Try again during allowed hours.")
+		      Case "gs_installation"
+		        Self.State = Self.StateOther
+		        Self.SetError("The server is switching games.")
+		      Case "backup_restore"
+		        Self.State = Self.StateOther
+		        Self.SetError("The server is restoring a backup.")
+		      Case "backup_creation"
+		        Self.State = Self.StateOther
+		        Self.SetError("The server is creating a backup.")
+		      Case "updating"
+		        Self.State = Self.StateStarting
+		        Self.SetError("The server is currently installing an update.")
+		      Else
+		        Self.State = Self.StateOther
+		        Self.SetError("Unknown server status: " + GameServer.Value("status").StringValue)
+		      End Select
+		      
+		      If Self.mInitialStatusQuery And Self.State <> Self.StateOther Then
+		        Self.mInitialStatusQuery = False
+		        
+		        Var Settings As Dictionary = GameServer.Value("settings")
+		        Var GeneralSettings As Dictionary = Settings.Value("general")
+		        #if GuidedModeSupportEnabled
+		          Self.mDoGuidedDeploy = GeneralSettings.Value("expertMode") = "false"
+		          Self.mGamePath = Self.GetViaDotNotation(GameServer, "game_specific.path")
+		        #else
+		          Var ExpertMode As Boolean = Self.GetViaDotNotation(Settings, "general.expertMode") = "true"
+		          If ExpertMode = False And Self.Mode = Self.ModeDeploy Then
+		            Self.SwitchToExpertMode("")
+		          End If
+		        #endif
+		        
+		        // Determine which map the server is running and update the profile if necessary
+		        Var Config As Dictionary = Settings.Value("config")
+		        Var MapText As String = Config.Value("map")
+		        Var MapParts() As String = MapText.Split(",")
+		        Self.Profile.Mask = Ark.Maps.MaskForIdentifier(MapParts(MapParts.LastIndex))
+		        
+		        // Keep track of the current settings for later
+		        Self.mCurrentSettings = Settings
+		        
+		        // Update the profile with less common changes
+		        Var GameSpecific As Dictionary = GameServer.Value("game_specific")
+		        Self.mLogFilePath = GameSpecific.Value("path") + "ShooterGame/Saved/Logs/ShooterGame.log"
+		        Ark.NitradoServerProfile(Self.Profile).ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
+		        Ark.NitradoServerProfile(Self.Profile).Address = GameServer.Value("ip") + ":" + GameServer.Value("port")
+		      End If
+		      
+		      Self.mStatusCheckFailureCount = 0
+		    Catch Err As RuntimeException
+		      App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
+		      If Self.mStatusCheckFailureCount > 0 Then
+		        Self.SetError(Err)
+		      End If
+		      Return
+		    End Try
+		  #endif
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub StartServer()
-		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  Sock.RequestHeader("Connection") = "close"
-		  
-		  Var FormData As New Dictionary
-		  FormData.Value("message") = "Server started by Beacon"
-		  FormData.Value("restart_message") = Nil
-		  
-		  Sock.SetJSON(FormData)
-		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/restart")
-		  If Self.Finished Or Self.CheckError(Sock) Then
-		    Return
-		  End If
-		  Var Content As String = Sock.LastString
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    If Response.Value("status") <> "success" Then
-		      Self.SetError("Error: Nitrado refused to start the server.")
-		      #if DebugBuild
-		        System.DebugLog("Reason: " + Response.Value("status").StringValue)
-		        System.DebugLog(Content)
-		      #endif
+		  #if false
+		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
+		    Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    Sock.RequestHeader("Connection") = "close"
+		    
+		    Var FormData As New Dictionary
+		    FormData.Value("message") = "Server started by Beacon"
+		    FormData.Value("restart_message") = Nil
+		    
+		    Sock.SetJSON(FormData)
+		    Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/restart")
+		    If Self.Finished Or Self.CheckError(Sock) Then
+		      Return
 		    End If
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
-		    Self.SetError(Err)
-		  End Try 
+		    Var Content As String = Sock.LastString
+		    Var Status As Integer = Sock.LastHTTPStatus
+		    
+		    Try
+		      Var Response As Dictionary = Beacon.ParseJSON(Content)
+		      If Response.Value("status") <> "success" Then
+		        Self.SetError("Error: Nitrado refused to start the server.")
+		        #if DebugBuild
+		          System.DebugLog("Reason: " + Response.Value("status").StringValue)
+		          System.DebugLog(Content)
+		        #endif
+		      End If
+		    Catch Err As RuntimeException
+		      App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
+		      Self.SetError(Err)
+		    End Try 
+		  #endif
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub StopServer()
-		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  Sock.RequestHeader("Connection") = "close"
-		  
-		  Var FormData As New Dictionary
-		  FormData.Value("message") = "Server is being stopped by Beacon"
-		  FormData.Value("stop_message") = Self.StopMessage
-		  
-		  Sock.SetJSON(FormData)
-		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/stop")
-		  If Self.Finished Or Self.CheckError(Sock) Then
-		    Return
-		  End If
-		  Var Content As String = Sock.LastString
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    If Response.Value("status") <> "success" Then
-		      Self.Log("Error: Nitrado refused to stop the server.")
-		      #if DebugBuild
-		        System.DebugLog("Reason: " + Response.Value("status").StringValue)
-		        System.DebugLog(Content)
-		      #endif
+		  #if false
+		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
+		    Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    Sock.RequestHeader("Connection") = "close"
+		    
+		    Var FormData As New Dictionary
+		    FormData.Value("message") = "Server is being stopped by Beacon"
+		    FormData.Value("stop_message") = Self.StopMessage
+		    
+		    Sock.SetJSON(FormData)
+		    Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/stop")
+		    If Self.Finished Or Self.CheckError(Sock) Then
+		      Return
 		    End If
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
-		    Self.SetError(Err)
-		  End Try
+		    Var Content As String = Sock.LastString
+		    Var Status As Integer = Sock.LastHTTPStatus
+		    
+		    Try
+		      Var Response As Dictionary = Beacon.ParseJSON(Content)
+		      If Response.Value("status") <> "success" Then
+		        Self.Log("Error: Nitrado refused to stop the server.")
+		        #if DebugBuild
+		          System.DebugLog("Reason: " + Response.Value("status").StringValue)
+		          System.DebugLog(Content)
+		        #endif
+		      End If
+		    Catch Err As RuntimeException
+		      App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
+		      Self.SetError(Err)
+		    End Try
+		  #endif
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub UploadFile(Transfer As Beacon.IntegrationTransfer)
-		  Var Filename As String = Transfer.Filename
-		  Var Path As String = Transfer.Path
-		  If Path.IsEmpty Then
-		    If Filename = "user-settings.ini" Then
-		      Path = Self.mGamePath
-		    Else
-		      Path = Ark.NitradoServerProfile(Self.Profile).ConfigPath
+		  #if false
+		    Var Filename As String = Transfer.Filename
+		    Var Path As String = Transfer.Path
+		    If Path.IsEmpty Then
+		      If Filename = "user-settings.ini" Then
+		        Path = Self.mGamePath
+		      Else
+		        Path = Ark.NitradoServerProfile(Self.Profile).ConfigPath
+		      End If
 		    End If
-		  End If
-		  
-		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  Sock.RequestHeader("Cache-Control") = "no-cache"
-		  
-		  Var FormData As New Dictionary
-		  FormData.Value("path") = Path
-		  FormData.Value("file") = Filename
-		  Sock.SetFormData(FormData)
-		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
-		  Var PermissionErrorMessage As String
-		  If Self.CheckSocketForError(Sock, PermissionErrorMessage) Then
-		    Transfer.SetError(PermissionErrorMessage)
-		    Return
-		  End If
-		  Var Content As String = Sock.LastString
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  Var PutURL, PutToken As String
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    If Response.Value("status") <> "success" Then
+		    
+		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
+		    Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    Sock.RequestHeader("Cache-Control") = "no-cache"
+		    
+		    Var FormData As New Dictionary
+		    FormData.Value("path") = Path
+		    FormData.Value("file") = Filename
+		    Sock.SetFormData(FormData)
+		    Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
+		    Var PermissionErrorMessage As String
+		    If Self.CheckSocketForError(Sock, PermissionErrorMessage) Then
+		      Transfer.SetError(PermissionErrorMessage)
+		      Return
+		    End If
+		    Var Content As String = Sock.LastString
+		    Var Status As Integer = Sock.LastHTTPStatus
+		    
+		    Var PutURL, PutToken As String
+		    Try
+		      Var Response As Dictionary = Beacon.ParseJSON(Content)
+		      If Response.Value("status") <> "success" Then
+		        Transfer.Success = False
+		        Transfer.ErrorMessage = "Error: Could not upload " + Path + "/" + Filename + "."
+		        Return
+		      End If
+		      
+		      Var Data As Dictionary = Response.Value("data")
+		      Var TokenDict As Dictionary = Data.Value("token")
+		      PutURL = TokenDict.Value("url")
+		      PutToken = TokenDict.Value("token")
+		    Catch Err As RuntimeException
+		      App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
 		      Transfer.Success = False
-		      Transfer.ErrorMessage = "Error: Could not upload " + Path + "/" + Filename + "."
+		      Transfer.ErrorMessage = Err.Message
+		      Return
+		    End Try
+		    
+		    // Wait a moment so the receiver server is ready for the file... or something?
+		    Self.Wait(1000)
+		    
+		    Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
+		    PutSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    PutSocket.RequestHeader("token") = PutToken
+		    PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(Transfer.Content))
+		    PutSocket.SetRequestContent(Transfer.Content, "application/octet-stream")
+		    PutSocket.RequestHeader("Cache-Control") = "no-cache"
+		    Self.SendRequest(PutSocket, "POST", PutURL)
+		    If Self.CheckSocketForError(Sock, Transfer) Then
+		      Var AdditionalLines As String = EndOfLine + "Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content."
+		      If Self.BackupEnabled Then
+		        AdditionalLines = AdditionalLines + EndOfLine + "Your config files were backed up to " + App.BackupsFolder.Child(Self.Profile.BackupFolderName).NativePath
+		      End If
+		      Transfer.ErrorMessage = Transfer.ErrorMessage + AdditionalLines
 		      Return
 		    End If
 		    
-		    Var Data As Dictionary = Response.Value("data")
-		    Var TokenDict As Dictionary = Data.Value("token")
-		    PutURL = TokenDict.Value("url")
-		    PutToken = TokenDict.Value("token")
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
-		    Transfer.Success = False
-		    Transfer.ErrorMessage = Err.Message
-		    Return
-		  End Try
-		  
-		  // Wait a moment so the receiver server is ready for the file... or something?
-		  Self.Wait(1000)
-		  
-		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  PutSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  PutSocket.RequestHeader("token") = PutToken
-		  PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(Transfer.Content))
-		  PutSocket.SetRequestContent(Transfer.Content, "application/octet-stream")
-		  PutSocket.RequestHeader("Cache-Control") = "no-cache"
-		  Self.SendRequest(PutSocket, "POST", PutURL)
-		  If Self.CheckSocketForError(Sock, Transfer) Then
-		    Var AdditionalLines As String = EndOfLine + "Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content."
-		    If Self.BackupEnabled Then
-		      AdditionalLines = AdditionalLines + EndOfLine + "Your config files were backed up to " + App.BackupsFolder.Child(Self.Profile.BackupFolderName).NativePath
-		    End If
-		    Transfer.ErrorMessage = Transfer.ErrorMessage + AdditionalLines
-		    Return
-		  End If
-		  
-		  Transfer.Success = True
+		    Transfer.Success = True
+		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -954,43 +968,7 @@ Inherits Ark.IntegrationEngine
 		    Self.mServiceID = Ark.NitradoServerProfile(Profile).ServiceID
 		  End If
 		  
-		  Super.Constructor(Profile)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CreateCheckpoint()
-		  If Self.mCheckpointCreated Then
-		    Return
-		  End If
-		  
-		  Self.Log("Saving previous configuration as profile…")
-		  
-		  Var FormData As New Dictionary
-		  FormData.Value("name") = "Beacon " + Self.Label
-		  
-		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  Sock.SetFormData(FormData)
-		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings/sets")
-		  If Self.Finished Or Self.CheckError(Sock) Then
-		    Return
-		  End If
-		  Var Content As String = Sock.LastString
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    If Response.Value("status") = "success" Then
-		      Self.mCheckpointCreated = True
-		      Self.Log("Created configuration profile """ + FormData.Value("name").StringValue + """")
-		    Else
-		      Self.SetError("Error: Could not backup current settings.")
-		    End If
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
-		    Self.SetError(Err)
-		  End Try
+		  Super.Constructor(Nil, Profile)
 		End Sub
 	#tag EndMethod
 
@@ -1056,79 +1034,81 @@ Inherits Ark.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SwitchToExpertMode(OffendingKey As String, ContentLength As Integer)
-		  Var UserData As New Dictionary
-		  UserData.Value("OffendingKey") = OffendingKey
-		  UserData.Value("ContentLength") = ContentLength
-		  Var Controller As New Beacon.TaskWaitController("Needs Expert Mode", UserData)
-		  
-		  Self.Log("Waiting for user action…")
-		  Self.Wait(Controller)
-		  Self.RemoveLastLog()
-		  If Controller.Cancelled Then
-		    Self.Cancel
-		    Return
-		  End If
-		  
-		  // Create a checkpoint now
-		  If Self.BackupEnabled Then
-		    Self.CreateCheckpoint()
-		    If Self.Finished Then
+		Private Sub SwitchToExpertModeOld(OffendingKey As String, ContentLength As Integer)
+		  #if false
+		    Var UserData As New Dictionary
+		    UserData.Value("OffendingKey") = OffendingKey
+		    UserData.Value("ContentLength") = ContentLength
+		    Var Controller As New Beacon.TaskWaitController("Needs Expert Mode", UserData)
+		    
+		    Self.Log("Waiting for user action…")
+		    Self.Wait(Controller)
+		    Self.RemoveLastLog()
+		    If Controller.Cancelled Then
+		      Self.Cancel
 		      Return
 		    End If
-		  End If
-		  
-		  // Start the server, returning it to its previous state
-		  Self.Log("Enabling expert mode…")
-		  Select Case Self.State
-		  Case Self.StateStopped, Self.StateStopping
-		    Self.Log("Enabling expert mode - starting server…", True)
-		    Self.StartServer(False)
-		    If Self.Finished Then
+		    
+		    // Create a checkpoint now
+		    If Self.BackupEnabled Then
+		      Self.CreateCheckpoint()
+		      If Self.Finished Then
+		        Return
+		      End If
+		    End If
+		    
+		    // Start the server, returning it to its previous state
+		    Self.Log("Enabling expert mode…")
+		    Select Case Self.State.State
+		    Case Beacon.ServerStatus.States.Stopped, Beacon.ServerStatus.States.Stopping
+		      Self.Log("Enabling expert mode - starting server…", True)
+		      Self.StartServer(False)
+		      If Self.Finished Then
+		        Return
+		      End If
+		      Self.Log("Enabling expert mode - stopping server…", True)
+		      Self.StopServer(False)
+		      If Self.Finished Then
+		        Return
+		      End If
+		    Case Beacon.ServerStatus.States.Running, Beacon.ServerStatus.States.Starting
+		      Self.Log("Enabling expert mode - stopping server…", True)
+		      Self.StopServer(False)
+		      If Self.Finished Then
+		        Return
+		      End If
+		      Self.Log("Enabling expert mode - starting server…", True)
+		      Self.StartServer(False)
+		      If Self.Finished Then
+		        Return
+		      End If
+		    End Select
+		    
+		    // Now actually change the server
+		    Var FormData As New Dictionary
+		    FormData.Value("category") = "general"
+		    FormData.Value("key") = "expertMode"
+		    FormData.Value("value") = "true"
+		    
+		    Var ExpertToggleSocket As New SimpleHTTP.SynchronousHTTPSocket
+		    ExpertToggleSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		    ExpertToggleSocket.SetFormData(FormData)
+		    
+		    Self.Log("Enabling expert mode…", True)
+		    Self.SendRequest(ExpertToggleSocket, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
+		    If Self.Finished Or Self.CheckError(ExpertToggleSocket) Then
 		      Return
 		    End If
-		    Self.Log("Enabling expert mode - stopping server…", True)
-		    Self.StopServer(False)
-		    If Self.Finished Then
+		    Var ExpertContent As String = ExpertToggleSocket.LastString
+		    
+		    Var ExpertResponse As Dictionary = Beacon.ParseJSON(ExpertContent)
+		    If ExpertResponse.Value("status") <> "success" Then
+		      Self.SetError("Error: Could not enable expert mode.")
 		      Return
 		    End If
-		  Case Self.StateRunning, Self.StateStarting
-		    Self.Log("Enabling expert mode - stopping server…", True)
-		    Self.StopServer(False)
-		    If Self.Finished Then
-		      Return
-		    End If
-		    Self.Log("Enabling expert mode - starting server…", True)
-		    Self.StartServer(False)
-		    If Self.Finished Then
-		      Return
-		    End If
-		  End Select
-		  
-		  // Now actually change the server
-		  Var FormData As New Dictionary
-		  FormData.Value("category") = "general"
-		  FormData.Value("key") = "expertMode"
-		  FormData.Value("value") = "true"
-		  
-		  Var ExpertToggleSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  ExpertToggleSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
-		  ExpertToggleSocket.SetFormData(FormData)
-		  
-		  Self.Log("Enabling expert mode…", True)
-		  Self.SendRequest(ExpertToggleSocket, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
-		  If Self.Finished Or Self.CheckError(ExpertToggleSocket) Then
-		    Return
-		  End If
-		  Var ExpertContent As String = ExpertToggleSocket.LastString
-		  
-		  Var ExpertResponse As Dictionary = Beacon.ParseJSON(ExpertContent)
-		  If ExpertResponse.Value("status") <> "success" Then
-		    Self.SetError("Error: Could not enable expert mode.")
-		    Return
-		  End If
-		  
-		  Self.Log("Expert mode enabled.")
+		    
+		    Self.Log("Expert mode enabled.")
+		  #endif
 		End Sub
 	#tag EndMethod
 

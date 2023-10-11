@@ -30,7 +30,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Sub Constructor(Project As SDTD.Project, Profile As SDTD.FTPServerProfile)
+		Sub Constructor(Project As SDTD.Project, Profile As SDTD.ServerProfile)
 		  
 		End Sub
 	#tag EndMethod

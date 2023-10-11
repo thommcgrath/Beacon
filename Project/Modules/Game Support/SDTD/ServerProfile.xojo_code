@@ -3,16 +3,15 @@ Protected Class ServerProfile
 Inherits Beacon.ServerProfile
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
-		Sub ReadFromDictionary(Dict As Dictionary)
-		  Self.mDescription = Dict.Value("Description")
-		  Self.mMap = Dict.Value("Map")
-		  Self.mMapSeed = Dict.Lookup("Map Seed", "")
-		  Self.mMapSize = Dict.Lookup("Map Size", 6144)
-		  Self.mPassword = NullableString.FromVariant(Dict.Lookup("Password", Nil))
-		  Self.mPort = NullableDouble.FromVariant(Dict.Lookup("Port", Nil))
-		  Self.mTelnetPort = NullableDouble.FromVariant(Dict.Lookup("Telnet Port", Nil))
-		  
-		  RaiseEvent ReadFromDictionary(Dict)
+		Sub ReadFromDictionary(Dict As Dictionary, Version As Integer)
+		  Self.mDescription = Dict.Value("description")
+		  Self.mMap = Dict.Value("map")
+		  Self.mMapSeed = Dict.Lookup("mapSeed", "")
+		  Self.mMapSize = Dict.Lookup("mapSize", 6144)
+		  Self.mPassword = NullableString.FromVariant(Dict.Lookup("password", Nil))
+		  Self.mPort = NullableDouble.FromVariant(Dict.Lookup("port", Nil))
+		  Self.mTelnetPort = NullableDouble.FromVariant(Dict.Lookup("telnetPort", Nil))
+		  Self.mPaths = Dict.Value("paths")
 		End Sub
 	#tag EndEvent
 
@@ -32,31 +31,31 @@ Inherits Beacon.ServerProfile
 		  Self.Port = Casted.Port
 		  Self.TelnetPort = Casted.TelnetPort
 		  
-		  RaiseEvent UpdateDetailsFrom(Casted)
+		  Self.mPaths = New Dictionary
+		  For Each Entry As DictionaryEntry In Casted.mPaths
+		    Self.Path(Entry.Key.StringValue) = Entry.Value.StringValue
+		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
-		  Dict.Value("Game") = SDTD.Identifier
-		  
-		  Dict.Value("Description") = Self.mDescription
-		  Dict.Value("Map") = Self.mMap
+		  Dict.Value("description") = Self.mDescription
+		  Dict.Value("map") = Self.mMap
 		  If Self.mMap = "RWG" Then
-		    Dict.Value("Map Seed") = Self.mMapSeed
-		    Dict.Value("Map Size") = Self.mMapSize
+		    Dict.Value("mapSeed") = Self.mMapSeed
+		    Dict.Value("mapSize") = Self.mMapSize
 		  End If
 		  If (Self.mPassword Is Nil) = False Then
-		    Dict.Value("Password") = Self.mPassword.StringValue
+		    Dict.Value("password") = Self.mPassword.StringValue
 		  End If
 		  If (Self.mPort Is Nil) = False Then
-		    Dict.Value("Port") = Self.mPort.IntegerValue
+		    Dict.Value("port") = Self.mPort.IntegerValue
 		  End If
 		  If (Self.mTelnetPort Is Nil) = False Then
-		    Dict.Value("Telnet Port") = Self.mTelnetPort.IntegerValue
+		    Dict.Value("telnetPort") = Self.mTelnetPort.IntegerValue
 		  End If
-		  
-		  RaiseEvent WriteToDictionary(Dict)
+		  Dict.Value("paths") = Self.mPaths
 		End Sub
 	#tag EndEvent
 
@@ -75,6 +74,15 @@ Inherits Beacon.ServerProfile
 		  Self.mPassword = Nil
 		  Self.mPort = 26900
 		  Self.mTelnetPort = 8081
+		  Self.mPaths = New Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Provider As String, Name As String)
+		  // Making the constructor public
+		  Self.Constructor()
+		  Super.Constructor(Provider, Name)
 		End Sub
 	#tag EndMethod
 
@@ -87,9 +95,14 @@ Inherits Beacon.ServerProfile
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function DefaultName() As String
-		  Return "An Unnamed " + FullName + " Server"
+	#tag Method, Flags = &h0
+		Function Filenames() As String()
+		  Var Names() As String
+		  For Each Entry As DictionaryEntry In Self.mPaths
+		    Names.Add(Entry.Key.StringValue)
+		  Next
+		  Names.Sort
+		  Return Names
 		End Function
 	#tag EndMethod
 
@@ -100,6 +113,23 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Path(Filename As String) As String
+		  Return Self.mPaths.Lookup(Filename, "").StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Path(Filename As String, Assigns Value As String)
+		  If Self.Path(Filename).Compare(Value, ComparisonOptions.CaseSensitive, Locale.Raw) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mPaths.Value(Filename) = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Platform(Assigns Value As Integer)
 		  Super.Platform = Value
 		End Sub
@@ -107,15 +137,15 @@ Inherits Beacon.ServerProfile
 
 
 	#tag Hook, Flags = &h0
-		Event ReadFromDictionary(Dict As Dictionary)
+		Attributes( Deprecated ) Event ReadFromDictionary(Dict As Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event UpdateDetailsFrom(Profile As SDTD.ServerProfile)
+		Attributes( Deprecated ) Event UpdateDetailsFrom(Profile As SDTD.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteToDictionary(Dict As Dictionary)
+		Attributes( Deprecated ) Event WriteToDictionary(Dict As Dictionary)
 	#tag EndHook
 
 
@@ -216,6 +246,10 @@ Inherits Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPaths As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPort As NullableDouble
 	#tag EndProperty
 
@@ -283,14 +317,6 @@ Inherits Beacon.ServerProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="ExternalAccountId"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
@@ -329,84 +355,6 @@ Inherits Beacon.ServerProfile
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Modified"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsConsole"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackupFolderName"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AdminNotes"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ProfileColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Beacon.ServerProfile.Colors"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Blue"
-				"2 - Brown"
-				"3 - Grey"
-				"4 - Green"
-				"5 - Indigo"
-				"6 - Orange"
-				"7 - Pink"
-				"8 - Purple"
-				"9 - Red"
-				"10 - Teal"
-				"11 - Yellow"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Nickname"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ProviderTokenId"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Description"

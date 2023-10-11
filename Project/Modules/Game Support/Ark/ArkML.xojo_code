@@ -201,7 +201,7 @@ Protected Class ArkML
 
 	#tag Method, Flags = &h0
 		Function Clone() As Ark.ArkML
-		  Return FromArray(Self.mParts)
+		  Return FromSaveData(Self.SaveData)
 		End Function
 	#tag EndMethod
 
@@ -257,6 +257,28 @@ Protected Class ArkML
 		  Try
 		    Var ML As New Ark.ArkML
 		    ML.RTFValue = Source
+		    Return ML
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(Source As String) As Ark.ArkML
+		  Try
+		    Var Json As String = Beacon.Decompress(DecodeBase64URLMBS(Source))
+		    Var Item As New JSONItem(Json)
+		    
+		    Var ML As New Ark.ArkML
+		    Var Bound As Integer = Item.LastRowIndex
+		    For Idx As Integer = 0 To Bound
+		      Var Child As JSONItem = Item.ChildAt(Idx)
+		      Var Part As New Dictionary
+		      Part.Value("Text") = Child.Value("Text")
+		      Part.Value("Color") = Child.Value("Color")
+		      ML.mParts.Add(Part)
+		    Next
 		    Return ML
 		  Catch Err As RuntimeException
 		    Return Nil
@@ -583,6 +605,17 @@ Protected Class ArkML
 		    Self.mParts.ResizeTo(-1)
 		  End Try
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData() As String
+		  Var Item As New JSONItem
+		  Item.Compact = False
+		  For Each Part As Dictionary In Self.mParts
+		    Item.Add(New JSONItem(Part))
+		  Next
+		  Return EncodeBase64URLMBS(Beacon.Compress(Item.ToString))
+		End Function
 	#tag EndMethod
 
 

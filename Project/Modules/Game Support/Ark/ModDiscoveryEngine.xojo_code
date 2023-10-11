@@ -218,7 +218,7 @@ Protected Class ModDiscoveryEngine
 		  Var CustomConfig As New Ark.Configs.CustomContent
 		  CustomConfig.GameUserSettingsIniContent = ConfigLines.Join(EndOfLine)
 		  
-		  Var Profile As New Ark.LocalServerProfile
+		  Var Profile As New Ark.ServerProfile(Local.Identifier, "Mod Discovery")
 		  Var Project As New Ark.Project
 		  Project.AddConfigGroup(CustomConfig)
 		  Project.AddServerProfile(Profile)

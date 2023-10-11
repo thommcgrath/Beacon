@@ -15,6 +15,7 @@ Inherits Ark.ConfigGroup
 		  Var ConsoleSafe As Boolean = Project.ConsoleSafe
 		  Var Configs() As Ark.ConfigValue
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var IsGameServerApp As Boolean = (Profile.ProviderId = GameServerApp.Identifier)
 		  For Each Entry As DictionaryEntry In Self.mSettings
 		    Try
 		      Var KeyUUID As String = Entry.Key
@@ -26,7 +27,7 @@ Inherits Ark.ConfigGroup
 		        Continue
 		      End If
 		      
-		      If Profile IsA Ark.GSAServerProfile And (Key.GSAPlaceholder Is Nil) = False Then
+		      If IsGameServerApp And (Key.GSAPlaceholder Is Nil) = False Then
 		        Configs.Add(New Ark.ConfigValue(Key, Key.Key + "=" + Key.GSAPlaceholder.StringValue, Key.SimplifiedKey))
 		        Continue
 		      End If
@@ -88,21 +89,21 @@ Inherits Ark.ConfigGroup
 		        If SupportedOnPlatform = False Then
 		          Continue
 		        End If
-		      ElseIf Profile.Platform <> Beacon.ServerProfile.PlatformUnknown Then
+		      ElseIf Profile.Platform <> Beacon.PlatformUnknown Then
 		        Var RequiredPlatform As Variant = Key.Constraint("platform")
 		        Var SupportedOnPlatform As Boolean = True
 		        If IsNull(RequiredPlatform) = False Then
 		          Select Case RequiredPlatform.StringValue
 		          Case "pc", "steam", "epic"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformPC)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPC)
 		          Case "xbox"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformXbox)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox)
 		          Case "ps"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPlayStation)
 		          Case "switch"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformSwitch)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformSwitch)
 		          Case "console"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformXbox Or Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox Or Profile.Platform = Beacon.PlatformPlayStation)
 		          End Select
 		          If SupportedOnPlatform = False Then
 		            Continue

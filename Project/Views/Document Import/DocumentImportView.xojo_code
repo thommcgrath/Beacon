@@ -1,6 +1,13 @@
 #tag Class
 Protected Class DocumentImportView
 Inherits DesktopContainer
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Method, Flags = &h1
+		Protected Sub Discover(Profiles() As Beacon.ServerProfile)
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Dismiss()
 		  RaiseEvent ShouldDismiss
@@ -47,6 +54,10 @@ Inherits DesktopContainer
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event Discover(Profiles() As Beacon.ServerProfile)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event ImportFile(File As FolderItem)

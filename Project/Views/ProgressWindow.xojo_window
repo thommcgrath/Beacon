@@ -157,7 +157,7 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Period          =   10
+      Period          =   100
       RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
@@ -235,6 +235,19 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Sub Cancel()
+		  If Self.mCancelPressed = True Then
+		    Return
+		  End If
+		  
+		  Self.mCancelPressed = True
+		  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
+		    Self.UpdateTimer.RunMode = Timer.RunModes.Single
+		  End If
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CancelPressed() As Boolean
@@ -455,6 +468,10 @@ End
 		  
 		  If Self.DetailLabel.Text.Compare(Self.mDetail, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
 		    Self.DetailLabel.Text = Self.mDetail
+		  End If
+		  
+		  If Self.CancelButton.Enabled <> Self.mCancelPressed Then
+		    Self.CancelButton.Enabled = Self.mCancelPressed
 		  End If
 		  
 		  Var ProgressValue, ProgressMaximum As Integer

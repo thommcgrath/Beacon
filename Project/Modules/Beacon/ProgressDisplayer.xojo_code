@@ -1,6 +1,12 @@
 #tag Interface
 Protected Interface ProgressDisplayer
 	#tag Method, Flags = &h0
+		Sub Cancel()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CancelPressed() As Boolean
 		  
 		End Function
@@ -38,6 +44,42 @@ Protected Interface ProgressDisplayer
 
 	#tag Method, Flags = &h0
 		Sub Progress(Assigns Value As NullableDouble)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ShowSubProgress() As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowSubProgress(Assigns Value As Boolean)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SubDetail() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SubDetail(Assigns Value As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SubProgress() As NullableDouble
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SubProgress(Assigns Value As NullableDouble)
 		  
 		End Sub
 	#tag EndMethod

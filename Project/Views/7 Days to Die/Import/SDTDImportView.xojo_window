@@ -265,7 +265,7 @@ Begin DocumentImportView SDTDImportView
          Visible         =   True
          Width           =   680
       End
-      Begin SDTDNitradoDiscoveryView NitradoView
+      Begin MultiSelectDiscoveryView NitradoView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -308,6 +308,30 @@ End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Discover(Profiles() As Beacon.ServerProfile)
+		  Self.mIntegrations.ResizeTo(Profiles.LastIndex)
+		  Self.StatusList.RowCount = Profiles.Count
+		  
+		  For Idx As Integer = Self.mIntegrations.FirstRowIndex To Self.mIntegrations.LastIndex
+		    If (Profiles(Idx) IsA SDTD.ServerProfile) = False Then
+		      Continue
+		    End If
+		    
+		    Var Integration As New SDTD.DiscoverIntegration(Profiles(Idx))
+		    Integration.Begin()
+		    Self.mIntegrations(Idx) = Integration
+		    
+		    Self.StatusList.CellTextAt(Idx, 0) = Profiles(Idx).Name + EndOfLine + "Starting parser…"
+		    Self.StatusList.RowTagAt(Idx) = Integration
+		  Next
+		  
+		  Self.SetThreadPriorities()
+		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
+		  Self.Views.SelectedPanelIndex = Self.PageStatus
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub ImportFile(File As FolderItem)
 		  #if Not SDTD.Enabled
@@ -388,9 +412,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Finish()
 		  Var Projects() As Beacon.Project
-		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
-		    If (Self.mImporters(I).Project Is Nil) = False Then
-		      Projects.Add(Self.mImporters(I).Project)
+		  For Idx As Integer = Self.mIntegrations.FirstRowIndex To Self.mIntegrations.LastIndex
+		    If (Self.mIntegrations(Idx).Project Is Nil) = False Then
+		      Projects.Add(Self.mIntegrations(Idx).Project)
 		    End If
 		  Next
 		  Self.Finish(Projects)
@@ -398,48 +422,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ImportFrom(Data() As Beacon.DiscoveredData)
-		  Self.mImporters.ResizeTo(Data.LastIndex)
-		  Self.StatusList.RowCount = Data.Count
-		  
-		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
-		    If (Data(I) IsA SDTD.DiscoveredData) = False Then
-		      Continue
-		    End If
-		    
-		    Var Importer As New SDTD.ImportThread(SDTD.DiscoveredData(Data(I)), Self.mDestinationProject)
-		    Importer.Start
-		    Self.mImporters(I) = Importer
-		    
-		    Self.StatusList.CellTextAt(I, 0) = Data(I).Profile.Name + EndOfLine + "Starting parser…"
-		    Self.StatusList.RowTagAt(I) = Importer
-		  Next
-		  
-		  Self.SetThreadPriorities()
-		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
-		  Self.Views.SelectedPanelIndex = Self.PageStatus
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub SetThreadPriorities()
 		  // Dynamically adjusts thread priority depending on the number that are actively running
 		  
-		  Var ActiveThreads() As SDTD.ImportThread
-		  For Each Importer As SDTD.ImportThread In Self.mImporters
-		    If Importer Is Nil Then
+		  Var ActiveIntegrations() As SDTD.DiscoverIntegration
+		  For Each Integration As SDTD.DiscoverIntegration In Self.mIntegrations
+		    If Integration Is Nil Then
 		      Continue
 		    End If
 		    
-		    If Importer.ThreadState <> Thread.ThreadStates.NotRunning Then
-		      ActiveThreads.Add(Importer)
+		    If Integration.ThreadState <> Global.Thread.ThreadStates.NotRunning Then
+		      ActiveIntegrations.Add(Integration)
 		    End If
 		  Next
 		  
-		  Var Priority As Integer = If(ActiveThreads.Count > 3, Thread.LowestPriority, Thread.NormalPriority)
-		  For Each Importer As SDTD.ImportThread In ActiveThreads
-		    If Importer.Priority <> Priority Then
-		      Importer.Priority = Priority
+		  Var Priority As Integer = If(ActiveIntegrations.Count > 3, Global.Thread.LowestPriority, Global.Thread.NormalPriority)
+		  For Each Integration As SDTD.DiscoverIntegration In ActiveIntegrations
+		    If Integration.ThreadPriority <> Priority Then
+		      Integration.ThreadPriority = Priority
 		    End If
 		  Next
 		End Sub
@@ -456,7 +456,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mImporters() As SDTD.ImportThread
+		Private mIntegrations() As SDTD.DiscoverIntegration
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -525,8 +525,8 @@ End
 #tag EndEvents
 #tag Events LocalView
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData)
-		  Self.ImportFrom(Data)
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -570,8 +570,8 @@ End
 #tag EndEvents
 #tag Events NitradoView
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData)
-		  Self.ImportFrom(Data)
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -593,6 +593,16 @@ End
 		  Self.SetPageHeight(NewHeight)
 		  Me.Height = NewHeight
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return SDTD.Identifier
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New Nitrado.HostingProvider
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher

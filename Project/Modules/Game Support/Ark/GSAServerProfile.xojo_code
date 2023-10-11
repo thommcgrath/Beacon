@@ -1,7 +1,7 @@
 #tag Class
 Protected Class GSAServerProfile
 Inherits Ark.ServerProfile
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit))
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  If Dict.HasKey("TemplateID") Then
@@ -20,7 +20,7 @@ Inherits Ark.ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Do not call the parent constructor
-		  Self.Platform = Beacon.ServerProfile.PlatformPC
+		  Self.Platform = Beacon.PlatformPC
 		End Sub
 	#tag EndMethod
 
@@ -48,6 +48,30 @@ Inherits Ark.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Provider"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Platform"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SecondaryName"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ExternalAccountId"
 			Visible=false

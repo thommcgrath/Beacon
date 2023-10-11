@@ -219,6 +219,7 @@ Begin ArkConfigEditor ArkServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -314,59 +315,6 @@ End
 		  Self.mViews = New Dictionary
 		  Super.Constructor(Project)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Engine_Discovered(Sender As Ark.IntegrationEngine, Data() As Beacon.DiscoveredData)
-		  #Pragma Unused Sender
-		  
-		  Var Profiles As New Dictionary
-		  Var AllProfiles() As Beacon.ServerProfile = Self.Project.ServerProfiles
-		  For Each Profile As Beacon.ServerProfile In AllProfiles
-		    Var ServiceId As Variant = Profile.ProviderServiceID
-		    If IsNull(ServiceId) Then
-		      Continue
-		    End If
-		    
-		    Profiles.Value(ServiceId) = Profile
-		  Next
-		  
-		  For Each DiscoveredData As Beacon.DiscoveredData In Data
-		    Var DiscoveredProfile As Beacon.ServerProfile = DiscoveredData.Profile
-		    Var ServiceId As Variant = DiscoveredProfile.ProviderServiceID
-		    If IsNull(ServiceId) Or Profiles.HasKey(ServiceId) = False Then
-		      Continue
-		    End If
-		    
-		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(DiscoveredProfile.ProviderTokenId, True)
-		    Var ProjectProfile As Beacon.ServerProfile = Profiles.Value(ServiceId)
-		    ProjectProfile.UpdateDetailsFrom(DiscoveredProfile)
-		    Self.Project.AddProviderToken(Token)
-		  Next
-		  Self.Modified = Self.Project.Modified
-		  
-		  Var AllFinished As Boolean = True
-		  For Each Entry As DictionaryEntry In Self.mEngines
-		    Var Engine As Ark.IntegrationEngine = Entry.Value
-		    
-		    If Engine.Finished = False Then
-		      AllFinished = False
-		    End If
-		  Next
-		  
-		  If AllFinished Then
-		    Self.FinishRefreshingDetails()
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Engine_Wait(Sender As Ark.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
-		  #Pragma Unused Sender
-		  Controller.Cancelled = False
-		  Controller.ShouldResume = True
-		  Return True
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -534,10 +482,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngines As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mRefreshing As Boolean
 	#tag EndProperty
 
@@ -561,15 +505,15 @@ End
 		    If Not Self.mViews.HasKey(ProfileID) Then
 		      // Create the view
 		      Var View As ArkServerViewContainer
-		      Select Case Profile
-		      Case IsA Ark.NitradoServerProfile
-		        View = New ArkNitradoServerView(Self.Project, Ark.NitradoServerProfile(Profile))
-		      Case IsA Ark.FTPServerProfile
-		        View = New ArkFTPServerView(Self.Project, Ark.FTPServerProfile(Profile))
-		      Case IsA Ark.LocalServerProfile
-		        View = New ArkLocalServerView(Self.Project, Ark.LocalServerProfile(Profile))
-		      Case IsA Ark.GSAServerProfile
-		        View = New ArkGSAServerView(Self.Project, Ark.GSAServerProfile(Profile))
+		      Select Case Profile.ProviderId
+		      Case Nitrado.Identifier
+		        View = New ArkNitradoServerView(Self.Project, Profile)
+		      Case FTP.Identifier
+		        View = New ArkFTPServerView(Self.Project, Profile)
+		      Case Local.Identifier
+		        View = New ArkLocalServerView(Self.Project, Profile)
+		      Case GameServerApp.Identifier
+		        View = New ArkGSAServerView(Self.Project, Profile)
 		      Else
 		        Self.CurrentProfileID = ""
 		        Return
@@ -661,8 +605,8 @@ End
 		    DeployItem = New DesktopMenuItem("Deploy This Server…")
 		  End If
 		  Var DeployProfiles() As Beacon.ServerProfile
-		  Var NitradoProfiles() As Ark.NitradoServerProfile
-		  Var LocalProfiles() As Ark.LocalServerProfile
+		  Var NitradoProfiles() As Ark.ServerProfile
+		  Var LocalProfiles() As Ark.ServerProfile
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.RowSelectedAt(Idx) = False Then
 		      Continue
@@ -671,12 +615,12 @@ End
 		    If Profile.DeployCapable Then
 		      DeployProfiles.Add(Profile)
 		    End If
-		    If Profile IsA Ark.NitradoServerProfile Then
-		      NitradoProfiles.Add(Ark.NitradoServerProfile(Profile))
-		    End If
-		    If Profile IsA Ark.LocalServerProfile Then
-		      LocalProfiles.Add(Ark.LocalServerProfile(Profile))
-		    End If
+		    Select Case Profile.ProviderId
+		    Case Nitrado.Identifier
+		      NitradoProfiles.Add(Profile)
+		    Case Local.Identifier
+		      LocalProfiles.Add(Profile)
+		    End Select
 		  Next Idx
 		  DeployItem.Enabled = DeployProfiles.Count > 0
 		  DeployItem.Tag = DeployProfiles
@@ -729,16 +673,16 @@ End
 		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
 		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)
 		  Case "Open Nitrado Dashboard"
-		    Var NitradoProfiles() As Ark.NitradoServerProfile = HitItem.Tag
+		    Var NitradoProfiles() As Ark.ServerProfile = HitItem.Tag
 		    For Idx As Integer = 0 To NitradoProfiles.LastIndex
-		      System.GotoURL(Beacon.WebURL("/redirect?destination=nitradodash&serviceid=" + NitradoProfiles(Idx).ServiceID.ToString(Locale.Raw, "0")))
+		      System.GotoURL(Beacon.WebURL("/redirect?destination=nitradodash&serviceid=" + Nitrado.HostConfig(NitradoProfiles(Idx).HostConfig).ServiceID.ToString(Locale.Raw, "0")))
 		    Next Idx
 		  Case "Show Config Files"
-		    Var LocalProfiles() As Ark.LocalServerProfile = HitItem.Tag
+		    Var LocalProfiles() As Ark.ServerProfile = HitItem.Tag
 		    For Idx As Integer = 0 To LocalProfiles.LastIndex
-		      Var File As FolderItem = LocalProfiles(Idx).GameIniFile
+		      Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(LocalProfiles(Idx).GameIniPath)
 		      If File Is Nil Or File.Exists = False Then
-		        File = LocalProfiles(Idx).GameUserSettingsIniFile
+		        File = BookmarkedFolderItem.FromSaveInfo(LocalProfiles(Idx).GameUserSettingsIniPath)
 		      End If
 		      If (File Is Nil) = False And File.Exists Then
 		        File.Parent.Open
@@ -773,8 +717,7 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Select Case Item.Name
 		  Case "AddServerButton"
-		    Var Profile As New Ark.LocalServerProfile
-		    Profile.Name = "An Ark Server"
+		    Var Profile As New Ark.ServerProfile(Local.Identifier, Language.DefaultServerName(Ark.Identifier))
 		    
 		    Self.Project.AddServerProfile(Profile)
 		    Self.ServerList.UpdateList(Profile, True)
@@ -812,13 +755,12 @@ End
 		Sub Run()
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  If Identity Is Nil Then
-		    Self.mEngines = New Dictionary
-		    Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": True))
+		    Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True, "Finished": True))
 		    Return
 		  End If
 		  
 		  Self.mRefreshing = True
-		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True))
 		  
 		  Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(Identity.UserId)
 		  Var Filter As New Dictionary
@@ -839,35 +781,38 @@ End
 		    End If
 		  Next
 		  
-		  Var Engines As New Dictionary
+		  Var AllProfiles() As Beacon.ServerProfile = Self.Project.ServerProfiles
+		  Var ProfileMap As New Dictionary
+		  For Each Profile As Beacon.ServerProfile in AllProfiles
+		    ProfileMap.Value(Profile.ProfileId) = Profile
+		  Next
+		  
 		  For Each Token As BeaconAPI.ProviderToken In Tokens
-		    Var Engine As Ark.IntegrationEngine
-		    
+		    Var Provider As Beacon.HostingProvider
+		    Var Config As Beacon.HostConfig
 		    Select Case Token.Provider
 		    Case BeaconAPI.ProviderToken.ProviderNitrado
-		      Var Profile As New Ark.NitradoServerProfile
-		      Profile.ProviderTokenId = Token.TokenId
-		      
-		      Engine = New Ark.NitradoIntegrationEngine(Profile)
+		      Provider = New Nitrado.HostingProvider
+		      Config = New Nitrado.HostConfig
+		      Nitrado.HostConfig(Config).TokenId = Token.TokenId
 		    Case BeaconAPI.ProviderToken.ProviderGameServerApp
-		      Var Profile As New Ark.GSAServerProfile
-		      Profile.ProviderTokenId = Token.TokenId
-		      
-		      Engine = New Ark.GSAIntegrationEngine(Profile)
+		      Provider = New GameServerApp.HostingProvider
+		      Config = New GameServerApp.HostConfig
+		      GameServerApp.HostConfig(Config).TokenId = Token.TokenId
 		    End Select
-		    
-		    If Engine Is Nil Then
+		    If Provider Is Nil Then
 		      Continue
 		    End If
 		    
-		    Engines.Value(Token.TokenId) = Engine
-		    AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
-		    AddHandler Engine.Wait, WeakAddressOf Engine_Wait
-		    Engine.BeginDiscovery(Self.Project)
+		    Var Profiles() As Beacon.ServerProfile = Provider.ListServers(Nil, Config, Ark.Identifier)
+		    For Each Profile As Beacon.ServerProfile In Profiles
+		      If ProfileMap.HasKey(Profile.ProfileId) Then
+		        Beacon.ServerProfile(ProfileMap.Value(Profile.ProfileId).ObjectValue).UpdateDetailsFrom(Profile)
+		      End If
+		    Next
 		  Next
 		  
-		  Self.mEngines = Engines
-		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": True))
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True, "Finished": True))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -877,10 +822,10 @@ End
 		    Var Finished As Boolean = Update.Lookup("Finished", False).BooleanValue
 		    
 		    If UpdateUI Then
-		      If Self.mEngines Is Nil Or Self.mEngines.KeyCount > 0 Or Finished = False Then
-		        Self.UpdateRefreshButton()
-		      Else
+		      If Finished Then
 		        Self.FinishRefreshingDetails()
+		      Else
+		        Self.UpdateRefreshButton()
 		      End If
 		    End If
 		  Next

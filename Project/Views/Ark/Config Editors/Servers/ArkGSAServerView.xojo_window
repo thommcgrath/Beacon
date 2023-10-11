@@ -173,27 +173,10 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
+		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
 		  Self.SettingsView.RefreshUI()
 		End Sub
 	#tag EndEvent
-
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Document As Ark.Project, Profile As Ark.GSAServerProfile)
-		  Self.mDocument = Document
-		  Self.mProfile = Profile
-		End Sub
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mDocument As Ark.Project
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProfile As Ark.GSAServerProfile
-	#tag EndProperty
 
 
 #tag EndWindowCode
@@ -210,15 +193,15 @@ End
 #tag Events AdminNotesField
 	#tag Event
 		Sub TextChanged()
-		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Modified = Self.mProfile.Modified
+		  Self.Profile.AdminNotes = Me.Text
+		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SettingsView
 	#tag Event
 		Sub Opening()
-		  Me.Profile = Self.mProfile
+		  Me.Profile = Self.Profile
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -228,7 +211,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GetProject() As Ark.Project
-		  Return Self.mDocument
+		  Return Self.Project
 		End Function
 	#tag EndEvent
 #tag EndEvents

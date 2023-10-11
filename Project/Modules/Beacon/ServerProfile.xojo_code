@@ -1,9 +1,38 @@
 #tag Class
 Protected Class ServerProfile
 	#tag Method, Flags = &h0
+		Function AdminNotes() As String
+		  Return Self.mAdminNotes
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AdminNotes(Assigns Value As String)
+		  If Value.Encoding Is Nil Then
+		    Value = Value.GuessEncoding
+		  ElseIf Value.Encoding <> Encodings.UTF8 Then
+		    Value = Value.ConvertEncoding(Encodings.UTF8)
+		  End If
+		  Value = Value.Trim
+		  If Self.mAdminNotes.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mAdminNotes = Value
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BackupFolderName() As String
+		  Return Beacon.SanitizeFilename(Self.Name, 60)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone() As Beacon.ServerProfile
 		  // The project is not necessary since SaveData will always be modern
-		  Return Beacon.ServerProfile.FromSaveData(Self.SaveData(), Nil)
+		  Var Json As String = Beacon.GenerateJson(Self.SaveData(), False)
+		  Var SaveData As Dictionary = Beacon.ParseJson(Json)
+		  Return Beacon.ServerProfile.FromSaveData(SaveData, Nil)
 		End Function
 	#tag EndMethod
 
@@ -26,7 +55,7 @@ Protected Class ServerProfile
 		  End If
 		  
 		  Self.mConfigSetStates = Beacon.ConfigSetState.CloneArray(States)
-		  Self.Modified = True
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -45,73 +74,125 @@ Protected Class ServerProfile
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(Dict As Dictionary, Project As Beacon.Project = Nil)
+	#tag Method, Flags = &h1
+		Protected Sub Constructor(Dict As Dictionary, Project As Beacon.Project, Version As Integer)
 		  // Optional project is needed to correctly restore legacy config set states
 		  
-		  If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
-		    Var Err As New KeyNotFoundException
-		    Err.Message = "Incomplete server profile"
-		    Raise Err
-		  End If
-		  
-		  Self.Name = Dict.Value("Name")
-		  Self.NickName = Dict.Lookup("Nickname", "")
-		  Self.SecondaryName = Dict.Lookup("Secondary Name", "")
-		  Self.Enabled = Dict.Value("Enabled")
-		  Self.mProfileID = Dict.Value("Profile ID")
-		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
-		  Self.mAdminNotes = Dict.Lookup("Admin Notes", "")
-		  Self.mProfileColor = CType(Dict.Lookup("Color", 0).IntegerValue, Beacon.ServerProfile.Colors)
-		  Self.mProvider = Dict.Value("Provider")
-		  Self.mProviderServiceID = Dict.Lookup("Provider Service ID", Nil)
-		  Self.mProviderTokenId = Dict.Lookup("Provider Token Id", "")
-		  
-		  If Dict.HasKey("External Account") Then
-		    Self.mExternalAccountId = Dict.Value("External Account").StringValue
-		  End If
-		  
-		  If Dict.HasKey("Config Set Priorities") Then
-		    Self.mConfigSetStates = Beacon.ConfigSetState.DecodeArray(Dict.Value("Config Set Priorities"))
-		  ElseIf Dict.HasKey("Config Sets") Then
-		    Var States() As Dictionary
-		    Try
-		      States = Dict.Value("Config Sets").DictionaryArrayValue
-		    Catch Err As RuntimeException
-		    End Try
+		  Select Case Version
+		  Case 2
+		    Self.mProviderId = Dict.Value("providerId")
+		    Self.mName = Dict.Value("name")
+		    Self.mNickname = Dict.Value("nickname")
+		    Self.mSecondaryName = Dict.Value("secondaryName")
+		    Self.mProfileId = Dict.Value("profileId")
+		    Self.mEnabled = Dict.Value("enabled")
+		    Self.mPlatform = Dict.Value("platform")
+		    Self.mAdminNotes = Dict.Value("notes")
+		    Self.mProfileColor = CType(Dict.Lookup("color", 0).IntegerValue, Beacon.ServerProfile.Colors)
 		    
-		    Var Sets() As Beacon.ConfigSet
-		    If (Project Is Nil) = False Then
-		      Sets = Project.ConfigSets
+		    If Dict.HasKey("configSetPriorities") Then
+		      Self.mConfigSetStates = Beacon.ConfigSetState.DecodeArray(Dict.Value("configSetPriorities"))
 		    End If
-		    Var SetsMap As New Dictionary
-		    For Each Set As Beacon.ConfigSet In Sets
-		      SetsMap.Value(Set.Name) = Set
-		    Next
 		    
-		    Self.mConfigSetStates.ResizeTo(-1)
-		    For Each State As Dictionary In States
+		    If Dict.HasKey("hostConfig") Then
+		      Self.mHostConfig = Beacon.HostConfig.FromSaveData(Dictionary(Dict.Value("hostConfig").ObjectValue))
+		    End If
+		  Case 1
+		    If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
+		      Var Err As New KeyNotFoundException
+		      Err.Message = "Incomplete server profile"
+		      Raise Err
+		    End If
+		    
+		    Self.Name = Dict.Value("Name")
+		    Self.NickName = Dict.Lookup("Nickname", "")
+		    Self.SecondaryName = Dict.Lookup("Secondary Name", "")
+		    Self.Enabled = Dict.Value("Enabled")
+		    Self.mProfileID = Dict.Value("Profile ID")
+		    Self.mPlatform = Dict.Lookup("Platform", Beacon.PlatformUnknown)
+		    Self.mAdminNotes = Dict.Lookup("Admin Notes", "")
+		    Self.mProfileColor = CType(Dict.Lookup("Color", 0).IntegerValue, Beacon.ServerProfile.Colors)
+		    
+		    Self.mProviderId = Dict.Value("Provider")
+		    Select Case Self.mProviderId
+		    Case Nitrado.Identifier
+		      Var HostConfig As New Nitrado.HostConfig
+		      HostConfig.ServiceId = Dict.Lookup("Provider Service ID", 0)
+		      HostConfig.TokenId = Dict.Lookup("Provider Token Id", "")
+		      Self.mHostConfig = HostConfig
+		    Case GameServerApp.Identifier
+		      Var HostConfig As New GameServerApp.HostConfig
+		      HostConfig.TemplateId = Dict.Lookup("Provider Service ID", 0)
+		      HostConfig.TokenId = Dict.Lookup("Provider Token Id", "")
+		      Self.mHostConfig = HostConfig
+		    Case FTP.Identifier
+		      Var HostConfig As New FTP.HostConfig
+		      HostConfig.Host = Dict.Value("Host").StringValue
+		      HostConfig.Port = Dict.Value("Port").IntegerValue
+		      HostConfig.Username = Dict.Value("User").StringValue
+		      HostConfig.Password = Dict.Value("Pass").StringValue
+		      HostConfig.Mode = Dict.Lookup("Mode", Beacon.FTPModeOptionalTLS).StringValue
+		      HostConfig.VerifyHost = Dict.Lookup("Verify Host", True).BooleanValue
+		      HostConfig.PrivateKeyFile = Dict.Lookup("Private Key", "").StringValue
+		      Self.mHostConfig = HostConfig
+		    End Select
+		    
+		    If Dict.HasKey("External Account") Then
+		      Self.mExternalAccountId = Dict.Value("External Account").StringValue
+		    End If
+		    
+		    If Dict.HasKey("Config Set Priorities") Then
+		      Self.mConfigSetStates = Beacon.ConfigSetState.DecodeArray(Dict.Value("Config Set Priorities"))
+		    ElseIf Dict.HasKey("Config Sets") Then
+		      Var States() As Dictionary
 		      Try
-		        Var SetName As String = State.Value("Name").StringValue
-		        If SetsMap.HasKey(SetName) = False Then
-		          Continue
-		        End If
-		        Var Set As Beacon.ConfigSet = SetsMap.Value(SetName)
-		        Self.mConfigSetStates.Add(New Beacon.ConfigSetState(Set, State.Value("Enabled").BooleanValue))
+		        States = Dict.Value("Config Sets").DictionaryArrayValue
 		      Catch Err As RuntimeException
 		      End Try
-		    Next
-		  End If
+		      
+		      Var Sets() As Beacon.ConfigSet
+		      If (Project Is Nil) = False Then
+		        Sets = Project.ConfigSets
+		      End If
+		      Var SetsMap As New Dictionary
+		      For Each Set As Beacon.ConfigSet In Sets
+		        SetsMap.Value(Set.Name) = Set
+		      Next
+		      
+		      Self.mConfigSetStates.ResizeTo(-1)
+		      For Each State As Dictionary In States
+		        Try
+		          Var SetName As String = State.Value("Name").StringValue
+		          If SetsMap.HasKey(SetName) = False Then
+		            Continue
+		          End If
+		          Var Set As Beacon.ConfigSet = SetsMap.Value(SetName)
+		          Self.mConfigSetStates.Add(New Beacon.ConfigSetState(Set, State.Value("Enabled").BooleanValue))
+		        Catch Err As RuntimeException
+		        End Try
+		      Next
+		    End If
+		  End Select
 		  
-		  RaiseEvent ReadFromDictionary(Dict)
+		  RaiseEvent ReadFromDictionary(Dict, Version)
 		  
-		  Self.Modified = False
+		  Self.Modified = False // Use the public version so the state will cascade down
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Constructor(Provider As String, ProfileId As String, Name As String, Nickname As String, SecondaryName As String)
-		  Self.mProvider = Provider
+		Protected Sub Constructor(ProviderId As String, Name As String)
+		  Self.mProviderId = ProviderId
+		  Self.mProfileId = Beacon.UUID.v4
+		  Self.mName = Name
+		  Self.mNickname = ""
+		  Self.mSecondaryName = ""
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Constructor(ProviderId As String, ProfileId As String, Name As String, Nickname As String, SecondaryName As String)
+		  Self.mProviderId = ProviderId
 		  Self.mProfileId = ProfileId
 		  Self.mName = Name
 		  Self.mNickname = Nickname
@@ -119,9 +200,22 @@ Protected Class ServerProfile
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function DefaultName() As String
-		  Return "An Unnamed Server"
+	#tag Method, Flags = &h0
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Select Case Self.mProviderId
+		  Case Nitrado.Identifier
+		    Return New Nitrado.HostingProvider
+		  Case GameServerApp.Identifier
+		    Return New GameServerApp.HostingProvider
+		  Case FTP.Identifier
+		    Return New FTP.HostingProvider
+		  Case Local.Identifier
+		    Return New Local.HostingProvider
+		  Else
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Unknown provider " + Self.mProviderId + "."
+		    Raise Err
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -137,8 +231,29 @@ Protected Class ServerProfile
 		  If Nickname.IsEmpty = False Then
 		    Return Nickname
 		  End If
-		  
 		  Return Self.Name
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Enabled() As Boolean
+		  Return Self.mEnabled
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Enabled(Assigns Value As Boolean)
+		  If Self.mEnabled <> Value Then
+		    Self.mEnabled = Value
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExternalAccountId() As String
+		  // Kept around for support importing
+		  Return Self.mExternalAccountId
 		End Function
 	#tag EndMethod
 
@@ -147,16 +262,31 @@ Protected Class ServerProfile
 		  // This isn't a great design because the factory needs to know about all its subclasses, but
 		  // there aren't better alternatives. Xojo's dead code stripping prevents a lookup from working.
 		  
-		  If Not Dict.HasAllKeys("Name", "Provider", "Profile ID") Then
-		    Return Nil
+		  Var Version As Integer = Dict.Lookup("version", 1)
+		  If Version > Beacon.ServerProfile.Version Then
+		    Var Err As New UnsupportedFormatException
+		    Err.Message = "Server profile version is too new"
+		    Raise Err
 		  End If
 		  
-		  Var GameId As String = Dict.Lookup("Game", Ark.Identifier)
+		  Var GameId As String
+		  If Version = 1 Then
+		    If Dict.HasAllKeys("Name", "Provider", "Profile ID") = False Then
+		      Return Nil
+		    End If
+		    GameId = Ark.Identifier
+		  ElseIf Version >= 2 Then
+		    If Dict.HasAllKeys("name", "gameId") = False Then
+		      Return Nil
+		    End If
+		    GameId = Dict.Value("gameId")
+		  End If
+		  
 		  Select Case GameId
 		  Case Ark.Identifier
-		    Return New Ark.ServerProfile(Dict, Project)
+		    Return New Ark.ServerProfile(Dict, Project, Version)
 		  Case SDTD.Identifier
-		    Return New SDTD.ServerProfile(Dict, Project)
+		    Return New SDTD.ServerProfile(Dict, Project, Version)
 		  End Select
 		End Function
 	#tag EndMethod
@@ -180,9 +310,108 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HostConfig() As Beacon.HostConfig
+		  Return Self.mHostConfig
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub HostConfig(Assigns Config As Beacon.HostConfig)
+		  If Self.mHostConfig = Config Then
+		    Return
+		  End If
+		  
+		  If (Config Is Nil) = False And Config.ProviderId <> Self.ProviderId Then
+		    Var Err As New UnsupportedFormatException
+		    Err.Message = "Incorrect host config for server profile."
+		    Raise Err
+		  End If
+		  
+		  Self.mHostConfig = Config
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsConsole() As Boolean
+		  Var Platform As Integer = Self.Platform
+		  Return Platform = Beacon.PlatformXbox Or Platform = Beacon.PlatformPlayStation Or Platform = Beacon.PlatformSwitch
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LinkPrefix() As String
 		  Return "Server"
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  If Self.mModified Then
+		    Return True
+		  End If
+		  
+		  If (Self.mHostConfig Is Nil) = False And Self.mHostConfig.Modified Then
+		    Return True
+		  End If
+		  
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  If Value Then
+		    Self.mModified = True
+		    Return
+		  End If
+		  
+		  Self.mModified = False
+		  
+		  If (Self.mHostConfig Is Nil) = False Then
+		    Self.mHostConfig.Modified = False
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Name() As String
+		  If Self.mName.IsEmpty = False Then
+		    Return Self.mName.Trim
+		  ElseIf Self.SecondaryName.IsEmpty = False Then
+		    Return Self.SecondaryName.Trim
+		  Else
+		    Return Language.DefaultServerName(Self.GameId)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Name(Assigns Value As String)
+		  Value = Value.Trim
+		  
+		  If Self.mName.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mName = Value
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Nickname() As String
+		  Return Self.mNickname.Trim
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Nickname(Assigns Value As String)
+		  Value = Value.Trim
+		  
+		  If Self.Nickname.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mNickname = Value
+		    Self.mModified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -191,22 +420,16 @@ Protected Class ServerProfile
 		    Return 1
 		  End If
 		  
-		  // Use the external identifier as the primary means of comparison, if present
-		  If IsNull(Self.mProviderServiceID) = False And Self.mProviderServiceID = Other.mProviderServiceID Then
+		  If Self.mProfileId = Other.mProfileId Then
 		    Return 0
 		  End If
 		  
-		  Var MyHash As String = Self.Hash
-		  Var TheirHash As String = Other.Hash
+		  Const PartSeparator = "4337005c"
 		  
-		  If MyHash = TheirHash Then
-		    Return 0
-		  Else
-		    // Don't just compare names. We know these are not equal, but we need them to be sortable.
-		    Var SelfCompare As String = Self.Name + "    " + MyHash
-		    Var OtherCompare As String = Other.Name + "    " + TheirHash
-		    Return SelfCompare.Compare(OtherCompare, ComparisonOptions.CaseInsensitive)
-		  End If
+		  // Don't just compare names. We know these are not equal, but we need them to be sortable.
+		  Var SelfCompare As String = Self.mName + PartSeparator + Self.mSecondaryName + PartSeparator + Self.mProfileId
+		  Var OtherCompare As String = Other.mName + PartSeparator + Other.mSecondaryName + PartSeparator + Other.mProfileId
+		  Return SelfCompare.Compare(OtherCompare, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -216,11 +439,26 @@ Protected Class ServerProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub Platform(Assigns Value As Integer)
+	#tag Method, Flags = &h0
+		Sub Platform(Assigns Value As Integer)
 		  If Self.mPlatform <> Value Then
 		    Self.mPlatform = Value
-		    Self.Modified = True
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProfileColor() As Beacon.ServerProfile.Colors
+		  Return Self.mProfileColor
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ProfileColor(Assigns Value As Beacon.ServerProfile.Colors)
+		  If Self.mProfileColor <> Value Then
+		    Self.mProfileColor = Value
+		    Self.mModified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -235,35 +473,74 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ProviderId() As String
+		  Return Self.mProviderId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ProviderId(Assigns Value As String)
+		  If Self.mProviderId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mProviderId = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
+		  Var SaveData As New Dictionary
+		  SaveData.Value("version") = Self.Version
+		  SaveData.Value("gameId") = Self.GameId
+		  SaveData.Value("providerId") = Self.mProviderId
+		  SaveData.Value("name") = Self.mName
+		  SaveData.Value("nickname") = Self.mNickname
+		  SaveData.Value("secondaryName") = Self.mSecondaryName
+		  SaveData.Value("profileId") = Self.mProfileId
+		  SaveData.Value("enabled") = Self.mEnabled
+		  SaveData.Value("platform") = Self.mPlatform
+		  SaveData.Value("notes") = Self.mAdminNotes
+		  SaveData.Value("color") = CType(Self.mProfileColor, Integer)
+		  
+		  If Self.mConfigSetStates.Count > 0 Then
+		    SaveData.Value("configSetPriorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetStates)
+		  End If
+		  
+		  If (Self.mHostConfig Is Nil) = False Then
+		    SaveData.Value("hostConfig") = Self.mHostConfig.SaveData
+		  End If
+		  
 		  Var Dict As New Dictionary
 		  RaiseEvent WriteToDictionary(Dict)
-		  If Dict.HasAllKeys("Game") = False Then
-		    Var Err As New KeyNotFoundException
-		    Err.Message = "No provider and/or game was set in ServerProfile.WriteToDictionary"
-		    Raise Err
-		  End If
-		  Dict.Value("Name") = Self.Name
-		  Dict.Value("Nickname") = Self.Nickname
-		  Dict.Value("Secondary Name") = Self.mSecondaryName
-		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
-		  Dict.Value("Enabled") = Self.Enabled
-		  Dict.Value("Platform") = Self.mPlatform
-		  Dict.Value("Admin Notes") = Self.mAdminNotes
-		  Dict.Value("Color") = CType(Self.mProfileColor, Integer)
-		  Dict.Value("Provider") = Self.mProvider
-		  Dict.Value("Provider Token Id") = Self.mProviderTokenId
-		  If Self.mExternalAccountId.IsEmpty = False Then
-		    Dict.Value("External Account") = Self.mExternalAccountId
-		  End If
-		  If Self.mConfigSetStates.Count > 0 Then
-		    Dict.Value("Config Set Priorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetStates)
-		  End If
-		  If IsNull(Self.mProviderServiceID) = False Then
-		    Dict.Value("Provider Service ID") = Self.mProviderServiceID
-		  End If
-		  Return Dict
+		  For Each Entry As DictionaryEntry In Dict
+		    If SaveData.HasKey(Entry.Key) Then
+		      Continue
+		    End If
+		    
+		    SaveData.Value(Entry.Key) = Entry.Value
+		  Next
+		  
+		  Return SaveData
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SecondaryName() As String
+		  Return Self.mSecondaryName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SecondaryName(Assigns Value As String)
+		  If Self.mSecondaryName.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mSecondaryName = Value
+		  Self.mModified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -280,14 +557,13 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
-		  Self.ProviderTokenId = Profile.ProviderTokenId
 		  RaiseEvent UpdateDetailsFrom(Profile)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event ReadFromDictionary(Dict As Dictionary)
+		Event ReadFromDictionary(Dict As Dictionary, Version As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -298,81 +574,6 @@ Protected Class ServerProfile
 		Event WriteToDictionary(Dict As Dictionary)
 	#tag EndHook
 
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mAdminNotes
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value.Encoding Is Nil Then
-			    Value = Value.GuessEncoding
-			  ElseIf Value.Encoding <> Encodings.UTF8 Then
-			    Value = Value.ConvertEncoding(Encodings.UTF8)
-			  End If
-			  Value = Value.Trim
-			  If Self.mAdminNotes.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-			    Self.mAdminNotes = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		AdminNotes As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Beacon.SanitizeFilename(Self.Name, 60)
-			End Get
-		#tag EndGetter
-		BackupFolderName As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mEnabled
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mEnabled <> Value Then
-			    Self.mEnabled = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		Enabled As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mExternalAccountId
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mExternalAccountId <> Value Then
-			    Self.mExternalAccountId = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		ExternalAccountId As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mPlatform = Beacon.ServerProfile.PlatformXbox Or Self.mPlatform = Beacon.ServerProfile.PlatformPlayStation Or Self.mPlatform = Beacon.ServerProfile.PlatformSwitch
-			End Get
-		#tag EndGetter
-		IsConsole As Boolean
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mAdminNotes As String
@@ -391,15 +592,19 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHostConfig As Beacon.HostConfig
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mNickname As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		Modified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -415,190 +620,15 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProvider As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProviderServiceId As Variant
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProviderTokenId As String
+		Private mProviderId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSecondaryName As String
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If Self.mName.IsEmpty = False Then
-			    Return Self.mName.Trim
-			  ElseIf Self.SecondaryName.IsEmpty = False Then
-			    Return Self.SecondaryName.Trim
-			  Else
-			    Return Self.DefaultName
-			  End If
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Value = Value.Trim
-			  
-			  If Self.mName.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-			    Self.mName = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		Name As String
-	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mNickname.Trim
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Value = Value.Trim
-			  
-			  If Self.Nickname.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-			    Self.mNickname = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		Nickname As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mPlatform
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mPlatform = Value Then
-			    Return
-			  End If
-			  
-			  Self.mPlatform = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		Platform As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mProfileColor
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mProfileColor <> Value Then
-			    Self.mProfileColor = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		ProfileColor As Beacon.ServerProfile.Colors
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mProvider
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mProvider = Value Then
-			    Return
-			  End If
-			  
-			  Self.mProvider = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		Provider As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mProviderServiceID
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mProviderServiceID <> Value Then
-			    Self.mProviderServiceID = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		ProviderServiceID As Variant
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mProviderTokenId
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mProviderTokenId <> Value Then
-			    Self.mProviderTokenId = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		ProviderTokenId As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mSecondaryName
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mSecondaryName.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
-			    Return
-			  End If
-			  
-			  Self.mSecondaryName = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		SecondaryName As String
-	#tag EndComputedProperty
-
-
-	#tag Constant, Name = PlatformPC, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = PlatformPlayStation, Type = Double, Dynamic = False, Default = \"3", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = PlatformSwitch, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = PlatformUnknown, Type = Double, Dynamic = False, Default = \"0", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = PlatformUnsupported, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = PlatformXbox, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
 	#tag EndConstant
 
 
@@ -656,108 +686,6 @@ Protected Class ServerProfile
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Modified"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsConsole"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackupFolderName"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AdminNotes"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ProfileColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Beacon.ServerProfile.Colors"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Blue"
-				"2 - Brown"
-				"3 - Grey"
-				"4 - Green"
-				"5 - Indigo"
-				"6 - Orange"
-				"7 - Pink"
-				"8 - Purple"
-				"9 - Red"
-				"10 - Teal"
-				"11 - Yellow"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Nickname"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ProviderTokenId"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ExternalAccountId"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Provider"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Platform"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -881,9 +881,15 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      If LegacyAccountIdMap.HasKey(Profile.ExternalAccountId) Then
-		        Var Token As BeaconApi.ProviderToken = LegacyAccountIdMap.Value(Profile.ExternalAccountId)
-		        Profile.ProviderTokenId = Token.TokenId
+		      If Dict.HasKey("External Account") Then
+		        Var ExternalAccountId As String = Dict.Value("External Account")
+		        If LegacyAccountIdMap.HasKey(ExternalAccountId) Then
+		          Var Token As BeaconApi.ProviderToken = LegacyAccountIdMap.Value(ExternalAccountId)
+		          Var Config As Beacon.HostConfig = Profile.HostConfig
+		          If (Token Is Nil) = False And (Config Is Nil) = False And Config IsA Beacon.OAuthConsumer Then
+		            Beacon.OAuthConsumer(Config).TokenId = Token.TokenId
+		          End If
+		        End If
 		      End If
 		      
 		      Project.mServerProfiles.Add(Profile)

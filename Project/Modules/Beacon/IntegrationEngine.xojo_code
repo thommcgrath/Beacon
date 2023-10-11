@@ -1,6 +1,7 @@
 #tag Class
 Protected Class IntegrationEngine
 Implements Beacon.LogProducer
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit))
 	#tag Method, Flags = &h0
 		Function AnalyzeEnabled() As Boolean
 		  Return (Self.mOptions And (CType(Self.OptionAnalyze, UInt64) Or CType(Self.OptionReview, UInt64))) = (CType(Self.OptionAnalyze, UInt64) Or CType(Self.OptionReview, UInt64))
@@ -64,7 +65,8 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Constructor(Profile As Beacon.ServerProfile)
+		Protected Sub Constructor(Provider As Beacon.HostingProvider, Profile As Beacon.ServerProfile)
+		  Self.mProvider = Provider
 		  Self.mProfile = Profile
 		  If Profile Is Nil Then
 		    Self.mID = EncodeHex(Crypto.GenerateRandomBytes(4)).Lowercase
@@ -72,6 +74,24 @@ Implements Beacon.LogProducer
 		    Self.mID = Profile.ProfileID.Left(8)
 		  End If
 		  Self.Log("Getting started…")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub CreateCheckpoint()
+		  If Self.mProvider.SupportsCheckpoints = False Or Self.mCheckpointCreated = True Then
+		    Return
+		  End If
+		  
+		  Try
+		    Self.Log("Saving previous configuration as profile…")
+		    Var CheckpointName As String = "Beacon " + Self.Label
+		    Self.mProvider.CreateCheckpoint(Self, Self.mProfile, CheckpointName)
+		    Self.Log("Created configuration profile """ + CheckpointName + """")
+		    Self.mCheckpointCreated = True
+		  Catch Err As RuntimeException
+		    Self.SetError("Failed to create configuration backup: " + Err.Message)
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -173,18 +193,18 @@ Implements Beacon.LogProducer
 		    If Not Silent Then
 		      Self.Log("Downloading " + Transfer.Filename + "…")
 		    End If
-		    RaiseEvent DownloadFile(Transfer, FailureMode, Profile)
 		    
-		    If Transfer.Success Then
-		      Success = True
+		    Try
+		      Self.mProvider.DownloadFile(Self, Profile, Transfer, FailureMode)
 		      If Not Silent Then
 		        Self.Log("Downloaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(Transfer.Size))
 		      End If
+		      Success = True
 		      Return Transfer.Content
-		    End If
-		    
-		    Message = Transfer.ErrorMessage
-		    Counter = Counter + 1
+		    Catch Err As RuntimeException
+		      Message = Transfer.ErrorMessage
+		      Counter = Counter + 1
+		    End Try
 		  Wend
 		  
 		  If Not Silent Then
@@ -297,14 +317,20 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function Provider() As Beacon.HostingProvider
+		  Return Self.mProvider
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function PutFile(Contents As String, Filename As String, TriesRemaining As Integer = 2) As Boolean
 		  Var Transfer As New Beacon.IntegrationTransfer(Filename, Contents)
 		  Var DesiredHash As String = Transfer.SHA256
 		  Var OriginalSize As Integer = Transfer.Size // Beacuse the transfer size will change after the event
 		  Self.Log("Uploading " + Transfer.Filename + "…")
-		  RaiseEvent UploadFile(Transfer)
-		  
-		  If Transfer.Success Then
+		  Try
+		    Self.mProvider.UploadFile(Self, Self.mProfile, Transfer)
+		    
 		    Var DownloadSuccess As Boolean
 		    Var CheckedContents As String = Self.GetFile(Filename, DownloadFailureMode.Required, True, DownloadSuccess)
 		    If DownloadSuccess Then
@@ -319,7 +345,8 @@ Implements Beacon.LogProducer
 		        #endif
 		      End If
 		    End If
-		  End If
+		  Catch Err As RuntimeException
+		  End Try
 		  
 		  If Self.Finished Then
 		    Return False
@@ -357,6 +384,12 @@ Implements Beacon.LogProducer
 		  
 		  Self.mLastRefresh = System.Microseconds
 		  RaiseEvent RefreshServerStatus
+		  
+		  Try
+		    Self.mServerState = Self.mProvider.GetServerStatus(Self, Self.mProfile)
+		  Catch Err As RuntimeException
+		    Self.Log("Failed to get server status: " + Err.Message)
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -392,9 +425,7 @@ Implements Beacon.LogProducer
 		  End If
 		  Self.Log("Backup finished")
 		  
-		  If Self.SupportsCheckpoints And Self.mCheckpointCreated = False Then
-		    RaiseEvent CreateCheckpoint
-		  End If
+		  Self.CreateCheckpoint()
 		End Sub
 	#tag EndMethod
 
@@ -418,10 +449,10 @@ Implements Beacon.LogProducer
 		      Return
 		    End If
 		  Else
-		    Self.State = Self.StateUnsupported
+		    Self.State = New Beacon.ServerStatus(Beacon.ServerStatus.States.Unsupported)
 		  End If
 		  
-		  Var InitialServerState As Integer = Self.State
+		  Var InitialServerState As Beacon.ServerStatus.States = Self.State.State
 		  
 		  // Let the game-specific engine do its work
 		  RaiseEvent Deploy(InitialServerState)
@@ -431,7 +462,7 @@ Implements Beacon.LogProducer
 		  End If
 		  
 		  // And start the server if it was already running
-		  If Self.SupportsRestarting And (InitialServerState = Self.StateRunning Or InitialServerState = Self.StateStarting) Then
+		  If Self.SupportsRestarting And (InitialServerState = Beacon.ServerStatus.States.Running Or InitialServerState = Beacon.ServerStatus.States.Starting) Then
 		    Self.StartServer()
 		  End If
 		  
@@ -495,9 +526,7 @@ Implements Beacon.LogProducer
 		Protected Sub SetError(Err As RuntimeException)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Reason As String
-		  If Err.Message <> "" Then
-		    Reason = Err.Message
-		  ElseIf Err.Message <> "" Then
+		  If Err.Message.IsEmpty = False Then
 		    Reason = Err.Message
 		  Else
 		    Reason = "No details available"
@@ -527,30 +556,36 @@ Implements Beacon.LogProducer
 		  While True
 		    Self.RefreshServerStatus()
 		    
-		    Select Case Self.mServerState
-		    Case Self.StateRunning
+		    Select Case Self.mServerState.State
+		    Case Beacon.ServerStatus.States.Running
 		      If Verbose And EventFired Then
 		        Self.Log("Server started.")
 		      End If
 		      Return
-		    Case Self.StateStopped
+		    Case Beacon.ServerStatus.States.Stopped
 		      If Not EventFired Then
 		        If Verbose Then
 		          Self.Log("Starting server…")
 		        End If
-		        RaiseEvent StartServer()
+		        
+		        Try
+		          Self.mProvider.StartServer(Self, Self.mProfile)
+		        Catch Err As RuntimeException
+		          Self.Log("Failed to stop server: " + Err.Message)
+		        End Try
+		        
 		        EventFired = True
 		      End If
-		    Case Self.StateStarting
+		    Case Beacon.ServerStatus.States.Starting
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish starting…")
 		      End If
-		    Case Self.StateStopping
+		    Case Beacon.ServerStatus.States.Stopping
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish stopping so it can be started…")
 		      End If
 		    Else
-		      Self.SetError("Error: Server neither started nor stopped.")
+		      Self.SetError("Unexpected server state:" + Self.mServerState.Message)
 		      Return
 		    End Select
 		    
@@ -560,13 +595,13 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function State() As Integer
+		Function State() As Beacon.ServerStatus
 		  Return Self.mServerState
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub State(Assigns Value As Integer)
+		Protected Sub State(Assigns Value As Beacon.ServerStatus)
 		  Self.mServerState = Value
 		End Sub
 	#tag EndMethod
@@ -619,30 +654,36 @@ Implements Beacon.LogProducer
 		  While True
 		    Self.RefreshServerStatus()
 		    
-		    Select Case Self.mServerState
-		    Case Self.StateRunning
+		    Select Case Self.mServerState.State
+		    Case Beacon.ServerStatus.States.Running
 		      If Not EventFired Then
 		        If Verbose Then
 		          Self.Log("Stopping server…")
 		        End If
-		        RaiseEvent StopServer()
+		        
+		        Try
+		          Self.mProvider.StopServer(Self, Self.mProfile, Self.mStopMessage)
+		        Catch Err As RuntimeException
+		          Self.Log("Failed to stop server: " + Err.Message)
+		        End Try
+		        
 		        EventFired = True
 		      End If
-		    Case Self.StateStopped
+		    Case Beacon.ServerStatus.States.Stopped
 		      If Verbose And EventFired Then
 		        Self.Log("Server stopped.")
 		      End If
 		      Return
-		    Case Self.StateStarting
+		    Case Beacon.ServerStatus.States.Starting
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish starting so it can be stopped…")
 		      End If
-		    Case Self.StateStopping
+		    Case Beacon.ServerStatus.States.Stopping
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish stopping…")
 		      End If
 		    Else
-		      Self.SetError("Error: Server neither started nor stopped")
+		      Self.SetError("Unexpected server state:" + Self.mServerState.Message)
 		      Return
 		    End Select
 		    
@@ -653,31 +694,31 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Function SupportsCheckpoints() As Boolean
-		  Return False
+		  Return Self.mProvider.SupportsCheckpoints
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsRestarting() As Boolean
-		  Return False
+		  Return Self.mProvider.SupportsRestarting
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsStatus() As Boolean
-		  Return False
+		  Return Self.mProvider.SupportsStatus
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsStopMessage() As Boolean
-		  Return False
+		  Return Self.mProvider.SupportsStopMessage
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsWideSettings() As Boolean
-		  Return False
+		  Return Self.mProvider.SupportsGameSettings
 		End Function
 	#tag EndMethod
 
@@ -766,7 +807,7 @@ Implements Beacon.LogProducer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Deploy(InitialServerState As Integer)
+		Event Deploy(InitialServerState As Beacon.ServerStatus.States)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -894,6 +935,10 @@ Implements Beacon.LogProducer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProvider As Beacon.HostingProvider
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private Shared mResourceIntenseLock As CriticalSection
 	#tag EndProperty
 
@@ -902,7 +947,7 @@ Implements Beacon.LogProducer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerState As Integer
+		Private mServerState As Beacon.ServerStatus
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -930,24 +975,6 @@ Implements Beacon.LogProducer
 	#tag EndConstant
 
 	#tag Constant, Name = OptionReview, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StateOther, Type = Double, Dynamic = False, Default = \"0", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StateRunning, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StateStarting, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StateStopped, Type = Double, Dynamic = False, Default = \"3", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StateStopping, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StateUnsupported, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
 	#tag EndConstant
 
 

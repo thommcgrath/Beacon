@@ -597,9 +597,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String, Container As String)
-		  Self.mImportProgress = New ImporterWindow
-		  Self.mImportProgress.Source = Container
-		  Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.mImportProgress = New ProgressWindow
 		  Self.mImportProgress.ShowDelayed(Self.TrueWindow)
 		  
 		  Var Data As New Ark.DiscoveredData
@@ -607,8 +605,8 @@ End
 		  
 		  Self.mImporter = New Ark.ImportThread(Data, Self.Project)
 		  Self.mImporter.Priority = Thread.NormalPriority
+		  Self.mImporter.Progress = Self.mImportProgress
 		  AddHandler mImporter.Finished, WeakAddressOf mImporter_Finished
-		  AddHandler mImporter.UpdateUI, WeakAddressOf mImporter_UpdateUI
 		  Self.mImporter.Start
 		End Sub
 	#tag EndMethod
@@ -640,14 +638,6 @@ End
 		    Next
 		  Next
 		  Self.AddSets(NewItemSets)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mImporter_UpdateUI(Sender As Ark.ImportThread)
-		  If Self.mImportProgress <> Nil Then
-		    Self.mImportProgress.Progress = Sender.Progress
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -891,7 +881,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mImportProgress As ImporterWindow
+		Private mImportProgress As ProgressWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

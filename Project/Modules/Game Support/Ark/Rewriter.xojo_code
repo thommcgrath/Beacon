@@ -536,7 +536,7 @@ Inherits Global.Thread
 		      End If
 		      
 		      If FinalOrganizer.HasHeader(Ark.ConfigFileGameUserSettings, "SessionSettings") = False Then
-		        FinalOrganizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "SessionSettings", "SessionName=An Ark Server Managed by Beacon"))
+		        FinalOrganizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Language.DefaultServerName(Ark.Identifier) + " Managed by Beacon"))
 		      End If
 		    End If
 		    

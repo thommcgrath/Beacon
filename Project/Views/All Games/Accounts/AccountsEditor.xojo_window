@@ -362,7 +362,10 @@ End
 		  
 		  Var UsageCounts As New Dictionary
 		  For Each Profile As Beacon.ServerProfile In Profiles
-		    UsageCounts.Value(Profile.ProviderTokenId) = UsageCounts.Lookup(Profile.ProviderTokenId, 0) + 1
+		    If (Profile.HostConfig Is Nil) = False And Profile.HostConfig IsA Beacon.OAuthConsumer Then
+		      Var TokenId As String = Beacon.OAuthConsumer(Profile.HostConfig).TokenId
+		      UsageCounts.Value(TokenId) = UsageCounts.Lookup(TokenId, 0) + 1
+		    End If
 		  Next
 		  
 		  Var IsRefreshing As Boolean = Self.IsRefreshing

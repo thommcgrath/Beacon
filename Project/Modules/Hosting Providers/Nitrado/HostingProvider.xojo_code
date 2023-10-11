@@ -1,7 +1,7 @@
 #tag Class
 Protected Class HostingProvider
 Implements Beacon.HostingProvider
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mServerDetailCache = New Dictionary
@@ -12,13 +12,14 @@ Implements Beacon.HostingProvider
 		Sub CreateCheckpoint(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Name As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServiceId As Integer = Profile.ProviderServiceId
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Profile.ProviderTokenId, True)
+		  Var ServiceId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("name") = "Beacon " + Name
 		  
-		  Var Response As Nitrado.APIResponse = Nitrado.APIRequest.Post("https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "0") + "/gameservers/settings/sets", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData))
+		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "0") + "/gameservers/settings/sets", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData)))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -26,17 +27,24 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.IntegrationEngine.DownloadFailureMode)
+		Function Discover(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.DiscoveredData
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var FullPath As String = Transfer.Path + "/" + Transfer.Filename
-		  Var ServiceId As Integer = Profile.ProviderServiceId
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Profile.ProviderTokenId, True)
+		  Var ServiceId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, ServiceId, Token)
 		  
-		  Var Response As Nitrado.APIResponse = Nitrado.APIRequest.Get("https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath), Token)
+		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath), Token))
 		  If Not Response.Success Then
 		    Select Case FailureMode
-		    Case Beacon.IntegrationEngine.DownloadFailureMode.MissingAllowed
+		    Case Beacon.Integration.DownloadFailureMode.MissingAllowed
 		      Var Status As Integer = Response.HTTPStatus
 		      If Status = 500 And Response.Message.Contains("File doesn't exist") Then
 		        // Nitrado reports a 404 as a 500
@@ -48,18 +56,18 @@ Implements Beacon.HostingProvider
 		      Else
 		        Transfer.SetError(Response.Message)
 		      End If
-		    Case Beacon.IntegrationEngine.DownloadFailureMode.ErrorsAllowed
+		    Case Beacon.Integration.DownloadFailureMode.ErrorsAllowed
 		      Transfer.Success = True
 		      Transfer.Content = ""
-		    Case Beacon.IntegrationEngine.DownloadFailureMode.Required
+		    Case Beacon.Integration.DownloadFailureMode.Required
 		      Raise Response.Error
 		    End Select
 		    Return
 		  End If
 		  
-		  Var SizeResponse As Nitrado.APIResponse = Nitrado.APIRequest.GET("https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath), Token)
+		  Var SizeResponse As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath), Token))
 		  If Not SizeResponse.Success Then
-		    If FailureMode <> Beacon.IntegrationEngine.DownloadFailureMode.ErrorsAllowed Then
+		    If FailureMode <> Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
 		      Raise SizeResponse.Error
 		    End If
 		    Return
@@ -71,7 +79,7 @@ Implements Beacon.HostingProvider
 		    RequiredFileSize = Parsed.Child("data").Value("size")
 		  Catch Err As RuntimeException
 		    Transfer.Content = ""
-		    If FailureMode = Beacon.IntegrationEngine.DownloadFailureMode.ErrorsAllowed Then
+		    If FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
 		      Transfer.Success = True
 		    Else
 		      App.LogAPIException(Err, CurrentMethodName, SizeResponse.Url, SizeResponse.HTTPStatus, SizeResponse.Content)
@@ -91,7 +99,7 @@ Implements Beacon.HostingProvider
 		    Var Parsed As New JSONItem(Response.Content)
 		    If Parsed.Value("status").StringValue <> "success" Then
 		      Transfer.Content = ""
-		      If FailureMode = Beacon.IntegrationEngine.DownloadFailureMode.ErrorsAllowed Then
+		      If FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
 		        Transfer.Success = True
 		      Else
 		        Transfer.SetError("Error: Could not download " + Transfer.Filename + ".")
@@ -102,7 +110,7 @@ Implements Beacon.HostingProvider
 		    FetchUrl = Parsed.Child("data").Child("token").Value("url")
 		  Catch Err As RuntimeException
 		    Transfer.Content = ""
-		    If FailureMode = Beacon.IntegrationEngine.DownloadFailureMode.ErrorsAllowed Then
+		    If FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
 		      Transfer.Success = True
 		    Else
 		      App.LogAPIException(Err, CurrentMethodName, SizeResponse.Url, SizeResponse.HTTPStatus, SizeResponse.Content)
@@ -111,10 +119,10 @@ Implements Beacon.HostingProvider
 		    Return
 		  End Try
 		  
-		  Var FetchResponse As Nitrado.APIResponse = Nitrado.APIRequest.Get(FetchUrl, Token)
+		  Var FetchResponse As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", FetchUrl, Token))
 		  If Not FetchResponse.Success Then
 		    Transfer.Content = ""
-		    If FailureMode = Beacon.IntegrationEngine.DownloadFailureMode.ErrorsAllowed Then
+		    If FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
 		      Transfer.Success = True
 		    Else
 		      Transfer.SetError(FetchResponse.Error.Message)
@@ -124,7 +132,7 @@ Implements Beacon.HostingProvider
 		  
 		  Var Content As String = FetchResponse.Content
 		  Var ContentSize As Integer = Content.Bytes
-		  If ContentSize = RequiredFileSize Or FailureMode = Beacon.IntegrationEngine.DownloadFailureMode.ErrorsAllowed Then
+		  If ContentSize = RequiredFileSize Or FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
 		    Transfer.Success = True
 		    Transfer.Content = Content
 		  Else
@@ -149,10 +157,10 @@ Implements Beacon.HostingProvider
 		  End If
 		  
 		  // Look through each path in order until we find a match
-		  Var Settings As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
+		  Var GameServer As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
 		  For Each Path As String In Paths
 		    Var Found As Boolean
-		    Var Value As Variant = Self.ValueByDotNotation(Settings, Path, Found)
+		    Var Value As Variant = Self.ValueByDotNotation(GameServer, Path, Found)
 		    If Found Then
 		      Return Value
 		    End If
@@ -176,14 +184,15 @@ Implements Beacon.HostingProvider
 		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
 		    Call Self.GetServerStatus(Logger, Profile)
 		  End If
-		  Var Settings As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
+		  Var GameServer As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
 		  
-		  Var ServiceId As Integer = Profile.ProviderServiceId
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Profile.ProviderTokenId, True)
+		  Var ServiceId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, ServiceId, Token)
 		  For Each Path As String In Paths
 		    Var Found As Boolean
-		    Var OldValue As Variant = Self.ValueByDotNotation(Settings, Path, Found)
-		    If Found = False Or OldValue = Value Then
+		    Var OldValue As Variant = Self.ValueByDotNotation(GameServer, Path, Found)
+		    If Found = False Or Setting.ValuesEqual(OldValue, Value) Then
 		      Continue
 		    End If
 		    
@@ -199,7 +208,7 @@ Implements Beacon.HostingProvider
 		    
 		    Logger.Log("Updating " + Key + "…")
 		    
-		    Var Response As Nitrado.APIResponse = Nitrado.APIRequest.Post("https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/settings", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData))
+		    Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/settings", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData)))
 		    If Not Response.Success Then
 		      Raise Response.Error
 		    End If
@@ -207,16 +216,31 @@ Implements Beacon.HostingProvider
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Sub GetCredentials(Profile As Beacon.ServerProfile, ByRef ServiceId As Integer, ByRef Token As BeaconAPI.ProviderToken)
+		  Var Config As Beacon.HostConfig = Profile.HostConfig
+		  If Config Is Nil Or (Config IsA Nitrado.HostConfig) = False Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Profile must have a Nitrado host config object"
+		    Raise Err
+		  End If
+		  
+		  ServiceId = Nitrado.HostConfig(Config).ServiceId
+		  Token = BeaconAPI.GetProviderToken(Nitrado.HostConfig(Config).TokenId, True)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function GetServerStatus(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServiceId As Integer = Profile.ProviderServiceId
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Profile.ProviderTokenId, True)
+		  Var ServiceId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, ServiceId, Token)
 		  Var Response As Nitrado.APIResponse
 		  Var RetriesRemaining As Integer = 5
 		  Do
-		    Response = Nitrado.APIRequest.Get("https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers", Token)
+		    Response = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers", Token))
 		    If Response.Success = False Then
 		      If RetriesRemaining > 0 Then
 		        RetriesRemaining = RetriesRemaining - 1
@@ -234,32 +258,32 @@ Implements Beacon.HostingProvider
 		  Var StatusMessage As String = GameServer.Value("status")
 		  
 		  // Cache the settings dict for use with game settings later
-		  Self.mServerDetailCache.Value(Profile.ProfileId) = GameServer.Child("settings")
+		  Self.mServerDetailCache.Value(Profile.ProfileId) = GameServer
 		  
 		  Var Status As Beacon.ServerStatus
 		  Select Case StatusMessage
 		  Case "started"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.Started)
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Running, GameServer)
 		  Case "starting", "restarting"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.Starting)
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Starting, GameServer)
 		  Case "stopping"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.Stopping)
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopping, GameServer)
 		  Case "stopped"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.Stopped)
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopped, GameServer)
 		  Case "suspended"
-		    Status = New Beacon.ServerStatus("The server is suspended. See your Nitrado control panel to reactivate your server.")
+		    Status = New Beacon.ServerStatus("The server is suspended. See your Nitrado control panel to reactivate your server.", GameServer)
 		  Case "guardian_locked"
-		    Status = New Beacon.ServerStatus("The server is currently guardian locked. Try again during allowed hours.")
+		    Status = New Beacon.ServerStatus("The server is currently guardian locked. Try again during allowed hours.", GameServer)
 		  Case "gs_installation"
-		    Status = New Beacon.ServerStatus("The server is switching games.")
+		    Status = New Beacon.ServerStatus("The server is switching games.", GameServer)
 		  Case "backup_restore"
-		    Status = New Beacon.ServerStatus("The server is restoring a backup.")
+		    Status = New Beacon.ServerStatus("The server is restoring a backup.", GameServer)
 		  Case "backup_creation"
-		    Status = New Beacon.ServerStatus("The server is creating a backup.")
+		    Status = New Beacon.ServerStatus("The server is creating a backup.", GameServer)
 		  Case "updating"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.Starting, "The server is currently installing an update.")
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Starting, "The server is currently installing an update.", GameServer)
 		  Else
-		    Status = New Beacon.ServerStatus("Unknown server status: " + StatusMessage)
+		    Status = New Beacon.ServerStatus("Unknown server status: " + StatusMessage, GameServer)
 		  End Select
 		  
 		  Return Status
@@ -275,10 +299,50 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListServers(Logger As Beacon.LogProducer, Token As BeaconAPI.ProviderToken, GameId As String) As Beacon.ServerProfile()
+		Function ListFiles(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StartingPath As String) As String()
+		  Var ServiceId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, ServiceId, Token)
+		  
+		  Var FormData As New Dictionary
+		  If StartingPath.IsEmpty = False Then
+		    FormData.Value("dir") = StartingPath
+		  End If
+		  Var Url As String = "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/list"
+		  If FormData.KeyCount > 0 Then
+		    Url = Url + "?" + SimpleHTTP.BuildFormData(FormData)
+		  End If
+		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", Url, Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var Parsed As New JSONItem(Response.Content)
+		  Var Entries As JSONItem = Parsed.Child("data").Child("entries")
+		  Var Bound As Integer = Entries.LastRowIndex
+		  Var Paths() As String
+		  
+		  For Idx As Integer = 0 To Bound
+		    Var Child As JSONItem = Entries.ChildAt(Idx)
+		    Paths.Add(Child.Value("path"))
+		  Next
+		  
+		  Return Paths
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ListServers(Logger As Beacon.LogProducer, Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var Response As Nitrado.APIResponse = Nitrado.APIRequest.Get("https://api.nitrado.net/services", Token)
+		  If (Config IsA Nitrado.HostConfig) = False Then
+		    Var Err As UnsupportedOperationException
+		    Err.Message = "Config is not a Nitrado host config."
+		    Raise Err
+		  End If
+		  
+		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Nitrado.HostConfig(Config).TokenId, True)
+		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services", Token))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -310,7 +374,7 @@ Implements Beacon.HostingProvider
 		      Continue
 		    End If
 		    Var Platform As Integer = Nitrado.HostingProvider.ShortcodeToPlatform(Portlist)
-		    If Platform = Beacon.ServerProfile.PlatformUnsupported Then
+		    If Platform = Beacon.PlatformUnsupported Then
 		      Continue
 		    End If
 		    
@@ -335,9 +399,11 @@ Implements Beacon.HostingProvider
 		    Case SDTD.Identifier
 		      Profile = New SDTD.ServerProfile(Self.Identifier, ProfileId, Name, Nickname, SecondaryName)
 		    End Select
-		    Profile.ProviderServiceId = ServiceId
-		    Profile.ProviderTokenId = Token.TokenId
-		    Profile.Provider = Self.Identifier
+		    
+		    Var ProfileConfig As New Nitrado.HostConfig
+		    ProfileConfig.ServiceId = ServiceId
+		    ProfileConfig.TokenId = Token.TokenId
+		    Profile.HostConfig = ProfileConfig
 		    Profile.Platform = Platform
 		    Profile.Modified = False
 		    
@@ -345,6 +411,41 @@ Implements Beacon.HostingProvider
 		  Next
 		  
 		  Return Profiles
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchProviderToken(Token As BeaconAPI.ProviderToken) As Boolean
+		  Return (Token Is Nil) = False And Token.Provider = BeaconAPI.ProviderToken.ProviderNitrado
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function RunRequest(Request As Nitrado.APIRequest) As Nitrado.APIResponse
+		  Var Headers As Dictionary = Request.Headers
+		  Var Content As MemoryBlock = Request.Content
+		  Var RequestMethod As String = Request.RequestMethod
+		  Var Url As String = Request.Url
+		  
+		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		  For Each Entry As DictionaryEntry In Headers
+		    Socket.RequestHeader(Entry.Key) = Entry.Value
+		  Next
+		  
+		  If (Content Is Nil) = False And Content.Size > 0 And Headers.HasKey("Content-Type") Then
+		    Socket.SetRequestContent(Content, Headers.Value("Content-Type"))
+		  End If
+		  
+		  Self.mThrottled = True
+		  Var Locked As Boolean = Preferences.SignalConnection()
+		  Self.mThrottled = False
+		  Self.mActiveSocket = Socket
+		  Socket.Send(RequestMethod, Url)
+		  Self.mActiveSocket = Nil
+		  If Locked Then
+		    Preferences.ReleaseConnection()
+		  End If
+		  Return Nitrado.APIResponse.FromSocket(Socket)
 		End Function
 	#tag EndMethod
 
@@ -363,15 +464,44 @@ Implements Beacon.HostingProvider
 		Private Shared Function ShortcodeToPlatform(Shortcode As String) As Integer
 		  Select Case Shortcode
 		  Case "arkxb", "arkxbosg"
-		    Return Beacon.ServerProfile.PlatformXbox
+		    Return Beacon.PlatformXbox
 		  Case "arkps", "arkpsosg"
-		    Return Beacon.ServerProfile.PlatformPlayStation
+		    Return Beacon.PlatformPlayStation
 		  Case "arkswitch", "arkswitchjp"
-		    Return Beacon.ServerProfile.PlatformSwitch
+		    Return Beacon.PlatformSwitch
 		  Case "arkse", "arksotf", "arkseosg", "7daystodie", "sevendaysexperimental", "sevendtd"
-		    Return Beacon.ServerProfile.PlatformPC
+		    Return Beacon.PlatformPC
 		  Case "arkmobile"
-		    Return Beacon.ServerProfile.PlatformUnsupported
+		    Return Beacon.PlatformUnsupported
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SocketStatus() As String
+		  If Self.mActiveSocket Is Nil Then
+		    Return ""
+		  End If
+		  
+		  Select Case Self.mActiveSocket.Phase
+		  Case SimpleHTTP.SynchronousHTTPSocket.Phases.Sending
+		    Var Sent As Int64 = Self.mActiveSocket.SentBytes
+		    Var Total As Int64 = Self.mActiveSocket.SendingBytes
+		    If Total > 0 Then
+		      Var Percent As Double = Sent / Total
+		      Return "Uploaded " + Beacon.BytesToString(Sent) + " of " + Beacon.BytesToString(Total) + " (" + Percent.ToString(Locale.Current, "0%") + ")"
+		    Else
+		      Return "Uploaded " + Beacon.BytesToString(Sent)
+		    End If
+		  Case SimpleHTTP.SynchronousHTTPSocket.Phases.Receiving
+		    Var Received As Int64 = Self.mActiveSocket.ReceivedBytes
+		    Var Total As Int64 = Self.mActiveSocket.ReceivingBytes
+		    If Total > 0 Then
+		      Var Percent As Double = Received / Total
+		      Return "Downloaded " + Beacon.BytesToString(Received) + " of " + Beacon.BytesToString(Total) + " (" + Percent.ToString(Locale.Current, "0%") + ")"
+		    Else
+		      Return "Downloaded " + Beacon.BytesToString(Received)
+		    End If
 		  End Select
 		End Function
 	#tag EndMethod
@@ -380,14 +510,15 @@ Implements Beacon.HostingProvider
 		Sub StartServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServiceId As Integer = Profile.ProviderServiceId
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Profile.ProviderTokenId, True)
+		  Var ServiceId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server started by Beacon"
 		  FormData.Value("restart_message") = Nil
 		  
-		  Var Response As Nitrado.APIResponse = Nitrado.APIRequest.Post("https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/restart", Token, "application/json", Beacon.GenerateJson(FormData, True))
+		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/restart", Token, "application/json", Beacon.GenerateJson(FormData, True)))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -398,14 +529,15 @@ Implements Beacon.HostingProvider
 		Sub StopServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServiceId As Integer = Profile.ProviderServiceId
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Profile.ProviderTokenId, True)
+		  Var ServiceId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server started by Beacon"
 		  FormData.Value("stop_message") = StopMessage
 		  
-		  Var Response As Nitrado.APIResponse = Nitrado.APIRequest.Post("https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/stop", Token, "application/json", Beacon.GenerateJson(FormData, False))
+		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/stop", Token, "application/json", Beacon.GenerateJson(FormData, False)))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -443,17 +575,24 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Throttled() As Boolean
+		  Return Self.mThrottled
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub UploadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServiceId As Integer = Profile.ProviderServiceId
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Profile.ProviderTokenId, True)
+		  Var ServiceId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("path") = Transfer.Path
 		  FormData.Value("file") = Transfer.Filename
 		  
-		  Var Response As Nitrado.APIResponse = Nitrado.APIRequest.Post("https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/upload", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData))
+		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/upload", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData)))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -475,7 +614,7 @@ Implements Beacon.HostingProvider
 		  Headers.Value("token") = PutToken
 		  Headers.Value("Content-MD5") = EncodeBase64(Crypto.MD5(Transfer.Content))
 		  
-		  Var PutResponse As Nitrado.APIResponse = Nitrado.APIRequest.Post(PutUrl, Token, Headers, "application/octet-stream", Transfer.Content)
+		  Var PutResponse As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", PutUrl, Token, Headers, "application/octet-stream", Transfer.Content))
 		  If Not PutResponse.Success Then
 		    Response.Error.Message = Response.Error.Message + EndOfLine + "Check your " + Transfer.Filename + " file on Nitrado. Nitrado may have accepted partial file content. If you have backups enabled, the originals will be saved to " + App.BackupsFolder.Child(Profile.BackupFolderName).NativePath + "."
 		    Raise Response.Error
@@ -485,6 +624,16 @@ Implements Beacon.HostingProvider
 
 	#tag Method, Flags = &h21
 		Private Shared Function ValueByDotNotation(Root As JSONItem, Path As String, ByRef Found As Boolean) As Variant
+		  // Paths in the database assume the settings key is root, but there are
+		  // values above settings that we need. We can't practically change the paths
+		  // in the database, so we'll use / to indicate that we want to start with
+		  // the true root
+		  If Path.BeginsWith("/") Then
+		    Path = Path.Middle(1)
+		  Else
+		    Path = "settings." + Path
+		  End If
+		  
 		  Var Parts() As String = Path.Split(".")
 		  Var Key As String = Parts(Parts.LastIndex)
 		  Parts.RemoveAt(Parts.LastIndex)
@@ -511,7 +660,15 @@ Implements Beacon.HostingProvider
 
 
 	#tag Property, Flags = &h21
+		Private mActiveSocket As SimpleHTTP.SynchronousHTTPSocket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mServerDetailCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThrottled As Boolean
 	#tag EndProperty
 
 
@@ -553,14 +710,6 @@ Implements Beacon.HostingProvider
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mServerDetailCache"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

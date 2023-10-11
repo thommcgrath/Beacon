@@ -1,7 +1,7 @@
 #tag Class
 Protected Class FTPIntegrationEngine
 Inherits Ark.IntegrationEngine
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit))
 	#tag Event
 		Function Discover() As Beacon.DiscoveredData()
 		  Var FTPProfile As Ark.FTPServerProfile = Self.Profile
@@ -208,7 +208,7 @@ Inherits Ark.IntegrationEngine
 		  
 		  Self.mSocketLock = New CriticalSection
 		  
-		  Super.Constructor(Profile)
+		  Super.Constructor(Nil, Profile)
 		End Sub
 	#tag EndMethod
 

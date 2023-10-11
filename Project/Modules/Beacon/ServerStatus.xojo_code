@@ -1,34 +1,34 @@
 #tag Class
 Protected Class ServerStatus
 	#tag Method, Flags = &h0
-		Sub Constructor(Status As Integer)
-		  Self.Constructor(Status, "", Nil)
+		Sub Constructor(State As Beacon.ServerStatus.States)
+		  Self.Constructor(State, "", Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Status As Integer, Message As String, UserData As Variant)
-		  Self.mStatus = Status
+		Sub Constructor(State As Beacon.ServerStatus.States, Message As String, UserData As Variant)
+		  Self.mState = State
 		  Self.mMessage = Message
 		  Self.mUserData = UserData
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Status As Integer, UserData As Variant)
-		  Self.Constructor(Status, "", UserData)
+		Sub Constructor(State As Beacon.ServerStatus.States, UserData As Variant)
+		  Self.Constructor(State, "", UserData)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Message As String)
-		  Self.Constructor(Self.Other, Message, Nil)
+		  Self.Constructor(Beacon.ServerStatus.States.Other, Message, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Message As String, UserData As Variant)
-		  Self.Constructor(Self.Other, Message, UserData)
+		  Self.Constructor(Beacon.ServerStatus.States.Other, Message, UserData)
 		End Sub
 	#tag EndMethod
 
@@ -39,8 +39,33 @@ Protected Class ServerStatus
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As Integer
-		  Return Self.Status
+		Function Operator_Compare(Other As Beacon.ServerStatus) As Integer
+		  If Other Is Nil Then
+		    Return 1
+		  End If
+		  
+		  Return Self.Operator_Compare(Other.mState)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(State As Beacon.ServerStatus.States) As Integer
+		  Var MyValue As Integer = CType(Self.mState, Integer)
+		  Var OtherValue As Integer = CType(State, Integer)
+		  
+		  If MyValue = OtherValue Then
+		    Return 0
+		  ElseIf MyValue > OtherValue Then
+		    Return 1
+		  Else
+		    Return -1
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function State() As Beacon.ServerStatus.States
+		  Return Self.mState
 		End Function
 	#tag EndMethod
 
@@ -56,7 +81,7 @@ Protected Class ServerStatus
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mStatus As Integer
+		Private mState As Beacon.ServerStatus.States
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -64,23 +89,14 @@ Protected Class ServerStatus
 	#tag EndProperty
 
 
-	#tag Constant, Name = Other, Type = Double, Dynamic = False, Default = \"5", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Running, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Started, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Starting, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Stopped, Type = Double, Dynamic = False, Default = \"0", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Stopping, Type = Double, Dynamic = False, Default = \"3", Scope = Public
-	#tag EndConstant
+	#tag Enum, Name = States, Type = Integer, Flags = &h0
+		Unsupported = -1
+		  Other
+		  Running
+		  Starting
+		  Stopped
+		Stopping
+	#tag EndEnum
 
 
 	#tag ViewBehavior

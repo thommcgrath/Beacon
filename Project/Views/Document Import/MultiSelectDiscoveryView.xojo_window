@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ArkDiscoveryView ArkGSADiscoveryView
+Begin DiscoveryView MultiSelectDiscoveryView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -7,17 +7,15 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
-   Height          =   402
+   Height          =   480
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
+   LockBottom      =   True
    LockLeft        =   True
-   LockRight       =   False
+   LockRight       =   True
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
@@ -26,8 +24,50 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   576
-   Begin DesktopLabel TemplatesMessage
+   Width           =   720
+   Begin Thread TokenLookupThread
+      DebugIdentifier =   ""
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
+   End
+   Begin DesktopButton TokensRefreshButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Refresh"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   7
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -48
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin DesktopLabel ListMessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
       Enabled         =   True
@@ -47,18 +87,18 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Select Config Templates"
+      Text            =   "Select Servers"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
-      Transparent     =   False
+      Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   536
+      Width           =   680
    End
    Begin BeaconListbox List
       AllowAutoDeactivate=   True
@@ -70,8 +110,8 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   "26,*"
+      ColumnCount     =   4
+      ColumnWidths    =   "26,*,170,170"
       DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -87,10 +127,10 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   282
+      Height          =   360
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   " 	Name"
+      InitialValue    =   " 	Name	Address	Platform"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -103,7 +143,7 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -114,104 +154,9 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   536
+      Width           =   680
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin UITweaks.ResizedPushButton ActionButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Next"
-      Default         =   True
-      Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   476
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   362
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedPushButton CancelButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   True
-      Caption         =   "Cancel"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   384
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   362
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin DesktopButton TokensRefreshButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Refresh"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   9
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   -49
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
    End
    Begin DesktopProgressWheel TokensRefreshSpinner
       Active          =   False
@@ -229,10 +174,10 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       LockTop         =   False
       PanelIndex      =   0
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   5
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   364
+      Top             =   442
       Transparent     =   False
       Visible         =   False
       Width           =   16
@@ -250,6 +195,7 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
+      InitialParent   =   ""
       Italic          =   False
       Left            =   48
       LockBottom      =   True
@@ -260,30 +206,82 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Authorizing…"
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   362
+      Top             =   440
       Transparent     =   False
       Underline       =   False
       Visible         =   False
-      Width           =   324
+      Width           =   468
    End
-   Begin Thread TokenLookupThread
-      DebugIdentifier =   ""
+   Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
       Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   528
+      LockBottom      =   True
       LockedInPosition=   False
-      Priority        =   5
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
-      StackSize       =   0
+      TabIndex        =   7
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   440
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Next"
+      Default         =   True
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   620
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   440
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
    End
 End
 #tag EndDesktopWindow
@@ -312,30 +310,57 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mEngines = New Dictionary
+		  Self.mThreads = New Dictionary
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Engine_Discovered(Sender As Ark.GSAIntegrationEngine, Data() As Beacon.DiscoveredData)
+		Private Sub Discovered(Profiles() As Beacon.ServerProfile)
 		  Self.mPendingListActions = Self.mPendingListActions - 1
 		  
-		  If Sender.Errored Then
-		    Self.ShowAlert("Unable to retrieve server list from GameServerApp.com", "The error message provided was:" + EndOfLine + EndOfLine + Sender.ErrorMessage + EndOfLine + EndOfLine + "This error may be temporary, so try again in a few minutes. If the problem persists, make sure your antivirus or malware protection is not blocking Beacon from contacting GameServerApp.com's servers.")
-		    Self.ShouldCancel()
-		    Return
-		  End If
-		  
-		  For Each Server As Beacon.DiscoveredData In Data
-		    Self.List.AddRow("", Server.Profile.Name)
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Server
+		  For Each Profile As Beacon.ServerProfile In Profiles
+		    Var PlatformText As String = "Unknown"
+		    Select Case Profile.Platform
+		    Case Beacon.PlatformPC
+		      PlatformText = "Steam & Epic"
+		    Case Beacon.PlatformPlayStation
+		      PlatformText = "PlayStation"
+		    Case Beacon.PlatformSwitch
+		      PlatformText = "Switch"
+		    Case Beacon.PlatformXbox
+		      PlatformText = "Xbox & Windows Store"
+		    End Select
+		    
+		    Self.List.AddRow("", Profile.Name, Profile.SecondaryName, PlatformText)
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Profile
 		  Next
 		  
 		  If Self.Busy = False And Self.List.RowCount = 0 Then
-		    Self.ShowAlert("No eligible templates were found", "Beacon could not find any templates on any of the connected GameServerApp.com accounts.")
+		    Self.ShowAlert("No eligible servers were found", "Beacon could not find any " + Language.GameName(Self.GameId()) + " servers on any of the connected " + Self.ProviderName + " accounts.")
 		    Self.ShouldCancel()
 		    Return
 		  End If
+		  
+		  Var AllSamePlatform As Boolean = True
+		  Var PlatformText As String
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    If PlatformText.IsEmpty Then
+		      PlatformText = Self.List.CellTextAt(Idx, 3)
+		      Continue
+		    End If
+		    
+		    If PlatformText <> Self.List.CellTextAt(Idx, 3) Then
+		      AllSamePlatform = False
+		      Exit For Idx
+		    End If
+		  Next
+		  
+		  If AllSamePlatform Then
+		    Self.List.ColumnAttributesAt(3).WidthExpression = "0"
+		  Else
+		    Self.List.SizeColumnToFit(3)
+		  End If
+		  Self.List.SizeColumnToFit(2)
 		  
 		  Self.List.SortingColumn = 1
 		  Self.List.Sort
@@ -344,29 +369,35 @@ End
 		  If Self.Busy = False And Self.TrueWindow IsA BeaconWindow Then
 		    BeaconWindow(Self.TrueWindow).BringToFront()
 		  End If
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Engine_Wait(Sender As Ark.GSAIntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
-		  #Pragma Unused Sender
-		  
-		  Controller.Cancelled = True
-		  Controller.ShouldResume = True
-		End Function
+		Private Sub Error(Err As RuntimeException)
+		  Self.mPendingListActions = Self.mPendingListActions - 1
+		  Self.ShowAlert("Unable to retrieve server list from " + Self.ProviderName, "The error message provided was:" + EndOfLine + EndOfLine + Err.Message + EndOfLine + EndOfLine + "This error may be temporary, so try again in a few minutes. If the problem persists, make sure your antivirus or malware protection is not blocking Beacon from contacting " + Self.ProviderName + "'s servers.")
+		  Self.ShouldCancel()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ListTemplatesForAccount(Token As BeaconAPI.ProviderToken)
-		  Var Profile As New Ark.GSAServerProfile
-		  Profile.ProviderTokenId = Token.TokenId
+		Private Sub ListServers(Token As BeaconAPI.ProviderToken)
+		  Var Config As Beacon.HostConfig
+		  Select Case Token.Provider
+		  Case Nitrado.Identifier
+		    Config = New Nitrado.HostConfig
+		    Nitrado.HostConfig(Config).TokenId = Token.TokenId
+		  Case GameServerApp.Identifier
+		    Config = New GameServerApp.HostConfig
+		    GameServerApp.HostConfig(Config).TokenId = Token.TokenId
+		  End Select
 		  
-		  Var Engine As New Ark.GSAIntegrationEngine(Profile)
-		  Self.mEngines.Value(Token.TokenId) = Engine
-		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
-		  AddHandler Engine.Wait, WeakAddressOf Engine_Wait
-		  Engine.BeginDiscovery(Self.Project)
-		  
+		  Var Thread As New Beacon.Thread
+		  Thread.UserData = Config
+		  AddHandler Thread.Run, WeakAddressOf Thread_Run
+		  Self.mThreads.Value(Token.TokenId) = Thread
+		  Thread.Start
 		  Self.mPendingListActions = Self.mPendingListActions + 1
 		End Sub
 	#tag EndMethod
@@ -391,6 +422,47 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Thread_Run(Sender As Beacon.Thread)
+		  Try
+		    Var Config As Beacon.HostConfig = Sender.UserData
+		    Var Profiles() As Beacon.ServerProfile = Self.Provider.ListServers(Nil, Config, Self.GameId())
+		    Var Dict As New Dictionary
+		    Dict.Value("Event") = "Finished"
+		    Dict.Value("Profiles") = Profiles
+		    Sender.AddUserInterfaceUpdate(Dict)
+		  Catch Err As RuntimeException
+		    Var Dict As New Dictionary
+		    Dict.Value("Event") = "Error"
+		    Dict.Value("Error") = Err
+		    Sender.AddUserInterfaceUpdate(Dict)
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		  #Pragma Unused Sender
+		  
+		  For Each Update As Dictionary In Updates
+		    Try
+		      If Update.HasKey("Event") Then
+		        Select Case Update.Value("Event")
+		        Case "Finished"
+		          Var Profiles() As Beacon.ServerProfile = Update.Value("Profiles")
+		          Self.Discovered(Profiles)
+		        Case "Error"
+		          Var DiscoveryError As RuntimeException = Update.Value("Error")
+		          Self.Error(DiscoveryError)
+		        End Select
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Processing discovery thread interface update")
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Var Refreshing As Boolean = Self.Busy
 		  If Self.TokensRefreshLabel.Visible <> Refreshing Then
@@ -407,9 +479,9 @@ End
 		  If Refreshing Then
 		    Var RefreshLabel As String
 		    If Self.mFetchingTokens Then
-		      RefreshLabel = "Retrieving GameServerApp.com tokens…"
+		      RefreshLabel = "Retrieving " + Self.ProviderName + " tokens…"
 		    Else
-		      RefreshLabel = "Listing templates on " + Language.NounWithQuantity(Self.mPendingListActions, "GameServerApp.com account", "GameServerApp.com accounts") + "…"
+		      RefreshLabel = "Listing servers on " + Language.NounWithQuantity(Self.mPendingListActions, Self.ProviderName + " account", Self.ProviderName + " accounts") + "…"
 		    End If
 		    
 		    If Self.TokensRefreshLabel.Text <> RefreshLabel Then
@@ -437,11 +509,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCancelled As Boolean
+		Private mAddressColumnWidth As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngines As Dictionary
+		Private mCancelled As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -453,63 +525,24 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPlatformColumnWidth As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedServers As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThreads As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTokens() As BeaconAPI.ProviderToken
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events List
-	#tag Event
-		Sub Opening()
-		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
-		  Me.TypeaheadColumn = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
-		  #Pragma Unused Column
-		  
-		  Self.UpdateUI()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ActionButton
-	#tag Event
-		Sub Pressed()
-		  Var Data() As Beacon.DiscoveredData
-		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
-		      Continue
-		    End If
-		    
-		    Data.Add(Self.List.RowTagAt(I))
-		  Next
-		  Self.ShouldFinish(Data)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CancelButton
-	#tag Event
-		Sub Pressed()
-		  Self.ShouldCancel()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TokensRefreshButton
-	#tag Event
-		Sub Pressed()
-		  Self.RefreshTokens()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.Top = Self.TokensRefreshLabel.Top
-		  Me.Left = Self.TokensRefreshSpinner.Left
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events TokenLookupThread
 	#tag Event
 		Sub Run()
@@ -522,14 +555,15 @@ End
 		  Var UserId As String = App.IdentityManager.CurrentUserId
 		  Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(UserId)
 		  Var Cache As New Dictionary
+		  Var Provider As Beacon.HostingProvider = Self.Provider()
 		  For Idx As Integer = Tokens.LastIndex DownTo 0
 		    If Self.mCancelled Then
 		      Return
 		    End If
 		    Cache.Value(Tokens(Idx).TokenId) = Tokens(Idx)
 		    
-		    If Tokens(Idx).Provider = BeaconAPI.ProviderToken.ProviderGameServerApp Then
-		      Self.ListTemplatesForAccount(Tokens(Idx))
+		    If Provider.MatchProviderToken(Tokens(Idx)) Then
+		      Self.ListServers(Tokens(Idx))
 		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
 		    Else
 		      Tokens.RemoveAt(Idx)
@@ -546,10 +580,10 @@ End
 		    End If
 		    
 		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId)
-		    If Token.Provider = BeaconAPI.ProviderToken.ProviderGameServerApp And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
+		    If (Token Is Nil) = False And Provider.MatchProviderToken(Token) And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
 		      Tokens.Add(Token)
 		      Cache.Value(Token.TokenId) = Token
-		      Self.ListTemplatesForAccount(Token)
+		      Self.ListServers(Token)
 		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
 		    End If
 		  Next
@@ -569,12 +603,63 @@ End
 		      Self.UpdateUI()
 		    End If
 		    If Update.Lookup("Finished", false).BooleanValue = True And Self.mTokens.Count = 0 Then
-		      If Self.ShowConfirm("No GameServerApp.com services are available. Would you like to a GameServerApp.com token to your Beacon account?", "Your web browser will be opened so you can add a token.", "Connect", "Cancel") Then
+		      If Self.ShowConfirm("No " + Self.ProviderName + " services are available. Would you like to connect a " + Self.ProviderName + " account to your Beacon account?", "Your web browser will be opened so you can connect your accounts.", "Connect", "Cancel") Then
 		        System.GotoURL(Beacon.WebURL("/account/#services", True))
 		      End If
 		      Self.ShouldCancel()
 		    End If
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TokensRefreshButton
+	#tag Event
+		Sub Pressed()
+		  Self.RefreshTokens()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Top = Self.TokensRefreshLabel.Top
+		  Me.Left = Self.TokensRefreshSpinner.Left
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub Opening()
+		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
+		  Me.TypeaheadColumn = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  #Pragma Unused Column
+		  
+		  Self.UpdateUI()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CancelButton
+	#tag Event
+		Sub Pressed()
+		  Self.ShouldCancel()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ActionButton
+	#tag Event
+		Sub Pressed()
+		  Var Profiles() As Beacon.ServerProfile
+		  For I As Integer = 0 To Self.List.RowCount - 1
+		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Profiles.Add(Self.List.RowTagAt(I))
+		  Next
+		  Self.ShouldFinish(Profiles)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -596,27 +681,75 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Name"
+		Name="Tooltip"
 		Visible=true
-		Group="ID"
+		Group="Appearance"
 		InitialValue=""
 		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Super"
+		Name="AllowFocusRing"
 		Visible=true
-		Group="ID"
-		InitialValue=""
-		Type="String"
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Width"
+		Name="BackgroundColor"
 		Visible=true
-		Group="Size"
-		InitialValue="300"
-		Type="Integer"
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Enabled"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -639,31 +772,23 @@ End
 		Name="Left"
 		Visible=true
 		Group="Position"
-		InitialValue="0"
+		InitialValue=""
 		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Top"
+		Name="LockBottom"
 		Visible=true
 		Group="Position"
-		InitialValue="0"
-		Type="Integer"
+		InitialValue=""
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockTop"
-		Visible=true
-		Group="Position"
-		InitialValue="True"
+		InitialValue=""
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -671,16 +796,32 @@ End
 		Name="LockRight"
 		Visible=true
 		Group="Position"
-		InitialValue="False"
+		InitialValue=""
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LockBottom"
+		Name="LockTop"
 		Visible=true
 		Group="Position"
-		InitialValue="False"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -708,34 +849,18 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AllowAutoDeactivate"
+		Name="Top"
 		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Enabled"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Tooltip"
-		Visible=true
-		Group="Appearance"
+		Group="Position"
 		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AllowFocusRing"
+		Name="Transparent"
 		Visible=true
-		Group="Appearance"
-		InitialValue="False"
+		Group="Behavior"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -748,51 +873,11 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="BackgroundColor"
+		Name="Width"
 		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="ColorGroup"
-		EditorType="ColorGroup"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Backdrop"
-		Visible=true
-		Group="Background"
-		InitialValue=""
-		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackgroundColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Transparent"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
+		Group="Size"
+		InitialValue="300"
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

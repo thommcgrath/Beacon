@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Project
 Inherits Beacon.Project
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused PlainData
@@ -79,7 +79,7 @@ Inherits Beacon.Project
 		  If Group IsA SDTD.ConfigGroup Then
 		    Super.AddConfigGroup(Group, Self.ActiveConfigSet)
 		  Else
-		    Var Err As UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wrong config group subclass for project"
 		    Raise Err
 		  End If
@@ -91,7 +91,7 @@ Inherits Beacon.Project
 		  If Group IsA SDTD.ConfigGroup Then
 		    Super.AddConfigGroup(Group, Set)
 		  Else
-		    Var Err As UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wrong config group subclass for project"
 		    Raise Err
 		  End If
