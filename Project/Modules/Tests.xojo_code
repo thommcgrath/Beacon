@@ -46,6 +46,7 @@ Protected Module Tests
 		    TestArkClassStrings()
 		    TestCachingTimes()
 		    TestXmlParsing()
+		    TestSaveInfo()
 		    App.Log("Tests complete")
 		  #endif
 		End Sub
@@ -556,6 +557,26 @@ Protected Module Tests
 		    Call Assert(ExtremeQualityMin = Quality, "Expected quality min " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + ExtremeQualityMin.Label + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
 		    Call Assert(ExtremeQualityMin = Quality, "Expected quality max " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + ExtremeQualityMax.Label + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestSaveInfo()
+		  Const LegacySaveInfo = "Ym9va9ACAAAAAAQQMAAAAM6I4fbCN9XOSgfPNDeYh52bNsTKTJMhWHVwjfqBytzmzAEAAAQAAAADAwAAAAgAKAUAAAABAQAAVXNlcnMAAAALAAAAAQEAAHRob21tY2dyYXRoAAcAAAABAQAAU2NyYXRjaAAdAAAAAQEAAE5pdHJhZG8gTWlncmF0aW9uIFRlc3QuYmVhY29uAAAAEAAAAAEGAAAQAAAAIAAAADQAAABEAAAACAAAAAQDAAC5XAAAAAAAAAgAAAAEAwAAgbQDAAAAAAAIAAAABAMAAPE3IQAAAAAACAAAAAQDAAAqxsMFAAAAABAAAAABBgAAhAAAAJQAAACkAAAAtAAAAAgAAAAABAAAQcVUK13hI4AYAAAAAQIAAAEAAAAAAAAADwAAAAAAAAAAAAAAAAAAAAgAAAAEAwAAAgAAAAAAAAAEAAAAAwMAAPUBAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQIAAAABAMAAAAgRYzQAQAACAAAAAAEAABBxT0uhwAAACQAAAABAQAAREIwOTI5RDItOUQ1MS00NTM2LUE5MEUtOEMzNUZBQjQxRUFCGAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAABAAAAAQEAAC8AAAAAAAAAAQUAAMwAAAD+////AQAAAAAAAAAQAAAABBAAAGwAAAAAAAAABRAAAMQAAAAAAAAAEBAAAOwAAAAAAAAAQBAAANwAAAAAAAAAAiAAALgBAAAAAAAABSAAACgBAAAAAAAAECAAADgBAAAAAAAAESAAAGwBAAAAAAAAEiAAAEwBAAAAAAAAEyAAAFwBAAAAAAAAICAAAJgBAAAAAAAAMCAAAMQBAAAAAAAAAcAAAAwBAAAAAAAAEcAAACAAAAAAAAAAEsAAABwBAAAAAAAAENAAAAQAAAAAAAAA"
+		  
+		  Var LegacyFile As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(LegacySaveInfo)
+		  Call Assert((LegacyFile Is Nil) = False, "Did not get FolderItem from legacy save info.")
+		  
+		  Var TempFile As FolderItem = FolderItem.TemporaryFile
+		  Var Stream As TextOutputStream = TextOutputStream.Create(TempFile)
+		  Stream.Write("Hello World")
+		  Stream.Close
+		  Var NewSaveInfo As String = BookmarkedFolderItem.CreateSaveInfo(TempFile)
+		  Var Restored As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(NewSaveInfo)
+		  If Assert((Restored Is Nil) = False, "Did not restore temporary FolderItem from save info.") And Assert(Restored.Exists, "Temporary FolderItem was restored but does not exist.") Then
+		    // Do nothing
+		  End If
+		  TempFile.Remove
 		End Sub
 	#tag EndMethod
 

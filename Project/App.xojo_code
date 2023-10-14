@@ -860,7 +860,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Else
 		        Var File As BookmarkedFolderItem
 		        Try
-		          File = BookmarkedFolderItem.FromSaveInfo(SaveInfo, True)
+		          File = BookmarkedFolderItem.FromSaveInfo(SaveInfo)
 		        Catch Err As RuntimeException
 		          Self.Log(Err, CurrentMethodName, "Decoding save info")
 		        End Try

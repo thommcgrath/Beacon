@@ -20,7 +20,28 @@ Implements Beacon.HostingProvider
 		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  Var File As FolderItem = BookmarkedFolderItem.FromSaveInfo(Transfer.Filename)
+		  If File Is Nil Or File.Exists = False Then
+		    If FailureMode = Beacon.Integration.DownloadFailureMode.Required Then
+		      Transfer.Success = False
+		      Transfer.ErrorMessage = "File not found"
+		    Else
+		      Transfer.Success = True
+		    End If
+		    Return
+		  End If
 		  
+		  Try
+		    Transfer.Content = File.Read
+		    Transfer.Success = True
+		  Catch Err As RuntimeException
+		    If FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
+		      Transfer.Success = True
+		    Else
+		      Transfer.Success = False
+		      Transfer.ErrorMessage = Err.Message
+		    End If
+		  End Try
 		End Sub
 	#tag EndMethod
 

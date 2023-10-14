@@ -197,9 +197,9 @@ Inherits Beacon.ServerProfile
 		Function GameIniPath() As String
 		  If Self.mGameIniPath.IsEmpty = False Then
 		    Return Self.mGameIniPath
+		  ElseIf Self.mBasePath.IsEmpty = False Then
+		    Return Self.mBasePath + "/ShooterGame/Saved/Config/WindowsServer/" + Ark.ConfigFileGame
 		  End If
-		  
-		  Return Self.mBasePath + "/ShooterGame/Saved/Config/WindowsServer/" + Ark.ConfigFileGame
 		End Function
 	#tag EndMethod
 
@@ -220,9 +220,9 @@ Inherits Beacon.ServerProfile
 		Function GameUserSettingsIniPath() As String
 		  If Self.mGameUserSettingsIniPath.IsEmpty = False Then
 		    Return Self.mGameUserSettingsIniPath
+		  ElseIf Self.mBasePath.IsEmpty = False Then
+		    Return Self.mBasePath + "/ShooterGame/Saved/Config/WindowsServer/" + Ark.ConfigFileGameUserSettings
 		  End If
-		  
-		  Return Self.mBasePath + "/ShooterGame/Saved/Config/WindowsServer/" + Ark.ConfigFileGameUserSettings
 		End Function
 	#tag EndMethod
 
@@ -243,9 +243,9 @@ Inherits Beacon.ServerProfile
 		Function LogsPath() As String
 		  If Self.mLogsPath.IsEmpty = False Then
 		    Return Self.mLogsPath
+		  ElseIf Self.mBasePath.IsEmpty = False Then
+		    Return Self.mBasePath + "/ShooterGame/Saved/Logs"
 		  End If
-		  
-		  Return Self.mBasePath + "/ShooterGame/Saved/Logs"
 		End Function
 	#tag EndMethod
 

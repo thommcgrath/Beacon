@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DiscoverIntegration
 Inherits Beacon.DiscoverIntegration
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Function Run() As Beacon.Project
 		  Var Provider As Beacon.HostingProvider = Self.Profile.CreateHostingProvider
@@ -10,8 +10,32 @@ Inherits Beacon.DiscoverIntegration
 		    Return Nil
 		  End If
 		  
+		  Var Profile As Ark.ServerProfile = Self.Profile
 		  Var Data As New Ark.DiscoveredData
-		  // Setup the data
+		  Var GameIniPath As String = Profile.GameIniPath
+		  If GameIniPath.IsEmpty = False Then
+		    Var Transfer As New Beacon.IntegrationTransfer(GameIniPath)
+		    Provider.DownloadFile(Self, Profile, Transfer, Beacon.Integration.DownloadFailureMode.Required)
+		    If Not Transfer.Success Then
+		      Self.SetError("Failed to load Game.ini: " + Transfer.ErrorMessage)
+		      Return Nil
+		    End If
+		    Data.GameIniContent = Transfer.Content
+		  End If
+		  Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
+		  If GameUserSettingsIniPath.IsEmpty = False Then
+		    Var Transfer As New Beacon.IntegrationTransfer(GameUserSettingsIniPath)
+		    Provider.DownloadFile(Self, Profile, Transfer, Beacon.Integration.DownloadFailureMode.Required)
+		    If Not Transfer.Success Then
+		      Self.SetError("Failed to load GameUserSettings.ini: " + Transfer.ErrorMessage)
+		      Return Nil
+		    End If
+		    Data.GameUserSettingsIniContent = Transfer.Content
+		  End If
+		  
+		  If Provider.SupportsGameSettings Then
+		    Var Settings() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
+		  End If
 		  
 		  Var Progress As New Beacon.DummyProgressDisplayer
 		  Return Ark.ImportThread.RunSynchronous(Data, Self.mDestinationProject, Progress)
@@ -29,6 +53,12 @@ Inherits Beacon.DiscoverIntegration
 	#tag Method, Flags = &h0
 		Function DestinationProject() As Ark.Project
 		  Return Self.mDestinationProject
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Profile() As Ark.ServerProfile
+		  Return Ark.ServerProfile(Super.Profile)
 		End Function
 	#tag EndMethod
 
