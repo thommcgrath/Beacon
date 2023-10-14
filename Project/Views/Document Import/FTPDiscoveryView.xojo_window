@@ -37,7 +37,7 @@ Begin DiscoveryView FTPDiscoveryView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -47,7 +47,7 @@ Begin DiscoveryView FTPDiscoveryView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin DesktopLabel ServerMessageLabel
@@ -553,6 +553,64 @@ Begin DiscoveryView FTPDiscoveryView
          Visible         =   True
          Width           =   141
       End
+      Begin DesktopLabel AutodiscoveryMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Attempting to find your config files…"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   199
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin DesktopProgressBar AutodiscoveryProgressBar
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
+         Enabled         =   True
+         Height          =   20
+         Indeterminate   =   True
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumValue    =   100
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   3
+         Tooltip         =   ""
+         Top             =   231
+         Transparent     =   False
+         Value           =   0.0
+         Visible         =   True
+         Width           =   560
+      End
    End
    Begin ClipboardWatcher URLWatcher
       Enabled         =   True
@@ -583,6 +641,13 @@ End
 		Sub Opening()
 		  RaiseEvent Open
 		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize()
+		  Var Group As New ControlGroup(Self.AutodiscoveryMessageLabel, Self.AutodiscoveryProgressBar)
+		  Group.Top = Self.ViewPanel.Top + ((Self.ViewPanel.Height - Group.Height) / 2)
 		End Sub
 	#tag EndEvent
 
@@ -629,6 +694,7 @@ End
 		  Thread.UserData = Path
 		  AddHandler Thread.Run, WeakAddressOf ListThread_Run
 		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf ListThread_UserInterfaceUpdate
+		  Self.mListThread = Thread
 		  
 		  Self.Browser.Enabled = False
 		  Self.BrowseSpinner.Visible = True
@@ -643,11 +709,13 @@ End
 		    Var Dict As New Dictionary
 		    Dict.Value("Event") = "Finished"
 		    Dict.Value("Filenames") = Filenames
+		    Dict.Value("Finished") = True
 		    Sender.AddUserInterfaceUpdate(Dict)
 		  Catch Err As RuntimeException
 		    Var Dict As New Dictionary
 		    Dict.Value("Event") = "Error"
 		    Dict.Value("Error") = Err
+		    Dict.Value("Finished") = True
 		    Sender.AddUserInterfaceUpdate(Dict)
 		  End Try
 		End Sub
@@ -669,6 +737,9 @@ End
 		          Self.ListError(Error)
 		        End Select
 		      End If
+		      If Update.Lookup("Finished", False).BooleanValue = True Then
+		        Self.mListThread = Nil
+		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Processing discovery thread interface update")
 		    End Try
@@ -676,6 +747,50 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub mAutodiscoverThread_Run(Sender As Beacon.Thread)
+		  Var Provider As FTP.HostingProvider = FTP.HostingProvider(Self.Provider)
+		  Var Profile As Beacon.ServerProfile = Self.mProfile
+		  Var DiscoveredProfiles() As Beacon.ServerProfile = RaiseEvent Autodiscover(Provider, Profile, Sender)
+		  Var Dict As New Dictionary
+		  Dict.Value("Event") = "Finished"
+		  Dict.Value("Success") = (DiscoveredProfiles Is Nil) = False And DiscoveredProfiles.Count > 0
+		  Dict.Value("Profiles") = DiscoveredProfiles
+		  Sender.AddUserInterfaceUpdate(Dict)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mAutodiscoverThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		  #Pragma Unused Sender
+		  
+		  For Each Update As Dictionary In Updates
+		    Try
+		      If Update.HasKey("Event") Then
+		        Select Case Update.Value("Event")
+		        Case "Finished"
+		          Var Success As Boolean = Update.Value("Success")
+		          If Success Then
+		            Var Profiles() As Beacon.ServerProfile = Update.Value("Profiles")
+		            Self.ShouldFinish(Profiles)
+		          Else
+		            Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
+		            Self.ListFiles("")
+		          End If
+		          Self.mAutodiscoverThread = Nil
+		        End Select
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Processing discovery thread interface update")
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Autodiscover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event CreateServerProfile(Name As String) As Beacon.ServerProfile
@@ -713,13 +828,28 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mAutodiscoverThread As Beacon.Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mBrowserRoot As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mListThread As Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProfile As Beacon.ServerProfile
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSettingsPageHeight As Integer
+	#tag EndProperty
+
+
+	#tag Constant, Name = PageAutodiscover, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = PageBrowse, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
@@ -733,7 +863,11 @@ End
 #tag Events ViewPanel
 	#tag Event
 		Sub PanelChanged()
-		  
+		  If Me.SelectedPanelIndex = Self.PageGeneral Then
+		    Self.DesiredHeight = Self.mSettingsPageHeight
+		  Else
+		    Self.DesiredHeight = Max(420, Self.mSettingsPageHeight)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -764,7 +898,11 @@ End
 		Sub NeedsChildrenForPath(Path As String)
 		  Var Empty() As String
 		  Me.AppendChildren(Empty)
-		  Self.ListFiles(Path)
+		  
+		  If (Self.mProfile Is Nil) = False Then
+		    System.DebugLog("NeedsChildrenForPath(""" + Path + """)")
+		    Self.ListFiles(Path)
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -811,9 +949,13 @@ End
 		  
 		  Profile.HostConfig = Config
 		  Self.mProfile = Profile
-		  Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageAutodiscover
 		  
-		  Self.ListFiles("")
+		  Var Thread As New Beacon.Thread
+		  AddHandler Thread.Run, WeakAddressOf mAutodiscoverThread_Run
+		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf mAutodiscoverThread_UserInterfaceUpdate
+		  Self.mAutodiscoverThread = Thread
+		  Thread.Start
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -830,7 +972,8 @@ End
 		  Self.ServerActionButton.Top = Self.SettingsBottomSeparator.Bottom + 20
 		  Self.ServerCancelButton.Top = Self.ServerActionButton.Top
 		  Self.ServerLoadSpecButton.Top = Self.ServerActionButton.Top
-		  Self.DesiredHeight = Self.ServerActionButton.Bottom + 20
+		  Self.mSettingsPageHeight = Self.ServerActionButton.Bottom + 20
+		  Self.DesiredHeight = Self.mSettingsPageHeight
 		End Sub
 	#tag EndEvent
 #tag EndEvents

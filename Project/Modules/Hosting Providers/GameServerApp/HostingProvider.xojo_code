@@ -24,6 +24,17 @@ Implements Beacon.HostingProvider
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function GameIdToSteamId(GameId As String) As Integer
+		  Select Case GameId
+		  Case Ark.Identifier
+		    Return Ark.SteamAppId
+		  Case SDTD.Identifier
+		    Return SDTD.SteamAppId
+		  End Select
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
 		  // Part of the Beacon.HostingProvider interface.
@@ -48,11 +59,26 @@ Implements Beacon.HostingProvider
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function GSAID() As String
+		  Static ID As String
+		  If ID = "" Then
+		    #if DebugBuild
+		      Var Chars As String = App.ResourcesFolder.Child("GSAID.txt").Read
+		    #else
+		      Var Chars As String = GSAIDEncoded
+		    #endif
+		    ID = DefineEncoding(DecodeBase64(Chars.Middle(3, 1) + Chars.Middle(3, 1) + Chars.Middle(22, 1) + Chars.Middle(10, 1) + Chars.Middle(13, 1) + Chars.Middle(26, 1) + Chars.Middle(5, 1) + Chars.Middle(9, 1) + Chars.Middle(13, 1) + Chars.Middle(18, 1) + Chars.Middle(17, 1) + Chars.Middle(14, 1) + Chars.Middle(20, 1) + Chars.Middle(23, 1) + Chars.Middle(10, 1) + Chars.Middle(18, 1) + Chars.Middle(24, 1) + Chars.Middle(4, 1) + Chars.Middle(1, 1) + Chars.Middle(16, 1) + Chars.Middle(11, 1) + Chars.Middle(5, 1) + Chars.Middle(5, 1) + Chars.Middle(19, 1) + Chars.Middle(24, 1) + Chars.Middle(13, 1) + Chars.Middle(2, 1) + Chars.Middle(9, 1) + Chars.Middle(2, 1) + Chars.Middle(4, 1) + Chars.Middle(11, 1) + Chars.Middle(9, 1) + Chars.Middle(7, 1) + Chars.Middle(4, 1) + Chars.Middle(22, 1) + Chars.Middle(9, 1) + Chars.Middle(0, 1) + Chars.Middle(8, 1) + Chars.Middle(1, 1) + Chars.Middle(8, 1) + Chars.Middle(3, 1) + Chars.Middle(13, 1) + Chars.Middle(6, 1) + Chars.Middle(0, 1) + Chars.Middle(11, 1) + Chars.Middle(22, 1) + Chars.Middle(17, 1) + Chars.Middle(21, 1) + Chars.Middle(12, 1) + Chars.Middle(13, 1) + Chars.Middle(6, 1) + Chars.Middle(24, 1) + Chars.Middle(11, 1) + Chars.Middle(25, 1) + Chars.Middle(15, 1) + Chars.Middle(15, 1)),Encodings.UTF8)
+		  End If
+		  Return ID
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Identifier() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  Return GameServerApp.Identifier
 		End Function
 	#tag EndMethod
 
@@ -68,13 +94,87 @@ Implements Beacon.HostingProvider
 		Function ListServers(Logger As Beacon.LogProducer, Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  Var SteamId As Integer = Self.GameIdToSteamId(GameId)
+		  If SteamId = 0 Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Unknown game id " + GameId + "."
+		    Raise Err
+		  End If
 		  
+		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(GameServerApp.HostConfig(Config).TokenId, True)
+		  Var Profiles() As Beacon.ServerProfile
+		  
+		  Var Response As GameServerApp.APIResponse = Self.RunRequest(New GameServerApp.APIRequest("GET", "https://api.gameserverapp.com/system-api/v1/config-template", Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var Parsed As New JSONItem(Response.Content)
+		  Var Templates As JSONItem
+		  If Parsed.HasKey(Ark.SteamAppId.ToString(Locale.Raw, "0")) Then
+		    Templates = Parsed.Value(Ark.SteamAppId.ToString(Locale.Raw, "0"))
+		  Else
+		    Return Profiles
+		  End If
+		  
+		  Var Bound As Integer = Templates.LastRowIndex
+		  For Idx As Integer = 0 To Bound
+		    Var Template As JSONItem = Templates.ChildAt(Idx)
+		    If Template.Value("can_edit").BooleanValue = False Then
+		      Continue
+		    End If
+		    Var TemplateId As Integer = Template.Value("id").IntegerValue
+		    Var TemplateName As String = Template.Value("name").StringValue
+		    
+		    Var ProfileId As String = Beacon.UUID.v5(Self.Identifier + ":" + TemplateId.ToString(Locale.Raw, "0"))
+		    Var ProfileConfig As New GameServerApp.HostConfig
+		    ProfileConfig.TokenId = Token.TokenId
+		    ProfileConfig.TemplateId = TemplateId
+		    
+		    Var Profile As New Ark.ServerProfile(Self.Identifier, ProfileId, TemplateName, "", TemplateId.ToString(Locale.Raw, "0"))
+		    Profile.Platform = Beacon.PlatformPC
+		    Profile.Mask = Ark.Maps.All.Mask
+		    Profile.HostConfig = ProfileConfig
+		    Profiles.Add(Profile)
+		  Next
+		  
+		  Return Profiles
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MatchProviderToken(Token As BeaconAPI.ProviderToken) As Boolean
 		  Return (Token Is Nil) = False And Token.Provider = BeaconAPI.ProviderToken.ProviderGameServerApp
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function RunRequest(Request As GameServerApp.APIRequest) As GameServerApp.APIResponse
+		  Var Headers As Dictionary = Request.Headers
+		  Var Content As MemoryBlock = Request.Content
+		  Var RequestMethod As String = Request.RequestMethod
+		  Var Url As String = Request.Url
+		  
+		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		  For Each Entry As DictionaryEntry In Headers
+		    Socket.RequestHeader(Entry.Key) = Entry.Value
+		  Next
+		  Socket.RequestHeader("GSA-ID") = Self.GSAID()
+		  
+		  If (Content Is Nil) = False And Content.Size > 0 And Headers.HasKey("Content-Type") Then
+		    Socket.SetRequestContent(Content, Headers.Value("Content-Type"))
+		  End If
+		  
+		  Self.mThrottled = True
+		  Var Locked As Boolean = Preferences.SignalConnection()
+		  Self.mThrottled = False
+		  Self.mActiveSocket = Socket
+		  Socket.Send(RequestMethod, Url)
+		  Self.mActiveSocket = Nil
+		  If Locked Then
+		    Preferences.ReleaseConnection()
+		  End If
+		  Return GameServerApp.APIResponse.FromSocket(Socket)
 		End Function
 	#tag EndMethod
 
@@ -157,6 +257,19 @@ Implements Beacon.HostingProvider
 		  
 		End Sub
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mActiveSocket As SimpleHTTP.SynchronousHTTPSocket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThrottled As Boolean
+	#tag EndProperty
+
+
+	#tag Constant, Name = GSAIDEncoded, Type = String, Dynamic = False, Default = \"You didn\'t think it would be that easy did you\?", Scope = Private
+	#tag EndConstant
 
 
 End Class

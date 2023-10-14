@@ -396,6 +396,7 @@ End
 		  Var Thread As New Beacon.Thread
 		  Thread.UserData = Config
 		  AddHandler Thread.Run, WeakAddressOf Thread_Run
+		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf Thread_UserInterfaceUpdate
 		  Self.mThreads.Value(Token.TokenId) = Thread
 		  Thread.Start
 		  Self.mPendingListActions = Self.mPendingListActions + 1

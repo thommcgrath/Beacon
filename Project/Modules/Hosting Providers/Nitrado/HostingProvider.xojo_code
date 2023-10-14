@@ -294,7 +294,7 @@ Implements Beacon.HostingProvider
 		Function Identifier() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Return "Nitrado"
+		  Return Nitrado.Identifier
 		End Function
 	#tag EndMethod
 
@@ -356,11 +356,6 @@ Implements Beacon.HostingProvider
 		    Return Profiles
 		  End If
 		  
-		  Var Portlists() As String
-		  If Portlists.Count = 0 Then
-		    Return Profiles
-		  End If
-		  
 		  Var Bound As Integer = Services.LastRowIndex
 		  For Idx As Integer = 0 To Bound
 		    Var Service As JSONItem = Services.ChildAt(Idx)
@@ -370,7 +365,8 @@ Implements Beacon.HostingProvider
 		    
 		    Var Details As JSONItem = Service.Child("details")
 		    Var Portlist As String = Details.Lookup("portlist_short", "")
-		    If Portlists.IndexOf(Portlist) = -1 Then
+		    Var ServerGameId As String = Nitrado.HostingProvider.ShortcodeToGameId(Portlist)
+		    If ServerGameId <> GameId Then
 		      Continue
 		    End If
 		    Var Platform As Integer = Nitrado.HostingProvider.ShortcodeToPlatform(Portlist)
@@ -378,19 +374,19 @@ Implements Beacon.HostingProvider
 		      Continue
 		    End If
 		    
-		    Var ServiceId As Integer = Details.Lookup("service_id", 0)
+		    Var ServiceId As Integer = Service.Lookup("id", 0)
 		    If ServiceId = 0 Then
 		      Continue
 		    End If
 		    Var Address As String = Details.Lookup("address", "")
 		    Var Name As String = Details.Lookup("name", "")
-		    Var Nickname As String = Services.Lookup("comment", "")
+		    Var Nickname As String = Service.Lookup("comment", "")
 		    If (Name.IsEmpty Or Name.BeginsWith("Gameserver - ")) And Nickname.IsEmpty = False Then
 		      Name = Nickname
 		    End If
 		    Var SecondaryName As String = Address + " (" + ServiceId.ToString(Locale.Raw, "0") + ")"
 		    
-		    Var ProfileId As String = Beacon.UUID.v5("Nitrado:" + ServiceId.ToString(Locale.Raw, "0"))
+		    Var ProfileId As String = Beacon.UUID.v5(Self.Identifier + ":" + ServiceId.ToString(Locale.Raw, "0"))
 		    
 		    Var Profile As Beacon.ServerProfile
 		    Select Case GameId

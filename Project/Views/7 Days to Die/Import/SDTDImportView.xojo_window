@@ -514,7 +514,7 @@ End
 		  Select Case Source
 		  Case Me.SourceFTP
 		  Case Me.SourceGSA
-		  Case Me.SourceLocal
+		  Case Me.SourceFiles, Me.SourceClipboard
 		    Self.Views.SelectedPanelIndex = Self.PageLocal
 		  Case Me.SourceNitrado
 		    Self.Views.SelectedPanelIndex = Self.PageNitrado

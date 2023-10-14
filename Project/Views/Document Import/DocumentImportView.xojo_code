@@ -1,10 +1,10 @@
 #tag Class
 Protected Class DocumentImportView
 Inherits DesktopContainer
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Method, Flags = &h1
 		Protected Sub Discover(Profiles() As Beacon.ServerProfile)
-		  
+		  RaiseEvent Discover(Profiles)
 		End Sub
 	#tag EndMethod
 

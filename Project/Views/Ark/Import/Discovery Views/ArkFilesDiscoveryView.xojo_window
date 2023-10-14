@@ -1,16 +1,16 @@
 #tag DesktopWindow
-Begin ArkDiscoveryView ArkLocalDiscoveryView
-   AllowAutoDeactivate=   "True"
-   AllowFocus      =   "False"
-   AllowFocusRing  =   "False"
-   AllowTabs       =   "True"
+Begin ArkDiscoveryView ArkFilesDiscoveryView
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   Composited      =   "False"
+   Composited      =   False
    DefaultLocation =   2
    DoubleBuffer    =   "False"
-   Enabled         =   "True"
+   Enabled         =   True
    EraseBackground =   "True"
    FullScreen      =   False
    HasBackgroundColor=   False
@@ -18,15 +18,15 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   396
+   Height          =   200
    ImplicitInstance=   True
-   Index           =   "-2147483648"
+   Index           =   -2147483648
    InitialParent   =   ""
-   Left            =   "0"
-   LockBottom      =   "True"
-   LockLeft        =   "True"
-   LockRight       =   "True"
-   LockTop         =   "True"
+   Left            =   0
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
@@ -35,13 +35,13 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
    MinimumHeight   =   64
    MinimumWidth    =   64
    Resizeable      =   True
-   TabIndex        =   "0"
-   TabPanelIndex   =   "0"
-   TabStop         =   "True"
+   TabIndex        =   0
+   TabPanelIndex   =   0
+   TabStop         =   True
    Title           =   "Untitled"
    Tooltip         =   ""
-   Top             =   "0"
-   Transparent     =   "True"
+   Top             =   0
+   Transparent     =   True
    Type            =   0
    Visible         =   True
    Width           =   600
@@ -60,18 +60,18 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       InitialParent   =   ""
       Italic          =   False
       Left            =   500
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   356
+      Top             =   160
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -92,159 +92,22 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       InitialParent   =   ""
       Italic          =   False
       Left            =   408
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   356
+      Top             =   160
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
-   End
-   Begin UITweaks.ResizedPushButton ChooseFileButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Select File"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   356
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   95
-   End
-   Begin Shelf Switcher
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      DrawCaptions    =   True
-      Enabled         =   True
-      Height          =   60
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsVertical      =   False
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Visible         =   True
-      Width           =   600
-   End
-   Begin FadedSeparator FadedSeparator1
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   1
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   60
-      Transparent     =   True
-      Visible         =   True
-      Width           =   600
-   End
-   Begin DesktopLabel ExplanationLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   38
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   73
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
-   End
-   Begin ClipboardWatcher Watcher
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Mode            =   2
-      Period          =   500
-      Scope           =   2
-      TabPanelIndex   =   0
    End
    Begin UITweaks.ResizedPopupMenu MapMenu
       AllowAutoDeactivate=   True
@@ -258,82 +121,295 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
-      Left            =   151
-      LockBottom      =   True
+      Left            =   171
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   5
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   356
+      Top             =   128
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   214
    End
-   Begin Timer TextChangeDelayTrigger
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Period          =   100
-      RunMode         =   0
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin DesktopRectangle BorderRect
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
-      BorderColor     =   &c000000
-      BorderThickness =   1.0
-      CornerSize      =   0.0
+      Bold            =   True
       Enabled         =   True
-      FillColor       =   &cFFFFFF
-      Height          =   221
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
       Index           =   -2147483648
+      Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Multiline       =   False
       Scope           =   2
-      TabIndex        =   8
+      Selectable      =   False
+      TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Choose your Ark: Survival Evolved game files"
+      TextAlignment   =   0
+      TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   123
+      Top             =   20
       Transparent     =   False
+      Underline       =   False
       Visible         =   True
       Width           =   560
-      Begin CodeEditor ConfigArea
-         AutoDeactivate  =   True
-         Enabled         =   True
-         HasBorder       =   False
-         Height          =   219
-         HorizontalScrollPosition=   0
-         Index           =   -2147483648
-         InitialParent   =   "BorderRect"
-         Left            =   21
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         SelectionLength =   0
-         ShowInfoBar     =   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   124
-         VerticalScrollPosition=   0
-         Visible         =   True
-         Width           =   558
-      End
+   End
+   Begin UITweaks.ResizedTextField GameIniPathField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   171
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   60
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   297
+   End
+   Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   171
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   94
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   297
+   End
+   Begin UITweaks.ResizedLabel GameIniLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Game.ini"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   60
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   139
+   End
+   Begin UITweaks.ResizedLabel GameUserSettingsIniLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "GameUserSettings.ini"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   94
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   139
+   End
+   Begin UITweaks.ResizedLabel MapLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Map:"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   128
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   139
+   End
+   Begin UITweaks.ResizedPushButton GameIniChooseButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Choose…"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   480
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   60
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   100
+   End
+   Begin UITweaks.ResizedPushButton GameUserSettingsIniChooseButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Choose…"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   480
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   94
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   100
    End
 End
 #tag EndDesktopWindow
@@ -341,8 +417,33 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.DesiredHeight = 450
-		  Self.ConfigArea.Text = ""
+		  Self.GameIniLabel.Text = Ark.ConfigFileGame + ":"
+		  Self.GameUserSettingsIniLabel.Text = Ark.ConfigFileGameUserSettings + ":"
+		  BeaconUI.SizeToFit(Self.GameIniLabel, Self.GameUserSettingsIniLabel, Self.MapLabel)
+		  
+		  Var FieldsLeft As Integer = Self.GameIniLabel.Right + 12
+		  Var FieldsWidth As Integer = Self.Width - (Self.GameIniLabel.Width + Self.GameIniChooseButton.Width + 64)
+		  
+		  Var GameIniGroup As New ControlGroup(Self.GameIniLabel, Self.GameIniPathField, Self.GameIniChooseButton)
+		  GameIniGroup.Top = Self.MessageLabel.Bottom + 20
+		  Self.GameIniPathField.Left = FieldsLeft
+		  Self.GameIniPathField.Width = FieldsWidth
+		  Self.GameIniChooseButton.Left = Self.GameIniPathField.Right + 12
+		  
+		  Var GameUserSettingsIniGroup As New ControlGroup(Self.GameUserSettingsIniLabel, Self.GameUserSettingsIniPathField, Self.GameUserSettingsIniChooseButton)
+		  GameUserSettingsIniGroup.Top = GameIniGroup.Bottom + 12
+		  Self.GameUserSettingsIniPathField.Left = FieldsLeft
+		  Self.GameUserSettingsIniPathField.Width = FieldsWidth
+		  Self.GameUserSettingsIniChooseButton.Left = Self.GameUserSettingsIniPathField.Right + 12
+		  
+		  Var MapGroup As New ControlGroup(Self.MapLabel, Self.MapMenu)
+		  MapGroup.Top = GameUserSettingsIniGroup.Bottom + 12
+		  Self.MapMenu.Left = FieldsLeft
+		  
+		  Self.ActionButton.Top = MapGroup.Bottom + 20
+		  Self.CancelButton.Top = Self.ActionButton.Top
+		  
+		  Self.DesiredHeight = Self.ActionButton.Bottom + 20
 		End Sub
 	#tag EndEvent
 
@@ -357,21 +458,7 @@ End
 		Sub Opening()
 		  RaiseEvent Opening
 		  Self.AcceptFileDrop(BeaconFileTypes.IniFile)
-		  Self.ConfigArea.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.SwapButtons()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resize()
-		  Const NaturalMenuWidth = 200
-		  
-		  Var MinLeft As Integer = Self.ChooseFileButton.Left + Self.ChooseFileButton.Width + 12
-		  Var MaxWidth As Integer = Self.CancelButton.Left - (MinLeft + 12)
-		  Var MenuWidth As Integer = Min(NaturalMenuWidth, MaxWidth)
-		  
-		  Self.MapMenu.Width = MenuWidth
-		  Self.MapMenu.Left = MinLeft + ((MaxWidth - MenuWidth) / 2)
 		End Sub
 	#tag EndEvent
 
@@ -384,87 +471,33 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddFile(File As FolderItem, ForceType As ConfigFileType)
-		  Var Content As String = Self.ReadIniFile(File).Trim
-		  If Content = "" Then
-		    Return
+		  If ForceType = ConfigFileType.Other Then
+		    ForceType = Self.DetectConfigType(File)
 		  End If
 		  
-		  Content  = Content.DefineEncoding(Encodings.UTF8)
-		  
-		  Var Type As ConfigFileType = ForceType
-		  If Type = ConfigFileType.Other Then
-		    Type = Self.DetectConfigType(Content)
-		    If Type = ConfigFileType.Other Then
-		      Select Case Self.Switcher.SelectedIndex
-		      Case Self.GameIniIndex
-		        Type = ConfigFileType.GameIni
-		      Case Self.GameUserSettingsIniIndex
-		        Type = ConfigFileType.GameUserSettingsIni
-		      End Select
-		    End If
-		  End If
-		  
-		  Var ExistingContent As String
-		  Select Case Type
-		  Case ConfigFileType.GameIni
-		    ExistingContent = Self.mGameIniContent
-		  Case ConfigFileType.GameUserSettingsIni
-		    ExistingContent = Self.mGameUserSettingsIniContent
-		  End Select
-		  
-		  If ExistingContent.IsEmpty = False Then
-		    Var Explanation As String
-		    Select Case Type
-		    Case ConfigFileType.GameIni
-		      Explanation = "The selected file would replace or become added to your Game.ini content."
-		    Case ConfigFileType.GameUserSettingsIni
-		      Explanation = "The selected file would replace or become added to your GameUserSettings.ini content."
-		    End Select
-		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Would you like to replace the existing content, or add this file to it?", Explanation, "Replace", "Cancel", "Add To")
-		    
-		    Select Case Choice
-		    Case BeaconUI.ConfirmResponses.Action
-		      // Do nothing
-		    Case BeaconUI.ConfirmResponses.Cancel
-		      Return
-		    Case BeaconUI.ConfirmResponses.Alternate
-		      Content = ExistingContent.Trim + EndOfLine + EndOfLine + Content
-		    End Select
-		  End If
-		  
-		  Var OtherFilename, OtherContent As String
-		  Var OtherType As ConfigFileType
-		  Select Case Type
+		  Select Case ForceType
 		  Case ConfigFileType.GameIni
 		    Self.mGameIniFile = File
-		    Self.mGameIniContent = Content
-		    OtherFilename = File.Name.Replace(Ark.ConfigFileGame, Ark.ConfigFileGameUserSettings)
-		    OtherContent = Self.mGameUserSettingsIniContent
-		    OtherType = ConfigFileType.GameUserSettingsIni
+		    Self.GameIniPathField.Text = File.NativePath
+		    Self.GameIniPathField.Tooltip = File.NativePath
 		  Case ConfigFileType.GameUserSettingsIni
 		    Self.mGameUserSettingsIniFile = File
-		    Self.mGameUserSettingsIniContent = Content
-		    OtherFilename = File.Name.Replace(Ark.ConfigFileGameUserSettings, Ark.ConfigFileGame)
-		    OtherContent = Self.mGameIniContent
-		    OtherType = ConfigFileType.GameIni
+		    Self.GameUserSettingsIniPathField.Text = File.NativePath
+		    Self.GameUserSettingsIniPathField.Tooltip = File.NativePath
 		  End Select
-		  
-		  If OtherContent.IsEmpty = False Then
-		    Self.RefreshContentArea(True)
-		    Return
-		  End If
-		  
-		  Var OtherFile As FolderItem = File.Parent.Child(OtherFilename)
-		  If OtherFile <> Nil And OtherFile.Exists And OtherFile.NativePath.Compare(File.NativePath, ComparisonOptions.CaseSensitive) <> 0 And Self.ShowConfirm("Import '" + OtherFilename + "' as well?", "Beacon found a file named '" + OtherFilename + "' in the same folder that looks like it belongs with this one. Would you like to import it?", "Yes", "No") Then
-		    Self.AddFile(OtherFile, OtherType)
-		  End If
-		  
-		  Self.RefreshContentArea(True)
+		  Self.ActionButton.Enabled = (Self.mGameIniFile Is Nil) = False Or (Self.mGameUserSettingsIniFile Is Nil) = False
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function DetectConfigType(Content As String, File As FolderItem = Nil) As ConfigFileType
+		Private Function DetectConfigType(File As FolderItem) As ConfigFileType
+		  Var Content As String
+		  Try
+		    Content = File.Read
+		  Catch Err As RuntimeException
+		    Return ConfigFileType.Other
+		  End Try
+		  
 		  Content = Content.GuessEncoding
 		  Var GameIniPos As Integer = Content.IndexOf(Ark.HeaderShooterGame)
 		  Var SettingsIniPos As Integer = Content.IndexOf(Ark.HeaderServerSettings)
@@ -473,16 +506,16 @@ End
 		    Return ConfigFileType.GameIni
 		  ElseIf SettingsIniPos > -1 And GameIniPos = -1 Then
 		    Return ConfigFileType.GameUserSettingsIni
-		  ElseIf File <> Nil Then
+		  Else
 		    Select Case File.Name
 		    Case Ark.ConfigFileGame
 		      Return ConfigFileType.GameIni
 		    Case Ark.ConfigFileGameUserSettings
 		      Return ConfigFileType.GameUserSettingsIni
+		    Else
+		      Return ConfigFileType.Other
 		    End Select
 		  End If
-		  
-		  Return ConfigFileType.Other
 		End Function
 	#tag EndMethod
 
@@ -532,36 +565,66 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RefreshContentArea(ChangeIfEmpty As Boolean = False)
-		  Var SettingUp As Boolean = Self.mSettingUp
-		  Self.mSettingUp = True
-		  Select Case Self.Switcher.SelectedIndex
-		  Case Self.GameIniIndex
-		    If ChangeIfEmpty And Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty = False Then
-		      Self.Switcher.SelectedIndex = Self.GameUserSettingsIniIndex
-		    Else
-		      Self.ConfigArea.Text = Self.mGameIniContent
-		    End If
-		  Case Self.GameUserSettingsIniIndex
-		    If ChangeIfEmpty And Self.mGameIniContent.IsEmpty = False And Self.mGameUserSettingsIniContent.IsEmpty Then
-		      Self.Switcher.SelectedIndex = Self.GameIniIndex
-		    Else
-		      Self.ConfigArea.Text = Self.mGameUserSettingsIniContent
-		    End If
+		Private Sub ShowFileChooser(DesiredType As ConfigFileType, SearchForSibling As Boolean)
+		  Var Filename As String
+		  Select Case DesiredType
+		  Case ConfigFileType.GameIni
+		    Filename = Ark.ConfigFileGame
+		  Case ConfigFileType.GameUserSettingsIni
+		    Filename = Ark.ConfigFileGameUserSettings
 		  Else
-		    Self.ConfigArea.Text = ""
+		    Return
 		  End Select
-		  Self.mSettingUp = SettingUp
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SetSwitcherForType(Type As ConfigFileType)
-		  If Type = ConfigFileType.GameIni And Self.Switcher.SelectedIndex <> Self.GameIniIndex Then
-		    Self.Switcher.SelectedIndex = Self.GameIniIndex
-		  ElseIf Type = ConfigFileType.GameUserSettingsIni And Self.Switcher.SelectedIndex <> Self.GameUserSettingsIniIndex Then
-		    Self.Switcher.SelectedIndex = Self.GameUserSettingsIniIndex
+		  
+		  Var Dialog As New OpenFileDialog
+		  If (Self.mGameUserSettingsIniFile Is Nil) = False Then
+		    Dialog.InitialFolder = Self.mGameUserSettingsIniFile.Parent
+		  ElseIf (Self.mGameIniFile Is Nil) = False Then
+		    Dialog.InitialFolder = Self.mGameIniFile.Parent
 		  End If
+		  Dialog.SuggestedFileName = Filename
+		  Dialog.Filter = BeaconFileTypes.IniFile
+		  
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+		  If File Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Type As ConfigFileType = Self.DetectConfigType(File)
+		  If Type <> DesiredType Then
+		    Var Force As Boolean = Self.ShowConfirm("The chosen file may not be a " + Filename + " file.", "Beacon searched in the file, but it does not look like a normal " + Filename + " file. Do you still want to import it?", "Import Anyway", "Cancel")
+		    If Force = False Then
+		      Return
+		    End If
+		  End If
+		  
+		  Self.AddFile(File, DesiredType)
+		  
+		  If SearchForSibling = False Then
+		    Return
+		  End If
+		  
+		  Var Parent As FolderItem = File.Parent
+		  Select Case DesiredType
+		  Case ConfigFileType.GameIni
+		    Var Sibling As FolderItem = Parent.Child(Ark.ConfigFileGameUserSettings)
+		    If (Sibling Is Nil) = False And Sibling.Exists And (Sibling.Read Is Nil) = False Then
+		      Self.AddFile(Sibling, ConfigFileType.GameUserSettingsIni)
+		      Return
+		    End If
+		    If Self.ShowConfirm("Select your " + Ark.ConfigFileGameUserSettings + " file too?", "Your " + Ark.ConfigFileGame + " file is set. Do you want to choose your " + Ark.ConfigFileGameUserSettings + " file now?", "Choose", "Not Now") Then
+		      Self.ShowFileChooser(ConfigFileType.GameUserSettingsIni, False)
+		    End If
+		  Case ConfigFileType.GameUserSettingsIni
+		    Var Sibling As FolderItem = Parent.Child(Ark.ConfigFileGame)
+		    If (Sibling Is Nil) = False And Sibling.Exists And (Sibling.Read Is Nil) = False Then
+		      Self.AddFile(Sibling, ConfigFileType.GameIni)
+		      Return
+		    End If
+		    If Self.ShowConfirm("Select your " + Ark.ConfigFileGame + " file too?", "Your " + Ark.ConfigFileGameUserSettings + " file is set. Do you want to choose your " + Ark.ConfigFileGame + " file now?", "Choose", "Not Now") Then
+		      Self.ShowFileChooser(ConfigFileType.GameIni, False)
+		    End If
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -572,15 +635,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mGameIniContent As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mGameIniFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -613,11 +668,12 @@ End
 		Sub Pressed()
 		  Var Profile As New Ark.ServerProfile(Local.Identifier, Language.DefaultServerName(Ark.Identifier))
 		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
-		  If (Self.mGameIniFile Is Nil) = False And (Self.mGameUserSettingsIniFile Is Nil) = False Then
+		  If (Self.mGameIniFile Is Nil) = False Then
 		    Profile.GameIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameIniFile)
+		  End If
+		  If (Self.mGameUserSettingsIniFile Is Nil) = False Then
 		    Profile.GameUserSettingsIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameUserSettingsIniFile)
 		  End If
-		  
 		  Self.ShouldFinish(Profile)
 		End Sub
 	#tag EndEvent
@@ -626,48 +682,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.ShouldCancel()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ChooseFileButton
-	#tag Event
-		Sub Pressed()
-		  If Self.mGameIniContent.Length > 0 And Self.mGameUserSettingsIniContent.Length > 0 And Self.ShowConfirm("Both files are already selected", "You can select another file if you really want to, but both Game.ini and GameUserSettings.ini files are already present.", "Add Another", "Cancel") = False Then
-		    Return
-		  End If
-		  
-		  Var Dialog As New OpenFileDialog
-		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGame)
-		  Dialog.Filter = BeaconFileTypes.IniFile
-		  
-		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-		  If File <> Nil Then
-		    Self.AddFile(File)
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Switcher
-	#tag Event
-		Sub Opening()
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconFileIniFilled, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
-		  Me.Add(IconFileIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.SelectedIndex = Self.GameUserSettingsIniIndex
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Pressed()
-		  Self.RefreshContentArea(False)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Watcher
-	#tag Event
-		Sub ClipboardChanged(Content As String)
-		  Var Type As ConfigFileType = Self.DetectConfigType(Content)
-		  Self.SetSwitcherForType(Type)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -682,62 +696,17 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events TextChangeDelayTrigger
+#tag Events GameIniChooseButton
 	#tag Event
-		Sub Action()
-		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty) = False
+		Sub Pressed()
+		  Self.ShowFileChooser(ConfigFileType.GameIni, Self.mGameUserSettingsIniFile Is Nil)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events BorderRect
+#tag Events GameUserSettingsIniChooseButton
 	#tag Event
-		Sub Opening()
-		  Me.BorderColor = SystemColors.SeparatorColor
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ConfigArea
-	#tag Event
-		Sub TextChanged()
-		  If Not Self.mSettingUp Then
-		    Var TextValue As String = Me.Text.Trim(Chr(0), Chr(10), Chr(13), Chr(32))
-		    Select Case Self.Switcher.SelectedIndex
-		    Case Self.GameIniIndex
-		      Self.mGameIniContent = TextValue
-		    Case Self.GameUserSettingsIniIndex
-		      Self.mGameUserSettingsIniContent = TextValue
-		    End Select
-		  End If
-		  
-		  If Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single Then
-		    Self.TextChangeDelayTrigger.Reset
-		  Else
-		    Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DropObject(obj As DragItem, action As DragItem.Types)
-		  Break
-		  
-		  #Pragma Unused Action
-		  Self.HandleDrop(Obj)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SetupNeeded()
-		  Ark.SetupCodeEditor(Me)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub URIDropped(text as String)
-		  Try
-		    Var File As FolderItem = New FolderItem(Text, FolderItem.PathModes.Native)
-		    Self.AddFile(File)
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  
+		Sub Pressed()
+		  Self.ShowFileChooser(ConfigFileType.GameUserSettingsIni, Self.mGameIniFile Is Nil)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

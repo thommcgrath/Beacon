@@ -57,7 +57,7 @@ Protected Class HostConfig
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
-		  Self.Modified = Value
+		  Self.mModified = Value
 		End Sub
 	#tag EndMethod
 

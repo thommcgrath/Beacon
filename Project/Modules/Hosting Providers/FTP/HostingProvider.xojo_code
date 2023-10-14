@@ -99,7 +99,7 @@ Implements Beacon.HostingProvider
 		  Var Socket As CURLSMBS = Self.CreateSocket(Config, Url)
 		  
 		  Try
-		    Transfer.Content = Self.RunRequest(Logger, Socket)
+		    Transfer.Content = Self.RunRequest(Logger, Socket, True)
 		    Transfer.Success = True
 		  Catch Err As RuntimeException
 		    If FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Or (Err IsA NetworkException And Err.ErrorNumber = CURLSMBS.kError_REMOTE_FILE_NOT_FOUND And FailureMode = Beacon.Integration.DownloadFailureMode.MissingAllowed) Then
@@ -183,7 +183,7 @@ Implements Beacon.HostingProvider
 		  Var Filenames() As String
 		  If Config.Mode = Beacon.FTPModeSSH Then
 		    Var Socket As CURLSMBS = Self.CreateSocket(Config, Url)
-		    Var Content As String = Self.RunRequest(Logger, Socket)
+		    Var Content As String = Self.RunRequest(Logger, Socket, False) // Listing files doesn't work multithreaded
 		    Var Lines() As String = Content.Trim.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
 		    
 		    Var Parser As New RegEx
@@ -215,13 +215,13 @@ Implements Beacon.HostingProvider
 		    
 		    Var Socket As CURLSMBS = Self.CreateSocket(Config, Url)
 		    Socket.OptionWildcardMatch = True
-		    Call Self.RunRequest(Logger, Socket)
+		    Call Self.RunRequest(Logger, Socket, False) // Listing files doesn't work multithreaded
 		    Var Infos() As CURLSFileInfoMBS = Socket.FileInfos
 		    
 		    If (Infos Is Nil) = False Then
 		      For Each Info As CURLSFileInfoMBS In Infos
 		        Var Filename As String = Info.Filename
-		        If Info.IsDirectory And Filename.EndsWith("/") Then
+		        If Info.IsDirectory And Filename.EndsWith("/") = False Then
 		          Filename = Filename + "/"
 		        End If
 		        Filenames.Add(Filename)
@@ -270,11 +270,16 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RunRequest(Logger As Beacon.LogProducer, Socket As CURLSMBS) As String
+		Private Function RunRequest(Logger As Beacon.LogProducer, Socket As CURLSMBS, Multithreaded As Boolean) As String
 		  Self.mThrottled = True
 		  Var Locked As Boolean = Preferences.SignalConnection
 		  Self.mThrottled = False
-		  Var Code As Integer = Socket.PerformMT
+		  Var Code As Integer
+		  If Multithreaded Then
+		    Code = Socket.PerformMT
+		  Else
+		    Code = Socket.Perform
+		  End If
 		  Var Content As String = Socket.OutputData
 		  If Locked Then
 		    Preferences.ReleaseConnection
@@ -385,7 +390,7 @@ Implements Beacon.HostingProvider
 		  Socket.SetInputData(Transfer.Content)
 		  
 		  Try
-		    Call Self.RunRequest(Logger, Socket)
+		    Call Self.RunRequest(Logger, Socket, True)
 		    Transfer.Success = True
 		  Catch Err As RuntimeException
 		    Transfer.SetError(Err.Message + ", code " + Err.ErrorNumber.ToString(Locale.Raw, "0"))

@@ -116,6 +116,9 @@ Protected Module SDTD
 	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = SteamAppId, Type = Double, Dynamic = False, Default = \"251570", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"51740154-f9eb-49d3-aaab-1f5acdfbb31e", Scope = Protected
 	#tag EndConstant
 

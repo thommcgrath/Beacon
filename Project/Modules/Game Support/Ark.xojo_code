@@ -1519,6 +1519,9 @@ Protected Module Ark
 	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = SteamAppId, Type = Double, Dynamic = False, Default = \"376030", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 

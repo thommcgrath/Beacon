@@ -9,7 +9,7 @@ Begin DesktopContainer DocumentImportSourcePicker
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   252
+   Height          =   284
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -118,36 +118,7 @@ Begin DesktopContainer DocumentImportSourcePicker
    Begin DesktopRadioButton SourceRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Single Player, Local Files, or Copy + Paste"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   2
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   116
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   468
-   End
-   Begin DesktopRadioButton SourceRadio
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "Server With FTP Access"
+      Caption         =   "Files on your computer"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -176,13 +147,13 @@ Begin DesktopContainer DocumentImportSourcePicker
    Begin DesktopRadioButton SourceRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Other Beacon Project"
+      Caption         =   "Server with FTP access"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   4
+      Index           =   2
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -191,11 +162,40 @@ Begin DesktopContainer DocumentImportSourcePicker
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   180
+      Top             =   116
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   468
+   End
+   Begin DesktopRadioButton SourceRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Other Beacon project"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   5
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   212
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -223,11 +223,11 @@ Begin DesktopContainer DocumentImportSourcePicker
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   212
+      Top             =   244
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -254,15 +254,44 @@ Begin DesktopContainer DocumentImportSourcePicker
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   212
+      Top             =   244
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
+   End
+   Begin DesktopRadioButton SourceRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Copy and paste"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   4
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   180
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   468
    End
 End
 #tag EndDesktopWindow
@@ -297,8 +326,10 @@ End
 		    Return Self.RadioFTP
 		  Case Self.SourceGSA
 		    Return Self.RadioGSA
-		  Case Self.SourceLocal
-		    Return Self.RadioLocal
+		  Case Self.SourceFiles
+		    Return Self.RadioFiles
+		  Case Self.SourceClipboard
+		    Return Self.RadioClipboard
 		  Case Self.SourceNitrado
 		    Return Self.RadioNitrado
 		  Case Self.SourceOtherProject
@@ -332,15 +363,17 @@ End
 		Private Sub SetupUI()
 		  Self.SourceRadio(Self.RadioFTP).Visible = (Self.mAllowedSources And Self.SourceFTP) > 0
 		  Self.SourceRadio(Self.RadioGSA).Visible = (Self.mAllowedSources And Self.SourceGSA) > 0
-		  Self.SourceRadio(Self.RadioLocal).Visible = (Self.mAllowedSources And Self.SourceLocal) > 0
+		  Self.SourceRadio(Self.RadioFiles).Visible = (Self.mAllowedSources And Self.SourceFiles) > 0
 		  Self.SourceRadio(Self.RadioNitrado).Visible = (Self.mAllowedSources And Self.SourceNitrado) > 0
 		  Self.SourceRadio(Self.RadioOtherProject).Visible = (Self.mAllowedSources And Self.SourceOtherProject) > 0
+		  Self.SourceRadio(Self.RadioClipboard).Visible = (Self.mAllowedSources And Self.SourceClipboard) > 0
 		  
 		  Self.SourceRadio(Self.RadioFTP).Enabled = (Self.mEnabledSources And Self.SourceFTP) > 0
 		  Self.SourceRadio(Self.RadioGSA).Enabled = (Self.mEnabledSources And Self.SourceGSA) > 0
-		  Self.SourceRadio(Self.RadioLocal).Enabled = (Self.mEnabledSources And Self.SourceLocal) > 0
+		  Self.SourceRadio(Self.RadioFiles).Enabled = (Self.mEnabledSources And Self.SourceFiles) > 0
 		  Self.SourceRadio(Self.RadioNitrado).Enabled = (Self.mEnabledSources And Self.SourceNitrado) > 0
 		  Self.SourceRadio(Self.RadioOtherProject).Enabled = (Self.mEnabledSources And Self.SourceOtherProject) > 0
+		  Self.SourceRadio(Self.RadioClipboard).Enabled = (Self.mEnabledSources And Self.SourceClipboard) > 0
 		  
 		  Self.ActionButton.Enabled = Self.mActionButtonCanEnable And Self.SelectedSource > 0
 		  Self.SourceRadio(Self.RadioOtherProject).Caption = "Other " + Language.GameName(Self.mGameId) + " Project" + If(Self.SourceRadio(Self.RadioOtherProject).Enabled, "", " (No Other Projects Open)")
@@ -372,8 +405,10 @@ End
 		    Return Self.SourceFTP
 		  Case Self.RadioGSA
 		    Return Self.SourceGSA
-		  Case Self.RadioLocal
-		    Return Self.SourceLocal
+		  Case Self.RadioFiles
+		    Return Self.SourceFiles
+		  Case Self.RadioClipboard
+		    Return Self.SourceClipboard
 		  Case Self.RadioNitrado
 		    Return Self.SourceNitrado
 		  Case Self.RadioOtherProject
@@ -477,31 +512,37 @@ End
 	#tag Constant, Name = FirstRadioIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LastRadioIndex, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = LastRadioIndex, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = RadioClipboard, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioFiles, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RadioGSA, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioLocal, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = RadioNitrado, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioOtherProject, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = RadioOtherProject, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SourceClipboard, Type = Double, Dynamic = False, Default = \"32", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SourceFiles, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SourceFTP, Type = Double, Dynamic = False, Default = \"8", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SourceGSA, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = SourceLocal, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SourceNitrado, Type = Double, Dynamic = False, Default = \"1", Scope = Public

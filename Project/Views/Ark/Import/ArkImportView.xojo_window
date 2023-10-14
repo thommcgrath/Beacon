@@ -56,7 +56,7 @@ Begin DocumentImportView ArkImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   7
+      PanelCount      =   8
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -66,7 +66,7 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   720
       Begin MultiSelectDiscoveryView NitradoDiscoveryView1
@@ -128,7 +128,7 @@ Begin DocumentImportView ArkImportView
          Visible         =   True
          Width           =   720
       End
-      Begin ArkLocalDiscoveryView LocalDiscoveryView1
+      Begin ArkFilesDiscoveryView FilesDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -437,7 +437,7 @@ Begin DocumentImportView ArkImportView
       End
       Begin DocumentImportSourcePicker SourcePicker
          AllowAutoDeactivate=   True
-         AllowedSources  =   31
+         AllowedSources  =   63
          AllowFocus      =   False
          AllowFocusRing  =   False
          AllowTabs       =   True
@@ -445,10 +445,10 @@ Begin DocumentImportView ArkImportView
          BackgroundColor =   &cFFFFFF
          Composited      =   False
          Enabled         =   True
-         EnabledSources  =   31
+         EnabledSources  =   63
          GameId          =   "#Ark.Identifier"
          HasBackgroundColor=   False
-         Height          =   252
+         Height          =   282
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -528,6 +528,35 @@ Begin DocumentImportView ArkImportView
          Visible         =   True
          Width           =   720
       End
+      Begin ArkClipboardDiscoveryView ClipboardDiscoveryView1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   8
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
    End
    Begin Timer DiscoveryWatcher
       Enabled         =   True
@@ -570,7 +599,7 @@ End
 		Sub ImportFile(File As FolderItem)
 		  Self.QuickCancel = True
 		  Self.Views.SelectedPanelIndex = 3
-		  Self.LocalDiscoveryView1.AddFile(File)
+		  Self.FilesDiscoveryView1.AddFile(File)
 		End Sub
 	#tag EndEvent
 
@@ -592,7 +621,8 @@ End
 		  Var ArkProject As Ark.Project = Ark.Project(Project)
 		  Self.mDestinationProject = ArkProject
 		  Self.FTPDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.LocalDiscoveryView1.PullValuesFromProject(ArkProject)
+		  Self.FilesDiscoveryView1.PullValuesFromProject(ArkProject)
+		  Self.ClipboardDiscoveryView1.PullValuesFromProject(ArkProject)
 		  Self.NitradoDiscoveryView1.PullValuesFromProject(ArkProject)
 		  Self.GSADiscoveryView1.PullValuesFromProject(ArkProject)
 		End Sub
@@ -707,13 +737,16 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = PageClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageFiles, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageGSA, Type = Double, Dynamic = False, Default = \"6", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageLocal, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageNitrado, Type = Double, Dynamic = False, Default = \"1", Scope = Private
@@ -742,11 +775,13 @@ End
 		    Self.SetPageHeight(Self.SourcePicker.Height)
 		    Self.SourcePicker.ActionButtonEnabled = True
 		  Case Self.PageNitrado
-		    NitradoDiscoveryView1.Begin
+		    Self.NitradoDiscoveryView1.Begin
 		  Case Self.PageFTP
-		    FTPDiscoveryView1.Begin
-		  Case Self.PageLocal
-		    LocalDiscoveryView1.Begin
+		    Self.FTPDiscoveryView1.Begin
+		  Case Self.PageFiles
+		    Self.FilesDiscoveryView1.Begin
+		  Case Self.PageClipboard
+		    Self.ClipboardDiscoveryView1.Begin
 		  Case Self.PageStatus, Self.PageOtherDocuments
 		    Self.SetPageHeight(Self.StatusPageHeight)
 		  Case Self.PageGSA
@@ -818,6 +853,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Function UsePath(Profile As Beacon.ServerProfile, CurrentPath As String) As Boolean
+		  Break
+		  
 		  #if DebugBuild
 		    #Pragma Warning "Needs to use base path"
 		  #else
@@ -839,11 +876,107 @@ End
 	#tag EndEvent
 	#tag Event
 		Function Satisfied(Path As String) As Boolean
+		  // Allow the selection of any file, because the user might have renamed them or using a symlink
+		  Return Path.EndsWith("/") = False
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function Autodiscover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+		  Var Logger As New Beacon.DummyLogProducer
+		  Var Profiles() As Beacon.ServerProfile
+		  Var RootFilenames() As String
+		  Try
+		    RootFilenames = Provider.ListFiles(Logger, InitialProfile, "/")
+		  Catch Err As RuntimeException
+		  End Try
+		  If RootFilenames Is Nil Or RootFilenames.Count = 0 Then
+		    Return Profiles
+		  End If
 		  
+		  Var IPMatch As New Regex
+		  IPMatch.SearchPattern = "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}_\d{1,5}$"
+		  
+		  Var PotentialPaths() As String
+		  For Each Filename As String In RootFilenames
+		    If Filename.EndsWith("/") = False Then
+		      Continue
+		    End If
+		    
+		    Filename = Filename.Left(Filename.Length - 1)
+		    If Filename = "arkse" Or Filename = "arkserver" Then
+		      PotentialPaths.Add("/" + FileName + "/ShooterGame/Saved")
+		      PotentialPaths.Add("/" + Filename + "/ShooterGame/SavedArks")
+		    ElseIf Filename = "ShooterGame" Then
+		      PotentialPaths.Add("/" + FileName + "/Saved")
+		      PotentialPaths.Add("/" + FileName + "/SavedArks")
+		    ElseIf Filename = "Saved" Or Filename = "SavedArks" Then
+		      PotentialPaths.Add("/" + Filename)
+		    ElseIf IPMatch.Search(Filename) <> Nil Then
+		      PotentialPaths.Add("/" + Filename + "/ShooterGame/Saved")
+		      PotentialPaths.Add("/" + Filename + "/ShooterGame/SavedArks")
+		    End If
+		  Next
+		  
+		  For Each Path As String In PotentialPaths
+		    Var Filenames() As String
+		    Try
+		      Filenames = Provider.ListFiles(Logger, InitialProfile, Path)
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		    Var LogsPath, ConfigPath As String
+		    For Each Filename As String In Filenames
+		      Select Case FileName
+		      Case "Config/"
+		        ConfigPath = Path + "/Config"
+		      Case "Logs/"
+		        LogsPath = Path + "/Logs"
+		      End Select
+		    Next
+		    If ConfigPath.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    Try
+		      Filenames = Provider.ListFiles(Logger, InitialProfile, ConfigPath)
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		    Var Found As Boolean
+		    For Each Filename As String In Filenames
+		      If Filename.EndsWith("/") = False Then
+		        Continue
+		      End If
+		      
+		      If Filename.EndsWith("Server/") Or Filename.EndsWith("NoEditor/") Then
+		        ConfigPath = ConfigPath + "/" + Filename.Left(Filename.Length - 1)
+		        Found = True
+		      End If
+		    Next
+		    
+		    If Not Found Then
+		      Continue
+		    End If
+		    
+		    Var ProfileId As String = Beacon.UUID.v5(FTP.Identifier + ":" + InitialProfile.HostConfig.Hash + ":" + ConfigPath)
+		    Var Profile As New Ark.ServerProfile(FTP.Identifier, ProfileId, InitialProfile.Name, InitialProfile.Nickname, InitialProfile.SecondaryName)
+		    Profile.HostConfig = InitialProfile.HostConfig
+		    Profile.GameIniPath = ConfigPath + "/" + Ark.ConfigFileGame
+		    Profile.GameUserSettingsIniPath = ConfigPath + "/" + Ark.ConfigFileGameUserSettings
+		    Profile.LogsPath = LogsPath
+		    Profiles.Add(Profile)
+		  Next
+		  
+		  Return Profiles
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Trying Ark FTP autodiscovery")
+		    Var Empty() As Beacon.ServerProfile
+		    Return Empty
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events LocalDiscoveryView1
+#tag Events FilesDiscoveryView1
 	#tag Event
 		Sub ShouldCancel()
 		  If Self.QuickCancel Then
@@ -944,8 +1077,10 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageFTP
 		  Case Me.SourceGSA
 		    Self.Views.SelectedPanelIndex = Self.PageGSA
-		  Case Me.SourceLocal
-		    Self.Views.SelectedPanelIndex = Self.PageLocal
+		  Case Me.SourceFiles
+		    Self.Views.SelectedPanelIndex = Self.PageFiles
+		  Case Me.SourceClipboard
+		    Self.Views.SelectedPanelIndex = Self.PageClipboard
 		  Case Me.SourceNitrado
 		    Self.Views.SelectedPanelIndex = Self.PageNitrado
 		  Case Me.SourceOtherProject
@@ -1004,6 +1139,32 @@ End
 		Function GameId() As String
 		  Return Ark.Identifier
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ClipboardDiscoveryView1
+	#tag Event
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher
