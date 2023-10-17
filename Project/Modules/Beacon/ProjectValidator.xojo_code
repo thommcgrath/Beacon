@@ -22,6 +22,8 @@ Protected Class ProjectValidator
 
 	#tag Method, Flags = &h21
 		Private Sub mThread_Run(Sender As Thread)
+		  Sender.YieldToNext
+		  
 		  Var Issues As Beacon.ProjectValidationResults = Self.mProject.Validate
 		  
 		  If Issues.Count = 0 Then

@@ -185,12 +185,12 @@ Protected Module DataUpdater
 
 	#tag Method, Flags = &h21
 		Private Sub mImportThread_Run(Sender As Thread)
-		  #Pragma Unused Sender
-		  
 		  If mPendingImports.Count = 0 Then
 		    mForceImport = False
 		    Return
 		  End If
+		  
+		  Sender.YieldToNext
 		  
 		  NotificationKit.Post(Notification_ImportBegin, Nil)
 		  

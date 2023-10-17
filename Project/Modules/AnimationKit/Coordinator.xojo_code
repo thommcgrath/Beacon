@@ -100,6 +100,7 @@ Protected Class Coordinator
 
 	#tag Method, Flags = &h21
 		Private Sub ThreadedAnimator_Run(Sender As Thread)
+		  Sender.YieldToNext()
 		  Do
 		    If Self.Tasks.LastIndex = -1 Then
 		      Sender.Pause()

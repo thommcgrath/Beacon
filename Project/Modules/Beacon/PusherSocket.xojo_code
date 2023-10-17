@@ -54,6 +54,8 @@ Protected Class PusherSocket
 		    Return
 		  #endif
 		  
+		  Sender.YieldToNext
+		  
 		  Var ClusterId, AppKey As String
 		  Try
 		    Var Request As New BeaconAPI.Request("/pusher", "GET")

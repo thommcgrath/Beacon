@@ -199,6 +199,8 @@ Protected Class ModDiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub mThread_Run(Sender As Thread)
+		  Sender.YieldToNext
+		  
 		  Self.StatusMessage = "Building server…"
 		  
 		  Var Port As Integer = System.Random.InRange(2000, 65000)

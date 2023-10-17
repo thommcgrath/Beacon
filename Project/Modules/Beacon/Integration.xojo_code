@@ -200,7 +200,7 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h21
 		Private Sub mThread_Run(Sender As Global.Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  Self.mRunning = True
 		  Try
@@ -568,6 +568,14 @@ Implements Beacon.LogProducer
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ThreadPriority"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

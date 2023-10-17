@@ -933,7 +933,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Sub SubmitPendingReports_Run(Sender As Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  If SubmitLock Is Nil Then
 		    SubmitLock = New CriticalSection

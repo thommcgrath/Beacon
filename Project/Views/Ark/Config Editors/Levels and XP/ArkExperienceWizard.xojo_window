@@ -451,6 +451,7 @@ Begin BeaconDialog ArkExperienceWizard
       TabStop         =   True
       Tooltip         =   ""
       Top             =   276
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -800,6 +801,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mComputeThread_Run(Sender As Thread)
+		  Sender.YieldToNext()
+		  
 		  Var AdditionalLevels As Integer = Self.mDesiredLevels
 		  Var AdditionalXP As UInt64 = Self.mDesiredXP
 		  Var Curve As Beacon.Curve = Self.mDesiredCurve

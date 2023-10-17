@@ -296,7 +296,7 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Sub Thread_Delete(Sender As Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  If Not Self.CanWrite Then
 		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Project is not writeable")
@@ -331,7 +331,7 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Sub Thread_Load(Sender As Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  Var FileContent As MemoryBlock
 		  
@@ -423,7 +423,7 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Sub Thread_UpdateProjectMembers(Sender As Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  Self.UpdateProjectMembers()
 		End Sub
@@ -431,7 +431,7 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Sub Thread_Upload(Sender As Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  Var SaveData As MemoryBlock
 		  Var Saved As Boolean
@@ -483,7 +483,7 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Sub Thread_Write(Sender As Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  Var SaveData As MemoryBlock
 		  Var Saved As Boolean

@@ -736,7 +736,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateNewsThread_Run(Sender As Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  Socket.RequestHeader("User-Agent") = App.UserAgent
