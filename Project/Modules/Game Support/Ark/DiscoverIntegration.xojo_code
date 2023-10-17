@@ -10,35 +10,119 @@ Inherits Beacon.DiscoverIntegration
 		    Return Nil
 		  End If
 		  
-		  Var Profile As Ark.ServerProfile = Self.Profile
+		  Var DownloadIniFiles, GatherGameSettings As Boolean = True
+		  
 		  Var Data As New Ark.DiscoveredData
-		  Var GameIniPath As String = Profile.GameIniPath
-		  If GameIniPath.IsEmpty = False Then
-		    Var Transfer As New Beacon.IntegrationTransfer(GameIniPath)
-		    Provider.DownloadFile(Self, Profile, Transfer, Beacon.Integration.DownloadFailureMode.Required)
-		    If Not Transfer.Success Then
-		      Self.SetError("Failed to load Game.ini: " + Transfer.ErrorMessage)
+		  Var Profile As Ark.ServerProfile = Self.Profile
+		  Select Case Provider
+		  Case IsA Nitrado.HostingProvider
+		    Self.Log("Checking server status…")
+		    Try
+		      Profile.BasePath = Provider.GameSetting(Self, Profile, "/game_specific.path")
+		    Catch Err As RuntimeException
+		      Self.SetError("Could not find server base path: " + Err.Message)
 		      Return Nil
-		    End If
-		    Data.GameIniContent = Transfer.Content
-		  End If
-		  Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
-		  If GameUserSettingsIniPath.IsEmpty = False Then
-		    Var Transfer As New Beacon.IntegrationTransfer(GameUserSettingsIniPath)
-		    Provider.DownloadFile(Self, Profile, Transfer, Beacon.Integration.DownloadFailureMode.Required)
-		    If Not Transfer.Success Then
-		      Self.SetError("Failed to load GameUserSettings.ini: " + Transfer.ErrorMessage)
+		    End Try
+		    
+		    Var ExpertMode As Boolean
+		    Try
+		      ExpertMode = Provider.GameSetting(Self, Profile, "general.expertMode")
+		    Catch Err As RuntimeException
+		      Self.SetError("Could not determine if the server is in expert mode: " + Err.Message)
 		      Return Nil
+		    End Try
+		    
+		    GatherGameSettings = False
+		    DownloadIniFiles = ExpertMode
+		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Provider.GameSetting(Self, Profile, "start-param")).ToString) // Weird way to convert JSONItem to Dictionary
+		    
+		    If ExpertMode = False Then
+		      Var GuidedOrganizer As New Ark.ConfigOrganizer
+		      Var Settings() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
+		      For Each Setting As Ark.ConfigOption In Settings
+		        If Setting.HasNitradoEquivalent = False Then
+		          Continue
+		        End If
+		        
+		        Var Value As Variant
+		        Try
+		          Value = Provider.GameSetting(Self, Profile, Setting)
+		        Catch Err As RuntimeException
+		          Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
+		          Return Nil
+		        End Try
+		        
+		        Select Case Setting.NitradoFormat
+		        Case Ark.ConfigOption.NitradoFormats.Value
+		          GuidedOrganizer.Add(New Ark.ConfigValue(Setting, Setting.Key + "=" + Value))
+		        Case Ark.ConfigOption.NitradoFormats.Line
+		          Var Lines() As String = Value.StringValue.Split(EndOfLine.UNIX)
+		          For LineIdx As Integer = 0 To Lines.LastIndex
+		            GuidedOrganizer.Add(New Ark.ConfigValue(Setting, Lines(LineIdx), LineIdx))
+		          Next
+		        End Select
+		      Next
+		      
+		      Self.Log("Downloading extra " + Ark.ConfigFileGame + " content…")
+		      Var ExtraGameIniPath As String = Profile.BasePath + "/user-settings.ini"
+		      Var ExtraGameIniTransfer As New Beacon.IntegrationTransfer(ExtraGameIniPath)
+		      Provider.DownloadFile(Self, Profile, ExtraGameIniTransfer, Beacon.Integration.DownloadFailureMode.MissingAllowed)
+		      If Not ExtraGameIniTransfer.Success Then
+		        Self.SetError("Failed to load extra " + Ark.ConfigFileGame + " content: " + ExtraGameIniTransfer.ErrorMessage)
+		        Return Nil
+		      End If
+		      GuidedOrganizer.Add(Ark.ConfigFileGame, Ark.HeaderShooterGame, ExtraGameIniTransfer.Content)
+		      
+		      Data.GameIniContent = GuidedOrganizer.Build(Ark.ConfigFileGame)
+		      Data.GameUserSettingsIniContent = GuidedOrganizer.Build(Ark.ConfigFileGameUserSettings)
 		    End If
-		    Data.GameUserSettingsIniContent = Transfer.Content
+		  End Select
+		  
+		  If DownloadIniFiles Then
+		    Var GameIniPath As String = Profile.GameIniPath
+		    If GameIniPath.IsEmpty = False Then
+		      Self.Log("Downloading " + Ark.ConfigFileGame + "…")
+		      Var Transfer As New Beacon.IntegrationTransfer(GameIniPath)
+		      Provider.DownloadFile(Self, Profile, Transfer, Beacon.Integration.DownloadFailureMode.Required)
+		      If Not Transfer.Success Then
+		        Self.SetError("Failed to load " + Ark.ConfigFileGame + ": " + Transfer.ErrorMessage)
+		        Return Nil
+		      End If
+		      Data.GameIniContent = Transfer.Content
+		    End If
+		    Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
+		    If GameUserSettingsIniPath.IsEmpty = False Then
+		      Self.Log("Downloading " + Ark.ConfigFileGameUserSettings + "…")
+		      Var Transfer As New Beacon.IntegrationTransfer(GameUserSettingsIniPath)
+		      Provider.DownloadFile(Self, Profile, Transfer, Beacon.Integration.DownloadFailureMode.Required)
+		      If Not Transfer.Success Then
+		        Self.SetError("Failed to load " + Ark.ConfigFileGameUserSettings + ": " + Transfer.ErrorMessage)
+		        Return Nil
+		      End If
+		      Data.GameUserSettingsIniContent = Transfer.Content
+		    End If
 		  End If
 		  
-		  If Provider.SupportsGameSettings Then
+		  If GatherGameSettings And Provider.SupportsGameSettings Then
+		    Var CommandLineOptions As New Dictionary
 		    Var Settings() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
+		    For Each Setting As Ark.ConfigOption In Settings
+		      Var Value As Variant
+		      Try
+		        Value = Provider.GameSetting(Self, Profile, Setting)
+		        CommandLineOptions.Value(Setting.Key) = Value
+		      Catch Err As RuntimeException
+		        Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
+		        Return Nil
+		      End Try
+		    Next
+		    Data.CommandLineOptions = CommandLineOptions
 		  End If
 		  
-		  Var Progress As New Beacon.DummyProgressDisplayer
-		  Return Ark.ImportThread.RunSynchronous(Data, Self.mDestinationProject, Progress)
+		  Self.mImportProgress = New Beacon.DummyProgressDisplayer
+		  Var Project As Ark.Project = Ark.ImportThread.RunSynchronous(Data, Self.mDestinationProject, Self.mImportProgress)
+		  Self.mImportProgress = Nil
+		  Return Project
 		End Function
 	#tag EndEvent
 
@@ -59,6 +143,16 @@ Inherits Beacon.DiscoverIntegration
 	#tag Method, Flags = &h0
 		Function Profile() As Ark.ServerProfile
 		  Return Ark.ServerProfile(Super.Profile)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StatusMessage() As String
+		  If (Self.mImportProgress Is Nil) = False Then
+		    Return Self.mImportProgress.Detail
+		  Else
+		    Return Super.StatusMessage
+		  End If
 		End Function
 	#tag EndMethod
 

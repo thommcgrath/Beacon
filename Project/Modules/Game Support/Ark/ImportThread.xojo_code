@@ -34,7 +34,7 @@ Inherits Beacon.Thread
 		  CharactersProcessed = CharactersProcessed + CharacterCount
 		  Var Percent As Double = CharactersProcessed / TotalCharacters
 		  Progress.Progress = Percent
-		  Progress.Detail = "Parsing files (" + Percent.ToString(Locale.Current, "0%") + "%)…"
+		  Progress.Detail = "Parsing files (" + Percent.ToString(Locale.Current, "0%") + ")…"
 		End Sub
 	#tag EndMethod
 
