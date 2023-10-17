@@ -375,7 +375,15 @@ class ServiceToken implements JsonSerializable {
 			'redirect_url' => static::RedirectURI($this->provider),
 		];
 
-		static::Redeem($this->userId, $this->provider, $fields);
+		$newToken = static::Redeem($this->userId, $this->provider, $fields);
+		$this->accessTokenEncrypted = $newToken->accessTokenEncrypted;
+		$this->refreshTokenEncrypted = $newToken->refreshTokenEncrypted;
+		$this->accessTokenExpiration = $newToken->accessTokenExpiration;
+		$this->refreshTokenExpiration = $newToken->refreshTokenExpiration;
+		$this->providerSpecific = json_decode(json_encode($newToken->providerSpecific), true);
+		$this->encryptionKey = $newToken->encryptionKey;
+		$this->accessToken = $newToken->accessToken;
+		$this->refreshToken = $newToken->refreshToken;
 	}
 
 	public function Delete(): bool {
