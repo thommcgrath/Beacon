@@ -20,7 +20,21 @@ Implements Beacon.HostingProvider
 		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  Var TemplateId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, TemplateId, Token)
 		  
+		  Var Response As GameServerApp.APIResponse = Self.RunRequest(New GameServerApp.APIRequest("GET", "https://api.gameserverapp.com/system-api/v1/config-template/" + TemplateId.ToString(Locale.Raw, "0") + "/config/" + Transfer.Filename, Token))
+		  If Not Response.Success Then
+		    Transfer.Success = (FailureMode = Beacon.Integration.DownloadFailureMode.Required)
+		    Transfer.Content = ""
+		    Transfer.ErrorMessage = Response.Error.Message
+		    Return
+		  End If
+		  
+		  Var Parsed As New JSONItem(Response.Content)
+		  Transfer.Success = True
+		  Transfer.Content = Parsed.Value("content")
 		End Sub
 	#tag EndMethod
 
@@ -48,6 +62,20 @@ Implements Beacon.HostingProvider
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Sub GetCredentials(Profile As Beacon.ServerProfile, ByRef TemplateId As Integer, ByRef Token As BeaconAPI.ProviderToken)
+		  Var Config As Beacon.HostConfig = Profile.HostConfig
+		  If Config Is Nil Or (Config IsA GameServerApp.HostConfig) = False Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Profile must have a GameServerApp host config object"
+		    Raise Err
+		  End If
+		  
+		  TemplateId = GameServerApp.HostConfig(Config).TemplateId
+		  Token = BeaconAPI.GetProviderToken(GameServerApp.HostConfig(Config).TokenId, True)
 		End Sub
 	#tag EndMethod
 
@@ -111,8 +139,8 @@ Implements Beacon.HostingProvider
 		  
 		  Var Parsed As New JSONItem(Response.Content)
 		  Var Templates As JSONItem
-		  If Parsed.HasKey(Ark.SteamAppId.ToString(Locale.Raw, "0")) Then
-		    Templates = Parsed.Value(Ark.SteamAppId.ToString(Locale.Raw, "0"))
+		  If Parsed.HasKey(SteamId.ToString(Locale.Raw, "0")) Then
+		    Templates = Parsed.Value(SteamId.ToString(Locale.Raw, "0"))
 		  Else
 		    Return Profiles
 		  End If
@@ -131,9 +159,15 @@ Implements Beacon.HostingProvider
 		    ProfileConfig.TokenId = Token.TokenId
 		    ProfileConfig.TemplateId = TemplateId
 		    
-		    Var Profile As New Ark.ServerProfile(Self.Identifier, ProfileId, TemplateName, "", TemplateId.ToString(Locale.Raw, "0"))
+		    Var Profile As Beacon.ServerProfile
+		    Select Case GameId
+		    Case Ark.Identifier
+		      Profile = New Ark.ServerProfile(Self.Identifier, ProfileId, TemplateName, "", TemplateId.ToString(Locale.Raw, "0"))
+		      Ark.ServerProfile(Profile).Mask = Ark.Maps.All.Mask
+		      Ark.ServerProfile(Profile).GameIniPath = Ark.ConfigFileGame
+		      Ark.ServerProfile(Profile).GameUserSettingsIniPath = Ark.ConfigFileGameUserSettings
+		    End Select
 		    Profile.Platform = Beacon.PlatformPC
-		    Profile.Mask = Ark.Maps.All.Mask
 		    Profile.HostConfig = ProfileConfig
 		    Profiles.Add(Profile)
 		  Next
@@ -272,5 +306,47 @@ Implements Beacon.HostingProvider
 	#tag EndConstant
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass
