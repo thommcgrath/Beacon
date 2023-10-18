@@ -436,7 +436,7 @@ Implements Beacon.HostingProvider
 		  Var Locked As Boolean = Preferences.SignalConnection()
 		  Self.mThrottled = False
 		  Self.mActiveSocket = Socket
-		  Socket.Send(RequestMethod, Url)
+		  Socket.Send(RequestMethod, Url, 120)
 		  Self.mActiveSocket = Nil
 		  If Locked Then
 		    Preferences.ReleaseConnection()
