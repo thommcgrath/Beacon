@@ -18,6 +18,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub AlternateLabel(Assigns Value As NullableString)
+		  If Self.mAlternateLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAlternateLabel = Value
 		  Self.mModified = True
 		End Sub
@@ -27,6 +31,11 @@ Implements Ark.MutableBlueprint
 		Sub Availability(Assigns Value As UInt64)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
+		  If Self.mAvailability = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAvailability = Value
 		  Self.Modified = True
 		End Sub
@@ -34,10 +43,13 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub BlueprintId(Assigns Value As String)
-		  If Self.mSpawnPointId <> Value Then
-		    Self.mSpawnPointId = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mSpawnPointId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mSpawnPointId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -69,6 +81,11 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackId(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
+		  If Self.mContentPackId = Value Then
+		    Return
+		  End If
+		  
 		  Self.mContentPackId = Value
 		  Self.Modified = True
 		End Sub
@@ -77,6 +94,11 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  #Pragma StackOverflowChecking False
+		  If Self.mContentPackName = Value Then
+		    Return
+		  End If
 		  
 		  Self.mContentPackName = Value
 		  Self.Modified = True
@@ -110,6 +132,11 @@ Implements Ark.MutableBlueprint
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
+		  If Self.mLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mLabel = Value
 		  Self.Modified = True
 		End Sub
@@ -117,10 +144,13 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub LastUpdate(Assigns Value As Double)
-		  If Self.mLastUpdate <> Value THen
-		    Self.mLastUpdate = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mLastUpdate = Value Then
+		    Return
 		  End If
+		  
+		  Self.mLastUpdate = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -164,10 +194,13 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Mode(Assigns Value As Integer)
-		  If Self.mMode <> Value Then
-		    Self.mMode = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mMode = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMode = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -180,6 +213,10 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  If Self.mPath = Value Then
+		    Return
+		  End If
 		  
 		  Self.mPath = Value
 		  Self.mClassString = Ark.ClassStringFromPath(Value)
@@ -254,10 +291,13 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub SpawnPointId(Assigns Value As String)
-		  If Self.mSpawnPointId <> Value Then
-		    Self.mSpawnPointId = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mSpawnPointId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mSpawnPointId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -359,7 +399,7 @@ Implements Ark.MutableBlueprint
 		      Var Set As New Ark.MutableSpawnPointSet
 		      Set.Label = SpawnDict.Lookup("label", "Untitled Spawn Set").StringValue
 		      Set.SetId = SpawnDict.Lookup("group_id", Beacon.UUID.v4).StringValue
-		      Set.Weight = SpawnDict.Lookup("weight", 0.1).DoubleValue
+		      Set.RawWeight = SpawnDict.Lookup("weight", 0.1).DoubleValue
 		      For Each Path As String In Creatures
 		        Var Creature As Ark.Creature = Ark.ResolveCreature("", Path, "", Nil)
 		        Set.Append(New Ark.MutableSpawnPointSetEntry(Creature))

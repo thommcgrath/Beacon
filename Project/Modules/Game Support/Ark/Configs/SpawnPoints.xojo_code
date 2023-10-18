@@ -449,7 +449,7 @@ Inherits Ark.ConfigGroup
 		            
 		            Var Set As New Ark.MutableSpawnPointSet
 		            Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
-		            Set.Weight = Entry.Lookup("EntryWeight", 1.0)
+		            Set.RawWeight = Entry.Lookup("EntryWeight", 1.0)
 		            Set.ColorSetClass = Entry.Lookup("ColorSets", "")
 		            
 		            For I As Integer = 0 To Classes.LastIndex

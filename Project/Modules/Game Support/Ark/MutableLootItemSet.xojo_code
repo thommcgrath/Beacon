@@ -101,6 +101,11 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
+		  #Pragma StackOverflowChecking False
+		  If Self.mLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mLabel = Value
 		  Self.Modified = True
 		End Sub
@@ -108,6 +113,12 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub MaxNumItems(Assigns Value As Integer)
+		  #Pragma StackOverflowChecking False
+		  Value = Max(Value, 0)
+		  If Self.mMaxNumItems = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMaxNumItems = Value
 		  Self.Modified = True
 		End Sub
@@ -115,6 +126,12 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub MinNumItems(Assigns Value As Integer)
+		  #Pragma StackOverflowChecking False
+		  Value = Max(Value, 0)
+		  If Self.mMinNumItems = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMinNumItems = Value
 		  Self.Modified = True
 		End Sub
@@ -128,6 +145,11 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub NumItemsPower(Assigns Value As Double)
+		  #Pragma StackOverflowChecking False
+		  If Self.mNumItemsPower = Value Then
+		    Return
+		  End If
+		  
 		  Self.mNumItemsPower = Value
 		  Self.Modified = True
 		End Sub
@@ -142,6 +164,12 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
+		  #Pragma StackOverflowChecking False
+		  Value = Max(Value, 0)
+		  If Self.mSetWeight = Value Then
+		    Return
+		  End If
+		  
 		  Self.mSetWeight = Value
 		  Self.Modified = True
 		End Sub
@@ -172,6 +200,11 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub TemplateUUID(Assigns Value As String)
+		  #Pragma StackOverflowChecking False
+		  If Self.mTemplateUUID = Value Then
+		    Return
+		  End If
+		  
 		  Self.mTemplateUUID = Value
 		  Self.Modified = True
 		End Sub
@@ -179,6 +212,11 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub UUID(Assigns Value As String)
+		  #Pragma StackOverflowChecking False
+		  If Self.mUUID = Value Then
+		    Return
+		  End If
+		  
 		  Self.mUUID = Value
 		  Self.Modified = True
 		End Sub

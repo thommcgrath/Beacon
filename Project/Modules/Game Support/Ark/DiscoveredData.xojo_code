@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DiscoveredData
 Inherits Beacon.DiscoveredData
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Method, Flags = &h0
 		Function CommandLineOptions() As Dictionary
 		  Return Self.mCommandLineOptions
@@ -16,6 +16,7 @@ Inherits Beacon.DiscoveredData
 
 	#tag Method, Flags = &h0
 		Function GameIniContent() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mGameIniContent
 		End Function
 	#tag EndMethod
@@ -28,6 +29,7 @@ Inherits Beacon.DiscoveredData
 
 	#tag Method, Flags = &h0
 		Function GameUserSettingsIniContent() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mGameUserSettingsIniContent
 		End Function
 	#tag EndMethod

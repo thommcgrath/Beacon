@@ -13,18 +13,21 @@ Protected Class Map
 
 	#tag Method, Flags = &h0
 		Function DifficultyOffset(DifficultyValue As Double) As Double
+		  #Pragma StackOverflowChecking False
 		  Return Min((DifficultyValue - 0.5) / (Self.mDifficultyScale - 0.5), 1.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DifficultyScale() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mDifficultyScale
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DifficultyValue(DifficultyOffset As Double) As Double
+		  #Pragma StackOverflowChecking False
 		  DifficultyOffset = Min(DifficultyOffset, 1.0)
 		  Return (DifficultyOffset * (Self.mDifficultyScale - 0.5)) + 0.5
 		End Function
@@ -32,18 +35,21 @@ Protected Class Map
 
 	#tag Method, Flags = &h0
 		Function Identifier() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Mask() As UInt64
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMask
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Matches(Value As UInt64) As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return (Value And Self.mMask) = Self.mMask
 		End Function
 	#tag EndMethod
@@ -56,6 +62,7 @@ Protected Class Map
 
 	#tag Method, Flags = &h0
 		Function Official() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mOfficial
 		End Function
 	#tag EndMethod
@@ -78,12 +85,14 @@ Protected Class Map
 
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As UInt64
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMask
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ProvidedByContentPackId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mProvidedByContentPackId
 		End Function
 	#tag EndMethod

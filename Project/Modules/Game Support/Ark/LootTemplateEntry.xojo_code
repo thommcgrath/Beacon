@@ -3,6 +3,7 @@ Protected Class LootTemplateEntry
 Implements Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
+		  #Pragma StackOverflowChecking False
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
@@ -19,6 +20,7 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function ChanceToBeBlueprint() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mChanceToBeBlueprint
 		End Function
 	#tag EndMethod
@@ -72,6 +74,7 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function EntryId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mEntryId
 		End Function
 	#tag EndMethod
@@ -287,6 +290,7 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function MaxQuantity() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMaxQuantity
 		End Function
 	#tag EndMethod
@@ -299,18 +303,21 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function MinQuantity() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMinQuantity
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mModified
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
+		  #Pragma StackOverflowChecking False
 		  Self.mModified = Value
 		  Self.mHash = ""
 		End Sub
@@ -407,30 +414,35 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function RawWeight() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mWeight
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RespectBlueprintChanceMultipliers() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mRespectBlueprintChanceMultipliers
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RespectQualityOffsets() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mRespectQualityOffsets
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RespectQuantityMultipliers() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mRespectQuantityMultipliers
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RespectWeightMultipliers() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mRespectWeightMultipliers
 		End Function
 	#tag EndMethod
@@ -497,6 +509,7 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function StatClampMultiplier() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mStatClampMultiplier
 		End Function
 	#tag EndMethod
@@ -509,6 +522,7 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Mask As UInt64) As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return (Self.mAvailability And Mask) > CType(0, UInt64)
 		End Function
 	#tag EndMethod

@@ -133,6 +133,7 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function Grouping() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mGrouping
 		End Function
 	#tag EndMethod
@@ -175,12 +176,14 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function Kind() As String
+		  #Pragma StackOverflowChecking False
 		  Return "LootTemplate"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MaxEntriesSelected() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMaxEntriesSelected
 		End Function
 	#tag EndMethod
@@ -208,6 +211,7 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function MinEntriesSelected() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMinEntriesSelected
 		End Function
 	#tag EndMethod
@@ -317,6 +321,7 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function UUID() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mUUID
 		End Function
 	#tag EndMethod

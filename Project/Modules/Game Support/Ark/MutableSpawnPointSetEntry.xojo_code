@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MutableSpawnPointSetEntry
 Inherits Ark.SpawnPointSetEntry
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
 		Sub Append(Level As Ark.SpawnPointLevel)
 		  Var Idx As Integer = Self.IndexOf(Level)
@@ -22,10 +23,13 @@ Inherits Ark.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub EntryId(Assigns Value As String)
-		  If Self.mEntryId <> Value Then
-		    Self.mEntryId = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mEntryId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mEntryId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -127,7 +131,7 @@ Inherits Ark.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Offset(Assigns Value As Beacon.Point3D)
-		  If Value = Nil Then
+		  If Value Is Nil Then
 		    If Self.mOffset <> Nil Then
 		      Self.mOffset = Nil
 		      Self.Modified = True

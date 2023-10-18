@@ -420,6 +420,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function ItemsRandomWithoutReplacement() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mItemsRandomWithoutReplacement
 		End Function
 	#tag EndMethod
@@ -450,18 +451,21 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function Label() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MaxNumItems() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Max(Self.mMaxNumItems, 0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MinNumItems() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Max(Self.mMinNumItems, 0)
 		End Function
 	#tag EndMethod
@@ -510,6 +514,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function NumItemsPower() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mNumItemsPower
 		End Function
 	#tag EndMethod
@@ -709,6 +714,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function TemplateUUID() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mTemplateUUID
 		End Function
 	#tag EndMethod
@@ -725,6 +731,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function UUID() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mUUID
 		End Function
 	#tag EndMethod

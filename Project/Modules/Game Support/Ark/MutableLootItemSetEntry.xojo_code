@@ -10,6 +10,11 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub ChanceToBeBlueprint(Assigns Value As Double)
+		  #Pragma StackOverflowChecking False
+		  If Self.mChanceToBeBlueprint = Value Then
+		    Return
+		  End If
+		  
 		  Self.mChanceToBeBlueprint = Value
 		  Self.Modified = True
 		End Sub
@@ -24,10 +29,13 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub EntryId(Assigns Value As String)
-		  If Self.mEntryId <> Value Then
-		    Self.mEntryId = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mEntryId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mEntryId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -39,6 +47,10 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub MaxQuality(Assigns Value As Ark.Quality)
+		  If Self.mMaxQuality = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMaxQuality = Value
 		  Self.Modified = True
 		End Sub
@@ -46,6 +58,12 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub MaxQuantity(Assigns Value As Integer)
+		  #Pragma StackOverflowChecking False
+		  Value = Max(Value, 0)
+		  If Self.mMaxQuantity = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMaxQuantity = Value
 		  Self.Modified = True
 		End Sub
@@ -53,6 +71,10 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub MinQuality(Assigns Value As Ark.Quality)
+		  If Self.mMinQuality = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMinQuality = Value
 		  Self.Modified = True
 		End Sub
@@ -60,6 +82,12 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub MinQuantity(Assigns Value As Integer)
+		  #Pragma StackOverflowChecking False
+		  Value = Max(Value, 0)
+		  If Self.mMinQuantity = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMinQuantity = Value
 		  Self.Modified = True
 		End Sub
@@ -80,6 +108,11 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub PreventGrinding(Assigns Value As Boolean)
+		  #Pragma StackOverflowChecking False
+		  If Self.mPreventGrinding = Value Then
+		    Return
+		  End If
+		  
 		  Self.mPreventGrinding = Value
 		  Self.Modified = True
 		End Sub
@@ -87,6 +120,12 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
+		  #Pragma StackOverflowChecking False
+		  Value = Max(Value, 0)
+		  If Self.mWeight = Value Then
+		    Return
+		  End If
+		  
 		  Self.mWeight = Value
 		  Self.Modified = True
 		End Sub
@@ -108,6 +147,11 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub SingleItemQuantity(Assigns Value As Boolean)
+		  #Pragma StackOverflowChecking False
+		  If Self.mSingleItemQuantity = Value Then
+		    Return
+		  End If
+		  
 		  Self.mSingleItemQuantity = Value
 		  Self.Modified = True
 		End Sub
@@ -115,6 +159,11 @@ Inherits Ark.LootItemSetEntry
 
 	#tag Method, Flags = &h0
 		Sub StatClampMultiplier(Assigns Value As Double)
+		  #Pragma StackOverflowChecking False
+		  If Self.mStatClampMultiplier = Value Then
+		    Return
+		  End If
+		  
 		  Self.mStatClampMultiplier = Value
 		  Self.Modified = True
 		End Sub

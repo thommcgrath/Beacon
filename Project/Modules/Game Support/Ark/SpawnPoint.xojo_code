@@ -11,12 +11,14 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function Availability() As UInt64
 		  // Part of the Ark.Blueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BlueprintId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mSpawnPointId
 		End Function
 	#tag EndMethod
@@ -25,6 +27,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function Category() As String
 		  // Part of the Ark.Blueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Ark.CategorySpawnPoints
 		End Function
 	#tag EndMethod
@@ -33,6 +36,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function ClassString() As String
 		  // Part of the Ark.Blueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Self.mClassString
 		End Function
 	#tag EndMethod
@@ -84,6 +88,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function ContentPackId() As String
 		  // Part of the Ark.Blueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Self.mContentPackId
 		End Function
 	#tag EndMethod
@@ -92,6 +97,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function ContentPackName() As String
 		  // Part of the Ark.Blueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
@@ -260,12 +266,14 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function Label() As String
 		  // Part of the Ark.Blueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LastUpdate() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mLastUpdate
 		End Function
 	#tag EndMethod
@@ -321,6 +329,7 @@ Implements Ark.Blueprint,Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Mode() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMode
 		End Function
 	#tag EndMethod
@@ -369,6 +378,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		Attributes( Deprecated = "SpawnPointId" )  Function ObjectID() As String
 		  // Part of the Ark.Blueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Self.mSpawnPointId
 		End Function
 	#tag EndMethod
@@ -397,6 +407,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function Path() As String
 		  // Part of the Ark.Blueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Self.mPath
 		End Function
 	#tag EndMethod
@@ -452,6 +463,7 @@ Implements Ark.Blueprint,Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function SpawnPointId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mSpawnPointId
 		End Function
 	#tag EndMethod

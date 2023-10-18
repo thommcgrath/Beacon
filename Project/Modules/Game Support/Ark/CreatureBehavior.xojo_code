@@ -56,6 +56,7 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function DamageMultiplier() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mDamageMultiplier
 		End Function
 	#tag EndMethod
@@ -131,18 +132,21 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function ProhibitSpawning() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mProhibitSpawning
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ProhibitTaming() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mProhibitTaming
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ProhibitTransfer() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mProhibitTransfer
 		End Function
 	#tag EndMethod
@@ -157,6 +161,7 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function ResistanceMultiplier() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mResistanceMultiplier
 		End Function
 	#tag EndMethod
@@ -169,18 +174,21 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function SpawnWeightMultiplier() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mSpawnWeightMultiplier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TamedDamageMultiplier() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mTamedDamageMultiplier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TamedResistanceMultiplier() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mTamedResistanceMultiplier
 		End Function
 	#tag EndMethod

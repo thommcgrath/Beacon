@@ -16,6 +16,7 @@ Protected Class ModDiscoverySettings
 
 	#tag Method, Flags = &h0
 		Function DeleteBlueprints() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mDeleteBlueprints
 		End Function
 	#tag EndMethod
@@ -83,14 +84,6 @@ Protected Class ModDiscoverySettings
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mArkFolder"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -7,6 +7,10 @@ Implements Ark.MutableBlueprint
 		Sub AlternateLabel(Assigns Value As NullableString)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Self.mAlternateLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAlternateLabel = Value
 		  Self.Modified = True
 		End Sub
@@ -16,6 +20,11 @@ Implements Ark.MutableBlueprint
 		Sub Availability(Assigns Value As UInt64)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
+		  If Self.mAvailability = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAvailability = Value
 		  Self.Modified = True
 		End Sub
@@ -23,10 +32,13 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub BlueprintId(Assigns Value As String)
-		  If Self.mEngramId <> Value Then
-		    Self.mEngramId = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mEngramId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mEngramId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -58,6 +70,11 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackId(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
+		  If Self.mContentPackId = Value Then
+		    Return
+		  End If
+		  
 		  Self.mContentPackId = Value
 		  Self.Modified = True
 		End Sub
@@ -67,6 +84,11 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  #Pragma StackOverflowChecking False
+		  If Self.mContentPackName = Value Then
+		    Return
+		  End If
+		  
 		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
@@ -74,16 +96,26 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub EngramId(Assigns Value As String)
-		  If Self.mEngramId <> Value Then
-		    Self.mEngramId = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mEngramId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mEngramId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub EntryString(Assigns Value As String)
-		  Self.mEngramEntryString = Value.Trim
+		  #Pragma StackOverflowChecking False
+		  
+		  Value = Value.Trim
+		  If Self.mEngramEntryString = Value Then
+		    Return
+		  End If
+		  
+		  Self.mEngramEntryString = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -113,13 +145,23 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ItemID(Assigns Value As NullableDouble)
+		  If Self.mItemID = Value Then
+		    Return
+		  End If
+		  
 		  Self.mItemID = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  #Pragma StackOverflowChecking False
+		  If Self.mLabel = Value Then
+		    Return
+		  End If
 		  
 		  Self.mLabel = Value
 		  Self.Modified = True
@@ -128,10 +170,13 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub LastUpdate(Assigns Value As Double)
-		  If Self.mLastUpdate <> Value THen
-		    Self.mLastUpdate = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mLastUpdate = Value Then
+		    Return
 		  End If
+		  
+		  Self.mLastUpdate = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -144,6 +189,10 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  If Self.mPath = Value Then
+		    Return
+		  End If
 		  
 		  Self.mPath = Value
 		  Self.mClassString = Ark.ClassStringFromPath(Value)
@@ -169,6 +218,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub RequiredPlayerLevel(Assigns Level As NullableDouble)
+		  If Self.mRequiredPlayerLevel = Level Then
+		    Return
+		  End If
+		  
 		  Self.mRequiredPlayerLevel = Level
 		  Self.Modified = True
 		End Sub
@@ -176,6 +229,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub RequiredUnlockPoints(Assigns Points As NullableDouble)
+		  If Self.mRequiredUnlockPoints = Points Then
+		    Return
+		  End If
+		  
 		  Self.mRequiredUnlockPoints = Points
 		  Self.Modified = True
 		End Sub
@@ -183,6 +240,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub StackSize(Assigns Value As NullableDouble)
+		  If Self.mStackSize = Value Then
+		    Return
+		  End If
+		  
 		  Self.mStackSize = Value
 		  Self.Modified = True
 		End Sub

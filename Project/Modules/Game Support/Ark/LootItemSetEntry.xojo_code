@@ -18,6 +18,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function ChanceToBeBlueprint() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mChanceToBeBlueprint
 		End Function
 	#tag EndMethod
@@ -93,6 +94,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function EntryId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mEntryId
 		End Function
 	#tag EndMethod
@@ -466,6 +468,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function MaxQuantity() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMaxQuantity
 		End Function
 	#tag EndMethod
@@ -551,6 +554,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function MinQuantity() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMinQuantity
 		End Function
 	#tag EndMethod
@@ -634,12 +638,14 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function PreventGrinding() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mPreventGrinding
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RawWeight() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Max(Self.mWeight, 0.00001)
 		End Function
 	#tag EndMethod
@@ -805,6 +811,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function StatClampMultiplier() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mStatClampMultiplier
 		End Function
 	#tag EndMethod

@@ -28,24 +28,28 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
+		  #Pragma StackOverflowChecking False
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BlueprintId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mCreatureId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Category() As String
+		  #Pragma StackOverflowChecking False
 		  Return Ark.CategoryCreatures
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ClassString() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mClassString
 		End Function
 	#tag EndMethod
@@ -94,12 +98,14 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ContentPackId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mContentPackId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ContentPackName() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
@@ -136,6 +142,7 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function CreatureId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mCreatureId
 		End Function
 	#tag EndMethod
@@ -150,6 +157,7 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function IncubationTime() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mIncubationTime
 		End Function
 	#tag EndMethod
@@ -172,36 +180,42 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function LastUpdate() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mLastUpdate
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MatureTime() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMatureTime
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MaxMatingInterval() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMaxMatingInterval
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MinMatingInterval() As Double
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMinMatingInterval
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
+		  #Pragma StackOverflowChecking False
 		  Return Self.mModified
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
+		  #Pragma StackOverflowChecking False
 		  Self.mModified = Value
 		End Sub
 	#tag EndMethod
@@ -224,6 +238,7 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Attributes( Deprecated = "CreatureId" )  Function ObjectID() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mCreatureId
 		End Function
 	#tag EndMethod
@@ -300,6 +315,7 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Path() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mPath
 		End Function
 	#tag EndMethod
@@ -324,6 +340,7 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function StatsMask() As UInt16
+		  #Pragma StackOverflowChecking False
 		  Return Self.mStatsMask
 		End Function
 	#tag EndMethod

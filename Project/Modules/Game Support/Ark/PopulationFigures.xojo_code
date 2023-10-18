@@ -10,18 +10,21 @@ Protected Class PopulationFigures
 
 	#tag Method, Flags = &h0
 		Function Instances() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mInstances
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MapName() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mMapName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TargetPopulation() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mTargetPopulation
 		End Function
 	#tag EndMethod

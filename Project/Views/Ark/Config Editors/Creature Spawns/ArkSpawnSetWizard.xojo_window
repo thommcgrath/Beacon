@@ -770,7 +770,7 @@ End
 		  Var Set As Ark.MutableSpawnPointSet = Self.mOrganizer.Template
 		  Set.Label = Self.mOrganizer.FindUniqueSetLabel(Self.mSelectedCreature.Label)
 		  Set.SpreadRadius = Radius
-		  Set.Weight = Weight
+		  Set.RawWeight = Weight
 		  For Each Entry As Ark.MutableSpawnPointSetEntry In Entries
 		    Set.Append(Entry)
 		  Next

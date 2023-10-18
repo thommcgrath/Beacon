@@ -2,7 +2,7 @@
 Protected Class MutableCreature
 Inherits Ark.Creature
 Implements Ark.MutableBlueprint
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub AddStatValue(Values As Ark.CreatureStatValue)
 		  If Values Is Nil Then
@@ -25,6 +25,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub AlternateLabel(Assigns Value As NullableString)
+		  If Self.mAlternateLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAlternateLabel = Value
 		  Self.Modified = True
 		End Sub
@@ -32,6 +36,11 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
+		  #Pragma StackOverflowChecking False
+		  If Self.mAvailability = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAvailability = Value
 		  Self.Modified = True
 		End Sub
@@ -39,10 +48,13 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub BlueprintId(Assigns Value As String)
-		  If Self.mCreatureId <> Value Then
-		    Self.mCreatureId = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mCreatureId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mCreatureId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -116,6 +128,11 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ContentPackId(Assigns Value As String)
+		  #Pragma StackOverflowChecking False
+		  If Self.mContentPackId = Value Then
+		    Return
+		  End If
+		  
 		  Self.mContentPackId = Value
 		  Self.Modified = True
 		End Sub
@@ -123,6 +140,11 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ContentPackName(Assigns Value As String)
+		  #Pragma StackOverflowChecking False
+		  If Self.mContentPackName = Value Then
+		    Return
+		  End If
+		  
 		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
@@ -130,10 +152,13 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub CreatureId(Assigns Value As String)
-		  If Self.mCreatureId <> Value Then
-		    Self.mCreatureId = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mCreatureId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mCreatureId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -171,6 +196,10 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
+		  #Pragma StackOverflowChecking False
+		  If Self.mLabel = Value Then
+		    Return
+		  End If
 		  
 		  Self.mLabel = Value
 		  Self.Modified = True
@@ -179,15 +208,23 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub LastUpdate(Assigns Value As Double)
-		  If Self.mLastUpdate <> Value THen
-		    Self.mLastUpdate = Value
-		    Self.Modified = True
+		  #Pragma StackOverflowChecking False
+		  If Self.mLastUpdate = Value Then
+		    Return
 		  End If
+		  
+		  Self.mLastUpdate = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MatureTime(Assigns Value As Double)
+		  #Pragma StackOverflowChecking False
+		  If Self.mMatureTime = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMatureTime = Value
 		  Self.Modified = True
 		End Sub
@@ -195,6 +232,11 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MaxMatingInterval(Assigns Value As Double)
+		  #Pragma StackOverflowChecking False
+		  If Self.mMaxMatingInterval = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMaxMatingInterval = Value
 		  Self.Modified = True
 		End Sub
@@ -202,6 +244,11 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MinMatingInterval(Assigns Value As Double)
+		  #Pragma StackOverflowChecking False
+		  If Self.mMinMatingInterval = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMinMatingInterval = Value
 		  Self.Modified = True
 		End Sub
@@ -217,6 +264,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
+		  If Self.mPath = Value Then
+		    Return
+		  End If
+		  
 		  Self.mPath = Value
 		  Self.mClassString = Ark.ClassStringFromPath(Value)
 		  Self.Modified = True
@@ -225,6 +276,11 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub StatsMask(Assigns Value As UInt16)
+		  #Pragma StackOverflowChecking False
+		  If Self.mStatsMask = Value Then
+		    Return
+		  End If
+		  
 		  Self.mStatsMask = Value
 		  Self.Modified = True
 		End Sub

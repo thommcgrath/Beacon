@@ -83,6 +83,7 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  #Pragma StackOverflowChecking False
 			  Return Self.mAttributedKey
 			End Get
 		#tag EndGetter
@@ -92,6 +93,7 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  #Pragma StackOverflowChecking False
 			  Return Self.mCommand
 			End Get
 		#tag EndGetter
@@ -173,6 +175,7 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  #Pragma StackOverflowChecking False
 			  Return Self.mSimplifiedKey
 			End Get
 		#tag EndGetter
@@ -195,6 +198,7 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  #Pragma StackOverflowChecking False
 			  Return Self.mSortKey
 			End Get
 		#tag EndGetter
@@ -204,6 +208,7 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  #Pragma StackOverflowChecking False
 			  Return Self.mValue
 			End Get
 		#tag EndGetter

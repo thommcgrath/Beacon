@@ -2152,7 +2152,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.SpawnSet.Weight = Value
+		  Self.SpawnSet.RawWeight = Value
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
