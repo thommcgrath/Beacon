@@ -318,6 +318,7 @@ Inherits Ark.IntegrationEngine
 		  End If
 		  
 		  Var Th As New Beacon.Thread
+		  Th.DebugIdentifier = CurrentMethodName
 		  Th.UserData = Path
 		  AddHandler Th.Run, WeakAddressOf ListThread_Run
 		  Th.Start

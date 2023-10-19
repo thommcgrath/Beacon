@@ -68,7 +68,7 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h0
 		Function Busy() As Boolean
-		  Return Self.mActiveThread <> Nil And Self.mActiveThread.ThreadState <> Thread.ThreadStates.NotRunning
+		  Return (Self.mActiveThread Is Nil) = False And Self.mActiveThread.ThreadState <> Thread.ThreadStates.NotRunning
 		End Function
 	#tag EndMethod
 
@@ -114,9 +114,10 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  Self.mActiveThread = New Thread
+		  Self.mActiveThread = New Beacon.Thread
 		  Self.mActiveThread.Priority = Thread.LowestPriority
-		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Delete
+		  Self.mActiveThread.DebugIdentifier = CurrentMethodName
+		  AddHandler Self.mActiveThread.Run, AddressOf Thread_Delete
 		  Self.mActiveThread.Start
 		End Sub
 	#tag EndMethod
@@ -209,12 +210,13 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  Self.mActiveThread = New Thread
+		  Self.mActiveThread = New Beacon.Thread
 		  Self.mActiveThread.Priority = Thread.LowestPriority
-		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Load
+		  Self.mActiveThread.DebugIdentifier = CurrentMethodName
+		  AddHandler Self.mActiveThread.Run, AddressOf Thread_Load
 		  Self.mActiveThread.Start
 		  
-		  Self.mLoadStartedCallbackKey = CallLater.Schedule(1500, WeakAddressOf TriggerLoadStarted)
+		  Self.mLoadStartedCallbackKey = CallLater.Schedule(1500, AddressOf TriggerLoadStarted)
 		End Sub
 	#tag EndMethod
 
@@ -295,9 +297,7 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Delete(Sender As Thread)
-		  Sender.YieldToNext
-		  
+		Private Sub Thread_Delete(Sender As Beacon.Thread)
 		  If Not Self.CanWrite Then
 		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Project is not writeable")
 		    Return
@@ -326,13 +326,16 @@ Protected Class ProjectController
 		  Else
 		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Unknown storage url type " + Self.mProjectURL.Type)
 		  End Select
+		  
+		  RemoveHandler Sender.Run, AddressOf Thread_Delete
+		  If Self.mActiveThread = Sender Then
+		    Self.mActiveThread = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Load(Sender As Thread)
-		  Sender.YieldToNext
-		  
+		Private Sub Thread_Load(Sender As Beacon.Thread)
 		  Var FileContent As MemoryBlock
 		  
 		  Select Case Self.mProjectURL.Type
@@ -418,21 +421,23 @@ Protected Class ProjectController
 		  
 		  Self.mLoaded = True
 		  Call CallLater.Schedule(0, AddressOf TriggerLoadSuccess)
+		  
+		  RemoveHandler Sender.Run, AddressOf Thread_Load
+		  If Self.mActiveThread = Sender Then
+		    Self.mActiveThread = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_UpdateProjectMembers(Sender As Thread)
-		  Sender.YieldToNext
-		  
+		Private Sub Thread_UpdateProjectMembers(Sender As Beacon.Thread)
 		  Self.UpdateProjectMembers()
+		  RemoveHandler Sender.Run, AddressOf Thread_UpdateProjectMembers
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Upload(Sender As Thread)
-		  Sender.YieldToNext
-		  
+		Private Sub Thread_Upload(Sender As Beacon.Thread)
 		  Var SaveData As MemoryBlock
 		  Var Saved As Boolean
 		  Var Message As String
@@ -478,13 +483,16 @@ Protected Class ProjectController
 		    End If
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
 		  End If
+		  
+		  RemoveHandler Sender.Run, AddressOf Thread_Upload
+		  If Self.mActiveThread = Sender Then
+		    Self.mActiveThread = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Write(Sender As Thread)
-		  Sender.YieldToNext
-		  
+		Private Sub Thread_Write(Sender As Beacon.Thread)
 		  Var SaveData As MemoryBlock
 		  Var Saved As Boolean
 		  Var Message As String
@@ -513,6 +521,11 @@ Protected Class ProjectController
 		      Message = "Unknown error"
 		    End If
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
+		  End If
+		  
+		  RemoveHandler Sender.Run, AddressOf Thread_Write
+		  If Self.mActiveThread = Sender Then
+		    Self.mActiveThread = Nil
 		  End If
 		End Sub
 	#tag EndMethod
@@ -570,8 +583,9 @@ Protected Class ProjectController
 	#tag Method, Flags = &h0
 		Sub UpdateProjectMembers()
 		  If Thread.Current Is Nil Then
-		    Var UpdaterThread As New Thread
-		    AddHandler UpdaterThread.Run, WeakAddressOf Thread_UpdateProjectMembers
+		    Var UpdaterThread As New Beacon.Thread
+		    UpdaterThread.DebugIdentifier = CurrentMethodName
+		    AddHandler UpdaterThread.Run, AddressOf Thread_UpdateProjectMembers
 		    UpdaterThread.Start
 		    Return
 		  End If
@@ -678,14 +692,16 @@ Protected Class ProjectController
 		  
 		  Select Case Destination.Type
 		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared
-		    Self.mActiveThread = New Thread
+		    Self.mActiveThread = New Beacon.Thread
+		    Self.mActiveThread.DebugIdentifier = CurrentMethodName
 		    Self.mActiveThread.Priority = Thread.LowestPriority
-		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
+		    AddHandler Self.mActiveThread.Run, AddressOf Thread_Upload
 		    Self.mActiveThread.Start
 		  Case Beacon.ProjectURL.TypeLocal
-		    Self.mActiveThread = New Thread
+		    Self.mActiveThread = New Beacon.Thread
+		    Self.mActiveThread.DebugIdentifier = CurrentMethodName
 		    Self.mActiveThread.Priority = Thread.LowestPriority
-		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Write
+		    AddHandler Self.mActiveThread.Run, AddressOf Thread_Write
 		    Self.mActiveThread.Start
 		  End Select
 		End Sub
@@ -734,7 +750,7 @@ Protected Class ProjectController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mActiveThread As Thread
+		Private mActiveThread As Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

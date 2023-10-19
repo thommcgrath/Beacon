@@ -33,8 +33,8 @@ Inherits Beacon.DeployIntegration
 		    Var Map As String = Config.Value("map").StringValue
 		    Self.Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField("."))
 		  Else
-		    Self.SetError("Unknown hosting provider")
-		    Return
+		    GameIniPath = Profile.GameIniPath
+		    GameUserSettingsIniPath = Profile.GameUserSettingsIniPath
 		  End Select
 		  
 		  Self.EnterResourceIntenseMode()
@@ -72,12 +72,12 @@ Inherits Beacon.DeployIntegration
 		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
 		  // Download the ini files
 		  Var DownloadSuccess As Boolean
-		  GameIniOriginal = Self.GetFile(GameIniPath, Beacon.Integration.DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
+		  GameIniOriginal = Self.GetFile(GameIniPath, Ark.ConfigFileGame, Beacon.Integration.DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
 		  If Self.Finished Or DownloadSuccess = False Then
 		    Self.Finish()
 		    Return
 		  End If
-		  GameUserSettingsIniOriginal = Self.GetFile(GameUserSettingsIniPath, Beacon.Integration.DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
+		  GameUserSettingsIniOriginal = Self.GetFile(GameUserSettingsIniPath, Ark.ConfigFileGameUserSettings, Beacon.Integration.DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
 		  If Self.Finished Or DownloadSuccess = False Then
 		    Self.Finish()
 		    Return
@@ -170,11 +170,11 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Put the new files on the server
-		  If Self.PutFile(GameIniRewritten, GameIniPath) = False Or Self.Finished Then
+		  If Self.PutFile(GameIniRewritten, GameIniPath, Ark.ConfigFileGame) = False Or Self.Finished Then
 		    Self.Finish()
 		    Return
 		  End If 
-		  If Self.PutFile(GameUserSettingsIniRewritten, GameUserSettingsIniPath) = False Or Self.Finished Then
+		  If Self.PutFile(GameUserSettingsIniRewritten, GameUserSettingsIniPath, Ark.ConfigFileGameUserSettings) = False Or Self.Finished Then
 		    Self.Finish()
 		    Return
 		  End If
@@ -188,12 +188,6 @@ Inherits Beacon.DeployIntegration
 		    End If
 		  End If
 		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Function Wait(Controller As Beacon.TaskWaitController) As Boolean
-		  
-		End Function
 	#tag EndEvent
 
 
@@ -327,7 +321,7 @@ Inherits Beacon.DeployIntegration
 		    
 		    // Generate a new user-settings.ini file
 		    Var ExtraGameIniSuccess As Boolean
-		    Var ExtraGameIni As String = Self.GetFile(UserSettingsIniPath, DownloadFailureMode.MissingAllowed, False, ExtraGameIniSuccess)
+		    Var ExtraGameIni As String = Self.GetFile(UserSettingsIniPath, "user-settings.ini", DownloadFailureMode.MissingAllowed, False, ExtraGameIniSuccess)
 		    If ExtraGameIniSuccess = False Or Self.Finished Then
 		      Self.Finish()
 		      Return False
@@ -380,7 +374,7 @@ Inherits Beacon.DeployIntegration
 		      End If
 		    End If
 		    
-		    If Not Self.PutFile(ExtraGameIniRewritten, UserSettingsIniPath) Then
+		    If Not Self.PutFile(ExtraGameIniRewritten, UserSettingsIniPath, "user-settings.ini") Then
 		      Self.Finish()
 		      Return False
 		    End If
@@ -437,7 +431,7 @@ Inherits Beacon.DeployIntegration
 		  
 		  Var LogPath As String = Self.Profile.BasePath + "/ShooterGame/Saved/Logs/ShooterGame.log"
 		  Var LogContentSuccess As Boolean
-		  Var LogContent As String = Self.GetFile(LogPath, Beacon.Integration.DownloadFailureMode.ErrorsAllowed, False, LogContentSuccess)
+		  Var LogContent As String = Self.GetFile(LogPath, "ShooterGame.log", Beacon.Integration.DownloadFailureMode.ErrorsAllowed, False, LogContentSuccess)
 		  Var ServerStopTime As DateTime
 		  
 		  If LogContentSuccess Then
@@ -596,6 +590,14 @@ Inherits Beacon.DeployIntegration
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ThreadPriority"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true

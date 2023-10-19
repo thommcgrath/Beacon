@@ -63,15 +63,12 @@ Inherits Beacon.DiscoverIntegration
 		        End Select
 		      Next
 		      
-		      Self.Log("Downloading extra " + Ark.ConfigFileGame + " content…")
-		      Var ExtraGameIniPath As String = Profile.BasePath + "/user-settings.ini"
-		      Var ExtraGameIniTransfer As New Beacon.IntegrationTransfer(ExtraGameIniPath)
-		      Provider.DownloadFile(Self, Profile, ExtraGameIniTransfer, Beacon.Integration.DownloadFailureMode.MissingAllowed)
-		      If Not ExtraGameIniTransfer.Success Then
-		        Self.SetError("Failed to load extra " + Ark.ConfigFileGame + " content: " + ExtraGameIniTransfer.ErrorMessage)
+		      Var DownloadSuccess As Boolean
+		      Var ExtraGameIniContent As String = Self.GetFile(Profile.BasePath + "/user-settings.ini", "user-settings.ini", Beacon.Integration.DownloadFailureMode.MissingAllowed, Profile, False, DownloadSuccess)
+		      If Not DownloadSuccess Then
 		        Return Nil
 		      End If
-		      GuidedOrganizer.Add(Ark.ConfigFileGame, Ark.HeaderShooterGame, ExtraGameIniTransfer.Content)
+		      GuidedOrganizer.Add(Ark.ConfigFileGame, Ark.HeaderShooterGame, ExtraGameIniContent)
 		      
 		      Data.GameIniContent = GuidedOrganizer.Build(Ark.ConfigFileGame)
 		      Data.GameUserSettingsIniContent = GuidedOrganizer.Build(Ark.ConfigFileGameUserSettings)
@@ -81,25 +78,19 @@ Inherits Beacon.DiscoverIntegration
 		  If DownloadIniFiles Then
 		    Var GameIniPath As String = Profile.GameIniPath
 		    If GameIniPath.IsEmpty = False Then
-		      Self.Log("Downloading " + Ark.ConfigFileGame + "…")
-		      Var Transfer As New Beacon.IntegrationTransfer(GameIniPath)
-		      Provider.DownloadFile(Self, Profile, Transfer, Beacon.Integration.DownloadFailureMode.Required)
-		      If Not Transfer.Success Then
-		        Self.SetError("Failed to load " + Ark.ConfigFileGame + ": " + Transfer.ErrorMessage)
+		      Var DownloadSuccess As Boolean
+		      Data.GameIniContent = Self.GetFile(GameIniPath, Ark.ConfigFileGame, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
+		      If Not DownloadSuccess Then
 		        Return Nil
 		      End If
-		      Data.GameIniContent = Transfer.Content
 		    End If
 		    Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
 		    If GameUserSettingsIniPath.IsEmpty = False Then
-		      Self.Log("Downloading " + Ark.ConfigFileGameUserSettings + "…")
-		      Var Transfer As New Beacon.IntegrationTransfer(GameUserSettingsIniPath)
-		      Provider.DownloadFile(Self, Profile, Transfer, Beacon.Integration.DownloadFailureMode.Required)
-		      If Not Transfer.Success Then
-		        Self.SetError("Failed to load " + Ark.ConfigFileGameUserSettings + ": " + Transfer.ErrorMessage)
+		      Var DownloadSuccess As Boolean
+		      Data.GameUserSettingsIniContent = Self.GetFile(GameUserSettingsIniPath, Ark.ConfigFileGameUserSettings, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
+		      If Not DownloadSuccess Then
 		        Return Nil
 		      End If
-		      Data.GameUserSettingsIniContent = Transfer.Content
 		    End If
 		  End If
 		  
@@ -121,6 +112,7 @@ Inherits Beacon.DiscoverIntegration
 		  
 		  Self.mImportProgress = New Beacon.DummyProgressDisplayer
 		  Var Project As Ark.Project = Ark.ImportThread.RunSynchronous(Data, Self.mDestinationProject, Self.mImportProgress)
+		  Project.AddServerProfile(Profile)
 		  Self.mImportProgress = Nil
 		  Return Project
 		End Function

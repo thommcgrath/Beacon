@@ -24,7 +24,7 @@ Implements Beacon.HostingProvider
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Profile, TemplateId, Token)
 		  
-		  Var Response As GameServerApp.APIResponse = Self.RunRequest(New GameServerApp.APIRequest("GET", "https://api.gameserverapp.com/system-api/v1/config-template/" + TemplateId.ToString(Locale.Raw, "0") + "/config/" + Transfer.Filename, Token))
+		  Var Response As GameServerApp.APIResponse = Self.RunRequest(New GameServerApp.APIRequest("GET", "https://api.gameserverapp.com/system-api/v1/config-template/" + TemplateId.ToString(Locale.Raw, "0") + "/config/" + EncodeURLComponent(Transfer.Path), Token))
 		  If Not Response.Success Then
 		    Transfer.Success = (FailureMode = Beacon.Integration.DownloadFailureMode.Required)
 		    Transfer.Content = ""
@@ -288,7 +288,24 @@ Implements Beacon.HostingProvider
 		Sub UploadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  Var TemplateId As Integer
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Profile, TemplateId, Token)
 		  
+		  Var Boundary As String = Beacon.UUID.v4
+		  Var ContentType As String = "multipart/form-data; charset=utf-8; boundary=" + Boundary
+		  Var Parts() As String
+		  Parts.Add("Content-Disposition: form-data; name=""content""" + EndOfLine.Windows + EndOfLine.Windows + Transfer.Content)
+		  Var PostBody As String = "--" + Boundary + EndOfLine.Windows + Parts.Join(EndOfLine.Windows + "--" + Boundary + EndOfLine.Windows) + EndOfLine.Windows + "--" + Boundary + "--"
+		  
+		  Var Response As GameServerApp.APIResponse = Self.RunRequest(New GameServerApp.APIRequest("POST", "https://api.gameserverapp.com/system-api/v1/config-template/" + TemplateId.ToString(Locale.Raw, "0") + "/config/" + EncodeURLComponent(Transfer.Path), Token, ContentType, PostBody))
+		  If Not Response.Success Then
+		    Transfer.Success = False
+		    Transfer.SetError(Response.Error.Message)
+		    Return
+		  End If
+		  
+		  Transfer.Success = True
 		End Sub
 	#tag EndMethod
 

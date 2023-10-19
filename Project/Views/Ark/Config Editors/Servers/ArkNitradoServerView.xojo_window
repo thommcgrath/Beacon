@@ -263,7 +263,6 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -275,7 +274,6 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -292,6 +290,13 @@ End
 	#tag Event
 		Sub Hidden()
 		  Self.CancelRefresh()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Opening()
+		  Self.ToggleThread.DebugIdentifier = "ArkNitradoServerView.ToggleThread"
+		  Self.RefreshThread.DebugIdentifier = "ArkNitradoServerView.RefreshThread"
 		End Sub
 	#tag EndEvent
 

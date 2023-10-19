@@ -96,6 +96,7 @@ Implements BeaconUI.ConfigEditorView
 		  Data.GameIniContent = GameIniContent
 		  
 		  Var Parser As New Ark.ImportThread(Data, Self.mProject)
+		  Parser.DebugIdentifier = CurrentMethodName
 		  Parser.Priority = Thread.NormalPriority
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
 		  

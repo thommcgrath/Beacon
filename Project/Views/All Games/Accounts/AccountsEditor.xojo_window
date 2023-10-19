@@ -163,6 +163,7 @@ End
 		  Var FetchThread As New Beacon.Thread
 		  AddHandler FetchThread.Run, AddressOf Thread_FetchToken
 		  AddHandler FetchThread.UserInterfaceUpdate, AddressOf Thread_UserInterfaceUpdate
+		  FetchThread.DebugIdentifier = CurrentMethodName
 		  FetchThread.UserData = TokenId
 		  FetchThread.Start
 		  Self.mThreads.Add(FetchThread)
@@ -177,6 +178,7 @@ End
 		  Var FetchThread As New Beacon.Thread
 		  AddHandler FetchThread.Run, AddressOf Thread_FetchTokens
 		  AddHandler FetchThread.UserInterfaceUpdate, AddressOf Thread_UserInterfaceUpdate
+		  FetchThread.DebugIdentifier = CurrentMethodName
 		  FetchThread.UserData = Silent
 		  FetchThread.Start
 		  Self.mThreads.Add(FetchThread)

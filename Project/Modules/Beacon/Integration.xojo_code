@@ -34,6 +34,10 @@ Implements Beacon.LogProducer
 		  Self.mIntegrationId = Profile.ProfileId.Left(8)
 		  
 		  Self.mThread = New Global.Thread
+		  #if DebugBuild
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
+		    Self.mThread.DebugIdentifier = Info.FullName + ".RunThread"
+		  #endif
 		  AddHandler mThread.Run, WeakAddressOf mThread_Run
 		  AddHandler mThread.UserInterfaceUpdate, WeakAddressOf mThread_UserInterfaceUpdate
 		End Sub
@@ -99,26 +103,24 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetFile(Filename As String, FailureMode As Beacon.Integration.DownloadFailureMode, Profile As Beacon.ServerProfile, Silent As Boolean, ByRef Success As Boolean) As String
+		Protected Function GetFile(Path As String, DisplayName As String, FailureMode As Beacon.Integration.DownloadFailureMode, Profile As Beacon.ServerProfile, Silent As Boolean, ByRef Success As Boolean) As String
 		  Var Counter As Integer = 0
 		  Var Message As String
-		  Var Basename As String
 		  While Counter < 3
 		    If Self.Finished Then
 		      Success = False
 		      Return ""
 		    End If
 		    
-		    Var Transfer As New Beacon.IntegrationTransfer(Filename)
-		    Basename = Transfer.Filename
+		    Var Transfer As New Beacon.IntegrationTransfer(Path)
 		    If Not Silent Then
-		      Self.Log("Downloading " + Transfer.Filename + "…")
+		      Self.Log("Downloading " + DisplayName + "…")
 		    End If
 		    
 		    Try
 		      Self.mProvider.DownloadFile(Self, Profile, Transfer, FailureMode)
 		      If Not Silent Then
-		        Self.Log("Downloaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(Transfer.Size))
+		        Self.Log("Downloaded " + DisplayName + ", size: " + Beacon.BytesToString(Transfer.Size))
 		      End If
 		      Success = True
 		      Return Transfer.Content
@@ -129,7 +131,7 @@ Implements Beacon.LogProducer
 		  Wend
 		  
 		  If Not Silent Then
-		    Self.Log("Unable to download " + Basename + ": " + Message)
+		    Self.Log("Unable to download " + DisplayName + ": " + Message)
 		  End If
 		  
 		  Success = False
@@ -138,8 +140,8 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetFile(Filename As String, FailureMode As Beacon.Integration.DownloadFailureMode, Silent As Boolean, ByRef Success As Boolean) As String
-		  Return Self.GetFile(Filename, FailureMode, Self.mProfile, Silent, Success)
+		Protected Function GetFile(Path As String, DisplayName As String, FailureMode As Beacon.Integration.DownloadFailureMode, Silent As Boolean, ByRef Success As Boolean) As String
+		  Return Self.GetFile(Path, DisplayName, FailureMode, Self.mProfile, Silent, Success)
 		End Function
 	#tag EndMethod
 
@@ -247,23 +249,23 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PutFile(Contents As String, Filename As String, TriesRemaining As Integer = 2) As Boolean
-		  Var Transfer As New Beacon.IntegrationTransfer(Filename, Contents)
+		Protected Function PutFile(Contents As String, Path As String, DisplayName As String, TriesRemaining As Integer = 2) As Boolean
+		  Var Transfer As New Beacon.IntegrationTransfer(Path, Contents)
 		  Var DesiredHash As String = Transfer.SHA256
 		  Var OriginalSize As Integer = Transfer.Size // Beacuse the transfer size will change after the event
-		  Self.Log("Uploading " + Transfer.Filename + "…")
+		  Self.Log("Uploading " + DisplayName + "…")
 		  Try
 		    Self.mProvider.UploadFile(Self, Self.mProfile, Transfer)
 		    
 		    Var DownloadSuccess As Boolean
-		    Var CheckedContents As String = Self.GetFile(Filename, DownloadFailureMode.Required, True, DownloadSuccess)
+		    Var CheckedContents As String = Self.GetFile(Path, DisplayName, DownloadFailureMode.Required, True, DownloadSuccess)
 		    If DownloadSuccess Then
 		      Var CheckedHash As String = EncodeHex(Crypto.SHA2_256(CheckedContents)).Lowercase
 		      If DesiredHash = CheckedHash Then
-		        Self.Log("Uploaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(OriginalSize))
+		        Self.Log("Uploaded " + DisplayName + ", size: " + Beacon.BytesToString(OriginalSize))
 		        Return True
 		      Else
-		        Self.Log(Transfer.Filename + " checksum does not match.")
+		        Self.Log(DisplayName + " checksum does not match.")
 		        #if DebugBuild
 		          Self.Log("Expected hash " + DesiredHash + ", got " + CheckedHash)
 		        #endif
@@ -277,11 +279,11 @@ Implements Beacon.LogProducer
 		  End If
 		  
 		  If TriesRemaining > 0 Then
-		    Self.Log(Filename + " upload failed, retrying…")
-		    Return Self.PutFile(Contents, Filename, TriesRemaining - 1)
+		    Self.Log(DisplayName + " upload failed, retrying…")
+		    Return Self.PutFile(Contents, Path, DisplayName, TriesRemaining - 1)
 		  End If
 		  
-		  Self.SetError("Could not upload " + Transfer.Filename + " and verify its content is correct on the server.")
+		  Self.SetError("Could not upload " + DisplayName + " and verify its content is correct on the server.")
 		  
 		  If Transfer.ErrorMessage.IsEmpty = False Then
 		    Self.Log("Reason: " + Transfer.ErrorMessage)

@@ -588,6 +588,7 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  Var Th As New Beacon.Thread
+		  Th.DebugIdentifier = CurrentMethodName
 		  Th.Retain
 		  AddHandler Th.Run, AddressOf ImportCloudFiles_Threaded
 		  Th.Start

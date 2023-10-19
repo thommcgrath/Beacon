@@ -5,6 +5,7 @@ Inherits Ark.BlueprintController
 	#tag Event
 		Sub FetchBlueprints(Task As Ark.BlueprintControllerFetchTask)
 		  Var FetchThread As New Beacon.Thread
+		  FetchThread.DebugIdentifier = CurrentMethodName
 		  FetchThread.UserData = Task
 		  AddHandler FetchThread.Run, WeakAddressOf FetchThread_Run
 		  AddHandler FetchThread.UserInterfaceUpdate, WeakAddressOf FetchThread_UserInterfaceUpdate
@@ -18,6 +19,7 @@ Inherits Ark.BlueprintController
 		Sub Publish(Tasks() As Ark.BlueprintControllerPublishTask)
 		  For Each Task As Ark.BlueprintControllerPublishTask In Tasks
 		    Var PublishThread As New Beacon.Thread
+		    PublishThread.DebugIdentifier = CurrentMethodName
 		    PublishThread.UserData = Task
 		    AddHandler PublishThread.Run, WeakAddressOf PublishThread_Run
 		    AddHandler PublishThread.UserInterfaceUpdate, WeakAddressOf PublishThread_UserInterfaceUpdate

@@ -27,6 +27,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
    Width           =   720
    Begin Thread TokenLookupThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -394,6 +395,7 @@ End
 		  End Select
 		  
 		  Var Thread As New Beacon.Thread
+		  Thread.DebugIdentifier = CurrentMethodName
 		  Thread.UserData = Config
 		  AddHandler Thread.Run, WeakAddressOf Thread_Run
 		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf Thread_UserInterfaceUpdate

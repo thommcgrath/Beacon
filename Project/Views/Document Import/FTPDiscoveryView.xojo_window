@@ -587,6 +587,7 @@ Begin DiscoveryView FTPDiscoveryView
          Width           =   560
       End
       Begin DesktopProgressBar AutodiscoveryProgressBar
+         Active          =   False
          AllowAutoDeactivate=   True
          AllowTabStop    =   True
          Enabled         =   True
@@ -601,6 +602,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
@@ -610,6 +612,10 @@ Begin DiscoveryView FTPDiscoveryView
          Value           =   0.0
          Visible         =   True
          Width           =   560
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
    End
    Begin ClipboardWatcher URLWatcher
@@ -691,6 +697,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ListFiles(Path As String)
 		  Var Thread As New Beacon.Thread
+		  Thread.DebugIdentifier = CurrentMethodName
 		  Thread.UserData = Path
 		  AddHandler Thread.Run, WeakAddressOf ListThread_Run
 		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf ListThread_UserInterfaceUpdate
@@ -952,6 +959,7 @@ End
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageAutodiscover
 		  
 		  Var Thread As New Beacon.Thread
+		  Thread.DebugIdentifier = CurrentMethodName
 		  AddHandler Thread.Run, WeakAddressOf mAutodiscoverThread_Run
 		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf mAutodiscoverThread_UserInterfaceUpdate
 		  Self.mAutodiscoverThread = Thread

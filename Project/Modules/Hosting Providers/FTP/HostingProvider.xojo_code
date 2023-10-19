@@ -91,7 +91,7 @@ Implements Beacon.HostingProvider
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var Config As FTP.HostConfig = Self.GetConfig(Profile)
-		  Var Path As String = Transfer.Path + "/" + Transfer.Filename
+		  Var Path As String = Transfer.Path
 		  If Path.BeginsWith("/") = False Then
 		    Path = "/" + Path
 		  End If
@@ -379,7 +379,7 @@ Implements Beacon.HostingProvider
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var Config As FTP.HostConfig = Self.GetConfig(Profile)
-		  Var Path As String = Transfer.Path + "/" + Transfer.Filename
+		  Var Path As String = Transfer.Path
 		  If Path.BeginsWith("/") = False Then
 		    Path = "/" + Path
 		  End If

@@ -2,9 +2,10 @@
 Protected Class ProjectValidator
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mThread = New Thread
-		  AddHandler mThread.Run, WeakAddressOf mThread_Run
-		  AddHandler mThread.UserInterfaceUpdate, WeakAddressOf mThread_UserInterfaceUpdate
+		  Self.mThread = New Beacon.Thread
+		  Self.mThread.DebugIdentifier = CurrentMethodName
+		  AddHandler mThread.Run, AddressOf mThread_Run
+		  AddHandler mThread.UserInterfaceUpdate, AddressOf mThread_UserInterfaceUpdate
 		  Self.mShowUITimer = New Timer
 		  Self.mShowUITimer.Period = 1000
 		  Self.mShowUITimer.RunMode = Timer.RunModes.Off
@@ -21,9 +22,7 @@ Protected Class ProjectValidator
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_Run(Sender As Thread)
-		  Sender.YieldToNext
-		  
+		Private Sub mThread_Run(Sender As Beacon.Thread)
 		  Var Issues As Beacon.ProjectValidationResults = Self.mProject.Validate
 		  
 		  If Issues.Count = 0 Then
@@ -65,14 +64,18 @@ Protected Class ProjectValidator
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_UserInterfaceUpdate(Sender As Thread, Updates() As Dictionary)
-		  #Pragma Unused Sender
-		  
+		Private Sub mThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
 		  For Idx As Integer = 0 To Updates.LastIndex
 		    Var Dict As Dictionary = Updates(Idx)
 		    If Dict.HasKey("Issues") Then
 		      Var Issues As Beacon.ProjectValidationResults = Dict.Value("Issues")
 		      RaiseEvent ValidationComplete(Issues, Self.mUserData)
+		      
+		      RemoveHandler Sender.Run, AddressOf mThread_Run
+		      RemoveHandler Sender.UserInterfaceUpdate, AddressOf mThread_UserInterfaceUpdate
+		      If Self.mThread = Sender Then
+		        Self.mThread = Nil
+		      End If
 		    End If
 		  Next Idx
 		End Sub

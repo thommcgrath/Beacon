@@ -604,6 +604,7 @@ End
 		  Data.GameIniContent = Content
 		  
 		  Self.mImporter = New Ark.ImportThread(Data, Self.Project)
+		  Self.mImporter.DebugIdentifier = CurrentMethodName
 		  Self.mImporter.Priority = Thread.NormalPriority
 		  Self.mImporter.Progress = Self.mImportProgress
 		  AddHandler mImporter.Finished, WeakAddressOf mImporter_Finished

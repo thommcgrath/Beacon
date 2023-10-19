@@ -36,12 +36,11 @@ Implements Beacon.HostingProvider
 		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var FullPath As String = Transfer.Path + "/" + Transfer.Filename
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Profile, ServiceId, Token)
 		  
-		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath), Token))
+		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Transfer.Path), Token))
 		  If Not Response.Success Then
 		    Select Case FailureMode
 		    Case Beacon.Integration.DownloadFailureMode.MissingAllowed
@@ -65,7 +64,7 @@ Implements Beacon.HostingProvider
 		    Return
 		  End If
 		  
-		  Var SizeResponse As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath), Token))
+		  Var SizeResponse As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/size?path=" + EncodeURLComponent(Transfer.Path), Token))
 		  If Not SizeResponse.Success Then
 		    If FailureMode <> Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
 		      Raise SizeResponse.Error
@@ -102,7 +101,7 @@ Implements Beacon.HostingProvider
 		      If FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Then
 		        Transfer.Success = True
 		      Else
-		        Transfer.SetError("Error: Could not download " + Transfer.Filename + ".")
+		        Transfer.SetError(Parsed.Value("message").StringValue)
 		      End If
 		      Return
 		    End If
@@ -584,9 +583,13 @@ Implements Beacon.HostingProvider
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Profile, ServiceId, Token)
 		  
+		  Var PathComponents() As String = Transfer.Path.Split("/")
+		  Var Filename As String = PathComponents(PathComponents.LastIndex)
+		  PathComponents.RemoveAt(PathComponents.LastIndex)
+		  
 		  Var FormData As New Dictionary
-		  FormData.Value("path") = Transfer.Path
-		  FormData.Value("file") = Transfer.Filename
+		  FormData.Value("path") = String.FromArray(PathComponents, "/")
+		  FormData.Value("file") = Filename
 		  
 		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/upload", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData)))
 		  If Not Response.Success Then
@@ -612,7 +615,7 @@ Implements Beacon.HostingProvider
 		  
 		  Var PutResponse As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", PutUrl, Token, Headers, "application/octet-stream", Transfer.Content))
 		  If Not PutResponse.Success Then
-		    Response.Error.Message = Response.Error.Message + EndOfLine + "Check your " + Transfer.Filename + " file on Nitrado. Nitrado may have accepted partial file content. If you have backups enabled, the originals will be saved to " + App.BackupsFolder.Child(Profile.BackupFolderName).NativePath + "."
+		    Response.Error.Message = Response.Error.Message + EndOfLine + "Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content. If you have backups enabled, the originals will be saved to " + App.BackupsFolder.Child(Profile.BackupFolderName).NativePath + "."
 		    Raise Response.Error
 		  End If
 		End Sub

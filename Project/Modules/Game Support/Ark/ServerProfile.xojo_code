@@ -90,6 +90,32 @@ Inherits Beacon.ServerProfile
 	#tag EndEvent
 
 	#tag Event
+		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  Var ArkProfile As Ark.ServerProfile
+		  If Profile IsA Ark.ServerProfile Then
+		    ArkProfile = Ark.ServerProfile(Profile)
+		  Else
+		    Return
+		  End If
+		  
+		  Self.mAdminPassword = ArkProfile.mAdminPassword
+		  Self.mBasePath = ArkProfile.mBasePath
+		  Self.mGameIniPath = ArkProfile.mGameIniPath
+		  Self.mGameUserSettingsIniPath = ArkProfile.mGameUserSettingsIniPath
+		  Self.mLogsPath = ArkProfile.mLogsPath
+		  Self.mMask = ArkProfile.mMask
+		  Self.mMessageDuration = ArkProfile.mMessageDuration
+		  If ArkProfile.mMessageOfTheDay Is Nil Then
+		    Self.mMessageOfTheDay = Nil
+		  Else
+		    Self.mMessageOfTheDay = ArkProfile.mMessageOfTheDay.Clone
+		  End If
+		  Self.mServerPassword = ArkProfile.mServerPassword
+		  Self.mSpectatorPassword = ArkProfile.mSpectatorPassword
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  Dict.Value("map") = Self.mMask
 		  
@@ -186,6 +212,17 @@ Inherits Beacon.ServerProfile
 		  Super.Constructor(Provider, ProfileId, Name, Nickname, SecondaryName)
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeployCapable() As Boolean
+		  Select Case Self.ProviderId
+		  Case Nitrado.Identifier, GameServerApp.Identifier
+		    Return True
+		  Case FTP.Identifier, Local.Identifier
+		    Return (Self.GameIniPath.IsEmpty = False And Self.GameUserSettingsIniPath.IsEmpty = False)
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

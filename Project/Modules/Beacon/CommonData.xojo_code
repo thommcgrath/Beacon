@@ -725,19 +725,17 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Var Th As New Thread
+		  Var Th As New Beacon.Thread
 		  Th.Priority = Thread.LowestPriority
-		  Th.DebugIdentifier = "News Updater"
-		  AddHandler Th.Run, WeakAddressOf UpdateNewsThread_Run
+		  Th.DebugIdentifier = CurrentMethodName
+		  AddHandler Th.Run, AddressOf UpdateNewsThread_Run
 		  Th.Start
 		  Self.mUpdateNewsThread = Th
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateNewsThread_Run(Sender As Thread)
-		  Sender.YieldToNext
-		  
+		Private Sub UpdateNewsThread_Run(Sender As Beacon.Thread)
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  Socket.RequestHeader("User-Agent") = App.UserAgent
 		  Var Content As String
@@ -821,7 +819,10 @@ Inherits Beacon.DataSource
 		    NotificationKit.Post(Self.Notification_NewsUpdated, Nil)
 		  End If
 		  
-		  Self.mUpdateNewsThread = Nil
+		  RemoveHandler Sender.Run, AddressOf UpdateNewsThread_Run
+		  If Self.mUpdateNewsThread = Sender Then
+		    Self.mUpdateNewsThread = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -849,7 +850,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdateNewsThread As Thread
+		Private mUpdateNewsThread As Beacon.Thread
 	#tag EndProperty
 
 

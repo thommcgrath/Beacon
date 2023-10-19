@@ -813,7 +813,22 @@ End
 		      Continue
 		    End If
 		    
-		    Var Engine As New Beacon.DeployIntegration(Profile)
+		    Var Engine As Beacon.DeployIntegration
+		    Select Case Profile
+		    Case IsA Ark.ServerProfile
+		      Engine = New Ark.DeployIntegration(Profile)
+		    Case IsA SDTD.ServerProfile
+		      #if DebugBuild
+		        #Pragma Warning "Need 7DTD DeployIntegration"
+		      #else
+		        #Pragma Error "Need 7DTD DeployIntegration"
+		      #endif
+		    End Select
+		    If Engine Is Nil Then
+		      Self.ShowAlert("The developer messed up.", "There is no DeployIntegration defined for server profile " + Profile.Name + ".")
+		      Continue
+		    End If
+		    
 		    AddHandler Engine.Wait, WeakAddressOf Engine_Wait
 		    
 		    Self.Engines.Value(Engine) = Profile

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class RemoteBlueprintController
 Inherits Ark.BlueprintController
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub FetchBlueprints(Task As Ark.BlueprintControllerFetchTask)
 		  If Preferences.OnlineEnabled = False Then
@@ -10,6 +10,7 @@ Inherits Ark.BlueprintController
 		  End If
 		  
 		  Var FetchThread As New Beacon.Thread
+		  FetchThread.DebugIdentifier = CurrentMethodName
 		  FetchThread.UserData = Task
 		  AddHandler FetchThread.Run, WeakAddressOf FetchThread_Run
 		  AddHandler FetchThread.UserInterfaceUpdate, WeakAddressOf FetchThread_UserInterfaceUpdate
@@ -29,6 +30,7 @@ Inherits Ark.BlueprintController
 		  
 		  For Each Task As Ark.BlueprintControllerPublishTask In Tasks
 		    Var PublishThread As New Beacon.Thread
+		    PublishThread.DebugIdentifier = CurrentMethodName
 		    PublishThread.UserData = Task
 		    AddHandler PublishThread.Run, WeakAddressOf PublishThread_Run
 		    AddHandler PublishThread.UserInterfaceUpdate, WeakAddressOf PublishThread_UserInterfaceUpdate

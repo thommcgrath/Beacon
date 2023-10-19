@@ -58,7 +58,7 @@ Inherits Beacon.Integration
 		  Self.mProject = Project
 		  Self.mIdentity = Identity
 		  Self.mStopMessage = StopMessage
-		  Self.mOptions = Options And (Self.OptionAnalyze Or Self.OptionBackup Or Self.OptionNuke Or Self.OptionReview)
+		  Self.mOptions = Options And CType(Self.OptionAnalyze Or Self.OptionBackup Or Self.OptionNuke Or Self.OptionReview, UInt64)
 		  Super.Begin()
 		End Sub
 	#tag EndMethod
