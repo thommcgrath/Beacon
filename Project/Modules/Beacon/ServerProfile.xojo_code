@@ -114,6 +114,9 @@ Protected Class ServerProfile
 		    Self.mProfileColor = CType(Dict.Lookup("Color", 0).IntegerValue, Beacon.ServerProfile.Colors)
 		    
 		    Self.mProviderId = Dict.Value("Provider")
+		    If Self.mProviderId = "GameServerApp" Then
+		      Self.mProviderId = GameServerApp.Identifier
+		    End If
 		    Select Case Self.mProviderId
 		    Case Nitrado.Identifier
 		      Var HostConfig As New Nitrado.HostConfig
@@ -125,6 +128,7 @@ Protected Class ServerProfile
 		      HostConfig.TemplateId = Dict.Lookup("Provider Service ID", 0)
 		      HostConfig.TokenId = Dict.Lookup("Provider Token Id", "")
 		      Self.mHostConfig = HostConfig
+		      Self.mSecondaryName = HostConfig.TemplateId.ToString(Locale.Raw, "0")
 		    Case FTP.Identifier
 		      Var HostConfig As New FTP.HostConfig
 		      HostConfig.Host = Dict.Value("Host").StringValue
