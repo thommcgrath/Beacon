@@ -32,9 +32,6 @@ Inherits Beacon.DeployIntegration
 		    Var Config As JSONItem = GameServer.Child("settings").Child("config")
 		    Var Map As String = Config.Value("map").StringValue
 		    Self.Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField("."))
-		  Case IsA GameServerApp.HostingProvider
-		    GameIniPath = Ark.ConfigFileGame
-		    GameUserSettingsIniPath = Ark.ConfigFileGameUserSettings
 		  Else
 		    GameIniPath = Profile.GameIniPath
 		    GameUserSettingsIniPath = Profile.GameUserSettingsIniPath

@@ -123,6 +123,7 @@ Protected Class ServerProfile
 		      HostConfig.ServiceId = Dict.Lookup("Provider Service ID", 0)
 		      HostConfig.TokenId = Dict.Lookup("Provider Token Id", "")
 		      Self.mHostConfig = HostConfig
+		      Self.mSecondaryName = Dict.Lookup("Address", "") + " (" + HostConfig.ServiceId.ToString(Locale.Raw, "0") + ")"
 		    Case GameServerApp.Identifier
 		      Var HostConfig As New GameServerApp.HostConfig
 		      HostConfig.TemplateId = Dict.Lookup("Provider Service ID", 0)
@@ -139,6 +140,7 @@ Protected Class ServerProfile
 		      HostConfig.VerifyHost = Dict.Lookup("Verify Host", True).BooleanValue
 		      HostConfig.PrivateKeyFile = Dict.Lookup("Private Key", "").StringValue
 		      Self.mHostConfig = HostConfig
+		      Self.mSecondaryName = HostConfig.Username + "@" + HostConfig.Host + ":" + HostConfig.Port.ToString(Locale.Raw, "0")
 		    End Select
 		    
 		    If Dict.HasKey("External Account") Then

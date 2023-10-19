@@ -83,6 +83,35 @@ Inherits Beacon.ServerProfile
 		        If Dict.HasKey(Ark.ConfigFileGameUserSettings) Then
 		          Self.mGameUserSettingsIniPath = Dict.Value(Ark.ConfigFileGameUserSettings).StringValue
 		        End If
+		        If Self.SecondaryName.IsEmpty Then
+		          Var Paths() As String = Array(Self.mGameIniPath, Self.mGameUserSettingsIniPath)
+		          For Each Path As String In Paths
+		            Try
+		              Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Path)
+		              Var NativePath As String = File.NativePath
+		              Var Components(), PathSeparator As String
+		              If NativePath.Contains("/") Then
+		                Components = NativePath.Split("/")
+		                PathSeparator = "/"
+		              ElseIf NativePath.Contains("\") Then
+		                Components = NativePath.Split("\")
+		                PathSeparator = "\"
+		              Else
+		                Components = Array(NativePath)
+		              End If
+		              While Components.Count > 3
+		                Components.RemoveAt(0)
+		              Wend
+		              Var PartialPath As String = String.FromArray(Components, PathSeparator)
+		              Self.SecondaryName = PartialPath
+		              Exit
+		            Catch Err As RuntimeException
+		            End Try
+		          Next
+		        End If
+		      Case GameServerApp.Identifier
+		        Self.mGameIniPath = Ark.ConfigFileGame
+		        Self.mGameUserSettingsIniPath = Ark.ConfigFileGameUserSettings
 		      End Select
 		    End If
 		  End Select

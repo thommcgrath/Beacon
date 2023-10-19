@@ -798,6 +798,7 @@ Begin BeaconContainer ArkCommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
+      SelectedColor   =   ""
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -917,6 +918,25 @@ End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Var PasswordsGroup As New ControlGroup(Self.MessageDurationLabel, Self.MessageDurationField, Self.MessageDurationSuffixLabel, Self.AdminPasswordLabel, Self.AdminPasswordSwitch, Self.AdminPasswordField, Self.ServerPasswordLabel, Self.ServerPasswordSwitch, Self.ServerPasswordField, Self.SpectatorPasswordLabel, Self.SpectatorPasswordSwitch, Self.SpectatorPasswordField)
+		  Var MOTDHeight As Integer = 145
+		  Var IdealHeight As Integer = Self.MessageOfTheDayArea.Top + MOTDHeight + 32 + PasswordsGroup.Height
+		  If IdealHeight > Self.Height Then
+		    MOTDHeight = MOTDHeight - (IdealHeight - Self.Height)
+		  End If
+		  
+		  If Self.MessageOfTheDayArea.Height <> MOTDHeight Then
+		    Self.MessageOfTheDayArea.Height = MOTDHeight
+		    PasswordsGroup.Top = Self.MessageOfTheDayArea.Top + MOTDHeight + 12
+		  End If
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Function Modified() As Boolean
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
@@ -1035,6 +1055,7 @@ End
 		  Self.ColorChooser.SelectedColor = Profile.ProfileColor
 		  
 		  Self.UpdateConfigSetUI()
+		  Self.Resize(True)
 		  
 		  Self.mSettingUp = False
 		End Sub
