@@ -364,7 +364,7 @@ Protected Class ProjectController
 		  Case Beacon.ProjectURL.TypeLocal
 		    // just a local file
 		    Var Success As Boolean
-		    Var Message As String = "Could not load data from file"
+		    Var Message As String
 		    Try
 		      Var File As BookmarkedFolderItem = Self.mProjectURL.File
 		      If File <> Nil And File.Exists Then
@@ -373,7 +373,14 @@ Protected Class ProjectController
 		        Success = True
 		      End If
 		    Catch Err As RuntimeException
-		      Message = Err.Explanation
+		      If Err.ErrorNumber = 1 And TargetMacOS Then
+		        Message = "The macOS sandbox denied Beacon permission to read the file. This can happen if the project is locked in Finder. Open the project using the File menu or by dragging it to the Beacon icon in the dock."
+		      Else
+		        Message = Err.Explanation
+		        If Message.IsEmpty Then
+		          Message = "Could not load any data from file."
+		        End If
+		      End If
 		    End Try
 		    
 		    If Not Success Then

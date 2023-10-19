@@ -551,24 +551,20 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem) As MemoryBlock
-		  #Pragma BreakOnExceptions False
-		  Try
-		    Const ChunkSize = 256000
-		    
-		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
-		    Var Contents As New MemoryBlock(CType(Stream.Length, Integer))
-		    Var Offset As Integer = 0
-		    While Stream.EndOfFile = False
-		      Var ReadBytes As Integer = Min(ChunkSize, CType(Stream.Length, Integer) - Offset)
-		      Contents.StringValue(Offset, ReadBytes) = Stream.Read(ReadBytes, Nil)
-		      Offset = Offset + ReadBytes
-		    Wend
-		    Stream.Close
-		    
-		    Return Contents
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
+		  // Let the caller deal with exceptions
+		  Const ChunkSize = 256000
+		  
+		  Var Stream As BinaryStream = BinaryStream.Open(File, False)
+		  Var Contents As New MemoryBlock(CType(Stream.Length, Integer))
+		  Var Offset As Integer = 0
+		  While Stream.EndOfFile = False
+		    Var ReadBytes As Integer = Min(ChunkSize, CType(Stream.Length, Integer) - Offset)
+		    Contents.StringValue(Offset, ReadBytes) = Stream.Read(ReadBytes, Nil)
+		    Offset = Offset + ReadBytes
+		  Wend
+		  Stream.Close
+		  
+		  Return Contents
 		End Function
 	#tag EndMethod
 

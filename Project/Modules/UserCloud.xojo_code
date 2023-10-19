@@ -545,7 +545,13 @@ Protected Module UserCloud
 		    Return
 		  End If
 		  
-		  Var Contents As MemoryBlock = LocalFile.Read()
+		  Var Contents As MemoryBlock
+		  Try
+		    Contents = LocalFile.Read()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Could not read local file for remote path '" + RemotePath + "'.")
+		    Return
+		  End Try
 		  Contents = Beacon.Compress(Contents)
 		  
 		  Var EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
@@ -625,8 +631,13 @@ Protected Module UserCloud
 		    Return False
 		  End If
 		  
-		  Var NewContent As MemoryBlock = Writer.LocalFile.Read()
-		  Var NewHash As String = EncodeHex(Crypto.SHA2_256(NewContent))
+		  Var NewContent As MemoryBlock
+		  Var NewHash As String
+		  Try
+		    NewContent = Writer.LocalFile.Read()
+		    NewHash = EncodeHex(Crypto.SHA2_256(NewContent))
+		  Catch Err As RuntimeException
+		  End Try
 		  
 		  If NewHash = Writer.OriginalHash Then
 		    // No changes were made
