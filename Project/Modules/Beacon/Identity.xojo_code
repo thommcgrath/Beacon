@@ -84,9 +84,10 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Function Licenses() As Beacon.OmniLicense()
 		  Var Arr() As Beacon.OmniLicense
-		  Arr.ResizeTo(Self.mLicenses.LastIndex)
-		  For Idx As Integer = 0 To Self.mLicenses.LastIndex
-		    Arr(Idx) = Self.mLicenses(Idx)
+		  For Each License As Beacon.OmniLicense In Self.mLicenses
+		    If License.IsValidForCurrentBuild Then
+		      Arr.Add(License)
+		    End If
 		  Next
 		  Return Arr
 		End Function
@@ -96,7 +97,7 @@ Protected Class Identity
 		Function Licenses(Flags As Integer) As Beacon.OmniLicense()
 		  Var Arr() As Beacon.OmniLicense
 		  For Each License As Beacon.OmniLicense In Self.mLicenses
-		    If (License.Flags And Flags) > 0 Then
+		    If (License.Flags And Flags) > 0 And License.IsValidForCurrentBuild Then
 		      Arr.Add(License)
 		    End If
 		  Next
@@ -169,10 +170,27 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MaxLicensedBuild() As Integer
+		  Var Flags, MaxBuild As Integer
+		  For Each License As Beacon.OmniLicense In Self.mLicenses
+		    If License.IsExpired = False And License.IsValidForCurrentBuild Then
+		      Flags = Flags Or License.Flags
+		      MaxBuild = Max(MaxBuild, License.MaxBuild)
+		    End If
+		  Next License
+		  If Flags > 0 And MaxBuild > 0 Then
+		    Return MaxBuild
+		  Else
+		    Return 999999999
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function OmniFlags() As Integer
 		  Var Flags As Integer
 		  For Each License As Beacon.OmniLicense In Self.mLicenses
-		    If License.IsExpired = False Then
+		    If License.IsExpired = False And License.IsValidForCurrentBuild Then
 		      Flags = Flags Or License.Flags
 		    End If
 		  Next License

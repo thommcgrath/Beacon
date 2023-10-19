@@ -7,6 +7,7 @@ Protected Class OmniLicense
 		  Self.mFlags = Source.mFlags
 		  Self.mLicenseId = Source.mLicenseId
 		  Self.mProductId = Source.mProductId
+		  Self.mMaxBuild = Source.mMaxBuild
 		End Sub
 	#tag EndMethod
 
@@ -17,21 +18,13 @@ Protected Class OmniLicense
 		  Self.mFlags = Source.Lookup("flags", 0).IntegerValue
 		  Self.mLicenseId = Source.Lookup("licenseId", "").StringValue
 		  Self.mProductId = Source.Lookup("productId", "").StringValue
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(ProductId As String, Flags As Integer, Expiration As String)
-		  Self.mExpiration = Expiration
-		  Self.mFirstUsed = ""
-		  Self.mFlags = Flags
-		  Self.mLicenseId = Beacon.UUID.v4
-		  Self.mProductId = ProductId
+		  Self.mMaxBuild = Source.Lookup("maxBuild", 999999999).IntegerValue
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Expiration() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mExpiration
 		End Function
 	#tag EndMethod
@@ -48,6 +41,7 @@ Protected Class OmniLicense
 
 	#tag Method, Flags = &h0
 		Function Flags() As Integer
+		  #Pragma StackOverflowChecking False
 		  Return Self.mFlags
 		End Function
 	#tag EndMethod
@@ -77,13 +71,28 @@ Protected Class OmniLicense
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsValidForCurrentBuild() As Boolean
+		  Return Self.mMaxBuild >= App.BuildNumber
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LicenseId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mLicenseId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MaxBuild() As Integer
+		  #Pragma StackOverflowChecking False
+		  Return Self.mMaxBuild
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ProductId() As String
+		  #Pragma StackOverflowChecking False
 		  Return Self.mProductId
 		End Function
 	#tag EndMethod
@@ -104,6 +113,7 @@ Protected Class OmniLicense
 		  Else
 		    Dict.Value("expires") = Self.mExpiration
 		  End If
+		  Dict.Value("maxBuild") = Self.mMaxBuild
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -123,6 +133,10 @@ Protected Class OmniLicense
 
 	#tag Property, Flags = &h21
 		Private mLicenseId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMaxBuild As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
