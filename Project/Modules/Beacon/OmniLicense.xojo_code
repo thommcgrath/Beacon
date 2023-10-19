@@ -71,8 +71,15 @@ Protected Class OmniLicense
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsValidForBuild(BuildNumber As Integer) As Boolean
+		  #Pragma StackOverflowChecking False
+		  Return Self.mMaxBuild >= BuildNumber
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsValidForCurrentBuild() As Boolean
-		  Return Self.mMaxBuild >= App.BuildNumber
+		  Return Self.IsValidForBuild(App.BuildNumber)
 		End Function
 	#tag EndMethod
 

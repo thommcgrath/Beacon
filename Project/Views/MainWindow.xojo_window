@@ -730,7 +730,7 @@ End
 		    Return
 		  End If
 		  
-		  Var ShowUpdateBar As Boolean = UpdatesKit.IsUpdateAvailable And Preferences.AutomaticallyDownloadsUpdates = False
+		  Var ShowUpdateBar As Boolean = UpdatesKit.IsUpdateAvailable And UpdatesKit.AutomaticallyDownloadsUpdates = False
 		  If UpdatesKit.AvailableUpdateRequired Then
 		    ShowUpdateBar = False
 		    Call App.HandleURL("beacon://action/checkforupdate")
@@ -775,7 +775,7 @@ End
 		      
 		      UpdateWindow.Present
 		    Else
-		      Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Blue
+		      Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Natural
 		    End If
 		  Else
 		    Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Natural
