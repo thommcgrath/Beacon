@@ -5,6 +5,10 @@ Implements Beacon.HostingProvider
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mServerDetailCache = New Dictionary
+		  
+		  #if Self.UseSingleConnection
+		    Self.mDedicatedSocket = New SimpleHTTP.SynchronousHTTPSocket
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -422,7 +426,14 @@ Implements Beacon.HostingProvider
 		  Var RequestMethod As String = Request.RequestMethod
 		  Var Url As String = Request.Url
 		  
-		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		  Var Socket As SimpleHTTP.SynchronousHTTPSocket
+		  If Self.UseSingleConnection Then
+		    Socket = Self.mDedicatedSocket
+		    Socket.ClearRequestHeaders
+		  Else
+		    Socket = New SimpleHTTP.SynchronousHTTPSocket
+		  End If
+		  
 		  For Each Entry As DictionaryEntry In Headers
 		    Socket.RequestHeader(Entry.Key) = Entry.Value
 		  Next
@@ -435,7 +446,18 @@ Implements Beacon.HostingProvider
 		  Var Locked As Boolean = Preferences.SignalConnection()
 		  Self.mThrottled = False
 		  Self.mActiveSocket = Socket
+		  #if DebugBuild
+		    System.DebugLog("Nitrado.HostingProvider: " + RequestMethod + " " + Url)
+		    Var RequestStartTime As Double = System.Microseconds
+		  #endif
 		  Socket.Send(RequestMethod, Url, 120)
+		  #if DebugBuild
+		    Var RequestDuration As Double = (System.Microseconds - RequestStartTime) * 0.001
+		    System.DebugLog("HTTP " + Socket.LastHTTPStatus.ToString(Locale.Raw, "0") + " took " + RequestDuration.ToString(Locale.Raw, ",##0.00") + "ms")
+		  #endif
+		  If Self.UseSingleConnection = False Then
+		    Socket.Disconnect
+		  End If
 		  Self.mActiveSocket = Nil
 		  If Locked Then
 		    Preferences.ReleaseConnection()
@@ -663,12 +685,21 @@ Implements Beacon.HostingProvider
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDedicatedSocket As SimpleHTTP.SynchronousHTTPSocket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mServerDetailCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mThrottled As Boolean
 	#tag EndProperty
+
+
+	#tag Constant, Name = UseSingleConnection, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"False"
+	#tag EndConstant
 
 
 	#tag ViewBehavior

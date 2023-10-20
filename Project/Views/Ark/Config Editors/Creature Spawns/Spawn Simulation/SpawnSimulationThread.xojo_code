@@ -157,7 +157,8 @@ Inherits Thread
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As Ark.Project, MapMask As UInt64, ConfigSetStates() As Beacon.ConfigSetState)
-		  Var Profile As New Ark.GenericServerProfile("Spawn Simulation", MapMask)
+		  Var Profile As New Ark.ServerProfile(Local.Identifier, "Spawn Simulation")
+		  Profile.Mask = MapMask
 		  Profile.ConfigSetStates = ConfigSetStates
 		  Self.Constructor(Project, Profile)
 		End Sub

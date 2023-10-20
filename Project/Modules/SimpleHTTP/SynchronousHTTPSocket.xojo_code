@@ -9,7 +9,7 @@ Inherits URLConnection
 		  Self.mLastException = Nil
 		  Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Finished
 		  RaiseEvent PageReceived(URL, HTTPStatus, Content)
-		  If Self.mOriginThread <> Nil Then
+		  If (Self.mOriginThread Is Nil) = False Then
 		    Self.mOriginThread.Resume
 		  End If
 		  Self.mOriginThread = Nil
@@ -23,7 +23,7 @@ Inherits URLConnection
 		  Self.mLastException = e
 		  Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Finished
 		  RaiseEvent Error(Self.mLastURL, e)
-		  If Self.mOriginThread <> Nil Then
+		  If (Self.mOriginThread Is Nil) = False Then
 		    Self.mOriginThread.Resume
 		  End If
 		  Self.mOriginThread = Nil
@@ -44,7 +44,7 @@ Inherits URLConnection
 		  Self.mLastException = Nil
 		  Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Finished
 		  RaiseEvent PageReceived(URL, HTTPStatus, Content)
-		  If Self.mOriginThread <> Nil Then
+		  If (Self.mOriginThread Is Nil) = False Then
 		    Self.mOriginThread.Resume
 		  End If
 		  Self.mOriginThread = Nil

@@ -205,12 +205,19 @@ Implements Beacon.LogProducer
 		  Sender.YieldToNext
 		  
 		  Self.mRunning = True
+		  #if TargetMacOS
+		    Var ProcessInfo As NSProcessInfoMBS = NSProcessInfoMBS.ProcessInfo
+		    Var Activity As NSProcessInfoActivityMBS = ProcessInfo.BeginActivity(NSProcessInfoMBS.NSActivityUserInitiated, "Interacting with a game server")
+		  #endif
 		  Try
 		    RaiseEvent Run()
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Running integration thread")
 		    Self.SetError(Err)
 		  End Try
+		  #if TargetMacOS
+		    ProcessInfo.EndActivity(Activity)
+		  #endif
 		  Self.mFinished = True
 		End Sub
 	#tag EndMethod

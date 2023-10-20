@@ -258,17 +258,64 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function ValuesEqual(FirstValue As Variant, SecondValue As Variant) As Boolean
-		  Var FirstString As String = Beacon.VariantToString(FirstValue)
-		  Var SecondString As String = Beacon.VariantToString(SecondValue)
-		  
 		  Select Case Self.mValueType
 		  Case ValueTypes.TypeNumeric
-		    Return FirstString = SecondString
+		    Var FirstDouble, SecondDouble As Double
+		    Try
+		      FirstDouble = FirstValue.DoubleValue
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		    Try
+		      SecondDouble = SecondValue.DoubleValue
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		    Return FirstDouble = SecondDouble
 		  Case ValueTypes.TypeBoolean
-		    Var FirstValueIsTrue As Boolean = (FirstString = "True") Or (FirstString = "1")
-		    Var SecondValueIsTrue As Boolean = (SecondString = "True") Or (SecondString = "1")
-		    Return FirstValueIsTrue = SecondValueIsTrue
+		    Var FirstBoolean, SecondBoolean As Boolean
+		    Try
+		      Select Case FirstValue.Type
+		      Case Variant.TypeBoolean
+		        FirstBoolean = FirstValue.BooleanValue
+		      Case Variant.TypeDouble, Variant.TypeSingle
+		        FirstBoolean = FirstValue.DoubleValue = 1.0
+		      Case Variant.TypeString
+		        If IsNumeric(FirstValue) Then
+		          FirstBoolean = FirstValue.DoubleValue = 1.0
+		        Else
+		          Var FirstString As String = FirstValue.StringValue
+		          FirstBoolean = FirstString = "True" Or FirstString = "t"
+		        End If
+		      Else
+		        Return False
+		      End Select
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		    Try
+		      Select Case SecondValue.Type
+		      Case Variant.TypeBoolean
+		        SecondBoolean = SecondValue.BooleanValue
+		      Case Variant.TypeDouble, Variant.TypeSingle
+		        SecondBoolean = SecondValue.DoubleValue = 1.0
+		      Case Variant.TypeString
+		        If IsNumeric(SecondValue) Then
+		          SecondBoolean = SecondValue.DoubleValue = 1.0
+		        Else
+		          Var SecondString As String = SecondValue.StringValue
+		          SecondBoolean = SecondString = "True" Or SecondString = "t"
+		        End If
+		      Else
+		        Return False
+		      End Select
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		    Return FirstBoolean = SecondBoolean
 		  Else
+		    Var FirstString As String = Beacon.VariantToString(FirstValue)
+		    Var SecondString As String = Beacon.VariantToString(SecondValue)
 		    Return FirstString.Compare(SecondString, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
 		  End Select
 		End Function

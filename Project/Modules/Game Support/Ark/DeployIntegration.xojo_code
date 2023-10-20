@@ -4,11 +4,6 @@ Inherits Beacon.DeployIntegration
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Run()
-		  Self.RefreshServerStatus()
-		  If Self.Finished Then
-		    Return
-		  End If
-		  
 		  Var InitialStatus As Beacon.ServerStatus = Self.Status
 		  Var Project As Ark.Project = Self.Project
 		  Var Profile As Ark.ServerProfile = Self.Profile
@@ -23,15 +18,15 @@ Inherits Beacon.DeployIntegration
 		      GamePath = GamePath.Left(GamePath.Length - 1)
 		    End If
 		    
-		    Self.Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
-		    Self.Profile.BasePath = GamePath
-		    Self.Profile.GameIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/Game.ini"
-		    Self.Profile.GameUserSettingsIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini"
-		    Self.Profile.LogsPath = GamePath + "/ShooterGame/Saved/Logs"
+		    Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
+		    Profile.BasePath = GamePath
+		    Profile.GameIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/Game.ini"
+		    Profile.GameUserSettingsIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini"
+		    Profile.LogsPath = GamePath + "/ShooterGame/Saved/Logs"
 		    
 		    Var Config As JSONItem = GameServer.Child("settings").Child("config")
 		    Var Map As String = Config.Value("map").StringValue
-		    Self.Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField("."))
+		    Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField("."))
 		  Else
 		    GameIniPath = Profile.GameIniPath
 		    GameUserSettingsIniPath = Profile.GameUserSettingsIniPath
@@ -61,7 +56,7 @@ Inherits Beacon.DeployIntegration
 		        // Restart the server if it is running
 		        If Self.Provider.SupportsRestarting And (InitialStatus = Beacon.ServerStatus.States.Running Or InitialStatus = Beacon.ServerStatus.States.Starting) Then
 		          Self.StopServer()
-		          // The starting is handled automatically
+		          // The starting is handled automatically by Beacon.DeployIntegration.Run
 		        End If
 		        
 		        Return

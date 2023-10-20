@@ -26,7 +26,6 @@ Private Class APIRequest
 		    Headers = Headers.Clone
 		  End If
 		  
-		  Headers.Value("Connection") = "close"
 		  Headers.Value("Cache-Control") = "no-cache"
 		  Headers.Value("User-Agent") = App.UserAgent
 		  If ContentType.IsEmpty = False And (Content Is Nil) = False Then

@@ -1003,7 +1003,8 @@ End
 		      Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		    End If
 		  ElseIf Self.MapMenu.SelectedRowIndex > -1 Then
-		    Profile = New Ark.GenericServerProfile(Self.mProject.Title, Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex))
+		    Profile = New Ark.ServerProfile(Local.Identifier, Self.mProject.Title)
+		    Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
 		    Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		  Else
 		    Return
