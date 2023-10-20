@@ -1050,15 +1050,27 @@ End
 		  
 		  Var Idx As Integer = Self.ServerList.SelectedRowIndex
 		  If Idx = -1 Then
-		    Self.LogsArea.Text = ""
+		    If Self.LogsArea.Text.IsEmpty = False Then
+		      Self.LogsArea.Text = ""
+		      Self.LogsArea.VerticalScrollPosition = 0
+		    End If
 		    Return
 		  End If
 		  
 		  Var Engine As Beacon.DeployIntegration = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
-		  Var ShouldScroll As Boolean = True// = Self.LogsArea.VerticalScrollPosition = Self.LogsArea.
-		  Self.LogsArea.Text = Engine.Logs
-		  If ShouldScroll Then
+		  
+		  Var Logs As String = Engine.Logs
+		  If Self.LogsArea.Text = Logs Then
+		    Return
+		  End If
+		  
+		  Var ScrollPosition As Integer = Self.LogsArea.VerticalScrollPosition
+		  Var IsAtBottom As Boolean = ScrollPosition = Self.LogsArea.LineNumber(Self.LogsArea.Text.Length)
+		  Self.LogsArea.Text = Logs
+		  If IsAtBottom Then
 		    Self.LogsArea.VerticalScrollPosition = 99999999
+		  ElseIf Self.LogsArea.VerticalScrollPosition <> ScrollPosition Then // Just in case changing the content changes the scroll position
+		    Self.LogsArea.VerticalScrollPosition = ScrollPosition
 		  End If
 		End Sub
 	#tag EndMethod
