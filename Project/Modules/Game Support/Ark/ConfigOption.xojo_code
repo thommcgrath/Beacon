@@ -134,6 +134,41 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsArray() As Boolean
+		  #Pragma StackOverflowChecking False
+		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeArray
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsBoolean() As Boolean
+		  #Pragma StackOverflowChecking False
+		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeBoolean
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsNumeric() As Boolean
+		  #Pragma StackOverflowChecking False
+		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeNumeric
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsString() As Boolean
+		  #Pragma StackOverflowChecking False
+		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeText
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsStruct() As Boolean
+		  #Pragma StackOverflowChecking False
+		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeStructure
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Key() As String
 		  #Pragma StackOverflowChecking False
 		  Return Self.mKey
@@ -273,46 +308,7 @@ Implements Beacon.GameSetting
 		    End Try
 		    Return FirstDouble = SecondDouble
 		  Case ValueTypes.TypeBoolean
-		    Var FirstBoolean, SecondBoolean As Boolean
-		    Try
-		      Select Case FirstValue.Type
-		      Case Variant.TypeBoolean
-		        FirstBoolean = FirstValue.BooleanValue
-		      Case Variant.TypeDouble, Variant.TypeSingle
-		        FirstBoolean = FirstValue.DoubleValue = 1.0
-		      Case Variant.TypeString
-		        If IsNumeric(FirstValue) Then
-		          FirstBoolean = FirstValue.DoubleValue = 1.0
-		        Else
-		          Var FirstString As String = FirstValue.StringValue
-		          FirstBoolean = FirstString = "True" Or FirstString = "t"
-		        End If
-		      Else
-		        Return False
-		      End Select
-		    Catch Err As RuntimeException
-		      Return False
-		    End Try
-		    Try
-		      Select Case SecondValue.Type
-		      Case Variant.TypeBoolean
-		        SecondBoolean = SecondValue.BooleanValue
-		      Case Variant.TypeDouble, Variant.TypeSingle
-		        SecondBoolean = SecondValue.DoubleValue = 1.0
-		      Case Variant.TypeString
-		        If IsNumeric(SecondValue) Then
-		          SecondBoolean = SecondValue.DoubleValue = 1.0
-		        Else
-		          Var SecondString As String = SecondValue.StringValue
-		          SecondBoolean = SecondString = "True" Or SecondString = "t"
-		        End If
-		      Else
-		        Return False
-		      End Select
-		    Catch Err As RuntimeException
-		      Return False
-		    End Try
-		    Return FirstBoolean = SecondBoolean
+		    Return FirstValue.IsTruthy = SecondValue.IsTruthy
 		  Else
 		    Var FirstString As String = Beacon.VariantToString(FirstValue)
 		    Var SecondString As String = Beacon.VariantToString(SecondValue)

@@ -27,10 +27,10 @@ Inherits Beacon.DeployIntegration
 		    Var Config As JSONItem = GameServer.Child("settings").Child("config")
 		    Var Map As String = Config.Value("map").StringValue
 		    Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField("."))
-		  Else
-		    GameIniPath = Profile.GameIniPath
-		    GameUserSettingsIniPath = Profile.GameUserSettingsIniPath
 		  End Select
+		  
+		  GameIniPath = Profile.GameIniPath
+		  GameUserSettingsIniPath = Profile.GameUserSettingsIniPath
 		  
 		  Self.EnterResourceIntenseMode()
 		  Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Profile)
@@ -510,17 +510,16 @@ Inherits Beacon.DeployIntegration
 		    End If
 		  End If
 		  
-		  // Start the server, returning it to its previous state
+		  // The server needs to be in the started state so it can be stopped.
+		  // If the server is already running, there may be changes made to guided mode
+		  // so since the server started, so we need to restart it to update the
+		  // ini files. If the server is not running, we need to start it to build
+		  // the ini files. But it must be stopped to enable expert mode.
 		  Self.Log("Enabling expert mode…")
 		  Select Case Self.Status.State
 		  Case Beacon.ServerStatus.States.Stopped, Beacon.ServerStatus.States.Stopping
 		    Self.Log("Enabling expert mode - starting server…", True)
 		    Self.StartServer(False)
-		    If Self.Finished Then
-		      Return
-		    End If
-		    Self.Log("Enabling expert mode - stopping server…", True)
-		    Self.StopServer(False)
 		    If Self.Finished Then
 		      Return
 		    End If
@@ -535,10 +534,18 @@ Inherits Beacon.DeployIntegration
 		    If Self.Finished Then
 		      Return
 		    End If
+		  Else
+		    Self.SetError("Could not enable expert mode because the server is neither started nor stopped.")
+		    Return
 		  End Select
+		  Self.Log("Enabling expert mode - stopping server…", True)
+		  Self.StopServer(False)
+		  If Self.Finished Then
+		    Return
+		  End If
 		  
 		  Try
-		    Self.Provider.GameSetting(Self, Self.Profile, "general.expertMode") = True
+		    Self.Provider.GameSetting(Self, Self.Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode")) = True
 		  Catch Err As RuntimeException
 		    Self.SetError("Could not enable expert mode: " + Err.Message)
 		    Return

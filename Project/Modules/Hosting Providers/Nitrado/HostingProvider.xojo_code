@@ -207,8 +207,11 @@ Implements Beacon.HostingProvider
 		    Var FormData As New Dictionary
 		    FormData.Value("category") = Category
 		    FormData.Value("key") = Key
-		    FormData.Value("value") = Value
-		    
+		    If Setting.IsBoolean Then
+		      FormData.Value("value") = If(Value.IsTruthy, "true", "false") // Nitrado **must** have these in lowercase
+		    Else
+		      FormData.Value("value") = Value
+		    End If
 		    Logger.Log("Updating " + Key + "…")
 		    
 		    Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/settings", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData)))

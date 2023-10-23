@@ -506,18 +506,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function GameSetting(Extends Provider As Beacon.HostingProvider, Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, SettingPath As String) As Variant
-		  Return Provider.GameSetting(Logger, Profile, New Beacon.GenericGameSetting(SettingPath))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GameSetting(Extends Provider As Beacon.HostingProvider, Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, SettingPath As String, Assigns Value As Variant)
-		  Provider.GameSetting(Logger, Profile, New Beacon.GenericGameSetting(SettingPath)) = Value
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
 		  Const UseMBS = False
@@ -808,6 +796,28 @@ Protected Module Beacon
 		  // See if the value starts with 1F8B
 		  Var MagicBytes As String = EncodeHex(StringValue.LeftBytes(2))
 		  Return MagicBytes = "1F8B"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsTruthy(Extends Value As Variant) As Boolean
+		  Try
+		    If IsNumeric(Value) Then
+		      Return Value.DoubleValue = 1.0
+		    End If
+		    
+		    Select Case Value.Type
+		    Case Variant.TypeBoolean
+		      Return Value.BooleanValue
+		    Case Variant.TypeString, Variant.TypeText
+		      Var StringValue As String = Value.StringValue
+		      Return StringValue = "True" Or StringValue = "t"
+		    Else
+		      Return False
+		    End Select
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 

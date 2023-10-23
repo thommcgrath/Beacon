@@ -327,8 +327,18 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As Ark.Project, Profile As Ark.ServerProfile)
 		  Self.mLock = New CriticalSection
-		  Self.mServerState = Self.StatusChecking
+		  Self.mServerStatus = New Beacon.ServerStatus("Checking…")
 		  Super.Constructor(Project, Profile)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RefreshNow(Provider As Beacon.HostingProvider)
+		  Try
+		    Self.mServerStatus = Provider.GetServerStatus(Nil, Self.Profile)
+		  Catch
+		    Self.mServerStatus = New Beacon.ServerStatus("Unhandled Beacon Exception")
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -376,52 +386,31 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatusDisplay()
-		  Var Started As Boolean = Self.mServerState = Self.StatusStarted
-		  Var ButtonEnabled As Boolean
-		  Select Case Self.mServerState
-		  Case Self.StatusStarted
-		    Self.ServerStatusField.Text = "Running"
+		  Var Started, ButtonEnabled As Boolean
+		  Var Message As String
+		  Select Case Self.mServerStatus.State
+		  Case Beacon.ServerStatus.States.Running
+		    Message = "Running"
 		    ButtonEnabled = True
-		  Case Self.StatusStopped
-		    Self.ServerStatusField.Text = "Stopped"
+		    Started = True
+		  Case Beacon.ServerStatus.States.Stopped
+		    Message = "Stopped"
 		    ButtonEnabled = True
-		  Case Self.StatusStopping
-		    Self.ServerStatusField.Text = "Stopping"
-		  Case Self.StatusRestarting
-		    Self.ServerStatusField.Text = "Starting"
-		  Case Self.StatusSuspended
-		    Self.ServerStatusField.Text = "Suspended"
-		  Case Self.StatusGuardianLocked
-		    Self.ServerStatusField.Text = "Locked by guardian"
-		  Case Self.StatusGameserverInstallation
-		    Self.ServerStatusField.Text = "Switching games"
-		  Case Self.StatusBackupRestore
-		    Self.ServerStatusField.Text = "Restoring from backup"
-		  Case Self.StatusBackupCreation
-		    Self.ServerStatusField.Text = "Creating backup"
-		  Case Self.StatusChecking
-		    Self.ServerStatusField.Text = "Checking…"
-		  Case Self.StatusException
-		    Self.ServerStatusField.Text = "Beacon error"
-		  Case Self.StatusBadGateway
-		    Self.ServerStatusField.Text = "Unexpected Nitrado outage"
-		  Case Self.StatusEncryptedToken
-		    Self.ServerStatusField.Text = "Token is encrypted. Ask the project owner to resave."
-		  Case Self.StatusMaintenance
-		    Self.ServerStatusField.Text = "Nitrado is down for maintenance"
-		  Case Self.StatusMissingProfile
-		    Self.ServerStatusField.Text = "Missing profile. Try a server list refresh."
-		  Case Self.StatusMissingToken
-		    Self.ServerStatusField.Text = "Missing token. Try a server list refresh."
-		  Case Self.StatusNitradoOther
-		    Self.ServerStatusField.Text = "Unknown Nitrado error"
-		  Case Self.StatusUnauthorized
-		    Self.ServerStatusField.Text = "Unauthorized. The token may have been revoked."
-		  Case Self.StatusNetworkError
-		    Self.ServerStatusField.Text = "Network error. This is likely an outage between you and Nitrado."
+		  Case Beacon.ServerStatus.States.Stopping
+		    Message = "Stopping"
+		  Case Beacon.ServerStatus.States.Starting
+		    Message = "Starting"
+		  Case Beacon.ServerStatus.States.Other
+		    Message = Self.mServerStatus.Message
 		  Else
-		    Self.ServerStatusField.Text = "Unknown state: " + Self.mServerState
+		    Message = "Something else?"
 		  End Select
+		  If Self.ServerStatusField.Text <> Message Then
+		    Self.ServerStatusField.Text = Message
+		  End If
+		  If Self.ServerStatusField.Tooltip <> Message Then
+		    Self.ServerStatusField.Tooltip = Message
+		  End If
 		  
 		  Self.ControlToolbar.Item("PowerButton").Enabled = ButtonEnabled
 		  Self.ControlToolbar.Item("PowerButton").Toggled = Started
@@ -440,7 +429,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerState As String = "beacon_checking"
+		Private mServerStatus As Beacon.ServerStatus
 	#tag EndProperty
 
 
@@ -556,7 +545,7 @@ End
 		    Item.Toggled = True
 		    Me.Item("PageGeneral").Toggled = False
 		  Case "PowerButton"
-		    If Self.mServerState = Self.StatusStarted Then
+		    If Self.mServerStatus.State = Beacon.ServerStatus.States.Running Then
 		      Var StopMessage As String = StopMessageDialog.Present(Self)
 		      If StopMessage.IsEmpty Then
 		        Return
@@ -575,12 +564,7 @@ End
 		  Self.mLock.Enter
 		  
 		  Var Provider As New Nitrado.HostingProvider
-		  Var Status As Beacon.ServerStatus
-		  Try
-		    Status = Provider.GetServerStatus(Nil, Self.Profile)
-		  Catch
-		    Self.mServerState = Self.StatusNitradoOther
-		  End Try
+		  Self.RefreshNow(Provider)
 		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		  Self.ScheduleRefresh()
@@ -604,23 +588,15 @@ End
 		  Self.CancelRefresh()
 		  
 		  Var Provider As New Nitrado.HostingProvider
-		  Var Status As Beacon.ServerStatus
-		  Try
-		    Status = Provider.GetServerStatus(Nil, Self.Profile)
-		  Catch
-		    Self.mServerState = Self.StatusNitradoOther
-		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
-		    Self.ScheduleRefresh()
-		    Self.mLock.Leave
-		    Return
-		  End Try
+		  Self.RefreshNow(Provider)
 		  
-		  Select Case Status.State
+		  Select Case Self.mServerStatus.State
 		  Case Beacon.ServerStatus.States.Running
 		    Try
 		      Provider.StopServer(Nil, Self.Profile, Me.UserData.StringValue)
+		      Self.mServerStatus = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopping)
 		    Catch Err As RuntimeException
-		      Self.mServerState = Self.StatusNitradoOther
+		      Self.mServerStatus = New Beacon.ServerStatus("Unhandled Beacon Exception")
 		      Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		      Self.ScheduleRefresh()
 		      Self.mLock.Leave
@@ -629,8 +605,9 @@ End
 		  Case Beacon.ServerStatus.States.Stopped
 		    Try
 		      Provider.StartServer(Nil, Self.Profile)
+		      Self.mServerStatus = New Beacon.ServerStatus(Beacon.ServerStatus.States.Starting)
 		    Catch Err As RuntimeException
-		      Self.mServerState = Self.StatusNitradoOther
+		      Self.mServerStatus = New Beacon.ServerStatus("Unhandled Beacon Exception")
 		      Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		      Self.ScheduleRefresh()
 		      Self.mLock.Leave
@@ -640,6 +617,7 @@ End
 		    Me.AddUserInterfaceUpdate(New Dictionary("ShowAlert": True, "AlertMessage": "Cannot do that right now.", "AlertExplanation": "The server is neither started nor stopped. Please wait for the current process to finish."))
 		  End Select
 		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		  Self.ScheduleRefresh()
 		  Self.mLock.Leave
 		End Sub
