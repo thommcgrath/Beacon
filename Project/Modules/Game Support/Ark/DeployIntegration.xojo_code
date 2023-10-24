@@ -203,6 +203,7 @@ Inherits Beacon.DeployIntegration
 		    Return False
 		  End If
 		  
+		  Var Project As Ark.Project = Self.Project
 		  Var Profile As Ark.ServerProfile = Self.Profile
 		  Var Keys() As Ark.ConfigOption = Organizer.DistinctKeys
 		  Var NewValues As New Dictionary
@@ -266,7 +267,7 @@ Inherits Beacon.DeployIntegration
 		  Var Changes As New Dictionary
 		  For Each Entry As DictionaryEntry In NewValues
 		    Var ConfigOption As Ark.ConfigOption = Entry.Key
-		    Var CurrentValue As Variant = Self.Provider.GameSetting(Self, Profile, ConfigOption)
+		    Var CurrentValue As Variant = Self.Provider.GameSetting(Project, Profile, ConfigOption)
 		    Var FinishedValue As String
 		    If Entry.Value.Type = Variant.TypeString Then
 		      // Value comparison
@@ -384,7 +385,7 @@ Inherits Beacon.DeployIntegration
 		    Var NewValue As String = Entry.Value
 		    
 		    Try
-		      Self.Provider.GameSetting(Self, Self.Profile, Setting) = NewValue
+		      Self.Provider.GameSetting(Project, Profile, Setting) = NewValue
 		    Catch Err As RuntimeException
 		      Self.SetError(Err)
 		      Return False
@@ -545,7 +546,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  Try
-		    Self.Provider.GameSetting(Self, Self.Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode")) = True
+		    Self.Provider.GameSetting(Self.Project, Self.Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode")) = True
 		  Catch Err As RuntimeException
 		    Self.SetError("Could not enable expert mode: " + Err.Message)
 		    Return

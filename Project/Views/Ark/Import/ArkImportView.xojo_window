@@ -581,7 +581,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Integration As New Ark.DiscoverIntegration(Profiles(Idx))
+		    Var Integration As New Ark.DiscoverIntegration(Self.mDestinationProject, Profiles(Idx))
 		    Integration.Begin()
 		    Self.mIntegrations(Idx) = Integration
 		    
@@ -882,11 +882,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Function Autodiscover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+		  #Pragma Unused SenderThread
+		  
 		  Var Logger As New Beacon.DummyLogProducer
 		  Var Profiles() As Beacon.ServerProfile
 		  Var RootFilenames() As String
 		  Try
-		    RootFilenames = Provider.ListFiles(Logger, InitialProfile, "/")
+		    RootFilenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, "/")
 		  Catch Err As RuntimeException
 		  End Try
 		  If RootFilenames Is Nil Or RootFilenames.Count = 0 Then
@@ -920,7 +922,7 @@ End
 		  For Each Path As String In PotentialPaths
 		    Var Filenames() As String
 		    Try
-		      Filenames = Provider.ListFiles(Logger, InitialProfile, Path)
+		      Filenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, Path)
 		    Catch Err As RuntimeException
 		      Continue
 		    End Try
@@ -938,7 +940,7 @@ End
 		    End If
 		    
 		    Try
-		      Filenames = Provider.ListFiles(Logger, InitialProfile, ConfigPath)
+		      Filenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, ConfigPath)
 		    Catch Err As RuntimeException
 		      Continue
 		    End Try

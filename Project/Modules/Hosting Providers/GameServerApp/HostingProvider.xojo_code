@@ -3,26 +3,33 @@ Protected Class HostingProvider
 Implements Beacon.HostingProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Name As String)
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  
+		Sub Constructor(Logger As Beacon.LogProducer = Nil)
+		  If Logger Is Nil Then
+		    Self.mLogger = New Beacon.DummyLogProducer
+		  Else
+		    Self.mLogger = Logger
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Discover(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.DiscoveredData
+		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
+		  // Part of the Beacon.HostingProvider interface.
 		  
-		End Function
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Name
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
+		Sub DownloadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var TemplateId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, TemplateId, Token)
+		  Self.GetCredentials(Project, Profile, TemplateId, Token)
 		  
 		  Var Response As GameServerApp.APIResponse = Self.RunRequest(New GameServerApp.APIRequest("GET", "https://api.gameserverapp.com/system-api/v1/config-template/" + TemplateId.ToString(Locale.Raw, "0") + "/config/" + EncodeURLComponent(Transfer.Path), Token))
 		  If Not Response.Success Then
@@ -50,23 +57,30 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
+		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Setting
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
+		Sub GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Setting
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Sub GetCredentials(Profile As Beacon.ServerProfile, ByRef TemplateId As Integer, ByRef Token As BeaconAPI.ProviderToken)
+		Private Shared Sub GetCredentials(Project As Beacon.Project, Profile As Beacon.ServerProfile, ByRef TemplateId As Integer, ByRef Token As BeaconAPI.ProviderToken)
 		  Var Config As Beacon.HostConfig = Profile.HostConfig
 		  If Config Is Nil Or (Config IsA GameServerApp.HostConfig) = False Then
 		    Var Err As New UnsupportedOperationException
@@ -75,15 +89,28 @@ Implements Beacon.HostingProvider
 		  End If
 		  
 		  TemplateId = GameServerApp.HostConfig(Config).TemplateId
-		  Token = BeaconAPI.GetProviderToken(GameServerApp.HostConfig(Config).TokenId, True)
+		  Token = BeaconAPI.GetProviderToken(GameServerApp.HostConfig(Config).TokenId, Project, True)
+		  If (Token Is Nil) = False Then
+		    If Token.IsEncrypted And (Project Is Nil Or Token.Decrypt(Project.ProviderTokenKey(Token.TokenId)) = False) Then
+		      Var Err as New UnsupportedOperationException
+		      Err.Message = "Provider token is still encrypted. Ask a project editor to resave."
+		      Raise Err
+		    End If
+		  Else
+		    // No such token
+		    Var Err as New UnsupportedOperationException
+		    Err.Message = "Authorization data for the account was not found. Ask a project editor to resave."
+		    Raise Err
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetServerStatus(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
+		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		End Function
 	#tag EndMethod
 
@@ -111,15 +138,17 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListFiles(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StartingPath As String) As String()
+		Function ListFiles(Project As Beacon.Project, Profile As Beacon.ServerProfile, StartingPath As String) As String()
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused StartingPath
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListServers(Logger As Beacon.LogProducer, Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
+		Function ListServers(Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var SteamId As Integer = Self.GameIdToSteamId(GameId)
@@ -129,7 +158,7 @@ Implements Beacon.HostingProvider
 		    Raise Err
 		  End If
 		  
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(GameServerApp.HostConfig(Config).TokenId, True)
+		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(GameServerApp.HostConfig(Config).TokenId, Nil, True)
 		  Var Profiles() As Beacon.ServerProfile
 		  
 		  Var Response As GameServerApp.APIResponse = Self.RunRequest(New GameServerApp.APIRequest("GET", "https://api.gameserverapp.com/system-api/v1/config-template", Token))
@@ -177,7 +206,13 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatchProviderToken(Token As BeaconAPI.ProviderToken) As Boolean
+		Function Logger() As Beacon.LogProducer
+		  Return Self.mLogger
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesToken(Token As BeaconAPI.ProviderToken) As Boolean
 		  Return (Token Is Nil) = False And Token.Provider = BeaconAPI.ProviderToken.ProviderGameServerApp
 		End Function
 	#tag EndMethod
@@ -221,18 +256,22 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub StartServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile)
+		Sub StartServer(Project As Beacon.Project, Profile As Beacon.ServerProfile)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub StopServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StopMessage As String)
+		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused StopMessage
 		End Sub
 	#tag EndMethod
 
@@ -240,7 +279,7 @@ Implements Beacon.HostingProvider
 		Function SupportsCheckpoints() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -248,7 +287,7 @@ Implements Beacon.HostingProvider
 		Function SupportsGameSettings() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -256,7 +295,7 @@ Implements Beacon.HostingProvider
 		Function SupportsRestarting() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -264,7 +303,7 @@ Implements Beacon.HostingProvider
 		Function SupportsStatus() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -272,7 +311,7 @@ Implements Beacon.HostingProvider
 		Function SupportsStopMessage() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -280,17 +319,18 @@ Implements Beacon.HostingProvider
 		Function Throttled() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  Return Self.mThrottled
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UploadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
+		Sub UploadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var TemplateId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, TemplateId, Token)
+		  Self.GetCredentials(Project, Profile, TemplateId, Token)
 		  
 		  Var Boundary As String = Beacon.UUID.v4
 		  Var ContentType As String = "multipart/form-data; charset=utf-8; boundary=" + Boundary
@@ -312,6 +352,10 @@ Implements Beacon.HostingProvider
 
 	#tag Property, Flags = &h21
 		Private mActiveSocket As SimpleHTTP.SynchronousHTTPSocket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLogger As Beacon.LogProducer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

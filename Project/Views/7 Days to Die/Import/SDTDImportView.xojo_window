@@ -318,7 +318,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Integration As New SDTD.DiscoverIntegration(Profiles(Idx))
+		    Var Integration As New SDTD.DiscoverIntegration(Self.mDestinationProject, Profiles(Idx))
 		    Integration.Begin()
 		    Self.mIntegrations(Idx) = Integration
 		    

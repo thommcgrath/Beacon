@@ -95,7 +95,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Multiline       =   False
          Scope           =   2
@@ -335,9 +335,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RefreshNow(Provider As Beacon.HostingProvider)
 		  Try
-		    Self.mServerStatus = Provider.GetServerStatus(Nil, Self.Profile)
-		  Catch
-		    Self.mServerStatus = New Beacon.ServerStatus("Unhandled Beacon Exception")
+		    Self.mServerStatus = Provider.GetServerStatus(Self.Project, Self.Profile)
+		  Catch Err As RuntimeException
+		    Self.mServerStatus = New Beacon.ServerStatus(Err.Message)
 		  End Try
 		End Sub
 	#tag EndMethod

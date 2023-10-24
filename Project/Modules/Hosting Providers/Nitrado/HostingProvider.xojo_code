@@ -3,7 +3,13 @@ Protected Class HostingProvider
 Implements Beacon.HostingProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Sub Constructor(Logger As Beacon.LogProducer = Nil)
+		  If Logger Is Nil Then
+		    Self.mLogger = New Beacon.DummyLogProducer
+		  Else
+		    Self.mLogger = Logger
+		  End If
+		  
 		  Self.mServerDetailCache = New Dictionary
 		  
 		  #if Self.UseSingleConnection
@@ -13,12 +19,12 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Name As String)
+		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, ServiceId, Token)
+		  Self.GetCredentials(Project, Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("name") = "Beacon " + Name
@@ -31,18 +37,12 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Discover(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.DiscoveredData
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
+		Sub DownloadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, ServiceId, Token)
+		  Self.GetCredentials(Project, Profile, ServiceId, Token)
 		  
 		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Transfer.Path), Token))
 		  If Not Response.Success Then
@@ -145,7 +145,7 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
+		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
 		  If Setting Is Nil Or Setting.HasNitradoEquivalent = False Then
 		    Return Nil
 		  End If
@@ -156,7 +156,7 @@ Implements Beacon.HostingProvider
 		  End If
 		  
 		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
-		    Call Self.GetServerStatus(Logger, Profile)
+		    Call Self.GetServerStatus(Project, Profile)
 		  End If
 		  
 		  // Look through each path in order until we find a match
@@ -174,7 +174,7 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
+		Sub GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
 		  If Setting Is Nil Or Setting.HasNitradoEquivalent = False Then
 		    Return
 		  End If
@@ -185,13 +185,13 @@ Implements Beacon.HostingProvider
 		  End If
 		  
 		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
-		    Call Self.GetServerStatus(Logger, Profile)
+		    Call Self.GetServerStatus(Project, Profile)
 		  End If
 		  Var GameServer As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
 		  
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, ServiceId, Token)
+		  Self.GetCredentials(Project, Profile, ServiceId, Token)
 		  For Each Path As String In Paths
 		    Var Found As Boolean
 		    Var OldValue As Variant = Self.ValueByDotNotation(GameServer, Path, Found)
@@ -212,7 +212,7 @@ Implements Beacon.HostingProvider
 		    Else
 		      FormData.Value("value") = Value
 		    End If
-		    Logger.Log("Updating " + Key + "…")
+		    Self.mLogger.Log("Updating " + Key + "…")
 		    
 		    Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/settings", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData)))
 		    If Not Response.Success Then
@@ -223,7 +223,7 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Sub GetCredentials(Profile As Beacon.ServerProfile, ByRef ServiceId As Integer, ByRef Token As BeaconAPI.ProviderToken)
+		Private Shared Sub GetCredentials(Project As Beacon.Project, Profile As Beacon.ServerProfile, ByRef ServiceId As Integer, ByRef Token As BeaconAPI.ProviderToken)
 		  Var Config As Beacon.HostConfig = Profile.HostConfig
 		  If Config Is Nil Or (Config IsA Nitrado.HostConfig) = False Then
 		    Var Err As New UnsupportedOperationException
@@ -232,17 +232,30 @@ Implements Beacon.HostingProvider
 		  End If
 		  
 		  ServiceId = Nitrado.HostConfig(Config).ServiceId
-		  Token = BeaconAPI.GetProviderToken(Nitrado.HostConfig(Config).TokenId, True)
+		  Token = BeaconAPI.GetProviderToken(Nitrado.HostConfig(Config).TokenId, Project, True)
+		  If (Token Is Nil) = False Then
+		    If Token.IsEncrypted And (Project Is Nil Or Token.Decrypt(Project.ProviderTokenKey(Token.TokenId)) = False) Then
+		      Var Err as New UnsupportedOperationException
+		      Err.Message = "Provider token is still encrypted. Ask a project editor to resave."
+		      Raise Err
+		    End If
+		  Else
+		    // No such token
+		    Var Err as New UnsupportedOperationException
+		    Err.Message = "Authorization data for the account was not found. Ask a project editor to resave."
+		    Raise Err
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetServerStatus(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
+		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, ServiceId, Token)
+		  Self.GetCredentials(Project, Profile, ServiceId, Token)
+		  
 		  Var Response As Nitrado.APIResponse
 		  Var RetriesRemaining As Integer = 5
 		  Do
@@ -305,10 +318,10 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListFiles(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StartingPath As String) As String()
+		Function ListFiles(Project As Beacon.Project, Profile As Beacon.ServerProfile, StartingPath As String) As String()
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, ServiceId, Token)
+		  Self.GetCredentials(Project, Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
 		  If StartingPath.IsEmpty = False Then
@@ -338,7 +351,7 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListServers(Logger As Beacon.LogProducer, Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
+		Function ListServers(Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  If (Config IsA Nitrado.HostConfig) = False Then
@@ -347,7 +360,7 @@ Implements Beacon.HostingProvider
 		    Raise Err
 		  End If
 		  
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Nitrado.HostConfig(Config).TokenId, True)
+		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Nitrado.HostConfig(Config).TokenId, Nil, True)
 		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("GET", "https://api.nitrado.net/services", Token))
 		  If Not Response.Success Then
 		    Raise Response.Error
@@ -417,7 +430,13 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatchProviderToken(Token As BeaconAPI.ProviderToken) As Boolean
+		Function Logger() As Beacon.LogProducer
+		  Return Self.mLogger
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesToken(Token As BeaconAPI.ProviderToken) As Boolean
 		  Return (Token Is Nil) = False And Token.Provider = BeaconAPI.ProviderToken.ProviderNitrado
 		End Function
 	#tag EndMethod
@@ -527,12 +546,12 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub StartServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile)
+		Sub StartServer(Project As Beacon.Project, Profile As Beacon.ServerProfile)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, ServiceId, Token)
+		  Self.GetCredentials(Project, Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server started by Beacon"
@@ -546,12 +565,12 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub StopServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StopMessage As String)
+		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, ServiceId, Token)
+		  Self.GetCredentials(Project, Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server started by Beacon"
@@ -601,12 +620,12 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UploadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
+		Sub UploadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Profile, ServiceId, Token)
+		  Self.GetCredentials(Project, Profile, ServiceId, Token)
 		  
 		  Var PathComponents() As String = Transfer.Path.Split("/")
 		  Var Filename As String = PathComponents(PathComponents.LastIndex)
@@ -689,6 +708,10 @@ Implements Beacon.HostingProvider
 
 	#tag Property, Flags = &h21
 		Private mDedicatedSocket As SimpleHTTP.SynchronousHTTPSocket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLogger As Beacon.LogProducer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

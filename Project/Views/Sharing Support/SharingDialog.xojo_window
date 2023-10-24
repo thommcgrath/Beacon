@@ -357,7 +357,7 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         Text            =   "Projects shared with the community will be available for download from the Beacon website and the Community section of the Projects tab. Community members will have read-only access, unless listed below."
+         Text            =   "Projects shared with the community will be available for download from the Beacon website and the Community section of the Projects tab. Community members will have read-only access, unless listed above."
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""

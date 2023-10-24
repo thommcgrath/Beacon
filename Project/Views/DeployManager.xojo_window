@@ -816,7 +816,7 @@ End
 		    Var Engine As Beacon.DeployIntegration
 		    Select Case Profile
 		    Case IsA Ark.ServerProfile
-		      Engine = New Ark.DeployIntegration(Profile)
+		      Engine = New Ark.DeployIntegration(Project, Profile)
 		    Case IsA SDTD.ServerProfile
 		      #if DebugBuild
 		        #Pragma Warning "Need 7DTD DeployIntegration"
@@ -899,7 +899,7 @@ End
 		  End If
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.DeployIntegration = Entry.Key
-		    Engine.Begin(Self.DeployLabel, Self.Project, App.IdentityManager.CurrentIdentity, StopMessage, Options)
+		    Engine.Begin(Self.DeployLabel, App.IdentityManager.CurrentIdentity, StopMessage, Options)
 		  Next
 		End Sub
 	#tag EndMethod

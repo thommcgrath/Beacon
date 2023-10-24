@@ -207,25 +207,6 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateHostingProvider() As Beacon.HostingProvider
-		  Select Case Self.mProviderId
-		  Case Nitrado.Identifier
-		    Return New Nitrado.HostingProvider
-		  Case GameServerApp.Identifier
-		    Return New GameServerApp.HostingProvider
-		  Case FTP.Identifier
-		    Return New FTP.HostingProvider
-		  Case Local.Identifier
-		    Return New Local.HostingProvider
-		  Else
-		    Var Err As New UnsupportedOperationException
-		    Err.Message = "Unknown provider " + Self.mProviderId + "."
-		    Raise Err
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function DeployCapable() As Boolean
 		  Return False
 		End Function

@@ -27,7 +27,6 @@ Begin DiscoveryView MultiSelectDiscoveryView
    Width           =   720
    Begin Thread TokenLookupThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -428,7 +427,7 @@ End
 		Private Sub Thread_Run(Sender As Beacon.Thread)
 		  Try
 		    Var Config As Beacon.HostConfig = Sender.UserData
-		    Var Profiles() As Beacon.ServerProfile = Self.Provider.ListServers(Nil, Config, Self.GameId())
+		    Var Profiles() As Beacon.ServerProfile = Self.Provider.ListServers(Config, Self.GameId())
 		    Var Dict As New Dictionary
 		    Dict.Value("Event") = "Finished"
 		    Dict.Value("Profiles") = Profiles
@@ -565,7 +564,7 @@ End
 		    End If
 		    Cache.Value(Tokens(Idx).TokenId) = Tokens(Idx)
 		    
-		    If Provider.MatchProviderToken(Tokens(Idx)) Then
+		    If Provider.MatchesToken(Tokens(Idx)) Then
 		      Self.ListServers(Tokens(Idx))
 		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
 		    Else
@@ -582,8 +581,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId)
-		    If (Token Is Nil) = False And Provider.MatchProviderToken(Token) And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
+		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId, Self.Project, False)
+		    If (Token Is Nil) = False And Provider.MatchesToken(Token) And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
 		      Tokens.Add(Token)
 		      Cache.Value(Token.TokenId) = Token
 		      Self.ListServers(Token)

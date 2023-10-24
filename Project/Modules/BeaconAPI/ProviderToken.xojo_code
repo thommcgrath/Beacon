@@ -57,8 +57,7 @@ Protected Class ProviderToken
 		  End If
 		  
 		  Try
-		    Var RawKey As String = DecodeBase64(EncryptionKey)
-		    Var AccessToken As String = BeaconEncryption.SymmetricDecrypt(RawKey, DecodeBase64(Self.mAccessToken))
+		    Var AccessToken As String = BeaconEncryption.SymmetricDecrypt(EncryptionKey, DecodeBase64(Self.mAccessToken))
 		    Self.mEncryptionKey = EncryptionKey
 		    Self.mAccessToken = AccessToken
 		    Return True

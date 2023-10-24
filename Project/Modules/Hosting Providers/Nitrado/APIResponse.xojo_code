@@ -60,13 +60,12 @@ Private Class APIResponse
 		        Err.Message = "Nitrado responded with an error but no message."
 		      End If
 		    Else
-		      Err.Message = "Unexpected HTTP status " + Err.ErrorNumber.ToString(Locale.Raw, "0")
+		      Err.Message = "Unexpected HTTP status " + Err.ErrorNumber.ToString(Locale.Raw, "0") + "."
 		    End Select
 		    
 		    If Err.Message.EndsWith(".") = False Then
 		      Err.Message = Err.Message + "."
 		    End If
-		    Err.Message = Err.Message + " Check the Nitrado API status at https://status.usebeacon.app/ for more information."
 		    
 		    Response.mError = Err
 		  Else
@@ -171,14 +170,6 @@ Private Class APIResponse
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mContent"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

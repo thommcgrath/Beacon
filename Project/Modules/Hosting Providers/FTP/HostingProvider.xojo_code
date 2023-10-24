@@ -18,10 +18,21 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Name As String)
+		Sub Constructor(Logger As Beacon.LogProducer = Nil)
+		  If Logger Is Nil Then
+		    Self.mLogger = New Beacon.DummyLogProducer
+		  Else
+		    Self.mLogger = Logger
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma Unused Logger
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Name
 		End Sub
@@ -81,14 +92,10 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Discover(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.DiscoveredData
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
+		Sub DownloadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
 		  
 		  Var Config As FTP.HostConfig = Self.GetConfig(Profile)
 		  Var Path As String = Transfer.Path
@@ -99,7 +106,7 @@ Implements Beacon.HostingProvider
 		  Var Socket As CURLSMBS = Self.CreateSocket(Config, Url)
 		  
 		  Try
-		    Transfer.Content = Self.RunRequest(Logger, Socket, True)
+		    Transfer.Content = Self.RunRequest(Socket, True)
 		    Transfer.Success = True
 		  Catch Err As RuntimeException
 		    If FailureMode = Beacon.Integration.DownloadFailureMode.ErrorsAllowed Or (Err IsA NetworkException And Err.ErrorNumber = CURLSMBS.kError_REMOTE_FILE_NOT_FOUND And FailureMode = Beacon.Integration.DownloadFailureMode.MissingAllowed) Then
@@ -113,20 +120,22 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
+		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma Unused Logger
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Setting
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
+		Sub GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma Unused Logger
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Setting
 		  #Pragma Unused Value
@@ -153,10 +162,11 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetServerStatus(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
+		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma Unused Logger
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  Return Nil
 		End Function
@@ -166,13 +176,16 @@ Implements Beacon.HostingProvider
 		Function Identifier() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return FTP.Identifier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListFiles(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StartingPath As String) As String()
+		Function ListFiles(Project As Beacon.Project, Profile As Beacon.ServerProfile, StartingPath As String) As String()
 		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
 		  
 		  If StartingPath.BeginsWith("/") = False Then
 		    StartingPath = "/" + StartingPath
@@ -183,7 +196,7 @@ Implements Beacon.HostingProvider
 		  Var Filenames() As String
 		  If Config.Mode = Beacon.FTPModeSSH Then
 		    Var Socket As CURLSMBS = Self.CreateSocket(Config, Url)
-		    Var Content As String = Self.RunRequest(Logger, Socket, False) // Listing files doesn't work multithreaded
+		    Var Content As String = Self.RunRequest(Socket, False) // Listing files doesn't work multithreaded
 		    Var Lines() As String = Content.Trim.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
 		    
 		    Var Parser As New RegEx
@@ -215,7 +228,7 @@ Implements Beacon.HostingProvider
 		    
 		    Var Socket As CURLSMBS = Self.CreateSocket(Config, Url)
 		    Socket.OptionWildcardMatch = True
-		    Call Self.RunRequest(Logger, Socket, False) // Listing files doesn't work multithreaded
+		    Call Self.RunRequest(Socket, False) // Listing files doesn't work multithreaded
 		    Var Infos() As CURLSFileInfoMBS = Socket.FileInfos
 		    
 		    If (Infos Is Nil) = False Then
@@ -236,7 +249,7 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListServers(Logger As Beacon.LogProducer, Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
+		Function ListServers(Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  If (Config IsA FTP.HostConfig) = False Then
@@ -263,14 +276,21 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatchProviderToken(Token As BeaconAPI.ProviderToken) As Boolean
+		Function Logger() As Beacon.LogProducer
+		  Return Self.mLogger
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesToken(Token As BeaconAPI.ProviderToken) As Boolean
 		  #Pragma Unused Token
+		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RunRequest(Logger As Beacon.LogProducer, Socket As CURLSMBS, Multithreaded As Boolean) As String
+		Private Function RunRequest(Socket As CURLSMBS, Multithreaded As Boolean) As String
 		  Self.mThrottled = True
 		  Var Locked As Boolean = Preferences.SignalConnection
 		  Self.mThrottled = False
@@ -289,9 +309,9 @@ Implements Beacon.HostingProvider
 		    Err.ErrorNumber = Code
 		    Err.Message = Socket.LastErrorMessage
 		    
-		    Logger.Log("Curl Error " + Code.ToString(Locale.Raw, "0"))
-		    Logger.Log(Socket.OptionURL)
-		    Logger.Log(Socket.DebugMessages)
+		    Self.mLogger.Log("Curl Error " + Code.ToString(Locale.Raw, "0"))
+		    Self.mLogger.Log(Socket.OptionURL)
+		    Self.mLogger.Log(Socket.DebugMessages)
 		    
 		    Raise Err
 		  End If
@@ -303,24 +323,25 @@ Implements Beacon.HostingProvider
 		Function SocketStatus() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return ""
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub StartServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile)
+		Sub StartServer(Project As Beacon.Project, Profile As Beacon.ServerProfile)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma Unused Logger
+		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub StopServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StopMessage As String)
+		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma Unused Logger
+		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused StopMessage
 		End Sub
@@ -330,6 +351,7 @@ Implements Beacon.HostingProvider
 		Function SupportsCheckpoints() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -338,6 +360,7 @@ Implements Beacon.HostingProvider
 		Function SupportsGameSettings() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -346,6 +369,7 @@ Implements Beacon.HostingProvider
 		Function SupportsRestarting() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -354,6 +378,7 @@ Implements Beacon.HostingProvider
 		Function SupportsStatus() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -362,6 +387,7 @@ Implements Beacon.HostingProvider
 		Function SupportsStopMessage() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -370,13 +396,16 @@ Implements Beacon.HostingProvider
 		Function Throttled() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  #Pragma StackOverflowChecking False
 		  Return Self.mThrottled
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UploadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
+		Sub UploadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
 		  
 		  Var Config As FTP.HostConfig = Self.GetConfig(Profile)
 		  Var Path As String = Transfer.Path
@@ -390,7 +419,7 @@ Implements Beacon.HostingProvider
 		  Socket.SetInputData(Transfer.Content)
 		  
 		  Try
-		    Call Self.RunRequest(Logger, Socket, True)
+		    Call Self.RunRequest(Socket, True)
 		    Transfer.Success = True
 		  Catch Err As RuntimeException
 		    Transfer.SetError(Err.Message + ", code " + Err.ErrorNumber.ToString(Locale.Raw, "0"))
@@ -398,6 +427,10 @@ Implements Beacon.HostingProvider
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mLogger As Beacon.LogProducer
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mThrottled As Boolean

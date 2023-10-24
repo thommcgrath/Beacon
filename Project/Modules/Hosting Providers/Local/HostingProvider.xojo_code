@@ -3,22 +3,32 @@ Protected Class HostingProvider
 Implements Beacon.HostingProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Name As String)
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  
+		Sub Constructor(Logger As Beacon.LogProducer = Nil)
+		  If Logger Is Nil Then
+		    Self.mLogger = New Beacon.DummyLogProducer
+		  Else
+		    Self.mLogger = Logger
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Discover(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.DiscoveredData
+		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
+		  // Part of the Beacon.HostingProvider interface.
 		  
-		End Function
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Name
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DownloadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
+		Sub DownloadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		  
 		  Var File As FolderItem = BookmarkedFolderItem.FromSaveInfo(Transfer.Path)
 		  If File Is Nil Or File.Exists = False Then
@@ -46,26 +56,35 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
+		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Setting
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameSetting(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
+		Sub GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Setting
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetServerStatus(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
+		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		End Function
 	#tag EndMethod
 
@@ -73,28 +92,42 @@ Implements Beacon.HostingProvider
 		Function Identifier() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  Return Local.Identifier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListFiles(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StartingPath As String) As String()
+		Function ListFiles(Project As Beacon.Project, Profile As Beacon.ServerProfile, StartingPath As String) As String()
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused StartingPath
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ListServers(Logger As Beacon.LogProducer, Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
+		Function ListServers(Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Config
+		  #Pragma Unused GameId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatchProviderToken(Token As BeaconAPI.ProviderToken) As Boolean
+		Function Logger() As Beacon.LogProducer
+		  #Pragma StackOverflowChecking False
+		  Return Self.mLogger
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesToken(Token As BeaconAPI.ProviderToken) As Boolean
+		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Token
 		  Return False
 		End Function
@@ -104,23 +137,28 @@ Implements Beacon.HostingProvider
 		Function SocketStatus() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub StartServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile)
+		Sub StartServer(Project As Beacon.Project, Profile As Beacon.ServerProfile)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub StopServer(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, StopMessage As String)
+		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused StopMessage
 		End Sub
 	#tag EndMethod
 
@@ -128,7 +166,8 @@ Implements Beacon.HostingProvider
 		Function SupportsCheckpoints() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -136,7 +175,8 @@ Implements Beacon.HostingProvider
 		Function SupportsGameSettings() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -144,7 +184,8 @@ Implements Beacon.HostingProvider
 		Function SupportsRestarting() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -152,7 +193,8 @@ Implements Beacon.HostingProvider
 		Function SupportsStatus() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -160,7 +202,8 @@ Implements Beacon.HostingProvider
 		Function SupportsStopMessage() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -168,18 +211,69 @@ Implements Beacon.HostingProvider
 		Function Throttled() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UploadFile(Logger As Beacon.LogProducer, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
+		Sub UploadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma StackOverflowChecking False
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Transfer
 		End Sub
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mLogger As Beacon.LogProducer
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

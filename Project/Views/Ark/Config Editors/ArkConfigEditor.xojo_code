@@ -91,6 +91,8 @@ Implements BeaconUI.ConfigEditorView
 
 	#tag Method, Flags = &h1
 		Protected Sub Parse(GameUserSettingsIniContent As String, GameIniContent As String, Source As String)
+		  #Pragma Unused Source
+		  
 		  Var Data As New Ark.DiscoveredData
 		  Data.GameUserSettingsIniContent = GameUserSettingsIniContent
 		  Data.GameIniContent = GameIniContent

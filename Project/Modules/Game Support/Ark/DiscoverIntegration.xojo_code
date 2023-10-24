@@ -4,12 +4,8 @@ Inherits Beacon.DiscoverIntegration
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Function Run() As Beacon.Project
-		  Var Provider As Beacon.HostingProvider = Self.Profile.CreateHostingProvider
-		  If Provider Is Nil Then
-		    Self.SetError("Failed to create hosting provider object")
-		    Return Nil
-		  End If
-		  
+		  Var Project As Beacon.Project = Self.Project
+		  Var Provider As Beacon.HostingProvider = Self.Provider
 		  Var DownloadIniFiles, GatherGameSettings As Boolean = True
 		  
 		  Var Data As New Ark.DiscoveredData
@@ -18,7 +14,7 @@ Inherits Beacon.DiscoverIntegration
 		  Case IsA Nitrado.HostingProvider
 		    Self.Log("Checking server status…")
 		    Try
-		      Profile.BasePath = Provider.GameSetting(Self, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "/game_specific.path"))
+		      Profile.BasePath = Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "/game_specific.path"))
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not find server base path: " + Err.Message)
 		      Return Nil
@@ -26,7 +22,7 @@ Inherits Beacon.DiscoverIntegration
 		    
 		    Var ExpertMode As Boolean
 		    Try
-		      ExpertMode = Provider.GameSetting(Self, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode"))
+		      ExpertMode = Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode"))
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not determine if the server is in expert mode: " + Err.Message)
 		      Return Nil
@@ -34,7 +30,7 @@ Inherits Beacon.DiscoverIntegration
 		    
 		    GatherGameSettings = False
 		    DownloadIniFiles = ExpertMode
-		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Provider.GameSetting(Self, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "start-param"))).ToString) // Weird way to convert JSONItem to Dictionary
+		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "start-param"))).ToString) // Weird way to convert JSONItem to Dictionary
 		    
 		    If ExpertMode = False Then
 		      Var GuidedOrganizer As New Ark.ConfigOrganizer
@@ -46,7 +42,7 @@ Inherits Beacon.DiscoverIntegration
 		        
 		        Var Value As Variant
 		        Try
-		          Value = Provider.GameSetting(Self, Profile, Setting)
+		          Value = Provider.GameSetting(Project, Profile, Setting)
 		        Catch Err As RuntimeException
 		          Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
 		          Return Nil
@@ -100,7 +96,7 @@ Inherits Beacon.DiscoverIntegration
 		    For Each Setting As Ark.ConfigOption In Settings
 		      Var Value As Variant
 		      Try
-		        Value = Provider.GameSetting(Self, Profile, Setting)
+		        Value = Provider.GameSetting(Project, Profile, Setting)
 		        CommandLineOptions.Value(Setting.Key) = Value
 		      Catch Err As RuntimeException
 		        Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
@@ -111,10 +107,10 @@ Inherits Beacon.DiscoverIntegration
 		  End If
 		  
 		  Self.mImportProgress = New Beacon.DummyProgressDisplayer
-		  Var Project As Ark.Project = Ark.ImportThread.RunSynchronous(Data, Self.mDestinationProject, Self.mImportProgress)
-		  Project.AddServerProfile(Profile)
+		  Var NewProject As Ark.Project = Ark.ImportThread.RunSynchronous(Data, Self.mDestinationProject, Self.mImportProgress)
+		  NewProject.AddServerProfile(Profile)
 		  Self.mImportProgress = Nil
-		  Return Project
+		  Return NewProject
 		End Function
 	#tag EndEvent
 

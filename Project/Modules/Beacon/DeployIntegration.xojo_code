@@ -53,9 +53,8 @@ Inherits Beacon.Integration
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As String, Project As Beacon.Project, Identity As Beacon.Identity, StopMessage As String, Options As UInt64)
+		Sub Begin(Label As String, Identity As Beacon.Identity, StopMessage As String, Options As UInt64)
 		  Self.mLabel = Label
-		  Self.mProject = Project
 		  Self.mIdentity = Identity
 		  Self.mStopMessage = StopMessage
 		  Self.mOptions = Options And CType(Self.OptionAnalyze Or Self.OptionBackup Or Self.OptionNuke Or Self.OptionReview, UInt64)
@@ -72,7 +71,7 @@ Inherits Beacon.Integration
 		  Try
 		    Self.Log("Saving previous configuration as profile…")
 		    Var CheckpointName As String = "Beacon " + Self.Label
-		    Self.Provider.CreateCheckpoint(Self, Self.Profile, CheckpointName)
+		    Self.Provider.CreateCheckpoint(Self.Project, Self.Profile, CheckpointName)
 		    Self.Log("Created configuration profile """ + CheckpointName + """")
 		    Self.mCheckpointCreated = True
 		  Catch Err As RuntimeException
@@ -124,12 +123,6 @@ Inherits Beacon.Integration
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Project() As Beacon.Project
-		  Return Self.mProject
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub RefreshServerStatus(Verbose As Boolean = False)
 		  If Self.Provider.SupportsStatus = False Then
@@ -150,7 +143,7 @@ Inherits Beacon.Integration
 		  Self.mLastRefresh = System.Microseconds
 		  
 		  Try
-		    Self.mStatus = Self.Provider.GetServerStatus(Self, Self.Profile)
+		    Self.mStatus = Self.Provider.GetServerStatus(Self.Project, Self.Profile)
 		  Catch Err As RuntimeException
 		    Self.SetError("Failed to get server status: " + Err.Message)
 		  End Try
@@ -212,7 +205,7 @@ Inherits Beacon.Integration
 		        End If
 		        
 		        Try
-		          Self.Provider.StartServer(Self, Self.Profile)
+		          Self.Provider.StartServer(Self.Project, Self.Profile)
 		        Catch Err As RuntimeException
 		          Self.SetError("Failed to stop server: " + Err.Message)
 		          Return
@@ -266,7 +259,7 @@ Inherits Beacon.Integration
 		        End If
 		        
 		        Try
-		          Self.Provider.StopServer(Self, Self.Profile, Self.mStopMessage)
+		          Self.Provider.StopServer(Self.Project, Self.Profile, Self.mStopMessage)
 		        Catch Err As RuntimeException
 		          Self.SetError("Failed to stop server: " + Err.Message)
 		          Return
@@ -325,10 +318,6 @@ Inherits Beacon.Integration
 
 	#tag Property, Flags = &h21
 		Private mOptions As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProject As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1,7 +1,7 @@
 #tag Module
 Protected Module BeaconAPI
 	#tag Method, Flags = &h1
-		Protected Function GetProviderToken(TokenId As String, UseCache As Boolean = False) As BeaconAPI.ProviderToken
+		Protected Function GetProviderToken(TokenId As String, Project As Beacon.Project, UseCache As Boolean = False) As BeaconAPI.ProviderToken
 		  If UseCache Then
 		    Try
 		      Var Cached As BeaconAPI.ProviderToken = Beacon.Cache.Fetch(TokenId)
@@ -28,6 +28,9 @@ Protected Module BeaconAPI
 		  
 		  Try
 		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.ProviderToken.Load(Parsed)
+		    If Token.IsEncrypted And (Project Is Nil) = False Then
+		      Call Token.Decrypt(Project.ProviderTokenKey(TokenId))
+		    End If
 		    Beacon.Cache.Store(Token.TokenId, Token, 10)
 		    Return Token
 		  Catch Err As RuntimeException

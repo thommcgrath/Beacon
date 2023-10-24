@@ -774,7 +774,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId, True)
+		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId, Self.Project, True)
 		    If (Token Is Nil) = False Then
 		      Tokens.Add(Token)
 		      Filter.Value(Token.TokenId) = Token
@@ -804,7 +804,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Profiles() As Beacon.ServerProfile = Provider.ListServers(Nil, Config, Ark.Identifier)
+		    Var Profiles() As Beacon.ServerProfile = Provider.ListServers(Config, Ark.Identifier)
 		    For Each Profile As Beacon.ServerProfile In Profiles
 		      If ProfileMap.HasKey(Profile.ProfileId) Then
 		        Beacon.ServerProfile(ProfileMap.Value(Profile.ProfileId).ObjectValue).UpdateDetailsFrom(Profile)

@@ -597,6 +597,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String, Container As String)
+		  #Pragma Unused Container
+		  
 		  Self.mImportProgress = New ProgressWindow
 		  Self.mImportProgress.ShowDelayed(Self.TrueWindow)
 		  

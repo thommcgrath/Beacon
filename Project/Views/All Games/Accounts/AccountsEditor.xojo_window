@@ -240,7 +240,7 @@ End
 		  
 		  Try
 		    Var TokenId As String = Sender.UserData
-		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId)
+		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId, Self.Project, False)
 		    If (Token Is Nil) = False Then
 		      UpdateDict.Value("token") = Token
 		    End If

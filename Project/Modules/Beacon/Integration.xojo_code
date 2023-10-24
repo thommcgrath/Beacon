@@ -22,15 +22,30 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.ServerProfile)
+		Sub Constructor(Project As Beacon.Project, Profile As Beacon.ServerProfile)
 		  If Profile Is Nil Then
-		    Var Err As New RuntimeException
+		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Nil profile"
+		    Raise Err
+		  ElseIf Project Is Nil Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Nil project"
 		    Raise Err
 		  End If
 		  
+		  Self.mProject = Project
+		  Select Case Profile.ProviderId
+		  Case Nitrado.Identifier
+		    Self.mProvider = New Nitrado.HostingProvider(Self)
+		  Case GameServerApp.Identifier
+		    Self.mProvider = New GameServerApp.HostingProvider(Self)
+		  Case FTP.Identifier
+		    Self.mProvider = New FTP.HostingProvider(Self)
+		  Case Local.Identifier
+		    Self.mProvider = New Local.HostingProvider(Self)
+		  End Select
+		  
 		  Self.mProfile = Profile
-		  Self.mProvider = Profile.CreateHostingProvider()
 		  Self.mIntegrationId = Profile.ProfileId.Left(8)
 		  
 		  Self.mThread = New Global.Thread
@@ -118,7 +133,7 @@ Implements Beacon.LogProducer
 		    End If
 		    
 		    Try
-		      Self.mProvider.DownloadFile(Self, Profile, Transfer, FailureMode)
+		      Self.mProvider.DownloadFile(Self.mProject, Profile, Transfer, FailureMode)
 		      If Not Silent Then
 		        Self.Log("Downloaded " + DisplayName + ", size: " + Beacon.BytesToString(Transfer.Size))
 		      End If
@@ -224,6 +239,8 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h21
 		Private Sub mThread_UserInterfaceUpdate(Sender As Global.Thread, Updates() As Dictionary)
+		  #Pragma Unused Sender
+		  
 		  For Each Update As Dictionary In Updates
 		    Try
 		      If Update.HasKey("Event") Then
@@ -250,6 +267,12 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Project() As Beacon.Project
+		  Return Self.mProject
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Provider() As Beacon.HostingProvider
 		  Return Self.mProvider
 		End Function
@@ -262,7 +285,7 @@ Implements Beacon.LogProducer
 		  Var OriginalSize As Integer = Transfer.Size // Beacuse the transfer size will change after the event
 		  Self.Log("Uploading " + DisplayName + "…")
 		  Try
-		    Self.mProvider.UploadFile(Self, Self.mProfile, Transfer)
+		    Self.mProvider.UploadFile(Self.mProject, Self.mProfile, Transfer)
 		    
 		    Var DownloadSuccess As Boolean
 		    Var CheckedContents As String = Self.GetFile(Path, DisplayName, DownloadFailureMode.Required, True, DownloadSuccess)
@@ -478,6 +501,10 @@ Implements Beacon.LogProducer
 
 	#tag Property, Flags = &h21
 		Private mProfile As Beacon.ServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProject As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
