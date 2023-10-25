@@ -404,6 +404,82 @@ Protected Module Preferences
 		Protected ArkLootItemSetEntryDefaults As Dictionary
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.DictionaryValue("ArkSA Loot Item Set Entry Defaults", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.DictionaryValue("ArkSA Loot Item Set Entry Defaults") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSALootItemSetEntryDefaults As Dictionary
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("ArkSA Spawn Point Editor Limits Splitter Position", ArkSpawnPointEditor.LimitsListDefaultHeight)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("ArkSA Spawn Point Editor Limits Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSASpawnPointEditorLimitsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("ArkSA Spawn Point Editor Sets Splitter Position", ArkSpawnPointEditor.SetsListDefaultWidth)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("ArkSA Spawn Point Editor Sets Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSASpawnPointEditorSetsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Var Default As String
+			  #if TargetWindows
+			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK"
+			  #elseif TargetLinux
+			    Default = SpecialFolder.UserHome + "/.steam/steam/steamapps/common/ARK"
+			  #elseif TargetMacOS
+			    // This is pointless, but whatever
+			    Default = SpecialFolder.ApplicationData.NativePath + "/Steam/SteamApps/common/ARK"
+			  #endif
+			  Return mManager.StringValue("ArkSA Steam Path", Default)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If ArkSteamPath = Value Then
+			    Return
+			  End If
+			  
+			  mManager.StringValue("ArkSA Steam Path") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSASteamPath As String
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get

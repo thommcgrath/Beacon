@@ -1044,7 +1044,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Try
 		    Self.mDataSources.Add(Ark.DataSource.Pool.Get(False))
 		    Self.mDataSources.Add(Beacon.CommonData.Pool.Get(False))
-		    Self.mDataSources.Add(SDTD.DataSource.Pool.Get(False))
+		    #if SDTD.Enabled
+		      Self.mDataSources.Add(SDTD.DataSource.Pool.Get(False))
+		    #endif
+		    #if ArkSA.Enabled
+		      Self.mDataSources.Add(ArkSA.DataSource.Pool.Get(False))
+		    #endif
 		  Catch Err As RuntimeException
 		    // Something is still wrong
 		    BeaconUI.ShowAlert("Beacon cannot start due to a problem with a local database.", "Beacon is unable to create or repair a local database. The database error was: `" + Err.Message + "`.")

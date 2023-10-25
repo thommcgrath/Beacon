@@ -214,6 +214,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Return New ArkDocumentEditorView(Controller)
 		  Case SDTD.Identifier
 		    Return New SDTDDocumentEditorView(Controller)
+		  Case ArkSA.Identifier
+		    Return New ArkSADocumentEditorView(Controller)
 		  End Select
 		End Function
 	#tag EndMethod

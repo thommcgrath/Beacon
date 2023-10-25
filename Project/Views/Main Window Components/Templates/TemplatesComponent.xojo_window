@@ -270,6 +270,33 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function CreateTemplate(ItemSet As ArkSA.LootItemSet) As ArkSA.LootTemplate
+		  Var Template As ArkSA.MutableLootTemplate
+		  If ItemSet.TemplateUUID.IsEmpty = False Then
+		    Var SourceTemplate As Beacon.Template = Beacon.CommonData.Pool.Get(False).GetTemplateByUUID(ItemSet.TemplateUUID)
+		    If (SourceTemplate Is Nil) = False And SourceTemplate IsA Ark.LootTemplate Then
+		      Template = New ArkSA.MutableLootTemplate(ArkSA.LootTemplate(SourceTemplate))
+		    End If
+		  End If
+		  If Template Is Nil Then
+		    Template = New ArkSA.MutableLootTemplate()
+		  End If
+		  
+		  Template.Label = ItemSet.Label
+		  Template.MinEntriesSelected = ItemSet.MinNumItems
+		  Template.MaxEntriesSelected = ItemSet.MaxNumItems
+		  
+		  Template.ResizeTo(-1)
+		  For Each Entry As ArkSA.LootItemSetEntry In ItemSet
+		    Template.Add(New ArkSA.LootTemplateEntry(Entry))
+		  Next Entry
+		  
+		  Self.OpenTemplate(Template, True)
+		  Return Template
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub EmbedView(View As TemplateEditorView)
 		  Self.AppendPage(View)

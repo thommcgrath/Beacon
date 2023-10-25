@@ -1,12 +1,6 @@
 #tag Module
 Protected Module Maps
 	#tag Method, Flags = &h1
-		Protected Function Aberration() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("Aberration_P")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function All() As ArkSA.Map()
 		  Return ArkSA.DataSource.Pool.Get(False).GetMaps()
 		End Function
@@ -19,26 +13,8 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CrystalIsles() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("CrystalIsles")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Extinction() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("Extinction")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function ForMask(Mask As UInt64) As ArkSA.Map()
 		  Return ArkSA.DataSource.Pool.Get(False).GetMaps(Mask)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Genesis() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("Genesis")
 		End Function
 	#tag EndMethod
 
@@ -64,24 +40,6 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Ragnarok() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("Ragnarok")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ScorchedEarth() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("ScorchedEarth_P")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function TheCenter() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("TheCenter")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function TheIsland() As ArkSA.Map
 		  Return ArkSA.DataSource.Pool.Get(False).GetMap("TheIsland")
 		End Function
@@ -93,12 +51,6 @@ Protected Module Maps
 		    mUniversalMask = All.Mask
 		  End If
 		  Return mUniversalMask
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Valguero() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("Valguero_P")
 		End Function
 	#tag EndMethod
 

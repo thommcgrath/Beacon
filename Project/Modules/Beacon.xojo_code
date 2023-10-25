@@ -504,6 +504,13 @@ Protected Module Beacon
 		    #if ArkSA.Enabled
 		      GameList.Add(New Beacon.Game(ArkSA.Identifier, ArkSA.FullName, ArkSA.OmniFlag))
 		    #endif
+		    
+		    Var Names() As String
+		    Names.ResizeTo(GameList.LastIndex)
+		    For Idx As Integer = Names.FirstIndex To Names.LastIndex
+		      Names(Idx) = GameList(Idx).Name
+		    Next
+		    Names.SortWith(GameList)
 		  End If
 		  Return GameList
 		End Function
