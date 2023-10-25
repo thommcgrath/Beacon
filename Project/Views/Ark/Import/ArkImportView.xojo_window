@@ -66,7 +66,7 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   3
       Visible         =   True
       Width           =   720
       Begin MultiSelectDiscoveryView NitradoDiscoveryView1
@@ -954,6 +954,7 @@ End
 		    Profile.GameIniPath = GameIniPath
 		    Profile.GameUserSettingsIniPath = GameUserSettingsIniPath
 		    Profile.LogsPath = LogsPath
+		    Profile.Mask = 0 // Tells the discover engine to update it
 		    Profiles.Add(Profile)
 		  Next
 		  
@@ -1003,6 +1004,7 @@ End
 		    Profile.GameIniPath = GameIniPath
 		    Profile.GameUserSettingsIniPath = GameUserSettingsIniPath
 		    Profile.LogsPath = LogsPath
+		    Profile.Mask = 0 // Tells the discover engine to update it
 		    Profiles.Add(Profile)
 		  End If
 		  
