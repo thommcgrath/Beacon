@@ -653,7 +653,7 @@ End
 	#tag Event
 		Sub Resize()
 		  Var Group As New ControlGroup(Self.DiscoveryMessageLabel, Self.DiscoveryProgressBar)
-		  Group.Top = Self.ViewPanel.Top + ((Self.ViewPanel.Height - Group.Height) / 2)
+		  Group.Top = Self.ViewPanel.Top + ((Self.ViewPanel.Height - Group.Height) / 2.5)
 		End Sub
 	#tag EndEvent
 
