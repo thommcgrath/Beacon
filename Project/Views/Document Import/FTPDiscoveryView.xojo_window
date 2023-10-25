@@ -47,7 +47,7 @@ Begin DiscoveryView FTPDiscoveryView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin DesktopLabel ServerMessageLabel
@@ -553,7 +553,7 @@ Begin DiscoveryView FTPDiscoveryView
          Visible         =   True
          Width           =   141
       End
-      Begin DesktopLabel AutodiscoveryMessageLabel
+      Begin DesktopLabel DiscoveryMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   False
          Enabled         =   True
@@ -586,7 +586,7 @@ Begin DiscoveryView FTPDiscoveryView
          Visible         =   True
          Width           =   560
       End
-      Begin DesktopProgressBar AutodiscoveryProgressBar
+      Begin DesktopProgressBar DiscoveryProgressBar
          Active          =   False
          AllowAutoDeactivate=   True
          AllowTabStop    =   True
@@ -652,11 +652,30 @@ End
 
 	#tag Event
 		Sub Resize()
-		  Var Group As New ControlGroup(Self.AutodiscoveryMessageLabel, Self.AutodiscoveryProgressBar)
+		  Var Group As New ControlGroup(Self.DiscoveryMessageLabel, Self.DiscoveryProgressBar)
 		  Group.Top = Self.ViewPanel.Top + ((Self.ViewPanel.Height - Group.Height) / 2)
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function ChoosePath(Filename As String, Options As Integer) As String
+		  Var Sender As Thread = Thread.Current
+		  If Sender Is Nil Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Do not call on main thread"
+		    Raise Err
+		  End If
+		  
+		  Self.mChooserOptions = Options And (Self.ChooserOptionAllowFiles Or Self.ChooserOptionAllowFolders Or Self.ChooserOptionOptional Or Self.ChooserOptionStrictNames)
+		  Self.mChooserFilename = Filename
+		  Self.mChooserOriginThread = Sender
+		  
+		  Call CallLater.Schedule(1, WeakAddressOf ShowPathChooser)
+		  Sender.Pause
+		  Return Self.mChosenPath
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ListedFiles(Filenames() As String)
@@ -755,20 +774,25 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mAutodiscoverThread_Run(Sender As Beacon.Thread)
+		Private Sub mDiscoverThread_Run(Sender As Beacon.Thread)
 		  Var Provider As FTP.HostingProvider = FTP.HostingProvider(Self.Provider)
 		  Var Profile As Beacon.ServerProfile = Self.mProfile
-		  Var DiscoveredProfiles() As Beacon.ServerProfile = RaiseEvent Autodiscover(Provider, Profile, Sender)
 		  Var Dict As New Dictionary
 		  Dict.Value("Event") = "Finished"
-		  Dict.Value("Success") = (DiscoveredProfiles Is Nil) = False And DiscoveredProfiles.Count > 0
-		  Dict.Value("Profiles") = DiscoveredProfiles
+		  Try
+		    Var DiscoveredProfiles() As Beacon.ServerProfile = RaiseEvent Discover(Provider, Profile, Sender)
+		    Dict.Value("Success") = (DiscoveredProfiles Is Nil) = False And DiscoveredProfiles.Count > 0
+		    Dict.Value("Profiles") = DiscoveredProfiles
+		  Catch Err As RuntimeException
+		    Dict.Value("Success") = False
+		    Dict.Value("Error") = Err
+		  End Try
 		  Sender.AddUserInterfaceUpdate(Dict)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mAutodiscoverThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub mDiscoverThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates
@@ -781,10 +805,25 @@ End
 		            Var Profiles() As Beacon.ServerProfile = Update.Value("Profiles")
 		            Self.ShouldFinish(Profiles)
 		          Else
-		            Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
-		            Self.ListFiles("")
+		            If Update.HasKey("Error") Then
+		              Var Err As RuntimeException = Update.Value("Error")
+		              Var Message As String
+		              If (Err Is Nil) = False Then
+		                If Err.Message.IsEmpty = False Then
+		                  Message = Err.Message
+		                Else
+		                  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		                  Message = "Unhandled " + Info.FullName 
+		                End If
+		              Else
+		                Message = "No error information is available."
+		              End If
+		              
+		              Self.ShowAlert("FTP import did not complete", Message)
+		            End If
+		            Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		          End If
-		          Self.mAutodiscoverThread = Nil
+		          Self.mDiscoverThread = Nil
 		        End Select
 		      End If
 		    Catch Err As RuntimeException
@@ -794,13 +833,37 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowPathChooser()
+		  Var Files As Boolean = (Self.mChooserOptions And Self.ChooserOptionAllowFiles) > 0
+		  Var Folders As Boolean = (Self.mChooserOptions And Self.ChooserOptionAllowFolders) > 0
+		  Var Required As Boolean = (Self.mChooserOptions And Self.ChooserOptionOptional) = 0
+		  Var Noun As String
+		  If Files And Folders Then
+		    Noun = "file or folder"
+		  ElseIf Files Then
+		    Noun = "file"
+		  Else
+		    Noun = "folder"
+		  End If
+		  
+		  Self.BrowseMessage.Text = "Please locate your " + Self.mChooserFilename + " " + Noun + "."
+		  Self.BrowseCancelButton.Caption = If(Required, "Cancel", "Skip")
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
+		  
+		  If Self.Browser.CurrentPath.IsEmpty Then
+		    Self.ListFiles("")
+		  End If
+		End Sub
+	#tag EndMethod
 
-	#tag Hook, Flags = &h0
-		Event Autodiscover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
-	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event CreateServerProfile(Name As String) As Beacon.ServerProfile
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -811,35 +874,33 @@ End
 		Event Satisfied(Path As String) As Boolean
 	#tag EndHook
 
-	#tag Hook, Flags = &h0
-		Event UsePath(Profile As Beacon.ServerProfile, CurrentPath As String) As Boolean
-	#tag EndHook
-
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.BrowseMessage.Text
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.BrowseMessage.Text = Value
-			End Set
-		#tag EndSetter
-		Instructions As String
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mActiveController As Beacon.TaskWaitController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAutodiscoverThread As Beacon.Thread
+		Private mBrowserRoot As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBrowserRoot As String
+		Private mChooserFilename As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mChooserOptions As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mChooserOriginThread As Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mChosenPath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDiscoverThread As Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -855,10 +916,22 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = PageAutodiscover, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = ChooserOptionAllowFiles, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ChooserOptionAllowFolders, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ChooserOptionOptional, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ChooserOptionStrictNames, Type = Double, Dynamic = False, Default = \"8", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageBrowse, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageDiscover, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageGeneral, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -882,21 +955,43 @@ End
 	#tag Event
 		Sub Pressed()
 		  Var CurrentPath As String = Self.Browser.CurrentPath
-		  Var Confirmed As Boolean = RaiseEvent UsePath(Self.mProfile, CurrentPath)
-		  If Not Confirmed Then
-		    Return
+		  If CurrentPath.EndsWith(Self.mChooserFilename) = False Then
+		    Var SelectedNoun As String = If(CurrentPath.EndsWith("/"), "folder", "file")
+		    Var Strict As Boolean = (Self.mChooserOptions And Self.ChooserOptionStrictNames) > 0
+		    If Strict Then
+		      Var Files As Boolean = (Self.mChooserOptions And Self.ChooserOptionAllowFiles) > 0
+		      Var Folders As Boolean = (Self.mChooserOptions And Self.ChooserOptionAllowFolders) > 0
+		      Var DesiredNoun As String
+		      If Files And Folders Then
+		        DesiredNoun = "file or folder"
+		      ElseIf Files Then
+		        DesiredNoun = "file"
+		      Else
+		        DesiredNoun = "folder"
+		      End If
+		      Self.ShowAlert("Please select a " + DesiredNoun + " named " + Self.mChooserFilename + ".", "The selected " + SelectedNoun + " is not what Beacon needs to finish the import.")
+		    Else
+		      Var UseAnyway As Boolean = Self.ShowConfirm("The chosen " + SelectedNoun + " is not named " + Self.mChooserFilename + ".", "You can still use the chosen " + SelectedNoun + " but it may not be the one Beacon needs. Only continue if you know what you're doing.", "Use Anyway", "Cancel")
+		      If UseAnyway = False Then
+		        Return
+		      End If
+		    End If
 		  End If
 		  
-		  Var Profiles() As Beacon.ServerProfile
-		  Profiles.Add(Self.mProfile)
-		  Self.ShouldFinish(Profiles)
+		  Self.mChosenPath = CurrentPath
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscover
+		  Self.mChooserOriginThread.Resume
+		  Self.mChooserOriginThread = Nil
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events BrowseCancelButton
 	#tag Event
 		Sub Pressed()
+		  Self.mChosenPath = ""
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
+		  Self.mChooserOriginThread.Resume
+		  Self.mChooserOriginThread = Nil
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -906,7 +1001,7 @@ End
 		  Var Empty() As String
 		  Me.AppendChildren(Empty)
 		  
-		  If (Self.mProfile Is Nil) = False Then
+		  If (Self.mProfile Is Nil) = False And Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse Then
 		    System.DebugLog("NeedsChildrenForPath(""" + Path + """)")
 		    Self.ListFiles(Path)
 		  End If
@@ -914,7 +1009,21 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PathSelected(Path As String)
-		  Self.BrowseActionButton.Enabled = RaiseEvent Satisfied(Path)
+		  If Path.IsEmpty Then
+		    Self.BrowseActionButton.Enabled = False
+		    Return
+		  End If
+		  
+		  Var Files As Boolean = (Self.mChooserOptions And Self.ChooserOptionAllowFiles) > 0
+		  Var Folders As Boolean = (Self.mChooserOptions And Self.ChooserOptionAllowFolders) > 0
+		  Var IsFolder As Boolean = Path.EndsWith("/")
+		  
+		  If (Files = False And IsFolder = False) Or (Folders = False And IsFolder = True) Then
+		    Self.BrowseActionButton.Enabled = False
+		    Return
+		  End If
+		  
+		  Self.BrowseActionButton.Enabled = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -955,14 +1064,17 @@ End
 		  End If
 		  
 		  Profile.HostConfig = Config
+		  Profile.SecondaryName = Config.Username + "@" + Config.Host + ":" + Config.Port.ToString(Locale.Raw, "0")
 		  Self.mProfile = Profile
-		  Self.ViewPanel.SelectedPanelIndex = Self.PageAutodiscover
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscover
+		  
+		  Self.Browser.Reset
 		  
 		  Var Thread As New Beacon.Thread
 		  Thread.DebugIdentifier = CurrentMethodName
-		  AddHandler Thread.Run, WeakAddressOf mAutodiscoverThread_Run
-		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf mAutodiscoverThread_UserInterfaceUpdate
-		  Self.mAutodiscoverThread = Thread
+		  AddHandler Thread.Run, WeakAddressOf mDiscoverThread_Run
+		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf mDiscoverThread_UserInterfaceUpdate
+		  Self.mDiscoverThread = Thread
 		  Thread.Start
 		End Sub
 	#tag EndEvent
@@ -1242,14 +1354,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Instructions"
-		Visible=true
-		Group="Behavior"
-		InitialValue="Choose your config file"
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Composited"

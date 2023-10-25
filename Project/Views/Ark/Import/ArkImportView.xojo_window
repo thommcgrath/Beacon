@@ -66,7 +66,7 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   720
       Begin MultiSelectDiscoveryView NitradoDiscoveryView1
@@ -111,7 +111,6 @@ Begin DocumentImportView ArkImportView
          Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
-         Instructions    =   "Please locate your Game.ini file"
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
@@ -852,19 +851,6 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function UsePath(Profile As Beacon.ServerProfile, CurrentPath As String) As Boolean
-		  Break
-		  
-		  #if DebugBuild
-		    #Pragma Warning "Needs to use base path"
-		  #else
-		    #Pragma Error "Needs to use base path"
-		  #endif
-		  
-		  Ark.ServerProfile(Profile).GameIniPath = CurrentPath
-		End Function
-	#tag EndEvent
-	#tag Event
 		Function CreateServerProfile(Name As String) As Beacon.ServerProfile
 		  Return New Ark.ServerProfile(FTP.Identifier, Name)
 		End Function
@@ -881,18 +867,18 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function Autodiscover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+		Function Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+		  // Do not trap exceptions here. The caller has its own handler so that error messages can reach the user.
+		  
 		  #Pragma Unused SenderThread
 		  
-		  Var Logger As New Beacon.DummyLogProducer
 		  Var Profiles() As Beacon.ServerProfile
 		  Var RootFilenames() As String
-		  Try
-		    RootFilenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, "/")
-		  Catch Err As RuntimeException
-		  End Try
+		  RootFilenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, "/")
 		  If RootFilenames Is Nil Or RootFilenames.Count = 0 Then
-		    Return Profiles
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "The server did not list any files."
+		    Raise Err
 		  End If
 		  
 		  Var IPMatch As New Regex
@@ -960,21 +946,67 @@ End
 		      Continue
 		    End If
 		    
-		    Var ProfileId As String = Beacon.UUID.v5(FTP.Identifier + ":" + InitialProfile.HostConfig.Hash + ":" + ConfigPath)
+		    Var GameIniPath As String = ConfigPath + "/" + Ark.ConfigFileGame
+		    Var GameUserSettingsIniPath As String = ConfigPath + "/" + Ark.ConfigFileGameUserSettings
+		    Var ProfileId As String = Beacon.UUID.v5(FTP.Identifier + ":" + InitialProfile.HostConfig.Hash + ":" + GameIniPath)
 		    Var Profile As New Ark.ServerProfile(FTP.Identifier, ProfileId, InitialProfile.Name, InitialProfile.Nickname, InitialProfile.SecondaryName)
 		    Profile.HostConfig = InitialProfile.HostConfig
-		    Profile.GameIniPath = ConfigPath + "/" + Ark.ConfigFileGame
-		    Profile.GameUserSettingsIniPath = ConfigPath + "/" + Ark.ConfigFileGameUserSettings
+		    Profile.GameIniPath = GameIniPath
+		    Profile.GameUserSettingsIniPath = GameUserSettingsIniPath
 		    Profile.LogsPath = LogsPath
 		    Profiles.Add(Profile)
 		  Next
 		  
-		  Return Profiles
+		  If Profiles.Count = 0 Then
+		    Var GameIniPath As String = Me.ChoosePath(Ark.ConfigFileGame, FTPDiscoveryView.ChooserOptionAllowFiles Or FTPDiscoveryView.ChooserOptionStrictNames)
+		    If GameIniPath.IsEmpty Then
+		      // Cancelled
+		      Return Profiles
+		    End If
+		    
+		    Var PathComponents() As String = GameIniPath.Split("/")
+		    PathComponents.RemoveAt(PathComponents.LastIndex)
+		    Var ConfigPath As String = String.FromArray(PathComponents, "/")
+		    
+		    Var GameUserSettingsIniPath As String
+		    Var Siblings() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, ConfigPath)
+		    If Siblings.IndexOf(Ark.ConfigFileGameUserSettings) > -1 Then
+		      GameUserSettingsIniPath = ConfigPath + "/" + Ark.ConfigFileGameUserSettings
+		    Else
+		      GameUserSettingsIniPath = Me.ChoosePath(Ark.ConfigFileGameUserSettings, FTPDiscoveryView.ChooserOptionAllowFiles Or FTPDiscoveryView.ChooserOptionStrictNames)
+		      If GameUserSettingsIniPath.IsEmpty Then
+		        // Cancelled
+		        Return Profiles
+		      End If
+		    End If
+		    
+		    Var LogsPath As String
+		    If PathComponents.Count >= 2 Then
+		      PathComponents.RemoveAt(PathComponents.LastIndex)
+		      PathComponents.RemoveAt(PathComponents.LastIndex)
+		      
+		      Var SavedPath As String = String.FromArray(PathComponents, "/")
+		      Var Children() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, SavedPath)
+		      If Children.IndexOf("Logs/") > -1 Then
+		        LogsPath = SavedPath + "/Logs"
+		      Else
+		        LogsPath = Me.ChoosePath("Logs", FTPDiscoveryView.ChooserOptionAllowFolders Or FTPDiscoveryView.ChooserOptionOptional Or FTPDiscoveryView.ChooserOptionStrictNames)
+		      End If
+		      If LogsPath.EndsWith("/") Then
+		        LogsPath = LogsPath.Left(LogsPath.Length -1)
+		      End If
+		    End If
+		    
+		    Var ProfileId As String = Beacon.UUID.v5(FTP.Identifier + ":" + InitialProfile.HostConfig.Hash + ":" + GameIniPath)
+		    Var Profile As New Ark.ServerProfile(FTP.Identifier, ProfileId, InitialProfile.Name, InitialProfile.Nickname, InitialProfile.SecondaryName)
+		    Profile.HostConfig = InitialProfile.HostConfig
+		    Profile.GameIniPath = GameIniPath
+		    Profile.GameUserSettingsIniPath = GameUserSettingsIniPath
+		    Profile.LogsPath = LogsPath
+		    Profiles.Add(Profile)
+		  End If
 		  
-		  Exception Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Trying Ark FTP autodiscovery")
-		    Var Empty() As Beacon.ServerProfile
-		    Return Empty
+		  Return Profiles
 		End Function
 	#tag EndEvent
 #tag EndEvents

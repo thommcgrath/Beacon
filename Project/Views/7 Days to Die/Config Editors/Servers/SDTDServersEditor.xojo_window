@@ -684,7 +684,7 @@ End
 		    Var LocalProfiles() As SDTD.ServerProfile = HitItem.Tag
 		    For Idx As Integer = 0 To LocalProfiles.LastIndex
 		      Var File As FolderItem
-		      #if DebugBuild
+		      #if DebugBuild Or SDTD.Enabled = False
 		        #Pragma Warning "Show local files"
 		      #else
 		        #Pragma Error "Show local files"

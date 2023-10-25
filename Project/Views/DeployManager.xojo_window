@@ -818,7 +818,7 @@ End
 		    Case IsA Ark.ServerProfile
 		      Engine = New Ark.DeployIntegration(Project, Profile)
 		    Case IsA SDTD.ServerProfile
-		      #if DebugBuild
+		      #if DebugBuild Or SDTD.Enabled = False
 		        #Pragma Warning "Need 7DTD DeployIntegration"
 		      #else
 		        #Pragma Error "Need 7DTD DeployIntegration"

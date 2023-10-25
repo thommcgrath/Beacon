@@ -205,7 +205,7 @@ Begin ArkServerViewContainer ArkFTPServerView
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         Height          =   112
+         Height          =   146
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -375,6 +375,81 @@ Begin ArkServerViewContainer ArkFTPServerView
             Visible         =   True
             Width           =   172
          End
+         Begin UITweaks.ResizedTextField LogsPathField
+            AllowAutoDeactivate=   True
+            AllowFocusRing  =   True
+            AllowSpellChecking=   False
+            AllowTabs       =   False
+            BackgroundColor =   &cFFFFFF
+            Bold            =   False
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Format          =   ""
+            HasBorder       =   True
+            Height          =   22
+            Hint            =   ""
+            Index           =   -2147483648
+            InitialParent   =   "PathsGroup"
+            Italic          =   False
+            Left            =   224
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            MaximumCharactersAllowed=   0
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   4
+            TabPanelIndex   =   2
+            TabStop         =   True
+            Text            =   ""
+            TextAlignment   =   0
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   487
+            Transparent     =   False
+            Underline       =   False
+            ValidationMask  =   ""
+            Visible         =   True
+            Width           =   336
+         End
+         Begin UITweaks.ResizedLabel LogsPathLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   22
+            Index           =   -2147483648
+            InitialParent   =   "PathsGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   5
+            TabPanelIndex   =   2
+            TabStop         =   True
+            Text            =   "Logs Path:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   487
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   172
+         End
       End
    End
    Begin OmniBar ControlToolbar
@@ -419,10 +494,20 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
+		  BeaconUI.SizeToFit(Self.GameIniPathLabel, Self.GameUserSettingsIniPathLabel, Self.LogsPathLabel)
+		  Var FieldsLeft As Integer = Self.GameIniPathLabel.Right + 12
+		  Var FieldsWidth As Integer = Self.PathsGroup.Right - (20 + FieldsLeft)
+		  Var Fields() As DesktopUIControl = Array(Self.GameIniPathField, Self.GameUserSettingsIniPathField, Self.LogsPathField)
+		  For Each Field As DesktopUIControl In Fields
+		    Field.Left = FieldsLeft
+		    Field.Width = FieldsWidth
+		  Next
+		  
 		  Self.mSettingUp = True
 		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
 		  Self.GameIniPathField.Text = Self.Profile.GameIniPath
 		  Self.GameUserSettingsIniPathField.Text = Self.Profile.GameUserSettingsIniPath
+		  Self.LogsPathField.Text = Self.Profile.LogsPath
 		  
 		  Var Config As Beacon.HostConfig = Self.Profile.HostConfig
 		  If (Config Is Nil) = False And Config IsA FTP.HostConfig Then
@@ -548,6 +633,14 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.Profile.GameUserSettingsIniPath = Me.Text
+		  Self.Modified = Self.Profile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LogsPathField
+	#tag Event
+		Sub TextChanged()
+		  Self.Profile.LogsPath = Me.Text
 		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
