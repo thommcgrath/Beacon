@@ -501,6 +501,9 @@ Protected Module Beacon
 		    #if SDTD.Enabled
 		      GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag))
 		    #endif
+		    #if ArkSA.Enabled
+		      GameList.Add(New Beacon.Game(ArkSA.Identifier, ArkSA.FullName, ArkSA.OmniFlag))
+		    #endif
 		  End If
 		  Return GameList
 		End Function
@@ -868,6 +871,23 @@ Protected Module Beacon
 		    Unique.Value(Engram.EngramId) = Engram
 		  Next
 		  Var Merged() As Ark.Engram
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Merge(Array1() As ArkSA.Engram, Array2() As ArkSA.Engram) As ArkSA.Engram()
+		  Var Unique As New Dictionary
+		  For Each Engram As ArkSA.Engram In Array1
+		    Unique.Value(Engram.EngramId) = Engram
+		  Next
+		  For Each Engram As ArkSA.Engram In Array2
+		    Unique.Value(Engram.EngramId) = Engram
+		  Next
+		  Var Merged() As ArkSA.Engram
 		  For Each Entry As DictionaryEntry In Unique
 		    Merged.Add(Entry.Value)
 		  Next

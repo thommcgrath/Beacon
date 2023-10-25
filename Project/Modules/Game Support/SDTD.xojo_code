@@ -113,7 +113,7 @@ Protected Module SDTD
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"7DaysToDie", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
+	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = SteamAppId, Type = Double, Dynamic = False, Default = \"251570", Scope = Protected

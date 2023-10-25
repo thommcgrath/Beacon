@@ -1,0 +1,251 @@
+#tag Class
+Protected Class LootItemSetEntryOption
+Implements Beacon.Validateable,ArkSA.Weighted
+	#tag Method, Flags = &h0
+		Sub Constructor(Reference As ArkSA.BlueprintReference, Weight As Double, UUID As String = "")
+		  If UUID.IsEmpty Then
+		    UUID = Beacon.UUID.v4
+		  End If
+		  
+		  Self.mUUID = UUID
+		  Self.mEngramRef = Reference
+		  Self.mWeight = Weight
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Engram As ArkSA.Engram, Weight As Double, UUID As String = "")
+		  Self.Constructor(New ArkSA.BlueprintReference(Engram), Weight, UUID)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Source As ArkSA.LootItemSetEntryOption)
+		  Self.mEngramRef = Source.mEngramRef
+		  Self.mHash = Source.mHash
+		  Self.mWeight = Source.mWeight
+		  Self.mUUID = Source.mUUID
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Engram() As ArkSA.Engram
+		  Return ArkSA.Engram(Self.mEngramRef.Resolve).ImmutableVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As ArkSA.LootItemSetEntryOption
+		  Var UUID As String
+		  If NewUUID Then
+		    UUID = Beacon.UUID.v4
+		  Else
+		    Try
+		      If Dict.HasKey("lootItemSetEntryOptionId") Then
+		        UUID = Dict.Value("lootItemSetEntryOptionId")
+		      ElseIf Dict.HasKey("loot_item_set_entry_option_id") Then
+		        UUID = Dict.Value("loot_item_set_entry_option_id")
+		      ElseIf Dict.HasKey("UUID") Then
+		        UUID = Dict.Value("UUID")
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading UUID value")
+		    End Try
+		  End If
+		  
+		  Var Weight As Double = 0.5
+		  Try
+		    If Dict.HasKey("weight") Then
+		      Weight = Dict.Value("weight")
+		    ElseIf Dict.HasKey("Weight") Then
+		      Weight = Dict.Value("Weight")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading Weight value")
+		  End Try
+		  
+		  Var Option As ArkSA.LootItemSetEntryOption
+		  If Dict.HasKey("engramId") Then
+		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict.Value("engramId").StringValue, "", "", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New ArkSA.LootItemSetEntryOption(Engram, Weight, UUID)
+		  ElseIf Dict.HasKey("engram") Then
+		    Var Reference As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dict.Value("engram"))
+		    If Reference Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New ArkSA.LootItemSetEntryOption(Reference, Weight, UUID)
+		  ElseIf Dict.HasKey("Blueprint") Then
+		    Var Reference As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
+		    If Reference Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New ArkSA.LootItemSetEntryOption(Reference, Weight, UUID)
+		  ElseIf Dict.HasKey("engram_id") Then
+		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict.Value("engram_id").StringValue, "", "", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New ArkSA.LootItemSetEntryOption(Engram, Weight, UUID)
+		  ElseIf Dict.HasAnyKey("UUID", "Path", "Class") Then
+		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict, "UUID", "Path", "Class", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New ArkSA.LootItemSetEntryOption(Engram, Weight, UUID)
+		  End If
+		  
+		  Return Option
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Hash() As String
+		  If Self.mHash.IsEmpty Then
+		    Self.mHash = Beacon.Hash(Self.mEngramRef.BlueprintId.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000"))
+		  End If
+		  
+		  Return Self.mHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As ArkSA.LootItemSetEntryOption) As Integer
+		  If Other Is Nil Then
+		    Return 1
+		  End If
+		  
+		  Var SelfHash As String = Self.Hash
+		  Var OtherHash As String = Other.Hash
+		  
+		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseInsensitive)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Pack() As Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("lootItemSetEntryOptionId") = Self.mUUID
+		  Dict.Value("engram") = Self.mEngramRef.SaveData
+		  Dict.Value("weight") = Self.mWeight
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RawWeight() As Double
+		  // Part of the ArkSA.Weighted interface.
+		  
+		  #Pragma StackOverflowChecking False
+		  Return Max(Self.mWeight, 0.00001)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Reference() As ArkSA.BlueprintReference
+		  Return Self.mEngramRef
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData() As Dictionary
+		  Var Keys As New Dictionary
+		  Keys.Value("lootItemSetEntryOptionId") = Self.mUUID
+		  Keys.Value("engramId") = Self.mEngramRef.BlueprintId
+		  Keys.Value("weight") = Self.mWeight
+		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UUID() As String
+		  #Pragma StackOverflowChecking False
+		  Return Self.mUUID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  // Part of the Beacon.Validateable interface.
+		  
+		  Try
+		    Location = Location + "." + Self.mEngramRef.ClassString
+		    If Issues.HasIssue(Location) Then
+		      Return
+		    End If
+		    
+		    Var Engram As ArkSA.Engram = Self.Engram
+		    If Project IsA ArkSA.Project And ArkSA.Project(Project).ContentPackEnabled(Engram.ContentPackId) = False Then
+		      Issues.Add(New Beacon.Issue(Location, "'" + Engram.Label + "' is provided by the '" + Engram.ContentPackName + "' mod, which is turned off for this project."))
+		    ElseIf Engram.IsTagged("Generic") Or Engram.IsTagged("Blueprint") Then
+		      Issues.Add(New Beacon.Issue(Location, "'" + Engram.Label + "' is a generic item intended for crafting recipies and cannot spawn in a drop."))
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mEngramRef As ArkSA.BlueprintReference
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHash As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUUID As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWeight As Double
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass

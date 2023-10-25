@@ -125,7 +125,7 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function GameArticle(GameId As String) As String
 		  Select Case GameId
-		  Case Ark.Identifier
+		  Case Ark.Identifier, ArkSA.Identifier
 		    Return "an"
 		  Case SDTD.Identifier
 		    Return "a"
@@ -140,6 +140,8 @@ Protected Module Language
 		    Return Ark.FullName
 		  Case SDTD.Identifier
 		    Return SDTD.FullName
+		  Case ArkSA.Identifier
+		    Return ArkSA.FullName
 		  Else
 		    Return GameId
 		  End Select
@@ -155,43 +157,43 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(ConfigName As String) As String
 		  Select Case ConfigName
-		  Case Ark.Configs.NameDifficulty
+		  Case Ark.Configs.NameDifficulty, ArkSA.Configs.NameDifficulty
 		    Return "Difficulty"
-		  Case Ark.Configs.NameLootDrops
+		  Case Ark.Configs.NameLootDrops, ArkSA.Configs.NameLootDrops
 		    Return "Loot Drops"
-		  Case Ark.Configs.NameLevelsAndXP
+		  Case Ark.Configs.NameLevelsAndXP, ArkSA.Configs.NameLevelsAndXP
 		    Return "Levels and XP"
-		  Case Ark.Configs.NameCustomConfig, SDTD.Configs.NameCustomConfig
+		  Case Ark.Configs.NameCustomConfig, SDTD.Configs.NameCustomConfig, ArkSA.Configs.NameCustomConfig
 		    Return "Custom Config"
-		  Case Ark.Configs.NameCraftingCosts
+		  Case Ark.Configs.NameCraftingCosts, ArkSA.Configs.NameCraftingCosts
 		    Return "Crafting Costs"
-		  Case Ark.Configs.NameStackSizes
+		  Case Ark.Configs.NameStackSizes, ArkSA.Configs.NameStackSizes
 		    Return "Stack Sizes"
-		  Case Ark.Configs.NameBreedingMultipliers
+		  Case Ark.Configs.NameBreedingMultipliers, ArkSA.Configs.NameBreedingMultipliers
 		    Return "Breeding Multipliers"
-		  Case Ark.Configs.NameHarvestRates
+		  Case Ark.Configs.NameHarvestRates, ArkSA.Configs.NameHarvestRates
 		    Return "Harvest Rates"
-		  Case Ark.Configs.NameCreatureAdjustments
+		  Case Ark.Configs.NameCreatureAdjustments, ArkSA.Configs.NameCreatureAdjustments
 		    Return "Creature Adjustments"
-		  Case Ark.Configs.NameStatMultipliers
+		  Case Ark.Configs.NameStatMultipliers, ArkSA.Configs.NameStatMultipliers
 		    Return "Stat Multipliers"
-		  Case Ark.Configs.NameDayCycle
+		  Case Ark.Configs.NameDayCycle, ArkSA.Configs.NameDayCycle
 		    Return "Day and Night Cycle"
-		  Case Ark.Configs.NameCreatureSpawns
+		  Case Ark.Configs.NameCreatureSpawns, ArkSA.Configs.NameCreatureSpawns
 		    Return "Creature Spawns"
-		  Case Ark.Configs.NameStatLimits
+		  Case Ark.Configs.NameStatLimits, ArkSA.Configs.NameStatLimits
 		    Return "Item Stat Limits"
-		  Case Ark.Configs.NameEngramControl
+		  Case Ark.Configs.NameEngramControl, ArkSA.Configs.NameEngramControl
 		    Return "Engram Control"
-		  Case Ark.Configs.NameDecayAndSpoil
+		  Case Ark.Configs.NameDecayAndSpoil, ArkSA.Configs.NameDecayAndSpoil
 		    Return "Decay and Spoil"
-		  Case Ark.Configs.NameGeneralSettings, SDTD.Configs.NameGeneralSettings
+		  Case Ark.Configs.NameGeneralSettings, SDTD.Configs.NameGeneralSettings, ArkSA.Configs.NameGeneralSettings
 		    Return "General Settings"
-		  Case Ark.Configs.NameServers, SDTD.Configs.NameServers
+		  Case Ark.Configs.NameServers, SDTD.Configs.NameServers, ArkSA.Configs.NameServers
 		    Return "Servers"
-		  Case Ark.Configs.NameAccounts, SDTD.Configs.NameAccounts
+		  Case Ark.Configs.NameAccounts, SDTD.Configs.NameAccounts, ArkSA.Configs.NameAccounts
 		    Return "Accounts"
-		  Case Ark.Configs.NameProjectSettings, SDTD.Configs.NameProjectSettings
+		  Case Ark.Configs.NameProjectSettings, SDTD.Configs.NameProjectSettings, ArkSA.Configs.NameProjectSettings
 		    Return "Project Settings"
 		  End Select
 		End Function
