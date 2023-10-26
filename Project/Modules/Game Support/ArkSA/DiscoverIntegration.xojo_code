@@ -50,6 +50,7 @@ Inherits Beacon.DiscoverIntegration
 		          FoundName = True
 		        ElseIf Line.BeginsWith("Commandline: ") Then
 		          // Here's the command line
+		          // Does not exist in ASA logs?
 		          Var CommandLine As String = Line.Middle(13)
 		          Var Options As Dictionary = ArkSA.ParseCommandLine(CommandLine)
 		          If GetMapFromLogs Then

@@ -87,13 +87,13 @@ End
 		    If Siblings.Count = 1 Then
 		      Var Map As Beacon.Map = Siblings(0)
 		      Var Sort As Integer = If(Map.Official, Map.Sort + 100, Map.Sort)
-		      SortValues.Add(Sort.ToString(Locale.Raw, "0") + ":" + Map.Name + ":" + GameNames.Value(Map.GameId).StringValue)
+		      SortValues.Add(Sort.ToString(Locale.Raw, "0000") + ":" + Map.Name + ":" + GameNames.Value(Map.GameId).StringValue)
 		      Maps.Add(Map)
 		      Names.Value(Map.MapId) = Map.Name
 		    Else
 		      For Each Map As Beacon.Map In Siblings
 		        Var Sort As Integer = If(Map.Official, Map.Sort + 100, Map.Sort)
-		        SortValues.Add(Sort.ToString(Locale.Raw, "0") + ":" + Map.Name + ":" + GameNames.Value(Map.GameId).StringValue)
+		        SortValues.Add(Sort.ToString(Locale.Raw, "0000") + ":" + Map.Name + ":" + GameNames.Value(Map.GameId).StringValue)
 		        Maps.Add(Map)
 		        Names.Value(Map.MapId) = Map.Name + " (" + GameNames.Value(Map.GameId).StringValue + ")"
 		      Next
