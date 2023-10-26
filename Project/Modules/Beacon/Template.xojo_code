@@ -18,6 +18,8 @@ Implements Beacon.NamedItem
 		  Select Case Game
 		  Case Ark.Identifier
 		    Template = Ark.Template.FromSaveData(Dict)
+		  Case ArkSA.Identifier
+		    Template = ArkSA.Template.FromSaveData(Dict)
 		  End Select
 		  If (Template Is Nil) = False Then
 		    Template.mUUID = Dict.Value("ID")

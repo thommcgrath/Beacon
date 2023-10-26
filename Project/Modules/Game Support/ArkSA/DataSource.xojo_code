@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
@@ -81,23 +81,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ExportCloudFiles()
-		  #if DebugBuild
-		    Const CleanupLegacyFiles = True
-		  #else
-		    Const CleanupLegacyFiles = Not App.UsePreviewMode
-		  #endif
-		  
-		  // Clean up legacy stuff
-		  #if CleanupLegacyFiles
-		    Var LegacyFiles() As String = Array("/Blueprints.json", "/Engrams.json", "/Ark/Blueprints.json")
-		    For Each LegacyFile As String In LegacyFiles
-		      If UserCloud.FileExists(LegacyFile) Then
-		        Call UserCloud.Delete(LegacyFile)
-		      End If
-		    Next
-		  #endif
-		  
-		  Const Filename = "/Ark/Blueprints" + Beacon.FileExtensionDelta
+		  Const Filename = "/ArkSA/Blueprints" + Beacon.FileExtensionDelta
 		  Var UserPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.Types.Custom)
 		  If UserPacks.Count = 0 Then
 		    Call UserCloud.Delete(Filename)
@@ -119,13 +103,15 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 201
+		  Return 100
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
+		  
+		  Break
 		  
 		  Var EngramsChanged As Boolean
 		  If ChangeDict.HasKey("deletions") Then
@@ -521,9 +507,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ImportCloudFiles()
-		  Const ModeBinary = 3
-		  Const ModeJson = 2
-		  Const ModeLegacy = 1
+		  Const ModeBinary = 1
 		  Const ModeNone = 0
 		  
 		  Var Mode As Integer = ModeNone
@@ -537,12 +521,8 @@ Inherits Beacon.DataSource
 		    End If
 		    
 		    Select Case Filename
-		    Case "/Ark/Blueprints" + Beacon.FileExtensionDelta
+		    Case "/ArkSA/Blueprints" + Beacon.FileExtensionDelta
 		      Mode = ModeBinary
-		    Case "/Ark/Blueprints.json", "/Blueprints.json"
-		      Mode = ModeJson
-		    Case "/Engrams.json"
-		      Mode = ModeLegacy
 		    End Select
 		    
 		    MatchedFilename = Filename
@@ -561,7 +541,7 @@ Inherits Beacon.DataSource
 		    Try
 		      Var Importer As ArkSA.BlueprintImporter = ArkSA.BlueprintImporter.ImportAsBinary(EngramsContent)
 		      If Importer Is Nil Then
-		        App.Log("Could not import Ark cloud files because data file is damaged.")
+		        App.Log("Could not import Ark Ascended cloud files because data file is damaged.")
 		        Self.RollbackTransaction()
 		        Return
 		      End If
@@ -586,105 +566,11 @@ Inherits Beacon.DataSource
 		        Call Self.DeleteContentPack(Entry.Key.StringValue, False)
 		      Next
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Importing Ark user blueprints")
+		      App.Log(Err, CurrentMethodName, "Importing Ark Ascended user blueprints")
 		      Self.RollbackTransaction()
 		      Return
 		    End Try
 		    
-		    Self.CommitTransaction()
-		  Case ModeJson
-		    Var Blueprints() As Variant
-		    Try
-		      Var StringContent As String = EngramsContent
-		      Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
-		    Catch Err As RuntimeException
-		      Return
-		    End Try
-		    
-		    Self.BeginTransaction()
-		    Var Packs() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.Types.Custom)
-		    Var KeepPacks As New Beacon.StringList
-		    Var RemovePacks As New Beacon.StringList
-		    For Idx As Integer = Packs.FirstIndex To Packs.LastIndex
-		      If Packs(Idx).ContentPackId = ArkSA.UserContentPackId Then
-		        KeepPacks.Append(Packs(Idx).ContentPackId)
-		      Else
-		        RemovePacks.Append(Packs(Idx).ContentPackId)
-		      End If
-		    Next
-		    
-		    Var Now As DateTime = DateTime.Now
-		    Var Unpacked() As ArkSA.Blueprint
-		    For Each Dict As Dictionary In Blueprints
-		      Try
-		        Var Blueprint As ArkSA.Blueprint = ArkSA.UnpackBlueprint(Dict)
-		        If (Blueprint Is Nil) = False Then
-		          Unpacked.Add(Blueprint)
-		          KeepPacks.Append(Blueprint.ContentPackId)
-		          RemovePacks.Remove(Blueprint.ContentPackId)
-		        ElseIf Dict.HasAllKeys("mod_id", "name", "workshop_id") Then
-		          Var ContentPackId As String = Dict.Value("mod_id").StringValue
-		          KeepPacks.Append(ContentPackId)
-		          RemovePacks.Remove(ContentPackId)
-		          If ContentPackId <> ArkSA.UserContentPackId Then
-		            Var Marketplace, MarketplaceId As String
-		            If Dict.Value("workshop_id").IsNull = False Then
-		              Marketplace = Beacon.ContentPack.MarketplaceSteamWorkshop
-		              MarketplaceId = Dict.Value("workshop_id").StringValue
-		            End If
-		            
-		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, is_local, game_id, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Marketplace, MarketplaceId, True, False, True, Self.Identifier, Now.SecondsFrom1970)
-		          End If
-		        End If
-		      Catch Err As RuntimeException
-		        App.Log(Err, CurrentMethodName)
-		      End Try
-		    Next
-		    
-		    // Yes, delete the stuff from the packs we want to **keep** because that happens first. It clears out the mods.
-		    Call Self.SaveBlueprints(Unpacked, Self.GetBlueprints("", KeepPacks, ""), Nil, False)
-		    For Each ContentPackId As String In RemovePacks
-		      Call Self.DeleteContentPack(ContentPackId, False)
-		    Next ContentPackId
-		    Self.CommitTransaction()
-		  Case ModeLegacy
-		    Var Blueprints() As Variant
-		    Try
-		      Var StringContent As String = EngramsContent
-		      Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
-		    Catch Err As RuntimeException
-		      Return
-		    End Try
-		    
-		    Self.BeginTransaction()
-		    Self.DeleteDataForContentPack(ArkSA.UserContentPackId)
-		    
-		    For Each Dict As Dictionary In Blueprints
-		      Try
-		        Var Category As String = Dict.Value("category")
-		        Var Path As String = Dict.Value("path") 
-		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE path = ?1;", Path)
-		        If Results.RowCount <> 0 Then
-		          Continue
-		        End If
-		        
-		        Var BlueprintId As String = Dict.Value("object_id").StringValue
-		        Var ClassString As String = Dict.Value("class_string")
-		        Var Label As String = Dict.Value("label")         
-		        Var Availability As UInt64 = Dict.Value("availability")
-		        Var Tags() As String = Dict.Value("tags").StringValue.Split(",")
-		        Var TagObjectIdx As Integer = Tags.IndexOf("object")
-		        If TagObjectIdx > -1 Then
-		          Tags.RemoveAt(TagObjectIdx)
-		        End If
-		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, content_pack_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  BlueprintId, ClassString, Label, Path, Availability, String.FromArray(Tags, ","), ArkSA.UserContentPackId)     
-		        For Each Tag As String In Tags
-		          Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", BlueprintId, Tag)
-		        Next Tag
-		      Catch Err As RuntimeException
-		        App.Log(Err, CurrentMethodName)
-		      End Try
-		    Next
 		    Self.CommitTransaction()
 		  End Select
 		End Sub
@@ -757,7 +643,7 @@ Inherits Beacon.DataSource
 		    Files = New Dictionary
 		  End If
 		  
-		  Var Blueprints As MemoryBlock = UserCloud.Read("/Ark/Blueprints.json")
+		  Var Blueprints As MemoryBlock = UserCloud.Read("/ArkSA/Blueprints.json")
 		  If (Blueprints Is Nil) = False And Blueprints.Size > 2 Then
 		    Files.Value("Blueprints.json") = Blueprints
 		  End If
@@ -2351,7 +2237,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Function PossibleBlueprintFilenames() As String()
-		  Return Array("/Ark/Blueprints" + Beacon.FileExtensionDelta, "/Ark/Blueprints.json", "/Blueprints.json", "/Engrams.json")
+		  Return Array("/ArkSA/Blueprints" + Beacon.FileExtensionDelta)
 		End Function
 	#tag EndMethod
 

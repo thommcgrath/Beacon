@@ -52,6 +52,8 @@ Implements Beacon.HostingProvider
 		    Return Ark.SteamAppId
 		  Case SDTD.Identifier
 		    Return SDTD.SteamAppId
+		  Case ArkSA.Identifier
+		    Return ArkSA.SteamAppId
 		  End Select
 		End Function
 	#tag EndMethod
@@ -195,6 +197,13 @@ Implements Beacon.HostingProvider
 		      Ark.ServerProfile(Profile).Mask = Ark.Maps.All.Mask
 		      Ark.ServerProfile(Profile).GameIniPath = Ark.ConfigFileGame
 		      Ark.ServerProfile(Profile).GameUserSettingsIniPath = Ark.ConfigFileGameUserSettings
+		    Case ArkSA.Identifier
+		      Profile = New ArkSA.ServerProfile(Self.Identifier, ProfileId, TemplateName, "", TemplateId.ToString(Locale.Raw, "0"))
+		      ArkSA.ServerProfile(Profile).Mask = ArkSA.Maps.All.Mask
+		      ArkSA.ServerProfile(Profile).GameIniPath = ArkSA.ConfigFileGame
+		      ArkSA.ServerProfile(Profile).GameUserSettingsIniPath = ArkSA.ConfigFileGameUserSettings
+		    Case SDTD.Identifier
+		      Profile = New SDTD.ServerProfile(Self.Identifier, ProfileId, TemplateName, "", TemplateId.ToString(Locale.Raw, "0"))
 		    End Select
 		    Profile.Platform = Beacon.PlatformPC
 		    Profile.HostConfig = ProfileConfig

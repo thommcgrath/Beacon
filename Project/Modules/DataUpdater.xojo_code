@@ -194,10 +194,11 @@ Protected Module DataUpdater
 		  
 		  NotificationKit.Post(Notification_ImportBegin, Nil)
 		  
-		  Var Sources(2) As Beacon.DataSource
-		  Sources(0) = Beacon.CommonData.Pool.Get(True)
-		  Sources(1) = Ark.DataSource.Pool.Get(True)
-		  Sources(2) = SDTD.DataSource.Pool.Get(True)
+		  Var Sources() As Beacon.DataSource
+		  Var DefinedSources() As Beacon.DataSource = App.DataSources()
+		  For Each DefinedSource As Beacon.DataSource In DefinedSources
+		    Sources.Add(DefinedSource.WriteableInstance)
+		  Next
 		  
 		  Var SourcesToOptimize As New Dictionary
 		  

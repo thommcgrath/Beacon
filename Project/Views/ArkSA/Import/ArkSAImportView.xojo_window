@@ -67,7 +67,7 @@ Begin DocumentImportView ArkSAImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   3
       Visible         =   True
       Width           =   720
       Begin MultiSelectDiscoveryView NitradoDiscoveryView1
@@ -128,7 +128,7 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
-      Begin ArkFilesDiscoveryView FilesDiscoveryView1
+      Begin ArkSAFilesDiscoveryView FilesDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -528,7 +528,7 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
-      Begin ArkClipboardDiscoveryView ClipboardDiscoveryView1
+      Begin ArkSAClipboardDiscoveryView ClipboardDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False

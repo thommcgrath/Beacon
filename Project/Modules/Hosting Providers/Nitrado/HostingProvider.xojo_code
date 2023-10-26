@@ -413,6 +413,8 @@ Implements Beacon.HostingProvider
 		      Profile = New Ark.ServerProfile(Self.Identifier, ProfileId, Name, Nickname, SecondaryName)
 		    Case SDTD.Identifier
 		      Profile = New SDTD.ServerProfile(Self.Identifier, ProfileId, Name, Nickname, SecondaryName)
+		    Case ArkSA.Identifier
+		      Profile = New ArkSA.ServerProfile(Self.Identifier, ProfileId, Name, Nickname, SecondaryName)
 		    End Select
 		    
 		    Var ProfileConfig As New Nitrado.HostConfig

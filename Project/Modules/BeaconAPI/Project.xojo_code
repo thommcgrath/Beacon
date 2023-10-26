@@ -40,7 +40,7 @@ Protected Class Project
 		  Self.mPublishState = Source.Value("communityStatus")
 		  
 		  Select Case Self.mGameId
-		  Case Ark.Identifier
+		  Case Ark.Identifier, ArkSA.Identifier
 		    Self.mArkMapMask = Source.Value("mapMask")
 		    Self.mArkDifficulty = Source.Value("difficulty")
 		  End Select

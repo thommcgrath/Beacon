@@ -1495,7 +1495,7 @@ Protected Module ArkSA
 	#tag Constant, Name = ConfigFileGameUserSettings, Type = String, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Enabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
+	#tag Constant, Name = Enabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FullName, Type = String, Dynamic = False, Default = \"Ark: Survival Ascended", Scope = Protected

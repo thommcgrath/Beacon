@@ -468,6 +468,12 @@ End
 		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
 		    ImportWindow.Show()
 		    ImportView.Import(File)
+		  Case ArkSA.Identifier
+		    Var ImportView As New ArkSAImportView
+		    Var ImportWindow As New DocumentImportWindow(ImportView, New ArkSA.Project, OtherProjects)
+		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
+		    ImportWindow.Show()
+		    ImportView.Import(File)
 		  End Select
 		End Sub
 	#tag EndMethod

@@ -267,6 +267,8 @@ Implements Beacon.HostingProvider
 		    Profile = New Ark.ServerProfile(Self.Identifier, ProfileId, Name, "", Name)
 		  Case SDTD.Identifier
 		    Profile = New SDTD.ServerProfile(Self.Identifier, ProfileId, Name, "", Name)
+		  Case ArkSA.Identifier
+		    Profile = New ArkSA.ServerProfile(Self.Identifier, ProfileId, Name, "", Name)
 		  End Select
 		  
 		  Var Profiles(0) As Beacon.ServerProfile

@@ -423,6 +423,8 @@ Implements ObservationKit.Observable
 		    Return New Ark.Project()
 		  Case SDTD.Identifier
 		    Return New SDTD.Project()
+		  Case ArkSA.Identifier
+		    Return New ArkSA.Project()
 		  End Select
 		End Function
 	#tag EndMethod
@@ -536,6 +538,8 @@ Implements ObservationKit.Observable
 		    Project = New Ark.Project
 		  Case SDTD.Identifier
 		    Project = New SDTD.Project
+		  Case ArkSA.Identifier
+		    Project = New ArkSA.Project
 		  Else
 		    Var Err As New Beacon.ProjectLoadException
 		    Err.Message = "Unknown game " + GameId + "."

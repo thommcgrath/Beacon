@@ -322,6 +322,8 @@ End
 		  Select Case GameId
 		  Case Ark.Identifier
 		    Self.OpenTemplate(New Ark.LootTemplate)
+		  Case ArkSA.Identifier
+		    Self.OpenTemplate(New ArkSA.LootTemplate)
 		  End Select
 		End Sub
 	#tag EndMethod
