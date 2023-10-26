@@ -253,7 +253,7 @@ End
 	#tag EndHook
 
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Beacon.TemplateSelector", Scope = Private
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.templateselector", Scope = Private
 	#tag EndConstant
 
 

@@ -451,7 +451,7 @@ End
 	#tag Constant, Name = ColumnStackSize, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ArkSA.stacksize", Scope = Private
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.stacksize", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"#\x2C##0", Scope = Private
