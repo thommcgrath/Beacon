@@ -40,30 +40,6 @@ Inherits Beacon.DeployIntegration
 		    Return
 		  End If
 		  
-		  If Self.Provider IsA Nitrado.HostingProvider Then
-		    Var GameServer As JSONItem = InitialStatus.UserData
-		    Var Settings As JSONItem = GameServer.Child("settings")
-		    Var General As JSONItem = Settings.Child("general")
-		    Var InExpertMode As Boolean = General.Value("expertMode")
-		    
-		    If InExpertMode = False Then
-		      Var GuidedSuccess As Boolean = Self.NitradoApplySettings(Organizer, True)
-		      If Self.Finished Then
-		        Return
-		      End If
-		      
-		      If GuidedSuccess Then
-		        // Restart the server if it is running
-		        If Self.Provider.SupportsRestarting And (InitialStatus = Beacon.ServerStatus.States.Running Or InitialStatus = Beacon.ServerStatus.States.Starting) Then
-		          Self.StopServer()
-		          // The starting is handled automatically by Beacon.DeployIntegration.Run
-		        End If
-		        
-		        Return
-		      End If
-		    End If
-		  End If
-		  
 		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
 		  // Download the ini files
 		  Var DownloadSuccess As Boolean
@@ -188,9 +164,11 @@ Inherits Beacon.DeployIntegration
 
 	#tag Method, Flags = &h1
 		Protected Function ApplySettings(Organizer As ArkSA.ConfigOrganizer, Full As Boolean) As Boolean
+		  #Pragma Unused Full
+		  
 		  Select Case Self.Provider
 		  Case IsA Nitrado.HostingProvider
-		    Return Self.NitradoApplySettings(Organizer, Full)
+		    Return Self.NitradoApplySettings(Organizer)
 		  Else
 		    Return True
 		  End Select
@@ -198,7 +176,9 @@ Inherits Beacon.DeployIntegration
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function NitradoApplySettings(Organizer As ArkSA.ConfigOrganizer, Full As Boolean) As Boolean
+		Protected Function NitradoApplySettings(Organizer As ArkSA.ConfigOrganizer) As Boolean
+		  #Pragma Unused
+		  
 		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
 		    Return False
 		  End If
@@ -207,25 +187,10 @@ Inherits Beacon.DeployIntegration
 		  Var Profile As ArkSA.ServerProfile = Self.Profile
 		  Var Keys() As ArkSA.ConfigOption = Organizer.DistinctKeys
 		  Var NewValues As New Dictionary
-		  Var ExtraGameIniOrganizer As New ArkSA.ConfigOrganizer
-		  Var Style As ArkSA.ConfigOption.NitradoDeployStyles = If(Full, ArkSA.ConfigOption.NitradoDeployStyles.Guided, ArkSA.ConfigOption.NitradoDeployStyles.Expert)
-		  
-		  // First we need to determine if guided mode *can* be supported.
-		  // Nitrado values are limited to 65,535 characters and not all GameUserSettings.ini
-		  // configs are supported in guided mode.
+		  Var Style As ArkSA.ConfigOption.NitradoDeployStyles = ArkSA.ConfigOption.NitradoDeployStyles.Expert
 		  
 		  For Each ConfigOption As ArkSA.ConfigOption In Keys
-		    If Full And ConfigOption.File = ArkSA.ConfigFileGameUserSettings And ConfigOption.HasNitradoEquivalent = False Then
-		      // Expert mode required because this config cannot be supported.
-		      App.Log("Cannot use guided deploy because the key " + ConfigOption.SimplifiedKey + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		      Self.SwitchToExpertMode(ConfigOption.Key, 0)
-		      Return False
-		    End If
-		    
 		    If ConfigOption.HasNitradoEquivalent = False Then
-		      If Full And ConfigOption.File = ArkSA.ConfigFileGame Then
-		        ExtraGameIniOrganizer.Add(Organizer.FilteredValues(ConfigOption))
-		      End If
 		      Continue
 		    End If
 		    
@@ -303,81 +268,8 @@ Inherits Beacon.DeployIntegration
 		      Continue
 		    End If
 		    
-		    If Full And FinishedValue.Length > 65535 Then
-		      App.Log("Cannot use guided deploy because the key " + ConfigOption.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, "#,##0") + " characters, and Nitrado has a limit of 65,535 characters.")
-		      Self.SwitchToExpertMode(ConfigOption.Key, FinishedValue.Length)
-		      Return False
-		    End If
-		    
 		    Changes.Value(ConfigOption) = FinishedValue
 		  Next
-		  
-		  If Full Then
-		    Var UserSettingsIniPath As String = Self.Profile.BasePath + "/user-settings.ini"
-		    
-		    // Generate a new user-settings.ini file
-		    Var ExtraGameIniSuccess As Boolean
-		    Var ExtraGameIni As String = Self.GetFile(UserSettingsIniPath, "user-settings.ini", DownloadFailureMode.MissingAllowed, False, ExtraGameIniSuccess)
-		    If ExtraGameIniSuccess = False Or Self.Finished Then
-		      Self.Finish()
-		      Return False
-		    End If
-		    If ExtraGameIni.BeginsWith("[" + ArkSA.HeaderShooterGame + "]") = False Then
-		      ExtraGameIni = "[" + ArkSA.HeaderShooterGame + "]" + EndOfLine.UNIX + ExtraGameIni
-		    End If
-		    Var RewriteError As RuntimeException
-		    Var ExtraGameIniRewritten As String = ArkSA.Rewriter.Rewrite(ArkSA.Rewriter.Sources.Deploy, ExtraGameIni, ArkSA.HeaderShooterGame, ArkSA.ConfigFileGame, ExtraGameIniOrganizer, Self.Project.ProjectId, Self.Project.LegacyTrustKey, If(Self.Project.AllowUCS2, ArkSA.Rewriter.EncodingFormat.UCS2AndASCII, ArkSA.Rewriter.EncodingFormat.ASCII), ArkSA.Project.UWPCompatibilityModes.Never, Self.NukeEnabled, RewriteError)
-		    If (RewriteError Is Nil) = False Then
-		      Self.SetError(RewriteError)
-		      Return False
-		    End If
-		    
-		    // Need to remove the header that the rewriter adds
-		    ExtraGameIniRewritten = ExtraGameIniRewritten.Replace("[" + ArkSA.HeaderShooterGame + "]", "").Trim
-		    
-		    // Create a checkpoint before making changes
-		    If Self.BackupEnabled Then
-		      Var GameServer As JSONItem = Self.Status.UserData
-		      Var OldSettings As JSONItem = GameServer.Child("settings")
-		      Var OldFiles As New Dictionary
-		      OldFiles.Value("Config.json") = Beacon.GenerateJSON(OldSettings, True)
-		      OldFiles.Value("user-settings.ini") = ExtraGameIni
-		      
-		      Var NewSettings As New JSONItem(OldSettings.ToString)
-		      For Each Entry As DictionaryEntry In Changes
-		        Var ConfigOption As ArkSA.ConfigOption = Entry.Key
-		        Var NewValue As String = Entry.Value
-		        Var Paths() As String = ConfigOption.NitradoPaths
-		        
-		        For Each Path As String In Paths
-		          Var CategoryLength As Integer = Path.IndexOf(".")
-		          Var Category As String = Path.Left(CategoryLength)
-		          Var Key As String = Path.Middle(CategoryLength + 1)
-		          
-		          Var CategoryDict As JSONItem = NewSettings.Child(Category)
-		          CategoryDict.Value(Key) = NewValue
-		        Next
-		      Next
-		      
-		      Var NewFiles As New Dictionary
-		      NewFiles.Value("Config.json") = Beacon.GenerateJSON(NewSettings, True)
-		      NewFiles.Value("user-settings.ini") = ExtraGameIniRewritten
-		      
-		      Self.RunBackup(OldFiles, NewFiles)
-		      
-		      If Self.Finished Then
-		        Return False
-		      End If
-		    End If
-		    
-		    If Not Self.PutFile(ExtraGameIniRewritten, UserSettingsIniPath, "user-settings.ini") Then
-		      Self.Finish()
-		      Return False
-		    End If
-		    If Self.Finished Then
-		      Return False
-		    End If
-		  End If
 		  
 		  // Deploy changes
 		  For Each Entry As DictionaryEntry In Changes
@@ -486,74 +378,6 @@ Inherits Beacon.DeployIntegration
 		Function Project() As ArkSA.Project
 		  Return ArkSA.Project(Super.Project)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SwitchToExpertMode(OffendingKey As String, ContentLength As Integer)
-		  Var UserData As New Dictionary
-		  UserData.Value("OffendingKey") = OffendingKey
-		  UserData.Value("ContentLength") = ContentLength
-		  Var Controller As New Beacon.TaskWaitController("Needs Expert Mode", UserData)
-		  
-		  Self.Log("Waiting for user action…")
-		  Self.Wait(Controller)
-		  Self.RemoveLastLog()
-		  If Controller.Cancelled Then
-		    Self.Cancel
-		    Return
-		  End If
-		  
-		  // Create a checkpoint now
-		  If Self.BackupEnabled Then
-		    Self.CreateCheckpoint()
-		    If Self.Finished Then
-		      Return
-		    End If
-		  End If
-		  
-		  // The server needs to be in the started state so it can be stopped.
-		  // If the server is already running, there may be changes made to guided mode
-		  // so since the server started, so we need to restart it to update the
-		  // ini files. If the server is not running, we need to start it to build
-		  // the ini files. But it must be stopped to enable expert mode.
-		  Self.Log("Enabling expert mode…")
-		  Select Case Self.Status.State
-		  Case Beacon.ServerStatus.States.Stopped, Beacon.ServerStatus.States.Stopping
-		    Self.Log("Enabling expert mode - starting server…", True)
-		    Self.StartServer(False)
-		    If Self.Finished Then
-		      Return
-		    End If
-		  Case Beacon.ServerStatus.States.Running, Beacon.ServerStatus.States.Starting
-		    Self.Log("Enabling expert mode - stopping server…", True)
-		    Self.StopServer(False)
-		    If Self.Finished Then
-		      Return
-		    End If
-		    Self.Log("Enabling expert mode - starting server…", True)
-		    Self.StartServer(False)
-		    If Self.Finished Then
-		      Return
-		    End If
-		  Else
-		    Self.SetError("Could not enable expert mode because the server is neither started nor stopped.")
-		    Return
-		  End Select
-		  Self.Log("Enabling expert mode - stopping server…", True)
-		  Self.StopServer(False)
-		  If Self.Finished Then
-		    Return
-		  End If
-		  
-		  Try
-		    Self.Provider.GameSetting(Self.Project, Self.Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode")) = True
-		  Catch Err As RuntimeException
-		    Self.SetError("Could not enable expert mode: " + Err.Message)
-		    Return
-		  End Try
-		  
-		  Self.Log("Expert mode enabled.")
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

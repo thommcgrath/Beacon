@@ -144,7 +144,9 @@ Inherits Beacon.DiscoverIntegration
 		      Var Value As Variant
 		      Try
 		        Value = Provider.GameSetting(Project, Profile, Setting)
-		        CommandLineOptions.Value(Setting.Key) = Value
+		        If Value.IsNull = False Then
+		          CommandLineOptions.Value(Setting.Key) = Value
+		        End If
 		      Catch Err As RuntimeException
 		        Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
 		        Return Nil

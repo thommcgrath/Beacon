@@ -154,7 +154,6 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
-      AllowTabStop    =   True
       ClearMenuItemValue=   "Clear"
       DelayPeriod     =   250
       Enabled         =   True
@@ -174,6 +173,7 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
       Top             =   50
@@ -232,7 +232,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Hidden()
-		  Var Container As ArkServerViewContainer = Self.CurrentView
+		  Var Container As ArkSAServerViewContainer = Self.CurrentView
 		  If (Container Is Nil) = False Then
 		    Container.SwitchedFrom()
 		  End If
@@ -256,7 +256,7 @@ End
 		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
 		  #Pragma Unused FireSetupUI
 		  
-		  Var Container As ArkServerViewContainer = Self.CurrentView
+		  Var Container As ArkSAServerViewContainer = Self.CurrentView
 		  If (Container Is Nil) = False Then
 		    Container.SwitchedTo(UserData)
 		  End If
@@ -444,7 +444,7 @@ End
 			  End If
 			  
 			  If Self.mCurrentProfileID.IsEmpty = False Then
-			    Var View As ArkServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
+			    Var View As ArkSAServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
 			    View.Visible = False
 			    View.SwitchedFrom()
 			    Self.mCurrentProfileID = ""
@@ -454,7 +454,7 @@ End
 			    Return
 			  End If
 			  
-			  Var View As ArkServerViewContainer = Self.mViews.Value(Value)
+			  Var View As ArkSAServerViewContainer = Self.mViews.Value(Value)
 			  View.SwitchedTo()
 			  View.Visible = True
 			  Self.mCurrentProfileID = Value
@@ -467,11 +467,11 @@ End
 		#tag Getter
 			Get
 			  If Self.mViews.HasKey(Self.mCurrentProfileID) Then
-			    Return ArkServerViewContainer(Self.mViews.Value(Self.mCurrentProfileID))
+			    Return ArkSAServerViewContainer(Self.mViews.Value(Self.mCurrentProfileID))
 			  End If
 			End Get
 		#tag EndGetter
-		CurrentView As ArkServerViewContainer
+		CurrentView As ArkSAServerViewContainer
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -573,7 +573,7 @@ End
 		          Self.CurrentProfileID = ""
 		        End If
 		        
-		        Var Panel As ArkServerViewContainer = Self.mViews.Value(Profile.ProfileID)
+		        Var Panel As ArkSAServerViewContainer = Self.mViews.Value(Profile.ProfileID)
 		        Panel.Close
 		        Self.mViews.Remove(Profile.ProfileID)
 		      End If

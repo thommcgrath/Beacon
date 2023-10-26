@@ -111,8 +111,6 @@ Inherits Beacon.DataSource
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
 		  
-		  Break
-		  
 		  Var EngramsChanged As Boolean
 		  If ChangeDict.HasKey("deletions") Then
 		    Var Deletions() As Variant = ChangeDict.Value("deletions")

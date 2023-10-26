@@ -6,7 +6,6 @@ Inherits Beacon.DiscoverIntegration
 		Function Run() As Beacon.Project
 		  Var Project As Beacon.Project = Self.Project
 		  Var Provider As Beacon.HostingProvider = Self.Provider
-		  Var DownloadIniFiles, GatherGameSettings As Boolean = True
 		  Var GetMapFromLogs As Boolean = True
 		  
 		  Var Profile As ArkSA.ServerProfile = Self.Profile
@@ -30,121 +29,71 @@ Inherits Beacon.DiscoverIntegration
 		      Self.SetError("Could not find server map: " + Err.Message)
 		      Return Nil
 		    End Try
-		    
-		    Var ExpertMode As Boolean
-		    Try
-		      ExpertMode = Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode"))
-		    Catch Err As RuntimeException
-		      Self.SetError("Could not determine if the server is in expert mode: " + Err.Message)
-		      Return Nil
-		    End Try
-		    
-		    GatherGameSettings = False
-		    DownloadIniFiles = ExpertMode
-		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "start-param"))).ToString) // Weird way to convert JSONItem to Dictionary
-		    
-		    If ExpertMode = False Then
-		      Var GuidedOrganizer As New ArkSA.ConfigOrganizer
-		      Var Settings() As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
-		      For Each Setting As ArkSA.ConfigOption In Settings
-		        If Setting.HasNitradoEquivalent = False Then
-		          Continue
-		        End If
-		        
-		        Var Value As Variant
-		        Try
-		          Value = Provider.GameSetting(Project, Profile, Setting)
-		        Catch Err As RuntimeException
-		          Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
-		          Return Nil
-		        End Try
-		        
-		        Select Case Setting.NitradoFormat
-		        Case ArkSA.ConfigOption.NitradoFormats.Value
-		          GuidedOrganizer.Add(New ArkSA.ConfigValue(Setting, Setting.Key + "=" + Value))
-		        Case ArkSA.ConfigOption.NitradoFormats.Line
-		          Var Lines() As String = Value.StringValue.Split(EndOfLine.UNIX)
-		          For LineIdx As Integer = 0 To Lines.LastIndex
-		            GuidedOrganizer.Add(New ArkSA.ConfigValue(Setting, Lines(LineIdx), LineIdx))
-		          Next
-		        End Select
-		      Next
-		      
-		      Var DownloadSuccess As Boolean
-		      Var ExtraGameIniContent As String = Self.GetFile(Profile.BasePath + "/user-settings.ini", "user-settings.ini", Beacon.Integration.DownloadFailureMode.MissingAllowed, Profile, False, DownloadSuccess)
-		      If Not DownloadSuccess Then
-		        Return Nil
-		      End If
-		      GuidedOrganizer.Add(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, ExtraGameIniContent)
-		      
-		      Data.GameIniContent = GuidedOrganizer.Build(ArkSA.ConfigFileGame)
-		      Data.GameUserSettingsIniContent = GuidedOrganizer.Build(ArkSA.ConfigFileGameUserSettings)
-		    End If
 		  End Select
 		  
-		  If DownloadIniFiles Then
-		    Var LogsPath As String = Profile.LogsPath
-		    If LogsPath.IsEmpty = False Then
-		      Var PathSeparator As String = If(LogsPath.Contains("/"), "/", "\")
-		      Var LogFilePath As String = LogsPath + PathSeparator + "ShooterGame.log"
-		      Var DownloadSuccess As Boolean
-		      Var LogContents As String = Self.GetFile(LogFilePath, "ShooterGame.log", Beacon.Integration.DownloadFailureMode.ErrorsAllowed, Profile, False, DownloadSuccess)
-		      If DownloadSuccess Then
-		        Var Lines() As String = LogContents.Split(EndOfLine)
-		        Var FoundName, FoundCommandLine As Boolean
-		        For Each Line As String In Lines
-		          Line = Line.Middle(30).Trim
-		          
-		          If Line.BeginsWith("Server: """) And Line.EndsWith(""" has successfully started!") Then
-		            // Found the server name
-		            Var ServerName As String = Line.Middle(9, Line.Length - 36)
-		            Profile.Name = ServerName
-		            FoundName = True
-		          ElseIf Line.BeginsWith("Commandline: ") Then
-		            // Here's the command line
-		            Var CommandLine As String = Line.Middle(13)
-		            Var Options As Dictionary = ArkSA.ParseCommandLine(CommandLine)
-		            If GetMapFromLogs Then
-		              Profile.Mask = ArkSA.Maps.MaskForIdentifier(Options.Value("Map"))
-		            End If
-		            Data.CommandLineOptions = Options
-		            FoundCommandLine = True
+		  Var LogsPath As String = Profile.LogsPath
+		  If LogsPath.IsEmpty = False Then
+		    Var PathSeparator As String = If(LogsPath.Contains("/"), "/", "\")
+		    Var LogFilePath As String = LogsPath + PathSeparator + "ShooterGame.log"
+		    Var DownloadSuccess As Boolean
+		    Var LogContents As String = Self.GetFile(LogFilePath, "ShooterGame.log", Beacon.Integration.DownloadFailureMode.ErrorsAllowed, Profile, False, DownloadSuccess)
+		    If DownloadSuccess Then
+		      Var Lines() As String = LogContents.Split(EndOfLine)
+		      Var FoundName, FoundCommandLine As Boolean
+		      For Each Line As String In Lines
+		        Line = Line.Middle(30).Trim
+		        
+		        If Line.BeginsWith("Server: """) And Line.EndsWith(""" has successfully started!") Then
+		          // Found the server name
+		          Var ServerName As String = Line.Middle(9, Line.Length - 36)
+		          Profile.Name = ServerName
+		          FoundName = True
+		        ElseIf Line.BeginsWith("Commandline: ") Then
+		          // Here's the command line
+		          Var CommandLine As String = Line.Middle(13)
+		          Var Options As Dictionary = ArkSA.ParseCommandLine(CommandLine)
+		          If GetMapFromLogs Then
+		            Profile.Mask = ArkSA.Maps.MaskForIdentifier(Options.Value("Map"))
 		          End If
-		          
-		          If FoundName And FoundCommandLine Then
-		            Exit For Line
-		          End If
-		        Next
-		      End If
-		    End If
-		    
-		    Var GameIniPath As String = Profile.GameIniPath
-		    If GameIniPath.IsEmpty = False Then
-		      Var DownloadSuccess As Boolean
-		      Data.GameIniContent = Self.GetFile(GameIniPath, ArkSA.ConfigFileGame, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
-		      If Not DownloadSuccess Then
-		        Return Nil
-		      End If
-		    End If
-		    
-		    Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
-		    If GameUserSettingsIniPath.IsEmpty = False Then
-		      Var DownloadSuccess As Boolean
-		      Data.GameUserSettingsIniContent = Self.GetFile(GameUserSettingsIniPath, ArkSA.ConfigFileGameUserSettings, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
-		      If Not DownloadSuccess Then
-		        Return Nil
-		      End If
+		          Data.CommandLineOptions = Options
+		          FoundCommandLine = True
+		        End If
+		        
+		        If FoundName And FoundCommandLine Then
+		          Exit For Line
+		        End If
+		      Next
 		    End If
 		  End If
 		  
-		  If GatherGameSettings And Provider.SupportsGameSettings Then
+		  Var GameIniPath As String = Profile.GameIniPath
+		  If GameIniPath.IsEmpty = False Then
+		    Var DownloadSuccess As Boolean
+		    Data.GameIniContent = Self.GetFile(GameIniPath, ArkSA.ConfigFileGame, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
+		    If Not DownloadSuccess Then
+		      Return Nil
+		    End If
+		  End If
+		  
+		  Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
+		  If GameUserSettingsIniPath.IsEmpty = False Then
+		    Var DownloadSuccess As Boolean
+		    Data.GameUserSettingsIniContent = Self.GetFile(GameUserSettingsIniPath, ArkSA.ConfigFileGameUserSettings, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
+		    If Not DownloadSuccess Then
+		      Return Nil
+		    End If
+		  End If
+		  
+		  If Provider.SupportsGameSettings Then
 		    Var CommandLineOptions As New Dictionary
 		    Var Settings() As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
 		    For Each Setting As ArkSA.ConfigOption In Settings
 		      Var Value As Variant
 		      Try
 		        Value = Provider.GameSetting(Project, Profile, Setting)
-		        CommandLineOptions.Value(Setting.Key) = Value
+		        If Value.IsNull = False Then
+		          CommandLineOptions.Value(Setting.Key) = Value
+		        End If
 		      Catch Err As RuntimeException
 		        Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
 		        Return Nil

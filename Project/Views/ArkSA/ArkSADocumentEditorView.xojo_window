@@ -827,7 +827,7 @@ End
 		Private Sub MergeCallback()
 		  Var Keys() As Variant = Self.Panels.Keys
 		  For Each Key As Variant In Keys
-		    Var Panel As ArkConfigEditor = Self.Panels.Value(Key)
+		    Var Panel As ArkSAConfigEditor = Self.Panels.Value(Key)
 		    If Panel <> Nil Then
 		      Panel.ImportFinished()
 		    End If

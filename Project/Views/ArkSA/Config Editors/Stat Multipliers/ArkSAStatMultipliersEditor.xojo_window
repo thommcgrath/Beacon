@@ -4595,9 +4595,7 @@ End
 		  
 		  Var CreaturesButton As OmniBarItem = OmniBarItem.CreateTab("CreaturesButton", "Creatures")
 		  
-		  Var MutagenButton As OmniBarItem = OmniBarItem.CreateTab("MutagenButton", "Mutagen")
-		  
-		  Me.Append(PlayersButton, CreaturesButton, MutagenButton)
+		  Me.Append(PlayersButton, CreaturesButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
