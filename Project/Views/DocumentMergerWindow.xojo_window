@@ -963,6 +963,9 @@ End
 		      Case IsA Beacon.DocumentMergeProfileItem
 		        Var ProfileItem As Beacon.DocumentMergeProfileItem = Beacon.DocumentMergeProfileItem(MergeItem)
 		        Self.mDestination.AddServerProfile(ProfileItem.Profile)
+		        If (ProfileItem.TokenId.IsEmpty) = False Then
+		          Self.mDestination.ProviderTokenKey(ProfileItem.TokenId) = ProfileItem.TokenKey
+		        End If
 		      End Select
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName)

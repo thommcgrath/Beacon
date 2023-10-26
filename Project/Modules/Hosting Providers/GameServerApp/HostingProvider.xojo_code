@@ -188,6 +188,7 @@ Implements Beacon.HostingProvider
 		    Var ProfileId As String = Beacon.UUID.v5(Self.Identifier + ":" + TemplateId.ToString(Locale.Raw, "0"))
 		    Var ProfileConfig As New GameServerApp.HostConfig
 		    ProfileConfig.TokenId = Token.TokenId
+		    ProfileConfig.TokenKey = Token.EncryptionKey
 		    ProfileConfig.TemplateId = TemplateId
 		    
 		    Var Profile As Beacon.ServerProfile

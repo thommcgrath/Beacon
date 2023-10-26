@@ -14,6 +14,8 @@ Implements Beacon.OAuthConsumer
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary)
+		  // Do not store the token key
+		  
 		  SaveData.Value("templateId") = Self.mTemplateId
 		  SaveData.Value("tokenId") = Self.mTokenId
 		End Sub
@@ -60,6 +62,22 @@ Implements Beacon.OAuthConsumer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function TokenKey() As String
+		  #Pragma StackOverflowChecking False
+		  Return Self.mTokenKey
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TokenKey(Assigns Value As String)
+		  // The key is not stored persistently, so don't change modified state.
+		  
+		  #Pragma StackOverflowChecking False
+		  Self.mTokenKey = Value
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mTemplateId As Integer
@@ -67,6 +85,10 @@ Implements Beacon.OAuthConsumer
 
 	#tag Property, Flags = &h21
 		Private mTokenId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTokenKey As String
 	#tag EndProperty
 
 

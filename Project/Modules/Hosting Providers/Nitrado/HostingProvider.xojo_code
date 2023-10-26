@@ -420,6 +420,7 @@ Implements Beacon.HostingProvider
 		    Var ProfileConfig As New Nitrado.HostConfig
 		    ProfileConfig.ServiceId = ServiceId
 		    ProfileConfig.TokenId = Token.TokenId
+		    ProfileConfig.TokenKey = Token.EncryptionKey
 		    Profile.HostConfig = ProfileConfig
 		    Profile.Platform = Platform
 		    Profile.Modified = False

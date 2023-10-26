@@ -321,7 +321,7 @@ End
 		  
 		  Var ViewIds() As Variant = Self.mViews.Keys
 		  For Each ViewId As Variant In ViewIds
-		    Var Panel As ArkServerViewContainer = Self.mViews.Value(ViewId)
+		    Var Panel As ArkSAServerViewContainer = Self.mViews.Value(ViewId)
 		    Panel.Close
 		    Self.mViews.Remove(ViewId)
 		  Next
