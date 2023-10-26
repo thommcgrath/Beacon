@@ -43,7 +43,6 @@ Begin DesktopContainer MapSelectionGrid
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -63,21 +62,53 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Var Maps() As Ark.Map = Ark.Maps.All
-		  Var OfficialMaps(), OtherMaps() As Ark.Map
-		  Var OfficialMasks(), OtherMasks() As UInt64
-		  For Each Map As Ark.Map In Maps
-		    If Map.Official Then
-		      OfficialMaps.Add(Map)
-		      OfficialMasks.Add(Map.Mask)
-		    Else
-		      OtherMaps.Add(Map)
-		      OtherMasks.Add(Map.Mask)
+		  Var Disambiguation As New Dictionary
+		  For Each Map As Beacon.Map In Self.mMaps
+		    Var Siblings() As Beacon.Map
+		    If Disambiguation.HasKey(Map.Name) Then
+		      Siblings = Disambiguation.Value(Map.Name)
 		    End If
+		    Siblings.Add(Map)
+		    Disambiguation.Value(Map.Name) = Siblings
 		  Next
 		  
-		  OfficialMasks.SortWith(OfficialMaps)
-		  OtherMasks.SortWith(OtherMaps)
+		  Var GameNames As New Dictionary
+		  Var Games() As Beacon.Game = Beacon.Games
+		  For Each Game As Beacon.Game In Games
+		    GameNames.Value(Game.Identifier) = Game.Name
+		  Next
+		  
+		  Var SortValues() As String
+		  Var Maps() As Beacon.Map
+		  Var Names As New Dictionary
+		  For Each Entry As DictionaryEntry In Disambiguation
+		    Var Siblings() As Beacon.Map = Entry.Value
+		    
+		    If Siblings.Count = 1 Then
+		      Var Map As Beacon.Map = Siblings(0)
+		      Var Sort As Integer = If(Map.Official, Map.Sort + 100, Map.Sort)
+		      SortValues.Add(Sort.ToString(Locale.Raw, "0") + ":" + Map.Name + ":" + GameNames.Value(Map.GameId).StringValue)
+		      Maps.Add(Map)
+		      Names.Value(Map.MapId) = Map.Name
+		    Else
+		      For Each Map As Beacon.Map In Siblings
+		        Var Sort As Integer = If(Map.Official, Map.Sort + 100, Map.Sort)
+		        SortValues.Add(Sort.ToString(Locale.Raw, "0") + ":" + Map.Name + ":" + GameNames.Value(Map.GameId).StringValue)
+		        Maps.Add(Map)
+		        Names.Value(Map.MapId) = Map.Name + " (" + GameNames.Value(Map.GameId).StringValue + ")"
+		      Next
+		    End If
+		  Next
+		  SortValues.SortWith(Maps)
+		  
+		  Var OfficialMaps(), OtherMaps() As Beacon.Map
+		  For Each Map As Beacon.Map In Maps
+		    If Map.Official Then
+		      OfficialMaps.Add(Map)
+		    Else
+		      OtherMaps.Add(Map)
+		    End If
+		  Next
 		  
 		  Var OfficialLeft As Integer = Boxes(0).Left
 		  Var OfficialNextTop As Integer = Boxes(0).Top
@@ -86,27 +117,35 @@ End
 		  
 		  Boxes(0).Close
 		  
-		  For Each Map As Ark.Map In OfficialMaps
+		  Var LeftBoxes(), RightBoxes() As MapCheckBox
+		  For Each Map As Beacon.Map In OfficialMaps
 		    Var Box As New Boxes
-		    Box.Mask = Map.Mask
-		    Box.Caption = Map.Name
+		    Box.Map = Map
+		    Box.Caption = Names.Value(Map.MapId)
 		    Box.Top = OfficialNextTop
 		    Box.Left = OfficialLeft
 		    OfficialNextTop = OfficialNextTop + Box.Height + 12
 		    Self.mBoxes.Add(Box)
+		    LeftBoxes.Add(Box)
 		  Next
-		  For Each Map As Ark.Map In OtherMaps
+		  For Each Map As Beacon.Map In OtherMaps
 		    Var Box As New Boxes
-		    Box.Mask = Map.Mask
-		    Box.Caption = Map.Name
+		    Box.Map = Map
+		    Box.Caption = Names.Value(Map.MapId)
 		    Box.Top = OtherNextTop
 		    Box.Left = OtherLeft
 		    OtherNextTop = OtherNextTop + Box.Height + 12
 		    Self.mBoxes.Add(Box)
+		    RightBoxes.Add(Box)
 		  Next
 		  
-		  Self.mDesiredHeight = (OfficialMaps.LastIndex + 1) * 32
-		  Self.mDesiredWidth = 304
+		  BeaconUI.SizeToFit(Self.mBoxes)
+		  Var LeftGroup As New ControlGroup(LeftBoxes)
+		  Var RightGroup As New ControlGroup(RightBoxes)
+		  RightGroup.Left = LeftGroup.Right + 12
+		  
+		  Self.mDesiredHeight = Max(LeftGroup.Height, RightGroup.Height) + 12
+		  Self.mDesiredWidth = If(LeftGroup.Width > 0 And RightGroup.Width > 0, LeftGroup.Width + 12 + RightGroup.Width, Max(LeftGroup.Width, RightGroup.Width)) + 12
 		  
 		  Self.Height = Self.mDesiredHeight
 		  Self.Width = Self.mDesiredWidth
@@ -118,57 +157,88 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function CheckedMask() As UInt64
-		  Var Combined As UInt64
+		Function CheckedMaps() As Beacon.Map()
+		  Var Maps() As Beacon.Map
 		  For Each Box As MapCheckBox In Self.mBoxes
 		    If Box.VisualState = DesktopCheckBox.VisualStates.Checked Then
-		      Combined = Combined Or Box.Mask
+		      Maps.Add(Box.Map)
 		    End If
 		  Next
-		  Return Combined
+		  Return Maps
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetWithMasks(Masks() As UInt64)
-		  Var Dict As New Dictionary
-		  For Each Mask As UInt64 In Masks
-		    For Each Box As MapCheckBox In Self.mBoxes
-		      If (Mask And Box.Mask) = Box.Mask Then
-		        Dict.Value(Box.Mask) = Dict.Lookup(Box.Mask, 0) + 1
-		      End If
-		    Next
-		  Next
+		Sub Constructor()
+		  Self.mMaps = RaiseEvent GetMaps
+		  Super.Constructor
 		  
-		  Var MaskCount As Integer = Masks.LastIndex + 1
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Maps() As Beacon.Map)
+		  Self.mMaps = Maps
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetMapStates(Maps() As Beacon.Map, State As DesktopCheckbox.VisualStates)
+		  Var Dict As New Dictionary
+		  If (Maps Is Nil) = False Then
+		    For Each Map As Beacon.Map In Maps
+		      Dict.Value(Map.MapId) = True
+		    Next
+		  End If
+		  
 		  For Each Box As MapCheckBox In Self.mBoxes
-		    Var Count As Integer = Dict.Lookup(Box.Mask, 0)
-		    If Count = 0 Then
-		      Box.VisualState = DesktopCheckbox.VisualStates.Unchecked
-		    ElseIf Count = MaskCount Then
-		      Box.VisualState = DesktopCheckbox.VisualStates.Checked
-		    Else
-		      Box.VisualState = DesktopCheckbox.VisualStates.Indeterminate
+		    If Dict.HasKey(Box.Map.MapId) Then
+		      Box.VisualState = State
 		    End If
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UncheckedMask() As UInt64
-		  Var Combined As UInt64
+		Sub SetWithMaps(Maps() As Beacon.Map)
+		  Var Dict As New Dictionary
+		  If (Maps Is Nil) = False Then
+		    For Each Map As Beacon.Map In Maps
+		      Dict.Value(Map.MapId) = True
+		    Next
+		  End If
+		  
 		  For Each Box As MapCheckBox In Self.mBoxes
-		    If Box.VisualState = DesktopCheckBox.VisualStates.Unchecked Then
-		      Combined = Combined Or Box.Mask
+		    If Dict.HasKey(Box.Map.MapId) Then
+		      Box.VisualState = DesktopCheckbox.VisualStates.Checked
+		    Else
+		      Box.VisualState = DesktopCheckbox.VisualStates.Unchecked
 		    End If
 		  Next
-		  Return Combined
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UncheckedMaps() As Beacon.Map()
+		  Var Maps() As Beacon.Map
+		  For Each Box As MapCheckBox In Self.mBoxes
+		    If Box.VisualState = DesktopCheckBox.VisualStates.Unchecked Then
+		      Maps.Add(Box.Map)
+		    End If
+		  Next
+		  Return Maps
 		End Function
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
 		Event Changed()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetMaps() As Beacon.Map()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -194,35 +264,6 @@ End
 		DesiredWidth As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Var Combined As UInt64
-			  For Each Box As MapCheckBox In Self.mBoxes
-			    If Box.Value Then
-			      Combined = Combined Or Box.Mask
-			    End If
-			  Next
-			  Return Combined
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.Mask = Value Then
-			    Return
-			  End If
-			  
-			  Self.mSettingUp = True
-			  For Each Box As MapCheckBox In Self.mBoxes
-			    Box.Value = (Value And Box.Mask) = Box.Mask
-			  Next
-			  Self.mSettingUp = False
-			  RaiseEvent Changed
-			End Set
-		#tag EndSetter
-		Mask As UInt64
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mBoxes() As MapCheckBox
 	#tag EndProperty
@@ -233,6 +274,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDesiredWidth As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMaps() As Beacon.Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -480,14 +525,6 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Mask"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="UInt64"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -12,6 +12,12 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(ParamArray Controls() As DesktopUIControl)
+		  Self.Constructor(Controls)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Controls() As DesktopUIControl)
 		  For Each Ctl As DesktopUIControl In Controls
 		    Self.mVisible = Self.mVisible Or Ctl.Visible
 		    Self.mMembers.Add(New WeakRef(Ctl))

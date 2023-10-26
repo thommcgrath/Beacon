@@ -1,8 +1,15 @@
 #tag Class
 Protected Class MapCheckBox
 Inherits DesktopCheckBox
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Note, Name = NoConstructor
+		If you override the constructor to add a parameter, the checkbox will not work correctly. The control array needs the normal constructor.
+		
+	#tag EndNote
+
+
 	#tag Property, Flags = &h0
-		Mask As UInt64
+		Map As Beacon.Map
 	#tag EndProperty
 
 
@@ -242,14 +249,6 @@ Inherits DesktopCheckBox
 				"1 - Checked"
 				"2 - Indeterminate"
 			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Mask"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="UInt64"
-			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

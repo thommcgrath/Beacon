@@ -862,6 +862,16 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MapIds(Extends Maps() As Beacon.Map) As String()
+		  Var Ids() As String
+		  For Each Map As Beacon.Map In Maps
+		    Ids.Add(Map.MapId)
+		  Next
+		  Return Ids
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function MD5(Value As MemoryBlock) As String
 		  Return EncodeHex(Crypto.MD5(Value))
@@ -899,6 +909,25 @@ Protected Module Beacon
 		    Merged.Add(Entry.Value)
 		  Next
 		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Merge(LeftArray() As Beacon.Map, RightArray() As Beacon.Map) As Beacon.Map()
+		  Var Merged() As Beacon.Map
+		  For Each Map As Beacon.Map In LeftArray
+		    Merged.Add(Map)
+		  Next
+		  For Each Map As Beacon.Map In RightArray
+		    Merged.Add(Map)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends LeftArray() As Beacon.Map, RightArray() As Beacon.Map) As Beacon.Map()
+		  Return Merge(LeftArray, RightArray)
 		End Function
 	#tag EndMethod
 

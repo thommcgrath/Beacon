@@ -803,7 +803,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub MapsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
-		    Self.Project.MapMask = MapSelectionGrid(Sender.Container).Mask
+		    Self.Project.MapMask = Ark.Maps.MaskForMaps(MapSelectionGrid(Sender.Container).CheckedMaps)
 		    Self.Modified = Self.Project.Modified
 		  End If
 		  
@@ -1079,9 +1079,9 @@ End
 		    Return
 		  End If
 		  
-		  Var Editor As New MapSelectionGrid
+		  Var Editor As New MapSelectionGrid(Ark.Maps.All)
 		  Var Controller As New PopoverController("Select Maps", Editor)
-		  Editor.Mask = Self.Project.MapMask
+		  Editor.SetWithMaps(Ark.Maps.ForMask(Self.Project.MapMask))
 		  Controller.Show(Self.OmniBar1, ItemRect)
 		  
 		  Item.Toggled = True

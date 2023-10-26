@@ -1,14 +1,26 @@
 #tag Class
 Protected Class Map
+Implements Beacon.Map
 	#tag Method, Flags = &h0
-		Sub Constructor(HumanName As String, Identifier As String, Mask As UInt64, DifficultyScale As Double, Official As Boolean, ProvidedByContentPackId As String)
+		Sub Constructor(MapId As String, HumanName As String, Identifier As String, Mask As UInt64, DifficultyScale As Double, Official As Boolean, ContentPackId As String, Sort As Integer)
+		  Self.mMapId = MapId
 		  Self.mName = HumanName
 		  Self.mIdentifier = Identifier
 		  Self.mMask = Mask
 		  Self.mDifficultyScale = DifficultyScale
 		  Self.mOfficial = Official
-		  Self.mProvidedByContentPackId = ProvidedByContentPackId
+		  Self.mContentPackId = ContentPackId
+		  Self.mSort = Sort
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackId() As String
+		  // Part of the Beacon.Map interface.
+		  
+		  #Pragma StackOverflowChecking False
+		  Return Self.mContentPackId
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -34,9 +46,27 @@ Protected Class Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GameId() As String
+		  // Part of the Beacon.Map interface.
+		  
+		  #Pragma StackOverflowChecking False
+		  Return ArkSA.Identifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Identifier() As String
 		  #Pragma StackOverflowChecking False
 		  Return Self.mIdentifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MapId() As String
+		  // Part of the Beacon.Map interface.
+		  
+		  #Pragma StackOverflowChecking False
+		  Return Self.mMapId
 		End Function
 	#tag EndMethod
 
@@ -91,12 +121,25 @@ Protected Class Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ProvidedByContentPackId() As String
+		Attributes( Deprecated = "ContentPackId" )  Function ProvidedByContentPackId() As String
 		  #Pragma StackOverflowChecking False
-		  Return Self.mProvidedByContentPackId
+		  Return Self.mContentPackId
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Sort() As Integer
+		  // Part of the Beacon.Map interface.
+		  
+		  #Pragma StackOverflowChecking False
+		  Return Self.mSort
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mContentPackId As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDifficultyScale As Double
@@ -104,6 +147,10 @@ Protected Class Map
 
 	#tag Property, Flags = &h21
 		Private mIdentifier As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMapId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -119,7 +166,7 @@ Protected Class Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProvidedByContentPackId As String
+		Private mSort As Integer
 	#tag EndProperty
 
 

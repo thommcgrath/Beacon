@@ -46,7 +46,7 @@ Begin BeaconDialog ArkBlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -70,7 +70,6 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
          Scope           =   2
          TabIndex        =   8
          TabPanelIndex   =   1
@@ -2129,7 +2128,7 @@ End
 		    Self.PathField.Text = Self.mOriginalBlueprint.Path
 		    Self.NameField.Text = Self.mOriginalBlueprint.Label
 		    Self.TagsField.Text = Self.mOriginalBlueprint.Tags.Join(", ")
-		    Self.MapSelector.Mask = Self.mOriginalBlueprint.Availability
+		    Self.MapSelector.SetWithMaps(Ark.Maps.ForMask(Self.mOriginalBlueprint.Availability))
 		    
 		    Select Case Self.mOriginalBlueprint
 		    Case IsA Ark.Engram
@@ -2147,7 +2146,7 @@ End
 		    Self.PathField.Text = ""
 		    Self.NameField.Text = ""
 		    Self.TagsField.Text = ""
-		    Self.MapSelector.Mask = 0
+		    Self.MapSelector.SetWithMaps(Nil)
 		  End If
 		  
 		  Self.MinimumHeight = Self.AbsoluteMinimumHeight
@@ -2424,7 +2423,7 @@ End
 		    End If
 		  Next
 		  
-		  Var Availability As UInt64 = Self.MapSelector.Mask
+		  Var Availability As UInt64 = Ark.Maps.MaskForMaps(Self.MapSelector.CheckedMaps)
 		  If Availability = CType(0, UInt64) Then
 		    Self.ShowAlert("Object is not available to any maps", "This object should be usable on at least one map.")
 		    Return False
@@ -2824,6 +2823,11 @@ End
 		Sub Changed()
 		  Self.Modified = True
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetMaps() As Beacon.Map()
+		  Return Ark.Maps.All
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events TagsField

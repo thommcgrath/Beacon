@@ -497,6 +497,8 @@ Implements Beacon.HostingProvider
 		    Return Ark.Identifier
 		  Case "7daystodie", "sevendaysexperimental", "sevendtd"
 		    Return SDTD.Identifier
+		  Case "arksa"
+		    Return ArkSA.Identifier
 		  End Select
 		End Function
 	#tag EndMethod
@@ -510,7 +512,7 @@ Implements Beacon.HostingProvider
 		    Return Beacon.PlatformPlayStation
 		  Case "arkswitch", "arkswitchjp"
 		    Return Beacon.PlatformSwitch
-		  Case "arkse", "arksotf", "arkseosg", "7daystodie", "sevendaysexperimental", "sevendtd"
+		  Case "arkse", "arksotf", "arkseosg", "7daystodie", "sevendaysexperimental", "sevendtd", "arksa"
 		    Return Beacon.PlatformPC
 		  Case "arkmobile"
 		    Return Beacon.PlatformUnsupported

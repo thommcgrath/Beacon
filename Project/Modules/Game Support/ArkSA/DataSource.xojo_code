@@ -1800,7 +1800,7 @@ Inherits Beacon.DataSource
 		    Return Nil
 		  End If
 		  
-		  Return New ArkSA.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue)
+		  Return New ArkSA.Map(Rows.Column("object_id").StringValue, Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue, Rows.Column("sort").IntegerValue)
 		End Function
 	#tag EndMethod
 
@@ -1809,7 +1809,7 @@ Inherits Beacon.DataSource
 		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps ORDER BY official DESC, sort;")
 		  Var Maps() As ArkSA.Map
 		  While Rows.AfterLastRow = False
-		    Maps.Add(New ArkSA.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue))
+		    Maps.Add(New ArkSA.Map(Rows.Column("object_id").StringValue, Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue, Rows.Column("sort").IntegerValue))
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Maps
@@ -1821,7 +1821,7 @@ Inherits Beacon.DataSource
 		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & ?1) = mask ORDER BY official DESC, sort;", Mask)
 		  Var Maps() As ArkSA.Map
 		  While Rows.AfterLastRow = False
-		    Maps.Add(New ArkSA.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue))
+		    Maps.Add(New ArkSA.Map(Rows.Column("object_id").StringValue, Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue, Rows.Column("sort").IntegerValue))
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Maps

@@ -19,16 +19,6 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Mask(Extends Maps() As ArkSA.Map) As UInt64
-		  Var Bits As UInt64
-		  For Each Map As ArkSA.Map In Maps
-		    Bits = Bits Or Map.Mask
-		  Next
-		  Return Bits
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function MaskForIdentifier(Identifier As String) As UInt64
 		  Var Map As ArkSA.Map = ArkSA.DataSource.Pool.Get(False).GetMap(Identifier)
 		  If (Map Is Nil) Then
@@ -36,6 +26,18 @@ Protected Module Maps
 		  End If
 		  
 		  Return Map.Mask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function MaskForMaps(Maps() As Beacon.Map) As UInt64
+		  Var Bits As UInt64
+		  For Each Map As Beacon.Map In Maps
+		    If Map IsA ArkSA.Map Then
+		      Bits = Bits Or ArkSA.Map(Map).Mask
+		    End If
+		  Next
+		  Return Bits
 		End Function
 	#tag EndMethod
 

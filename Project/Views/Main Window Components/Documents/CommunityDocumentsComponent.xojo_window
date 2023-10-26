@@ -151,6 +151,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -359,11 +360,6 @@ End
 
 #tag Events FilterBar
 	#tag Event
-		Sub Opening()
-		  Me.Mask = Ark.Maps.UniversalMask
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub NewProject()
 		  Self.NewProject()
 		End Sub
@@ -391,12 +387,17 @@ End
 		  Var Params As New Dictionary
 		  Params.Value("page") = Page
 		  Params.Value("pageSize") = Me.PageSize
-		  Params.Value("gameId") = Self.FilterBar.GameId
-		  If Self.FilterBar.Mask > CType(0, UInt64) Then
+		  If Self.FilterBar.GameId.IsEmpty = False Then
+		    Params.Value("gameId") = Self.FilterBar.GameId
+		  End If
+		  
+		  Var Maps() As Beacon.Map = Self.FilterBar.Maps
+		  If (Maps Is Nil) = False And Maps.Count > 0 Then
+		    Var MapValue As String = String.FromArray(Maps.MapIds, ",")
 		    If Self.FilterBar.RequireAllMaps Then
-		      Params.Value("allMaps") = Self.FilterBar.Mask
+		      Params.Value("allMaps") = MapValue
 		    Else
-		      Params.Value("anyMaps") = Self.FilterBar.Mask
+		      Params.Value("anyMaps") = MapValue
 		    End If
 		  End If
 		  

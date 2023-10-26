@@ -179,7 +179,6 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -296,10 +295,10 @@ End
 		  Self.Picker.ClearSelections()
 		  Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(New Beacon.StringList)
 		  
-		  Var Masks() As UInt64
+		  Var Mask As UInt64
 		  Var Tags As New Dictionary
 		  For Each Blueprint As Ark.Blueprint In Self.mBlueprints
-		    Masks.Add(Blueprint.Availability)
+		    Mask = Mask Or Blueprint.Availability
 		    
 		    Var BlueprintTags() As String = Blueprint.Tags
 		    For Each Tag As String In BlueprintTags
@@ -308,7 +307,7 @@ End
 		  Next
 		  
 		  Var BlueprintCount As Integer = Self.mBlueprints.LastIndex + 1
-		  Self.MapSelector.SetWithMasks(Masks)
+		  Self.MapSelector.SetWithMaps(Ark.Maps.ForMask(Mask))
 		  
 		  Var CommonTags() As String
 		  For I As Integer = 0 To Tags.KeyCount - 1
@@ -389,8 +388,8 @@ End
 		  Var AddTags() As String = Self.Picker.RequiredTags
 		  Var RemoveTags() As String = Self.Picker.ExcludedTags
 		  
-		  Var AddMask As UInt64 = Self.MapSelector.CheckedMask
-		  Var ClearMask As UInt64 = Self.MapSelector.UncheckedMask
+		  Var AddMask As UInt64 = Ark.Maps.MaskForMaps(Self.MapSelector.CheckedMaps)
+		  Var ClearMask As UInt64 = Ark.Maps.MaskForMaps(Self.MapSelector.UncheckedMaps)
 		  
 		  For Idx As Integer = 0 To Self.mBlueprints.LastIndex
 		    Var Blueprint As Ark.MutableBlueprint = Self.mBlueprints(Idx).MutableVersion
@@ -448,6 +447,11 @@ End
 		Sub Changed()
 		  Self.Modified = True
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetMaps() As Beacon.Map()
+		  Return Ark.Maps.All
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
