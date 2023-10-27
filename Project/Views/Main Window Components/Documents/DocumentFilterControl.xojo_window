@@ -211,7 +211,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function Maps() As Beacon.Map()
-		  
+		  Return Self.mMaps
 		End Function
 	#tag EndMethod
 
@@ -309,7 +309,7 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Ark.Identifier
+			  // Ignore
 			End Get
 		#tag EndGetter
 		#tag Setter
