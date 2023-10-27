@@ -25,6 +25,20 @@ Inherits Beacon.Thread
 		    Self.mFinished = True
 		    Self.mError = Err
 		  End Try
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value("Event") = "Finished"
+		  Self.AddUserInterfaceUpdate(Dict)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    If Update.Lookup("Event", "").StringValue = "Finished" Then
+		      RaiseEvent Finished(Self.mCreatedProject)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 
