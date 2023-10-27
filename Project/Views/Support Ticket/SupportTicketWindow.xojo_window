@@ -1065,7 +1065,7 @@ End
 		    End If
 		    Self.mProgress.Detail = "Attaching project…"
 		    Var FileName As String = Self.mTicketDocument.Title + ".beacon"
-		    Var FileContent As String = Beacon.GenerateJSON(Self.mTicketDocument.SaveData(Identity), True)
+		    Var FileContent As String = Self.mTicketDocument.SaveData(Identity)
 		    Archive.AddFile(Beacon.SanitizeFilename(FileName), FileContent)
 		    
 		    Self.mProgress.Detail = "Attaching backup files…"
