@@ -591,13 +591,12 @@ End
 		  HumanNames.Sort
 		  
 		  Var Message, Explanation As String
-		  If HumanNames.LastIndex = 0 Then
-		    Message = "You are using an editor that will not be included in your config files."
-		    Explanation = "The " + HumanNames(0) + " editor requires Beacon Omni, which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue?"
+		  If HumanNames.Count = 1 Then
+		    Message = Self.OmniWarningSingularMessage
+		    Explanation = Language.ReplacePlaceholders(Self.OmniWarningSingularExplanation, HumanNames(0), Language.GameName(Ark.Identifier))
 		  Else
-		    Var GroupList As String = HumanNames.EnglishOxfordList()
-		    Message = "You are using editors that will not be included in your config files."
-		    Explanation = "The " + GroupList + " editors require Beacon Omni, which you have not purchased. Beacon will not generate their content for your config files. Do you still want to continue?"
+		    Message = Self.OmniWarningPluralMessage
+		    Explanation = Language.ReplacePlaceholders(Self.OmniWarningPluralExplanation, HumanNames.EnglishOxfordList(), Language.GameName(Ark.Identifier))
 		  End If
 		  
 		  Return Self.ShowConfirm(Message, Explanation, "Continue", "Cancel")
@@ -1241,7 +1240,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GameName() As String
-		    Return Language.GameName(Ark.Identifier)
+		  Return Language.GameName(Ark.Identifier)
 		End Function
 	#tag EndEvent
 #tag EndEvents

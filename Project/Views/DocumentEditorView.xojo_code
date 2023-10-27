@@ -712,6 +712,18 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = OmniWarningPluralExplanation, Type = String, Dynamic = False, Default = \"The \?1 editors require Beacon Omni for \?2\x2C which you have not purchased. Beacon will not generate their content for your config files. Do you still want to continue\?", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = OmniWarningPluralMessage, Type = String, Dynamic = False, Default = \"You are using editors that will not be included in your config files.", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = OmniWarningSingularExplanation, Type = String, Dynamic = False, Default = \"The \?1 editor requires Beacon Omni for \?2\x2C which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue\?", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = OmniWarningSingularMessage, Type = String, Dynamic = False, Default = \"You are using an editor that will not be included in your config files.", Scope = Protected
+	#tag EndConstant
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
