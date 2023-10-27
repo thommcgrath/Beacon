@@ -796,7 +796,7 @@ End
 		Private Sub Begin()
 		  Var NowGMT As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		  Var Now As DateTime = DateTime.Now
-		  Self.DeployLabel = NowGMT.Year.ToString(Locale.Raw, "0000") + "-" + NowGMT.Month.ToString(Locale.Raw, "00") + "-" + NowGMT.Day.ToString(Locale.Raw, "00") + " " + NowGMT.Hour.ToString(Locale.Raw, "00") + ":" + NowGMT.Minute.ToString(Locale.Raw, "00") + ":" + NowGMT.Second.ToString(Locale.Raw, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short) + " " + Now.Timezone.Abbreviation + ")"
+		  Self.DeployLabel = NowGMT.Year.ToString(Locale.Raw, "0000") + "-" + NowGMT.Month.ToString(Locale.Raw, "00") + "-" + NowGMT.Day.ToString(Locale.Raw, "00") + " " + NowGMT.Hour.ToString(Locale.Raw, "00") + ":" + NowGMT.Minute.ToString(Locale.Raw, "00") + ":" + NowGMT.Second.ToString(Locale.Raw, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short).ReplaceAll(&u202f, " ") + " " + Now.Timezone.Abbreviation + ")"
 		  
 		  Var ProfileProblems As New Dictionary
 		  
