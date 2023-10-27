@@ -545,6 +545,11 @@ End
 		    Item.Toggled = True
 		    Me.Item("PageGeneral").Toggled = False
 		  Case "PowerButton"
+		    If ToggleThread.ThreadState <> Thread.ThreadStates.NotRunning Then
+		      Self.ShowAlert("An action is already running", "Wait a moment for the current action to complete.")
+		      Return
+		    End If
+		    
 		    If Self.mServerStatus.State = Beacon.ServerStatus.States.Running Then
 		      Var StopMessage As String = StopMessageDialog.Present(Self)
 		      If StopMessage.IsEmpty Then

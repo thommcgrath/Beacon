@@ -263,6 +263,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -274,6 +275,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -545,6 +547,11 @@ End
 		    Item.Toggled = True
 		    Me.Item("PageGeneral").Toggled = False
 		  Case "PowerButton"
+		    If ToggleThread.ThreadState <> Thread.ThreadStates.NotRunning Then
+		      Self.ShowAlert("An action is already running", "Wait a moment for the current action to complete.")
+		      Return
+		    End If
+		    
 		    If Self.mServerStatus.State = Beacon.ServerStatus.States.Running Then
 		      Var StopMessage As String = StopMessageDialog.Present(Self)
 		      If StopMessage.IsEmpty Then
