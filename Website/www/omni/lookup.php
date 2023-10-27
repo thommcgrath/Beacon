@@ -14,6 +14,7 @@ $email = isset($_GET['email']) ? $_GET['email'] : '';
 $response = [
 	'error' => false,
 	'email' => $email,
+	'userId' => null,
 	'purchases' => [],
 	'verified' => false,
 ];
@@ -28,9 +29,10 @@ exit;
 function lookupEmail($email, &$response) {
 	// Check it the address looks like an address
 	if (BeaconEmail::IsEmailValid($email) === false) {
+		$response['debug'] = 'invalid email';
 		return;
 	}
-	
+
 	// Then see if we have a user account, as that went through manual
 	// verification already.
 	$user = null;
@@ -38,12 +40,16 @@ function lookupEmail($email, &$response) {
 		$user = User::Fetch($email);
 		if (is_null($user) === false) {
 			$response['verified'] = true;
+			$response['userId'] = $user->UserId();
 			$response['purchases'] = $user->Licenses();
 			return;
+		} else {
+			$response['debug'] = 'null user';
 		}
 	} catch (Exception $e) {
+		$response['debug'] = 'exception';
 	}
-	
+
 	// Ask CleanTalk to connect to the server and see if the mailbox exists.
 	$response['verified'] = BeaconEmail::QuickVerify($email);
 }
