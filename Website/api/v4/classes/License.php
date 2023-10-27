@@ -28,8 +28,8 @@ class License extends DatabaseObject implements JsonSerializable {
 		return new DatabaseSchema('public', 'licenses', [
 			new DatabaseObjectProperty('licenseId', ['primaryKey' => true, 'columnName' => 'license_id']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'accessor' => 'users.user_id']),
-			new DatabaseObjectProperty('purchaseId', ['columnName' => 'purchases.purchase_id']),
-			new DatabaseObjectProperty('productId', ['columnName' => 'products.product_id']),
+			new DatabaseObjectProperty('purchaseId', ['columnName' => 'purchase_id']),
+			new DatabaseObjectProperty('productId', ['columnName' => 'product_id']),
 			new DatabaseObjectProperty('productName', ['columnName' => 'product_name', 'accessor' => 'products.product_name']),
 			new DatabaseObjectProperty('productFlags', ['columnName' => 'product_flags', 'accessor' => 'products.flags']),
 			new DatabaseObjectProperty('expiration', ['accessor' => "DATE_TRUNC('second', %%TABLE%%.%%COLUMN%%)"]),
