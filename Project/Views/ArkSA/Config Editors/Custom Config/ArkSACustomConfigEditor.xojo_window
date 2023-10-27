@@ -151,6 +151,7 @@ End
 		    Call Self.Config(True)
 		    Config.GameIniContent() = Organizer
 		    Config.GameUserSettingsIniContent() = Organizer
+		    Self.Modified = True
 		  End If
 		  
 		  Self.SetupUI()
