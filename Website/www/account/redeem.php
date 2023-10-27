@@ -70,7 +70,7 @@ function RedeemCode(string $code, bool $confirmed): void {
 	$licenses = $user->Licenses();
 	$licenseMap = [];
 	foreach ($licenses as $license) {
-		$licenseMap[$license['product_id']] = $license;
+		$licenseMap[$license->ProductId()] = $license;
 	}
 	
 	$results = $database->Query('SELECT products.product_id, products.product_name, gift_code_products.quantity FROM public.gift_code_products INNER JOIN public.products ON (gift_code_products.product_id = products.product_id) WHERE gift_code_products.code = $1 ORDER BY products.product_name;', $code);
