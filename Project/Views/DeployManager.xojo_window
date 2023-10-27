@@ -823,6 +823,8 @@ End
 		      #else
 		        #Pragma Error "Need 7DTD DeployIntegration"
 		      #endif
+		    Case IsA ArkSA.ServerProfile
+		      Engine = New ArkSA.DeployIntegration(Project, Profile)
 		    End Select
 		    If Engine Is Nil Then
 		      Self.ShowAlert("The developer messed up.", "There is no DeployIntegration defined for server profile " + Profile.Name + ".")

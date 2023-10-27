@@ -357,7 +357,8 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Now we can compute how long to wait.
-		  Var WaitUntil As DateTime = ServerStopTime + New DateInterval(0, 0, 0, 0, 3, 0)
+		  Var WaitSeconds As Integer = ArkSA.DataSource.Pool.Get(False).GetVariable("Nitrado Wait Seconds")
+		  Var WaitUntil As DateTime = ServerStopTime + New DateInterval(0, 0, 0, 0, 0, WaitSeconds)
 		  WaitUntil = New DateTime(WaitUntil.SecondsFrom1970, TimeZone.Current)
 		  Var Diff As Double = WaitUntil.SecondsFrom1970 - Now.SecondsFrom1970
 		  

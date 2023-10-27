@@ -89,6 +89,11 @@ Inherits Beacon.DiscoverIntegration
 		    Var CommandLineOptions As New Dictionary
 		    Var Settings() As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
 		    For Each Setting As ArkSA.ConfigOption In Settings
+		      If (Setting.File = "CommandLineOption" Or Setting.File = "CommandLineFlag") Then
+		        // Only import true command line options
+		        Continue
+		      End If
+		      
 		      Var Value As Variant
 		      Try
 		        Value = Provider.GameSetting(Project, Profile, Setting)
