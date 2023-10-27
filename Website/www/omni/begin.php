@@ -196,7 +196,7 @@ foreach ($bundles as $bundle) {
 			if ($ownsArkSA) {
 				$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + $wantsArkSAYears;
 			} else {
-				if ($ownsArk) {
+				if ($wantsArk || $ownsArk) {
 					$lines[$products['ArkSA']['Upgrade']['PriceId']] = ($lines[$products['ArkSA']['Upgrade']['PriceId']] ?? 0) + 1;
 				} else {
 					$lines[$products['ArkSA']['Base']['PriceId']] = ($lines[$products['ArkSA']['Base']['PriceId']] ?? 0) + 1;
