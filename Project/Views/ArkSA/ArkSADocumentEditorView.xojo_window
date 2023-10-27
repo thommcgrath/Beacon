@@ -1390,6 +1390,7 @@ End
 		  Const PasteTag = "31f1decc-7706-4baf-af11-f4d4fdde799d"
 		  Const HelpTag = "f3766fd7-7483-446f-8fa9-47dd0dd09209"
 		  
+		  Var Base As New DesktopMenuItem
 		  Var ReadOnly As Boolean = Self.Project.ReadOnly
 		  Var Item As SourceListItem
 		  Var ConfigName As String
@@ -1398,13 +1399,12 @@ End
 		    Item = Me.Item(ItemIndex)
 		    ConfigName = Item.Tag
 		    Config = Self.Project.ConfigGroup(ConfigName, False)
+		    
+		    Var HelpItem As New DesktopMenuItem(Item.Caption + " Help", HelpTag)
+		    HelpItem.Enabled = True
+		    Base.AddMenu(HelpItem)
+		    Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		  End If
-		  
-		  Var Base As New DesktopMenuItem
-		  Var HelpItem As New DesktopMenuItem(Item.Caption + " Help", HelpTag)
-		  HelpItem.Enabled = True
-		  Base.AddMenu(HelpItem)
-		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		  
 		  Var CopyItem As New DesktopMenuItem("Copy", CopyTag)
 		  CopyItem.Enabled = ReadOnly = False And (ItemIndex > -1) And (Config Is Nil) = False And Config.IsImplicit = False
