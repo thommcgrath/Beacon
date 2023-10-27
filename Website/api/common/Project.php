@@ -10,7 +10,7 @@ abstract class Project implements \JsonSerializable {
 	const PUBLISH_STATUS_DENIED = 'Denied';
 
 	protected $project_id = '';
-	protected $game_id = '';
+	protected $game_id = 'Ark';
 	protected $game_specific = [];
 	protected $user_id = '';
 	protected $role = '';
@@ -40,7 +40,6 @@ abstract class Project implements \JsonSerializable {
 	public static function SQLColumns() {
 		return [
 			'projects.project_id',
-			'projects.game_id',
 			'project_members.user_id',
 			'project_members.role',
 			'project_role_permissions(project_members.role) AS permissions',
@@ -74,10 +73,7 @@ abstract class Project implements \JsonSerializable {
 	}
 
 	public function GameURLComponent() {
-		switch ($this->game_id) {
-		case 'Ark':
-			return 'ark';
-		}
+		return 'ark';
 	}
 
 	public function UserID() {
@@ -365,17 +361,8 @@ abstract class Project implements \JsonSerializable {
 	protected static function GetFromResult(\BeaconRecordSet $results) {
 		// This is a factory method. Not my favorite, but it'll do.
 
-		$game_id = $results->Field('game_id');
-		$project = null;
-		switch ($game_id) {
-		case 'Ark':
-			$project = new \Ark\Project();
-			break;
-		default:
-			throw new \Exception('Unknown game ' . $game_id);
-		}
+		$project = new \Ark\Project();
 		$project->project_id = $results->Field('project_id');
-		$project->game_id = $game_id;
 		$project->title = $results->Field('title');
 		$project->description = $results->Field('description');
 		$project->revision = intval($results->Field('revision'));
@@ -543,7 +530,7 @@ abstract class Project implements \JsonSerializable {
 		}
 		$title = isset($project['Title']) ? $project['Title'] : '';
 		$description = isset($project['Description']) ? $project['Description'] : '';
-		$game_id = isset($project['GameID']) ? $project['GameID'] : 'Ark';
+		$game_id = 'Ark';
 
 		// check if the project already exists
 		$results = $database->Query('SELECT project_id, storage_path FROM ' . static::SchemaName() . '.' . static::TableName() . ' WHERE projects.project_id = $1;', $project_id);
