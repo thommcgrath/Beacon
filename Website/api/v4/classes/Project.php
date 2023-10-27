@@ -185,7 +185,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			}
 		}
 
-		$namespaces = ['Ark' => 'Ark', 'SDTD' => '7DaysToDie'];
+		$namespaces = ['Ark' => 'Ark', 'SDTD' => '7DaysToDie', 'ArkSA' => 'ArkSA'];
 		$namespaceClauses = [];
 		foreach ($namespaces as $namespace => $identifier) {
 			$namespacedParameters = new DatabaseSearchParameters();
@@ -420,7 +420,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				$archive = new PharData($archivePath);
 				$manifest = json_decode($archive['Manifest.json']->getContent(), true);
 				$version = $manifest['version'];
-				$content = $archive['v ' . $version . '.json']->getContent();
+				$content = $archive['v' . $version . '.json']->getContent();
 				$archive = null;
 				unlink($archivePath);
 			}

@@ -9,44 +9,44 @@ class Generator {
 	protected float $qualityScale;
 	protected int $mapMask;
 	protected float $difficultyValue;
-	
+
 	public function __construct(Project $project) {
 		$this->project = $project;
 		$this->qualityScale = 1.0;
 		$this->mapMask = $project->MapMask();
 		$this->difficultyValue = $project->DifficultyValue();
 	}
-	
+
 	public function QualityScale(): float {
 		return $this->qualityScale;
 	}
-	
+
 	public function SetQualityScale(float $qualityScale): void {
 		$this->qualityScale = $qualityScale;
 	}
-	
+
 	public function MapMask(): int {
 		return $this->mapMask;
 	}
-	
+
 	public function SetMapMask(int $mapMask): void {
 		$this->mapMask = $mapMask;
 	}
-	
+
 	public function DifficultyValue(): float {
 		return $this->difficultyValue;
 	}
-	
+
 	public function SetDifficultyValue(float $difficultyValue): void {
 		$this->difficultyValue = $difficultyValue;
 	}
-	
+
 	public function Generate(string $input = ''): string {
 		$contents = $this->project->Content(false, true);
 		if (empty($contents)) {
 			throw new Exception('The project is empty.');
 		}
-		
+
 		$version = $contents['Version'];
 		if (isset($contents['Config Sets'])) {
 			if (isset($contents['Config Sets']['94c9797d-857d-574a-bdb9-30ee6543ed12']['LootDrops']['Contents'])) {
@@ -70,7 +70,7 @@ class Generator {
 		$newLines = [
 			sprintf('SupplyCrateLootQualityMultiplier=%F', $this->qualityScale)
 		];
-		
+
 		foreach ($lootSourcesJson as $json) {
 			$definition = null;
 			if (array_key_exists('Reference', $json)) {
@@ -89,30 +89,30 @@ class Generator {
 			if ($definition->AvailableTo($this->mapMask) === false) {
 				continue;
 			}
-			
+
 			$randomWithoutReplacement = true;
 			if (array_key_exists('PreventDuplicates', $json)) {
 				$randomWithoutReplacement = boolval($json['PreventDuplicates']);
 			} elseif (array_key_exists('bSetsRandomWithoutReplacement', $json)) {
 				$randomWithoutReplacement = boolval($json['bSetsRandomWithoutReplacement']);
 			}
-			
+
 			$minItemSets = intval($json['MinItemSets']);
 			$maxItemSets = intval($json['MaxItemSets']);
-			
+
 			$appendMode = false;
 			if (array_key_exists('AppendMode', $json)) {
 				$appendMode = boolval($json['AppendMode']);
 			} elseif (array_key_exists('bAppendMode', $json)) {
 				$appendMode = boolval($json['bAppendMode']);
 			}
-			
+
 			$sets = [];
 			$totalWeight = $this->SumOfItemSetWeights($json['ItemSets']);
 			foreach ($json['ItemSets'] as $item_set) {
 				$sets[] = $this->RenderItemSet($definition, $item_set, $totalWeight);
 			}
-			
+
 			$keys = [
 				sprintf('SupplyCrateClassString="%s"', $class)
 			];
@@ -125,17 +125,17 @@ class Generator {
 				$keys[] = sprintf('bSetsRandomWithoutReplacement=%s', $randomWithoutReplacement ? 'true' : 'false');
 			}
 			$keys[] = sprintf('ItemSets=(%s)', implode(',', $sets));
-			
+
 			$newLines[] = sprintf('ConfigOverrideSupplyCrateItems=(%s)', implode(',', $keys));
 		}
-		
+
 		$input = trim($input);
 		$input = str_replace(chr(13) . chr(10), chr(10), $input);
 		$input = str_replace(chr(13), chr(10), $input);
 		$lines = explode(chr(10), $input);
 		$groups = [];
 		$currentGroup = '';
-		
+
 		foreach ($lines as $line) {
 			$line = trim($line);
 			if (empty($line)) {
@@ -145,7 +145,7 @@ class Generator {
 				$currentGroup = strtolower(substr($line, 1, strlen($line) - 2));
 				continue;
 			}
-			
+
 			// don't import the keys we're going to replace
 			if ($currentGroup == '/script/shootergame.shootergamemode' && strpos($line, '=') !== false) {
 				list($key, $value) = explode('=', $line, 2);
@@ -153,24 +153,24 @@ class Generator {
 					continue;
 				}
 			}
-			
+
 			if (array_key_exists($currentGroup, $groups)) {
 				$groupLines = $groups[$currentGroup];
 			} else {
 				$groupLines = [];
 			}
-			
+
 			$groupLines[] = $line;
 			$groups[$currentGroup] = $groupLines;
 		}
-		
+
 		$shooterGroup = [];
 		if (array_key_exists('/script/shootergame.shootergamemode', $groups)) {
 			$shooterGroup = $groups['/script/shootergame.shootergamemode'];
 		}
 		$shooterGroup = array_merge($shooterGroup, $newLines);
 		$groups['/script/shootergame.shootergamemode'] = $shooterGroup;
-		
+
 		$outputLines = [];
 		foreach ($groups as $header => $lines) {
 			if ($header !== '') {
@@ -179,10 +179,10 @@ class Generator {
 			$outputLines = array_merge($outputLines, $lines);
 			$outputLines[] = '';
 		}
-		
+
 		return trim(implode(chr(13) . chr(10), $outputLines));
 	}
-	
+
 	protected function SumOfItemSetWeights(array $sets) {
 		$sum = 0;
 		foreach ($sets as $set) {
@@ -190,7 +190,7 @@ class Generator {
 		}
 		return $sum;
 	}
-	
+
 	protected function SumOfEntryWeights(array $entries) {
 		$sum = 0;
 		foreach ($entries as $entry) {
@@ -198,36 +198,42 @@ class Generator {
 		}
 		return $sum;
 	}
-	
+
 	protected function QualityTagToValue(string $tag, float $crateQualityMultiplier) {
 		$rawValue = 0;
 		switch ($tag) {
+		case 'Tier1':
+			$rawValue = 0.5;
+			break;
 		case 'Tier2':
-			$rawValue = 4.8;
+			$rawValue = 3.0;
 			break;
 		case 'Tier3':
-			$rawValue = 7.68;
+			$rawValue = 5.0;
 			break;
 		case 'Tier4':
-			$rawValue = 14.4;
+			$rawValue = 8.7;
 			break;
 		case 'Tier5':
-			$rawValue = 21.12;
+			$rawValue = 12.5;
 			break;
 		case 'Tier6':
-			$rawValue = 26.88;
+			$rawValue = 20.0;
 			break;
 		case 'Tier7':
-			$rawValue = 34.56;
+			$rawValue = 40.0;
 			break;
 		case 'Tier8':
-			$rawValue = 42.24;
+			$rawValue = 60.0;
 			break;
 		case 'Tier9':
-			$rawValue = 53.76;
+			$rawValue = 80.0;
+			break;
+		case 'Tier10':
+			$rawValue = 100.0;
 			break;
 		}
-		
+
 		$crateArbitraryQuality = $crateQualityMultiplier + (($crateQualityMultiplier - 1) * 0.2);
 		$difficultyOffset = min(($this->difficultyValue - 0.5) / (ceil($this->difficultyValue) - 0.5), 1.0);
 		if ($difficultyOffset <= 0) {
@@ -236,7 +242,7 @@ class Generator {
 		$baseArbitraryQuality = 0.75 + ($difficultyOffset * 1.75);
 		return $rawValue / ($baseArbitraryQuality * $crateArbitraryQuality);
 	}
-	
+
 	protected function RenderItemSet(LootDrop $source, array $set, float $weightTotal): string {
 		$randomWithoutReplacement = boolval($set['bItemsRandomWithoutReplacement']);
 		$name = $set['Label'];
@@ -245,13 +251,13 @@ class Generator {
 		$maxEntries = min(max(intval($set['MaxNumItems']), $minEntries), count($entries));
 		$localWeight = max(floatval($set['SetWeight']), 0.0001);
 		$relativeWeight = round(($localWeight / $weightTotal) * 1000);
-		
+
 		$entriesWeightSum = $this->SumOfEntryWeights($entries);
 		$children = [];
 		foreach ($entries as $entry) {
 			$children[] = $this->RenderEntry($source, $entry, $entriesWeightSum);
 		}
-		
+
 		$keys = [
 			sprintf('SetName="%s"', $name),
 			sprintf('MinNumItems=%u', $minEntries),
@@ -261,10 +267,10 @@ class Generator {
 			sprintf('bItemsRandomWithoutReplacement=%s', $randomWithoutReplacement ? 'true' : 'false'),
 			sprintf('ItemEntries=(%s)', implode(',', $children))
 		];
-		
+
 		return '(' . implode(',', $keys) . ')';
 	}
-	
+
 	protected function RenderEntry(LootDrop $source, array $entry, float $weightTotal): string {
 		$blueprintChance = floatval($entry['ChanceToBeBlueprintOverride']);
 		$localWeight = max(floatval($entry['EntryWeight']), 0.0001);
@@ -274,7 +280,7 @@ class Generator {
 		$minQualityTag = $entry['MinQuality'];
 		$maxQuantity = intval($entry['MaxQuantity']);
 		$minQuantity = intval($entry['MinQuantity']);
-		
+
 		$classes = [];
 		$relativeWeights = [];
 		$optionsWeightSum = 0;
@@ -287,10 +293,10 @@ class Generator {
 			} elseif (isset($item['Class'])) {
 				$classes[] = sprintf('"%s"', $item['Class']);
 			}
-			
+
 			$relativeWeights[] = sprintf('%u', round((max(floatval($item['Weight']), 0.0001) / $optionsWeightSum) * 1000));
 		}
-		
+
 		$keys = [
 			sprintf('EntryWeight=%u', $relativeWeight),
 			sprintf('MinQuantity=%u', $minQuantity),
@@ -302,7 +308,7 @@ class Generator {
 			sprintf('ItemClassStrings=(%s)', implode(',', $classes)),
 			sprintf('ItemsWeights=(%s)', implode(',', $relativeWeights))
 		];
-		
+
 		return '(' . implode(',', $keys) . ')';
 	}
 }

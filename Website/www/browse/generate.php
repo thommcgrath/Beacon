@@ -8,7 +8,7 @@ if (empty($_REQUEST['projectId'])) {
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 use BeaconAPI\v4\Project;
-use BeaconAPI\v4\Ark\Generator;
+use BeaconAPI\v4\{Ark, ArkSA};
 
 $projectId = $_REQUEST['projectId'];
 $project = Project::Fetch($projectId);
@@ -18,8 +18,22 @@ if (is_null($project) || $project->IsPublic() === false) {
 	echo '<h1>Project not found</h1><p><a href="/browse/">Browse community projects</a></p>';
 	exit;
 }
+$gameId = $project->GameId();
+$generator = null;
+switch ($gameId) {
+case 'Ark':
+	$generator = new Ark\Generator($project);
+	break;
+case 'ArkSA':
+	$generator = new ArkSA\Generator($project);
+	break;
+default:
+	http_response_code(400);
+	BeaconTemplate::SetTitle('Incompatible Project');
+	echo '<h1>Incompatible Project</h1><p>This project does not support generating content online.</p><p><a href="/browse/">Browse community projects</a></p>';
+	exit;
+}
 
-$generator = new Generator($project);
 if (array_key_exists('qualityScale', $_REQUEST)) {
 	$generator->SetQualityScale(floatval($_REQUEST['qualityScale']));
 }

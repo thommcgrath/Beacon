@@ -10,8 +10,7 @@ $searchKeys = [
 	'pageSize' => 25,
 	'page' => 1,
 	'sort' => 'downloadCount',
-	'direction' => 'DESC',
-	'gameId' => 'Ark'
+	'direction' => 'DESC'
 ];
 
 $selectedMaps = Map::CombinedMask(Map::Search([], true));
@@ -125,7 +124,7 @@ if (count($projects) > 0) {
 	foreach ($projects as $project) {
 		$updateTime = new DateTime('@' . $project->LastUpdate());
 		echo '<tr>';
-		echo '<td><a href="' . urlencode($project->ProjectId()) . '?map_filter=' . $selectedMaps . '" class="document_name">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . str_replace(["\r\n", "\n", "\r"], ' ', htmlentities($project->Description())) . '</span><div class="row-details"><span class="detail">Updated: ' . $updateTime->format('M jS, Y g:i A') . ' UTC</span></div></td>';
+		echo '<td class="break-code"><a href="' . urlencode($project->ProjectId()) . '?map_filter=' . $selectedMaps . '" class="document_name">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . str_replace(["\r\n", "\n", "\r"], ' ', htmlentities($project->Description())) . '</span><div class="row-details"><span class="detail">Updated: ' . $updateTime->format('M jS, Y g:i A') . ' UTC</span></div></td>';
 		echo '<td class="text-right low-priority">' . number_format($project->DownloadCount()) . '</td>';
 		echo '<td class="nowrap text-center low-priority"><time datetime="' . $updateTime->format('c') . '">' . $updateTime->format('M jS, Y g:i A') . ' UTC</time></td>';
 		echo '<td class="text-right low-priority">' . number_format($project->Revision()) . '</td>';
@@ -143,7 +142,7 @@ if ($projectCount > count($projects)) {
 	} else {
 		$prev_link = '&laquo; Previous';
 	}
-	
+
 	if ($projectResults['page'] < $projectResults['pages']) {
 		$next = $_GET;
 		$next['page'] = min($projectResults['page'] + 1, $projectResults['pages']);
@@ -151,7 +150,7 @@ if ($projectCount > count($projects)) {
 	} else {
 		$next_link = 'More &raquo;';
 	}
-	
+
 	echo '<p class="text-center">' . $prev_link . ' ' . $next_link . '</p>';
 }
 
