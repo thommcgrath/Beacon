@@ -479,8 +479,8 @@ End
 		Private Sub SettingsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
 		    Var Config As ArkSA.Configs.EngramControl = Self.Config(True)
-		    Config.OnlyAllowSpecifiedEngrams = ArkEngramControlSettingsView(Sender.Container).OnlyAllowSpecifiedEngrams
-		    Config.AutoUnlockAllEngrams = ArkEngramControlSettingsView(Sender.Container).AutoUnlockEngrams
+		    Config.OnlyAllowSpecifiedEngrams = ArkSAEngramControlSettingsView(Sender.Container).OnlyAllowSpecifiedEngrams
+		    Config.AutoUnlockAllEngrams = ArkSAEngramControlSettingsView(Sender.Container).AutoUnlockEngrams
 		    Self.SetupEngramsList
 		    Self.Modified = Self.Project.Modified
 		  End If
