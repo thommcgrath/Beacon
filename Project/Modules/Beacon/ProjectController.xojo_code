@@ -186,7 +186,11 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h0
 		Function GameId() As String
-		  Return Self.mProjectURL.GameId
+		  If (Self.mProject Is Nil) = False Then
+		    Return Self.mProject.GameId
+		  Else
+		    Return Self.mProjectURL.GameId
+		  End If
 		End Function
 	#tag EndMethod
 
