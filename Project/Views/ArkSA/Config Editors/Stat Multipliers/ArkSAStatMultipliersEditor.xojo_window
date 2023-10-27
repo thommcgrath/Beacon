@@ -4437,15 +4437,15 @@ End
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageCreatureStats
 		    Self.ConfigToolbar.Item("CreaturesButton").Toggled = True
-		    Self.ConfigToolbar.Item("MutagenButton").Toggled = False
+		    //Self.ConfigToolbar.Item("MutagenButton").Toggled = False
 		    Self.ConfigToolbar.Item("PlayersButton").Toggled = False
 		  Case Self.PageMutagenBonuses
 		    Self.ConfigToolbar.Item("CreaturesButton").Toggled = False
-		    Self.ConfigToolbar.Item("MutagenButton").Toggled = True
+		    //Self.ConfigToolbar.Item("MutagenButton").Toggled = True
 		    Self.ConfigToolbar.Item("PlayersButton").Toggled = False
 		  Case Self.PagePlayerStats
 		    Self.ConfigToolbar.Item("CreaturesButton").Toggled = False
-		    Self.ConfigToolbar.Item("MutagenButton").Toggled = False
+		    //Self.ConfigToolbar.Item("MutagenButton").Toggled = False
 		    Self.ConfigToolbar.Item("PlayersButton").Toggled = True
 		  End Select
 		End Sub
