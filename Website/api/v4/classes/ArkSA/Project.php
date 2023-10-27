@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\ArkSA;
 use BeaconAPI\v4\{Core, DatabaseSearchParameters};
-use BeaconCommon;
+use BeaconCommon, BeaconUUID;
 
 class Project extends \BeaconAPI\v4\Project {
 	public function jsonSerialize(): mixed {
@@ -11,28 +11,46 @@ class Project extends \BeaconAPI\v4\Project {
 		$json['difficulty'] = $this->DifficultyValue();
 		return $json;
 	}
-	
+
 	protected static function ExtendSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
-			
+
 		if (isset($filters['allMaps'])) {
 			$parameters->clauses[] = '(game_specific->\'map\')::int & $' . $parameters->placeholder . ' = $' . $parameters->placeholder++;
-			$parameters->values[] = $filters['allMaps'];
+			$parameters->values[] = static::MapFilterToMask($filters['allMaps']);
 		} else if (isset($filters['anyMaps'])) {
 			$parameters->clauses[] = '(game_specific->\'map\')::int & $' . $parameters->placeholder++ . ' != 0';
-			$parameters->values[] = $filters['anyMaps'];
+			$parameters->values[] = static::MapFilterToMask($filters['anyMaps']);
 		}
 	}
-	
+
+	protected static function MapFilterToMask(string $filter): int {
+		if (is_numeric($filter)) {
+			return intval($filter);
+		} else {
+			$allMaps = explode(',', $filter);
+			$mapIds = [];
+			foreach ($allMaps as $mapId) {
+				if (BeaconUUID::Validate($mapId)) {
+					$mapIds[] = $mapId;
+				}
+			}
+
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT BIT_OR(mask) AS mask FROM arksa.maps WHERE map_id = ANY($1);', '{' . implode(',', $mapIds) . '}');
+			return $rows->Field('mask') ?? 0;
+		}
+	}
+
 	public function MapMask(): int {
 		return array_key_exists('map', $this->gameSpecific) ? intval($this->gameSpecific['map']) : 0;
 	}
-	
+
 	public function DifficultyValue(): float {
 		return array_key_exists('difficulty', $this->gameSpecific) ? floatval($this->gameSpecific['difficulty']) : 0;
 		return $this->difficulty_value;
 	}
-	
+
 	public function RequiredContentPacks(bool $asArray): array|string {
 		if (array_key_exists('contentPacks', $this->gameSpecific)) {
 			$contentPacks = $this->gameSpecific['contentPacks'];
@@ -49,7 +67,7 @@ class Project extends \BeaconAPI\v4\Project {
 			}
 		}
 	}
-	
+
 	public function ImplementedConfigs(bool $asArray): array|string {
 		if (array_key_exists('included_editors', $this->gameSpecific)) {
 			$editors = $this->gameSpecific['included_editors'];
@@ -66,14 +84,14 @@ class Project extends \BeaconAPI\v4\Project {
 			}
 		}
 	}
-	
+
 	protected static function AddColumnValues(array $project, array &$row_values): bool {
 		if (parent::AddColumnValues($project, $row_values) === false) {
 			return false;
 		}
-		
+
 		$database = BeaconCommon::Database();
-		
+
 		$content_pack_ids = [];
 		if (isset($project['ModSelections'])) {
 			$console_safe = true;
@@ -96,17 +114,17 @@ class Project extends \BeaconAPI\v4\Project {
 		} else {
 			$console_safe = false;
 		}
-		
+
 		$editor_names = [];
 		foreach ($project['EditorNames'] as $editor_name) {
 			if ($editor_name === 'Difficulty' || $editor_name === 'Metadata') {
 				continue;
 			}
-			
+
 			$editor_names[] = $editor_name;
 		}
 		$project['EditorNames'] = $editor_names;
-		
+
 		$row_values['game_specific'] = json_encode([
 			'map' => isset($project['Map']) ? $project['Map'] : 4,
 			'difficulty' => isset($project['DifficultyValue']) ? $project['DifficultyValue'] : 4,
@@ -114,7 +132,7 @@ class Project extends \BeaconAPI\v4\Project {
 			'included_editors' => $project['EditorNames']
 		]);
 		$row_values['console_safe'] = $console_safe;
-		
+
 		return true;
 	}
 }

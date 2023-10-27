@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseSearchParameters};
-use BeaconCommon;
+use BeaconCommon, BeaconUUID;
 
 class Project extends \BeaconAPI\v4\Project {
 	public function jsonSerialize(): mixed {
@@ -17,10 +17,28 @@ class Project extends \BeaconAPI\v4\Project {
 
 		if (isset($filters['allMaps'])) {
 			$parameters->clauses[] = '(game_specific->\'map\')::int & $' . $parameters->placeholder . ' = $' . $parameters->placeholder++;
-			$parameters->values[] = $filters['allMaps'];
+			$parameters->values[] = static::MapFilterToMask($filters['allMaps']);
 		} else if (isset($filters['anyMaps'])) {
 			$parameters->clauses[] = '(game_specific->\'map\')::int & $' . $parameters->placeholder++ . ' != 0';
-			$parameters->values[] = $filters['anyMaps'];
+			$parameters->values[] = static::MapFilterToMask($filters['anyMaps']);
+		}
+	}
+
+	protected static function MapFilterToMask(string $filter): int {
+		if (is_numeric($filter)) {
+			return intval($filter);
+		} else {
+			$allMaps = explode(',', $filter);
+			$mapIds = [];
+			foreach ($allMaps as $mapId) {
+				if (BeaconUUID::Validate($mapId)) {
+					$mapIds[] = $mapId;
+				}
+			}
+
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT BIT_OR(mask) AS mask FROM ark.maps WHERE map_id = ANY($1);', '{' . implode(',', $mapIds) . '}');
+			return $rows->Field('mask') ?? 0;
 		}
 	}
 
