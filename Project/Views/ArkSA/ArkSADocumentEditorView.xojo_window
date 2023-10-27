@@ -1239,6 +1239,11 @@ End
 		  System.GotoURL(Beacon.WebURL("/omni"))
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function GameName() As String
+		  Return Language.GameName(ArkSA.Identifier)
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events OmniBar1
 	#tag Event

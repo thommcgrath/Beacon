@@ -1182,6 +1182,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events OmniNoticeBanner
+	#tag Event
+		Function GameName() As String
+		    Return Language.GameName(SDTD.Identifier)
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Modified"

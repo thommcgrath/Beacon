@@ -1,7 +1,7 @@
 #tag Class
 Protected Class OmniNoticeBar
 Inherits ControlCanvas
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
@@ -49,11 +49,13 @@ Inherits ControlCanvas
 		  G.DrawingColor = BorderColor
 		  G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
 		  
-		  Var TextWidth As Double = G.TextWidth(Self.WarningText)
+		  Var GameName As String = RaiseEvent GameName
+		  Var WarningText As String = Language.ReplacePlaceholders(Self.WarningText, GameName)
+		  Var TextWidth As Double = G.TextWidth(WarningText)
 		  Var TextLeft As Double = (G.Width - TextWidth) / 2
 		  Var TextBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
 		  G.DrawingColor = TextColor
-		  G.DrawText(Self.WarningText, TextLeft, TextBaseline, G.Width - 40, True)
+		  G.DrawText(WarningText, TextLeft, TextBaseline, G.Width - 40, True)
 		  
 		  If Self.mDrawPressed Then
 		    G.DrawingColor = &c00000080
@@ -62,6 +64,10 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndEvent
 
+
+	#tag Hook, Flags = &h0
+		Event GameName() As String
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Pressed()
@@ -73,7 +79,7 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 
-	#tag Constant, Name = WarningText, Type = String, Dynamic = False, Default = \"This config type requires Beacon Omni. Click this banner to learn more.", Scope = Private
+	#tag Constant, Name = WarningText, Type = String, Dynamic = False, Default = \"This editor requires Beacon Omni for \?1. Click this banner to learn more.", Scope = Private
 	#tag EndConstant
 
 
