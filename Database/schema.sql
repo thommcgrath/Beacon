@@ -26,6 +26,15 @@ CREATE SCHEMA ark;
 ALTER SCHEMA ark OWNER TO thommcgrath;
 
 --
+-- Name: arksa; Type: SCHEMA; Schema: -; Owner: thommcgrath
+--
+
+CREATE SCHEMA arksa;
+
+
+ALTER SCHEMA arksa OWNER TO thommcgrath;
+
+--
 -- Name: sdtd; Type: SCHEMA; Schema: -; Owner: thommcgrath
 --
 
@@ -125,6 +134,26 @@ CREATE TYPE ark.loot_quality_tier AS ENUM (
 ALTER TYPE ark.loot_quality_tier OWNER TO thommcgrath;
 
 --
+-- Name: loot_quality_tier; Type: TYPE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TYPE arksa.loot_quality_tier AS ENUM (
+    'Tier1',
+    'Tier2',
+    'Tier3',
+    'Tier4',
+    'Tier5',
+    'Tier6',
+    'Tier7',
+    'Tier8',
+    'Tier9',
+    'Tier10'
+);
+
+
+ALTER TYPE arksa.loot_quality_tier OWNER TO thommcgrath;
+
+--
 -- Name: article_type; Type: TYPE; Schema: public; Owner: thommcgrath
 --
 
@@ -189,7 +218,8 @@ ALTER DOMAIN public.email OWNER TO thommcgrath;
 
 CREATE TYPE public.game_identifier AS ENUM (
     'Ark',
-    '7DaysToDie'
+    '7DaysToDie',
+    'ArkSA'
 );
 
 
@@ -254,7 +284,8 @@ ALTER TYPE public.loot_source_kind OWNER TO thommcgrath;
 
 CREATE TYPE public.marketplace AS ENUM (
     'Steam',
-    'Steam Workshop'
+    'Steam Workshop',
+    'CurseForge'
 );
 
 
@@ -357,7 +388,7 @@ ALTER TYPE public.taming_methods OWNER TO thommcgrath;
 
 CREATE TYPE public.token_provider AS ENUM (
     'Nitrado',
-    'GameServerApp'
+    'GameServerApp.com'
 );
 
 
@@ -1051,6 +1082,622 @@ $$;
 ALTER FUNCTION ark.update_support_article_timestamp() OWNER TO thommcgrath;
 
 --
+-- Name: blueprint_insert_trigger(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.blueprint_insert_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	EXECUTE 'DELETE FROM arksa.deletions WHERE object_id = $1;' USING NEW.object_id;
+	NEW.last_update = CURRENT_TIMESTAMP(0);
+	NEW.object_id = public.create_object_id(NEW.content_pack_id, NEW.path);
+	NEW.min_version = GREATEST(NEW.min_version, 20000000);
+	RETURN NEW;
+END;
+$_$;
+
+
+ALTER FUNCTION arksa.blueprint_insert_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: break_content_pack_relationships(uuid[]); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.break_content_pack_relationships(p_uuids uuid[]) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	FOR first_idx IN array_lower(p_uuids, 1) .. array_upper(p_uuids, 1)
+	LOOP
+		FOR second_idx IN array_lower(p_uuids, 1) .. array_upper(p_uuids, 1)
+		LOOP
+			IF first_idx != second_idx THEN
+				DELETE FROM arksa.content_pack_relationships WHERE (pack_1 = p_uuids[first_idx] AND pack_2 = p_uuids[second_idx]) OR (pack_1 = p_uuids[second_idx] AND pack_2 = p_uuids[first_idx]);
+			END IF;
+		END LOOP;
+	END LOOP;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.break_content_pack_relationships(p_uuids uuid[]) OWNER TO thommcgrath;
+
+--
+-- Name: compute_class_trigger(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.compute_class_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	NEW.class_string = SUBSTRING(NEW.path, '\.([a-zA-Z0-9\-\_]+)$') || '_C';
+	RETURN NEW;
+END;
+$_$;
+
+
+ALTER FUNCTION arksa.compute_class_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: create_content_pack_relationships(uuid[]); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.create_content_pack_relationships(p_uuids uuid[]) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	FOR first_idx IN array_lower(p_uuids, 1) .. array_upper(p_uuids, 1)
+	LOOP
+		FOR second_idx IN array_lower(p_uuids, 1) .. array_upper(p_uuids, 1)
+		LOOP
+			IF first_idx != second_idx THEN
+				INSERT INTO arksa.content_pack_relationships (pack_1, pack_2) VALUES (p_uuids[first_idx], p_uuids[second_idx]) ON CONFLICT (pack_1, pack_2) DO NOTHING;
+				INSERT INTO arksa.content_pack_relationships (pack_1, pack_2) VALUES (p_uuids[second_idx], p_uuids[first_idx]) ON CONFLICT (pack_1, pack_2) DO NOTHING;
+			END IF;
+		END LOOP;
+	END LOOP;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.create_content_pack_relationships(p_uuids uuid[]) OWNER TO thommcgrath;
+
+--
+-- Name: deletions_delete(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.deletions_delete() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM public.deletions WHERE object_id = OLD.object_id;
+	RETURN OLD;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.deletions_delete() OWNER TO thommcgrath;
+
+--
+-- Name: deletions_insert(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.deletions_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO public.deletions (object_id, game_id, from_table, label, min_version, action_time, tag) VALUES (NEW.object_id, 'Ark', NEW.from_table, NEW.label, NEW.min_version, NEW.action_time, NEW.tag);
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.deletions_insert() OWNER TO thommcgrath;
+
+--
+-- Name: engram_delete_trigger(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.engram_delete_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	EXECUTE 'INSERT INTO arksa.deletions (object_id, from_table, label, min_version, tag) VALUES ($1, $2, $3, $4, $5);' USING OLD.object_id, TG_TABLE_NAME, OLD.label, OLD.min_version, OLD.path;
+	RETURN OLD;
+END;
+$_$;
+
+
+ALTER FUNCTION arksa.engram_delete_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: generic_update_trigger(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.generic_update_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.last_update = CURRENT_TIMESTAMP(0);
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.generic_update_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: ini_options_insert_trigger(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.ini_options_insert_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	EXECUTE 'DELETE FROM arksa.deletions WHERE object_id = $1;' USING NEW.object_id;
+	NEW.last_update = CURRENT_TIMESTAMP(0);
+	NEW.object_id = public.generate_uuid_from_text(LOWER(NEW.content_pack_id::TEXT) || ':' || LOWER(NEW.file::TEXT) || ':' || LOWER(NEW.header) || ':' || LOWER(NEW.key));
+	NEW.min_version = GREATEST(NEW.min_version, 20000000);
+	RETURN NEW;
+END;
+$_$;
+
+
+ALTER FUNCTION arksa.ini_options_insert_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: object_delete_trigger(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.object_delete_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	EXECUTE 'INSERT INTO arksa.deletions (object_id, from_table, label, min_version) VALUES ($1, $2, $3, $4);' USING OLD.object_id, TG_TABLE_NAME, OLD.label, OLD.min_version;
+	RETURN OLD;
+END;
+$_$;
+
+
+ALTER FUNCTION arksa.object_delete_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: object_insert_trigger(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.object_insert_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	EXECUTE 'DELETE FROM arksa.deletions WHERE object_id = $1;' USING NEW.object_id;
+	NEW.last_update = CURRENT_TIMESTAMP(0);
+	NEW.min_version = GREATEST(NEW.min_version, 20000000);
+	RETURN NEW;
+END;
+$_$;
+
+
+ALTER FUNCTION arksa.object_insert_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: object_update_trigger(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.object_update_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.last_update = CURRENT_TIMESTAMP(0);
+	NEW.min_version = GREATEST(NEW.min_version, 20000000);
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.object_update_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: objects_search_sync(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.objects_search_sync() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'DELETE' THEN
+		INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.object_id, TG_TABLE_NAME, 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		RETURN OLD;
+	ELSIF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+		INSERT INTO search_sync (object_id, table_name, action) VALUES (NEW.object_id, TG_TABLE_NAME, 'Save')  ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		RETURN NEW;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.objects_search_sync() OWNER TO thommcgrath;
+
+--
+-- Name: table_to_group(text); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.table_to_group(p_table_name text) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	CASE p_table_name
+	WHEN 'ini_options' THEN
+		RETURN 'configOptions';
+	WHEN 'loot_drop_icons' THEN
+		RETURN 'lootDropIcons';
+	WHEN 'loot_drops' THEN
+		RETURN 'lootDrops';
+	WHEN 'content_packs' THEN
+		RETURN 'contentPacks';
+	WHEN 'spawn_points' THEN
+		RETURN 'spawnPoints';
+	ELSE
+		RETURN p_table_name;
+	END CASE;
+END
+$$;
+
+
+ALTER FUNCTION arksa.table_to_group(p_table_name text) OWNER TO thommcgrath;
+
+--
+-- Name: templates_json_sync_function(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.templates_json_sync_function() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.label = NEW.contents->>'Label';
+	NEW.object_id = (NEW.contents->>'ID')::UUID;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.templates_json_sync_function() OWNER TO thommcgrath;
+
+--
+-- Name: update_color_last_update(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_color_last_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		DELETE FROM arksa.deletions WHERE object_id = generate_uuid_from_text('color ' || NEW.color_id::text) AND from_table = 'colors';
+		RETURN NEW;
+	ELSIF TG_OP = 'UPDATE' THEN
+		NEW.last_update = CURRENT_TIMESTAMP;
+		RETURN NEW;
+	ELSIF TG_OP = 'DELETE' THEN
+		INSERT INTO arksa.deletions (object_id, from_table, label, min_version, action_time) VALUES (generate_uuid_from_text('color ' || OLD.color_id::text), 'colors', OLD.color_name, 0, CURRENT_TIMESTAMP);
+		RETURN OLD;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.update_color_last_update() OWNER TO thommcgrath;
+
+--
+-- Name: update_color_set_last_update(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_color_set_last_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		DELETE FROM arksa.deletions WHERE object_id = NEW.color_set_id AND from_table = 'color_sets';
+		RETURN NEW;
+	ELSIF TG_OP = 'UPDATE' THEN
+		NEW.last_update = CURRENT_TIMESTAMP;
+		RETURN NEW;
+	ELSIF TG_OP = 'DELETE' THEN
+		INSERT INTO arksa.deletions (object_id, from_table, label, min_version, action_time) VALUES (OLD.color_set_id, 'color_sets', OLD.label, 0, CURRENT_TIMESTAMP);
+		RETURN OLD;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.update_color_set_last_update() OWNER TO thommcgrath;
+
+--
+-- Name: update_creature_modified(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_creature_modified() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'DELETE' OR TG_OP = 'TRUNCATE' OR (TG_OP = 'UPDATE' AND NEW.creature_id != OLD.creature_id) THEN
+		UPDATE arksa.creatures SET last_update = CURRENT_TIMESTAMP WHERE object_id = OLD.creature_id;
+	END IF;
+	IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+		UPDATE arksa.creatures SET last_update = CURRENT_TIMESTAMP WHERE object_id = NEW.creature_id;
+	END IF;
+	RETURN NULL;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.update_creature_modified() OWNER TO thommcgrath;
+
+--
+-- Name: update_engram_timestamp(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_engram_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_oldid UUID;
+	v_newid UUID;
+BEGIN
+	IF TG_OP = 'DELETE' THEN
+		v_oldid = OLD.engram_id;
+	ELSIF TG_OP = 'UPDATE' THEN
+		v_oldid = OLD.engram_id;
+		v_newid = NEW.engram_id;
+	ELSE
+		v_newid = NEW.engram_id;
+	END IF;
+	IF v_oldid IS NOT NULL THEN
+		UPDATE arksa.engrams SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_oldid;
+	END IF;
+	IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+		UPDATE arksa.engrams SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_newid;
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END; $$;
+
+
+ALTER FUNCTION arksa.update_engram_timestamp() OWNER TO thommcgrath;
+
+--
+-- Name: update_event_last_update(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_event_last_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		DELETE FROM arksa.deletions WHERE object_id = NEW.event_id AND from_table = 'events';
+		RETURN NEW;
+	ELSIF TG_OP = 'UPDATE' THEN
+		NEW.last_update = CURRENT_TIMESTAMP;
+		RETURN NEW;
+	ELSIF TG_OP = 'DELETE' THEN
+		INSERT INTO arksa.deletions (object_id, from_table, label, min_version, action_time) VALUES (OLD.event_id, 'events', OLD.event_name, 0, CURRENT_TIMESTAMP);
+		RETURN OLD;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.update_event_last_update() OWNER TO thommcgrath;
+
+--
+-- Name: update_event_last_update_from_children(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_event_last_update_from_children() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+		UPDATE arksa.events SET last_update = CURRENT_TIMESTAMP WHERE event_id = NEW.event_id;
+	END IF;
+	IF TG_OP = 'DELETE' OR (TG_OP = 'UPDATE' AND NEW.event_id != OLD.event_id) THEN
+		UPDATE arksa.events SET last_update = CURRENT_TIMESTAMP WHERE event_id = OLD.event_id;
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.update_event_last_update_from_children() OWNER TO thommcgrath;
+
+--
+-- Name: update_last_update_column(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_last_update_column() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.last_update = CURRENT_TIMESTAMP;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.update_last_update_column() OWNER TO thommcgrath;
+
+--
+-- Name: update_loot_drop_timestamp(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_loot_drop_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_oldid UUID;
+	v_newid UUID;
+BEGIN
+	IF TG_TABLE_NAME = 'loot_item_sets' THEN
+		IF TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN
+			v_oldid = OLD.loot_drop_id;
+		END IF;
+		IF TG_OP = 'NEW' OR TG_OP = 'UPDATE' THEN
+			v_newid = NEW.loot_drop_id;
+		END IF;
+		IF v_oldid IS NOT NULL THEN
+			UPDATE arksa.loot_drops SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_oldid;
+		END IF;
+		IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+			UPDATE arksa.loot_drops SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_newid;
+		END IF;
+	ELSIF TG_TABLE_NAME = 'loot_item_set_entries' THEN
+		IF TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN
+			v_oldid = OLD.loot_item_set_id;
+		END IF;
+		IF TG_OP = 'NEW' OR TG_OP = 'UPDATE' THEN
+			v_newid = NEW.loot_item_set_id;
+		END IF;
+		IF v_oldid IS NOT NULL THEN
+			UPDATE arksa.loot_drops SET last_update = CURRENT_TIMESTAMP FROM arksa.loot_item_sets WHERE loot_item_sets.loot_item_set_id = v_oldid AND loot_item_sets.loot_drop_id = loot_drops.object_id;
+		END IF;
+		IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+			UPDATE arksa.loot_drops SET last_update = CURRENT_TIMESTAMP FROM arksa.loot_item_sets WHERE loot_item_sets.loot_item_set_id = v_newid AND loot_item_sets.loot_drop_id = loot_drops.object_id;
+		END IF;
+	ELSIF TG_TABLE_NAME = 'loot_item_set_entry_options' THEN
+		IF TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN
+			v_oldid = OLD.loot_item_set_entry_id;
+		END IF;
+		IF TG_OP = 'NEW' OR TG_OP = 'UPDATE' THEN
+			v_newid = NEW.loot_item_set_entry_id;
+		END IF;
+		IF v_oldid IS NOT NULL THEN
+			UPDATE arksa.loot_drops SET last_update = CURRENT_TIMESTAMP FROM arksa.loot_item_sets, arksa.loot_item_set_entries WHERE loot_item_set_entries.loot_item_set_entry_id = v_oldid AND loot_item_set_entries.loot_item_set_id = loot_item_sets.loot_item_set_id AND loot_item_sets.loot_drop_id = loot_drops.object_id;
+		END IF;
+		IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+			UPDATE arksa.loot_drops SET last_update = CURRENT_TIMESTAMP FROM arksa.loot_item_sets, arksa.loot_item_set_entries WHERE loot_item_set_entries.loot_item_set_entry_id = v_newid AND loot_item_set_entries.loot_item_set_id = loot_item_sets.loot_item_set_id AND loot_item_sets.loot_drop_id = loot_drops.object_id;
+		END IF;
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END; $$;
+
+
+ALTER FUNCTION arksa.update_loot_drop_timestamp() OWNER TO thommcgrath;
+
+--
+-- Name: update_spawn_point_timestamp(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_spawn_point_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_oldid UUID;
+	v_newid UUID;
+BEGIN
+	IF TG_TABLE_NAME = 'spawn_point_set_entries' OR TG_TABLE_NAME = 'spawn_point_set_replacements' THEN
+		IF TG_OP = 'DELETE' THEN
+			v_oldid = OLD.spawn_point_set_id;
+		ELSIF TG_OP = 'UPDATE' THEN
+			v_oldid = OLD.spawn_point_set_id;
+			v_newid = NEW.spawn_point_set_id;
+		ELSE
+			v_newid = NEW.spawn_point_set_id;
+		END IF;
+		IF v_oldid IS NOT NULL THEN
+			UPDATE arksa.spawn_points SET last_update = CURRENT_TIMESTAMP FROM arksa.spawn_point_sets WHERE spawn_point_sets.spawn_point_set_id = v_oldid AND spawn_point_sets.spawn_point_id = spawn_points.object_id;
+		END IF;
+		IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+			UPDATE arksa.spawn_points SET last_update = CURRENT_TIMESTAMP FROM arksa.spawn_point_sets WHERE spawn_point_sets.spawn_point_set_id = v_newid AND spawn_point_sets.spawn_point_id = spawn_points.object_id;
+		END IF;
+	ELSIF TG_TABLE_NAME = 'spawn_point_set_entry_levels' THEN
+		IF TG_OP = 'DELETE' THEN
+			v_oldid = OLD.spawn_point_set_entry_id;
+		ELSIF TG_OP = 'UPDATE' THEN
+			v_oldid = OLD.spawn_point_set_entry_id;
+			v_newid = NEW.spawn_point_set_entry_id;
+		ELSE
+			v_newid = NEW.spawn_point_set_entry_id;
+		END IF;
+		IF v_oldid IS NOT NULL THEN
+			UPDATE arksa.spawn_points SET last_update = CURRENT_TIMESTAMP FROM arksa.spawn_point_set_entries, arksa.spawn_point_sets WHERE spawn_point_set_entries.spawn_point_set_entry_id = v_oldid AND spawn_point_set_entries.spawn_point_set_id = spawn_point_sets.spawn_point_set_id AND spawn_point_sets.spawn_point_id = spawn_points.object_id;
+		END IF;
+		IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+			UPDATE arksa.spawn_points SET last_update = CURRENT_TIMESTAMP FROM arksa.spawn_point_set_entries, arksa.spawn_point_sets WHERE spawn_point_set_entries.spawn_point_set_entry_id = v_newid AND spawn_point_set_entries.spawn_point_set_id = spawn_point_sets.spawn_point_set_id AND spawn_point_sets.spawn_point_id = spawn_points.object_id;
+		END IF;
+	ELSE
+		IF TG_OP = 'DELETE' THEN
+			v_oldid = OLD.spawn_point_id;
+		ELSIF TG_OP = 'UPDATE' THEN
+			v_oldid = OLD.spawn_point_id;
+			v_newid = NEW.spawn_point_id;
+		ELSE
+			v_newid = NEW.spawn_point_id;
+		END IF;
+		IF v_oldid IS NOT NULL THEN
+			UPDATE arksa.spawn_points SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_oldid;
+		END IF;
+		IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+			UPDATE arksa.spawn_points SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_newid;
+		END IF;
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END; $$;
+
+
+ALTER FUNCTION arksa.update_spawn_point_timestamp() OWNER TO thommcgrath;
+
+--
+-- Name: update_support_article_module_timestamp(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_support_article_module_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.module_updated := CURRENT_TIMESTAMP;
+	UPDATE support_articles SET article_updated = CURRENT_TIMESTAMP WHERE content_markdown LIKE '%[module:' || NEW.module_name || ']%';
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.update_support_article_module_timestamp() OWNER TO thommcgrath;
+
+--
+-- Name: update_support_article_timestamp(); Type: FUNCTION; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE FUNCTION arksa.update_support_article_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.article_updated := CURRENT_TIMESTAMP;
+	IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.subject IS DISTINCT FROM OLD.subject) THEN
+		UPDATE support_articles SET article_updated = CURRENT_TIMESTAMP WHERE content_markdown LIKE '%' || NEW.article_id::TEXT || '%';
+		UPDATE support_article_modules SET module_updated = CURRENT_TIMESTAMP WHERE module_markdown LIKE '%' || NEW.article_id::TEXT || '%';
+	END IF;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION arksa.update_support_article_timestamp() OWNER TO thommcgrath;
+
+--
 -- Name: content_packs_delete_trigger(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -1111,6 +1758,21 @@ $$;
 ALTER FUNCTION public.content_packs_search_sync() OWNER TO thommcgrath;
 
 --
+-- Name: create_object_id(uuid, text); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.create_object_id(p_content_pack_id uuid, p_path text) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	RETURN uuid_generate_v5('82aa4465-85f9-4b9e-8d36-f66164cef0a6', LOWER(p_content_pack_id::TEXT) || ':' || LOWER(p_path));
+END;
+$$;
+
+
+ALTER FUNCTION public.create_object_id(p_content_pack_id uuid, p_path text) OWNER TO thommcgrath;
+
+--
 -- Name: email_needs_update(uuid); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -1118,12 +1780,11 @@ CREATE FUNCTION public.email_needs_update(p_email_id uuid) RETURNS boolean
     LANGUAGE plpgsql
     AS $$
 DECLARE
-	v_precision INTEGER;
 	v_alg CITEXT;
 BEGIN
-	SELECT group_key_precision, group_key_alg INTO v_precision, v_alg FROM email_addresses WHERE email_id = p_email_id;
+	SELECT group_key_alg INTO v_alg FROM public.email_addresses WHERE email_id = p_email_id;
 	IF FOUND THEN
-		RETURN v_precision != 4 OR v_alg != 'sha3-512';
+		RETURN v_alg != 'uuidv5';
 	END IF;
 	RETURN FALSE;
 END;
@@ -1143,7 +1804,10 @@ DECLARE
 	v_email_id UUID;
 BEGIN
 	v_email_id := public.uuid_for_email(p_address);
-	RETURN public.email_needs_update(v_email_id);
+	IF v_email_id IS NULL THEN
+		RETURN FALSE;
+	END IF;
+	RETURN SUBSTRING(v_email_id::TEXT FROM 15 FOR 1) != '5';
 END;
 $$;
 
@@ -1604,6 +2268,66 @@ CREATE FUNCTION public.uuid_for_email(p_address public.email) RETURNS uuid
     AS $$
 DECLARE
 	v_uuid UUID;
+BEGIN
+	v_uuid := public.uuidv5_for_email(p_address);
+	IF EXISTS (SELECT FROM public.email_addresses WHERE email_id = v_uuid) THEN
+		RETURN v_uuid;
+	END IF;
+	
+	RETURN public.uuidv4_for_email(p_address);
+END;
+$$;
+
+
+ALTER FUNCTION public.uuid_for_email(p_address public.email) OWNER TO thommcgrath;
+
+--
+-- Name: uuid_for_email(public.email, boolean); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_uuidv4 UUID;
+	v_uuidv5 UUID;
+	v_precision INTEGER;
+	v_alg TEXT;
+	k_target_precision CONSTANT INTEGER := 4;
+	k_target_alg CONSTANT TEXT := 'sha3-512';
+BEGIN
+	v_uuidv5 := public.uuidv5_for_email(p_address);
+	IF EXISTS (SELECT FROM public.email_addresses WHERE email_id = v_uuidv5) THEN
+		RETURN v_uuidv5;
+	END IF;
+	
+	v_uuidv4 := public.uuidv4_for_email(p_address);
+	IF v_uuidv4 IS NULL THEN
+		IF p_create = TRUE THEN
+			INSERT INTO public.email_addresses (email_id, group_key_alg) VALUES (v_uuidv5, 'uuidv5');
+			RETURN v_uuidv5;
+		ELSE
+			RETURN NULL;
+		END IF;
+	ELSE
+		UPDATE public.email_addresses SET email_id = v_uuidv5, address = NULL, group_key = NULL, group_key_precision = NULL, group_key_alg = 'uuidv5' WHERE email_id = v_uuidv4;
+		RETURN v_uuidv5;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) OWNER TO thommcgrath;
+
+--
+-- Name: uuidv4_for_email(public.email); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.uuidv4_for_email(p_address public.email) RETURNS uuid
+    LANGUAGE plpgsql STABLE
+    AS $$
+DECLARE
+	v_uuid UUID;
 	v_group_params TEXT[][] := array[array['sha3-512', '4'], array['md5', '5'], array['md5', '2']];
 	i INTEGER;
 	v_group_key TEXT;
@@ -1621,39 +2345,22 @@ END;
 $$;
 
 
-ALTER FUNCTION public.uuid_for_email(p_address public.email) OWNER TO thommcgrath;
+ALTER FUNCTION public.uuidv4_for_email(p_address public.email) OWNER TO thommcgrath;
 
 --
--- Name: uuid_for_email(public.email, boolean); Type: FUNCTION; Schema: public; Owner: thommcgrath
+-- Name: uuidv5_for_email(public.email); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
-CREATE FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) RETURNS uuid
-    LANGUAGE plpgsql
+CREATE FUNCTION public.uuidv5_for_email(p_address public.email) RETURNS uuid
+    LANGUAGE plpgsql IMMUTABLE
     AS $$
-DECLARE
-	v_uuid UUID;
-	v_precision INTEGER;
-	v_alg TEXT;
-	k_target_precision CONSTANT INTEGER := 4;
-	k_target_alg CONSTANT TEXT := 'sha3-512';
 BEGIN
-	v_uuid := uuid_for_email(p_address);
-	IF v_uuid IS NULL THEN
-		IF p_create = TRUE THEN
-			INSERT INTO email_addresses (address, group_key, group_key_precision, group_key_alg) VALUES (CRYPT(LOWER(p_address), GEN_SALT('bf', 8)), public.group_key_for_email(p_address, k_target_precision, k_target_alg), k_target_precision, k_target_alg) RETURNING email_id INTO v_uuid;
-		END IF;
-	ELSE
-		SELECT group_key_precision, group_key_alg INTO v_precision, v_alg FROM email_addresses WHERE email_id = v_uuid;
-		IF v_precision != k_target_precision OR v_alg != k_target_alg THEN
-			UPDATE email_addresses SET group_key = public.group_key_for_email(p_address, k_target_precision, k_target_alg), group_key_precision = k_target_precision, group_key_alg = k_target_alg, address = CRYPT(LOWER(p_address), GEN_SALT('bf', 8)) WHERE email_id = v_uuid;
-		END IF;
-	END IF;
-	RETURN v_uuid;
+	RETURN uuid_generate_v5('7fa3e1c6-014a-4832-ad55-9a3fadcd866f', LOWER(TRIM(p_address)));
 END;
 $$;
 
 
-ALTER FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) OWNER TO thommcgrath;
+ALTER FUNCTION public.uuidv5_for_email(p_address public.email) OWNER TO thommcgrath;
 
 --
 -- Name: object_delete_trigger(); Type: FUNCTION; Schema: sdtd; Owner: thommcgrath
@@ -2444,6 +3151,614 @@ CREATE TABLE ark.spawn_point_sets (
 ALTER TABLE ark.spawn_point_sets OWNER TO thommcgrath;
 
 --
+-- Name: objects; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.objects (
+    object_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    label public.citext NOT NULL,
+    alternate_label public.citext,
+    min_version integer DEFAULT 20000000 NOT NULL,
+    last_update timestamp with time zone DEFAULT ('now'::text)::timestamp(0) with time zone NOT NULL,
+    content_pack_id uuid DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid NOT NULL,
+    tags public.citext[] DEFAULT '{}'::public.citext[]
+);
+
+
+ALTER TABLE arksa.objects OWNER TO thommcgrath;
+
+--
+-- Name: creatures; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.creatures (
+    path public.citext NOT NULL,
+    class_string public.citext NOT NULL,
+    availability integer NOT NULL,
+    breedable boolean NOT NULL,
+    incubation_time interval,
+    mature_time interval,
+    mating_interval_min interval,
+    mating_interval_max interval,
+    used_stats integer,
+    tag public.citext,
+    CONSTRAINT creatures_check CHECK ((((mating_interval_min IS NULL) AND (mating_interval_max IS NULL)) OR ((mating_interval_min IS NOT NULL) AND (mating_interval_max IS NOT NULL)))),
+    CONSTRAINT creatures_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.creatures OWNER TO thommcgrath;
+
+--
+-- Name: engrams; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.engrams (
+    path public.citext NOT NULL,
+    class_string public.citext NOT NULL,
+    availability integer DEFAULT 0 NOT NULL,
+    entry_string public.citext,
+    required_points integer,
+    required_level integer,
+    stack_size integer,
+    item_id integer,
+    gfi text,
+    CONSTRAINT engrams_check CHECK ((((entry_string IS NULL) AND (required_points IS NULL) AND (required_level IS NULL)) OR (entry_string IS NOT NULL))),
+    CONSTRAINT engrams_entry_string_check CHECK ((entry_string OPERATOR(public.~) '_C$'::public.citext)),
+    CONSTRAINT engrams_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.engrams OWNER TO thommcgrath;
+
+--
+-- Name: loot_drops; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.loot_drops (
+    path public.citext NOT NULL,
+    class_string public.citext NOT NULL,
+    availability integer NOT NULL,
+    multiplier_min numeric(6,4) NOT NULL,
+    multiplier_max numeric(6,4) NOT NULL,
+    uicolor text NOT NULL,
+    icon uuid NOT NULL,
+    sort_order public.citext NOT NULL,
+    experimental boolean DEFAULT false NOT NULL,
+    notes text DEFAULT ''::text NOT NULL,
+    requirements jsonb DEFAULT '{}'::jsonb NOT NULL,
+    simple_label public.citext,
+    min_item_sets integer NOT NULL,
+    max_item_sets integer NOT NULL,
+    prevent_duplicates boolean NOT NULL,
+    CONSTRAINT loot_drops_class_string_check CHECK ((class_string OPERATOR(public.~~) '%_C'::public.citext)),
+    CONSTRAINT loot_drops_uicolor_check CHECK ((uicolor ~* '^[0-9a-fA-F]{8}$'::text))
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.loot_drops OWNER TO thommcgrath;
+
+--
+-- Name: COLUMN loot_drops.simple_label; Type: COMMENT; Schema: arksa; Owner: thommcgrath
+--
+
+COMMENT ON COLUMN arksa.loot_drops.simple_label IS 'simple_label is a more ambiguous name that relies on the client to perform disambiguation';
+
+
+--
+-- Name: spawn_points; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.spawn_points (
+    path public.citext NOT NULL,
+    class_string public.citext NOT NULL,
+    availability integer DEFAULT 0 NOT NULL,
+    CONSTRAINT spawn_points_path_check CHECK ((path OPERATOR(public.~~) '/Game/%'::public.citext))
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.spawn_points OWNER TO thommcgrath;
+
+--
+-- Name: blueprints; Type: VIEW; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE VIEW arksa.blueprints AS
+ SELECT creatures.object_id,
+    creatures.label,
+    creatures.alternate_label,
+    creatures.tableoid,
+    creatures.min_version,
+    creatures.last_update,
+    creatures.content_pack_id,
+    creatures.path,
+    creatures.class_string,
+    creatures.availability,
+    creatures.tags
+   FROM arksa.creatures
+UNION
+ SELECT engrams.object_id,
+    engrams.label,
+    engrams.alternate_label,
+    engrams.tableoid,
+    engrams.min_version,
+    engrams.last_update,
+    engrams.content_pack_id,
+    engrams.path,
+    engrams.class_string,
+    engrams.availability,
+    engrams.tags
+   FROM arksa.engrams
+UNION
+ SELECT loot_drops.object_id,
+    loot_drops.label,
+    loot_drops.alternate_label,
+    loot_drops.tableoid,
+    loot_drops.min_version,
+    loot_drops.last_update,
+    loot_drops.content_pack_id,
+    loot_drops.path,
+    loot_drops.class_string,
+    loot_drops.availability,
+    loot_drops.tags
+   FROM arksa.loot_drops
+UNION
+ SELECT spawn_points.object_id,
+    spawn_points.label,
+    spawn_points.alternate_label,
+    spawn_points.tableoid,
+    spawn_points.min_version,
+    spawn_points.last_update,
+    spawn_points.content_pack_id,
+    spawn_points.path,
+    spawn_points.class_string,
+    spawn_points.availability,
+    spawn_points.tags
+   FROM arksa.spawn_points;
+
+
+ALTER TABLE arksa.blueprints OWNER TO thommcgrath;
+
+--
+-- Name: color_sets; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.color_sets (
+    color_set_id uuid NOT NULL,
+    label public.citext NOT NULL,
+    class_string public.citext NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE arksa.color_sets OWNER TO thommcgrath;
+
+--
+-- Name: colors; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.colors (
+    color_id integer NOT NULL,
+    color_name public.citext NOT NULL,
+    color_code public.hex NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE arksa.colors OWNER TO thommcgrath;
+
+--
+-- Name: content_pack_relationships; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.content_pack_relationships (
+    relation_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    pack_1 uuid NOT NULL,
+    pack_2 uuid NOT NULL
+);
+
+
+ALTER TABLE arksa.content_pack_relationships OWNER TO thommcgrath;
+
+--
+-- Name: content_packs; Type: VIEW; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE VIEW arksa.content_packs AS
+ SELECT content_packs.content_pack_id,
+    content_packs.marketplace_id,
+    content_packs.user_id,
+    content_packs.name,
+    content_packs.confirmed,
+    content_packs.confirmation_code,
+    content_packs.console_safe,
+    content_packs.default_enabled,
+    content_packs.last_update,
+    content_packs.min_version,
+    content_packs.include_in_deltas,
+    content_packs.is_official
+   FROM public.content_packs
+  WHERE (content_packs.game_id = 'ArkSA'::public.game_identifier);
+
+
+ALTER TABLE arksa.content_packs OWNER TO thommcgrath;
+
+--
+-- Name: crafting_costs; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.crafting_costs (
+    engram_id uuid NOT NULL,
+    ingredient_id uuid NOT NULL,
+    quantity integer NOT NULL,
+    exact boolean NOT NULL,
+    CONSTRAINT crafting_costs_check CHECK ((engram_id IS DISTINCT FROM ingredient_id)),
+    CONSTRAINT crafting_costs_quantity_check CHECK ((quantity >= 1))
+);
+
+
+ALTER TABLE arksa.crafting_costs OWNER TO thommcgrath;
+
+--
+-- Name: creature_engrams; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.creature_engrams (
+    relation_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    creature_id uuid NOT NULL,
+    engram_id uuid NOT NULL
+);
+
+
+ALTER TABLE arksa.creature_engrams OWNER TO thommcgrath;
+
+--
+-- Name: creature_stats; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.creature_stats (
+    creature_id uuid NOT NULL,
+    stat_index integer NOT NULL,
+    base_value numeric(16,6) NOT NULL,
+    per_level_wild_multiplier numeric(16,6) NOT NULL,
+    per_level_tamed_multiplier numeric(16,6) NOT NULL,
+    add_multiplier numeric(16,6) NOT NULL,
+    affinity_multiplier numeric(16,6) NOT NULL,
+    CONSTRAINT creature_stats_stat_index_check CHECK (((stat_index >= 0) AND (stat_index <= 11)))
+);
+
+
+ALTER TABLE arksa.creature_stats OWNER TO thommcgrath;
+
+--
+-- Name: deletions; Type: VIEW; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE VIEW arksa.deletions AS
+ SELECT deletions.object_id,
+    deletions.from_table,
+    deletions.label,
+    deletions.min_version,
+    deletions.action_time,
+    deletions.tag
+   FROM public.deletions
+  WHERE (deletions.game_id = 'Ark'::public.game_identifier);
+
+
+ALTER TABLE arksa.deletions OWNER TO thommcgrath;
+
+--
+-- Name: event_colors; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.event_colors (
+    event_id uuid NOT NULL,
+    color_id integer NOT NULL
+);
+
+
+ALTER TABLE arksa.event_colors OWNER TO thommcgrath;
+
+--
+-- Name: event_engrams; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.event_engrams (
+    event_id uuid NOT NULL,
+    object_id uuid NOT NULL
+);
+
+
+ALTER TABLE arksa.event_engrams OWNER TO thommcgrath;
+
+--
+-- Name: event_rates; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.event_rates (
+    event_id uuid NOT NULL,
+    ini_option uuid NOT NULL,
+    multiplier numeric(8,4) NOT NULL
+);
+
+
+ALTER TABLE arksa.event_rates OWNER TO thommcgrath;
+
+--
+-- Name: events; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.events (
+    event_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    event_name public.citext NOT NULL,
+    event_code public.citext NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE arksa.events OWNER TO thommcgrath;
+
+--
+-- Name: game_variables; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.game_variables (
+    key text NOT NULL,
+    value text NOT NULL,
+    last_update timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE arksa.game_variables OWNER TO thommcgrath;
+
+--
+-- Name: ini_options; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.ini_options (
+    native_editor_version integer,
+    file public.ini_file NOT NULL,
+    header public.citext NOT NULL,
+    key public.citext NOT NULL,
+    value_type public.ini_value_type NOT NULL,
+    max_allowed integer,
+    description text NOT NULL,
+    default_value text NOT NULL,
+    nitrado_path public.citext,
+    nitrado_format public.nitrado_format,
+    nitrado_deploy_style public.nitrado_deploy_style,
+    ui_group public.citext,
+    constraints jsonb,
+    custom_sort public.citext,
+    gsa_placeholder public.citext,
+    uwp_changes jsonb,
+    CONSTRAINT ini_options_check CHECK ((((nitrado_path IS NULL) AND (nitrado_format IS NULL) AND (nitrado_deploy_style IS NULL)) OR ((nitrado_path IS NOT NULL) AND (nitrado_format IS NOT NULL) AND (nitrado_deploy_style IS NOT NULL)))),
+    CONSTRAINT ini_options_check1 CHECK (((file IS DISTINCT FROM 'CommandLineFlag'::public.ini_file) OR ((file = 'CommandLineFlag'::public.ini_file) AND (value_type = 'Boolean'::public.ini_value_type)))),
+    CONSTRAINT ini_options_max_allowed_check CHECK (((max_allowed IS NULL) OR (max_allowed >= 1)))
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.ini_options OWNER TO thommcgrath;
+
+--
+-- Name: loot_drop_icons; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.loot_drop_icons (
+    icon_data bytea NOT NULL
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.loot_drop_icons OWNER TO thommcgrath;
+
+--
+-- Name: loot_item_set_entries; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.loot_item_set_entries (
+    loot_item_set_entry_id uuid NOT NULL,
+    loot_item_set_id uuid NOT NULL,
+    min_quantity integer NOT NULL,
+    max_quantity integer NOT NULL,
+    min_quality arksa.loot_quality_tier NOT NULL,
+    max_quality arksa.loot_quality_tier NOT NULL,
+    blueprint_chance numeric(16,6) NOT NULL,
+    weight numeric(16,6) NOT NULL,
+    single_item_quantity boolean NOT NULL,
+    prevent_grinding boolean NOT NULL,
+    stat_clamp_multiplier numeric(16,6) NOT NULL,
+    sync_sort_key text NOT NULL
+);
+
+
+ALTER TABLE arksa.loot_item_set_entries OWNER TO thommcgrath;
+
+--
+-- Name: loot_item_set_entry_options; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.loot_item_set_entry_options (
+    loot_item_set_entry_option_id uuid NOT NULL,
+    loot_item_set_entry_id uuid NOT NULL,
+    engram_id uuid NOT NULL,
+    weight numeric(16,6) NOT NULL,
+    sync_sort_key text NOT NULL
+);
+
+
+ALTER TABLE arksa.loot_item_set_entry_options OWNER TO thommcgrath;
+
+--
+-- Name: loot_item_sets; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.loot_item_sets (
+    loot_item_set_id uuid NOT NULL,
+    loot_drop_id uuid NOT NULL,
+    label public.citext NOT NULL,
+    min_entries integer NOT NULL,
+    max_entries integer NOT NULL,
+    weight numeric(16,6) NOT NULL,
+    prevent_duplicates boolean NOT NULL,
+    sync_sort_key text NOT NULL
+);
+
+
+ALTER TABLE arksa.loot_item_sets OWNER TO thommcgrath;
+
+--
+-- Name: maps; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.maps (
+    map_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    content_pack_id uuid NOT NULL,
+    label public.citext NOT NULL,
+    ark_identifier text NOT NULL,
+    difficulty_scale numeric(8,4) NOT NULL,
+    official boolean NOT NULL,
+    mask bigint NOT NULL,
+    sort integer NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    engram_groups text[] NOT NULL,
+    CONSTRAINT maps_mask_check CHECK ((ceiling(log((2)::numeric, (mask)::numeric)) = floor(log((2)::numeric, (mask)::numeric))))
+);
+
+
+ALTER TABLE arksa.maps OWNER TO thommcgrath;
+
+--
+-- Name: spawn_point_limits; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.spawn_point_limits (
+    spawn_point_id uuid NOT NULL,
+    creature_id uuid NOT NULL,
+    max_percentage numeric(5,4)
+);
+
+
+ALTER TABLE arksa.spawn_point_limits OWNER TO thommcgrath;
+
+--
+-- Name: spawn_point_populations; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.spawn_point_populations (
+    population_id uuid NOT NULL,
+    spawn_point_id uuid NOT NULL,
+    map_id uuid NOT NULL,
+    instances_on_map integer NOT NULL,
+    max_population integer NOT NULL
+);
+
+
+ALTER TABLE arksa.spawn_point_populations OWNER TO thommcgrath;
+
+--
+-- Name: spawn_point_set_entries; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.spawn_point_set_entries (
+    spawn_point_set_entry_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    spawn_point_set_id uuid NOT NULL,
+    creature_id uuid NOT NULL,
+    weight numeric(16,6),
+    override numeric(16,6),
+    min_level_multiplier numeric(16,6),
+    max_level_multiplier numeric(16,6),
+    min_level_offset numeric(16,6),
+    max_level_offset numeric(16,6),
+    spawn_offset public.point3d
+);
+
+
+ALTER TABLE arksa.spawn_point_set_entries OWNER TO thommcgrath;
+
+--
+-- Name: spawn_point_set_entry_levels; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.spawn_point_set_entry_levels (
+    spawn_point_set_entry_level_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    spawn_point_set_entry_id uuid NOT NULL,
+    difficulty numeric(16,6) NOT NULL,
+    min_level numeric(16,6) NOT NULL,
+    max_level numeric(16,6) NOT NULL
+);
+
+
+ALTER TABLE arksa.spawn_point_set_entry_levels OWNER TO thommcgrath;
+
+--
+-- Name: spawn_point_set_replacements; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.spawn_point_set_replacements (
+    spawn_point_set_replacement_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    spawn_point_set_id uuid NOT NULL,
+    target_creature_id uuid NOT NULL,
+    replacement_creature_id uuid NOT NULL,
+    weight numeric(16,6) NOT NULL
+);
+
+
+ALTER TABLE arksa.spawn_point_set_replacements OWNER TO thommcgrath;
+
+--
+-- Name: spawn_point_sets; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.spawn_point_sets (
+    spawn_point_set_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    spawn_point_id uuid NOT NULL,
+    label public.citext NOT NULL,
+    weight numeric(16,6) NOT NULL,
+    spawn_offset public.point3d,
+    min_distance_from_players_multiplier numeric(16,6),
+    min_distance_from_structures_multiplier numeric(16,6),
+    min_distance_from_tamed_dinos_multiplier numeric(16,6),
+    spread_radius numeric(16,6),
+    water_only_minimum_height numeric(16,6),
+    offset_before_multiplier boolean
+);
+
+
+ALTER TABLE arksa.spawn_point_sets OWNER TO thommcgrath;
+
+--
+-- Name: template_selectors; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.template_selectors (
+    pattern text NOT NULL,
+    language public.citext NOT NULL,
+    CONSTRAINT template_selectors_check CHECK (((min_version >= 10600000) OR (language OPERATOR(public.=) 'regex'::public.citext)))
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.template_selectors OWNER TO thommcgrath;
+
+--
+-- Name: templates; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.templates (
+    contents jsonb NOT NULL
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.templates OWNER TO thommcgrath;
+
+--
 -- Name: access_tokens; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -2719,7 +4034,41 @@ UNION
     GREATEST(objects.min_version, content_packs.min_version) AS min_version
    FROM (sdtd.objects
      JOIN public.content_packs ON ((objects.content_pack_id = content_packs.content_pack_id)))
-  WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true));
+  WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true))
+UNION
+ SELECT objects.last_update,
+    objects.content_pack_id,
+    GREATEST(objects.min_version, content_packs.min_version) AS min_version
+   FROM (arksa.objects
+     JOIN public.content_packs ON ((objects.content_pack_id = content_packs.content_pack_id)))
+  WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true))
+UNION
+ SELECT game_variables.last_update,
+    NULL::uuid AS content_pack_id,
+    0 AS min_version
+   FROM arksa.game_variables
+UNION
+ SELECT maps.last_update,
+    maps.content_pack_id,
+    content_packs.min_version
+   FROM (arksa.maps
+     JOIN public.content_packs ON ((maps.content_pack_id = content_packs.content_pack_id)))
+  WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true))
+UNION
+ SELECT events.last_update,
+    NULL::uuid AS content_pack_id,
+    0 AS min_version
+   FROM arksa.events
+UNION
+ SELECT colors.last_update,
+    NULL::uuid AS content_pack_id,
+    0 AS min_version
+   FROM arksa.colors
+UNION
+ SELECT color_sets.last_update,
+    NULL::uuid AS content_pack_id,
+    0 AS min_version
+   FROM arksa.color_sets;
 
 
 ALTER TABLE public.content_update_times OWNER TO thommcgrath;
@@ -2787,10 +4136,11 @@ ALTER TABLE public.download_urls OWNER TO thommcgrath;
 
 CREATE TABLE public.email_addresses (
     email_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    address text NOT NULL,
-    group_key public.hex NOT NULL,
-    group_key_precision integer NOT NULL,
-    group_key_alg public.citext NOT NULL
+    address text,
+    group_key public.hex,
+    group_key_precision integer,
+    group_key_alg public.citext NOT NULL,
+    CONSTRAINT email_addresses_check CHECK ((((group_key_alg OPERATOR(public.=) 'uuidv5'::public.citext) AND (address IS NULL) AND (group_key IS NULL) AND (group_key_precision IS NULL)) OR ((group_key_alg OPERATOR(public.<>) 'uuidv5'::public.citext) AND (address IS NOT NULL) AND (group_key IS NOT NULL) AND (group_key_precision IS NOT NULL))))
 );
 
 
@@ -3330,6 +4680,7 @@ ALTER TABLE public.support_videos OWNER TO thommcgrath;
 CREATE VIEW public.search_contents AS
  SELECT support_articles.article_id AS id,
     support_articles.subject AS title,
+    NULL::public.game_identifier AS game_id,
     COALESCE(support_articles.content_markdown, ''::public.citext) AS body,
     COALESCE(support_articles.preview, ''::public.citext) AS preview,
     COALESCE((support_articles.affected_ini_keys)::public.citext, ''::public.citext) AS meta_content,
@@ -3344,6 +4695,7 @@ CREATE VIEW public.search_contents AS
 UNION
  SELECT support_videos.video_id AS id,
     support_videos.video_title AS title,
+    NULL::public.game_identifier AS game_id,
     ''::text AS body,
     ''::text AS preview,
     ''::text AS meta_content,
@@ -3357,6 +4709,7 @@ UNION
 UNION
  SELECT blueprints.object_id AS id,
     blueprints.label AS title,
+    content_packs.game_id,
     ''::text AS body,
     ''::text AS preview,
     blueprints.class_string AS meta_content,
@@ -3364,28 +4717,33 @@ UNION
     (( SELECT pg_class.relname
            FROM pg_class
           WHERE (pg_class.oid = blueprints.tableoid)))::text AS subtype,
-    ('/object/'::text || (blueprints.object_id)::text) AS uri,
+    ((((('/Games/'::text || (content_packs.game_id)::text) || '/Mods/'::text) || content_packs.marketplace_id) || '/'::text) || (blueprints.class_string)::text) AS uri,
     blueprints.min_version,
     99999999 AS max_version,
     blueprints.mod_id
-   FROM ark.blueprints
+   FROM (ark.blueprints
+     JOIN public.content_packs ON ((blueprints.mod_id = content_packs.content_pack_id)))
 UNION
- SELECT mods_legacy.mod_id AS id,
-    mods_legacy.name AS title,
+ SELECT blueprints.object_id AS id,
+    blueprints.label AS title,
+    content_packs.game_id,
     ''::text AS body,
     ''::text AS preview,
-    ''::text AS meta_content,
-    'Mod'::text AS type,
-    ''::text AS subtype,
-    ('/mods/'::text || mods_legacy.mod_id) AS uri,
-    0 AS min_version,
+    blueprints.class_string AS meta_content,
+    'Object'::text AS type,
+    (( SELECT pg_class.relname
+           FROM pg_class
+          WHERE (pg_class.oid = blueprints.tableoid)))::text AS subtype,
+    ((((('/Games/'::text || (content_packs.game_id)::text) || '/Mods/'::text) || content_packs.marketplace_id) || '/'::text) || (blueprints.class_string)::text) AS uri,
+    blueprints.min_version,
     99999999 AS max_version,
-    mods_legacy.mod_id
-   FROM ark.mods_legacy
-  WHERE (mods_legacy.confirmed = true)
+    blueprints.content_pack_id AS mod_id
+   FROM (arksa.blueprints
+     JOIN public.content_packs ON ((blueprints.content_pack_id = content_packs.content_pack_id)))
 UNION
  SELECT projects.project_id AS id,
     projects.title,
+    projects.game_id,
     projects.description AS body,
     ''::text AS preview,
     ''::text AS meta_content,
@@ -3396,7 +4754,22 @@ UNION
     99999999 AS max_version,
     NULL::uuid AS mod_id
    FROM public.projects
-  WHERE ((projects.published = 'Approved'::public.publish_status) AND (projects.deleted = false));
+  WHERE ((projects.published = 'Approved'::public.publish_status) AND (projects.deleted = false))
+UNION
+ SELECT content_packs.content_pack_id AS id,
+    content_packs.name AS title,
+    content_packs.game_id,
+    ''::text AS body,
+    ''::text AS preview,
+    ''::text AS meta_content,
+    'Mod'::text AS type,
+    ''::text AS subtype,
+    ((('/Games/'::text || (content_packs.game_id)::text) || '/Mods/'::text) || content_packs.marketplace_id) AS uri,
+    content_packs.min_version,
+    99999999 AS max_version,
+    NULL::uuid AS mod_id
+   FROM public.content_packs
+  WHERE (content_packs.confirmed = true);
 
 
 ALTER TABLE public.search_contents OWNER TO thommcgrath;
@@ -4076,6 +5449,293 @@ ALTER TABLE ONLY ark.spawn_points ALTER COLUMN tags SET DEFAULT '{}'::public.cit
 
 
 --
+-- Name: creatures object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creatures ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: creatures min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creatures ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: creatures last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creatures ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: creatures content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creatures ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: creatures tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creatures ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
+-- Name: deletions action_time; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.deletions ALTER COLUMN action_time SET DEFAULT CURRENT_TIMESTAMP(0);
+
+
+--
+-- Name: engrams object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.engrams ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: engrams min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.engrams ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: engrams last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.engrams ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: engrams content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.engrams ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: engrams tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.engrams ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
+-- Name: ini_options object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.ini_options ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: ini_options min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.ini_options ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: ini_options last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.ini_options ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: ini_options content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.ini_options ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: ini_options tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.ini_options ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
+-- Name: loot_drop_icons object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drop_icons ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: loot_drop_icons min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drop_icons ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: loot_drop_icons last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drop_icons ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: loot_drop_icons content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drop_icons ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: loot_drop_icons tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drop_icons ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
+-- Name: loot_drops object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drops ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: loot_drops min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drops ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: loot_drops last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drops ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: loot_drops content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drops ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: loot_drops tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drops ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
+-- Name: spawn_points object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_points ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: spawn_points min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_points ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: spawn_points last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_points ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: spawn_points content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_points ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: spawn_points tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_points ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
+-- Name: template_selectors object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.template_selectors ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: template_selectors min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.template_selectors ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: template_selectors last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.template_selectors ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: template_selectors content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.template_selectors ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: template_selectors tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.template_selectors ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
+-- Name: templates object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.templates ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: templates min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.templates ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: templates last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.templates ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: templates content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.templates ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: templates tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.templates ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: config_options min_version; Type: DEFAULT; Schema: sdtd; Owner: thommcgrath
 --
 
@@ -4462,6 +6122,318 @@ ALTER TABLE ONLY ark.spawn_point_sets
 
 ALTER TABLE ONLY ark.spawn_points
     ADD CONSTRAINT spawn_points_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: color_sets color_sets_class_string_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.color_sets
+    ADD CONSTRAINT color_sets_class_string_key UNIQUE (class_string);
+
+
+--
+-- Name: color_sets color_sets_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.color_sets
+    ADD CONSTRAINT color_sets_pkey PRIMARY KEY (color_set_id);
+
+
+--
+-- Name: colors colors_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.colors
+    ADD CONSTRAINT colors_pkey PRIMARY KEY (color_id);
+
+
+--
+-- Name: content_pack_relationships content_pack_relationships_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.content_pack_relationships
+    ADD CONSTRAINT content_pack_relationships_pkey PRIMARY KEY (relation_id);
+
+
+--
+-- Name: crafting_costs crafting_costs_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.crafting_costs
+    ADD CONSTRAINT crafting_costs_pkey PRIMARY KEY (engram_id, ingredient_id);
+
+
+--
+-- Name: creature_engrams creature_engrams_creature_id_engram_id_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creature_engrams
+    ADD CONSTRAINT creature_engrams_creature_id_engram_id_key UNIQUE (creature_id, engram_id);
+
+
+--
+-- Name: creature_engrams creature_engrams_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creature_engrams
+    ADD CONSTRAINT creature_engrams_pkey PRIMARY KEY (relation_id);
+
+
+--
+-- Name: creature_stats creature_stats_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creature_stats
+    ADD CONSTRAINT creature_stats_pkey PRIMARY KEY (creature_id, stat_index);
+
+
+--
+-- Name: creatures creatures_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creatures
+    ADD CONSTRAINT creatures_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: engrams engrams_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.engrams
+    ADD CONSTRAINT engrams_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: event_colors event_colors_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.event_colors
+    ADD CONSTRAINT event_colors_pkey PRIMARY KEY (event_id, color_id);
+
+
+--
+-- Name: event_rates event_rates_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.event_rates
+    ADD CONSTRAINT event_rates_pkey PRIMARY KEY (event_id, ini_option);
+
+
+--
+-- Name: events events_event_code_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.events
+    ADD CONSTRAINT events_event_code_key UNIQUE (event_code);
+
+
+--
+-- Name: events events_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.events
+    ADD CONSTRAINT events_pkey PRIMARY KEY (event_id);
+
+
+--
+-- Name: game_variables game_variables_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.game_variables
+    ADD CONSTRAINT game_variables_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: ini_options ini_options_file_header_key_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.ini_options
+    ADD CONSTRAINT ini_options_file_header_key_key UNIQUE (file, header, key);
+
+
+--
+-- Name: ini_options ini_options_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.ini_options
+    ADD CONSTRAINT ini_options_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: loot_drop_icons loot_drop_icons_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drop_icons
+    ADD CONSTRAINT loot_drop_icons_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: loot_drops loot_drops_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drops
+    ADD CONSTRAINT loot_drops_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: loot_item_set_entries loot_item_set_entries_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_item_set_entries
+    ADD CONSTRAINT loot_item_set_entries_pkey PRIMARY KEY (loot_item_set_entry_id);
+
+
+--
+-- Name: loot_item_set_entries loot_item_set_entries_sort_idx; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_item_set_entries
+    ADD CONSTRAINT loot_item_set_entries_sort_idx UNIQUE (loot_item_set_id, sync_sort_key) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: loot_item_set_entry_options loot_item_set_entry_options_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_item_set_entry_options
+    ADD CONSTRAINT loot_item_set_entry_options_pkey PRIMARY KEY (loot_item_set_entry_option_id);
+
+
+--
+-- Name: loot_item_sets loot_item_sets_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_item_sets
+    ADD CONSTRAINT loot_item_sets_pkey PRIMARY KEY (loot_item_set_id);
+
+
+--
+-- Name: maps maps_ark_identifier_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.maps
+    ADD CONSTRAINT maps_ark_identifier_key UNIQUE (ark_identifier);
+
+
+--
+-- Name: maps maps_content_pack_id_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.maps
+    ADD CONSTRAINT maps_content_pack_id_key UNIQUE (content_pack_id);
+
+
+--
+-- Name: maps maps_mask_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.maps
+    ADD CONSTRAINT maps_mask_key UNIQUE (mask);
+
+
+--
+-- Name: maps maps_official_sort_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.maps
+    ADD CONSTRAINT maps_official_sort_key UNIQUE (official, sort);
+
+
+--
+-- Name: maps maps_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.maps
+    ADD CONSTRAINT maps_pkey PRIMARY KEY (map_id);
+
+
+--
+-- Name: objects objects_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.objects
+    ADD CONSTRAINT objects_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: spawn_point_limits spawn_point_limits_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_limits
+    ADD CONSTRAINT spawn_point_limits_pkey PRIMARY KEY (spawn_point_id, creature_id);
+
+
+--
+-- Name: spawn_point_populations spawn_point_populations_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_populations
+    ADD CONSTRAINT spawn_point_populations_pkey PRIMARY KEY (population_id);
+
+
+--
+-- Name: spawn_point_set_entries spawn_point_set_entries_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_entries
+    ADD CONSTRAINT spawn_point_set_entries_pkey PRIMARY KEY (spawn_point_set_entry_id);
+
+
+--
+-- Name: spawn_point_set_entry_levels spawn_point_set_entry_levels_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_entry_levels
+    ADD CONSTRAINT spawn_point_set_entry_levels_pkey PRIMARY KEY (spawn_point_set_entry_level_id);
+
+
+--
+-- Name: spawn_point_set_replacements spawn_point_set_replacements_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_replacements
+    ADD CONSTRAINT spawn_point_set_replacements_pkey PRIMARY KEY (spawn_point_set_replacement_id);
+
+
+--
+-- Name: spawn_point_sets spawn_point_sets_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_sets
+    ADD CONSTRAINT spawn_point_sets_pkey PRIMARY KEY (spawn_point_set_id);
+
+
+--
+-- Name: spawn_points spawn_points_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_points
+    ADD CONSTRAINT spawn_points_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: template_selectors template_selectors_pattern_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.template_selectors
+    ADD CONSTRAINT template_selectors_pattern_key UNIQUE (pattern);
+
+
+--
+-- Name: template_selectors template_selectors_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.template_selectors
+    ADD CONSTRAINT template_selectors_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: templates templates_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.templates
+    ADD CONSTRAINT templates_pkey PRIMARY KEY (object_id);
 
 
 --
@@ -5335,6 +7307,167 @@ CREATE UNIQUE INDEX spawn_points_path_legacy_uidx ON ark.spawn_points USING btre
 
 
 --
+-- Name: content_pack_relationships_pack_1_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX content_pack_relationships_pack_1_idx ON arksa.content_pack_relationships USING btree (pack_1);
+
+
+--
+-- Name: content_pack_relationships_pack_1_pack_2_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX content_pack_relationships_pack_1_pack_2_idx ON arksa.content_pack_relationships USING btree (pack_1, pack_2);
+
+
+--
+-- Name: creatures_class_string_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX creatures_class_string_idx ON arksa.creatures USING btree (class_string);
+
+
+--
+-- Name: creatures_content_pack_id_path_uidx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX creatures_content_pack_id_path_uidx ON arksa.creatures USING btree (content_pack_id, path);
+
+
+--
+-- Name: creatures_path_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX creatures_path_idx ON arksa.creatures USING btree (path);
+
+
+--
+-- Name: engrams_class_string_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX engrams_class_string_idx ON arksa.engrams USING btree (class_string);
+
+
+--
+-- Name: engrams_content_pack_id_path_uidx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX engrams_content_pack_id_path_uidx ON arksa.engrams USING btree (content_pack_id, path);
+
+
+--
+-- Name: engrams_path_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX engrams_path_idx ON arksa.engrams USING btree (path);
+
+
+--
+-- Name: loot_drops_class_string_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX loot_drops_class_string_idx ON arksa.loot_drops USING btree (class_string);
+
+
+--
+-- Name: loot_drops_content_pack_id_path_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX loot_drops_content_pack_id_path_idx ON arksa.loot_drops USING btree (content_pack_id, path);
+
+
+--
+-- Name: loot_drops_path_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX loot_drops_path_idx ON arksa.loot_drops USING btree (path);
+
+
+--
+-- Name: loot_drops_sort_order_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX loot_drops_sort_order_idx ON arksa.loot_drops USING btree (sort_order);
+
+
+--
+-- Name: loot_item_set_entries_loot_item_set_id_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX loot_item_set_entries_loot_item_set_id_idx ON arksa.loot_item_set_entries USING btree (loot_item_set_id);
+
+
+--
+-- Name: loot_item_set_entry_options_loot_item_set_entry_id_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX loot_item_set_entry_options_loot_item_set_entry_id_idx ON arksa.loot_item_set_entry_options USING btree (loot_item_set_entry_id);
+
+
+--
+-- Name: loot_item_set_entry_options_sort_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX loot_item_set_entry_options_sort_idx ON arksa.loot_item_set_entry_options USING btree (loot_item_set_entry_id, sync_sort_key);
+
+
+--
+-- Name: loot_item_sets_loot_drop_id_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX loot_item_sets_loot_drop_id_idx ON arksa.loot_item_sets USING btree (loot_drop_id);
+
+
+--
+-- Name: loot_item_sets_sort_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX loot_item_sets_sort_idx ON arksa.loot_item_sets USING btree (loot_drop_id, sync_sort_key);
+
+
+--
+-- Name: spawn_point_populations_spawn_point_id_map_id_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX spawn_point_populations_spawn_point_id_map_id_idx ON arksa.spawn_point_populations USING btree (spawn_point_id, map_id);
+
+
+--
+-- Name: spawn_point_set_entry_levels_unique_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX spawn_point_set_entry_levels_unique_idx ON arksa.spawn_point_set_entry_levels USING btree (spawn_point_set_entry_id, difficulty);
+
+
+--
+-- Name: spawn_point_set_replacements_unique_replacement_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX spawn_point_set_replacements_unique_replacement_idx ON arksa.spawn_point_set_replacements USING btree (spawn_point_set_id, target_creature_id, replacement_creature_id);
+
+
+--
+-- Name: spawn_points_class_string_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX spawn_points_class_string_idx ON arksa.spawn_points USING btree (class_string);
+
+
+--
+-- Name: spawn_points_content_pack_id_path_uidx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX spawn_points_content_pack_id_path_uidx ON arksa.spawn_points USING btree (content_pack_id, path);
+
+
+--
+-- Name: spawn_points_path_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX spawn_points_path_idx ON arksa.spawn_points USING btree (path);
+
+
+--
 -- Name: access_tokens_application_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -5972,6 +8105,412 @@ CREATE TRIGGER spawn_points_search_sync_update_trigger BEFORE UPDATE ON ark.spaw
 
 
 --
+-- Name: color_sets color_sets_modified_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER color_sets_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.color_sets FOR EACH ROW EXECUTE FUNCTION arksa.update_color_set_last_update();
+
+
+--
+-- Name: colors colors_modified_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER colors_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.colors FOR EACH ROW EXECUTE FUNCTION arksa.update_color_last_update();
+
+
+--
+-- Name: crafting_costs crafting_costs_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER crafting_costs_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.crafting_costs FOR EACH ROW EXECUTE FUNCTION arksa.update_engram_timestamp();
+
+
+--
+-- Name: creature_stats creature_stats_update_creature_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER creature_stats_update_creature_trigger AFTER INSERT OR DELETE OR UPDATE ON arksa.creature_stats FOR EACH ROW EXECUTE FUNCTION arksa.update_creature_modified();
+
+
+--
+-- Name: creatures creatures_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER creatures_after_delete_trigger AFTER DELETE ON arksa.creatures FOR EACH ROW EXECUTE FUNCTION arksa.object_delete_trigger();
+
+
+--
+-- Name: creatures creatures_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER creatures_before_insert_trigger BEFORE INSERT ON arksa.creatures FOR EACH ROW EXECUTE FUNCTION arksa.blueprint_insert_trigger();
+
+
+--
+-- Name: creatures creatures_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER creatures_before_update_trigger BEFORE UPDATE ON arksa.creatures FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
+-- Name: creatures creatures_compute_class_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER creatures_compute_class_trigger BEFORE INSERT OR UPDATE ON arksa.creatures FOR EACH ROW EXECUTE FUNCTION arksa.compute_class_trigger();
+
+
+--
+-- Name: creatures creatures_search_sync_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER creatures_search_sync_trigger BEFORE INSERT OR DELETE ON arksa.creatures FOR EACH ROW EXECUTE FUNCTION arksa.objects_search_sync();
+
+
+--
+-- Name: creatures creatures_search_sync_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER creatures_search_sync_update_trigger BEFORE UPDATE ON arksa.creatures FOR EACH ROW WHEN ((((old.label)::text IS DISTINCT FROM (new.label)::text) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.content_pack_id IS DISTINCT FROM new.content_pack_id))) EXECUTE FUNCTION arksa.objects_search_sync();
+
+
+--
+-- Name: deletions deletions_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER deletions_delete_trigger INSTEAD OF DELETE ON arksa.deletions FOR EACH ROW EXECUTE FUNCTION arksa.deletions_delete();
+
+
+--
+-- Name: deletions deletions_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER deletions_insert_trigger INSTEAD OF INSERT ON arksa.deletions FOR EACH ROW EXECUTE FUNCTION arksa.deletions_insert();
+
+
+--
+-- Name: engrams engrams_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER engrams_after_delete_trigger AFTER DELETE ON arksa.engrams FOR EACH ROW EXECUTE FUNCTION arksa.engram_delete_trigger();
+
+
+--
+-- Name: engrams engrams_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER engrams_before_insert_trigger BEFORE INSERT ON arksa.engrams FOR EACH ROW EXECUTE FUNCTION arksa.blueprint_insert_trigger();
+
+
+--
+-- Name: engrams engrams_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON arksa.engrams FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
+-- Name: engrams engrams_compute_class_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER engrams_compute_class_trigger BEFORE INSERT OR UPDATE ON arksa.engrams FOR EACH ROW EXECUTE FUNCTION arksa.compute_class_trigger();
+
+
+--
+-- Name: engrams engrams_search_sync_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER engrams_search_sync_trigger BEFORE INSERT OR DELETE ON arksa.engrams FOR EACH ROW EXECUTE FUNCTION arksa.objects_search_sync();
+
+
+--
+-- Name: engrams engrams_search_sync_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER engrams_search_sync_update_trigger BEFORE UPDATE ON arksa.engrams FOR EACH ROW WHEN (((old.label IS DISTINCT FROM new.label) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.content_pack_id IS DISTINCT FROM new.content_pack_id))) EXECUTE FUNCTION arksa.objects_search_sync();
+
+
+--
+-- Name: event_colors event_colors_modified_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER event_colors_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON arksa.event_colors FOR EACH ROW EXECUTE FUNCTION arksa.update_event_last_update_from_children();
+
+
+--
+-- Name: event_engrams event_engrams_modified_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER event_engrams_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON arksa.event_engrams FOR EACH ROW EXECUTE FUNCTION arksa.update_event_last_update_from_children();
+
+
+--
+-- Name: event_rates event_rates_modified_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER event_rates_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON arksa.event_rates FOR EACH ROW EXECUTE FUNCTION arksa.update_event_last_update_from_children();
+
+
+--
+-- Name: events events_modified_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER events_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.events FOR EACH ROW EXECUTE FUNCTION arksa.update_event_last_update();
+
+
+--
+-- Name: game_variables game_variables_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON arksa.game_variables FOR EACH ROW EXECUTE FUNCTION arksa.generic_update_trigger();
+
+
+--
+-- Name: ini_options ini_options_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER ini_options_after_delete_trigger AFTER DELETE ON arksa.ini_options FOR EACH ROW EXECUTE FUNCTION arksa.object_delete_trigger();
+
+
+--
+-- Name: ini_options ini_options_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER ini_options_before_insert_trigger BEFORE INSERT ON arksa.ini_options FOR EACH ROW EXECUTE FUNCTION arksa.ini_options_insert_trigger();
+
+
+--
+-- Name: ini_options ini_options_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER ini_options_before_update_trigger BEFORE UPDATE ON arksa.ini_options FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
+-- Name: loot_drop_icons loot_drop_icons_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drop_icons_after_delete_trigger AFTER DELETE ON arksa.loot_drop_icons FOR EACH ROW EXECUTE FUNCTION arksa.object_delete_trigger();
+
+
+--
+-- Name: loot_drop_icons loot_drop_icons_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drop_icons_before_insert_trigger BEFORE INSERT ON arksa.loot_drop_icons FOR EACH ROW EXECUTE FUNCTION arksa.object_insert_trigger();
+
+
+--
+-- Name: loot_drop_icons loot_drop_icons_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drop_icons_before_update_trigger BEFORE UPDATE ON arksa.loot_drop_icons FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
+-- Name: loot_drops loot_drops_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drops_after_delete_trigger AFTER DELETE ON arksa.loot_drops FOR EACH ROW EXECUTE FUNCTION arksa.object_delete_trigger();
+
+
+--
+-- Name: loot_drops loot_drops_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drops_before_insert_trigger BEFORE INSERT ON arksa.loot_drops FOR EACH ROW EXECUTE FUNCTION arksa.blueprint_insert_trigger();
+
+
+--
+-- Name: loot_drops loot_drops_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drops_before_update_trigger BEFORE UPDATE ON arksa.loot_drops FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
+-- Name: loot_drops loot_drops_compute_class_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drops_compute_class_trigger BEFORE INSERT OR UPDATE ON arksa.loot_drops FOR EACH ROW EXECUTE FUNCTION arksa.compute_class_trigger();
+
+
+--
+-- Name: loot_drops loot_drops_search_sync_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drops_search_sync_trigger BEFORE INSERT OR DELETE ON arksa.loot_drops FOR EACH ROW EXECUTE FUNCTION arksa.objects_search_sync();
+
+
+--
+-- Name: loot_drops loot_drops_search_sync_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_drops_search_sync_update_trigger BEFORE UPDATE ON arksa.loot_drops FOR EACH ROW WHEN ((((old.label)::text IS DISTINCT FROM (new.label)::text) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.content_pack_id IS DISTINCT FROM new.content_pack_id))) EXECUTE FUNCTION arksa.objects_search_sync();
+
+
+--
+-- Name: loot_item_set_entries loot_item_set_entries_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_item_set_entries_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.loot_item_set_entries FOR EACH ROW EXECUTE FUNCTION arksa.update_loot_drop_timestamp();
+
+
+--
+-- Name: loot_item_set_entry_options loot_item_set_entry_options_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_item_set_entry_options_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.loot_item_set_entry_options FOR EACH ROW EXECUTE FUNCTION arksa.update_loot_drop_timestamp();
+
+
+--
+-- Name: loot_item_sets loot_item_sets_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER loot_item_sets_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.loot_item_sets FOR EACH ROW EXECUTE FUNCTION arksa.update_loot_drop_timestamp();
+
+
+--
+-- Name: maps maps_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER maps_before_update_trigger BEFORE INSERT OR UPDATE ON arksa.maps FOR EACH ROW EXECUTE FUNCTION arksa.update_last_update_column();
+
+
+--
+-- Name: spawn_point_limits spawn_point_limits_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_point_limits_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.spawn_point_limits FOR EACH ROW EXECUTE FUNCTION arksa.update_spawn_point_timestamp();
+
+
+--
+-- Name: spawn_point_populations spawn_point_populations_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_point_populations_update_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.spawn_point_populations FOR EACH ROW EXECUTE FUNCTION arksa.update_spawn_point_timestamp();
+
+
+--
+-- Name: spawn_point_set_entries spawn_point_set_entries_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_point_set_entries_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.spawn_point_set_entries FOR EACH ROW EXECUTE FUNCTION arksa.update_spawn_point_timestamp();
+
+
+--
+-- Name: spawn_point_set_entry_levels spawn_point_set_entry_levels_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_point_set_entry_levels_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.spawn_point_set_entry_levels FOR EACH ROW EXECUTE FUNCTION arksa.update_spawn_point_timestamp();
+
+
+--
+-- Name: spawn_point_set_replacements spawn_point_set_replacements_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_point_set_replacements_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.spawn_point_set_replacements FOR EACH ROW EXECUTE FUNCTION arksa.update_spawn_point_timestamp();
+
+
+--
+-- Name: spawn_point_sets spawn_point_sets_update_timestamp_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_point_sets_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON arksa.spawn_point_sets FOR EACH ROW EXECUTE FUNCTION arksa.update_spawn_point_timestamp();
+
+
+--
+-- Name: spawn_points spawn_points_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_after_delete_trigger AFTER DELETE ON arksa.spawn_points FOR EACH ROW EXECUTE FUNCTION arksa.object_delete_trigger();
+
+
+--
+-- Name: spawn_points spawn_points_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_before_insert_trigger BEFORE INSERT ON arksa.spawn_points FOR EACH ROW EXECUTE FUNCTION arksa.blueprint_insert_trigger();
+
+
+--
+-- Name: spawn_points spawn_points_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_before_update_trigger BEFORE UPDATE ON arksa.spawn_points FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
+-- Name: spawn_points spawn_points_compute_class_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_compute_class_trigger BEFORE INSERT OR UPDATE ON arksa.spawn_points FOR EACH ROW EXECUTE FUNCTION arksa.compute_class_trigger();
+
+
+--
+-- Name: spawn_points spawn_points_search_sync_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_search_sync_trigger BEFORE INSERT OR DELETE ON arksa.spawn_points FOR EACH ROW EXECUTE FUNCTION arksa.objects_search_sync();
+
+
+--
+-- Name: spawn_points spawn_points_search_sync_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_search_sync_update_trigger BEFORE UPDATE ON arksa.spawn_points FOR EACH ROW WHEN ((((old.label)::text IS DISTINCT FROM (new.label)::text) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.content_pack_id IS DISTINCT FROM new.content_pack_id))) EXECUTE FUNCTION arksa.objects_search_sync();
+
+
+--
+-- Name: template_selectors template_selectors_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER template_selectors_after_delete_trigger AFTER DELETE ON arksa.template_selectors FOR EACH ROW EXECUTE FUNCTION arksa.object_delete_trigger();
+
+
+--
+-- Name: template_selectors template_selectors_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER template_selectors_before_insert_trigger BEFORE INSERT ON arksa.template_selectors FOR EACH ROW EXECUTE FUNCTION arksa.object_insert_trigger();
+
+
+--
+-- Name: template_selectors template_selectors_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER template_selectors_before_update_trigger BEFORE UPDATE ON arksa.template_selectors FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
+-- Name: templates templates_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER templates_after_delete_trigger AFTER DELETE ON arksa.templates FOR EACH ROW EXECUTE FUNCTION arksa.object_delete_trigger();
+
+
+--
+-- Name: templates templates_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER templates_before_insert_trigger BEFORE INSERT ON arksa.templates FOR EACH ROW EXECUTE FUNCTION arksa.object_insert_trigger();
+
+
+--
+-- Name: templates templates_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER templates_before_update_trigger BEFORE UPDATE ON arksa.templates FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
+-- Name: templates templates_json_sync_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER templates_json_sync_trigger BEFORE INSERT OR UPDATE ON arksa.templates FOR EACH ROW EXECUTE FUNCTION arksa.templates_json_sync_function();
+
+
+--
 -- Name: client_notices client_notices_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -6528,6 +9067,318 @@ ALTER TABLE ONLY ark.spawn_points
 
 
 --
+-- Name: content_pack_relationships content_pack_relationships_pack_1_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.content_pack_relationships
+    ADD CONSTRAINT content_pack_relationships_pack_1_fkey FOREIGN KEY (pack_1) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: content_pack_relationships content_pack_relationships_pack_2_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.content_pack_relationships
+    ADD CONSTRAINT content_pack_relationships_pack_2_fkey FOREIGN KEY (pack_2) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: crafting_costs crafting_costs_engram_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.crafting_costs
+    ADD CONSTRAINT crafting_costs_engram_id_fkey FOREIGN KEY (engram_id) REFERENCES arksa.engrams(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: crafting_costs crafting_costs_ingredient_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.crafting_costs
+    ADD CONSTRAINT crafting_costs_ingredient_id_fkey FOREIGN KEY (ingredient_id) REFERENCES arksa.engrams(object_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: creature_engrams creature_engrams_creature_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creature_engrams
+    ADD CONSTRAINT creature_engrams_creature_id_fkey FOREIGN KEY (creature_id) REFERENCES arksa.creatures(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: creature_engrams creature_engrams_engram_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creature_engrams
+    ADD CONSTRAINT creature_engrams_engram_id_fkey FOREIGN KEY (engram_id) REFERENCES arksa.engrams(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: creature_stats creature_stats_creature_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creature_stats
+    ADD CONSTRAINT creature_stats_creature_id_fkey FOREIGN KEY (creature_id) REFERENCES arksa.creatures(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: creatures creatures_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.creatures
+    ADD CONSTRAINT creatures_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: engrams engrams_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.engrams
+    ADD CONSTRAINT engrams_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: event_colors event_colors_color_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.event_colors
+    ADD CONSTRAINT event_colors_color_id_fkey FOREIGN KEY (color_id) REFERENCES arksa.colors(color_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: event_colors event_colors_event_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.event_colors
+    ADD CONSTRAINT event_colors_event_id_fkey FOREIGN KEY (event_id) REFERENCES arksa.events(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_engrams event_engrams_event_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.event_engrams
+    ADD CONSTRAINT event_engrams_event_id_fkey FOREIGN KEY (event_id) REFERENCES arksa.events(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_engrams event_engrams_object_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.event_engrams
+    ADD CONSTRAINT event_engrams_object_id_fkey FOREIGN KEY (object_id) REFERENCES arksa.engrams(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_rates event_rates_event_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.event_rates
+    ADD CONSTRAINT event_rates_event_id_fkey FOREIGN KEY (event_id) REFERENCES arksa.events(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_rates event_rates_ini_option_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.event_rates
+    ADD CONSTRAINT event_rates_ini_option_fkey FOREIGN KEY (ini_option) REFERENCES arksa.ini_options(object_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: ini_options ini_options_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.ini_options
+    ADD CONSTRAINT ini_options_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: loot_drop_icons loot_drop_icons_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drop_icons
+    ADD CONSTRAINT loot_drop_icons_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: loot_drops loot_drops_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drops
+    ADD CONSTRAINT loot_drops_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: loot_drops loot_drops_icon_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_drops
+    ADD CONSTRAINT loot_drops_icon_fkey FOREIGN KEY (icon) REFERENCES arksa.loot_drop_icons(object_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: loot_item_set_entries loot_item_set_entries_loot_item_set_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_item_set_entries
+    ADD CONSTRAINT loot_item_set_entries_loot_item_set_id_fkey FOREIGN KEY (loot_item_set_id) REFERENCES arksa.loot_item_sets(loot_item_set_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: loot_item_set_entry_options loot_item_set_entry_options_engram_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_item_set_entry_options
+    ADD CONSTRAINT loot_item_set_entry_options_engram_id_fkey FOREIGN KEY (engram_id) REFERENCES arksa.engrams(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: loot_item_set_entry_options loot_item_set_entry_options_loot_item_set_entry_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_item_set_entry_options
+    ADD CONSTRAINT loot_item_set_entry_options_loot_item_set_entry_id_fkey FOREIGN KEY (loot_item_set_entry_id) REFERENCES arksa.loot_item_set_entries(loot_item_set_entry_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: loot_item_sets loot_item_sets_loot_drop_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.loot_item_sets
+    ADD CONSTRAINT loot_item_sets_loot_drop_id_fkey FOREIGN KEY (loot_drop_id) REFERENCES arksa.loot_drops(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: maps maps_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.maps
+    ADD CONSTRAINT maps_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: objects objects_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.objects
+    ADD CONSTRAINT objects_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: spawn_point_limits spawn_point_limits_creature_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_limits
+    ADD CONSTRAINT spawn_point_limits_creature_id_fkey FOREIGN KEY (creature_id) REFERENCES arksa.creatures(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_limits spawn_point_limits_spawn_point_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_limits
+    ADD CONSTRAINT spawn_point_limits_spawn_point_id_fkey FOREIGN KEY (spawn_point_id) REFERENCES arksa.spawn_points(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_populations spawn_point_populations_map_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_populations
+    ADD CONSTRAINT spawn_point_populations_map_id_fkey FOREIGN KEY (map_id) REFERENCES arksa.maps(map_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_populations spawn_point_populations_spawn_point_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_populations
+    ADD CONSTRAINT spawn_point_populations_spawn_point_id_fkey FOREIGN KEY (spawn_point_id) REFERENCES arksa.spawn_points(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_set_entries spawn_point_set_entries_creature_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_entries
+    ADD CONSTRAINT spawn_point_set_entries_creature_id_fkey FOREIGN KEY (creature_id) REFERENCES arksa.creatures(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_set_entries spawn_point_set_entries_spawn_point_set_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_entries
+    ADD CONSTRAINT spawn_point_set_entries_spawn_point_set_id_fkey FOREIGN KEY (spawn_point_set_id) REFERENCES arksa.spawn_point_sets(spawn_point_set_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_set_entry_levels spawn_point_set_entry_levels_spawn_point_set_entry_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_entry_levels
+    ADD CONSTRAINT spawn_point_set_entry_levels_spawn_point_set_entry_id_fkey FOREIGN KEY (spawn_point_set_entry_id) REFERENCES arksa.spawn_point_set_entries(spawn_point_set_entry_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_set_replacements spawn_point_set_replacements_replacement_creature_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_replacements
+    ADD CONSTRAINT spawn_point_set_replacements_replacement_creature_id_fkey FOREIGN KEY (replacement_creature_id) REFERENCES arksa.creatures(object_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: spawn_point_set_replacements spawn_point_set_replacements_spawn_point_set_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_replacements
+    ADD CONSTRAINT spawn_point_set_replacements_spawn_point_set_id_fkey FOREIGN KEY (spawn_point_set_id) REFERENCES arksa.spawn_point_sets(spawn_point_set_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_set_replacements spawn_point_set_replacements_target_creature_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_set_replacements
+    ADD CONSTRAINT spawn_point_set_replacements_target_creature_id_fkey FOREIGN KEY (target_creature_id) REFERENCES arksa.creatures(object_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: spawn_point_sets spawn_point_sets_spawn_point_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_point_sets
+    ADD CONSTRAINT spawn_point_sets_spawn_point_id_fkey FOREIGN KEY (spawn_point_id) REFERENCES arksa.spawn_points(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_points spawn_points_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.spawn_points
+    ADD CONSTRAINT spawn_points_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: template_selectors template_selectors_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.template_selectors
+    ADD CONSTRAINT template_selectors_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: templates templates_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.templates
+    ADD CONSTRAINT templates_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: access_tokens access_tokens_application_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -6969,6 +9820,15 @@ GRANT USAGE ON SCHEMA ark TO beacon_readonly;
 
 
 --
+-- Name: SCHEMA arksa; Type: ACL; Schema: -; Owner: thommcgrath
+--
+
+GRANT USAGE ON SCHEMA arksa TO thezaz_website;
+GRANT USAGE ON SCHEMA arksa TO beacon_updater;
+GRANT USAGE ON SCHEMA arksa TO beacon_readonly;
+
+
+--
 -- Name: SCHEMA sdtd; Type: ACL; Schema: -; Owner: thommcgrath
 --
 
@@ -7079,6 +9939,7 @@ GRANT SELECT ON TABLE ark.creature_stats TO beacon_readonly;
 
 GRANT SELECT ON TABLE public.deletions TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.deletions TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.deletions TO beacon_updater;
 
 
 --
@@ -7087,6 +9948,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.deletions TO thezaz_website;
 
 GRANT SELECT ON TABLE ark.deletions TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE ON TABLE ark.deletions TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.deletions TO beacon_updater;
 
 
 --
@@ -7212,6 +10074,7 @@ GRANT SELECT ON TABLE ark.mod_relationships TO beacon_readonly;
 
 GRANT SELECT ON TABLE public.content_packs TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.content_packs TO thezaz_website;
+GRANT SELECT,INSERT ON TABLE public.content_packs TO beacon_updater;
 
 
 --
@@ -7220,6 +10083,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.content_packs TO thezaz_websit
 
 GRANT SELECT ON TABLE ark.mods TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods TO thezaz_website;
+GRANT SELECT ON TABLE ark.mods TO beacon_updater;
 
 
 --
@@ -7299,6 +10163,291 @@ GRANT SELECT ON TABLE ark.spawn_point_set_replacements TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_sets TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_sets TO beacon_updater;
 GRANT SELECT ON TABLE ark.spawn_point_sets TO beacon_readonly;
+
+
+--
+-- Name: TABLE objects; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.objects TO thezaz_website;
+GRANT SELECT ON TABLE arksa.objects TO beacon_readonly;
+
+
+--
+-- Name: TABLE creatures; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.creatures TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.creatures TO beacon_updater;
+GRANT SELECT ON TABLE arksa.creatures TO beacon_readonly;
+
+
+--
+-- Name: TABLE engrams; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.engrams TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.engrams TO beacon_updater;
+GRANT SELECT ON TABLE arksa.engrams TO beacon_readonly;
+
+
+--
+-- Name: TABLE loot_drops; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.loot_drops TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.loot_drops TO beacon_updater;
+GRANT SELECT ON TABLE arksa.loot_drops TO beacon_readonly;
+
+
+--
+-- Name: TABLE spawn_points; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_points TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_points TO beacon_updater;
+GRANT SELECT ON TABLE arksa.spawn_points TO beacon_readonly;
+
+
+--
+-- Name: TABLE blueprints; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.blueprints TO thezaz_website;
+GRANT SELECT ON TABLE arksa.blueprints TO beacon_updater;
+GRANT SELECT ON TABLE arksa.blueprints TO beacon_readonly;
+
+
+--
+-- Name: TABLE color_sets; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.color_sets TO thezaz_website;
+GRANT SELECT ON TABLE arksa.color_sets TO beacon_readonly;
+
+
+--
+-- Name: TABLE colors; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.colors TO thezaz_website;
+GRANT SELECT ON TABLE arksa.colors TO beacon_readonly;
+
+
+--
+-- Name: TABLE content_pack_relationships; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.content_pack_relationships TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.content_pack_relationships TO beacon_updater;
+GRANT SELECT ON TABLE arksa.content_pack_relationships TO beacon_readonly;
+
+
+--
+-- Name: TABLE content_packs; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.content_packs TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.content_packs TO thezaz_website;
+GRANT SELECT ON TABLE arksa.content_packs TO beacon_updater;
+
+
+--
+-- Name: TABLE crafting_costs; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.crafting_costs TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.crafting_costs TO beacon_updater;
+GRANT SELECT ON TABLE arksa.crafting_costs TO beacon_readonly;
+
+
+--
+-- Name: TABLE creature_engrams; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.creature_engrams TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.creature_engrams TO beacon_updater;
+GRANT SELECT ON TABLE arksa.creature_engrams TO beacon_readonly;
+
+
+--
+-- Name: TABLE creature_stats; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.creature_stats TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.creature_stats TO beacon_updater;
+GRANT SELECT ON TABLE arksa.creature_stats TO beacon_readonly;
+
+
+--
+-- Name: TABLE deletions; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.deletions TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE ON TABLE arksa.deletions TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.deletions TO beacon_updater;
+
+
+--
+-- Name: TABLE event_colors; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.event_colors TO thezaz_website;
+GRANT SELECT ON TABLE arksa.event_colors TO beacon_readonly;
+
+
+--
+-- Name: TABLE event_engrams; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.event_engrams TO thezaz_website;
+GRANT SELECT ON TABLE arksa.event_engrams TO beacon_readonly;
+
+
+--
+-- Name: TABLE event_rates; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.event_rates TO thezaz_website;
+GRANT SELECT ON TABLE arksa.event_rates TO beacon_readonly;
+
+
+--
+-- Name: TABLE events; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.events TO thezaz_website;
+GRANT SELECT ON TABLE arksa.events TO beacon_readonly;
+
+
+--
+-- Name: TABLE game_variables; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.game_variables TO thezaz_website;
+GRANT SELECT ON TABLE arksa.game_variables TO beacon_readonly;
+
+
+--
+-- Name: TABLE ini_options; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.ini_options TO thezaz_website;
+GRANT SELECT ON TABLE arksa.ini_options TO beacon_readonly;
+
+
+--
+-- Name: TABLE loot_drop_icons; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.loot_drop_icons TO thezaz_website;
+GRANT SELECT ON TABLE arksa.loot_drop_icons TO beacon_readonly;
+
+
+--
+-- Name: TABLE loot_item_set_entries; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.loot_item_set_entries TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.loot_item_set_entries TO beacon_updater;
+GRANT SELECT ON TABLE arksa.loot_item_set_entries TO beacon_readonly;
+
+
+--
+-- Name: TABLE loot_item_set_entry_options; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.loot_item_set_entry_options TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.loot_item_set_entry_options TO beacon_updater;
+GRANT SELECT ON TABLE arksa.loot_item_set_entry_options TO beacon_readonly;
+
+
+--
+-- Name: TABLE loot_item_sets; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.loot_item_sets TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.loot_item_sets TO beacon_updater;
+GRANT SELECT ON TABLE arksa.loot_item_sets TO beacon_readonly;
+
+
+--
+-- Name: TABLE maps; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.maps TO thezaz_website;
+GRANT SELECT ON TABLE arksa.maps TO beacon_updater;
+GRANT SELECT ON TABLE arksa.maps TO beacon_readonly;
+
+
+--
+-- Name: TABLE spawn_point_limits; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_limits TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_limits TO beacon_updater;
+GRANT SELECT ON TABLE arksa.spawn_point_limits TO beacon_readonly;
+
+
+--
+-- Name: TABLE spawn_point_populations; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_populations TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_populations TO beacon_updater;
+GRANT SELECT ON TABLE arksa.spawn_point_populations TO beacon_readonly;
+
+
+--
+-- Name: TABLE spawn_point_set_entries; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_set_entries TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_set_entries TO beacon_updater;
+GRANT SELECT ON TABLE arksa.spawn_point_set_entries TO beacon_readonly;
+
+
+--
+-- Name: TABLE spawn_point_set_entry_levels; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_set_entry_levels TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_set_entry_levels TO beacon_updater;
+GRANT SELECT ON TABLE arksa.spawn_point_set_entry_levels TO beacon_readonly;
+
+
+--
+-- Name: TABLE spawn_point_set_replacements; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_set_replacements TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_set_replacements TO beacon_updater;
+GRANT SELECT ON TABLE arksa.spawn_point_set_replacements TO beacon_readonly;
+
+
+--
+-- Name: TABLE spawn_point_sets; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_sets TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.spawn_point_sets TO beacon_updater;
+GRANT SELECT ON TABLE arksa.spawn_point_sets TO beacon_readonly;
+
+
+--
+-- Name: TABLE template_selectors; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.template_selectors TO thezaz_website;
+GRANT SELECT ON TABLE arksa.template_selectors TO beacon_readonly;
+
+
+--
+-- Name: TABLE templates; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.templates TO thezaz_website;
+GRANT SELECT ON TABLE arksa.templates TO beacon_readonly;
 
 
 --

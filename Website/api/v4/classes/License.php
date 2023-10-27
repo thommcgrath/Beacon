@@ -112,7 +112,7 @@ class License extends DatabaseObject implements JsonSerializable {
 
 		if ($isBetaActive && $allowedBuildBase === $latestBuildBase) {
 			// User had access to at least one of the active betas, so they should have access to all betas until release
-			$allowedBuild = ($allowedBuildBase * 1000) + 99;
+			$allowedBuild = ($allowedBuildBase * 1000) + 299;
 		} else {
 			$allowedBuild = ($allowedBuildBase * 1000) + 999;
 		}

@@ -3,6 +3,7 @@
 use BeaconAPI\v4\{ContentPack, Core, Template, TemplateSelector};
 use BeaconAPI\v4\Ark;
 use BeaconAPI\v4\SDTD;
+use BeaconAPI\v4\ArkSA;
 
 $root = "/v{$version}";
 if (BeaconCommon::InProduction() == false) {
@@ -37,6 +38,9 @@ foreach ($packs as $pack) {
 	case '7DaysToDie':
 		Build7DTDContentPackFile($completeArchive, null, $pack);
 		break;
+	case 'ArkSA':
+		BuildArkSAContentPackFile($completeArchive, null, $pack);
+		break;
 	}
 }
 
@@ -65,6 +69,9 @@ if ($buildDeltas) {
 			break;
 		case '7DaysToDie':
 			Build7DTDContentPackFile($deltaArchive, $since, $pack);
+			break;
+		case 'ArkSA':
+			BuildArKSAContentPackFile($deltaArchive, $since, $pack);
 			break;
 		}
 
@@ -109,6 +116,17 @@ function Build7DTDContentPackFile(Archiver $archive, ?DateTime $since, ContentPa
 		'class' => '7DaysToDie/ContentPack',
 		'since' => $since,
 		'7DaysToDie' => [
+			'contentPack' => $contentPack
+		]
+	]);
+}
+
+function BuildArkSAContentPackFile(Archiver $archive, ?DateTime $since, ContentPack $contentPack): void {
+	BuildFile([
+		'archive' => $archive,
+		'class' => 'ArkSA/ContentPack',
+		'since' => $since,
+		'ArkSA' => [
 			'contentPack' => $contentPack
 		]
 	]);
@@ -190,6 +208,15 @@ function BuildFile(array $settings): void {
 			'contentPacks' => ContentPack::Search([...$filters, 'gameId' => '7DaysToDie'], true),
 		];
 
+		$payloads[] = [
+			'gameId' => 'ArkSA',
+			'colors' => ArkSA\Color::Search($filters, true),
+			'colorSets' => ArkSA\ColorSet::Search($filters, true),
+			'contentPacks' => ContentPack::Search([...$filters, 'gameId' => 'ArkSA'], true),
+			'events' => ArkSA\Event::Search($filters, true),
+			'gameVariables' => ArkSA\GameVariable::Search($filters, true)
+		];
+
 		$localName = 'Main.json';
 		break;
 	case 'Ark/Mod':
@@ -216,6 +243,23 @@ function BuildFile(array $settings): void {
 		$payloads[] = [
 			'gameId' => '7DaysToDie',
 			'configOptions' => SDTD\ConfigOption::Search($filters, true),
+		];
+
+		$localName = "{$pack->ContentPackId()}.json";
+		break;
+	case 'ArkSA/ContentPack':
+		$pack = $settings['ArkSA']['contentPack'];
+		$filters['contentPackId'] = $pack->ContentPackId();
+
+		$payloads[] = [
+			'gameId' => 'ArkSA',
+			'configOptions' => ArkSA\ConfigOption::Search($filters, true),
+			'creatures' => ArkSA\Creature::Search($filters, true),
+			'engrams' => ArkSA\Engram::Search($filters, true),
+			'lootDrops' => ArkSA\LootDrop::Search($filters, true),
+			'lootDropIcons' => ArkSA\LootDropIcon::Search($filters, true),
+			'maps' => ArkSA\Map::Search($filters, true),
+			'spawnPoints' => ArkSA\SpawnPoint::Search($filters, true)
 		];
 
 		$localName = "{$pack->ContentPackId()}.json";

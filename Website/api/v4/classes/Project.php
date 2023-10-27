@@ -83,6 +83,9 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		case '7DaysToDie':
 			return new SDTD\Project($rows);
 			break;
+		case 'ArkSA':
+			return new ArkSA\Project($rows);
+			break;
 		default:
 			throw new Exception('Unknown game ' . $gameId);
 		}
@@ -556,9 +559,10 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 
 		switch ($gameId) {
 		case 'Ark':
+		case 'ArkSA':
 			$columns['game_specific']['map'] = $manifest['map'] ?? 1;
 			$columns['game_specific']['difficulty'] = $manifest['difficulty'] ?? 4.0;
-			$columns['game_specific']['include_editors'] = $manifest['editors'] ?? [];
+			$columns['game_specific']['included_editors'] = $manifest['editors'] ?? [];
 
 			$mods = $manifest['modSelections'] ?? [];
 			$enabledModIds = [];
