@@ -146,9 +146,9 @@ const buildDownloadsTable = async (downloadData) => {
 		addChildRow(table, 'Release Notes', data.history_url, 'View');
 	};
 
-	const stableTable = document.getElementById('stable-table');
-	const prereleaseTable = document.getElementById('prerelease-table');
-	const legacyTable = document.getElementById('legacy-table');
+	const stableTable = document.getElementById('stable');
+	const prereleaseTable = document.getElementById('preview');
+	const legacyTable = document.getElementById('legacy');
 
 	const current = downloadData.current;
 	if (current) {

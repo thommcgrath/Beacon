@@ -20,9 +20,9 @@ if (isset($_GET['build']) && isset($_GET['token']) && isset($_GET['expires'])) {
 }
 
 ?><p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
-<div id="stable-table" class="downloads-table"></div>
-<div id="prerelease-table" class="downloads-table"></div>
-<div id="legacy-table" class="downloads-table"></div>
+<div id="stable" class="downloads-table"></div>
+<div id="preview" class="downloads-table"></div>
+<div id="legacy" class="downloads-table"></div>
 <h3 id="requirements">System Requirements</h3>
 <div class="double_column">
 	<div class="column">
