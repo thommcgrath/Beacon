@@ -4,6 +4,7 @@ header('Cache-Control: no-cache');
 header('Accept-CH: UA-Mobile, UA-Arch, UA-Platform, UA-Bitness');
 BeaconTemplate::SetTitle('Download');
 BeaconTemplate::SetPageDescription('Download Beacon for Windows and macOS');
+BeaconTemplate::SetCanonicalPath('/download');
 
 $forceBuild = null;
 if (isset($_GET['build']) && isset($_GET['token']) && isset($_GET['expires'])) {
