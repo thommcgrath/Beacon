@@ -141,7 +141,7 @@ Begin ArkSADiscoveryView ArkSAFilesDiscoveryView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Choose your Ark: Survival Evolved game files"
+      Text            =   "Choose your Ark: Survival Ascended game files"
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
