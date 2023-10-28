@@ -311,6 +311,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mThreads = New Dictionary
+		  Self.mListLock = New CriticalSection
 		End Sub
 	#tag EndMethod
 
@@ -427,7 +428,9 @@ End
 		Private Sub Thread_Run(Sender As Beacon.Thread)
 		  Try
 		    Var Config As Beacon.HostConfig = Sender.UserData
+		    Self.mListLock.Enter
 		    Var Profiles() As Beacon.ServerProfile = Self.Provider.ListServers(Config, Self.GameId())
+		    Self.mListLock.Leave
 		    Var Dict As New Dictionary
 		    Dict.Value("Event") = "Finished"
 		    Dict.Value("Profiles") = Profiles
@@ -520,6 +523,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mFetchingTokens As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mListLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
