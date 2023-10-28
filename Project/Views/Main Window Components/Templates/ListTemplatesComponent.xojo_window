@@ -276,10 +276,11 @@ End
 		    
 		    Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		    If (File Is Nil) = False Then
-		      Var Contents As String = Beacon.GenerateJSON(Template.SaveData, True)
-		      If File.Write(Contents) = False Then
+		      Try
+		        File.Write(Beacon.GenerateJSON(Template.SaveData, True))
+		      Catch Err As RuntimeException
 		        Self.ShowAlert("Could not export template", "There was an error saving the template. The disk may be full or may not have write permission.")
-		      End If
+		      End Try
 		    End If
 		    
 		    Return

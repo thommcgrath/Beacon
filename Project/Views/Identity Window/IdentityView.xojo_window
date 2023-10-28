@@ -397,7 +397,8 @@ End
 		Private Function DecryptFile(SourceFile As FolderItem, DestinationFile As FolderItem, Identity As Beacon.Identity) As Boolean
 		  Try
 		    Var SourceContent As MemoryBlock = SourceFile.Read(Identity)
-		    Return DestinationFile.Write(SourceContent)
+		    DestinationFile.Write(SourceContent)
+		    Return True
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try

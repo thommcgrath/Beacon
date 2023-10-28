@@ -897,7 +897,8 @@ End
 		    
 		    Var Filename As String = Fields.Value("hash").StringValue + ".beaconerror"
 		    Var ErrorFile As FolderItem = ErrorsFolder.Child(Filename)
-		    Return ErrorFile.Write(Beacon.GenerateJSON(Fields, True))
+		    ErrorFile.Write(Beacon.GenerateJSON(Fields, True))
+		    Return True
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try

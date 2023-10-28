@@ -615,9 +615,11 @@ Protected Module UserCloud
 		    End If
 		  End If
 		  
-		  If Not LocalFile.Write(Content) Then
+		  Try
+		    LocalFile.Write(Content)
+		  Catch Err As RuntimeException
 		    Return False
-		  End If
+		  End Try
 		  
 		  SetActionForPath(RemotePath, "PUT")
 		  Sync()

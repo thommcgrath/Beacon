@@ -550,8 +550,27 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function PartialPath(Extends File As FolderItem) As String
+		  Var NativePath As String = File.NativePath
+		  Var Components(), PathSeparator As String
+		  If NativePath.Contains("/") Then
+		    Components = NativePath.Split("/")
+		    PathSeparator = "/"
+		  ElseIf NativePath.Contains("\") Then
+		    Components = NativePath.Split("\")
+		    PathSeparator = "\"
+		  Else
+		    Components = Array(NativePath)
+		  End If
+		  While Components.Count > 3
+		    Components.RemoveAt(0)
+		  Wend
+		  Return String.FromArray(Components, PathSeparator)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem) As MemoryBlock
-		  // Let the caller deal with exceptions
 		  Const ChunkSize = 256000
 		  
 		  Var Stream As BinaryStream = BinaryStream.Open(File, False)
@@ -570,14 +589,10 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem, Encoding As TextEncoding) As String
-		  Try
-		    Var Stream As TextInputStream = TextInputStream.Open(File)
-		    Var Contents As String = Stream.ReadAll(Encoding)
-		    Stream.Close
-		    Return Contents
-		  Catch Err As RuntimeException
-		    Return ""
-		  End Try
+		  Var Stream As TextInputStream = TextInputStream.Open(File)
+		  Var Contents As String = Stream.ReadAll(Encoding)
+		  Stream.Close
+		  Return Contents
 		End Function
 	#tag EndMethod
 
@@ -837,7 +852,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Write(Extends File As FolderItem, Contents As MemoryBlock) As Boolean
+		Sub Write(Extends File As FolderItem, Contents As MemoryBlock)
 		  Static Locks As Dictionary
 		  If Locks = Nil Then
 		    Locks = New Dictionary
@@ -878,13 +893,12 @@ Protected Module FrameworkExtensions
 		    File.ModificationDateTime = DateTime.Now
 		    
 		    Lock.Leave
-		    Return True
 		  Catch Err As RuntimeException
 		    App.Log("Unable to write " + File.NativePath + ": " + Err.Message + " (" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ")")
 		    Lock.Leave
-		    Return False
+		    Raise Err
 		  End Try
-		End Function
+		End Sub
 	#tag EndMethod
 
 

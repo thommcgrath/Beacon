@@ -472,7 +472,8 @@ Protected Class ProjectController
 		      If BackupFolder.CheckIsFolder Then
 		        Var BackupFile As FolderItem = BackupFolder.Child(Self.mProject.ProjectId + ".beacon")
 		        Try
-		          Saved = BackupFile.Write(SaveData)
+		          BackupFile.Write(SaveData)
+		          Saved = True
 		        Catch LocalErr As RuntimeException
 		          App.Log(LocalErr, CurrentMethodName, "Writing local backup")
 		        End Try
@@ -515,7 +516,8 @@ Protected Class ProjectController
 		    
 		    SaveData = Self.mProject.SaveData(Self.mIdentity, AdditionalProperties)
 		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
-		      Saved = Self.mDestination.File.Write(SaveData)
+		      Self.mDestination.File.Write(SaveData)
+		      Saved = True
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Writing save data to disk")

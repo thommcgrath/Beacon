@@ -28,10 +28,10 @@ Inherits Beacon.ServerProfile
 		      Self.mSpectatorPassword = Dict.Value("spectatorPassword").StringValue
 		    End If
 		    
-		    Self.mBasePath = SaveData.Lookup("basePath", "").StringValue
-		    Self.mGameIniPath = SaveData.Lookup("gameIniPath", "").StringValue
-		    Self.mGameUserSettingsIniPath = SaveData.Lookup("gameUserSettingsIniPath", "").StringValue
-		    Self.mLogsPath = SaveData.Lookup("logsPath", "").StringValue
+		    Self.mBasePath = Dict.Lookup("basePath", "").StringValue
+		    Self.mGameIniPath = Dict.Lookup("gameIniPath", "").StringValue
+		    Self.mGameUserSettingsIniPath = Dict.Lookup("gameUserSettingsIniPath", "").StringValue
+		    Self.mLogsPath = Dict.Lookup("logsPath", "").StringValue
 		  Case 1
 		    Self.mMask = Dict.Lookup("Map", 0)
 		    
@@ -84,26 +84,11 @@ Inherits Beacon.ServerProfile
 		          Self.mGameUserSettingsIniPath = Dict.Value(Ark.ConfigFileGameUserSettings).StringValue
 		        End If
 		        If Self.SecondaryName.IsEmpty Then
-		          Var Paths() As String = Array(Self.mGameIniPath, Self.mGameUserSettingsIniPath)
+		          Var Paths() As String = Array(Self.mGameUserSettingsIniPath, Self.mGameIniPath)
 		          For Each Path As String In Paths
 		            Try
 		              Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Path)
-		              Var NativePath As String = File.NativePath
-		              Var Components(), PathSeparator As String
-		              If NativePath.Contains("/") Then
-		                Components = NativePath.Split("/")
-		                PathSeparator = "/"
-		              ElseIf NativePath.Contains("\") Then
-		                Components = NativePath.Split("\")
-		                PathSeparator = "\"
-		              Else
-		                Components = Array(NativePath)
-		              End If
-		              While Components.Count > 3
-		                Components.RemoveAt(0)
-		              Wend
-		              Var PartialPath As String = String.FromArray(Components, PathSeparator)
-		              Self.SecondaryName = PartialPath
+		              Self.SecondaryName = File.PartialPath
 		              Exit
 		            Catch Err As RuntimeException
 		            End Try

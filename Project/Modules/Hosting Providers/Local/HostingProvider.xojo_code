@@ -220,10 +220,26 @@ Implements Beacon.HostingProvider
 		Sub UploadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
-		  #Pragma Unused Transfer
+		  
+		  Var File As FolderItem = BookmarkedFolderItem.FromSaveInfo(Transfer.Path)
+		  If File Is Nil Then
+		    Transfer.SetError("Could not get path to file")
+		    Return
+		  End If
+		  
+		  Try
+		    File.Write(Transfer.Content)
+		    Transfer.Success = True
+		  Catch Err As RuntimeException
+		    If Err.Message.IsEmpty Then
+		      Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		      Transfer.SetError(Info.FullName + " while trying to write file")
+		    Else
+		      Transfer.SetError(Err.Message)
+		    End If
+		  End Try
 		End Sub
 	#tag EndMethod
 

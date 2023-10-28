@@ -28,92 +28,10 @@ Inherits Beacon.ServerProfile
 		      Self.mSpectatorPassword = Dict.Value("spectatorPassword").StringValue
 		    End If
 		    
-		    Self.mBasePath = SaveData.Lookup("basePath", "").StringValue
-		    Self.mGameIniPath = SaveData.Lookup("gameIniPath", "").StringValue
-		    Self.mGameUserSettingsIniPath = SaveData.Lookup("gameUserSettingsIniPath", "").StringValue
-		    Self.mLogsPath = SaveData.Lookup("logsPath", "").StringValue
-		  Case 1
-		    Self.mMask = Dict.Lookup("Map", 0)
-		    
-		    If Dict.HasKey("Message of the Day") Then
-		      Var MOTD As Variant = Dict.Value("Message of the Day")
-		      If MOTD.Type = Variant.TypeString Then
-		        #if Not TargetiOS
-		          Self.mMessageOfTheDay = ArkSA.ArkML.FromRTF(MOTD)
-		        #endif
-		      Else
-		        Var Info As Introspection.TypeInfo = Introspection.GetType(MOTD)
-		        If Info.FullName = "Dictionary()" Then
-		          Self.mMessageOfTheDay = ArkSA.ArkML.FromArray(MOTD)
-		        ElseIf Info.FullName = "Object()" Then
-		          Self.mMessageOfTheDay = ArkSA.ArkML.FromObjects(MOTD)
-		        End If
-		      End If
-		      Self.mMessageDuration = Dict.Lookup("Message Duration", 30).IntegerValue
-		    End If
-		    
-		    If Self.mMessageOfTheDay Is Nil Then
-		      Self.mMessageOfTheDay = New ArkSA.ArkML
-		    End If
-		    
-		    If Dict.HasKey("Admin Password") Then
-		      Self.mAdminPassword = Dict.Value("Admin Password").StringValue
-		    End If
-		    
-		    If Dict.HasKey("Server Password") Then
-		      Self.mServerPassword = Dict.Value("Server Password").StringValue
-		    End If
-		    
-		    If Dict.HasKey("Spectator Password") Then
-		      Self.mSpectatorPassword = Dict.Value("Spectator Password").StringValue
-		    End If
-		    
-		    If Dict.HasKey("Provider") Then
-		      Var Provider As String = Dict.Value("Provider")
-		      Select Case Provider
-		      Case Nitrado.Identifier
-		        Self.mBasePath = Dict.Value("Path").StringValue
-		      Case FTP.Identifier
-		        Self.mGameIniPath = Dict.Value("Game.ini Path").StringValue
-		        Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path").StringValue
-		      Case Local.Identifier
-		        If Dict.HasKey(ArkSA.ConfigFileGame) Then
-		          Self.mGameIniPath = Dict.Value(ArkSA.ConfigFileGame).StringValue
-		        End If
-		        If Dict.HasKey(ArkSA.ConfigFileGameUserSettings) Then
-		          Self.mGameUserSettingsIniPath = Dict.Value(ArkSA.ConfigFileGameUserSettings).StringValue
-		        End If
-		        If Self.SecondaryName.IsEmpty Then
-		          Var Paths() As String = Array(Self.mGameIniPath, Self.mGameUserSettingsIniPath)
-		          For Each Path As String In Paths
-		            Try
-		              Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Path)
-		              Var NativePath As String = File.NativePath
-		              Var Components(), PathSeparator As String
-		              If NativePath.Contains("/") Then
-		                Components = NativePath.Split("/")
-		                PathSeparator = "/"
-		              ElseIf NativePath.Contains("\") Then
-		                Components = NativePath.Split("\")
-		                PathSeparator = "\"
-		              Else
-		                Components = Array(NativePath)
-		              End If
-		              While Components.Count > 3
-		                Components.RemoveAt(0)
-		              Wend
-		              Var PartialPath As String = String.FromArray(Components, PathSeparator)
-		              Self.SecondaryName = PartialPath
-		              Exit
-		            Catch Err As RuntimeException
-		            End Try
-		          Next
-		        End If
-		      Case GameServerApp.Identifier
-		        Self.mGameIniPath = ArkSA.ConfigFileGame
-		        Self.mGameUserSettingsIniPath = ArkSA.ConfigFileGameUserSettings
-		      End Select
-		    End If
+		    Self.mBasePath = Dict.Lookup("basePath", "").StringValue
+		    Self.mGameIniPath = Dict.Lookup("gameIniPath", "").StringValue
+		    Self.mGameUserSettingsIniPath = Dict.Lookup("gameUserSettingsIniPath", "").StringValue
+		    Self.mLogsPath = Dict.Lookup("logsPath", "").StringValue
 		  End Select
 		End Sub
 	#tag EndEvent

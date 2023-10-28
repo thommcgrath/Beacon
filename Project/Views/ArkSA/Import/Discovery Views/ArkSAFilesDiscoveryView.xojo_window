@@ -588,18 +588,26 @@ End
 		  Select Case DesiredType
 		  Case ConfigFileType.GameIni
 		    Var Sibling As FolderItem = Parent.Child(ArkSA.ConfigFileGameUserSettings)
-		    If (Sibling Is Nil) = False And Sibling.Exists And (Sibling.Read Is Nil) = False Then
-		      Self.AddFile(Sibling, ConfigFileType.GameUserSettingsIni)
-		      Return
+		    If (Sibling Is Nil) = False And Sibling.Exists Then
+		      Try
+		        Call Sibling.Read()
+		        Self.AddFile(Sibling, ConfigFileType.GameUserSettingsIni)
+		        Return
+		      Catch Err As RuntimeException
+		      End Try
 		    End If
 		    If Self.ShowConfirm("Select your " + ArkSA.ConfigFileGameUserSettings + " file too?", "Your " + ArkSA.ConfigFileGame + " file is set. Do you want to choose your " + ArkSA.ConfigFileGameUserSettings + " file now?", "Choose", "Not Now") Then
 		      Self.ShowFileChooser(ConfigFileType.GameUserSettingsIni, False)
 		    End If
 		  Case ConfigFileType.GameUserSettingsIni
 		    Var Sibling As FolderItem = Parent.Child(ArkSA.ConfigFileGame)
-		    If (Sibling Is Nil) = False And Sibling.Exists And (Sibling.Read Is Nil) = False Then
-		      Self.AddFile(Sibling, ConfigFileType.GameIni)
-		      Return
+		    If (Sibling Is Nil) = False And Sibling.Exists Then
+		      Try
+		        Call Sibling.Read
+		        Self.AddFile(Sibling, ConfigFileType.GameIni)
+		        Return
+		      Catch Err As RuntimeException
+		      End Try
 		    End If
 		    If Self.ShowConfirm("Select your " + ArkSA.ConfigFileGame + " file too?", "Your " + ArkSA.ConfigFileGameUserSettings + " file is set. Do you want to choose your " + ArkSA.ConfigFileGame + " file now?", "Choose", "Not Now") Then
 		      Self.ShowFileChooser(ConfigFileType.GameIni, False)
@@ -648,11 +656,15 @@ End
 		Sub Pressed()
 		  Var Profile As New ArkSA.ServerProfile(Local.Identifier, Language.DefaultServerName(ArkSA.Identifier))
 		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
-		  If (Self.mGameIniFile Is Nil) = False Then
-		    Profile.GameIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameIniFile)
-		  End If
 		  If (Self.mGameUserSettingsIniFile Is Nil) = False Then
 		    Profile.GameUserSettingsIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameUserSettingsIniFile)
+		    Profile.SecondaryName = Self.mGameUserSettingsIniFile.PartialPath
+		  End If
+		  If (Self.mGameIniFile Is Nil) = False Then
+		    Profile.GameIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameIniFile)
+		    If Profile.SecondaryName.IsEmpty Then
+		      Profile.SecondaryName = Self.mGameIniFile.PartialPath
+		    End If
 		  End If
 		  Self.ShouldFinish(Profile)
 		End Sub

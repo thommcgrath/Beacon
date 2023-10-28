@@ -724,13 +724,15 @@ End
 		  End If
 		  
 		  Var File As FolderItem = Dialog.ShowModal()
-		  If File = Nil Then
+		  If File Is Nil Then
 		    Return
 		  End If
 		  
-		  If Not File.Write(Self.CurrentContent) Then
+		  Try
+		    File.Write(Self.CurrentContent)
+		  Catch Err As RuntimeException
 		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
-		  End If
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -880,9 +882,11 @@ End
 		  End If
 		  
 		  If (Self.mFileDestination Is Nil) = False Then
-		    If Not Self.mFileDestination.Write(Content) Then
+		    Try
+		      Self.mFileDestination.Write(Content)
+		    Catch Err As RuntimeException
 		      Self.ShowAlert("Unable to update file", "There was an error trying to rewrite the ini content in the selected file.")
-		    End If
+		    End Try
 		    Return
 		  End If
 		End Sub

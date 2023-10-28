@@ -415,19 +415,23 @@ End
 		  
 		  If Self.mGameIniContent.IsEmpty = False Then
 		    Var TempFile As FolderItem = FolderItem.TemporaryFile
-		    If Not TempFile.Write(Self.mGameIniContent) Then
+		    Try
+		      TempFile.Write(Self.mGameIniContent)
+		    Catch Err As RuntimeException
 		      Self.ShowAlert("Import error", "Beacon was unable to write the temporary " + Ark.ConfigFileGame + " file necessary to import.")
 		      Return
-		    End If
+		    End Try
 		    Profile.GameIniPath = BookmarkedFolderItem.CreateSaveInfo(TempFile)
 		  End If
 		  
 		  If Self.mGameUserSettingsIniContent.IsEmpty = False Then
 		    Var TempFile As FolderItem = FolderItem.TemporaryFile
-		    If Not TempFile.Write(Self.mGameUserSettingsIniContent) Then
+		    Try
+		      TempFile.Write(Self.mGameUserSettingsIniContent)
+		    Catch Err As RuntimeException
 		      Self.ShowAlert("Import error", "Beacon was unable to write the temporary " + Ark.ConfigFileGameUserSettings + " file necessary to import.")
 		      Return
-		    End If
+		    End Try
 		    Profile.GameUserSettingsIniPath = BookmarkedFolderItem.CreateSaveInfo(TempFile)
 		  End If
 		  

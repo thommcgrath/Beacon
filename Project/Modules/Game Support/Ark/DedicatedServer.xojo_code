@@ -86,14 +86,18 @@ Protected Module DedicatedServer
 		    Return False
 		  End If
 		  
-		  If ConfigFolder.Child(Ark.ConfigFileGameUserSettings).Write(GameUserSettingsIniRewritten) = False Then
-		    App.Log("Could not write GameUserSettings.ini to platform config directory")
+		  Try
+		    ConfigFolder.Child(Ark.ConfigFileGameUserSettings).Write(GameUserSettingsIniRewritten)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Could not write GameUserSettings.ini to platform config directory")
 		    Return False
-		  End If
-		  If ConfigFolder.Child(Ark.ConfigFileGame).Write(GameIniRewritten) = False Then
-		    App.Log("Could not write Game.ini to platform config directory")
+		  End Try
+		  Try
+		    ConfigFolder.Child(Ark.ConfigFileGame).Write(GameIniRewritten)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Could not write Game.ini to platform config directory")
 		    Return False
-		  End If
+		  End Try
 		  
 		  Try
 		    HardLinkContents(ArkRoot, ServerFolder, False)

@@ -364,35 +364,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function HelpCreateOfflineAuthorizationRequest() As Boolean Handles HelpCreateOfflineAuthorizationRequest.Action
-		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = "Authorization Request" + Beacon.FileExtensionAuth
-		  
-		  Var File As FolderItem = Dialog.ShowModal()
-		  If File = Nil Then
-		    Return True
-		  End If
-		  
-		  Var Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
-		  
-		  Var HardwareID As String = Beacon.HardwareId
-		  Var Signed As MemoryBlock = Identity.Sign(HardwareID)
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("UserID") = Identity.UserID
-		  Dict.Value("Signed") = EncodeHex(Signed)
-		  Dict.Value("Device") = HardwareID
-		  
-		  Var JSON As String = Beacon.GenerateJSON(Dict, False)
-		  If Not File.Write(JSON) Then
-		    BeaconUI.ShowAlert("Could not create offline authorization request.", "There was a problem writing the file to disk.")
-		  End If
-		  
-		  Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
 		  Self.StartTicket()
 		  Return True

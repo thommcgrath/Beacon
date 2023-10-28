@@ -466,7 +466,7 @@ End
 		  Dialog.SuggestedFileName = Ark.ConfigFileGameUserSettings
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-		  If File = Nil Then
+		  If File Is Nil Then
 		    Return
 		  End If
 		  
@@ -477,6 +477,7 @@ End
 		  
 		  Var Bookmark As New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
 		  Self.Profile.GameUserSettingsIniPath = Bookmark.SaveInfo()
+		  Self.Profile.SecondaryName = File.PartialPath
 		  
 		  Self.GameUserSettingsIniPathField.Text = File.NativePath
 		  Self.Modified = Self.Profile.Modified
@@ -491,7 +492,7 @@ End
 		  Dialog.SuggestedFileName = Ark.ConfigFileGame
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-		  If File = Nil Then
+		  If File Is Nil Then
 		    Return
 		  End If
 		  
@@ -502,6 +503,9 @@ End
 		  
 		  Var Bookmark As New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
 		  Self.Profile.GameIniPath = Bookmark.SaveInfo()
+		  If Self.Profile.SecondaryName.IsEmpty Then
+		    Self.Profile.SecondaryName = File.PartialPath
+		  End If
 		  
 		  Self.GameIniPathField.Text = File.NativePath
 		  Self.Modified = Self.Profile.Modified
