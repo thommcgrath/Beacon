@@ -90,7 +90,7 @@ Inherits Beacon.DiscoverIntegration
 		      Var DownloadSuccess As Boolean
 		      Var LogContents As String = Self.GetFile(LogFilePath, "ShooterGame.log", Beacon.Integration.DownloadFailureMode.ErrorsAllowed, Profile, False, DownloadSuccess)
 		      If DownloadSuccess Then
-		        Var Lines() As String = LogContents.Split(EndOfLine)
+		        Var Lines() As String = LogContents.GuessEncoding.Split(EndOfLine)
 		        Var FoundName, FoundCommandLine As Boolean
 		        For Each Line As String In Lines
 		          Line = Line.Middle(30).Trim
@@ -121,8 +121,10 @@ Inherits Beacon.DiscoverIntegration
 		    Var GameIniPath As String = Profile.GameIniPath
 		    If GameIniPath.IsEmpty = False Then
 		      Var DownloadSuccess As Boolean
-		      Data.GameIniContent = Self.GetFile(GameIniPath, Ark.ConfigFileGame, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
-		      If Not DownloadSuccess Then
+		      Var IniContent As String = Self.GetFile(GameIniPath, Ark.ConfigFileGame, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
+		      If DownloadSuccess Then
+		        Data.GameIniContent = IniContent.GuessEncoding
+		      Else
 		        Return Nil
 		      End If
 		    End If
@@ -130,8 +132,10 @@ Inherits Beacon.DiscoverIntegration
 		    Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
 		    If GameUserSettingsIniPath.IsEmpty = False Then
 		      Var DownloadSuccess As Boolean
-		      Data.GameUserSettingsIniContent = Self.GetFile(GameUserSettingsIniPath, Ark.ConfigFileGameUserSettings, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
-		      If Not DownloadSuccess Then
+		      Var IniContent As String = Self.GetFile(GameUserSettingsIniPath, Ark.ConfigFileGameUserSettings, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
+		      If DownloadSuccess Then
+		        Data.GameUserSettingsIniContent = IniContent.GuessEncoding
+		      Else
 		        Return Nil
 		      End If
 		    End If

@@ -373,7 +373,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		        Path = Path.Middle(10, Path.Length - 11)
 		      Else
 		        // No idea what this says
-		        Break
 		        Continue
 		      End If
 		      
