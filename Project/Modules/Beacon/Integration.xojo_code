@@ -134,6 +134,11 @@ Implements Beacon.LogProducer
 		    
 		    Try
 		      Self.mProvider.DownloadFile(Self.mProject, Profile, Transfer, FailureMode)
+		      If Not Transfer.Success Then
+		        Message = Transfer.ErrorMessage
+		        Counter = Counter + 1
+		        Continue
+		      End If
 		      If Not Silent Then
 		        Self.Log("Downloaded " + DisplayName + ", size: " + Beacon.BytesToString(Transfer.Size))
 		      End If
