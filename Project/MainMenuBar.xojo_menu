@@ -527,14 +527,6 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopMenuItem HelpCreateOfflineAuthorizationRequest
-         SpecialMenu = 0
-         Index = -2147483648
-         Text = "Create Offline Authorization Request…"
-         AutoEnabled = True
-         AutoEnable = True
-         Visible = True
-      End
       Begin DesktopMenuItem UntitledSeparator2
          SpecialMenu = 0
          Index = -2147483648
@@ -547,14 +539,6 @@ Begin Menu MainMenuBar
          SpecialMenu = 0
          Index = -2147483648
          Text = "API Guide…"
-         AutoEnabled = True
-         AutoEnable = True
-         Visible = True
-      End
-      Begin DesktopMenuItem HelpAPIBuilder
-         SpecialMenu = 0
-         Index = -2147483648
-         Text = "API Builder…"
          AutoEnabled = True
          AutoEnable = True
          Visible = True
