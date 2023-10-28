@@ -233,8 +233,8 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ConfigSetData(Set As Beacon.ConfigSet) As Dictionary
+	#tag Method, Flags = &h0
+		Function ConfigSetData(Set As Beacon.ConfigSet) As Dictionary
 		  If Set Is Nil Then
 		    Set = Self.ActiveConfigSet
 		  End If
@@ -248,8 +248,8 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub ConfigSetData(Set As Beacon.ConfigSet, Assigns Dict As Dictionary)
+	#tag Method, Flags = &h0
+		Sub ConfigSetData(Set As Beacon.ConfigSet, Assigns Dict As Dictionary)
 		  If Set Is Nil Then
 		    Set = Self.ActiveConfigSet
 		  End If
@@ -1551,7 +1551,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Set = Self.mConfigSets(OldNameIdx)
-		  If Set.Name = NewName Then
+		  If Set.Name.Compare(NewName, ComparisonOptions.CaseSensitive) = 0 Then
 		    Return
 		  End If
 		  

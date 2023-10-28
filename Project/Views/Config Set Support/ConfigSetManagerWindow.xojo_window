@@ -18,12 +18,12 @@ Begin BeaconDialog ConfigSetManagerWindow
    MenuBar         =   0
    MenuBarVisible  =   True
    MinimumHeight   =   400
-   MinimumWidth    =   600
+   MinimumWidth    =   700
    Resizeable      =   True
    Title           =   "Manage Config Sets"
    Type            =   8
    Visible         =   True
-   Width           =   600
+   Width           =   700
    Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -38,7 +38,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   600
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -70,7 +70,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   408
+      Left            =   508
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -142,7 +142,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   329
+      Width           =   429
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -177,7 +177,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   660
    End
    Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
@@ -210,7 +210,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   660
    End
    Begin UITweaks.ResizedPushButton NewButton
       AllowAutoDeactivate=   True
@@ -340,7 +340,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Index           =   -2147483648
       InitialValue    =   " 	Servers"
       Italic          =   False
-      Left            =   361
+      Left            =   461
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -366,6 +366,37 @@ Begin BeaconDialog ConfigSetManagerWindow
       Width           =   219
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin UITweaks.ResizedPushButton CloneButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Duplicate"
+      Default         =   False
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   341
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   360
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   90
    End
 End
 #tag EndDesktopWindow
@@ -397,6 +428,7 @@ End
 		  // Calling the overridden superclass constructor.
 		  Self.mProject = Project
 		  Self.mBlockServersUpdate = True
+		  Self.mClones = New Dictionary
 		  
 		  Self.mProfileSets = New Dictionary
 		  Var Profiles() As Beacon.ServerProfile = Project.ServerProfiles()
@@ -406,6 +438,18 @@ End
 		  
 		  Super.Constructor
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function IsNameUnique(DesiredName As String, SkipSet As Beacon.ConfigSet) As Boolean
+		  For Idx As Integer = 0 To Self.SetList.LastRowIndex
+		    Var RowSet As Beacon.ConfigSet = Beacon.ConfigSet(Self.SetList.RowTagAt(Idx))
+		    If RowSet.Name = DesiredName And RowSet <> SkipSet Then
+		      Return False
+		    End If
+		  Next
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -446,6 +490,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mClones As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDeletedSets() As Beacon.ConfigSet
 	#tag EndProperty
 
@@ -480,16 +528,26 @@ End
 		    Self.mProject.RemoveConfigSet(Set)
 		  Next
 		  
-		  // Rename sets
+		  // Rename sets. To avoid conflicts, first rename everything that is getting changed.
+		  Var RenameSets As New Dictionary
 		  For Idx As Integer = 0 To Self.SetList.LastRowIndex
 		    Var Set As Beacon.ConfigSet = Self.SetList.RowTagAt(Idx)
-		    
-		    If SetsMap.HasKey(Set.ConfigSetId) Then
-		      Var OriginalSet As Beacon.ConfigSet = SetsMap.Value(Set.ConfigSetId)
-		      If Set.Name.Compare(OriginalSet.Name, ComparisonOptions.CaseSensitive) <> 0 Then
-		        Self.mProject.RenameConfigSet(OriginalSet, Set.Name)
-		      End If
+		    If SetsMap.HasKey(Set.ConfigSetId) = False Then
+		      Continue
 		    End If
+		    
+		    Var OriginalSet As Beacon.ConfigSet = SetsMap.Value(Set.ConfigSetId)
+		    If Set.Name.Compare(OriginalSet.Name, ComparisonOptions.CaseSensitive) = 0 Then
+		      Continue
+		    End If
+		    
+		    Self.mProject.RenameConfigSet(OriginalSet, Beacon.UUID.v4)
+		    RenameSets.Value(OriginalSet) = Set.Name
+		  Next
+		  For Each Entry As DictionaryEntry In RenameSets
+		    Var Set As Beacon.ConfigSet = Entry.Key
+		    Var NewName As String = Entry.Value
+		    Self.mProject.RenameConfigSet(Set, NewName)
 		  Next
 		  
 		  // Add sets
@@ -502,6 +560,13 @@ End
 		  For Each Profile As Beacon.ServerProfile In Profiles
 		    Var States() As Beacon.ConfigSetState = Self.mProfileSets.Value(Profile.ProfileId)
 		    Profile.ConfigSetStates = States
+		  Next
+		  
+		  // Set clone data
+		  For Each Entry As DictionaryEntry In Self.mClones
+		    Var Set As Beacon.ConfigSet = Entry.Key
+		    Var SetDict As Dictionary = Entry.Value
+		    Self.mProject.ConfigSetData(Set) = SetDict
 		  Next
 		  
 		  Self.mCancelled = False
@@ -522,6 +587,7 @@ End
 		Sub SelectionChanged()
 		  Self.EditButton.Enabled = Me.CanEdit
 		  Self.DeleteButton.Enabled = Me.CanDelete
+		  Self.CloneButton.Enabled = Me.SelectedRowCount = 1
 		  
 		  Var SelectedSet As Beacon.ConfigSet
 		  If Me.SelectedRowCount = 1 Then
@@ -579,6 +645,10 @@ End
 		  Var Set As Beacon.ConfigSet = Beacon.ConfigSet(Me.RowTagAt(Me.SelectedRowIndex))
 		  Me.RemoveRowAt(Me.SelectedRowIndex)
 		  
+		  If Self.mClones.HasKey(Set) Then
+		    Self.mClones.Remove(Set)
+		  End If
+		  
 		  // If it's a new set, just remove it from the array and don't add it to deleted
 		  For Idx As Integer = 0 To Self.mNewSets.LastIndex
 		    If Self.mNewSets(Idx) = Set Then
@@ -588,7 +658,6 @@ End
 		  Next
 		  
 		  Self.mDeletedSets.Add(Set)
-		  
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -599,13 +668,10 @@ End
 		    Return
 		  End If
 		  
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    Var RowSet As Beacon.ConfigSet = Beacon.ConfigSet(Me.RowTagAt(Idx))
-		    If RowSet.Name = NewSetName And RowSet <> Set Then
-		      Self.ShowAlert("There is already a config set named " + NewSetName + ". Please choose another.", "More than one config set of the same name would get confusing.")
-		      Return
-		    End If
-		  Next
+		  If Not Self.IsNameUnique(NewSetName, Set) Then
+		    Self.ShowAlert("There is already a config set named " + NewSetName + ". Please choose another.", "More than one config set of the same name would get confusing.")
+		    Return
+		  End If
 		  
 		  Set.Name = NewSetName
 		  Me.CellTextAt(Me.SelectedRowIndex, 0) = Set.Name
@@ -627,6 +693,11 @@ End
 		Sub Pressed()
 		  Var NewSetName As String = ConfigSetNamingWindow.Present(Self)
 		  If NewSetName.IsEmpty Then
+		    Return
+		  End If
+		  
+		  If Not Self.IsNameUnique(NewSetName, Nil) Then
+		    Self.ShowAlert("There is already a config set named " + NewSetName + ". Please choose another.", "More than one config set of the same name would get confusing.")
 		    Return
 		  End If
 		  
@@ -696,6 +767,37 @@ End
 		    States.Add(New Beacon.ConfigSetState(SelectedSet, Checked))
 		  End If
 		  Self.mProfileSets.Value(Profile.ProfileId) = States
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CloneButton
+	#tag Event
+		Sub Pressed()
+		  Var SourceSet As Beacon.ConfigSet = Beacon.ConfigSet(Self.SetList.RowTagAt(Self.SetList.SelectedRowIndex))
+		  Var NewSetName As String = ConfigSetNamingWindow.Present(Self, SourceSet.Name + " Copy")
+		  If NewSetName.IsEmpty Then
+		    Return
+		  End If
+		  
+		  If Not Self.IsNameUnique(NewSetName, Nil) Then
+		    Self.ShowAlert("There is already a config set named " + NewSetName + ". Please choose another.", "More than one config set of the same name would get confusing.")
+		    Return
+		  End If
+		  
+		  Var Set As New Beacon.ConfigSet(NewSetName)
+		  Self.mNewSets.Add(Set)
+		  
+		  Self.SetList.AddRow(Set.Name, "0 Servers")
+		  Self.SetList.RowTagAt(Self.SetList.LastAddedRowIndex) = Set
+		  Self.SetList.CellTagAt(Self.SetList.LastAddedRowIndex, 1) = 0
+		  Self.SetList.SelectedRowIndex = Self.SetList.LastAddedRowIndex
+		  Self.SetList.Sort
+		  
+		  If Self.mProject.HasConfigSet(SourceSet) Then
+		    Self.mClones.Value(Set) = Self.mProject.ConfigSetData(SourceSet).Clone
+		  ElseIf Self.mClones.HasKey(SourceSet) Then
+		    Self.mClones.Value(Set) = Dictionary(Self.mClones.Value(SourceSet)).Clone
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
