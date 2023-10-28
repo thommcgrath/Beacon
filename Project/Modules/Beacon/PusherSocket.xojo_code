@@ -44,6 +44,8 @@ Protected Class PusherSocket
 
 	#tag Method, Flags = &h21
 		Private Sub mRunThread_Run(Sender As Global.Thread)
+		  Const SleepTime = 500
+		  
 		  If Preferences.OnlineEnabled = False Then
 		    Self.State = Beacon.PusherSocket.States.Disabled
 		    Return
@@ -155,7 +157,7 @@ Protected Class PusherSocket
 		        Exit While
 		      End If
 		      
-		      Sender.Sleep(500)
+		      Sender.Sleep(SleepTime)
 		      Continue
 		    End If
 		    
@@ -167,32 +169,51 @@ Protected Class PusherSocket
 		      #if DebugBuild
 		        System.DebugLog("Sent pong")
 		      #endif
+		      Sender.Sleep(SleepTime)
 		      Continue
 		    ElseIf Message.FlagPong Then
 		      #if DebugBuild
 		        System.DebugLog("Received pong")
 		      #endif
+		      Sender.Sleep(SleepTime)
 		      Continue
 		    End If
 		    
 		    Try
-		      Var Json As Dictionary = Beacon.ParseJson(Message.Data)
+		      Var Json As New JSONItem(Message.Data)
+		      If Json.HasKey("event") = False Or Json.HasKey("data") = False Then
+		        #if DebugBuild
+		          System.DebugLog("Received a message I don't understand")
+		        #endif
+		        Sender.Sleep(SleepTime)
+		        Continue
+		      End If
+		      
 		      Var EventName As String = Json.Value("event")
+		      Var Payload As String = Json.Value("data")
 		      Select Case EventName
 		      Case "pusher:connection_established"
-		        Var ConnectionInfo As Dictionary = Beacon.ParseJson(Json.Value("data").StringValue)
+		        Var ConnectionInfo As New JSONItem(Payload)
 		        Self.mSocketId = ConnectionInfo.Value("socket_id")
 		        ActivityTimeout = ConnectionInfo.Lookup("activity_timeout", ActivityTimeout)
 		        #if DebugBuild
 		          System.DebugLog("Connected, socket is " + Self.mSocketId)
 		        #endif
 		      Else
-		        Var ChannelName As String = Json.Value("channel")
-		        Sender.AddUserInterfaceUpdate(New Dictionary("Channel": ChannelName, "Event": EventName, "Payload": Json.Value("data")))
+		        If Json.HasKey("channel") Then
+		          Var ChannelName As String = Json.Value("channel")
+		          Var EventDict As New Dictionary
+		          EventDict.Value("Event") = EventName
+		          EventDict.Value("Channel") = ChannelName
+		          EventDict.Value("Payload") = Payload
+		          Sender.AddUserInterfaceUpdate(EventDict)
+		        End If
 		      End Select
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Receiving event from pusher")
 		    End Try
+		    
+		    Sender.Sleep(500)
 		  Wend
 		  Self.State = Beacon.PusherSocket.States.Disconnected
 		  
