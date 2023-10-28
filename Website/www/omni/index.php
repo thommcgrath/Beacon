@@ -3,7 +3,7 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 BeaconCommon::StartSession();
-	
+
 $database = BeaconCommon::Database();
 
 $stable_version = BeaconCommon::NewestVersionForStage(3);
@@ -20,7 +20,7 @@ while (!$results->EOF()) {
 	$game_id = $results->Field('game_id');
 	$tag = $results->Field('tag');
 	$plan_length_seconds = $results->Field('plan_length_seconds');
-	
+
 	$product = [
 		'ProductId' => $product_id,
 		'Name' => $product_name,
@@ -29,10 +29,10 @@ while (!$results->EOF()) {
 		'Tag' => $tag,
 		'PlanLengthSeconds' => $plan_length_seconds
 	];
-	
+
 	$product_details[$game_id][$tag] = $product;
 	$product_ids[$product_id] = $product;
-	
+
 	$results->MoveNext();
 }
 
@@ -219,6 +219,9 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 		</table>
 	</div>
 	<div id="page-cart" class="hidden invisible">
+		<div id="storefront-cart-asanotice" class="storefront-cart-section">
+			<div class="notice-block notice-info">Support for Ark: Survival Ascended requires Beacon 2.0 Alpha 3 or later. You can download this preview version from <a href="/download#preview">the Preview section of the download page</a>.</div>
+		</div>
 		<div id="storefront-cart-header" class="storefront-cart-section">
 			<div><button id="cart-back-button">&laquo; Back</button></div>
 			<div id="storefront-cart-header-email-field">&nbsp;</div>
@@ -261,7 +264,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 					<div class="select"><span></span>
 						<select id="storefront-cart-currency-menu">
 							<?php
-							
+
 							foreach ($_SESSION['store_currency_options'] as $currencyCode => $currencyLabel) {
 								echo '<option value="' . htmlentities($currencyCode) . '"';
 								if ($currencyCode === $currency) {
@@ -269,7 +272,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 								}
 								echo '>' . htmlentities($currencyLabel) . '</option>';
 							}
-							
+
 							?>
 						</select>
 					</div>
@@ -283,11 +286,11 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 			</div>
 			<div class="storefront-cart-paymethods">
 				<?php
-				
+
 				foreach ($payment_method_info as $payMethod) {
-					echo '<div><img src="' . $payMethod['iconUrl'] . '" title="' . $payMethod['label'] . '" alt="' . $payMethod['label'] . '"></div>';	
+					echo '<div><img src="' . $payMethod['iconUrl'] . '" title="' . $payMethod['label'] . '" alt="' . $payMethod['label'] . '"></div>';
 				}
-				
+
 				?>
 			</div>
 			<div class="storefront-cart-notice">
