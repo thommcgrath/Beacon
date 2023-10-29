@@ -595,15 +595,18 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h0
 		Sub UpdateProjectMembers()
-		  If Thread.Current Is Nil Then
+		  // This routine will download the member list and update the project if necessary
+		  
+		  If Global.Thread.Current Is Nil Then
 		    Var UpdaterThread As New Beacon.Thread
 		    UpdaterThread.DebugIdentifier = CurrentMethodName
 		    AddHandler UpdaterThread.Run, AddressOf Thread_UpdateProjectMembers
+		    UpdaterThread.Retain
 		    UpdaterThread.Start
 		    Return
 		  End If
 		  
-		  // This routine will download the member list and update the project if necessary
+		  Var CurrentThread As Global.Thread = Global.Thread.Current
 		  
 		  If Self.mMemberUpdateLock Is Nil Then
 		    Self.mMemberUpdateLock = New CriticalSection
@@ -613,6 +616,7 @@ Protected Class ProjectController
 		  Try
 		    // If we don't know the password, don't do anything
 		    If Project.PasswordDecrypted = False Then
+		      Self.mMemberUpdateLock.Leave
 		      Return
 		    End If
 		    
@@ -644,6 +648,10 @@ Protected Class ProjectController
 		  End Try
 		  
 		  Self.mMemberUpdateLock.Leave
+		  
+		  If CurrentThread IsA Beacon.Thread Then
+		    Beacon.Thread(CurrentThread).Release
+		  End If
 		End Sub
 	#tag EndMethod
 

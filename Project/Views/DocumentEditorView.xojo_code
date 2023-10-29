@@ -19,6 +19,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  
 		  If (Self.Project Is Nil) = False Then
 		    Self.Project.RemoveObserver(Self, "Title")
+		    Self.Project.RemoveObserver(Self, "Role")
 		  End If
 		  
 		  Self.UnsubscribeFromProjectChannel()
@@ -49,6 +50,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  
 		  If (Self.Project Is Nil) = False Then
 		    Self.Project.AddObserver(Self, "Title")
+		    Self.Project.AddObserver(Self, "Role")
 		  End If
 		  
 		  Self.SubscribeToProjectChannel()
@@ -429,6 +431,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  Case "Title"
 		    Self.ViewTitle = Self.mController.Name
 		    Self.Modified = True
+		  Case "Role"
+		    Self.UpdateViewIcon()
 		  End Select
 		End Sub
 	#tag EndMethod

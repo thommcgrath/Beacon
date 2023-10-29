@@ -91,8 +91,10 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  // If this is the active user, make sure the stored role is correct
-		  If Member.UserId = Self.mLoadedUserId Then
+		  If Member.UserId = Self.mLoadedUserId And Self.mRole <> Member.Role Then
+		    Var OldRole As String = Self.mRole
 		    Self.mRole = Member.Role
+		    Self.NotifyObservers("Role", OldRole, Member.Role)
 		  End If
 		  
 		  // If the project doesn't have a password, none of this makes sense
@@ -1269,8 +1271,12 @@ Implements ObservationKit.Observable
 		  For Each Entry As DictionaryEntry In Self.mMembers
 		    Var Member As Beacon.ProjectMember = Entry.Value
 		    Member.SetPassword(Self.mProjectPassword)
-		    If Member.UserId = Self.mLoadedUserId Then
-		      Self.mRole = Member.Role // In case it was loaded as guest with no password
+		    
+		    // In case it was loaded as guest with no password
+		    If Member.UserId = Self.mLoadedUserId And Member.Role <> Self.mRole Then
+		      Var OldRole As String = Self.mRole
+		      Self.mRole = Member.Role
+		      Self.NotifyObservers("Role", OldRole, Member.Role)
 		    End If
 		  Next
 		  
@@ -1477,8 +1483,10 @@ Implements ObservationKit.Observable
 		Function RemoveMember(UserId As String) As Boolean
 		  UserId = UserId.Lowercase
 		  If Self.mMembers.HasKey(UserId) Then
-		    If Self.mLoadedUserId = UserId Then
+		    If Self.mLoadedUserId = UserId And Self.mRole <> Beacon.ProjectMember.RoleGuest Then
+		      Var OldRole As String = Self.mRole
 		      Self.mRole = Beacon.ProjectMember.RoleGuest
+		      Self.NotifyObservers("Role", OldRole, Beacon.ProjectMember.RoleGuest)
 		    End If
 		    Self.mMembers.Remove(UserId)
 		    Self.Modified = True
