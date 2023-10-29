@@ -1519,9 +1519,6 @@ Protected Module ArkSA
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"ArkSA", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = LevelsAndXPEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
-	#tag EndConstant
-
 	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
 	#tag EndConstant
 

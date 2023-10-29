@@ -11,9 +11,7 @@ Protected Module Configs
 		    Names.Add(NameDifficulty)
 		    Names.Add(NameCreatureAdjustments)
 		    Names.Add(NameEngramControl)
-		    #if ArkSA.LevelsAndXPEnabled
-		      Names.Add(NameLevelsAndXP)
-		    #endif
+		    Names.Add(NameLevelsAndXP)
 		    Names.Add(NameHarvestRates)
 		    Names.Add(NameLootDrops)
 		    Names.Add(NameGeneralSettings)
@@ -133,10 +131,8 @@ Protected Module Configs
 		    Return New ArkSA.Configs.DinoAdjustments()
 		  Case NameEngramControl
 		    Return New ArkSA.Configs.EngramControl()
-		    #if ArkSA.LevelsAndXPEnabled
 		  Case NameLevelsAndXP
 		    Return New ArkSA.Configs.ExperienceCurves()
-		    #endif
 		  Case NameHarvestRates
 		    Return New ArkSA.Configs.HarvestRates()
 		  Case NameLootDrops
@@ -187,10 +183,8 @@ Protected Module Configs
 		    Return New ArkSA.Configs.DinoAdjustments(SaveData, EncryptedData)
 		  Case NameEngramControl
 		    Return New ArkSA.Configs.EngramControl(SaveData, EncryptedData)
-		    #if ArkSA.LevelsAndXPEnabled
 		  Case NameLevelsAndXP
 		    Return New ArkSA.Configs.ExperienceCurves(SaveData, EncryptedData)
-		    #endif
 		  Case NameHarvestRates
 		    Return New ArkSA.Configs.HarvestRates(SaveData, EncryptedData)
 		  Case NameLootDrops
@@ -238,10 +232,8 @@ Protected Module Configs
 		    Return ArkSA.Configs.DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case ArkSA.Configs.NameEngramControl
 		    Return ArkSA.Configs.EngramControl.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		    #if ArkSA.LevelsAndXPEnabled
 		  Case ArkSA.Configs.NameLevelsAndXP
 		    Return ArkSA.Configs.ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		    #endif
 		  Case ArkSA.Configs.NameHarvestRates
 		    Return ArkSA.Configs.HarvestRates.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case ArkSA.Configs.NameLootDrops
