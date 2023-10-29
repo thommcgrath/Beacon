@@ -110,7 +110,13 @@ End
 	#tag Method, Flags = &h0
 		Sub Embed(Container As DesktopContainer, PaddingX As Integer, PaddingY As Integer)
 		  Container.EmbedWithin(Self, PaddingX, PaddingY, Container.Width, Container.Height)
-		  Self.Width = Container.Width + (PaddingX * 2)
+		  
+		  Var PopoverWidth As Integer = Container.Width + (PaddingX * 2)
+		  #if Not TargetMacOS
+		    PopoverWidth = Max(PopoverWidth, 52 + Self.ActionButton.Width + Self.CancelButton.Width)
+		  #endif
+		  
+		  Self.Width = PopoverWidth
 		  Self.Height = Container.Height + (PaddingY * 2) + 40
 		End Sub
 	#tag EndMethod
