@@ -80,10 +80,27 @@ function BuildLinks(array $update): array {
 	$delta_version = $update['delta_version'];
 	$stage = $update['stage'];
 
+	$games = [];
+	foreach ($update['supported_games'] as $gameId) {
+		switch ($gameId) {
+		case 'Ark':
+			$games[] = 'Ark: Survival Evolved';
+			break;
+		case 'ArkSA':
+			$games[] = 'Ark: Survival Ascended';
+			break;
+		case 'SDTD':
+			$games[] = '7 Days to Die';
+			break;
+		}
+	}
+	sort($games);
+
 	$data = [
 		'build_display' => $update['build_display'],
 		'build_number' => $build,
 		'stage' => $stage,
+		'supported_games' => BeaconCommon::ArrayToEnglish($games),
 		'mac_url' => BeaconCommon::SignDownloadURL(array_key_first($update['files'][BeaconUpdates::PLATFORM_MACOS]), 300)
 	];
 

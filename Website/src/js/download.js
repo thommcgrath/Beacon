@@ -150,29 +150,36 @@ const buildDownloadsTable = async (downloadData) => {
 	const prereleaseTable = document.getElementById('preview');
 	const legacyTable = document.getElementById('legacy');
 
-	const current = downloadData.current;
-	if (current) {
-		const headerRow = document.createElement('div');
-		headerRow.classList.add('row');
+	const buildHeaderRow = (title, update) => {
+		const headerTitle = document.createElement('span');
+		headerTitle.innerText = `${title}: Beacon ${update.build_display}`;
+
+		const headerGames = document.createElement('span');
+		headerGames.classList.add('games');
+		headerGames.innerText = 'For ' + update.supported_games;
+
 		const headerBody = document.createElement('div');
 		headerBody.classList.add('full');
-		headerBody.innerText = 'Stable Version: Beacon ' + current.build_display;
-		headerRow.appendChild(headerBody);
-		stableTable.appendChild(headerRow);
+		headerBody.classList.add('header');
+		headerBody.appendChild(headerTitle);
+		headerBody.appendChild(document.createElement('br'));
+		headerBody.appendChild(headerGames);
 
+		const headerRow = document.createElement('div');
+		headerRow.classList.add('row');
+		headerRow.appendChild(headerBody);
+		return headerRow;
+	};
+
+	const current = downloadData.current;
+	if (current) {
+		stableTable.appendChild(buildHeaderRow('Stable Version', current));
 		addChildRows(stableTable, current, true);
 	}
 
 	const prerelease = downloadData.preview;
 	if (prerelease) {
-		const headerRow = document.createElement('div');
-		headerRow.classList.add('row');
-		const headerBody = document.createElement('div');
-		headerBody.classList.add('full');
-		headerBody.innerText = 'Preview Version: Beacon ' + prerelease.build_display;
-		headerRow.appendChild(headerBody);
-		prereleaseTable.appendChild(headerRow);
-
+		prereleaseTable.appendChild(buildHeaderRow((prerelease.stage === 2 ? 'Beta Preview' : 'Alpha Preview'), prerelease));
 		addChildRows(prereleaseTable, prerelease, false);
 	} else {
 		prereleaseTable.classList.add('hidden');
@@ -180,14 +187,7 @@ const buildDownloadsTable = async (downloadData) => {
 
 	const legacy = downloadData.legacy;
 	if (legacy) {
-		const headerRow = document.createElement('div');
-		headerRow.classList.add('row');
-		const headerBody = document.createElement('div');
-		headerBody.classList.add('full');
-		headerBody.innerText = 'Legacy Version: Beacon ' + legacy.build_display;
-		headerRow.appendChild(headerBody);
-		legacyTable.appendChild(headerRow);
-
+		legacyTable.appendChild(buildHeaderRow('Legacy Version', legacy));
 		addChildRows(legacyTable, legacy, false);
 	} else {
 		legacyTable.classList.add('hidden');

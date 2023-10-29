@@ -2138,6 +2138,15 @@ ul.no-markings, ol.no-markings {
 			flex: 0 0 80px;
 			margin-left: 10px;
 		}
+
+		.header {
+			line-height: 1.0rem;
+		}
+
+		.games {
+			opacity: 0.7;
+			font-size: small;
+		}
 	}
 
 	&+.downloads-table {
