@@ -20,9 +20,7 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Blueprint As ArkSA.Blueprint)
 		  If Blueprint Is Nil Then
-		    Var Err As New UnsupportedOperationException
-		    Err.Message = "Blueprint is Nil"
-		    Raise Err
+		    Return
 		  End If
 		  
 		  Self.mBlueprint = Blueprint
