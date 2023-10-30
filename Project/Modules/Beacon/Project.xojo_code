@@ -103,10 +103,11 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  // Need to set the password to generate the fingerprint
+		  Var PasswordMissing As Boolean = Member.EncryptedPassword.IsEmpty
 		  Member.SetPassword(Self.mProjectPassword)
 		  
 		  Var ExistingMember As Beacon.ProjectMember = Self.mMembers.Lookup(Member.UserId.Lowercase, Nil)
-		  If (ExistingMember Is Nil) = False And Member.Fingerprint = ExistingMember.Fingerprint And Member.Role = ExistingMember.Role Then
+		  If PasswordMissing = False And (ExistingMember Is Nil) = False And Member.Fingerprint = ExistingMember.Fingerprint And Member.Role = ExistingMember.Role Then
 		    // No change
 		    Return False
 		  End If
