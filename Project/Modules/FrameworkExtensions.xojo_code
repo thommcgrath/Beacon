@@ -177,7 +177,7 @@ Protected Module FrameworkExtensions
 		    End If
 		    
 		    If Win.DefaultLocation = DesktopWindow.Locations.ParentWindow Then
-		      Win.Top = Parent.Top
+		      Win.Top = Parent.Top + ((Parent.Height - Win.Height) / 4)
 		      Win.Left = Parent.Left + ((Parent.Width - Win.Width) / 2)
 		    End If
 		  #else
