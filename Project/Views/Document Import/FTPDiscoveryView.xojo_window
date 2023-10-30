@@ -851,7 +851,7 @@ End
 		  Self.BrowseCancelButton.Caption = If(Required, "Cancel", "Skip")
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
 		  
-		  If Self.Browser.CurrentPath.IsEmpty Then
+		  If Self.Browser.CurrentPath.IsEmpty Or Self.Browser.CurrentPath = "/" Then
 		    Self.ListFiles("")
 		  End If
 		End Sub

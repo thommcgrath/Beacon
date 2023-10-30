@@ -215,6 +215,10 @@ Implements Beacon.HostingProvider
 		        Filename = Filename + "/"
 		      End If
 		      
+		      If Filename = "./" Or Filename = "../" Then
+		        Continue
+		      End If
+		      
 		      Filenames.Add(Filename)
 		    Next
 		  Else

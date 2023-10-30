@@ -892,7 +892,7 @@ End
 		    End If
 		    
 		    Filename = Filename.Left(Filename.Length - 1)
-		    If Filename = "arkse" Or Filename = "arkserver" Then
+		    If Filename = "arksa" Or Filename = "arkserver" Then
 		      PotentialPaths.Add("/" + FileName + "/ShooterGame/Saved")
 		      PotentialPaths.Add("/" + Filename + "/ShooterGame/SavedArks")
 		    ElseIf Filename = "ShooterGame" Then
