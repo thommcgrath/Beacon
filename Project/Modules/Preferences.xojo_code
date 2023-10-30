@@ -563,11 +563,14 @@ Protected Module Preferences
 			  If mAuthToken Is Nil Then
 			    Init
 			    
+			    Var AccountName As String = Beacon.SystemAccountName
+			    Var HardwareId As String = Beacon.HardwareId
 			    Try
 			      Var TokenSource As String = mManager.StringValue("Beacon Auth")
-			      TokenSource = BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, TokenSource)
+			      TokenSource = BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5 " + AccountName + " " + HardwareId, TokenSource)
 			      mAuthToken = BeaconAPI.OAuthToken.Load(TokenSource)
 			    Catch Err As RuntimeException
+			      App.Log("Failed to decrypt token using account name `" + AccountName + "` and hardware id `" + HardwareId + "`.")
 			    End Try
 			  End If
 			  
@@ -579,7 +582,7 @@ Protected Module Preferences
 			  Init
 			  If (Value Is Nil) = False Then
 			    Var TokenSource As String = Value.StringValue
-			    mManager.StringValue("Beacon Auth") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, TokenSource)
+			    mManager.StringValue("Beacon Auth") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5 " + Beacon.SystemAccountName + " " + Beacon.HardwareId, TokenSource)
 			  Else
 			    mManager.StringValue("Beacon Auth") = ""
 			  End If

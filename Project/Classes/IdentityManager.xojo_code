@@ -22,7 +22,7 @@ Protected Class IdentityManager
 		  Var DatabaseFile As FolderItem = AppSupport.Child("Identities.sqlite")
 		  Var Database As New SQLiteDatabase
 		  #if Not DebugBuild
-		    Var Key As String = Crypto.SHA3_256("8df95865-3fac-4c79-8ee6-8ee98ca199df" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId(True))
+		    Var Key As String = Crypto.SHA3_256("8df95865-3fac-4c79-8ee6-8ee98ca199df " + Beacon.SystemAccountName + " " + Beacon.HardwareId(True))
 		    Database.EncryptionKey = "aes256:" + Key.ReplaceAll(Chr(0), Chr(1)) // https://forum.xojo.com/t/sqlitedatabase-encryptionkey-key-derivation/76366/9?u=thom_mcgrath
 		  #endif
 		  Database.DatabaseFile = DatabaseFile
