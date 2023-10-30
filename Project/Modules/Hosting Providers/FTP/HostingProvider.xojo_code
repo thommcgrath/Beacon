@@ -195,6 +195,9 @@ Implements Beacon.HostingProvider
 		  Var Url As String = Self.BaseUrl(Config) + StartingPath
 		  Var Filenames() As String
 		  If Config.Mode = Beacon.FTPModeSSH Then
+		    If Url.EndsWith("/") = False Then
+		      Url = Url + "/"
+		    End If
 		    Var Socket As CURLSMBS = Self.CreateSocket(Config, Url)
 		    Var Content As String = Self.RunRequest(Socket, False) // Listing files doesn't work multithreaded
 		    Var Lines() As String = Content.Trim.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)

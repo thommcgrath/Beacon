@@ -1002,7 +1002,6 @@ End
 		  Me.AppendChildren(Empty)
 		  
 		  If (Self.mProfile Is Nil) = False And Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse Then
-		    System.DebugLog("NeedsChildrenForPath(""" + Path + """)")
 		    Self.ListFiles(Path)
 		  End If
 		End Sub

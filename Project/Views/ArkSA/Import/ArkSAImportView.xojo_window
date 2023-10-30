@@ -875,7 +875,7 @@ End
 		  For Each Path As String In PotentialPaths
 		    Var Filenames() As String
 		    Try
-		      Filenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, Path)
+		      Filenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, Path + "/")
 		    Catch Err As RuntimeException
 		      Continue
 		    End Try
@@ -893,7 +893,7 @@ End
 		    End If
 		    
 		    Try
-		      Filenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, ConfigPath)
+		      Filenames = Provider.ListFiles(Self.mDestinationProject, InitialProfile, ConfigPath + "/")
 		    Catch Err As RuntimeException
 		      Continue
 		    End Try
@@ -937,7 +937,7 @@ End
 		    Var ConfigPath As String = String.FromArray(PathComponents, "/")
 		    
 		    Var GameUserSettingsIniPath As String
-		    Var Siblings() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, ConfigPath)
+		    Var Siblings() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, ConfigPath + "/")
 		    If Siblings.IndexOf(ArkSA.ConfigFileGameUserSettings) > -1 Then
 		      GameUserSettingsIniPath = ConfigPath + "/" + ArkSA.ConfigFileGameUserSettings
 		    Else
@@ -954,7 +954,7 @@ End
 		      PathComponents.RemoveAt(PathComponents.LastIndex)
 		      
 		      Var SavedPath As String = String.FromArray(PathComponents, "/")
-		      Var Children() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, SavedPath)
+		      Var Children() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, SavedPath + "/")
 		      If Children.IndexOf("Logs/") > -1 Then
 		        LogsPath = SavedPath + "/Logs"
 		      Else
