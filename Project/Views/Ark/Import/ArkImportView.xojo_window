@@ -69,35 +69,6 @@ Begin DocumentImportView ArkImportView
       Value           =   3
       Visible         =   True
       Width           =   720
-      Begin MultiSelectDiscoveryView NitradoDiscoveryView1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF
-         Composited      =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   480
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   720
-      End
       Begin FTPDiscoveryView FTPDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -498,35 +469,6 @@ Begin DocumentImportView ArkImportView
          Visible         =   False
          Width           =   80
       End
-      Begin MultiSelectDiscoveryView GSADiscoveryView1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF
-         Composited      =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   480
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   7
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   720
-      End
       Begin ArkClipboardDiscoveryView ClipboardDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -549,6 +491,66 @@ Begin DocumentImportView ArkImportView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   8
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
+      Begin MultiSelectDiscoveryView NitradoDiscoveryView1
+         AddressColumnLabel=   "Address"
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
+      Begin MultiSelectDiscoveryView GSADiscoveryView1
+         AddressColumnLabel=   "Template Id"
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   7
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
@@ -787,42 +789,6 @@ End
 		    Self.GSADiscoveryView1.Begin
 		  End Select
 		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events NitradoDiscoveryView1
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.QuickCancel Then
-		    Self.Dismiss
-		  Else
-		    Views.SelectedPanelIndex = 0
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Finished(Profiles() As Beacon.ServerProfile)
-		  Self.Discover(Profiles)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  Self.SetPageHeight(NewHeight)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function GetDestinationProject() As Beacon.Project
-		  Return Self.mDestinationProject
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function GameId() As String
-		  Return Ark.Identifier
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CreateHostingProvider() As Beacon.HostingProvider
-		  Return New Nitrado.HostingProvider
-		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events FTPDiscoveryView1
@@ -1141,6 +1107,68 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ClipboardDiscoveryView1
+	#tag Event
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NitradoDiscoveryView1
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return Ark.Identifier
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New Nitrado.HostingProvider
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag Events GSADiscoveryView1
 	#tag Event
 		Sub Finished(Profiles() As Beacon.ServerProfile)
@@ -1175,32 +1203,6 @@ End
 		Function GameId() As String
 		  Return Ark.Identifier
 		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events ClipboardDiscoveryView1
-	#tag Event
-		Sub Finished(Profiles() As Beacon.ServerProfile)
-		  Self.Discover(Profiles)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function GetDestinationProject() As Beacon.Project
-		  Return Self.mDestinationProject
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.QuickCancel Then
-		    Self.Dismiss
-		  Else
-		    Views.SelectedPanelIndex = 0
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  Self.SetPageHeight(NewHeight)
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher

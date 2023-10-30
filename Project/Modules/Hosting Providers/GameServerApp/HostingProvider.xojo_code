@@ -53,7 +53,7 @@ Implements Beacon.HostingProvider
 		  Case SDTD.Identifier
 		    Return SDTD.SteamAppId
 		  Case ArkSA.Identifier
-		    Return ArkSA.SteamAppId
+		    Return ArkSA.SteamServerId
 		  End Select
 		End Function
 	#tag EndMethod

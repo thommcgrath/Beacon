@@ -1525,6 +1525,9 @@ Protected Module ArkSA
 	#tag Constant, Name = SteamAppId, Type = Double, Dynamic = False, Default = \"2399830", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = SteamServerId, Type = Double, Dynamic = False, Default = \"2430930", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 
