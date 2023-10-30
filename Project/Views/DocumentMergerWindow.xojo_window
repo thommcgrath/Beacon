@@ -443,7 +443,6 @@ End
 		      For DestinationProfileIndex As Integer = 0 To DestinationProfileBound
 		        Var DestinationProfile As Beacon.ServerProfile = DestinationProject.ServerProfile(DestinationProfileIndex)
 		        If DestinationProfile = Profile Then
-		          DestinationProfile.UpdateDetailsFrom(Profile)
 		          Continue For ProfileIndex
 		        End If
 		      Next

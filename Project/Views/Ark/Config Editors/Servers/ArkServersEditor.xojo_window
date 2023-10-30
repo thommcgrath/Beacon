@@ -807,7 +807,7 @@ End
 		    Var Profiles() As Beacon.ServerProfile = Provider.ListServers(Config, Ark.Identifier)
 		    For Each Profile As Beacon.ServerProfile In Profiles
 		      If ProfileMap.HasKey(Profile.ProfileId) Then
-		        Beacon.ServerProfile(ProfileMap.Value(Profile.ProfileId).ObjectValue).UpdateDetailsFrom(Profile)
+		        Beacon.ServerProfile(ProfileMap.Value(Profile.ProfileId).ObjectValue).SecondaryName = Profile.SecondaryName
 		      End If
 		    Next
 		  Next

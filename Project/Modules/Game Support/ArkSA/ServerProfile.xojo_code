@@ -37,32 +37,6 @@ Inherits Beacon.ServerProfile
 	#tag EndEvent
 
 	#tag Event
-		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
-		  Var ArkProfile As ArkSA.ServerProfile
-		  If Profile IsA ArkSA.ServerProfile Then
-		    ArkProfile = ArkSA.ServerProfile(Profile)
-		  Else
-		    Return
-		  End If
-		  
-		  Self.mAdminPassword = ArkProfile.mAdminPassword
-		  Self.mBasePath = ArkProfile.mBasePath
-		  Self.mGameIniPath = ArkProfile.mGameIniPath
-		  Self.mGameUserSettingsIniPath = ArkProfile.mGameUserSettingsIniPath
-		  Self.mLogsPath = ArkProfile.mLogsPath
-		  Self.mMask = ArkProfile.mMask
-		  Self.mMessageDuration = ArkProfile.mMessageDuration
-		  If ArkProfile.mMessageOfTheDay Is Nil Then
-		    Self.mMessageOfTheDay = Nil
-		  Else
-		    Self.mMessageOfTheDay = ArkProfile.mMessageOfTheDay.Clone
-		  End If
-		  Self.mServerPassword = ArkProfile.mServerPassword
-		  Self.mSpectatorPassword = ArkProfile.mSpectatorPassword
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  Dict.Value("map") = Self.mMask
 		  

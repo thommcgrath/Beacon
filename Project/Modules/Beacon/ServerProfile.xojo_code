@@ -544,19 +544,9 @@ Protected Class ServerProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
-		  RaiseEvent UpdateDetailsFrom(Profile)
-		End Sub
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event ReadFromDictionary(Dict As Dictionary, Version As Integer)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event UpdateDetailsFrom(Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

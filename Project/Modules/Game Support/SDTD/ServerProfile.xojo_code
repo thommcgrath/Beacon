@@ -16,29 +16,6 @@ Inherits Beacon.ServerProfile
 	#tag EndEvent
 
 	#tag Event
-		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
-		  If (Profile IsA SDTD.ServerProfile) = False Then
-		    Return
-		  End If
-		  
-		  // Use the public accessors to update the modified status correctly
-		  Var Casted As SDTD.ServerProfile = SDTD.ServerProfile(Profile)
-		  Self.Description = Casted.Description
-		  Self.Map = Casted.Map
-		  Self.MapSeed = Casted.MapSeed
-		  Self.MapSize = Casted.MapSize
-		  Self.Password = Casted.Password
-		  Self.Port = Casted.Port
-		  Self.TelnetPort = Casted.TelnetPort
-		  
-		  Self.mPaths = New Dictionary
-		  For Each Entry As DictionaryEntry In Casted.mPaths
-		    Self.Path(Entry.Key.StringValue) = Entry.Value.StringValue
-		  Next
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  Dict.Value("description") = Self.mDescription
 		  Dict.Value("map") = Self.mMap
