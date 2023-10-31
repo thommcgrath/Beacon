@@ -936,7 +936,7 @@ End
 		    Var ConfigPath As String = String.FromArray(PathComponents, "/")
 		    
 		    Var GameUserSettingsIniPath As String
-		    Var Siblings() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, ConfigPath)
+		    Var Siblings() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, ConfigPath + "/")
 		    If Siblings.IndexOf(Ark.ConfigFileGameUserSettings) > -1 Then
 		      GameUserSettingsIniPath = ConfigPath + "/" + Ark.ConfigFileGameUserSettings
 		    Else
@@ -953,7 +953,7 @@ End
 		      PathComponents.RemoveAt(PathComponents.LastIndex)
 		      
 		      Var SavedPath As String = String.FromArray(PathComponents, "/")
-		      Var Children() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, SavedPath)
+		      Var Children() As String = Provider.ListFiles(Self.mDestinationProject, InitialProfile, SavedPath + "/")
 		      If Children.IndexOf("Logs/") > -1 Then
 		        LogsPath = SavedPath + "/Logs"
 		      Else
