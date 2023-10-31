@@ -175,8 +175,8 @@ abstract class BeaconShop {
 		return true;
 	}
 
-	public static function CreateGiftPurchase(string $email, string $productId, int $quantity, string $notes, bool $process = false): string {
-		return static::GrantProducts($email, [static::CreateBundle([$productId => $quantity], true)], $notes, $process);
+	public static function CreateFreePurchase(string $email, string $productId, int $quantity, string $notes, bool $createGiftCodes): string {
+		return static::GrantProducts($email, [static::CreateBundle([$productId => $quantity], $createGiftCodes)], $notes, true);
 	}
 
 	public static function GrantProducts(string $email, array $bundles, string $notes, bool $process = false): string {

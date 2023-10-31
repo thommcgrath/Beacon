@@ -42,7 +42,7 @@ if (is_null($productId)) {
 	return;
 }
 
-BeaconShop::CreateGiftPurchase($email, $productId['ProductId'], $numCodes, $reason, true);
+BeaconShop::CreateFreePurchase($email, $productId['ProductId'], $numCodes, $reason, true);
 
 PostReply('Codes have been issued to ' . $email . '.');
 

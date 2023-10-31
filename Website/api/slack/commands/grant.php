@@ -1,5 +1,5 @@
 <?php
-	
+
 $gameid = 'ark';
 
 if (strpos($text, ' ') !== false) {
@@ -52,7 +52,7 @@ if ($results->RecordCount() > 0 && is_null($results->Field('expiration')) === tr
 	return;
 }
 
-BeaconShop::CreateGiftPurchase($emailId, $productId, 1, 'Granted by Slack', true);
+BeaconShop::CreateFreePurchase($emailId, $productId, 1, 'Granted by Slack', false);
 
 PostReply("`$email` has been granted a copy of Omni");
 
