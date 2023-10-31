@@ -1210,6 +1210,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub NewIdentifier()
 		  Self.mProjectId = Beacon.UUID.v4
+		  Self.mMembers = New Dictionary
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
