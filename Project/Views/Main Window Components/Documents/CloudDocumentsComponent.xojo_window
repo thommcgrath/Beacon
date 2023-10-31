@@ -404,7 +404,7 @@ End
 		    Return
 		  End Try
 		  
-		  DocumentVersionListWindow.Present(Self, Versions)
+		  DocumentVersionListWindow.Present(Self, Request.URL, Versions)
 		End Sub
 	#tag EndMethod
 

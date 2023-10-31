@@ -216,8 +216,8 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub AddVersion(Version As Dictionary)
-		  Var DocumentURL As String = Version.Value("resource_url")
+		Private Sub AddVersion(BaseUrl As String, Version As Dictionary)
+		  Var DocumentURL As String = BaseUrl + "/" + Version.Value("versionId")
 		  Var SizeInBytes As Double = Version.Value("size")
 		  Var SaveDate As DateTime = NewDateFromSQLDateTime(Version.Value("date").StringValue)
 		  Var LocalDate As DateTime = SaveDate.LocalTime
@@ -228,7 +228,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As DesktopWindow, Versions() As Dictionary)
+		Shared Sub Present(Parent As DesktopWindow, BaseUrl As String, Versions() As Dictionary)
 		  If Parent Is Nil Then
 		    Return
 		  End If
@@ -243,7 +243,7 @@ End
 		      Win = New DocumentVersionListWindow
 		    End If
 		    
-		    Win.AddVersion(Version)
+		    Win.AddVersion(BaseUrl, Version)
 		  Next
 		  
 		  If Win Is Nil Then
