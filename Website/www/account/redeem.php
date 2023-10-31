@@ -74,8 +74,7 @@ function RedeemCode(string $code, bool $confirmed): void {
 	}
 
 	$results = $database->Query('SELECT products.product_id, products.product_name, gift_code_products.quantity FROM public.gift_code_products INNER JOIN public.products ON (gift_code_products.product_id = products.product_id) WHERE gift_code_products.code = $1 ORDER BY products.product_name;', $code);
-
-	if ($results->RecordCount() === 1 && array_key_exists($results->Field('product_id'), $licenseMap) && array_key_exists('expires', $licenseMap[$results->Field('product_id')]) === false) {
+	if ($results->RecordCount() === 1 && array_key_exists($results->Field('product_id'), $licenseMap) && is_null($licenseMap[$results->Field('product_id')]->Expiration()) === true) {
 		echo '<p>You already own ' . htmlentities($results->Field('product_name')) . '. You cannot redeem this gift code.</p>';
 		return;
 	}
@@ -126,7 +125,7 @@ function RedeemCode(string $code, bool $confirmed): void {
 
 			echo '<li>' . ($quantity > 1 ? $quantity . ' x ' : '') . htmlentities($productName);
 
-			if (array_key_exists($productId, $licenseMap) && array_key_exists('expires', $licenseMap[$productId]) === false) {
+			if (array_key_exists($productId, $licenseMap) && is_null($licenseMap[$productId]->Expiration()) === true) {
 				echo '<br><span class="text-blue">You already own ' . htmlentities($productName) . '. You will be given a gift code for it instead. Share it with somebody.</span>';
 			}
 
