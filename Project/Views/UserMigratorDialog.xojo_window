@@ -338,6 +338,7 @@ End
 		    End If
 		  Next
 		  
+		  UserCloud.Sync
 		  Return True
 		End Function
 	#tag EndMethod
