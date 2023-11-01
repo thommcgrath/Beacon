@@ -204,7 +204,11 @@ Protected Class IdentityManager
 		      End
 		      
 		      PrivateKey = ExistingIdentity.PrivateKey
-		      CloudKey = EncodeBase64(ExistingIdentity.UserCloudKey)
+		      Try
+		        CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
+		      Catch Err As RuntimeException
+		        CloudKey = EncodeBase64(ExistingIdentity.UserCloudKey)
+		      End Try
 		    End If
 		    
 		    Self.mDatabase.BeginTransaction
@@ -333,6 +337,33 @@ Protected Class IdentityManager
 		    Return Self.Fetch(UserId)
 		  Catch Err As RuntimeException
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MarkedMerged(Identity As Beacon.Identity)
+		  If Identity Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mDatabase.BeginTransaction
+		  Self.mDatabase.ExecuteSQL("UPDATE identities SET merged = 1 WHERE user_id = ?1;", Identity.UserId)
+		  Self.mDatabase.CommitTransaction
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MergeCandidates() As Beacon.Identity()
+		  Var Identities() As Beacon.Identity
+		  Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT * FROM identities WHERE active = 0 AND merged = 0 AND anonymous = 1 AND banned = 0;")
+		  While Not Rows.AfterLastRow
+		    Var Identity As Beacon.Identity = Beacon.Identity.Load(Rows)
+		    If (Identity Is Nil) = False Then
+		      Identities.Add(Identity)
+		    End If
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Identities
 		End Function
 	#tag EndMethod
 

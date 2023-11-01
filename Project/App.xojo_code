@@ -97,7 +97,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If Preferences.OnlineEnabled Then
 		    HelpSyncCloudFiles.Visible = True
 		    HelpUpdateEngrams.Visible = True
-		    HelpSeparator2.Visible = True
+		    HelpRefreshBlueprints.Visible = True
+		    HelpUpdateEngramsSeparator.Visible = True
+		    
+		    Var Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
+		    If Identity Is Nil Or Identity.IsAnonymous Then
+		      HelpMigrateAccounts.Visible = False
+		      HelpMigrateAccountsSeparator.Visible = False
+		    Else
+		      HelpMigrateAccounts.Visible = True
+		      HelpMigrateAccounts.Enabled = True
+		      HelpMigrateAccountsSeparator.Visible = True
+		    End If
 		    
 		    If UserCloud.IsBusy = False Then
 		      HelpSyncCloudFiles.Enabled = True
@@ -108,7 +119,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Else
 		    HelpSyncCloudFiles.Visible = False
 		    HelpUpdateEngrams.Visible = False
-		    HelpSeparator2.Visible = False
+		    HelpRefreshBlueprints.Visible = False
+		    HelpUpdateEngramsSeparator.Visible = False
+		    HelpMigrateAccounts.Visible = False
+		    HelpMigrateAccountsSeparator.Visible = False
 		  End If
 		  
 		  Var Counter As Integer = 1
@@ -193,7 +207,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  #if TargetMacOS
-		    UntitledSeparator6.Visible = False
+		    //Help.Visible = False
 		  #endif
 		  Self.RebuildRecentMenu
 		  
@@ -367,6 +381,14 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
 		  Self.StartTicket()
 		  Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpMigrateAccounts() As Boolean Handles HelpMigrateAccounts.Action
+		  UserMigratorDialog.Present(False)
+		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 
@@ -1351,6 +1373,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Case UserCloud.Notification_SyncFinished
 		    HelpSyncCloudFiles.Text = "Sync Cloud Files"
 		    HelpSyncCloudFiles.Enabled = True
+		    If Self.mMigrateAfterSync Then
+		      UserMigratorDialog.Present(True)
+		      Self.mMigrateAfterSync = False
+		    End If
 		  Case Preferences.Notification_OnlineStateChanged
 		    UpdatesKit.IsCheckingAutomatically = Preferences.OnlineEnabled
 		  Case DataUpdater.Notification_ImportStopped
@@ -1384,6 +1410,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		        Self.mPusher.Listen(UserChannelName, "cloud-updated", AddressOf Pusher_CloudUpdated)
 		      End If
 		    End If
+		    
+		    Self.mMigrateAfterSync = True
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1740,6 +1768,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mMainWindow As MainWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMigrateAfterSync As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

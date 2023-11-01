@@ -859,6 +859,7 @@ Class=ModDiscoverySettings;Modules/Game Support/ArkSA/ModDiscoverySettings.xojo_
 Class=DeployIntegration;Modules/Game Support/ArkSA/DeployIntegration.xojo_code;&h000000007AC89FFF;&h000000004504AFFF;false
 Class=DiscoverIntegration;Modules/Game Support/ArkSA/DiscoverIntegration.xojo_code;&h000000006C6BC7FF;&h000000004504AFFF;false
 Interface=Map;Modules/Beacon/Map.xojo_code;&h0000000036D76FFF;&h0000000055ADDFFF;false
+DesktopWindow=UserMigratorDialog;Views/UserMigratorDialog.xojo_window;&h0000000037922FFF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=0

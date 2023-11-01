@@ -415,7 +415,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopApplicationMenuItem UntitledSeparator5
+      Begin DesktopApplicationMenuItem HelpShowWhatsNewWindowSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -447,7 +447,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopApplicationMenuItem HelpSeparator2
+      Begin DesktopApplicationMenuItem HelpUpdateEngramsSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -479,7 +479,23 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin DesktopMenuItem UntitledSeparator6
+      Begin DesktopMenuItem HelpMigrateAccountsSeparator
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "-"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin DesktopMenuItem HelpMigrateAccounts
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Migrate Anonymous Accounts"
+         AutoEnabled = False
+         AutoEnable = False
+         Visible = True
+      End
+      Begin DesktopMenuItem HelpAdminSpawnCodesSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -503,7 +519,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopMenuItem UntitledSeparator1
+      Begin DesktopMenuItem HelpCreateSupportTicketSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -527,7 +543,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopMenuItem UntitledSeparator2
+      Begin DesktopMenuItem HelpAPIGuideSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"

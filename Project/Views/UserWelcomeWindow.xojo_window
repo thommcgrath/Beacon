@@ -753,6 +753,8 @@ End
 		  Var Scopes() As String = Array("common", "users:read")
 		  If WithIdentity Is Nil Then
 		    Scopes.Add("users.private_key:read")
+		    Scopes.Add("users:delete")
+		    Scopes.Add("users:update")
 		    
 		    Self.mOAuthChallenge = Self.GenerateCodeVerifier()
 		    
@@ -772,7 +774,8 @@ End
 		    Params.Value("expiration") = Expiration
 		    Params.Value("signature") = Signature
 		    Params.Value("public_key") = WithIdentity.PublicKey()
-		  End If 
+		  End If
+		  Scopes.Sort
 		  Params.Value("scope") = String.FromArray(Scopes, " ")
 		  
 		  Var Query As String = SimpleHTTP.BuildFormData(Params)
