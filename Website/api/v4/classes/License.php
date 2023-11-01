@@ -76,6 +76,10 @@ class License extends DatabaseObject implements JsonSerializable {
 		return $this->expiration;
 	}
 
+	public function Expires(): bool {
+		return is_null($this->expiration) === false;
+	}
+
 	public function FirstUsed(): ?string {
 		return $this->firstUsed;
 	}
