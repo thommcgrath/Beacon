@@ -131,6 +131,7 @@ Core::RegisterRoutes(
 		'/users/{userId}' => [
 			'GET' => 'users/get',
 			'PATCH' => 'users/edit',
+			'DELETE' => 'users/delete',
 		],
 		'/users/{userId}/licenses' => [
 			'GET' => 'licenses/list',
