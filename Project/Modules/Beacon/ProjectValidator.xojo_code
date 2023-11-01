@@ -48,7 +48,7 @@ Protected Class ProjectValidator
 		        End Try
 		      Next
 		      If NeedsRefresh Then
-		        BeaconAPI.UserController.RefreshUserDetails()
+		        BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityLoginOnly)
 		      End If
 		      If Not Reported Then
 		        Issues.Add(New Beacon.Issue("", "First time license check has failed."))

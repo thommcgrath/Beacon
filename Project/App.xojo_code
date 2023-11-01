@@ -707,7 +707,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If URL.Left(7) = "action/" Then
 		    Var Instructions As String = URL.Middle(7)
 		    Var ParamsPos As Integer = Instructions.IndexOf("?")
+		    Var Query As String
 		    If ParamsPos > -1 Then
+		      Query = Instructions.Middle(ParamsPos + 1)
 		      Instructions = Instructions.Left(ParamsPos)
 		    End If
 		    
@@ -729,7 +731,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "refreshengrams"
 		      Self.SyncGamedata(False, True)
 		    Case "refreshuser"
-		      BeaconAPI.UserController.RefreshUserDetails()
+		      If Query = "silent=false" Then
+		        BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityFull)
+		      Else
+		        BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityLoginOnly)
+		      End If
 		    Case "releasenotes"
 		      Self.ShowReleaseNotes()
 		    Case "enableonline"
@@ -1005,7 +1011,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_RequestUser()
-		  BeaconAPI.UserController.RefreshUserDetails()
+		  BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityLoginOnly)
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
@@ -1497,7 +1503,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #Pragma Unused EventName
 		  #Pragma Unused Payload
 		  
-		  BeaconAPI.UserController.RefreshUserDetails()
+		  BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityLoginOnly)
 		End Sub
 	#tag EndMethod
 

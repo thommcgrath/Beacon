@@ -832,7 +832,7 @@ End
 		      IdentityItem.Enabled = False
 		      Base.AddMenu(IdentityItem)
 		      Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
-		      Base.AddMenu(New DesktopMenuItem("Refresh Purchases", "beacon://action/refreshuser"))
+		      Base.AddMenu(New DesktopMenuItem("Refresh Purchases", "beacon://action/refreshuser?silent=false"))
 		      Base.AddMenu(New DesktopMenuItem("Account Control Panel", "beacon://action/showaccount"))
 		      Base.AddMenu(New DesktopMenuItem("Show Account Info…", "beacon://action/showidentity"))
 		      Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))

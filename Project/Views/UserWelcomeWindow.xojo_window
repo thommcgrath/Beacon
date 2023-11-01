@@ -1041,7 +1041,7 @@ End
 #tag Events RefreshAndCloseThread
 	#tag Event
 		Sub Run()
-		  BeaconAPI.UserController.RefreshUserDetails()
+		  BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbositySilent)
 		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		End Sub
 	#tag EndEvent
