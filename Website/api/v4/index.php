@@ -32,7 +32,7 @@ Core::RegisterRoutes(
 			'DELETE' => 'authenticators/delete',
 		],
 		'/contentPacks/{contentPackId}/confirm' => [
-			'GET' => 'ark/confirmContentPack',
+			'GET' => 'contentPacks/confirm',
 		],
 		'/dbtest' => [
 			'GET' => 'dbtest',
