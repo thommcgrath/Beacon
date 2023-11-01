@@ -77,8 +77,8 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   6
-      ColumnWidths    =   "46,2*,*,100,70,220"
+      ColumnCount     =   7
+      ColumnWidths    =   "46,2*,200,*,100,70,220"
       DefaultRowHeight=   26
       DefaultSortColumn=   "#ColumnUpdated"
       DefaultSortDirection=   -1
@@ -97,7 +97,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       Height          =   414
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   " 	Name	Map	Console Safe	Revision	Last Updated"
+      InitialValue    =   " 	Name	Game	Map	Console Safe	Revision	Last Updated"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -332,6 +332,7 @@ End
 		    If IsNull(Results(Idx)) Or Results(Idx).Type <> Variant.TypeObject Or (Results(Idx) IsA Dictionary) = False Then
 		      Self.List.RowTagAt(RowIdx) = Nil
 		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnGame) = ""
 		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = ""
 		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = ""
 		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = ""
@@ -342,6 +343,7 @@ End
 		    Try
 		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue), UserId)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
+		      Self.List.CellTextAt(RowIdx, Self.ColumnGame) = Language.GameName(Project.GameId)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
 		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
 		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
@@ -352,6 +354,9 @@ End
 		      Continue
 		    End Try
 		  Next
+		  
+		  Self.List.SizeColumnToFit(Self.ColumnGame)
+		  Self.List.SizeColumnToFit(Self.ColumnUpdated)
 		  
 		  Self.List.CompleteRowLoadRequest(Request.Tag)
 		  Self.UpdateStatusbar()
@@ -482,22 +487,25 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnConsole, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = ColumnConsole, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnIcon, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnMaps, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = ColumnMaps, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnRevision, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnRevision, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageError, Type = Double, Dynamic = False, Default = \"4", Scope = Private
@@ -764,6 +772,8 @@ End
 		    Params.Value("sort") = "lastUpdate"
 		  Case Self.ColumnRevision
 		    Params.Value("sort") = "revision"
+		  Case Self.ColumnGame
+		    Params.Value("sort") = "gameId"
 		  End Select
 		  
 		  If Me.ColumnSortDirectionAt(Me.SortingColumn) = DesktopListbox.SortDirections.Descending Then

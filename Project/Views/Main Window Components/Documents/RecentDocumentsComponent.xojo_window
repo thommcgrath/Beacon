@@ -136,7 +136,6 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
       RequireAllMaps  =   False
       Scope           =   2
       SearchDelayPeriod=   250
@@ -230,6 +229,7 @@ End
 		      Self.List.RowSelectedAt(Idx) = SelectedURLs.IndexOf(URL) > -1
 		    Next
 		  End If
+		  Self.List.SizeColumnToFit(Self.ColumnGame)
 		  
 		  
 		End Sub

@@ -48,7 +48,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
       RequireAllMaps  =   False
       Scope           =   2
       SearchDelayPeriod=   1000
@@ -102,8 +101,8 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   5
-      ColumnWidths    =   "2*,*,100,*,125"
+      ColumnCount     =   6
+      ColumnWidths    =   "2*,200,*,100,*,125"
       DefaultRowHeight=   26
       DefaultSortColumn=   "#ColumnDownloads"
       DefaultSortDirection=   -1
@@ -122,7 +121,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       Height          =   426
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Name	Map	Console Safe	Last Updated	Downloads"
+      InitialValue    =   "Name	Game	Map	Console Safe	Last Updated	Downloads"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -151,7 +150,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -281,6 +279,7 @@ End
 		    If IsNull(Results(Idx)) Or Results(Idx).Type <> Variant.TypeObject Or (Results(Idx) IsA Dictionary) = False Then
 		      Self.List.RowTagAt(RowIdx) = Nil
 		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnGame) = ""
 		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = ""
 		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = ""
 		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = ""
@@ -291,6 +290,7 @@ End
 		    Try
 		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue), UserId)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
+		      Self.List.CellTextAt(RowIdx, Self.ColumnGame) = Language.GameName(Project.GameId)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
 		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
 		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
@@ -301,6 +301,10 @@ End
 		      Continue
 		    End Try
 		  Next
+		  
+		  Self.List.SizeColumnToFit(Self.ColumnGame)
+		  Self.List.SizeColumnToFit(Self.ColumnUpdated)
+		  Self.List.SizeColumnToFit(Self.ColumnDownloads)
 		  
 		  Self.List.CompleteRowLoadRequest(Request.Tag)
 		  Self.UpdateStatusbar()
@@ -340,19 +344,22 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnConsole, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = ColumnConsole, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnDownloads, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnDownloads, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnMaps, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnMaps, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 
@@ -474,7 +481,7 @@ End
 		Sub Opening()
 		  Me.ColumnAlignmentAt(Self.ColumnConsole) = DesktopListBox.Alignments.Center
 		  Me.ColumnAlignmentAt(Self.ColumnDownloads) = DesktopListBox.Alignments.Right
-		  
+		  Me.SizeColumnToFit(Self.ColumnDownloads)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
