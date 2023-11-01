@@ -842,120 +842,124 @@ End
 		    Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("fbe652a8-62f0-4daf-af89-a2d501b4f3f8") // Bow
+		    Dict.Value("Engram") = DataSource.GetEngram("3dd1df4a-180d-5c7c-8a73-0c3487b0a5bf") // Bow
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("afb5a381-1da6-48d8-8eb7-a185b381c87f") // Crossbow
+		    Dict.Value("Engram") = DataSource.GetEngram("f47bc00c-f2e1-5fb6-8847-9805f623a596") // Crossbow
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(100.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("d5647622-9a5e-4790-871d-33b1b7261458") // Compound Bow
+		    Dict.Value("Engram") = DataSource.GetEngram("8b59e9dc-cd7c-5f8b-91ed-913a29b2f797") // Compound Bow
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(55.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("f7cc1e6c-2b40-4204-8272-10ff56fe55f3") // Assault Rifle
+		    Dict.Value("Engram") = DataSource.GetEngram("24980d6d-802c-5466-8d51-6fc115ce673b") // Assault Rifle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(40.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("10e10423-a2fd-462e-9ca1-45dbcbfdd511") // Longneck Rifle
+		    Dict.Value("Engram") = DataSource.GetEngram("554fbd13-daeb-59e5-bf33-853c7c965f2d") // Longneck Rifle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(70.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("215228dc-968b-4093-bb25-d56ff57f6ad6") // Fabricated Sniper Rifle
+		    Dict.Value("Engram") = DataSource.GetEngram("ab9bc82b-3a88-53b6-ab95-d5a6788e0b16") // Fabricated Sniper Rifle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(70.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("9728096c-9057-43ea-9732-92817eaf3a92") // Simple Pistol
+		    Dict.Value("Engram") = DataSource.GetEngram("e2bb9163-f48b-5550-8316-d7dca8633b36") // Simple Pistol
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(60.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("52187247-2dff-4567-91f6-0080fa24f988") // Fabricated Pistol
+		    Dict.Value("Engram") = DataSource.GetEngram("82748d15-a3bd-50f9-9a31-7492b8515e11") // Fabricated Pistol
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(210.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("3a9479b3-6b76-4cf7-95a5-b1a5f1beb1a9") // Shotgun
+		    Dict.Value("Engram") = DataSource.GetEngram("ee8fd357-7a4f-550e-a0b3-d782bebb2a33") // Shotgun
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("72e9e30e-f3ea-4880-875d-b41aa9f38703") // Pump Shotgun
+		    Dict.Value("Engram") = DataSource.GetEngram("7456cdc2-c5fe-5eec-be53-1686f21b0f2b") // Pump Shotgun
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("1f5b289a-2665-4d68-879d-7309274f94c4") // Tek Rifle
+		    Dict.Value("Engram") = DataSource.GetEngram("7cddfb0b-9324-53c8-9e15-9ca09b51e235") // Tek Rifle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("d35d97ff-1f4b-4925-9956-61a61ae607e8") // Railgun
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
+		    #if false
+		      Dict = New Dictionary
+		      Dict.Value("Engram") = DataSource.GetEngram("d35d97ff-1f4b-4925-9956-61a61ae607e8") // Railgun
+		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
+		      Self.mPreviewItemStats.Add(Dict)
+		      
+		      Dict = New Dictionary
+		      Dict.Value("Engram") = DataSource.GetEngram("ac748d72-01ff-48b5-a355-142145d5b13f") // Tek Bow
+		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(55.0, 0.001, 0.25)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
+		      Self.mPreviewItemStats.Add(Dict)
+		      
+		      Dict = New Dictionary
+		      Dict.Value("Engram") = DataSource.GetEngram("39b6d260-a7fb-418c-8112-f554a551238d") // Tek Pistol
+		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
+		      Self.mPreviewItemStats.Add(Dict)
+		    #endif
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("ac748d72-01ff-48b5-a355-142145d5b13f") // Tek Bow
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(55.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("39b6d260-a7fb-418c-8112-f554a551238d") // Tek Pistol
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("75f7a97a-f4d9-4c4d-8807-01b5a35502d0") // Cloth Shirt
+		    Dict.Value("Engram") = DataSource.GetEngram("7618efa9-7a1e-5ba9-b9a7-939bd980656a") // Cloth Shirt
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(10.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(25.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("684b5ba4-b656-4bcf-9f58-e8c506bc108c") // Desert Cloth Shirt
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(40.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
+		    #if false
+		      Dict = New Dictionary
+		      Dict.Value("Engram") = DataSource.GetEngram("684b5ba4-b656-4bcf-9f58-e8c506bc108c") // Desert Cloth Shirt
+		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(40.0, 0.001, 0.2)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(25.0, 0.001, 0.2)
+		      Self.mPreviewItemStats.Add(Dict)
+		    #endif
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("591c1e36-fb17-473b-8299-a3bee995662f") // Hide Shirt
+		    Dict.Value("Engram") = DataSource.GetEngram("f21f8067-76c5-5ba1-87cd-96404af23c16") // Hide Shirt
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(20.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(20.0, 0.001, 0.2)
@@ -963,7 +967,7 @@ End
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("f8608f38-b6ca-49b0-af9c-11d43a846fe1") // Chitin Chestpiece
+		    Dict.Value("Engram") = DataSource.GetEngram("ca1e2884-6c95-55d0-b9fb-677d3d39acd1") // Chitin Chestpiece
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(50.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
@@ -971,7 +975,7 @@ End
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("8bd65538-3798-44be-ae77-cde30ebcad78") // Fur Chestpiece
+		    Dict.Value("Engram") = DataSource.GetEngram("cb165ce1-846c-516f-9bdf-5f305ae77785") // Fur Chestpiece
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(40.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(65.0, 0.001, 0.2)
@@ -979,23 +983,25 @@ End
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("590a1041-b086-493e-8592-5b306ecc10c0") // SCUBA Tank
+		    Dict.Value("Engram") = DataSource.GetEngram("754d03a8-b1bf-5731-b9d0-ab915d6930f2") // SCUBA Tank
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(0.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(40.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-5.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("293c9a0e-498c-4ed2-a66a-619672e441f7") // Hazard Shirt
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(65.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(85.5, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(60.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
+		    #if false
+		      Dict = New Dictionary
+		      Dict.Value("Engram") = DataSource.GetEngram("293c9a0e-498c-4ed2-a66a-619672e441f7") // Hazard Shirt
+		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(65.0, 0.001, 0.2)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(85.5, 0.001, 0.25)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
+		      Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(60.0, 0.001, 0.2)
+		      Self.mPreviewItemStats.Add(Dict)
+		    #endif
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("b0cc8932-0469-4a6b-9c0c-81eb06f9bb3a") // Flak Chestpiece
+		    Dict.Value("Engram") = DataSource.GetEngram("21e2c27f-5326-5418-8e64-bbede6dcde86") // Flak Chestpiece
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(100.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
@@ -1003,7 +1009,7 @@ End
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("ac1a9096-df5e-4148-9d84-a30f17564f3c") // Riot Chestpiece
+		    Dict.Value("Engram") = DataSource.GetEngram("cf0705a1-180e-59a3-9bf0-560eb3d7b883") // Riot Chestpiece
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(115.0, 0.001, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
@@ -1011,7 +1017,7 @@ End
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("58989713-f1d2-4daa-b641-72f786e174f2") // Tek Chestpiece
+		    Dict.Value("Engram") = DataSource.GetEngram("18524e8a-ff2e-5d62-a3a9-f105eba01306") // Tek Chestpiece
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(180.0, 0.00075, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.00055, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
@@ -1019,66 +1025,79 @@ End
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("bf214282-9872-408a-a074-2baca78d535a") // Raptor Saddle
+		    Dict.Value("Engram") = DataSource.GetEngram("9cd3913c-19a6-50cf-94f2-63a57f043f7e") // Raptor Saddle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("13b4abbc-321e-45a1-ba64-e7691c3725a0") // Pteranodon Saddle
+		    Dict.Value("Engram") = DataSource.GetEngram("d5cd431a-1a7b-5c30-95fb-dbbe0af4e671") // Pteranodon Saddle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("6de040fc-6a9f-48bf-8b14-6a3714439299") // Rex Saddle
+		    Dict.Value("Engram") = DataSource.GetEngram("c6ce03d5-97ed-5d90-a352-638788e7bfcd") // Rex Saddle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("427992ed-de43-4809-a98b-0d8e13f44707") // Tek Rex Saddle
+		    Dict.Value("Engram") = DataSource.GetEngram("a97e3600-e611-5caa-b397-ad20c8089c18") // Tek Rex Saddle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("d45d0691-a430-4443-98e3-bcc501067317") // Rock Drake Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
+		    #if false
+		      Dict = New Dictionary
+		      Dict.Value("Engram") = DataSource.GetEngram("d45d0691-a430-4443-98e3-bcc501067317") // Rock Drake Saddle
+		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
+		      Self.mPreviewItemStats.Add(Dict)
+		      
+		      Dict = New Dictionary
+		      Dict.Value("Engram") = DataSource.GetEngram("c52794f4-4329-4d15-8952-68631fd61060") // Tek Rock Drake Saddle
+		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
+		      Self.mPreviewItemStats.Add(Dict)
+		    #endif
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("c52794f4-4329-4d15-8952-68631fd61060") // Tek Rock Drake Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("86bc8625-7e65-4539-8f4f-32d85f68e815") // Doesdicurus Saddle
+		    Dict.Value("Engram") = DataSource.GetEngram("2b2d619b-fe82-59d6-9399-fec44c33f7a2") // Doedicurus Saddle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("52ece996-649e-4fb7-abca-7cfbe72dae24") // Rock Golem Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
-		    Self.mPreviewItemStats.Add(Dict)
+		    #if false
+		      Dict = New Dictionary
+		      Dict.Value("Engram") = DataSource.GetEngram("52ece996-649e-4fb7-abca-7cfbe72dae24") // Rock Golem Saddle
+		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
+		      Self.mPreviewItemStats.Add(Dict)
+		    #endif
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("783df1df-f5fe-4208-92a3-77e062875968") // Tropeognathus Saddle
+		    Dict.Value("Engram") = DataSource.GetEngram("da2880ea-55bb-5e79-8ec9-1d9f76b310ff") // Tropeognathus Saddle
 		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.0, 0.2)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
 		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.00136, 0.1)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("419e00c5-5201-43a6-bcfe-639f1073eb86") // Metal Shield
+		    Dict.Value("Engram") = DataSource.GetEngram("64665fe6-9ec2-55df-9810-3f5824268db2") // Metal Shield
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(1250.0, 0.001, 0.25)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("f40512df-c37f-4fcc-af62-bc805cac2736") // Riot Shield
+		    Dict.Value("Engram") = DataSource.GetEngram("b500d917-4dc2-5e69-b806-8b5180c3f18f") // Riot Shield
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(2300.0, 0.001, 0.25)
 		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("b30c8597-6c47-40df-b180-268f43e18764") // Tek Shield
+		    Dict.Value("Engram") = DataSource.GetEngram("333501ed-86af-55c4-bbc6-3845fc31a31e") // Tek Shield
 		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(2300.0, 0.001, 0.25)
 		    Self.mPreviewItemStats.Add(Dict)
+		    
+		    For Idx As Integer = Self.mPreviewItemStats.LastIndex DownTo 0
+		      Dict = Self.mPreviewItemStats(Idx)
+		      Var Engram As ArkSA.Engram = Dict.Value("Engram")
+		      If (Engram Is Nil) = False Then
+		        Continue
+		      End If
+		      Self.mPreviewItemStats.RemoveAt(Idx)
+		    Next
 		  End If
 		  
 		  Var Config As ArkSA.Configs.StatLimits = Self.Config(False)
@@ -1086,9 +1105,6 @@ End
 		  For I As Integer = 0 To Self.mPreviewItemStats.LastIndex
 		    Var Dict As Dictionary = Self.mPreviewItemStats(I)
 		    Var Engram As ArkSA.Engram = Dict.Value("Engram")
-		    If Engram = Nil Then
-		      Continue
-		    End If
 		    
 		    Self.PreviewList.RowTagAt(I) = Dict
 		    Self.PreviewList.CellTextAt(I, Self.ColumnLabel) = Engram.Label
