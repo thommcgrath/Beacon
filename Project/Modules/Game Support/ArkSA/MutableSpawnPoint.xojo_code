@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MutableSpawnPoint
 Inherits ArkSA.SpawnPoint
-Implements ArkSA.MutableBlueprint
+Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub AddSet(Set As ArkSA.SpawnPointSet, Replace As Boolean = False)
@@ -221,6 +221,56 @@ Implements ArkSA.MutableBlueprint
 		  Self.mPath = Value
 		  Self.mClassString = ArkSA.ClassStringFromPath(Value)
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		  // Part of the ArkSA.Prunable interface.
+		  
+		  For Idx As Integer = Self.mSets.LastIndex DownTo 0
+		    Var Set As ArkSA.SpawnPointSet = Self.mSets(Idx)
+		    Var Mutable As ArkSA.MutableSpawnPointSet = Set.MutableVersion
+		    Mutable.PruneUnknownContent(DataSource, Project)
+		    If Mutable.Count = 0 Then
+		      Self.mSets.RemoveAt(Idx)
+		      Self.Modified = True
+		      Continue
+		    End If
+		    
+		    Var ReplacedCreatureIds() As String = Mutable.ReplacedCreatureIds
+		    For Each ReplacedCreatureId As String In ReplacedCreatureIds
+		      Var ReplacedCreature As ArkSA.Creature = DataSource.GetCreature(ReplacedCreatureId)
+		      If ReplacedCreature Is Nil Then
+		        Mutable.RemoveReplacedCreature(ReplacedCreatureId)
+		        Continue
+		      End If
+		      
+		      Var ReplacementCreatureIds() As String = Mutable.ReplacementCreatureIds(ReplacedCreatureId)
+		      For Each ReplacementCreatureId As String In ReplacementCreatureIds
+		        Var ReplacementCreature As ArkSA.Creature = DataSource.GetCreature(ReplacementCreatureId)
+		        If ReplacementCreature Is Nil Then
+		          Mutable.CreatureReplacementWeight(ReplacedCreatureId, ReplacementCreatureId) = Nil
+		          Continue
+		        End If
+		      Next
+		    Next
+		    
+		    If Mutable.Hash <> Set.Hash Then
+		      Self.mSets(Idx) = Mutable.ImmutableVersion
+		      Self.Modified = True
+		    End If
+		  Next
+		  
+		  Var Keys() As Variant = Self.mLimits.Keys
+		  For Each Key As Variant In Keys
+		    Var CreatureId As String = Key
+		    Var Creature As ArkSA.Creature = DataSource.GetCreature(CreatureId)
+		    If Creature Is Nil Then
+		      Self.Limit(CreatureId) = 1.0
+		      Continue
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 

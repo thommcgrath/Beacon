@@ -48,6 +48,30 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub PruneUnknownContent(Project As ArkSA.Project)
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var Keys() As Variant = Self.mCosts.Keys
+		  For Each Key As Variant In Keys
+		    Var EngramId As String = Key
+		    Var Cost As ArkSA.CraftingCost = Self.mCosts.Value(Key)
+		    Var Engram As ArkSA.Engram = DataSource.GetEngram(EngramId)
+		    If Engram Is Nil Then
+		      Self.Remove(Cost)
+		      Continue
+		    End If
+		    
+		    Var Mutable As ArkSA.MutableCraftingCost = ArkSA.CraftingCost(Cost).MutableVersion
+		    Mutable.PruneUnknownContent(DataSource, Project)
+		    If Mutable.Count = 0 Then
+		      Self.Remove(Cost)
+		    Else
+		      Self.Add(Mutable)
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

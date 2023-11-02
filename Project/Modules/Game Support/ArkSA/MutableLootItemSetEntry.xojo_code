@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MutableLootItemSetEntry
 Inherits ArkSA.LootItemSetEntry
+Implements ArkSA.Prunable
 	#tag Method, Flags = &h0
 		Sub Add(Option As ArkSA.LootItemSetEntryOption)
 		  Self.mOptions.Add(Option)
@@ -115,6 +116,23 @@ Inherits ArkSA.LootItemSetEntry
 		  
 		  Self.mPreventGrinding = Value
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		  // Part of the ArkSA.Prunable interface.
+		  
+		  #Pragma Unused Project
+		  
+		  For Idx As Integer = Self.mOptions.LastIndex DownTo 0
+		    Var BlueprintId As String = Self.mOptions(Idx).Reference.BlueprintId
+		    Var Blueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId)
+		    If Blueprint Is Nil Then
+		      Self.mOptions.RemoveAt(Idx)
+		      Self.Modified = True
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 

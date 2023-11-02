@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MutableLootItemSet
 Inherits ArkSA.LootItemSet
+Implements ArkSA.Prunable
 	#tag Method, Flags = &h0
 		Sub Add(Entry As ArkSA.LootItemSetEntry)
 		  Self.mEntries.Add(Entry.ImmutableVersion)
@@ -159,6 +160,23 @@ Inherits ArkSA.LootItemSet
 		Sub Operator_Subscript(Index As Integer, Assigns Entry As ArkSA.LootItemSetEntry)
 		  Self.mEntries(Index) = Entry.ImmutableVersion
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		  // Part of the ArkSA.Prunable interface.
+		  
+		  For Idx As Integer = Self.mEntries.LastIndex DownTo 0
+		    Var Mutable As ArkSA.MutableLootItemSetEntry = Self.mEntries(Idx).MutableVersion
+		    Mutable.PruneUnknownContent(DataSource, Project)
+		    If Mutable.Count = 0 Then
+		      Self.mEntries.RemoveAt(Idx)
+		      Self.Modified = True
+		    ElseIf Mutable.Hash <> Self.mEntries(Idx).Hash Then
+		      Self.mEntries(Idx) = Mutable.ImmutableVersion
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 

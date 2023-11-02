@@ -237,6 +237,12 @@ Protected Module Language
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"Pasteboard"
 	#tag EndConstant
 
+	#tag Constant, Name = CommonCancel, Type = String, Dynamic = True, Default = \"Cancel", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonContinue, Type = String, Dynamic = True, Default = \"Continue", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = ExperimentalWarningActionCaption, Type = String, Dynamic = False, Default = \"Continue", Scope = Protected
 	#tag EndConstant
 

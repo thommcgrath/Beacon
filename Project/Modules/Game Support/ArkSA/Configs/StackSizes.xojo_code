@@ -69,6 +69,23 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub PruneUnknownContent(Project As ArkSA.Project)
+		  #Pragma Unused Project
+		  
+		  Var References() As ArkSA.BlueprintReference = Self.mOverrides.References
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  For Each Reference As ArkSA.BlueprintReference In References
+		    Var BlueprintId As String = Reference.BlueprintId
+		    Var Blueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId)
+		    If Blueprint Is Nil Then
+		      Self.mOverrides.Remove(BlueprintId)
+		      Self.Modified = True
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

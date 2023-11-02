@@ -27,7 +27,15 @@ Protected Class ProjectTool
 
 	#tag Method, Flags = &h0
 		Function FirstGroup() As String
-		  Return Self.mGroups(0)
+		  If Self.mGroups.Count > 0 Then
+		    Return Self.mGroups(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsGlobal() As Boolean
+		  Return Self.mGroups.Count = 0
 		End Function
 	#tag EndMethod
 

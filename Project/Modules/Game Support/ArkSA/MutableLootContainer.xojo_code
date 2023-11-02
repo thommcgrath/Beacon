@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MutableLootContainer
 Inherits ArkSA.LootContainer
-Implements ArkSA.MutableBlueprint
+Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 	#tag Method, Flags = &h0
 		Sub Add(ItemSet As ArkSA.LootItemSet)
 		  Var Idx As Integer = Self.IndexOf(ItemSet)
@@ -328,6 +328,23 @@ Implements ArkSA.MutableBlueprint
 		  
 		  Self.mPreventDuplicates = Value
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		  // Part of the ArkSA.Prunable interface.
+		  
+		  For Idx As Integer = Self.mItemSets.LastIndex DownTo 0
+		    Var Mutable As ArkSA.MutableLootItemSet = Self.mItemSets(Idx).MutableVersion
+		    Mutable.PruneUnknownContent(DataSource, Project)
+		    If Mutable.Count = 0 Then
+		      Self.mItemSets.RemoveAt(Idx)
+		      Self.Modified = True
+		    ElseIf Mutable.Hash <> Self.mItemSets(Idx).Hash Then
+		      Self.mItemSets(Idx) = Mutable.ImmutableVersion
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 

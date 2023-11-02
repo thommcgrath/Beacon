@@ -1375,6 +1375,18 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub PruneUnknownContent()
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    Var SetDict As Dictionary = Self.mConfigSetData.Value(Set.ConfigSetId)
+		    For Each Entry As DictionaryEntry In SetDict
+		      Var Group As Beacon.ConfigGroup = Entry.Value
+		      Group.PruneUnknownContent(Self)
+		    Next
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function ReadLegacySecureData(SecureDict As Dictionary, Identity As Beacon.Identity, SkipHashVerification As Boolean = False) As Dictionary
 		  If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then

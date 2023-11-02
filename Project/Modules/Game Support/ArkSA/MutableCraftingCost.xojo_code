@@ -2,6 +2,7 @@
 Protected Class MutableCraftingCost
 Inherits ArkSA.CraftingCost
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+Implements ArkSA.Prunable
 	#tag Method, Flags = &h0
 		Sub Add(Ingredient As ArkSA.CraftingCostIngredient)
 		  If Ingredient Is Nil Then
@@ -60,6 +61,22 @@ Inherits ArkSA.CraftingCost
 		Function MutableVersion() As ArkSA.MutableCraftingCost
 		  Return Self
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		  // Part of the ArkSA.Prunable interface.
+		  
+		  #Pragma Unused Project
+		  
+		  For Each Ingredient As ArkSA.CraftingCostIngredient In Self.mIngredients
+		    Var BlueprintId As String = Ingredient.Reference.BlueprintId
+		    Var Blueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId)
+		    If Blueprint Is Nil Then
+		      Self.Remove(Ingredient)
+		    End If
+		  Next
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

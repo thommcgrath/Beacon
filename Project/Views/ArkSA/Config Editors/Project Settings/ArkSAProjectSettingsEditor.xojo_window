@@ -465,30 +465,10 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Visible         =   True
       Width           =   40
    End
-   Begin Thread GFIComputeThread
-      DebugIdentifier =   ""
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   5
-      Scope           =   2
-      StackSize       =   0
-      TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
-   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
-	#tag Event
-		Sub RunTool(Tool As Ark.ProjectTool)
-		  Select Case Tool.UUID
-		  Case "6bcf5785-b8e2-4889-91c8-545c34f30d8a"
-		    Self.ComputeGFICodes()
-		  End Select
-		End Sub
-	#tag EndEvent
-
 	#tag Event
 		Sub SetupUI()
 		  Self.TitleField.Text = Self.Project.Title
@@ -512,43 +492,11 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub ComputeGFICodes()
-		  If Self.ShowConfirm("Computing GFI codes will take a few minutes to complete.", "If you continue, you will be asked to save a CSV file with the results, then the process will start.", "Continue", "Cancel") = False Then
-		    Return
-		  End If
-		  
-		  Var SaveDialog As New SaveFileDialog
-		  SaveDialog.Filter = BeaconFileTypes.CSVFile
-		  SaveDialog.SuggestedFileName = "Ark GFI Codes " + DateTime.Now.SQLDate + ".csv"
-		  
-		  Var OutputFile As FolderItem = SaveDialog.ShowModal(Self.TrueWindow)
-		  If OutputFile Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.mGFIOutputFile = OutputFile
-		  Self.mGFIProgress = New ProgressWindow
-		  Self.mGFIProgress.ShowDelayed(Self.TrueWindow)
-		  
-		  Self.GFIComputeThread.Start
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return ArkSA.Configs.NameProjectSettings
 		End Function
 	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mGFIOutputFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGFIProgress As ProgressWindow
-	#tag EndProperty
 
 
 	#tag Constant, Name = HelpAllowUCS, Type = String, Dynamic = False, Default = \"When two-byte characters are used in the server name or message of the day\x2C Ark needs the ini file formatted differently\x2C but this different format is not compatible with most text editors. When this setting is off\x2C Beacon will remove two-byte characters\x2C keeping the ini files compatible with all text editors.", Scope = Private
@@ -666,37 +614,6 @@ End
 		  Self.Project.AllowUCS2 = Me.Value
 		  Self.Modified = True
 		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GFIComputeThread
-	#tag Event
-		Sub Run()
-		  Var Result As New Dictionary("Finished": True)
-		  
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		  Var Lines() As String = DataSource.ComputeGFICodes(Self.Project.ContentPacks, Self.mGFIProgress)
-		  If Lines.Count > 0 Then
-		    Var Stream As TextOutputStream = TextOutputStream.Create(Self.mGFIOutputFile)
-		    Stream.Write(String.FromArray(Lines, EndOfLine))
-		    Stream.Close
-		    
-		    Result.Value("Success") = True
-		  End If
-		  
-		  Me.AddUserInterfaceUpdate(Result)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub UserInterfaceUpdate(data() as Dictionary)
-		  For Each Dict As Dictionary In Data
-		    If Dict.Lookup("Finished", False) = True Then
-		      Self.mGFIProgress.Close
-		    End If
-		    If Dict.Lookup("Success", False) = True Then
-		      Self.ShowAlert("GFI codes are ready.", "See the results in " + Self.mGFIOutputFile.NativePath)
-		    End If
-		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

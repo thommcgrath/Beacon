@@ -59,6 +59,31 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub PruneUnknownContent(Project As ArkSA.Project)
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var Keys() As Variant = Self.mSpawnPoints.Keys
+		  For Each UniqueKey As Variant In Keys
+		    Var SpawnPoint As ArkSA.SpawnPoint = Self.mSpawnPoints.Value(UniqueKey)
+		    If SpawnPoint Is Nil Or DataSource.GetSpawnPoint(SpawnPoint.SpawnPointId) Is Nil Then
+		      Self.mSpawnPoints.Remove(UniqueKey)
+		      Self.Modified = True
+		      Continue
+		    End If
+		    
+		    Var Mutable As ArkSA.MutableSpawnPoint = SpawnPoint.MutableVersion
+		    Mutable.PruneUnknownContent(DataSource, Project)
+		    If Mutable.Count = 0 Then
+		      Self.mSpawnPoints.Remove(UniqueKey)
+		      Self.Modified = True
+		    ElseIf Mutable.Hash <> SpawnPoint.Hash Then
+		      Self.mSpawnPoints.Value(UniqueKey) = Mutable.ImmutableVersion
+		      Self.Modified = True
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

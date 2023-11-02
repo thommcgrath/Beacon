@@ -260,7 +260,6 @@ End
 		    Return Nil
 		  End If
 		  
-		  Var Token As BeaconAPI.OAuthToken
 		  Try
 		    Return BeaconAPI.OAuthToken.Load(AuthResponse.Content)
 		  Catch Err As RuntimeException
@@ -522,8 +521,6 @@ End
 		  Self.Close
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events ResultsMessageLabel
 #tag EndEvents
 #tag Events MigratorThread
 	#tag Event

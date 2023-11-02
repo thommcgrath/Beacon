@@ -433,6 +433,16 @@ Implements Beacon.Countable,ArkSA.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ReplacedCreatureIds() As String()
+		  Var Arr() As String
+		  For Each Entry As DictionaryEntry In Self.mReplacements
+		    Arr.Add(Entry.Key)
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ReplacedCreatures() As ArkSA.Creature()
 		  Var Arr() As ArkSA.Creature
 		  For Each Entry As DictionaryEntry In Self.mReplacements
@@ -442,6 +452,33 @@ Implements Beacon.Countable,ArkSA.Weighted
 		      Arr.Add(Creature)
 		    End If
 		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReplacementCreatureIds(FromCreature As ArkSA.Creature) As String()
+		  Var Arr() As String
+		  If FromCreature Is Nil Then
+		    Return Arr
+		  End If
+		  
+		  Return Self.ReplacementCreatureIds(FromCreature.CreatureId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReplacementCreatureIds(FromCreatureId As String) As String()
+		  Var Arr() As String
+		  If Self.mReplacements.HasKey(FromCreatureId) = False Then
+		    Return Arr
+		  End If
+		  
+		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
+		  For Each Entry As DictionaryEntry In Choices
+		    Arr.Add(Entry.Key)
+		  Next
+		  
 		  Return Arr
 		End Function
 	#tag EndMethod

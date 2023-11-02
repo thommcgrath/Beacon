@@ -63,6 +63,16 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub PruneUnknownContent(Project As Beacon.Project)
+		  Try
+		    RaiseEvent PruneUnknownContent(Project)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Pruning a config group's content")
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RequiresOmni() As Boolean
 		  Return False
 		End Function
@@ -113,6 +123,10 @@ Implements Beacon.Validateable
 
 	#tag Hook, Flags = &h0
 		Event HasContent() As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PruneUnknownContent(Project As Beacon.Project)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

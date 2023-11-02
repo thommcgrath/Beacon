@@ -160,6 +160,14 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ReplacementCreatureId() As String
+		  If (Self.mReplacementCreature Is Nil) = False Then
+		    Return Self.mReplacementCreature.BlueprintId
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ResistanceMultiplier() As Double
 		  #Pragma StackOverflowChecking False
 		  Return Self.mResistanceMultiplier

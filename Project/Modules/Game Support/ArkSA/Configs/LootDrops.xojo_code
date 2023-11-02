@@ -47,6 +47,32 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
+		Sub PruneUnknownContent(Project As ArkSA.Project)
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var Keys() As Variant = Self.mContainers.Keys
+		  Var PackIds As New Beacon.StringList
+		  For Each Key As Variant In Keys
+		    Var ClassString As String = Key
+		    Var Matches() As ArkSA.LootContainer = DataSource.GetLootContainersByClass(ClassString, PackIds)
+		    If Matches.Count = 0 Then
+		      Self.mContainers.Remove(ClassString)
+		      Self.Modified = True
+		      Continue
+		    End If
+		    
+		    Var Container As ArkSA.LootContainer = Self.mContainers.Value(Key)
+		    Var Mutable As ArkSA.MutableLootContainer = Container.MutableVersion
+		    Mutable.PruneUnknownContent(DataSource, Project)
+		    If Mutable.Count = 0 Then
+		      Self.Remove(Container)
+		    ElseIf Mutable.Hash <> Container.Hash Then
+		      Self.Add(Mutable)
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

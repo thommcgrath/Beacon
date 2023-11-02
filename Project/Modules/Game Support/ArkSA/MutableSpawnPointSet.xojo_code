@@ -2,6 +2,7 @@
 Protected Class MutableSpawnPointSet
 Inherits ArkSA.SpawnPointSet
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+Implements ArkSA.Prunable
 	#tag Method, Flags = &h0
 		Sub Append(Entry As ArkSA.SpawnPointSetEntry)
 		  Var Idx As Integer = Self.IndexOf(Entry)
@@ -184,6 +185,22 @@ Inherits ArkSA.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		  // Part of the ArkSA.Prunable interface.
+		  
+		  #Pragma Unused Project
+		  
+		  For Idx As Integer = Self.mEntries.LastIndex DownTo 0
+		    Var Entry As ArkSA.SpawnPointSetEntry = Self.mEntries(Idx)
+		    If Entry.Creature Is Nil Or DataSource.GetCreature(Entry.Creature.CreatureId) Is Nil Then
+		      Self.mEntries.RemoveAt(Idx)
+		      Self.Modified = True
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
 		  #Pragma StackOverflowChecking False
 		  Value = Max(Abs(Value), 0.00001)
@@ -221,6 +238,24 @@ Inherits ArkSA.SpawnPointSet
 		  
 		  Self.mEntries.RemoveAll
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveReplacedCreature(Creature As ArkSA.Creature)
+		  If Creature Is Nil Then
+		    Return
+		  End If
+		  Self.RemoveReplacedCreature(Creature.CreatureId)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveReplacedCreature(CreatureId As String)
+		  If Self.mReplacements.HasKey(CreatureId) Then
+		    Self.mReplacements.Remove(CreatureId)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 

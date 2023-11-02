@@ -268,6 +268,17 @@ Begin DocumentEditorView ArkSADocumentEditorView
       Visible         =   True
       Width           =   230
    End
+   Begin Thread GFIComputeThread
+      DebugIdentifier =   ""
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -553,6 +564,29 @@ End
 		    RemoveHandler mImportWindow.ProjectsImported, WeakAddressOf mImportWindow_ProjectsImported
 		  Catch Err As RuntimeException
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ComputeGFICodes()
+		  If Self.ShowConfirm("Computing GFI codes will take a few minutes to complete.", "If you continue, you will be asked to save a CSV file with the results, then the process will start.", "Continue", "Cancel") = False Then
+		    Return
+		  End If
+		  
+		  Var SaveDialog As New SaveFileDialog
+		  SaveDialog.Filter = BeaconFileTypes.CSVFile
+		  SaveDialog.SuggestedFileName = "Ark GFI Codes " + DateTime.Now.SQLDate + ".csv"
+		  
+		  Var OutputFile As FolderItem = SaveDialog.ShowModal(Self.TrueWindow)
+		  If OutputFile Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mGFIOutputFile = OutputFile
+		  Self.mGFIProgress = New ProgressWindow
+		  Self.mGFIProgress.ShowDelayed(Self.TrueWindow)
+		  
+		  Self.GFIComputeThread.Start
 		End Sub
 	#tag EndMethod
 
@@ -1005,6 +1039,22 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub PruneUnknownContent()
+		  PruningWindow.Present(Self, Self.Project, AddressOf PruningFinished)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PruningFinished()
+		  Self.Modified = Project.Modified
+		  If (Self.CurrentPanel Is Nil) = False Then
+		    Self.CurrentPanel.SetupUI()
+		  End If
+		  Self.ShowAlert(Self.PruningFinishedMessage, Self.PruningFinishedExplanation)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
 		  If Self.Project Is Nil Or Self.Project.ServerProfileCount = 0 Then
 		    Return False
@@ -1047,6 +1097,17 @@ End
 		    Self.Modified = True
 		    Self.UpdateConfigList()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RunTool(ToolId As String)
+		  Select Case ToolId
+		  Case "6bcf5785-b8e2-4889-91c8-545c34f30d8a"
+		    Self.ComputeGFICodes()
+		  Case "56742123-8e17-4285-b196-fd79823b61f7"
+		    Self.PruneUnknownContent()
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -1155,6 +1216,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGFIOutputFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGFIProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mImportWindow As DocumentImportWindow
 	#tag EndProperty
 
@@ -1227,6 +1296,12 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = kConfigGroupClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.configgroup", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PruningFinishedExplanation, Type = String, Dynamic = True, Default = \"Any object that is not in Beacon\'s game database has been removed from the project.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PruningFinishedMessage, Type = String, Dynamic = True, Default = \"The process has finished", Scope = Private
 	#tag EndConstant
 
 
@@ -1309,20 +1384,47 @@ End
 		    Self.mModsPopoverController = Controller
 		  Case "ToolsButton"
 		    Var Tools() As ArkSA.ProjectTool = ArkSA.Configs.AllTools
-		    Var LastEditor As String
-		    Var Base As New DesktopMenuItem
+		    Var GroupNames() As String
+		    Var GroupedTools As New Dictionary
 		    For Each Tool As ArkSA.ProjectTool In Tools
-		      If Tool.FirstGroup <> LastEditor Then
+		      Var GroupName As String = Tool.FirstGroup
+		      If GroupNames.IndexOf(GroupName) = -1 Then
+		        GroupNames.Add(GroupName)
+		      End If
+		      
+		      Var Siblings() As ArkSA.ProjectTool
+		      If GroupedTools.HasKey(GroupName) Then
+		        Siblings = GroupedTools.Value(GroupName)
+		        Siblings.Add(Tool)
+		      Else
+		        Siblings.Add(Tool)
+		        GroupedTools.Value(GroupName) = Siblings
+		      End If
+		    Next
+		    GroupNames.Sort
+		    
+		    Var Base As New DesktopMenuItem
+		    For Each GroupName As String In GroupNames
+		      If GroupName.IsEmpty = False Then
 		        If Base.Count > 0 Then
 		          Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		        End If
 		        
-		        Var Header As New DesktopMenuItem(Language.LabelForConfig(Tool.FirstGroup))
+		        Var Header As New DesktopMenuItem(Language.LabelForConfig(GroupName))
 		        Header.Enabled = False
 		        Base.AddMenu(Header)
-		        LastEditor = Tool.FirstGroup
 		      End If
-		      Base.AddMenu(New DesktopMenuItem(Tool.Caption, Tool))
+		      
+		      Var GroupTools() As ArkSA.ProjectTool = GroupedTools.Value(GroupName)
+		      Var ToolNames() As String
+		      For Each Tool As ArkSA.ProjectTool In GroupTools
+		        ToolNames.Add(Tool.Caption)
+		      Next
+		      ToolNames.SortWith(GroupTools)
+		      
+		      For Each Tool As ArkSA.ProjectTool In GroupTools
+		        Base.AddMenu(New DesktopMenuItem(Tool.Caption, Tool))
+		      Next
 		    Next
 		    
 		    Var Position As Point = Me.GlobalPosition
@@ -1332,10 +1434,14 @@ End
 		    End If
 		    
 		    Var Tool As ArkSA.ProjectTool = Choice.Tag
-		    If Tool.IsRelevantForGroup(Self.CurrentConfigName) = False Then
-		      Self.CurrentConfigName = Tool.FirstGroup
+		    If Tool.IsGlobal Then
+		      Self.RunTool(Tool.UUID)
+		    Else
+		      If Tool.IsRelevantForGroup(Self.CurrentConfigName) = False Then
+		        Self.CurrentConfigName = Tool.FirstGroup
+		      End If
+		      Call Self.CurrentPanel.RunTool(Tool.UUID)
 		    End If
-		    Call Self.CurrentPanel.RunTool(Tool.UUID)
 		    Self.UpdateConfigList()
 		  Case "BlueprintsButton"
 		    ArkSASaveBlueprintsDialog.Present(Self, Self.Project)
@@ -1515,6 +1621,37 @@ End
 	#tag Event
 		Sub Changed(Set As Beacon.ConfigSet)
 		  Self.ActiveConfigSet = Set
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GFIComputeThread
+	#tag Event
+		Sub Run()
+		  Var Result As New Dictionary("Finished": True)
+		  
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var Lines() As String = DataSource.ComputeGFICodes(Self.Project.ContentPacks, Self.mGFIProgress)
+		  If Lines.Count > 0 Then
+		    Var Stream As TextOutputStream = TextOutputStream.Create(Self.mGFIOutputFile)
+		    Stream.Write(String.FromArray(Lines, EndOfLine))
+		    Stream.Close
+		    
+		    Result.Value("Success") = True
+		  End If
+		  
+		  Me.AddUserInterfaceUpdate(Result)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.Lookup("Finished", False) = True Then
+		      Self.mGFIProgress.Close
+		    End If
+		    If Dict.Lookup("Success", False) = True Then
+		      Self.ShowAlert("GFI codes are ready.", "See the results in " + Self.mGFIOutputFile.NativePath)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

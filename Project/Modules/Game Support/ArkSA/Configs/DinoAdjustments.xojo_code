@@ -91,6 +91,36 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub PruneUnknownContent(Project As ArkSA.Project)
+		  #Pragma Unused Project
+		  
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var Behaviors() As ArkSA.CreatureBehavior = Self.Behaviors
+		  For Each Behavior As ArkSA.CreatureBehavior In Behaviors
+		    Var CreatureId As String = Behavior.CreatureId
+		    Var Creature As ArkSA.Creature = DataSource.GetCreature(CreatureId)
+		    If Creature Is Nil Then
+		      Self.RemoveBehavior(CreatureId)
+		      Continue
+		    End If
+		    
+		    Var ReplacementId As String = Behavior.ReplacementCreatureId
+		    If ReplacementId.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    Var Replacement As ArkSA.Creature = DataSource.GetCreature(ReplacementId)
+		    If Replacement Is Nil Then
+		      Var Mutable As ArkSA.MutableCreatureBehavior = New ArkSA.MutableCreatureBehavior(Behavior)
+		      Mutable.ProhibitSpawning = True
+		      Mutable.ReplacementCreature = Nil
+		      Self.Add(New ArkSA.CreatureBehavior(Mutable))
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
@@ -367,8 +397,18 @@ Inherits ArkSA.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub RemoveBehavior(Creature As ArkSA.Creature)
-		  If Self.mBehaviors.HasKey(Creature.CreatureId) Then
-		    Self.mBehaviors.Remove(Creature.CreatureId)
+		  If Creature Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RemoveBehavior(Creature.CreatureId)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveBehavior(CreatureId As String)
+		  If Self.mBehaviors.HasKey(CreatureId) Then
+		    Self.mBehaviors.Remove(CreatureId)
 		    Self.Modified = True
 		  End If
 		End Sub
