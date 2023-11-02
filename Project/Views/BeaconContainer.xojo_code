@@ -1,7 +1,7 @@
 #tag Class
 Protected Class BeaconContainer
 Inherits DesktopContainer
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Opening()
 		  #if XojoVersion >= 2018.01

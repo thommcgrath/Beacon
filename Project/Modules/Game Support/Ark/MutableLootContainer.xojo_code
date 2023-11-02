@@ -39,7 +39,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub AppendMode(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  If Self.mAppendMode = Value Then
 		    Return
 		  End If
@@ -53,7 +52,6 @@ Implements Ark.MutableBlueprint
 		Sub Availability(Assigns Value As UInt64)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mAvailability = Value Then
 		    Return
 		  End If
@@ -65,7 +63,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub BlueprintId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mLootDropId = Value Then
 		    Return
 		  End If
@@ -103,7 +100,6 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackId(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mContentPackId = Value Then
 		    Return
 		  End If
@@ -117,7 +113,6 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mContentPackName = Value Then
 		    Return
 		  End If
@@ -162,7 +157,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Experimental(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  If Self.mExperimental = Value Then
 		    Return
 		  End If
@@ -174,7 +168,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub IconID(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mIconId = Value Then
 		    Return
 		  End If
@@ -211,7 +204,6 @@ Implements Ark.MutableBlueprint
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mLabel = Value Then
 		    Return
 		  End If
@@ -223,7 +215,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub LastUpdate(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mLastUpdate = Value Then
 		    Return
 		  End If
@@ -235,7 +226,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub LootDropId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mLootDropId = Value Then
 		    Return
 		  End If
@@ -247,7 +237,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MaxItemSets(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  Value = Max(Value, 0)
 		  
 		  If Self.mMaxItemSets = Value Then
@@ -261,7 +250,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MinItemSets(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  Value = Max(Value, 0)
 		  
 		  If Self.mMinItemSets = Value Then
@@ -288,7 +276,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Notes(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mNotes = Value Then
 		    Return
 		  End If
@@ -321,7 +308,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub PreventDuplicates(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  If Self.mPreventDuplicates = Value Then
 		    Return
 		  End If
@@ -407,7 +393,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub SortValue(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  If Self.mSortValue = Value Then
 		    Return
 		  End If

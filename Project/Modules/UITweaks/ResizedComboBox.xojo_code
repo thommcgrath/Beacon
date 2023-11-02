@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ResizedComboBox
 Inherits DesktopComboBox
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Opening()
 		  If Self.TopDelta <> 0 Then

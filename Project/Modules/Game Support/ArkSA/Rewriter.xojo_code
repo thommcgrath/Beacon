@@ -957,7 +957,7 @@ Inherits Global.Thread
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Ark.Rewriter.Sources"
+			Type="ArkSA.Rewriter.Sources"
 			EditorType="Enum"
 			#tag EnumValues
 				"0 - Original"

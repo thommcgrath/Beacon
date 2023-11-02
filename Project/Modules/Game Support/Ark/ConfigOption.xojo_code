@@ -3,14 +3,12 @@ Protected Class ConfigOption
 Implements Beacon.GameSetting
 	#tag Method, Flags = &h0
 		Function ConfigOptionId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mConfigOptionId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Constraint(Key As String) As Variant
-		  #Pragma StackOverflowChecking False
 		  
 		  If Self.mConstraints Is Nil Or Self.mConstraints.HasKey(Key) = False Then
 		    Return Nil
@@ -77,7 +75,6 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function ContentPackId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mContentPackId
 		End Function
 	#tag EndMethod
@@ -96,14 +93,12 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function Description() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mDescription
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function File() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mFile
 		End Function
 	#tag EndMethod
@@ -128,56 +123,48 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function Header() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mHeader
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsArray() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeArray
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsBoolean() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeBoolean
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsNumeric() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeNumeric
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsString() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeText
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsStruct() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mValueType = Ark.ConfigOption.ValueTypes.TypeStructure
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Key() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mKey
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
@@ -196,14 +183,12 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function NitradoDeployStyle() As Ark.ConfigOption.NitradoDeployStyles
-		  #Pragma StackOverflowChecking False
 		  Return Self.mNitradoDeployStyle
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function NitradoFormat() As Ark.ConfigOption.NitradoFormats
-		  #Pragma StackOverflowChecking False
 		  Return Self.mNitradoFormat
 		End Function
 	#tag EndMethod
@@ -319,7 +304,6 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function ValueType() As Ark.ConfigOption.ValueTypes
-		  #Pragma StackOverflowChecking False
 		  Return Self.mValueType
 		End Function
 	#tag EndMethod
@@ -404,7 +388,6 @@ Implements Beacon.GameSetting
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  #Pragma StackOverflowChecking False
 			  Return Self.mFile + "." + Self.mHeader + "." + Self.mKey
 			End Get
 		#tag EndGetter

@@ -16,7 +16,6 @@ Protected Class ModDiscoverySettings
 
 	#tag Method, Flags = &h0
 		Function DeleteBlueprints() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mDeleteBlueprints
 		End Function
 	#tag EndMethod

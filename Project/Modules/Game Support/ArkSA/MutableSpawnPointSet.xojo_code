@@ -2,7 +2,6 @@
 Protected Class MutableSpawnPointSet
 Inherits ArkSA.SpawnPointSet
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
-Implements ArkSA.Prunable
 	#tag Method, Flags = &h0
 		Sub Append(Entry As ArkSA.SpawnPointSetEntry)
 		  Var Idx As Integer = Self.IndexOf(Entry)
@@ -15,7 +14,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub ColorSetClass(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mColorSetClass = Value Then
 		    Return
 		  End If
@@ -125,7 +123,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub LevelOffsetBeforeMultiplier(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  If Self.mOffsetBeforeMultiplier = Value Then
 		    Return
 		  End If
@@ -170,7 +167,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  If Value = True Then
 		    Self.mCachedHash = ""
 		  End If
@@ -202,7 +198,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  Value = Max(Abs(Value), 0.00001)
 		  If Self.mWeight = Value Then
 		    Return
@@ -262,7 +257,6 @@ Implements ArkSA.Prunable
 	#tag Method, Flags = &h0
 		Sub SetId(Assigns Value As String)
 		  // Calling the overridden superclass method.
-		  #Pragma StackOverflowChecking False
 		  If Self.mSetId = Value Then
 		    Return
 		  End If
@@ -274,7 +268,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub SpreadRadius(Assigns Value As NullableDouble)
-		  #Pragma StackOverflowChecking False
 		  If Self.mSpreadRadius = Value Then
 		    Return
 		  End If
@@ -286,7 +279,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub WaterOnlyMinimumHeight(Assigns Value As NullableDouble)
-		  #Pragma StackOverflowChecking False
 		  If Self.mWaterOnlyMinimumHeight = Value Then
 		    Return
 		  End If

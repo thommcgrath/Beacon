@@ -217,6 +217,7 @@ Begin ArkSAConfigEditor ArkSAServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

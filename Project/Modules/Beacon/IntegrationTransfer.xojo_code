@@ -15,7 +15,6 @@ Protected Class IntegrationTransfer
 
 	#tag Method, Flags = &h0
 		Function Path() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mPath
 		End Function
 	#tag EndMethod

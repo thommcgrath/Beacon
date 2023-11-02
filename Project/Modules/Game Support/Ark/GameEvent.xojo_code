@@ -3,7 +3,6 @@ Protected Class GameEvent
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function ArkCode() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mArkCode
 		End Function
 	#tag EndMethod
@@ -105,7 +104,6 @@ Implements Beacon.NamedItem
 		Function Label() As String
 		  // Part of the Beacon.NamedItem interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
@@ -132,7 +130,6 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function UUID() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mEventUUID
 		End Function
 	#tag EndMethod

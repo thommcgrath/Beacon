@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ServerProfile
 Inherits Beacon.ServerProfile
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary, Version As Integer)
 		  Select Case Version
@@ -87,7 +87,6 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Function BasePath() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mBasePath
 		End Function
 	#tag EndMethod
@@ -148,14 +147,12 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Function GameId() As String
-		  #Pragma StackOverflowChecking False
 		  Return ArkSA.Identifier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GameIniPath() As String
-		  #Pragma StackOverflowChecking False
 		  If Self.mGameIniPath.IsEmpty = False Then
 		    Return Self.mGameIniPath
 		  ElseIf Self.mBasePath.IsEmpty = False Then
@@ -179,7 +176,6 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Function GameUserSettingsIniPath() As String
-		  #Pragma StackOverflowChecking False
 		  If Self.mGameUserSettingsIniPath.IsEmpty = False Then
 		    Return Self.mGameUserSettingsIniPath
 		  ElseIf Self.mBasePath.IsEmpty = False Then
@@ -203,7 +199,6 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Function LogsPath() As String
-		  #Pragma StackOverflowChecking False
 		  If Self.mLogsPath.IsEmpty = False Then
 		    Return Self.mLogsPath
 		  ElseIf Self.mBasePath.IsEmpty = False Then
@@ -237,7 +232,6 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Sub Mask(Assigns Value As UInt64)
-		  #Pragma StackOverflowChecking False
 		  If Self.mMask = Value Then
 		    Return
 		  End If
@@ -249,14 +243,12 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Function MessageDuration() As Integer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mMessageDuration
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MessageDuration(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  If Self.mMessageDuration = Value Then
 		    Return
 		  End If

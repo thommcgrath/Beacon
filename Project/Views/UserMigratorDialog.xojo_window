@@ -38,6 +38,7 @@ Begin BeaconDialog UserMigratorDialog
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   False
@@ -81,6 +82,7 @@ Begin BeaconDialog UserMigratorDialog
          Width           =   560
       End
       Begin DesktopProgressBar Bar
+         Active          =   False
          AllowAutoDeactivate=   True
          AllowTabStop    =   True
          Enabled         =   True
@@ -95,6 +97,7 @@ Begin BeaconDialog UserMigratorDialog
          LockRight       =   True
          LockTop         =   True
          MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
@@ -104,6 +107,10 @@ Begin BeaconDialog UserMigratorDialog
          Value           =   50.0
          Visible         =   True
          Width           =   560
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin DesktopButton FinishedButton
          AllowAutoDeactivate=   True
@@ -205,12 +212,16 @@ Begin BeaconDialog UserMigratorDialog
       End
    End
    Begin Beacon.Thread MigratorThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndDesktopWindow

@@ -265,6 +265,7 @@ Begin ArkSAConfigEditor ArkSACraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -343,7 +344,6 @@ Begin ArkSAConfigEditor ArkSACraftingCostsEditor
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
-      AllowTabStop    =   True
       ClearMenuItemValue=   "Clear"
       DelayPeriod     =   250
       Enabled         =   True
@@ -363,6 +363,7 @@ Begin ArkSAConfigEditor ArkSACraftingCostsEditor
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
       Top             =   50

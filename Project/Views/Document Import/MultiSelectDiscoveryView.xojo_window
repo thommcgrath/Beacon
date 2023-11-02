@@ -27,6 +27,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
    Width           =   720
    Begin Thread TokenLookupThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

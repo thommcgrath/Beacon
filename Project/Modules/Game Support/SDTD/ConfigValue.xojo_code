@@ -200,6 +200,14 @@ Protected Class ConfigValue
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Hash"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

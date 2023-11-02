@@ -34,14 +34,12 @@ Inherits Beacon.Template
 
 	#tag Method, Flags = &h0
 		Function GameId() As String
-		  #Pragma StackOverflowChecking False
 		  Return ArkSA.Identifier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Kind() As String
-		  #Pragma StackOverflowChecking False
 		  Return "LootTemplate"
 		End Function
 	#tag EndMethod

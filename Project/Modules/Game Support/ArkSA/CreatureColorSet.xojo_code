@@ -3,7 +3,6 @@ Protected Class CreatureColorSet
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function ClassString() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mClassString
 		End Function
 	#tag EndMethod
@@ -32,14 +31,12 @@ Implements Beacon.NamedItem
 		Function Label() As String
 		  // Part of the Beacon.NamedItem interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function UUID() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mUUID
 		End Function
 	#tag EndMethod

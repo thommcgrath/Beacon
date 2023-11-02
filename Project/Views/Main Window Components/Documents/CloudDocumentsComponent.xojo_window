@@ -28,6 +28,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    Visible         =   True
    Width           =   804
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

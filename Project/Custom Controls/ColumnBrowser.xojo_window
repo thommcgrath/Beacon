@@ -115,6 +115,7 @@ Begin BeaconContainer ColumnBrowser
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False

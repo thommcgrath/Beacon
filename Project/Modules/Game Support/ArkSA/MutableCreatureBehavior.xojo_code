@@ -3,7 +3,6 @@ Protected Class MutableCreatureBehavior
 Inherits ArkSA.CreatureBehavior
 	#tag Method, Flags = &h0
 		Sub DamageMultiplier(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mDamageMultiplier = Value Then
 		    Return
 		  End If
@@ -15,7 +14,6 @@ Inherits ArkSA.CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub ProhibitSpawning(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  If Self.mProhibitSpawning = Value Then
 		    Return
 		  End If
@@ -27,7 +25,6 @@ Inherits ArkSA.CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub ProhibitTaming(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  If Self.mProhibitTaming = Value Then
 		    Return
 		  End If
@@ -39,7 +36,6 @@ Inherits ArkSA.CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub ProhibitTransfer(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  If Self.mProhibitTransfer = Value Then
 		    Return
 		  End If
@@ -62,7 +58,6 @@ Inherits ArkSA.CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub ResistanceMultiplier(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mResistanceMultiplier = Value Then
 		    Return
 		  End If
@@ -85,7 +80,6 @@ Inherits ArkSA.CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub SpawnWeightMultiplier(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mSpawnWeightMultiplier = Value Then
 		    Return
 		  End If
@@ -97,7 +91,6 @@ Inherits ArkSA.CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub TamedDamageMultiplier(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mTamedDamageMultiplier = Value Then
 		    Return
 		  End If
@@ -109,7 +102,6 @@ Inherits ArkSA.CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub TamedResistanceMultiplier(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mTamedResistanceMultiplier = Value Then
 		    Return
 		  End If

@@ -140,6 +140,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   60
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False

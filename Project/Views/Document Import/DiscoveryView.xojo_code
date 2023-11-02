@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DiscoveryView
 Inherits DesktopContainer
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Closing()
 		  RaiseEvent Closing

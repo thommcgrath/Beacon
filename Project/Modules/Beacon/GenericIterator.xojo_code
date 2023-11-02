@@ -1,6 +1,6 @@
 #tag Class
 Protected Class GenericIterator
-Implements Iterator, Iterable
+Implements Iterator,Iterable
 	#tag Method, Flags = &h0
 		Sub Constructor(Items() As Variant)
 		  Self.mItems.ResizeTo(Items.LastIndex)

@@ -303,7 +303,6 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
-      AllowTabStop    =   True
       ClearMenuItemValue=   "Clear"
       DelayPeriod     =   250
       Enabled         =   True
@@ -323,6 +322,7 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
       Top             =   50

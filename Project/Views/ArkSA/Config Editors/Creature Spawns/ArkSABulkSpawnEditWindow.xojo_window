@@ -540,6 +540,7 @@ Begin BeaconDialog ArkSABulkSpawnEditWindow
    End
    Begin Thread ProcessingThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   2

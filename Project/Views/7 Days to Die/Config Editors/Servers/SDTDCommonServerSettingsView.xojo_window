@@ -45,6 +45,7 @@ Begin BeaconContainer SDTDCommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
+      SelectedColor   =   ""
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True

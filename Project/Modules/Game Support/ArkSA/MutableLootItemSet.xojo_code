@@ -102,7 +102,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mLabel = Value Then
 		    Return
 		  End If
@@ -114,7 +113,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub MaxNumItems(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  Value = Max(Value, 0)
 		  If Self.mMaxNumItems = Value Then
 		    Return
@@ -127,7 +125,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub MinNumItems(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  Value = Max(Value, 0)
 		  If Self.mMinNumItems = Value Then
 		    Return
@@ -146,7 +143,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub NumItemsPower(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mNumItemsPower = Value Then
 		    Return
 		  End If
@@ -182,7 +178,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  Value = Max(Value, 0)
 		  If Self.mSetWeight = Value Then
 		    Return
@@ -218,7 +213,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub TemplateUUID(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mTemplateUUID = Value Then
 		    Return
 		  End If
@@ -230,7 +224,6 @@ Implements ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub UUID(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mUUID = Value Then
 		    Return
 		  End If

@@ -205,6 +205,7 @@ Begin BeaconDialog ArkBreedingTunerDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   132
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False

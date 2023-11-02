@@ -34,7 +34,7 @@
 
 	#tag FileType
 		CodeName=BeaconIdentity
-		DocIcon=Beacon.xojo_resources;&h673DF
+		DocIcon=Beacon.xojo_resources;&h6739C
 		Extension=.beaconidentity
 		Flags=&h5
 		MacCreator=
@@ -51,7 +51,7 @@
 
 	#tag FileType
 		CodeName=BeaconPreset
-		DocIcon=Beacon.xojo_resources;&hA67C2
+		DocIcon=Beacon.xojo_resources;&hA67A5
 		Extension=.beacontemplate;.beaconpreset
 		Flags=&h5
 		MacCreator=
@@ -116,7 +116,7 @@
 
 	#tag FileType
 		CodeName=BeaconAuth
-		DocIcon=Beacon.xojo_resources;&hE6448
+		DocIcon=Beacon.xojo_resources;&hE6446
 		Extension=.beaconauth
 		Flags=&h9
 		MacCreator=
@@ -133,7 +133,7 @@
 
 	#tag FileType
 		CodeName=BeaconData
-		DocIcon=Beacon.xojo_resources;&h12536E
+		DocIcon=Beacon.xojo_resources;&h12539D
 		Extension=.beacondata
 		Flags=&h9
 		MacCreator=

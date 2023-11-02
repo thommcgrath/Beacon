@@ -38,12 +38,17 @@ Begin SDTDConfigEditor SDTDAccountsEditor
       Height          =   500
       Index           =   -2147483648
       InitialParent   =   ""
+      IsFrontmost     =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      MinimumHeight   =   0
+      MinimumWidth    =   0
+      Modified        =   False
+      Progress        =   0.0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0

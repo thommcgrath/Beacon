@@ -2,7 +2,7 @@
 Protected Class MutableSpawnPoint
 Inherits Ark.SpawnPoint
 Implements Ark.MutableBlueprint
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub AddSet(Set As Ark.SpawnPointSet, Replace As Boolean = False)
 		  Var Idx As Integer = Self.IndexOf(Set)
@@ -31,7 +31,6 @@ Implements Ark.MutableBlueprint
 		Sub Availability(Assigns Value As UInt64)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mAvailability = Value Then
 		    Return
 		  End If
@@ -43,7 +42,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub BlueprintId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mSpawnPointId = Value Then
 		    Return
 		  End If
@@ -81,7 +79,6 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackId(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mContentPackId = Value Then
 		    Return
 		  End If
@@ -95,7 +92,6 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mContentPackName = Value Then
 		    Return
 		  End If
@@ -132,7 +128,6 @@ Implements Ark.MutableBlueprint
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mLabel = Value Then
 		    Return
 		  End If
@@ -144,7 +139,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub LastUpdate(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mLastUpdate = Value Then
 		    Return
 		  End If
@@ -194,7 +188,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Mode(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  If Self.mMode = Value Then
 		    Return
 		  End If
@@ -291,7 +284,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub SpawnPointId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mSpawnPointId = Value Then
 		    Return
 		  End If

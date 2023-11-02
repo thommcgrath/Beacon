@@ -510,7 +510,6 @@ Begin ArkSAConfigEditor ArkSAHarvestRatesEditor
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
-      AllowTabStop    =   True
       ClearMenuItemValue=   "Clear"
       DelayPeriod     =   250
       Enabled         =   True
@@ -530,6 +529,7 @@ Begin ArkSAConfigEditor ArkSAHarvestRatesEditor
       Scope           =   2
       TabIndex        =   15
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
       Top             =   9

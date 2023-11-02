@@ -2,7 +2,7 @@
 Protected Class HostConfig
 Inherits Beacon.HostConfig
 Implements Beacon.OAuthConsumer
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, Version As Integer)
 		  #Pragma Unused Version
@@ -64,7 +64,6 @@ Implements Beacon.OAuthConsumer
 
 	#tag Method, Flags = &h0
 		Function TokenKey() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mTokenKey
 		End Function
 	#tag EndMethod
@@ -73,7 +72,6 @@ Implements Beacon.OAuthConsumer
 		Sub TokenKey(Assigns Value As String)
 		  // The key is not stored persistently, so don't change modified state.
 		  
-		  #Pragma StackOverflowChecking False
 		  Self.mTokenKey = Value
 		End Sub
 	#tag EndMethod

@@ -266,6 +266,7 @@ Begin DocumentImportView SDTDImportView
          Width           =   680
       End
       Begin MultiSelectDiscoveryView NitradoView
+         AddressColumnLabel=   "Address"
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False

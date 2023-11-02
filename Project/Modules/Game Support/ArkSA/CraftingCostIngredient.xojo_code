@@ -157,7 +157,6 @@ Protected Class CraftingCostIngredient
 
 	#tag Method, Flags = &h0
 		Function Quantity() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mQuantity
 		End Function
 	#tag EndMethod
@@ -170,7 +169,6 @@ Protected Class CraftingCostIngredient
 
 	#tag Method, Flags = &h0
 		Function RequireExact() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mRequireExact
 		End Function
 	#tag EndMethod

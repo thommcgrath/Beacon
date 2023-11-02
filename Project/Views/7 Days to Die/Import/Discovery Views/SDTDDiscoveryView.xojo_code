@@ -1,7 +1,7 @@
 #tag Class
 Protected Class SDTDDiscoveryView
 Inherits DiscoveryView
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Function GameId() As String
 		  Return SDTD.Identifier

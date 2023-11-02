@@ -2,7 +2,6 @@
 Protected Class ProjectTool
 	#tag Method, Flags = &h0
 		Function Caption() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mCaption
 		End Function
 	#tag EndMethod
@@ -63,7 +62,6 @@ Protected Class ProjectTool
 
 	#tag Method, Flags = &h0
 		Function UUID() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mUUID
 		End Function
 	#tag EndMethod

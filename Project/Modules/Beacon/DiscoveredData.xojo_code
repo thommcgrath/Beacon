@@ -1,6 +1,6 @@
 #tag Class
 Protected Class DiscoveredData
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
 		  Return Self.mProfile

@@ -24,7 +24,6 @@ Protected Class OmniLicense
 
 	#tag Method, Flags = &h0
 		Function Expiration() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mExpiration
 		End Function
 	#tag EndMethod
@@ -41,7 +40,6 @@ Protected Class OmniLicense
 
 	#tag Method, Flags = &h0
 		Function Flags() As Integer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mFlags
 		End Function
 	#tag EndMethod
@@ -72,7 +70,6 @@ Protected Class OmniLicense
 
 	#tag Method, Flags = &h0
 		Function IsValidForBuild(BuildNumber As Integer) As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mMaxBuild >= BuildNumber
 		End Function
 	#tag EndMethod
@@ -85,21 +82,18 @@ Protected Class OmniLicense
 
 	#tag Method, Flags = &h0
 		Function LicenseId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLicenseId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MaxBuild() As Integer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mMaxBuild
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ProductId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mProductId
 		End Function
 	#tag EndMethod

@@ -263,6 +263,7 @@ Begin ArkSAServerViewContainer ArkSANitradoServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -274,6 +275,7 @@ Begin ArkSAServerViewContainer ArkSANitradoServerView
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

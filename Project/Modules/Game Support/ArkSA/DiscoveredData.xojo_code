@@ -16,7 +16,6 @@ Inherits Beacon.DiscoveredData
 
 	#tag Method, Flags = &h0
 		Function GameIniContent() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mGameIniContent
 		End Function
 	#tag EndMethod
@@ -29,7 +28,6 @@ Inherits Beacon.DiscoveredData
 
 	#tag Method, Flags = &h0
 		Function GameUserSettingsIniContent() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mGameUserSettingsIniContent
 		End Function
 	#tag EndMethod

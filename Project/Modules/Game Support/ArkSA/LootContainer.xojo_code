@@ -11,7 +11,6 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function AppendMode() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mAppendMode
 		End Function
 	#tag EndMethod
@@ -20,14 +19,12 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Function Availability() As UInt64
 		  // Part of the ArkSA.Blueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BlueprintId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLootDropId
 		End Function
 	#tag EndMethod
@@ -36,14 +33,12 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Function Category() As String
 		  // Part of the ArkSA.Blueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return ArkSA.CategoryLootContainers
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ClassString() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mClassString
 		End Function
 	#tag EndMethod
@@ -106,7 +101,6 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Function ContentPackId() As String
 		  // Part of the ArkSA.Blueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mContentPackId
 		End Function
 	#tag EndMethod
@@ -115,7 +109,6 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Function ContentPackName() As String
 		  // Part of the ArkSA.Blueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
@@ -194,7 +187,6 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function Experimental() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mExperimental
 		End Function
 	#tag EndMethod
@@ -294,7 +286,6 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function IconID() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mIconID
 		End Function
 	#tag EndMethod
@@ -411,42 +402,36 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function LastUpdate() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLastUpdate
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LootDropId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLootDropId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MaxItemSets() As Integer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mMaxItemSets
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MinItemSets() As Integer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mMinItemSets
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mModified
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  Self.mModified = Value
 		End Sub
 	#tag EndMethod
@@ -475,7 +460,6 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function Notes() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mNotes
 		End Function
 	#tag EndMethod
@@ -484,7 +468,6 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Function ObjectID() As String
 		  // Part of the ArkSA.Blueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLootDropId
 		End Function
 	#tag EndMethod
@@ -523,14 +506,12 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Function Path() As String
 		  // Part of the ArkSA.Blueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mPath
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function PreventDuplicates() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mPreventDuplicates
 		End Function
 	#tag EndMethod
@@ -669,7 +650,6 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function SortValue() As Integer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mSortValue
 		End Function
 	#tag EndMethod

@@ -16,7 +16,6 @@ Implements Beacon.HostingProvider
 		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Name
@@ -59,7 +58,6 @@ Implements Beacon.HostingProvider
 		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Setting
@@ -70,7 +68,6 @@ Implements Beacon.HostingProvider
 		Sub GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Setting
@@ -82,7 +79,6 @@ Implements Beacon.HostingProvider
 		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		End Function
@@ -92,7 +88,6 @@ Implements Beacon.HostingProvider
 		Function Identifier() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Local.Identifier
 		End Function
 	#tag EndMethod
@@ -101,7 +96,6 @@ Implements Beacon.HostingProvider
 		Function ListFiles(Project As Beacon.Project, Profile As Beacon.ServerProfile, StartingPath As String) As String()
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused StartingPath
@@ -112,7 +106,6 @@ Implements Beacon.HostingProvider
 		Function ListServers(Config As Beacon.HostConfig, GameId As String) As Beacon.ServerProfile()
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Config
 		  #Pragma Unused GameId
 		End Function
@@ -120,14 +113,12 @@ Implements Beacon.HostingProvider
 
 	#tag Method, Flags = &h0
 		Function Logger() As Beacon.LogProducer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLogger
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MatchesToken(Token As BeaconAPI.ProviderToken) As Boolean
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Token
 		  Return False
 		End Function
@@ -137,7 +128,6 @@ Implements Beacon.HostingProvider
 		Function SocketStatus() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		End Function
 	#tag EndMethod
 
@@ -145,7 +135,6 @@ Implements Beacon.HostingProvider
 		Sub StartServer(Project As Beacon.Project, Profile As Beacon.ServerProfile)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		End Sub
@@ -155,7 +144,6 @@ Implements Beacon.HostingProvider
 		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused StopMessage
@@ -166,7 +154,6 @@ Implements Beacon.HostingProvider
 		Function SupportsCheckpoints() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -175,7 +162,6 @@ Implements Beacon.HostingProvider
 		Function SupportsGameSettings() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -184,7 +170,6 @@ Implements Beacon.HostingProvider
 		Function SupportsRestarting() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -193,7 +178,6 @@ Implements Beacon.HostingProvider
 		Function SupportsStatus() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -202,7 +186,6 @@ Implements Beacon.HostingProvider
 		Function SupportsStopMessage() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -211,7 +194,6 @@ Implements Beacon.HostingProvider
 		Function Throttled() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return False
 		End Function
 	#tag EndMethod

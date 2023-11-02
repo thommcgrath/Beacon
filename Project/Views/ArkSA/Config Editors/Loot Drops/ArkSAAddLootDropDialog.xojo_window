@@ -527,7 +527,6 @@ Begin BeaconDialog ArkSAAddLootDropDialog
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowRecentItems=   False
-         AllowTabStop    =   True
          ClearMenuItemValue=   "Clear"
          DelayPeriod     =   250
          Enabled         =   True
@@ -547,6 +546,7 @@ Begin BeaconDialog ArkSAAddLootDropDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   ""
          Tooltip         =   ""
          Top             =   20

@@ -2,21 +2,18 @@
 Protected Class CreatureStatValue
 	#tag Method, Flags = &h0
 		Function AddMultiplier() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mAddMultiplier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function AffinityMultiplier() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mAffinityMultiplier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BaseValue() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mBaseValue
 		End Function
 	#tag EndMethod
@@ -119,14 +116,12 @@ Protected Class CreatureStatValue
 
 	#tag Method, Flags = &h0
 		Function TamedMultiplier() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mTamedMultiplier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function WildMultiplier() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mWildMultiplier
 		End Function
 	#tag EndMethod

@@ -19,28 +19,24 @@ Protected Class Stat
 
 	#tag Method, Flags = &h0
 		Function Index() As Integer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mIndex
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsPercentage() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mIsPercentage
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Key() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mKey
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
@@ -65,56 +61,48 @@ Protected Class Stat
 
 	#tag Method, Flags = &h0
 		Function PlayerBase() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mPlayerBase
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function PlayerBaseCapped() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mPlayerBaseCapped
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function PlayerPerLevelAmount() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mPlayerPerLevelAmount
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function PlayerPerLevelEditable() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mPlayerPerLevelEditable
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TamedAddDefault() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mTamedAddDefault
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TamedAffinityDefault() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mTamedAffinityDefault
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TamedDefault() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mTamedDefault
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function WildDefault() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mWildDefault
 		End Function
 	#tag EndMethod

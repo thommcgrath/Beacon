@@ -237,6 +237,7 @@ Begin BeaconDialog ArkSASaveBlueprintsDialog
    End
    Begin Thread SaveThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

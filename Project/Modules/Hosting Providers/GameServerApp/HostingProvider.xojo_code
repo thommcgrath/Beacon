@@ -16,7 +16,6 @@ Implements Beacon.HostingProvider
 		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Name
@@ -62,7 +61,6 @@ Implements Beacon.HostingProvider
 		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Setting
@@ -73,7 +71,6 @@ Implements Beacon.HostingProvider
 		Sub GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Setting
@@ -278,7 +275,6 @@ Implements Beacon.HostingProvider
 		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused StopMessage
@@ -329,7 +325,6 @@ Implements Beacon.HostingProvider
 		Function Throttled() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mThrottled
 		End Function
 	#tag EndMethod

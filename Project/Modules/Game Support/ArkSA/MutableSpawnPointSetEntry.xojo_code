@@ -23,7 +23,6 @@ Inherits ArkSA.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub EntryId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mEntryId = Value Then
 		    Return
 		  End If

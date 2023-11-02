@@ -427,6 +427,7 @@ Begin BeaconDialog ArkModDiscoveryDialog
       Top             =   185
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   1
       Width           =   433

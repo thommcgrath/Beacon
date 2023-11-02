@@ -11,7 +11,6 @@ Implements Beacon.Countable,Ark.Weighted
 
 	#tag Method, Flags = &h0
 		Function ColorSetClass() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mColorSetClass
 		End Function
 	#tag EndMethod
@@ -337,14 +336,12 @@ Implements Beacon.Countable,Ark.Weighted
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LevelOffsetBeforeMultiplier() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mOffsetBeforeMultiplier
 		End Function
 	#tag EndMethod
@@ -427,7 +424,6 @@ Implements Beacon.Countable,Ark.Weighted
 		Function RawWeight() As Double
 		  // Part of the Ark.Weighted interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Self.mWeight
 		End Function
 	#tag EndMethod
@@ -551,7 +547,6 @@ Implements Beacon.Countable,Ark.Weighted
 
 	#tag Method, Flags = &h0
 		Function SetId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mSetId
 		End Function
 	#tag EndMethod

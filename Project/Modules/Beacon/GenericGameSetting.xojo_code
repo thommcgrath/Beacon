@@ -22,35 +22,30 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function IsArray() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mType = Self.TypeArray
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsBoolean() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mType = Self.TypeBoolean
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsNumeric() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mType = Self.TypeNumeric
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsString() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mType = Self.TypeNumeric
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsStruct() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mType = Self.TypeStruct
 		End Function
 	#tag EndMethod
@@ -69,14 +64,12 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function Type() As Integer
-		  #Pragma StackOverflowChecking False
 		  Return Self.mType
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Type(Assigns NewType As Integer)
-		  #Pragma StackOverflowChecking False
 		  Self.mType = NewType
 		End Sub
 	#tag EndMethod

@@ -2,7 +2,6 @@
 Protected Class LootContainerSelector
 	#tag Method, Flags = &h0
 		Function Code() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mCode
 		End Function
 	#tag EndMethod
@@ -58,7 +57,6 @@ Protected Class LootContainerSelector
 
 	#tag Method, Flags = &h0
 		Function Language() As Beacon.TemplateSelector.Languages
-		  #Pragma StackOverflowChecking False
 		  Return Self.mLanguage
 		End Function
 	#tag EndMethod

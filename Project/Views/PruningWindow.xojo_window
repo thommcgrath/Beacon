@@ -26,6 +26,7 @@ Begin BeaconDialog PruningWindow
    Width           =   400
    Begin Beacon.Thread PrunerThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

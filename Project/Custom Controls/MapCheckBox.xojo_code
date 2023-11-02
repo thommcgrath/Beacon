@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MapCheckBox
 Inherits DesktopCheckBox
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Note, Name = NoConstructor
 		If you override the constructor to add a parameter, the checkbox will not work correctly. The control array needs the normal constructor.
 		

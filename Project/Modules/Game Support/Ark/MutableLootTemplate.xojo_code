@@ -124,7 +124,6 @@ Inherits Ark.LootTemplate
 
 	#tag Method, Flags = &h0
 		Sub Grouping(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  Self.mGrouping = Value
 		End Sub
 	#tag EndMethod
@@ -137,14 +136,12 @@ Inherits Ark.LootTemplate
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  Self.mLabel = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MaxEntriesSelected(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  Self.mMaxEntriesSelected = Value
 		End Sub
 	#tag EndMethod
@@ -173,7 +170,6 @@ Inherits Ark.LootTemplate
 
 	#tag Method, Flags = &h0
 		Sub MinEntriesSelected(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  Self.mMinEntriesSelected = Value
 		End Sub
 	#tag EndMethod

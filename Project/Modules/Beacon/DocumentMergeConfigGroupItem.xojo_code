@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DocumentMergeConfigGroupItem
 Inherits Beacon.DocumentMergeItem
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Constructor(Group As Beacon.ConfigGroup, SourceProject As Beacon.Project, SourceConfigSet As Beacon.ConfigSet)
 		  Self.Group = Group

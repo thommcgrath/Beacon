@@ -2,7 +2,6 @@
 Protected Class Quality
 	#tag Method, Flags = &h0
 		Function BaseValue() As Double
-		  #Pragma StackOverflowChecking False
 		  Return Self.mBaseValue
 		End Function
 	#tag EndMethod
@@ -16,7 +15,6 @@ Protected Class Quality
 
 	#tag Method, Flags = &h0
 		Function Key() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mKey
 		End Function
 	#tag EndMethod

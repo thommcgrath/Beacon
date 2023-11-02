@@ -138,7 +138,6 @@ Implements Beacon.Validateable,Ark.Weighted
 		Function RawWeight() As Double
 		  // Part of the Ark.Weighted interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  Return Max(Self.mWeight, 0.00001)
 		End Function
 	#tag EndMethod
@@ -161,7 +160,6 @@ Implements Beacon.Validateable,Ark.Weighted
 
 	#tag Method, Flags = &h0
 		Function UUID() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mUUID
 		End Function
 	#tag EndMethod

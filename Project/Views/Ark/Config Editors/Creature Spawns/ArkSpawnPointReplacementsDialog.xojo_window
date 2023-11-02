@@ -328,6 +328,7 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
          TabStop         =   True
          Tooltip         =   ""
          Top             =   290
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False

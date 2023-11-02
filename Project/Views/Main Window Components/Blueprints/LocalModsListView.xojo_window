@@ -119,6 +119,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -256,6 +257,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine DiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

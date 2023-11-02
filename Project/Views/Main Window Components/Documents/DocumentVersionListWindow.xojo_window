@@ -202,6 +202,7 @@ Begin BeaconDialog DocumentVersionListWindow
       TabStop         =   True
       Tooltip         =   ""
       Top             =   143
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False

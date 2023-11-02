@@ -36,7 +36,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
-		  #Pragma StackOverflowChecking False
 		  If Self.mAvailability = Value Then
 		    Return
 		  End If
@@ -48,7 +47,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub BlueprintId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mCreatureId = Value Then
 		    Return
 		  End If
@@ -128,7 +126,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ContentPackId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mContentPackId = Value Then
 		    Return
 		  End If
@@ -140,7 +137,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ContentPackName(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mContentPackName = Value Then
 		    Return
 		  End If
@@ -152,7 +148,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub CreatureId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mCreatureId = Value Then
 		    Return
 		  End If
@@ -196,7 +191,6 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
-		  #Pragma StackOverflowChecking False
 		  If Self.mLabel = Value Then
 		    Return
 		  End If
@@ -208,7 +202,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub LastUpdate(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mLastUpdate = Value Then
 		    Return
 		  End If
@@ -220,7 +213,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MatureTime(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mMatureTime = Value Then
 		    Return
 		  End If
@@ -232,7 +224,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MaxMatingInterval(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mMaxMatingInterval = Value Then
 		    Return
 		  End If
@@ -244,7 +235,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MinMatingInterval(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mMinMatingInterval = Value Then
 		    Return
 		  End If
@@ -276,7 +266,6 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub StatsMask(Assigns Value As UInt16)
-		  #Pragma StackOverflowChecking False
 		  If Self.mStatsMask = Value Then
 		    Return
 		  End If

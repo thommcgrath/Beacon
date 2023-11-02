@@ -54,7 +54,6 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function EntryId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mEntryId
 		End Function
 	#tag EndMethod
@@ -401,14 +400,12 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
-		  #Pragma StackOverflowChecking False
 		  Return Self.mModified
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
-		  #Pragma StackOverflowChecking False
 		  Self.mModified = Value
 		End Sub
 	#tag EndMethod

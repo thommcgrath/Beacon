@@ -150,6 +150,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

@@ -26,21 +26,18 @@ Inherits Beacon.DocumentMergeItem
 
 	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
-		  #Pragma StackOverflowChecking False
 		  Return Self.mProfile
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TokenId() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mTokenId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TokenKey() As String
-		  #Pragma StackOverflowChecking False
 		  Return Self.mTokenKey
 		End Function
 	#tag EndMethod
@@ -114,22 +111,6 @@ Inherits Beacon.DocumentMergeItem
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mTokenKey"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mTokenId"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

@@ -77,7 +77,9 @@ Begin SDTDServerViewContainer SDTDMultiServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Modified        =   False
       Scope           =   2
+      SettingUp       =   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True

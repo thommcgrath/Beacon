@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MutableSpawnPoint
 Inherits ArkSA.SpawnPoint
-Implements ArkSA.MutableBlueprint, ArkSA.Prunable
+Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub AddSet(Set As ArkSA.SpawnPointSet, Replace As Boolean = False)
@@ -31,7 +31,6 @@ Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 		Sub Availability(Assigns Value As UInt64)
 		  // Part of the ArkSA.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mAvailability = Value Then
 		    Return
 		  End If
@@ -43,7 +42,6 @@ Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub BlueprintId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mSpawnPointId = Value Then
 		    Return
 		  End If
@@ -81,7 +79,6 @@ Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 		Sub ContentPackId(Assigns Value As String)
 		  // Part of the ArkSA.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mContentPackId = Value Then
 		    Return
 		  End If
@@ -95,7 +92,6 @@ Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the ArkSA.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mContentPackName = Value Then
 		    Return
 		  End If
@@ -132,7 +128,6 @@ Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 		Sub Label(Assigns Value As String)
 		  // Part of the ArkSA.MutableBlueprint interface.
 		  
-		  #Pragma StackOverflowChecking False
 		  If Self.mLabel = Value Then
 		    Return
 		  End If
@@ -144,7 +139,6 @@ Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub LastUpdate(Assigns Value As Double)
-		  #Pragma StackOverflowChecking False
 		  If Self.mLastUpdate = Value Then
 		    Return
 		  End If
@@ -194,7 +188,6 @@ Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub Mode(Assigns Value As Integer)
-		  #Pragma StackOverflowChecking False
 		  If Self.mMode = Value Then
 		    Return
 		  End If
@@ -341,7 +334,6 @@ Implements ArkSA.MutableBlueprint, ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub SpawnPointId(Assigns Value As String)
-		  #Pragma StackOverflowChecking False
 		  If Self.mSpawnPointId = Value Then
 		    Return
 		  End If
