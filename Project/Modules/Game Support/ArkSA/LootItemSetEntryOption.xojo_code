@@ -66,7 +66,7 @@ Implements Beacon.Validateable,ArkSA.Weighted
 		  
 		  Var Option As ArkSA.LootItemSetEntryOption
 		  If Dict.HasKey("engramId") Then
-		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict.Value("engramId").StringValue, "", "", Nil)
+		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict.Value("engramId").StringValue, "", "", Nil, True)
 		    If Engram Is Nil Then
 		      Return Nil
 		    End If
@@ -84,13 +84,13 @@ Implements Beacon.Validateable,ArkSA.Weighted
 		    End If
 		    Option = New ArkSA.LootItemSetEntryOption(Reference, Weight, UUID)
 		  ElseIf Dict.HasKey("engram_id") Then
-		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict.Value("engram_id").StringValue, "", "", Nil)
+		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict.Value("engram_id").StringValue, "", "", Nil, True)
 		    If Engram Is Nil Then
 		      Return Nil
 		    End If
 		    Option = New ArkSA.LootItemSetEntryOption(Engram, Weight, UUID)
 		  ElseIf Dict.HasAnyKey("UUID", "Path", "Class") Then
-		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict, "UUID", "Path", "Class", Nil)
+		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict, "UUID", "Path", "Class", Nil, True)
 		    If Engram Is Nil Then
 		      Return Nil
 		    End If

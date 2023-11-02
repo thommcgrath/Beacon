@@ -2,17 +2,6 @@
 Protected Class ConfigGroup
 Inherits Beacon.ConfigGroup
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
-	#tag Event
-		Sub PruneUnknownContent(Project As Beacon.Project)
-		  If (Project IsA ArkSA.Project) = False Then
-		    Return
-		  End If
-		  
-		  RaiseEvent PruneUnknownContent(ArkSA.Project(Project))
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As ArkSA.ConfigGroup)
 		  Self.Constructor()
@@ -88,10 +77,6 @@ Inherits Beacon.ConfigGroup
 
 	#tag Hook, Flags = &h0
 		Event Migrate(SavedWithVersion As Integer, Project As ArkSA.Project)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event PruneUnknownContent(Project As ArkSA.Project)
 	#tag EndHook
 
 

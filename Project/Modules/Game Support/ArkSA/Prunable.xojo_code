@@ -1,7 +1,7 @@
 #tag Interface
 Protected Interface Prunable
 	#tag Method, Flags = &h0
-		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  
 		End Sub
 	#tag EndMethod

@@ -160,12 +160,12 @@ Implements ArkSA.Prunable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  // Part of the ArkSA.Prunable interface.
 		  
 		  For Idx As Integer = Self.mEntries.LastIndex DownTo 0
 		    Var Mutable As ArkSA.MutableLootItemSetEntry = Self.mEntries(Idx).MutableVersion
-		    Mutable.PruneUnknownContent(DataSource, Project)
+		    Mutable.PruneUnknownContent(ContentPackIds)
 		    If Mutable.Count = 0 Then
 		      Self.mEntries.RemoveAt(Idx)
 		      Self.Modified = True

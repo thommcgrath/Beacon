@@ -1,6 +1,7 @@
 #tag Class
 Protected Class SpoilTimers
 Inherits ArkSA.ConfigGroup
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.SpoilTimers = ArkSA.Configs.SpoilTimers(Other)
@@ -90,6 +91,12 @@ Inherits ArkSA.ConfigGroup
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "PvEStructureDecayPeriodMultiplier"))
 		  
 		  Return Keys
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function HasContent() As Boolean
+		  Return True
 		End Function
 	#tag EndEvent
 

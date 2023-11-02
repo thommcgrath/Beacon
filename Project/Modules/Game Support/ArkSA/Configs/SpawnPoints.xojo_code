@@ -1,6 +1,7 @@
 #tag Class
 Protected Class SpawnPoints
 Inherits ArkSA.ConfigGroup
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.SpawnPoints = ArkSA.Configs.SpawnPoints(Other)
@@ -59,19 +60,26 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub PruneUnknownContent(Project As ArkSA.Project)
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  Var Keys() As Variant = Self.mSpawnPoints.Keys
 		  For Each UniqueKey As Variant In Keys
 		    Var SpawnPoint As ArkSA.SpawnPoint = Self.mSpawnPoints.Value(UniqueKey)
-		    If SpawnPoint Is Nil Or DataSource.GetSpawnPoint(SpawnPoint.SpawnPointId) Is Nil Then
+		    If SpawnPoint Is Nil Then
+		      Self.mSpawnPoints.Remove(UniqueKey)
+		      Self.Modified = True
+		      Continue
+		    End If
+		    
+		    Var Reference As New ArkSA.BlueprintReference(SpawnPoint)
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
+		    If Blueprint Is Nil Then
 		      Self.mSpawnPoints.Remove(UniqueKey)
 		      Self.Modified = True
 		      Continue
 		    End If
 		    
 		    Var Mutable As ArkSA.MutableSpawnPoint = SpawnPoint.MutableVersion
-		    Mutable.PruneUnknownContent(DataSource, Project)
+		    Mutable.PruneUnknownContent(ContentPackIds)
 		    If Mutable.Count = 0 Then
 		      Self.mSpawnPoints.Remove(UniqueKey)
 		      Self.Modified = True
@@ -412,7 +420,7 @@ Inherits ArkSA.ConfigGroup
 		      If SpawnClasses.HasKey(ClassString) Then
 		        SpawnPoint = SpawnPoints.mSpawnPoints.Value(SpawnClasses.Value(ClassString))
 		      Else
-		        SpawnPoint = ArkSA.ResolveSpawnPoint("", "", ClassString, ContentPacks)
+		        SpawnPoint = ArkSA.ResolveSpawnPoint("", "", ClassString, ContentPacks, True)
 		        
 		        Var Mutable As ArkSA.MutableSpawnPoint = SpawnPoint.MutableVersion
 		        Mutable.Mode = Mode
@@ -478,7 +486,7 @@ Inherits ArkSA.ConfigGroup
 		            Set.ColorSetClass = Entry.Lookup("ColorSets", "")
 		            
 		            For I As Integer = 0 To Classes.LastIndex
-		              Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", "", Classes(I), ContentPacks)
+		              Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", "", Classes(I), ContentPacks, True)
 		              
 		              Var SetEntry As New ArkSA.MutableSpawnPointSetEntry(Creature)
 		              If LevelMembers.LastIndex >= I Then
@@ -557,13 +565,13 @@ Inherits ArkSA.ConfigGroup
 		                End If
 		                
 		                Var FromClassValue As String = Replacement.Value("FromClass")
-		                Var FromCreature As ArkSA.Creature = ArkSA.ResolveCreature("", "", FromClassValue, ContentPacks)
+		                Var FromCreature As ArkSA.Creature = ArkSA.ResolveCreature("", "", FromClassValue, ContentPacks, True)
 		                
 		                Var ToWeights() As Variant = Replacement.Value("Weights")
 		                Var ToClassValues() As Variant = Replacement.Value("ToClasses")
 		                For I As Integer = 0 To ToClassValues.LastIndex
 		                  Var ToWeight As Double = If(I <= ToWeights.LastIndex, ToWeights(I), 1.0)
-		                  Var ToCreature As ArkSA.Creature = ArkSA.ResolveCreature("", "", ToClassValues(I), ContentPacks)
+		                  Var ToCreature As ArkSA.Creature = ArkSA.ResolveCreature("", "", ToClassValues(I), ContentPacks, True)
 		                  
 		                  Set.CreatureReplacementWeight(FromCreature, ToCreature) = ToWeight
 		                Next
@@ -586,7 +594,7 @@ Inherits ArkSA.ConfigGroup
 		            Continue
 		          End If
 		          
-		          Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Limit, "", "", "NPCClassString", ContentPacks)
+		          Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Limit, "", "", "NPCClassString", ContentPacks, True)
 		          If (Creature Is Nil) = False Then
 		            Clone.Limit(Creature) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
 		          End If

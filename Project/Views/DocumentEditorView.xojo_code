@@ -269,7 +269,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function EditorsForGameId(GameId As String) As DocumentEditorView()
+		Shared Function EditorsForGameId(ParamArray GameIds() As String) As DocumentEditorView()
 		  Var Editors() As DocumentEditorView
 		  If mEditorRefs Is Nil Then
 		    Return Editors
@@ -278,7 +278,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  For Idx As Integer = 0 To mEditorRefs.KeyCount - 1
 		    Var Key As Variant = mEditorRefs.Key(Idx)
 		    Var Ref As WeakRef = mEditorRefs.Value(Key)
-		    If (Ref Is Nil) = False And (Ref.Value Is Nil) = False And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.GameId = GameId Then
+		    If (Ref Is Nil) = False And (Ref.Value Is Nil) = False And Ref.Value IsA DocumentEditorView And GameIds.IndexOf(DocumentEditorView(Ref.Value).Project.GameId) > -1 Then
 		      Editors.Add(DocumentEditorView(Ref.Value))
 		    End If
 		  Next

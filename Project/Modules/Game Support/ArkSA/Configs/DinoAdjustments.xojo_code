@@ -1,6 +1,7 @@
 #tag Class
 Protected Class DinoAdjustments
 Inherits ArkSA.ConfigGroup
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.DinoAdjustments = ArkSA.Configs.DinoAdjustments(Other)
@@ -91,25 +92,22 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub PruneUnknownContent(Project As ArkSA.Project)
-		  #Pragma Unused Project
-		  
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  Var Behaviors() As ArkSA.CreatureBehavior = Self.Behaviors
 		  For Each Behavior As ArkSA.CreatureBehavior In Behaviors
-		    Var CreatureId As String = Behavior.CreatureId
-		    Var Creature As ArkSA.Creature = DataSource.GetCreature(CreatureId)
+		    Var Reference As ArkSA.BlueprintReference = Behavior.TargetCreatureReference
+		    Var Creature As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
 		    If Creature Is Nil Then
-		      Self.RemoveBehavior(CreatureId)
+		      Self.RemoveBehavior(Reference.BlueprintId)
 		      Continue
 		    End If
 		    
-		    Var ReplacementId As String = Behavior.ReplacementCreatureId
-		    If ReplacementId.IsEmpty Then
+		    Var ReplacementReference As ArkSA.BlueprintReference = Behavior.ReplacementCreatureReference
+		    If ReplacementReference Is Nil Then
 		      Continue
 		    End If
 		    
-		    Var Replacement As ArkSA.Creature = DataSource.GetCreature(ReplacementId)
+		    Var Replacement As ArkSA.Blueprint = ReplacementReference.Resolve(ContentPackIds, 0)
 		    If Replacement Is Nil Then
 		      Var Mutable As ArkSA.MutableCreatureBehavior = New ArkSA.MutableCreatureBehavior(Behavior)
 		      Mutable.ProhibitSpawning = True
@@ -222,11 +220,11 @@ Inherits ArkSA.ConfigGroup
 		        Continue
 		      End If
 		      
-		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature(Dict, "", "", "FromClassName", ContentPacks))
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature(Dict, "", "", "FromClassName", ContentPacks, True))
 		      If Dict.Value("ToClassName").StringValue.IsEmpty Then
 		        Behavior.ProhibitSpawning = True
 		      Else
-		        Behavior.ReplacementCreature = ArkSA.ResolveCreature(Dict, "", "", "ToClassName", ContentPacks)
+		        Behavior.ReplacementCreature = ArkSA.ResolveCreature(Dict, "", "", "ToClassName", ContentPacks, True)
 		      End If
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -244,7 +242,7 @@ Inherits ArkSA.ConfigGroup
 		      Var TargetClass As String = Dict.Value("ClassName")
 		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks))
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
 		      Behavior.DamageMultiplier = Multiplier
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -262,7 +260,7 @@ Inherits ArkSA.ConfigGroup
 		      Var TargetClass As String = Dict.Value("ClassName")
 		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks))
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
 		      Behavior.ResistanceMultiplier = Multiplier
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -280,7 +278,7 @@ Inherits ArkSA.ConfigGroup
 		      Var TargetClass As String = Dict.Value("ClassName")
 		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks))
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
 		      Behavior.TamedDamageMultiplier = Multiplier
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -298,7 +296,7 @@ Inherits ArkSA.ConfigGroup
 		      Var TargetClass As String = Dict.Value("ClassName")
 		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks))
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
 		      Behavior.TamedResistanceMultiplier = Multiplier
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -309,7 +307,7 @@ Inherits ArkSA.ConfigGroup
 		  For Each Entry As Variant In PreventTamedDinos
 		    Try
 		      Var TargetClass As String = Entry
-		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks))
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
 		      Behavior.ProhibitTaming = True
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -320,7 +318,7 @@ Inherits ArkSA.ConfigGroup
 		  For Each Entry As Variant In PreventTransferDinos
 		    Try
 		      Var TargetClass As String = Entry
-		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks))
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
 		      Behavior.ProhibitTransfer = True
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException

@@ -300,8 +300,9 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.SwapButtons
-		  
 		  RaiseEvent Opening
+		  Self.mOpened = True
+		  Self.SetupUI
 		End Sub
 	#tag EndEvent
 
@@ -361,6 +362,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
+		  If Self.mOpened = False Then
+		    Return
+		  End If
+		  
 		  Self.SourceRadio(Self.RadioFTP).Visible = (Self.mAllowedSources And Self.SourceFTP) > 0
 		  Self.SourceRadio(Self.RadioGSA).Visible = (Self.mAllowedSources And Self.SourceGSA) > 0
 		  Self.SourceRadio(Self.RadioFiles).Visible = (Self.mAllowedSources And Self.SourceFiles) > 0
@@ -376,7 +381,20 @@ End
 		  Self.SourceRadio(Self.RadioClipboard).Enabled = (Self.mEnabledSources And Self.SourceClipboard) > 0
 		  
 		  Self.ActionButton.Enabled = Self.mActionButtonCanEnable And Self.SelectedSource > 0
-		  Self.SourceRadio(Self.RadioOtherProject).Caption = "Other " + Language.GameName(Self.mGameId) + " Project" + If(Self.SourceRadio(Self.RadioOtherProject).Enabled, "", " (No Other Projects Open)")
+		  
+		  Var GameIds() As String = RaiseEvent CompatibleGameIds()
+		  Var GameNames() As String
+		  If (GameIds Is Nil) = False Then
+		    For Each GameId As String In GameIds
+		      GameNames.Add(Language.GameName(GameId))
+		    Next
+		    GameNames.Sort
+		  End If
+		  Var OtherProjectCaption As String = Language.ReplacePlaceholders(Self.OtherCompatibleProjectCaption, Language.EnglishOxfordList(GameNames, "or"))
+		  If Self.SourceRadio(Self.RadioOtherProject).Enabled = False Then
+		    OtherProjectCaption = OtherProjectCaption + " (" + Self.NoCompatibleProjectsOpen + ")"
+		  End If
+		  Self.SourceRadio(Self.RadioOtherProject).Caption = OtherProjectCaption
 		  
 		  Var NextTop As Integer = Self.MessageLabel.Bottom + 12
 		  For Idx As Integer = Self.FirstRadioIndex To Self.LastRadioIndex
@@ -420,6 +438,10 @@ End
 
 	#tag Hook, Flags = &h0
 		Event Cancelled()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CompatibleGameIds() As String()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -473,25 +495,6 @@ End
 		EnabledSources As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mGameId
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mGameId = Value Then
-			    Return
-			  End If
-			  
-			  Self.mGameId = Value
-			  Self.SetupUI
-			End Set
-		#tag EndSetter
-		GameId As String
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mActionButtonCanEnable As Boolean = True
 	#tag EndProperty
@@ -508,11 +511,21 @@ End
 		Private mGameId As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mOpened As Boolean
+	#tag EndProperty
+
 
 	#tag Constant, Name = FirstRadioIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LastRadioIndex, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NoCompatibleProjectsOpen, Type = String, Dynamic = True, Default = \"No Compatible Projects Are Open", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = OtherCompatibleProjectCaption, Type = String, Dynamic = True, Default = \"Other \?1 Project", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RadioClipboard, Type = Double, Dynamic = False, Default = \"4", Scope = Private
@@ -788,14 +801,6 @@ End
 		InitialValue="31"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="GameId"
-		Visible=true
-		Group="Behavior"
-		InitialValue="#Ark.Identifier"
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Composited"

@@ -78,6 +78,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EngramReference() As ArkSA.BlueprintReference
+		  Return Self.mEngramRef
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Dictionary
 		  Var Ingredients() As Dictionary
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
@@ -155,12 +161,12 @@ Implements Beacon.NamedItem
 		      Return Nil
 		    End If
 		    
-		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict, "", "", "ItemClassString", ContentPacks)
+		    Var Engram As ArkSA.Engram = ArkSA.ResolveEngram(Dict, "", "", "ItemClassString", ContentPacks, True)
 		    Var Cost As New ArkSA.MutableCraftingCost(Engram)
 		    If Dict.HasKey("BaseCraftingResourceRequirements") Then
 		      Var Resources() As Variant = Dict.Value("BaseCraftingResourceRequirements")
 		      For Each Resource As Dictionary In Resources
-		        Var ResourceEngram As ArkSA.Engram = ArkSA.ResolveEngram(Resource, "", "", "ResourceItemTypeString", ContentPacks)
+		        Var ResourceEngram As ArkSA.Engram = ArkSA.ResolveEngram(Resource, "", "", "ResourceItemTypeString", ContentPacks, True)
 		        Var Quantity As Double = Resource.Lookup("BaseResourceRequirement", 1)
 		        Var RequireExact As Boolean = Resource.Lookup("bCraftingRequireExactResourceType", False)
 		        Cost.Add(ResourceEngram, Quantity, RequireExact)

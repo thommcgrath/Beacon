@@ -1,6 +1,7 @@
 #tag Class
 Protected Class StackSizes
 Inherits ArkSA.ConfigGroup
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.StackSizes = ArkSA.Configs.StackSizes(Other)
@@ -64,21 +65,17 @@ Inherits ArkSA.ConfigGroup
 
 	#tag Event
 		Function HasContent() As Boolean
-		  Return Self.mGlobalMultiplier <> 1.0 Or ((Self.mOverrides Is Nil) = False And Self.mOverrides.Count > 0)
+		  Return True
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub PruneUnknownContent(Project As ArkSA.Project)
-		  #Pragma Unused Project
-		  
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  Var References() As ArkSA.BlueprintReference = Self.mOverrides.References
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  For Each Reference As ArkSA.BlueprintReference In References
-		    Var BlueprintId As String = Reference.BlueprintId
-		    Var Blueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId)
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
 		    If Blueprint Is Nil Then
-		      Self.mOverrides.Remove(BlueprintId)
+		      Self.mOverrides.Remove(Reference.BlueprintId)
 		      Self.Modified = True
 		    End If
 		  Next
@@ -100,7 +97,7 @@ Inherits ArkSA.ConfigGroup
 		    Var Rates As Dictionary = SaveData.DictionaryValue("Rates", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
-		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", Entry.Key, "", Nil)
+		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", Entry.Key, "", Nil, True)
 		        Self.mOverrides.Value(Engram, "Stack Size") = Entry.Value.UInt64Value
 		      Catch Err As RuntimeException
 		      End Try
@@ -109,7 +106,7 @@ Inherits ArkSA.ConfigGroup
 		    Var Rates As Dictionary = SaveData.DictionaryValue("Overrides", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
-		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", Entry.Key, Nil)
+		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", Entry.Key, Nil, True)
 		        Self.mOverrides.Value(Engram, "Stack Size") = Entry.Value.UInt64Value
 		      Catch Err As RuntimeException
 		      End Try
@@ -196,7 +193,7 @@ Inherits ArkSA.ConfigGroup
 		      Var StackSize As UInt64 = Quantity.Lookup("MaxItemQuantity", CType(0, UInt64))
 		      
 		      If ClassString.IsEmpty = False And ClassString.EndsWith("_C") And StackSize > CType(0, UInt64) Then
-		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", ClassString, ContentPacks)
+		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", ClassString, ContentPacks, True)
 		        Overrides.Value(Engram, "Stack Size") = StackSize
 		      End If
 		    Next

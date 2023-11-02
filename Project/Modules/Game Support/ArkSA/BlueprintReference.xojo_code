@@ -271,8 +271,8 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Resolve(Packs As Beacon.StringList = Nil) As ArkSA.Blueprint
-		  If (Self.mBlueprint Is Nil) = False Then
+		Function Resolve(Packs As Beacon.StringList = Nil, Options As Integer = 3) As ArkSA.Blueprint
+		  If (Options And Self.OptionUseCache) = Self.OptionUseCache And (Self.mBlueprint Is Nil) = False Then
 		    Return Self.mBlueprint
 		  End If
 		  
@@ -280,16 +280,17 @@ Implements Beacon.NamedItem
 		    Packs = New Beacon.StringList(Self.mContentPackId)
 		  End If
 		  
+		  Var Create As Boolean = (Options And Self.OptionCreate) = Self.OptionCreate
 		  Var Blueprint As ArkSA.Blueprint
 		  Select Case Self.mKind
 		  Case Self.KindEngram
-		    Blueprint = ArkSA.ResolveEngram(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs)
+		    Blueprint = ArkSA.ResolveEngram(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs, Create)
 		  Case Self.KindCreature
-		    Blueprint = ArkSA.ResolveCreature(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs)
+		    Blueprint = ArkSA.ResolveCreature(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs, Create)
 		  Case Self.KindSpawnPoint
-		    Blueprint = ArkSA.ResolveSpawnPoint(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs)
+		    Blueprint = ArkSA.ResolveSpawnPoint(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs, Create)
 		  Case Self.KindLootContainer
-		    Blueprint = ArkSA.ResolveLootContainer(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs)
+		    Blueprint = ArkSA.ResolveLootContainer(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs, Create)
 		  Else
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Unknown blueprint reference kind " + Self.mKind
@@ -358,6 +359,12 @@ Implements Beacon.NamedItem
 	#tag EndConstant
 
 	#tag Constant, Name = KindSpawnPoint, Type = String, Dynamic = False, Default = \"spawnPoint", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionCreate, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionUseCache, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"2", Scope = Private

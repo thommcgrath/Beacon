@@ -1,6 +1,7 @@
 #tag Class
 Protected Class HarvestRates
 Inherits ArkSA.ConfigGroup
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.HarvestRates = ArkSA.Configs.HarvestRates(Other)
@@ -60,20 +61,17 @@ Inherits ArkSA.ConfigGroup
 
 	#tag Event
 		Function HasContent() As Boolean
-		  Return Self.mClampResourceHarvestDamage = True Or Self.mDinoHarvestingDamageMultiplier <> 1.0 Or Self.mHarvestAmountMultiplier <> 1.0 Or Self.mHarvestHealthMultiplier <> 1.0 Or Self.mPlayerHarvestingDamageMultiplier <> 1.0 Or Self.mUseOptimizedRates = True Or ((Self.mOverrides Is Nil) = False And Self.mOverrides.Count > 0)
+		  Return True
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub PruneUnknownContent(Project As ArkSA.Project)
-		  #Pragma Unused Project
-		  
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		  Var BlueprintIds() As String = Self.mOverrides.BlueprintIds
-		  For Each BlueprintId As String In BlueprintIds
-		    Var Blueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
+		  Var References() As ArkSA.BlueprintReference = Self.mOverrides.References
+		  For Each Reference As ArkSA.BlueprintReference In References
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
 		    If Blueprint Is Nil Then
-		      Self.mOverrides.Remove(BlueprintId)
+		      Self.mOverrides.Remove(Reference.BlueprintId)
 		    End If
 		  Next
 		End Sub
@@ -106,7 +104,7 @@ Inherits ArkSA.ConfigGroup
 		    Var Rates As Dictionary = SaveData.DictionaryValue("Rates", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
-		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", Entry.Key, "", Nil)
+		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", Entry.Key, "", Nil, True)
 		        Self.mOverrides.Value(Engram, Self.RateAttribute) = Entry.Value.DoubleValue
 		      Catch Err As RuntimeException
 		      End Try
@@ -115,7 +113,7 @@ Inherits ArkSA.ConfigGroup
 		    Var Rates As Dictionary = SaveData.DictionaryValue("Overrides", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
-		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", Entry.Key, Nil)
+		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", Entry.Key, Nil, True)
 		        Self.mOverrides.Value(Engram, Self.RateAttribute) = Entry.Value.DoubleValue
 		      Catch Err As RuntimeException
 		      End Try
@@ -224,7 +222,7 @@ Inherits ArkSA.ConfigGroup
 		      Var ClassString As String = Dict.Value("ClassName")
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And Multiplier > 0 Then
-		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", ClassString, ContentPacks)
+		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", ClassString, ContentPacks, True)
 		        Overrides.Value(Engram, RateAttribute) = Multiplier
 		      End If
 		    Next

@@ -207,7 +207,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    AppendModeKey = "appendMode"
 		    MinItemSetsKey = "minItemSets"
 		    MaxItemSetsKey = "maxItemSets"
-		    SourceContainer = ArkSA.ResolveLootContainer(SaveData.Value("lootDropId").StringValue, "", "", Nil)
+		    SourceContainer = ArkSA.ResolveLootContainer(SaveData.Value("lootDropId").StringValue, "", "", Nil, True)
 		  ElseIf SaveData.HasKey("Reference") Then
 		    Var Reference As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
 		    If Reference Is Nil Then
@@ -215,7 +215,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    End If
 		    SourceContainer = ArkSA.LootContainer(Reference.Resolve)
 		  Else
-		    SourceContainer = ArkSA.ResolveLootContainer(SaveData, "", "", "SupplyCrateClassString", Nil)
+		    SourceContainer = ArkSA.ResolveLootContainer(SaveData, "", "", "SupplyCrateClassString", Nil, True)
 		    PreventDuplicatesKey = "bSetsRandomWithoutReplacement"
 		    AppendModeKey = "bAppendMode"
 		  End If

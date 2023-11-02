@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MutableCraftingCost
 Inherits ArkSA.CraftingCost
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
 		Sub Add(Ingredient As ArkSA.CraftingCostIngredient)
 		  If Ingredient Is Nil Then
@@ -63,14 +63,12 @@ Inherits ArkSA.CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  // Part of the ArkSA.Prunable interface.
 		  
-		  #Pragma Unused Project
-		  
 		  For Each Ingredient As ArkSA.CraftingCostIngredient In Self.mIngredients
-		    Var BlueprintId As String = Ingredient.Reference.BlueprintId
-		    Var Blueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId)
+		    Var Reference As ArkSA.BlueprintReference = Ingredient.Reference
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
 		    If Blueprint Is Nil Then
 		      Self.Remove(Ingredient)
 		    End If

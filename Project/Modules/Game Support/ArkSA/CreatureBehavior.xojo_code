@@ -71,7 +71,7 @@ Protected Class CreatureBehavior
 		    End If
 		    Behavior = New ArkSA.CreatureBehavior(Reference)
 		  ElseIf Dict.HasAnyKey("UUID", "Path", "Class") Then
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict, "UUID", "Path", "Class", Nil)
+		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict, "UUID", "Path", "Class", Nil, True)
 		    If Creature Is Nil Then
 		      Return Nil
 		    End If
@@ -88,7 +88,7 @@ Protected Class CreatureBehavior
 		      Behavior.mReplacementCreature = Reference
 		    End If
 		  ElseIf Dict.HasAnyKey("Replacement UUID", "Replacement Path", "Replacement Class") Then
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict, "Replacement UUID", "Replacement Path", "Replacement Class", Nil)
+		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict, "Replacement UUID", "Replacement Path", "Replacement Class", Nil, True)
 		    If (Creature Is Nil) = False Then
 		      Behavior.mReplacementCreature = New ArkSA.BlueprintReference(Creature)
 		    End If
@@ -164,6 +164,12 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ReplacementCreatureReference() As ArkSA.BlueprintReference
+		  Return Self.mReplacementCreature
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ResistanceMultiplier() As Double
 		  Return Self.mResistanceMultiplier
 		End Function
@@ -196,6 +202,12 @@ Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
 		Function TargetCreature() As ArkSA.Creature
 		  Return ArkSA.Creature(Self.mTargetCreature.Resolve)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TargetCreatureReference() As ArkSA.BlueprintReference
+		  Return Self.mTargetCreature
 		End Function
 	#tag EndMethod
 

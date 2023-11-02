@@ -417,7 +417,6 @@ Begin DocumentImportView ArkSAImportView
          Composited      =   False
          Enabled         =   True
          EnabledSources  =   63
-         GameId          =   "#ArkSA.Identifier"
          HasBackgroundColor=   False
          Height          =   282
          Index           =   -2147483648
@@ -658,16 +657,9 @@ End
 		    DestinationProjectId = Self.mDestinationProject.ProjectId
 		  End If
 		  
-		  Var ArkProjects() As ArkSA.Project
-		  For Idx As Integer = 0 To Projects.LastIndex
-		    If  Projects(Idx) IsA ArkSA.Project And Projects(Idx).ReadOnly = False And Projects(Idx).ProjectId <> DestinationProjectId Then
-		      ArkProjects.Add(ArkSA.Project(Projects(Idx)))
-		    End If
-		  Next
+		  Self.mOtherProjects = Projects
 		  
-		  Self.mOtherProjects = ArkProjects
-		  
-		  If ArkProjects.Count > 0 Then
+		  If Projects.Count > 0 Then
 		    Self.SourcePicker.EnabledSources = Self.SourcePicker.EnabledSources Or Self.SourcePicker.SourceOtherProject
 		  Else
 		    Self.SourcePicker.EnabledSources = Self.SourcePicker.EnabledSources And Not Self.SourcePicker.SourceOtherProject
@@ -685,6 +677,127 @@ End
 		    End If
 		  Next
 		  Self.Finish(Projects)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MigrateThread_Run(Sender As Beacon.Thread)
+		  Var SourceProject As Ark.Project = Sender.UserData
+		  Var NewProject As New ArkSA.Project
+		  Var ConfigSets() As Beacon.ConfigSet = SourceProject.ConfigSets
+		  For Each ConfigSet As Beacon.ConfigSet In ConfigSets
+		    Var ClonedConfigSet As Beacon.ConfigSet
+		    If ConfigSet.IsBase Then
+		      ClonedConfigSet = NewProject.ConfigSet("Base")
+		    Else
+		      ClonedConfigSet = New Beacon.ConfigSet(ConfigSet.Name)
+		      NewProject.AddConfigSet(ClonedConfigSet)
+		    End If
+		    
+		    For Each Group As Beacon.ConfigGroup In SourceProject.ImplementedConfigs(ConfigSet)
+		      // Skip servers and accounts
+		      Var GroupName As String
+		      Select Case Group.InternalName
+		      Case Ark.Configs.NameBreedingMultipliers
+		        GroupName = ArkSA.Configs.NameBreedingMultipliers
+		      Case Ark.Configs.NameCraftingCosts
+		        GroupName = ArkSA.Configs.NameCraftingCosts
+		      Case Ark.Configs.NameCreatureAdjustments
+		        GroupName = ArkSA.Configs.NameCreatureAdjustments
+		      Case Ark.Configs.NameCreatureSpawns
+		        GroupName = ArkSA.Configs.NameCreatureSpawns
+		      Case Ark.Configs.NameCustomConfig
+		        GroupName = ArkSA.Configs.NameCustomConfig
+		      Case Ark.Configs.NameDayCycle
+		        GroupName = ArkSA.Configs.NameDayCycle
+		      Case Ark.Configs.NameDecayAndSpoil
+		        GroupName = ArkSA.Configs.NameDecayAndSpoil
+		      Case Ark.Configs.NameDifficulty
+		        GroupName = ArkSA.Configs.NameDifficulty
+		      Case Ark.Configs.NameEngramControl
+		        GroupName = ArkSA.Configs.NameEngramControl
+		      Case Ark.Configs.NameGeneralSettings
+		        GroupName = ArkSA.Configs.NameGeneralSettings
+		      Case Ark.Configs.NameHarvestRates
+		        GroupName = ArkSA.Configs.NameHarvestRates
+		      Case Ark.Configs.NameLevelsAndXP
+		        GroupName = ArkSA.Configs.NameLevelsAndXP
+		      Case Ark.Configs.NameLootDrops
+		        GroupName = ArkSA.Configs.NameLootDrops
+		      Case Ark.Configs.NameProjectSettings
+		        GroupName = ArkSA.Configs.NameProjectSettings
+		      Case Ark.Configs.NameStackSizes
+		        GroupName = ArkSA.Configs.NameStackSizes
+		      Case Ark.Configs.NameStatLimits
+		        GroupName = ArkSA.Configs.NameStatLimits
+		      Case Ark.Configs.NameStatMultipliers
+		        GroupName = ArkSA.Configs.NameStatMultipliers
+		      Else
+		        Continue
+		      End Select
+		      
+		      Try
+		        Var SaveData As Dictionary = Group.SaveData
+		        If SaveData Is Nil Then
+		          Continue
+		        End If
+		        
+		        Var EncryptedData As Dictionary
+		        If SaveData.HasAllKeys("Plain", "Encrypted") Then
+		          EncryptedData = SaveData.Value("Encrypted")
+		          SaveData = SaveData.Value("Plain")
+		        End If
+		        
+		        // JSONify the data
+		        SaveData = Beacon.ParseJSON(Beacon.GenerateJSON(SaveData, False))
+		        If (EncryptedData Is Nil) = False Then
+		          EncryptedData = Beacon.ParseJSON(Beacon.GenerateJSON(SaveData, False))
+		        End If
+		        
+		        Var NewGroup As ArkSA.ConfigGroup = ArkSA.Configs.CreateInstance(GroupName, SaveData, EncryptedData)
+		        If NewGroup Is Nil Then
+		          Continue
+		        End If
+		        
+		        NewProject.AddConfigGroup(NewGroup, ClonedConfigSet)
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  Next
+		  
+		  // Cleanup stuff
+		  NewProject.PruneUnknownContent()
+		  
+		  Var Update As New Dictionary
+		  Update.Value("Event") = "Finished"
+		  Update.Value("Project") = NewProject
+		  Sender.AddUserInterfaceUpdate(Update)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MigrateThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		  For Each Update As Dictionary In Updates
+		    Var EventName As String = Update.Lookup("Event", "").StringValue
+		    Select Case EventName
+		    Case "Finished"
+		      Var Project As ArkSA.Project = Update.Value("Project")
+		      Self.mSourceProjects.Add(Project)
+		      
+		      Var Idx As Integer = Self.mMigrationThreads.IndexOf(Sender)
+		      If Idx > -1 Then
+		        Self.mMigrationThreads.RemoveAt(Idx)
+		      End If
+		      
+		      If Self.mMigrationThreads.Count = 0 Then
+		        If (Self.mMigrationProgress Is Nil) = False Then
+		          Self.mMigrationProgress.Close
+		          Self.mMigrationProgress = Nil
+		        End If
+		        Self.Finish(Self.mSourceProjects)
+		      End If
+		    End Select
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -731,13 +844,31 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOtherProjects() As ArkSA.Project
+		Private mMigrationProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMigrationThreads() As Beacon.Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOtherProjects() As Beacon.Project
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSourceProjects() As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		QuickCancel As Boolean
 	#tag EndProperty
 
+
+	#tag Constant, Name = MigrationMessagePlural, Type = String, Dynamic = True, Default = \"Migrating \?1 Projects", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = MigrationMessageSingular, Type = String, Dynamic = True, Default = \"Migrating \?1 Project", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = PageClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
@@ -1019,18 +1150,35 @@ End
 #tag Events OtherDocsActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Projects() As Beacon.Project
+		  Self.mSourceProjects.ResizeTo(-1)
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
 		    If Not OtherDocsList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Var Project As ArkSA.Project = ArkSA.Project(OtherDocsList.RowTagAt(I)).Clone(App.IdentityManager.CurrentIdentity)
-		    If (Project Is Nil) = False And Project.ReadOnly = False Then
-		      Projects.Add(Project)
-		    End If
+		    Var SourceProject As Beacon.Project = OtherDocsList.RowTagAt(I)
+		    Select Case SourceProject
+		    Case IsA ArkSA.Project
+		      Self.mSourceProjects.Add(ArkSA.Project(SourceProject).Clone(App.IdentityManager.CurrentIdentity))
+		    Case IsA Ark.Project
+		      // We need to export to ini, then import from that, and finally prune it.
+		      Var MigrateThread As New Beacon.Thread
+		      MigrateThread.UserData = SourceProject
+		      MigrateThread.DebugIdentifier = "ArkSA Migrator Thread"
+		      AddHandler MigrateThread.Run, WeakAddressOf MigrateThread_Run
+		      AddHandler MigrateThread.UserInterfaceUpdate, WeakAddressOf MigrateThread_UserInterfaceUpdate
+		      MigrateThread.Start
+		      Self.mMigrationThreads.Add(MigrateThread)
+		    End Select
 		  Next
-		  Self.Finish(Projects)
+		  If Self.mMigrationThreads.Count = 0 Then
+		    Self.Finish(Self.mSourceProjects)
+		  Else
+		    Self.mMigrationProgress = New ProgressWindow
+		    Self.mMigrationProgress.Message = Language.ReplacePlaceholders(If(Self.mMigrationThreads.Count = 1, Self.MigrationMessageSingular, Self.MigrationMessagePlural), Language.GameName(Ark.Identifier))
+		    Self.mMigrationProgress.Progress = Nil
+		    Self.mMigrationProgress.Show(Self)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1089,7 +1237,7 @@ End
 		  Case Me.SourceOtherProject
 		    Self.OtherDocsList.RemoveAllRows
 		    Self.OtherDocsList.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
-		    For Each Project As ArkSA.Project In Self.mOtherProjects
+		    For Each Project As Beacon.Project In Self.mOtherProjects
 		      Self.OtherDocsList.AddRow("", Project.Title)
 		      Self.OtherDocsList.RowTagAt(Self.OtherDocsList.LastAddedRowIndex) = Project
 		    Next
@@ -1099,6 +1247,11 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageOtherDocuments
 		  End Select
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompatibleGameIds() As String()
+		  Return Array(Ark.Identifier, ArkSA.Identifier)
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events StatusActionButton

@@ -1377,11 +1377,17 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub PruneUnknownContent()
+		  Var PackIds As Beacon.StringList = Self.ContentPacks
 		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
 		    Var SetDict As Dictionary = Self.mConfigSetData.Value(Set.ConfigSetId)
-		    For Each Entry As DictionaryEntry In SetDict
-		      Var Group As Beacon.ConfigGroup = Entry.Value
-		      Group.PruneUnknownContent(Self)
+		    Var Keys() As Variant = SetDict.Keys
+		    For Each Key As Variant In Keys
+		      Var Group As Beacon.ConfigGroup = SetDict.Value(Key)
+		      Group.PruneUnknownContent(PackIds)
+		      If Group.HasContent = False Then
+		        SetDict.Remove(Key)
+		        Self.Modified = True
+		      End If
 		    Next
 		  Next
 		End Sub

@@ -533,10 +533,14 @@ End
 		    Return
 		  End If
 		  
-		  Var OtherEditors() As DocumentEditorView = Self.EditorsForGameId(Self.Project.GameId)
+		  Var ProjectId As String = Self.Project.ProjectId
+		  Var OtherEditors() As DocumentEditorView = Self.EditorsForGameId(ArkSA.Identifier, Ark.Identifier)
 		  Var OtherProjects() As Beacon.Project
 		  For Each Editor As DocumentEditorView In OtherEditors
-		    OtherProjects.Add(Editor.Project)
+		    Var OtherProject As Beacon.Project = Editor.Project
+		    If (OtherProject Is Nil) = False And OtherProject.ReadOnly = False And OtherProject.ProjectId <> ProjectId Then
+		      OtherProjects.Add(OtherProject)
+		    End If
 		  Next
 		  
 		  Var ImportView As New ArkSAImportView

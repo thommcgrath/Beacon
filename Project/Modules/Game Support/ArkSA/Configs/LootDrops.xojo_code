@@ -2,6 +2,7 @@
 Protected Class LootDrops
 Inherits ArkSA.ConfigGroup
 Implements Iterable
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.LootDrops = ArkSA.Configs.LootDrops(Other)
@@ -47,22 +48,20 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
-		Sub PruneUnknownContent(Project As ArkSA.Project)
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  Var Keys() As Variant = Self.mContainers.Keys
-		  Var PackIds As New Beacon.StringList
 		  For Each Key As Variant In Keys
-		    Var ClassString As String = Key
-		    Var Matches() As ArkSA.LootContainer = DataSource.GetLootContainersByClass(ClassString, PackIds)
-		    If Matches.Count = 0 Then
-		      Self.mContainers.Remove(ClassString)
+		    Var Reference As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindLootContainer, "", "", Key.StringValue, "", "")
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
+		    If Blueprint Is Nil Then
+		      Self.mContainers.Remove(Reference.ClassString)
 		      Self.Modified = True
 		      Continue
 		    End If
 		    
 		    Var Container As ArkSA.LootContainer = Self.mContainers.Value(Key)
 		    Var Mutable As ArkSA.MutableLootContainer = Container.MutableVersion
-		    Mutable.PruneUnknownContent(DataSource, Project)
+		    Mutable.PruneUnknownContent(ContentPackIds)
 		    If Mutable.Count = 0 Then
 		      Self.Remove(Container)
 		    ElseIf Mutable.Hash <> Container.Hash Then

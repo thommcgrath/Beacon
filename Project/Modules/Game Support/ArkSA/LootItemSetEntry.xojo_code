@@ -359,7 +359,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  If Dict.HasKey("ItemClassStrings") Then
 		    Var ClassStrings() As Variant = Dict.Value("ItemClassStrings")
 		    For Each ClassString As String In ClassStrings
-		      Engrams.Add(ArkSA.ResolveEngram("", "", ClassString, ContentPacks))
+		      Engrams.Add(ArkSA.ResolveEngram("", "", ClassString, ContentPacks, True))
 		    Next
 		  ElseIf Dict.HasKey("Items") Then
 		    Var Paths() As Variant = Dict.Value("Items")
@@ -374,7 +374,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		        Continue
 		      End If
 		      
-		      Engrams.Add(ArkSA.ResolveEngram("", Path, "", ContentPacks))
+		      Engrams.Add(ArkSA.ResolveEngram("", Path, "", ContentPacks, True))
 		    Next
 		  End If
 		  

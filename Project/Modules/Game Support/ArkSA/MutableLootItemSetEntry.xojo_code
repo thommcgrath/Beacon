@@ -115,14 +115,12 @@ Implements ArkSA.Prunable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  // Part of the ArkSA.Prunable interface.
 		  
-		  #Pragma Unused Project
-		  
 		  For Idx As Integer = Self.mOptions.LastIndex DownTo 0
-		    Var BlueprintId As String = Self.mOptions(Idx).Reference.BlueprintId
-		    Var Blueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId)
+		    Var Reference As ArkSA.BlueprintReference = Self.mOptions(Idx).Reference
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
 		    If Blueprint Is Nil Then
 		      Self.mOptions.RemoveAt(Idx)
 		      Self.Modified = True

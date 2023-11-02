@@ -20,6 +20,12 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasContent() As Boolean
+		  Return RaiseEvent HasContent()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return ""
 		End Function
@@ -63,9 +69,9 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PruneUnknownContent(Project As Beacon.Project)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  Try
-		    RaiseEvent PruneUnknownContent(Project)
+		    RaiseEvent PruneUnknownContent(ContentPackIds)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Pruning a config group's content")
 		  End Try
@@ -126,7 +132,7 @@ Implements Beacon.Validateable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PruneUnknownContent(Project As Beacon.Project)
+		Event PruneUnknownContent(ContentPackIds As Beacon.StringList)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

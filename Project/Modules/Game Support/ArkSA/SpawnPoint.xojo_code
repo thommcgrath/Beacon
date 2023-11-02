@@ -137,7 +137,7 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		  Try
 		    Var SpawnPoint As ArkSA.SpawnPoint
 		    If Dict.HasKey("spawnPointId") Then
-		      SpawnPoint = ArkSA.ResolveSpawnPoint(Dict.Value("spawnPointId").StringValue, "", "", Nil)
+		      SpawnPoint = ArkSA.ResolveSpawnPoint(Dict.Value("spawnPointId").StringValue, "", "", Nil, True)
 		    ElseIf Dict.HasKey("Reference") Then
 		      Var Reference As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dict.Value("Reference"))
 		      If Reference Is Nil Then
@@ -145,7 +145,7 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		      End If
 		      SpawnPoint = ArkSA.SpawnPoint(Reference.Resolve)
 		    Else
-		      SpawnPoint = ArkSA.ResolveSpawnPoint(Dict, "UUID", "Path", "Class", Nil)
+		      SpawnPoint = ArkSA.ResolveSpawnPoint(Dict, "UUID", "Path", "Class", Nil, True)
 		    End If
 		    
 		    SpawnPoint = New ArkSA.SpawnPoint(SpawnPoint)
@@ -178,7 +178,7 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		            CreatureId = Entry.Key
 		          Else
 		            Var CreaturePath As String = Entry.Key
-		            Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", CreaturePath, "", Nil)
+		            Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", CreaturePath, "", Nil, True)
 		            If (Creature Is Nil) = False Then
 		              CreatureId = Creature.CreatureId
 		            End If
@@ -297,7 +297,7 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		    Var CreatureId As String = Entry.Key
 		    Var MaxPercentage As Double = Entry.Value
 		    If ResolveBlueprints Then
-		      Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(CreatureId, "", "", Nil)
+		      Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(CreatureId, "", "", Nil, True)
 		      If (Creature Is Nil) = False Then
 		        Limits.Value(Creature) = MaxPercentage
 		      End If

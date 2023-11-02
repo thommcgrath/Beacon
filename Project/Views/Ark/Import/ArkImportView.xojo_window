@@ -416,7 +416,6 @@ Begin DocumentImportView ArkImportView
          Composited      =   False
          Enabled         =   True
          EnabledSources  =   63
-         GameId          =   "#Ark.Identifier"
          HasBackgroundColor=   False
          Height          =   282
          Index           =   -2147483648
@@ -1098,6 +1097,11 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageOtherDocuments
 		  End Select
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompatibleGameIds() As String()
+		  Return Array(Ark.Identifier)
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events StatusActionButton

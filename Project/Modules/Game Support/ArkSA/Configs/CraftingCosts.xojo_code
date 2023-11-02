@@ -1,6 +1,7 @@
 #tag Class
 Protected Class CraftingCosts
 Inherits ArkSA.ConfigGroup
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.CraftingCosts = ArkSA.Configs.CraftingCosts(Other)
@@ -48,20 +49,19 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub PruneUnknownContent(Project As ArkSA.Project)
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  Var Keys() As Variant = Self.mCosts.Keys
 		  For Each Key As Variant In Keys
-		    Var EngramId As String = Key
 		    Var Cost As ArkSA.CraftingCost = Self.mCosts.Value(Key)
-		    Var Engram As ArkSA.Engram = DataSource.GetEngram(EngramId)
+		    Var Reference As ArkSA.BlueprintReference = Cost.EngramReference
+		    Var Engram As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
 		    If Engram Is Nil Then
 		      Self.Remove(Cost)
 		      Continue
 		    End If
 		    
 		    Var Mutable As ArkSA.MutableCraftingCost = ArkSA.CraftingCost(Cost).MutableVersion
-		    Mutable.PruneUnknownContent(DataSource, Project)
+		    Mutable.PruneUnknownContent(ContentPackIds)
 		    If Mutable.Count = 0 Then
 		      Self.Remove(Cost)
 		    Else

@@ -69,7 +69,7 @@ Implements Beacon.NamedItem
 		  
 		  Var Entry As ArkSA.SpawnPointSetEntry
 		  If Dict.HasKey("creatureId") Then
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict.Value("creatureId").StringValue, "", "", Nil)
+		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict.Value("creatureId").StringValue, "", "", Nil, True)
 		    If Creature Is Nil Then
 		      Return Nil
 		    End If
@@ -97,7 +97,7 @@ Implements Beacon.NamedItem
 		    End If
 		    Entry = New ArkSA.SpawnPointSetEntry(ArkSA.Creature(Blueprint))
 		  Else
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict, "creature_id", "Creature", "", Nil)
+		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict, "creature_id", "Creature", "", Nil, True)
 		    If Creature Is Nil Then
 		      Return Nil
 		    End If

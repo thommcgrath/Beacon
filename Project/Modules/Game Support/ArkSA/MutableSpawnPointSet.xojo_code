@@ -181,14 +181,13 @@ Inherits ArkSA.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PruneUnknownContent(DataSource As ArkSA.DataSource, Project As ArkSA.Project)
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  // Part of the ArkSA.Prunable interface.
-		  
-		  #Pragma Unused Project
 		  
 		  For Idx As Integer = Self.mEntries.LastIndex DownTo 0
 		    Var Entry As ArkSA.SpawnPointSetEntry = Self.mEntries(Idx)
-		    If Entry.Creature Is Nil Or DataSource.GetCreature(Entry.Creature.CreatureId) Is Nil Then
+		    Var Creature As ArkSA.Creature = Entry.Creature
+		    If Creature Is Nil Or ArkSA.ResolveCreature(Creature.BlueprintId, "", "", ContentPackIds, False) Is Nil Then
 		      Self.mEntries.RemoveAt(Idx)
 		      Self.Modified = True
 		    End If

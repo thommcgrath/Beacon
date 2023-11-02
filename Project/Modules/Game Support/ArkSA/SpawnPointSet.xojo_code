@@ -149,7 +149,7 @@ Implements Beacon.Countable,ArkSA.Weighted
 		      End If
 		    ElseIf EntrySaveData.Type = Variant.TypeString Then
 		      Var CreaturePath As String = EntrySaveData.StringValue
-		      Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", CreaturePath, "", Nil)
+		      Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", CreaturePath, "", Nil, True)
 		      If (Creature Is Nil) = False Then
 		        Set.Append(New ArkSA.SpawnPointSetEntry(Creature))
 		      End If
@@ -267,12 +267,12 @@ Implements Beacon.Countable,ArkSA.Weighted
 		          Var Replacements As Dictionary = ReplacementsData
 		          For Each Entry As DictionaryEntry In Replacements
 		            Var FromPath As String = Entry.Key
-		            Var FromCreature As ArkSA.Creature = ArkSA.ResolveCreature("", FromPath, "", Nil)
+		            Var FromCreature As ArkSA.Creature = ArkSA.ResolveCreature("", FromPath, "", Nil, True)
 		            Var ToDict As Dictionary = Entry.Value
 		            For Each SubEntry As DictionaryEntry In ToDict
 		              Var ToPath As String = SubEntry.Key
 		              Var Weight As Double = SubEntry.Value
-		              Var ToCreature As ArkSA.Creature = ArkSA.ResolveCreature("", ToPath, "", Nil)
+		              Var ToCreature As ArkSA.Creature = ArkSA.ResolveCreature("", ToPath, "", Nil, True)
 		              Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
 		            Next
 		          Next
@@ -443,7 +443,7 @@ Implements Beacon.Countable,ArkSA.Weighted
 		  Var Arr() As ArkSA.Creature
 		  For Each Entry As DictionaryEntry In Self.mReplacements
 		    Var FromCreatureId As String = Entry.Key
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(FromCreatureId, "", "", Nil)
+		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(FromCreatureId, "", "", Nil, True)
 		    If (Creature Is Nil) = False Then
 		      Arr.Add(Creature)
 		    End If
@@ -500,7 +500,7 @@ Implements Beacon.Countable,ArkSA.Weighted
 		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
 		  For Each Entry As DictionaryEntry In Choices
 		    Var ToCreatureId As String = Entry.Key
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(ToCreatureId, "", "", Nil)
+		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(ToCreatureId, "", "", Nil, True)
 		    If (Creature Is Nil) = False Then
 		      Arr.Add(Creature)
 		    End If

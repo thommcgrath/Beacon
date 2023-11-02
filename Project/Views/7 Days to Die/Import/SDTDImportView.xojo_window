@@ -60,7 +60,6 @@ Begin DocumentImportView SDTDImportView
          Composited      =   False
          Enabled         =   True
          EnabledSources  =   31
-         GameId          =   "#SDTD.Identifier"
          HasBackgroundColor=   False
          Height          =   252
          Index           =   -2147483648
@@ -522,6 +521,11 @@ End
 		  Case Me.SourceOtherProject
 		  End Select
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompatibleGameIds() As String()
+		  Return Array(SDTD.Identifier)
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events LocalView

@@ -1,6 +1,7 @@
 #tag Class
 Protected Class EngramControl
 Inherits ArkSA.ConfigGroup
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.EngramControl = ArkSA.Configs.EngramControl(Other)
@@ -151,21 +152,17 @@ Inherits ArkSA.ConfigGroup
 
 	#tag Event
 		Function HasContent() As Boolean
-		  Return Self.mAutoUnlockAllEngrams = True Or Self.mOnlyAllowSpecifiedEngrams = True Or Self.mPointsPerLevel.Count > 0 Or ((Self.mOverrides Is Nil) = False And Self.mOverrides.Count > 0)
+		  Return True
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub PruneUnknownContent(Project As ArkSA.Project)
-		  #Pragma Unused Project
-		  
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
 		  Var References() As ArkSA.BlueprintReference = Self.mOverrides.References
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  For Each Reference As ArkSA.BlueprintReference In References
-		    Var BlueprintId As String = Reference.BlueprintId
-		    Var Blueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId)
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
 		    If Blueprint Is Nil Then
-		      Self.mOverrides.Remove(BlueprintId)
+		      Self.mOverrides.Remove(Reference.BlueprintId)
 		      Self.Modified = True
 		    End If
 		  Next
@@ -207,7 +204,7 @@ Inherits ArkSA.ConfigGroup
 		      Var Path As String = Entry.Key
 		      Var BehaviorDict As Dictionary = Entry.Value
 		      
-		      Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", Path, "", Nil)
+		      Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", Path, "", Nil, True)
 		      For Each BehaviorEntry As DictionaryEntry In BehaviorDict
 		        Self.mOverrides.Value(Engram, BehaviorEntry.Key) = BehaviorEntry.Value
 		      Next

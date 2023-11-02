@@ -83,17 +83,19 @@ Inherits ArkSA.ConfigGroup
 		    End If
 		  Next
 		  
-		  For StatIndex As Integer = Self.MutagenTamed.FirstIndex To Self.MutagenTamed.LastIndex
-		    If Self.MutagenTamed(StatIndex) <> Self.DefaultMutagenLevelCount(False, StatIndex) Then
-		      Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MutagenLevelBoost[" + StatIndex.ToString(Locale.Raw, "0") + "]=" + Self.MutagenTamed(StatIndex).ToString(Locale.Raw, "0"), StatIndex))
-		    End If
-		  Next StatIndex
-		  
-		  For StatIndex As Integer = Self.MutagenBred.FirstIndex To Self.MutagenBred.LastIndex
-		    If Self.MutagenBred(StatIndex) <> Self.DefaultMutagenLevelCount(True, StatIndex) Then
-		      Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MutagenLevelBoostBred[" + StatIndex.ToString(Locale.Raw, "0") + "]=" + Self.MutagenBred(StatIndex).ToString(Locale.Raw, "0"), StatIndex))
-		    End If
-		  Next StatIndex
+		  #if false
+		    For StatIndex As Integer = Self.MutagenTamed.FirstIndex To Self.MutagenTamed.LastIndex
+		      If Self.MutagenTamed(StatIndex) <> Self.DefaultMutagenLevelCount(False, StatIndex) Then
+		        Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MutagenLevelBoost[" + StatIndex.ToString(Locale.Raw, "0") + "]=" + Self.MutagenTamed(StatIndex).ToString(Locale.Raw, "0"), StatIndex))
+		      End If
+		    Next StatIndex
+		    
+		    For StatIndex As Integer = Self.MutagenBred.FirstIndex To Self.MutagenBred.LastIndex
+		      If Self.MutagenBred(StatIndex) <> Self.DefaultMutagenLevelCount(True, StatIndex) Then
+		        Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MutagenLevelBoostBred[" + StatIndex.ToString(Locale.Raw, "0") + "]=" + Self.MutagenBred(StatIndex).ToString(Locale.Raw, "0"), StatIndex))
+		      End If
+		    Next StatIndex
+		  #endif
 		  
 		  Return Values
 		End Function
@@ -108,9 +110,17 @@ Inherits ArkSA.ConfigGroup
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed_Add"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed_Affinity"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "PerLevelStatsMultiplier_DinoWild"))
-		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MutagenLevelBoost"))
-		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MutagenLevelBoostBred"))
+		  #if false
+		    Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MutagenLevelBoost"))
+		    Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MutagenLevelBoostBred"))
+		  #endif
 		  Return Keys
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function HasContent() As Boolean
+		  Return Self.PlayerStats.KeyCount > 0 Or Self.TamedStats.KeyCount > 0 Or Self.WildStats.KeyCount > 0 Or Self.MutagenTamed.Count > 0 Or Self.MutagenBred.Count > 0
 		End Function
 	#tag EndEvent
 
