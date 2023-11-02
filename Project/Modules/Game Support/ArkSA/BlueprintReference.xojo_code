@@ -185,6 +185,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsResolved() As Boolean
+		  Return (Self.mBlueprint Is Nil) = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function IsSaveData(Value As Variant) As Boolean
 		  If Value.IsNull Or Value.IsArray Or (Value IsA Dictionary) = False Then
 		    Return False
