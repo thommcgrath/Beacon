@@ -641,6 +641,10 @@ Protected Module Beacon
 		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
 		  // remove them, and convert to UTF-8.
 		  
+		  If Value.IsEmpty Then
+		    Return ""
+		  End If
+		  
 		  Var Mem As MemoryBlock = Value
 		  If Mem.Size >= 3 And Mem.StringValue(0, 3) = Encodings.ASCII.Chr(239) + Encodings.ASCII.Chr(187) + Encodings.ASCII.Chr(191) Then
 		    // The rare UTF-8 BOM
