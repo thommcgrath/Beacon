@@ -43,6 +43,18 @@ Implements Beacon.NamedItem
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor(Reference As ArkSA.BlueprintReference)
+		  Self.mBlueprint = Reference.mBlueprint
+		  Self.mBlueprintId = Reference.mBlueprintId
+		  Self.mClassString = Reference.mClassString
+		  Self.mContentPackId = Reference.mContentPackId
+		  Self.mKind = Reference.mKind
+		  Self.mLabel = Reference.mLabel
+		  Self.mPath = Reference.mPath
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor(SaveData As Dictionary)
 		  If SaveData Is Nil Then

@@ -16,9 +16,22 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Reference As ArkSA.BlueprintReference)
+		  If Reference.Kind <> ArkSA.BlueprintReference.KindCreature Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Expected creature reference, got " + Reference.Kind + "."
+		    Raise Err
+		  End If
+		  
+		  Self.Constructor()
+		  Self.mCreatureRef = Reference
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Creature As ArkSA.Creature)
 		  Self.Constructor()
-		  Self.mCreature = Creature
+		  Self.mCreatureRef = New ArkSA.BlueprintReference(Creature)
 		End Sub
 	#tag EndMethod
 
@@ -27,7 +40,9 @@ Implements Beacon.NamedItem
 		  Self.Constructor()
 		  
 		  Self.mEntryId = Source.mEntryId
-		  Self.mCreature = Source.mCreature
+		  If (Source.mCreatureRef Is Nil) = False Then
+		    Self.mCreatureRef = New ArkSA.BlueprintReference(Source.mCreatureRef)
+		  End If
 		  Self.mChance = Source.mChance
 		  Self.mModified = Source.mModified
 		  Self.mLevelOverride = Source.mLevelOverride
@@ -48,7 +63,22 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Creature() As ArkSA.Creature
-		  Return Self.mCreature
+		  Var Blueprint As ArkSA.Blueprint = Self.mCreatureRef.Resolve()
+		  If (Blueprint Is Nil) = False And Blueprint IsA ArkSA.Creature Then
+		    Return ArkSA.Creature(Blueprint)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreatureId() As String
+		  Return Self.mCreatureRef.BlueprintId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreatureReference() As ArkSA.BlueprintReference
+		  Return Self.mCreatureRef
 		End Function
 	#tag EndMethod
 
@@ -68,34 +98,20 @@ Implements Beacon.NamedItem
 		  // delta versions, v4, and v5 versions of the structure.
 		  
 		  Var Entry As ArkSA.SpawnPointSetEntry
-		  If Dict.HasKey("creatureId") Then
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict.Value("creatureId").StringValue, "", "", Nil, True)
-		    If Creature Is Nil Then
-		      Return Nil
-		    End If
-		    Entry = New ArkSA.SpawnPointSetEntry(Creature)
-		  ElseIf Dict.HasKey("creature") Then
+		  If Dict.HasKey("creature") Then
 		    Var Reference As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dict.Value("creature"))
 		    If Reference Is Nil Or Reference.IsCreature = False Then
 		      Return Nil
 		    End If
-		    
-		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve
-		    If Blueprint Is Nil Or (Blueprint IsA ArkSA.Creature) = False Then
-		      Return Nil
-		    End If
-		    Entry = New ArkSA.SpawnPointSetEntry(ArkSA.Creature(Blueprint))
+		    Entry = New ArkSA.SpawnPointSetEntry(Reference)
 		  ElseIf Dict.HasKey("Blueprint") Then
 		    Var Reference As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
 		    If Reference Is Nil Or Reference.IsCreature = False Then
 		      Return Nil
 		    End If
-		    
-		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve
-		    If Blueprint Is Nil Or (Blueprint IsA ArkSA.Creature) = False Then
-		      Return Nil
-		    End If
-		    Entry = New ArkSA.SpawnPointSetEntry(ArkSA.Creature(Blueprint))
+		    Entry = New ArkSA.SpawnPointSetEntry(Reference)
+		  ElseIf Dict.HasKey("creatureId") Then
+		    Entry = New ArkSA.SpawnPointSetEntry(New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Dict.Value("creatureId").StringValue, "", "", "", ""))
 		  Else
 		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict, "creature_id", "Creature", "", Nil, True)
 		    If Creature Is Nil Then
@@ -226,7 +242,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  Return Self.Creature.Label
+		  Return Self.mCreatureRef.Label
 		End Function
 	#tag EndMethod
 
@@ -446,7 +462,7 @@ Implements Beacon.NamedItem
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("spawnPointSetEntryId") = Self.mEntryId
-		  Dict.Value("creatureId") = Self.mCreature.CreatureId
+		  Dict.Value("creature") = Self.mCreatureRef.SaveData
 		  Dict.Value("type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then
 		    Dict.Value("weight") = Self.mChance.DoubleValue
@@ -530,7 +546,7 @@ Implements Beacon.NamedItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mCreature As ArkSA.Creature
+		Protected mCreatureRef As ArkSA.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

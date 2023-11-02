@@ -149,28 +149,38 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Limit(Creature As ArkSA.Creature, Assigns Value As Double)
-		  If Creature Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.Limit(Creature.CreatureId) = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Limit(CreatureId As String, Assigns Value As Double)
+		Sub Limit(CreatureRef As ArkSA.BlueprintReference, Assigns Value As Double)
 		  Value = Min(Abs(Value), 1.0)
 		  
-		  Var Exists As Boolean = Self.mLimits.HasKey(CreatureId)
+		  Var Exists As Boolean = Self.mLimits.HasBlueprint(CreatureRef)
+		  
 		  If Exists And Value = 1.0 Then
-		    Self.mLimits.Remove(CreatureId)
+		    Self.mLimits.Remove(CreatureRef)
 		    Self.Modified = True
 		    Return
 		  End If
 		  
-		  If Exists = False Or Self.mLimits.Value(CreatureId).DoubleValue.Equals(Value, 1) Then
-		    Self.mLimits.Value(CreatureId) = Value
+		  If Exists = False Or Self.mLimits.Value(CreatureRef, Self.LimitAttribute).DoubleValue <> Value Then
+		    Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Limit(Creature As ArkSA.Creature, Assigns Value As Double)
+		  Value = Min(Abs(Value), 1.0)
+		  
+		  Var Exists As Boolean = Self.mLimits.HasBlueprint(Creature)
+		  
+		  If Exists And Value = 1.0 Then
+		    Self.mLimits.Remove(Creature)
+		    Self.Modified = True
+		    Return
+		  End If
+		  
+		  If Exists = False Or Self.mLimits.Value(Creature, Self.LimitAttribute).DoubleValue <> Value Then
+		    Self.mLimits.Value(Creature, Self.LimitAttribute) = Value
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -231,19 +241,19 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 		      Continue
 		    End If
 		    
-		    Var ReplacedCreatureIds() As String = Mutable.ReplacedCreatureIds
-		    For Each ReplacedCreatureId As String In ReplacedCreatureIds
-		      Var ReplacedCreature As ArkSA.Creature = ArkSA.ResolveCreature(ReplacedCreatureId, "", "", ContentPackIds, False)
+		    Var ReplacedCreatureRefs() As ArkSA.BlueprintReference = Mutable.ReplacedCreatureRefs
+		    For Each ReplacedCreatureRef As ArkSA.BlueprintReference In ReplacedCreatureRefs
+		      Var ReplacedCreature As ArkSA.Blueprint = ReplacedCreatureRef.Resolve(ContentPackIds, 0)
 		      If ReplacedCreature Is Nil Then
-		        Mutable.RemoveReplacedCreature(ReplacedCreatureId)
+		        Mutable.RemoveReplacedCreature(ReplacedCreatureRef)
 		        Continue
 		      End If
 		      
-		      Var ReplacementCreatureIds() As String = Mutable.ReplacementCreatureIds(ReplacedCreatureId)
-		      For Each ReplacementCreatureId As String In ReplacementCreatureIds
-		        Var ReplacementCreature As ArkSA.Creature = ArkSA.ResolveCreature(ReplacementCreatureId, "", "", ContentPackIds, False)
+		      Var ReplacementCreatureRefs() As ArkSA.BlueprintReference = Mutable.ReplacementCreatures(ReplacedCreatureRef)
+		      For Each ReplacementCreatureRef As ArkSA.BlueprintReference In ReplacementCreatureRefs
+		        Var ReplacementCreature As ArkSA.Blueprint = ReplacementCreatureRef.Resolve(ContentPackIds, 0)
 		        If ReplacementCreature Is Nil Then
-		          Mutable.CreatureReplacementWeight(ReplacedCreatureId, ReplacementCreatureId) = Nil
+		          Mutable.CreatureReplacementWeight(ReplacedCreatureRef, ReplacementCreatureRef) = Nil
 		          Continue
 		        End If
 		      Next
@@ -255,13 +265,11 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 		    End If
 		  Next
 		  
-		  Var Keys() As Variant = Self.mLimits.Keys
-		  For Each Key As Variant In Keys
-		    Var CreatureId As String = Key
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(CreatureId, "", "", ContentPackIds, False)
+		  Var LimitRefs() As ArkSA.BlueprintReference = Self.mLimits.References
+		  For Each Ref As ArkSA.BlueprintReference In LimitRefs
+		    Var Creature As ArkSA.Blueprint = Ref.Resolve(ContentPackIds, 0)
 		    If Creature Is Nil Then
-		      Self.Limit(CreatureId) = 1.0
-		      Continue
+		      Self.Limit(Ref) = 1.0
 		    End If
 		  Next
 		End Sub
@@ -359,41 +367,30 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 
 	#tag Method, Flags = &h0
 		Sub Unpack(Dict As Dictionary)
-		  Self.mLimits = New Dictionary
+		  Self.mLimits = New ArkSA.BlueprintAttributeManager
 		  If Dict.HasKey("limits") Then
 		    Try
 		      Var Limits As Variant = Dict.Value("limits")
 		      If IsNull(Limits) = False And Limits.Type = Variant.TypeObject And Limits.ObjectValue IsA Dictionary Then
 		        Var LimitsDict As Dictionary = Dictionary(Limits.ObjectValue)
 		        For Each Entry As DictionaryEntry In LimitsDict
-		          Var CreatureId As String
-		          If Beacon.UUID.Validate(Entry.Key.StringValue) Then
-		            CreatureId = Entry.Key
-		          Else
-		            Var CreaturePath As String = Entry.Key
-		            Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", CreaturePath, "", Nil, True)
-		            If (Creature Is Nil) = False Then
-		              CreatureId = Creature.CreatureId
-		            End If
-		          End If
-		          
-		          If CreatureId.IsEmpty = False Then
-		            Self.mLimits.Value(CreatureId) = Entry.Value
-		          End If
+		          Var CreatureRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "")
+		          Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = Entry.Value.DoubleValue
 		        Next
 		      ElseIf IsNull(Limits) = False And Limits.IsArray And Limits.ArrayElementType = Variant.TypeObject Then
 		        Var Members() As Dictionary = Limits.DictionaryArrayValue
 		        For Each Limit As Dictionary In Members
+		          Var MaxPercent As Double = Limit.FirstValue("maxPercentage", "max_percent", 1.0).DoubleValue
+		          Var CreatureRef As ArkSA.BlueprintReference
 		          If Limit.HasKey("creatureId") Then
-		            Var CreatureId As String = Limit.Value("creatureId")
-		            Var MaxPercent As Double = Limit.Value("maxPercentage")
-		            Self.mLimits.Value(CreatureId) = MaxPercent
+		            CreatureRef = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Limit.Value("creatureId").StringValue, "", "", "", "")
 		          ElseIf Limit.HasKey("creature") Then
-		            Var CreatureRef As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Limit.Value("creature"))
-		            Var MaxPercent As Double = Limit.Value("max_percent").DoubleValue
-		            Self.mLimits.Value(CreatureRef.BlueprintId) = MaxPercent
+		            CreatureRef = ArkSA.BlueprintReference.FromSaveData(Limit.Value("creature"))
 		          End If
-		        Next Limit
+		          If (CreatureRef Is Nil) = False Then
+		            Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = MaxPercent
+		          End If
+		        Next
 		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Unpacking limits")

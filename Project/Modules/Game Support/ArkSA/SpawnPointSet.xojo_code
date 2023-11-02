@@ -21,7 +21,7 @@ Implements Beacon.Countable,ArkSA.Weighted
 		  Self.mModified = False
 		  Self.mGroupOffset = Nil
 		  Self.mSetId = Beacon.UUID.v4
-		  Self.mReplacements = New Dictionary
+		  Self.mReplacements = New ArkSA.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod
 
@@ -68,27 +68,48 @@ Implements Beacon.Countable,ArkSA.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreatureReplacementWeight(FromCreatureRef As ArkSA.BlueprintReference, ToCreatureRef As ArkSA.BlueprintReference) As NullableDouble
+		  If FromCreatureRef Is Nil Or ToCreatureRef Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  If Not Self.mReplacements.HasBlueprint(FromCreatureRef) Then
+		    Return Nil
+		  End If
+		  
+		  Var Options As ArkSA.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
+		  If Options.HasAttribute(ToCreatureRef, "Weight") Then
+		    Return Options.Value(ToCreatureRef, "Weight").DoubleValue
+		  End If
+		  
+		  Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreature As ArkSA.Creature, ToCreature As ArkSA.Creature) As NullableDouble
 		  If FromCreature Is Nil Or ToCreature Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Return Self.CreatureReplacementWeight(FromCreature.CreatureId, ToCreature.CreatureId)
+		  If Not Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Return Nil
+		  End If
+		  
+		  Var Options As ArkSA.BlueprintAttributeManager = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
+		  If Options.HasAttribute(ToCreature, "Weight") Then
+		    Return Options.Value(ToCreature, "Weight").DoubleValue
+		  End If
+		  
+		  Return Nil
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreatureId As String, ToCreatureId As String) As NullableDouble
-		  If Self.mReplacements.HasKey(FromCreatureId) = False Then
-		    Return Nil
-		  End If
-		  
-		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
-		  If Choices.HasKey(ToCreatureId) = False Then
-		    Return Nil
-		  End If
-		  
-		  Return NullableDouble.FromVariant(Choices.Value(ToCreatureId))
+		  Var FromCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(FromCreatureID)
+		  Var ToCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(ToCreatureID)
+		  Return Self.CreatureReplacementWeight(FromCreature, ToCreature)
 		End Function
 	#tag EndMethod
 
@@ -429,10 +450,13 @@ Implements Beacon.Countable,ArkSA.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReplacedCreatureIds() As String()
-		  Var Arr() As String
-		  For Each Entry As DictionaryEntry In Self.mReplacements
-		    Arr.Add(Entry.Key)
+		Function ReplacedCreatureRefs() As ArkSA.BlueprintReference()
+		  Var Arr() As ArkSA.BlueprintReference
+		  Var Blueprints() As ArkSA.BlueprintReference = Self.mReplacements.References
+		  For Each Blueprint As ArkSA.BlueprintReference In Blueprints
+		    If Blueprint.IsCreature Then
+		      Arr.Add(Blueprint)
+		    End If
 		  Next
 		  Return Arr
 		End Function
@@ -441,11 +465,10 @@ Implements Beacon.Countable,ArkSA.Weighted
 	#tag Method, Flags = &h0
 		Function ReplacedCreatures() As ArkSA.Creature()
 		  Var Arr() As ArkSA.Creature
-		  For Each Entry As DictionaryEntry In Self.mReplacements
-		    Var FromCreatureId As String = Entry.Key
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(FromCreatureId, "", "", Nil, True)
-		    If (Creature Is Nil) = False Then
-		      Arr.Add(Creature)
+		  Var Blueprints() As ArkSA.BlueprintReference = Self.mReplacements.References
+		  For Each Blueprint As ArkSA.BlueprintReference In Blueprints
+		    If Blueprint.IsCreature Then
+		      Arr.Add(ArkSA.Creature(Blueprint.Resolve))
 		    End If
 		  Next
 		  Return Arr
@@ -453,27 +476,22 @@ Implements Beacon.Countable,ArkSA.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReplacementCreatureIds(FromCreature As ArkSA.Creature) As String()
-		  Var Arr() As String
-		  If FromCreature Is Nil Then
+		Function ReplacementCreatures(FromCreatureRef As ArkSA.BlueprintReference) As ArkSA.BlueprintReference()
+		  Var Arr() As ArkSA.BlueprintReference
+		  If FromCreatureRef Is Nil Then
 		    Return Arr
 		  End If
 		  
-		  Return Self.ReplacementCreatureIds(FromCreature.CreatureId)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ReplacementCreatureIds(FromCreatureId As String) As String()
-		  Var Arr() As String
-		  If Self.mReplacements.HasKey(FromCreatureId) = False Then
-		    Return Arr
+		  Var Options As ArkSA.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
+		  If (Options Is Nil) = False Then
+		    Var References() As ArkSA.BlueprintReference = Options.References
+		    For Each Reference As ArkSA.BlueprintReference In References
+		      If Reference.IsCreature = False Then
+		        Continue
+		      End If
+		      Arr.Add(Reference)
+		    Next
 		  End If
-		  
-		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
-		  For Each Entry As DictionaryEntry In Choices
-		    Arr.Add(Entry.Key)
-		  Next
 		  
 		  Return Arr
 		End Function
@@ -486,25 +504,16 @@ Implements Beacon.Countable,ArkSA.Weighted
 		    Return Arr
 		  End If
 		  
-		  Return Self.ReplacementCreatures(FromCreature.CreatureId)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ReplacementCreatures(FromCreatureId As String) As ArkSA.Creature()
-		  Var Arr() As ArkSA.Creature
-		  If Self.mReplacements.HasKey(FromCreatureId) = False Then
-		    Return Arr
+		  Var Options As ArkSA.BlueprintAttributeManager = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
+		  If (Options Is Nil) = False Then
+		    Var References() As ArkSA.BlueprintReference = Options.References
+		    For Each Reference As ArkSA.BlueprintReference In References
+		      If Reference.IsCreature = False Then
+		        Continue
+		      End If
+		      Arr.Add(ArkSA.Creature(Reference.Resolve))
+		    Next
 		  End If
-		  
-		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
-		  For Each Entry As DictionaryEntry In Choices
-		    Var ToCreatureId As String = Entry.Key
-		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(ToCreatureId, "", "", Nil, True)
-		    If (Creature Is Nil) = False Then
-		      Arr.Add(Creature)
-		    End If
-		  Next
 		  
 		  Return Arr
 		End Function
@@ -512,7 +521,7 @@ Implements Beacon.Countable,ArkSA.Weighted
 
 	#tag Method, Flags = &h0
 		Function ReplacesCreatures() As Boolean
-		  Return Self.mReplacements.KeyCount > 0
+		  Return Self.mReplacements.Count > 0
 		End Function
 	#tag EndMethod
 
@@ -551,32 +560,8 @@ Implements Beacon.Countable,ArkSA.Weighted
 		  If (Self.mMinDistanceFromTamedDinosMultiplier Is Nil) = False Then
 		    SaveData.Value("minDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
 		  End If
-		  If Self.mReplacements.KeyCount > 0 Then
-		    // We *could* just store the dictionary, but in the database replacements are objects so
-		    // for consistency we're going to replicate that structure
-		    
-		    Var Replacements() As Dictionary
-		    For Each FromEntry As DictionaryEntry In Self.mReplacements
-		      Var FromCreatureId As String = FromEntry.Key
-		      Var Choices As Dictionary = FromEntry.Value
-		      If Choices.KeyCount = 0 Then
-		        Continue
-		      End If
-		      
-		      Var ChoicesArray() As Dictionary
-		      For Each ToEntry As DictionaryEntry In Choices
-		        Var ToCreatureId As String = ToEntry.Key
-		        Var Weight As Double = ToEntry.Value
-		        ChoicesArray.Add(New Dictionary("creatureId": ToCreatureId, "weight": Weight))
-		      Next
-		      
-		      Var Dict As New Dictionary
-		      Dict.Value("creatureId") = FromCreatureId
-		      Dict.Value("choices") = ChoicesArray
-		      Replacements.Add(Dict)
-		    Next
-		    
-		    SaveData.Value("replacements") = Replacements
+		  If Self.mReplacements.Count > 0 Then
+		    SaveData.Value("replacements") = Self.mReplacements.SaveData
 		  End If
 		  Return SaveData
 		End Function
@@ -642,7 +627,7 @@ Implements Beacon.Countable,ArkSA.Weighted
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mReplacements As Dictionary
+		Protected mReplacements As ArkSA.BlueprintAttributeManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

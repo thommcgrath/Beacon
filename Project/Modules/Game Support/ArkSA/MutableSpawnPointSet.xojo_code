@@ -38,39 +38,84 @@ Inherits ArkSA.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CreatureReplacementWeight(FromCreatureRef As ArkSA.BlueprintReference, ToCreatureRef As ArkSA.BlueprintReference, Assigns Weight As NullableDouble)
+		  If FromCreatureRef Is Nil Or ToCreatureRef Is Nil Then
+		    Return
+		  End If
+		  
+		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreatureRef, ToCreatureRef)
+		  If CurrentWeight = Weight Then
+		    Return
+		  End If
+		  
+		  Var Options As ArkSA.BlueprintAttributeManager
+		  If Self.mReplacements.HasBlueprint(FromCreatureRef) Then
+		    Options = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
+		  Else
+		    If Weight = Nil Then
+		      Return
+		    End If
+		    Options = New ArkSA.BlueprintAttributeManager
+		  End If
+		  
+		  If Weight = Nil Then
+		    Options.Remove(ToCreatureRef)
+		  Else
+		    Options.Value(ToCreatureRef, "Weight") = Weight.DoubleValue
+		  End If
+		  
+		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreatureRef) Then
+		    Self.mReplacements.Remove(FromCreatureRef)
+		  Else
+		    Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute) = Options
+		  End If
+		  
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CreatureReplacementWeight(FromCreature As ArkSA.Creature, ToCreature As ArkSA.Creature, Assigns Weight As NullableDouble)
 		  If FromCreature Is Nil Or ToCreature Is Nil Then
 		    Return
 		  End If
 		  
-		  Self.CreatureReplacementWeight(FromCreature.CreatureId, ToCreature.CreatureId) = Weight
+		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreature, ToCreature)
+		  If CurrentWeight = Weight Then
+		    Return
+		  End If
+		  
+		  Var Options As ArkSA.BlueprintAttributeManager
+		  If Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Options = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
+		  Else
+		    If Weight = Nil Then
+		      Return
+		    End If
+		    Options = New ArkSA.BlueprintAttributeManager
+		  End If
+		  
+		  If Weight = Nil Then
+		    Options.Remove(ToCreature)
+		  Else
+		    Options.Value(ToCreature, "Weight") = Weight.DoubleValue
+		  End If
+		  
+		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Self.mReplacements.Remove(FromCreature)
+		  Else
+		    Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute) = Options
+		  End If
+		  
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub CreatureReplacementWeight(FromCreatureId As String, ToCreatureId As String, Assigns Weight As NullableDouble)
-		  If Self.mReplacements.HasKey(FromCreatureId) = False Then
-		    Self.mReplacements.Value(FromCreatureId) = New Dictionary
-		  End If
-		  
-		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
-		  If Choices.HasKey(ToCreatureId) Then
-		    If Weight Is Nil Then
-		      Choices.Remove(ToCreatureId)
-		      Self.Modified = True
-		    ElseIf Choices.Value(ToCreatureId).DoubleValue.Equals(Weight.DoubleValue, 1) = False Then
-		      Choices.Value(ToCreatureId) = Weight.DoubleValue
-		      Self.Modified = True
-		    End If
-		  ElseIf (Weight Is Nil) = False Then
-		    Choices.Value(ToCreatureId) = Weight.DoubleValue
-		    Self.Modified = True
-		  End If
-		  
-		  // No modify here, the previous block will have done that
-		  If Choices.KeyCount = 0 Then
-		    Self.mReplacements.Remove(FromCreatureId)
-		  End If
+		  Var FromCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(FromCreatureID)
+		  Var ToCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(ToCreatureID)
+		  Self.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
 		End Sub
 	#tag EndMethod
 
@@ -186,8 +231,9 @@ Inherits ArkSA.SpawnPointSet
 		  
 		  For Idx As Integer = Self.mEntries.LastIndex DownTo 0
 		    Var Entry As ArkSA.SpawnPointSetEntry = Self.mEntries(Idx)
-		    Var Creature As ArkSA.Creature = Entry.Creature
-		    If Creature Is Nil Or ArkSA.ResolveCreature(Creature.BlueprintId, "", "", ContentPackIds, False) Is Nil Then
+		    Var Reference As ArkSA.BlueprintReference = Entry.CreatureReference
+		    Var Creature As ArkSA.Blueprint = Reference.Resolve(ContentPackIds, 0)
+		    If Creature Is Nil Then
 		      Self.mEntries.RemoveAt(Idx)
 		      Self.Modified = True
 		    End If
@@ -236,20 +282,43 @@ Inherits ArkSA.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RemoveReplacedCreature(CreatureRef As ArkSA.BlueprintReference)
+		  If CreatureRef Is Nil Then
+		    Return
+		  End If
+		  
+		  If Self.mReplacements.HasBlueprint(CreatureRef) = False Then
+		    Return
+		  End If
+		  
+		  Self.mReplacements.Remove(CreatureRef)
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveReplacedCreature(Creature As ArkSA.Creature)
 		  If Creature Is Nil Then
 		    Return
 		  End If
-		  Self.RemoveReplacedCreature(Creature.CreatureId)
+		  
+		  If Self.mReplacements.HasBlueprint(Creature) = False Then
+		    Return
+		  End If
+		  
+		  Self.mReplacements.Remove(Creature)
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RemoveReplacedCreature(CreatureId As String)
-		  If Self.mReplacements.HasKey(CreatureId) Then
-		    Self.mReplacements.Remove(CreatureId)
-		    Self.Modified = True
+		  If Self.mReplacements.HasBlueprint(CreatureId) = False Then
+		    Return
 		  End If
+		  
+		  Self.mReplacements.Remove(CreatureId)
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 

@@ -48,7 +48,7 @@ Implements ArkSA.Blueprint,Beacon.Countable
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mAvailability = ArkSA.Maps.UniversalMask
-		  Self.mLimits = New Dictionary
+		  Self.mLimits = New ArkSA.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod
 
@@ -151,16 +151,11 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		    SpawnPoint = New ArkSA.SpawnPoint(SpawnPoint)
 		    SpawnPoint.mSets.ResizeTo(-1)
 		    
-		    If Dict.HasKey("limits") Then
-		      Var Limits() As Variant = Dict.Value("limits")
-		      For Each Limit As Dictionary In Limits
-		        Var CreatureId As String = Limit.Value("creatureId")
-		        Var MaxPercentage As Double = Limit.Value("maxPercentage")
-		        SpawnPoint.mLimits.Value(CreatureId) = MaxPercentage
-		      Next
-		    ElseIf Dict.HasKey("Limits") Then
-		      Var Manager As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(Dict.Value("Limits"))
+		    Var LimitsVar As Variant = Dict.FirstValue("limits", "Limits", Nil)
+		    If LimitsVar.IsNull = False Then
+		      Var Manager As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(LimitsVar)
 		      If (Manager Is Nil) = False Then
+		        // A reference manager
 		        Var References() As ArkSA.BlueprintReference = Manager.References
 		        For Each Reference As ArkSA.BlueprintReference In References
 		          If Reference.IsCreature = False Then
@@ -168,25 +163,29 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		          End If
 		          
 		          Var MaxPercentage As Double = Manager.Value(Reference, LimitAttribute)
-		          SpawnPoint.mLimits.Value(Reference.BlueprintId) = MaxPercentage
+		          SpawnPoint.mLimits.Value(Reference, LimitAttribute) = MaxPercentage
 		        Next
-		      Else
-		        Var Limits As Dictionary = Dict.Value("Limits")
+		      ElseIf LimitsVar.Type = Variant.TypeObject And LimitsVar.ObjectValue IsA Dictionary Then
+		        // A dictionary
+		        Var Limits As Dictionary = Dictionary(LimitsVar.ObjectValue)
 		        For Each Entry As DictionaryEntry In Limits
-		          Var CreatureId As String
+		          Var Reference As ArkSA.BlueprintReference
 		          If Beacon.UUID.Validate(Entry.Key.StringValue) Then
-		            CreatureId = Entry.Key
+		            Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "")
 		          Else
-		            Var CreaturePath As String = Entry.Key
-		            Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", CreaturePath, "", Nil, True)
-		            If (Creature Is Nil) = False Then
-		              CreatureId = Creature.CreatureId
-		            End If
+		            Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, "", Entry.Key.StringValue, "", "", "")
 		          End If
 		          
-		          If CreatureId.IsEmpty = False Then
-		            SpawnPoint.mLimits.Value(CreatureId) = Entry.Value
-		          End If
+		          SpawnPoint.mLimits.Value(Reference, LimitAttribute) = Entry.Value
+		        Next
+		      Else
+		        // Probably an array of dictionaries
+		        Var Limits() As Variant = LimitsVar
+		        For Each Limit As Dictionary In Limits
+		          Var CreatureId As String = Limit.Value("creatureId")
+		          Var MaxPercentage As Double = Limit.Value("maxPercentage")
+		          Var Reference As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, CreatureId, "", "", "", "")
+		          SpawnPoint.mLimits.Value(Reference, LimitAttribute) = MaxPercentage
 		        Next
 		      End If
 		    End If
@@ -271,19 +270,9 @@ Implements ArkSA.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Limit(Creature As ArkSA.Creature) As Double
-		  If Creature Is Nil Then
-		    Return 1.0
-		  End If
-		  
-		  Return Self.Limit(Creature.CreatureId)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Limit(CreatureId As String) As Double
-		  If Self.mLimits.HasKey(CreatureId) Then
-		    Return Self.mLimits.Value(CreatureId)
+		Function Limit(CreatureRef As ArkSA.BlueprintReference) As Double
+		  If Self.mLimits.HasBlueprint(CreatureRef) Then
+		    Return Self.mLimits.Value(CreatureRef, Self.LimitAttribute)
 		  Else
 		    Return 1.0
 		  End If
@@ -291,19 +280,26 @@ Implements ArkSA.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Limits(ResolveBlueprints As Boolean = True) As Dictionary
+		Function Limit(Creature As ArkSA.Creature) As Double
+		  If Self.mLimits.HasBlueprint(Creature) Then
+		    Return Self.mLimits.Value(Creature, Self.LimitAttribute)
+		  Else
+		    Return 1.0
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Limits() As Dictionary
 		  Var Limits As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mLimits
-		    Var CreatureId As String = Entry.Key
-		    Var MaxPercentage As Double = Entry.Value
-		    If ResolveBlueprints Then
-		      Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(CreatureId, "", "", Nil, True)
-		      If (Creature Is Nil) = False Then
-		        Limits.Value(Creature) = MaxPercentage
-		      End If
-		    Else
-		      Limits.Value(CreatureId) = MaxPercentage
+		  Var References() As ArkSA.BlueprintReference = Self.mLimits.References
+		  For Each Reference As ArkSA.BlueprintReference In References
+		    If Reference.IsCreature = False Then
+		      Continue
 		    End If
+		    
+		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
+		    Limits.Value(ArkSA.Creature(Reference.Resolve)) = Limit
 		  Next
 		  Return Limits
 		End Function
@@ -312,7 +308,7 @@ Implements ArkSA.Blueprint,Beacon.Countable
 	#tag Method, Flags = &h0
 		Function LimitsString(Pretty As Boolean = False) As String
 		  Try
-		    Return Beacon.GenerateJSON(Self.mLimits, Pretty)
+		    Return Beacon.GenerateJSON(Self.mLimits.SaveData, Pretty)
 		  Catch Err As RuntimeException
 		    Return ""
 		  End Try
@@ -381,11 +377,14 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		  Next
 		  
 		  Var Limits() As Dictionary
-		  For Each Entry As DictionaryEntry In Self.mLimits
-		    Var Limit As New Dictionary
-		    Limit.Value("creatureId") = Entry.Key
-		    Limit.Value("maxPercentage") = Entry.Value
-		    Limits.Add(Limit)
+		  Var References() As ArkSA.BlueprintReference = Self.mLimits.References
+		  For Each Reference As ArkSA.BlueprintReference In References
+		    If Reference.IsCreature = False Then
+		      Continue
+		    End If
+		    
+		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
+		    Limits.Add(New Dictionary("creature": Reference.SaveData, "maxPercentage": Limit))
 		  Next
 		  
 		  Dict.Value("sets") = Sets
@@ -414,15 +413,8 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		  If Children.LastIndex > -1 Then
 		    Keys.Value("sets") = Children
 		  End If
-		  If Self.mLimits.KeyCount > 0 Then
-		    Var Limits() As Dictionary
-		    For Each Entry As DictionaryEntry In Self.mLimits
-		      Var Limit As New Dictionary
-		      Limit.Value("creatureId") = Entry.Key
-		      Limit.Value("maxPercentage") = Entry.Value
-		      Limits.Add(Limit)
-		    Next
-		    Keys.Value("limits") = Limits
+		  If Self.mLimits.Count > 0 Then
+		    Keys.Value("limits") = Self.mLimits.SaveData
 		  End If
 		  Return Keys
 		End Function
@@ -520,7 +512,7 @@ Implements ArkSA.Blueprint,Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mLimits As Dictionary
+		Protected mLimits As ArkSA.BlueprintAttributeManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

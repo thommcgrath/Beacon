@@ -14,10 +14,36 @@ Inherits ArkSA.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Creature(Assigns Value As ArkSA.Creature)
-		  If Self.mCreature <> Value Then
-		    Self.mCreature = Value
-		    Self.Modified = True
+		  If Value Is Nil Then
+		    Var Err As New NilObjectException
+		    Err.Message = "Cannot assign to nil creature"
+		    Raise Err
 		  End If
+		  
+		  Var Reference As New ArkSA.BlueprintReference(Value)
+		  If Self.mCreatureRef = Reference Then
+		    Return
+		  End If
+		  
+		  Self.mCreatureRef = Reference
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CreatureReference(Assigns Value As ArkSA.BlueprintReference)
+		  If Value Is Nil Or Value.Kind <> ArkSA.BlueprintReference.KindCreature Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Expected creature reference"
+		    Raise Err
+		  End If
+		  
+		  If Self.mCreatureRef = Value Then
+		    Return
+		  End If
+		  
+		  Self.mCreatureRef = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
