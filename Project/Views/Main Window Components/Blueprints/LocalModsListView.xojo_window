@@ -416,6 +416,15 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RunModDiscovery()
+		  Var GameId As String = GameSelectorWindow.Present(Self)
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
+		  If GameId <> Ark.Identifier Then
+		    Self.ShowAlert("Beacon does not support mod discovery for " + Language.GameName(GameId), "This feature may or may not be coming in the future.")
+		    Return
+		  End If
+		  
 		  Var Settings As Ark.ModDiscoverySettings = ArkModDiscoveryDialog.Present(Self)
 		  If Settings Is Nil Then
 		    Return
@@ -671,6 +680,9 @@ End
 		  Select Case Item.Name
 		  Case "RegisterMod"
 		    Var GameId As String = GameSelectorWindow.Present(Self)
+		    If GameId.IsEmpty Then
+		      Return
+		    End If
 		    If GameId <> Ark.Identifier Then
 		      Self.ShowAlert("Beacon does not yet support mods for " + Language.GameName(GameId), "This feature is coming, but isn't ready in this version.")
 		      Return

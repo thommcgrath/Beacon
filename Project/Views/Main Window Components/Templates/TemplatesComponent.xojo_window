@@ -313,6 +313,9 @@ End
 	#tag Method, Flags = &h0
 		Sub NewTemplate()
 		  Var GameId As String = GameSelectorWindow.Present(Self)
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
 		  Self.NewTemplate(GameId)
 		End Sub
 	#tag EndMethod
