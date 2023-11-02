@@ -26,7 +26,6 @@ Begin BeaconDialog PruningWindow
    Width           =   400
    Begin Beacon.Thread PrunerThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -155,7 +154,7 @@ End
 	#tag Constant, Name = ConfirmationMessage, Type = String, Dynamic = True, Default = \"This tool will remove everything from the project this is not currently available in the game.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = DialogTitle, Type = String, Dynamic = True, Default = \"Pruning Unknown Content", Scope = Private
+	#tag Constant, Name = DialogTitle, Type = String, Dynamic = True, Default = \"Removing Unknown Content", Scope = Private
 	#tag EndConstant
 
 
