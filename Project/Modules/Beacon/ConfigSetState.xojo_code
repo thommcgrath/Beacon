@@ -133,7 +133,7 @@ Protected Class ConfigSetState
 		  
 		  Var FilteredStates() As Beacon.ConfigSetState
 		  For Each State As Beacon.ConfigSetState In States
-		    If State.Enabled = False Or SetsMap.HasKey(State.ConfigSetId) = False Then
+		    If SetsMap.HasKey(State.ConfigSetId) = False Then
 		      Continue
 		    End If
 		    
