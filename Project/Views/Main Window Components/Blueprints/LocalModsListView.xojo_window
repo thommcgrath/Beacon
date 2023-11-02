@@ -670,7 +670,13 @@ End
 		  
 		  Select Case Item.Name
 		  Case "RegisterMod"
-		    Var ModId As String =  ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeLocal)
+		    Var GameId As String = GameSelectorWindow.Present(Self)
+		    If GameId <> Ark.Identifier Then
+		      Self.ShowAlert("Beacon does not yet support mods for " + Language.GameName(GameId), "This feature is coming, but isn't ready in this version.")
+		      Return
+		    End If
+		    
+		    Var ModId As String = ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeLocal)
 		    If ModId.IsEmpty = False Then
 		      Self.mOpenModWhenRefreshed = ModId
 		      Self.RefreshMods()

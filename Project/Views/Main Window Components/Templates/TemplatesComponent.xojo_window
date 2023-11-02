@@ -312,7 +312,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewTemplate()
-		  Var GameId As String = GameSelectorWindow.Present(Self, Ark.Identifier)
+		  Var GameId As String = GameSelectorWindow.Present(Self)
 		  Self.NewTemplate(GameId)
 		End Sub
 	#tag EndMethod
@@ -322,8 +322,8 @@ End
 		  Select Case GameId
 		  Case Ark.Identifier
 		    Self.OpenTemplate(New Ark.LootTemplate)
-		  Case ArkSA.Identifier
-		    Self.OpenTemplate(New ArkSA.LootTemplate)
+		  Else
+		    Self.ShowAlert("Beacon does not yet support templates for " + Language.GameName(GameId), "This feature is coming, but isn't ready in this version.")
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -352,6 +352,9 @@ End
 		    Select Case Template
 		    Case IsA Ark.LootTemplate
 		      View = New ArkLootTemplateEditorView(Ark.LootTemplate(Template))
+		    Else
+		      Self.ShowAlert("Beacon does not yet support templates for this game.", "This feature is coming, but isn't ready in this version.")
+		      Return
 		    End Select
 		    Self.EmbedView(TemplateEditorView(View))
 		  End If
