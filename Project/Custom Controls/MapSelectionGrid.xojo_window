@@ -62,6 +62,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  If Self.mFetchMaps Then
+		    Self.mMaps = RaiseEvent GetMaps()
+		  End If
+		  
 		  Var Disambiguation As New Dictionary
 		  For Each Map As Beacon.Map In Self.mMaps
 		    Var Siblings() As Beacon.Map
@@ -170,7 +174,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mMaps = RaiseEvent GetMaps
+		  Self.mFetchMaps = True
 		  Super.Constructor
 		  
 		End Sub
@@ -179,6 +183,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Maps() As Beacon.Map)
 		  Self.mMaps = Maps
+		  Self.mFetchMaps = False
 		  Super.Constructor
 		  
 		End Sub
@@ -274,6 +279,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDesiredWidth As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFetchMaps As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
