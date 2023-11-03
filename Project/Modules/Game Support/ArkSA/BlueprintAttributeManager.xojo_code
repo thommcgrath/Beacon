@@ -226,7 +226,8 @@ Protected Class BlueprintAttributeManager
 		  End If
 		  
 		  Var SchemaValue As Variant = Dict.Value("Schema")
-		  If SchemaValue.IsNull Or SchemaValue.Type <> Variant.TypeString Or (SchemaValue.StringValue <> "ArkSA.BlueprintAttributeManager" And SchemaValue.StringValue <> "Beacon.BlueprintAttributeManager") Then
+		  Var ValidSchemas() As String = Array("ArkSA.BlueprintAttributeManager", "Ark.BlueprintAttributeManager", "Beacon.BlueprintAttributeManager")
+		  If SchemaValue.IsNull Or SchemaValue.Type <> Variant.TypeString Or ValidSchemas.IndexOf(SchemaValue.StringValue) = -1 Then
 		    Return False
 		  End If
 		  

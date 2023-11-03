@@ -437,13 +437,27 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Ark.Blueprint, Mods As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
-		  Self.mSettingUp = True
+		  Var References() As Ark.BlueprintReference
 		  For Each Blueprint As Ark.Blueprint In Exclude
 		    If Blueprint Is Nil Then
 		      Continue
 		    End If
 		    
-		    Self.mExcluded.Add(Blueprint.BlueprintId)
+		    References.Add(New Ark.BlueprintReference(Blueprint))
+		  Next
+		  Self.Constructor(Category, Subgroup, References, Mods, SelectMode, ShowLoadDefaults)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Ark.BlueprintReference, Mods As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
+		  Self.mSettingUp = True
+		  For Each Reference As Ark.BlueprintReference In Exclude
+		    If Reference Is Nil Then
+		      Continue
+		    End If
+		    
+		    Self.mExcluded.Add(Reference.BlueprintId)
 		  Next
 		  Self.mMods = Mods
 		  Self.mCategory = Category
@@ -451,13 +465,13 @@ End
 		  Super.Constructor
 		  
 		  If SelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultipleWithExcluded Then
-		    For Each Blueprint As Ark.Blueprint In Exclude
-		      If Blueprint Is Nil Then
+		    For Each Reference As Ark.BlueprintReference In Exclude
+		      If Reference Is Nil Then
 		        Continue
 		      End If
 		      
-		      Self.SelectedList.AddRow(Blueprint.Label)
-		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Blueprint
+		      Self.SelectedList.AddRow(Reference.Label)
+		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Reference.Resolve
 		    Next
 		    SelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple
 		  End If
@@ -593,6 +607,42 @@ End
 		  
 		  For Idx As Integer = 0 To Win.SelectedList.RowCount - 1
 		    Blueprints.Add(Win.SelectedList.RowTagAt(Idx))
+		  Next
+		  
+		  WithDefaults = Win.WithDefaultsCheck.Value
+		  Win.Close
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As Ark.BlueprintReference, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes) As Ark.BlueprintReference()
+		  Var WithDefaults As Boolean
+		  Return Present(Parent, Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As Ark.BlueprintReference, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Ark.BlueprintReference()
+		  Var Blueprints() As Ark.BlueprintReference
+		  If Parent Is Nil Then
+		    Return Blueprints
+		  End If
+		  
+		  If ContentPacks Is Nil Then
+		    ContentPacks = New Beacon.StringList
+		  End If
+		  
+		  Var Win As New ArkBlueprintSelectorDialog(Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		  Win.ShowModal(Parent)
+		  If Win.mCancelled Then
+		    Win.Close
+		    Return Blueprints
+		  End If
+		  
+		  For Idx As Integer = 0 To Win.SelectedList.RowCount - 1
+		    Var Blueprint As Ark.Blueprint = Win.SelectedList.RowTagAt(Idx)
+		    Blueprints.Add(New Ark.BlueprintReference(Blueprint))
 		  Next
 		  
 		  WithDefaults = Win.WithDefaultsCheck.Value

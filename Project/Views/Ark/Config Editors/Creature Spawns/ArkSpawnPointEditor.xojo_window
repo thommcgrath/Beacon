@@ -79,7 +79,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   705
       Begin ArkSpawnPointSetEditor SetEditor
@@ -481,29 +481,54 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Overrides() As Ark.SpawnPointOverride()
+		  Var Overrides() As Ark.SpawnPointOverride
+		  Overrides.ResizeTo(Self.mOverrides.LastIndex)
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    Overrides(Idx) = New Ark.SpawnPointOverride(Self.mOverrides(Idx))
+		  Next
+		  Return Overrides
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Overrides(Assigns Overrides() As Ark.SpawnPointOverride)
+		  If Overrides Is Nil Then
+		    Self.mOverrides.ResizeTo(-1)
+		  Else
+		    Self.mOverrides.ResizeTo(Overrides.LastIndex)
+		    For I As Integer = 0 To Overrides.LastIndex
+		      Self.mOverrides(I) = New Ark.MutableSpawnPointOverride(Overrides(I))
+		    Next
+		  End If
+		  
+		  Self.UpdateUI
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub PresentLimitsDialog()
-		  Var SelectedCreatures() As Ark.Creature
+		  Var SelectedCreatures() As Ark.BlueprintReference
 		  Self.PresentLimitsDialog(SelectedCreatures)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PresentLimitsDialog(SelectedCreatures() As Ark.Creature)
-		  Var DefinedCreatures() As Ark.Creature
+		Private Sub PresentLimitsDialog(SelectedCreatures() As Ark.BlueprintReference)
+		  Var DefinedCreatures() As Ark.BlueprintReference
 		  Var CommonLimit As NullableDouble
 		  Var CreatureFilter As New Dictionary
 		  
-		  For Each Point As Ark.SpawnPoint In Self.mSpawnPoints
-		    Var Limits As Dictionary = Point.Limits
-		    For Each Entry As DictionaryEntry In Limits
-		      Var Creature As Ark.Creature = Entry.Key
-		      If DefinedCreatures.IndexOf(Creature) = -1 Then
-		        DefinedCreatures.Add(Creature)
+		  For Each Override As Ark.SpawnPointOverride In Self.mOverrides
+		    Var LimitedCreatureRefs() As Ark.BlueprintReference = Override.LimitedCreatureRefs
+		    For Each CreatureRef As Ark.BlueprintReference In LimitedCreatureRefs
+		      If DefinedCreatures.IndexOf(CreatureRef) = -1 Then
+		        DefinedCreatures.Add(CreatureRef)
 		      End If
-		      If SelectedCreatures.IndexOf(Creature) > -1 Then
-		        Var CreatureLimit As Double = Entry.Value
-		        If CommonLimit = Nil Then
+		      If SelectedCreatures.IndexOf(CreatureRef) > -1 Then
+		        Var CreatureLimit As Double = Override.Limit(CreatureRef)
+		        If CommonLimit Is Nil Then
 		          CommonLimit = CreatureLimit
 		        ElseIf CommonLimit <> -1.0 And CommonLimit <> CreatureLimit Then
 		          CommonLimit = -1.0
@@ -511,33 +536,29 @@ End
 		      End If
 		    Next
 		    
-		    Var Bound As Integer = Point.Count - 1
-		    For I As Integer = 0 To Bound
-		      Var Set As Ark.SpawnPointSet = Point.Set(I)
+		    For Each Set As Ark.SpawnPointSet In Override
 		      Var Entries() As Ark.SpawnPointSetEntry = Set.Entries
 		      For Each Entry As Ark.SpawnPointSetEntry In Entries
-		        Var Creature As Ark.Creature = Entry.Creature
-		        If (Creature Is Nil) = False THen
-		          CreatureFilter.Value(Creature.CreatureId) = Creature
-		        End If
+		        Var CreatureRef As Ark.BlueprintReference = Entry.CreatureReference
+		        CreatureFilter.Value(CreatureRef.BlueprintId) = CreatureRef
 		      Next
 		    Next
 		  Next
 		  
-		  Var CreaturesInSpawnPoint() As Ark.Creature
+		  Var CreaturesInSpawnPoint() As Ark.BlueprintReference
 		  For Each Entry As DictionaryEntry In CreatureFilter
 		    CreaturesInSpawnPoint.Add(Entry.Value)
 		  Next
 		  
-		  If CommonLimit <> Nil And CommonLimit = -1.0 Then
+		  If (CommonLimit Is Nil) = False And CommonLimit = -1.0 Then
 		    CommonLimit = Nil
 		  End If
 		  
 		  Var Limit As NullableDouble = ArkSpawnPointLimitDialog.Present(Self, Self.Project.ContentPacks, CommonLimit, SelectedCreatures, DefinedCreatures, CreaturesInSpawnPoint)
-		  If Limit <> Nil Then
-		    For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		      For Each Creature As Ark.Creature In SelectedCreatures
-		        Point.Limit(Creature) = Limit
+		  If (Limit Is Nil) = False Then
+		    For Each Override As Ark.MutableSpawnPointOverride In Self.mOverrides
+		      For Each CreatureRef As Ark.BlueprintReference In SelectedCreatures
+		        Override.Limit(CreatureRef) = Limit
 		      Next
 		    Next
 		    
@@ -583,83 +604,72 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function SpawnPoints() As Ark.SpawnPoint()
-		  Var Points() As Ark.SpawnPoint
-		  Points.ResizeTo(Self.mSpawnPoints.LastIndex)
-		  For Idx As Integer = 0 To Self.mSpawnPoints.LastIndex
-		    Points(Idx) = New Ark.SpawnPoint(Self.mSpawnPoints(Idx))
+	#tag Method, Flags = &h21
+		Private Sub UpdateLimitsList()
+		  Var SelectedCreatureRefs() As Ark.BlueprintReference
+		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
+		    If Self.LimitsList.RowSelectedAt(I) Then
+		      Var Ref As Ark.BlueprintReference = Self.LimitsList.RowTagAt(I)
+		      SelectedCreatureRefs.Add(Ref)
+		    End If
 		  Next
-		  Return Points
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SpawnPoints(Assigns Points() As Ark.SpawnPoint)
-		  If Points = Nil Then
-		    Self.mSpawnPoints.ResizeTo(-1)
-		  Else
-		    Self.mSpawnPoints.ResizeTo(Points.LastIndex)
-		    For I As Integer = 0 To Points.LastIndex
-		      Self.mSpawnPoints(I) = New Ark.MutableSpawnPoint(Points(I))
-		    Next
-		  End If
-		  
-		  Self.UpdateUI
+		  Self.UpdateLimitsList(SelectedCreatureRefs)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateLimitsList(SelectCreatures() As Ark.Creature = Nil)
+		Private Sub UpdateLimitsList(SelectCreatures() As Ark.BlueprintReference)
+		  If SelectCreatures Is Nil Then
+		    Self.UpdateLimitsList()
+		    Return
+		  End If
+		  
 		  Self.LimitsList.SelectionChangeBlocked = True
 		  
 		  Const MixedLimitValue = -1.0
 		  
 		  Var CombinedLimits As Dictionary
-		  
-		  For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		    Var PointLimits As Dictionary = Point.Limits
-		    
-		    If CombinedLimits = Nil Then
+		  Var CombinedRefs As New Dictionary
+		  For Each Override As Ark.MutableSpawnPointOverride In Self.mOverrides
+		    Var LimitedCreatureRefs() As Ark.BlueprintReference = Override.LimitedCreatureRefs
+		    If CombinedLimits Is Nil Then
 		      CombinedLimits = New Dictionary
-		      For Each Entry As DictionaryEntry In PointLimits
-		        Var Creature As Ark.Creature = Entry.Key
-		        Var Limit As Double = Entry.Value
-		        CombinedLimits.Value(Creature.CreatureId) = Limit
+		      For Each CreatureRef As Ark.BlueprintReference In LimitedCreatureRefs
+		        Var Limit As Double = Override.Limit(CreatureRef)
+		        CombinedLimits.Value(CreatureRef.BlueprintId) = Limit
+		        
+		        If CombinedRefs.HasKey(CreatureRef.BlueprintId) = False Then
+		          CombinedRefs.Value(CreatureRef.BlueprintId) = CreatureRef
+		        End If
 		      Next
 		    Else
-		      For Each Entry As DictionaryEntry In PointLimits
-		        Var Creature As Ark.Creature = Entry.Key
-		        Var Limit As Double = Entry.Value
+		      For Each CreatureRef As Ark.BlueprintReference In LimitedCreatureRefs
+		        Var Limit As Double = Override.Limit(CreatureRef)
+		        If CombinedLimits.HasKey(CreatureRef.BlueprintId) = False Then
+		          CombinedLimits.Value(CreatureRef.BlueprintId) = Limit
+		        ElseIf CombinedLimits.Value(CreatureRef.BlueprintId).DoubleValue <> Limit Then
+		          CombinedLimits.Value(CreatureRef.BlueprintId) = MixedLimitValue
+		        End If
 		        
-		        If CombinedLimits.HasKey(Creature.CreatureId) = False Then
-		          CombinedLimits.Value(Creature.CreatureId) = Limit
-		        ElseIf CombinedLimits.Value(Creature.CreatureId).DoubleValue <> Limit Then
-		          CombinedLimits.Value(Creature.CreatureId) = MixedLimitValue
+		        If CombinedRefs.HasKey(CreatureRef.BlueprintId) = False Then
+		          CombinedRefs.Value(CreatureRef.BlueprintId) = CreatureRef
 		        End If
 		      Next
 		    End If
 		  Next
 		  
-		  If CombinedLimits <> Nil And CombinedLimits.KeyCount > 0 Then
-		    Var SelectedCreatures() As String
-		    If SelectCreatures <> Nil Then
-		      For Each Creature As Ark.Creature In SelectCreatures
-		        SelectedCreatures.Add(Creature.CreatureId)
-		      Next
-		    Else
-		      For I As Integer = 0 To Self.LimitsList.RowCount - 1
-		        If Self.LimitsList.RowSelectedAt(I) Then
-		          SelectedCreatures.Add(Self.LimitsList.RowTagAt(I))
-		        End If
-		      Next
-		    End If
+		  If (CombinedLimits Is Nil) = False And CombinedLimits.KeyCount > 0 Then
+		    Var SelectCreatureIds() As String
+		    For Each CreatureRef As Ark.BlueprintReference In SelectCreatures
+		      SelectCreatureIds.Add(CreatureRef.BlueprintId)
+		    Next
 		    
 		    Self.LimitsList.RowCount = CombinedLimits.KeyCount
 		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
 		      Var CreatureId As String = CombinedLimits.Key(RowIndex)
+		      Var CreatureRef As Ark.BlueprintReference = CombinedRefs.Value(CreatureId)
 		      Var Limit As Double = CombinedLimits.Value(CreatureId)
-		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(CreatureId)
+		      Var Creature As Ark.Blueprint = CreatureRef.Resolve()
 		      If (Creature Is Nil) Then
 		        Self.LimitsList.CellTextAt(RowIndex, 0) = "Unknown Creature"
 		      Else
@@ -667,8 +677,8 @@ End
 		      End If
 		      
 		      Self.LimitsList.CellTextAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
-		      Self.LimitsList.RowTagAt(RowIndex) = CreatureId
-		      Self.LimitsList.RowSelectedAt(RowIndex) = SelectedCreatures.IndexOf(CreatureId) > -1
+		      Self.LimitsList.RowTagAt(RowIndex) = CreatureRef
+		      Self.LimitsList.RowSelectedAt(RowIndex) = SelectCreatureIds.IndexOf(CreatureId) > -1
 		    Next
 		  Else
 		    Self.LimitsList.RowCount = 0
@@ -679,6 +689,25 @@ End
 		  Self.LimitsList.SortingColumn = 0
 		  Self.LimitsList.Sort
 		  Self.LimitsList.SelectionChangeBlocked = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateLimitsList(SelectCreatures() As Ark.Creature)
+		  If SelectCreatures Is Nil Then
+		    Self.UpdateLimitsList()
+		    Return
+		  End If
+		  
+		  Var SelectedCreatureRefs() As Ark.BlueprintReference
+		  For Each Creature As Ark.Creature In SelectCreatures
+		    If Creature Is Nil Then
+		      Continue
+		    End If
+		    
+		    SelectedCreatureRefs.Add(New Ark.BlueprintReference(Creature))
+		  Next
+		  Self.UpdateLimitsList(SelectedCreatureRefs)
 		End Sub
 	#tag EndMethod
 
@@ -702,8 +731,8 @@ End
 		  Self.SetsList.SelectionChangeBlocked = True
 		  
 		  Var CombinedSets As New Dictionary
-		  For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		    For Each Set As Ark.SpawnPointSet In Point
+		  For Each Override As Ark.MutableSpawnPointOverride In Self.mOverrides
+		    For Each Set As Ark.SpawnPointSet In Override
 		      Var Hash As String = Set.Hash
 		      Var Organizer As Ark.SpawnSetOrganizer
 		      If CombinedSets.HasKey(Hash) Then
@@ -712,7 +741,7 @@ End
 		        Organizer = New Ark.SpawnSetOrganizer(Set)
 		        CombinedSets.Value(Hash) = Organizer
 		      End If
-		      Organizer.Attach(Point, Set)
+		      Organizer.Attach(Override, Set)
 		    Next
 		  Next
 		  
@@ -730,7 +759,7 @@ End
 		      Next
 		    End If
 		    
-		    Var ExtendedLabels As Boolean = Self.mSpawnPoints.LastIndex > 0
+		    Var ExtendedLabels As Boolean = Self.mOverrides.Count > 1
 		    
 		    Self.SetsList.RowCount = CombinedSets.KeyCount
 		    Self.SetsList.DefaultRowHeight = If(ExtendedLabels, 34, 26)
@@ -782,14 +811,14 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mSpawnPoints() As Ark.MutableSpawnPoint
+		Private mOverrides() As Ark.MutableSpawnPointOverride
 	#tag EndProperty
 
 
-	#tag Constant, Name = kLimitsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.limit", Scope = Private
+	#tag Constant, Name = kLimitsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Ark.spawn.limit", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.set", Scope = Private
+	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Ark.spawn.set", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LimitsListDefaultHeight, Type = Double, Dynamic = False, Default = \"192", Scope = Public
@@ -825,7 +854,7 @@ End
 		  Var Organizer As Ark.SpawnSetOrganizer = Self.SetsList.RowTagAt(Self.SetsList.SelectedRowIndex)
 		  Organizer.Replicate()
 		  
-		  Self.SetsList.CellTextAt(Self.SetsList.SelectedRowIndex, 0) = Organizer.Label(Self.mSpawnPoints.LastIndex > 0)
+		  Self.SetsList.CellTextAt(Self.SetsList.SelectedRowIndex, 0) = Organizer.Label(Self.mOverrides.Count > 1)
 		  
 		  RaiseEvent Changed
 		End Sub
@@ -874,10 +903,10 @@ End
 		  End If
 		  
 		  For Each Organizer As Ark.SpawnSetOrganizer In Organizers
-		    Var Points() As Ark.MutableSpawnPoint = Organizer.Points
-		    For Each Point As Ark.MutableSpawnPoint In Points
-		      Var Set As Ark.SpawnPointSet = Organizer.SetForPoint(Point)
-		      Point.RemoveSet(Set)
+		    Var Overrides() As Ark.MutableSpawnPointOverride = Organizer.Overrides
+		    For Each Override As Ark.MutableSpawnPointOverride In Overrides
+		      Var Set As Ark.SpawnPointSet = Organizer.SetForOverride(Override)
+		      Override.Remove(Set)
 		    Next
 		  Next
 		  
@@ -928,8 +957,8 @@ End
 		          Continue
 		        End If
 		        
-		        For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		          Point.AddSet(Set)
+		        For Each Override As Ark.MutableSpawnPointOverride In Self.mOverrides
+		          Override.Add(Set)
 		        Next
 		        
 		        SelectSets.Add(Set)
@@ -960,10 +989,11 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DoublePressed()
-		  Var SelectedCreatures() As Ark.Creature
+		  Var SelectedCreatures() As Ark.BlueprintReference
 		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		    If Self.LimitsList.RowSelectedAt(I) Then
-		      SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreature(Self.LimitsList.RowTagAt(I).StringValue))
+		      Var Ref As Ark.BlueprintReference = Self.LimitsList.RowTagAt(I)
+		      SelectedCreatures.Add(Ref)
 		    End If
 		  Next
 		  Self.PresentLimitsDialog(SelectedCreatures)
@@ -976,27 +1006,22 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var Creatures() As Ark.Creature
+		  Var CreatureRefs() As Ark.BlueprintReference
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
-		    Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(Me.RowTagAt(I).StringValue)
-		    If Creature Is Nil Then
-		      Continue
-		    End If
-		    
-		    Creatures.Add(Creature)
+		    CreatureRefs.Add(Me.RowTagAt(I))
 		  Next
 		  
-		  If Warn And Self.ShowDeleteConfirmation(Creatures, "creature limit", "creature limits") = False Then
+		  If Warn And Self.ShowDeleteConfirmation(CreatureRefs, "creature limit", "creature limits") = False Then
 		    Return
 		  End If
 		  
-		  For Each Creature As Ark.Creature In Creatures
-		    For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		      Point.Limit(Creature) = 1.0
+		  For Each CreatureRef As Ark.BlueprintReference In CreatureRefs
+		    For Each Override As Ark.MutableSpawnPointOverride In Self.mOverrides
+		      Override.Limit(CreatureRef) = 1.0
 		    Next
 		  Next
 		  
@@ -1016,38 +1041,36 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Var Limits As New Dictionary
+		  Var Limits() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
-		    Var UUID As String = Me.RowTagAt(I)
-		    Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(UUID)
-		    If Creature Is Nil Then
-		      Continue
-		    End If
-		    
+		    Var CreatureRef As Ark.BlueprintReference = Me.RowTagAt(I)
 		    Var CommonLimit As NullableDouble
-		    For Each Point As Ark.SpawnPoint In Self.mSpawnPoints
-		      Var Limit As NullableDouble = Point.Limit(Creature)
-		      If Limit = Nil Or Limit = 1.0 Then
+		    For Each Override As Ark.SpawnPointOverride In Self.mOverrides
+		      Var Limit As Double = Override.Limit(CreatureRef)
+		      If Limit >= 1.0 Or Limit < 0.0 Then
 		        Continue
 		      End If
 		      
-		      If CommonLimit = Nil Then
+		      If CommonLimit Is Nil Then
 		        CommonLimit = Limit
 		      ElseIf CommonLimit <> Limit Then
 		        Continue For I
 		      End If
 		    Next
 		    
-		    If CommonLimit <> Nil Then
-		      Limits.Value(Creature.CreatureId) = CommonLimit.IntegerValue
+		    If (CommonLimit Is Nil) = False Then
+		      Var LimitDict As New Dictionary
+		      LimitDict.Value("creature") = CreatureRef.SaveData
+		      LimitDict.Value("maxPercentage") = CommonLimit.DoubleValue
+		      Limits.Add(LimitDict)
 		    End If
 		  Next
 		  
-		  If Limits.KeyCount = 0 Then
+		  If Limits.Count = 0 Then
 		    System.Beep
 		    Return
 		  End If
@@ -1058,35 +1081,30 @@ End
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  Var Contents As Variant = Board.GetClipboardData(Self.kLimitsClipboardType)
-		  If Contents.IsNull = False Then
-		    Try
-		      Var Limits As Dictionary = Contents
-		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		      Var SelectCreatures() As Ark.Creature
-		      For Each Entry As DictionaryEntry In Limits
-		        Var CreatureId As String = Entry.Key
-		        Var Creature As Ark.Creature = DataSource.GetCreature(CreatureId)
-		        If Creature Is Nil Then
-		          Continue
-		        End If
-		        
-		        SelectCreatures.Add(Creature)
-		        
-		        Var Limit As Double = Entry.Value
-		        For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		          Point.Limit(Creature) = Limit
-		        Next
-		      Next
-		      
-		      If SelectCreatures.Count > 0 Then
-		        RaiseEvent Changed
-		        Self.UpdateLimitsList(SelectCreatures)
-		      End If
-		    Catch Err As RuntimeException
-		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
-		    End Try
+		  If Contents.IsNull Then
 		    Return
 		  End If
+		  
+		  Try
+		    Var Limits() As Variant = Contents
+		    Var SelectCreatures() As Ark.BlueprintReference
+		    For Each LimitDict As Dictionary In Limits
+		      Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(LimitDict.Value("creature"))
+		      SelectCreatures.Add(CreatureRef)
+		      
+		      Var Limit As Double = LimitDict.Value("maxPercentage")
+		      For Each Override As Ark.MutableSpawnPointOverride In Self.mOverrides
+		        Override.Limit(CreatureRef) = Limit
+		      Next
+		    Next
+		    
+		    If SelectCreatures.Count > 0 Then
+		      RaiseEvent Changed
+		      Self.UpdateLimitsList(SelectCreatures)
+		    End If
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1099,10 +1117,11 @@ End
 		  Case "AddButton"
 		    Self.PresentLimitsDialog()
 		  Case "EditButton"
-		    Var SelectedCreatures() As Ark.Creature
+		    Var SelectedCreatures() As Ark.BlueprintReference
 		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		      If Self.LimitsList.RowSelectedAt(I) Then
-		        SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreature(Self.LimitsList.RowTagAt(I).StringValue))
+		        Var Ref As Ark.BlueprintReference = Self.LimitsList.RowTagAt(I)
+		        SelectedCreatures.Add(Ref)
 		      End If
 		    Next
 		    Self.PresentLimitsDialog(SelectedCreatures)
@@ -1146,26 +1165,26 @@ End
 		  Select Case Item.Name
 		  Case "AddButton"
 		    Var Organizer As New Ark.SpawnSetOrganizer
-		    For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		      Organizer.Attach(Point)
+		    For Each Override As Ark.MutableSpawnPointOverride In Self.mOverrides
+		      Organizer.Attach(Override)
 		    Next
 		    
-		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastIndex > 0))
+		    Self.SetsList.AddRow(Organizer.Label(Self.mOverrides.Count > 1))
 		    Self.SetsList.RowTagAt(Self.SetsList.LastAddedRowIndex) = Organizer
 		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastAddedRowIndex
 		    Self.SetsList.Sort
 		    Self.SetsList.EnsureSelectionIsVisible
 		  Case "WizardButton"
 		    Var Organizer As New Ark.SpawnSetOrganizer
-		    For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		      Organizer.Attach(Point)
+		    For Each Override As Ark.MutableSpawnPointOverride In Self.mOverrides
+		      Organizer.Attach(Override)
 		    Next
 		    
 		    If ArkSpawnSetWizard.Present(Self, Organizer, Self.Project.ContentPacks) = False Then
 		      Return
 		    End If
 		    
-		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastIndex > 0))
+		    Self.SetsList.AddRow(Organizer.Label(Self.mOverrides.Count > 1))
 		    Self.SetsList.RowTagAt(Self.SetsList.LastRowIndex) = Organizer
 		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
 		    Self.SetsList.Sort

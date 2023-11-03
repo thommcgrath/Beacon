@@ -585,36 +585,38 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function AverageSetWeight() As Double
-		  Var Points() As Ark.MutableSpawnPoint = Self.mOrganizer.Points
-		  If Points.Count = 0 Then
+		  Var Overrides() As Ark.MutableSpawnPointOverride = Self.mOrganizer.Overrides
+		  If Overrides.Count = 0 Then
 		    Return 0.5
 		  End If
 		  
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  Var Sum As Double
 		  Var NumSets As Integer
-		  For Each Point As Ark.MutableSpawnPoint In Points
-		    If Point.Mode = Ark.SpawnPoint.ModeRemove Then
+		  
+		  For Each Override As Ark.MutableSpawnPointOverride In Overrides
+		    If Override.Mode = Ark.SpawnPointOverride.ModeRemove Then
 		      Continue
 		    End If
 		    
-		    If Point.Mode = Ark.SpawnPoint.ModeAppend Then
-		      Var Official As Ark.SpawnPoint = DataSource.GetSpawnPoint(Point.SpawnPointId)
+		    If Override.Mode = Ark.SpawnPointOverride.ModeAppend Then
+		      Var Official As Ark.SpawnPoint = DataSource.GetSpawnPoint(Override.SpawnPointId)
 		      If (Official Is Nil) = False Then
-		        Var OfficialMutable As Ark.MutableSpawnPoint = Official.MutableVersion
-		        DataSource.LoadDefaults(OfficialMutable)
-		        For Each Set As Ark.SpawnPointSet In OfficialMutable
+		        Var Template As New Ark.MutableSpawnPointOverride(Official, Ark.SpawnPointOverride.ModeOverride)
+		        Template.LoadDefaults()
+		        For Each Set As Ark.SpawnPointSet In Template
 		          Sum = Sum + Set.RawWeight
 		        Next
-		        NumSets = NumSets + OfficialMutable.Count
+		        NumSets = NumSets + Template.Count
 		      End If
 		    End If
 		    
-		    For Each Set As Ark.SpawnPointSet In Point
+		    For Each Set As Ark.SpawnPointSet In Override
 		      Sum = Sum + Set.RawWeight
 		    Next
-		    NumSets = NumSets + Point.Count
+		    NumSets = NumSets + Override.Count
 		  Next
+		  
 		  
 		  If NumSets = 0 Then
 		    Return 0.5
@@ -689,7 +691,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedCreature As Ark.Creature
+		Private mSelectedCreature As Ark.BlueprintReference
 	#tag EndProperty
 
 
@@ -799,7 +801,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.mSelectedCreature = Creatures(0)
+		  Self.mSelectedCreature = New Ark.BlueprintReference(Creatures(0))
 		  Self.CreatureNameField.Text = Self.mSelectedCreature.Label
 		  Self.CreatureNameField.Italic = False
 		End Sub

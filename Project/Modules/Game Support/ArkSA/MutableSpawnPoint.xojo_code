@@ -52,6 +52,13 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ClearLimits()
+		  Self.mLimits = New ArkSA.BlueprintAttributeManager
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone() As ArkSA.MutableSpawnPoint
 		  Return New ArkSA.MutableSpawnPoint(Self)
 		End Function
@@ -289,6 +296,13 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 		    Self.mSets.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Reset()
+		  Self.mSets.ResizeTo(-1)
+		  Self.ClearLimits()
 		End Sub
 	#tag EndMethod
 

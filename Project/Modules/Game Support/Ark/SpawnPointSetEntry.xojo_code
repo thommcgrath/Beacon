@@ -16,6 +16,19 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Reference As Ark.BlueprintReference)
+		  If Reference.Kind <> Ark.BlueprintReference.KindCreature Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Expected creature reference, got " + Reference.Kind + "."
+		    Raise Err
+		  End If
+		  
+		  Self.Constructor()
+		  Self.mCreatureRef = Reference
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Creature As Ark.Creature)
 		  Self.Constructor()
 		  Self.mCreatureRef = New Ark.BlueprintReference(Creature)

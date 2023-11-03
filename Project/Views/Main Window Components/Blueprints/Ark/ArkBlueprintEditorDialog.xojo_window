@@ -2285,12 +2285,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LoadBlueprint(Point As Ark.SpawnPoint)
-		  Var Mutable As Ark.MutableSpawnPoint = Point.MutableVersion
-		  Ark.DataSource.Pool.Get(False).LoadDefaults(Mutable)
+		  Var Mutable As New Ark.MutableSpawnPointOverride(Point.MutableVersion, Ark.MutableSpawnPointOverride.ModeOverride)
+		  Mutable.LoadDefaults()
 		  
-		  Var Points(0) As Ark.SpawnPoint
-		  Points(0) = Mutable
-		  Self.SpawnPointEditor1.SpawnPoints = Points
+		  Var Overrides(0) As Ark.SpawnPointOverride
+		  Overrides(0) = Mutable
+		  Self.SpawnPointEditor1.Overrides = Overrides
 		End Sub
 	#tag EndMethod
 
@@ -2714,14 +2714,23 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function UpdateBlueprint(Point As Ark.MutableSpawnPoint) As Boolean
-		  Var Points() As Ark.SpawnPoint = Self.SpawnPointEditor1.SpawnPoints
-		  If Points.Count <> 1 Then
+		  Var Overrides() As Ark.SpawnPointOverride = Self.SpawnPointEditor1.Overrides
+		  If Overrides.Count <> 1 Then
 		    Return False
 		  End If
 		  
-		  Var Source As Ark.SpawnPoint = Points(0)
-		  Point.SetsString = Source.SetsString
-		  Point.LimitsString = Source.LimitsString
+		  Var Source As Ark.SpawnPointOverride = Overrides(0)
+		  
+		  Point.Reset()
+		  For Each Set As Ark.SpawnPointSet In Source
+		    Point.AddSet(New Ark.SpawnPointSet(Set))
+		  Next
+		  
+		  Var Refs() As Ark.BlueprintReference = Source.LimitedCreatureRefs
+		  For Each Ref As Ark.BlueprintReference In Refs
+		    Var Limit As Double = Source.Limit(Ref)
+		    Point.Limit(Ref) = Limit
+		  Next
 		  
 		  Return True
 		End Function
@@ -3210,9 +3219,9 @@ End
 #tag Events SpawnPointEditor1
 	#tag Event
 		Sub Opening()
-		  Var Points(0) As Ark.SpawnPoint
-		  Points(0) = New Ark.MutableSpawnPoint(Ark.UnknownBlueprintPath("SpawnPoints", "BlueprintEditor_C"), "8cdcd17e-b246-4973-a694-98e0dee33e25")
-		  Me.SpawnPoints = Points
+		  Var Overrides(0) As Ark.SpawnPointOverride
+		  Overrides(0) = New Ark.SpawnPointOverride(New Ark.MutableSpawnPoint(Ark.UnknownBlueprintPath("SpawnPoints", "BlueprintEditor_C"), "8cdcd17e-b246-4973-a694-98e0dee33e25"), Ark.SpawnPointOverride.ModeOverride)
+		  Me.Overrides = Overrides
 		End Sub
 	#tag EndEvent
 	#tag Event

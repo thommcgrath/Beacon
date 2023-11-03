@@ -2297,18 +2297,17 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadDefaults(SpawnPoint As Ark.MutableSpawnPoint)
-		  If SpawnPoint Is Nil Then
+		Sub LoadDefaults(Override As Ark.MutableSpawnPointOverride)
+		  If Override Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.SpawnPointId)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", Override.SpawnPointId)
 		  If Rows.RowCount = 0 Then
 		    Return
 		  End If
 		  
-		  SpawnPoint.SetsString = Rows.Column("sets").StringValue
-		  SpawnPoint.LimitsString = Rows.Column("limits").StringValue
+		  Override.LoadDefaults(Rows.Column("sets").StringValue, Rows.Column("limits").StringValue)
 		End Sub
 	#tag EndMethod
 

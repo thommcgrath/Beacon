@@ -7,9 +7,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   548
    Index           =   -2147483648
@@ -169,7 +167,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   729
       Begin ArkSpawnPointEditor Editor
@@ -305,6 +303,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
+      AllowTabStop    =   True
       ClearMenuItemValue=   "Clear"
       DelayPeriod     =   250
       Enabled         =   True
@@ -324,7 +323,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
       Top             =   50
@@ -399,7 +397,7 @@ End
 		    Return True
 		  End If
 		  
-		  Self.HandlePastedSpawnPoints(ParsedConfig.Points)
+		  Self.HandlePastedSpawnPoints(ParsedConfig.Overrides)
 		  Return True
 		End Function
 	#tag EndEvent
@@ -479,14 +477,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub HandlePastedSpawnPoints(SpawnPoints() As Ark.SpawnPoint)
-		  If SpawnPoints.LastIndex = -1 Then
+		Private Sub HandlePastedSpawnPoints(SpawnPoints() As Ark.SpawnPointOverride)
+		  If SpawnPoints.Count = 0 Then
 		    Return
 		  End If
 		  
 		  Var Config As Ark.Configs.SpawnPoints = Self.Config(True)
-		  For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
-		    Config.Add(SpawnPoint)
+		  For Each Override As Ark.SpawnPointOverride In SpawnPoints
+		    Config.Add(Override)
 		  Next
 		  
 		  Self.Modified = Config.Modified
@@ -548,49 +546,49 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var SpawnPoints() As Ark.SpawnPoint
+		  Var Overrides() As Ark.SpawnPointOverride
 		  Var Bound As Integer = Self.List.RowCount - 1
 		  For I As Integer = 0 To Bound
 		    If Self.List.RowSelectedAt(I) Then
-		      SpawnPoints.Add(Self.List.RowTagAt(I))
+		      Overrides.Add(Self.List.RowTagAt(I))
 		    End If
 		  Next
-		  Self.UpdateList(SpawnPoints)
+		  Self.UpdateList(Overrides)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectedPoints() As Ark.SpawnPoint)
+		Private Sub UpdateList(SelectedPoints() As Ark.SpawnPointOverride)
 		  Var Config As Ark.Configs.SpawnPoints = Self.Config(False)
-		  Var SpawnPoints() As Ark.SpawnPoint = Config.Points(Self.FilterField.Text)
+		  Var Overrides() As Ark.SpawnPointOverride = Config.Overrides(Self.FilterField.Text)
 		  Var Selected As New Dictionary
-		  For Each SpawnPoint As Ark.SpawnPoint In SelectedPoints
-		    Selected.Value(SpawnPoint.UniqueKey) = True
+		  For Each Override As Ark.SpawnPointOverride In SelectedPoints
+		    Selected.Value(Override.UniqueKey) = True
 		  Next
 		  
 		  Var Labels As Dictionary = Ark.DataSource.Pool.Get(False).GetSpawnPointLabels(Self.Project.MapMask)
 		  
 		  Self.List.SelectionChangeBlocked = True
-		  Self.List.RowCount = SpawnPoints.Count
-		  For I As Integer = SpawnPoints.FirstIndex To SpawnPoints.LastIndex
+		  Self.List.RowCount = Overrides.Count
+		  For I As Integer = Overrides.FirstIndex To Overrides.LastIndex
 		    Var Prefix As String
-		    Select Case SpawnPoints(I).Mode
-		    Case Ark.SpawnPoint.ModeOverride
+		    Select Case Overrides(I).Mode
+		    Case Ark.SpawnPointOverride.ModeOverride
 		      Prefix = "Replace"
-		    Case Ark.SpawnPoint.ModeAppend
+		    Case Ark.SpawnPointOverride.ModeAppend
 		      Prefix = "Add to"
-		    Case Ark.SpawnPoint.ModeRemove
+		    Case Ark.SpawnPointOverride.ModeRemove
 		      Prefix = "Remove from"
 		    Else
 		      #if DebugBuild
-		        System.DebugLog("Unknown mode for spawn point `" + SpawnPoints(I).Path + "`: " + CType(SpawnPoints(I).Mode, Integer).ToString)
+		        System.DebugLog("Unknown mode for spawn point `" + Overrides(I).SpawnPointReference.Path + "`: " + CType(Overrides(I).Mode, Integer).ToString)
 		      #endif
 		    End Select
 		    
-		    Var RowLabel As String = Prefix + " " + Labels.Lookup(SpawnPoints(I).SpawnPointId, SpawnPoints(I).Label).StringValue
+		    Var RowLabel As String = Prefix + " " + Labels.Lookup(Overrides(I).SpawnPointId, Overrides(I).Label).StringValue
 		    Self.List.CellTextAt(I, 0) = RowLabel
-		    Self.List.RowTagAt(I) = SpawnPoints(I)
-		    Self.List.RowSelectedAt(I) = Selected.HasKey(SpawnPoints(I).UniqueKey)
+		    Self.List.RowTagAt(I) = Overrides(I)
+		    Self.List.RowSelectedAt(I) = Selected.HasKey(Overrides(I).UniqueKey)
 		  Next I
 		  Self.List.SortingColumn = 0
 		  Self.List.Sort
@@ -620,7 +618,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.point", Scope = Private
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Ark.spawn.point", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"330", Scope = Public
@@ -639,20 +637,20 @@ End
 #tag Events List
 	#tag Event
 		Sub SelectionChanged()
-		  Var SpawnPoints() As Ark.SpawnPoint
+		  Var Overrides() As Ark.SpawnPointOverride
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
 		    If Me.RowSelectedAt(I) Then
-		      SpawnPoints.Add(Me.RowTagAt(I))
+		      Overrides.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  
-		  Self.Editor.SpawnPoints = SpawnPoints
+		  Self.Editor.Overrides = Overrides
 		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("DuplicateButton")
 		  If (DuplicateButton Is Nil) = False Then
 		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
 		  End If
-		  Self.Pages.SelectedPanelIndex = If(SpawnPoints.LastIndex = -1, 0, 1)
+		  Self.Pages.SelectedPanelIndex = If(Overrides.LastIndex = -1, 0, 1)
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -665,21 +663,21 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var Bound As Integer = Me.RowCount - 1
 		  Var Config As Ark.Configs.SpawnPoints = Self.Config(True)
-		  Var Points() As Ark.SpawnPoint
+		  Var Overrides() As Ark.SpawnPointOverride
 		  For I As Integer = 0 To Bound
 		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
-		    Points.Add(Me.RowTagAt(I))
+		    Overrides.Add(Me.RowTagAt(I))
 		  Next
 		  
-		  If Warn And Self.ShowDeleteConfirmation(Points, "spawn point", "spawn points") = False Then
+		  If Warn And Self.ShowDeleteConfirmation(Overrides, "spawn point", "spawn points") = False Then
 		    Return
 		  End If
 		  
-		  For Each Point As Ark.SpawnPoint In Points
-		    Config.Remove(Point)
+		  For Each Override As Ark.SpawnPointOverride In Overrides
+		    Config.Remove(Override)
 		  Next
 		  
 		  Self.UpdateList()
@@ -700,8 +698,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var SpawnPoint As Ark.SpawnPoint = Me.RowTagAt(I)
-		    SaveData.Add(SpawnPoint.SaveData)
+		    Var Override As Ark.SpawnPointOverride = Me.RowTagAt(I)
+		    SaveData.Add(Override.SaveData)
 		  Next
 		  
 		  If SaveData.Count = 0 Then
@@ -723,14 +721,14 @@ End
 		  If Contents.IsNull = False Then
 		    Try
 		      Var Dicts() As Variant = Contents
-		      Var SpawnPoints() As Ark.SpawnPoint
+		      Var Overrides() As Ark.SpawnPointOverride
 		      For Each Dict As Dictionary In Dicts
-		        Var SpawnPoint As Ark.SpawnPoint = Ark.SpawnPoint.FromSaveData(Dict)
-		        If (SpawnPoint Is Nil) = False Then
-		          SpawnPoints.Add(SpawnPoint)
+		        Var Override As Ark.SpawnPointOverride = Ark.SpawnPointOverride.FromSaveData(Dict)
+		        If (Override Is Nil) = False Then
+		          Overrides.Add(Override)
 		        End If
 		      Next
-		      Self.HandlePastedSpawnPoints(SpawnPoints)
+		      Self.HandlePastedSpawnPoints(Overrides)
 		    Catch Err As RuntimeException
 		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    End Try
@@ -744,10 +742,10 @@ End
 		    Return False
 		  End If
 		  
-		  Var Point1 As Ark.SpawnPoint = Me.RowTagAt(Row1)
-		  Var Point2 As Ark.SpawnPoint = Me.RowTagAt(Row2)
+		  Var Point1 As Ark.SpawnPointOverride = Me.RowTagAt(Row1)
+		  Var Point2 As Ark.SpawnPointOverride = Me.RowTagAt(Row2)
 		  
-		  If Point1 = Nil Or Point2 = Nil Then
+		  If Point1 Is Nil Or Point2 Is Nil Then
 		    Return False
 		  End If
 		  
@@ -768,8 +766,8 @@ End
 	#tag Event
 		Function Typeahead(Buffer As String) As Boolean
 		  For Row As Integer = 0 To Me.LastRowIndex
-		    Var Point As Ark.SpawnPoint = Me.RowTagAt(Row)
-		    If (Point Is Nil) = False And Point.Label.BeginsWith(Buffer) Then
+		    Var Override As Ark.SpawnPointOverride = Me.RowTagAt(Row)
+		    If (Override Is Nil) = False And Override.Label.BeginsWith(Buffer) Then
 		      Me.SelectedRowIndex = Row
 		      Me.EnsureSelectionIsVisible
 		      Exit
@@ -789,28 +787,30 @@ End
 	#tag Event
 		Sub Changed()
 		  Var Config As Ark.Configs.SpawnPoints = Self.Config(True)
-		  Var Points() As Ark.SpawnPoint = Me.SpawnPoints
+		  Var Overrides() As Ark.SpawnPointOverride = Me.Overrides
 		  Var PathMap As New Dictionary
-		  For Each Point As Ark.SpawnPoint In Points
-		    Config.Add(Point)
-		    PathMap.Value(Point.UniqueKey) = Point
+		  For Each Override As Ark.SpawnPointOverride In Overrides
+		    Config.Add(Override)
+		    PathMap.Value(Override.UniqueKey) = Override
 		  Next
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    Var Point As Ark.SpawnPoint = Self.List.RowTagAt(I)
-		    If Not PathMap.HasKey(Point.UniqueKey) Then
+		    Var Override As Ark.SpawnPointOverride = Self.List.RowTagAt(I)
+		    If Not PathMap.HasKey(Override.UniqueKey) Then
 		      Continue
 		    End If
 		    
-		    Var NewPoint As Ark.SpawnPoint = PathMap.Value(Point.UniqueKey)
+		    Var NewPoint As Ark.SpawnPointOverride = PathMap.Value(Override.UniqueKey)
 		    Self.List.RowTagAt(I) = NewPoint
 		  Next
 		  
 		  Self.Modified = Self.Config(False).Modified
 		  
-		  Var Simulator As ArkSpawnSimulatorWindow = Self.SimulatorWindow(False)
-		  If (Simulator Is Nil) = False Then
-		    Simulator.RunSimulator()
-		  End If
+		  #if false
+		    Var Simulator As ArkSpawnSimulatorWindow = Self.SimulatorWindow(False)
+		    If (Simulator Is Nil) = False Then
+		      Simulator.RunSimulator()
+		    End If
+		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -821,38 +821,36 @@ End
 		  
 		  Select Case Item.Name
 		  Case "AddButton"
-		    Var SpawnPoints() As Ark.SpawnPoint = ArkAddSpawnPointDialog.Present(Self, Self.Project)
-		    If SpawnPoints.LastIndex = -1 Then
+		    Var Overrides() As Ark.SpawnPointOverride = ArkAddSpawnPointDialog.Present(Self, Self.Project)
+		    If Overrides.Count = 0 Then
 		      Return
 		    End If
 		    
 		    Var Config As Ark.Configs.SpawnPoints = Self.Config(True)
-		    For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
-		      Config.Add(SpawnPoint)
+		    For Each Override As Ark.SpawnPointOverride In Overrides
+		      Config.Add(Override)
 		    Next
 		    
 		    Self.Modified = Config.Modified
-		    Self.UpdateList(SpawnPoints)
+		    Self.UpdateList(Overrides)
 		  Case "DuplicateButton"
-		    Var TargetSpawnPoints() As Ark.SpawnPoint = ArkAddSpawnPointDialog.Present(Self, Self.Project, ArkAddSpawnPointDialog.UIModeDuplicate)
-		    If TargetSpawnPoints.LastIndex = -1 Then
+		    Var TargetOverrides() As Ark.SpawnPointOverride = ArkAddSpawnPointDialog.Present(Self, Self.Project, ArkAddSpawnPointDialog.UIModeDuplicate)
+		    If TargetOverrides.Count = 0 Then
 		      Return
 		    End If
 		    
-		    Var SourceSpawnPoint As Ark.SpawnPoint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		    Var SourceLimits As String = SourceSpawnPoint.LimitsString
-		    Var SourceSets As String = SourceSpawnPoint.SetsString
+		    Var SourceOverride As Ark.SpawnPointOverride = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    Var Config As Ark.Configs.SpawnPoints = Self.Config(True)
-		    For Each Target As Ark.SpawnPoint In TargetSpawnPoints
-		      Var SpawnPoint As New Ark.MutableSpawnPoint(Target)
-		      SpawnPoint.Mode = SourceSpawnPoint.Mode
-		      SpawnPoint.LimitsString = SourceLimits
-		      SpawnPoint.SetsString = SourceSets
-		      Config.Add(SpawnPoint)
+		    Var NewOverrides() As Ark.SpawnPointOverride
+		    For Each Target As Ark.SpawnPointOverride In TargetOverrides
+		      Var Override As New Ark.MutableSpawnPointOverride(SourceOverride)
+		      Override.SpawnPointReference = Target.SpawnPointReference
+		      Config.Add(Override)
+		      NewOverrides.Add(Override)
 		    Next
 		    
 		    Self.Modified = Config.Modified
-		    Self.UpdateList(TargetSpawnPoints)
+		    Self.UpdateList(NewOverrides)
 		  End Select
 		End Sub
 	#tag EndEvent

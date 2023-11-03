@@ -2,7 +2,7 @@
 Protected Class MutableSpawnPoint
 Inherits Ark.SpawnPoint
 Implements Ark.MutableBlueprint
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
 		Sub AddSet(Set As Ark.SpawnPointSet, Replace As Boolean = False)
 		  Var Idx As Integer = Self.IndexOf(Set)
@@ -47,6 +47,13 @@ Implements Ark.MutableBlueprint
 		  End If
 		  
 		  Self.mSpawnPointId = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ClearLimits()
+		  Self.mLimits = New Ark.BlueprintAttributeManager
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -149,6 +156,25 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Limit(CreatureRef As Ark.BlueprintReference, Assigns Value As Double)
+		  Value = Min(Abs(Value), 1.0)
+		  
+		  Var Exists As Boolean = Self.mLimits.HasBlueprint(CreatureRef)
+		  
+		  If Exists And Value = 1.0 Then
+		    Self.mLimits.Remove(CreatureRef)
+		    Self.Modified = True
+		    Return
+		  End If
+		  
+		  If Exists = False Or Self.mLimits.Value(CreatureRef, Self.LimitAttribute).DoubleValue <> Value Then
+		    Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Limit(Creature As Ark.Creature, Assigns Value As Double)
 		  Value = Min(Abs(Value), 1.0)
 		  
@@ -247,6 +273,13 @@ Implements Ark.MutableBlueprint
 		    Self.mSets.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Reset()
+		  Self.ResizeTo(-1)
+		  Self.ClearLimits()
 		End Sub
 	#tag EndMethod
 

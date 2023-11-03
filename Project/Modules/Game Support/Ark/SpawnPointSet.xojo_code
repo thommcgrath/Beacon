@@ -450,6 +450,19 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ReplacedCreatureRefs() As Ark.BlueprintReference()
+		  Var Arr() As Ark.BlueprintReference
+		  Var Blueprints() As Ark.BlueprintReference = Self.mReplacements.References
+		  For Each Blueprint As Ark.BlueprintReference In Blueprints
+		    If Blueprint.IsCreature Then
+		      Arr.Add(Blueprint)
+		    End If
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ReplacedCreatures() As Ark.Creature()
 		  Var Arr() As Ark.Creature
 		  Var Blueprints() As Ark.BlueprintReference = Self.mReplacements.References

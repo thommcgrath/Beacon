@@ -9,11 +9,15 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function ClassString() As String
-		  If Self.mBlueprint Is Nil Then
-		    Return Self.mClassString
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.ClassString
 		  End If
 		  
-		  Return Self.mBlueprint.ClassString
+		  If Self.mClassString.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mClassString
 		End Function
 	#tag EndMethod
 
@@ -185,6 +189,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsResolved() As Boolean
+		  Return (Self.mBlueprint Is Nil) = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function IsSaveData(Value As Variant) As Boolean
 		  If Value.IsNull Or Value.IsArray Or (Value IsA Dictionary) = False Then
 		    Return False
@@ -224,11 +234,15 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If Self.mBlueprint Is Nil Then
-		    Return Self.mLabel
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.Label
 		  End If
 		  
-		  Return Self.mBlueprint.Label
+		  If Self.mLabel.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
@@ -274,17 +288,21 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Path() As String
-		  If Self.mBlueprint Is Nil Then
-		    Return Self.mPath
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.Path
 		  End If
 		  
-		  Return Self.mBlueprint.Path
+		  If Self.mPath.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mPath
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Resolve(Packs As Beacon.StringList = Nil) As Ark.Blueprint
-		  If (Self.mBlueprint Is Nil) = False Then
+		Function Resolve(Packs As Beacon.StringList = Nil, Options As Integer = 3) As Ark.Blueprint
+		  If (Options And Self.OptionUseCache) = Self.OptionUseCache And (Self.mBlueprint Is Nil) = False Then
 		    Return Self.mBlueprint
 		  End If
 		  
@@ -370,6 +388,9 @@ Implements Beacon.NamedItem
 	#tag EndConstant
 
 	#tag Constant, Name = KindSpawnPoint, Type = String, Dynamic = False, Default = \"spawnPoint", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionUseCache, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"2", Scope = Private

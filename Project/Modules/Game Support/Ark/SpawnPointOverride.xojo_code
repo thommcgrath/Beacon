@@ -2,33 +2,33 @@
 Protected Class SpawnPointOverride
 Implements Beacon.Countable,Beacon.NamedItem
 	#tag Method, Flags = &h0
-		Sub Constructor(Point As ArkSA.BlueprintReference, Mode As Integer)
+		Sub Constructor(Point As Ark.BlueprintReference, Mode As Integer)
 		  Self.mPointRef = Point
 		  Self.mMode = Mode
-		  Self.mLimits = New ArkSA.BlueprintAttributeManager
+		  Self.mLimits = New Ark.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Point As ArkSA.SpawnPoint, Mode As Integer)
-		  Self.Constructor(New ArkSA.BlueprintReference(Point), Mode)
+		Sub Constructor(Point As Ark.SpawnPoint, Mode As Integer)
+		  Self.Constructor(New Ark.BlueprintReference(Point), Mode)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As ArkSA.SpawnPointOverride)
+		Sub Constructor(Source As Ark.SpawnPointOverride)
 		  If (Source.mLimits Is Nil) = False Then
 		    Self.mLimits = Source.mLimits.Clone
 		  Else
-		    Self.mLimits = New ArkSA.BlueprintAttributeManager
+		    Self.mLimits = New Ark.BlueprintAttributeManager
 		  End If
 		  Self.mMode = Source.mMode
 		  Self.mModified = Source.mModified
-		  Self.mPointRef = New ArkSA.BlueprintReference(Source.mPointRef)
+		  Self.mPointRef = New Ark.BlueprintReference(Source.mPointRef)
 		  
 		  Self.mSets.ResizeTo(Source.mSets.LastIndex)
 		  For Idx As Integer = 0 To Self.mSets.LastIndex
-		    Self.mSets(Idx) = New ArkSA.SpawnPointSet(Source.mSets(Idx))
+		    Self.mSets(Idx) = New Ark.SpawnPointSet(Source.mSets(Idx))
 		  Next
 		End Sub
 	#tag EndMethod
@@ -40,15 +40,15 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromLegacy(SaveData As Dictionary) As ArkSA.SpawnPointOverride
+		Shared Function FromLegacy(SaveData As Dictionary) As Ark.SpawnPointOverride
 		  Try
-		    Var SpawnPointRef As ArkSA.BlueprintReference
+		    Var SpawnPointRef As Ark.BlueprintReference
 		    If SaveData.HasKey("Reference") Then
-		      SpawnPointRef = ArkSA.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
+		      SpawnPointRef = Ark.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
 		    ElseIf SaveData.HasKey("spawnPointId") Then
-		      SpawnPointRef = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindSpawnPoint, SaveData.Value("spawnPointId").StringValue, "", "", "", "")
+		      SpawnPointRef = New Ark.BlueprintReference(Ark.BlueprintReference.KindSpawnPoint, SaveData.Value("spawnPointId").StringValue, "", "", "", "")
 		    Else
-		      SpawnPointRef = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindSpawnPoint, SaveData.Lookup("UUID", "").StringValue, SaveData.Lookup("Path", "").StringValue, SaveData.Lookup("Class", "").StringValue, "", "")
+		      SpawnPointRef = New Ark.BlueprintReference(Ark.BlueprintReference.KindSpawnPoint, SaveData.Lookup("UUID", "").StringValue, SaveData.Lookup("Path", "").StringValue, SaveData.Lookup("Class", "").StringValue, "", "")
 		    End If
 		    If SpawnPointRef Is Nil Then
 		      Return Nil
@@ -63,15 +63,15 @@ Implements Beacon.Countable,Beacon.NamedItem
 		      Return Nil
 		    End If
 		    
-		    Var Override As New ArkSA.SpawnPointOverride(SpawnPointRef, Mode)
+		    Var Override As New Ark.SpawnPointOverride(SpawnPointRef, Mode)
 		    
 		    Var LimitsVar As Variant = SaveData.FirstValue("limits", "Limits", Nil)
 		    If LimitsVar.IsNull = False Then
-		      Var Manager As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(LimitsVar)
+		      Var Manager As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(LimitsVar)
 		      If (Manager Is Nil) = False Then
 		        // A reference manager
-		        Var References() As ArkSA.BlueprintReference = Manager.References
-		        For Each Reference As ArkSA.BlueprintReference In References
+		        Var References() As Ark.BlueprintReference = Manager.References
+		        For Each Reference As Ark.BlueprintReference In References
 		          If Reference.IsCreature = False Then
 		            Continue
 		          End If
@@ -83,11 +83,11 @@ Implements Beacon.Countable,Beacon.NamedItem
 		        // A dictionary
 		        Var Limits As Dictionary = Dictionary(LimitsVar.ObjectValue)
 		        For Each Entry As DictionaryEntry In Limits
-		          Var Reference As ArkSA.BlueprintReference
+		          Var Reference As Ark.BlueprintReference
 		          If Beacon.UUID.Validate(Entry.Key.StringValue) Then
-		            Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "")
+		            Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "")
 		          Else
-		            Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, "", Entry.Key.StringValue, "", "", "")
+		            Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, "", Entry.Key.StringValue, "", "", "")
 		          End If
 		          
 		          Override.mLimits.Value(Reference, LimitAttribute) = Entry.Value
@@ -98,7 +98,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 		        For Each Limit As Dictionary In Limits
 		          Var CreatureId As String = Limit.Value("creatureId")
 		          Var MaxPercentage As Double = Limit.Value("maxPercentage")
-		          Var Reference As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, CreatureId, "", "", "", "")
+		          Var Reference As New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, CreatureId, "", "", "", "")
 		          Override.mLimits.Value(Reference, LimitAttribute) = MaxPercentage
 		        Next
 		      End If
@@ -111,7 +111,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 		      SetSaveData = SaveData.Value("Sets")
 		    End If
 		    For Each SetDict As Dictionary In SetSaveData
-		      Var Set As ArkSA.SpawnPointSet = ArkSA.SpawnPointSet.FromSaveData(SetDict)
+		      Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(SetDict)
 		      If Set <> Nil Then
 		        Override.mSets.Add(Set)
 		      End If
@@ -126,17 +126,17 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary) As ArkSA.SpawnPointOverride
+		Shared Function FromSaveData(SaveData As Dictionary) As Ark.SpawnPointOverride
 		  If SaveData.HasAllKeys("definition", "mode") = False Then
 		    Return Nil
 		  End If
 		  
-		  Var Definition As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(SaveData.Value("definition"))
+		  Var Definition As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Value("definition"))
 		  Var Mode As Integer = SaveData.Value("mode")
-		  Var Override As New ArkSA.SpawnPointOverride(Definition, Mode)
+		  Var Override As New Ark.SpawnPointOverride(Definition, Mode)
 		  
 		  If SaveData.HasKey("limits") Then
-		    Var Limits As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(SaveData.Value("limits"))
+		    Var Limits As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(SaveData.Value("limits"))
 		    If (Limits Is Nil) = False Then
 		      Override.mLimits = Limits
 		    End If
@@ -145,7 +145,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 		  If SaveData.HasKey("sets") Then
 		    Var SetDicts() As Variant = SaveData.Value("sets")
 		    For Each SetDict As Dictionary In SetDicts
-		      Var SpawnSet As ArkSA.SpawnPointSet = ArkSA.SpawnPointSet.FromSaveData(SetDict)
+		      Var SpawnSet As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(SetDict)
 		      If (SpawnSet Is Nil) = False Then
 		        Override.mSets.Add(SpawnSet)
 		      End If
@@ -157,7 +157,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function GetUniqueKey(Point As ArkSA.SpawnPoint, Mode As Integer) As String
+		Shared Function GetUniqueKey(Point As Ark.SpawnPoint, Mode As Integer) As String
 		  If Point Is Nil Then
 		    Return ""
 		  End If
@@ -173,19 +173,19 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImmutableCopy() As ArkSA.SpawnPointOverride
-		  Return New ArkSA.SpawnPointOverride(Self)
+		Function ImmutableCopy() As Ark.SpawnPointOverride
+		  Return New Ark.SpawnPointOverride(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImmutableVersion() As ArkSA.SpawnPointOverride
+		Function ImmutableVersion() As Ark.SpawnPointOverride
 		  Return Self
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Set As ArkSA.SpawnPointSet) As Integer
+		Function IndexOf(Set As Ark.SpawnPointSet) As Integer
 		  If Set Is Nil Then
 		    Return -1
 		  End If
@@ -219,7 +219,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 		  
 		  Var Label As String = Self.mPointRef.Label
 		  If Label.IsEmpty Then
-		    Var Point As ArkSA.Blueprint = Self.mPointRef.Resolve()
+		    Var Point As Ark.Blueprint = Self.mPointRef.Resolve()
 		    If (Point Is Nil) = False Then
 		      Label = Point.Label
 		    End If
@@ -229,7 +229,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Limit(CreatureRef As ArkSA.BlueprintReference) As Double
+		Function Limit(CreatureRef As Ark.BlueprintReference) As Double
 		  If Self.mLimits.HasBlueprint(CreatureRef) Then
 		    Return Self.mLimits.Value(CreatureRef, Self.LimitAttribute)
 		  Else
@@ -239,7 +239,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Limit(Creature As ArkSA.Creature) As Double
+		Function Limit(Creature As Ark.Creature) As Double
 		  If Self.mLimits.HasBlueprint(Creature) Then
 		    Return Self.mLimits.Value(Creature, Self.LimitAttribute)
 		  Else
@@ -249,8 +249,8 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LimitedCreatureRefs() As ArkSA.BlueprintReference()
-		  Var References() As ArkSA.BlueprintReference
+		Function LimitedCreatureRefs() As Ark.BlueprintReference()
+		  Var References() As Ark.BlueprintReference
 		  If (Self.mLimits Is Nil) = False Then
 		    References = Self.mLimits.References
 		  End If
@@ -259,15 +259,15 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LimitedCreatures() As ArkSA.Creature()
-		  Var Creatures() As ArkSA.Creature
-		  Var References() As ArkSA.BlueprintReference = Self.mLimits.References
-		  For Each Reference As ArkSA.BlueprintReference In References
-		    Var Creature As ArkSA.Blueprint = Reference.Resolve()
-		    If Creature Is Nil Or (Creature IsA ArkSA.Creature) = False Then
+		Function LimitedCreatures() As Ark.Creature()
+		  Var Creatures() As Ark.Creature
+		  Var References() As Ark.BlueprintReference = Self.mLimits.References
+		  For Each Reference As Ark.BlueprintReference In References
+		    Var Creature As Ark.Blueprint = Reference.Resolve()
+		    If Creature Is Nil Or (Creature IsA Ark.Creature) = False Then
 		      Continue
 		    End If
-		    Creatures.Add(ArkSA.Creature(Creature))
+		    Creatures.Add(Ark.Creature(Creature))
 		  Next
 		  Return Creatures
 		End Function
@@ -285,7 +285,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 		    Return True
 		  End If
 		  
-		  For Each Set As ArkSA.SpawnPointSet In Self.mSets
+		  For Each Set As Ark.SpawnPointSet In Self.mSets
 		    If Set.Modified Then
 		      Return True
 		    End If
@@ -298,7 +298,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 		  Self.mModified = Value
 		  
 		  If Value = False Then
-		    For Each Set As ArkSA.SpawnPointSet In Self.mSets
+		    For Each Set As Ark.SpawnPointSet In Self.mSets
 		      Set.Modified = False
 		    Next
 		  End If
@@ -306,14 +306,14 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableCopy() As ArkSA.MutableSpawnPointOverride
-		  Return New ArkSA.MutableSpawnPointOverride(Self)
+		Function MutableCopy() As Ark.MutableSpawnPointOverride
+		  Return New Ark.MutableSpawnPointOverride(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableVersion() As ArkSA.MutableSpawnPointOverride
-		  Return New ArkSA.MutableSpawnPointOverride(Self)
+		Function MutableVersion() As Ark.MutableSpawnPointOverride
+		  Return New Ark.MutableSpawnPointOverride(Self)
 		End Function
 	#tag EndMethod
 
@@ -327,7 +327,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 		  End If
 		  If Self.mSets.Count > 0 Then
 		    Var SetArray() As Dictionary
-		    For Each Set As ArkSA.SpawnPointSet In Self.mSets
+		    For Each Set As Ark.SpawnPointSet In Self.mSets
 		      SetArray.Add(Set.SaveData)
 		    Next
 		    Dict.Value("sets") = SetArray
@@ -337,7 +337,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SetAt(Idx As Integer) As ArkSA.SpawnPointSet
+		Function SetAt(Idx As Integer) As Ark.SpawnPointSet
 		  If Idx = -1 Then
 		    Return Nil
 		  End If
@@ -353,7 +353,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SpawnPointReference() As ArkSA.BlueprintReference
+		Function SpawnPointReference() As Ark.BlueprintReference
 		  Return Self.mPointRef
 		End Function
 	#tag EndMethod
@@ -362,7 +362,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 		Function UniqueKey() As String
 		  Var ClassString As String = Self.mPointRef.ClassString
 		  If ClassString.IsEmpty Then
-		    Var Point As ArkSA.Blueprint = Self.mPointRef.Resolve()
+		    Var Point As Ark.Blueprint = Self.mPointRef.Resolve()
 		    If (Point Is Nil) = False Then
 		      ClassString = Point.ClassString
 		    End If
@@ -373,7 +373,7 @@ Implements Beacon.Countable,Beacon.NamedItem
 
 
 	#tag Property, Flags = &h1
-		Protected mLimits As ArkSA.BlueprintAttributeManager
+		Protected mLimits As Ark.BlueprintAttributeManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -385,11 +385,11 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mPointRef As ArkSA.BlueprintReference
+		Protected mPointRef As Ark.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mSets() As ArkSA.SpawnPointSet
+		Protected mSets() As Ark.SpawnPointSet
 	#tag EndProperty
 
 
