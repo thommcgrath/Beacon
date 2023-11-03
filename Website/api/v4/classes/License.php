@@ -6,6 +6,7 @@ use BeaconCommon, BeaconRecordSet, Exception, DateTime, JsonSerializable;
 class License extends DatabaseObject implements JsonSerializable {
 	protected string $licenseId;
 	protected string $userId;
+	protected string $emailId;
 	protected string $purchaseId;
 	protected string $productId;
 	protected string $productName;
@@ -17,6 +18,7 @@ class License extends DatabaseObject implements JsonSerializable {
 	public function __construct(BeaconRecordSet $row) {
 		$this->licenseId = $row->Field('license_id');
 		$this->userId = $row->Field('user_id');
+		$this->emailId = $row->Field('email_id');
 		$this->purchaseId = $row->Field('purchase_id');
 		$this->productId = $row->Field('product_id');
 		$this->productName = $row->Field('product_name');
@@ -30,6 +32,7 @@ class License extends DatabaseObject implements JsonSerializable {
 		return new DatabaseSchema('public', 'licenses', [
 			new DatabaseObjectProperty('licenseId', ['primaryKey' => true, 'columnName' => 'license_id']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'accessor' => 'users.user_id']),
+			new DatabaseObjectProperty('emailId', ['columnName' => 'email_id', 'accessor' => 'users.email_id']),
 			new DatabaseObjectProperty('purchaseId', ['columnName' => 'purchase_id']),
 			new DatabaseObjectProperty('productId', ['columnName' => 'product_id']),
 			new DatabaseObjectProperty('productName', ['columnName' => 'product_name', 'accessor' => 'products.product_name']),
@@ -57,6 +60,10 @@ class License extends DatabaseObject implements JsonSerializable {
 
 	public function UserId(): string {
 		return $this->userId;
+	}
+
+	public function EmailId(): string {
+		return $this->emailId;
 	}
 
 	public function PurchaseId(): string {

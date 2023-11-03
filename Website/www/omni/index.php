@@ -9,6 +9,8 @@ $database = BeaconCommon::Database();
 $stable_version = BeaconCommon::NewestVersionForStage(3);
 $currency = BeaconShop::GetCurrency();
 $supported_currencies = BeaconShop::GetCurrencyOptions();
+BeaconTemplate::SetTitle('Buy Beacon Omni');
+BeaconTemplate::SetCanonicalPath('/omni', str_starts_with($_SERVER['REQUEST_URI'], '/omni/license/') === false);
 
 $results = $database->Query('SELECT products.game_id, products.tag, products.product_id, products.product_name, product_prices.price, EXTRACT(epoch FROM products.updates_length) AS plan_length_seconds FROM public.products INNER JOIN public.product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1 AND products.active = TRUE;', $currency);
 $product_details = [];
@@ -76,6 +78,33 @@ foreach ($supported_payment_methods as $payment_method) {
 	];
 }
 
+$forceEmail = null;
+if (isset($_GET['licenseId'])) {
+	$licenseId = $_GET['licenseId'];
+	if (BeaconUUID::Validate($licenseId)) {
+		$license = BeaconAPI\v4\License::Fetch($licenseId);
+		if (is_null($license) === false) {
+			$emailId = $license->EmailId();
+			$results = $database->Query('SELECT merchant_reference FROM public.purchases WHERE purchaser_email = $1 AND refunded = FALSE;', $emailId);
+			$stripeApi = null;
+			while (!$results->EOF()) {
+				$merchantReference = $results->Field('merchant_reference');
+				if (str_starts_with($merchantReference, 'pi_')) {
+					if (is_null($stripeApi)) {
+						$stripeApi = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'), '2022-08-01');
+					}
+					$email = $stripeApi->EmailForPaymentIntent($merchantReference);
+					if (is_null($email) === false) {
+						$forceEmail = $email;
+						break;
+					}
+				}
+				$results->MoveNext();
+			}
+		}
+	}
+}
+
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 BeaconTemplate::StartScript();
 ?>
@@ -89,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		'paymentMethods' => $payment_method_info,
 		'products' => $product_details,
 		'productIds' => $product_ids,
+		'forceEmail' => $forceEmail,
 	]); ?>;
 	document.dispatchEvent(event);
 });

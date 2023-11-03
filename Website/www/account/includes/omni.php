@@ -69,6 +69,7 @@ function ShowLicenses() {
 	echo '<table class="generic"><thead><tr><th class="w-50">Product</th><th class="low-priority w-30">Updates Until</th><th class="low-priority w-20">Actions</th></thead>';
 	$now = new DateTime();
 	foreach ($licenses as $license) {
+		$licenseId = $license->LicenseId();
 		$purchaseId = $license->PurchaseId();
 		$productId = $license->ProductId();
 		$productName = $license->ProductName();
@@ -83,7 +84,7 @@ function ShowLicenses() {
 			$exp = new DateTime($expiration);
 			$expirationText = '<time datetime="' . htmlentities($exp->format('Y-m-d H:i:s.000O')) . '">' . htmlentities($exp->format('F jS Y')) . '</time>';
 			$renew_caption = ($exp->getTimestamp() < time() ? 'Renew' : 'Extend');
-			$actions[$renew_caption] = '/omni/buy/' . $productId;
+			$actions[$renew_caption] = '/omni/license/' . urlencode($licenseId);
 
 			if ($exp < $now) {
 				// The license has expired

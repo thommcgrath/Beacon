@@ -447,12 +447,12 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	const arkOnlyMode = Object.keys(ProductIds).length === 1;
 
 	const goToCart = () => {
-		history.pushState({}, '', '/omni/#checkout');
+		history.pushState({}, '', '/omni#checkout');
 		dispatchEvent(new PopStateEvent('popstate', {}));
 	};
 
 	const goToLanding = () => {
-		history.pushState({}, '', '/omni/');
+		history.pushState({}, '', '/omni');
 		dispatchEvent(new PopStateEvent('popstate', {}));
 	};
 
@@ -501,6 +501,13 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 			});
 		},
 		present: function(allowSkipping, successFunction) {
+			if (checkoutProperties.forceEmail) {
+				cart.setEmail(checkoutProperties.forceEmail).then(({newEmail, cartChanged}) => {
+					successFunction(cartChanged);
+				});
+				return;
+			}
+
 			this.allowsSkipping = allowSkipping;
 			this.successFunction = successFunction;
 
@@ -996,6 +1003,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 		update: function() {
 			if (arkOnlyMode) {
 				this.emailField.innerText = cart.email;
+				this.changeEmailButton.disabled = Boolean(checkoutProperties.forceEmail);
 				this.changeEmailButton.innerText = cart.email ? 'Change Email' : 'Set Email';
 				this.changeEmailButton.classList.remove('hidden');
 				this.addMoreButton.classList.add('hidden');
@@ -1020,6 +1028,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 				}
 			} else if (cart.count > 0) {
 				this.emailField.innerText = cart.email;
+				this.changeEmailButton.disabled = Boolean(checkoutProperties.forceEmail);
 				this.changeEmailButton.innerText = cart.email ? 'Change Email' : 'Set Email';
 				this.changeEmailButton.classList.remove('hidden');
 				this.body.innerText = '';
@@ -1196,4 +1205,17 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 		setViewMode(true);
 	});
 	setViewMode(false);
+
+	if (checkoutProperties.forceEmail) {
+		if (cart.email !== checkoutProperties.forceEmail) {
+			cart.reset();
+		}
+		if (cart.count === 0) {
+			emailDialog.present(true, () => {
+				wizard.present();
+			});
+		} else {
+			goToCart();
+		}
+	}
 });
