@@ -11,6 +11,7 @@ class License extends DatabaseObject implements JsonSerializable {
 	protected string $productName;
 	protected int $productFlags;
 	protected ?string $expiration;
+	protected ?int $expirationEpoch;
 	protected ?string $firstUsed;
 
 	public function __construct(BeaconRecordSet $row) {
@@ -21,6 +22,7 @@ class License extends DatabaseObject implements JsonSerializable {
 		$this->productName = $row->Field('product_name');
 		$this->productFlags = filter_var($row->Field('product_flags'), FILTER_VALIDATE_INT);
 		$this->expiration = $row->Field('expiration');
+		$this->expirationEpoch = $row->Field('expiration_epoch');
 		$this->firstUsed = $row->Field('first_used');
 	}
 
@@ -33,6 +35,7 @@ class License extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('productName', ['columnName' => 'product_name', 'accessor' => 'products.product_name']),
 			new DatabaseObjectProperty('productFlags', ['columnName' => 'product_flags', 'accessor' => 'products.flags']),
 			new DatabaseObjectProperty('expiration', ['accessor' => "DATE_TRUNC('second', %%TABLE%%.%%COLUMN%%)"]),
+			new DatabaseObjectProperty('expirationEpoch', ['accessor' => "EXTRACT(EPOCH FROM DATE_TRUNC('second', %%TABLE%%.expiration))", 'columnName' => 'expiration_epoch']),
 			new DatabaseObjectProperty('firstUsed', ['columnName' => 'first_used', 'accessor' => "DATE_TRUNC('second', purchases.first_used)"]),
 		], [
 			"INNER JOIN public.products ON (licenses.product_id = products.product_id)",
@@ -76,6 +79,10 @@ class License extends DatabaseObject implements JsonSerializable {
 		return $this->expiration;
 	}
 
+	public function ExpirationEpoch(): ?int {
+		return $this->expirationEpoch;
+	}
+
 	public function Expires(): bool {
 		return is_null($this->expiration) === false;
 	}
@@ -91,6 +98,7 @@ class License extends DatabaseObject implements JsonSerializable {
 			'flags' => $this->productFlags,
 			'firstUsed' => $this->firstUsed,
 			'expires' => $this->expiration,
+			'expiresEpoch' => $this->expirationEpoch,
 			'maxBuild' => $this->NewestLicensedBuild(),
 		];
 		return $json;
