@@ -1553,37 +1553,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateReplacementsList(Set As ArkSA.SpawnPointSet, SelectCreatures() As ArkSA.Creature = Nil)
+		Private Sub UpdateReplacementsList(Set As ArkSA.SpawnPointSet, SelectCreatures() As ArkSA.BlueprintReference = Nil)
 		  Var SelectedReplacements() As String
-		  If SelectCreatures = Nil Then
+		  If SelectCreatures Is Nil Then
 		    For I As Integer = 0 To Self.ReplaceList.RowCount - 1
 		      If Self.ReplaceList.RowSelectedAt(I) Then
-		        SelectedReplacements.Add(Self.ReplaceList.RowTagAt(I))
+		        Var Reference As ArkSA.BlueprintReference = Self.ReplaceList.RowTagAt(I)
+		        SelectedReplacements.Add(Reference.BlueprintId)
 		      End If
 		    Next
 		  Else
-		    For Each Creature As ArkSA.Creature In SelectCreatures
-		      SelectedReplacements.Add(Creature.CreatureId)
+		    For Each CreatureRef As ArkSA.BlueprintReference In SelectCreatures
+		      SelectedReplacements.Add(CreatureRef.BlueprintId)
 		    Next
 		  End If
 		  
-		  Var ReplacedCreatures() As ArkSA.Creature = Set.ReplacedCreatures
+		  Var ReplacedCreatures() As ArkSA.BlueprintReference = Set.ReplacedCreatureRefs
 		  Self.ReplaceList.SelectionChangeBlocked = True
 		  Self.ReplaceList.RowCount = ReplacedCreatures.LastIndex + 1
 		  For RowIndex As Integer = 0 To ReplacedCreatures.LastIndex
-		    Var ReplacedCreature As ArkSA.Creature = ReplacedCreatures(RowIndex)
-		    Var ReplacementCreatures() As ArkSA.Creature = Set.ReplacementCreatures(ReplacedCreature)
+		    Var ReplacedCreature As ArkSA.BlueprintReference = ReplacedCreatures(RowIndex)
+		    Var ReplacementCreatures() As ArkSA.BlueprintReference = Set.ReplacementCreatures(ReplacedCreature)
 		    
 		    Var TotalWeight As Double
-		    For Each ReplacementCreature As ArkSA.Creature In ReplacementCreatures
+		    For Each ReplacementCreature As ArkSA.BlueprintReference In ReplacementCreatures
 		      Var Weight As NullableDouble = Set.CreatureReplacementWeight(ReplacedCreature, ReplacementCreature)
-		      If Weight <> Nil Then
+		      If (Weight Is Nil) = False Then
 		        TotalWeight = TotalWeight + Weight
 		      End If
 		    Next
 		    
 		    Var ReplacementCreatureNames() As String
-		    For Each ReplacementCreature As ArkSA.Creature In ReplacementCreatures
+		    For Each ReplacementCreature As ArkSA.BlueprintReference In ReplacementCreatures
 		      Var Label As String = ReplacementCreature.Label
 		      Var Weight As NullableDouble = Set.CreatureReplacementWeight(ReplacedCreature, ReplacementCreature)
 		      If Weight <> Nil Then
@@ -1595,8 +1596,8 @@ End
 		    ReplacementCreatureNames.Sort
 		    
 		    Self.ReplaceList.CellTextAt(RowIndex, 0) = ReplacedCreature.Label + EndOfLine + Language.EnglishOxfordList(ReplacementCreatureNames)
-		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.CreatureId
-		    Self.ReplaceList.RowSelectedAt(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.CreatureId) > -1
+		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature
+		    Self.ReplaceList.RowSelectedAt(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.BlueprintId) > -1
 		  Next
 		  Self.ReplaceList.SortingColumn = 0
 		  Self.ReplaceList.Sort
@@ -1913,12 +1914,12 @@ End
 		Sub Pressed()
 		  Var Set As ArkSA.MutableSpawnPointSet = Self.SpawnSet
 		  
-		  Var Creature As ArkSA.Creature = ArkSASpawnPointReplacementsDialog.Present(Self, Self.Project.ContentPacks, Set)
+		  Var Creature As ArkSA.BlueprintReference = ArkSASpawnPointReplacementsDialog.Present(Self, Self.Project.ContentPacks, Set)
 		  If Creature = Nil Then
 		    Return
 		  End If
 		  
-		  Var Creatures(0) As ArkSA.Creature
+		  Var Creatures(0) As ArkSA.BlueprintReference
 		  Creatures(0) = Creature
 		  Self.UpdateReplacementsList(Set, Creatures)
 		  Self.ReplaceList.EnsureSelectionIsVisible
@@ -1965,18 +1966,13 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  Var Bound As Integer = Me.RowCount - 1
-		  Var CreaturesToDelete() As ArkSA.Creature
+		  Var CreaturesToDelete() As ArkSA.BlueprintReference
 		  For I As Integer = Bound DownTo 0
 		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
-		    Var Creature As ArkSA.Creature
-		    Try
-		      Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(Me.RowTagAt(I))
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Creature UUID: " + Me.RowTagAt(I).StringValue)
-		    End Try
+		    Var Creature As ArkSA.BlueprintReference = Me.RowTagAt(I)
 		    If Creature Is Nil Then
 		      Continue
 		    End If
@@ -1990,9 +1986,9 @@ End
 		  
 		  Var Set As ArkSA.MutableSpawnPointSet = Self.SpawnSet
 		  Var Changed As Boolean
-		  For Each FromCreature As ArkSA.Creature In CreaturesToDelete
-		    Var Replacements() As ArkSA.Creature = Set.ReplacementCreatures(FromCreature)
-		    For Each ToCreature As ArkSA.Creature In Replacements
+		  For Each FromCreature As ArkSA.BlueprintReference In CreaturesToDelete
+		    Var Replacements() As ArkSA.BlueprintReference = Set.ReplacementCreatures(FromCreature)
+		    For Each ToCreature As ArkSA.BlueprintReference In Replacements
 		      If Set.CreatureReplacementWeight(FromCreature, ToCreature) <> Nil Then
 		        Set.CreatureReplacementWeight(FromCreature, ToCreature) = Nil
 		        Changed = True
@@ -2015,24 +2011,24 @@ End
 		      Continue
 		    End If
 		    
-		    Var FromUUID As String = Me.RowTagAt(I)
-		    Var FromCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(FromUUID)
-		    If FromCreature Is Nil Then
-		      Continue
-		    End If
-		    
-		    Var Replacements() As ArkSA.Creature = Set.ReplacementCreatures(FromCreature)
-		    Var Map As New Dictionary
-		    For Each ToCreature As ArkSA.Creature In Replacements
-		      Var Weight As NullableDouble = Set.CreatureReplacementWeight(FromCreature, ToCreature)
-		      If (Weight Is Nil) = False Then
-		        Map.Value(ToCreature.BlueprintId) = Weight.DoubleValue
+		    Var FromCreatureRef As ArkSA.BlueprintReference = Me.RowTagAt(I)
+		    Var ReplacementRefs() As ArkSA.BlueprintReference = Set.ReplacementCreatures(FromCreatureRef)
+		    Var Replacements() As Dictionary
+		    For Each ReplacementRef As ArkSA.BlueprintReference In ReplacementRefs
+		      Var Weight As NullableDouble = Set.CreatureReplacementWeight(FromCreatureRef, ReplacementRef)
+		      If Weight Is Nil Then
+		        Continue
 		      End If
+		      
+		      Var Replacement As New Dictionary
+		      Replacement.Value("creature") = ReplacementRef.SaveData
+		      Replacement.Value("weight") = Weight.DoubleValue
+		      Replacements.Add(Replacement)
 		    Next
 		    
 		    Var Dict As New Dictionary
-		    Dict.Value("creatureId") = FromCreature.BlueprintId
-		    Dict.Value("replacements") = Map
+		    Dict.Value("creature") = FromCreatureRef.SaveData
+		    Dict.Value("replacements") = Replacements
 		    Items.Add(Dict)
 		  Next
 		  
@@ -2051,42 +2047,41 @@ End
 		  End If
 		  
 		  Var Contents As Variant = Board.GetClipboardData(Self.kReplacementClipboardType)
-		  If Contents.IsNull = False Then
-		    Try
-		      Var Dicts() As Variant = Contents
-		      Var Set As ArkSA.MutableSpawnPointSet = Self.SpawnSet
-		      Var SelectCreatures() As ArkSA.Creature
-		      Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		      For Each Dict As Dictionary In Dicts
-		        Var FromCreatureId As String = Dict.Value("creatureId")
-		        Var FromCreature As ArkSA.Creature = DataSource.GetCreature(FromCreatureId)
-		        If FromCreature Is Nil Then
+		  If Contents.IsNull Then
+		    Return
+		  End If
+		  
+		  Try
+		    Var Dicts() As Variant = Contents
+		    Var Set As ArkSA.MutableSpawnPointSet = Self.SpawnSet
+		    Var SelectCreatures() As ArkSA.BlueprintReference
+		    For Each Dict As Dictionary In Dicts
+		      Var FromCreatureRef As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dictionary(Dict.Value("creature")))
+		      If FromCreatureRef Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var Replacements() As Variant = Dict.Value("replacements")
+		      For Each Replacement As Dictionary In Replacements
+		        Var ToCreatureRef As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dictionary(Replacement.Value("creature")))
+		        If ToCreatureRef Is Nil Then
 		          Continue
 		        End If
 		        
-		        Var Map As Dictionary = Dict.Value("replacements")
-		        For Each Entry As DictionaryEntry In Map
-		          Var ToCreatureId As String = Entry.Key
-		          Var ToCreature As ArkSA.Creature = DataSource.GetCreature(ToCreatureId)
-		          If ToCreature Is Nil Then
-		            Continue
-		          End If
-		          Var Weight As Double = Entry.Value
-		          Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
-		        Next Entry
+		        Var Weight As Double = Replacement.Value("weight")
+		        Set.CreatureReplacementWeight(FromCreatureRef, ToCreatureRef) = Weight
 		        
-		        SelectCreatures.Add(FromCreature)
+		        SelectCreatures.Add(FromCreatureRef)
 		      Next
-		      
-		      If SelectCreatures.Count > 0 Then
-		        Self.UpdateReplacementsList(Set, SelectCreatures)
-		        RaiseEvent Changed
-		      End If
-		    Catch Err As RuntimeException
-		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
-		    End Try
-		    Return
-		  End If
+		    Next
+		    
+		    If SelectCreatures.Count > 0 Then
+		      Self.UpdateReplacementsList(Set, SelectCreatures)
+		      RaiseEvent Changed
+		    End If
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		  End Try
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2096,19 +2091,20 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
-		  Var TargetUUID As String = Self.ReplaceList.RowTagAt(Self.ReplaceList.SelectedRowIndex)
-		  Var TargetCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(TargetUUID)
-		  If TargetCreature Is Nil Then
+		  Var TargetCreatureRef As ArkSA.BlueprintReference = Self.ReplaceList.RowTagAt(Self.ReplaceList.SelectedRowIndex)
+		  If TargetCreatureRef Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Creature As ArkSA.Creature = ArkSASpawnPointReplacementsDialog.Present(Self, Self.Project.ContentPacks, Self.SpawnSet, TargetCreature)
-		  If Creature <> Nil Then
-		    Var Creatures(0) As ArkSA.Creature
-		    Creatures(0) = Creature
-		    Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
-		    RaiseEvent Changed
+		  Var CreatureRef As ArkSA.BlueprintReference = ArkSASpawnPointReplacementsDialog.Present(Self, Self.Project.ContentPacks, Self.SpawnSet, TargetCreatureRef)
+		  If CreatureRef Is Nil Then
+		    Return
 		  End If
+		  
+		  Var CreatureRefs(0) As ArkSA.BlueprintReference
+		  CreatureRefs(0) = CreatureRef
+		  Self.UpdateReplacementsList(Self.SpawnSet, CreatureRefs)
+		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
 #tag EndEvents

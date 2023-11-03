@@ -2,7 +2,7 @@
 Protected Class SpawnSetOrganizer
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
-		Sub Attach(Point As ArkSA.MutableSpawnPoint, Set As ArkSA.SpawnPointSet = Nil)
+		Sub Attach(Point As ArkSA.MutableSpawnPointOverride, Set As ArkSA.SpawnPointSet = Nil)
 		  If Set <> Nil Then
 		    Self.mSets.Value(Point) = Set.MutableVersion
 		  Else
@@ -29,8 +29,8 @@ Implements Beacon.NamedItem
 		Function FindUniqueSetLabel(Label As String) As String
 		  Var Siblings() As String
 		  For Each Entry As DictionaryEntry In Self.mSets
-		    Var Point As ArkSA.SpawnPoint = Entry.Key
-		    For Each Set As ArkSA.SpawnPointSet In Point
+		    Var Override As ArkSA.SpawnPointOverride = Entry.Key
+		    For Each Set As ArkSA.SpawnPointSet In Override
 		      Siblings.Add(Set.Label)
 		    Next
 		  Next
@@ -54,13 +54,13 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  If Self.mSubLabel = "" Then
-		    Var PointNames() As String
-		    Var Points() As ArkSA.MutableSpawnPoint = Self.Points
-		    For Each Point As ArkSA.MutableSpawnPoint In Points
-		      PointNames.Add(Point.Label)
+		    Var OverrideNames() As String
+		    Var Overrides() As ArkSA.MutableSpawnPointOverride = Self.Overrides
+		    For Each Override As ArkSA.MutableSpawnPointOverride In Overrides
+		      OverrideNames.Add(Override.Label)
 		    Next
-		    PointNames.Sort
-		    Self.mSubLabel = Language.EnglishOxfordList(PointNames)
+		    OverrideNames.Sort
+		    Self.mSubLabel = Language.EnglishOxfordList(OverrideNames)
 		  End If
 		  
 		  Return Self.Template.Label + EndOfLine + Self.mSubLabel
@@ -108,8 +108,8 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Points() As ArkSA.MutableSpawnPoint()
-		  Var Arr() As ArkSA.MutableSpawnPoint
+		Function Overrides() As ArkSA.MutableSpawnPointOverride()
+		  Var Arr() As ArkSA.MutableSpawnPointOverride
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Arr.Add(Entry.Key)
 		  Next
@@ -121,37 +121,37 @@ Implements Beacon.NamedItem
 		Sub Replicate()
 		  Var Bound As Integer = Self.mSets.KeyCount - 1
 		  For I As Integer = 0 To Bound
-		    Var Point As ArkSA.MutableSpawnPoint = Self.mSets.Key(I)
-		    Var Set As ArkSA.MutableSpawnPointSet = Self.mSets.Value(Point)
+		    Var Override As ArkSA.MutableSpawnPointOverride = Self.mSets.Key(I)
+		    Var Set As ArkSA.MutableSpawnPointSet = Self.mSets.Value(Override)
 		    
 		    If (Set Is Nil) = False Then
-		      Point.RemoveSet(Set)
+		      Override.Remove(Set)
 		      Set.CopyFrom(Self.mTemplate)
 		    Else
 		      Set = New ArkSA.MutableSpawnPointSet
 		      Set.CopyFrom(Self.mTemplate)
-		      Self.mSets.Value(Point) = Set
+		      Self.mSets.Value(Override) = Set
 		    End If
-		    Point.AddSet(Set, True)
+		    Override.Add(Set)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SetForPoint(Point As ArkSA.MutableSpawnPoint) As ArkSA.SpawnPointSet
-		  If Self.mSets.HasKey(Point) Then
-		    Return Self.mSets.Value(Point)
+		Function SetForOverride(Override As ArkSA.MutableSpawnPointOverride) As ArkSA.SpawnPointSet
+		  If Self.mSets.HasKey(Override) Then
+		    Return Self.mSets.Value(Override)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetLimit(Creature As ArkSA.Creature, Limit As NullableDouble, OnlyIfNotSet As Boolean)
+		Sub SetLimit(CreatureRef As ArkSA.BlueprintReference, Limit As NullableDouble, OnlyIfNotSet As Boolean)
 		  Var Bound As Integer = Self.mSets.KeyCount - 1
 		  For I As Integer = 0 To Bound
-		    Var Point As ArkSA.MutableSpawnPoint = Self.mSets.Key(I)
-		    If OnlyIfNotSet = False Or Point.Limit(Creature) = 1 Then
-		      Point.Limit(Creature) = Limit
+		    Var Override As ArkSA.MutableSpawnPointOverride = Self.mSets.Key(I)
+		    If OnlyIfNotSet = False Or Override.Limit(CreatureRef) = 1 Then
+		      Override.Limit(CreatureRef) = Limit
 		    End If
 		  Next
 		End Sub

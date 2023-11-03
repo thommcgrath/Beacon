@@ -9,11 +9,15 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function ClassString() As String
-		  If Self.mBlueprint Is Nil Then
-		    Return Self.mClassString
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.ClassString
 		  End If
 		  
-		  Return Self.mBlueprint.ClassString
+		  If Self.mClassString.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mClassString
 		End Function
 	#tag EndMethod
 
@@ -230,11 +234,15 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If Self.mBlueprint Is Nil Then
-		    Return Self.mLabel
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.Label
 		  End If
 		  
-		  Return Self.mBlueprint.Label
+		  If Self.mLabel.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
@@ -280,11 +288,15 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Path() As String
-		  If Self.mBlueprint Is Nil Then
-		    Return Self.mPath
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.Path
 		  End If
 		  
-		  Return Self.mBlueprint.Path
+		  If Self.mPath.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mPath
 		End Function
 	#tag EndMethod
 

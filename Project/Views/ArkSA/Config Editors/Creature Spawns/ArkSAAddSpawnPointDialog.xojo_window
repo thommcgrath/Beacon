@@ -477,9 +477,9 @@ End
 		  If Project.HasConfigGroup(ArkSA.Configs.NameCreatureSpawns) Then
 		    Var Config As ArkSA.Configs.SpawnPoints = ArkSA.Configs.SpawnPoints(Project.ConfigGroup(ArkSA.Configs.NameCreatureSpawns, False))
 		    If Config <> Nil Then
-		      Var SpawnPoints() As ArkSA.SpawnPoint = Config.Points
-		      For Each SpawnPoint As ArkSA.SpawnPoint In SpawnPoints
-		        Self.mDefinedSpawns.Value(SpawnPoint.UniqueKey) = True
+		      Var Overrides() As ArkSA.SpawnPointOverride = Config.Overrides
+		      For Each Override As ArkSA.SpawnPointOverride In Overrides
+		        Self.mDefinedSpawns.Value(Override.UniqueKey) = True
 		      Next
 		    End If
 		  End If
@@ -489,13 +489,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Project As ArkSA.Project, UIMode As Integer = UIModeAdd) As ArkSA.SpawnPoint()
+		Shared Function Present(Parent As DesktopWindow, Project As ArkSA.Project, UIMode As Integer = UIModeAdd) As ArkSA.SpawnPointOverride()
 		  Var Win As New ArkSAAddSpawnPointDialog(Project, UIMode)
 		  Win.ShowModal(Parent)
 		  
-		  Var SpawnPoints() As ArkSA.SpawnPoint = Win.mSelectedPoints
+		  Var Overrides() As ArkSA.SpawnPointOverride = Win.mSelectedOverrides
 		  Win.Close
-		  Return SpawnPoints
+		  Return Overrides
 		End Function
 	#tag EndMethod
 
@@ -504,7 +504,7 @@ End
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8.Trim
 		  Var SpawnPoints() As ArkSA.SpawnPoint
 		  
-		  If SearchText = "" Then
+		  If SearchText.IsEmpty Then
 		    SpawnPoints = ArkSA.DataSource.Pool.Get(False).GetSpawnPoints("", Self.mMods)
 		  Else
 		    Select Case Self.FilterMode
@@ -534,7 +534,10 @@ End
 		      Continue
 		    End If
 		    
-		    If Self.mDefinedSpawns.HasKey(SpawnPoint.SpawnPointId + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.SpawnPointId + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.SpawnPointId + ":Remove")) Then
+		    Var OverrideKey As String = ArkSA.SpawnPointOverride.GetUniqueKey(SpawnPoint, ArkSA.SpawnPointOverride.ModeOverride)
+		    Var AppendKey As String = ArkSA.SpawnPointOverride.GetUniqueKey(SpawnPoint, ArkSA.SpawnPointOverride.ModeAppend)
+		    Var RemoveKey As String = ArkSA.SpawnPointOverride.GetUniqueKey(SpawnPoint, ArkSA.SpawnPointOverride.ModeRemove)
+		    If Self.mDefinedSpawns.HasKey(OverrideKey) Or (Self.mDefinedSpawns.HasKey(AppendKey) And Self.mDefinedSpawns.HasKey(RemoveKey)) Then
 		      Continue
 		    End If
 		    
@@ -598,7 +601,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedPoints() As ArkSA.SpawnPoint
+		Private mSelectedOverrides() As ArkSA.SpawnPointOverride
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -640,14 +643,13 @@ End
 		    End If
 		    
 		    Var SpawnPoint As ArkSA.SpawnPoint = Self.List.RowTagAt(I)
-		    Var MutableSpawnPoint As ArkSA.MutableSpawnPoint = SpawnPoint.MutableVersion
+		    Var MutableOverride As New ArkSA.MutableSpawnPointOverride(SpawnPoint, Mode)
 		    
 		    If LoadDefaults Then
-		      ArkSA.DataSource.Pool.Get(False).LoadDefaults(MutableSpawnPoint)
+		      ArkSA.DataSource.Pool.Get(False).LoadDefaults(MutableOverride)
 		    End If
 		    
-		    MutableSpawnPoint.Mode = Mode
-		    Self.mSelectedPoints.Add(MutableSpawnPoint)
+		    Self.mSelectedOverrides.Add(MutableOverride.ImmutableVersion)
 		  Next
 		  
 		  Self.Hide

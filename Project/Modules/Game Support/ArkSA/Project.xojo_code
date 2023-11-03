@@ -478,12 +478,12 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      Var SpawnPoint As ArkSA.MutableSpawnPoint = SourceSpawnPoint.MutableClone
-		      ArkSA.DataSource.Pool.Get(False).LoadDefaults(SpawnPoint)
+		      Var SourceOverride As New ArkSA.MutableSpawnPointOverride(SourceSpawnPoint, ArkSA.SpawnPointOverride.ModeAppend)
+		      SourceOverride.LoadDefaults()
 		      
-		      Var Limit As Double = SpawnPoint.Limit(ReplacedCreature)
+		      Var Limit As Double = SourceOverride.Limit(ReplacedCreature)
 		      Var NewSets() As ArkSA.SpawnPointSet
-		      For Each Set As ArkSA.SpawnPointSet In SpawnPoint
+		      For Each Set As ArkSA.SpawnPointSet In SourceOverride
 		        Var NewSet As ArkSA.MutableSpawnPointSet
 		        For Each Entry As ArkSA.SpawnPointSetEntry In Set
 		          If Entry.Creature <> ReplacedCreature Then
@@ -513,21 +513,18 @@ Inherits Beacon.Project
 		          SpawnConfig.IsImplicit = False
 		        End If
 		        
-		        Var Override As ArkSA.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.SpawnPointId, ArkSA.SpawnPoint.ModeAppend)
-		        If Override = Nil Then
-		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.SpawnPointId, ArkSA.SpawnPoint.ModeOverride)
-		        End If
-		        If Override = Nil Then
-		          Override = New ArkSA.MutableSpawnPoint(SpawnPoint)
-		          ArkSA.MutableSpawnPoint(Override).ResizeTo(-1)
-		          ArkSA.MutableSpawnPoint(Override).LimitsString = "{}"
-		          ArkSA.MutableSpawnPoint(Override).Mode = ArkSA.SpawnPoint.ModeAppend
+		        Var Override As ArkSA.SpawnPointOverride = SpawnConfig.OverrideForSpawnPoint(SourceSpawnPoint, ArkSA.SpawnPointOverride.ModeAppend)
+		        If Override Is Nil Then
+		          Override = SpawnConfig.OverrideForSpawnPoint(SourceSpawnPoint, ArkSA.SpawnPointOverride.ModeOverride)
+		          If Override Is Nil Then
+		            Override = New ArkSA.MutableSpawnPointOverride(SourceSpawnPoint, ArkSA.SpawnPointOverride.ModeAppend)
+		          End If
 		        End If
 		        
-		        Var Mutable As ArkSA.MutableSpawnPoint = Override.MutableVersion
+		        Var Mutable As ArkSA.MutableSpawnPointOverride = Override.MutableVersion
 		        Mutable.Limit(ReplacementCreature) = Limit
 		        For Each Set As ArkSA.SpawnPointSet In NewSets
-		          Mutable.AddSet(Set)
+		          Mutable.Add(Set)
 		        Next
 		        
 		        SpawnConfig.Add(Mutable)

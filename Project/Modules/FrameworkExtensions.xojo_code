@@ -340,7 +340,30 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FirstKey(Extends Dict As JSONItem, ParamArray Keys() As String) As String
+		  For Idx As Integer = 0 To Keys.LastIndex
+		    If Dict.HasKey(Keys(Idx)) Then
+		      Return Keys(Idx)
+		    End If
+		  Next
+		  Return ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function FirstValue(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Variant
+		  // Last element of Keys is the default
+		  For Idx As Integer = 0 To Keys.LastIndex - 1
+		    If Dict.HasKey(Keys(Idx)) Then
+		      Return Dict.Value(Keys(Idx))
+		    End If
+		  Next
+		  Return Keys(Keys.LastIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FirstValue(Extends Dict As JSONItem, ParamArray Keys() As String) As Variant
 		  // Last element of Keys is the default
 		  For Idx As Integer = 0 To Keys.LastIndex - 1
 		    If Dict.HasKey(Keys(Idx)) Then

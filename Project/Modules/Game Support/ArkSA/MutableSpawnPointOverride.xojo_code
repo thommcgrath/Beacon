@@ -5,11 +5,14 @@ Inherits ArkSA.SpawnPointOverride
 	#tag Method, Flags = &h0
 		Sub Add(Set As ArkSA.SpawnPointSet)
 		  Var Idx As Integer = Self.IndexOf(Set)
-		  If Idx > -1 And Self.mSets(Idx).Hash = Set.Hash Then
-		    Return
+		  If Idx > -1 Then
+		    If Self.mSets(Idx).Hash = Set.Hash Then
+		      Return
+		    End If
+		    Self.mSets(Idx) = Set.ImmutableVersion
+		  Else
+		    Self.mSets.Add(Set.ImmutableVersion)
 		  End If
-		  
-		  Self.mSets(Idx) = Set.ImmutableVersion
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -24,7 +27,7 @@ Inherits ArkSA.SpawnPointOverride
 		Sub Limit(CreatureRef As ArkSA.BlueprintReference, Assigns Value As Double)
 		  Var HasBlueprint As Boolean = Self.mLimits.HasAttribute(CreatureRef, Self.LimitAttribute)
 		  
-		  If Value = 1.0 Then
+		  If Value >= 1.0 Or Value < 0.0 Then
 		    If HasBlueprint Then
 		      Self.mLimits.Remove(CreatureRef, Self.LimitAttribute)
 		      Self.Modified = True
@@ -45,7 +48,7 @@ Inherits ArkSA.SpawnPointOverride
 		Sub Limit(Creature As ArkSA.Creature, Assigns Value As Double)
 		  Var HasBlueprint As Boolean = Self.mLimits.HasAttribute(Creature, Self.LimitAttribute)
 		  
-		  If Value = 1.0 Then
+		  If Value >= 1.0 Or Value < 0.0 Then
 		    If HasBlueprint Then
 		      Self.mLimits.Remove(Creature, Self.LimitAttribute)
 		      Self.Modified = True
@@ -59,6 +62,34 @@ Inherits ArkSA.SpawnPointOverride
 		  
 		  Self.mLimits.Value(Creature, Self.LimitAttribute) = Value
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadDefaults()
+		  ArkSA.DataSource.Pool.Get(False).LoadDefaults(Self)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadDefaults(SetsString As String, LimitsString As String)
+		  Var Sets() As Variant = Beacon.ParseJSON(SetsString)
+		  For Each Set As Dictionary In Sets
+		    Var Created As ArkSA.SpawnPointSet = ArkSA.SpawnPointSet.FromSaveData(Set)
+		    If (Created Is Nil) = False Then
+		      Self.Add(Created)
+		    End If
+		  Next
+		  
+		  Var Limits As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(Beacon.ParseJSON(LimitsString))
+		  Var References() As ArkSA.BlueprintReference = Limits.References
+		  For Each Reference As ArkSA.BlueprintReference In References
+		    Var Limit As Double = Limits.Value(Reference, LimitAttribute)
+		    Self.Limit(Reference) = Limit
+		  Next
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Loading spawn set defaults")
 		End Sub
 	#tag EndMethod
 
@@ -103,13 +134,38 @@ Inherits ArkSA.SpawnPointOverride
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SetAt(Idx As Integer) As ArkSA.SpawnPointSet
-		  If Idx = -1 Then
-		    Return Nil
+		Sub RemoveCreature(CreatureRef As ArkSA.BlueprintReference)
+		  Self.Limit(CreatureRef) = 1.0
+		  
+		  For SetIdx As Integer = Self.mSets.LastIndex DownTo 0
+		    Var MutableSet As ArkSA.MutableSpawnPointSet = Self.mSets(SetIdx).MutableVersion
+		    For EntryIdx As Integer = MutableSet.LastIndex DownTo 0
+		      If MutableSet.Entry(EntryIdx).CreatureReference = CreatureRef Then
+		        MutableSet.Remove(EntryIdx)
+		      End If
+		    Next
+		    If MutableSet.Count = 0 Then
+		      Self.Remove(MutableSet)
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveCreature(Creature As ArkSA.Creature)
+		  Self.RemoveCreature(New ArkSA.BlueprintReference(Creature))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetAt(Idx As Integer, Assigns Set As ArkSA.SpawnPointSet)
+		  If Set Is Nil Then
+		    Return
 		  End If
 		  
-		  Return Self.mSets(Idx).ImmutableVersion
-		End Function
+		  Self.mSets(Idx) = Set.ImmutableVersion
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -645,9 +645,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ProcessSpawnPoint(Point As ArkSA.MutableSpawnPoint)
+		Private Sub ProcessSpawnPoint(Point As ArkSA.MutableSpawnPointOverride)
 		  For SetIdx As Integer = 0 To Point.LastIndex
-		    Var MutableSet As ArkSA.MutableSpawnPointSet = Point.Set(SetIdx).MutableVersion
+		    Var MutableSet As ArkSA.MutableSpawnPointSet = Point.SetAt(SetIdx).MutableVersion
 		    Var ChangeThisColorSet As Boolean
 		    
 		    For EntryIdx As Integer = 0 To MutableSet.LastIndex
@@ -674,7 +674,7 @@ End
 		      MutableSet.ColorSetClass = Self.mSelectedColorClass
 		    End If
 		    
-		    Point.Set(SetIdx) = MutableSet
+		    Point.SetAt(SetIdx) = MutableSet
 		  Next SetIdx
 		  
 		  Self.mConfig.Add(Point)
@@ -910,16 +910,15 @@ End
 		        Continue
 		      End If
 		      
-		      Var Original As ArkSA.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.SpawnPointId, ArkSA.SpawnPoint.ModeOverride)
+		      Var Original As ArkSA.SpawnPointOverride = Self.mConfig.OverrideForSpawnPoint(Definition, ArkSA.SpawnPoint.ModeOverride)
 		      If (Original Is Nil) = False Then
 		        Continue
 		      End If
 		      
-		      Var Mutable As ArkSA.MutableSpawnPoint = Definition.MutableClone
-		      Mutable.Mode = ArkSA.SpawnPoint.ModeOverride
+		      Var Mutable As New ArkSA.MutableSpawnPointOverride(Definition, ArkSA.SpawnPointOverride.ModeOverride)
 		      ArkSA.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		      
-		      Var Remove As ArkSA.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.SpawnPointId, ArkSA.SpawnPoint.ModeRemove)
+		      Var Remove As ArkSA.SpawnPointOverride = Self.mConfig.OverrideForSpawnPoint(Definition, ArkSA.SpawnPoint.ModeRemove)
 		      If (Remove Is Nil) = False Then
 		        For Each Set As ArkSA.SpawnPointSet In Remove
 		          For Each Entry As ArkSA.SpawnPointSetEntry In Set
@@ -929,17 +928,16 @@ End
 		        Self.mConfig.Remove(Remove)
 		      End If
 		      
-		      Var Append As ArkSA.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.SpawnPointId, ArkSA.SpawnPoint.ModeAppend)
+		      Var Append As ArkSA.SpawnPointOverride = Self.mConfig.OverrideForSpawnPoint(Definition, ArkSA.SpawnPoint.ModeAppend)
 		      If (Append Is Nil) = False Then
 		        For Each Set As ArkSA.SpawnPointSet In Append
-		          Mutable.AddSet(Set.Clone)
+		          Mutable.Add(Set.Clone)
 		        Next Set
-		        Var Limits As Dictionary = Append.Limits
-		        For Each Entry As DictionaryEntry In Limits
-		          Var LimitCreature As ArkSA.Creature = Entry.Key
-		          Var Percent As Double = Entry.Value
-		          Mutable.Limit(LimitCreature) = Percent
-		        Next Entry
+		        Var LimitedCreatureRefs() As ArkSA.BlueprintReference = Append.LimitedCreatureRefs
+		        For Each CreatureRef As ArkSA.BlueprintReference In LimitedCreatureRefs
+		          Var Percent As Double = Append.Limit(CreatureRef)
+		          Mutable.Limit(CreatureRef) = Percent
+		        Next
 		        Self.mConfig.Remove(Append)
 		      End If
 		      
@@ -950,17 +948,17 @@ End
 		  Next Creature
 		  
 		  // Next, process everything
-		  Var Points() As ArkSA.SpawnPoint = Self.mConfig.Points
-		  Var PointCount As Integer = Points.Count
-		  Var TotalPointsText As String = Language.NounWithQuantity(PointCount, "spawn point", "spawn points")
+		  Var Overrides() As ArkSA.SpawnPointOverride = Self.mConfig.Overrides
+		  Var OverrideCount As Integer = Overrides.Count
+		  Var TotalPointsText As String = Language.NounWithQuantity(OverrideCount, "spawn point", "spawn points")
 		  Var PointsProcessed As Integer
 		  Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed 0 of " + TotalPointsText + "…"))
-		  For Each Point As ArkSA.SpawnPoint In Points
-		    Var Mutable As ArkSA.MutableSpawnPoint = Point.MutableVersion
+		  For Each Override As ArkSA.SpawnPointOverride In Overrides
+		    Var Mutable As ArkSA.MutableSpawnPointOverride = Override.MutableVersion
 		    Self.ProcessSpawnPoint(Mutable)
 		    PointsProcessed = PointsProcessed + 1
 		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed " + PointsProcessed.ToString(Locale.Current, "#,##0") + " of " + TotalPointsText + "…"))
-		  Next Point
+		  Next
 		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Status": "Finished"))
 		End Sub
