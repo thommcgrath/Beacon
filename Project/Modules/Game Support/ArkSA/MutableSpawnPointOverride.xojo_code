@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MutableSpawnPointOverride
 Inherits ArkSA.SpawnPointOverride
+Implements ArkSA.Prunable
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
 		Sub Add(Set As ArkSA.SpawnPointSet)
@@ -108,6 +109,22 @@ Inherits ArkSA.SpawnPointOverride
 		Function MutableVersion() As ArkSA.MutableSpawnPointOverride
 		  Return Self
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
+		  // Part of the ArkSA.Prunable interface.
+		  
+		  For Idx As Integer = Self.mSets.LastIndex DownTo 0
+		    Var Mutable As New ArkSA.MutableSpawnPointSet(Self.mSets(Idx))
+		    Mutable.PruneUnknownContent(ContentPackIds)
+		    If Mutable.Count = 0 Then
+		      Self.mSets.RemoveAt(Idx)
+		      Self.Modified = True
+		    End If
+		  Next
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

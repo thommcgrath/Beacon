@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointOverride
-Implements ArkSA.Prunable, Beacon.Countable, Beacon.NamedItem
+Implements Beacon.Countable, Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Point As ArkSA.BlueprintReference, Mode As Integer)
 		  Self.mPointRef = Point
@@ -304,22 +304,6 @@ Implements ArkSA.Prunable, Beacon.Countable, Beacon.NamedItem
 		Function MutableVersion() As ArkSA.MutableSpawnPointOverride
 		  Return New ArkSA.MutableSpawnPointOverride(Self)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub PruneUnknownContent(ContentPackIds As Beacon.StringList)
-		  // Part of the ArkSA.Prunable interface.
-		  
-		  For Idx As Integer = Self.mSets.LastIndex DownTo 0
-		    Var Mutable As New ArkSA.MutableSpawnPointSet(Self.mSets(Idx))
-		    Mutable.PruneUnknownContent(ContentPackIds)
-		    If Mutable.Count = 0 Then
-		      Self.mSets.RemoveAt(Idx)
-		      Self.Modified = True
-		    End If
-		  Next
-		  
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
