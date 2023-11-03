@@ -629,13 +629,13 @@ End
 		Sub Pressed()
 		  Var Mode As Integer
 		  If Self.OverrideRadio.Value Then
-		    Mode = ArkSA.SpawnPoint.ModeOverride
+		    Mode = ArkSA.SpawnPointOverride.ModeOverride
 		  ElseIf Self.AppendRadio.Value Then
-		    Mode = ArkSA.SpawnPoint.ModeAppend
+		    Mode = ArkSA.SpawnPointOverride.ModeAppend
 		  ElseIf Self.RemoveRadio.Value Then
-		    Mode = ArkSA.SpawnPoint.ModeRemove
+		    Mode = ArkSA.SpawnPointOverride.ModeRemove
 		  End If
-		  Var LoadDefaults As Boolean = Mode = ArkSA.SpawnPoint.ModeOverride And Self.LoadDefaultsCheck.Value = True
+		  Var LoadDefaults As Boolean = Mode = ArkSA.SpawnPointOverride.ModeOverride And Self.LoadDefaultsCheck.Value = True
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.RowSelectedAt(I) Then
@@ -666,7 +666,7 @@ End
 #tag Events List
 	#tag Event
 		Sub SelectionChanged()
-		  Var SupportedModes As Integer = ArkSA.SpawnPoint.ModeOverride Or ArkSA.SpawnPoint.ModeAppend Or ArkSA.SpawnPoint.ModeRemove
+		  Var SupportedModes As Integer = ArkSA.SpawnPointOverride.ModeOverride Or ArkSA.SpawnPointOverride.ModeAppend Or ArkSA.SpawnPointOverride.ModeRemove
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.RowSelectedAt(I) Then
 		      Continue
@@ -676,21 +676,21 @@ End
 		    Var Point As ArkSA.SpawnPoint = Me.RowTagAt(I)
 		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Override") Then
 		      // Include Append and Remove here so they cannot be selected if Override is already defined
-		      DefinedModes = DefinedModes Or ArkSA.SpawnPoint.ModeOverride Or ArkSA.SpawnPoint.ModeAppend Or ArkSA.SpawnPoint.ModeRemove
+		      DefinedModes = DefinedModes Or ArkSA.SpawnPointOverride.ModeOverride Or ArkSA.SpawnPointOverride.ModeAppend Or ArkSA.SpawnPointOverride.ModeRemove
 		    End If
 		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Append") Then
-		      DefinedModes = DefinedModes Or ArkSA.SpawnPoint.ModeOverride Or ArkSA.SpawnPoint.ModeAppend
+		      DefinedModes = DefinedModes Or ArkSA.SpawnPointOverride.ModeOverride Or ArkSA.SpawnPointOverride.ModeAppend
 		    End If
 		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Remove") Then
-		      DefinedModes = DefinedModes Or ArkSA.SpawnPoint.ModeOverride Or ArkSA.SpawnPoint.ModeRemove
+		      DefinedModes = DefinedModes Or ArkSA.SpawnPointOverride.ModeOverride Or ArkSA.SpawnPointOverride.ModeRemove
 		    End If
 		    
 		    SupportedModes = SupportedModes And (Not DefinedModes)
 		  Next
 		  
-		  Self.OverrideRadio.Enabled = (SupportedModes And ArkSA.SpawnPoint.ModeOverride) = ArkSA.SpawnPoint.ModeOverride
-		  Self.AppendRadio.Enabled = (SupportedModes And ArkSA.SpawnPoint.ModeAppend) = ArkSA.SpawnPoint.ModeAppend
-		  Self.RemoveRadio.Enabled = (SupportedModes And ArkSA.SpawnPoint.ModeRemove) = ArkSA.SpawnPoint.ModeRemove
+		  Self.OverrideRadio.Enabled = (SupportedModes And ArkSA.SpawnPointOverride.ModeOverride) = ArkSA.SpawnPointOverride.ModeOverride
+		  Self.AppendRadio.Enabled = (SupportedModes And ArkSA.SpawnPointOverride.ModeAppend) = ArkSA.SpawnPointOverride.ModeAppend
+		  Self.RemoveRadio.Enabled = (SupportedModes And ArkSA.SpawnPointOverride.ModeRemove) = ArkSA.SpawnPointOverride.ModeRemove
 		  
 		  If Self.OverrideRadio.Enabled = False And Self.OverrideRadio.Value = True Then
 		    Self.OverrideRadio.Value = False

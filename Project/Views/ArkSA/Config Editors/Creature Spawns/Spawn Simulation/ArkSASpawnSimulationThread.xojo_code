@@ -59,7 +59,7 @@ Inherits Thread
 		        Continue
 		      End If
 		      
-		      If SpawnPoint.Mode <> ArkSA.SpawnPoint.ModeOverride Then
+		      If SpawnPoint.Mode <> ArkSA.SpawnPointOverride.ModeOverride Then
 		        Var Default As ArkSA.SpawnPoint = Database.GetSpawnPoint(SpawnPoint.SpawnPointId)
 		        If Default Is Nil Then
 		          Continue
@@ -69,11 +69,11 @@ Inherits Thread
 		        Database.LoadDefaults(Mutable)
 		        
 		        Var AppendConfig, RemoveConfig As ArkSA.SpawnPoint
-		        If SpawnPoint.Mode = ArkSA.SpawnPoint.ModeAppend Then
+		        If SpawnPoint.Mode = ArkSA.SpawnPointOverride.ModeAppend Then
 		          AppendConfig = SpawnPoint
-		          RemoveConfig = ArkSA.Configs.SpawnPoints(SpawnConfig).GetSpawnPoint(SpawnPoint.SpawnPointId, ArkSA.SpawnPoint.ModeRemove)
-		        ElseIf SpawnPoint.Mode = ArkSA.SpawnPoint.ModeRemove Then
-		          AppendConfig = ArkSA.Configs.SpawnPoints(SpawnConfig).GetSpawnPoint(SpawnPoint.SpawnPointId, ArkSA.SpawnPoint.ModeAppend)
+		          RemoveConfig = ArkSA.Configs.SpawnPoints(SpawnConfig).GetSpawnPoint(SpawnPoint.SpawnPointId, ArkSA.SpawnPointOverride.ModeRemove)
+		        ElseIf SpawnPoint.Mode = ArkSA.SpawnPointOverride.ModeRemove Then
+		          AppendConfig = ArkSA.Configs.SpawnPoints(SpawnConfig).GetSpawnPoint(SpawnPoint.SpawnPointId, ArkSA.SpawnPointOverride.ModeAppend)
 		          RemoveConfig = SpawnPoint
 		        Else
 		          App.Log("Spawn point mode " + SpawnPoint.Mode.ToString(Locale.Raw, "0") + " for " + SpawnPoint.ClassString + " does not make sense.")

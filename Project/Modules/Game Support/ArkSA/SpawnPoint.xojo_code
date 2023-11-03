@@ -133,91 +133,6 @@ Implements ArkSA.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As ArkSA.SpawnPoint
-		  Try
-		    Var SpawnPoint As ArkSA.SpawnPoint
-		    If Dict.HasKey("spawnPointId") Then
-		      SpawnPoint = ArkSA.ResolveSpawnPoint(Dict.Value("spawnPointId").StringValue, "", "", Nil, True)
-		    ElseIf Dict.HasKey("Reference") Then
-		      Var Reference As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dict.Value("Reference"))
-		      If Reference Is Nil Then
-		        Return Nil
-		      End If
-		      SpawnPoint = ArkSA.SpawnPoint(Reference.Resolve)
-		    Else
-		      SpawnPoint = ArkSA.ResolveSpawnPoint(Dict, "UUID", "Path", "Class", Nil, True)
-		    End If
-		    
-		    SpawnPoint = New ArkSA.SpawnPoint(SpawnPoint)
-		    SpawnPoint.mSets.ResizeTo(-1)
-		    
-		    Var LimitsVar As Variant = Dict.FirstValue("limits", "Limits", Nil)
-		    If LimitsVar.IsNull = False Then
-		      Var Manager As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(LimitsVar)
-		      If (Manager Is Nil) = False Then
-		        // A reference manager
-		        Var References() As ArkSA.BlueprintReference = Manager.References
-		        For Each Reference As ArkSA.BlueprintReference In References
-		          If Reference.IsCreature = False Then
-		            Continue
-		          End If
-		          
-		          Var MaxPercentage As Double = Manager.Value(Reference, LimitAttribute)
-		          SpawnPoint.mLimits.Value(Reference, LimitAttribute) = MaxPercentage
-		        Next
-		      ElseIf LimitsVar.Type = Variant.TypeObject And LimitsVar.ObjectValue IsA Dictionary Then
-		        // A dictionary
-		        Var Limits As Dictionary = Dictionary(LimitsVar.ObjectValue)
-		        For Each Entry As DictionaryEntry In Limits
-		          Var Reference As ArkSA.BlueprintReference
-		          If Beacon.UUID.Validate(Entry.Key.StringValue) Then
-		            Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "")
-		          Else
-		            Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, "", Entry.Key.StringValue, "", "", "")
-		          End If
-		          
-		          SpawnPoint.mLimits.Value(Reference, LimitAttribute) = Entry.Value
-		        Next
-		      Else
-		        // Probably an array of dictionaries
-		        Var Limits() As Variant = LimitsVar
-		        For Each Limit As Dictionary In Limits
-		          Var CreatureId As String = Limit.Value("creatureId")
-		          Var MaxPercentage As Double = Limit.Value("maxPercentage")
-		          Var Reference As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, CreatureId, "", "", "", "")
-		          SpawnPoint.mLimits.Value(Reference, LimitAttribute) = MaxPercentage
-		        Next
-		      End If
-		    End If
-		    
-		    Var SetSaveData() As Variant
-		    If Dict.HasKey("sets") Then
-		      SetSaveData = Dict.Value("sets")
-		    ElseIf Dict.HasKey("Sets") Then
-		      SetSaveData = Dict.Value("Sets")
-		    End If
-		    For Each SetDict As Dictionary In SetSaveData
-		      Var Set As ArkSA.SpawnPointSet = ArkSA.SpawnPointSet.FromSaveData(SetDict)
-		      If Set <> Nil Then
-		        SpawnPoint.mSets.Add(Set)
-		      End If
-		    Next
-		    
-		    If Dict.HasKey("mode") Then
-		      SpawnPoint.mMode = Dict.Value("mode").IntegerValue
-		    ElseIf Dict.HasKey("Mode") Then
-		      SpawnPoint.mMode = Dict.Value("Mode").IntegerValue
-		    End If
-		    
-		    SpawnPoint.Modified = False
-		    Return SpawnPoint
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ImmutableVersion() As ArkSA.SpawnPoint
 		  Return Self
 		End Function
@@ -316,12 +231,6 @@ Implements ArkSA.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Mode() As Integer
-		  Return Self.mMode
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.mModified Then
 		    Return True
@@ -401,26 +310,6 @@ Implements ArkSA.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
-		  Var Children() As Variant
-		  For Each Set As ArkSA.SpawnPointSet In Self.mSets
-		    Children.Add(Set.SaveData)
-		  Next
-		  
-		  Var Keys As New Dictionary
-		  Keys.Value("spawnPointId") = Self.mSpawnPointId
-		  Keys.Value("mode") = Self.Mode
-		  If Children.LastIndex > -1 Then
-		    Keys.Value("sets") = Children
-		  End If
-		  If Self.mLimits.Count > 0 Then
-		    Keys.Value("limits") = Self.mLimits.SaveData
-		  End If
-		  Return Keys
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Set(Index As Integer) As ArkSA.SpawnPointSet
 		  Return New ArkSA.SpawnPointSet(Self.mSets(Index))
 		End Function
@@ -458,27 +347,6 @@ Implements ArkSA.Blueprint,Beacon.Countable
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UniqueKey() As String
-		  Return Self.UniqueKey(Self.SpawnPointId, Self.Mode)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function UniqueKey(SpawnPointId As String, Mode As Integer) As String
-		  Var Key As String = SpawnPointId
-		  Select Case Mode
-		  Case ArkSA.SpawnPoint.ModeOverride
-		    Key = Key + ":Override"
-		  Case ArkSA.SpawnPoint.ModeAppend
-		    Key = Key + ":Append"
-		  Case ArkSA.SpawnPoint.ModeRemove
-		    Key = Key + ":Remove"
-		  End Select
-		  Return Key
 		End Function
 	#tag EndMethod
 
@@ -541,15 +409,6 @@ Implements ArkSA.Blueprint,Beacon.Countable
 
 
 	#tag Constant, Name = LimitAttribute, Type = String, Dynamic = False, Default = \"Limit", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = ModeAppend, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ModeOverride, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ModeRemove, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
 

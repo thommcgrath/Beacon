@@ -197,17 +197,6 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Mode(Assigns Value As Integer)
-		  If Self.mMode = Value Then
-		    Return
-		  End If
-		  
-		  Self.mMode = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function MutableVersion() As ArkSA.MutableSpawnPoint
 		  Return Self
 		End Function

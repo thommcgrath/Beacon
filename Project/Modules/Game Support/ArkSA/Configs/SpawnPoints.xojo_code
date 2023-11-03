@@ -1,7 +1,7 @@
 #tag Class
 Protected Class SpawnPoints
 Inherits ArkSA.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.SpawnPoints = ArkSA.Configs.SpawnPoints(Other)
@@ -448,11 +448,11 @@ Inherits ArkSA.ConfigGroup
 		  
 		  Var Mode As Integer
 		  If ConfigOption.BeginsWith("ConfigAdd") Then
-		    Mode = ArkSA.SpawnPoint.ModeAppend
+		    Mode = ArkSA.SpawnPointOverride.ModeAppend
 		  ElseIf ConfigOption.BeginsWith("ConfigSubtract") Then
-		    Mode = ArkSA.SpawnPoint.ModeRemove
+		    Mode = ArkSA.SpawnPointOverride.ModeRemove
 		  Else
-		    Mode = ArkSA.SpawnPoint.ModeOverride
+		    Mode = ArkSA.SpawnPointOverride.ModeOverride
 		  End If
 		  
 		  For Each Obj As Variant In Dicts
