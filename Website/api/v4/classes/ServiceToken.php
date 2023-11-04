@@ -11,10 +11,12 @@ class ServiceToken implements JsonSerializable {
 	final const TypeStatic = 'Static';
 
 	final const ExpirationBuffer = 86400;
-	private const SelectColumns = 'token_id, user_id, provider, type, access_token, EXTRACT(EPOCH FROM access_token_expiration) AS access_token_expiration, refresh_token, EXTRACT(EPOCH FROM refresh_token_expiration) AS refresh_token_expiration, provider_specific, encryption_key';
+	private const SelectColumns = 'service_tokens.token_id, service_tokens.user_id, users.username, service_tokens.provider, service_tokens.type, service_tokens.access_token, EXTRACT(EPOCH FROM service_tokens.access_token_expiration) AS access_token_expiration, service_tokens.refresh_token, EXTRACT(EPOCH FROM service_tokens.refresh_token_expiration) AS refresh_token_expiration, service_tokens.provider_specific, service_tokens.encryption_key, service_tokens.automatic';
+	private const FromClause = 'public.service_tokens INNER JOIN public.users ON (service_tokens.user_id = users.user_id)';
 
 	protected string $tokenId;
 	protected string $userId;
+	protected string $userName;
 	protected string $provider;
 	protected string $type;
 	protected string $accessToken;
@@ -25,6 +27,7 @@ class ServiceToken implements JsonSerializable {
 	protected ?int $refreshTokenExpiration;
 	protected string $encryptionKey;
 	protected array $providerSpecific;
+	protected bool $automatic;
 
 	public static function RedirectURI(string $provider): string {
 		return 'https://' . BeaconCommon::Domain() . '/account/oauth/v4/redeem/' . strtolower($provider);
@@ -70,6 +73,7 @@ class ServiceToken implements JsonSerializable {
 	protected function __construct(BeaconRecordSet $row) {
 		$this->tokenId = $row->Field('token_id');
 		$this->userId = $row->Field('user_id');
+		$this->userName = $row->Field('username') ?? 'Anonymous';
 		$this->provider = $row->Field('provider');
 		$this->type = $row->Field('type');
 		$this->accessTokenEncrypted = $row->Field('access_token');
@@ -77,6 +81,7 @@ class ServiceToken implements JsonSerializable {
 		$this->accessTokenExpiration = is_null($row->Field('access_token_expiration')) ? null : intval($row->Field('access_token_expiration'));
 		$this->refreshTokenExpiration = is_null($row->Field('refresh_token_expiration')) ? null : intval($row->Field('refresh_token_expiration'));
 		$this->providerSpecific = json_decode($row->Field('provider_specific'), true);
+		$this->automatic = $row->Field('automatic');
 
 		$this->encryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($row->Field('encryption_key')));
 		$this->accessToken = BeaconEncryption::SymmetricDecrypt($this->encryptionKey, base64_decode($this->accessTokenEncrypted));
@@ -178,7 +183,7 @@ class ServiceToken implements JsonSerializable {
 
 	public static function Fetch(string $tokenId): ?static {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE token_id = $1;', $tokenId);
+		$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.token_id = $1;', $tokenId);
 		if ($rows->RecordCount() !== 1) {
 			return null;
 		}
@@ -193,9 +198,9 @@ class ServiceToken implements JsonSerializable {
 	public static function Lookup(string $userId, ?string $provider = null): array {
 		$database = BeaconCommon::Database();
 		if (is_null($provider)) {
-			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE user_id = $1 ORDER BY token_id;', $userId);
+			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.user_id = $1 ORDER BY service_tokens.token_id;', $userId);
 		} else {
-			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE user_id = $1 AND provider = $2 ORDER BY token_id;', $userId, $provider);
+			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.user_id = $1 AND service_tokens.provider = $2 ORDER BY service_tokens.token_id;', $userId, $provider);
 		}
 		$tokens = [];
 		while (!$rows->EOF()) {
@@ -239,7 +244,7 @@ class ServiceToken implements JsonSerializable {
 		// Refreshes tokens that are near their refresh token expiration
 
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE refresh_token_expiration IS NOT NULL AND refresh_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
+		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.refresh_token_expiration IS NOT NULL AND service_tokens.refresh_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
 
 		while (!$results->EOF()) {
 			try {
@@ -310,15 +315,22 @@ class ServiceToken implements JsonSerializable {
 		return $this->providerSpecific;
 	}
 
+	public function ProvidesServers(): bool {
+		return in_array($this->provider, [self::ProviderNitrado, self::ProviderGameServerApp]);
+	}
+
 	public function JSON(bool $decrypted): array {
 		$json = [
 			'tokenId' => $this->tokenId,
 			'userId' => $this->userId,
+			'userName' => $this->userName,
 			'provider' => $this->provider,
 			'type' => $this->type,
 			'accessToken' => $this->AccessToken($decrypted),
 			'accessTokenExpiration' => $this->accessTokenExpiration,
-			'providerSpecific' => $this->providerSpecific
+			'providerSpecific' => $this->providerSpecific,
+			'automatic' => $this->automatic,
+			'providesServers' => $this->ProvidesServers(),
 		];
 		if ($decrypted) {
 			$json['encryptionKey'] = base64_encode($this->encryptionKey);
