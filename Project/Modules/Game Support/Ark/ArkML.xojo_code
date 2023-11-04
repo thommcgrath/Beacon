@@ -120,7 +120,11 @@ Protected Class ArkML
 		  Var NewLine As Boolean = True
 		  Var Offset As Integer = 0
 		  While True
-		    Var Pos As Integer = Source.IndexOf(Offset, "<RichColor")
+		    Var Pos As Integer = -1
+		    Try
+		      Pos = Source.IndexOf(Offset, "<RichColor")
+		    Catch Err As RuntimeException
+		    End Try
 		    If Pos = -1 Then
 		      Self.mParts.Add(Self.CreateDict(Source.Middle(Offset), &cFFFFFF00))
 		      Exit
