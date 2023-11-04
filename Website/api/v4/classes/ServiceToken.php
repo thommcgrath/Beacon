@@ -195,13 +195,30 @@ class ServiceToken implements JsonSerializable {
 		}
 	}
 
-	public static function Lookup(string $userId, ?string $provider = null): array {
+	public static function Lookup(string $userId, ?string $provider = null, ?string $tokenId = null): array {
 		$database = BeaconCommon::Database();
-		if (is_null($provider)) {
-			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.user_id = $1 ORDER BY service_tokens.token_id;', $userId);
-		} else {
-			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.user_id = $1 AND service_tokens.provider = $2 ORDER BY service_tokens.token_id;', $userId, $provider);
+		$placeholder = 2;
+		$clauses = ['service_tokens.user_id = $1'];
+		$values = [$userId];
+		if (is_null($provider) === false) {
+			$clauses[] = 'service_tokens.provider = $' . $placeholder++;
+			$values[] = $provider;
 		}
+		if (is_null($tokenId) === false) {
+			$tokensSplit = explode(',', $tokenId);
+			$tokenIds = [];
+			foreach ($tokensSplit as $tokenId) {
+				if (BeaconUUID::Validate($tokenId)) {
+					$tokenIds[] = $tokenId;
+				}
+			}
+			if (count($clauses) > 0) {
+				$clauses[] = 'service_tokens.token_id = $' . $placeholder++;
+				$values[] = '{' . implode(',', $tokenIds) . '}';
+			}
+		}
+
+		$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE ' . implode(' AND ', $clauses) . ' ORDER BY service_tokens.token_id;', $values);
 		$tokens = [];
 		while (!$rows->EOF()) {
 			try {
