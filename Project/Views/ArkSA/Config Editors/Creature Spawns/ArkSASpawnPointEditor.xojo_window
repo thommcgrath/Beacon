@@ -815,10 +815,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kLimitsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ArkSA.spawn.limit", Scope = Private
+	#tag Constant, Name = kLimitsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.spawn.limit", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ArkSA.spawn.set", Scope = Private
+	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.spawn.set", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LimitsListDefaultHeight, Type = Double, Dynamic = False, Default = \"192", Scope = Public

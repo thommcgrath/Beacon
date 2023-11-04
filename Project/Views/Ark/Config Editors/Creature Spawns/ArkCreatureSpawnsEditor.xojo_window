@@ -618,7 +618,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Ark.spawn.point", Scope = Private
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.point", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"330", Scope = Public

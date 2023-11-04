@@ -1705,10 +1705,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kEntryClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Ark.spawn.entry", Scope = Private
+	#tag Constant, Name = kEntryClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.entry", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kReplacementClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Ark.spawn.replacement", Scope = Private
+	#tag Constant, Name = kReplacementClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.replacement", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = MinEditorHeight, Type = Double, Dynamic = False, Default = \"535", Scope = Public

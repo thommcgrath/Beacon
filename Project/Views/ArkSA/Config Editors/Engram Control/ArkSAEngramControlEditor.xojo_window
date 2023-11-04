@@ -662,10 +662,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kEngramsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ArkSA.engramoverride", Scope = Private
+	#tag Constant, Name = kEngramsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.engramoverride", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kPointsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ArkSA.unlockpointoverride", Scope = Private
+	#tag Constant, Name = kPointsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.unlockpointoverride", Scope = Private
 	#tag EndConstant
 
 
