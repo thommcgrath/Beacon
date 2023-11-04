@@ -41,8 +41,13 @@ Protected Module BeaconAPI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetProviderTokens(UserId As String) As BeaconAPI.ProviderToken()
-		  Var Request As New BeaconAPI.Request("/users/" + EncodeURLComponent(UserId) + "/tokens", "GET")
+		Protected Function GetProviderTokens(UserId As String, TokenIds() As String = Nil) As BeaconAPI.ProviderToken()
+		  Var Url As String = "/users/" + EncodeURLComponent(UserId) + "/tokens"
+		  If (TokenIds Is Nil) = False And TokenIds.Count > 0 Then
+		    Url = Url + "?tokenId=" + EncodeURLComponent(String.FromArray(TokenIds))
+		  End If
+		  
+		  Var Request As New BeaconAPI.Request(Url, "GET")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  Var Tokens() As BeaconAPI.ProviderToken
 		  If Response.HTTPStatus <> 200 Then

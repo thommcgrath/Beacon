@@ -68,7 +68,7 @@ Begin BeaconSubview AccountsEditor
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   3
+      ColumnCount     =   4
       ColumnWidths    =   ""
       DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
       DefaultSortColumn=   0
@@ -87,7 +87,7 @@ Begin BeaconSubview AccountsEditor
       HeadingIndex    =   1
       Height          =   459
       Index           =   -2147483648
-      InitialValue    =   "Name	Provider	Status"
+      InitialValue    =   "Name	Provider	Status	Beacon Account"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -388,12 +388,17 @@ End
 		      Else
 		        Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = "Used by " + Language.NounWithQuantity(UsedCount, "server", "servers")
 		      End If
+		      Self.List.CellTextAt(RowIdx, Self.ColumnAccount) = Token.UserName
 		    Else
 		      Self.List.CellTextAt(RowIdx, Self.ColumnLabel) = TokenId
 		      Self.List.CellTextAt(RowIdx, Self.ColumnProvider) = ""
 		      Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = If(IsRefreshing, "Loading…", "Service not found")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnAccount) = ""
 		    End If
 		  Next
+		  Self.List.SizeColumnToFit(Self.ColumnProvider, 100)
+		  Self.List.SizeColumnToFit(Self.ColumnStatus, 100)
+		  Self.List.SizeColumnToFit(Self.ColumnAccount, 100)
 		  
 		  Var AddButton As OmniBarItem = Self.ConfigToolbar.Item("NewAccount")
 		  If (AddButton Is Nil) = False Then
@@ -445,6 +450,9 @@ End
 		Private mTokens As Dictionary
 	#tag EndProperty
 
+
+	#tag Constant, Name = ColumnAccount, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant

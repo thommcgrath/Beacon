@@ -29,21 +29,30 @@ Protected Class ProviderToken
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Automatic() As Boolean
+		  Return Self.mAutomatic
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Dict As Dictionary)
 		  Self.mTokenId = Dict.Value("tokenId").StringValue
 		  Self.mUserId = Dict.Value("userId").StringValue
+		  Self.mUserName = Dict.Value("userName").StringValue
 		  Self.mProvider = Dict.Value("provider").StringValue
 		  Self.mType = Dict.Value("type").StringValue
 		  Self.mAccessToken = Dict.Value("accessToken").StringValue
 		  Self.mAccessTokenExpiration = NullableDouble.FromVariant(Dict.Value("accessTokenExpiration"))
+		  Self.mAutomatic = Dict.Value("automatic").BooleanValue
+		  Self.mProvidesServers = Dict.Value("providesServers")
 		  Try
 		    Self.mProviderSpecific = Dict.Value("providerSpecific")
 		  Catch Err As RuntimeException
 		    Self.mProviderSpecific = New Dictionary
 		  End Try
 		  If Dict.HasKey("encryptionKey") Then
-		    Self.mEncryptionKey = Dict.Value("encryptionKey").StringValue
+		    Self.mEncryptionKey = DecodeBase64(Dict.Value("encryptionKey").StringValue)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -124,7 +133,7 @@ Protected Class ProviderToken
 
 	#tag Method, Flags = &h0
 		Shared Function Load(Dict As Dictionary) As BeaconAPI.ProviderToken
-		  If Dict.HasAllKeys("tokenId", "userId", "provider", "type", "accessToken", "accessTokenExpiration", "providerSpecific") = False Then
+		  If Dict.HasAllKeys("tokenId", "userId", "userName", "provider", "type", "accessToken", "accessTokenExpiration", "providerSpecific", "automatic", "providesServers") = False Then
 		    Return Nil
 		  End If
 		  
@@ -166,6 +175,12 @@ Protected Class ProviderToken
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ProvidesServers() As Boolean
+		  Return Self.mProvidesServers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function TokenId() As String
 		  Return Self.mTokenId
 		End Function
@@ -183,6 +198,16 @@ Protected Class ProviderToken
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UserName(WithDiscriminator As Boolean = True) As String
+		  Var Name As String = Self.mUserName
+		  If WithDiscriminator Then
+		    Name = Name + "#" + Self.mUserId.Left(8)
+		  End If
+		  Return Name
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mAccessToken As String
@@ -190,6 +215,10 @@ Protected Class ProviderToken
 
 	#tag Property, Flags = &h21
 		Private mAccessTokenExpiration As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAutomatic As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -205,6 +234,10 @@ Protected Class ProviderToken
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProvidesServers As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTokenId As String
 	#tag EndProperty
 
@@ -214,6 +247,10 @@ Protected Class ProviderToken
 
 	#tag Property, Flags = &h21
 		Private mUserId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUserName As String
 	#tag EndProperty
 
 

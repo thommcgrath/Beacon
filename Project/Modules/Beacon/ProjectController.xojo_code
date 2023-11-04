@@ -455,6 +455,20 @@ Protected Class ProjectController
 		  Try
 		    Self.UpdateProjectMembers()
 		    
+		    // Download the most recent token keys for the user
+		    Var TokenIds() As String = Self.mProject.ProviderTokenIds
+		    If (TokenIds Is Nil) = False And TokenIds.Count > 0 Then
+		      Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(Self.mIdentity.UserId, TokenIds)
+		      If (Tokens Is Nil) = False Then
+		        For Each Token As BeaconAPI.ProviderToken In Tokens
+		          Try
+		            Self.mProject.AddProviderToken(Token)
+		          Catch Err As RuntimeException
+		          End Try
+		        Next
+		      End If
+		    End If
+		    
 		    SaveData = Self.mProject.SaveData(Self.mIdentity, True)
 		    
 		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then

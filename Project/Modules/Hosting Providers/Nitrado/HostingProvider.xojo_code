@@ -236,13 +236,13 @@ Implements Beacon.HostingProvider
 		  If (Token Is Nil) = False Then
 		    If Token.IsEncrypted And (Project Is Nil Or Token.Decrypt(Project.ProviderTokenKey(Token.TokenId)) = False) Then
 		      Var Err as New UnsupportedOperationException
-		      Err.Message = "Provider token is still encrypted. Ask a project editor to resave."
+		      Err.Message = "Provider token is still encrypted. Ask " + Token.UserName + " to resave."
 		      Raise Err
 		    End If
 		  Else
 		    // No such token
 		    Var Err as New UnsupportedOperationException
-		    Err.Message = "Authorization data for the account was not found. Ask a project editor to resave."
+		    Err.Message = "Authorization data for the account was not found."
 		    Raise Err
 		  End If
 		End Sub
