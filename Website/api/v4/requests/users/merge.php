@@ -4,7 +4,7 @@
 // makes a request for a challenge. That could be a bug, but this feature looks
 // to be unused at the moment.
 
-use BeaconAPI\v4\{Application, Response, BatchResponse, Core, Project, User};
+use BeaconAPI\v4\{Application, Response, BatchResponse, Core, Project, ServiceToken, User};
 
 $requiredScopes[] = Application::kScopeUsersUpdate;
 $requiredScopes[] = Application::kScopeUsersDelete;
@@ -83,6 +83,15 @@ function MergeUser(User $authenticatedUser, array $anonymousUser): Response {
 		$database->Query('UPDATE ' . $table . ' SET user_id = $1 WHERE user_id = $2;', $authenticatedUserId, $userId);
 	}
 	$temp = 'temp_' . BeaconCommon::GenerateRandomKey();
+
+	// Service tokens are special because their uuid includes the user id
+	$tokens = ServiceToken::Lookup($userId);
+	foreach ($tokens as $token) {
+		// Returns true on success, false if the accounts already has the same service
+		if ($token->MoveToUser($authenticatedUser) === false) {
+			$token->Delete();
+		}
+	}
 
 	// Migrating project members is hard
 	$database->Query('CREATE TEMPORARY TABLE ' . $temp . ' (project_id UUID, role public.project_role);');

@@ -90,8 +90,7 @@ class ServiceToken implements JsonSerializable {
 		}
 	}
 
-	public static function StoreOAuth(string|User $user, string $provider, string $accessToken, string $refreshToken, int $accessTokenExpiration, int $refreshTokenExpiration, array $providerSpecific, bool $updateExisting = true): ?static {
-		$userId = is_string($user) ? $user : $user->UserId();
+	protected static function OAuthTokenId(string $userId, string $provider, array $providerSpecific): string {
 		$uuidParts = [
 			$userId,
 			$provider
@@ -99,7 +98,21 @@ class ServiceToken implements JsonSerializable {
 		if ($provider === self::ProviderNitrado) {
 			$uuidParts[] = $providerSpecific['user']['id'];
 		}
-		$tokenId = BeaconUUID::v5(implode('|', $uuidParts));
+		return BeaconUUID::v5(implode('|', $uuidParts));
+	}
+
+	protected static function StaticTokenId(string $userId, string $provider, string $accessToken): string {
+		$uuidParts = [
+			$userId,
+			$provider,
+			$accessToken
+		];
+		return BeaconUUID::v5(implode('|', $uuidParts));
+	}
+
+	public static function StoreOAuth(string|User $user, string $provider, string $accessToken, string $refreshToken, int $accessTokenExpiration, int $refreshTokenExpiration, array $providerSpecific, bool $updateExisting = true): ?static {
+		$userId = is_string($user) ? $user : $user->UserId();
+		$tokenId = static::OAuthTokenId($user, $provider, $providerSpecific);
 
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT encryption_key FROM public.service_tokens WHERE token_id = $1;', $tokenId);
@@ -129,12 +142,7 @@ class ServiceToken implements JsonSerializable {
 
 	public static function StoreStatic(string|User $user, string $provider, string $accessToken, array $providerSpecific, bool $updateExisting = true): ?static {
 		$userId = is_string($user) ? $user : $user->UserId();
-		$uuidParts = [
-			$userId,
-			$provider,
-			$accessToken
-		];
-		$tokenId = BeaconUUID::v5(implode('|', $uuidParts));
+		$tokenId = static::StaticTokenId($user, $provider, $accessToken);
 
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT encryption_key FROM public.service_tokens WHERE token_id = $1;', $tokenId);
@@ -278,6 +286,40 @@ class ServiceToken implements JsonSerializable {
 			$database->Query('DELETE FROM public.service_tokens WHERE refresh_token_expiration <= CURRENT_TIMESTAMP;');
 			$database->Commit();
 		}
+	}
+
+	public function MoveToUser(string|User $user): bool {
+		if ($user instanceof User) {
+			$userId = $user->UserId();
+		} else {
+			$userId = $user;
+			$user = User::Fetch($user);
+		}
+		switch ($this->type) {
+		case self::TypeOAuth:
+			$newTokenId = static::OAuthTokenId($userId, $this->provider, $this->providerSpecific);
+			break;
+		case self::TypeStatic:
+			$newTokenId = static::StaticTokenId($userId, $this->provider, $this->accessToken);
+			break;
+		default:
+			return false;
+		}
+
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$rows = $database->Query('SELECT token_id FROM public.service_tokens WHERE token_id = $1;', $newTokenId);
+		if ($rows->RecordCount() !== 0) {
+			$database->Rollback();
+			return false;
+		}
+		$database->Query('UPDATE public.service_tokens SET user_id = $2, token_id = $3 WHERE token_id = $1;', $this->tokenId, $userId, $newTokenId);
+		$database->Commit();
+
+		$this->tokenId = $newTokenId;
+		$this->userId = $userId;
+		$this->userName = $user->Username() ?? 'Anonymous';
+		return true;
 	}
 
 	public function TokenId(): string {
