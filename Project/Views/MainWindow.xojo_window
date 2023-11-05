@@ -1079,7 +1079,7 @@ End
 		    Return
 		  Case "NavPusher"
 		    If (App.Pusher Is Nil) = False And App.Pusher.State <> Beacon.PusherSocket.States.Connected Then
-		      App.Pusher.Start(App.IdentityManager.CurrentIdentity)
+		      App.Pusher.Start()
 		    End If
 		  Else
 		    Return

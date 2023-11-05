@@ -61,8 +61,6 @@ Protected Class PusherSocket
 		  Var ClusterId, AppKey As String
 		  Try
 		    Var Request As New BeaconAPI.Request("/pusher", "GET")
-		    Request.AutoRenew = False
-		    
 		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		    If Not Response.Success Then
 		      App.Log("Could not fetch pusher credentials")
@@ -264,17 +262,8 @@ Protected Class PusherSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Start(Identity As Beacon.Identity)
-		  If Identity Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.Start(Identity.UserId)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Start(UserId As String)
+		Sub Start()
+		  Var UserId As String = App.IdentityManager.CurrentUserId
 		  If UserId.IsEmpty Then
 		    Return
 		  End If

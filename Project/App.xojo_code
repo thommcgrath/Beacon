@@ -1169,7 +1169,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Sub LaunchQueue_StartPusher()
 		  Self.mPusher = New Beacon.PusherSocket
 		  If (Self.mIdentityManager Is Nil) = False And Self.mIdentityManager.CurrentUserId.IsEmpty = False Then
-		    Self.mPusher.Start(Self.mIdentityManager.CurrentUserId)
+		    Self.mPusher.Start()
 		  End If
 		  Self.NextLaunchQueueTask
 		End Sub
@@ -1404,7 +1404,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    If (Self.mIdentityManager Is Nil) = False Then
 		      Var UserId As String = Self.mIdentityManager.CurrentUserId
 		      If UserId.IsEmpty = False Then
-		        Self.mPusher.Start(Self.mIdentityManager.CurrentUserId)
+		        Self.mPusher.Start()
 		        Var UserChannelName As String = Beacon.PusherSocket.UserChannelName(UserId)
 		        Self.mPusher.Listen(UserChannelName, "user-updated", AddressOf Pusher_UserUpdated)
 		        Self.mPusher.Listen(UserChannelName, "cloud-updated", AddressOf Pusher_CloudUpdated)
