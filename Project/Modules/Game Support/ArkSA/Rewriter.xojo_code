@@ -200,7 +200,7 @@ Inherits Global.Thread
 		  
 		  Try
 		    // Even if we're about to nuke the file, determine the mode so the file can be rebuilt in the same format
-		    InitialContent = InitialContent.GuessEncoding.SanitizeIni
+		    InitialContent = InitialContent.GuessEncoding("/script/").SanitizeIni
 		    Var DesiredLineEnding As String = InitialContent.DetectLineEnding
 		    Var ConvertToUWP As Boolean
 		    Select Case UWPMode

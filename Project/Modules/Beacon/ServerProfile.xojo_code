@@ -9,7 +9,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Sub AdminNotes(Assigns Value As String)
 		  If Value.Encoding Is Nil Then
-		    Value = Value.GuessEncoding
+		    Value = Value.DefineEncoding(Encodings.UTF8)
 		  ElseIf Value.Encoding <> Encodings.UTF8 Then
 		    Value = Value.ConvertEncoding(Encodings.UTF8)
 		  End If

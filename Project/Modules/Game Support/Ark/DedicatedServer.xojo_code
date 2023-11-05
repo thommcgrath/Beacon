@@ -56,12 +56,12 @@ Protected Module DedicatedServer
 		  Var GameUserSettingsIniOriginal, GameIniOriginal As String
 		  If ConfigFolder.Child(Ark.ConfigFileGameUserSettings).Exists Then
 		    Var Stream As TextInputStream = TextInputStream.Open(ConfigFolder.Child(Ark.ConfigFileGameUserSettings))
-		    GameUserSettingsIniOriginal = Stream.ReadAll(Nil).GuessEncoding
+		    GameUserSettingsIniOriginal = Stream.ReadAll(Nil).GuessEncoding("/script/")
 		    Stream.Close
 		  End If
 		  If ConfigFolder.Child(Ark.ConfigFileGame).Exists Then
 		    Var Stream As TextInputStream = TextInputStream.Open(ConfigFolder.Child(Ark.ConfigFileGame))
-		    GameIniOriginal = Stream.ReadAll(Nil).GuessEncoding
+		    GameIniOriginal = Stream.ReadAll(Nil).GuessEncoding("/script/")
 		    Stream.Close
 		  End If
 		  
@@ -478,7 +478,7 @@ Protected Module DedicatedServer
 	#tag Method, Flags = &h21
 		Private Sub WriteFString(Stream As BinaryStream, Value As String)
 		  If Value.Encoding Is Nil Then
-		    Value = Value.GuessEncoding
+		    Value = Value.DefineEncoding(Encodings.UTF8)
 		  Else
 		    Value = Value.ConvertEncoding(Encodings.UTF8)
 		  End If
@@ -494,7 +494,7 @@ Protected Module DedicatedServer
 	#tag Method, Flags = &h21
 		Private Sub WriteUnrealString(Stream As BinaryStream, Value As String)
 		  If Value.Encoding Is Nil Then
-		    Value = Value.GuessEncoding
+		    Value = Value.DefineEncoding(Encodings.UTF8)
 		  Else
 		    Value = Value.ConvertEncoding(Encodings.UTF8)
 		  End If

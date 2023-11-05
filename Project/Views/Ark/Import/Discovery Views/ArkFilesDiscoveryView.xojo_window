@@ -498,7 +498,7 @@ End
 		    Return ConfigFileType.Other
 		  End Try
 		  
-		  Content = Content.GuessEncoding
+		  Content = Content.GuessEncoding("/script/")
 		  Var GameIniPos As Integer = Content.IndexOf(Ark.HeaderShooterGame)
 		  Var SettingsIniPos As Integer = Content.IndexOf(Ark.HeaderServerSettings)
 		  
@@ -538,7 +538,7 @@ End
 		    Var Contents As String = Stream.ReadAll()
 		    Stream.Close
 		    
-		    Contents = Contents.GuessEncoding
+		    Contents = Contents.GuessEncoding("/script/")
 		    
 		    Return Contents
 		  Catch Err As IOException

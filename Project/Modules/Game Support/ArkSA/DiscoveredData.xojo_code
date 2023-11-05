@@ -22,7 +22,7 @@ Inherits Beacon.DiscoveredData
 
 	#tag Method, Flags = &h0
 		Sub GameIniContent(Assigns Value As String)
-		  Self.mGameIniContent = Value.GuessEncoding
+		  Self.mGameIniContent = Value.GuessEncoding("/script/")
 		End Sub
 	#tag EndMethod
 
@@ -34,7 +34,7 @@ Inherits Beacon.DiscoveredData
 
 	#tag Method, Flags = &h0
 		Sub GameUserSettingsIniContent(Assigns Value As String)
-		  Self.mGameUserSettingsIniContent = Value.GuessEncoding
+		  Self.mGameUserSettingsIniContent = Value.GuessEncoding("/script/")
 		End Sub
 	#tag EndMethod
 

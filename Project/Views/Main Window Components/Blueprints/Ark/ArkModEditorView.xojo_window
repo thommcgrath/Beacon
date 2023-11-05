@@ -573,7 +573,7 @@ End
 		  Self.mProgress.ShowDelayed(Self.TrueWindow)
 		  
 		  Self.mImporter = Nil
-		  Self.mContentToImport = Contents.GuessEncoding
+		  Self.mContentToImport = Contents.GuessEncoding("/script/")
 		  Self.ImporterThread.Start
 		  
 		  Self.Progress = BeaconSubview.ProgressIndeterminate

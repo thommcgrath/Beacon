@@ -38,7 +38,7 @@ Inherits Beacon.DiscoverIntegration
 		    Var DownloadSuccess As Boolean
 		    Var LogContents As String = Self.GetFile(LogFilePath, "ShooterGame.log", Beacon.Integration.DownloadFailureMode.ErrorsAllowed, Profile, False, DownloadSuccess)
 		    If DownloadSuccess Then
-		      Var Lines() As String = LogContents.GuessEncoding.Split(EndOfLine)
+		      Var Lines() As String = LogContents.GuessEncoding("Primal Game Data Took").Split(EndOfLine)
 		      Var FoundName, FoundCommandLine As Boolean
 		      For Each Line As String In Lines
 		        Line = Line.Middle(30).Trim
@@ -72,7 +72,7 @@ Inherits Beacon.DiscoverIntegration
 		    Var DownloadSuccess As Boolean
 		    Var IniContent As String = Self.GetFile(GameIniPath, ArkSA.ConfigFileGame, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
 		    If DownloadSuccess Then
-		      Data.GameIniContent = IniContent.GuessEncoding
+		      Data.GameIniContent = IniContent.GuessEncoding("/script/")
 		    Else
 		      Return Nil
 		    End If
@@ -83,7 +83,7 @@ Inherits Beacon.DiscoverIntegration
 		    Var DownloadSuccess As Boolean
 		    Var IniContent As String = Self.GetFile(GameUserSettingsIniPath, ArkSA.ConfigFileGameUserSettings, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
 		    If DownloadSuccess Then
-		      Data.GameUserSettingsIniContent = IniContent.GuessEncoding
+		      Data.GameUserSettingsIniContent = IniContent.GuessEncoding("/script/")
 		    Else
 		      Return Nil
 		    End If

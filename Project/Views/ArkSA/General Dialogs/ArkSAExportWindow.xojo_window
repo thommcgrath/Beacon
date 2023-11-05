@@ -840,7 +840,7 @@ End
 		    Self.ShowAlert("Unable to open " + File.DisplayName, "Beacon was unable to read the current content of the file to rewriting. The file has not been changed.")
 		    Return
 		  End Try
-		  Content = Content.GuessEncoding
+		  Content = Content.GuessEncoding("/script/")
 		  
 		  Var HeaderFound As Boolean
 		  For Each Header As String In RequiredHeader

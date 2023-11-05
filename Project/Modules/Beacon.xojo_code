@@ -637,7 +637,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GuessEncoding(Extends Value As String) As String
+		Function GuessEncoding(Extends Value As String, TestValue As String) As String
 		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
 		  // remove them, and convert to UTF-8.
 		  
@@ -659,7 +659,6 @@ Protected Module Beacon
 		    // Ok, now we need to get fancy. It's a safe bet that all files contain a "/script/" string, right?
 		    // Let's interpret the file as each of the 3 and see which one matches.
 		    
-		    Const TestValue = "/script/"
 		    Static EncodingsList() As TextEncoding
 		    If EncodingsList.LastIndex = -1 Then
 		      EncodingsList = Array(Encodings.UTF8, Encodings.UTF16LE, Encodings.UTF16BE)
@@ -674,9 +673,14 @@ Protected Module Beacon
 		    
 		    For Each Encoding As TextEncoding In EncodingsList
 		      Var TestVersion As String = Value.DefineEncoding(Encoding)
-		      If TestVersion.IndexOf(TestValue) > -1 Then
-		        Return TestVersion.ConvertEncoding(Encodings.UTF8)
-		      End If
+		      Try
+		        #Pragma BreakOnExceptions False
+		        If TestVersion.IndexOf(TestValue) > -1 Then
+		          Return TestVersion.ConvertEncoding(Encodings.UTF8)
+		        End If
+		      Catch Err As RuntimeException
+		        // IndexOf firing exceptions is stupid
+		      End Try
 		    Next
 		    
 		    // Who knows what the heck it could be, so it's ASCII now.
@@ -1103,7 +1107,7 @@ Protected Module Beacon
 		  Const UseMBS = False
 		  
 		  If Source.Encoding Is Nil Then
-		    Source = Source.GuessEncoding
+		    Source = Source.DefineEncoding(Encodings.UTF8)
 		  ElseIf Source.Encoding <> Encodings.UTF8 Then
 		    Source = Source.ConvertEncoding(Encodings.UTF8)
 		  End If

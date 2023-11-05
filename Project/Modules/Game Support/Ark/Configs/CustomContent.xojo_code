@@ -311,7 +311,7 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function ReadContent(Input As String, Rainbow As Dictionary) As String
-		  Input = Input.GuessEncoding
+		  Input = Input.GuessEncoding("/script/")
 		  
 		  Var Pos As Integer
 		  

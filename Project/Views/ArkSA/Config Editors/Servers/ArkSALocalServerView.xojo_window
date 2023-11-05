@@ -419,7 +419,7 @@ End
 	#tag Method, Flags = &h21
 		Private Function DetectConfigType(File As FolderItem) As String
 		  Var Content As String = File.Read
-		  Content = Content.GuessEncoding
+		  Content = Content.GuessEncoding("/script/")
 		  Var GameIniPos As Integer = Content.IndexOf(ArkSA.HeaderShooterGame)
 		  Var SettingsIniPos As Integer = Content.IndexOf(ArkSA.HeaderServerSettings)
 		  

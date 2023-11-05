@@ -70,7 +70,13 @@ Inherits Beacon.Thread
 		    Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
 		    For Each SessionName As Variant In SessionNames
 		      Try
-		        Project.Title = SessionName.StringValue.GuessEncoding
+		        Var SessionTitle As String = SessionName.StringValue
+		        If SessionTitle.Encoding Is Nil Then
+		          SessionTitle = SessionTitle.DefineEncoding(Encodings.UTF8)
+		        ElseIf SessionTitle.Encoding <> Encodings.UTF8 Then
+		          SessionTitle = SessionTitle.ConvertEncoding(Encodings.UTF8)
+		        End If
+		        Project.Title = SessionTitle
 		        Exit
 		      Catch Err As RuntimeException
 		      End Try

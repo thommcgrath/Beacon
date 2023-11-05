@@ -320,8 +320,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
-		  If Reason.Encoding = Nil Then
-		    Reason = Reason.GuessEncoding
+		  If Reason.Encoding Is Nil Then
+		    Reason = Reason.DefineEncoding(Encodings.UTF8)
 		  End If
 		  
 		  // This has been made thread safe

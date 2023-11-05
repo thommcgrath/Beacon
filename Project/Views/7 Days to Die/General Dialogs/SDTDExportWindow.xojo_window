@@ -695,7 +695,7 @@ End
 		    Self.ShowAlert("Unable to open " + File.DisplayName, "Beacon was unable to read the current content of the file to rewriting. The file has not been changed.")
 		    Return
 		  End Try
-		  Content = Content.GuessEncoding
+		  Content = Content.GuessEncoding("<?xml")
 		  
 		  If Content.IndexOf("<" + RequiredRoot + ">") = -1 Then
 		    Self.ShowAlert("Incorrect xml file detected.", "Beacon is expecting to find the <" + RequiredRoot + "> element in this file before rewriting, but cannot find it. Make sure you select the correct file config file.")
