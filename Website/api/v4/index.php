@@ -22,6 +22,10 @@ Core::RegisterRoutes(
 			'GET' => 'ark/generate',
 			'PUT' => 'ark/generate',
 		],
+		'/arksa/projects/{projectId}/Game.ini' => [
+			'GET' => 'arksa/generate',
+			'PUT' => 'arksa/generate',
+		],
 		'/authenticators' => [
 			'POST' => 'authenticators/create',
 			'GET' => 'authenticators/list',
@@ -162,6 +166,18 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootDrop', 'ark/lootDrop
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootDropIcon', 'ark/lootDropIcons', 'lootDropIconId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Map', 'ark/maps', 'mapId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\SpawnPoint', 'ark/spawnPoints', 'spawnPointId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Blueprint', 'arksa/blueprints', 'blueprintId', DatabaseObjectManager::kFeatureAll, 'blueprintGroup', ['creatures' => 'BeaconAPI\v4\ArkSA\Creature', 'engrams' => 'BeaconAPI\v4\ArkSA\Engram', 'lootDrops' => 'BeaconAPI\v4\ArkSA\LootDrop', 'spawnPoints' => 'BeaconAPI\v4\ArkSA\SpawnPoint']);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Color', 'arksa/colors', 'colorId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\ColorSet', 'arksa/colorSets', 'colorSetId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\ConfigOption', 'arksa/configOptions', 'configOptionId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Creature', 'arksa/creatures', 'creatureId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Engram', 'arksa/engrams', 'engramId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Event', 'arksa/events', 'eventId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\GameVariable', 'arksa/gameVariables', 'key');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\LootDrop', 'arksa/lootDrops', 'lootDropId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\LootDropIcon', 'arksa/lootDropIcons', 'lootDropIconId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Map', 'arksa/maps', 'mapId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\SpawnPoint', 'arksa/spawnPoints', 'spawnPointId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/players', 'playerId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');

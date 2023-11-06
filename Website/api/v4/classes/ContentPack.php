@@ -23,6 +23,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 	protected bool $isOfficial;
 	protected bool $isIncludedInDeltas;
 	protected array $gameSpecific;
+	protected ?string $slug;
 
 	protected function __construct(BeaconRecordSet $row) {
 		$this->contentPackId = $row->Field('content_pack_id');
@@ -40,6 +41,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$this->isOfficial = filter_var($row->Field('is_official'), FILTER_VALIDATE_BOOL);
 		$this->isIncludedInDeltas = filter_var($row->Field('include_in_deltas'), FILTER_VALIDATE_BOOL);
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
+		$this->slug = $row->Field('slug');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -58,7 +60,8 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official', 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas', 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific', 'editable' => DatabaseObjectProperty::kEditableNever])
+			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('slug', ['editable' => DatabaseObjectProperty::kEditableAtCreation])
 		]);
 	}
 
@@ -120,6 +123,9 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		case 'Ark':
 			$validMarketplaces = ['Steam Workshop'];
 			break;
+		Case 'ArkSA':
+			$validMarketplaces = ['CurseForge'];
+			break;
 		default:
 			throw new Exception('Property gameId should be one of: ' . BeaconCommon::ArrayToEnglish(['Ark']) . '.');
 		}
@@ -131,47 +137,6 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			throw new Exception('This contentPackId is reserved for local content packs.');
 		}
 	}
-
-	/*public static function Create(array $propertyValues): ?static {
-		$requiredKeys = ['marketplace', 'marketplaceId', 'gameId', 'name'];
-		if (BeaconCommon::HasAllKeys($propertyValues, ...$requiredKeys) === false) {
-			throw new Exception('Properties ' . BeaconCommon::ArrayToEnglish($requiredKeys) . ' keys are required.');
-		}
-
-		$marketplace = $propertyValues['marketplace'];
-		$marketplaceId = $propertyValues['marketplaceId'];
-		$gameId = $propertyValues['gameId'];
-		$userId = $propertyValues['userId'];
-		$name = $propertyValues['name'];
-
-		$validMarketplaces = [];
-		switch ($gameId) {
-		case 'Ark':
-			$validMarketplaces = ['Steam Workshop'];
-			break;
-		default:
-			throw new Exception('Property gameId should be one of: ' . BeaconCommon::ArrayToEnglish(['Ark']) . '.');
-		}
-		if (in_array($marketplace, $validMarketplaces) === false) {
-			throw new Exception('Property marketplace should be one of: ' . BeaconCommon::ArrayToEnglish($validMarketplaces) . '.');
-		}
-
-		if (isset($propertyValues['contentPackId'])) {
-			$contentPackId = strtolower($propertyValues['contentPackId']);
-			if ($contentPackId === static::GenerateLocalId($marketplace, $marketplaceId)) {
-				throw new Exception('This contentPackId is reserved for local content packs.');
-			}
-		} else {
-			$contentPackId = BeaconUUID::v4();
-		}
-
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('INSERT INTO public.content_packs (content_pack_id, marketplace, marketplace_id, game_id, user_id, name, console_safe, default_enabled, min_version, include_in_deltas, is_official) VALUES ($1, $2, $3, $4, $5, $6, FALSE, FALSE, 10500000, FALSE, FALSE);', $contentPackId, $marketplace, $marketplaceId, $gameId, $userId, $name);
-		$database->Commit();
-
-		return static::Fetch($contentPackId);
-	}*/
 
 	public function ContentPackId(): string {
 		return $this->contentPackId;
@@ -195,6 +160,13 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			return "https://store.steampowered.com/app/{$this->marketplaceId}";
 		case 'Steam Workshop':
 			return "https://steamcommunity.com/sharedfiles/filedetails/?id={$this->marketplaceId}";
+		case 'CurseForge':
+			switch ($this->gameId) {
+			case 'ArkSA':
+				return "https://www.curseforge.com/ark-survival-ascended/mods/{$this->slug}";
+			default:
+				return '';
+			}
 		default:
 			return '';
 		}
@@ -241,22 +213,48 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		return $this->isConsoleSafe;
 	}
 
+	public function Slug(): ?string {
+		return $this->slug;
+	}
+
 	public function AttemptConfirmation(): bool {
+		$confirmed = false;
 		switch ($this->marketplace) {
 		case 'Steam Workshop':
 			$workshop_item = BeaconWorkshopItem::Load($this->marketplaceId);
 			if (is_null($workshop_item)) {
 				return false;
 			}
-			if (BeaconCommon::InDevelopment() || $workshop_item->ContainsString($this->confirmationCode)) {
-				$database = BeaconCommon::Database();
-				$database->BeginTransaction();
-				$database->Query('UPDATE public.content_packs SET confirmed = TRUE WHERE content_pack_id = $1;', $this->contentPackId);
-				$database->Commit();
-				$this->isConfirmed = true;
-				return true;
-			}
+			$confirmed = $workshop_item->ContainsString($this->confirmationCode);
 			break;
+		case 'CurseForge':
+			$http = curl_init();
+			curl_setopt($http, CURLOPT_HTTPHEADER, [
+				'x-api-key: ' . BeaconCommon::GetGlobal('CurseForge API Key'),
+			]);
+			curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($http, CURLOPT_URL, "https://api.curseforge.com/v1/mods/{$this->marketplaceId}/description");
+			$body = curl_exec($http);
+			$status = curl_getinfo($http, CURLINFO_HTTP_CODE);
+			curl_close($http);
+
+			if ($status !== 200) {
+				return false;
+			}
+
+			$parsed = json_decode($body, true);
+			$html = $parsed['data'];
+			$confirmed = str_contains($html, $this->confirmationCode);
+			break;
+		}
+
+		if ($confirmed || BeaconCommon::InDevelopment()) {
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			$database->Query('UPDATE public.content_packs SET confirmed = TRUE WHERE content_pack_id = $1;', $this->contentPackId);
+			$database->Commit();
+			$this->isConfirmed = true;
+			return true;
 		}
 
 		return false;
@@ -279,7 +277,8 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			'confirmationCode' => $this->confirmationCode,
 			'minVersion' => $this->minVersion,
 			'lastUpdate' => $this->lastUpdate,
-			'gameSpecific' => $this->gameSpecific
+			'gameSpecific' => $this->gameSpecific,
+			'slug' => $this->slug
 		];
 	}
 }
