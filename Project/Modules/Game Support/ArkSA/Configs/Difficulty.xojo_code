@@ -16,6 +16,7 @@ Inherits ArkSA.ConfigGroup
 		  Var Values() As ArkSA.ConfigValue
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DifficultyOffset=1.0"))
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "OverrideOfficialDifficulty=" + Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
+		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MaxDifficulty=False"))
 		  Return Values
 		End Function
 	#tag EndEvent
@@ -25,6 +26,7 @@ Inherits ArkSA.ConfigGroup
 		  Var Keys() As ArkSA.ConfigOption
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DifficultyOffset"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "OverrideOfficialDifficulty"))
+		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "MaxDifficulty"))
 		  Return Keys
 		End Function
 	#tag EndEvent
