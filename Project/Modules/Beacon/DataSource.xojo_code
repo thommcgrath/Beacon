@@ -236,13 +236,13 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateLocalContentPack(PackName As String, DoCloudExport As Boolean) As Beacon.ContentPack
-		  Return Self.CreateLocalContentPack(PackName, "", "", DoCloudExport)
+		Function CreateLocalContentPack(PackName As String, GameId As String, DoCloudExport As Boolean) As Beacon.ContentPack
+		  Return Self.CreateLocalContentPack(PackName, GameId, "", "", DoCloudExport)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateLocalContentPack(PackName As String, Marketplace As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
+		Function CreateLocalContentPack(PackName As String, GameId As String, Marketplace As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
 		  Var ContentPackId As String
 		  If MarketplaceId.IsEmpty Or Marketplace.IsEmpty Then
 		    ContentPackId = Beacon.UUID.v4
@@ -252,7 +252,7 @@ Implements NotificationKit.Receiver
 		    ContentPackId = Beacon.ContentPack.GenerateLocalContentPackId(Marketplace, MarketplaceId)
 		  End If
 		  Self.BeginTransaction()
-		  Var Rows As RowSet = Self.SQLSelect("INSERT OR IGNORE INTO content_packs (content_pack_id, game_id, marketplace, marketplace_id, name, console_safe, default_enabled, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9) RETURNING *;", ContentPackId, Ark.Identifier, Marketplace, MarketplaceId, PackName, False, False, True, DateTime.Now.SecondsFrom1970)
+		  Var Rows As RowSet = Self.SQLSelect("INSERT OR IGNORE INTO content_packs (content_pack_id, game_id, marketplace, marketplace_id, name, console_safe, default_enabled, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9) RETURNING *;", ContentPackId, GameId, Marketplace, MarketplaceId, PackName, False, False, True, DateTime.Now.SecondsFrom1970)
 		  If Rows.RowCount <> 1 Then
 		    Self.RollbackTransaction()
 		    Return Nil

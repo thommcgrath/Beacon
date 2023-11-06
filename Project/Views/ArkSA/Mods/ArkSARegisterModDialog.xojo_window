@@ -49,7 +49,7 @@ Begin BeaconDialog ArkSARegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   3
       Visible         =   True
       Width           =   520
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -306,7 +306,7 @@ Begin BeaconDialog ArkSARegisterModDialog
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "You can register your mod with Beacon so your engrams and creatures can be available to all Beacon users. You'll even be given a page on Beacon's website with your engram spawn codes and other blueprint details. To get started, enter the Steam workshop id or the url to your mod. You will be given a code to temporarily add to your mod's Steam page so your ownership of the mod can be confirmed."
+         Text            =   "You can register your mod with Beacon so your engrams and creatures can be available to all Beacon users. You'll even be given a page on Beacon's website with your engram spawn codes and other blueprint details. To get started, enter the CurseForge id or the url to your mod. You will be given a code to temporarily add to your mod's CurseForge page so your ownership of the mod can be confirmed."
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -436,7 +436,7 @@ Begin BeaconDialog ArkSARegisterModDialog
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
-         Text            =   "To confirm ownership of your mod, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Check"" button below. Once confirmed, the text can be removed from your Steam page. If you are unable to do this right now, you can cancel now and return to this later."
+         Text            =   "To confirm ownership of your mod, please copy the value below and insert it anywhere on the mod's CurseForge page. Then press the ""Check"" button below. Once confirmed, the text can be removed from your CurseForge page. If you are unable to do this right now, you can cancel now and return to this later."
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -974,14 +974,14 @@ End
 		      BeaconAPI.Send(DownloadRequest)
 		      Return
 		    Case BeaconUI.ConfirmResponses.Cancel
-		      Self.IntroActionButton.Enabled = Self.mSteamId.IsEmpty = False
+		      Self.IntroActionButton.Enabled = Self.mCurseForgeId.IsEmpty = False
 		      Self.IntroSkipButton.Enabled = True
 		      Self.IntroIdField.Enabled = True
 		      Return
 		    End Select
 		  End If
 		  
-		  Self.GetSteamPage()
+		  Self.GetCurseForgeData()
 		End Sub
 	#tag EndMethod
 
@@ -993,12 +993,12 @@ End
 		    Self.mModInfo.Constructor(Dictionary(Response.JSON))
 		    Self.ShowConfirmation()
 		    If Self.mModInfo.Confirmed Then
-		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your Steam page.")
+		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your CurseForge page.")
 		      Self.mModId = Self.mModInfo.ContentPackId
 		      Self.Hide
 		      Return
 		    Else
-		      Self.ShowAlert("Mod ownership has not been confirmed.", "The confirmation code was not found on mod's Steam page.")
+		      Self.ShowAlert("Mod ownership has not been confirmed.", "The confirmation code was not found on mod's CurseForge page.")
 		    End If
 		  Else
 		    Self.ShowAlert("Mod ownership has not been confirmed.", Response.Message)
@@ -1012,7 +1012,7 @@ End
 		  
 		  If Not Response.Success Then
 		    Self.ShowAlert("Failed to download discovery results.", "The process will continue as if discovery results were not found.")
-		    Self.GetSteamPage()
+		    Self.GetCurseForgeData()
 		    Return
 		  End If
 		  
@@ -1055,42 +1055,75 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub GetSteamPage()
+		Private Sub GetCurseForgeData()
 		  Var Socket As New URLConnection
 		  Socket.RequestHeader("User-Agent") = App.UserAgent
-		  AddHandler Socket.Error, WeakAddressOf mSteamLookupSocket_Error
-		  AddHandler Socket.ContentReceived, WeakAddressOf mSteamLookupSocket_ContentReceived
-		  Socket.Send("GET", "https://steamcommunity.com/sharedfiles/filedetails/?id=" + Self.mSteamId)
-		  Self.mSteamLookupSocket = Socket
+		  Socket.RequestHeader("x-api-key") = Beacon.CurseForgeApiKey
+		  AddHandler Socket.Error, WeakAddressOf mCurseForgeLookupSocket_Error
+		  AddHandler Socket.ContentReceived, WeakAddressOf mCurseForgeLookupSocket_ContentReceived
+		  If Self.mCurseForgeIdIsSlug Then
+		    Socket.Send("GET", "https://api.curseforge.com/v1/mods/search?slug=" + Self.mCurseForgeId + "&classId=6072&gameId=83374")
+		  Else
+		    Socket.Send("GET", "https://api.curseforge.com/v1/mods/" + Self.mCurseForgeId)
+		  End If
+		  Self.mCurseForgeLookupSocket = Socket
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSteamLookupSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		Private Sub mCurseForgeLookupSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused Url
 		  #Pragma Unused HttpStatus
 		  
-		  Var Extractor As New RegEx
-		  Extractor.SearchPattern = "<div class=""workshopItemTitle"">(.+)</div>"
-		  Extractor.Options.Greedy = False
-		  
-		  Var Matches As RegExMatch = Extractor.Search(Content)
-		  Var ModName As String
-		  If (Matches Is Nil) = False Then
-		    ModName = DecodingFromHTMLMBS(Matches.SubExpressionString(1))
-		  End If
-		  
-		  Self.ShowNamePage(ModName)
+		  Try
+		    Var Parsed As New JSONItem(Content)
+		    Var DataObj As JSONItem = Parsed.Child("data")
+		    Var ModInfo As JSONItem
+		    If DataObj.IsArray Then
+		      // Search results
+		      If DataObj.Count = 0 Then
+		        MessageBox("Could not find mod")
+		        Self.IntroActionButton.Enabled = Self.mCurseForgeId.IsEmpty = False
+		        Self.IntroSkipButton.Enabled = True
+		        Self.IntroIdField.Enabled = True
+		        Return
+		      Else
+		        ModInfo = DataObj.ChildAt(0)
+		      End If
+		    Else
+		      // Direct lookup
+		      ModInfo = DataObj
+		    End If
+		    
+		    If ModInfo.Value("gameId") <> 83374 Then
+		      MessageBox("Beacon found the mod, but it is not an Ark: Survival Ascended mod.")
+		      Self.IntroActionButton.Enabled = Self.mCurseForgeId.IsEmpty = False
+		      Self.IntroSkipButton.Enabled = True
+		      Self.IntroIdField.Enabled = True
+		      Return
+		    End If
+		    
+		    Var ModName As String = ModInfo.Value("name")
+		    Self.mCurseForgeId = ModInfo.Value("id").IntegerValue.ToString(Locale.Raw, "0")
+		    Self.mCurseForgeIdIsSlug = False
+		    Self.ShowNamePage(ModName)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Response from CurseForge API")
+		    MessageBox("Failed to parse response from CurseForge")
+		    Self.IntroActionButton.Enabled = Self.mCurseForgeId.IsEmpty = False
+		    Self.IntroSkipButton.Enabled = True
+		    Self.IntroIdField.Enabled = True
+		  End Try
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSteamLookupSocket_Error(Sender As URLConnection, Err As RuntimeException)
+		Private Sub mCurseForgeLookupSocket_Error(Sender As URLConnection, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  #Pragma Unused Err
 		  
-		  Self.IntroActionButton.Enabled = Self.mSteamId.IsEmpty = False
+		  Self.IntroActionButton.Enabled = Self.mCurseForgeId.IsEmpty = False
 		  Self.IntroSkipButton.Enabled = True
 		  Self.IntroIdField.Enabled = True
 		  Break
@@ -1165,6 +1198,18 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCurseForgeId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCurseForgeIdIsSlug As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCurseForgeLookupSocket As URLConnection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMode As Integer
 	#tag EndProperty
 
@@ -1178,14 +1223,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mModName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSteamId As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSteamLookupSocket As URLConnection
 	#tag EndProperty
 
 
@@ -1237,6 +1274,9 @@ End
 	#tag Constant, Name = PageName, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = SlugPattern, Type = String, Dynamic = False, Default = \"^https://www\\.curseforge\\.com/ark-survival-ascended/mods/([a-z0-9\\-_]+)$", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
@@ -1268,7 +1308,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  If Self.mMode = Self.ModeLocal Then
-		    Self.mModId = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.ContentPack.MarketplaceCurseForge, Self.mSteamId)
+		    Self.mModId = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, Self.mCurseForgeId)
 		    Var ContentPack As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPackWithId(Self.mModId)
 		    If (ContentPack Is Nil) = False Then
 		      Self.ShowAlert("You have already added this mod.", "It is not possible to add the same mod more than once.")
@@ -1291,7 +1331,7 @@ End
 		      Return
 		    End If
 		    
-		    Self.GetSteamPage()
+		    Self.GetCurseForgeData()
 		  End If
 		  
 		  Me.Enabled = False
@@ -1321,11 +1361,11 @@ End
 		  Var ModID As String = Self.DetailModIDField.Text.Trim
 		  If ModID.Left(4) = "http" Then
 		    Var Regex As New Regex
-		    Regex.SearchPattern = "id=(\d+)"
+		    Regex.SearchPattern = Self.SlugPattern
 		    
 		    Var Matches As RegexMatch = Regex.Search(ModID)
 		    If Matches = Nil Then
-		      MessageBox("This url does not appear to be a steam workshop url")
+		      MessageBox("This url does not appear to be an Ark: Survival Ascended CurseForge mod url")
 		      Return
 		    End If
 		    
@@ -1333,7 +1373,9 @@ End
 		  End If
 		  
 		  Var Dict As New Dictionary
-		  Dict.Value("mod_id") = ModID
+		  Dict.Value("gameId") = ArkSA.Identifier
+		  Dict.Value("marketplace") = Beacon.MarketplaceCurseForge
+		  Dict.Value("marketplaceId") = ModID
 		  Var Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
 		  Var Request As New BeaconAPI.Request("/contentPacks", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
@@ -1397,7 +1439,7 @@ End
 		Sub Pressed()
 		  Self.Pages.SelectedPanelIndex = 0
 		  Self.IntroIdField.Enabled = True
-		  Self.IntroActionButton.Enabled = (Self.mSteamId.IsEmpty = False)
+		  Self.IntroActionButton.Enabled = (Self.mCurseForgeId.IsEmpty = False)
 		  Self.IntroSkipButton.Enabled = True
 		End Sub
 	#tag EndEvent
@@ -1412,8 +1454,18 @@ End
 #tag Events IntroIdField
 	#tag Event
 		Sub TextChanged()
+		  Try
+		    #Pragma BreakOnExceptions False
+		    Var ModNumeric As Integer = Integer.FromString(Me.Text, Locale.Current)
+		    Self.mCurseForgeId = ModNumeric.ToString(Locale.Raw, "0")
+		    Self.mCurseForgeIdIsSlug = False
+		    Self.IntroActionButton.Enabled = True
+		    Return
+		  Catch Err As RuntimeException
+		  End Try
+		  
 		  Var Validator As New RegEx
-		  Validator.SearchPattern = "^((https?://)?steamcommunity.com/sharedfiles/filedetails/\?id=)?(\d+)"
+		  Validator.SearchPattern = Self.SlugPattern
 		  
 		  Var Matches As RegExMatch = Validator.Search(Me.Text)
 		  If Matches Is Nil Then
@@ -1421,7 +1473,8 @@ End
 		    Return
 		  End If
 		  
-		  Self.mSteamId = Matches.SubExpressionString(3)
+		  Self.mCurseForgeId = Matches.SubExpressionString(1)
+		  Self.mCurseForgeIdIsSlug = True
 		  Self.IntroActionButton.Enabled = True
 		End Sub
 	#tag EndEvent
@@ -1463,7 +1516,7 @@ End
 		  Var ModInfo As BeaconAPI.ContentPack
 		  If Self.mMode = Self.ModeLocal Then
 		    Var Database As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
-		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mSteamId, True)
+		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mCurseForgeId, True)
 		    ModId = ContentPack.ContentPackId
 		    ModInfo = New BeaconAPI.ContentPack(ContentPack)
 		  Else
@@ -1471,8 +1524,8 @@ End
 		    Var PackData As New Dictionary
 		    PackData.Value("contentPackId") = ModId
 		    PackData.Value("name") = Self.mModName
-		    PackData.Value("marketplace") = Beacon.ContentPack.MarketplaceCurseForge
-		    PackData.Value("marketplaceId") = Self.mSteamId
+		    PackData.Value("marketplace") = Beacon.MarketplaceCurseForge
+		    PackData.Value("marketplaceId") = Self.mModId
 		    PackData.Value("gameId") = ArkSA.Identifier
 		    
 		    Var Request As New BeaconAPI.Request("contentPacks", "POST", Beacon.GenerateJSON(PackData, False), "application/json")

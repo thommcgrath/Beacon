@@ -629,7 +629,7 @@ Inherits Beacon.DataSource
 		          If ContentPackId <> Ark.UserContentPackId Then
 		            Var Marketplace, MarketplaceId As String
 		            If Dict.Value("workshop_id").IsNull = False Then
-		              Marketplace = Beacon.ContentPack.MarketplaceSteamWorkshop
+		              Marketplace = Beacon.MarketplaceSteamWorkshop
 		              MarketplaceId = Dict.Value("workshop_id").StringValue
 		            End If
 		            
@@ -1009,7 +1009,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function CreateLocalContentPack(PackName As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
-		  Return Self.CreateLocalContentPack(PackName, Beacon.MarketplaceSteamWorkshop, MarketplaceId, DoCloudExport)
+		  Return Self.CreateLocalContentPack(PackName, Ark.Identifier, Beacon.MarketplaceSteamWorkshop, MarketplaceId, DoCloudExport)
 		End Function
 	#tag EndMethod
 

@@ -893,7 +893,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function CreateLocalContentPack(PackName As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
-		  Return Self.CreateLocalContentPack(PackName, Beacon.MarketplaceSteamWorkshop, MarketplaceId, DoCloudExport)
+		  Return Self.CreateLocalContentPack(PackName, ArkSA.Identifier, Beacon.MarketplaceCurseForge, MarketplaceId, DoCloudExport)
 		End Function
 	#tag EndMethod
 

@@ -269,16 +269,6 @@ Protected Class ContentPack
 	#tag EndProperty
 
 
-	#tag Constant, Name = MarketplaceCurseForge, Type = String, Dynamic = False, Default = \"CurseForge", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = MarketplaceSteam, Type = String, Dynamic = False, Default = \"Steam", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = MarketplaceSteamWorkshop, Type = String, Dynamic = False, Default = \"Steam Workshop", Scope = Public
-	#tag EndConstant
-
-
 	#tag Enum, Name = Types, Type = Integer, Flags = &h0
 		Official
 		  ThirdParty

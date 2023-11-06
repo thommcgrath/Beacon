@@ -517,7 +517,7 @@ Protected Module Beacon
 		      GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag, 0))
 		    #endif
 		    #if ArkSA.Enabled
-		      GameList.Add(New Beacon.Game(ArkSA.Identifier, ArkSA.FullName, ArkSA.OmniFlag, Beacon.Game.FeatureTemplates))
+		      GameList.Add(New Beacon.Game(ArkSA.Identifier, ArkSA.FullName, ArkSA.OmniFlag, Beacon.Game.FeatureTemplates Or Beacon.Game.FeatureMods))
 		    #endif
 		    
 		    Var Names() As String
@@ -1594,6 +1594,9 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = FTPModeSSH, Type = String, Dynamic = False, Default = \"sftp", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = MarketplaceCurseForge, Type = String, Dynamic = False, Default = \"CurseForge", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = MarketplaceSteam, Type = String, Dynamic = False, Default = \"Steam", Scope = Protected

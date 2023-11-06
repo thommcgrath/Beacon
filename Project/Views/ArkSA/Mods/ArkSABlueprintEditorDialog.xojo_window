@@ -3291,7 +3291,7 @@ End
 		    Me.AddRow(Icon.Label, Icon.UUID)
 		  Next Icon
 		  Try
-		    Me.SelectRowWithTag("84d76c41-4386-467d-83e7-841dcaa4007d")
+		    Me.SelectRowWithTag("d5bb71e5-fba5-51f3-b120-f1abadc1fa6e")
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub

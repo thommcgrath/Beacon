@@ -277,22 +277,28 @@ End
 		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
 		  Var Filter As String = Self.FilterField.Text.Trim
 		  
+		  Var DataSources() As Beacon.DataSource = App.DataSources
+		  // DataSources(0) = Ark.DataSource.Pool.Get(False)
+		  // DataSources(1) = ArkSA.DataSource.Pool.Get(False)
+		  
 		  Self.ModsList.RemoveAllRows
-		  Var Packs() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Filter, Beacon.ContentPack.Types.Custom)
-		  For Each Pack As Beacon.ContentPack In Packs
-		    Var GameName As String = Language.GameName("Ark")
-		    Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
-		    Var ModInfo As New BeaconAPI.ContentPack(Pack)
-		    
-		    Self.ModsList.AddRow(Pack.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium))
-		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
-		    Self.ModsList.RowTagAt(Idx) = ModInfo
-		    Self.ModsList.RowSelectedAt(Idx) = SelectedModIds.IndexOf(Pack.ContentPackId) > -1
-		    
-		    If Self.mOpenModWhenRefreshed = Pack.ContentPackId Then
-		      Self.ShowMod(ModInfo)
-		      Self.mOpenModWhenRefreshed = ""
-		    End If
+		  For Each DataSource As Beacon.DataSource In DataSources
+		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks(Filter, Beacon.ContentPack.Types.Custom)
+		    For Each Pack As Beacon.ContentPack In Packs
+		      Var GameName As String = Language.GameName(Pack.GameId)
+		      Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
+		      Var ModInfo As New BeaconAPI.ContentPack(Pack)
+		      
+		      Self.ModsList.AddRow(Pack.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium))
+		      Var Idx As Integer = Self.ModsList.LastAddedRowIndex
+		      Self.ModsList.RowTagAt(Idx) = ModInfo
+		      Self.ModsList.RowSelectedAt(Idx) = SelectedModIds.IndexOf(Pack.ContentPackId) > -1
+		      
+		      If Self.mOpenModWhenRefreshed = Pack.ContentPackId Then
+		        Self.ShowMod(ModInfo)
+		        Self.mOpenModWhenRefreshed = ""
+		      End If
+		    Next
 		  Next
 		  Self.TotalPages = 1
 		  Self.TotalResults = Self.ModsList.RowCount

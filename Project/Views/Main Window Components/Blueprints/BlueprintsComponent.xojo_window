@@ -289,6 +289,8 @@ End
 		  If ModInfo.Confirmed = False Then
 		    If ModInfo.GameId = Ark.Identifier And ArkRegisterModDialog.Present(Self, ModInfo) Then
 		      Sender.RefreshMods()
+		    ElseIf ModInfo.GameId = ArkSA.Identifier And ArkSARegisterModDialog.Present(Self, ModInfo) Then
+		      Sender.RefreshMods()
 		    Else
 		      Return
 		    End If
@@ -309,6 +311,16 @@ End
 		      End If
 		      
 		      View = New ArkModEditorView(Controller)
+		      Self.EmbedView(View)
+		    Case ArkSA.Identifier
+		      Var Controller As ArkSA.BlueprintController
+		      If ModInfo.IsLocal Then
+		        Controller = New ArkSA.LocalBlueprintController(ModInfo)
+		      Else
+		        Controller = New ArkSA.RemoteBlueprintController(ModInfo)
+		      End If
+		      
+		      View = New ArkSAModEditorView(Controller)
 		      Self.EmbedView(View)
 		    End Select
 		  End If
