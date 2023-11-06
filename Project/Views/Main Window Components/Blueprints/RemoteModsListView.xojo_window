@@ -587,20 +587,28 @@ End
 		  
 		  Select Case Item.Name
 		  Case "RegisterMod"
-		    Var GameId As String = GameSelectorWindow.Present(Self)
+		    Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureMods, False)
 		    If GameId.IsEmpty Then
 		      Return
 		    End If
-		    If GameId <> Ark.Identifier Then
-		      Self.ShowAlert("Beacon does not yet support mods for " + Language.GameName(GameId), "This feature is coming, but isn't ready in this version.")
-		      Return
-		    End If
 		    
-		    Var ModId As String =  ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeRemote)
-		    If ModId.IsEmpty = False Then
-		      Self.RefreshMods(Array(ModId))
-		      Self.List.SetFocus()
-		    End If
+		    Select Case GameId
+		    Case Ark.Identifier
+		      Var ModId As String =  ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeRemote)
+		      If ModId.IsEmpty = False Then
+		        Self.RefreshMods(Array(ModId))
+		        Self.List.SetFocus()
+		      End If
+		    Case ArkSA.Identifier
+		      Var ModId As String =  ArkSARegisterModDialog.Present(Self, ArkSARegisterModDialog.ModeRemote)
+		      If ModId.IsEmpty = False Then
+		        Self.RefreshMods(Array(ModId))
+		        Self.List.SetFocus()
+		      End If
+		    Else
+		      Self.ShowAlert("Beacon does not support mods for " + Language.GameName(GameId), "This feature may or may not be added in the future.")
+		      Return
+		    End Select
 		  Case "EditModBlueprints"
 		    Self.List.DoEdit()
 		  End Select

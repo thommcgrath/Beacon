@@ -497,12 +497,12 @@ Protected Module Beacon
 		Function Games() As Beacon.Game()
 		  Static GameList() As Beacon.Game
 		  If GameList.Count = 0 Then
-		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName, Ark.OmniFlag))
+		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName, Ark.OmniFlag, Beacon.Game.FeatureTemplates Or Beacon.Game.FeatureMods Or Beacon.Game.FeatureModDiscovery))
 		    #if SDTD.Enabled
-		      GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag))
+		      GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag, 0))
 		    #endif
 		    #if ArkSA.Enabled
-		      GameList.Add(New Beacon.Game(ArkSA.Identifier, ArkSA.FullName, ArkSA.OmniFlag))
+		      GameList.Add(New Beacon.Game(ArkSA.Identifier, ArkSA.FullName, ArkSA.OmniFlag, Beacon.Game.FeatureTemplates))
 		    #endif
 		    
 		    Var Names() As String

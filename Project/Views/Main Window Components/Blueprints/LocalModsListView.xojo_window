@@ -119,7 +119,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -257,7 +256,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine DiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -416,7 +414,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RunModDiscovery()
-		  Var GameId As String = GameSelectorWindow.Present(Self)
+		  Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureMods, False)
 		  If GameId.IsEmpty Then
 		    Return
 		  End If
@@ -679,20 +677,28 @@ End
 		  
 		  Select Case Item.Name
 		  Case "RegisterMod"
-		    Var GameId As String = GameSelectorWindow.Present(Self)
+		    Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureMods, False)
 		    If GameId.IsEmpty Then
 		      Return
 		    End If
-		    If GameId <> Ark.Identifier Then
-		      Self.ShowAlert("Beacon does not yet support mods for " + Language.GameName(GameId), "This feature is coming, but isn't ready in this version.")
-		      Return
-		    End If
 		    
-		    Var ModId As String = ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeLocal)
-		    If ModId.IsEmpty = False Then
-		      Self.mOpenModWhenRefreshed = ModId
-		      Self.RefreshMods()
-		    End If
+		    Select Case GameId
+		    Case Ark.Identifier
+		      Var ModId As String =  ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeLocal)
+		      If ModId.IsEmpty = False Then
+		        Self.RefreshMods(Array(ModId))
+		        Self.ModsList.SetFocus()
+		      End If
+		    Case ArkSA.Identifier
+		      Var ModId As String =  ArkSARegisterModDialog.Present(Self, ArkSARegisterModDialog.ModeLocal)
+		      If ModId.IsEmpty = False Then
+		        Self.RefreshMods(Array(ModId))
+		        Self.ModsList.SetFocus()
+		      End If
+		    Else
+		      Self.ShowAlert("Beacon does not support mods for " + Language.GameName(GameId), "This feature may or may not be added in the future.")
+		      Return
+		    End Select
 		  Case "EditModBlueprints"
 		    Self.ModsList.DoEdit()
 		  Case "DiscoverMods"

@@ -270,7 +270,6 @@ Begin DocumentEditorView ArkSADocumentEditorView
    End
    Begin Thread GFIComputeThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

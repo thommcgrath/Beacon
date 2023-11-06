@@ -312,7 +312,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewTemplate()
-		  Var GameId As String = GameSelectorWindow.Present(Self)
+		  Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureTemplates, False)
 		  If GameId.IsEmpty Then
 		    Return
 		  End If

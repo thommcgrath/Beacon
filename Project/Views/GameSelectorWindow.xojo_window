@@ -160,7 +160,8 @@ End
 		  Var Games() As Beacon.Game = Beacon.Games
 		  Var Idx As Integer = 0
 		  For Each Game As Beacon.Game In Games
-		    If Self.mAllowedGameIds.HasKey(Game.Identifier) = False Then
+		    Var Allowed As Boolean = Self.mAllowedGameIds.HasKey(Game.Identifier)
+		    If Allowed = False And Self.mHideOthers = True Then
 		      Continue
 		    End If
 		    
@@ -173,6 +174,12 @@ End
 		    Radio.Height = 20
 		    Radio.Width = Self.Width - 40
 		    Radio.Left = 20
+		    Radio.Enabled = Allowed
+		    If Not Allowed Then
+		      Radio.Tooltip = Language.ReplacePlaceholders(Self.FeatureNotSupported, Game.Name)
+		    Else
+		      Radio.Tooltip = "" // Just to make sure it gets cleared
+		    End If
 		    NextTop = Radio.Bottom + 12
 		    
 		    Idx = Idx + 1
@@ -188,50 +195,64 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(AllowedGameIds() As String)
+		Private Sub Constructor(AllowedGameIds() As String, HideOthers As Boolean)
 		  Self.mAllowedGameIds = New Dictionary
 		  For Each GameId As String In AllowedGameIds
 		    Self.mAllowedGameIds.Value(GameId) = True
 		  Next
+		  Self.mHideOthers = HideOthers
 		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, AllowedGames() As Beacon.Game) As String
+		Shared Function Present(Parent As DesktopWindow, AllowedGames() As Beacon.Game, HideOthers As Boolean) As String
 		  Var AllowedGameIds() As String
 		  AllowedGameIds.ResizeTo(AllowedGames.LastIndex)
 		  For Idx As Integer = 0 To AllowedGameIds.LastIndex
 		    AllowedGameIds(Idx) = AllowedGames(Idx).Identifier
 		  Next
-		  Return Present(Parent, AllowedGameIds)
+		  Return Present(Parent, AllowedGameIds, HideOthers)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, WithFeatures As Integer, HideOthers As Boolean) As String
+		  Var AllGames() As Beacon.Game = Beacon.Games
+		  Var AllowedGameIds() As String
+		  For Each Game As Beacon.Game In AllGames
+		    If Game.HasFeature(WithFeatures) Then
+		      AllowedGameIds.Add(Game.Identifier)
+		    End If
+		  Next
+		  Return Present(Parent, AllowedGameIds, HideOthers)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As DesktopWindow, ParamArray AllowedGameIds() As String) As String
 		  If AllowedGameIds.Count = 0 Then
-		    Return Present(Parent, Beacon.Games)
+		    Return Present(Parent, Beacon.Games, True)
 		  Else
-		    Return Present(Parent, AllowedGameIds)
+		    Return Present(Parent, AllowedGameIds, True)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, AllowedGameIds() As String) As String
+		Shared Function Present(Parent As DesktopWindow, AllowedGameIds() As String, HideOthers As Boolean) As String
 		  If (Parent Is Nil) = False Then
 		    Parent = Parent.TrueWindow
 		  End If
 		  
 		  If AllowedGameIds.Count = 0 Then
 		    Return ""
-		  ElseIf AllowedGameIds.Count = 1 Then
+		  ElseIf AllowedGameIds.Count = 1 And HideOthers = True Then
 		    Return AllowedGameIds(0)
 		  End If
 		  
-		  Var Win As New GameSelectorWindow(AllowedGameIds)
+		  Var Win As New GameSelectorWindow(AllowedGameIds, HideOthers)
 		  Win.ShowModal(Parent)
 		  
 		  Var GameId As String
@@ -260,6 +281,14 @@ End
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHideOthers As Boolean
+	#tag EndProperty
+
+
+	#tag Constant, Name = FeatureNotSupported, Type = String, Dynamic = True, Default = \"\?1 does not support the requested feature.", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode

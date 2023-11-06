@@ -269,6 +269,9 @@ Protected Class ContentPack
 	#tag EndProperty
 
 
+	#tag Constant, Name = MarketplaceCurseForge, Type = String, Dynamic = False, Default = \"CurseForge", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = MarketplaceSteam, Type = String, Dynamic = False, Default = \"Steam", Scope = Public
 	#tag EndConstant
 

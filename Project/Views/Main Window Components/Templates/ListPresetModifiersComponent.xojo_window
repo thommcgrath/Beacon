@@ -242,7 +242,7 @@ End
 		Private Sub EditSelector(TemplateSelector As Beacon.TemplateSelector)
 		  Var GameId As String
 		  If TemplateSelector Is Nil Then
-		    GameId = GameSelectorWindow.Present(Self)
+		    GameId = GameSelectorWindow.Present(Self, Beacon.Game.FeatureTemplates, False)
 		  Else
 		    GameId = TemplateSelector.GameId
 		  End If
