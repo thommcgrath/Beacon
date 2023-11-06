@@ -325,6 +325,8 @@ End
 		  Select Case GameId
 		  Case Ark.Identifier
 		    Self.OpenTemplate(New Ark.LootTemplate)
+		  Case ArkSA.Identifier
+		    Self.OpenTemplate(New ArkSA.LootTemplate)
 		  Else
 		    Self.ShowAlert("Beacon does not yet support templates for " + Language.GameName(GameId), "This feature is coming, but isn't ready in this version.")
 		  End Select
@@ -355,6 +357,8 @@ End
 		    Select Case Template
 		    Case IsA Ark.LootTemplate
 		      View = New ArkLootTemplateEditorView(Ark.LootTemplate(Template))
+		    Case IsA ArkSA.LootTemplate
+		      View = New ArkSALootTemplateEditorView(ArkSA.LootTemplate(Template))
 		    Else
 		      Self.ShowAlert("Beacon does not yet support templates for this game.", "This feature is coming, but isn't ready in this version.")
 		      Return
@@ -397,6 +401,8 @@ End
 		    Select Case Template
 		    Case IsA Ark.LootTemplate
 		      View = New ArkLootTemplateEditorView(Ark.LootTemplate(Template))
+		    Case IsA ArkSA.LootTemplate
+		      View = New ArkSALootTemplateEditorView(ArkSA.LootTemplate(Template))
 		    End Select
 		    Self.EmbedView(TemplateEditorView(View))
 		  End If

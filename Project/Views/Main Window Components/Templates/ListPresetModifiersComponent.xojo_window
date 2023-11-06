@@ -71,8 +71,8 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   1
-      ColumnWidths    =   ""
+      ColumnCount     =   2
+      ColumnWidths    =   "*,150"
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -84,14 +84,14 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       FontUnit        =   0
       GridLineStyle   =   0
       HasBorder       =   False
-      HasHeader       =   False
+      HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   259
+      Height          =   228
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
+      InitialValue    =   "Name	Game"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -118,6 +118,67 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin DesktopLabel StatusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Loading template selectors"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   275
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   260
+   End
+   Begin FadedSeparator StatusSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   269
+      Transparent     =   True
+      Visible         =   True
+      Width           =   300
    End
 End
 #tag EndDesktopWindow
@@ -179,7 +240,26 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EditSelector(TemplateSelector As Beacon.TemplateSelector)
-		  Var CreatedSelector As Beacon.TemplateSelector = ArkLootContainerSelectorEditorDialog.Present(Self, TemplateSelector)
+		  Var GameId As String
+		  If TemplateSelector Is Nil Then
+		    GameId = GameSelectorWindow.Present(Self)
+		  Else
+		    GameId = TemplateSelector.GameId
+		  End If
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var CreatedSelector As Beacon.TemplateSelector
+		  Select Case GameId
+		  Case Ark.Identifier
+		    CreatedSelector = ArkLootContainerSelectorEditorDialog.Present(Self, TemplateSelector)
+		  Case ArkSA.Identifier
+		    CreatedSelector = ArkSALootContainerSelectorEditorDialog.Present(Self, TemplateSelector)
+		  Else
+		    Self.ShowAlert("Game does not support templates", "Beacon does not have support for templates in " + Language.GameName(GameId) + ".")
+		    Return
+		  End Select
 		  If CreatedSelector Is Nil Then
 		    Return
 		  End If
@@ -227,12 +307,16 @@ End
 		  
 		  Self.List.RowCount = Modifiers.Count
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    Self.List.CellTextAt(Idx, 0) = Modifiers(Idx).Label
+		    Self.List.CellTextAt(Idx, Self.ColumnName) = Modifiers(Idx).Label
+		    Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(Modifiers(Idx).GameId)
 		    Self.List.RowTagAt(Idx) = Modifiers(Idx)
 		    Self.List.RowSelectedAt(Idx) = SelectIDs.IndexOf(Modifiers(Idx).UUID) > -1
 		  Next
 		  
 		  Self.List.Sort
+		  Self.List.SizeColumnToFit(Self.ColumnGame)
+		  
+		  Self.UpdateStatus
 		End Sub
 	#tag EndMethod
 
@@ -247,11 +331,31 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Var Status As String
+		  If Self.List.SelectedRowCount > 0 Then
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.List.RowCount, "template selector", "template selectors") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.List.RowCount, "template selector", "template selectors")
+		  End If
+		  If Self.StatusLabel.Text <> Status Then
+		    Self.StatusLabel.Text = Status
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
+
+	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.templateselector", Scope = Private
 	#tag EndConstant
@@ -371,6 +475,8 @@ End
 		  If (Self.ModifiersToolbar.Item("EditModifier") Is Nil) = False Then
 		    Self.ModifiersToolbar.Item("EditModifier").Enabled = Me.CanEdit()
 		  End If
+		  
+		  Self.UpdateStatus
 		End Sub
 	#tag EndEvent
 #tag EndEvents
