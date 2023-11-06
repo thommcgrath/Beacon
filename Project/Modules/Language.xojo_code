@@ -240,7 +240,13 @@ Protected Module Language
 	#tag Constant, Name = CommonCancel, Type = String, Dynamic = True, Default = \"Cancel", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = CommonChoose, Type = String, Dynamic = True, Default = \"Choose\xE2\x80\xA6", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = CommonContinue, Type = String, Dynamic = True, Default = \"Continue", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonOk, Type = String, Dynamic = True, Default = \"OK", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = ExperimentalWarningActionCaption, Type = String, Dynamic = False, Default = \"Continue", Scope = Protected

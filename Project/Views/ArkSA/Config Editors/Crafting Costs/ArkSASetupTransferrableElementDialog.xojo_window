@@ -20,7 +20,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
    MinimumHeight   =   296
    MinimumWidth    =   600
    Resizeable      =   False
-   Title           =   "Setup Transferrable Element"
+   Title           =   "#DialogTitle"
    Type            =   8
    Visible         =   True
    Width           =   600
@@ -47,7 +47,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Setup Transferrable Element"
+      Text            =   "#DialogTitle"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -80,7 +80,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "This tool will add or change the crafting costs necessary to make element transferrable. Most admins choose to use soap as the intermediate ingredient. This means 1 soap would require 1 element to craft. Then 100 shards would be crafted from 1 soap. And finally the normal 1 element is crafted from 100 shards. This allows the element to be transferred as soap without prohibiting shards being turned into element."
+      Text            =   "#Explanation"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -94,7 +94,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
-      Caption         =   "Choose…"
+      Caption         =   "#Language.CommonChoose"
       Default         =   False
       Enabled         =   True
       FontName        =   "System"
@@ -145,7 +145,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Intermediate Ingredient:"
+      Text            =   "#LabelIntermediateIngredient"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -158,7 +158,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
    Begin DesktopRadioButton CraftIntoShardsRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Intermediate crafts into 100 shards"
+      Caption         =   "#LabelIntermediateToShards"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -188,7 +188,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
    Begin DesktopRadioButton CraftIntoElementRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Intermediate crafts into 1 element"
+      Caption         =   "#LabelIntermediateToElement"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -252,7 +252,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
-      Caption         =   "OK"
+      Caption         =   "#Language.CommonOk"
       Default         =   True
       Enabled         =   True
       FontName        =   "System"
@@ -284,7 +284,7 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   True
-      Caption         =   "Cancel"
+      Caption         =   "#Language.CommonCancel"
       Default         =   False
       Enabled         =   True
       FontName        =   "System"
@@ -316,11 +316,41 @@ End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  Self.ExplanationLabel.Height = Self.ExplanationLabel.IdealHeight
+		  Self.IntermediateLabel.SizeToFit
+		  
+		  Self.ChooseIntermediateButton.Top = Self.ExplanationLabel.Bottom + 12
+		  Self.IntermediateLabel.Top = Self.ChooseIntermediateButton.Top
+		  Self.IntermediateLabel.Height = Self.ChooseIntermediateButton.Height
+		  Self.IntermediateField.Top = Self.ChooseIntermediateButton.Top
+		  Self.IntermediateField.Height = Self.ChooseIntermediateButton.Height
+		  Self.ChooseIntermediateButton.Left = Self.IntermediateLabel.Right + 12
+		  Self.IntermediateField.Left = Self.ChooseIntermediateButton.Right + 12
+		  Self.IntermediateField.Width = Self.Width - (20 + Self.IntermediateField.Left)
+		  
+		  Self.CraftIntoShardsRadio.Top = Self.ChooseIntermediateButton.Bottom + 12
+		  Self.CraftIntoShardsRadio.Left = Self.IntermediateLabel.Right + 12
+		  Self.CraftIntoShardsRadio.Width = Self.Width - (20 + Self.CraftIntoShardsRadio.Left)
+		  
+		  Self.CraftIntoElementRadio.Top = Self.CraftIntoShardsRadio.Bottom + 12
+		  Self.CraftIntoElementRadio.Left = Self.IntermediateLabel.Right + 12
+		  Self.CraftIntoElementRadio.Width = Self.Width - (20 + Self.CraftIntoElementRadio.Left)
+		  
+		  Self.ActionButton.Top = Self.CraftIntoElementRadio.Bottom + 20
+		  Self.CancelButton.Top = Self.ActionButton.Top
+		  
+		  Self.Height = Self.CancelButton.Bottom + 20
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Config As ArkSA.Configs.CraftingCosts, Mods As Beacon.StringList)
 		  Self.mConfig = Config
 		  Self.mMods = Mods
-		  Self.mIntermediate = ArkSA.DataSource.Pool.Get(False).GetEngram("0e795209-d421-432c-86a2-cd22bf5484a3")
+		  Self.mIntermediate = ArkSA.DataSource.Pool.Get(False).GetEngram("82d8bf54-08bc-5d9e-9f23-a63e24a1273f")
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -357,6 +387,37 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ButtonRefreshNow, Type = String, Dynamic = True, Default = \"Rebuild Now", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = DialogTitle, Type = String, Dynamic = True, Default = \"Setup Transferrable Element", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ErrorNoElementExplanation, Type = String, Dynamic = True, Default = \"Beacon could not find Element in its database. Would you like Beacon to rebuild its blueprints database\?", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ErrorNoElementMessage, Type = String, Dynamic = True, Default = \"Could not find element", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ErrorNoShardsExplanation, Type = String, Dynamic = True, Default = \"Beacon could not find Element Shards in its database. Would you like Beacon to rebuild its blueprints database\?", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ErrorNoShardsMessage, Type = String, Dynamic = True, Default = \"Could not find element shards", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Explanation, Type = String, Dynamic = True, Default = \"This tool will add or change the crafting costs necessary to make element transferrable. Most admins choose to use soap as the intermediate ingredient. This means 1 soap would require 1 element to craft. Then 100 shards would be crafted from 1 soap. And finally the normal 1 element is crafted from 100 shards. This allows the element to be transferred as soap without prohibiting shards being turned into element.", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelIntermediateIngredient, Type = String, Dynamic = True, Default = \"Intermediate Ingredient:", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelIntermediateToElement, Type = String, Dynamic = True, Default = \"Intermediate crafts into 1 element", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelIntermediateToShards, Type = String, Dynamic = True, Default = \"Intermediate crafts into 100 shards", Scope = Protected
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events ChooseIntermediateButton
@@ -374,14 +435,28 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Element As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("904af0d9-ec92-447b-bcaa-d1a8bf1ab3cf")
+		  Var Element As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("1ca85b1a-41cd-5b93-ba08-872a5edcc376")
+		  If Element Is Nil Then
+		    If Self.ShowConfirm(Self.ErrorNoElementMessage, Self.ErrorNoElementExplanation, Self.ButtonRefreshNow, Language.CommonCancel) Then
+		      App.SyncGamedata(False, True)
+		    End If
+		    Return
+		  End If
 		  
 		  Var IntermediateCost As New ArkSA.MutableCraftingCost(Self.mIntermediate, False)
 		  IntermediateCost.Add(Element, 1, True)
 		  Self.mConfig.Add(IntermediateCost)
 		  
 		  If Self.CraftIntoShardsRadio.Value Then
-		    Var ShardsCost As New ArkSA.MutableCraftingCost(ArkSA.DataSource.Pool.Get(False).GetEngram("c1ee52b8-e6c4-475d-96e9-b1b491b67063"), False)
+		    Var Shards As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("a3cb0922-6c3e-5c3d-88ea-a47011f97d68")
+		    If Shards Is Nil Then
+		      If Self.ShowConfirm(Self.ErrorNoShardsMessage, Self.ErrorNoShardsExplanation, Self.ButtonRefreshNow, Language.CommonCancel) Then
+		        App.SyncGamedata(False, True)
+		      End If
+		      Return
+		    End If
+		    
+		    Var ShardsCost As New ArkSA.MutableCraftingCost(Shards, False)
 		    ShardsCost.Add(Self.mIntermediate, 1, True)
 		    Self.mConfig.Add(ShardsCost)
 		    
