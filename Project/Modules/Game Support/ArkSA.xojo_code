@@ -1542,7 +1542,7 @@ Protected Module ArkSA
 	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"b2362c68-abcf-4dc2-93b1-5d39074e48b3", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
+	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"Ark: Survival Ascended User Content", Scope = Protected
 	#tag EndConstant
 
 

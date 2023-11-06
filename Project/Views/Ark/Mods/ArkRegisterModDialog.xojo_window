@@ -1336,7 +1336,9 @@ End
 		  End If
 		  
 		  Var Dict As New Dictionary
-		  Dict.Value("mod_id") = ModID
+		  Dict.Value("gameId") = Ark.Identifier
+		  Dict.Value("marketplace") = Beacon.MarketplaceSteam
+		  Dict.Value("marketplaceId") = ModID
 		  Var Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
 		  Var Request As New BeaconAPI.Request("/contentPacks", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)

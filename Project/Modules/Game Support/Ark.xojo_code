@@ -1528,7 +1528,7 @@ Protected Module Ark
 	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
+	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"Ark: Survival Evolved User Content", Scope = Protected
 	#tag EndConstant
 
 

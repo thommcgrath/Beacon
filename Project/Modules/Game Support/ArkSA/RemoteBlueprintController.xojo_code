@@ -52,7 +52,7 @@ Inherits ArkSA.BlueprintController
 		  Params.Value("page") = Task.Page
 		  Params.Value("pageSize") = Task.PageSize
 		  
-		  Var Request As New BeaconAPI.Request("ark/" + PathComponent, "GET", Params)
+		  Var Request As New BeaconAPI.Request("arksa/" + PathComponent, "GET", Params)
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  
 		  If Response.HTTPStatus <> 200 Then
@@ -162,7 +162,7 @@ Inherits ArkSA.BlueprintController
 		    Objects.Add(New Dictionary(IdProperty: Id))
 		  Next
 		  
-		  Var Request As New BeaconAPI.Request("ark/" + PathComponent, "DELETE", Beacon.GenerateJSON(Objects, False), "application/json")
+		  Var Request As New BeaconAPI.Request("arksa/" + PathComponent, "DELETE", Beacon.GenerateJSON(Objects, False), "application/json")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  
 		  If Response.HTTPStatus <> 200 And Response.HTTPStatus <> 204 Then
@@ -182,7 +182,7 @@ Inherits ArkSA.BlueprintController
 		    Objects.Add(ArkSA.PackBlueprint(Blueprint))
 		  Next
 		  
-		  Var Request As New BeaconAPI.Request("ark/" + PathComponent, "POST", Beacon.GenerateJSON(Objects, False), "application/json")
+		  Var Request As New BeaconAPI.Request("arksa/" + PathComponent, "POST", Beacon.GenerateJSON(Objects, False), "application/json")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  
 		  If Response.HTTPStatus <> 200 And Response.HTTPStatus <> 201 Then
