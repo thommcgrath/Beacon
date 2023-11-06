@@ -314,6 +314,21 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function CurseForgeApiKey() As String
+		  Static ApiKey As String
+		  If ApiKey.IsEmpty Then
+		    #if DebugBuild
+		      Var Chars As String = App.ResourcesFolder.Child("CurseForge.txt").Read
+		    #else
+		      Var Chars As String = CurseForgeApiKeyEncoded
+		    #endif
+		    ApiKey = DefineEncoding(DecodeBase64(Chars.Middle(0, 1) + Chars.Middle(3, 1) + Chars.Middle(0, 1) + Chars.Middle(38, 1) + Chars.Middle(0, 1) + Chars.Middle(3, 1) + Chars.Middle(5, 1) + Chars.Middle(34, 1) + Chars.Middle(0, 1) + Chars.Middle(3, 1) + Chars.Middle(38, 1) + Chars.Middle(6, 1) + Chars.Middle(33, 1) + Chars.Middle(18, 1) + Chars.Middle(35, 1) + Chars.Middle(40, 1) + Chars.Middle(35, 1) + Chars.Middle(5, 1) + Chars.Middle(0, 1) + Chars.Middle(28, 1) + Chars.Middle(19, 1) + Chars.Middle(5, 1) + Chars.Middle(25, 1) + Chars.Middle(12, 1) + Chars.Middle(35, 1) + Chars.Middle(8, 1) + Chars.Middle(29, 1) + Chars.Middle(41, 1) + Chars.Middle(17, 1) + Chars.Middle(27, 1) + Chars.Middle(22, 1) + Chars.Middle(11, 1) + Chars.Middle(19, 1) + Chars.Middle(7, 1) + Chars.Middle(35, 1) + Chars.Middle(22, 1) + Chars.Middle(22, 1) + Chars.Middle(32, 1) + Chars.Middle(14, 1) + Chars.Middle(2, 1) + Chars.Middle(27, 1) + Chars.Middle(31, 1) + Chars.Middle(14, 1) + Chars.Middle(4, 1) + Chars.Middle(22, 1) + Chars.Middle(24, 1) + Chars.Middle(38, 1) + Chars.Middle(20, 1) + Chars.Middle(1, 1) + Chars.Middle(13, 1) + Chars.Middle(25, 1) + Chars.Middle(22, 1) + Chars.Middle(17, 1) + Chars.Middle(36, 1) + Chars.Middle(0, 1) + Chars.Middle(32, 1) + Chars.Middle(33, 1) + Chars.Middle(16, 1) + Chars.Middle(16, 1) + Chars.Middle(24, 1) + Chars.Middle(1, 1) + Chars.Middle(26, 1) + Chars.Middle(9, 1) + Chars.Middle(37, 1) + Chars.Middle(36, 1) + Chars.Middle(36, 1) + Chars.Middle(15, 1) + Chars.Middle(3, 1) + Chars.Middle(21, 1) + Chars.Middle(25, 1) + Chars.Middle(30, 1) + Chars.Middle(11, 1) + Chars.Middle(21, 1) + Chars.Middle(10, 1) + Chars.Middle(16, 1) + Chars.Middle(19, 1) + Chars.Middle(2, 1) + Chars.Middle(30, 1) + Chars.Middle(39, 1) + Chars.Middle(23, 1)),Encodings.UTF8)
+		  End If
+		  Return ApiKey
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function Decompress(Data As String) As String
 		  If Not IsCompressed(Data) Then
 		    Return Data
@@ -1520,6 +1535,9 @@ Protected Module Beacon
 		
 	#tag EndNote
 
+
+	#tag Constant, Name = CurseForgeApiKeyEncoded, Type = String, Dynamic = False, Default = \"Biggle bongos!", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrettyDecimals, Type = Double, Dynamic = False, Default = \"9", Scope = Private
 	#tag EndConstant

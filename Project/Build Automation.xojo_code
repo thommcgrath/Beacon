@@ -85,6 +85,7 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vR1NBSUQudHh0
+					FolderItem = Li4vQ3Vyc2VGb3JnZS50eHQ=
 				End
 				Begin CopyFilesBuildStep CopyMigration
 					AppliesTo = 2
@@ -149,6 +150,7 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vR1NBSUQudHh0
+					FolderItem = Li4vQ3Vyc2VGb3JnZS50eHQ=
 				End
 				Begin IDEScriptBuildStep DownloadClassesDebugWin , AppliesTo = 3, Architecture = 0, Target = 0
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
