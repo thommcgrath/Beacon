@@ -998,18 +998,15 @@ abstract class BeaconCommon {
 	}
 
 	public static function SetSession(?Session $session, bool $remember): void {
-		$paths = ['/account', '/v4'];
 		if (is_null($session)) {
-			foreach ($paths as $path) {
-				setcookie(self::AuthCookieName, '', [
-					'expires' => 0,
-					'path' => $path,
-					'domain' => '.usebeacon.app',
-					'secure' => true,
-					'httponly' => true,
-					'samesite' => 'Lax'
-				]);
-			}
+			setcookie(self::AuthCookieName, '', [
+				'expires' => 0,
+				'path' => '/account',
+				'domain' => '',
+				'secure' => true,
+				'httponly' =>true,
+				'samesite' => 'Lax'
+			]);
 			self::$session = null;
 			return;
 		}
@@ -1022,18 +1019,15 @@ abstract class BeaconCommon {
 			'remember' => $remember
 		];
 		$signature = static::Base64UrlEncode(BeaconEncryption::RSASign(static::GetGlobal('Beacon_Private_Key'), json_encode($params)));
-		$cookieValue = static::Base64UrlEncode(json_encode(['params' => $params, 'signature' => $signature]));
 
-		foreach ($paths as $path) {
-			setcookie(self::AuthCookieName, $cookieValue, [
-				'expires' => ($remember ? $session->RefreshTokenExpiration() : 0),
-				'path' => $path,
-				'domain' => '.usebeacon.app',
-				'secure' => true,
-				'httponly' => true,
-				'samesite' => 'Lax'
-			]);
-		}
+		setcookie(self::AuthCookieName, static::Base64UrlEncode(json_encode(['params' => $params, 'signature' => $signature])), [
+			'expires' => ($remember ? $session->RefreshTokenExpiration() : 0),
+			'path' => '/account',
+			'domain' =>'',
+			'secure' => true,
+			'httponly' =>true,
+			'samesite' => 'Lax'
+		]);
 
 		self::$session = $session;
 	}
@@ -1042,8 +1036,6 @@ abstract class BeaconCommon {
 		switch (strtolower(trim($gameId))) {
 		case 'ark':
 			return 'Ark';
-		case 'arksa':
-			return 'ArkSA';
 		case 'sdtd':
 			return '7DaysToDie';
 		}
