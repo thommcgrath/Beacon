@@ -47,7 +47,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RightPadding    =   -1
+      RightPadding    =   14
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False
@@ -365,7 +365,7 @@ End
 
 	#tag Event
 		Sub Closing()
-		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged, Beacon.PusherSocket.Notification_StateChanged)
+		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged, Beacon.PusherSocket.Notification_StateChanged, IdentityManager.Notification_IdentityChanged)
 		  #if TargetMacOS
 		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
 		  #endif
@@ -456,7 +456,7 @@ End
 		  #endif
 		  
 		  UpdatesKit.Init()
-		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged, Beacon.PusherSocket.Notification_StateChanged)
+		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged, Beacon.PusherSocket.Notification_StateChanged, IdentityManager.Notification_IdentityChanged)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
@@ -680,6 +680,10 @@ End
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
+		  If Self.NavBar Is Nil Then
+		    Return
+		  End If
+		  
 		  Select Case Notification.Name
 		  Case UpdatesKit.Notification_UpdateAvailable
 		    Self.SetupUpdateUI()
@@ -690,6 +694,16 @@ End
 		    End If
 		  Case Beacon.PusherSocket.Notification_StateChanged
 		    Self.UpdatePusherStatus()
+		  Case IdentityManager.Notification_IdentityChanged
+		    Var ProfileButton As OmniBarItem = Self.NavBar.Item("NavUser")
+		    If (ProfileButton Is Nil) = False Then
+		      Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		      If (Identity Is Nil) = False Then
+		        ProfileButton.Caption = Identity.Username(True)
+		      Else
+		        ProfileButton.Caption = ""
+		      End If
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -735,6 +749,7 @@ End
 		    ShowUpdateBar = False
 		    Call App.HandleURL("beacon://action/checkforupdate")
 		    Self.Hide
+		    Return
 		  End If
 		  
 		  If ShowUpdateBar Then
@@ -746,23 +761,11 @@ End
 		    End If
 		    
 		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")
-		    If UpdateItem Is Nil Then
-		      UpdateItem = OmniBarItem.CreateButton("NavUpdate", "", IconToolbarUpdate, Preview)
-		      UpdateItem.AlwaysUseActiveColor = True
-		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
-		      UpdateItem.Caption = "Update Ready"
-		      
-		      Var Idx As Integer = Max(Self.NavBar.IndexOf("NavUser"), Self.NavBar.IndexOf("NavPusher"))
-		      If Idx > -1 Then
-		        Self.NavBar.Insert(Idx, UpdateItem)
-		      Else
-		        Self.NavBar.Append(UpdateItem)
-		      End If
-		      
-		      If Preferences.PlaySoundForUpdate Then
+		    If (UpdateItem Is Nil) = False Then
+		      If UpdateItem.Visible = False Then
 		        SoundUpdateAvailable.Play
 		      End If
-		    Else
+		      UpdateItem.Visible = True
 		      UpdateItem.HelpTag = Preview
 		    End If
 		    
@@ -782,7 +785,7 @@ End
 		    
 		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")
 		    If (UpdateItem Is Nil) = False Then
-		      Self.NavBar.Remove(UpdateItem)
+		      UpdateItem.Visible = False
 		    End If
 		  End If
 		End Sub
@@ -828,10 +831,6 @@ End
 		    If App.IdentityManager.CurrentIdentity Is Nil Then
 		      Base.AddMenu(New DesktopMenuItem("Log In", "beacon://action/signin"))
 		    Else
-		      Var IdentityItem As New DesktopMenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
-		      IdentityItem.Enabled = False
-		      Base.AddMenu(IdentityItem)
-		      Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		      Base.AddMenu(New DesktopMenuItem("Refresh Purchases", "beacon://action/refreshuser?silent=false"))
 		      Base.AddMenu(New DesktopMenuItem("Account Control Panel", "beacon://action/showaccount"))
 		      Base.AddMenu(New DesktopMenuItem("Show Account Info…", "beacon://action/showidentity"))
@@ -949,20 +948,17 @@ End
 		  Else
 		    State = Beacon.PusherSocket.States.Disabled
 		  End If
-		  Var ShouldHaveButton As Boolean = State <> Beacon.PusherSocket.States.Disabled
 		  Var Button As OmniBarItem = Self.NavBar.Item("NavPusher")
-		  If ShouldHaveButton = False And (Button Is Nil) = False Then
-		    Self.NavBar.Remove(Button)
+		  If Button Is Nil Then
 		    Return
-		  ElseIf ShouldHaveButton = True And Button Is Nil Then
-		    Button = OmniBarItem.CreateButton("NavPusher", "", IconToolbarCloudDisconnected, "")
-		    Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
-		    If Idx > -1 Then
-		      Self.NavBar.Insert(Idx, Button)
-		    Else
-		      Self.NavBar.Append(Button)
-		    End If
 		  End If
+		  
+		  If State = Beacon.PusherSocket.States.Disabled Then
+		    Button.Visible = False
+		    Return
+		  End If
+		  
+		  Button.Visible = True
 		  
 		  Select Case State
 		  Case Beacon.PusherSocket.States.Connected
@@ -1051,8 +1047,17 @@ End
 		  Self.HelpComponent1.LinkedOmniBarItem = Help
 		  
 		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", Self.ProfileIcon, "Access user settings")
+		  User.ButtonStyle = OmniBarItem.ButtonStyleLeftCaption
 		  
-		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace, User)
+		  Var Update As OmniBarItem = OmniBarItem.CreateButton("NavUpdate", "Update Ready", IconToolbarUpdate, "")
+		  Update.AlwaysUseActiveColor = True
+		  Update.ActiveColor = OmniBarItem.ActiveColors.Green
+		  Update.Visible = False
+		  
+		  Var Pusher As OmniBarItem = OmniBarItem.CreateButton("NavPusher", "", IconToolbarCloudDisconnected, "")
+		  Pusher.Visible = False
+		  
+		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace("MidSpacer"), Update, Pusher, OmniBarItem.CreateSeparator("UserSeparator"), User)
 		  
 		  Self.UpdatePusherStatus
 		End Sub

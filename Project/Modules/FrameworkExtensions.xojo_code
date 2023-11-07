@@ -58,6 +58,34 @@ Protected Module FrameworkExtensions
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function BestDisplay(Extends Win As DesktopWindow) As DesktopDisplay
+		  Var IdealScreen As DesktopDisplay = DesktopDisplay.DisplayAt(0)
+		  Var Bound As Integer = DesktopDisplay.DisplayCount - 1
+		  Var WindowBounds As Rect = Win.Bounds
+		  If Bound > 0 Then
+		    Var MaxArea As Integer
+		    For I As Integer = 0 To Bound
+		      Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(I)
+		      Var ScreenBounds As New Rect(Display.AvailableLeft, Display.AvailableTop, Display.AvailableWidth, Display.AvailableHeight)
+		      Var Intersection As Rect = ScreenBounds.Intersection(WindowBounds)
+		      If Intersection Is Nil Then
+		        Continue
+		      End If
+		      Var Area As Integer = Intersection.Width * Intersection.Height
+		      If Area <= 0 Then
+		        Continue
+		      End If
+		      If Area > MaxArea Then
+		        MaxArea = Area
+		        IdealScreen = Display
+		      End If
+		    Next
+		  End If
+		  Return IdealScreen
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Bottom(Extends Ctl As DesktopUIControl) As Integer
 		  Return Ctl.Top + Ctl.Height

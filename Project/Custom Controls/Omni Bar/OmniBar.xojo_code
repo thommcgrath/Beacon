@@ -227,7 +227,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
 		    Var ItemRect As Rect = Self.mItemRects(Idx)
-		    If Item Is Nil Or ItemRect Is Nil Then
+		    If Item Is Nil Or ItemRect Is Nil Or Item.Visible = False Then
 		      Continue
 		    End If
 		    
@@ -358,7 +358,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Var FirstMarginIndex As Integer = -1
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
-		    If Item Is Nil Then
+		    If Item Is Nil Or Item.Visible = False Then
 		      Continue
 		    End If
 		    
@@ -840,7 +840,30 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  App.ShowTooltip(Self.mItems(Self.mMouseOverIndex).HelpTag, System.MouseX, System.MouseY + 16)
+		  Const MaxWidth = 510
+		  
+		  Var HelpTag As String = Self.mItems(Self.mMouseOverIndex).HelpTag
+		  If HelpTag.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var Measure As New Picture(10, 10)
+		  Measure.Graphics.FontSize = 11
+		  
+		  Var TooltipWidth As Integer = Min(Measure.Graphics.TextWidth(HelpTag), MaxWidth)
+		  
+		  Var X As Integer = System.MouseX
+		  Var Y As Integer = System.MouseY + 16
+		  
+		  Var Win As DesktopWindow = Self.Window
+		  If (Win Is Nil) = False Then
+		    Var Screen As DesktopDisplay = Win.BestDisplay
+		    If X + TooltipWidth >= Screen.Left + Screen.AvailableWidth Then
+		      X = (Screen.Left + Screen.AvailableWidth) - TooltipWidth
+		    End If
+		  End If
+		  
+		  App.ShowTooltip(Self.mItems(Self.mMouseOverIndex).HelpTag, X, Y)
 		End Sub
 	#tag EndMethod
 

@@ -85,7 +85,11 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h21
 		Private Function Compact(G As Graphics) As Boolean
-		  Return G.Height < 50
+		  If Self.mType = OmniBarItem.Types.Button And Self.mButtonStyle = Self.ButtonStyleBottomCaption Then
+		    Return G.Height < 50
+		  Else
+		    Return False
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -104,6 +108,7 @@ Implements ObservationKit.Observable
 		  Self.mName = Name
 		  Self.mProgress = 0
 		  Self.mPriority = 10
+		  Self.mVisible = True
 		End Sub
 	#tag EndMethod
 
@@ -203,7 +208,8 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var CellHeight As Double = Self.ButtonIconSize
-		  If Self.Caption.IsEmpty = False Then
+		  Var WithCaption As Boolean = Self.Caption.IsEmpty = False
+		  If WithCaption And Self.mButtonStyle = Self.ButtonStyleBottomCaption Then
 		    CellHeight = CellHeight + (Margins / 2) + G.TextHeight
 		  End If
 		  Var CellTop As Double = NearestMultiple((G.Height - CellHeight) / 2, G.ScaleY)
@@ -237,6 +243,15 @@ Implements ObservationKit.Observable
 		  Var Factor As Double = Max(G.ScaleX, G.ScaleY)
 		  Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, ForeColor, Factor, Factor)
 		  
+		  If WithCaption Then
+		    Select Case Self.mButtonStyle
+		    Case Self.ButtonStyleLeftCaption
+		      IconRect.Left = NearestMultiple(G.Width - ((Margins / 2) + IconRect.Width), G.ScaleX)
+		    Case Self.ButtonStyleRightCaption
+		      IconRect.Left = NearestMultiple(Margins / 2, G.ScaleX)
+		    End Select
+		  End If
+		  
 		  If BackColor.Alpha < 255 Then
 		    G.DrawingColor = BackColor
 		    G.FillRoundRectangle(HighlightRect.Left, HighlightRect.Top, HighlightRect.Width, HighlightRect.Height, CornerRadius, CornerRadius)
@@ -245,10 +260,21 @@ Implements ObservationKit.Observable
 		  G.ShadowBrush = Self.CreateShadowBrush(ShadowColor)
 		  G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
 		  
-		  If Self.Caption.IsEmpty = False Then
+		  If WithCaption Then
 		    Var CaptionWidth As Double = G.TextWidth(Self.Caption)
-		    Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, G.ScaleX)
-		    Var CaptionBaseline As Double = NearestMultiple(IconRect.Bottom + (Margins / 2) + G.FontAscent, G.ScaleY)
+		    Var CaptionLeft, CaptionBaseline As Double
+		    
+		    Select Case Self.mButtonStyle
+		    Case Self.ButtonStyleBottomCaption
+		      CaptionLeft = NearestMultiple((G.Width - CaptionWidth) / 2, G.ScaleX)
+		      CaptionBaseline = NearestMultiple(IconRect.Bottom + (Margins / 2) + G.FontAscent, G.ScaleY)
+		    Case Self.ButtonStyleLeftCaption
+		      CaptionLeft = NearestMultiple(Margins / 2, G.ScaleX)
+		      CaptionBaseline = NearestMultiple((IconRect.VerticalCenter - 1) + (G.FontAscent / 2), G.ScaleY)
+		    Case Self.ButtonStyleRightCaption
+		      CaptionLeft = NearestMultiple(IconRect.Right + (Margins / 2), G.ScaleX)
+		      CaptionBaseline = NearestMultiple((IconRect.VerticalCenter - 1) + (G.FontAscent / 2), G.ScaleY)
+		    End Select
 		    
 		    G.DrawingColor = ForeColor
 		    G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, G.Width, True)
@@ -684,7 +710,16 @@ Implements ObservationKit.Observable
 		  Case OmniBarItem.Types.Separator, OmniBarItem.Types.Space
 		    Segments.Add(2)
 		  Case OmniBarItem.Types.Button
-		    Segments.Add(Max(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth), Self.ButtonIconSize) + (Self.ButtonPadding * 2))
+		    If Self.mCaption.IsEmpty Then
+		      Segments.Add(Self.ButtonIconSize + (Self.ButtonPadding * 2))
+		    Else
+		      Select Case Self.mButtonStyle
+		      Case Self.ButtonStyleBottomCaption
+		        Segments.Add(Max(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth), Self.ButtonIconSize) + (Self.ButtonPadding * 2))
+		      Case Self.ButtonStyleLeftCaption, Self.ButtonStyleRightCaption
+		        Segments.Add(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth) + Self.ButtonIconSize + (Self.ButtonPadding * 2))
+		      End Select
+		    End If
 		  Case OmniBarItem.Types.Tab
 		    If Self.Caption.IsEmpty = False Then
 		      Segments.Add(Min(Ceiling(G.TextWidth(Self.Caption) + 2), Self.MaxCaptionWidth))
@@ -742,6 +777,24 @@ Implements ObservationKit.Observable
 			End Set
 		#tag EndSetter
 		AlwaysUseActiveColor As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mButtonStyle
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mButtonStyle <> Value Then
+			    Var OldValue As Integer = Self.mButtonStyle
+			    Self.mButtonStyle = Value
+			    Self.NotifyObservers("MajorChange", OldValue, Value)
+			  End If
+			End Set
+		#tag EndSetter
+		ButtonStyle As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -961,6 +1014,10 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mButtonStyle As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCanBeClosed As Boolean
 	#tag EndProperty
 
@@ -1034,6 +1091,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mType As OmniBarItem.Types
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mVisible As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -1117,6 +1178,23 @@ Implements ObservationKit.Observable
 		Type As OmniBarItem.Types
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mVisible
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mVisible <> Value Then
+			    Self.mVisible = Value
+			    Self.NotifyObservers("MajorChange", Not Value, Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Visible As Boolean
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = AccessoryIconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Public
 	#tag EndConstant
@@ -1125,6 +1203,15 @@ Implements ObservationKit.Observable
 	#tag EndConstant
 
 	#tag Constant, Name = ButtonPadding, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ButtonStyleBottomCaption, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ButtonStyleLeftCaption, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ButtonStyleRightCaption, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ElementSpacing, Type = Double, Dynamic = False, Default = \"8", Scope = Public
