@@ -223,28 +223,32 @@ class Core {
 	}
 
 	public static function HasAuthenticationHeader(): bool {
-		return (empty($_SERVER['HTTP_AUTHORIZATION']) === false || empty($_SERVER['HTTP_X_BEACON_TOKEN']) === false);
+		return (empty($_SERVER['HTTP_AUTHORIZATION']) === false || empty($_SERVER['HTTP_X_BEACON_TOKEN']) === false || empty($_COOKIE[BeaconCommon::AuthCookieName]) === false);
 	}
 
 	protected static function AuthenticateWithBearer(array $requestedScopes): int {
 		$header = $_SERVER['HTTP_AUTHORIZATION'] ?? 'Bearer ' . ($_SERVER['HTTP_X_BEACON_TOKEN'] ?? '');
-		$scheme = strtok($header, ' ');
-
-		if ($scheme !== self::kAuthSchemeBearer) {
-			return self::kUnauthorized;
-		}
-
-		$token = strtok(' ');
-		if (empty($token)) {
-			return self::kAuthErrorNoToken;
-		}
-
 		$session = null;
-		try {
-			$session = Session::Fetch($token);
-		} catch (Exception $err) {
-			return self::kAuthErrorMalformedToken;
+		if (strlen($header) < 10) {
+			$session = BeaconCommon::GetSession();
+		} else {
+			$scheme = strtok($header, ' ');
+			if ($scheme !== self::kAuthSchemeBearer) {
+				return self::kUnauthorized;
+			}
+
+			$token = strtok(' ');
+			if (empty($token)) {
+				return self::kAuthErrorNoToken;
+			}
+
+			try {
+				$session = Session::Fetch($token);
+			} catch (Exception $err) {
+				return self::kAuthErrorMalformedToken;
+			}
 		}
+
 		if (is_null($session)) {
 			return self::kAuthErrorInvalidToken;
 		}
