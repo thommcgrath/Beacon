@@ -341,7 +341,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MarkedMerged(Identity As Beacon.Identity)
+		Sub MarkMerged(Identity As Beacon.Identity)
 		  If Identity Is Nil Then
 		    Return
 		  End If

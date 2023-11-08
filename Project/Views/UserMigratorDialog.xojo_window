@@ -551,7 +551,7 @@ End
 		      If Response.Success = False Then
 		        If Response.HTTPStatus = 404 Then
 		          // User doesn't exist, mark it as merged so we don't try again
-		          Manager.MarkedMerged(Identity)
+		          Manager.MarkMerged(Identity)
 		        End If
 		        
 		        Var MigrateErr As New UnsupportedOperationException
@@ -587,7 +587,7 @@ End
 		        End If
 		      End If
 		      
-		      Manager.MarkedMerged(Identity)
+		      Manager.MarkMerged(Identity)
 		      Self.mResults.Value(Identity.UserId) = True
 		    Catch Err As RuntimeException
 		      Self.mResults.Value(Identity.UserId) = Err
