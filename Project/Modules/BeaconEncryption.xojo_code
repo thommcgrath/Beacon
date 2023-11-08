@@ -171,13 +171,20 @@ Protected Module BeaconEncryption
 		  #Pragma BreakOnExceptions False
 		  If Parts.Count <> 4 Then
 		    Var Err As New CryptoException
-		    Err.Message = "Incorrect number of parts"
+		    Err.Message = "Incorrect number of parts: " + Parts.Count.ToString(Locale.Raw, "0")
 		    Raise Err
 		  End If
 		  #Pragma BreakOnExceptions Default
 		  
-		  Var Encrypted As MemoryBlock = DecodeBase64(Parts(0))
-		  Var Salt As MemoryBlock = DecodeBase64(Parts(1))
+		  Var Encrypted, Salt As MemoryBlock
+		  If Parts(1).Bytes = 44 Then
+		    Encrypted = DecodeBase64(Parts(0))
+		    Salt = DecodeBase64(Parts(1))
+		  Else
+		    Encrypted = DecodeBase64URLMBS(Parts(0))
+		    Salt = DecodeBase64URLMBS(Parts(1))
+		  End If
+		  
 		  Var Algorithm As Crypto.HashAlgorithms
 		  Select Case Parts(2)
 		  Case "sha2-512"
@@ -187,7 +194,7 @@ Protected Module BeaconEncryption
 		    Err.Message = "Unknown algorithm " + Parts(2)
 		    Raise Err
 		  End Select
-		  Var Iterations As Integer = Parts(3).ToInteger()
+		  Var Iterations As Integer = Integer.FromString(Parts(3), Locale.Raw)
 		  
 		  Var DerivedKey As MemoryBlock = Crypto.PBKDF2(Salt, Key, Iterations, 32, Algorithm)
 		  Return SymmetricDecrypt(DerivedKey, Encrypted)
@@ -218,7 +225,7 @@ Protected Module BeaconEncryption
 		  Var DerivedKey As MemoryBlock = Crypto.PBKDF2(Salt, Key, mOptimalIterations, 32, Algorithm)
 		  Var Encrypted As MemoryBlock = SymmetricEncrypt(DerivedKey, Data)
 		  
-		  Return EncodeBase64(Encrypted, 0) + ":" + EncodeBase64(Salt, 0) + ":sha2-512:" + mOptimalIterations.ToString(Locale.Raw, "0")
+		  Return EncodeBase64URLMBS(Encrypted) + ":" + EncodeBase64URLMBS(Salt) + ":sha2-512:" + mOptimalIterations.ToString(Locale.Raw, "0")
 		End Function
 	#tag EndMethod
 

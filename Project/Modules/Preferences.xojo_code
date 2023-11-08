@@ -570,7 +570,7 @@ Protected Module Preferences
 			      Var TokenEncrypted As String = mManager.StringValue("Beacon Auth")
 			      TokenSource = BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5 " + AccountName + " " + HardwareId, TokenEncrypted)
 			    Catch Err As RuntimeException
-			      App.Log("Failed to decrypt token using account name `" + AccountName + "` and hardware id `" + HardwareId + "`.")
+			      App.Log("Failed to decrypt token using account name `" + AccountName + "` and hardware id `" + HardwareId + "`: `" + Err.Message + "`.")
 			      Return Nil
 			    End Try
 			    
