@@ -101,7 +101,6 @@ Protected Module BeaconAPI
 		    If Request.RequestHeader("Authorization").IsEmpty = False Then
 		      AuthHeader = Request.RequestHeader("Authorization")
 		    Else
-		      Preferences.LockAuth
 		      Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
 		      If (Token Is Nil) = False Then
 		        If Token.AccessTokenExpired And Request.AutoRenew Then
@@ -134,7 +133,6 @@ Protected Module BeaconAPI
 		        
 		        AuthHeader = Token.AuthHeaderValue
 		      End If
-		      Preferences.UnlockAuth
 		    End If
 		  End If
 		  

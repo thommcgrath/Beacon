@@ -137,8 +137,8 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Fetch(UserId As String) As Beacon.Identity
-		  Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT * FROM identities WHERE user_id = ?1;", UserId)
+		Function Fetch(UserId As String, AllowMerged As Boolean = True) As Beacon.Identity
+		  Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT * FROM identities WHERE user_id = ?1" + If(AllowMerged = False, " AND merged = FALSE", "") + ";", UserId)
 		  If Rows.RowCount = 0 Then
 		    Return Nil
 		  End If

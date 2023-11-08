@@ -636,7 +636,7 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      Var MergedIdentity As Beacon.Identity = App.IdentityManager.Fetch(UserId)
+		      Var MergedIdentity As Beacon.Identity = App.IdentityManager.Fetch(UserId, False)
 		      If (MergedIdentity Is Nil) = False Then
 		        PossibleIdentities.Add(MergedIdentity)
 		      End If

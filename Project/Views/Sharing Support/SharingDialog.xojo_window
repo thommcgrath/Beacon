@@ -751,14 +751,6 @@ End
 		  Request.Tag = New Dictionary("UserIdentifier": UserIdentifier, "Role": Role)
 		  BeaconAPI.Send(Request)
 		  Self.IncrementRequestCount()
-		  
-		  // Var MemberData As New Dictionary
-		  // MemberData.Value("role") = Role
-		  // 
-		  // Var Request As New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members/" + EncodeURLComponent(UserIdentifier), "PUT", Beacon.GenerateJson(MemberData, False), "application/json", AddressOf APICallback_AddUser)
-		  // Request.Tag = New Dictionary("UserIdentifier": UserIdentifier, "Role": Role)
-		  // BeaconAPI.Send(Request)
-		  // Self.IncrementRequestCount()
 		End Sub
 	#tag EndMethod
 

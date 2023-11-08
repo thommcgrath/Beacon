@@ -649,7 +649,7 @@ Protected Class ProjectController
 		        Var UserId As String = MemberDict.Value("userId")
 		        Var Member As Beacon.ProjectMember = New Beacon.ProjectMember(UserId, MemberDict)
 		        
-		        // Returns true only if changes are needed and they were madey
+		        // Returns true only if changes are needed and they were made
 		        If Project.AddMember(Member) Then
 		          App.Log("Encrypted project password for user `" + UserId + "` needs to be updated…")
 		        End If
