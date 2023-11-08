@@ -125,6 +125,8 @@ Protected Module Preferences
 		      NewProjectGameId = ""
 		    End If
 		  End If
+		  
+		  mAuthLock = New CriticalSection
 		End Sub
 	#tag EndMethod
 
@@ -195,6 +197,12 @@ Protected Module Preferences
 		    Var Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
 		    Win.Bounds = New Rect(Left, Top, Width, Height)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub LockAuth()
+		  mAuthLock.Enter
 		End Sub
 	#tag EndMethod
 
@@ -387,6 +395,12 @@ Protected Module Preferences
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub UnlockAuth()
+		  mAuthLock.Leave
+		End Sub
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
@@ -560,9 +574,10 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
+			  Init
+			  
+			  mAuthLock.Enter
 			  If mAuthToken Is Nil Then
-			    Init
-			    
 			    Var AccountName As String = Beacon.SystemAccountName
 			    Var HardwareId As String = Beacon.HardwareId
 			    Var TokenSource As String
@@ -581,6 +596,7 @@ Protected Module Preferences
 			      Return Nil
 			    End Try
 			  End If
+			  mAuthLock.Leave
 			  
 			  Return mAuthToken
 			End Get
@@ -588,13 +604,20 @@ Protected Module Preferences
 		#tag Setter
 			Set
 			  Init
-			  If (Value Is Nil) = False Then
-			    Var TokenSource As String = Value.StringValue
-			    mManager.StringValue("Beacon Auth") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5 " + Beacon.SystemAccountName + " " + Beacon.HardwareId, TokenSource)
-			  Else
-			    mManager.StringValue("Beacon Auth") = ""
-			  End If
-			  mAuthToken = Value
+			  
+			  mAuthLock.Enter
+			  Try
+			    If (Value Is Nil) = False Then
+			      Var TokenSource As String = Value.StringValue
+			      mManager.StringValue("Beacon Auth") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5 " + Beacon.SystemAccountName + " " + Beacon.HardwareId, TokenSource)
+			    Else
+			      mManager.StringValue("Beacon Auth") = ""
+			    End If
+			    mAuthToken = Value
+			  Catch Err As RuntimeException
+			    App.Log(Err, CurrentMethodName, "Saving new auth token")
+			  End Try
+			  mAuthLock.Leave
 			End Set
 		#tag EndSetter
 		Protected BeaconAuth As BeaconAPI.OAuthToken
@@ -869,6 +892,10 @@ Protected Module Preferences
 		#tag EndSetter
 		Protected MainWindowPosition As Rect
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAuthLock As CriticalSection
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mAuthToken As BeaconAPI.OAuthToken

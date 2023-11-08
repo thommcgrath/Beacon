@@ -28,7 +28,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    Visible         =   True
    Width           =   804
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -531,13 +530,6 @@ End
 	#tag Event
 		Sub WorkCompleted()
 		  Self.Progress = BeaconSubview.ProgressNone
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub WorkProgress(Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
-		  #Pragma Unused Request
-		  
-		  Self.Progress = BytesReceived / BytesTotal
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -229,7 +229,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  SystemColors.Init
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped, IdentityManager.Notification_IdentityChanged)
 		  
 		  Self.mIdentityManager = New IdentityManager()
 		  
@@ -1363,8 +1363,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case BeaconAPI.Socket.Notification_Unauthorized
-		    Preferences.BeaconAuth = Nil
 		  Case Preferences.Notification_RecentsChanged
 		    Self.RebuildRecentMenu()
 		  Case UserCloud.Notification_SyncStarted
@@ -1725,10 +1723,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Function
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mAPISocket As BeaconAPI.Socket
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDataFolder As FolderItem

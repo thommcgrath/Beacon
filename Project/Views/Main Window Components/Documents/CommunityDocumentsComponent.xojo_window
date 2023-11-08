@@ -493,13 +493,6 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub WorkProgress(Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
-		  #Pragma Unused Request
-		  
-		  Self.Progress = BytesReceived / BytesTotal
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub WorkStarted()
 		  Self.Progress = BeaconSubview.ProgressIndeterminate
 		End Sub
