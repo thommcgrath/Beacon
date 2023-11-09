@@ -848,22 +848,35 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  End If
 		  
 		  Var Measure As New Picture(10, 10)
-		  Measure.Graphics.FontSize = 11
-		  
-		  Var TooltipWidth As Integer = Min(Measure.Graphics.TextWidth(HelpTag), MaxWidth)
+		  #if TargetMacOS
+		    Measure.Graphics.FontSize = 12
+		  #elseif TargetWindows
+		    Measure.Graphics.FontSize = 13
+		  #endif
 		  
 		  Var X As Integer = System.MouseX
-		  Var Y As Integer = System.MouseY + 16
-		  
-		  Var Win As DesktopWindow = Self.Window
-		  If (Win Is Nil) = False Then
-		    Var Screen As DesktopDisplay = Win.BestDisplay
-		    If X + TooltipWidth >= Screen.Left + Screen.AvailableWidth Then
-		      X = (Screen.Left + Screen.AvailableWidth) - TooltipWidth
+		  Var Y As Integer = System.MouseY
+		  Var DisplayBound As Integer = DesktopDisplay.DisplayCount - 1
+		  Var CursorDisplay As DesktopDisplay
+		  If DisplayBound = 0 Then
+		    CursorDisplay = DesktopDisplay.DisplayAt(0)
+		  ElseIf DisplayBound > 0 Then
+		    For Idx As Integer = 0 To DisplayBound
+		      Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(Idx)
+		      If X >= Display.Left And X <= Display.Left + Display.Width And Y >= Display.Top And Y <= Display.Top + Display.Height Then
+		        CursorDisplay = Display
+		        Exit For Idx
+		      End If
+		    Next
+		    If CursorDisplay Is Nil Then
+		      Return
 		    End If
 		  End If
 		  
-		  App.ShowTooltip(Self.mItems(Self.mMouseOverIndex).HelpTag, X, Y)
+		  Var TooltipWidth As Integer = Min(Measure.Graphics.TextWidth(HelpTag), MaxWidth)
+		  Var MaxX As Integer = (CursorDisplay.AvailableLeft + CursorDisplay.AvailableWidth) - TooltipWidth
+		  
+		  App.ShowTooltip(Self.mItems(Self.mMouseOverIndex).HelpTag, Min(X, MaxX), Y + 16)
 		End Sub
 	#tag EndMethod
 
