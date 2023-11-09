@@ -661,8 +661,9 @@ Inherits Beacon.Project
 		  
 		  Var Packs As Beacon.StringList = Self.ContentPacks
 		  Var Containers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", Packs, "", True)
-		  Var Engram As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
+		  Var Engram As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("f25b4d0e-2a1c-57c0-b54c-99d9083b2ca0")
 		  Var Mask As UInt64 = Self.MapMask
+		  Var LootDrops As New ArkSA.Configs.LootDrops
 		  For Each Container As ArkSA.LootContainer In Containers
 		    If Container.ValidForMask(Mask) = False Then
 		      Continue For Container
@@ -683,15 +684,20 @@ Inherits Beacon.Project
 		    ItemSet.MaxNumItems = 1
 		    ItemSet.Add(Entry)
 		    
-		    Var Mutable As ArkSA.MutableLootContainer = Container.MutableVersion
-		    Mutable.MinItemSets = 1
-		    Mutable.MaxItemSets = 1
-		    Mutable.PreventDuplicates = True
-		    Mutable.AppendMode = False
-		    Mutable.Add(ItemSet)
+		    Var Override As New ArkSA.MutableLootDropOverride(Container)
+		    Override.MinItemSets = 1
+		    Override.MaxItemSets = 1
+		    Override.PreventDuplicates = True
+		    Override.AddToDefaults = False
+		    Override.Add(ItemSet)
 		    
-		    ArkSA.Configs.LootDrops.BuildOverrides(Mutable, Values, 5.0)
-		  Next Container
+		    LootDrops.Add(Override)
+		  Next
+		  
+		  Var LootValues() As ArkSA.ConfigValue = LootDrops.GenerateConfigValues(Self, App.IdentityManager.CurrentIdentity, Profile)
+		  For Each LootValue As ArkSA.ConfigValue In LootValues
+		    Values.Add(LootValue)
+		  Next
 		  
 		  Var Craftable() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
 		  Var CoinFlip As Integer = Rand.InRange(0, 1)

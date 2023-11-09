@@ -480,8 +480,96 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Disambiguate(Extends Overrides() As ArkSA.LootDropOverride, EnabledMaps As UInt64) As Dictionary
+		  Var Mapper As New SQLiteDatabase
+		  Mapper.Connect
+		  Mapper.ExecuteSQL("CREATE TABLE labels (loot_drop_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, content_pack_name TEXT COLLATE NOCASE NOT NULL);")
+		  Mapper.ExecuteSQL("CREATE INDEX labels_label_idx ON labels(label);")
+		  
+		  Var Results As New Dictionary
+		  For Idx As Integer = 0 To Overrides.LastIndex
+		    Results.Value(Overrides(Idx).LootDropId) = Overrides(Idx).Label
+		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (loot_drop_id, label, content_pack_name) VALUES (?1, ?2, ?3);", Overrides(Idx).LootDropId, Overrides(Idx).Label, Overrides(Idx).LootDropReference.ContentPackName)
+		  Next
+		  
+		  Var All() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", New Beacon.StringList, "")
+		  For Idx As Integer = 0 To All.LastIndex
+		    If All(Idx).ValidForMask(EnabledMaps) = False Then
+		      Continue For Idx
+		    End If
+		    
+		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (loot_drop_id, label, content_pack_name) VALUES (?1, ?2, ?3);", All(Idx).LootDropId, All(Idx).Label, All(Idx).ContentPackName)
+		  Next
+		  
+		  Var Labels As New Dictionary
+		  Var LabelRows As RowSet = Mapper.SelectSQL("SELECT DISTINCT label FROM labels;")
+		  For Each LabelRow As DatabaseRow In LabelRows
+		    Var CommonLabel As String = LabelRow.Column("label").StringValue
+		    Var SiblingRows As RowSet = Mapper.SelectSQL("SELECT loot_drop_id, content_pack_name FROM labels WHERE label = ?1;", CommonLabel)
+		    If SiblingRows.RowCount = 1 Then
+		      // Unique already
+		      Labels.Value(SiblingRows.Column("loot_drop_id").StringValue) = CommonLabel
+		      Continue
+		    End If
+		    
+		    For Each SiblingRow As DatabaseRow In SiblingRows
+		      Var LootDropId As String = SiblingRow.Column("loot_drop_id").StringValue
+		      Var Suffix As String = SiblingRow.Column("content_pack_name").StringValue
+		      Labels.Value(LootDropId) = CommonLabel + " (" + Suffix + ")"
+		    Next
+		  Next
+		  
+		  Return Labels
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Disambiguate(Extends SpawnPoints() As ArkSA.SpawnPoint, EnabledMaps As UInt64) As Dictionary
 		  Return Disambiguate(CategorySpawnPoints, SpawnPoints, EnabledMaps)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Disambiguate(Extends Overrides() As ArkSA.SpawnPointOverride, EnabledMaps As UInt64) As Dictionary
+		  Var Mapper As New SQLiteDatabase
+		  Mapper.Connect
+		  Mapper.ExecuteSQL("CREATE TABLE labels (spawn_point_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, content_pack_name TEXT COLLATE NOCASE NOT NULL);")
+		  Mapper.ExecuteSQL("CREATE INDEX labels_label_idx ON labels(label);")
+		  
+		  Var Results As New Dictionary
+		  For Idx As Integer = 0 To Overrides.LastIndex
+		    Results.Value(Overrides(Idx).SpawnPointId) = Overrides(Idx).Label
+		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (spawn_point_id, label, content_pack_name) VALUES (?1, ?2, ?3);", Overrides(Idx).SpawnPointId, Overrides(Idx).Label, Overrides(Idx).SpawnPointReference.ContentPackName)
+		  Next
+		  
+		  Var All() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPoints("", New Beacon.StringList, "")
+		  For Idx As Integer = 0 To All.LastIndex
+		    If All(Idx).ValidForMask(EnabledMaps) = False Then
+		      Continue For Idx
+		    End If
+		    
+		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (spawn_point_id, label, content_pack_name) VALUES (?1, ?2, ?3);", All(Idx).SpawnPointId, All(Idx).Label, All(Idx).ContentPackName)
+		  Next
+		  
+		  Var Labels As New Dictionary
+		  Var LabelRows As RowSet = Mapper.SelectSQL("SELECT DISTINCT label FROM labels;")
+		  For Each LabelRow As DatabaseRow In LabelRows
+		    Var CommonLabel As String = LabelRow.Column("label").StringValue
+		    Var SiblingRows As RowSet = Mapper.SelectSQL("SELECT spawn_point_id, content_pack_name FROM labels WHERE label = ?1;", CommonLabel)
+		    If SiblingRows.RowCount = 1 Then
+		      // Unique already
+		      Labels.Value(SiblingRows.Column("spawn_point_id").StringValue) = CommonLabel
+		      Continue
+		    End If
+		    
+		    For Each SiblingRow As DatabaseRow In SiblingRows
+		      Var SpawnPointId As String = SiblingRow.Column("spawn_point_id").StringValue
+		      Var Suffix As String = SiblingRow.Column("content_pack_name").StringValue
+		      Labels.Value(SpawnPointId) = CommonLabel + " (" + Suffix + ")"
+		    Next
+		  Next
+		  
+		  Return Labels
 		End Function
 	#tag EndMethod
 
@@ -1316,6 +1404,23 @@ Protected Module ArkSA
 		  Next
 		  
 		  Order.SortWith(Containers)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Sort(Extends Overrides() As ArkSA.LootDropOverride)
+		  Var Bound As Integer = Overrides.LastIndex
+		  If Bound = -1 Then
+		    Return
+		  End If
+		  
+		  Var Order() As String
+		  Order.ResizeTo(Bound)
+		  For I As Integer = 0 To Bound
+		    Order(I) = Overrides(I).SortValue.ToString(Locale.Raw, "0000") + Overrides(I).Label + Overrides(I).LootDropReference.ClassString
+		  Next
+		  
+		  Order.SortWith(Overrides)
 		End Sub
 	#tag EndMethod
 

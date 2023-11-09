@@ -2,6 +2,16 @@
 Protected Class SpawnPointOverride
 Implements Beacon.Countable,Beacon.NamedItem
 	#tag Method, Flags = &h0
+		Function Availability() As UInt64
+		  If Self.mPointRef.IsResolved = False Then
+		    Return Self.mAvailability
+		  End If
+		  
+		  Return Ark.SpawnPoint(Self.mPointRef.Resolve()).Availability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Point As Ark.BlueprintReference, Mode As Integer)
 		  Self.mPointRef = Point
 		  Self.mMode = Mode
@@ -151,6 +161,8 @@ Implements Beacon.Countable,Beacon.NamedItem
 		      End If
 		    Next
 		  End If
+		  
+		  Override.mAvailability = SaveData.Value("availability")
 		  
 		  Return Override
 		End Function
@@ -332,6 +344,13 @@ Implements Beacon.Countable,Beacon.NamedItem
 		    Next
 		    Dict.Value("sets") = SetArray
 		  End If
+		  If Self.mPointRef.IsResolved Then
+		    Var Blueprint As Ark.Blueprint = Self.mPointRef.Resolve() // Parameters don't matter because it's already been resolved
+		    Var Point As Ark.SpawnPoint = Ark.SpawnPoint(Blueprint)
+		    Dict.Value("availability") = Point.Availability
+		  Else
+		    Dict.Value("availability") = Self.mAvailability
+		  End If
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -343,6 +362,17 @@ Implements Beacon.Countable,Beacon.NamedItem
 		  End If
 		  
 		  Return Self.mSets(Idx).ImmutableVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SpawnPoint(Pack As Beacon.StringList = Nil, Options As Integer = 3) As Ark.SpawnPoint
+		  Var Blueprint As Ark.Blueprint = Self.mPointRef.Resolve(Pack, Options)
+		  If Blueprint Is Nil Or (Blueprint IsA Ark.SpawnPoint) = False Then
+		    Return Nil
+		  End If
+		  
+		  Return Ark.SpawnPoint(Blueprint)
 		End Function
 	#tag EndMethod
 
@@ -371,6 +401,10 @@ Implements Beacon.Countable,Beacon.NamedItem
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mAvailability As UInt64
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mLimits As Ark.BlueprintAttributeManager

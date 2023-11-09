@@ -111,7 +111,7 @@ Implements Beacon.NamedItem
 		    End If
 		    Entry = New ArkSA.SpawnPointSetEntry(Reference)
 		  ElseIf Dict.HasKey("creatureId") Then
-		    Entry = New ArkSA.SpawnPointSetEntry(New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Dict.Value("creatureId").StringValue, "", "", "", ""))
+		    Entry = New ArkSA.SpawnPointSetEntry(New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Dict.Value("creatureId").StringValue, "", "", "", "", ""))
 		  Else
 		    Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Dict, "creature_id", "Creature", "", Nil, True)
 		    If Creature Is Nil Then

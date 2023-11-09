@@ -59,7 +59,7 @@ Protected Class CraftingCostIngredient
 		    End If
 		    If Reference Is Nil Then
 		      If BlueprintId.IsEmpty = False Or BlueprintPath.IsEmpty = False Or BlueprintClass.IsEmpty = False Then
-		        Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, BlueprintId, BlueprintPath, BlueprintClass, "", "")
+		        Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, BlueprintId, BlueprintPath, BlueprintClass, "", "", "")
 		      Else
 		        Return Nil
 		      End If

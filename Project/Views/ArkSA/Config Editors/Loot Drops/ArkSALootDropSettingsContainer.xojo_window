@@ -402,11 +402,11 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function Containers() As ArkSA.MutableLootContainer()
-		  Var Results() As ArkSA.MutableLootContainer
-		  For Idx As Integer = 0 To Self.mContainerRefs.LastIndex
-		    If (Self.mContainerRefs(Idx).Value Is Nil) = False Then
-		      Results.Add(ArkSA.MutableLootContainer(Self.mContainerRefs(Idx).Value))
+		Function Overrides() As ArkSA.MutableLootDropOverride()
+		  Var Results() As ArkSA.MutableLootDropOverride
+		  For Idx As Integer = 0 To Self.mOverrideRefs.LastIndex
+		    If (Self.mOverrideRefs(Idx).Value Is Nil) = False Then
+		      Results.Add(ArkSA.MutableLootDropOverride(Self.mOverrideRefs(Idx).Value))
 		    End If
 		  Next
 		  Return Results
@@ -414,35 +414,35 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Containers(Assigns Containers() As ArkSA.MutableLootContainer)
+		Sub Overrides(Assigns Overrides() As ArkSA.MutableLootDropOverride)
 		  Self.mSettingUp = True
 		  
-		  Self.mContainerRefs.ResizeTo(Containers.LastIndex)
+		  Self.mOverrideRefs.ResizeTo(Overrides.LastIndex)
 		  
-		  If Containers.Count = 0 Then
+		  If Overrides.Count = 0 Then
 		    Self.MinItemSetsField.Clear
 		    Self.MaxItemSetsField.Clear
 		    Self.NoDuplicatesCheck.VisualState(False) = DesktopCheckBox.VisualStates.Unchecked
 		    Self.AppendModeCheck.VisualState(False) = DesktopCheckBox.VisualStates.Unchecked
 		  Else
-		    Var CommonMinItemSets As Integer = Containers(0).MinItemSets
-		    Var CommonMaxItemSets As Integer = Containers(0).MaxItemSets
-		    Var CommonNoDuplicates As DesktopCheckBox.VisualStates = If(Containers(0).PreventDuplicates, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked)
-		    Var CommonAppendMode As DesktopCheckBox.VisualStates = If(Containers(0).AppendMode, DesktopCheckBox.VisualStates.Checked, DesktopCheckBox.VisualStates.Unchecked)
+		    Var CommonMinItemSets As Integer = Overrides(0).MinItemSets
+		    Var CommonMaxItemSets As Integer = Overrides(0).MaxItemSets
+		    Var CommonNoDuplicates As DesktopCheckBox.VisualStates = If(Overrides(0).PreventDuplicates, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked)
+		    Var CommonAppendMode As DesktopCheckBox.VisualStates = If(Overrides(0).AddToDefaults, DesktopCheckBox.VisualStates.Checked, DesktopCheckBox.VisualStates.Unchecked)
 		    
-		    For Idx As Integer = 0 To Containers.LastIndex
-		      Self.mContainerRefs(Idx) = New WeakRef(Containers(Idx))
+		    For Idx As Integer = 0 To Overrides.LastIndex
+		      Self.mOverrideRefs(Idx) = New WeakRef(Overrides(Idx))
 		      
-		      If Containers(Idx).MinItemSets <> CommonMinItemSets Then
+		      If Overrides(Idx).MinItemSets <> CommonMinItemSets Then
 		        CommonMinItemSets = -1
 		      End If
-		      If Containers(Idx).MaxItemSets <> CommonMaxItemSets Then
+		      If Overrides(Idx).MaxItemSets <> CommonMaxItemSets Then
 		        CommonMaxItemSets = -1
 		      End If
-		      If If(Containers(Idx).PreventDuplicates, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
+		      If If(Overrides(Idx).PreventDuplicates, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
 		        CommonNoDuplicates = DesktopCheckBox.VisualStates.Indeterminate
 		      End If
-		      If If(Containers(Idx).AppendMode, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked) <> CommonAppendMode Then
+		      If If(Overrides(Idx).AddToDefaults, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked) <> CommonAppendMode Then
 		        CommonAppendMode = DesktopCheckBox.VisualStates.Indeterminate
 		      End If
 		    Next
@@ -483,7 +483,7 @@ End
 		Private Sub SetupUI()
 		  Const Gap = 6
 		  Const RowHeight = 20
-		  Const ContainerHeight = (RowHeight * 4) + (Gap * 5) + 1
+		  Const OverrideHeight = (RowHeight * 4) + (Gap * 5) + 1
 		  
 		  BeaconUI.SizeToFit(Self.MinItemSetsLabel, Self.MaxItemSetsLabel, Self.NoDuplicatesLabel, Self.AppendModeLabel)
 		  
@@ -510,10 +510,10 @@ End
 		  Self.MaxItemSetsStepper.Left = Self.MaxItemSetsField.Right + 2
 		  Self.MaxItemSetsStepper.Top = Self.MaxItemSetsField.Top
 		  
-		  Self.BottomSeparator.Top = ContainerHeight - 1
+		  Self.BottomSeparator.Top = OverrideHeight - 1
 		  
-		  If Self.Height <> ContainerHeight Then
-		    Self.Height = ContainerHeight
+		  If Self.Height <> OverrideHeight Then
+		    Self.Height = OverrideHeight
 		  End If
 		End Sub
 	#tag EndMethod
@@ -525,7 +525,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mContainerRefs() As WeakRef
+		Private mOverrideRefs() As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -554,16 +554,16 @@ End
 		  End If
 		  
 		  Var Value As Integer = Val(Me.Text)
-		  Var Containers() As ArkSA.MutableLootContainer = Self.Containers
-		  For Idx As Integer = 0 To Containers.LastIndex
-		    Containers(Idx).MinItemSets = Value
+		  Var Overrides() As ArkSA.MutableLootDropOverride = Self.Overrides
+		  For Idx As Integer = 0 To Overrides.LastIndex
+		    Overrides(Idx).MinItemSets = Value
 		  Next
 		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function AllowContents(Value As String) As Boolean
-		  If Value.Trim.IsEmpty And Self.mContainerRefs.LastIndex > 0 Then
+		  If Value.Trim.IsEmpty And Self.mOverrideRefs.LastIndex > 0 Then
 		    Return True
 		  End If
 		End Function
@@ -595,16 +595,16 @@ End
 		  End If
 		  
 		  Var Value As Integer = Val(Me.Text)
-		  Var Containers() As ArkSA.MutableLootContainer = Self.Containers
-		  For Idx As Integer = 0 To Containers.LastIndex
-		    Containers(Idx).MaxItemSets = Value
+		  Var Overrides() As ArkSA.MutableLootDropOverride = Self.Overrides
+		  For Idx As Integer = 0 To Overrides.LastIndex
+		    Overrides(Idx).MaxItemSets = Value
 		  Next
 		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function AllowContents(Value As String) As Boolean
-		  If Value.Trim.IsEmpty And Self.mContainerRefs.LastIndex > 0 Then
+		  If Value.Trim.IsEmpty And Self.mOverrideRefs.LastIndex > 0 Then
 		    Return True
 		  End If
 		End Function
@@ -671,9 +671,9 @@ End
 		    Return
 		  End If
 		  
-		  Var Containers() As ArkSA.MutableLootContainer = Self.Containers
-		  For Idx As Integer = 0 To Containers.LastIndex
-		    Containers(Idx).PreventDuplicates = Me.Value
+		  Var Overrides() As ArkSA.MutableLootDropOverride = Self.Overrides
+		  For Idx As Integer = 0 To Overrides.LastIndex
+		    Overrides(Idx).PreventDuplicates = Me.Value
 		  Next
 		  
 		  RaiseEvent SettingsChanged
@@ -687,9 +687,9 @@ End
 		    Return
 		  End If
 		  
-		  Var Containers() As ArkSA.MutableLootContainer = Self.Containers
-		  For Idx As Integer = 0 To Containers.LastIndex
-		    Containers(Idx).AppendMode = Me.Value
+		  Var Overrides() As ArkSA.MutableLootDropOverride = Self.Overrides
+		  For Idx As Integer = 0 To Overrides.LastIndex
+		    Overrides(Idx).AddToDefaults = Me.Value
 		  Next
 		  
 		  Self.SetFieldsEnabled()
@@ -700,19 +700,99 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Composited"
+		Name="Width"
 		Visible=true
-		Group="Window Behavior"
+		Group="Size"
+		InitialValue="300"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="300"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="InitialParent"
+		Visible=false
+		Group="Position"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="LockLeft"
+		Visible=true
+		Group="Position"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="LockTop"
+		Visible=true
+		Group="Position"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="LockRight"
+		Visible=true
+		Group="Position"
 		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Index"
+		Name="LockBottom"
 		Visible=true
-		Group="ID"
-		InitialValue="-2147483648"
+		Group="Position"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="TabIndex"
+		Visible=true
+		Group="Position"
+		InitialValue="0"
 		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="TabPanelIndex"
+		Visible=false
+		Group="Position"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="TabStop"
+		Visible=true
+		Group="Position"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Enabled"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -724,18 +804,18 @@ End
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AllowAutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="AllowFocusRing"
 		Visible=true
 		Group="Appearance"
 		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Visible"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -746,6 +826,14 @@ End
 		InitialValue="&hFFFFFF"
 		Type="ColorGroup"
 		EditorType="ColorGroup"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -772,6 +860,30 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="Transparent"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
@@ -783,30 +895,6 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
-		InitialValue=""
-		Type="String"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Size"
-		InitialValue="300"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Size"
-		InitialValue="300"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="InitialParent"
-		Visible=false
-		Group="Position"
 		InitialValue=""
 		Type="String"
 		EditorType=""
@@ -825,94 +913,6 @@ End
 		Group="Position"
 		InitialValue=""
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockLeft"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockTop"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockRight"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockBottom"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabPanelIndex"
-		Visible=false
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabIndex"
-		Visible=true
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabStop"
-		Visible=true
-		Group="Position"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Visible"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Enabled"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Backdrop"
-		Visible=true
-		Group="Background"
-		InitialValue=""
-		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Transparent"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

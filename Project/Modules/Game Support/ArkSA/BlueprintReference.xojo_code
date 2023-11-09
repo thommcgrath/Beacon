@@ -31,6 +31,7 @@ Implements Beacon.NamedItem
 		  Self.mBlueprintId = Blueprint.BlueprintId
 		  Self.mClassString = Blueprint.ClassString
 		  Self.mContentPackId = Blueprint.ContentPackId
+		  Self.mContentPackName = Blueprint.ContentPackName
 		  Self.mLabel = Blueprint.Label
 		  Self.mPath = Blueprint.Path
 		  
@@ -53,6 +54,7 @@ Implements Beacon.NamedItem
 		  Self.mBlueprintId = Reference.mBlueprintId
 		  Self.mClassString = Reference.mClassString
 		  Self.mContentPackId = Reference.mContentPackId
+		  Self.mContentPackName = Reference.mContentPackName
 		  Self.mKind = Reference.mKind
 		  Self.mLabel = Reference.mLabel
 		  Self.mPath = Reference.mPath
@@ -79,6 +81,7 @@ Implements Beacon.NamedItem
 		    Self.mBlueprintId = SaveData.Value("UUID")
 		    Self.mClassString = SaveData.FirstValue("ClassString", "Class", "")
 		    Self.mContentPackId = SaveData.Value("ModUUID")
+		    Self.mContentPackName = ""
 		    
 		    Self.mLabel = SaveData.FirstValue("ClassString", "Class", "Path", "ObjectID")
 		    Self.mPath = SaveData.Value("Path")
@@ -99,6 +102,7 @@ Implements Beacon.NamedItem
 		    Self.mBlueprintId = SaveData.Value("blueprintId")
 		    Self.mClassString = SaveData.Value("classString")
 		    Self.mContentPackId = SaveData.Value("contentPackId")
+		    Self.mContentPackName = SaveData.Lookup("contentPackName", "")
 		    Self.mKind = SaveData.Value("kind")
 		    Self.mLabel = SaveData.Value("label")
 		    Self.mPath = SaveData.Value("path")
@@ -111,10 +115,11 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Kind As String, BlueprintId As String, Path As String, ClassString As String, Label As String, ContentPackId As String)
+		Sub Constructor(Kind As String, BlueprintId As String, Path As String, ClassString As String, Label As String, ContentPackId As String, ContentPackName As String)
 		  Self.mBlueprintId = BlueprintId
 		  Self.mClassString = ClassString
 		  Self.mContentPackId = ContentPackId
+		  Self.mContentPackName = ContentPackName
 		  Self.mKind = Kind
 		  Self.mLabel = Label
 		  Self.mPath = Path
@@ -127,7 +132,25 @@ Implements Beacon.NamedItem
 		    Return Self.mContentPackId
 		  End If
 		  
+		  If Self.mContentPackId.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
 		  Return Self.mBlueprint.ContentPackId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackName() As String
+		  If Self.mBlueprint Is Nil Then
+		    Return Self.mContentPackName
+		  End If
+		  
+		  If Self.mContentPackName.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mBlueprint.ContentPackName
 		End Function
 	#tag EndMethod
 
@@ -149,7 +172,7 @@ Implements Beacon.NamedItem
 		  If ContentPackIdKey.IsEmpty = False And Dict.HasKey(ContentPackIdKey) Then
 		    ContentPackId = Dict.Value(ContentPackIdKey)
 		  End If
-		  Return New ArkSA.BlueprintReference(Kind, BlueprintId, Path, ClassString, Label, ContentPackId)
+		  Return New ArkSA.BlueprintReference(Kind, BlueprintId, Path, ClassString, Label, ContentPackId, "")
 		End Function
 	#tag EndMethod
 
@@ -345,6 +368,7 @@ Implements Beacon.NamedItem
 		  Dict.Value("path") = Self.mPath
 		  Dict.Value("classString") = Self.mClassString
 		  Dict.Value("contentPackId") = Self.mContentPackId
+		  Dict.Value("contentPackName") = Self.mContentPackName
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -364,6 +388,10 @@ Implements Beacon.NamedItem
 
 	#tag Property, Flags = &h21
 		Private mContentPackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPackName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

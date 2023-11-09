@@ -377,7 +377,7 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 		      If IsNull(Limits) = False And Limits.Type = Variant.TypeObject And Limits.ObjectValue IsA Dictionary Then
 		        Var LimitsDict As Dictionary = Dictionary(Limits.ObjectValue)
 		        For Each Entry As DictionaryEntry In LimitsDict
-		          Var CreatureRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "")
+		          Var CreatureRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "", "")
 		          Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = Entry.Value.DoubleValue
 		        Next
 		      ElseIf IsNull(Limits) = False And Limits.IsArray And Limits.ArrayElementType = Variant.TypeObject Then
@@ -386,7 +386,7 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 		          Var MaxPercent As Double = Limit.FirstValue("maxPercentage", "max_percent", 1.0).DoubleValue
 		          Var CreatureRef As ArkSA.BlueprintReference
 		          If Limit.HasKey("creatureId") Then
-		            CreatureRef = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Limit.Value("creatureId").StringValue, "", "", "", "")
+		            CreatureRef = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, Limit.Value("creatureId").StringValue, "", "", "", "", "")
 		          ElseIf Limit.HasKey("creature") Then
 		            CreatureRef = ArkSA.BlueprintReference.FromSaveData(Limit.Value("creature"))
 		          End If

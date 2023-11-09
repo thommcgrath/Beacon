@@ -201,8 +201,8 @@ Inherits ArkSA.ConfigGroup
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function ConfigValueForOverride(Override As ArkSA.SpawnPointOverride) As ArkSA.ConfigValue
+	#tag Method, Flags = &h21
+		Private Shared Function ConfigValueForOverride(Override As ArkSA.SpawnPointOverride) As ArkSA.ConfigValue
 		  Var RenderedEntries() As String
 		  
 		  Var Config As String
@@ -467,7 +467,7 @@ Inherits ArkSA.ConfigGroup
 		      End If
 		      
 		      Var ClassString As String = Dict.Value("NPCSpawnEntriesContainerClassString")
-		      Var SpawnPointRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindSpawnPoint, "", "", ClassString, "", "")
+		      Var SpawnPointRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindSpawnPoint, "", "", ClassString, "", "", "")
 		      Var SpawnPoint As ArkSA.SpawnPoint = ArkSA.SpawnPoint(SpawnPointRef.Resolve(ContentPacks))
 		      Var Override As New ArkSA.MutableSpawnPointOverride(SpawnPoint, Mode)
 		      

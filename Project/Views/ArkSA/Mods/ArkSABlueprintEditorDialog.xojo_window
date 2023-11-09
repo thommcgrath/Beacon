@@ -2277,9 +2277,9 @@ End
 		  Var Mutable As ArkSA.MutableLootContainer = Container.MutableVersion
 		  ArkSA.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		  
-		  Var Drops(0) As ArkSA.LootContainer
-		  Drops(0) = Mutable
-		  Self.DropEditor.Containers = Drops
+		  Var Overrides(0) As ArkSA.LootDropOverride
+		  Overrides(0) = New ArkSA.LootDropOverride(Mutable)
+		  Self.DropEditor.Overrides = Overrides
 		End Sub
 	#tag EndMethod
 
@@ -2689,12 +2689,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function UpdateBlueprint(Container As ArkSA.MutableLootContainer) As Boolean
-		  Var Containers() As ArkSA.LootContainer = Self.DropEditor.Containers
-		  If Containers.Count <> 1 Then
+		  Var Overrides() As ArkSA.LootDropOverride = Self.DropEditor.Overrides
+		  If Overrides.Count <> 1 Then
 		    Return False
 		  End If
 		  
-		  Var Source As ArkSA.LootContainer = Containers(0)
+		  Var Source As ArkSA.LootContainer = Overrides(0).LootDrop(Self.SampleProject.ContentPacks)
 		  Container.Unpack(Source.Pack)
 		  
 		  Container.Multipliers = New Beacon.Range(Self.LootMinMultiplierField.DoubleValue, Self.LootMaxMultiplierField.DoubleValue)
@@ -3319,9 +3319,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Var Drops(0) As ArkSA.LootContainer
-		  Drops(0) = New ArkSA.MutableLootContainer(ArkSA.UnknownBlueprintPath("LootContainers", "BlueprintEditor_C"), "8e25c4be-d496-4c94-b1bc-d4bef54834ad")
-		  Me.Containers = Drops
+		  Var DummyContainer As ArkSA.LootContainer = New ArkSA.MutableLootContainer(ArkSA.UnknownBlueprintPath("LootContainers", "BlueprintEditor_C"), "8e25c4be-d496-4c94-b1bc-d4bef54834ad")
+		  Var Overrides(0) As ArkSA.LootDropOverride
+		  Overrides(0) = New ArkSA.LootDropOverride(DummyContainer)
+		  Me.Overrides = Overrides
 		End Sub
 	#tag EndEvent
 	#tag Event

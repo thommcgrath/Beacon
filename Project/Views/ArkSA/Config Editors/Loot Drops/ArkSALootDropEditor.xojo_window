@@ -402,9 +402,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddSets(Sets() As ArkSA.LootItemSet)
-		  For Each Container As ArkSA.MutableLootContainer In Self.mContainers
+		  For Each Override As ArkSA.MutableLootDropOverride In Self.mOverrides
 		    For Each NewSet As ArkSA.LootItemSet In Sets
-		      Container.Add(New ArkSA.LootItemSet(NewSet))
+		      Override.Add(New ArkSA.LootItemSet(NewSet))
 		    Next
 		  Next
 		  
@@ -454,7 +454,7 @@ End
 		  AddHandler EmptySetItem.MenuItemSelected, WeakAddressOf Self.HandlePresetMenu
 		  Parent.AddMenu(EmptySetItem)
 		  
-		  Var HasTarget As Boolean = Self.mContainers.LastIndex > -1
+		  Var HasTarget As Boolean = Self.mOverrides.Count > 0
 		  
 		  For Each Group As String In GroupNames
 		    Var Arr() As ArkSA.LootTemplate = Groups.Value(Group)
@@ -508,34 +508,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Containers() As ArkSA.LootContainer()
-		  Var Containers() As ArkSA.LootContainer
-		  Containers.ResizeTo(Self.mContainers.LastIndex)
-		  For Idx As Integer = 0 To Self.mContainers.LastIndex
-		    Containers(Idx) = New ArkSA.LootContainer(Self.mContainers(Idx))
-		  Next
-		  Return Containers
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Containers(Assigns Containers() As ArkSA.LootContainer)
-		  If Containers Is Nil Then
-		    Self.mContainers.ResizeTo(-1)
-		  Else
-		    Self.mContainers.ResizeTo(Containers.LastIndex)
-		    For Idx As Integer = 0 To Containers.LastIndex
-		      Self.mContainers(Idx) = New ArkSA.MutableLootContainer(Containers(Idx))
-		    Next
-		  End If
-		  
-		  Self.SettingsContainer.Containers = Self.mContainers
-		  
-		  Self.UpdateUI
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GoToChild(ItemSetUUID As String, EntryUUID As String = "", EngramClass As String = "") As Boolean
 		  For Idx As Integer = 0 To Self.SetList.LastRowIndex
 		    Var Organizer As ArkSA.LootItemSetOrganizer = Self.SetList.RowTagAt(Idx)
@@ -571,17 +543,17 @@ End
 		  Var ContentPacks As Beacon.StringList = Self.Project.ContentPacks
 		  Var NewItemSets() As ArkSA.LootItemSet
 		  
-		  For Each Container As ArkSA.MutableLootContainer In Self.mContainers
+		  For Each Override As ArkSA.MutableLootDropOverride In Self.mOverrides
 		    Var Set As ArkSA.LootItemSet
-		    If SelectedPreset <> Nil Then
-		      Set = ArkSA.LootItemSet.FromTemplate(SelectedPreset, Container, Mask, ContentPacks)
+		    If (SelectedPreset Is Nil) = False Then
+		      Set = ArkSA.LootItemSet.FromTemplate(SelectedPreset, Override, Mask, ContentPacks)
 		    End If
 		    If Set Is Nil Then
 		      Set = New ArkSA.MutableLootItemSet()
-		      ArkSA.MutableLootItemSet(Set).RawWeight = Container.DefaultItemSetWeight
+		      ArkSA.MutableLootItemSet(Set).RawWeight = Override.DefaultWeight
 		    End If
 		    
-		    Container.Add(Set)
+		    Override.Add(Set)
 		    NewItemSets.Add(Set)
 		  Next
 		  
@@ -657,6 +629,34 @@ End
 		  End If
 		  
 		  Self.Refresh()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Overrides() As ArkSA.LootDropOverride()
+		  Var Overrides() As ArkSA.LootDropOverride
+		  Overrides.ResizeTo(Self.mOverrides.LastIndex)
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    Overrides(Idx) = New ArkSA.LootDropOverride(Self.mOverrides(Idx))
+		  Next
+		  Return Overrides
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Overrides(Assigns Overrides() As ArkSA.LootDropOverride)
+		  If Overrides Is Nil Then
+		    Self.mOverrides.ResizeTo(-1)
+		  Else
+		    Self.mOverrides.ResizeTo(Overrides.LastIndex)
+		    For Idx As Integer = 0 To Overrides.LastIndex
+		      Self.mOverrides(Idx) = New ArkSA.MutableLootDropOverride(Overrides(Idx))
+		    Next
+		  End If
+		  
+		  Self.SettingsContainer.Overrides = Self.mOverrides
+		  
+		  Self.UpdateUI
 		End Sub
 	#tag EndMethod
 
@@ -792,8 +792,8 @@ End
 		  Self.SetList.SelectionChangeBlocked = True
 		  
 		  Var CombinedSets As New Dictionary
-		  For Each Container As ArkSA.MutableLootContainer In Self.mContainers
-		    For Each Set As ArkSA.LootItemSet In Container
+		  For Each Override As ArkSA.MutableLootDropOverride In Self.mOverrides
+		    For Each Set As ArkSA.LootItemSet In Override
 		      Var Hash As String = Set.Hash
 		      Var Organizer As ArkSA.LootItemSetOrganizer
 		      If CombinedSets.HasKey(Hash) Then
@@ -802,13 +802,13 @@ End
 		        Organizer = New ArkSA.LootItemSetOrganizer(Set)
 		        CombinedSets.Value(Hash) = Organizer
 		      End If
-		      Organizer.Attach(Container, Set)
+		      Organizer.Attach(Override, Set)
 		    Next
 		  Next
 		  
-		  If CombinedSets <> Nil And CombinedSets.KeyCount > 0 Then
+		  If (CombinedSets Is Nil) = false And CombinedSets.KeyCount > 0 Then
 		    Var SelectedSets() As String
-		    If SelectSets = Nil Then
+		    If SelectSets Is Nil Then
 		      For I As Integer = 0 To Self.SetList.RowCount - 1
 		        If Self.SetList.RowSelectedAt(I) Then
 		          SelectedSets.Add(ArkSA.LootItemSetOrganizer(Self.SetList.RowTagAt(I)).Template.UUID)
@@ -820,7 +820,7 @@ End
 		      Next
 		    End If
 		    
-		    Var ExtendedLabels As Boolean = Self.mContainers.LastIndex > 0
+		    Var ExtendedLabels As Boolean = Self.mOverrides.Count > 1
 		    
 		    Self.SetList.RowCount = CombinedSets.KeyCount
 		    Self.SetList.DefaultRowHeight = If(ExtendedLabels, 34, 26)
@@ -843,11 +843,11 @@ End
 		  Self.SetList.SelectionChangeBlocked = False
 		  
 		  Var SimulatorButton As OmniBarItem = Self.ConfigToolbar.Item("SimulatorButton")
-		  If Self.mContainers.LastIndex = 0 Then
+		  If Self.mOverrides.Count = 1 Then
 		    If (SimulatorButton Is Nil) = False Then
 		      SimulatorButton.Enabled = True
 		    End If
-		    Self.Simulator.Simulate(Self.mContainers(0))
+		    Self.Simulator.Simulate(Self.mOverrides(0))
 		  Else
 		    If (SimulatorButton Is Nil) = False Then
 		      SimulatorButton.Enabled = False
@@ -867,7 +867,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PresentDropEditor(Container As ArkSA.LootContainer)
+		Event PresentDropEditor(Override As ArkSA.LootDropOverride)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -876,15 +876,15 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mContainers() As ArkSA.MutableLootContainer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mImporter As ArkSA.ImportThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mImportProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOverrides() As ArkSA.MutableLootDropOverride
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -970,12 +970,12 @@ End
 		  End If
 		  
 		  For Each Organizer As ArkSA.LootItemSetOrganizer In Organizers
-		    Var Containers() As ArkSA.MutableLootContainer = Organizer.Containers
-		    For Each Container As ArkSA.MutableLootContainer In Containers
-		      Var Set As ArkSA.LootItemSet = Organizer.SetForContainer(Container)
-		      Container.Remove(Set)
-		    Next Container
-		  Next Organizer
+		    Var Overrides() As ArkSA.MutableLootDropOverride = Organizer.Overrides
+		    For Each Override As ArkSA.MutableLootDropOverride In Overrides
+		      Var Set As ArkSA.LootItemSet = Organizer.SetForOverride(Override)
+		      Override.Remove(Set)
+		    Next
+		  Next
 		  
 		  RaiseEvent Updated
 		  Self.UpdateUI()
@@ -1004,7 +1004,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Self.mContainers.Count = 0 Then
+		  If Self.mOverrides.Count = 0 Then
 		    Return
 		  End If
 		  
@@ -1115,17 +1115,17 @@ End
 		      
 		      Var Mask As UInt64 = Self.Project.MapMask
 		      Var AffectedItemSets() As ArkSA.LootItemSet
-		      Var Containers() As ArkSA.MutableLootContainer = Organizer.Containers
-		      For Each Container As ArkSA.MutableLootContainer In Containers
-		        Var Set As ArkSA.LootItemSet = Organizer.SetForContainer(Container)
+		      Var Overrides() As ArkSA.MutableLootDropOverride = Organizer.Overrides
+		      For Each Override As ArkSA.MutableLootDropOverride In Overrides
+		        Var Set As ArkSA.LootItemSet = Organizer.SetForOverride(Override)
 		        If Set Is Nil Then
 		          Continue
 		        End If
 		        
 		        Var MutableSet As ArkSA.MutableLootItemSet = Set.MutableVersion
-		        If NewTemplate.RebuildLootItemSet(MutableSet, Mask, Container, Self.Project.ContentPacks) Then
-		          Var Idx As Integer = Container.IndexOf(Set)
-		          Container(Idx) = MutableSet
+		        If NewTemplate.RebuildLootItemSet(MutableSet, Mask, Override, Self.Project.ContentPacks) Then
+		          Var Idx As Integer = Override.IndexOf(Set)
+		          Override.SetAt(Idx) = MutableSet
 		          AffectedItemSets.Add(MutableSet)
 		        End If
 		      Next
@@ -1139,11 +1139,11 @@ End
 		    Var AffectedItemSets() As ArkSA.LootItemSet
 		    Var Templates As New Dictionary
 		    For Each Organizer As ArkSA.LootItemSetOrganizer In Targets
-		      Var Containers() As ArkSA.MutableLootContainer = Organizer.Containers
+		      Var Overrides() As ArkSA.MutableLootDropOverride = Organizer.Overrides
 		      Var Mask As UInt64 = Self.Project.MapMask
 		      
-		      For Each Container As ArkSA.MutableLootContainer In Containers
-		        Var Set As ArkSA.LootItemSet = Organizer.SetForContainer(Container)
+		      For Each Override As ArkSA.MutableLootDropOverride In Overrides
+		        Var Set As ArkSA.LootItemSet = Organizer.SetForOverride(Override)
 		        If Set Is Nil Or Set.TemplateUUID.IsEmpty Then
 		          Continue
 		        End If
@@ -1158,15 +1158,15 @@ End
 		        
 		        Var MutableSet As ArkSA.MutableLootItemSet = Set.MutableVersion
 		        Var Template As ArkSA.LootTemplate = Templates.Value(Set.TemplateUUID)
-		        If Template.RebuildLootItemSet(MutableSet, Mask, Container, Self.Project.ContentPacks) Then
-		          Var Idx As Integer = Container.IndexOf(Set)
-		          Container(Idx) = MutableSet
+		        If Template.RebuildLootItemSet(MutableSet, Mask, Override, Self.Project.ContentPacks) Then
+		          Var Idx As Integer = Override.IndexOf(Set)
+		          Override.SetAt(Idx) = MutableSet
 		          AffectedItemSets.Add(MutableSet)
 		        End If
 		      Next
 		    Next
 		    
-		    If AffectedItemSets.LastIndex = -1 Then
+		    If AffectedItemSets.Count = 0 Then
 		      If Targets.LastIndex = 0 Then
 		        Self.ShowAlert("No changes made", "This item set is already identical to the template.")
 		      Else
@@ -1209,8 +1209,8 @@ End
 		  
 		  RaiseEvent Updated
 		  
-		  If Self.SimulatorVisible And Self.mContainers.LastIndex = 0 Then
-		    Self.Simulator.Simulate(Self.mContainers(0))
+		  If Self.SimulatorVisible And Self.mOverrides.Count = 1 Then
+		    Self.Simulator.Simulate(Self.mOverrides(0))
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1255,7 +1255,7 @@ End
 		  RaiseEvent Updated
 		  
 		  If Self.SimulatorVisible Then
-		    Self.Simulator.Simulate(Self.mContainers(0))
+		    Self.Simulator.Simulate(Self.mOverrides(0))
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1285,13 +1285,13 @@ End
 		  Select Case Item.Name
 		  Case "AddSetButton"
 		    Var Set As New ArkSA.MutableLootItemSet
-		    Set.RawWeight = Self.mContainers(0).DefaultItemSetWeight
+		    Set.RawWeight = Self.mOverrides(0).DefaultWeight
 		    Self.AddSet(Set)
 		  Case "SimulatorButton"
 		    If Self.SimulatorVisible Then
 		      Self.SimulatorVisible = False
 		    Else
-		      Self.Simulator.Simulate(Self.mContainers(0))
+		      Self.Simulator.Simulate(Self.mOverrides(0))
 		      Self.SimulatorVisible = True
 		    End If
 		  End Select

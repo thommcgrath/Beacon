@@ -85,12 +85,6 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RunWhenBanned() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var SaveData As New Dictionary
 		  Var EncryptedData As New Dictionary

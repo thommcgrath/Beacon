@@ -29,7 +29,7 @@ Inherits Beacon.ConfigGroup
 		Function GenerateConfigValues(Project As ArkSA.Project, Identity As Beacon.Identity, Profile As ArkSA.ServerProfile) As ArkSA.ConfigValue()
 		  Var Values() As ArkSA.ConfigValue
 		  
-		  If ArkSA.Configs.ConfigUnlocked(Self, Identity) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
+		  If ArkSA.Configs.ConfigUnlocked(Self, Identity) Then
 		    Var Generated() As ArkSA.ConfigValue = RaiseEvent GenerateConfigValues(Project, Profile)
 		    If (Generated Is Nil) = False Then
 		      Values = Generated

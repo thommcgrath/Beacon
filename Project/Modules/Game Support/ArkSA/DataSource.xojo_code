@@ -2163,7 +2163,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadDefaults(Container As ArkSA.MutableLootContainer)
+		Attributes( Deprecated )  Sub LoadDefaults(Container As ArkSA.MutableLootContainer)
 		  If Container Is Nil Then
 		    Return
 		  End If
@@ -2177,6 +2177,21 @@ Inherits Beacon.DataSource
 		  Container.MaxItemSets = Rows.Column("max_item_sets").IntegerValue
 		  Container.PreventDuplicates = Rows.Column("prevent_duplicates").BooleanValue
 		  Container.ContentsString = Rows.Column("contents").StringValue
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadDefaults(Override As ArkSA.MutableLootDropOverride)
+		  If Override Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT min_item_sets, max_item_sets, prevent_duplicates, contents FROM loot_containers WHERE object_id = ?1;", Override.LootDropId)
+		  If Rows.RowCount = 0 Then
+		    Return
+		  End If
+		  
+		  Override.LoadDefaults(Rows.Column("min_item_sets").IntegerValue, Rows.Column("max_item_sets").IntegerValue, Rows.Column("prevent_duplicates").BooleanValue, False, Rows.Column("contents").StringValue)
 		End Sub
 	#tag EndMethod
 

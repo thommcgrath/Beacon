@@ -93,12 +93,6 @@ Inherits Ark.ConfigGroup
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function RunWhenBanned() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

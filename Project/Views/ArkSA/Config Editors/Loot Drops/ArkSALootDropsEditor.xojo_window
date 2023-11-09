@@ -379,16 +379,16 @@ End
 		    Return False
 		  End If
 		  
-		  Var Containers() As ArkSA.LootContainer = OtherConfig.Containers
-		  Var TotalNewContainers As Integer = Containers.Count
+		  Var Overrides() As ArkSA.LootDropOverride = OtherConfig.Overrides
+		  Var TotalNewContainers As Integer = Overrides.Count
 		  If TotalNewContainers = 0 Then
 		    Return False
 		  End If
 		  
 		  Var DuplicateContainerCount As Integer
 		  Var Config As ArkSA.Configs.LootDrops = Self.Config(True)
-		  For Each Container As ArkSA.LootContainer In Containers
-		    If Config.HasContainer(Container) Then
+		  For Each Override As ArkSA.LootDropOverride In Overrides
+		    If Config.HasOverride(Override) Then
 		      DuplicateContainerCount = DuplicateContainerCount + 1
 		    End If
 		  Next
@@ -398,23 +398,23 @@ End
 		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateContainerCount, "loot drop", "loot drops") + "?", DuplicateContainerCount.ToString + " of " + Language.NounWithQuantity(TotalNewContainers, " loot drop has already been defined in this project. Would you like to replace it?", " loot drops are already defined in this project. Would you like to replace them?"), "Replace", "Cancel")
 		  End If
 		  
-		  Var AddedContainers() As ArkSA.LootContainer
-		  For Each Container As ArkSA.LootContainer In OtherConfig
-		    If Config.HasContainer(Container) Then
+		  Var AddedOverrides() As ArkSA.LootDropOverride
+		  For Each Override As ArkSA.LootDropOverride In OtherConfig
+		    If Config.HasOverride(Override) Then
 		      If Replace Then
-		        Config.Remove(Container)
+		        Config.Remove(Override)
 		      Else
 		        Continue
 		      End If
 		    End If
 		    
-		    AddedContainers.Add(Container)
-		    Config.Add(Container)
+		    AddedOverrides.Add(Override)
+		    Config.Add(Override)
 		  Next
 		  
-		  If AddedContainers.LastIndex > -1 Then
+		  If AddedOverrides.Count > 0 Then
 		    Self.Modified = True
-		    Self.UpdateContainerList(AddedContainers)
+		    Self.UpdateContainerList(AddedOverrides)
 		  End If
 		  
 		  Return True
@@ -473,22 +473,22 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddLootContainer(Container As ArkSA.LootContainer)
-		  Var Arr(0) As ArkSA.LootContainer
-		  Arr(0) = Container
-		  Self.AddLootContainers(Arr)
+		Private Sub AddOverride(Override As ArkSA.LootDropOverride)
+		  Var Arr(0) As ArkSA.LootDropOverride
+		  Arr(0) = Override
+		  Self.AddOverrides(Arr)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub AddLootContainers(Containers() As ArkSA.LootContainer)
-		  If Containers.LastIndex = -1 Then
+		Private Sub AddOverrides(Overrides() As ArkSA.LootDropOverride)
+		  If Overrides Is Nil Or Overrides.Count = 0 Then
 		    Return
 		  End If
 		  
-		  For Each Container As ArkSA.LootContainer In Containers
-		    If Container.Experimental And Not Preferences.HasShownExperimentalWarning Then
-		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Container.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
+		  For Each Override As ArkSA.LootDropOverride In Overrides
+		    If Override.Experimental And Not Preferences.HasShownExperimentalWarning Then
+		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Override.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
 		        Preferences.HasShownExperimentalWarning = True
 		        Exit
 		      Else
@@ -498,16 +498,12 @@ End
 		  Next
 		  
 		  Var Config As ArkSA.Configs.LootDrops = Self.Config(True)
-		  For Each Container As ArkSA.LootContainer In Containers
-		    If Config.HasContainer(Container) Then
-		      Config.Remove(Container)
-		    End If
-		    
-		    Config.Add(Container)
+		  For Each Override As ArkSA.LootDropOverride In Overrides
+		    Config.Add(Override)
 		    Self.Modified = Self.Project.Modified
 		  Next
 		  
-		  Self.UpdateContainerList(Containers)
+		  Self.UpdateContainerList(Overrides)
 		  Self.List.EnsureSelectionIsVisible()
 		End Sub
 	#tag EndMethod
@@ -519,19 +515,19 @@ End
 		  Var HasExperimentalContainers As Boolean = Data.HasExperimentalLootContainers(Self.Project.ContentPacks)
 		  Var Config As ArkSA.Configs.LootDrops = Self.Config(False)
 		  Var Mask As UInt64 = Self.Project.MapMask
-		  If Config <> Nil Then
+		  If (Config Is Nil) = False Then
 		    For I As Integer = Containers.LastIndex DownTo 0
 		      Var Container As ArkSA.LootContainer = Containers(I)
-		      If Config.HasContainer(Container) Or Container.ValidForMask(Mask) = False Then
+		      If Config.HasOverride(Container) Or Container.ValidForMask(Mask) = False Then
 		        Containers.RemoveAt(I)
 		        Continue For I
 		      End If
 		    Next
 		  End If
 		  
-		  Var Labels As Dictionary = Config.Containers.Disambiguate(Self.Project.MapMask)
+		  Var Labels As Dictionary = Config.Overrides.Disambiguate(Self.Project.MapMask)
 		  
-		  If Containers.LastIndex = -1 Then
+		  If Containers.Count = 0 Then
 		    Var Warning As DesktopMenuItem
 		    If Mask = CType(0, UInt64) Then
 		      Warning = New DesktopMenuItem("List is empty because no maps have been selected.")
@@ -603,7 +599,7 @@ End
 		    End Select
 		  ElseIf Tag.Type = Variant.TypeObject And Tag.ObjectValue IsA ArkSA.LootContainer Then
 		    Var Container As ArkSA.LootContainer = ChosenItem.Tag
-		    Self.AddLootContainer(Container)
+		    Self.AddOverride(New ArkSA.LootDropOverride(Container))
 		    Self.Focus = Self.List
 		  End If
 		End Sub
@@ -674,27 +670,27 @@ End
 		  End If
 		  
 		  Var Config As ArkSA.Configs.LootDrops = Self.Config(False)
-		  Var CurrentContainers() As ArkSA.LootContainer = Config.Containers
+		  Var CurrentOverrides() As ArkSA.LootDropOverride = Config.Overrides
 		  Var Map As New Dictionary
-		  For Each Container As ArkSA.LootContainer In CurrentContainers
-		    Map.Value(Container.ClassString) = True
+		  For Each Override As ArkSA.LootDropOverride In CurrentOverrides
+		    Map.Value(Override.LootDropId) = True
 		  Next
 		  
-		  Var DuplicateContainer As ArkSA.LootContainer
+		  Var DuplicateOverride As ArkSA.LootDropOverride
 		  If DuplicateSelected Then
-		    DuplicateContainer = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		    DuplicateOverride = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  End If
 		  
-		  If ArkSAAddLootDropDialog.Present(Self, Config, Self.Project.MapMask, Self.Project.ContentPacks, DuplicateContainer, DuplicateSelected) Then
+		  If ArkSAAddLootDropDialog.Present(Self, Config, Self.Project.MapMask, Self.Project.ContentPacks, DuplicateOverride, DuplicateSelected) Then
 		    Call Self.Config(True) // Actually saves the config to the document 
-		    CurrentContainers = Config.Containers
-		    Var NewContainers() As ArkSA.LootContainer
-		    For Each Container As ArkSA.LootContainer In CurrentContainers
-		      If Not Map.HasKey(Container.ClassString) Then
-		        NewContainers.Add(Container)
+		    CurrentOverrides = Config.Overrides
+		    Var NewOverrides() As ArkSA.LootDropOverride
+		    For Each Override As ArkSA.LootDropOverride In CurrentOverrides
+		      If Map.HasKey(Override.LootDropId) = False Then
+		        NewOverrides.Add(Override)
 		      End If
 		    Next
-		    Self.UpdateContainerList(NewContainers)
+		    Self.UpdateContainerList(NewOverrides)
 		    Self.Modified = Self.Project.Modified
 		    Self.Focus = Self.List
 		  End If
@@ -702,44 +698,77 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateContainerList(SelectedContainers() As ArkSA.LootContainer = Nil)
-		  Var VisibleContainers() As ArkSA.LootContainer = Self.Config(False).Containers(Self.FilterField.Text)
-		  Var Labels As Dictionary = VisibleContainers.Disambiguate(Self.Project.MapMask)
-		  VisibleContainers.Sort
+		Private Sub UpdateContainerList()
+		  // Maintain selection
 		  
-		  Var SelectedClasses() As String
-		  If SelectedContainers <> Nil Then
-		    For Each Container As ArkSA.LootContainer In SelectedContainers
-		      SelectedClasses.Add(Container.ClassString)
-		    Next
-		  Else
-		    Var Bound As Integer = Self.List.RowCount - 1
-		    For I As Integer = 0 To Bound
-		      If Self.List.RowSelectedAt(I) Then
-		        SelectedClasses.Add(ArkSA.LootContainer(Self.List.RowTagAt(I)).ClassString)
-		      End If
-		    Next
-		  End If
+		  Var LootDropIds() As String
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    If Self.List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Var Override As ArkSA.LootDropOverride = Self.List.RowTagAt(Idx)
+		    LootDropIds.Add(Override.LootDropId)
+		  Next
+		  Self.UpdateContainerList(LootDropIds)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateContainerList(Containers() As ArkSA.LootContainer)
+		  Var LootDropIds() As String
+		  For Each Container As ArkSA.LootContainer In Containers
+		    If Container Is Nil Then
+		      Continue
+		    End If
+		    
+		    LootDropIds.Add(Container.LootDropId)
+		  Next
+		  Self.UpdateContainerList(LootDropIds)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateContainerList(Overrides() As ArkSA.LootDropOverride)
+		  Var LootDropIds() As String
+		  For Each Override As ArkSA.LootDropOverride In Overrides
+		    If Override Is Nil Then
+		      Continue
+		    End If
+		    
+		    LootDropIds.Add(Override.LootDropId)
+		  Next
+		  Self.UpdateContainerList(LootDropIds)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateContainerList(LootDropIds() As String)
+		  // Select the given loot drops
 		  
-		  Self.List.RowCount = VisibleContainers.LastIndex + 1
+		  Var VisibleOverrides() As ArkSA.LootDropOverride = Self.Config(False).Overrides(Self.FilterField.Text)
+		  Var Labels As Dictionary = VisibleOverrides.Disambiguate(Self.Project.MapMask)
+		  VisibleOverrides.Sort
+		  
+		  Self.List.RowCount = VisibleOverrides.LastIndex + 1
 		  
 		  Self.mBlockSelectionChanged = True
-		  Var Selection() As ArkSA.LootContainer
-		  For I As Integer = 0 To VisibleContainers.LastIndex
-		    Self.List.RowTagAt(I) = VisibleContainers(I)
-		    Self.List.CellTextAt(I, 0) = "" // Causes a redraw of the cell
-		    Self.List.CellTextAt(I, 1) = Labels.Lookup(VisibleContainers(I).LootDropId, VisibleContainers(I).Label)
-		    If SelectedClasses.IndexOf(VisibleContainers(I).ClassString) > -1 Then
-		      Self.List.RowSelectedAt(I) = True
-		      Selection.Add(VisibleContainers(I))
+		  Var Selection() As ArkSA.LootDropOverride
+		  For Idx As Integer = 0 To VisibleOverrides.LastIndex
+		    Self.List.RowTagAt(Idx) = VisibleOverrides(Idx)
+		    Self.List.CellTextAt(Idx, 0) = "" // Causes a redraw of the cell
+		    Self.List.CellTextAt(Idx, 1) = Labels.Lookup(VisibleOverrides(Idx).LootDropId, VisibleOverrides(Idx).Label)
+		    If LootDropIds.IndexOf(VisibleOverrides(Idx).LootDropId) > -1 Then
+		      Self.List.RowSelectedAt(Idx) = True
+		      Selection.Add(VisibleOverrides(Idx))
 		    Else
-		      Self.List.RowSelectedAt(I) = False
+		      Self.List.RowSelectedAt(Idx) = False
 		    End If
 		  Next
 		  Self.mBlockSelectionChanged = False
 		  
-		  Editor.Containers = Selection
-		  If Selection.LastIndex = -1 Then
+		  Editor.Overrides = Selection
+		  If Selection.Count = 0 Then
 		    Panel.SelectedPanelIndex = 0
 		  Else
 		    Panel.SelectedPanelIndex = 1
@@ -747,7 +776,7 @@ End
 		  
 		  Var RebuildButton As OmniBarItem = Self.ConfigToolbar.Item("RebuildButton")
 		  If (RebuildButton Is Nil) = False Then
-		    RebuildButton.Enabled = VisibleContainers.LastIndex > -1
+		    RebuildButton.Enabled = VisibleOverrides.Count > 0
 		  End If
 		  Self.UpdateStatus()
 		End Sub
@@ -798,21 +827,26 @@ End
 		  #Pragma Unused IsHighlighted
 		  #Pragma Unused TextColor
 		  
-		  If Row >= Me.RowCount Then
+		  If Row >= Me.RowCount Or Column <> 0 Then
 		    Return
 		  End If
 		  
-		  If Column = 0 Then
-		    Var Container As ArkSA.LootContainer = Me.RowTagAt(Row)
-		    Var Icon As Picture
-		    If Me.RowSelectedAt(Row) And IsHighlighted Then
-		      Icon = ArkSA.DataSource.Pool.Get(False).GetLootContainerIcon(Container, TextColor, BackgroundColor)
-		    Else
-		      Icon = ArkSA.DataSource.Pool.Get(False).GetLootContainerIcon(Container, BackgroundColor)
-		    End If
-		    
-		    G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))
+		  Var Override As ArkSA.LootDropOverride = Me.RowTagAt(Row)
+		  If Override Is Nil Then
+		    Return
 		  End If
+		  
+		  Var Icon As Picture
+		  If Me.RowSelectedAt(Row) And IsHighlighted Then
+		    Icon = ArkSA.DataSource.Pool.Get(False).GetLootContainerIcon(Override.LootDrop(Self.Project.ContentPacks), TextColor, BackgroundColor)
+		  Else
+		    Icon = ArkSA.DataSource.Pool.Get(False).GetLootContainerIcon(Override.LootDrop(Self.Project.ContentPacks), BackgroundColor)
+		  End If
+		  If Icon Is Nil Then
+		    Return
+		  End If
+		  
+		  G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -836,22 +870,22 @@ End
 		    Return
 		  End If
 		  
-		  Var Containers() As ArkSA.LootContainer
+		  Var Overrides() As ArkSA.LootDropOverride
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
-		    Containers.Add(Self.List.RowTagAt(I))
+		    Overrides.Add(Self.List.RowTagAt(I))
 		  Next
 		  
-		  If Warn And Self.ShowDeleteConfirmation(Containers, "loot drop", "loot drops") = False Then
+		  If Warn And Self.ShowDeleteConfirmation(Overrides, "loot drop", "loot drops") = False Then
 		    Return
 		  End If
 		  
 		  Var Config As ArkSA.Configs.LootDrops = Self.Config(True)
-		  For Each Container As ArkSA.LootContainer In Containers
-		    Config.Remove(Container)
+		  For Each Override As ArkSA.LootDropOverride In Overrides
+		    Config.Remove(Override)
 		  Next
 		  
 		  Self.Modified = Self.Project.Modified
@@ -867,8 +901,8 @@ End
 		  Var Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.RowSelectedAt(I) Then
-		      Var Container As ArkSA.LootContainer = Me.RowTagAt(I)
-		      Dicts.Add(Container.SaveData)
+		      Var Override As ArkSA.LootDropOverride = Me.RowTagAt(I)
+		      Dicts.Add(Override.SaveData)
 		    End If
 		  Next
 		  
@@ -886,15 +920,15 @@ End
 		  If Contents.IsNull = False Then
 		    Try
 		      Var Dicts() As Variant = Contents
-		      Var Containers() As ArkSA.LootContainer
+		      Var Overrides() As ArkSA.LootDropOverride
 		      For Each Dict As Dictionary In Dicts
-		        Var Container As ArkSA.LootContainer = ArkSA.LootContainer.FromSaveData(Dict)
-		        If Container Is Nil Then
+		        Var Override As ArkSA.LootDropOverride = ArkSA.LootDropOverride.FromSaveData(Dict)
+		        If Override Is Nil Then
 		          Continue
 		        End If
-		        Containers.Add(Container)
+		        Overrides.Add(Override)
 		      Next
-		      Self.AddLootContainers(Containers)
+		      Self.AddOverrides(Overrides)
 		    Catch Err As RuntimeException
 		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    End Try
@@ -913,15 +947,15 @@ End
 		    Return
 		  End If
 		  
-		  Var Containers() As ArkSA.LootContainer
+		  Var Overrides() As ArkSA.LootDropOverride
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.RowSelectedAt(I) Then
-		      Containers.Add(Me.RowTagAt(I))
+		      Overrides.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  
-		  Editor.Containers = Containers
-		  If Containers.LastIndex = -1 Then
+		  Editor.Overrides = Overrides
+		  If Overrides.Count = 0 Then
 		    Panel.SelectedPanelIndex = 0
 		  Else
 		    Panel.SelectedPanelIndex = 1
@@ -963,19 +997,19 @@ End
 	#tag Event
 		Sub Updated()
 		  Var Config As ArkSA.Configs.LootDrops = Self.Config(True)
-		  Var Containers() As ArkSA.LootContainer = Me.Containers
+		  Var Overrides() As ArkSA.LootDropOverride = Me.Overrides
 		  Var Map As New Dictionary
-		  For Each Container As ArkSA.LootContainer In Containers
-		    Config.Add(Container)
-		    Map.Value(Container.ClassString) = Container
-		  Next Container
+		  For Each Override As ArkSA.LootDropOverride In Overrides
+		    Config.Add(Override)
+		    Map.Value(Override.LootDropId) = Override
+		  Next
 		  For RowIdx As Integer = 0 To Self.List.LastRowIndex
-		    Var Container As ArkSA.LootContainer = Self.List.RowTagAt(RowIdx)
-		    If Map.HasKey(Container.ClassString) = False Then
+		    Var Override As ArkSA.LootDropOverride = Self.List.RowTagAt(RowIdx)
+		    If Map.HasKey(Override.LootDropId) = False Then
 		      Continue For RowIdx
 		    End If
 		    
-		    Self.List.RowTagAt(RowIdx) = Map.Value(Container.ClassString)
+		    Self.List.RowTagAt(RowIdx) = Map.Value(Override.LootDropId)
 		  Next RowIdx
 		  
 		  Self.Modified = Self.Config(False).Modified
@@ -987,9 +1021,9 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub PresentDropEditor(Container As ArkSA.LootContainer)
+		Sub PresentDropEditor(Override As ArkSA.LootDropOverride)
 		  Var Config As ArkSA.Configs.LootDrops = Self.Config(False)
-		  If ArkSAAddLootDropDialog.Present(Self, Config, Self.Project.MapMask, Self.Project.ContentPacks, Container) Then
+		  If ArkSAAddLootDropDialog.Present(Self, Config, Self.Project.MapMask, Self.Project.ContentPacks, Override) Then
 		    Call Self.Config(True) // Actually saves the config to the document
 		    Self.UpdateContainerList()
 		    Self.Modified = True

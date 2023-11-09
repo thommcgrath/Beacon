@@ -126,9 +126,9 @@ Implements Beacon.NamedItem
 		    Var BlueprintId As String = Dict.FirstValue("engramId", "EngramID", "Engram", "")
 		    If BlueprintId.IsEmpty = False Then
 		      If Beacon.UUID.Validate(BlueprintId) Then
-		        Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, BlueprintId, "", "", "", "")
+		        Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, BlueprintId, "", "", "", "", "")
 		      Else
-		        Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, "", "", BlueprintId, "", "")
+		        Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, "", "", BlueprintId, "", "", "")
 		      End If
 		    Else
 		      Return Nil

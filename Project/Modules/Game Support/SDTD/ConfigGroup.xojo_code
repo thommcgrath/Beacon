@@ -29,7 +29,7 @@ Inherits Beacon.ConfigGroup
 		Function GenerateConfigValues(Project As SDTD.Project, Identity As Beacon.Identity, Profile As SDTD.ServerProfile) As SDTD.ConfigValue()
 		  Var Values() As SDTD.ConfigValue
 		  
-		  If SDTD.Configs.ConfigUnlocked(Self, Identity) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
+		  If SDTD.Configs.ConfigUnlocked(Self, Identity) Then
 		    Var Generated() As SDTD.ConfigValue = RaiseEvent GenerateConfigValues(Project, Profile)
 		    If (Generated Is Nil) = False Then
 		      Values = Generated
