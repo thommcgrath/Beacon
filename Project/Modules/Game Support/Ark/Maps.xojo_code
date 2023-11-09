@@ -54,7 +54,7 @@ Protected Module Maps
 		  End If
 		  
 		  Var Label As String
-		  If Mask = 0 Then
+		  If Mask = CType(0, UInt64) Then
 		    Label = "Unused"
 		  Else
 		    Label = ForMask(Mask).Label

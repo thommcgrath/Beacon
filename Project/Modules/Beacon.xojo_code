@@ -445,7 +445,7 @@ Protected Module Beacon
 		  
 		  Var Results As New Dictionary
 		  For Idx As Integer = 0 To Candidates.LastIndex
-		    If CType(Candidates(Idx).DisambiguationMask And Mask, UInt64) = 0 Then
+		    If (Candidates(Idx).DisambiguationMask And Mask) = CType(0, UInt64) Then
 		      Continue For Idx
 		    End If
 		    
