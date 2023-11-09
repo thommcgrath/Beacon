@@ -101,10 +101,10 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DisambiguationSuffix() As String
+		Function DisambiguationSuffix(Mask As UInt64) As String
 		  // Part of the Beacon.DisambiguationCandidate interface.
 		  
-		  Return Self.mDropRef.ContentPackName
+		  Return Ark.Maps.LabelForMask(Self.Availability And Mask)
 		End Function
 	#tag EndMethod
 

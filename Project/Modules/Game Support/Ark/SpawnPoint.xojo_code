@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPoint
-Implements Ark.Blueprint,Beacon.Countable
+Implements Ark.Blueprint,Beacon.Countable, Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  Return Self.mAlternateLabel
@@ -129,6 +129,30 @@ Implements Ark.Blueprint,Beacon.Countable
 		  SpawnPoint.mSpawnPointId = BlueprintId
 		  SpawnPoint.mLabel = Ark.LabelFromClassString(ClassString)
 		  Return SpawnPoint
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationId() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mSpawnPointId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationMask() As UInt64
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationSuffix(Mask As UInt64) As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Ark.Maps.LabelForMask(Self.Availability And Mask)
 		End Function
 	#tag EndMethod
 

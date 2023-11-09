@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Engram
-Implements ArkSA.Blueprint, Beacon.DisambiguationCandidate
+Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the ArkSA.Blueprint interface.
@@ -179,10 +179,10 @@ Implements ArkSA.Blueprint, Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DisambiguationSuffix() As String
+		Function DisambiguationSuffix(Mask As UInt64) As String
 		  // Part of the Beacon.DisambiguationCandidate interface.
 		  
-		  Return Self.mContentPackName
+		  Return ArkSA.Maps.LabelForMask(Self.Availability And Mask)
 		End Function
 	#tag EndMethod
 

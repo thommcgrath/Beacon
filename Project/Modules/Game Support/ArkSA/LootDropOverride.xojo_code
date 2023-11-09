@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootDropOverride
-Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem, Beacon.DisambiguationCandidate
+Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AddToDefaults() As Boolean
 		  Return Self.mAddToDefaults
@@ -101,10 +101,10 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem, Beaco
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DisambiguationSuffix() As String
+		Function DisambiguationSuffix(Mask As UInt64) As String
 		  // Part of the Beacon.DisambiguationCandidate interface.
 		  
-		  Return Self.mDropRef.ContentPackName
+		  Return ArkSA.Maps.LabelForMask(Self.Availability And Mask)
 		End Function
 	#tag EndMethod
 

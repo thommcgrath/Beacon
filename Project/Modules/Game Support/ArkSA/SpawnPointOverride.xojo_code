@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointOverride
-Implements Beacon.Countable,Beacon.NamedItem, Beacon.DisambiguationCandidate
+Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  If Self.mPointRef.IsResolved = False Then
@@ -68,10 +68,10 @@ Implements Beacon.Countable,Beacon.NamedItem, Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DisambiguationSuffix() As String
+		Function DisambiguationSuffix(Mask As UInt64) As String
 		  // Part of the Beacon.DisambiguationCandidate interface.
 		  
-		  Return Self.mPointRef.ContentPackName
+		  Return ArkSA.Maps.LabelForMask(Self.Availability And Mask)
 		End Function
 	#tag EndMethod
 

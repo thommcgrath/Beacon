@@ -780,13 +780,13 @@ End
 		  
 		  Var Overrides() As ArkSA.LootDropOverride = Self.mConfig.Overrides
 		  Var AllContainers() As ArkSA.LootContainer = Data.GetLootContainers("", Self.mContentPacks, "")
-		  Var Labels As Dictionary = Overrides.Disambiguate(AllContainers, Self.mMask)
 		  Var AllowedLootContainers() As ArkSA.LootContainer = Data.GetLootContainers(Self.FilterField.Text.MakeUTF8, Self.mContentPacks, "", Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootContainers.LastIndex DownTo 0
 		    If Not AllowedLootContainers(X).ValidForMask(Self.mMask) Then
 		      AllowedLootContainers.RemoveAt(X)
 		    End If
 		  Next
+		  Var Labels As Dictionary = AllowedLootContainers.Disambiguate(Self.mMask)
 		  
 		  For X As Integer = 0 To Overrides.LastIndex
 		    For Y As Integer = AllowedLootContainers.LastIndex DownTo 0

@@ -14,7 +14,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DisambiguationSuffix() As String
+		Function DisambiguationSuffix(Mask As UInt64) As String
 		  
 		End Function
 	#tag EndMethod

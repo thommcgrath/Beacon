@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootContainer
-Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable, Beacon.DisambiguationCandidate
+Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the Ark.Blueprint interface.
@@ -202,10 +202,10 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable, Beacon.D
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DisambiguationSuffix() As String
+		Function DisambiguationSuffix(Mask As UInt64) As String
 		  // Part of the Beacon.DisambiguationCandidate interface.
 		  
-		  Return Self.mContentPackName
+		  Return Ark.Maps.LabelForMask(Self.Availability And Mask)
 		End Function
 	#tag EndMethod
 

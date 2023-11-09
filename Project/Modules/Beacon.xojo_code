@@ -437,7 +437,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Disambiguate(Extends Candidates() As Beacon.DisambiguationCandidate, All() As Beacon.DisambiguationCandidate, Mask As UInt64) As Dictionary
+		Function Disambiguate(Extends Candidates() As Beacon.DisambiguationCandidate, Mask As UInt64, GuaranteedMembers() As Beacon.DisambiguationCandidate = Nil) As Dictionary
 		  Var Mapper As New SQLiteDatabase
 		  Mapper.Connect
 		  Mapper.ExecuteSQL("CREATE TABLE labels (id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, suffix TEXT COLLATE NOCASE NOT NULL);")
@@ -445,17 +445,20 @@ Protected Module Beacon
 		  
 		  Var Results As New Dictionary
 		  For Idx As Integer = 0 To Candidates.LastIndex
-		    Results.Value(Candidates(Idx).DisambiguationId) = Candidates(Idx).Label
-		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (id, label, suffix) VALUES (?1, ?2, ?3);", Candidates(Idx).DisambiguationId, Candidates(Idx).Label, Candidates(Idx).DisambiguationSuffix)
-		  Next
-		  
-		  For Idx As Integer = 0 To All.LastIndex
-		    If CType(All(Idx).DisambiguationMask And Mask, UInt64) > 0 Then
+		    If CType(Candidates(Idx).DisambiguationMask And Mask, UInt64) = 0 Then
 		      Continue For Idx
 		    End If
 		    
-		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (id, label, suffix) VALUES (?1, ?2, ?3);", All(Idx).DisambiguationId, All(Idx).Label, All(Idx).DisambiguationSuffix)
+		    Results.Value(Candidates(Idx).DisambiguationId) = Candidates(Idx).Label
+		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (id, label, suffix) VALUES (?1, ?2, ?3);", Candidates(Idx).DisambiguationId, Candidates(Idx).Label, Candidates(Idx).DisambiguationSuffix(Mask))
 		  Next
+		  
+		  If (GuaranteedMembers Is Nil) = False Then
+		    For Each Candidate As Beacon.DisambiguationCandidate In GuaranteedMembers
+		      Results.Value(Candidate.DisambiguationId) = Candidate.Label
+		      Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (id, label, suffix) VALUES (?1, ?2, ?3);", Candidate.DisambiguationId, Candidate.Label, Candidate.DisambiguationSuffix(Mask))
+		    Next
+		  End If
 		  
 		  Var Labels As New Dictionary
 		  For Each Candidate As Beacon.DisambiguationCandidate In Candidates
