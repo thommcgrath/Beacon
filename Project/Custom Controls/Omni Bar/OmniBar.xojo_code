@@ -67,7 +67,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      If OriginalRect.Left <> ChangedRect.Left Or OriginalRect.Top <> ChangedRect.Top Or OriginalRect.Width <> ChangedRect.Width Or OriginalRect.Height <> ChangedRect.Height Then
 		        // Determine how the button has moved
 		        Var OriginalButtonRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
-		        Self.Refresh(False)
+		        Self.Refresh(True)
 		        Var NewButtonRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
 		        
 		        Var ButtonDeltaX As Double = NewButtonRect.Left - OriginalButtonRect.Left
