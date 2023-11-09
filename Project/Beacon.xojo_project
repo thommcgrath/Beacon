@@ -873,6 +873,7 @@ Folder=Mods;Views/ArkSA/Mods;&h000000004B8DE7FF;&h000000000DC787FF;false
 DesktopWindow=ArkSASelectModPrefixDialog;Views/ArkSA/Mods/ArkSASelectModPrefixDialog.xojo_window;&h000000003F1DC7FF;&h000000004B8DE7FF;false
 Class=LootDropOverride;Modules/Game Support/ArkSA/LootDropOverride.xojo_code;&h0000000005954FFF;&h000000004504AFFF;false
 Class=MutableLootDropOverride;Modules/Game Support/ArkSA/MutableLootDropOverride.xojo_code;&h00000000462EC7FF;&h000000004504AFFF;false
+Interface=DisambiguationCandidate;Modules/Beacon/DisambiguationCandidate.xojo_code;&h0000000029F2FFFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=0

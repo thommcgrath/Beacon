@@ -525,7 +525,8 @@ End
 		    Next
 		  End If
 		  
-		  Var Labels As Dictionary = Config.Overrides.Disambiguate(Self.Project.MapMask)
+		  Var AllContainers() As ArkSA.LootContainer = Data.GetLootContainers("", Self.Project.ContentPacks, "")
+		  Var Labels As Dictionary = Config.Overrides.Disambiguate(AllContainers, Self.Project.MapMask)
 		  
 		  If Containers.Count = 0 Then
 		    Var Warning As DesktopMenuItem
@@ -747,7 +748,8 @@ End
 		  // Select the given loot drops
 		  
 		  Var VisibleOverrides() As ArkSA.LootDropOverride = Self.Config(False).Overrides(Self.FilterField.Text)
-		  Var Labels As Dictionary = VisibleOverrides.Disambiguate(Self.Project.MapMask)
+		  Var AllContainers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", Self.Project.ContentPacks, "")
+		  Var Labels As Dictionary = VisibleOverrides.Disambiguate(AllContainers, Self.Project.MapMask)
 		  VisibleOverrides.Sort
 		  
 		  Self.List.RowCount = VisibleOverrides.LastIndex + 1

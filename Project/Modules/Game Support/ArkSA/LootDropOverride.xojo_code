@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootDropOverride
-Implements Beacon.Validateable, Iterable, Beacon.Countable, Beacon.NamedItem
+Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem, Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AddToDefaults() As Boolean
 		  Return Self.mAddToDefaults
@@ -81,6 +81,30 @@ Implements Beacon.Validateable, Iterable, Beacon.Countable, Beacon.NamedItem
 		  Else
 		    Return Self.AverageWeight
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationId() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mDropRef.BlueprintId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationMask() As UInt64
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.Availability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationSuffix() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mDropRef.ContentPackName
 		End Function
 	#tag EndMethod
 
@@ -545,14 +569,6 @@ Implements Beacon.Validateable, Iterable, Beacon.Countable, Beacon.NamedItem
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mDropRef"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

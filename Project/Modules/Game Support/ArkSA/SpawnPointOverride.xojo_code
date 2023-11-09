@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointOverride
-Implements Beacon.Countable,Beacon.NamedItem
+Implements Beacon.Countable,Beacon.NamedItem, Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  If Self.mPointRef.IsResolved = False Then
@@ -48,6 +48,30 @@ Implements Beacon.Countable,Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  Return Self.mSets.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationId() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mPointRef.BlueprintId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationMask() As UInt64
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.Availability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationSuffix() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mPointRef.ContentPackName
 		End Function
 	#tag EndMethod
 

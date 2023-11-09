@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootContainer
-Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
+Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable, Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the ArkSA.Blueprint interface.
@@ -182,6 +182,30 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    Sum = Sum + Self.mItemSets(Idx).RawWeight
 		  Next Idx
 		  Return Sum / Self.mItemSets.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationId() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mLootDropId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationMask() As UInt64
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationSuffix() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
 

@@ -437,6 +437,49 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Disambiguate(Extends Candidates() As Beacon.DisambiguationCandidate, All() As Beacon.DisambiguationCandidate, Mask As UInt64) As Dictionary
+		  Var Mapper As New SQLiteDatabase
+		  Mapper.Connect
+		  Mapper.ExecuteSQL("CREATE TABLE labels (id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, suffix TEXT COLLATE NOCASE NOT NULL);")
+		  Mapper.ExecuteSQL("CREATE INDEX labels_label_idx ON labels(label);")
+		  
+		  Var Results As New Dictionary
+		  For Idx As Integer = 0 To Candidates.LastIndex
+		    Results.Value(Candidates(Idx).DisambiguationId) = Candidates(Idx).Label
+		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (id, label, suffix) VALUES (?1, ?2, ?3);", Candidates(Idx).DisambiguationId, Candidates(Idx).Label, Candidates(Idx).DisambiguationSuffix)
+		  Next
+		  
+		  For Idx As Integer = 0 To All.LastIndex
+		    If CType(All(Idx).DisambiguationMask And Mask, UInt64) > 0 Then
+		      Continue For Idx
+		    End If
+		    
+		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (id, label, suffix) VALUES (?1, ?2, ?3);", All(Idx).DisambiguationId, All(Idx).Label, All(Idx).DisambiguationSuffix)
+		  Next
+		  
+		  Var Labels As New Dictionary
+		  Var LabelRows As RowSet = Mapper.SelectSQL("SELECT DISTINCT label FROM labels;")
+		  For Each LabelRow As DatabaseRow In LabelRows
+		    Var CommonLabel As String = LabelRow.Column("label").StringValue
+		    Var SiblingRows As RowSet = Mapper.SelectSQL("SELECT id, suffix FROM labels WHERE label = ?1;", CommonLabel)
+		    If SiblingRows.RowCount = 1 Then
+		      // Unique already
+		      Labels.Value(SiblingRows.Column("id").StringValue) = CommonLabel
+		      Continue
+		    End If
+		    
+		    For Each SiblingRow As DatabaseRow In SiblingRows
+		      Var Id As String = SiblingRow.Column("id").StringValue
+		      Var Suffix As String = SiblingRow.Column("suffix").StringValue
+		      Labels.Value(Id) = CommonLabel + " (" + Suffix + ")"
+		    Next
+		  Next
+		  
+		  Return Labels
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Disambiguate(Extends Label As String, Specifier As String) As String
 		  Return Beacon.Disambiguate(Label, Specifier)
 		End Function

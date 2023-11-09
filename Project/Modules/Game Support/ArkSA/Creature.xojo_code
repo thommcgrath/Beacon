@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Creature
-Implements ArkSA.Blueprint
+Implements ArkSA.Blueprint, Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AllStatValues() As ArkSA.CreatureStatValue()
 		  Var Values() As ArkSA.CreatureStatValue
@@ -137,6 +137,30 @@ Implements ArkSA.Blueprint
 	#tag Method, Flags = &h0
 		Function CreatureId() As String
 		  Return Self.mCreatureId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationId() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mCreatureId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationMask() As UInt64
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationSuffix() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
 
