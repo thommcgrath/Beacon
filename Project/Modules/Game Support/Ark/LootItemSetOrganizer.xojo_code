@@ -2,11 +2,11 @@
 Protected Class LootItemSetOrganizer
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
-		Sub Attach(Container As Ark.MutableLootContainer, Set As Ark.LootItemSet = Nil)
+		Sub Attach(Override As Ark.MutableLootDropOverride, Set As Ark.LootItemSet = Nil)
 		  If Set <> Nil Then
-		    Self.mSets.Value(Container) = Set.MutableVersion
+		    Self.mSets.Value(Override) = Set.MutableVersion
 		  Else
-		    Self.mSets.Value(Container) = Nil
+		    Self.mSets.Value(Override) = Nil
 		  End If
 		End Sub
 	#tag EndMethod
@@ -26,21 +26,11 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Containers() As Ark.MutableLootContainer()
-		  Var Arr() As Ark.MutableLootContainer
-		  For Each Entry As DictionaryEntry In Self.mSets
-		    Arr.Add(Entry.Key)
-		  Next
-		  Return Arr
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function FindUniqueSetLabel(Label As String) As String
 		  Var Siblings() As String
 		  For Each Entry As DictionaryEntry In Self.mSets
-		    Var Container As Ark.LootContainer = Entry.Key
-		    For Each Set As Ark.LootItemSet In Container
+		    Var Override As Ark.LootDropOverride = Entry.Key
+		    For Each Set As Ark.LootItemSet In Override
 		      Siblings.Add(Set.Label)
 		    Next
 		  Next
@@ -64,13 +54,13 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  If Self.mSubLabel = "" Then
-		    Var ContainerNames() As String
-		    Var Containers() As Ark.LootContainer = Self.Containers
-		    For Each Container As Ark.LootContainer In Containers
-		      ContainerNames.Add(Container.Label)
+		    Var OverrideNames() As String
+		    Var Overrides() As Ark.LootDropOverride = Self.Overrides
+		    For Each Override As Ark.LootDropOverride In Overrides
+		      OverrideNames.Add(Override.Label)
 		    Next
-		    ContainerNames.Sort
-		    Self.mSubLabel = Language.EnglishOxfordList(ContainerNames)
+		    OverrideNames.Sort
+		    Self.mSubLabel = Language.EnglishOxfordList(OverrideNames)
 		  End If
 		  
 		  Return Self.Template.Label + EndOfLine + Self.mSubLabel
@@ -118,29 +108,39 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Overrides() As Ark.MutableLootDropOverride()
+		  Var Arr() As Ark.MutableLootDropOverride
+		  For Each Entry As DictionaryEntry In Self.mSets
+		    Arr.Add(Entry.Key)
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Replicate()
 		  Var Bound As Integer = Self.mSets.KeyCount - 1
 		  For I As Integer = 0 To Bound
-		    Var Container As Ark.MutableLootContainer = Self.mSets.Key(I)
-		    Var Set As Ark.MutableLootItemSet = Self.mSets.Value(Container)
+		    Var Override As Ark.MutableLootDropOverride = Self.mSets.Key(I)
+		    Var Set As Ark.MutableLootItemSet = Self.mSets.Value(Override)
 		    
 		    If (Set Is Nil) = False Then
-		      Container.Remove(Set)
+		      Override.Remove(Set)
 		      Set.CopyFrom(Self.mTemplate)
 		    Else
 		      Set = New Ark.MutableLootItemSet
 		      Set.CopyFrom(Self.mTemplate)
-		      Self.mSets.Value(Container) = Set
+		      Self.mSets.Value(Override) = Set
 		    End If
-		    Container.Add(Set)
+		    Override.Add(Set)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SetForContainer(Container As Ark.MutableLootContainer) As Ark.LootItemSet
-		  If Self.mSets.HasKey(Container) Then
-		    Return Self.mSets.Value(Container)
+		Function SetForOverride(Override As Ark.MutableLootDropOverride) As Ark.LootItemSet
+		  If Self.mSets.HasKey(Override) Then
+		    Return Self.mSets.Value(Override)
 		  End If
 		End Function
 	#tag EndMethod

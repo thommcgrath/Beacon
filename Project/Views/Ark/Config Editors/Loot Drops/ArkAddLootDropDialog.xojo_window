@@ -778,9 +778,9 @@ End
 		Private Sub BuildSourceList()
 		  Var Data As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
-		  
-		  Var CurrentContainers() As Ark.LootContainer = Self.mConfig.Containers
-		  Var Labels As Dictionary = CurrentContainers.Disambiguate(Self.mMask)
+		  Var Overrides() As Ark.LootDropOverride = Self.mConfig.Overrides
+		  Var AllContainers() As Ark.LootContainer = Data.GetLootContainers("", Self.mContentPacks, "")
+		  Var Labels As Dictionary = Overrides.Disambiguate(AllContainers, Self.mMask)
 		  Var AllowedLootContainers() As Ark.LootContainer = Data.GetLootContainers(Self.FilterField.Text.MakeUTF8, Self.mContentPacks, "", Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootContainers.LastIndex DownTo 0
 		    If Not AllowedLootContainers(X).ValidForMask(Self.mMask) Then
@@ -788,9 +788,9 @@ End
 		    End If
 		  Next
 		  
-		  For X As Integer = 0 To CurrentContainers.LastIndex
+		  For X As Integer = 0 To Overrides.LastIndex
 		    For Y As Integer = AllowedLootContainers.LastIndex DownTo 0
-		      If AllowedLootContainers(Y).Path = CurrentContainers(X).Path Then
+		      If AllowedLootContainers(Y).ClassString = Overrides(X).LootDropReference.ClassString Then
 		        AllowedLootContainers.RemoveAt(Y)
 		        Exit For Y
 		      End If
@@ -855,14 +855,14 @@ End
 		      End If
 		    End If
 		    
-		    Self.mDestinations.Add(Source.Clone)
+		    Self.mDestinations.Add(New Ark.LootDropOverride(Source))
 		  Next
 		  
 		  If Self.LoadDefaultsCheckbox.Visible And Self.LoadDefaultsCheckbox.Value Then
 		    // Skip the customize step, load defaults, and finish
 		    Var Instance As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		    For Each Destination As Ark.LootContainer In Self.mDestinations
-		      Var Mutable As New Ark.MutableLootContainer(Destination)
+		    For Each Destination As Ark.LootDropOverride In Self.mDestinations
+		      Var Mutable As New Ark.MutableLootDropOverride(Destination)
 		      Instance.LoadDefaults(Mutable)
 		      Self.mConfig.Add(Mutable)
 		    Next
@@ -876,7 +876,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Config As Ark.Configs.LootDrops, Mask As UInt64, ContentPacks As Beacon.StringList, Source As Ark.LootContainer, ShowAsDuplicate As Boolean)
+		Private Sub Constructor(Config As Ark.Configs.LootDrops, Mask As UInt64, ContentPacks As Beacon.StringList, Source As Ark.LootDropOverride, ShowAsDuplicate As Boolean)
 		  // Calling the overridden superclass constructor.
 		  Self.mConfig = Config
 		  Self.mMask = Mask
@@ -888,7 +888,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Config As Ark.Configs.LootDrops, Mask As UInt64, ContentPacks As Beacon.StringList, Source As Ark.LootContainer = Nil, ShowAsDuplicate As Boolean = False) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Config As Ark.Configs.LootDrops, Mask As UInt64, ContentPacks As Beacon.StringList, Source As Ark.LootDropOverride = Nil, ShowAsDuplicate As Boolean = False) As Boolean
 		  If Parent Is Nil Or Config Is Nil Then
 		    Return False
 		  End If
@@ -933,17 +933,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowCustomize()
-		  Var BasedOn As Ark.LootContainer
+		  Var BasedOn As Ark.LootDropOverride
 		  If (Self.mSource Is Nil) = False Then
 		    BasedOn = Self.mSource
 		  Else
-		    BasedOn = New Ark.MutableLootContainer()
+		    Var Blueprint As New Ark.MutableLootContainer(Ark.UnknownBlueprintPath("LootContainers", "BeaconTemplateItem"), "669ab057-f90b-4137-9a75-f8f912d5b6c8")
+		    BasedOn = New Ark.LootDropOverride(Blueprint)
 		  End If
 		  
 		  Self.CustomizeMinSetsField.Text = BasedOn.MinItemSets.ToString(Locale.Current, "0")
 		  Self.CustomizeMaxSetsField.Text = BasedOn.MaxItemSets.ToString(Locale.Current, "0")
 		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.PreventDuplicates
-		  Self.CustomizeAppendItemSetsCheck.Value = BasedOn.AppendMode
+		  Self.CustomizeAppendItemSetsCheck.Value = BasedOn.AddToDefaults
 		  
 		  Var Templates() As Ark.LootTemplate = Ark.DataSource.Pool.Get(False).GetLootTemplates()
 		  
@@ -1006,7 +1007,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDestinations() As Ark.LootContainer
+		Private mDestinations() As Ark.LootDropOverride
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1018,7 +1019,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSource As Ark.LootContainer
+		Private mSource As Ark.LootDropOverride
 	#tag EndProperty
 
 
@@ -1080,12 +1081,12 @@ End
 		    Next
 		  End If
 		  
-		  For Each Destination As Ark.LootContainer In Self.mDestinations
-		    Var Mutable As New Ark.MutableLootContainer(Destination)
+		  For Each Destination As Ark.LootDropOverride In Self.mDestinations
+		    Var Mutable As New Ark.MutableLootDropOverride(Destination)
 		    Mutable.MinItemSets = MinItemSets
 		    Mutable.MaxItemSets = MaxItemSets
 		    Mutable.PreventDuplicates = PreventDuplicates
-		    Mutable.AppendMode = AppendMode
+		    Mutable.AddToDefaults = AppendMode
 		    
 		    // Add the clones
 		    For Each Set As Ark.LootItemSet In SourceSets
@@ -1164,11 +1165,18 @@ End
 		  End If
 		  
 		  Var Container As Ark.LootContainer = Me.RowTagAt(Row)
+		  If Container Is Nil Then
+		    Return
+		  End If
+		  
 		  Var Icon As Picture
 		  If Me.RowSelectedAt(Row) And IsHighlighted Then
 		    Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, TextColor, BackgroundColor)
 		  Else
 		    Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, BackgroundColor)
+		  End If
+		  If Icon Is Nil Then
+		    Return
 		  End If
 		  
 		  G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))

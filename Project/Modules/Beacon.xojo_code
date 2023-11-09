@@ -458,9 +458,13 @@ Protected Module Beacon
 		  Next
 		  
 		  Var Labels As New Dictionary
-		  Var LabelRows As RowSet = Mapper.SelectSQL("SELECT DISTINCT label FROM labels;")
-		  For Each LabelRow As DatabaseRow In LabelRows
-		    Var CommonLabel As String = LabelRow.Column("label").StringValue
+		  For Each Candidate As Beacon.DisambiguationCandidate In Candidates
+		    If Labels.HasKey(Candidate.DisambiguationId) Then
+		      // No need to check this one again
+		      Continue
+		    End If
+		    
+		    Var CommonLabel As String = Candidate.Label
 		    Var SiblingRows As RowSet = Mapper.SelectSQL("SELECT id, suffix FROM labels WHERE label = ?1;", CommonLabel)
 		    If SiblingRows.RowCount = 1 Then
 		      // Unique already

@@ -299,6 +299,15 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromTemplate(Template As Ark.LootTemplate, ForLootOverride As Ark.LootDropOverride, Mask As UInt64, ContentPacks As Beacon.StringList) As Ark.LootItemSet
+		  Var LootDrop As Ark.LootContainer = ForLootOverride.LootDrop(ContentPacks)
+		  If (LootDrop Is Nil) = False Then
+		    Return FromTemplate(Template, LootDrop, Mask, ContentPacks)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Hash(ForPreset As Boolean = False) As String
 		  If Self.HashIsStale Or ForPreset Then
 		    Var Entries() As String

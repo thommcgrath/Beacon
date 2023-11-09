@@ -236,8 +236,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Simulate(Container As Ark.LootContainer)
-		  Self.mTarget = Container
+		Sub Simulate(Override As Ark.LootDropOverride)
+		  Self.mTarget = Override
 		  Self.Simulate()
 		End Sub
 	#tag EndMethod
@@ -261,7 +261,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mTarget As Ark.LootContainer
+		Private mTarget As Ark.LootDropOverride
 	#tag EndProperty
 
 

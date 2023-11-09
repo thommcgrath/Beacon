@@ -1312,6 +1312,23 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Sort(Extends Overrides() As Ark.LootDropOverride)
+		  Var Bound As Integer = Overrides.LastIndex
+		  If Bound = -1 Then
+		    Return
+		  End If
+		  
+		  Var Order() As String
+		  Order.ResizeTo(Bound)
+		  For I As Integer = 0 To Bound
+		    Order(I) = Overrides(I).SortValue.ToString(Locale.Raw, "0000") + Overrides(I).Label + Overrides(I).LootDropReference.ClassString
+		  Next
+		  
+		  Order.SortWith(Overrides)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Sort(Extends Qualities() As Ark.Quality)
 		  Var Bound As Integer = Qualities.LastIndex
 		  If Bound = -1 Then

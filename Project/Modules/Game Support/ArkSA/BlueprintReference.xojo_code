@@ -83,7 +83,7 @@ Implements Beacon.NamedItem
 		    Self.mContentPackId = SaveData.Value("ModUUID")
 		    Self.mContentPackName = ""
 		    
-		    Self.mLabel = SaveData.FirstValue("ClassString", "Class", "Path", "ObjectID")
+		    Self.mLabel = "" // Intentionally leave blank so it'll be resolved
 		    Self.mPath = SaveData.Value("Path")
 		    
 		    Select Case SaveData.Value("Kind").StringValue
@@ -115,7 +115,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Kind As String, BlueprintId As String, Path As String, ClassString As String, Label As String, ContentPackId As String, ContentPackName As String)
+		Sub Constructor(Kind As String, BlueprintId As String, Path As String = "", ClassString As String = "", Label As String = "", ContentPackId As String = "", ContentPackName As String = "")
 		  Self.mBlueprintId = BlueprintId
 		  Self.mClassString = ClassString
 		  Self.mContentPackId = ContentPackId

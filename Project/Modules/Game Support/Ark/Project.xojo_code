@@ -663,6 +663,7 @@ Inherits Beacon.Project
 		  Var Containers() As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainers("", Packs, "", True)
 		  Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
 		  Var Mask As UInt64 = Self.MapMask
+		  Var LootDrops As New Ark.Configs.LootDrops
 		  For Each Container As Ark.LootContainer In Containers
 		    If Container.ValidForMask(Mask) = False Then
 		      Continue For Container
@@ -683,15 +684,20 @@ Inherits Beacon.Project
 		    ItemSet.MaxNumItems = 1
 		    ItemSet.Add(Entry)
 		    
-		    Var Mutable As Ark.MutableLootContainer = Container.MutableVersion
-		    Mutable.MinItemSets = 1
-		    Mutable.MaxItemSets = 1
-		    Mutable.PreventDuplicates = True
-		    Mutable.AppendMode = False
-		    Mutable.Add(ItemSet)
+		    Var Override As New Ark.MutableLootDropOverride(Container)
+		    Override.MinItemSets = 1
+		    Override.MaxItemSets = 1
+		    Override.PreventDuplicates = True
+		    Override.AddToDefaults = False
+		    Override.Add(ItemSet)
 		    
-		    Ark.Configs.LootDrops.BuildOverrides(Mutable, Values, 5.0)
+		    LootDrops.Add(Override)
 		  Next Container
+		  
+		  Var LootValues() As Ark.ConfigValue = LootDrops.GenerateConfigValues(Self, App.IdentityManager.CurrentIdentity, Profile)
+		  For Each LootValue As Ark.ConfigValue In LootValues
+		    Values.Add(LootValue)
+		  Next
 		  
 		  Var Craftable() As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
 		  Var CoinFlip As Integer = Rand.InRange(0, 1)

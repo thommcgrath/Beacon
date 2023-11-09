@@ -2277,9 +2277,9 @@ End
 		  Var Mutable As Ark.MutableLootContainer = Container.MutableVersion
 		  Ark.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		  
-		  Var Drops(0) As Ark.LootContainer
-		  Drops(0) = Mutable
-		  Self.DropEditor.Containers = Drops
+		  Var Overrides(0) As Ark.LootDropOverride
+		  Overrides(0) = New Ark.LootDropOverride(Mutable)
+		  Self.DropEditor.Overrides = Overrides
 		End Sub
 	#tag EndMethod
 
@@ -2689,12 +2689,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function UpdateBlueprint(Container As Ark.MutableLootContainer) As Boolean
-		  Var Containers() As Ark.LootContainer = Self.DropEditor.Containers
-		  If Containers.Count <> 1 Then
+		  Var Overrides() As Ark.LootDropOverride = Self.DropEditor.Overrides
+		  If Overrides.Count <> 1 Then
 		    Return False
 		  End If
 		  
-		  Var Source As Ark.LootContainer = Containers(0)
+		  Var Source As Ark.LootContainer = Overrides(0).LootDrop(Self.SampleProject.ContentPacks)
 		  Container.Unpack(Source.Pack)
 		  
 		  Container.Multipliers = New Beacon.Range(Self.LootMinMultiplierField.DoubleValue, Self.LootMaxMultiplierField.DoubleValue)
@@ -3291,7 +3291,7 @@ End
 		    Me.AddRow(Icon.Label, Icon.UUID)
 		  Next Icon
 		  Try
-		    Me.SelectRowWithTag("84d76c41-4386-467d-83e7-841dcaa4007d")
+		    Me.SelectRowWithTag("d5bb71e5-fba5-51f3-b120-f1abadc1fa6e")
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
@@ -3319,9 +3319,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Var Drops(0) As Ark.LootContainer
-		  Drops(0) = New Ark.MutableLootContainer(Ark.UnknownBlueprintPath("LootContainers", "BlueprintEditor_C"), "8e25c4be-d496-4c94-b1bc-d4bef54834ad")
-		  Me.Containers = Drops
+		  Var DummyContainer As Ark.LootContainer = New Ark.MutableLootContainer(Ark.UnknownBlueprintPath("LootContainers", "BlueprintEditor_C"), "8e25c4be-d496-4c94-b1bc-d4bef54834ad")
+		  Var Overrides(0) As Ark.LootDropOverride
+		  Overrides(0) = New Ark.LootDropOverride(DummyContainer)
+		  Me.Overrides = Overrides
 		End Sub
 	#tag EndEvent
 	#tag Event

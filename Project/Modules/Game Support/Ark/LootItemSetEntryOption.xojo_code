@@ -65,18 +65,18 @@ Implements Beacon.Validateable,Ark.Weighted
 		  End Try
 		  
 		  Var Option As Ark.LootItemSetEntryOption
-		  If Dict.HasKey("engramId") Then
-		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict.Value("engramId").StringValue, "", "", Nil)
-		    If Engram Is Nil Then
-		      Return Nil
-		    End If
-		    Option = New Ark.LootItemSetEntryOption(Engram, Weight, UUID)
-		  ElseIf Dict.HasKey("engram") Then
+		  If Dict.HasKey("engram") Then
 		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("engram"))
 		    If Reference Is Nil Then
 		      Return Nil
 		    End If
 		    Option = New Ark.LootItemSetEntryOption(Reference, Weight, UUID)
+		  ElseIf Dict.HasKey("engramId") Then
+		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict.Value("engramId").StringValue, "", "", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New Ark.LootItemSetEntryOption(Engram, Weight, UUID)
 		  ElseIf Dict.HasKey("Blueprint") Then
 		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
 		    If Reference Is Nil Then
@@ -152,7 +152,7 @@ Implements Beacon.Validateable,Ark.Weighted
 		Function SaveData() As Dictionary
 		  Var Keys As New Dictionary
 		  Keys.Value("lootItemSetEntryOptionId") = Self.mUUID
-		  Keys.Value("engramId") = Self.mEngramRef.BlueprintId
+		  Keys.Value("engram") = Self.mEngramRef.SaveData
 		  Keys.Value("weight") = Self.mWeight
 		  Return Keys
 		End Function
