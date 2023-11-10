@@ -722,7 +722,10 @@ Implements ObservationKit.Observable
 		    End If
 		  Case OmniBarItem.Types.Tab
 		    If Self.Caption.IsEmpty = False Then
-		      Segments.Add(Min(Ceiling(G.TextWidth(Self.Caption) + 2), Self.MaxCaptionWidth))
+		      Var Bold As Boolean = G.Bold
+		      G.Bold = True
+		      Segments.Add(Min(Ceiling(G.TextWidth(Self.Caption) + 6), Self.MaxCaptionWidth))
+		      G.Bold = Bold
 		    End If
 		    If (Self.Icon Is Nil) = False Then
 		      If Self.Caption.IsEmpty Then
@@ -1453,6 +1456,22 @@ Implements ObservationKit.Observable
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsFlexible"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ButtonStyle"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Visible"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

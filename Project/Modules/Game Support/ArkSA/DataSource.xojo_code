@@ -80,6 +80,28 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Function DeleteContentPack(ContentPackId As String) As Boolean
+		  If ContentPackId = ArkSA.UserContentPackId Then
+		    Self.DeleteDataForContentPack(ContentPackId)
+		    Return True
+		  End If
+		  
+		  Self.BeginTransaction()
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND is_local = 1;", ContentPackId)
+		  If Rows.RowCount = 0 Then
+		    Self.RollbackTransaction()
+		    Return False
+		  End If
+		  
+		  Self.DeleteDataForContentPack(ContentPackId)
+		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
+		  Self.CommitTransaction()
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ExportCloudFiles()
 		  Const Filename = "/ArkSA/Blueprints" + Beacon.FileExtensionDelta
 		  Var UserPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.Types.Custom)
@@ -894,41 +916,6 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function CreateLocalContentPack(PackName As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
 		  Return Self.CreateLocalContentPack(PackName, ArkSA.Identifier, Beacon.MarketplaceCurseForge, MarketplaceId, DoCloudExport)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DeleteContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean) As Boolean
-		  Return Self.DeleteContentPack(Pack.ContentPackId, DoCloudExport)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DeleteContentPack(ContentPackId As String, DoCloudExport As Boolean) As Boolean
-		  If ContentPackId = ArkSA.UserContentPackId Then
-		    Self.DeleteDataForContentPack(ContentPackId)
-		    If DoCloudExport Then
-		      Self.ExportCloudFiles()
-		    End If
-		    Return True
-		  End If
-		  
-		  Self.BeginTransaction()
-		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND is_local = 1;", ContentPackId)
-		  If Rows.RowCount = 0 Then
-		    Self.RollbackTransaction()
-		    Return False
-		  End If
-		  
-		  Self.DeleteDataForContentPack(ContentPackId)
-		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
-		  Self.CommitTransaction()
-		  If DoCloudExport Then
-		    Self.ExportCloudFiles()
-		  End If
-		  
-		  Return True
 		End Function
 	#tag EndMethod
 

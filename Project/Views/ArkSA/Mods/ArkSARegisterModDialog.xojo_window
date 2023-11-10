@@ -39,11 +39,11 @@ Begin BeaconDialog ArkSARegisterModDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   3
+      PanelCount      =   4
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -478,7 +478,7 @@ Begin BeaconDialog ArkSARegisterModDialog
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   5
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
@@ -510,7 +510,7 @@ Begin BeaconDialog ArkSARegisterModDialog
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
@@ -539,7 +539,7 @@ Begin BeaconDialog ArkSARegisterModDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
@@ -691,6 +691,129 @@ Begin BeaconDialog ArkSARegisterModDialog
          Visible         =   True
          Width           =   480
       End
+      Begin DesktopLabel LookupMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   True
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "#LookupMessageCaption"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   480
+      End
+      Begin DesktopLabel LookupExplanationLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "#LookupExplanationCaption"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   52
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   480
+      End
+      Begin DesktopProgressBar LookupProgressBar
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
+         Enabled         =   True
+         Height          =   20
+         Indeterminate   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumValue    =   100
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   4
+         Tooltip         =   ""
+         Top             =   84
+         Transparent     =   False
+         Value           =   0.0
+         Visible         =   True
+         Width           =   480
+      End
+      Begin DesktopButton LookupCancelButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   420
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   116
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
    End
    Begin BeaconAPI.Socket ConfirmSocket
       Index           =   -2147483648
@@ -768,14 +891,12 @@ End
 		      BeaconAPI.Send(DownloadRequest)
 		      Return
 		    Case BeaconUI.ConfirmResponses.Cancel
-		      Self.IntroActionButton.Enabled = Self.mCurseForgeId > 0 Or Self.mCurseForgeSlug.IsEmpty = False
-		      Self.IntroSkipButton.Enabled = True
-		      Self.IntroIdField.Enabled = True
+		      Self.Pages.SelectedPanelIndex = Self.PageIntro
 		      Return
 		    End Select
 		  End If
 		  
-		  Self.GetCurseForgeData()
+		  Self.ShowNamePage(Self.mModName)
 		End Sub
 	#tag EndMethod
 
@@ -877,10 +998,8 @@ End
 		    If DataObj.IsArray Then
 		      // Search results
 		      If DataObj.Count = 0 Then
-		        MessageBox("Could not find mod")
-		        Self.IntroActionButton.Enabled = Self.mCurseForgeId > 0 Or Self.mCurseForgeSlug.IsEmpty = False
-		        Self.IntroSkipButton.Enabled = True
-		        Self.IntroIdField.Enabled = True
+		        Self.ShowAlert("Mod lookup error", "Could not find mod")
+		        Self.Pages.SelectedPanelIndex = Self.PageIntro
 		        Return
 		      Else
 		        ModInfo = DataObj.ChildAt(0)
@@ -891,23 +1010,38 @@ End
 		    End If
 		    
 		    If ModInfo.Value("gameId") <> 83374 Then
-		      MessageBox("Beacon found the mod, but it is not an Ark: Survival Ascended mod.")
-		      Self.IntroActionButton.Enabled = Self.mCurseForgeId > 0 Or Self.mCurseForgeSlug.IsEmpty = False
-		      Self.IntroSkipButton.Enabled = True
-		      Self.IntroIdField.Enabled = True
+		      Self.ShowAlert("Mod lookup error", "Beacon found the mod, but it is not an Ark: Survival Ascended mod.")
+		      Self.Pages.SelectedPanelIndex = Self.PageIntro
 		      Return
 		    End If
 		    
 		    Var ModName As String = ModInfo.Value("name")
-		    Self.mCurseForgeId = ModInfo.Value("id").IntegerValue
-		    Self.mCurseForgeSlug = ModInfo.Value("slug")
-		    Self.ShowNamePage(ModName)
+		    Var CurseForgeId As Integer = ModInfo.Value("id").IntegerValue
+		    Var CurseForgeSlug As String = ModInfo.Value("slug").StringValue
+		    Var ModId As String = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, CurseForgeId.ToString(Locale.Raw, "0"))
+		    Var ContentPack As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPackWithId(ModId)
+		    If (ContentPack Is Nil) = False Then
+		      Self.ShowAlert("You have already added this mod.", "It is not possible to add the same mod more than once.")
+		      Self.Pages.SelectedPanelIndex = Self.PageIntro
+		      Return
+		    End If
+		    
+		    Self.mModId = ModId
+		    Self.mModName = ModName
+		    Self.mCurseForgeId = CurseForgeId
+		    Self.mCurseForgeSlug = CurseForgeSlug
+		    
+		    If Self.mMode = Self.ModeLocal Then
+		      // See if this mod has been discovered already
+		      Var Request As New BeaconAPI.Request("/discovery/" + ModId, "HEAD", WeakAddressOf APICallback_CheckModDiscovered)
+		      BeaconAPI.Send(Request)
+		    Else
+		      Self.ShowNamePage(ModName)
+		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Response from CurseForge API")
-		    MessageBox("Failed to parse response from CurseForge")
-		    Self.IntroActionButton.Enabled = Self.mCurseForgeId > 0 Or Self.mCurseForgeSlug.IsEmpty = False
-		    Self.IntroSkipButton.Enabled = True
-		    Self.IntroIdField.Enabled = True
+		    Self.ShowAlert("Mod lookup error", "Failed to parse response from CurseForge")
+		    Self.Pages.SelectedPanelIndex = Self.PageIntro
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -915,12 +1049,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mCurseForgeLookupSocket_Error(Sender As URLConnection, Err As RuntimeException)
 		  #Pragma Unused Sender
-		  #Pragma Unused Err
 		  
-		  Self.IntroActionButton.Enabled = Self.mCurseForgeId > 0 Or Self.mCurseForgeSlug.IsEmpty = False
-		  Self.IntroSkipButton.Enabled = True
-		  Self.IntroIdField.Enabled = True
-		  Break
+		  App.Log(Err, CurrentMethodName, "Fetching CurseForge mod info")
+		  Self.ShowAlert("Mod lookup error", "There was a network error trying to retrieve the mod info from CurseForge. This could be a bad connection, antivirus, or firewall issue.")
+		  Self.Pages.SelectedPanelIndex = Self.PageIntro
 		End Sub
 	#tag EndMethod
 
@@ -1029,6 +1161,9 @@ End
 	#tag Constant, Name = HeightConfirm, Type = Double, Dynamic = False, Default = \"220", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = HeightLookup, Type = Double, Dynamic = False, Default = \"156", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = IntroExplanationLocal, Type = String, Dynamic = False, Default = \"Start by entering the id or link to the mod. You may skip this step\x2C but Beacon can better support this mod if you don\'t.", Scope = Private
 	#tag EndConstant
 
@@ -1039,6 +1174,12 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = IntroMessageRemote, Type = String, Dynamic = False, Default = \"Register Mod", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = LookupExplanationCaption, Type = String, Dynamic = True, Default = \"Beacon is retreiving the mod id and slug from CurseForge\xE2\x80\xA6", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = LookupMessageCaption, Type = String, Dynamic = True, Default = \"Finding Mod\xE2\x80\xA6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ModeLocal, Type = Double, Dynamic = False, Default = \"0", Scope = Public
@@ -1057,6 +1198,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageIntro, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageModLookup, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageName, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -1081,6 +1225,8 @@ End
 		  Case Self.PageName
 		    TargetHeight = Self.HeightName
 		    Self.NameInputField.SetFocus()
+		  Case Self.PageModLookup
+		    TargetHeight = Self.HeightLookup
 		  End Select
 		  
 		  Self.MinimumHeight = TargetHeight
@@ -1092,36 +1238,14 @@ End
 #tag Events IntroActionButton
 	#tag Event
 		Sub Pressed()
-		  If Self.mMode = Self.ModeLocal Then
-		    Self.mModId = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, Self.mCurseForgeId.ToString(Locale.Raw, "0"))
-		    Var ContentPack As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPackWithId(Self.mModId)
-		    If (ContentPack Is Nil) = False Then
-		      Self.ShowAlert("You have already added this mod.", "It is not possible to add the same mod more than once.")
-		      Return
-		    End If
-		    
-		    If Preferences.OnlineEnabled = False Then
-		      // Go to next step
-		      Self.ShowNamePage()
-		      Return
-		    End If
-		    
-		    // See if this mod has been discovered already
-		    Var Request As New BeaconAPI.Request("/discovery/" + Self.mModId, "HEAD", WeakAddressOf APICallback_CheckModDiscovered)
-		    BeaconAPI.Send(Request)
-		  Else
-		    If Preferences.OnlineEnabled = False Then
-		      // Go to next step
-		      Self.ShowNamePage()
-		      Return
-		    End If
-		    
-		    Self.GetCurseForgeData()
+		  If Preferences.OnlineEnabled = False Then
+		    // Go to next step
+		    Self.ShowNamePage()
+		    Return
 		  End If
 		  
-		  Me.Enabled = False
-		  Self.IntroSkipButton.Enabled = False
-		  Self.IntroIdField.Enabled = False
+		  Self.Pages.SelectedPanelIndex = Self.PageModLookup
+		  Self.GetCurseForgeData()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1180,16 +1304,16 @@ End
 #tag Events NameCancelButton
 	#tag Event
 		Sub Pressed()
-		  Self.Pages.SelectedPanelIndex = 0
-		  Self.IntroIdField.Enabled = True
-		  Self.IntroActionButton.Enabled = Self.mCurseForgeId > 0 Or Self.mCurseForgeSlug.IsEmpty = False
-		  Self.IntroSkipButton.Enabled = True
+		  Self.Pages.SelectedPanelIndex = Self.PageIntro
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IntroSkipButton
 	#tag Event
 		Sub Pressed()
+		  Self.mModId = Beacon.UUID.v4
+		  Self.mCurseForgeId = System.Random.InRange(1000000, 9999999)
+		  Self.mCurseForgeSlug = Beacon.GenerateRandomKey()
 		  Self.ShowNamePage("")
 		End Sub
 	#tag EndEvent
@@ -1225,6 +1349,20 @@ End
 		  End Try
 		  
 		  MessageBox("Could not find mod number or slug in field.")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LookupCancelButton
+	#tag Event
+		Sub Pressed()
+		  If (Self.mCurseForgeLookupSocket Is Nil) = False Then
+		    RemoveHandler Self.mCurseForgeLookupSocket.Error, WeakAddressOf mCurseForgeLookupSocket_Error
+		    RemoveHandler Self.mCurseForgeLookupSocket.ContentReceived, WeakAddressOf mCurseForgeLookupSocket_ContentReceived
+		    Self.mCurseForgeLookupSocket.Disconnect
+		    Self.mCurseForgeLookupSocket = Nil
+		  End If
+		  
+		  Self.Pages.SelectedPanelIndex = Self.PageIntro
 		End Sub
 	#tag EndEvent
 #tag EndEvents

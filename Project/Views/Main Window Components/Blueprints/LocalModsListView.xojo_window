@@ -720,11 +720,17 @@ End
 #tag Events ModDeleterThread
 	#tag Event
 		Sub Run()
-		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
-		  For Each ModUUID As String In Self.mModUUIDsToDelete
-		    If Database.DeleteContentPack(ModUUID, True) Then
-		      Me.AddUserInterfaceUpdate(New Dictionary("Action": "Mod Deleted", "Mod UUID": ModUUID))
-		    End If
+		  Var DataSources() As Beacon.DataSource = App.DataSources
+		  For Each DataSource As Beacon.DataSource In DataSources
+		    Var Writable As Beacon.DataSource = DataSource.WriteableInstance
+		    For Each ModId As String In Self.mModUUIDsToDelete
+		      Try
+		        If Writable.DeleteContentPack(ModId, True) Then
+		          Me.AddUserInterfaceUpdate(New Dictionary("Action": "Mod Deleted", "Mod UUID": ModId))
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
 		  Next
 		End Sub
 	#tag EndEvent

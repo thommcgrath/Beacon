@@ -267,6 +267,22 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DeleteContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean) As Boolean
+		  Return Self.DeleteContentPack(Pack.ContentPackId, DoCloudExport)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeleteContentPack(ContentPackId As String, DoCloudExport As Boolean) As Boolean
+		  Var Deleted As Boolean = RaiseEvent DeleteContentPack(ContentPackId)
+		  If Deleted And DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
+		  Return Deleted
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Destructor()
 		  NotificationKit.Ignore(Self, UserCloud.Notification_SyncFinished)
 		  
@@ -935,6 +951,10 @@ Implements NotificationKit.Receiver
 
 	#tag Hook, Flags = &h0
 		Event DefineIndexes() As Beacon.DataIndex()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event DeleteContentPack(ContentPackId As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
