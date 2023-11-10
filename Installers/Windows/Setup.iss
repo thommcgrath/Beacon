@@ -19,14 +19,14 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{7D88A8B1-0F3C-4251-9AA0-4E4C0EBC1187}
-AppName={#MyAppName} (Alpha)
+AppName={#MyAppName} (Beta)
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName} Alpha
-DefaultGroupName={#MyAppName} Alpha
+DefaultDirName={autopf}\{#MyAppName} Beta
+DefaultGroupName={#MyAppName} Beta
 DisableProgramGroupPage=yes
 AllowNoIcons=yes
 OutputBaseFilename=Install_{#MyAppName}
@@ -98,7 +98,7 @@ Type: filesandordirs; Name: "{app}\XojoGUIFramework64.dll"
 Type: filesandordirs; Name: "{app}\XojoGUIFrameworkARM.dll"
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName} (Alpha)"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autoprograms}\{#MyAppName} (Beta)"; Filename: "{app}\{#MyAppExeName}"
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\.beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
