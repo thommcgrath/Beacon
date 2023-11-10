@@ -96,6 +96,7 @@ Type: filesandordirs; Name: "{app}\Beacon Resources"
 Type: filesandordirs; Name: "{app}\Beacon.pdb"
 Type: filesandordirs; Name: "{app}\XojoGUIFramework64.dll"
 Type: filesandordirs; Name: "{app}\XojoGUIFrameworkARM.dll"
+Type: files; Name: "{autoprograms}\{#MyAppName} (Alpha).lnk"
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName} (Beta)"; Filename: "{app}\{#MyAppExeName}"
