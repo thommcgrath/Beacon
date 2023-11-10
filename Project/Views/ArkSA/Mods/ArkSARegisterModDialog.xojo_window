@@ -757,31 +757,6 @@ Begin BeaconDialog ArkSARegisterModDialog
          Visible         =   True
          Width           =   480
       End
-      Begin DesktopProgressBar LookupProgressBar
-         AllowAutoDeactivate=   True
-         AllowTabStop    =   True
-         Enabled         =   True
-         Height          =   20
-         Indeterminate   =   True
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumValue    =   100
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   4
-         Tooltip         =   ""
-         Top             =   84
-         Transparent     =   False
-         Value           =   0.0
-         Visible         =   True
-         Width           =   480
-      End
       Begin DesktopButton LookupCancelButton
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -814,6 +789,37 @@ Begin BeaconDialog ArkSARegisterModDialog
          Visible         =   True
          Width           =   80
       End
+      Begin DesktopProgressBar LookupProgressBar
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
+         Enabled         =   True
+         Height          =   20
+         Indeterminate   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumValue    =   100
+         PanelIndex      =   0
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   4
+         Tooltip         =   ""
+         Top             =   84
+         Transparent     =   False
+         Value           =   0.0
+         Visible         =   True
+         Width           =   480
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
+      End
    End
    Begin BeaconAPI.Socket ConfirmSocket
       Index           =   -2147483648
@@ -822,15 +828,12 @@ Begin BeaconDialog ArkSARegisterModDialog
       TabPanelIndex   =   0
    End
    Begin Thread RegisterModThread
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
 End
 #tag EndDesktopWindow
