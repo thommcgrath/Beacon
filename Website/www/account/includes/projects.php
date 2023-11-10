@@ -26,16 +26,16 @@ if (count($projects) > 0) {
 			$status = 'Yes';
 			break;
 		}
-		
-		$projectUrl = 'https://' . BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->ProjectId());
-		
+
+		$projectUrl = 'beacon://' . BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->ProjectId()) . '?name=' . urlencode($project->Title());
+
 		$delete_link = '<a href="delete/' . htmlentities($project->ProjectId()) . '" beacon-action="delete" beacon-resource-name="' . htmlentities($project->Title()) .'" beacon-resource-url="' . htmlentities($projectUrl) . '">Delete</a>';
 		$details = array(
 			'Downloads: ' . number_format($project->DownloadCount()),
 			'Revision: ' . number_format($project->Revision()),
 			$delete_link
 		);
-		
+
 		echo '<tr>';
 		echo '<td><a href="' . htmlentities($projectUrl) . '">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . htmlentities($project->Description()) . '</span><div class="row-details"><span class="detail">' . implode('</span><span class="detail">', $details) . '</span></div></td>';
 		echo '<td class="low-priority text-right nowrap">' . number_format($project->DownloadCount()) . '</td>';
