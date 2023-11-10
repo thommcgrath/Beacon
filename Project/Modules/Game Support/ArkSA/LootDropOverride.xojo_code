@@ -124,7 +124,7 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		    Var LootDropRef As ArkSA.BlueprintReference
 		    If SaveData.HasKey("Reference") Then
 		      LootDropRef = ArkSA.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
-		    ElseIf SaveData.HasKey("spawnPointId") Then
+		    ElseIf SaveData.HasKey("lootDropId") Then
 		      LootDropRef = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindLootContainer, SaveData.Value("lootDropId").StringValue, "", "", "", "", "")
 		    ElseIf SaveData.HasKey("SupplyCrateClassString") Then
 		      LootDropRef = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindLootContainer, "", "", SaveData.Lookup("SupplyCrateClassString", "").StringValue, "", "", "")
