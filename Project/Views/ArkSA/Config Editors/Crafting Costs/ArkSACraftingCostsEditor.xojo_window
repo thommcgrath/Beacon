@@ -468,7 +468,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CreateFibercraftServer()
-		  Var Fiber As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("244bc843-2540-486e-af4a-8824500c0e56")
+		  Var Fiber As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("31815d05-b6ef-586b-b415-bf278f1a3668")
 		  If ArkSAAdjustIngredientDialog.Present(Self, Self.Project, Nil, "{""required"":[],""excluded"":[""no_fibercraft""]}", Nil, "", Fiber, 0.00001, ArkAdjustIngredientDialog.RoundUp, False) Then
 		    Self.Modified = True
 		    Self.SetupUI()
