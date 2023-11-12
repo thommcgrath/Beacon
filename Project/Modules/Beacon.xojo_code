@@ -1302,7 +1302,8 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function SafeToInvoke(Callback As Variant) As Boolean
-		  Return Callback.IsNull = False And (GetDelegateWeakMBS(Callback) = False Or (GetDelegateTargetMBS(Callback) Is Nil) = False)
+		  // Module methods will have a Nil target, but can never be weak. Non-weak methods are always safe to invoke.
+		  Return Callback.IsNull = False And (GetDelegateWeakMBS(Callback) = False Or GetDelegateTargetMBS(Callback).IsNull = False)
 		End Function
 	#tag EndMethod
 

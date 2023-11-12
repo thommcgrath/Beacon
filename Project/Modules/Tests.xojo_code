@@ -47,8 +47,19 @@ Protected Module Tests
 		    TestCachingTimes()
 		    TestXmlParsing()
 		    TestSaveInfo()
+		    TestDelegateDetection()
 		    App.Log("Tests complete")
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag DelegateDeclaration, Flags = &h21
+		Private Delegate Sub SampleDelegate()
+	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h21
+		Private Sub SampleDelegateTarget()
+		  
 		End Sub
 	#tag EndMethod
 
@@ -164,6 +175,32 @@ Protected Module Tests
 		  
 		  Var SpeedScales() As Ark.ConfigOption = Source.GetConfigOptions(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "*SpeedScale", False)
 		  Call Assert(SpeedScales.Count = 3, "Found incorrect number of *SpeedScale keys, expected 3, got " + SpeedScales.Count.ToString + ".")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestDelegateDetection()
+		  Var ModuleDelegate As SampleDelegate = AddressOf SampleDelegateTarget
+		  Var ModuleTarget As Variant = GetDelegateTargetMBS(ModuleDelegate)
+		  Var ModuleWeak As Boolean = GetDelegateWeakMBS(ModuleDelegate)
+		  
+		  Var ClassInstance As New DelegateClass
+		  Var ClassDelegate As SampleDelegate = WeakAddressOf ClassInstance.TriggerMethod
+		  Var ClassTarget As Variant = GetDelegateTargetMBS(ClassDelegate)
+		  Var ClassWeak As Boolean = GetDelegateWeakMBS(ClassDelegate)
+		  
+		  ClassInstance = Nil
+		  Var UnsafeClassTarget As Variant = GetDelegateTargetMBS(ClassDelegate)
+		  Var UnsafeClassWeak As Boolean = GetDelegateWeakMBS(ClassDelegate)
+		  
+		  Call Assert(ModuleTarget.IsNull = True, "Module method delegate has a target when it should not.")
+		  Call Assert(ModuleWeak = False, "Module method delegate is weak but that should not be possible.")
+		  
+		  Call Assert(ClassTarget.IsNull = False, "Instance method delegate does not have a target.")
+		  Call Assert(ClassWeak = True, "Instance method delegate is not weak.")
+		  
+		  Call Assert(UnsafeClassTarget.IsNull = True, "Unsafe instance method delegate has a target.")
+		  Call Assert(UnsafeClassWeak = True, "Unsafe instance method delegate is not weak.")
 		End Sub
 	#tag EndMethod
 

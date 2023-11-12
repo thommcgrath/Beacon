@@ -876,6 +876,7 @@ Class=LootDropOverride;Modules/Game Support/ArkSA/LootDropOverride.xojo_code;&h0
 Class=MutableLootDropOverride;Modules/Game Support/ArkSA/MutableLootDropOverride.xojo_code;&h00000000462EC7FF;&h000000004504AFFF;false
 Interface=DisambiguationCandidate;Modules/Beacon/DisambiguationCandidate.xojo_code;&h0000000029F2FFFF;&h0000000055ADDFFF;false
 Class=MutableLootDropOverride;Modules/Game Support/Ark/MutableLootDropOverride.xojo_code;&h00000000035FA7FF;&h0000000016B997FF;false
+Class=DelegateClass;Modules/Tests/DelegateClass.xojo_code;&h000000005F3617FF;&h00000000656D4FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=0
