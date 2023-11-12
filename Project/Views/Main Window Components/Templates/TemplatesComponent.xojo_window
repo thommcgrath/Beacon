@@ -275,7 +275,7 @@ End
 		  Var Template As ArkSA.MutableLootTemplate
 		  If ItemSet.TemplateUUID.IsEmpty = False Then
 		    Var SourceTemplate As Beacon.Template = Beacon.CommonData.Pool.Get(False).GetTemplateByUUID(ItemSet.TemplateUUID)
-		    If (SourceTemplate Is Nil) = False And SourceTemplate IsA Ark.LootTemplate Then
+		    If (SourceTemplate Is Nil) = False And SourceTemplate IsA ArkSA.LootTemplate Then
 		      Template = New ArkSA.MutableLootTemplate(ArkSA.LootTemplate(SourceTemplate))
 		    End If
 		  End If
