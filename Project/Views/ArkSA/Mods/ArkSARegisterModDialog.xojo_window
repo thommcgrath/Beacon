@@ -828,12 +828,15 @@ Begin BeaconDialog ArkSARegisterModDialog
       TabPanelIndex   =   0
    End
    Begin Thread RegisterModThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
 End
 #tag EndDesktopWindow
@@ -975,16 +978,20 @@ End
 	#tag Method, Flags = &h21
 		Private Sub GetCurseForgeData()
 		  Var Socket As New URLConnection
-		  Socket.RequestHeader("User-Agent") = App.UserAgent
-		  Socket.RequestHeader("x-api-key") = Beacon.CurseForgeApiKey
-		  AddHandler Socket.Error, WeakAddressOf mCurseForgeLookupSocket_Error
-		  AddHandler Socket.ContentReceived, WeakAddressOf mCurseForgeLookupSocket_ContentReceived
-		  If Self.mCurseForgeSlug.IsEmpty = False Then
-		    Socket.Send("GET", "https://api.curseforge.com/v1/mods/search?slug=" + Self.mCurseForgeSlug + "&classId=6072&gameId=83374")
-		  Else
-		    Socket.Send("GET", "https://api.curseforge.com/v1/mods/" + Self.mCurseForgeId.ToString(Locale.Raw, "0"))
-		  End If
-		  Self.mCurseForgeLookupSocket = Socket
+		  Try
+		    Socket.RequestHeader("User-Agent") = App.UserAgent
+		    Socket.RequestHeader("x-api-key") = Beacon.CurseForgeApiKey
+		    AddHandler Socket.Error, WeakAddressOf mCurseForgeLookupSocket_Error
+		    AddHandler Socket.ContentReceived, WeakAddressOf mCurseForgeLookupSocket_ContentReceived
+		    If Self.mCurseForgeSlug.IsEmpty = False Then
+		      Socket.Send("GET", "https://api.curseforge.com/v1/mods/search?slug=" + Self.mCurseForgeSlug + "&classId=6072&gameId=83374")
+		    Else
+		      Socket.Send("GET", "https://api.curseforge.com/v1/mods/" + Self.mCurseForgeId.ToString(Locale.Raw, "0"))
+		    End If
+		    Self.mCurseForgeLookupSocket = Socket
+		  Catch Err As RuntimeException
+		    Self.mCurseForgeLookupSocket_Error(Socket, Err)
+		  End Try
 		End Sub
 	#tag EndMethod
 
