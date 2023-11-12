@@ -288,6 +288,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Closing()
+		  Self.CancelRefresh()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Hidden()
 		  Self.CancelRefresh()
 		End Sub
