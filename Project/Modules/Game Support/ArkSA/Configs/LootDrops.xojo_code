@@ -271,18 +271,18 @@ Implements Iterable
 		      Continue
 		    End If
 		    
-		    Var Container As ArkSA.LootContainer
+		    Var Override As ArkSA.LootDropOverride
 		    Try
-		      Container = ArkSA.LootContainer.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty, ContentPacks)
+		      Override = ArkSA.LootDropOverride.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty, ContentPacks)
 		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Importing override from ini")
 		      Continue
 		    End Try
-		    
-		    If Container Is Nil Then
+		    If Override Is Nil Then
 		      Continue
 		    End If
 		    
-		    LootDrops.Add(Container)
+		    LootDrops.Add(Override)
 		  Next
 		  If LootDrops.Count > 0 Then
 		    Return LootDrops

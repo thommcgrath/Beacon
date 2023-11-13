@@ -204,6 +204,69 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function ImportFromConfig(Dict As Dictionary, Difficulty As Double, ContentPacks As Beacon.StringList) As ArkSA.LootDropOverride
+		  Var ClassString As String
+		  If Dict.HasKey("SupplyCrateClassString") Then
+		    ClassString = Dict.Value("SupplyCrateClassString")
+		  End If
+		  
+		  Var Containers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainersByClass(ClassString, ContentPacks)
+		  Var Container As ArkSA.LootContainer
+		  If Containers.Count > 0 Then
+		    Container = Containers(0)
+		  Else
+		    Var Path As String = ArkSA.UnknownBlueprintPath("LootContainers", ClassString)
+		    Var UUID As String = Beacon.UUID.v5(ArkSA.UserContentPackId.Lowercase + ":" + Path.Lowercase)
+		    Var UIColor As String = Dict.Lookup("UIColor", "FFFFFF00")
+		    
+		    Var Mutable As New ArkSA.MutableLootContainer(Path, UUID)
+		    Mutable.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
+		    Mutable.Availability = ArkSA.Maps.UniversalMask
+		    Mutable.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
+		    Mutable.SortValue = Dict.Lookup("SortValue", 999).IntegerValue
+		    Mutable.Label = Dict.Lookup("Label", ClassString).StringValue
+		    Mutable.RequiredItemSetCount = Dict.Lookup("RequiredItemSets", 1).IntegerValue
+		    Mutable.Experimental = Dict.Lookup("Experimental", False).BooleanValue
+		    Mutable.Notes = Dict.Lookup("Notes", "").StringValue
+		    Mutable.ContentPackId = ArkSA.UserContentPackId
+		    Container = Mutable
+		  End If
+		  
+		  Var Override As New ArkSA.MutableLootDropOverride(Container)
+		  
+		  Var Children() As Dictionary
+		  If Dict.HasKey("ItemSets") Then
+		    Children = Dict.Value("ItemSets").DictionaryArrayValue
+		  End If
+		  Var AddedHashes As New Dictionary
+		  For Each Child As Dictionary In Children
+		    Var Set As ArkSA.LootItemSet = ArkSA.LootItemSet.ImportFromConfig(Child, Container.Multipliers, Difficulty, ContentPacks)
+		    Var Hash As String = Set.Hash
+		    If (Set Is Nil) = False And AddedHashes.HasKey(Hash) = False Then
+		      Override.Add(Set)
+		      AddedHashes.Value(Hash) = True
+		    End If
+		  Next
+		  
+		  If Dict.HasKey("MaxItemSets") Then
+		    Override.MaxItemSets = Dict.Value("MaxItemSets")
+		  End If
+		  If Dict.HasKey("MinItemSets") Then
+		    Override.MinItemSets = Dict.Value("MinItemSets")
+		  End If
+		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
+		    Override.PreventDuplicates = Dict.Value("bSetsRandomWithoutReplacement")
+		  End If
+		  If Dict.HasKey("bAppendItemSets") Then
+		    Override.AddToDefaults = Dict.Value("bAppendItemSets")
+		  End If
+		  
+		  Override.Modified = False
+		  Return Override.ImmutableVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexOf(Set As ArkSA.LootItemSet) As Integer
 		  If Set Is Nil Then
 		    Return -1

@@ -323,66 +323,6 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.LootContainer
-		  Var ClassString As String
-		  If Dict.HasKey("SupplyCrateClassString") Then
-		    ClassString = Dict.Value("SupplyCrateClassString")
-		  End If
-		  
-		  Var Containers() As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainersByClass(ClassString, ContentPacks)
-		  Var Container As Ark.MutableLootContainer
-		  If Containers.Count > 0 Then
-		    Container = New Ark.MutableLootContainer(Containers(0))
-		  Else
-		    Var Path As String = Ark.UnknownBlueprintPath("LootContainers", ClassString)
-		    Var UUID As String = Beacon.UUID.v5(Ark.UserContentPackId.Lowercase + ":" + Path.Lowercase)
-		    Var UIColor As String = Dict.Lookup("UIColor", "FFFFFF00")
-		    
-		    Container = New Ark.MutableLootContainer(Path, UUID)
-		    Container.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
-		    Container.Availability = Ark.Maps.UniversalMask
-		    Container.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
-		    Container.SortValue = Dict.Lookup("SortValue", 999).IntegerValue
-		    Container.Label = Dict.Lookup("Label", ClassString).StringValue
-		    Container.RequiredItemSetCount = Dict.Lookup("RequiredItemSets", 1).IntegerValue
-		    Container.Experimental = Dict.Lookup("Experimental", False).BooleanValue
-		    Container.Notes = Dict.Lookup("Notes", "").StringValue
-		    Container.ContentPackId = Ark.UserContentPackId
-		  End If
-		  
-		  Var Children() As Dictionary
-		  If Dict.HasKey("ItemSets") Then
-		    Children = Dict.Value("ItemSets").DictionaryArrayValue
-		  End If
-		  Var AddedHashes As New Dictionary
-		  For Each Child As Dictionary In Children
-		    Var Set As Ark.LootItemSet = Ark.LootItemSet.ImportFromConfig(Child, Container.Multipliers, Difficulty, ContentPacks)
-		    Var Hash As String = Set.Hash
-		    If (Set Is Nil) = False And AddedHashes.HasKey(Hash) = False Then
-		      Call Container.Add(Set)
-		      AddedHashes.Value(Hash) = True
-		    End If
-		  Next
-		  
-		  If Dict.HasKey("MaxItemSets") Then
-		    Container.MaxItemSets = Dict.Value("MaxItemSets")
-		  End If
-		  If Dict.HasKey("MinItemSets") Then
-		    Container.MinItemSets = Dict.Value("MinItemSets")
-		  End If
-		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
-		    Container.PreventDuplicates = Dict.Value("bSetsRandomWithoutReplacement")
-		  End If
-		  If Dict.HasKey("bAppendItemSets") Then
-		    Container.AppendMode = Dict.Value("bAppendItemSets")
-		  End If
-		  
-		  Container.Modified = False
-		  Return Container
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IndexOf(ItemSet As Ark.LootItemSet) As Integer
 		  For Idx As Integer = 0 To Self.mItemSets.LastIndex
 		    If Self.mItemSets(Idx) = ItemSet Then
