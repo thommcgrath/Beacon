@@ -768,6 +768,7 @@ End
 		  Self.mSettingUp = False
 		  
 		  Self.Designer.Curve = New Beacon.Curve(0, 0, 1, 1)
+		  Self.NextLevelField.Text = Self.mStartingLevel.ToString(Locale.Current, "#,##0")
 		End Sub
 	#tag EndEvent
 
