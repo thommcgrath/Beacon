@@ -1004,7 +1004,7 @@ abstract class BeaconCommon {
 				'path' => '/account',
 				'domain' => '',
 				'secure' => true,
-				'httponly' =>true,
+				'httponly' => true,
 				'samesite' => 'Lax'
 			]);
 			self::$session = null;
@@ -1023,9 +1023,9 @@ abstract class BeaconCommon {
 		setcookie(self::AuthCookieName, static::Base64UrlEncode(json_encode(['params' => $params, 'signature' => $signature])), [
 			'expires' => ($remember ? $session->RefreshTokenExpiration() : 0),
 			'path' => '/account',
-			'domain' =>'',
+			'domain' => '',
 			'secure' => true,
-			'httponly' =>true,
+			'httponly' => true,
 			'samesite' => 'Lax'
 		]);
 
@@ -1036,6 +1036,8 @@ abstract class BeaconCommon {
 		switch (strtolower(trim($gameId))) {
 		case 'ark':
 			return 'Ark';
+		case 'arksa':
+			return 'ArkSA';
 		case 'sdtd':
 			return '7DaysToDie';
 		}
