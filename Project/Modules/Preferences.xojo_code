@@ -22,6 +22,13 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub EncryptPrivateKey()
+		  mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(mDevicePublicKey), 0)
+		  mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, DecodeHex(mDevicePrivateKey))
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function HiddenTags() As String()
 		  Init
@@ -102,8 +109,7 @@ Protected Module Preferences
 		    Call Crypto.RSAGenerateKeyPair(4096, PrivateKey, PublicKey)
 		    mDevicePublicKey = PublicKey
 		    mDevicePrivateKey = PrivateKey
-		    mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(PublicKey), 0)
-		    mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, DecodeHex(PrivateKey))
+		    EncryptPrivateKey()
 		  End If
 		  
 		  Var NewestUsedBuild As Integer = NewestUsedBuild
@@ -774,6 +780,9 @@ Protected Module Preferences
 			Set
 			  Init
 			  mManager.IntegerValue("Hardware Id Version") = Value
+			  
+			  // Update private key encryption in case the hardware id changes
+			  EncryptPrivateKey()
 			End Set
 		#tag EndSetter
 		Protected HardwareIdVersion As Integer
