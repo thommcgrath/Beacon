@@ -686,6 +686,12 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SimpleSQLDate(Extends Source As DateTime) As String
+		  Return Source.Year.ToString(Locale.Raw, "0000") + "-" + Source.Month.ToString(Locale.Raw, "00") + "-" + Source.Day.ToString(Locale.Raw, "00")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SQLDateTimeWithOffset(Extends Source As DateTime) As String
 		  Var Zone As TimeZone = Source.Timezone
 		  Var Offset As Double = Abs(Zone.SecondsFromGMT / 3600)

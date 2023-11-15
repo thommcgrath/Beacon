@@ -579,7 +579,7 @@ End
 		  
 		  Var SaveDialog As New SaveFileDialog
 		  SaveDialog.Filter = BeaconFileTypes.CSVFile
-		  SaveDialog.SuggestedFileName = "Ark GFI Codes " + DateTime.Now.SQLDate + ".csv"
+		  SaveDialog.SuggestedFileName = "Ark GFI Codes " + DateTime.Now.SimpleSQLDate + ".csv"
 		  
 		  Var OutputFile As FolderItem = SaveDialog.ShowModal(Self.TrueWindow)
 		  If OutputFile Is Nil Then

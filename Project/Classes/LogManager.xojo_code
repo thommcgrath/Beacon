@@ -8,7 +8,7 @@ Protected Class LogManager
 		    End If
 		    
 		    Var Now As DateTime = DateTime.Now(New TimeZone(0))
-		    Var Filename As String = Now.SQLDate + ".log"
+		    Var Filename As String = Now.SimpleSQLDate + ".log"
 		    Var Destination As FolderItem = Self.mFolder.Child(Filename)
 		    
 		    Var AppendContent As String
@@ -165,7 +165,7 @@ Protected Class LogManager
 		    
 		    // But use GMT for the filename
 		    Now = New DateTime(Now.SecondsFrom1970, New TimeZone(0))
-		    Var Filename As String = Now.SQLDate + ".log"
+		    Var Filename As String = Now.SimpleSQLDate + ".log"
 		    
 		    Try
 		      Var Messages() As String
