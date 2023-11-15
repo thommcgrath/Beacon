@@ -401,6 +401,10 @@ Inherits Beacon.Thread
 		          Var Duration As Integer = Integer.FromString(Line.Middle(9))
 		          ParsedData.Value("Duration") = Duration
 		          ParsedData.Value("MessageOfTheDay.Duration") = Duration
+		        ElseIf Line.BeginsWith("MessageSetterID=") Then
+		          Var SetterId As String = Line.Middle(16)
+		          ParsedData.Value("MessageSetterID") = SetterId
+		          ParsedData.Value("MessageOfTheDay.MessageSetterID") = SetterId
 		        Else
 		          Var Message As String
 		          If Line.BeginsWith("Message=") Then
