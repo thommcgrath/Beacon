@@ -573,6 +573,16 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Cleanup()
+		  Self.ClipboardDiscoveryView1.Cleanup
+		  Self.FilesDiscoveryView1.Cleanup
+		  Self.FTPDiscoveryView1.Cleanup
+		  Self.GSADiscoveryView1.Cleanup
+		  Self.NitradoDiscoveryView1.Cleanup
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Discover(Profiles() As Beacon.ServerProfile)
 		  Self.mIntegrations.ResizeTo(Profiles.LastIndex)
 		  Self.StatusList.RowCount = Profiles.Count

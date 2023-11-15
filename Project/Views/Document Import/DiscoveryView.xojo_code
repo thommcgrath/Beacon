@@ -33,6 +33,16 @@ Inherits DesktopContainer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Cleanup()
+		  If Self.mClosed Then
+		    Return
+		  End If
+		  
+		  RaiseEvent Cleanup()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DesiredHeight() As Integer
 		  Return Self.mDesiredHeight
 		End Function
@@ -126,6 +136,10 @@ Inherits DesktopContainer
 
 	#tag Hook, Flags = &h0
 		Event Begin()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Cleanup()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

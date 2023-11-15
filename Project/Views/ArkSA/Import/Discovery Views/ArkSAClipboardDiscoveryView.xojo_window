@@ -295,6 +295,21 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Cleanup()
+		  For Idx As Integer = Self.mTempFiles.LastIndex DownTo 0
+		    If (Self.mTempFiles(Idx) Is Nil) = False And Self.mTempFiles(Idx).Exists Then
+		      Try
+		        Self.mTempFiles(Idx).Remove
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Removing temporary file")
+		      End Try
+		    End If
+		    Self.mTempFiles.RemoveAt(Idx)
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  RaiseEvent Opening
 		  Self.SwapButtons()
@@ -370,6 +385,10 @@ End
 		Private mSettingUp As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mTempFiles() As FolderItem
+	#tag EndProperty
+
 
 	#tag Constant, Name = GameIniIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
@@ -395,6 +414,7 @@ End
 		  
 		  If Self.mGameIniContent.IsEmpty = False Then
 		    Var TempFile As FolderItem = FolderItem.TemporaryFile
+		    Self.mTempFiles.Add(TempFile)
 		    Try
 		      TempFile.Write(Self.mGameIniContent)
 		    Catch Err As RuntimeException
@@ -406,6 +426,7 @@ End
 		  
 		  If Self.mGameUserSettingsIniContent.IsEmpty = False Then
 		    Var TempFile As FolderItem = FolderItem.TemporaryFile
+		    Self.mTempFiles.Add(TempFile)
 		    Try
 		      TempFile.Write(Self.mGameUserSettingsIniContent)
 		    Catch Err As RuntimeException

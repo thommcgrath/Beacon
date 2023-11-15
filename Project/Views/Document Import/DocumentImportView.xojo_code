@@ -10,6 +10,7 @@ Inherits DesktopContainer
 
 	#tag Method, Flags = &h1
 		Protected Sub Dismiss()
+		  RaiseEvent Cleanup
 		  RaiseEvent ShouldDismiss
 		End Sub
 	#tag EndMethod
@@ -54,6 +55,10 @@ Inherits DesktopContainer
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event Cleanup()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Discover(Profiles() As Beacon.ServerProfile)
