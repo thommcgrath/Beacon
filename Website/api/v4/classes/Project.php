@@ -178,7 +178,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				foreach ($results as $result) {
 					$ids[] = $result['objectID'];
 				}
-				$parameters->clauses[] = $schema->Comparison('projectId', '=', 'ANY(' . $parameters->placeholder++ . ')');
+				$parameters->clauses[] = $schema->Comparison('projectId', '=', 'ANY($' . $parameters->placeholder++ . ')');
 				$parameters->values[] = '{' . implode(',', $ids) . '}';
 			} else {
 				$parameters->clauses[] = $schema->Comparison('projectId', '=', "'00000000-0000-0000-0000-000000000000'");
