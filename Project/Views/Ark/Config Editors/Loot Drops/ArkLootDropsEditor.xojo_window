@@ -600,7 +600,7 @@ End
 		    End Select
 		  ElseIf Tag.Type = Variant.TypeObject And Tag.ObjectValue IsA Ark.LootContainer Then
 		    Var Container As Ark.LootContainer = ChosenItem.Tag
-		    Self.AddOverride(New Ark.LootDropOverride(Container))
+		    Self.AddOverride(New Ark.LootDropOverride(Container, False))
 		    Self.Focus = Self.List
 		  End If
 		End Sub

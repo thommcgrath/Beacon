@@ -2278,7 +2278,7 @@ End
 		  ArkSA.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		  
 		  Var Overrides(0) As ArkSA.LootDropOverride
-		  Overrides(0) = New ArkSA.LootDropOverride(Mutable)
+		  Overrides(0) = New ArkSA.LootDropOverride(Mutable, False)
 		  Self.DropEditor.Overrides = Overrides
 		End Sub
 	#tag EndMethod
@@ -3321,7 +3321,7 @@ End
 		Sub Opening()
 		  Var DummyContainer As ArkSA.LootContainer = New ArkSA.MutableLootContainer(ArkSA.UnknownBlueprintPath("LootContainers", "BlueprintEditor_C"), "8e25c4be-d496-4c94-b1bc-d4bef54834ad")
 		  Var Overrides(0) As ArkSA.LootDropOverride
-		  Overrides(0) = New ArkSA.LootDropOverride(DummyContainer)
+		  Overrides(0) = New ArkSA.LootDropOverride(DummyContainer, False)
 		  Me.Overrides = Overrides
 		End Sub
 	#tag EndEvent

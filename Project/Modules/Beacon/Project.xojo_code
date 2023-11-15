@@ -559,9 +559,11 @@ Implements ObservationKit.Observable
 		    For Each Source As Variant In LootSources
 		      Try
 		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dictionary(Source))
-		        If (Container Is Nil) = False Then
-		          Loot.Add(Container)
+		        If Container Is Nil Then
+		          Continue
 		        End If
+		        
+		        Loot.Add(Container, True)
 		      Catch Err As RuntimeException
 		      End Try
 		    Next

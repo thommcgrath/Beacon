@@ -38,11 +38,19 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Drop As Ark.LootContainer)
+		Sub Constructor(Drop As Ark.LootContainer, IncludeItemSets As Boolean)
 		  Self.Constructor(New Ark.BlueprintReference(Drop))
 		  Self.mAvailability = Drop.Availability
 		  Self.mExperimental = Drop.Experimental
 		  Self.mSortValue = Drop.SortValue
+		  
+		  If IncludeItemSets = False Then
+		    Return
+		  End If
+		  
+		  For Each ItemSet As Ark.LootItemSet In Drop
+		    Self.mSets.Add(ItemSet.ImmutableClone)
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -232,7 +240,7 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		    Container = Mutable
 		  End If
 		  
-		  Var Override As New Ark.MutableLootDropOverride(Container)
+		  Var Override As New Ark.MutableLootDropOverride(Container, False)
 		  
 		  Var Children() As Dictionary
 		  If Dict.HasKey("ItemSets") Then

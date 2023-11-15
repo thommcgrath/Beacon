@@ -855,7 +855,7 @@ End
 		      End If
 		    End If
 		    
-		    Self.mDestinations.Add(New ArkSA.LootDropOverride(Source))
+		    Self.mDestinations.Add(New ArkSA.LootDropOverride(Source, False))
 		  Next
 		  
 		  If Self.LoadDefaultsCheckbox.Visible And Self.LoadDefaultsCheckbox.Value Then
@@ -938,7 +938,7 @@ End
 		    BasedOn = Self.mSource
 		  Else
 		    Var Blueprint As New ArkSA.MutableLootContainer(ArkSA.UnknownBlueprintPath("LootContainers", "BeaconTemplateItem"), "669ab057-f90b-4137-9a75-f8f912d5b6c8")
-		    BasedOn = New ArkSA.LootDropOverride(Blueprint)
+		    BasedOn = New ArkSA.LootDropOverride(Blueprint, False)
 		  End If
 		  
 		  Self.CustomizeMinSetsField.Text = BasedOn.MinItemSets.ToString(Locale.Current, "0")

@@ -211,7 +211,7 @@ Inherits Beacon.Project
 		      Try
 		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dictionary(Source))
 		        If (Container Is Nil) = False Then
-		          Loot.Add(Container)
+		          Loot.Add(Container, True)
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -684,7 +684,7 @@ Inherits Beacon.Project
 		    ItemSet.MaxNumItems = 1
 		    ItemSet.Add(Entry)
 		    
-		    Var Override As New Ark.MutableLootDropOverride(Container)
+		    Var Override As New Ark.MutableLootDropOverride(Container, False)
 		    Override.MinItemSets = 1
 		    Override.MaxItemSets = 1
 		    Override.PreventDuplicates = True

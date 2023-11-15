@@ -143,20 +143,20 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Add(LootDrop As Ark.LootContainer)
+		Sub Add(LootDrop As Ark.LootContainer, IncludeItemSets As Boolean)
 		  If LootDrop Is Nil Then
 		    Return
 		  End If
 		  
 		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
 		    If Self.mOverrides(Idx).LootDropId = LootDrop.LootDropId Then
-		      Self.mOverrides(Idx) = New Ark.LootDropOverride(LootDrop)
+		      Self.mOverrides(Idx) = New Ark.LootDropOverride(LootDrop, IncludeItemSets)
 		      Self.Modified = True
 		      Return
 		    End If
 		  Next
 		  
-		  Self.mOverrides.Add(New Ark.LootDropOverride(LootDrop))
+		  Self.mOverrides.Add(New Ark.LootDropOverride(LootDrop, IncludeItemSets))
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
