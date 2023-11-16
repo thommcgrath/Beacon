@@ -259,8 +259,8 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function CloseView(View As BeaconSubview) As Boolean
+	#tag Method, Flags = &h0
+		Function CloseView(View As BeaconSubview) As Boolean
 		  If View.CanBeClosed = False Or View.ConfirmClose() = False Then
 		    Return False
 		  End If

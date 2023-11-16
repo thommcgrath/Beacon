@@ -199,6 +199,12 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub CloneSelected()
 		  Var Siblings() As String

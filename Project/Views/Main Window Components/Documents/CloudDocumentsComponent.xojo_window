@@ -413,6 +413,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.

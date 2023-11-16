@@ -390,6 +390,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.ViewID = "RemoteModsListView"
 		  Super.Constructor()
