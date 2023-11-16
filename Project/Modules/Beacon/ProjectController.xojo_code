@@ -358,7 +358,7 @@ Protected Class ProjectController
 		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mProjectURL.Path)
-		    If Socket.LastHTTPStatus >= 200 Then
+		    If Socket.LastHTTPStatus >= 200 And Socket.LastHTTPStatus < 300 Then
 		      FileContent = Socket.LastContent
 		    Else
 		      Var Message As String = Self.ErrorMessageFromSocket(Socket)

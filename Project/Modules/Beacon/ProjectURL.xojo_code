@@ -30,7 +30,7 @@ Protected Class ProjectURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(URL As String)
+		Sub Constructor(Url As String)
 		  If Url.BeginsWith("{") And Url.EndsWith("}") Then
 		    // Newer Json style
 		    Var Dict As Dictionary = Beacon.ParseJson(Url)
@@ -38,21 +38,22 @@ Protected Class ProjectURL
 		    Return
 		  End If
 		  
-		  Var Pos As Integer = URL.IndexOf("://")
+		  Var Pos As Integer = Url.IndexOf("://")
 		  If Pos = -1 Then
 		    Var Err As New UnsupportedFormatException
-		    Err.Message = "Unable to determine scheme from URL " + URL
+		    Err.Message = "Unable to determine scheme from URL " + Url
 		    Raise Err
 		  End If
 		  
 		  Self.mPath = Url
 		  
-		  Var Scheme As String = URL.Left(Pos)
+		  Var Scheme As String = Url.Left(Pos)
 		  Select Case Scheme
 		  Case "file"
 		    Self.mType = Self.TypeLocal
 		  Case "http", "https"
-		    Self.mType = Self.TypeWeb
+		    Static ProjectsUrl As String = BeaconApi.Url("/projects/")
+		    Self.mType = If(Url.BeginsWith(ProjectsUrl), Self.TypeCloud, Self.TypeWeb)
 		  Case "beacon", "beacon-cloud"
 		    Self.mType = Self.TypeCloud
 		    Self.mPath = "https" + Self.mPath.Middle(Scheme.Length)
