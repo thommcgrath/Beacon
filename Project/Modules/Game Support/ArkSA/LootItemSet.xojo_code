@@ -140,6 +140,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		      App.Log(Err, CurrentMethodName, "Reading set entry dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
 		  Next
+		  If Set.Count = 0 Then
+		    // Empty item set
+		    Return Nil
+		  End If
 		  
 		  Try
 		    If Dict.HasKey("minEntries") Then

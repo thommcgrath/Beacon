@@ -208,7 +208,11 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
-		  Next Idx
+		  Next
+		  If Entry.Count = 0 Then
+		    // Nothing loaded
+		    Return Nil
+		  End If
 		  
 		  Try
 		    If Dict.HasKey("preventGrinding") Then

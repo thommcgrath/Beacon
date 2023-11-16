@@ -156,6 +156,9 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		        End If
 		      Next
 		    End If
+		    If Override.Count = 0 Then
+		      Return Nil
+		    End If
 		    
 		    Override.Modified = False
 		    Return Override
@@ -188,6 +191,9 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		      Override.mSets.Add(ItemSet)
 		    End If
 		  Next
+		  If Override.Count = 0 Then
+		    Return Nil
+		  End If
 		  
 		  Return Override
 		End Function
