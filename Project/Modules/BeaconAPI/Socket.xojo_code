@@ -11,12 +11,27 @@ Protected Class Socket
 
 	#tag Method, Flags = &h21
 		Private Sub mQueueThread_Run(Sender As Beacon.Thread)
-		  Self.mWorking = True
-		  Var StartUpdate As New Dictionary
-		  StartUpdate.Value("Event") = "WorkStarted"
-		  Sender.AddUserInterfaceUpdate(StartUpdate)
-		  
-		  While Self.mQueue.Count > 0
+		  While True
+		    If Self.mQueue.Count = 0 Then
+		      If Self.mWorking Then
+		        Self.mWorking = False
+		        Var FinishUpdate As New Dictionary
+		        FinishUpdate.Value("Event") = "WorkCompleted"
+		        Sender.AddUserInterfaceUpdate(FinishUpdate)
+		        Sender.Sleep(10)
+		        Continue
+		      End If
+		      
+		      Return
+		    End If
+		    
+		    If Self.mWorking = False Then
+		      Self.mWorking = True
+		      Var StartUpdate As New Dictionary
+		      StartUpdate.Value("Event") = "WorkStarted"
+		      Sender.AddUserInterfaceUpdate(StartUpdate)
+		    End If
+		    
 		    Var Request As BeaconAPI.Request = Self.mQueue(0)
 		    Self.mQueue.RemoveAt(0)
 		    
@@ -29,11 +44,6 @@ Protected Class Socket
 		    
 		    Sender.Sleep(10)
 		  Wend
-		  
-		  Self.mWorking = False
-		  Var FinishUpdate As New Dictionary
-		  FinishUpdate.Value("Event") = "WorkCompleted"
-		  Sender.AddUserInterfaceUpdate(FinishUpdate)
 		End Sub
 	#tag EndMethod
 
@@ -60,7 +70,8 @@ Protected Class Socket
 	#tag Method, Flags = &h0
 		Sub Start(Request As BeaconAPI.Request)
 		  Self.mQueue.Add(Request)
-		  If Self.mQueue.Count > 0 And Self.mQueueThread.ThreadState = Thread.ThreadStates.NotRunning Then
+		  
+		  If Self.mQueueThread.ThreadState = Thread.ThreadStates.NotRunning Then
 		    Self.mQueueThread.Start
 		  End If
 		End Sub
