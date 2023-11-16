@@ -105,7 +105,7 @@ Inherits Ark.LootDropOverride
 		    Return
 		  End If
 		  
-		  Self.mAddToDefaults = Value
+		  Self.mPreventDuplicates = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
