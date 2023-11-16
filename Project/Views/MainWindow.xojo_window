@@ -538,6 +538,26 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  If Super.CanBeClosed() = False Then
+		    Return False
+		  End If
+		  
+		  Select Case Self.Pages.SelectedPanelIndex
+		  Case Self.PageDocuments
+		    Var Frontmost As BeaconSubview = Self.DocumentsComponent1.FrontmostPage
+		    Return (Frontmost Is Nil) = False And Frontmost.CanBeClosed
+		  Case Self.PageBlueprints
+		    Var Frontmost As BeaconSubview = Self.BlueprintsComponent1.FrontmostPage
+		    Return (Frontmost Is Nil) = False And Frontmost.CanBeClosed
+		  Case Self.PageTemplates
+		    Var Frontmost As BeaconSubview = Self.TemplatesComponent1.FrontmostPage
+		    Return (Frontmost Is Nil) = False And Frontmost.CanBeClosed
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  #if TargetMacOS
 		    Self.mObserver = New NSNotificationObserverMBS
@@ -589,6 +609,28 @@ End
 		  
 		  Return Self.DocumentsComponent1
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub DoFileClose()
+		  Select Case Self.Pages.SelectedPanelIndex
+		  Case Self.PageDocuments
+		    Var Frontmost As BeaconSubview = Self.DocumentsComponent1.FrontmostPage
+		    If (Frontmost Is Nil) = False And Frontmost.CanBeClosed Then
+		      Call Self.DocumentsComponent1.DiscardView(Frontmost)
+		    End If
+		  Case Self.PageBlueprints
+		    Var Frontmost As BeaconSubview = Self.BlueprintsComponent1.FrontmostPage
+		    If (Frontmost Is Nil) = False And Frontmost.CanBeClosed Then
+		      Call Self.BlueprintsComponent1.CloseView(Frontmost)
+		    End If
+		  Case Self.PageTemplates
+		    Var Frontmost As BeaconSubview = Self.TemplatesComponent1.FrontmostPage
+		    If (Frontmost Is Nil) = False And Frontmost.CanBeClosed Then
+		      Call Self.TemplatesComponent1.CloseView(Frontmost)
+		    End If
+		  End Select
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -978,6 +1020,23 @@ End
 		    Button.Icon = IconToolbarCloudError
 		  End Select
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function WindowTypeLabel() As String
+		  Select Case Self.Pages.SelectedPanelIndex
+		  Case Self.PageHome
+		    Return "Home"
+		  Case Self.PageDocuments
+		    Return "Project"
+		  Case Self.PageBlueprints
+		    Return "Mod"
+		  Case Self.PageTemplates
+		    Return "Template"
+		  Case Self.PageHelp
+		    Return "Help"
+		  End Select
+		End Function
 	#tag EndMethod
 
 
