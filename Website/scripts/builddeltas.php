@@ -91,7 +91,7 @@ if (count($required_versions) == 0) {
 $cdn = BeaconCDN::DeltasZone();
 foreach ($required_versions as $version) {
 	echo "Building delta for version {$version}...\n";
-	
+
 	switch ($version) {
 	case 7:
 		include("{$apiRoot}/v4/includes/builddeltas.php");
@@ -103,11 +103,11 @@ foreach ($required_versions as $version) {
 		} else {
 			$completeData['timestamp'] = $lastDatabaseUpdate->getTimestamp();
 		}
-		
+
 		$results = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1 AND type = \'Delta\';', $version);
 		if (is_null($results->Field('since')) == false) {
 			$since = new DateTime($results->Field('since'));
-			
+
 			$deltaData = DataForVersion($version, $since);
 			if ($version === 5) {
 				$deltaData['timestamp'] = $lastDatabaseUpdate->format('Y-m-d H:i:s');
@@ -117,14 +117,14 @@ foreach ($required_versions as $version) {
 		} else {
 			$deltaData = null;
 		}
-		
+
 		$prefix = '/v' . $version;
 		$timestamp = $lastDatabaseUpdate->format('U');
 		if (BeaconCommon::InProduction() == false) {
 			$prefix .= '/' . BeaconCommon::EnvironmentName();
 			$timestamp += rand(-1800,1800);
 		}
-		
+
 		$completeUrl = $prefix . '/Complete.beacondata?t=' . $timestamp . '&bcdn_filename=Complete.beacondata';
 		$completeContent = gzencode(json_encode($completeData));
 		$completeSize = strlen($completeContent);
@@ -136,7 +136,7 @@ foreach ($required_versions as $version) {
 			echo $err->getMessage() . "\n";
 			continue 2;
 		}
-		
+
 		if (is_null($deltaData) == false) {
 			$deltaUrl = $prefix . '/' . $lastDatabaseUpdate->format('YmdHis') . '.beacondata?bcdn_filename=' . $lastDatabaseUpdate->format('YmdHis') . '.beacondata';
 			$deltaContent = gzencode(json_encode($deltaData));
@@ -150,12 +150,12 @@ foreach ($required_versions as $version) {
 				continue 2;
 			}
 		} else {
-			$deltaUrl = $compelteUrl;
+			$deltaUrl = $completeUrl;
 			$deltaSize = $completeSize;
 		}
 		break;
 	}
-	
+
 	$database->BeginTransaction();
 	$rows = $database->Query("SELECT file_id FROM public.update_files WHERE version = $1 AND type = 'Complete';", $version);
 	if ($rows->RecordCount() == 1) {
@@ -165,7 +165,7 @@ foreach ($required_versions as $version) {
 	}
 	$database->Query("INSERT INTO public.update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, 'Delta');", $lastDatabaseUpdate->format('Y-m-d H:i:sO'), $version, $deltaUrl, $deltaSize);
 	$database->Commit();
-	
+
 	echo "Delta for version {$version} uploaded to {$deltaUrl}\n";
 }
 
