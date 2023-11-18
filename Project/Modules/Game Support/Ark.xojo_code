@@ -103,6 +103,8 @@ Protected Module Ark
 		    Path = Matches.SubExpressionString(6)
 		  ElseIf Matches.SubExpressionCount >= 8 And Matches.SubExpressionString(8).IsEmpty = False Then
 		    Path = Matches.SubExpressionString(8)
+		  ElseIf Matches.SubExpressionCount >= 10 And Matches.SubExpressionString(10).IsEmpty = False Then
+		    Path = "/Game/Mods" + Matches.SubExpressionString(10)
 		  End If
 		  If Path.IsEmpty = False And Path.EndsWith("_C") Then
 		    Path = Path.Left(Path.Length - 2)
@@ -119,7 +121,7 @@ Protected Module Ark
 		    
 		    Regex = New Regex
 		    Regex.Options.CaseSensitive = False
-		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
+		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/Script/Engine\.Blueprint[" + QuotationCharacters + "]([^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
 		  End If
 		  Return Regex
 		End Function
