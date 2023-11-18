@@ -19,6 +19,7 @@ Protected Class UserController
 		        Raise Err
 		      End If
 		    Case 401, 403
+		      App.Log("Login window will be presented because user details returned an unauthorized or forbidden response.")
 		      Return True
 		    End Select
 		  Catch Err As RuntimeException

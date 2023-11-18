@@ -314,6 +314,7 @@ End
 		  End If
 		  
 		  If Reason = "Unauthorized" Then
+		    App.Log("Presenting login window because DocumentsComponent received an unauthorized response while loading a project.")
 		    UserWelcomeWindow.Present(False)
 		    Return
 		  End If

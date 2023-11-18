@@ -645,8 +645,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return True
 		  End If
 		  
+		  App.Log("Presenting login window because GetOnlinePermission was called and the identity is nil or online access is disabled.")
 		  UserWelcomeWindow.Present(False)
-		  
 		  Return Preferences.OnlineEnabled
 		End Function
 	#tag EndMethod
@@ -761,8 +761,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "releasenotes"
 		      Self.ShowReleaseNotes()
 		    Case "enableonline"
+		      App.Log("Presenting login window as a result of following beacon://action/enableonline.")
 		      UserWelcomeWindow.Present(False)
 		    Case "signin"
+		      App.Log("Presenting login window as a result of following beacon://action/signin.")
 		      UserWelcomeWindow.Present(True)
 		    Case "showaccount"
 		      System.GotoURL(Beacon.WebURL("/account/", True))
@@ -784,6 +786,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Preferences.BeaconAuth = Nil
 		      Self.IdentityManager.CurrentIdentity = Nil
 		      
+		      App.Log("Presenting login window as a result of following beacon://action/signout.")
 		      UserWelcomeWindow.Present(False)
 		    Case "syncusercloud"
 		      UserCloud.Sync(True)
@@ -1024,6 +1027,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_PrivacyCheck()
 		  If Self.mIdentityManager.CurrentIdentity Is Nil Then
+		    App.Log("Presenting login window because identity is nil during launch steps.")
 		    UserWelcomeWindow.Present(False)
 		  Else
 		    Self.NextLaunchQueueTask()
@@ -1318,14 +1322,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mIdentityManager_NeedsLogin(Sender As IdentityManager)
-		  #Pragma Unused Sender
-		  
-		  Call CallLater.Schedule(100, AddressOf ShowLoginWindow)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function mOpenRecent_ClearMenu(Sender As DesktopMenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
@@ -1587,28 +1583,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  #endif
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowLoginWindow()
-		  Var RestoreMainWindow As Boolean
-		  If (Self.mMainWindow Is Nil) = False And Self.mMainWindow.Visible Then
-		    Self.mMainWindow.Hide
-		    RestoreMainWindow = True
-		  End If
-		  
-		  UserWelcomeWindow.Present(False, AddressOf ShowLoginWindowMessage)
-		  
-		  If RestoreMainWindow Then
-		    Self.mMainWindow.Show
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowLoginWindowMessage(WelcomeWindow As UserWelcomeWindow)
-		  WelcomeWindow.ShowAlert("Please log in again", "There was a problem with your user data. You will need to log in again.")
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

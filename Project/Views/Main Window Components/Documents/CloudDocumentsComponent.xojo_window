@@ -305,6 +305,7 @@ End
 		    Self.List.CompleteRowLoadRequest(Request.Tag)
 		    
 		    If Response.HTTPStatus = 401 Or Response.HTTPStatus = 403 Then
+		      App.Log("Presenting login window because CloudDocumentsComponent received an unauthorized or forbidden response while listing projects.")
 		      UserWelcomeWindow.Present(False)
 		    End If
 		    
