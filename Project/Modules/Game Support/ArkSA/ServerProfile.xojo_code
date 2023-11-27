@@ -198,6 +198,12 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsConsole() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LogsPath() As String
 		  If Self.mLogsPath.IsEmpty = False Then
 		    Return Self.mLogsPath
@@ -270,6 +276,19 @@ Inherits Beacon.ServerProfile
 		    Self.mMessageOfTheDay = Value
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Platform() As Integer
+		  Return Beacon.PlatformUniversal
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Platform(Assigns Value As Integer)
+		  #Pragma Unused Value
+		  Super.Platform = Beacon.PlatformUniversal
 		End Sub
 	#tag EndMethod
 

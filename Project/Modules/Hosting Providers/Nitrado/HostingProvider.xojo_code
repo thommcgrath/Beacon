@@ -513,10 +513,12 @@ Implements Beacon.HostingProvider
 		    Return Beacon.PlatformPlayStation
 		  Case "arkswitch", "arkswitchjp"
 		    Return Beacon.PlatformSwitch
-		  Case "arkse", "arksotf", "arkseosg", "7daystodie", "sevendaysexperimental", "sevendtd", "arksa"
+		  Case "arkse", "arksotf", "arkseosg", "7daystodie", "sevendaysexperimental", "sevendtd"
 		    Return Beacon.PlatformPC
 		  Case "arkmobile"
 		    Return Beacon.PlatformUnsupported
+		  Case "arksa"
+		    Return Beacon.PlatformUniversal
 		  End Select
 		End Function
 	#tag EndMethod

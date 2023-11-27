@@ -94,18 +94,22 @@ Inherits ArkSA.ConfigGroup
 		        Var RequiredPlatform As Variant = Key.Constraint("platform")
 		        Var SupportedOnPlatform As Boolean = True
 		        If IsNull(RequiredPlatform) = False Then
-		          Select Case RequiredPlatform.StringValue
-		          Case "pc", "steam", "epic"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPC)
-		          Case "xbox"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox)
-		          Case "ps"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPlayStation)
-		          Case "switch"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformSwitch)
-		          Case "console"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox Or Profile.Platform = Beacon.PlatformPlayStation)
-		          End Select
+		          If Profile.Platform = Beacon.PlatformUniversal Then
+		            SupportedOnPlatform = True
+		          Else
+		            Select Case RequiredPlatform.StringValue
+		            Case "pc", "steam", "epic"
+		              SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPC)
+		            Case "xbox"
+		              SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox)
+		            Case "ps"
+		              SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPlayStation)
+		            Case "switch"
+		              SupportedOnPlatform = (Profile.Platform = Beacon.PlatformSwitch)
+		            Case "console"
+		              SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox Or Profile.Platform = Beacon.PlatformPlayStation)
+		            End Select
+		          End If
 		          If SupportedOnPlatform = False Then
 		            Continue
 		          End If

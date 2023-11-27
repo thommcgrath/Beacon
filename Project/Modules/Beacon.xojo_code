@@ -1675,6 +1675,9 @@ Protected Module Beacon
 	#tag Constant, Name = PlatformSwitch, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = PlatformUniversal, Type = Double, Dynamic = False, Default = \"999", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = PlatformUnknown, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
 	#tag EndConstant
 

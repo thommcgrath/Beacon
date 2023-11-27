@@ -331,6 +331,8 @@ End
 		      PlatformText = "Switch"
 		    Case Beacon.PlatformXbox
 		      PlatformText = "Xbox & Windows Store"
+		    Case Beacon.PlatformUniversal
+		      PlatformText = "Universal"
 		    End Select
 		    
 		    Self.List.AddRow("", Profile.Name, Profile.SecondaryName, PlatformText)
