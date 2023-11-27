@@ -115,7 +115,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       HasBorder       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   311
+      Height          =   343
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -276,39 +276,6 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Visible         =   True
       Width           =   132
    End
-   Begin DesktopLabel ConsoleModeLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Force Console Compatibility:"
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   "#HelpConsoleMode"
-      Top             =   418
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   189
-   End
    Begin DesktopLabel CompressedLabel
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -374,36 +341,6 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Underline       =   False
       Visible         =   True
       Width           =   189
-   End
-   Begin SwitchControl ConsoleModeSwitch
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   221
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   "#HelpConsoleMode"
-      Top             =   418
-      Transparent     =   True
-      Visible         =   True
-      Width           =   40
    End
    Begin SwitchControl CompressedSwitch
       AllowAutoDeactivate=   True
@@ -475,16 +412,14 @@ End
 		  Self.DescriptionArea.Text = Self.Project.Description
 		  Self.CompressedSwitch.Value(False) = Self.Project.UseCompression
 		  Self.AllowUCSSwitch.Value(False) = Self.Project.AllowUCS2
-		  Self.ConsoleModeSwitch.Value(False) = Self.Project.ConsoleSafe
 		  Self.UWPModeMenu.SelectedRowIndex = CType(Self.Project.UWPMode, Integer)
 		  
-		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.ConsoleModeLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel)
+		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel)
 		  Var ControlLeft As Integer = Self.TitleLabel.Right + 12
 		  Self.TitleField.Left = ControlLeft
 		  Self.TitleField.Width = Self.Width - (ControlLeft + 20)
 		  Self.DescriptionArea.Left = ControlLeft
 		  Self.DescriptionArea.Width = Self.TitleField.Width
-		  Self.ConsoleModeSwitch.Left = ControlLeft
 		  Self.UWPModeMenu.Left = ControlLeft
 		  Self.CompressedSwitch.Left = ControlLeft
 		  Self.AllowUCSSwitch.Left = ControlLeft
@@ -560,30 +495,6 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Project.UWPMode = CType(Me.SelectedRowIndex, ArkSA.Project.UWPCompatibilityModes)
-		  Self.Modified = True
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ConsoleModeSwitch
-	#tag Event
-		Sub Pressed()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Self.Project.ConsoleSafe = Me.Value
-		  
-		  If Me.Value Then
-		    Var ContentPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks
-		    For Each Pack As Beacon.ContentPack In ContentPacks
-		      If Pack.IsConsoleSafe = False Then
-		        Self.Project.ContentPackEnabled(Pack.ContentPackId) = False
-		      End If
-		    Next
-		  End If
-		  
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub

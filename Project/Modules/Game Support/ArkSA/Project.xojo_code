@@ -439,6 +439,19 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConsoleSafe() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConsoleSafe(Assigns Value As Boolean)
+		  #Pragma Unused Value
+		  Super.ConsoleSafe = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMapMask = 1 // Play it safe, do not bother calling ArkSA.Maps here in case database access is fubar
 		  Self.mEmbeddedBlueprints = New Dictionary
