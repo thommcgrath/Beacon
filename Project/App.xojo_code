@@ -1794,7 +1794,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Constant, Name = Notification_AppearanceChanged, Type = String, Dynamic = False, Default = \"Appearance Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = UsePreviewMode, Type = Boolean, Dynamic = False, Default = \"True", Scope = Public
+	#tag Constant, Name = UsePreviewMode, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
 	#tag EndConstant
 
 
