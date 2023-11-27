@@ -194,3 +194,49 @@ begin
       Exit;
     end;
 end;
+
+function GetBetaUninstaller(): String;
+var
+  sUnInstPath: String;
+  sUninstallString: String;
+begin
+  sUnInstPath := ExpandConstant('Software\Microsoft\Windows\CurrentVersion\Uninstall\{7D88A8B1-0F3C-4251-9AA0-4E4C0EBC1187}_is1');
+  sUninstallString := '';
+  if not RegQueryStringValue(HKLM, sUnInstPath, 'UninstallString', sUninstallString) then
+    RegQueryStringValue(HKCU, sUnInstPath, 'UninstallString', sUninstallString);
+  Result := sUninstallString;
+end;
+
+function IsBetaInstalled(): Boolean;
+begin
+  Result := (GetBetaUninstaller() <> '');
+end;
+
+function UninstallBetaVersion(): Integer;
+var
+  sUninstallString: String;
+  iResultCode: Integer;
+begin
+  Result := 0;
+
+  sUninstallString := GetBetaUninstaller();
+  if sUninstallString <> '' then begin
+    sUninstallString := RemoveQuotes(sUninstallString);
+    if Exec(sUninstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+      Result := 3
+    else
+      Result := 2;
+  end else
+    Result := 1;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if (CurStep=ssInstall) then
+  begin
+    if (IsBetaInstalled()) then
+    begin
+      UninstallBetaVersion();
+    end;
+  end;
+end;
