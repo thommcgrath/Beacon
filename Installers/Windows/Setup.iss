@@ -18,15 +18,15 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{7D88A8B1-0F3C-4251-9AA0-4E4C0EBC1187}
-AppName={#MyAppName} (Beta)
+AppId={{E58BA263-A23C-484E-99DF-319D5BD1399F}
+AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName} Beta
-DefaultGroupName={#MyAppName} Beta
+DefaultDirName={autopf}\{#MyAppName}
+DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 AllowNoIcons=yes
 OutputBaseFilename=Install_{#MyAppName}
