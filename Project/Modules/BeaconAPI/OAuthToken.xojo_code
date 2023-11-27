@@ -27,10 +27,17 @@ Protected Class OAuthToken
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Dict As Dictionary)
+		  Var Delta As Double
+		  If Dict.HasKey("now") Then
+		    Var OfficialNow As Double = Dict.Value("now").DoubleValue
+		    Var UnofficialNow As Double = DateTime.Now.SecondsFrom1970
+		    Delta = UnofficialNow - OfficialNow
+		  End If
+		  
 		  Self.mAccessToken = Dict.Value("access_token").StringValue
 		  Self.mRefreshToken = Dict.Value("refresh_token").StringValue
-		  Self.mAccessTokenExpiration = Dict.Value("access_token_expiration").DoubleValue
-		  Self.mRefreshTokenExpiration = Dict.Value("refresh_token_expiration").DoubleValue
+		  Self.mAccessTokenExpiration = Dict.Value("access_token_expiration").DoubleValue + Delta
+		  Self.mRefreshTokenExpiration = Dict.Value("refresh_token_expiration").DoubleValue + Delta
 		  Self.mScopes = Dict.Value("scope").StringValue.Split(" ")
 		End Sub
 	#tag EndMethod
@@ -62,7 +69,7 @@ Protected Class OAuthToken
 
 	#tag Method, Flags = &h0
 		Shared Function Load(Dict As Dictionary) As BeaconAPI.OAuthToken
-		  If Dict.HasAllKeys("token_type", "access_token", "refresh_token", "access_token_expiration", "refresh_token_expiration", "access_token_expires_in", "refresh_token_expires_in", "scope") = False Then
+		  If Dict.HasAllKeys("token_type", "access_token", "refresh_token", "access_token_expiration", "refresh_token_expiration", "scope") = False Then
 		    Return Nil
 		  End If
 		  
