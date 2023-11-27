@@ -561,7 +561,7 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		  // Part of the Beacon.Validateable interface.
 		  
 		  For Each Set As ArkSA.LootItemSet In Self.mSets
-		    Set.Validate(Location + "." + Self.mDropRef.ClassString, Issues, Project)
+		    Set.Validate(Location + Beacon.Issue.Separator + Self.mDropRef.ClassString, Issues, Project)
 		  Next
 		End Sub
 	#tag EndMethod

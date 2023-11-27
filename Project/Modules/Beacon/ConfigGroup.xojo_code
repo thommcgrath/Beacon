@@ -116,7 +116,7 @@ Implements Beacon.Validateable
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
 		  
-		  RaiseEvent Validate(Location + "." + Self.InternalName, Issues, Project)
+		  RaiseEvent Validate(Location + Beacon.Issue.Separator + Self.InternalName, Issues, Project)
 		End Sub
 	#tag EndMethod
 

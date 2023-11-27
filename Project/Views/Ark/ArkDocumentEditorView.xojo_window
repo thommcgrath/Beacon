@@ -890,7 +890,7 @@ End
 		    Return
 		  End Select
 		  
-		  Var Parts() As String = Issue.Location.Split(".")
+		  Var Parts() As String = Issue.Location.Split(Beacon.Issue.Separator)
 		  If Parts.Count < 3 Then
 		    Break
 		    App.Log("Unknown issue path " + Issue.Location)

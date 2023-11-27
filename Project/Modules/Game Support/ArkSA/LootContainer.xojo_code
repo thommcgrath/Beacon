@@ -548,11 +548,11 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 		  // Part of the Beacon.Validateable interface.
 		  
 		  For Each Set As ArkSA.LootItemSet In Self.mItemSets
-		    Set.Validate(Location + "." + Self.ClassString, Issues, Project)
+		    Set.Validate(Location + Beacon.Issue.Separator + Self.ClassString, Issues, Project)
 		  Next Set
 		  
 		  If Self.Count < Self.RequiredItemSetCount Then
-		    Issues.Add(New Beacon.Issue(Location + "." + Self.ClassString, "Loot drop '" + Self.Label + "' requires at least " + Self.RequiredItemSetCount.ToString(Locale.Current, "0") + " item sets."))
+		    Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + Self.ClassString, "Loot drop '" + Self.Label + "' requires at least " + Self.RequiredItemSetCount.ToString(Locale.Current, "0") + " item sets."))
 		  End If
 		End Sub
 	#tag EndMethod

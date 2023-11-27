@@ -453,7 +453,7 @@ End
 
 	#tag Event
 		Sub ShowIssue(Issue As Beacon.Issue)
-		  Var LocationParts() As String = Issue.Location.Split(".")
+		  Var LocationParts() As String = Issue.Location.Split(Beacon.Issue.Separator)
 		  // ConfigSet is 0, ConfigName is 1
 		  Var DropClass As String = LocationParts(2)
 		  Var ItemSetUUID, EntryUUID, EngramClass As String
@@ -565,8 +565,8 @@ End
 	#tag Method, Flags = &h0
 		Function GoToChild(DropClass As String, ItemSetUUID As String = "", EntryUUID As String = "", EngramClass As String = "") As Boolean
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    Var Container As Ark.LootContainer = Self.List.RowTagAt(Idx)
-		    If Container Is Nil Or Container.ClassString <> DropClass Then
+		    Var Container As Ark.LootDropOverride = Self.List.RowTagAt(Idx)
+		    If Container Is Nil Or Container.LootDropReference.ClassString <> DropClass Then
 		      Continue
 		    End If
 		    

@@ -746,7 +746,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  // Part of the Beacon.Validateable interface.
 		  
 		  For Each Entry As Ark.LootItemSetEntry In Self.mEntries
-		    Entry.Validate(Location + "." + Self.UUID, Issues, Project)
+		    Entry.Validate(Location + Beacon.Issue.Separator + Self.UUID, Issues, Project)
 		  Next Entry
 		End Sub
 	#tag EndMethod

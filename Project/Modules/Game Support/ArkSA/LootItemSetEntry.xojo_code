@@ -885,7 +885,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  // Part of the Beacon.Validateable interface.
 		  
 		  For Each Option As ArkSA.LootItemSetEntryOption In Self.mOptions
-		    Option.Validate(Location + "." + Self.EntryId, Issues, Project)
+		    Option.Validate(Location + Beacon.Issue.Separator + Self.EntryId, Issues, Project)
 		  Next Option
 		End Sub
 	#tag EndMethod

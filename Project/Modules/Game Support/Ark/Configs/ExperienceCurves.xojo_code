@@ -141,7 +141,7 @@ Inherits Ark.ConfigGroup
 		  Var Locale As Locale = Locale.Current
 		  
 		  If Self.mPlayerLevels.LastIndex > -1 And Self.PlayerLevelCap <= Self.AscensionLevels Then
-		    Issues.Add(New Beacon.Issue(Location + ".PlayerLevels", "Must define at least " + Self.AscensionLevels.ToString(Locale) + " player levels to handle ascension correctly."))
+		    Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "PlayerLevels", "Must define at least " + Self.AscensionLevels.ToString(Locale) + " player levels to handle ascension correctly."))
 		  End If
 		  
 		  For I As Integer = 0 To Self.mPlayerLevels.LastIndex
@@ -149,10 +149,10 @@ Inherits Ark.ConfigGroup
 		    Var XP As UInt64 = Self.mPlayerLevels(I)
 		    Var LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), CType(0, UInt64))
 		    If XP < LastXP Then
-		      Issues.Add(New Beacon.Issue(Location + ".PlayerLevels." + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
+		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "PlayerLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
 		    End If
 		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
-		      Issues.Add(New Beacon.Issue(Location + ".PlayerLevels." + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
+		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "PlayerLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
 		    End If
 		  Next I
 		  
@@ -161,10 +161,10 @@ Inherits Ark.ConfigGroup
 		    Var XP As UInt64 = Self.mDinoLevels(I)
 		    Var LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), CType(0, UInt64))
 		    If XP < LastXP Then
-		      Issues.Add(New Beacon.Issue(Location + ".DinoLevels." + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
+		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "DinoLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
 		    End If
 		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
-		      Issues.Add(New Beacon.Issue(Location + ".DinoLevels." + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
+		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "DinoLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
 		    End If
 		  Next I
 		End Sub

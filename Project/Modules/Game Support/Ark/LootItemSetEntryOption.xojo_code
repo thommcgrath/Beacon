@@ -169,7 +169,7 @@ Implements Beacon.Validateable,Ark.Weighted
 		  // Part of the Beacon.Validateable interface.
 		  
 		  Try
-		    Location = Location + "." + Self.mEngramRef.ClassString
+		    Location = Location + Beacon.Issue.Separator + Self.mEngramRef.ClassString
 		    If Issues.HasIssue(Location) Then
 		      Return
 		    End If
