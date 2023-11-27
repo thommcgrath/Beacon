@@ -27,6 +27,7 @@ Begin ModEditorView ArkModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -37,6 +38,7 @@ Begin ModEditorView ArkModEditorView
       ThreadState     =   0
    End
    Begin Ark.ModDiscoveryEngine DiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -63,7 +65,7 @@ Begin ModEditorView ArkModEditorView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   900
       Begin OmniBarSeparator FilterSeparator
@@ -403,7 +405,7 @@ End
 		  #Pragma Unused Initial
 		  
 		  Var Group As New ControlGroup(Self.DiscoveryStatusLabel, Self.DiscoveryStatusBar)
-		  Group.Top = (Self.Height - Group.Height) / 3
+		  Group.Top = (Self.Height - Group.Height) / 2.5
 		  Group.Left = (Self.Width - Group.Width) / 2
 		End Sub
 	#tag EndEvent
@@ -767,6 +769,14 @@ End
 		  For Idx As Integer = Ark.BlueprintController.FirstMode To Ark.BlueprintController.LastMode
 		    Self.mBlueprints(Idx) = New Dictionary
 		    Self.mHasRequestedBlueprints(Idx) = False
+		  Next
+		  
+		  Var Blueprints() As Ark.Blueprint = Self.mController.AllBlueprints()
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var ModeDict As Dictionary = Self.BlueprintDictionary(Blueprint)
+		    If (ModeDict Is Nil) = False Then
+		      ModeDict.Value(Blueprint.BlueprintId) = Blueprint
+		    End If
 		  Next
 		  
 		  Self.SwitchMode(Self.mMode)

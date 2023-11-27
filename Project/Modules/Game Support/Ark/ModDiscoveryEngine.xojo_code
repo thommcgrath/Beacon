@@ -396,7 +396,7 @@ Protected Class ModDiscoveryEngine
 		  Self.mModsByTag = New Dictionary
 		  Self.mTagsByMod = New Dictionary
 		  If (ModsFolder Is Nil) = False Then
-		    Self.StatusMessage = "Colling mod info…"
+		    Self.StatusMessage = "Collecting mod info…"
 		    
 		    For Each ModId As String In Self.mModIds
 		      If Self.mCancelled Then

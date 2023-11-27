@@ -1,14 +1,7 @@
 #tag Class
 Protected Class ModDiscoverySettings
 	#tag Method, Flags = &h0
-		Function ArkFolder() As FolderItem
-		  Return New FolderItem(Self.mArkFolder)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(ArkFolder As FolderItem, ModIds() As String, DeleteBlueprints As Boolean)
-		  Self.mArkFolder = New FolderItem(ArkFolder)
+		Sub Constructor(ModIds() As String, DeleteBlueprints As Boolean)
 		  Self.mModIds = ModIds
 		  Self.mDeleteBlueprints = DeleteBlueprints
 		End Sub
@@ -31,10 +24,6 @@ Protected Class ModDiscoverySettings
 		End Function
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mArkFolder As FolderItem
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDeleteBlueprints As Boolean

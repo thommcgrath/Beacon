@@ -49,7 +49,7 @@ Begin BeaconDialog ArkSARegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   520
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -968,6 +968,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub CheckForDiscovery()
+		  If Self.mMode = Self.ModeRemote Then
+		    // Don't discover remote mods
+		    Self.ShowNamePage(Self.mModName)
+		    Return
+		  End If
+		  
+		  Var Request As New BeaconAPI.Request("/discovery/" + Self.mModId, "HEAD", WeakAddressOf APICallback_CheckModDiscovered)
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor(ModInfo As BeaconAPI.ContentPack, Mode As Integer)
 		  Self.mModInfo = ModInfo
 		  Self.mMode = Mode
@@ -989,6 +1002,7 @@ End
 		      Socket.Send("GET", "https://api.curseforge.com/v1/mods/" + Self.mCurseForgeId.ToString(Locale.Raw, "0"))
 		    End If
 		    Self.mCurseForgeLookupSocket = Socket
+		    Self.LookupProgressBar.Indeterminate = True
 		  Catch Err As RuntimeException
 		    Self.mCurseForgeLookupSocket_Error(Socket, Err)
 		  End Try
@@ -1041,13 +1055,7 @@ End
 		    Self.mCurseForgeId = CurseForgeId
 		    Self.mCurseForgeSlug = CurseForgeSlug
 		    
-		    If Self.mMode = Self.ModeLocal Then
-		      // See if this mod has been discovered already
-		      Var Request As New BeaconAPI.Request("/discovery/" + ModId, "HEAD", WeakAddressOf APICallback_CheckModDiscovered)
-		      BeaconAPI.Send(Request)
-		    Else
-		      Self.ShowNamePage(ModName)
-		    End If
+		    Self.CheckForDiscovery()
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Response from CurseForge API")
 		    Self.ShowAlert("Mod lookup error", "Failed to parse response from CurseForge")
@@ -1112,7 +1120,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowNamePage(PrefilledName As String = "")
+		Private Sub ShowNamePage(PrefilledName As String)
 		  Self.NameInputField.Text = PrefilledName
 		  Self.Pages.SelectedPanelIndex = Self.PageName
 		  
@@ -1186,7 +1194,7 @@ End
 	#tag Constant, Name = IntroMessageRemote, Type = String, Dynamic = False, Default = \"Register Mod", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LookupExplanationCaption, Type = String, Dynamic = True, Default = \"Beacon is retreiving the mod id and slug from CurseForge\xE2\x80\xA6", Scope = Private
+	#tag Constant, Name = LookupExplanationCaption, Type = String, Dynamic = True, Default = \"Beacon is retreiving the mod from CurseForge\xE2\x80\xA6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LookupMessageCaption, Type = String, Dynamic = True, Default = \"Finding Mod\xE2\x80\xA6", Scope = Private
@@ -1250,7 +1258,7 @@ End
 		Sub Pressed()
 		  If Preferences.OnlineEnabled = False Then
 		    // Go to next step
-		    Self.ShowNamePage()
+		    Self.ShowNamePage("")
 		    Return
 		  End If
 		  
