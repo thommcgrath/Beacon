@@ -23,6 +23,7 @@ function handleRequest(array $context): Response {
 			$token->Refresh();
 			$json[] = $token->JSON($authenticatedAsUser);
 		} catch (Exception $err) {
+			$token->MarkNeedsReplacing();
 		}
 	}
 	return Response::NewJson($json, 200);

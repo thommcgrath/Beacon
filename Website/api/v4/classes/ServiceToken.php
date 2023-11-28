@@ -11,7 +11,7 @@ class ServiceToken implements JsonSerializable {
 	final const TypeStatic = 'Static';
 
 	final const ExpirationBuffer = 86400;
-	private const SelectColumns = 'service_tokens.token_id, service_tokens.user_id, users.username, service_tokens.provider, service_tokens.type, service_tokens.access_token, EXTRACT(EPOCH FROM service_tokens.access_token_expiration) AS access_token_expiration, service_tokens.refresh_token, EXTRACT(EPOCH FROM service_tokens.refresh_token_expiration) AS refresh_token_expiration, service_tokens.provider_specific, service_tokens.encryption_key, service_tokens.automatic';
+	private const SelectColumns = 'service_tokens.token_id, service_tokens.user_id, users.username, service_tokens.provider, service_tokens.type, service_tokens.access_token, EXTRACT(EPOCH FROM service_tokens.access_token_expiration) AS access_token_expiration, service_tokens.refresh_token, EXTRACT(EPOCH FROM service_tokens.refresh_token_expiration) AS refresh_token_expiration, service_tokens.provider_specific, service_tokens.encryption_key, service_tokens.automatic, service_tokens.needs_replacing';
 	private const FromClause = 'public.service_tokens INNER JOIN public.users ON (service_tokens.user_id = users.user_id)';
 
 	protected string $tokenId;
@@ -28,6 +28,7 @@ class ServiceToken implements JsonSerializable {
 	protected string $encryptionKey;
 	protected array $providerSpecific;
 	protected bool $automatic;
+	protected bool $needsReplacing;
 
 	public static function RedirectURI(string $provider): string {
 		return 'https://' . BeaconCommon::Domain() . '/account/oauth/v4/redeem/' . strtolower($provider);
@@ -82,6 +83,7 @@ class ServiceToken implements JsonSerializable {
 		$this->refreshTokenExpiration = is_null($row->Field('refresh_token_expiration')) ? null : intval($row->Field('refresh_token_expiration'));
 		$this->providerSpecific = json_decode($row->Field('provider_specific'), true);
 		$this->automatic = $row->Field('automatic');
+		$this->needsReplacing = $row->Field('needs_replacing');
 
 		$this->encryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($row->Field('encryption_key')));
 		$this->accessToken = BeaconEncryption::SymmetricDecrypt($this->encryptionKey, base64_decode($this->accessTokenEncrypted));
@@ -378,6 +380,23 @@ class ServiceToken implements JsonSerializable {
 		return in_array($this->provider, [self::ProviderNitrado, self::ProviderGameServerApp]);
 	}
 
+	public function NeedsReplacing(): bool {
+		return $this->needsReplacing;
+	}
+
+	public function MarkNeedsReplacing(): void {
+		if ($this->needsReplacing === true) {
+			return;
+		}
+
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('UPDATE public.service_tokens SET needs_replacing = TRUE WHERE token_id = $1;', $this->tokenId);
+		$database->Commit();
+
+		$this->needsReplacing = true;
+	}
+
 	public function JSON(bool $decrypted): array {
 		$json = [
 			'tokenId' => $this->tokenId,
@@ -390,6 +409,7 @@ class ServiceToken implements JsonSerializable {
 			'providerSpecific' => $this->providerSpecific,
 			'automatic' => $this->automatic,
 			'providesServers' => $this->ProvidesServers(),
+			'needsReplacing' => $this->needsReplacing,
 		];
 		if ($decrypted) {
 			$json['encryptionKey'] = base64_encode($this->encryptionKey);

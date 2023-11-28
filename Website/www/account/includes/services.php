@@ -39,6 +39,9 @@ if (count($connectedServices) > 0) {
 		echo '<div class="service service-' . $providerSimplified . '">';
 		echo '<div class="service-logo"><img src="' . BeaconCommon::AssetURI($providerSimplified . '-color.svg') . '" alt="' . $provider . '"></div>';
 		echo '<div class="service-name">' . $username . '</div>';
+		if ($service->NeedsReplacing()) {
+			echo '<div class="service-error">This service is no longer usable due to an authentication error and should be replaced.</div>';
+		}
 		echo '<div class="service-action"><div class="button-group"><button class="' . $buttonClass . '" beacon-provider="' . $providerLower . '" beacon-provider-type="' . strtolower($service->Type()) . '" beacon-token-id="' . htmlentities($service->TokenId()) . '" beacon-token-name="' . htmlentities($serviceName) . '">' . htmlentities($buttonCaption) . '</button></div></div>';
 		echo '</div>';
 	}
