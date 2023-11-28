@@ -44,7 +44,7 @@ Protected Class ModDiscoveryEngine
 		      Return
 		    End If
 		    
-		    Self.StatusMessage = "Downloading mod " + ModId + "…"
+		    Self.StatusMessage = "Looking up mod " + ModId + "…"
 		    
 		    Try
 		      Var LookupSocket As New SimpleHTTP.SynchronousHTTPSocket
@@ -80,6 +80,19 @@ Protected Class ModDiscoveryEngine
 		        Continue For ModId
 		      End If
 		      
+		      Var FileHash As String
+		      Var Hashes As JSONItem = LatestFile.Child("hashes")
+		      For Idx As Integer = 0 To Hashes.Count - 1
+		        Var Hash As JSONItem = Hashes.ChildAt(Idx)
+		        If Hash.Value("algo") = 1 Then
+		          FileHash = Hash.Value("value")
+		          Exit For Idx
+		        End If
+		      Next
+		      
+		      Var FileSize As Double = LatestFile.Value("fileLength")
+		      Var FileName As String = LatestFile.Value("fileName")
+		      
 		      Var DownloadUrl As String
 		      If LatestFile.HasKey("downloadUrl") And LatestFile.Value("downloadUrl").IsNull = False Then
 		        DownloadUrl = LatestFile.Value("downloadUrl")
@@ -88,16 +101,34 @@ Protected Class ModDiscoveryEngine
 		        Var FileId As Integer = LatestFile.Value("id")
 		        Var ParentFolderId As Integer = Floor(FileId / 1000)
 		        Var ChildFolderId As Integer = FileId - (ParentFolderId * 1000)
-		        DownloadUrl = "https://edge.forgecdn.net/files/" + ParentFolderId.ToString(Locale.Raw, "0") + "/" + ChildFolderId.ToString(Locale.Raw, "0") + "/" + EncodeURLComponent(LatestFile.Value("fileName").StringValue)
+		        DownloadUrl = "https://edge.forgecdn.net/files/" + ParentFolderId.ToString(Locale.Raw, "0") + "/" + ChildFolderId.ToString(Locale.Raw, "0") + "/" + EncodeURLComponent(FileName)
 		      End If
 		      
 		      // This isn't officially supported, so let's pretend we're a browser.
 		      Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
 		      DownloadSocket.RequestHeader("User-Agent") = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+		      Me.StatusMessage = "Downloading " + FileName + ", " + Beacon.BytesToString(FileSize) + "…"
 		      DownloadSocket.Send("GET", DownloadUrl)
 		      If DownloadSocket.LastHTTPStatus <> 200 Then
 		        App.Log("Mod " + ModId + " was looked up, but the archive could not be downloaded: HTTP #" + DownloadSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
 		        Continue For ModId
+		      End If
+		      
+		      Var DownloadedBytes As Double
+		      If (DownloadSocket.LastContent Is Nil) = False Then
+		        DownloadedBytes = DownloadSocket.LastContent.Size
+		      End If
+		      If DownloadedBytes <> FileSize Then
+		        App.Log("Mod " + ModId + " downloaded " + Beacon.BytesToString(DownloadedBytes) + " but should have downloaded " + Beacon.BytesToString(FileSize) + ".")
+		        Continue For ModId
+		      End If
+		      
+		      If FileHash.IsEmpty = False And (DownloadSocket.LastContent Is Nil) = False Then
+		        Var ComputedHash As String = EncodeHex(Crypto.SHA1(DownloadSocket.LastContent))
+		        If ComputedHash <> FileHash Then
+		          App.Log("Mod " + ModId + " downloaded but checksum does not match. Expected " + FileHash.Lowercase + ", computed " + ComputedHash.Lowercase)
+		          Continue For ModId
+		        End If
 		      End If
 		      
 		      Var Reader As New ArchiveReaderMBS
@@ -108,6 +139,7 @@ Protected Class ModDiscoveryEngine
 		        Continue For ModId
 		      End If
 		      
+		      Me.StatusMessage = "Locating manifest of " + FileName + "…"
 		      Var ManifestContent As String
 		      Do
 		        Var Entry As ArchiveEntryMBS = Reader.NextHeader
@@ -132,6 +164,7 @@ Protected Class ModDiscoveryEngine
 		      Reader.Close
 		      Reader = Nil
 		      
+		      Me.StatusMessage = "Scanning manifest of " + FileName + "…"
 		      Var Lines() As String = ManifestContent.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
 		      Var Candidates As New Dictionary
 		      For Each Line As String In Lines
@@ -155,6 +188,8 @@ Protected Class ModDiscoveryEngine
 		      App.Log(Err, CurrentMethodName, "Trying to download mod " + ModId)
 		    End Try
 		  Next
+		  
+		  Me.StatusMessage = "Finished"
 		  
 		  If Self.mCancelled Then
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
