@@ -19,8 +19,11 @@ function handleRequest(array $context): Response {
 	$tokens = ServiceToken::Lookup(userId: $userId, provider: $provider, tokenId: $tokenId);
 	$json = [];
 	foreach ($tokens as $token) {
-		$token->Refresh();
-		$json[] = $token->JSON($authenticatedAsUser);
+		try {
+			$token->Refresh();
+			$json[] = $token->JSON($authenticatedAsUser);
+		} catch (Exception $err) {
+		}
 	}
 	return Response::NewJson($json, 200);
 }
