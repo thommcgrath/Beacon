@@ -1,6 +1,17 @@
 #tag Class
 Protected Class ModDiscoveryEngine
 	#tag Method, Flags = &h0
+		Sub Cancel()
+		  Self.mCancelled = True
+		  Self.StatusMessage = "Cancelling…"
+		  
+		  If (Self.mThread Is Nil) = False And Self.mThread.ThreadState = Thread.ThreadStates.Paused Then
+		    Self.mThread.Resume
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ModIds() As String()
 		  Var ModIds() As String
 		  ModIds.ResizeTo(Self.mModIds.LastIndex)
@@ -144,8 +155,6 @@ Protected Class ModDiscoveryEngine
 		      App.Log(Err, CurrentMethodName, "Trying to download mod " + ModId)
 		    End Try
 		  Next
-		  
-		  RaiseEvent Import("") // Needs to run on the actual manifest
 		  
 		  If Self.mCancelled Then
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
@@ -325,6 +334,12 @@ Protected Class ModDiscoveryEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WasSuccessful() As Boolean
+		  Return Self.mSuccess
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
@@ -336,10 +351,6 @@ Protected Class ModDiscoveryEngine
 
 	#tag Hook, Flags = &h0
 		Event Finished()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Import(LogContents As String)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -255,7 +255,13 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   270
    End
-   Begin Ark.ModDiscoveryEngine DiscoveryEngine
+   Begin Ark.ModDiscoveryEngine ArkDiscoveryEngine
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin ArkSA.ModDiscoveryEngine ArkSADiscoveryEngine
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -409,7 +415,13 @@ End
 		Private Sub mProgress_CancelPressed(Sender As ProgressWindow)
 		  #Pragma Unused Sender
 		  
-		  Self.DiscoveryEngine.Cancel
+		  If (Self.ArkDiscoveryEngine Is Nil) = False Then
+		    Self.ArkDiscoveryEngine.Cancel
+		  End If
+		  
+		  If (Self.ArkSADiscoveryEngine Is Nil) = False Then
+		    Self.ArkSADiscoveryEngine.Cancel
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -425,16 +437,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RunModDiscovery()
-		  Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureMods, False)
-		  If GameId.IsEmpty Then
-		    Return
-		  End If
-		  If GameId <> Ark.Identifier Then
-		    Self.ShowAlert("Beacon does not support mod discovery for " + Language.GameName(GameId), "This feature may or may not be coming in the future.")
-		    Return
-		  End If
-		  
+		Private Sub RunArkModDiscovery()
 		  Var Settings As Ark.ModDiscoverySettings = ArkModDiscoveryDialog.Present(Self)
 		  If Settings Is Nil Then
 		    Return
@@ -501,10 +504,103 @@ End
 		  Try
 		    Var ArkFolder As FolderItem = Settings.ArkFolder
 		    Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
-		    Self.DiscoveryEngine.Start(ArkFolder, ModIds)
+		    Self.ArkDiscoveryEngine.Start(ArkFolder, ModIds)
 		  Catch Err As RuntimeException
 		    Self.ShowAlert("Beacon could not start mod discovery", Err.Message)
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RunArkSAModDiscovery()
+		  Var Settings As ArkSA.ModDiscoverySettings = ArkSAModDiscoveryDialog.Present(Self)
+		  If Settings Is Nil Then
+		    Return
+		  End If
+		  
+		  Var ModIds() As String = Settings.ModIds
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var OfficialModNames() As String
+		  Var OfficialModIds() As String
+		  For Each ModId As String In ModIds
+		    Var Pack As Beacon.ContentPack = DataSource.GetContentPack(Beacon.MarketplaceCurseForge, ModId)
+		    If (Pack Is Nil) = False And Pack.IsLocal = False Then
+		      OfficialModNames.Add(Pack.Name + " (" + ModId + ")")
+		      OfficialModIds.Add(ModID)
+		    End If
+		    
+		    If Self.CloseModView(ModID) = False Then
+		      Self.ShowAlert("Close your mod editors to continue", "There is an editor open for mod " + ModID + " that needs to be closed first.")
+		      Return
+		    End If
+		  Next
+		  
+		  If OfficialModNames.Count > 0 Then
+		    Var RemainingMods As Integer = ModIds.Count - OfficialModNames.Count
+		    Var SkipCaption As String = "Skip Them"
+		    
+		    Var Message As String = If(RemainingMods > 0, "Beacon already supports some of your mods", "Beacon already supports your mods")
+		    Var Explanation As String
+		    If OfficialModNames.Count > 8 Then
+		      Explanation = OfficialModNames.Count.ToString(Locale.Current, "#,##0") + " mods are already built into Beacon and do not need to be discovered."
+		    ElseIf OfficialModNames.Count > 1 Then
+		      Explanation = "The mods " + Language.EnglishOxfordList(OfficialModNames) + " are already built into Beacon and do not need to be discovered."
+		    Else
+		      Message = If(RemainingMods > 0, "Beacon already supports one of your mods", "Beacon already supports your mod")
+		      Explanation = "The mod " + OfficialModNames(0) + " is already built into Beacon and does not need to be discovered."
+		      SkipCaption = "Skip It"
+		    End If
+		    
+		    Var ShouldSkip As Boolean
+		    Var Choice As BeaconUI.ConfirmResponses
+		    If RemainingMods > 0 Then
+		      Choice = BeaconUI.ShowConfirm(Message, Explanation, SkipCaption, "Cancel Discovery", "Discover Anyway")
+		      ShouldSkip = (Choice = BeaconUI.ConfirmResponses.Action)
+		    Else
+		      Choice = BeaconUI.ShowConfirm(Message, Explanation, "Discover Anyway", "Cancel Discovery", "")
+		    End If
+		    If Choice = BeaconUI.ConfirmResponses.Cancel Then
+		      Return
+		    End If
+		    
+		    If ShouldSkip Then
+		      For Idx As Integer = ModIDs.LastIndex DownTo 0
+		        If OfficialModIds.IndexOf(ModIds(Idx)) > -1 Then
+		          ModIDs.RemoveAt(Idx)
+		        End If
+		      Next
+		    End If
+		  End If
+		  
+		  Try
+		    Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
+		    Self.ArkSADiscoveryEngine.Start(ModIds)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Beacon could not start mod discovery", Err.Message)
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RunModDiscovery()
+		  Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureMods, False)
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Select Case GameId
+		  Case Ark.Identifier
+		    #if Not TargetWindows
+		      Self.ShowAlert("Mod discovery for " + Language.GameName(Ark.Identifier) + " requires Windows.", "Mod discovery will launch an Ark server to do its work. There is no Ark server process for macOS.")
+		      Return
+		    #endif
+		    
+		    Self.RunArkModDiscovery()
+		  Case ArkSA.Identifier
+		    Self.RunArkSAModDiscovery()
+		  End Select
+		  
+		  
 		End Sub
 	#tag EndMethod
 
@@ -675,12 +771,10 @@ End
 		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Export the selected mod or mods to be shared with other Beacon users.", False))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EditModBlueprints", "Edit Blueprints", IconToolbarEdit, "Edit the blueprints provided by the selected mod.", Self.ModsList.SelectedRowCount = 1))
-		  #if TargetWindows
-		    Me.Append(OmniBarItem.CreateSpace)
-		    Me.Append(OmniBarItem.CreateSeparator)
-		    Me.Append(OmniBarItem.CreateSpace)
-		    Me.Append(OmniBarItem.CreateButton("DiscoverMods", "Discover Mods", IconToolbarDiscover, "Launch a dedicated server to discover mod data."))
-		  #endif
+		  Me.Append(OmniBarItem.CreateSpace)
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateSpace)
+		  Me.Append(OmniBarItem.CreateButton("DiscoverMods", "Discover Mods", IconToolbarDiscover, "Launch a dedicated server to discover mod data."))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -767,7 +861,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events DiscoveryEngine
+#tag Events ArkDiscoveryEngine
 	#tag Event
 		Sub Error(ErrorMessage As String)
 		  Self.ShowAlert("There was an error with mod discovery", ErrorMessage)
@@ -968,6 +1062,97 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Started()
+		  Self.mProgress = New ProgressWindow("Running mod discovery", Me.StatusMessage)
+		  AddHandler mProgress.CancelPressed, WeakAddressOf mProgress_CancelPressed
+		  Self.mProgress.Show(Self.TrueWindow)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub StatusUpdated()
+		  If (Self.mProgress Is Nil) = False Then
+		    Self.mProgress.Detail = Me.StatusMessage
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ArkSADiscoveryEngine
+	#tag Event
+		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
+		  
+		  // Save the new content pack
+		  If Blueprints.Count > 0 Then
+		    DataSource.SaveContentPack(ContentPack, False)
+		    Self.mNumAddedMods = Self.mNumAddedMods + 1
+		  End If
+		  
+		  // Find existing blueprints
+		  Var Map As New Dictionary
+		  Var ExistingBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		  For Each Blueprint As ArkSA.Blueprint In ExistingBlueprints
+		    Map.Value(Blueprint.BlueprintId) = Blueprint
+		  Next
+		  
+		  // Existing blueprints should not be saved over
+		  Var BlueprintsToSave() As ArkSA.Blueprint
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    If Map.HasKey(Blueprint.BlueprintId) Then
+		      Map.Remove(Blueprint.BlueprintId)
+		    Else
+		      BlueprintsToSave.Add(Blueprint)
+		    End If
+		  Next
+		  
+		  // Setup blueprints to be deleted, if necessary
+		  Var BlueprintsToDelete() As ArkSA.Blueprint
+		  If Self.mDiscoveryShouldDelete Then
+		    For Each Entry As DictionaryEntry In Map
+		      BlueprintsToDelete.Add(Entry.Value)
+		    Next
+		  End If
+		  
+		  Var ErrorDict As New Dictionary
+		  Call DataSource.SaveBlueprints(Blueprints, BlueprintsToDelete, ErrorDict, True)
+		  
+		  Self.mNumAddedBlueprints = Self.mNumAddedBlueprints + BlueprintsToSave.Count
+		  Self.mNumRemovedBlueprints = Self.mNumRemovedBlueprints + BlueprintsToDelete.Count
+		  Self.mNumErrorBlueprints = Self.mNumErrorBlueprints + ErrorDict.KeyCount
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(ErrorMessage As String)
+		  Self.ShowAlert("There was an error with mod discovery", ErrorMessage)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished()
+		  If (Self.mProgress Is Nil) = False Then
+		    Self.mProgress.Close
+		    Self.mProgress = Nil
+		  End If
+		  
+		  If Me.WasSuccessful Then
+		    Self.RefreshMods()
+		  Else
+		    Return
+		  End If
+		  
+		  Var Message As String = "Added " + Language.NounWithQuantity(Self.mNumAddedMods, "new mod", "new mods") + ", " + Language.NounWithQuantity(Self.mNumAddedBlueprints, "new or updated blueprint", "new or updated blueprints") + ", and removed " + Language.NounWithQuantity(Self.mNumRemovedBlueprints, "blueprint", "blueprints") + "."
+		  If Self.mNumErrorBlueprints > 0 Then
+		    Message = Message + " " + Language.NounWithQuantity(Self.mNumErrorBlueprints, "blueprint", "blueprints") + " had errors and could not be imported."
+		  End If
+		  
+		  Self.ShowAlert("Mod discovery has finished", Message)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.mNumAddedBlueprints = 0
+		  Self.mNumErrorBlueprints = 0
+		  Self.mNumAddedMods = 0
+		  Self.mNumRemovedBlueprints = 0
+		  
 		  Self.mProgress = New ProgressWindow("Running mod discovery", Me.StatusMessage)
 		  AddHandler mProgress.CancelPressed, WeakAddressOf mProgress_CancelPressed
 		  Self.mProgress.Show(Self.TrueWindow)

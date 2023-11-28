@@ -95,7 +95,7 @@ Inherits Beacon.Thread
 		    Var ActiveMods As String = ParsedData.StringValue("ActiveMods", "")
 		    Var ModIDs() As String = ActiveMods.Split(",")
 		    For Each ModId As String In ModIDs
-		      Var ContentPack As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPackWithSteamId(ModId)
+		      Var ContentPack As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPack(Beacon.MarketplaceCurseForge, ModId)
 		      If (ContentPack Is Nil) = False Then
 		        Project.ContentPackEnabled(ContentPack) = True
 		      End If
