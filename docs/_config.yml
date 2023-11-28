@@ -25,7 +25,7 @@ gh_edit_view_mode: "edit"
 
 aux_links_new_tab: true
 aux_links:
-  "Ark Config File Reference":
-    - "https://ark.wiki.gg/wiki/Server_configuration"
+  "Create Support Ticket":
+    - "https://usebeacon.app/help/contact"
   "Beacon System Status":
     - "https://status.usebeacon.app/"

@@ -1187,7 +1187,7 @@ CREATE FUNCTION arksa.deletions_insert() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-	INSERT INTO public.deletions (object_id, game_id, from_table, label, min_version, action_time, tag) VALUES (NEW.object_id, 'Ark', NEW.from_table, NEW.label, NEW.min_version, NEW.action_time, NEW.tag);
+	INSERT INTO public.deletions (object_id, game_id, from_table, label, min_version, action_time, tag) VALUES (NEW.object_id, 'ArkSA', NEW.from_table, NEW.label, NEW.min_version, NEW.action_time, NEW.tag);
 	RETURN NEW;
 END;
 $$;
@@ -3446,7 +3446,7 @@ CREATE VIEW arksa.deletions AS
     deletions.action_time,
     deletions.tag
    FROM public.deletions
-  WHERE (deletions.game_id = 'Ark'::public.game_identifier);
+  WHERE (deletions.game_id = 'ArkSA'::public.game_identifier);
 
 
 ALTER TABLE arksa.deletions OWNER TO thommcgrath;
