@@ -1,6 +1,41 @@
 #tag Class
 Protected Class LootDropOverride
 Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
+	#tag Method, Flags = &h1
+		Protected Sub Add(Set As ArkSA.LootItemSet)
+		  If Set Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  
+		  Var CurrentNames() As String
+		  For SetIdx As Integer = 0 To Self.mSets.LastIndex
+		    If SetIdx = Idx Then
+		      Continue
+		    End If
+		    CurrentNames.Add(Self.mSets(SetIdx).Label)
+		  Next
+		  
+		  Var Label As String = Beacon.FindUniqueLabel(Set.Label, CurrentNames)
+		  If Label <> Set.Label Then
+		    Var Mutable As New ArkSA.MutableLootItemSet(Set)
+		    Mutable.Label = Label
+		    Set = Mutable
+		  End If
+		  
+		  If Idx > -1 Then
+		    If Self.mSets(Idx).Hash = Set.Hash Then
+		      Return
+		    End If
+		    Self.mSets(Idx) = Set.ImmutableVersion
+		  Else
+		    Self.mSets.Add(Set.ImmutableVersion)
+		  End If
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function AddToDefaults() As Boolean
 		  Return Self.mAddToDefaults
@@ -151,8 +186,8 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		    If (SetSaveData Is Nil) = False Then
 		      For Each SetDict As Dictionary In SetSaveData
 		        Var Set As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(SetDict)
-		        If Set <> Nil Then
-		          Override.mSets.Add(Set)
+		        If (Set Is Nil) = False Then
+		          Override.Add(Set)
 		        End If
 		      Next
 		    End If
@@ -188,7 +223,7 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		  For Each SetDict As Dictionary In SetDicts
 		    Var ItemSet As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(SetDict)
 		    If (ItemSet Is Nil) = False Then
-		      Override.mSets.Add(ItemSet)
+		      Override.Add(ItemSet)
 		    End If
 		  Next
 		  If Override.Count = 0 Then

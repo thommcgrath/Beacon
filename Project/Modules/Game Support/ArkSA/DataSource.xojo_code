@@ -2178,7 +2178,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Override.LoadDefaults(Rows.Column("min_item_sets").IntegerValue, Rows.Column("max_item_sets").IntegerValue, Rows.Column("prevent_duplicates").BooleanValue, False, Rows.Column("contents").StringValue)
+		  Override.LoadDefaults(Rows.Column("min_item_sets").IntegerValue, Rows.Column("max_item_sets").IntegerValue, False, Rows.Column("prevent_duplicates").BooleanValue, Rows.Column("contents").StringValue)
 		End Sub
 	#tag EndMethod
 
