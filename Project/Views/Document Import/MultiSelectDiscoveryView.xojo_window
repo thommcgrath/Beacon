@@ -27,7 +27,6 @@ Begin DiscoveryView MultiSelectDiscoveryView
    Width           =   720
    Begin Thread TokenLookupThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -128,7 +127,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   360
+      Height          =   368
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   " 	Name	Address	Platform"
@@ -148,7 +147,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   60
+      Top             =   52
       TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
@@ -284,6 +283,67 @@ Begin DiscoveryView MultiSelectDiscoveryView
       Visible         =   True
       Width           =   80
    End
+   Begin UITweaks.ResizedPopupMenu AccountMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialValue    =   "#AccountMenuAllAccountsCaption"
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -111
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   300
+   End
+   Begin UITweaks.ResizedLabel AccountMenuLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "#AccountMenuLabelCaption"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   -111
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   100
+   End
 End
 #tag EndDesktopWindow
 
@@ -321,57 +381,16 @@ End
 		  Self.mPendingListActions = Self.mPendingListActions - 1
 		  
 		  For Each Profile As Beacon.ServerProfile In Profiles
-		    Var PlatformText As String = "Unknown"
-		    Select Case Profile.Platform
-		    Case Beacon.PlatformPC
-		      PlatformText = "Steam & Epic"
-		    Case Beacon.PlatformPlayStation
-		      PlatformText = "PlayStation"
-		    Case Beacon.PlatformSwitch
-		      PlatformText = "Switch"
-		    Case Beacon.PlatformXbox
-		      PlatformText = "Xbox & Windows Store"
-		    Case Beacon.PlatformUniversal
-		      PlatformText = "Universal"
-		    End Select
-		    
-		    Self.List.AddRow("", Profile.Name, Profile.SecondaryName, PlatformText)
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Profile
+		    Self.mProfiles.Add(Profile)
 		  Next
 		  
-		  If Self.Busy = False And Self.List.RowCount = 0 Then
-		    Self.ShowAlert("No eligible servers were found", "Beacon could not find any " + Language.GameName(Self.GameId()) + " servers on any of the connected " + Self.ProviderName + " accounts.")
-		    Self.ShouldCancel()
-		    Return
-		  End If
-		  
-		  Var AllSamePlatform As Boolean = True
-		  Var PlatformText As String
-		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    If PlatformText.IsEmpty Then
-		      PlatformText = Self.List.CellTextAt(Idx, 3)
-		      Continue
+		  If Self.Busy = False Then
+		    Self.UpdateList()
+		    If Self.TrueWindow IsA BeaconWindow Then
+		      BeaconWindow(Self.TrueWindow).BringToFront()
 		    End If
-		    
-		    If PlatformText <> Self.List.CellTextAt(Idx, 3) Then
-		      AllSamePlatform = False
-		      Exit For Idx
-		    End If
-		  Next
-		  
-		  If AllSamePlatform Then
-		    Self.List.ColumnAttributesAt(3).WidthExpression = "0"
 		  Else
-		    Self.List.SizeColumnToFit(3)
-		  End If
-		  Self.List.SizeColumnToFit(2)
-		  
-		  Self.List.SortingColumn = 1
-		  Self.List.Sort
-		  Self.UpdateUI()
-		  
-		  If Self.Busy = False And Self.TrueWindow IsA BeaconWindow Then
-		    BeaconWindow(Self.TrueWindow).BringToFront()
+		    Self.UpdateUI()
 		  End If
 		  
 		End Sub
@@ -411,6 +430,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RefreshTokens()
 		  Self.List.RemoveAllRows()
+		  Self.mProfiles.ResizeTo(-1)
 		  Self.mFetchingTokens = False
 		  Self.mPendingListActions = 0
 		  Self.mCancelled = False
@@ -467,6 +487,83 @@ End
 		      App.Log(Err, CurrentMethodName, "Processing discovery thread interface update")
 		    End Try
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList()
+		  Var SelectedToken As BeaconAPI.ProviderToken
+		  If Self.AccountMenu.SelectedRowIndex > -1 Then
+		    SelectedToken = Self.AccountMenu.SelectedRowTag
+		  End If
+		  
+		  Self.List.SelectionChangeBlocked = True
+		  Self.List.RemoveAllRows()
+		  
+		  For Each Profile As Beacon.ServerProfile In Self.mProfiles
+		    If (SelectedToken Is Nil) = False Then
+		      Var Config As Beacon.HostConfig = Profile.HostConfig
+		      Select Case Config
+		      Case IsA Nitrado.HostConfig
+		        If Nitrado.HostConfig(Config).TokenId <> SelectedToken.TokenId Then
+		          Continue
+		        End If
+		      Case IsA GameServerApp.HostConfig
+		        If GameServerApp.HostConfig(Config).TokenId <> SelectedToken.TokenId Then
+		          Continue
+		        End If
+		      End Select
+		    End If
+		    
+		    Var PlatformText As String = "Unknown"
+		    Select Case Profile.Platform
+		    Case Beacon.PlatformPC
+		      PlatformText = "Steam & Epic"
+		    Case Beacon.PlatformPlayStation
+		      PlatformText = "PlayStation"
+		    Case Beacon.PlatformSwitch
+		      PlatformText = "Switch"
+		    Case Beacon.PlatformXbox
+		      PlatformText = "Xbox & Windows Store"
+		    Case Beacon.PlatformUniversal
+		      PlatformText = "Universal"
+		    End Select
+		    
+		    Self.List.AddRow("", Profile.Name, Profile.SecondaryName, PlatformText)
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Profile
+		  Next
+		  
+		  If SelectedToken Is Nil And Self.Busy = False And Self.List.RowCount = 0 Then
+		    Self.ShowAlert("No eligible servers were found", "Beacon could not find any " + Language.GameName(Self.GameId()) + " servers on any of the connected " + Self.ProviderName + " accounts.")
+		    Self.ShouldCancel()
+		    Return
+		  End If
+		  
+		  Var AllSamePlatform As Boolean = True
+		  Var PlatformText As String
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    If PlatformText.IsEmpty Then
+		      PlatformText = Self.List.CellTextAt(Idx, 3)
+		      Continue
+		    End If
+		    
+		    If PlatformText <> Self.List.CellTextAt(Idx, 3) Then
+		      AllSamePlatform = False
+		      Exit For Idx
+		    End If
+		  Next
+		  
+		  If AllSamePlatform Then
+		    Self.List.ColumnAttributesAt(3).WidthExpression = "0"
+		  Else
+		    Self.List.SizeColumnToFit(3)
+		  End If
+		  Self.List.SizeColumnToFit(2)
+		  
+		  Self.List.SortingColumn = 1
+		  Self.List.Sort
+		  Self.List.SelectionChangeBlocked(False) = False
+		  Self.UpdateUI()
 		End Sub
 	#tag EndMethod
 
@@ -566,6 +663,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProfiles() As Beacon.ServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectedServers As Dictionary
 	#tag EndProperty
 
@@ -578,6 +679,13 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = AccountMenuAllAccountsCaption, Type = String, Dynamic = True, Default = \"All Accounts", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = AccountMenuLabelCaption, Type = String, Dynamic = True, Default = \"Account:", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events TokenLookupThread
@@ -587,7 +695,7 @@ End
 		    Return
 		  End If
 		  Self.mFetchingTokens = True
-		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True))
 		  
 		  Var UserId As String = App.IdentityManager.CurrentUserId
 		  Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(UserId)
@@ -601,7 +709,7 @@ End
 		    
 		    If Provider.MatchesToken(Tokens(Idx)) Then
 		      Self.ListServers(Tokens(Idx))
-		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True))
 		    Else
 		      Tokens.RemoveAt(Idx)
 		    End If
@@ -621,7 +729,7 @@ End
 		      Tokens.Add(Token)
 		      Cache.Value(Token.TokenId) = Token
 		      Self.ListServers(Token)
-		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True))
 		    End If
 		  Next
 		  If Self.mCancelled Then
@@ -630,7 +738,7 @@ End
 		  
 		  Self.mTokens = Tokens
 		  Self.mFetchingTokens = False
-		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": true))
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True, "Finished": True))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -639,11 +747,50 @@ End
 		    If Update.Lookup("UpdateUI", False).BooleanValue = True Then
 		      Self.UpdateUI()
 		    End If
-		    If Update.Lookup("Finished", false).BooleanValue = True And Self.mTokens.Count = 0 Then
-		      If Self.ShowConfirm("No " + Self.ProviderName + " services are available. Would you like to connect a " + Self.ProviderName + " account to your Beacon account?", "Your web browser will be opened so you can connect your accounts.", "Connect", "Cancel") Then
-		        System.GotoURL(Beacon.WebURL("/account/#services", True))
+		    
+		    If Update.Lookup("Finished", false).BooleanValue = True Then
+		      If Self.mTokens.Count = 0 Then
+		        If Self.ShowConfirm("No " + Self.ProviderName + " services are available. Would you like to connect a " + Self.ProviderName + " account to your Beacon account?", "Your web browser will be opened so you can connect your accounts.", "Connect", "Cancel") Then
+		          System.GotoURL(Beacon.WebURL("/account/#services", True))
+		        End If
+		        Self.ShouldCancel()
+		        Return
 		      End If
-		      Self.ShouldCancel()
+		      
+		      Var SelectedTokenId As String
+		      Var SelectedRowTag As Variant = Self.AccountMenu.SelectedRowTag
+		      If SelectedRowTag.IsNull = False And SelectedRowTag IsA BeaconAPI.ProviderToken Then
+		        SelectedTokenId = BeaconAPI.ProviderToken(SelectedRowTag).TokenId
+		      End If
+		      
+		      Self.AccountMenu.RemoveAllRows
+		      Self.AccountMenu.AddRow(Self.AccountMenuAllAccountsCaption)
+		      Self.AccountMenu.AddSeparator()
+		      For Each Token As BeaconAPI.ProviderToken In Self.mTokens
+		        Self.AccountMenu.AddRow(Token.Label(BeaconAPI.ProviderToken.DetailNormal))
+		        Self.AccountMenu.RowTagAt(Self.AccountMenu.LastAddedRowIndex) = Token
+		        If Token.TokenId = SelectedTokenId Then
+		          Self.AccountMenu.SelectedRowIndex = Self.AccountMenu.LastAddedRowIndex
+		        End If
+		      Next
+		      If SelectedTokenId.IsEmpty Then
+		        Self.AccountMenu.SelectedRowIndex = 0
+		      End If
+		      
+		      If Self.mTokens.Count = 1 Then
+		        Self.AccountMenu.Visible = False
+		        Self.AccountMenuLabel.Visible = False
+		        Self.List.Top = Self.ListMessageLabel.Bottom + 12
+		      Else
+		        Self.AccountMenu.Visible = True
+		        Self.AccountMenuLabel.Visible = True
+		        Self.AccountMenu.Top = Self.ListMessageLabel.Bottom + 12
+		        Self.List.Top = Self.AccountMenu.Bottom + 12
+		      End If
+		      Self.AccountMenuLabel.Top = Self.AccountMenu.Top
+		      Self.List.Height = Self.ActionButton.Top - (12 + Self.List.Top)
+		      
+		      Self.UpdateList()
 		    End If
 		  Next
 		End Sub
@@ -699,6 +846,22 @@ End
 		    Profiles.Add(Self.List.RowTagAt(I))
 		  Next
 		  Self.ShouldFinish(Profiles)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AccountMenu
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AccountMenuLabel
+	#tag Event
+		Sub Open()
+		  Me.SizeToFit
+		  Self.AccountMenu.Left = Me.Right + 12
 		End Sub
 	#tag EndEvent
 #tag EndEvents
