@@ -252,31 +252,38 @@ Protected Class ModDiscoveryEngine
 		    ClassPaths.Value(ClassString) = Path
 		  Next
 		  
-		  Var Unlocks As New Dictionary
 		  Var Map As New SQLiteDatabase
 		  Map.Connect
 		  Map.ExecuteSQL("CREATE TABLE map (item_class TEXT COLLATE NOCASE NOT NULL, engram_class TEXT COLATE NOCASE NOT NULL, difference REAL NOT NULL);")
 		  Map.ExecuteSQL("CREATE INDEX map_engram_class_idx ON map(engram_class);")
 		  
-		  For Idx As Integer = PrimalItems.LastIndex DownTo 0
-		    Var ClassString As String = PrimalItems(Idx)
-		    Var PerfectEngramEntry As String = "EngramEntry" + ClassString.Middle(10)
+		  For Each ItemClass As String In PrimalItems
+		    Var PerfectEngramEntry As String = "EngramEntry" + ItemClass.Middle(10)
 		    
-		    For EngramIdx As Integer = EngramEntries.LastIndex DownTo 0
-		      Var Distance As Double = LevenshteinDistanceMBS(PerfectEngramEntry, EngramEntries(EngramIdx))
-		      Map.ExecuteSQL("INSERT INTO map (item_class, engram_class, difference) VALUES (?1, ?2, ?3);", ClassString, EngramEntries(EngramIdx), Distance)
+		    For Each EngramClass As String In EngramEntries
+		      Var Distance As Double = LevenshteinDistanceMBS(PerfectEngramEntry, EngramClass)
+		      Map.ExecuteSQL("INSERT INTO map (item_class, engram_class, difference) VALUES (?1, ?2, ?3);", ItemClass, EngramClass, Distance)
 		    Next
 		  Next
 		  
-		  For Each EngramClass As String In EngramEntries
-		    Var Rows As RowSet = Map.SelectSQL("SELECT item_class FROM map WHERE engram_class = ?1 ORDER BY difference LIMIT 1;", EngramClass)
+		  Var Unlocks As New Dictionary
+		  Do
+		    Var Rows As RowSet = Map.SelectSQL("SELECT item_class, difference, engram_class FROM map ORDER BY difference LIMIT 1;")
 		    If Rows.RowCount = 0 Then
-		      Continue
+		      Exit
 		    End If
 		    
 		    Var ItemClass As String = Rows.Column("item_class").StringValue
+		    Var Difference As Double = Rows.Column("difference").DoubleValue
+		    Var EngramClass As String = Rows.Column("engram_class").StringValue
+		    
+		    #if DebugBuild
+		      System.DebugLog("Matched " + EngramClass + " to " + ItemClass + " with score " + Difference.ToString(Locale.Raw, "0.0000"))
+		    #endif
+		    
 		    Unlocks.Value(ItemClass) = EngramClass
-		  Next
+		    Map.ExecuteSQL("DELETE FROM map WHERE item_class = ?1 OR engram_class = ?2;", ItemClass, EngramClass)
+		  Loop
 		  
 		  Var Blueprints() As ArkSA.Blueprint
 		  For Each ClassString As String In PrimalItems
