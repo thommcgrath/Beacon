@@ -97,9 +97,10 @@ Type: filesandordirs; Name: "{app}\Beacon.pdb"
 Type: filesandordirs; Name: "{app}\XojoGUIFramework64.dll"
 Type: filesandordirs; Name: "{app}\XojoGUIFrameworkARM.dll"
 Type: files; Name: "{autoprograms}\{#MyAppName} (Alpha).lnk"
+Type: files; Name: "{autoprograms}\{#MyAppName} (Beta).lnk"
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName} (Beta)"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\.beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
@@ -200,7 +201,7 @@ var
   sUnInstPath: String;
   sUninstallString: String;
 begin
-  sUnInstPath := ExpandConstant('Software\Microsoft\Windows\CurrentVersion\Uninstall\{7D88A8B1-0F3C-4251-9AA0-4E4C0EBC1187}_is1');
+  sUnInstPath := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{7D88A8B1-0F3C-4251-9AA0-4E4C0EBC1187}_is1';
   sUninstallString := '';
   if not RegQueryStringValue(HKLM, sUnInstPath, 'UninstallString', sUninstallString) then
     RegQueryStringValue(HKCU, sUnInstPath, 'UninstallString', sUninstallString);
