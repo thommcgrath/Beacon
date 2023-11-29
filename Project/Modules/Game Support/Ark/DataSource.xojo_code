@@ -131,7 +131,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  If Ark.BuildExport(UserPacks, Writer.LocalFile, False) = False Then
+		  If Beacon.BuildExport(UserPacks, Writer.LocalFile, False) = False Then
 		    Return
 		  End If
 		  

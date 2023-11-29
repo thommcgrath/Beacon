@@ -72,15 +72,115 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function BuildExport(ContentPacks() As Beacon.ContentPack, Archive As Beacon.Archive, IsUserData As Boolean) As Boolean
+		  Var Filenames() As String
+		  Var ArkDataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var ArkSADataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  For Each ContentPack As Beacon.ContentPack In ContentPacks
+		    Select Case ContentPack.GameId
+		    Case Ark.Identifier
+		      Var Blueprints() As Ark.Blueprint = ArkDataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		      Var Filename As String = Ark.AddToArchive(Archive, ContentPack, Blueprints)
+		      If Filename.IsEmpty = False Then
+		        Filenames.Add(Filename)
+		      End If
+		    Case ArkSA.Identifier
+		      Var Blueprints() As ArkSA.Blueprint = ArkSADataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		      Var Filename As String = ArkSA.AddToArchive(Archive, ContentPack, Blueprints)
+		      If Filename.IsEmpty = False Then
+		        Filenames.Add(Filename)
+		      End If
+		    End Select
+		  Next
+		  If Filenames.Count = 0 Then
+		    Return False
+		  End If
+		  Filenames.Sort
+		  
+		  Var Manifest As New Dictionary
+		  Manifest.Value("version") = 7
+		  Manifest.Value("minVersion") = 7
+		  Manifest.Value("generatedWith") = App.BuildNumber
+		  Manifest.Value("isFull") = False
+		  Manifest.Value("files") = Filenames
+		  Manifest.Value("isUserData") = IsUserData
+		  Archive.AddFile("Manifest.json", Beacon.GenerateJson(Manifest, False))
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
-		Protected Function BuildPath(ParamArray Components() As String) As String
-		  Return Beacon.BuildPath(Components)
+		Protected Function BuildExport(ContentPacks() As Beacon.ContentPack, IsUserData As Boolean) As MemoryBlock
+		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Then
+		    App.Log("Could not export blueprints because there are no mods to export.")
+		    Return Nil
+		  End If
+		  
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create()
+		  Var Success As Boolean = BuildExport(ContentPacks, Archive, IsUserData)
+		  Var Mem As MemoryBlock = Archive.Finalize
+		  If Success Then
+		    Return Mem
+		  Else
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(ContentPacks() As Beacon.ContentPack, Destination As FolderItem, IsUserData As Boolean) As Boolean
+		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Or Destination Is Nil Then
+		    App.Log("Could not export blueprints because the destination is invalid or there are no mods to export.")
+		    Return False
+		  End If
+		  
+		  Var Temp As FolderItem = FolderItem.TemporaryFile
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Temp)
+		  Var Success As Boolean = BuildExport(ContentPacks, Archive, IsUserData)
+		  Call Archive.Finalize
+		  
+		  If Success Then
+		    Try
+		      If Destination.Exists Then
+		        Destination.Remove
+		      End If
+		      Temp.MoveTo(Destination)
+		      Return True
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		  End If
+		  
+		  Try
+		    Temp.Remove
+		  Catch Err As RuntimeException
+		  End Try
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(IsUserData As Boolean, ParamArray ContentPacks() As Beacon.ContentPack) As MemoryBlock
+		  Return BuildExport(ContentPacks, IsUserData)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Destination As FolderItem, IsUserData As Boolean, ParamArray ContentPacks() As Beacon.ContentPack) As Boolean
+		  Return BuildExport(ContentPacks, Destination, IsUserData)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function BuildPath(Components() As String) As String
 		  Return String.FromArray(Components, Beacon.PathSeparator)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildPath(ParamArray Components() As String) As String
+		  Return Beacon.BuildPath(Components)
 		End Function
 	#tag EndMethod
 
@@ -1399,12 +1499,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SecondsToString(Human As Boolean, ParamArray Intervals() As Double) As String
-		  Return SecondsToString(Human, Intervals)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function SecondsToString(Human As Boolean, Intervals() As Double) As String
 		  Var WithDays, WithHours, WithMinutes As Boolean = True
 		  For Each Interval As Double In Intervals
@@ -1425,6 +1519,12 @@ Protected Module Beacon
 		  Else
 		    Return Values.Join(", ")
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SecondsToString(Human As Boolean, ParamArray Intervals() As Double) As String
+		  Return SecondsToString(Human, Intervals)
 		End Function
 	#tag EndMethod
 
