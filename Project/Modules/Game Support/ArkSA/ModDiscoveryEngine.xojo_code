@@ -253,53 +253,32 @@ Protected Class ModDiscoveryEngine
 		  Next
 		  
 		  Var Unlocks As New Dictionary
+		  Var Map As New SQLiteDatabase
+		  Map.Connect
+		  Map.ExecuteSQL("CREATE TABLE map (item_class TEXT COLLATE NOCASE NOT NULL, engram_class TEXT COLATE NOCASE NOT NULL, difference REAL NOT NULL);")
+		  Map.ExecuteSQL("CREATE INDEX map_engram_class_idx ON map(engram_class);")
 		  
 		  For Idx As Integer = PrimalItems.LastIndex DownTo 0
 		    Var ClassString As String = PrimalItems(Idx)
 		    Var PerfectEngramEntry As String = "EngramEntry" + ClassString.Middle(10)
 		    
-		    Var BestDistance As Double = 1.0
-		    Var BestIndex As Integer
-		    
 		    For EngramIdx As Integer = EngramEntries.LastIndex DownTo 0
 		      Var Distance As Double = LevenshteinDistanceMBS(PerfectEngramEntry, EngramEntries(EngramIdx))
-		      If Distance < BestDistance Then
-		        BestDistance = Distance
-		        BestIndex = EngramIdx
-		        If Distance = 0 Then
-		          Exit For EngramIdx
-		        End If
-		      End If
+		      Map.ExecuteSQL("INSERT INTO map (item_class, engram_class, difference) VALUES (?1, ?2, ?3);", ClassString, EngramEntries(EngramIdx), Distance)
 		    Next
-		    
-		    If BestDistance = 1.0 Then
-		      Continue For Idx
+		  Next
+		  
+		  For Each EngramClass As String In EngramEntries
+		    Var Rows As RowSet = Map.SelectSQL("SELECT item_class FROM map WHERE engram_class = ?1 ORDER BY difference LIMIT 1;", EngramClass)
+		    If Rows.RowCount = 0 Then
+		      Continue
 		    End If
 		    
-		    Unlocks.Value(ClassString) = EngramEntries(BestIndex)
-		    EngramEntries.RemoveAt(BestIndex)
-		    PrimalItems.RemoveAt(Idx)
+		    Var ItemClass As String = Rows.Column("item_class").StringValue
+		    Unlocks.Value(ItemClass) = EngramClass
 		  Next
-		  
-		  // At this point EngramEntries *should* be empty, and PrimalItems will contain only things with no unlock.
-		  // Unlockable stuff will be generated from the Unlocks dictionary
 		  
 		  Var Blueprints() As ArkSA.Blueprint
-		  For Each Entry As DictionaryEntry In Unlocks
-		    Var ClassString As String = Entry.Key
-		    Var EntryString As String = Entry.Value + "_C"
-		    Var Path As String = ClassPaths.Value(ClassString)
-		    Var Engram As New ArkSA.MutableEngram(Path, "")
-		    Engram.ContentPackId = ContentPackId
-		    Engram.ContentPackName = ModName
-		    Engram.RegenerateBlueprintId()
-		    Engram.EntryString = EntryString
-		    Engram.RequiredPlayerLevel = 999
-		    Engram.RequiredUnlockPoints = 999
-		    Engram.Label = ArkSA.LabelFromClassString(ClassString + "_C")
-		    Blueprints.Add(Engram)
-		  Next
-		  
 		  For Each ClassString As String In PrimalItems
 		    Var Path As String = ClassPaths.Value(ClassString)
 		    Var Engram As New ArkSA.MutableEngram(Path, "")
@@ -307,6 +286,13 @@ Protected Class ModDiscoveryEngine
 		    Engram.ContentPackName = ModName
 		    Engram.RegenerateBlueprintId()
 		    Engram.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    
+		    If Unlocks.HasKey(ClassString) Then
+		      Engram.EntryString = Unlocks.Value(ClassString).StringValue
+		      Engram.RequiredPlayerLevel = 999
+		      Engram.RequiredUnlockPoints = 999
+		    End If
+		    
 		    Blueprints.Add(Engram)
 		  Next
 		  
