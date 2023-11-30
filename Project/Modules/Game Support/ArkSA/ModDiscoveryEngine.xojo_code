@@ -235,7 +235,9 @@ Protected Class ModDiscoveryEngine
 		Private Sub ProcessCandidates(Candidates As Dictionary, ModInfo As JSONItem)
 		  Var ModName As String = ModInfo.Value("name")
 		  Var ContentPackId As String = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, ModInfo.Value("id"))
-		  Var Pack As New Beacon.ContentPack(ArkSA.Identifier, ModName, ContentPackId)
+		  Var Pack As New Beacon.MutableContentPack(ArkSA.Identifier, ModName, ContentPackId)
+		  Pack.Marketplace = Beacon.MarketplaceCurseForge
+		  Pack.MarketplaceId = ModInfo.Value("id")
 		  
 		  Var EngramEntries(), PrimalItems() As String
 		  Var ClassPaths As New Dictionary // Yes, this will break if a mod uses the same class in more than one namespace. This is a crappy implementation anyway, so I don't care.
@@ -303,7 +305,7 @@ Protected Class ModDiscoveryEngine
 		    Blueprints.Add(Engram)
 		  Next
 		  
-		  RaiseEvent ContentPackDiscovered(Pack, Blueprints)
+		  RaiseEvent ContentPackDiscovered(Pack.ImmutableVersion, Blueprints)
 		End Sub
 	#tag EndMethod
 
