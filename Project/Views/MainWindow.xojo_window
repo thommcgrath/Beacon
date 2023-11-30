@@ -1145,6 +1145,7 @@ End
 		    If (App.Pusher Is Nil) = False And App.Pusher.State <> Beacon.PusherSocket.States.Connected Then
 		      App.Pusher.Start()
 		    End If
+		    Return
 		  Else
 		    Return
 		  End Select
