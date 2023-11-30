@@ -66,7 +66,7 @@ if (is_null($pack)) {
 		$packIds[] = $pack->ContentPackId();
 	}
 	$filters['contentPackId'] = implode(',', $packIds);
-	$title = 'Ark Spawn Codes';
+	$title = 'Ark: Survival Evolved Spawn Codes';
 	$baseUrl = '/Games/Ark/Cheats';
 } else {
 	$filters['contentPackId'] = $pack->ContentPackId();

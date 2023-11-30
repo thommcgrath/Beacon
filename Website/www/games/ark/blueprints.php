@@ -33,7 +33,7 @@ if (is_null($contentPackId) === false) {
 			$pack = $packs[0];
 		}
 	}
-	
+
 	if (is_null($pack) || $pack->GameId() !== 'Ark') {
 		http_response_code(404);
 		echo '<h1>Mod is not registered with Beacon.</h1>';
@@ -58,28 +58,28 @@ if (empty($search) === false) {
 if (is_null($pack)) {
 	if (empty($tag)) {
 		$baseUrl = '/Games/Ark/{{group}}';
-		$pageTitle = 'Ark ' . $currentGroup->HumanVersion() . ' List';
-		$pageDescriptionPlain = "This is the master list of all objects in Ark that Beacon knows about.";
+		$pageTitle = 'Ark: Survival Evolved ' . $currentGroup->HumanVersion() . ' List';
+		$pageDescriptionPlain = "This is the master list of all objects in Ark: Survival Evolved that Beacon knows about.";
 		$pageDescriptionHtml = $pageDescriptionPlain;
 	} else {
 		$baseUrl = '/Games/Ark/Tags/' . urlencode($tagUrl) . '/{{group}}';
-		$pageTitle = 'Ark ' . $currentGroup->HumanVersion() . ' Tagged "' . $tagHuman . '"';
-		$pageDescriptionPlain = 'These Ark objects have the "' . $tagHuman . '" tag.';
+		$pageTitle = 'Ark: Survival Evolved ' . $currentGroup->HumanVersion() . ' Tagged "' . $tagHuman . '"';
+		$pageDescriptionPlain = 'These Ark: Survival Evolved objects have the "' . $tagHuman . '" tag.';
 		$pageDescriptionHtml = htmlentities($pageDescriptionPlain);
 	}
 } else {
 	if (empty($tag) === false) {
 		$queryParams['tag'] = $tag;
 	}
-	
+
 	$modSteamUrl = htmlentities($pack->MarketplaceUrl());
 	$modSteamId = urlencode($pack->MarketplaceId());
 	$modName = htmlentities($pack->Name());
 	$filters['contentPackId'] = $pack->ContentPackId();
-	
+
 	$baseUrl = '/Games/Ark/Mods/' . $modSteamId . '/{{group}}';
 	$pageTitle = $currentGroup->HumanVersion() . ' From ' . $pack->Name();
-	
+
 	$pageDescriptionPlain = "Beacon has built-in support for {$modName}. This means its blueprints are already part of Beacon's database and you can begin using them immediately.";
 	$pageDescriptionHtml = "Beacon has built-in support for <a href=\"{$modSteamUrl}\">{$modName}</a>. This means its blueprints are already part of Beacon's database and you can begin using them immediately. We also have a full list of <a href=\"/Games/Ark/Mods/{$modSteamId}/Cheats\">spawn codes for {$modName}</a>.";
 }
@@ -87,7 +87,7 @@ if (is_null($pack)) {
 BeaconTemplate::SetCanonicalPath(BuildUrl($baseUrl, $currentGroup, $queryParams, $page, false));
 BeaconTemplate::SetTitle($pageTitle);
 BeaconTemplate::SetPageDescription($pageDescriptionPlain);
-	
+
 $breadcrumbs = new BeaconBreadcrumbs();
 $breadcrumbs->AddComponent('/Games', 'Games');
 $breadcrumbs->AddComponent('Ark', 'Ark: Survival Evolved');
@@ -97,7 +97,7 @@ if (is_null($pack) === false) {
 }
 $breadcrumbs->AddComponent($currentGroup->UrlVersion(), $currentGroup->HumanVersion());
 echo $breadcrumbs->Render();
-	
+
 echo '<h1>' . htmlentities($pageTitle) . '</h1>';
 echo '<p>' . $pageDescriptionHtml . '</p>';
 
@@ -127,7 +127,7 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 	<div class="page-panel-pages">
 	<div class="page-panel-page page-panel-visible" page="<?php echo htmlentities($currentGroup->ApiVersion()); ?>">
 		<?php
-		
+
 		if ($pageContents['totalResults'] === 0) {
 			echo '<p>';
 			if (empty($search)) {
@@ -143,7 +143,7 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 				echo ' containing &quot;' . htmlentities($search) . '&quot;<br><a href="' . htmlentities($clearSearchUrl) . '">Clear Search</a>';
 			}
 			echo '</p>';
-			
+
 			if (is_null($pack)) {
 				$columnWidths = [
 					'name' => 'w-40',
@@ -156,7 +156,7 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 					'class' => 'w-50'
 				];
 			}
-			
+
 			echo '<table class="generic">';
 			echo '<thead>';
 			echo '<tr>';
@@ -174,7 +174,7 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 				if (is_null($pack)) {
 					$modDetailLink = "<span class=\"detail\">Mod: {$modLink}</span>";
 				}
-				
+
 				echo '<tr>';
 				echo '<td><a href="/Games/Ark/Mods/' . $result->ContentPackMarketplaceId() . '/' . urlencode($result->ClassString()) . '">' . htmlentities($result->Label()) . '</a><div class="row-details">' . $modDetailLink . '<span class="detail">Class: ' . htmlentities($result->ClassString()) . '</span></div></td>';
 				if (is_null($pack)) {
@@ -185,7 +185,7 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 			}
 			echo '</tbody>';
 			echo '</table>';
-			
+
 			if ($pageCount > 1) {
 				$targetPages = 9;
 				if ($pageCount <= $targetPages) {
@@ -198,13 +198,13 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 					$pagesAfter = $pagesBefore;
 					$lowestPage = $page - $pagesBefore;
 					$highestPage = $page + $pagesAfter;
-					
+
 					if ($lowestPage < 1) {
 						$overflow = abs($lowestPage - 1);
 						$pagesAfter += $overflow;
 						$pagesBefore -= $overflow;
 						$lowestPage = 1;
-						$highestPage = $page + $pagesAfter;	
+						$highestPage = $page + $pagesAfter;
 					} else if ($highestPage > $pageCount) {
 						$overflow = $highestPage - $pageCount;
 						$pagesBefore += $overflow;
@@ -213,7 +213,7 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 						$highestPage = $pageCount;
 					}
 				}
-				
+
 				$pageLinks = [];
 				if ($lowestPage > 1) {
 					$pageLinks[] = '<a href="' . htmlentities(BuildUrl($baseUrl, $currentGroup, $queryParams, 1)) . '" class="pagination-button pagination-text">&laquo; First</a>';
@@ -246,7 +246,7 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 				} else {
 					$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 				}
-				
+
 				echo '<div class="pagination-controls"><div class="pagination-cell">' . implode('</div><div class="pagination-cell">', $pageLinks) . '</div></div>';
 			}
 		}

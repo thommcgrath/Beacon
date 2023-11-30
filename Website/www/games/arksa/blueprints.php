@@ -58,13 +58,13 @@ if (empty($search) === false) {
 if (is_null($pack)) {
 	if (empty($tag)) {
 		$baseUrl = '/Games/ArkSA/{{group}}';
-		$pageTitle = 'Ark ' . $currentGroup->HumanVersion() . ' List';
-		$pageDescriptionPlain = "This is the master list of all objects in Ark that Beacon knows about.";
+		$pageTitle = 'Ark: Survival Ascended ' . $currentGroup->HumanVersion() . ' List';
+		$pageDescriptionPlain = "This is the master list of all objects in Ark: Survival Ascended that Beacon knows about.";
 		$pageDescriptionHtml = $pageDescriptionPlain;
 	} else {
 		$baseUrl = '/Games/ArkSA/Tags/' . urlencode($tagUrl) . '/{{group}}';
-		$pageTitle = 'Ark ' . $currentGroup->HumanVersion() . ' Tagged "' . $tagHuman . '"';
-		$pageDescriptionPlain = 'These Ark objects have the "' . $tagHuman . '" tag.';
+		$pageTitle = 'Ark: Survival Ascended ' . $currentGroup->HumanVersion() . ' Tagged "' . $tagHuman . '"';
+		$pageDescriptionPlain = 'These Ark: Survival Ascended objects have the "' . $tagHuman . '" tag.';
 		$pageDescriptionHtml = htmlentities($pageDescriptionPlain);
 	}
 } else {
