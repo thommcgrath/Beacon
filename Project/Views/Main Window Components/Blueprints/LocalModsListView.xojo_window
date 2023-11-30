@@ -368,7 +368,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ExportSelectedMods()
 		  Var Packs() As Beacon.ContentPack
-		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var ArkDataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var ArkSADataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
 		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
 		    If Self.ModsList.RowSelectedAt(Idx) = False Then
@@ -380,7 +381,14 @@ End
 		      Continue
 		    End If
 		    
-		    Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
+		    Var Pack As Beacon.ContentPack
+		    Select Case WorkshopMod.GameId
+		    Case Ark.Identifier
+		      Pack = ArkDataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
+		    Case ArkSA.Identifier
+		      Pack = ArkSADataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
+		    End Select
+		    
 		    If Pack Is Nil Then
 		      Continue
 		    End If
@@ -405,7 +413,7 @@ End
 		    Return
 		  End If
 		  
-		  If Ark.BuildExport(Packs, File, True) = False Then
+		  If Beacon.BuildExport(Packs, File, True) = False Then
 		    Self.ShowAlert("Export failed", "The selected " + If(Self.ModsList.SelectedRowCount = 1, "mod was", "mods were") + " not exported. Mods must have at least one blueprint to be exported.")
 		  End If
 		End Sub
@@ -1044,7 +1052,7 @@ End
 		    End If
 		    
 		    Try
-		      Var Exported As MemoryBlock = Ark.BuildExport(True, Pack)
+		      Var Exported As MemoryBlock = Beacon.BuildExport(True, Pack)
 		      If Exported Is Nil Then
 		        Call Database.DeleteContentPack(Pack, True)
 		        Self.mNumAddedMods = Max(Self.mNumAddedMods - 1, 0)
