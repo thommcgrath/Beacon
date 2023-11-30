@@ -196,7 +196,7 @@ Inherits Ark.ConfigGroup
 		  Var Config As New Ark.Configs.OtherSettings
 		  Var AllKeys() As Ark.ConfigOption = DataSource.GetConfigOptions("", "", "", False)
 		  For Each Key As Ark.ConfigOption In AllKeys
-		    If KeySupported(Key, ContentPacks) = False Then
+		    If KeySupported(Key, ContentPacks) = False Or Key.AutoImported = False Then
 		      Continue
 		    End If
 		    

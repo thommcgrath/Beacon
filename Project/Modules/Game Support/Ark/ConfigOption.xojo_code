@@ -2,6 +2,16 @@
 Protected Class ConfigOption
 Implements Beacon.GameSetting
 	#tag Method, Flags = &h0
+		Function AutoImported() As Boolean
+		  Var AutoImported As Variant = Self.Constraint("auto_imported")
+		  If AutoImported.IsNull Then
+		    Return True
+		  End If
+		  Return AutoImported.BooleanValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ConfigOptionId() As String
 		  Return Self.mConfigOptionId
 		End Function

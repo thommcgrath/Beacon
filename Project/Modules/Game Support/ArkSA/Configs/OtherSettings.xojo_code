@@ -201,7 +201,7 @@ Inherits ArkSA.ConfigGroup
 		  Var Config As New ArkSA.Configs.OtherSettings
 		  Var AllKeys() As ArkSA.ConfigOption = DataSource.GetConfigOptions("", "", "", False)
 		  For Each Key As ArkSA.ConfigOption In AllKeys
-		    If KeySupported(Key, ContentPacks) = False Then
+		    If KeySupported(Key, ContentPacks) = False Or Key.AutoImported = False Then
 		      Continue
 		    End If
 		    
