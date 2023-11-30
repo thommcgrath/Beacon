@@ -281,7 +281,7 @@ Protected Class ModDiscoveryEngine
 		      System.DebugLog("Matched " + EngramClass + " to " + ItemClass + " with score " + Difference.ToString(Locale.Raw, "0.0000"))
 		    #endif
 		    
-		    Unlocks.Value(ItemClass) = EngramClass
+		    Unlocks.Value(ItemClass) = EngramClass + "_C"
 		    Map.ExecuteSQL("DELETE FROM map WHERE item_class = ?1 OR engram_class = ?2;", ItemClass, EngramClass)
 		  Loop
 		  
