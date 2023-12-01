@@ -101,9 +101,16 @@ Protected Module BeaconAPI
 		    If Request.RequestHeader("Authorization").IsEmpty = False Then
 		      AuthHeader = Request.RequestHeader("Authorization")
 		    Else
+		      If mTokenLock Is Nil Then
+		        mTokenLock = New CriticalSection
+		      End If
+		      mTokenLock.Enter
+		      
 		      Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
 		      If (Token Is Nil) = False Then
 		        If Token.AccessTokenExpired And Request.AutoRenew Then
+		          App.Log("Token expired at " + Token.AccessTokenExpiration.ToString(Locale.Raw, "0") + ", current time is " + DateTime.Now.SecondsFrom1970.ToString(Locale.Raw, "0") + ". Requesting a new one...")
+		          
 		          Var Params As New Dictionary
 		          Params.Value("grant_type") = "refresh_token"
 		          Params.Value("client_id") = BeaconAPI.ClientId
@@ -126,6 +133,9 @@ Protected Module BeaconAPI
 		            If RefreshSocket.LastHTTPStatus = 201 Then
 		              Token = BeaconAPI.OAuthToken.Load(RefreshResponse)
 		              Preferences.BeaconAuth = Token
+		              App.Log("Saved new token with expiration " + Token.AccessTokenExpiration.ToString(Locale.Raw, "0") + ".")
+		            Else
+		              App.Log("Failed to get a new token, HTTP status " + RefreshSocket.LastHTTPStatus.ToString(Locale.Raw, "0") + ".")
 		            End If
 		          Catch Err As RuntimeException
 		          End Try
@@ -133,6 +143,8 @@ Protected Module BeaconAPI
 		        
 		        AuthHeader = Token.AuthHeaderValue
 		      End If
+		      
+		      mTokenLock.Leave
 		    End If
 		  End If
 		  
@@ -213,6 +225,10 @@ Protected Module BeaconAPI
 
 	#tag Property, Flags = &h21
 		Private mSharedSocket As BeaconAPI.Socket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTokenLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
