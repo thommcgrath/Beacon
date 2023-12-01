@@ -543,6 +543,14 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin DesktopMenuItem HelpShowDiagnosticInfo
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Show Diagnostic Information"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
       Begin DesktopMenuItem HelpAPIGuideSeparator
          SpecialMenu = 0
          Index = -2147483648
