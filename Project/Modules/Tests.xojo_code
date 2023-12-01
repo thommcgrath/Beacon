@@ -189,15 +189,16 @@ Protected Module Tests
 		  Var ClassTarget As Variant = GetDelegateTargetMBS(ClassDelegate)
 		  Var ClassWeak As Boolean = GetDelegateWeakMBS(ClassDelegate)
 		  
-		  ClassInstance = Nil
-		  Var UnsafeClassTarget As Variant = GetDelegateTargetMBS(ClassDelegate)
-		  Var UnsafeClassWeak As Boolean = GetDelegateWeakMBS(ClassDelegate)
-		  
 		  Call Assert(ModuleTarget.IsNull = True, "Module method delegate has a target when it should not.")
 		  Call Assert(ModuleWeak = False, "Module method delegate is weak but that should not be possible.")
 		  
 		  Call Assert(ClassTarget.IsNull = False, "Instance method delegate does not have a target.")
 		  Call Assert(ClassWeak = True, "Instance method delegate is not weak.")
+		  
+		  ClassInstance = Nil
+		  ClassTarget = Nil
+		  Var UnsafeClassTarget As Variant = GetDelegateTargetMBS(ClassDelegate)
+		  Var UnsafeClassWeak As Boolean = GetDelegateWeakMBS(ClassDelegate)
 		  
 		  Call Assert(UnsafeClassTarget.IsNull = True, "Unsafe instance method delegate has a target.")
 		  Call Assert(UnsafeClassWeak = True, "Unsafe instance method delegate is not weak.")
