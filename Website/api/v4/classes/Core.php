@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCache, BeaconCommon, BeaconLogin, BeaconRateLimits, DateTime, Exception, Throwable;
+use BeaconCache, BeaconCommon, BeaconErrors, BeaconLogin, BeaconRateLimits, DateTime, Exception, Throwable;
 
 class Core {
 	const kAuthSchemeBearer = 'Bearer';
@@ -488,6 +488,7 @@ class Core {
 				}
 			} catch (Exception $err) {
 				static::ManageRateLimit();
+				BeaconErrors::HandleException($err);
 				Response::NewJsonError((BeaconCommon::InProduction() ? 'Internal server error' : $err->getMessage()), null, 500)->Flush();
 				exit;
 			}
