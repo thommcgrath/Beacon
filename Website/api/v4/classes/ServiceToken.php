@@ -215,15 +215,15 @@ class ServiceToken implements JsonSerializable {
 			$values[] = $provider;
 		}
 		if (is_null($tokenId) === false) {
-			$tokensSplit = explode(',', $tokenId);
+			$tokensSplit = preg_split('/[ ,]/', $tokenId); // Some beta versions of Beacon 2.0.0 used spaces.
 			$tokenIds = [];
 			foreach ($tokensSplit as $tokenId) {
 				if (BeaconUUID::Validate($tokenId)) {
 					$tokenIds[] = $tokenId;
 				}
 			}
-			if (count($clauses) > 0) {
-				$clauses[] = 'service_tokens.token_id = $' . $placeholder++;
+			if (count($tokenIds) > 0) {
+				$clauses[] = 'service_tokens.token_id = ANY($' . $placeholder++ . ')';
 				$values[] = '{' . implode(',', $tokenIds) . '}';
 			}
 		}
