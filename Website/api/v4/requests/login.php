@@ -21,20 +21,20 @@ function handleRequest(array $context): Response {
 		$expiration = $_GET['expiration'] ?? '';
 		$deviceId = $_GET['device_id'] ?? '';
 		$application = null;
-		
+
 		if (empty($clientId) || empty($scopes)) {
 			return Response::NewJsonError('Missing parameters', null, 400);
 		}
-		
+
 		$response = HandlePublicKeyAuth($clientId, $application, $publicKey, $scopes, $userId, $signature, $expiration);
 		if (is_null($response) === false) {
 			return $response;
 		}
-		
+
 		if (empty($redirectUri) || empty($state) || empty($responseType) || empty($codeVerifierHash) || empty($codeVerifierMethod)) {
 			return Response::NewJsonError('Missing parameters', null, 400);
 		}
-		
+
 		if ($responseType !== 'code') {
 			return Response::NewJsonError('Response type should be code', null, 400);
 		}
@@ -44,20 +44,20 @@ function handleRequest(array $context): Response {
 		if (strlen($codeVerifierHash) !== 43) {
 			return Response::NewJsonError('The code challenge should be exactly 43 characters when Base64URL encoded', null, 400);
 		}
-		
+
 		if (is_null($application)) {
 			$application = Application::Fetch($clientId);
 			if (is_null($application)) {
 				return Response::NewJsonError('Invalid client id', null, 400);
 			}
 		}
-		
+
 		$flow = null;
 		try {
 			if (is_null($publicKey) === false) {
 				$publicKey = BeaconEncryption::PublicKeyToPEM($publicKey);
 			}
-			
+
 			$flow = ApplicationAuthFlow::Create($application, $scopes, $redirectUri, $state, $codeVerifierHash, $codeVerifierMethod, $publicKey);
 		} catch (Exception $err) {
 			return Response::NewJSONError($err->getMessage(), null, 400);
@@ -65,7 +65,7 @@ function handleRequest(array $context): Response {
 		if (is_null($flow)) {
 			return Response::NewJsonError('Invalid scope or redirect_uri', null, 400);
 		}
-		
+
 		$query = [
 			'flow_id' => $flow->FlowId(),
 		];
@@ -88,28 +88,32 @@ function handleRequest(array $context): Response {
 		}
 		$grantType = $obj['grant_type'] ?? null;
 		$clientId = $obj['client_id'] ?? null;
-		$clientSecret = $obj['client_secret'] ?? null;	
-		
+		$clientSecret = $obj['client_secret'] ?? null;
+
 		if (is_null($grantType)) {
 			return Response::NewJsonError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
 		}
-		
+
 		switch ($grantType) {
 		case 'authorization_code':
 			$code = $obj['code'] ?? '';
 			$redirectUri = $obj['redirect_uri'] ?? '';
 			$codeVerifier = $obj['code_verifier'] ?? '';
-			
+
 			if (empty($grantType) || empty($code) || empty($clientId) || empty($redirectUri)) {
 				return Response::NewJsonError('Missing parameters', ['code' => 'INVALID_GRANT'], 400);
 			}
-			
-			$session = ApplicationAuthFlow::Redeem($clientId, $clientSecret, $redirectUri, $code, $codeVerifier);
-			if (is_null($session)) {
-				return Response::NewJsonError('Invalid code', ['code' => 'INVALID_CODE'], 400);
+
+			try {
+				$session = ApplicationAuthFlow::Redeem($clientId, $clientSecret, $redirectUri, $code, $codeVerifier);
+				if (is_null($session)) {
+					return Response::NewJsonError('Invalid code', ['code' => 'INVALID_CODE'], 400);
+				}
+				Core::SetSession($session);
+				return Response::NewJson($session->OAuthResponse(), 201);
+			} catch (Exception $err) {
+				return Response::NewJsonError($err->getMessage() ?: 'Unhandled exception redeeming auth flow', ['code' => 'INVALID_CODE'], 400);
 			}
-			Core::SetSession($session);
-			return Response::NewJson($session->OAuthResponse(), 201);
 		case 'refresh_token':
 			$refreshToken = $obj['refresh_token'] ?? null;
 			$scopes = explode(' ', $obj['scope']) ?? null;
@@ -144,7 +148,7 @@ function HandlePublicKeyAuth(string $clientId, &$application, &$publicKey, array
 	if (empty($userId) || empty($publicKey) || empty($signature) || empty($expiration) || empty($scopes) || in_array(Application::kScopeAuthPublicKey, $scopes) === false) {
 		return null;
 	}
-	
+
 	$application = Application::Fetch($clientId);
 	if (is_null($application)) {
 		return Response::NewJsonError('Invalid client id', null, 400);;
@@ -152,7 +156,7 @@ function HandlePublicKeyAuth(string $clientId, &$application, &$publicKey, array
 	if ($application->HasScope(Application::kScopeAuthPublicKey) === false) {
 		return null;
 	}
-	
+
 	$user = User::Fetch($userId);
 	if (is_null($user)) {
 		$publicKey = BeaconEncryption::PublicKeyToPEM($publicKey);
@@ -171,7 +175,7 @@ function HandlePublicKeyAuth(string $clientId, &$application, &$publicKey, array
 	if (!$verified) {
 		return Response::NewJsonError('Incorrect signature', null, 400);
 	}
-		
+
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
 	try {
@@ -182,7 +186,7 @@ function HandlePublicKeyAuth(string $clientId, &$application, &$publicKey, array
 				'cloudKey' => bin2hex(BeaconEncryption::RSAEncrypt($publicKey, User::GenerateCloudKey()))
 			]);
 		}
-		
+
 		$session = Session::Create($user, $application, $scopes);
 		$database->Commit();
 		Core::SetSession($session);
