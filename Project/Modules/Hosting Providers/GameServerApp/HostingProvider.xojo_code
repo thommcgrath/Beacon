@@ -90,7 +90,7 @@ Implements Beacon.HostingProvider
 		  TemplateId = GameServerApp.HostConfig(Config).TemplateId
 		  Token = BeaconAPI.GetProviderToken(GameServerApp.HostConfig(Config).TokenId, Project, True)
 		  If (Token Is Nil) = False Then
-		    If Token.IsEncrypted And (Project Is Nil Or Token.Decrypt(Project.ProviderTokenKey(Token.TokenId)) = False) Then
+		    If Token.IsEncrypted Then
 		      Var Err as New UnsupportedOperationException
 		      Err.Message = "Provider token is still encrypted. Ask " + Token.UserName + " to resave."
 		      Raise Err

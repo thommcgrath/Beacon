@@ -44,7 +44,7 @@ Protected Module BeaconAPI
 		Protected Function GetProviderTokens(UserId As String, TokenIds() As String = Nil) As BeaconAPI.ProviderToken()
 		  Var Url As String = "/users/" + EncodeURLComponent(UserId) + "/tokens"
 		  If (TokenIds Is Nil) = False And TokenIds.Count > 0 Then
-		    Url = Url + "?tokenId=" + EncodeURLComponent(String.FromArray(TokenIds))
+		    Url = Url + "?tokenId=" + EncodeURLComponent(String.FromArray(TokenIds, ","))
 		  End If
 		  
 		  Var Request As New BeaconAPI.Request(Url, "GET")
