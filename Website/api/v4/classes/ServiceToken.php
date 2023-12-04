@@ -274,10 +274,17 @@ class ServiceToken implements JsonSerializable {
 		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.refresh_token_expiration IS NOT NULL AND service_tokens.refresh_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
 
 		while (!$results->EOF()) {
+			$token = null;
 			try {
 				$token = new static($results);
-				$token->Refresh(true);
 			} catch (Exception $err) {
+			}
+			if (is_null($token) === false) {
+				try {
+					$token->Refresh(true);
+				} catch (Exception $err) {
+					$token->MarkNeedsReplacing();
+				}
 			}
 			$results->MoveNext();
 		}
