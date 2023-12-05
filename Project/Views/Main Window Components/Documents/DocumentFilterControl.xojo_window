@@ -191,18 +191,50 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.mMask = Ark.Maps.UniversalMask
+		  Self.mMaps = Beacon.Merge(Ark.Maps.All, ArkSA.Maps.All)
 		  RaiseEvent Opening
+		  Self.mOpened = True
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
+		Private Shared Function Hash(Maps() As Beacon.Map) As String
+		  Var Parts() As String
+		  For Each Map As Beacon.Map In Maps
+		    Parts.Add(Map.MapId.Lowercase)
+		  Next
+		  Parts.Sort
+		  Return EncodeHex(Crypto.SHA2_256(String.FromArray(Parts, ":")))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Maps() As Beacon.Map()
+		  Return Self.mMaps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Maps(Assigns NewMaps() As Beacon.Map)
+		  If Self.Hash(NewMaps) = Self.Hash(Self.mMaps) Then
+		    Return
+		  End If
+		  
+		  Self.mMaps = NewMaps
+		  
+		  If Self.mOpened Then
+		    RaiseEvent Changed()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mMapSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
-		    Var NewMask As UInt64 = MapSelectionGrid(Sender.Container).Mask
-		    If Self.mMask <> NewMask Then
-		      Self.mMask = NewMask
+		    Var NewMaps() As Beacon.Map = MapSelectionGrid(Sender.Container).CheckedMaps
+		    If Self.Hash(NewMaps) <> Self.Hash(Self.mMaps) Then
+		      Self.mMaps = NewMaps
 		      RaiseEvent Changed()
 		    End If
 		  End If
@@ -242,7 +274,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event NewDocument()
+		Event NewProject()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -277,15 +309,15 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMask
+			  // Ignore
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMask = Value
+			  // Ignore
 			End Set
 		#tag EndSetter
-		Mask As UInt64
+		GameId As String
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -293,11 +325,19 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGameId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMaps() As Beacon.Map
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMapSelectionController As PopoverController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMask As UInt64
+		Private mOpened As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -389,9 +429,19 @@ End
 		    Return
 		  End If
 		  
-		  Var Editor As New MapSelectionGrid
+		  Var AllMaps() As Beacon.Map
+		  Select Case Self.mGameId
+		  Case Ark.Identifier
+		    AllMaps = Ark.Maps.All
+		  Case ArkSA.Identifier
+		    AllMaps = ArkSA.Maps.All
+		  Else
+		    AllMaps = Beacon.Merge(Ark.Maps.All, ArkSA.Maps.All) // This will need to be more robust when a third game is added
+		  End Select
+		  
+		  Var Editor As New MapSelectionGrid(AllMaps)
 		  Var Controller As New PopoverController("Select Maps", Editor)
-		  Editor.Mask = Self.mMask
+		  Editor.SetWithMaps(Self.mMaps)
 		  Controller.Show(Me)
 		  
 		  AddHandler Controller.Finished, WeakAddressOf mMapSelectionController_Finished
@@ -402,7 +452,7 @@ End
 #tag Events NewDocumentButton
 	#tag Event
 		Sub Pressed()
-		  RaiseEvent NewDocument()
+		  RaiseEvent NewProject()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -650,14 +700,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Mask"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="UInt64"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="ConsoleSafe"
 		Visible=false
 		Group="Behavior"
@@ -696,5 +738,13 @@ End
 		InitialValue="0"
 		Type="Integer"
 		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="GameId"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

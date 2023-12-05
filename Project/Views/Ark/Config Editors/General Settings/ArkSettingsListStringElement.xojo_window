@@ -286,7 +286,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Key As Ark.ConfigKey)
+		Sub Constructor(Key As Ark.ConfigOption)
 		  If IsNull(Key.Constraint("oneof")) = False Then
 		    Var AllowCustom As Variant = Key.Constraint("allowcustom")
 		    If IsNull(AllowCustom) = False And AllowCustom.BooleanValue = True Then
@@ -350,7 +350,7 @@ End
 		  Case Self.PlainMode
 		    StringValue = Self.mValueField.Text
 		  Case Self.MenuMode
-		    StringValue = Self.mChoiceMenu.SelectedRowValue
+		    StringValue = Self.mChoiceMenu.SelectedRowText
 		  Case Self.ComboMode
 		    StringValue = Self.mInputMenu.Text
 		  End Select

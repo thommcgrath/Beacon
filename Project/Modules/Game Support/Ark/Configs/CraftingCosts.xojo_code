@@ -34,9 +34,9 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigOverrideItemCraftingCosts"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigOverrideItemCraftingCosts"))
 		  Return Keys
 		End Function
 	#tag EndEvent
@@ -56,7 +56,7 @@ Inherits Ark.ConfigGroup
 		    For Each CostData As Dictionary In Costs
 		      Var Cost As Ark.CraftingCost = Ark.CraftingCost.ImportFromBeacon(CostData)
 		      If (Cost Is Nil) = False Then
-		        Self.mCosts.Value(Cost.Engram.ObjectID) = Cost
+		        Self.mCosts.Value(Cost.Engram.EngramId) = Cost
 		      End If
 		    Next
 		  End If
@@ -109,8 +109,8 @@ Inherits Ark.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  If Self.mCosts.HasKey(Engram.ObjectID) Then
-		    Return Self.mCosts.Value(Engram.ObjectID)
+		  If Self.mCosts.HasKey(Engram.EngramId) Then
+		    Return Self.mCosts.Value(Engram.EngramId)
 		  End If
 		End Function
 	#tag EndMethod
@@ -122,14 +122,14 @@ Inherits Ark.ConfigGroup
 		  End If
 		  
 		  If Cost Is Nil Then
-		    If Self.mCosts.HasKey(Engram.ObjectID) Then
-		      Self.mCosts.Remove(Engram.ObjectID)
+		    If Self.mCosts.HasKey(Engram.EngramId) Then
+		      Self.mCosts.Remove(Engram.EngramId)
 		      Self.Modified = True
 		    End If
 		    Return
 		  End If
 		  
-		  Var Key As String = Cost.Engram.ObjectID
+		  Var Key As String = Cost.Engram.EngramId
 		  If Self.mCosts.HasKey(Key) And Ark.CraftingCost(Self.mCosts.Value(Key)) = Cost Then
 		    Return
 		  End If

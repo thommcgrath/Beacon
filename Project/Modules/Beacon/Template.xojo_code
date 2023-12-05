@@ -3,7 +3,7 @@ Protected Class Template
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mUUID = New v4UUID
+		  Self.mUUID = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 
@@ -18,6 +18,8 @@ Implements Beacon.NamedItem
 		  Select Case Game
 		  Case Ark.Identifier
 		    Template = Ark.Template.FromSaveData(Dict)
+		  Case ArkSA.Identifier
+		    Template = ArkSA.Template.FromSaveData(Dict)
 		  End Select
 		  If (Template Is Nil) = False Then
 		    Template.mUUID = Dict.Value("ID")
@@ -59,7 +61,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Function GameId() As String
 		  
 		End Function
 	#tag EndMethod
@@ -74,7 +76,7 @@ Implements Beacon.NamedItem
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("ID") = Self.mUUID
-		  Dict.Value("Game") = Self.GameID
+		  Dict.Value("Game") = Self.GameId
 		  Dict.Value("Label") = Self.mLabel
 		  RaiseEvent Save(Dict)
 		  Return Dict

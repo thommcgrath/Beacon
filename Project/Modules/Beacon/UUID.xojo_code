@@ -29,7 +29,7 @@ Protected Class UUID
 		  
 		  Var Value As Byte = Pointer.Byte(6)
 		  Value = Value And CType(&b00001111, Byte)
-		  Value = Value Or CType(Bitwise.ShiftLeft(Version, 4, 8), Byte)
+		  Value = Value Or CType(Bitwise.ShiftLeft(CType(Version, UInt64), 4, 8), Byte)
 		  Pointer.Byte(6) = Value
 		  
 		  Value = Pointer.Byte(8)
@@ -158,11 +158,26 @@ Protected Class UUID
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function v4(Algorithm As Crypto.HashAlgorithms, Data As MemoryBlock) As Beacon.UUID
+		  // Old versions of Beacon used a weird v4 uuid before I realized what a v5 UUID was.
+		  
+		  Return New Beacon.UUID(FormatBytes(Crypto.Hash(Data, Algorithm), 4), 4)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function v5(Value As String, Prefix As Beacon.UUID = Nil) As Beacon.UUID
 		  Var PrefixString As String = If(Prefix Is Nil, "82aa4465-85f9-4b9e-8d36-f66164cef0a6", Prefix.StringValue)
 		  Var DecodedPrefix As String = DecodeHex(PrefixString.ReplaceAll("-", ""))
 		  Var Bytes As MemoryBlock = Crypto.Hash(DecodedPrefix + Value, Crypto.HashAlgorithms.SHA1)
 		  Return New Beacon.UUID(FormatBytes(Bytes, 5), 5)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Validate(Input As String) As Boolean
+		  Var Version As Integer
+		  Return Validate(Input, Version)
 		End Function
 	#tag EndMethod
 

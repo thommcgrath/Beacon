@@ -35,10 +35,10 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ItemStatClamps"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "ClampItemStats"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ItemStatClamps"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "ClampItemStats"))
 		  Return Keys
 		End Function
 	#tag EndEvent

@@ -1,8 +1,8 @@
 #tag Class
 Protected Class BlueprintImporter
 	#tag Method, Flags = &h0
-		Function BlueprintAt(Index As Integer) As Ark.Blueprint
-		  Return Self.mBlueprints(Index)
+		Function BlueprintAt(Idx As Integer) As Ark.Blueprint
+		  Return Self.mBlueprints(Idx)
 		End Function
 	#tag EndMethod
 
@@ -36,8 +36,44 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContentPackAt(Idx As Integer) As Beacon.ContentPack
+		  Return Self.mContentPacks(Idx)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackCount() As Integer
+		  Return Self.mContentPacks.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackLastIndex() As Integer
+		  Return Self.mContentPacks.LastIndex
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPacks() As Beacon.ContentPack()
+		  Var Arr() As Beacon.ContentPack
+		  Arr.ResizeTo(Self.mContentPacks.LastIndex)
+		  For Idx As Integer = Self.mContentPacks.FirstIndex To Self.mContentPacks.LastIndex
+		    Arr(Idx) = Self.mContentPacks(Idx)
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Import(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
 		  Var Importer As Ark.BlueprintImporter
+		  
+		  Importer = ImportAsBinary(Contents, Progress)
+		  If (Progress Is Nil) = False ANd Progress.CancelPressed Then
+		    Return Nil
+		  ElseIf (Importer Is Nil) = False Then
+		    Return Importer
+		  End If
 		  
 		  Importer = ImportAsDataDumper(Contents, Progress)
 		  If (Progress Is Nil) = False And Progress.CancelPressed Then
@@ -46,7 +82,7 @@ Protected Class BlueprintImporter
 		    Return Importer
 		  End If
 		  
-		  Importer = ImportAsJSON(Contents, Progress)
+		  Importer = ImportAsJson(Contents, Progress)
 		  If (Progress Is Nil) = False And Progress.CancelPressed Then
 		    Return Nil
 		  ElseIf (Importer Is Nil) = False Then
@@ -59,6 +95,156 @@ Protected Class BlueprintImporter
 		  Else
 		    Return Importer
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ImportAsBinary(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
+		  Var Archive As Beacon.Archive
+		  Try
+		    Archive = Beacon.Archive.Open(Contents)
+		  Catch Err As RuntimeException
+		  End Try
+		  If Archive Is Nil Then
+		    // Not a .beacondata file
+		    Return Nil
+		  End If
+		  
+		  // Return the importer no matter what, because this is an archive file
+		  Var Importer As New Ark.BlueprintImporter
+		  
+		  Var ManifestString As String = Archive.GetFile("Manifest.json")
+		  If ManifestString.IsEmpty Then
+		    Return Importer
+		  End If
+		  
+		  Var Manifest As Dictionary
+		  Var Filenames() As Variant
+		  Try
+		    Manifest = Beacon.ParseJSON(ManifestString)
+		    Filenames = Manifest.Value("files")
+		    If Manifest.Lookup("minVersion", 7).IntegerValue > 7 Then
+		      Return Importer
+		    End If
+		  Catch Err As RuntimeException
+		    Return Importer
+		  End Try
+		  
+		  If (Progress Is Nil) = False Then
+		    Progress.ShowSubProgress = True
+		  End If
+		  
+		  Var NumFiles As Integer = Filenames.Count
+		  Var FilesProcessed As Integer = 0
+		  For Each Filename As Variant In Filenames
+		    If (Progress Is Nil) = False Then
+		      If Progress.CancelPressed Then
+		        Return Nil
+		      End If
+		      
+		      Progress.Detail = "Processing " + Filename + "..."
+		      Progress.Progress = FilesProcessed / NumFiles
+		    End If
+		    
+		    Try
+		      Var FileContents As String = Archive.GetFile(Filename.StringValue)
+		      Var Parsed As Dictionary = Beacon.ParseJSON(FileContents)
+		      Var Payloads() As Variant = Parsed.Value("payloads")
+		      For Each Payload As Dictionary In Payloads
+		        If Payload.Value("gameId") <> Ark.Identifier Then
+		          Continue
+		        End If
+		        
+		        Var TotalObjects As Integer
+		        Var ObjectsProcessed As Integer
+		        Var ContentPackDicts() As Variant
+		        
+		        If Payload.HasKey("contentPacks") Then
+		          ContentPackDicts = Payload.Value("contentPacks")
+		          TotalObjects = TotalObjects + ContentPackDicts.Count
+		        End If
+		        
+		        Var BlueprintArrays() As Variant
+		        Var Keys() As String = Array("engrams", "creatures", "lootDrops", "spawnPoints")
+		        For Each Key As String In Keys
+		          If Payload.HasKey(Key) Then
+		            Var BlueprintDicts() As Variant = Payload.Value(Key)
+		            TotalObjects = TotalObjects + BlueprintDicts.Count
+		            BlueprintArrays.Add(BlueprintDicts)
+		          End If
+		        Next
+		        
+		        If (Progress Is Nil) = False Then
+		          Progress.SubProgress = ObjectsProcessed / TotalObjects
+		        End If
+		        
+		        For Each ContentPackDict As Dictionary In ContentPackDicts
+		          If (Progress Is Nil) = False And Progress.CancelPressed Then
+		            Return Nil
+		          End If
+		          
+		          Var ContentPack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(ContentPackDict)
+		          If (ContentPack Is Nil) = False Then
+		            Importer.mContentPacks.Add(ContentPack)
+		            If (Progress Is Nil) = False Then
+		              Progress.SubDetail = "Found mod " + ContentPack.Name + "…"
+		            End If
+		          End If
+		          
+		          ObjectsProcessed = ObjectsProcessed + 1
+		          
+		          If (Progress Is Nil) = False Then
+		            Progress.SubProgress = ObjectsProcessed / TotalObjects
+		          End If
+		        Next
+		        
+		        For Each BlueprintArray As Variant In BlueprintArrays
+		          If (Progress Is Nil) = False And Progress.CancelPressed Then
+		            Return Nil
+		          End If
+		          
+		          Var BlueprintDicts() As Variant = BlueprintArray
+		          For Each BlueprintDict As Dictionary In BlueprintDicts
+		            If (Progress Is Nil) = False And Progress.CancelPressed Then
+		              Return Nil
+		            End If
+		            
+		            Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(BlueprintDict)
+		            If (Blueprint Is Nil) = False Then
+		              Importer.mBlueprints.Add(Blueprint)
+		              If (Progress Is Nil) = False Then
+		                Progress.SubDetail = "Found blueprint " + Blueprint.Label + "…"
+		              End If
+		              
+		              If Blueprint.Path.BeginsWith("/Game/Mods/") Then
+		                Var Tag As String = Blueprint.Path.NthField("/", 4)
+		                If Importer.mMods.HasKey(Tag) = False Then
+		                  Var ContentPackName As String = Tag
+		                  If Blueprint.ContentPackName.IsEmpty = False Then
+		                    ContentPackName = Blueprint.ContentPackName + " (" + Tag + ")"
+		                  End If
+		                  Importer.mMods.Value(Tag) = ContentPackName
+		                End If
+		              End If
+		            End If
+		            
+		            ObjectsProcessed = ObjectsProcessed + 1
+		            If (Progress Is Nil) = False Then
+		              Progress.SubProgress = ObjectsProcessed / TotalObjects
+		            End If
+		          Next
+		        Next
+		      Next
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    FilesProcessed = FilesProcessed + 1
+		    If (Progress Is Nil) = False Then
+		      Progress.Progress = FilesProcessed / NumFiles
+		    End If
+		  Next
+		  
+		  Return Importer
 		End Function
 	#tag EndMethod
 
@@ -77,6 +263,7 @@ Protected Class BlueprintImporter
 		  Var Importer As New Ark.BlueprintImporter
 		  Var ItemDicts(), CreatureDicts(), SpawnDicts(), LootDicts(), DropDicts() As Dictionary
 		  Var EngramsByClass As New Dictionary
+		  Var Now As Double = DateTime.Now.SecondsFrom1970
 		  
 		  If (Progress Is Nil) = False Then
 		    Progress.Detail = "Parsing log output…"
@@ -149,9 +336,11 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var Engram As New Ark.MutableEngram(Path, New v4UUID)
+		      Var BlueprintId As String = Beacon.UUID.v4
+		      Var Engram As New Ark.MutableEngram(Path, BlueprintId)
 		      Engram.Label = ItemDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
 		      Engram.AddTag("blueprintable")
+		      Engram.LastUpdate = Now
 		      Select Case ItemDict.Value("ITEM_TYPE").StringValue
 		      Case "Resource"
 		        Engram.AddTag("resource")
@@ -189,8 +378,10 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var Creature As New Ark.MutableCreature(Path, New v4UUID)
+		      Var BlueprintId As String = Beacon.UUID.v4
+		      Var Creature As New Ark.MutableCreature(Path, BlueprintId)
 		      Creature.Label = CreatureDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
+		      Creature.LastUpdate = Now
 		      Importer.mBlueprints.Add(Creature.ImmutableVersion)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing creature data")
@@ -207,8 +398,10 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var Point As New Ark.MutableSpawnPoint(Path, New v4UUID)
+		      Var BlueprintId As String = Beacon.UUID.v4
+		      Var Point As New Ark.MutableSpawnPoint(Path, BlueprintId)
 		      Point.Label = SpawnDict.Value("CLASS")
+		      Point.LastUpdate = Now
 		      Importer.mBlueprints.Add(Point.ImmutableVersion)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing spawn point data")
@@ -225,9 +418,11 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var Container As New Ark.MutableLootContainer(Path, New v4UUID)
+		      Var BlueprintId As String = Beacon.UUID.v4
+		      Var Container As New Ark.MutableLootContainer(Path, BlueprintId)
 		      Container.Label = LootDict.Value("CLASS")
 		      Container.IconID = "84d76c41-4386-467d-83e7-841dcaa4007d"
+		      Container.LastUpdate = Now
 		      Importer.mBlueprints.Add(Container.ImmutableVersion)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing supply crate data")
@@ -246,10 +441,12 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var Container As New Ark.MutableLootContainer(Path, New v4UUID)
+		      Var BlueprintId As String = Beacon.UUID.v4
+		      Var Container As New Ark.MutableLootContainer(Path, BlueprintId)
 		      Container.Label = DropDict.Value("CLASS")
 		      Container.IconID = "41dde824-5675-4515-b222-e860a44619d9"
 		      Container.Experimental = True
+		      Container.LastUpdate = Now
 		      Importer.mBlueprints.Add(Container.ImmutableVersion)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing dino inventory data")
@@ -261,7 +458,7 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportAsJSON(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
+		Shared Function ImportAsJson(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
 		  Var Parsed As Variant
 		  Try
 		    #Pragma BreakOnExceptions False
@@ -271,25 +468,62 @@ Protected Class BlueprintImporter
 		    Return Nil
 		  End Try
 		  
-		  Var Dictionaries() As Variant
-		  Try
-		    Dictionaries = Parsed
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
+		  Var Blueprints() As Variant
+		  Var ContentPacks() As Variant
+		  If Parsed.IsArray Then
+		    Try
+		      Blueprints = Parsed
+		    Catch Err As RuntimeException
+		    End Try
+		  Else
+		    Var ExportDict As Dictionary
+		    Try
+		      ExportDict = Parsed
+		      If ExportDict.Value("minVersion") > 1 Then
+		        Return Nil
+		      End If
+		      Blueprints = ExportDict.Value("blueprints")
+		      If ExportDict.HasKey("contentPacks") Then
+		        ContentPacks = ExportDict.Value("contentPacks")
+		      ElseIf ExportDict.HasKey("contentPack") Then
+		        ContentPacks.Add(ExportDict.Value("contentPack"))
+		      End If
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  End If
 		  
+		  Var NumProcessed As Integer = 0
+		  Var NumToProcess As Integer = Blueprints.Count + ContentPacks.Count
 		  If (Progress Is Nil) = False Then
 		    Progress.Detail = "Unpacking blueprints…"
+		    Progress.Progress = NumProcessed / NumToProcess
 		  End If
 		  
 		  Var Importer As New Ark.BlueprintImporter
-		  For Idx As Integer = Dictionaries.FirstIndex To Dictionaries.LastIndex
+		  For Idx As Integer = ContentPacks.FirstIndex To ContentPacks.LastIndex
+		    If (Progress Is Nil) = False And Progress.CancelPressed Then
+		      Return Nil
+		    End If
+		    
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(ContentPacks(Idx))
+		    If (Pack Is Nil) = False Then
+		      Importer.mContentPacks.Add(Pack)
+		    End If
+		    
+		    NumProcessed = NumProcessed + 1
+		    If (Progress Is Nil) = False Then
+		      Progress.Progress = NumProcessed / NumToProcess
+		    End If
+		  Next
+		  
+		  For Idx As Integer = Blueprints.FirstIndex To Blueprints.LastIndex
 		    If (Progress Is Nil) = False And Progress.CancelPressed Then
 		      Return Nil
 		    End If
 		    
 		    Try
-		      Var Dict As Dictionary = Dictionaries(Idx)
+		      Var Dict As Dictionary = Blueprints(Idx)
 		      Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
 		      If Blueprint Is Nil Then
 		        Continue
@@ -311,6 +545,11 @@ Protected Class BlueprintImporter
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
+		    
+		    NumProcessed = NumProcessed + 1
+		    If (Progress Is Nil) = False Then
+		      Progress.Progress = NumProcessed / NumToProcess
+		    End If
 		  Next
 		  
 		  // No matter what, it was still JSON data, even if nothing was found.
@@ -418,11 +657,12 @@ Protected Class BlueprintImporter
 		      End If
 		      
 		      Var Blueprint As Ark.MutableBlueprint
+		      Var BlueprintId As String = Beacon.UUID.v4
 		      Select Case Category
 		      Case Ark.CategoryEngrams
-		        Blueprint = New Ark.MutableEngram(Path, New v4UUID)
+		        Blueprint = New Ark.MutableEngram(Path, BlueprintId)
 		      Case Ark.CategoryCreatures
-		        Blueprint = New Ark.MutableCreature(Path, New v4UUID)
+		        Blueprint = New Ark.MutableCreature(Path, BlueprintId)
 		      Else
 		        Continue
 		      End Select
@@ -501,11 +741,12 @@ Protected Class BlueprintImporter
 		    Var Command As String = Paths.Value(Key)
 		    Var Path As String = Key
 		    Var Blueprint As Ark.Blueprint
+		    Var BlueprintId As String = Beacon.UUID.v4
 		    Select Case Command
 		    Case "giveitem"
-		      Blueprint = New Ark.MutableEngram(Path, New v4UUID)
+		      Blueprint = New Ark.MutableEngram(Path, BlueprintId)
 		    Case "spawndino"
-		      Blueprint = New Ark.MutableCreature(Path, New v4UUID)
+		      Blueprint = New Ark.MutableCreature(Path, BlueprintId)
 		    End Select
 		    
 		    If Blueprint Is Nil Then
@@ -584,6 +825,10 @@ Protected Class BlueprintImporter
 
 	#tag Property, Flags = &h21
 		Private mBlueprints() As Ark.Blueprint
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPacks() As Beacon.ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

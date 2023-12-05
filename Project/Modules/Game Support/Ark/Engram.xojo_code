@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Engram
-Implements Ark.Blueprint
+Implements Ark.Blueprint, Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the Ark.Blueprint interface.
@@ -14,6 +14,12 @@ Implements Ark.Blueprint
 		  // Part of the Ark.Blueprint interface.
 		  
 		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BlueprintId() As String
+		  Return Self.mEngramId
 		End Function
 	#tag EndMethod
 
@@ -61,18 +67,19 @@ Implements Ark.Blueprint
 		  Self.mAvailability = Source.mAvailability
 		  Self.mClassString = Source.mClassString
 		  Self.mContentPackName = Source.mContentPackName
-		  Self.mContentPackUUID = Source.mContentPackUUID
+		  Self.mContentPackId = Source.mContentPackId
 		  Self.mEngramEntryString = Source.mEngramEntryString
 		  Self.mHasLoadedIngredients = Source.mHasLoadedIngredients
 		  Self.mIsValid = Source.mIsValid
 		  Self.mItemID = Source.mItemID
 		  Self.mLabel = Source.mLabel
 		  Self.mModified = Source.mModified
-		  Self.mObjectID = Source.mObjectID
+		  Self.mEngramId = Source.mEngramId
 		  Self.mPath = Source.mPath
 		  Self.mRequiredPlayerLevel = Source.mRequiredPlayerLevel
 		  Self.mRequiredUnlockPoints = Source.mRequiredUnlockPoints
 		  Self.mStackSize = Source.mStackSize
+		  Self.mLastUpdate = Source.mLastUpdate
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
@@ -87,6 +94,14 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContentPackId() As String
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return Self.mContentPackId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ContentPackName() As String
 		  // Part of the Ark.Blueprint interface.
 		  
@@ -95,37 +110,25 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackUUID() As String
-		  // Part of the Ark.Blueprint interface.
-		  
-		  If Self.mContentPackUUID Is Nil Then
-		    Return ""
-		  End If
-		  
-		  Return Self.mContentPackUUID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.Engram
+		Shared Function CreateCustom(BlueprintId As String, Path As String, ClassString As String) As Ark.Engram
 		  Var Engram As New Ark.Engram
-		  Engram.mContentPackUUID = Ark.UserContentPackUUID
+		  Engram.mContentPackId = Ark.UserContentPackId
 		  Engram.mContentPackName = Ark.UserContentPackName
 		  
-		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		  If BlueprintId.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
 		    // Seriously?
 		    ClassString = "PrimalItemMystery_NoData_C"
 		  End If
 		  If Path.IsEmpty Then
 		    If ClassString.IsEmpty Then
-		      ClassString = "PrimalItemMystery_" + ObjectID + "_C"
+		      ClassString = "PrimalItemMystery_" + BlueprintId + "_C"
 		    End If
 		    Path = Ark.UnknownBlueprintPath("Engrams", ClassString)
 		  ElseIf ClassString.IsEmpty Then
-		    ClassString = Beacon.ClassStringFromPath(Path)
+		    ClassString = Ark.ClassStringFromPath(Path)
 		  End If
-		  If ObjectID.IsEmpty Then
-		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Engram.mContentPackUUID + ":" + Path.Lowercase)
+		  If BlueprintId.IsEmpty Then
+		    BlueprintId = Beacon.UUID.v5(Engram.mContentPackId.Lowercase + ":" + Path.Lowercase)
 		  End If
 		  
 		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
@@ -138,7 +141,7 @@ Implements Ark.Blueprint
 		  
 		  Engram.mPath = Path
 		  Engram.mClassString = ClassString
-		  Engram.mObjectID = ObjectID
+		  Engram.mEngramId = BlueprintId
 		  Engram.mTags.Add("blueprintable")
 		  
 		  Return Engram
@@ -156,6 +159,36 @@ Implements Ark.Blueprint
 		  Var Engram As Ark.Engram = CreateCustom("", "", "PrimalItemMystery_" + Base)
 		  Engram.mEngramEntryString = EntryString
 		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationId() As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mEngramId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationMask() As UInt64
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisambiguationSuffix(Mask As UInt64) As String
+		  // Part of the Beacon.DisambiguationCandidate interface.
+		  
+		  Return Ark.Maps.LabelForMask(Self.Availability And Mask)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EngramId() As String
+		  Return Self.mEngramId
 		End Function
 	#tag EndMethod
 
@@ -204,10 +237,16 @@ Implements Ark.Blueprint
 		  // Part of the Beacon.NamedItem interface.
 		  
 		  If Self.mLabel.IsEmpty Then
-		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
+		    Self.mLabel = Ark.LabelFromClassString(Self.ClassString)
 		  End If
 		  
 		  Return Self.mLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastUpdate() As Double
+		  Return Self.mLastUpdate
 		End Function
 	#tag EndMethod
 
@@ -253,7 +292,7 @@ Implements Ark.Blueprint
 		Function ObjectID() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  Return Self.mObjectID
+		  Return Self.mEngramId
 		End Function
 	#tag EndMethod
 
@@ -263,7 +302,7 @@ Implements Ark.Blueprint
 		    Return 1
 		  End If
 		  
-		  If Self.ObjectID = Other.ObjectID Then
+		  If Self.mEngramId = Other.mEngramId Then
 		    Return 0
 		  End If
 		  
@@ -276,28 +315,28 @@ Implements Ark.Blueprint
 		  // Part of the Ark.Blueprint interface.
 		  
 		  If Self.HasUnlockDetails Then
-		    Dict.Value("entry_string") = Self.mEngramEntryString
+		    Dict.Value("entryString") = Self.mEngramEntryString
 		    If Self.mRequiredPlayerLevel Is Nil Then
-		      Dict.Value("required_level") = Nil
+		      Dict.Value("requiredLevel") = Nil
 		    Else
-		      Dict.Value("required_level") = Self.mRequiredPlayerLevel.IntegerValue
+		      Dict.Value("requiredLevel") = Self.mRequiredPlayerLevel.IntegerValue
 		    End If
 		    If Self.mRequiredUnlockPoints Is Nil Then
-		      Dict.Value("required_points") = Nil
+		      Dict.Value("requiredPoints") = Nil
 		    Else
-		      Dict.Value("required_points") = Self.mRequiredUnlockPoints.IntegerValue
+		      Dict.Value("requiredPoints") = Self.mRequiredUnlockPoints.IntegerValue
 		    End If
 		  Else
-		    Dict.Value("entry_string") = Nil
-		    Dict.Value("item_id") = Nil
-		    Dict.Value("required_points") = Nil
-		    Dict.Value("required_level") = Nil
+		    Dict.Value("entryString") = Nil
+		    Dict.Value("itemId") = Nil
+		    Dict.Value("requiredPoints") = Nil
+		    Dict.Value("requiredLevel") = Nil
 		  End If
 		  
 		  If Self.mStackSize Is Nil Then
-		    Dict.Value("stack_size") = Nil
+		    Dict.Value("stackSize") = Nil
 		  Else
-		    Dict.Value("stack_size") = Self.mStackSize.IntegerValue
+		    Dict.Value("stackSize") = Self.mStackSize.IntegerValue
 		  End If
 		  
 		  Call Self.Recipe // Forces the recipe to load
@@ -383,15 +422,19 @@ Implements Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mContentPackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mContentPackName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mContentPackUUID As v4UUID
+		Protected mEngramEntryString As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mEngramEntryString As String
+		Protected mEngramId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -414,12 +457,12 @@ Implements Ark.Blueprint
 		Protected mLabel As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mModified As Boolean
+	#tag Property, Flags = &h1
+		Protected mLastUpdate As Double
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mObjectID As String
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

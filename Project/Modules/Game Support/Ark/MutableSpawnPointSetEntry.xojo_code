@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MutableSpawnPointSetEntry
 Inherits Ark.SpawnPointSetEntry
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
 		Sub Append(Level As Ark.SpawnPointLevel)
 		  Var Idx As Integer = Self.IndexOf(Level)
@@ -13,18 +14,47 @@ Inherits Ark.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Creature(Assigns Value As Ark.Creature)
-		  If Self.mCreatureRef <> Value Then
-		    Self.mCreatureRef = New Ark.BlueprintReference(Value.ImmutableVersion)
-		    Self.Modified = True
+		  If Value Is Nil Then
+		    Var Err As New NilObjectException
+		    Err.Message = "Cannot assign to nil creature"
+		    Raise Err
 		  End If
+		  
+		  Var Reference As New Ark.BlueprintReference(Value)
+		  If Self.mCreatureRef = Reference Then
+		    Return
+		  End If
+		  
+		  Self.mCreatureRef = Reference
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ID(Assigns Value As v4UUID)
-		  If (Value Is Nil) = False Then
-		    Self.mID = Value
+		Sub CreatureReference(Assigns Value As Ark.BlueprintReference)
+		  If Value Is Nil Or Value.Kind <> Ark.BlueprintReference.KindCreature Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Expected creature reference"
+		    Raise Err
 		  End If
+		  
+		  If Self.mCreatureRef = Value Then
+		    Return
+		  End If
+		  
+		  Self.mCreatureRef = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EntryId(Assigns Value As String)
+		  If Self.mEntryId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mEntryId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -126,7 +156,7 @@ Inherits Ark.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Offset(Assigns Value As Beacon.Point3D)
-		  If Value = Nil Then
+		  If Value Is Nil Then
 		    If Self.mOffset <> Nil Then
 		      Self.mOffset = Nil
 		      Self.Modified = True

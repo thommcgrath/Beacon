@@ -1,6 +1,7 @@
 #tag Class
 Protected Class Template
 Inherits Beacon.Template
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Save(SaveData As Dictionary)
 		  SaveData.Value("Kind") = Self.Kind
@@ -32,7 +33,7 @@ Inherits Beacon.Template
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Function GameId() As String
 		  Return Ark.Identifier
 		End Function
 	#tag EndMethod

@@ -7,21 +7,21 @@ Protected Module PasswordStorage
 		    Try
 		      Var Item As New KeyChainItem
 		      Item.ServiceName = "Beacon"
-		      If v4UUID.IsValid(EmailOrUserId) Then
+		      If Beacon.UUID.Validate(EmailOrUserId) Then
 		        Item.AccountName = EmailOrUserId
 		      Else
 		        Item.Label = EmailOrUserId
 		      End If
 		      Call System.KeyChain.FindPassword(Item)
 		      Item.Remove
-		    Catch Err As KeychainException
+		    Catch Err As RuntimeException
 		      // Not found
 		    End Try
 		  #else
 		    Var SavedPasswords As Dictionary = Preferences.SavedPasswords
 		    
 		    Var UserId As String
-		    If v4UUID.IsValid(EmailOrUserId) Then
+		    If Beacon.UUID.Validate(EmailOrUserId) Then
 		      UserId = EmailOrUserId
 		    Else
 		      For Each Entry As DictionaryEntry In SavedPasswords
@@ -50,7 +50,7 @@ Protected Module PasswordStorage
 		  #if TargetMacOS
 		    #Pragma BreakOnExceptions False
 		    Try
-		      Var IsAccountId As Boolean = v4UUID.IsValid(EmailOrUserId)
+		      Var IsAccountId As Boolean = Beacon.UUID.Validate(EmailOrUserId)
 		      
 		      Var Item As New KeyChainItem
 		      Item.ServiceName = "Beacon"
@@ -64,7 +64,7 @@ Protected Module PasswordStorage
 		      If (IsAccountId And Item.AccountName = EmailOrUserId) Or (IsAccountId = False And Item.Label = EmailOrUserId) Then
 		        Return Password
 		      End If
-		    Catch Err As KeychainException
+		    Catch Err As RuntimeException
 		      Return ""
 		    End Try
 		  #else
@@ -95,8 +95,8 @@ Protected Module PasswordStorage
 		    
 		    Try
 		      Var Email As String = PasswordData.Lookup("email", "")
-		      Return BeaconEncryption.SlowDecrypt(Email.Lowercase + " " + UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, PasswordData.Lookup("password", ""))
-		    Catch Err As CryptoException
+		      Return BeaconEncryption.SlowDecrypt(Email.Lowercase + " " + UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, PasswordData.Lookup("password", ""))
+		    Catch Err As RuntimeException
 		      Return ""
 		    End Try
 		  #endif
@@ -116,14 +116,14 @@ Protected Module PasswordStorage
 		    Try
 		      System.KeyChain.AddPassword(Item, Password)
 		      Return True
-		    Catch Err As KeyChainException
+		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Saving keychain item")
 		      Return False
 		    End Try
 		  #else
 		    Var PasswordData As New Dictionary
 		    PasswordData.Value("email") = Email
-		    PasswordData.Value("password") = BeaconEncryption.SlowEncrypt(Email.Lowercase + " " + UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Password)
+		    PasswordData.Value("password") = BeaconEncryption.SlowEncrypt(Email.Lowercase + " " + UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, Password)
 		    
 		    Var SavedPasswords As Dictionary = Preferences.SavedPasswords
 		    SavedPasswords.Value(UserId) = PasswordData

@@ -2,26 +2,36 @@
 Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Function AttributesForBlueprint(Blueprint As Ark.Blueprint) As String()
-		  Return Self.AttributesForBlueprint(Blueprint.ObjectID)
+		  Return Self.AttributesForBlueprint(Blueprint.BlueprintId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function AttributesForBlueprint(Reference As Ark.BlueprintReference) As String()
-		  Return Self.AttributesForBlueprint(Reference.ObjectID)
+		  Return Self.AttributesForBlueprint(Reference.BlueprintId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AttributesForBlueprint(ObjectID As String) As String()
+		Function AttributesForBlueprint(BlueprintId As String) As String()
 		  Var Arr() As String
-		  If Self.mAttributes.HasKey(ObjectID) = False Then
+		  If Self.mAttributes.HasKey(BlueprintId) = False Then
 		    Return Arr
 		  End If
 		  
-		  Var Dict As Dictionary = Self.mAttributes.Value(ObjectID)
+		  Var Dict As Dictionary = Self.mAttributes.Value(BlueprintId)
 		  For Each Entry As DictionaryEntry In Dict
 		    Arr.Add(Entry.Key.StringValue)
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BlueprintIds() As String()
+		  Var Arr() As String
+		  For Each Entry As DictionaryEntry In Self.mReferences
+		    Arr.Add(Entry.Key)
 		  Next
 		  Return Arr
 		End Function
@@ -141,9 +151,9 @@ Protected Class BlueprintAttributeManager
 		      Next
 		      
 		      Call Reference.Resolve // Get the correct UUID from the reference
-		      Var ObjectID As String = Reference.ObjectID
-		      Manager.mReferences.Value(ObjectID) = Reference
-		      Manager.mAttributes.Value(ObjectID) = Attr
+		      Var BlueprintId As String = Reference.BlueprintId
+		      Manager.mReferences.Value(BlueprintId) = Reference
+		      Manager.mAttributes.Value(BlueprintId) = Attr
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
@@ -158,7 +168,7 @@ Protected Class BlueprintAttributeManager
 		    Return False
 		  End If
 		  
-		  Return Self.HasAttribute(Blueprint.ObjectID, Key)
+		  Return Self.HasAttribute(Blueprint.BlueprintId, Key)
 		End Function
 	#tag EndMethod
 
@@ -168,13 +178,13 @@ Protected Class BlueprintAttributeManager
 		    Return False
 		  End If
 		  
-		  Return Self.HasAttribute(Reference.ObjectID, Key)
+		  Return Self.HasAttribute(Reference.BlueprintId, Key)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasAttribute(ObjectID As String, Key As String) As Boolean
-		  Return Self.mAttributes.HasKey(ObjectID) And Dictionary(Self.mAttributes.Value(ObjectID)).HasKey(Key)
+		Function HasAttribute(BlueprintId As String, Key As String) As Boolean
+		  Return Self.mAttributes.HasKey(BlueprintId) And Dictionary(Self.mAttributes.Value(BlueprintId)).HasKey(Key)
 		End Function
 	#tag EndMethod
 
@@ -184,7 +194,7 @@ Protected Class BlueprintAttributeManager
 		    Return False
 		  End If
 		  
-		  Return Self.HasBlueprint(Blueprint.ObjectID)
+		  Return Self.HasBlueprint(Blueprint.BlueprintId)
 		End Function
 	#tag EndMethod
 
@@ -194,13 +204,13 @@ Protected Class BlueprintAttributeManager
 		    Return False
 		  End If
 		  
-		  Return Self.HasBlueprint(Reference.ObjectID)
+		  Return Self.HasBlueprint(Reference.BlueprintId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasBlueprint(ObjectID As String) As Boolean
-		  Return Self.mReferences.HasKey(ObjectID)
+		Function HasBlueprint(BlueprintId As String) As Boolean
+		  Return Self.mReferences.HasKey(BlueprintId)
 		End Function
 	#tag EndMethod
 
@@ -230,19 +240,15 @@ Protected Class BlueprintAttributeManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectIDs() As String()
-		  Var Arr() As String
-		  For Each Entry As DictionaryEntry In Self.mReferences
-		    Arr.Add(Entry.Key)
-		  Next
-		  Return Arr
+		Attributes( Deprecated = "BlueprintsIds" )  Function ObjectIDs() As String()
+		  Return Self.BlueprintIds
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Reference(ObjectID As String) As Ark.BlueprintReference
-		  If Self.mReferences.HasKey(ObjectID) Then
-		    Return Self.mReferences.Value(ObjectID)
+		Function Reference(BlueprintId As String) As Ark.BlueprintReference
+		  If Self.mReferences.HasKey(BlueprintId) Then
+		    Return Self.mReferences.Value(BlueprintId)
 		  End If
 		End Function
 	#tag EndMethod
@@ -260,7 +266,7 @@ Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Sub Remove(Blueprint As Ark.Blueprint)
 		  If (Blueprint Is Nil) = False Then
-		    Self.Remove(Blueprint.ObjectID)
+		    Self.Remove(Blueprint.BlueprintId)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -268,7 +274,7 @@ Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Sub Remove(Blueprint As Ark.Blueprint, Key As String)
 		  If (Blueprint Is Nil) = False Then
-		    Self.Remove(Blueprint.ObjectID, Key)
+		    Self.Remove(Blueprint.BlueprintId, Key)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -276,7 +282,7 @@ Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Sub Remove(Reference As Ark.BlueprintReference)
 		  If (Reference Is Nil) = False Then
-		    Self.Remove(Reference.ObjectID)
+		    Self.Remove(Reference.BlueprintId)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -284,37 +290,37 @@ Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Sub Remove(Reference As Ark.BlueprintReference, Key As String)
 		  If (Reference Is Nil) = False Then
-		    Self.Remove(Reference.ObjectID, Key)
+		    Self.Remove(Reference.BlueprintId, Key)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(ObjectID As String)
-		  If Self.mAttributes.HasKey(ObjectID) Then
-		    Self.mAttributes.Remove(ObjectID)
+		Sub Remove(BlueprintId As String)
+		  If Self.mAttributes.HasKey(BlueprintId) Then
+		    Self.mAttributes.Remove(BlueprintId)
 		  End If
 		  
-		  If Self.mReferences.HasKey(ObjectID) Then
-		    Self.mReferences.Remove(ObjectID)
+		  If Self.mReferences.HasKey(BlueprintId) Then
+		    Self.mReferences.Remove(BlueprintId)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(ObjectID As String, Key As String)
-		  If Self.mAttributes.HasKey(ObjectID) = False Then
+		Sub Remove(BlueprintId As String, Key As String)
+		  If Self.mAttributes.HasKey(BlueprintId) = False Then
 		    Return
 		  End If
 		  
-		  Var Attr As Dictionary = Self.mAttributes.Value(ObjectID)
+		  Var Attr As Dictionary = Self.mAttributes.Value(BlueprintId)
 		  If Attr.HasKey(Key) Then
 		    Attr.Remove(Key)
 		    If Attr.KeyCount = 0 Then
-		      Self.mAttributes.Remove(ObjectID)
-		      Self.mReferences.Remove(ObjectID)
+		      Self.mAttributes.Remove(BlueprintId)
+		      Self.mReferences.Remove(BlueprintId)
 		    Else
-		      Self.mAttributes.Value(ObjectID) = Attr
+		      Self.mAttributes.Value(BlueprintId) = Attr
 		    End If
 		  End If
 		End Sub
@@ -325,9 +331,9 @@ Protected Class BlueprintAttributeManager
 		  Var Dicts() As Dictionary
 		  
 		  For Each Entry As DictionaryEntry In Self.mAttributes
-		    Var ObjectID As String = Entry.Key
+		    Var BlueprintId As String = Entry.Key
 		    Var ObjectValues As Dictionary = Entry.Value
-		    Var ObjectRef As Ark.BlueprintReference = Self.mReferences.Value(ObjectID)
+		    Var ObjectRef As Ark.BlueprintReference = Self.mReferences.Value(BlueprintId)
 		    
 		    Var Dict As New Dictionary
 		    Dict.Value("Blueprint") = ObjectRef.SaveData
@@ -355,41 +361,41 @@ Protected Class BlueprintAttributeManager
 
 	#tag Method, Flags = &h0
 		Function Value(Blueprint As Ark.Blueprint, Key As String) As Variant
-		  Return Self.Value(Blueprint.ObjectID, Key)
+		  Return Self.Value(Blueprint.BlueprintId, Key)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Value(Blueprint As Ark.Blueprint, Key As String, Assigns NewValue As Variant)
-		  If Self.mReferences.HasKey(Blueprint.ObjectID) = False Then
-		    Self.mReferences.Value(Blueprint.ObjectID) = New Ark.BlueprintReference(Blueprint)
+		  If Self.mReferences.HasKey(Blueprint.BlueprintId) = False Then
+		    Self.mReferences.Value(Blueprint.BlueprintId) = New Ark.BlueprintReference(Blueprint)
 		  End If
 		  
-		  Self.Value(Blueprint.ObjectID, Key) = NewValue
+		  Self.Value(Blueprint.BlueprintId, Key) = NewValue
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Value(Reference As Ark.BlueprintReference, Key As String) As Variant
-		  Return Self.Value(Reference.ObjectID, Key)
+		  Return Self.Value(Reference.BlueprintId, Key)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Value(Reference As Ark.BlueprintReference, Key As String, Assigns NewValue As Variant)
-		  If Self.mReferences.HasKey(Reference.ObjectID) = False Then
-		    Self.mReferences.Value(Reference.ObjectID) = Reference
+		  If Self.mReferences.HasKey(Reference.BlueprintId) = False Then
+		    Self.mReferences.Value(Reference.BlueprintId) = Reference
 		  End If
 		  
-		  Self.Value(Reference.ObjectID, Key) = NewValue
+		  Self.Value(Reference.BlueprintId, Key) = NewValue
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value(ObjectID As String, Key As String) As Variant
+		Function Value(BlueprintId As String, Key As String) As Variant
 		  Var Dict As Dictionary
-		  If Self.mAttributes.HasKey(ObjectID) Then
-		    Dict = Self.mAttributes.Value(ObjectID)
+		  If Self.mAttributes.HasKey(BlueprintId) Then
+		    Dict = Self.mAttributes.Value(BlueprintId)
 		  Else
 		    Dict = New Dictionary
 		  End If
@@ -403,16 +409,16 @@ Protected Class BlueprintAttributeManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Value(ObjectID As String, Key As String, Assigns NewValue As Variant)
+		Sub Value(BlueprintId As String, Key As String, Assigns NewValue As Variant)
 		  Var Dict As Dictionary
-		  If Self.mAttributes.HasKey(ObjectID) Then
-		    Dict = Self.mAttributes.Value(ObjectID)
+		  If Self.mAttributes.HasKey(BlueprintId) Then
+		    Dict = Self.mAttributes.Value(BlueprintId)
 		  Else
 		    Dict = New Dictionary
 		  End If
 		  
 		  Dict.Value(Key) = Self.EncodeValue(NewValue)
-		  Self.mAttributes.Value(ObjectID) = Dict
+		  Self.mAttributes.Value(BlueprintId) = Dict
 		End Sub
 	#tag EndMethod
 

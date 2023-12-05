@@ -20,7 +20,7 @@ Protected Module DataUpdater
 		    End If
 		  End If
 		  If (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
-		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.UserID)
+		    CheckURL = CheckURL + "&userId=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.UserID)
 		  End If
 		  
 		  mForceImport = Refresh
@@ -68,8 +68,8 @@ Protected Module DataUpdater
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub ImportString(Content As String)
+	#tag Method, Flags = &h1
+		Protected Sub ImportString(Content As String)
 		  mPendingImports.Add(Content)
 		  
 		  If mPendingImports.Count > 0 Then
@@ -185,67 +185,80 @@ Protected Module DataUpdater
 
 	#tag Method, Flags = &h21
 		Private Sub mImportThread_Run(Sender As Thread)
-		  #Pragma Unused Sender
-		  
 		  If mPendingImports.Count = 0 Then
 		    mForceImport = False
 		    Return
 		  End If
 		  
+		  Sender.YieldToNext
+		  
 		  NotificationKit.Post(Notification_ImportBegin, Nil)
 		  
-		  Var Sources(1) As Beacon.DataSource
-		  Sources(0) = Beacon.CommonData.Pool.Get(True)
-		  Sources(1) = Ark.DataSource.Pool.Get(True)
+		  Var Sources() As Beacon.DataSource
+		  Var DefinedSources() As Beacon.DataSource = App.DataSources()
+		  For Each DefinedSource As Beacon.DataSource In DefinedSources
+		    Sources.Add(DefinedSource.WriteableInstance)
+		  Next
 		  
-		  Var SourcesToOptimize() As Beacon.DataSource
+		  Var SourcesToOptimize As New Dictionary
 		  
 		  While mPendingImports.Count > 0
 		    Var Content As String = mPendingImports(mPendingImports.FirstIndex)
 		    mPendingImports.RemoveAt(mPendingImports.FirstIndex)
 		    
-		    If Beacon.IsCompressed(Content) Then
-		      Content = Beacon.Decompress(Content)
-		    End If
-		    
-		    Var Parsed As Dictionary
-		    Var IsFull As Boolean
-		    Var Deletions() As Dictionary
-		    Var PayloadTimestamp As Double
+		    Var Archive As Beacon.Archive
 		    Try
-		      #if DebugBuild
-		        Var StartTime As Double = System.Microseconds
-		      #endif
-		      Parsed = Beacon.ParseJSON(Content)
-		      #if DebugBuild
-		        Var ParseTime As Double = System.Microseconds - StartTime
-		        System.DebugLog("Took " + ParseTime.ToString(Locale.Raw, "0") + " microseconds to parse " + Beacon.BytesToString(Content.Bytes) + " of JSON.")
-		      #endif
-		      IsFull = Parsed.Value("is_full").BooleanValue
-		      
-		      Var FileVersion As Integer = Parsed.Value("beacon_version")
-		      If FileVersion <> Version Then
-		        Continue While
-		      End If
-		      
-		      PayloadTimestamp = Parsed.Value("timestamp").DoubleValue
-		      
-		      If IsFull = False Then
-		        Var Temp() As Variant = Parsed.Value("deletions")
-		        For Each Member As Variant In Temp
-		          Try
-		            Deletions.Add(Member)
-		          Catch MemberErr As RuntimeException
-		          End Try
-		        Next Member
-		      End If
+		      Archive = Beacon.Archive.Open(Content)
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Parsing imported JSON")
-		      Continue While
+		      App.Log(Err, CurrentMethodName, "Trying to open archive")
+		      Continue
 		    End Try
 		    
+		    Var ManifestSource As String = Archive.GetFile("Manifest.json")
+		    Var Manifest As Dictionary
+		    Try
+		      Manifest = Beacon.ParseJSON(ManifestSource)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to parse manifest")
+		      Continue
+		    End Try
+		    
+		    Var FileList() As Variant
+		    Var IsFull As Boolean
+		    Var Version As Integer
+		    Var Timestamp As NullableDouble
+		    Var IsUserData As Boolean
+		    Try
+		      FileList = Manifest.Value("files")
+		      IsFull = Manifest.Value("isFull")
+		      Version = Manifest.Value("version")
+		      Timestamp = NullableDouble.FromVariant(Manifest.Lookup("timestamp", Nil))
+		      IsUserData = Manifest.Lookup("isUserData", False).BooleanValue
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Loading values from manifest")
+		      Continue
+		    End Try
+		    
+		    Var Payloads() As Dictionary
+		    For Each Filename As Variant In FileList
+		      Try
+		        #if DebugBuild
+		          Var StartTime As Double = System.Microseconds
+		        #endif
+		        Var PayloadContent As MemoryBlock = Archive.GetFile(Filename.StringValue)
+		        Var Payload As Dictionary = Beacon.ParseJSON(PayloadContent)
+		        #if DebugBuild
+		          Var ParseTime As Double = System.Microseconds - StartTime
+		          System.DebugLog("Took " + ParseTime.ToString(Locale.Raw, "#,##0") + " microseconds to parse " + Filename.StringValue + " (" + Beacon.BytesToString(PayloadContent.Size) + ").")
+		        #endif
+		        Payloads.Add(Payload)
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Parsing update payload")
+		      End Try
+		    Next
+		    
 		    For Each Source As Beacon.DataSource In Sources
-		      If mForceImport = False And Source.LastSyncTimestamp >= PayloadTimestamp Then
+		      If mForceImport = False And (Timestamp Is Nil) = False And Source.LastSyncTimestamp >= Timestamp Then
 		        // No need to import this one
 		        Continue
 		      End If
@@ -253,13 +266,13 @@ Protected Module DataUpdater
 		      Var Imported As Boolean
 		      Var OriginalChangeCount As Integer = Source.TotalChanges()
 		      Try
-		        Imported = Source.Import(Parsed, IsFull, Deletions)
+		        Imported = Source.Import(IsFull, Payloads, Timestamp, IsUserData)
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Trying to import delta updates for " + Source.Identifier)
 		      End Try
 		      
 		      If Imported And Source.TotalChanges() > OriginalChangeCount Then
-		        SourcesToOptimize.Add(Source)
+		        SourcesToOptimize.Value(Source) = True
 		      End If
 		      
 		      If Imported = False Then
@@ -270,15 +283,14 @@ Protected Module DataUpdater
 		          Source.LastSyncTimestamp = 0
 		          CheckNow(True)
 		        End If
-		        Continue While
 		      End If
-		    Next Source
+		    Next
 		    
 		    If mPendingImports.Count = 0 Then
 		      // About to finish up, but if something gets added to mPendingImports, then the loop will restart to avoid missing anything
-		      For Each Source As Beacon.DataSource In SourcesToOptimize
-		        Source.Optimize()
-		      Next Source
+		      For Each Entry As DictionaryEntry In SourcesToOptimize
+		        Beacon.DataSource(Entry.Key).Optimize()
+		      Next
 		    End If
 		  Wend
 		  
@@ -333,7 +345,7 @@ Protected Module DataUpdater
 	#tag Constant, Name = Notification_OnlineCheckStopped, Type = String, Dynamic = False, Default = \"DataUpdater:OnlineCheckStopped", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"6", Scope = Protected
+	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"7", Scope = Protected
 	#tag EndConstant
 
 

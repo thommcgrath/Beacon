@@ -14,6 +14,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintId() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Category() As String
 		  
 		End Function
@@ -32,13 +38,13 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackName() As String
+		Function ContentPackId() As String
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackUUID() As String
+		Function ContentPackName() As String
 		  
 		End Function
 	#tag EndMethod
@@ -56,6 +62,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastUpdate() As Double
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MutableClone() As Ark.MutableBlueprint
 		  
 		End Function
@@ -63,12 +75,6 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function MutableVersion() As Ark.MutableBlueprint
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ObjectID() As String
 		  
 		End Function
 	#tag EndMethod

@@ -37,8 +37,8 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   "*,200"
+      ColumnCount     =   3
+      ColumnWidths    =   "*,150,150"
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -54,10 +54,10 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   397
+      Height          =   366
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Template Name	Type"
+      InitialValue    =   "Template Name	Game	Type"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -65,6 +65,7 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -74,6 +75,7 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -113,6 +115,67 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   576
+   End
+   Begin DesktopLabel StatusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Loading templates"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   413
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   536
+   End
+   Begin FadedSeparator StatusSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   407
       Transparent     =   True
       Visible         =   True
       Width           =   576
@@ -176,6 +239,12 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub CloneSelected()
 		  If Self.List.SelectedRowCount = 0 Then
@@ -213,7 +282,7 @@ End
 		  Var SaveData As String
 		  Try
 		    Var SaveDict As Dictionary = Source.SaveData
-		    SaveDict.Value("ID") = v4UUID.Create.StringValue
+		    SaveDict.Value("ID") = Beacon.UUID.v4
 		    SaveDict.Value("Label") = Beacon.FindUniqueLabel(SaveDict.Value("Label").StringValue, SiblingNames)
 		    SiblingNames.Add(SaveDict.Value("Label").StringValue)
 		    SaveData = Beacon.GenerateJSON(SaveDict, False)
@@ -247,6 +316,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub DeleteTemplates(Templates() As Beacon.Template)
 		  Var Th As New Beacon.DeleteTemplateThread(Templates)
+		  Th.DebugIdentifier = "Template Delete Thread"
 		  AddHandler Th.DeleteComplete, AddressOf DeleteThread_Completed
 		  Th.Start
 		End Sub
@@ -274,10 +344,11 @@ End
 		    
 		    Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		    If (File Is Nil) = False Then
-		      Var Contents As String = Beacon.GenerateJSON(Template.SaveData, True)
-		      If File.Write(Contents) = False Then
+		      Try
+		        File.Write(Beacon.GenerateJSON(Template.SaveData, True))
+		      Catch Err As RuntimeException
 		        Self.ShowAlert("Could not export template", "There was an error saving the template. The disk may be full or may not have write permission.")
-		      End If
+		      End Try
 		    End If
 		    
 		    Return
@@ -319,6 +390,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SaveTemplates(Templates() As Beacon.Template)
 		  Var Th As New Beacon.SaveTemplateThread(Templates)
+		  Th.DebugIdentifier = "Template Save Thread"
 		  AddHandler Th.SaveComplete, AddressOf SaveThread_Completed
 		  Th.Start
 		End Sub
@@ -364,24 +436,44 @@ End
 		  
 		  Self.List.RowCount = TemplateCount
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    Self.List.CellTextAt(Idx, 0) = Templates(Idx).Label
+		    Self.List.CellTextAt(Idx, Self.ColumnName) = Templates(Idx).Label
+		    Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(Templates(Idx).GameId)
 		    
 		    Var CustomTemplate As Boolean = CommonData.IsTemplateCustom(Templates(Idx))
 		    Var OfficialTemplate As Boolean = CommonData.IsTemplateOfficial(Templates(Idx))
 		    If OfficialTemplate And CustomTemplate Then
-		      Self.List.CellTextAt(Idx, 1) = "Customized Built-In"
+		      Self.List.CellTextAt(Idx, Self.ColumnType) = "Customized Built-In"
 		    ElseIf OfficialTemplate Then
-		      Self.List.CellTextAt(Idx, 1) = "Built-In"
+		      Self.List.CellTextAt(Idx, Self.ColumnType) = "Built-In"
 		    Else
-		      Self.List.CellTextAt(Idx, 1) = "Custom"
+		      Self.List.CellTextAt(Idx, Self.ColumnType) = "Custom"
 		    End If
 		    
 		    Self.List.RowTagAt(Idx) = Templates(Idx)
 		    Self.List.RowSelectedAt(Idx) = SelectUUIDs.IndexOf(Templates(Idx).UUID) > -1
-		  Next Idx
+		  Next
+		  
+		  Self.List.SizeColumnToFit(Self.ColumnGame, 150)
+		  Self.List.SizeColumnToFit(Self.ColumnType, 150)
 		  
 		  Self.List.Sort
 		  Self.List.EnsureSelectionIsVisible
+		  
+		  Self.UpdateStatus
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Var Status As String
+		  If Self.List.SelectedRowCount > 0 Then
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.List.RowCount, "template", "templates") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.List.RowCount, "template", "templates")
+		  End If
+		  If Self.StatusLabel.Text <> Status Then
+		    Self.StatusLabel.Text = Status
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -389,6 +481,16 @@ End
 	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
+
+
+	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnType, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -405,11 +507,8 @@ End
 		  If (Self.TemplatesToolbar.Item("ExportTemplate") Is Nil) = False Then
 		    Self.TemplatesToolbar.Item("ExportTemplate").Enabled = Me.SelectedRowCount > 0
 		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.ColumnAlignmentAt(1) = DesktopListbox.Alignments.Right
+		  
+		  Self.UpdateStatus
 		End Sub
 	#tag EndEvent
 	#tag Event

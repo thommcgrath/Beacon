@@ -97,6 +97,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -106,6 +107,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   82
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -265,6 +267,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -467,7 +470,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CreateFibercraftServer()
-		  Var Fiber As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("244bc843-2540-486e-af4a-8824500c0e56")
+		  Var Fiber As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram("244bc843-2540-486e-af4a-8824500c0e56")
 		  If ArkAdjustIngredientDialog.Present(Self, Self.Project, Nil, "{""required"":[],""excluded"":[""no_fibercraft""]}", Nil, "", Fiber, 0.00001, ArkAdjustIngredientDialog.RoundUp, False) Then
 		    Self.Modified = True
 		    Self.SetupUI()
@@ -588,9 +591,9 @@ End
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
-		  Var ObjectIDs() As String
+		  Var RecipeIds() As String
 		  For Each Item As Ark.CraftingCost In SelectItems
-		    ObjectIDs.Add(Item.ObjectID)
+		    RecipeIds.Add(Item.RecipeId)
 		  Next
 		  
 		  Var Filter As String = Self.FilterField.Text.Trim
@@ -606,7 +609,7 @@ End
 		    Var Cost As Ark.CraftingCost = Config.Cost(Engrams(Idx))
 		    Self.List.AddRow(Cost.Engram.Label)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = RecipeIds.IndexOf(Cost.RecipeId) > -1
 		  Next Idx
 		  
 		  Self.List.Sort
@@ -729,20 +732,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return True
-		  End If
-		  
-		  If Not Board.TextAvailable Then
-		    Return False
-		  End If
-		  
-		  Return Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -759,59 +754,36 @@ End
 		    Dicts.Add(Cost.Export)
 		  Next
 		  
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
-		  
-		  If Not Ark.Configs.ConfigUnlocked(Ark.Configs.NameCraftingCosts, App.IdentityManager.CurrentIdentity) Then
+		  If Dicts.Count = 0 Then
+		    System.Beep
 		    Return
 		  End If
 		  
-		  Var Lines() As String
-		  For Each Cost As Ark.CraftingCost In SelectedCosts
-		    If Cost.Engram Is Nil Or Cost.Engram.ValidForProject(Self.Project) = False Then
-		      Continue
-		    End If
-		    
-		    Var Config As Ark.ConfigValue = Ark.Configs.CraftingCosts.ConfigValueForCraftingCost(Cost)
-		    If (Config Is Nil) = False Then
-		      Lines.Add(Config.Command)
-		    End If
-		  Next
-		  
-		  If Lines.Count = 0 Then
-		    Return
-		  End If
-		  
-		  Board.Text = Lines.Join(EndOfLine)
+		  Board.AddClipboardData(Self.kClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
-		    Var ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse("", ImportText, "Clipboard")
-		    Return
-		  End If
-		  
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var Dicts() As Variant
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Var Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		      Dicts = Beacon.ParseJSON(Contents)
-		      
+		      Var Dicts() As Variant = Contents
 		      Var Costs() As Ark.CraftingCost
 		      Var Config As Ark.Configs.CraftingCosts = Self.Config(True)
 		      For Each Dict As Dictionary In Dicts
 		        Var Cost As Ark.CraftingCost = Ark.CraftingCost.ImportFromBeacon(Dict)
-		        If Cost <> Nil Then
+		        If (Cost Is Nil) = False Then
 		          Config.Add(Cost)
 		          Costs.Add(Cost)
 		        End If
 		      Next
 		      
-		      Self.UpdateList(Costs)
-		      Self.Modified = True
+		      If Costs.Count > 0 Then
+		        Self.UpdateList(Costs)
+		        Self.Modified = True
+		      End If
 		    Catch Err As RuntimeException
-		      System.Beep
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    End Try
 		    Return
 		  End If
@@ -861,16 +833,16 @@ End
 		  Var Engrams() As Ark.Engram = OriginalConfig.Engrams
 		  Var Filter As New Dictionary
 		  For Each Engram As Ark.Engram In Engrams
-		    Filter.Value(Engram.ObjectID) = True
+		    Filter.Value(Engram.EngramId) = True
 		  Next
 		  
-		  Var ObjectIDs() As String = Ark.DataSource.Pool.Get(False).GetEngramUUIDsThatHaveCraftingCosts(Self.Project.ContentPacks, Self.Project.MapMask)
-		  For Each ObjectID As String In ObjectIDs
-		    If Filter.HasKey(ObjectID) Then
+		  Var EngramIds() As String = Ark.DataSource.Pool.Get(False).GetRecipeEngramIds(Self.Project.ContentPacks, Self.Project.MapMask)
+		  For Each EngramId As String In EngramIds
+		    If Filter.HasKey(EngramId) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(ObjectID)
+		    Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram(EngramId)
 		    If (Engram Is Nil) = False Then
 		      Engrams.Add(Engram)
 		    End If

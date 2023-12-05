@@ -1,47 +1,19 @@
 #tag Class
 Protected Class Request
 	#tag Method, Flags = &h0
-		Sub Authenticate(Token As String)
-		  Self.RequestHeader("Authorization") = "Session " + Token
-		  Self.RequestHeader("X-Beacon-Token") = Token
-		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Token
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Authenticate(Username As String, Password As String)
-		  Self.RequestHeader("Authorization") = "Basic " + EncodeBase64(Username + ":" + Password, 0)
-		  Self.RequestHeader("X-Beacon-Token") = ""
-		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Password
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Authenticated() As Boolean
-		  Return Self.mRequestHeaders <> Nil And Self.mRequestHeaders.HasKey("Authorization")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AuthType() As BeaconAPI.Request.AuthTypes
-		  Return Self.mAuthType
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, Method As String, Callback As BeaconAPI.Request.ReplyCallback)
+		Sub Constructor(Path As String, Method As String, Callback As BeaconAPI.Request.ReplyCallback = Nil)
 		  Self.Constructor(Path, Method, New Dictionary, Callback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, Method As String, Payload As Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
+		Sub Constructor(Path As String, Method As String, Payload As Dictionary, Callback As BeaconAPI.Request.ReplyCallback = Nil)
 		  Self.Constructor(Path, Method, SimpleHTTP.BuildFormData(Payload), "application/x-www-form-urlencoded", Callback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, Method As String, Payload As MemoryBlock, ContentType As String, Callback As BeaconAPI.Request.ReplyCallback)
+		Sub Constructor(Path As String, Method As String, Payload As MemoryBlock, ContentType As String, Callback As BeaconAPI.Request.ReplyCallback = Nil)
 		  If Path.IndexOf("://") = -1 Then
 		    Path = BeaconAPI.URL(Path)
 		  End If
@@ -65,7 +37,7 @@ Protected Class Request
 		    ContentType = "application/x-www-form-urlencoded"
 		  End If
 		  
-		  Self.mRequestID = New v4UUID
+		  Self.mRequestID = Beacon.UUID.v4
 		  Self.mURL = Path
 		  Self.mMethod = Method.Uppercase
 		  Self.mCallback = Callback
@@ -84,10 +56,21 @@ Protected Class Request
 		Shared Function CreateSessionRequest(Callback As BeaconAPI.Request.ReplyCallback) As BeaconAPI.Request
 		  Var Path As String = BeaconAPI.URL("session")
 		  Var Method As String = "POST"
-		  Var Body As String = Beacon.GenerateJSON(New Dictionary("device_id" : Beacon.HardwareID), False)
+		  Var Body As String = Beacon.GenerateJSON(New Dictionary("device_id" : Beacon.HardwareId), False)
 		  Var Request As New BeaconAPI.Request(Path, Method, Body, "application/json", Callback)
 		  Return Request
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ForceAuthorize(Token As BeaconAPI.OAuthToken)
+		  If Token Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RequiresAuthentication = True
+		  Self.RequestHeader("Authorization") = Token.AuthHeaderValue
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -162,18 +145,9 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RequestID() As String
+		Function RequestId() As String
 		  Return Self.mRequestID
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Sign(Identity As Beacon.Identity, Challenge As String)
-		  Var Signature As String = Identity.Sign(Challenge)
-		  Self.RequestHeader("Authorization") = "Challenge " + EncodeBase64(Identity.UserID + ":" + Signature, 0)
-		  Self.RequestHeader("X-Beacon-Token") = ""
-		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Signature
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -184,11 +158,7 @@ Protected Class Request
 
 
 	#tag Property, Flags = &h0
-		HasBeenRetried As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mAuthType As BeaconAPI.Request.AuthTypes
+		AutoRenew As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -212,11 +182,19 @@ Protected Class Request
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mRequestID As String
+		Protected mRequestId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mURL As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		RequiresAuthentication As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		Tag As Variant
 	#tag EndProperty
 
 
@@ -270,10 +248,18 @@ Protected Class Request
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="HasBeenRetried"
+			Name="RequiresAuthentication"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoRenew"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

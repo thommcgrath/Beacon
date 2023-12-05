@@ -9,7 +9,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Self.mSetWeight = 500
 		  Self.mItemsRandomWithoutReplacement = True
 		  Self.mLabel = "Untitled Item Set"
-		  Self.mUUID = New v4UUID
+		  Self.mUUID = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 
@@ -54,10 +54,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
 		  If NewUUID Then
-		    Set.UUID = v4UUID.Create.StringValue
+		    Set.UUID = Beacon.UUID.v4
 		  Else
 		    Try
-		      If Dict.HasKey("loot_item_set_id") Then
+		      If Dict.HasKey("lootItemSetId") Then
+		        Set.UUID = Dict.Value("lootItemSetId")
+		      ElseIf Dict.HasKey("loot_item_set_id") Then
 		        Set.UUID = Dict.Value("loot_item_set_id")
 		      ElseIf Dict.HasKey("UUID") Then
 		        Set.UUID = Dict.Value("UUID")
@@ -68,7 +70,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End If
 		  
 		  Try
-		    If Dict.HasKey("NumItemsPower") Then
+		    If Dict.HasKey("numItemsPower") Then
+		      Set.NumItemsPower = Dict.Value("numItemsPower")
+		    ElseIf Dict.HasKey("NumItemsPower") Then
 		      Set.NumItemsPower = Dict.Value("NumItemsPower")
 		    End If
 		  Catch Err As RuntimeException
@@ -88,7 +92,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("prevent_duplicates") Then
+		    If Dict.HasKey("preventDuplicates") Then
+		      Set.ItemsRandomWithoutReplacement = Dict.Value("preventDuplicates")
+		    ElseIf Dict.HasKey("prevent_duplicates") Then
 		      Set.ItemsRandomWithoutReplacement = Dict.Value("prevent_duplicates")
 		    ElseIf Dict.HasKey("bItemsRandomWithoutReplacement") Then
 		      Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
@@ -134,9 +140,14 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		      App.Log(Err, CurrentMethodName, "Reading set entry dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
 		  Next
+		  If Set.Count = 0 Then
+		    Return Nil
+		  End If
 		  
 		  Try
-		    If Dict.HasKey("min_entries") Then
+		    If Dict.HasKey("minEntries") Then
+		      Set.MinNumItems = Dict.Value("minEntries")
+		    ElseIf Dict.HasKey("min_entries") Then
 		      Set.MinNumItems = Dict.Value("min_entries")
 		    ElseIf Dict.HasKey("MinNumItems") Then
 		      Set.MinNumItems = Dict.Value("MinNumItems")
@@ -146,7 +157,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("max_entries") Then
+		    If Dict.HasKey("maxEntries") Then
+		      Set.MaxNumItems = Dict.Value("maxEntries")
+		    ElseIf Dict.HasKey("max_entries") Then
 		      Set.MaxNumItems = Dict.Value("max_entries")
 		    ElseIf Dict.HasKey("MaxNumItems") Then
 		      Set.MaxNumItems = Dict.Value("MaxNumItems")
@@ -156,7 +169,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("SourcePresetID") Then
+		    If Dict.HasKey("sourceTemplateId") Then
+		      Set.TemplateUUID = Dict.Value("sourceTemplateId")
+		    ElseIf Dict.HasKey("SourcePresetID") Then
 		      Set.TemplateUUID = Dict.Value("SourcePresetID")
 		    End If
 		  Catch Err As RuntimeException
@@ -283,6 +298,15 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  
 		  Set.Modified = False
 		  Return Set
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromTemplate(Template As Ark.LootTemplate, ForLootOverride As Ark.LootDropOverride, Mask As UInt64, ContentPacks As Beacon.StringList) As Ark.LootItemSet
+		  Var LootDrop As Ark.LootContainer = ForLootOverride.LootDrop(ContentPacks)
+		  If (LootDrop Is Nil) = False Then
+		    Return FromTemplate(Template, LootDrop, Mask, ContentPacks)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -535,12 +559,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next Idx
 		  
 		  Var Dict As New Dictionary
-		  Dict.Value("loot_item_set_id") = Self.mUUID
+		  Dict.Value("lootItemSetId") = Self.mUUID
 		  Dict.Value("label") = Self.mLabel
-		  Dict.Value("min_entries") = Self.mMinNumItems
-		  Dict.Value("max_entries") = Self.mMaxNumItems
+		  Dict.Value("minEntries") = Self.mMinNumItems
+		  Dict.Value("maxEntries") = Self.mMaxNumItems
 		  Dict.Value("weight") = Self.mSetWeight
-		  Dict.Value("prevent_duplicates") = Self.mItemsRandomWithoutReplacement
+		  Dict.Value("preventDuplicates") = Self.mItemsRandomWithoutReplacement
 		  Dict.Value("entries") = Entries
 		  Return Dict
 		End Function
@@ -591,100 +615,93 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("UUID") = Self.mUUID
-		  Keys.Value("ItemEntries") = Children
-		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
-		  Keys.Value("Label") = Self.Label // Write "Label" so older versions of Beacon can read it
-		  Keys.Value("MaxNumItems") = Self.MaxNumItems
-		  Keys.Value("MinNumItems") = Self.MinNumItems
-		  Keys.Value("NumItemsPower") = Self.NumItemsPower
-		  Keys.Value("Weight") = Self.RawWeight
-		  Keys.Value("SetWeight") = Self.RawWeight / 1000
+		  Keys.Value("lootItemSetId") = Self.mUUID
+		  Keys.Value("entries") = Children
+		  Keys.Value("preventDuplicates") = Self.ItemsRandomWithoutReplacement
+		  Keys.Value("label") = Self.Label
+		  Keys.Value("minEntries") = Self.MinNumItems
+		  Keys.Value("maxEntries") = Self.MaxNumItems
+		  Keys.Value("numItemsPower") = Self.NumItemsPower
+		  Keys.Value("weight") = Self.RawWeight
 		  If Self.TemplateUUID.IsEmpty = False Then
-		    Keys.Value("SourcePresetID") = Self.TemplateUUID
+		    Keys.Value("sourceTemplateId") = Self.TemplateUUID
 		  End If
 		  Return Keys
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Simulate() As Ark.LootSimulatorSelection()
-		  Var Selections() As Ark.LootSimulatorSelection
-		  If Self.mEntries.LastIndex = -1 Then
-		    Return Selections
+		Function Simulate() As Ark.LootItemSetEntry()
+		  Var SelectedEntries() As Ark.LootItemSetEntry
+		  If Self.mEntries.Count = 0 Then
+		    Return SelectedEntries
 		  End If
 		  
 		  Var NumEntries As Integer = Self.Count
 		  Var MinEntries As Integer = Min(Self.MinNumItems, Self.MaxNumItems)
 		  Var MaxEntries As Integer = Max(Self.MaxNumItems, Self.MinNumItems)
 		  
-		  Var SelectedEntries() As Ark.LootItemSetEntry
 		  If NumEntries = MinEntries And MinEntries = MaxEntries And Self.ItemsRandomWithoutReplacement Then
 		    // All
 		    For Each Entry As Ark.LootItemSetEntry In Self.mEntries
 		      SelectedEntries.Add(Entry)
 		    Next
-		  Else
-		    Const WeightScale = 100000
-		    Var Pool() As Ark.LootItemSetEntry
-		    Pool.ResizeTo(Self.mEntries.LastIndex)
-		    For I As Integer = 0 To Self.mEntries.LastIndex
-		      Pool(I) = New Ark.LootItemSetEntry(Self.mEntries(I))
-		    Next
+		    Return SelectedEntries
+		  End If
+		  
+		  Const WeightScale = 100000
+		  Var Pool() As Ark.LootItemSetEntry
+		  Pool.ResizeTo(Self.mEntries.LastIndex)
+		  For I As Integer = 0 To Self.mEntries.LastIndex
+		    Pool(I) = New Ark.LootItemSetEntry(Self.mEntries(I))
+		  Next
+		  
+		  Var RecomputeFigures As Boolean = True
+		  Var ChooseEntries As Integer = System.Random.InRange(MinEntries, MaxEntries)
+		  Var WeightSum, Weights() As Double
+		  Var WeightLookup As Dictionary
+		  For I As Integer = 1 To ChooseEntries
+		    If Pool.Count = 0 Then
+		      Exit For I
+		    End If
 		    
-		    Var RecomputeFigures As Boolean = True
-		    Var ChooseEntries As Integer = System.Random.InRange(MinEntries, MaxEntries)
-		    Var WeightSum, Weights() As Double
-		    Var WeightLookup As Dictionary
-		    For I As Integer = 1 To ChooseEntries
-		      If Pool.LastIndex = -1 Then
-		        Exit For I
+		    If RecomputeFigures Then
+		      Ark.LootSimulatorSelection.ComputeSimulatorFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
+		      RecomputeFigures = False
+		    End If
+		    
+		    Do
+		      Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
+		      Var SelectedEntry As Ark.LootItemSetEntry
+		      
+		      For X As Integer = 0 To Weights.LastIndex
+		        If Weights(X) >= Decision Then
+		          Var SelectedWeight As Double = Weights(X)
+		          SelectedEntry = WeightLookup.Value(SelectedWeight)
+		          Exit For X
+		        End If
+		      Next
+		      
+		      If SelectedEntry = Nil Then
+		        Continue
 		      End If
 		      
-		      If RecomputeFigures Then
-		        Ark.LootSimulatorSelection.ComputeSimulatorFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
-		        RecomputeFigures = False
-		      End If
-		      
-		      Do
-		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
-		        Var SelectedEntry As Ark.LootItemSetEntry
-		        
-		        For X As Integer = 0 To Weights.LastIndex
-		          If Weights(X) >= Decision Then
-		            Var SelectedWeight As Double = Weights(X)
-		            SelectedEntry = WeightLookup.Value(SelectedWeight)
+		      SelectedEntries.Add(SelectedEntry)
+		      If Self.ItemsRandomWithoutReplacement Then
+		        For X As Integer = 0 To Pool.LastIndex
+		          If Pool(X) = SelectedEntry Then
+		            Pool.RemoveAt(X)
 		            Exit For X
 		          End If
 		        Next
-		        
-		        If SelectedEntry = Nil Then
-		          Continue
-		        End If
-		        
-		        SelectedEntries.Add(SelectedEntry)
-		        If Self.ItemsRandomWithoutReplacement Then
-		          For X As Integer = 0 To Pool.LastIndex
-		            If Pool(X) = SelectedEntry Then
-		              Pool.RemoveAt(X)
-		              Exit For X
-		            End If
-		          Next
-		          RecomputeFigures = True
-		        End If
-		        
-		        Exit
-		      Loop
-		    Next
-		  End If
-		  
-		  For Each Entry As Ark.LootItemSetEntry In SelectedEntries
-		    Var EntrySelections() As Ark.LootSimulatorSelection = Entry.Simulate()
-		    For Each Selection As Ark.LootSimulatorSelection In EntrySelections
-		      Selections.Add(Selection)
-		    Next
+		        RecomputeFigures = True
+		      End If
+		      
+		      Exit
+		    Loop
 		  Next
-		  Return Selections
+		  
+		  Return SelectedEntries
 		End Function
 	#tag EndMethod
 
@@ -729,7 +746,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  // Part of the Beacon.Validateable interface.
 		  
 		  For Each Entry As Ark.LootItemSetEntry In Self.mEntries
-		    Entry.Validate(Location + "." + Self.UUID, Issues, Project)
+		    Entry.Validate(Location + Beacon.Issue.Separator + Self.UUID, Issues, Project)
 		  Next Entry
 		End Sub
 	#tag EndMethod

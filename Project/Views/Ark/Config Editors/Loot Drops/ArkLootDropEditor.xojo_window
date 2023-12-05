@@ -70,6 +70,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -79,6 +80,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       TabStop         =   True
       Tooltip         =   ""
       Top             =   137
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -110,7 +112,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   347
       Begin ArkLootItemSetEditor Editor
@@ -400,9 +402,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddSets(Sets() As Ark.LootItemSet)
-		  For Each Container As Ark.MutableLootContainer In Self.mContainers
+		  For Each Override As Ark.MutableLootDropOverride In Self.mOverrides
 		    For Each NewSet As Ark.LootItemSet In Sets
-		      Container.Add(New Ark.LootItemSet(NewSet))
+		      Override.Add(New Ark.LootItemSet(NewSet))
 		    Next
 		  Next
 		  
@@ -452,7 +454,7 @@ End
 		  AddHandler EmptySetItem.MenuItemSelected, WeakAddressOf Self.HandlePresetMenu
 		  Parent.AddMenu(EmptySetItem)
 		  
-		  Var HasTarget As Boolean = Self.mContainers.LastIndex > -1
+		  Var HasTarget As Boolean = Self.mOverrides.Count > 0
 		  
 		  For Each Group As String In GroupNames
 		    Var Arr() As Ark.LootTemplate = Groups.Value(Group)
@@ -470,7 +472,7 @@ End
 		    
 		    Names.SortWith(Items)
 		    
-		    Parent.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		    Parent.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
 		    Var Header As New DesktopMenuItem(Group)
 		    Header.Enabled = False
@@ -502,34 +504,6 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Containers() As Ark.LootContainer()
-		  Var Containers() As Ark.LootContainer
-		  Containers.ResizeTo(Self.mContainers.LastIndex)
-		  For Idx As Integer = 0 To Self.mContainers.LastIndex
-		    Containers(Idx) = New Ark.LootContainer(Self.mContainers(Idx))
-		  Next
-		  Return Containers
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Containers(Assigns Containers() As Ark.LootContainer)
-		  If Containers Is Nil Then
-		    Self.mContainers.ResizeTo(-1)
-		  Else
-		    Self.mContainers.ResizeTo(Containers.LastIndex)
-		    For Idx As Integer = 0 To Containers.LastIndex
-		      Self.mContainers(Idx) = New Ark.MutableLootContainer(Containers(Idx))
-		    Next
-		  End If
-		  
-		  Self.SettingsContainer.Containers = Self.mContainers
-		  
-		  Self.UpdateUI
 		End Sub
 	#tag EndMethod
 
@@ -569,17 +543,17 @@ End
 		  Var ContentPacks As Beacon.StringList = Self.Project.ContentPacks
 		  Var NewItemSets() As Ark.LootItemSet
 		  
-		  For Each Container As Ark.MutableLootContainer In Self.mContainers
+		  For Each Override As Ark.MutableLootDropOverride In Self.mOverrides
 		    Var Set As Ark.LootItemSet
-		    If SelectedPreset <> Nil Then
-		      Set = Ark.LootItemSet.FromTemplate(SelectedPreset, Container, Mask, ContentPacks)
+		    If (SelectedPreset Is Nil) = False Then
+		      Set = Ark.LootItemSet.FromTemplate(SelectedPreset, Override, Mask, ContentPacks)
 		    End If
 		    If Set Is Nil Then
 		      Set = New Ark.MutableLootItemSet()
-		      Ark.MutableLootItemSet(Set).RawWeight = Container.DefaultItemSetWeight
+		      Ark.MutableLootItemSet(Set).RawWeight = Override.DefaultWeight
 		    End If
 		    
-		    Container.Add(Set)
+		    Override.Add(Set)
 		    NewItemSets.Add(Set)
 		  Next
 		  
@@ -595,18 +569,19 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String, Container As String)
-		  Self.mImportProgress = New ImporterWindow
-		  Self.mImportProgress.Source = Container
-		  Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  #Pragma Unused Container
+		  
+		  Self.mImportProgress = New ProgressWindow
 		  Self.mImportProgress.ShowDelayed(Self.TrueWindow)
 		  
 		  Var Data As New Ark.DiscoveredData
 		  Data.GameIniContent = Content
 		  
 		  Self.mImporter = New Ark.ImportThread(Data, Self.Project)
+		  Self.mImporter.DebugIdentifier = CurrentMethodName
 		  Self.mImporter.Priority = Thread.NormalPriority
+		  Self.mImporter.Progress = Self.mImportProgress
 		  AddHandler mImporter.Finished, WeakAddressOf mImporter_Finished
-		  AddHandler mImporter.UpdateUI, WeakAddressOf mImporter_UpdateUI
 		  Self.mImporter.Start
 		End Sub
 	#tag EndMethod
@@ -641,18 +616,48 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub mImporter_UpdateUI(Sender As Ark.ImportThread)
-		  If Self.mImportProgress <> Nil Then
-		    Self.mImportProgress.Progress = Sender.Progress
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Shared Function MinEditorWidth() As Integer
 		  Return ListMinWidth + ArkLootItemSetEditor.MinEditorWidth + 1
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mSimulatorTask_Completed(Sender As AnimationKit.Task)
+		  If Sender = Self.mSimulatorTask Then
+		    Self.mSimulatorTask = Nil
+		  End If
+		  
+		  Self.Refresh()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Overrides() As Ark.LootDropOverride()
+		  Var Overrides() As Ark.LootDropOverride
+		  Overrides.ResizeTo(Self.mOverrides.LastIndex)
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    Overrides(Idx) = New Ark.LootDropOverride(Self.mOverrides(Idx))
+		  Next
+		  Return Overrides
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Overrides(Assigns Overrides() As Ark.LootDropOverride)
+		  If Overrides Is Nil Then
+		    Self.mOverrides.ResizeTo(-1)
+		  Else
+		    Self.mOverrides.ResizeTo(Overrides.LastIndex)
+		    For Idx As Integer = 0 To Overrides.LastIndex
+		      Self.mOverrides(Idx) = New Ark.MutableLootDropOverride(Overrides(Idx))
+		    Next
+		  End If
+		  
+		  Self.SettingsContainer.Overrides = Self.mOverrides
+		  
+		  Self.UpdateUI
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -752,6 +757,7 @@ End
 		  End If
 		  
 		  Self.mSimulatorTask = New AnimationKit.ValueTask(Self, "simulator position", Self.SimulatorPosition, NewPosition)
+		  AddHandler mSimulatorTask.Completed, AddressOf mSimulatorTask_Completed
 		  Self.mSimulatorTask.DurationInSeconds = Duration
 		  Self.mSimulatorTask.Curve = Curve
 		  Self.mSimulatorTask.Run
@@ -786,8 +792,8 @@ End
 		  Self.SetList.SelectionChangeBlocked = True
 		  
 		  Var CombinedSets As New Dictionary
-		  For Each Container As Ark.MutableLootContainer In Self.mContainers
-		    For Each Set As Ark.LootItemSet In Container
+		  For Each Override As Ark.MutableLootDropOverride In Self.mOverrides
+		    For Each Set As Ark.LootItemSet In Override
 		      Var Hash As String = Set.Hash
 		      Var Organizer As Ark.LootItemSetOrganizer
 		      If CombinedSets.HasKey(Hash) Then
@@ -796,13 +802,13 @@ End
 		        Organizer = New Ark.LootItemSetOrganizer(Set)
 		        CombinedSets.Value(Hash) = Organizer
 		      End If
-		      Organizer.Attach(Container, Set)
+		      Organizer.Attach(Override, Set)
 		    Next
 		  Next
 		  
-		  If CombinedSets <> Nil And CombinedSets.KeyCount > 0 Then
+		  If (CombinedSets Is Nil) = false And CombinedSets.KeyCount > 0 Then
 		    Var SelectedSets() As String
-		    If SelectSets = Nil Then
+		    If SelectSets Is Nil Then
 		      For I As Integer = 0 To Self.SetList.RowCount - 1
 		        If Self.SetList.RowSelectedAt(I) Then
 		          SelectedSets.Add(Ark.LootItemSetOrganizer(Self.SetList.RowTagAt(I)).Template.UUID)
@@ -814,7 +820,7 @@ End
 		      Next
 		    End If
 		    
-		    Var ExtendedLabels As Boolean = Self.mContainers.LastIndex > 0
+		    Var ExtendedLabels As Boolean = Self.mOverrides.Count > 1
 		    
 		    Self.SetList.RowCount = CombinedSets.KeyCount
 		    Self.SetList.DefaultRowHeight = If(ExtendedLabels, 34, 26)
@@ -837,11 +843,11 @@ End
 		  Self.SetList.SelectionChangeBlocked = False
 		  
 		  Var SimulatorButton As OmniBarItem = Self.ConfigToolbar.Item("SimulatorButton")
-		  If Self.mContainers.LastIndex = 0 Then
+		  If Self.mOverrides.Count = 1 Then
 		    If (SimulatorButton Is Nil) = False Then
 		      SimulatorButton.Enabled = True
 		    End If
-		    Self.Simulator.Simulate(Self.mContainers(0))
+		    Self.Simulator.Simulate(Self.mOverrides(0))
 		  Else
 		    If (SimulatorButton Is Nil) = False Then
 		      SimulatorButton.Enabled = False
@@ -861,7 +867,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PresentDropEditor(Container As Ark.LootContainer)
+		Event PresentDropEditor(Override As Ark.LootDropOverride)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -870,15 +876,15 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mContainers() As Ark.MutableLootContainer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mImporter As Ark.ImportThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mImportProgress As ImporterWindow
+		Private mImportProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOverrides() As Ark.MutableLootDropOverride
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -902,7 +908,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.loot.itemset", Scope = Private
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.loot.itemset", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
@@ -939,12 +945,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.Left(1) = "(")
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -964,12 +970,12 @@ End
 		  End If
 		  
 		  For Each Organizer As Ark.LootItemSetOrganizer In Organizers
-		    Var Containers() As Ark.MutableLootContainer = Organizer.Containers
-		    For Each Container As Ark.MutableLootContainer In Containers
-		      Var Set As Ark.LootItemSet = Organizer.SetForContainer(Container)
-		      Container.Remove(Set)
-		    Next Container
-		  Next Organizer
+		    Var Overrides() As Ark.MutableLootDropOverride = Organizer.Overrides
+		    For Each Override As Ark.MutableLootDropOverride In Overrides
+		      Var Set As Ark.LootItemSet = Organizer.SetForOverride(Override)
+		      Override.Remove(Set)
+		    Next
+		  Next
 		  
 		  RaiseEvent Updated
 		  Self.UpdateUI()
@@ -993,72 +999,33 @@ End
 		    Return
 		  End If
 		  
-		  Var Contents As String
-		  If Dicts.LastIndex = 0 Then
-		    Contents = Beacon.GenerateJSON(Dicts(0), False)
-		  Else
-		    Contents = Beacon.GenerateJSON(Dicts, False)
-		  End If
-		  
-		  Board.RawData(Self.kClipboardType) = Contents
+		  Board.AddClipboardData(Self.kClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Self.mContainers.LastIndex = -1 Then
+		  If Self.mOverrides.Count = 0 Then
 		    Return
 		  End If
 		  
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Var Parsed As Variant
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Parsed = Beacon.ParseJSON(Contents)
-		    Catch Err As RuntimeException
-		      System.Beep
-		      Return
-		    End Try
-		    
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
-		    Var Dicts() As Dictionary
-		    If Info.FullName = "Dictionary" Then
-		      Dicts.Add(Parsed)
-		    ElseIf Info.FullName = "Object()" Then
-		      Var Values() As Variant = Parsed
-		      For Each Dict As Dictionary In Values
-		        Dicts.Add(Dict)
+		      Var Dicts() As Variant = Contents
+		      Var NewItemSets() As Ark.LootItemSet
+		      For Each Dict As Dictionary In Dicts
+		        Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dict, True)
+		        If Set Is Nil Then
+		          Continue
+		        End If
+		        NewItemSets.Add(Set)
 		      Next
-		    Else
-		      System.Beep
-		      Return
-		    End If
-		    
-		    Var NewItemSets() As Ark.LootItemSet
-		    For Each Dict As Dictionary In Dicts
-		      Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dict, True)
-		      If Set = Nil Then
-		        Continue
-		      End If
-		      
-		      NewItemSets.Add(Set)
-		    Next
-		    Self.AddSets(NewItemSets)
-		  ElseIf Board.TextAvailable And Board.Text.Left(1) = "(" Then
-		    Var Contents As String = Board.Text
-		    If Contents.Left(2) = "((" Then
-		      // This may be multiple item sets from the dev kit, so wrap it up like a full loot drop
-		      // No additional wrapping necessary, but we need to make sure the next clause is not hit
-		    ElseIf Contents.Left(1) = "(" Then
-		      // This may be a single item set from the dev kit, so wrap it up like a full loot drop
-		      Contents = "(" + Contents + ")"
-		    End If
-		    
-		    Var Lines() As String
-		    For Each Container As Ark.LootContainer In Self.mContainers
-		      Lines.Add("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Container.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
-		    Next
-		    Self.Import(Lines.Join(EndOfLine), "Clipboard")
-		  End
+		      Self.AddSets(NewItemSets)
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
+		    Return
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1123,11 +1090,6 @@ End
 		    CopyJSONItem.Name = "copyjson"
 		    CopyJSONItem.Enabled = True
 		    Base.AddMenu(CopyJSONItem)
-		    
-		    Var CopyConfigItem As New DesktopMenuItem("Copy Config Part", Targets)
-		    CopyConfigItem.Name = "copyconfig"
-		    CopyConfigItem.Enabled = True
-		    Base.AddMenu(CopyConfigItem)
 		  End If
 		  
 		  Return True
@@ -1153,17 +1115,17 @@ End
 		      
 		      Var Mask As UInt64 = Self.Project.MapMask
 		      Var AffectedItemSets() As Ark.LootItemSet
-		      Var Containers() As Ark.MutableLootContainer = Organizer.Containers
-		      For Each Container As Ark.MutableLootContainer In Containers
-		        Var Set As Ark.LootItemSet = Organizer.SetForContainer(Container)
+		      Var Overrides() As Ark.MutableLootDropOverride = Organizer.Overrides
+		      For Each Override As Ark.MutableLootDropOverride In Overrides
+		        Var Set As Ark.LootItemSet = Organizer.SetForOverride(Override)
 		        If Set Is Nil Then
 		          Continue
 		        End If
 		        
 		        Var MutableSet As Ark.MutableLootItemSet = Set.MutableVersion
-		        If NewTemplate.RebuildLootItemSet(MutableSet, Mask, Container, Self.Project.ContentPacks) Then
-		          Var Idx As Integer = Container.IndexOf(Set)
-		          Container(Idx) = MutableSet
+		        If NewTemplate.RebuildLootItemSet(MutableSet, Mask, Override, Self.Project.ContentPacks) Then
+		          Var Idx As Integer = Override.IndexOf(Set)
+		          Override.SetAt(Idx) = MutableSet
 		          AffectedItemSets.Add(MutableSet)
 		        End If
 		      Next
@@ -1177,11 +1139,11 @@ End
 		    Var AffectedItemSets() As Ark.LootItemSet
 		    Var Templates As New Dictionary
 		    For Each Organizer As Ark.LootItemSetOrganizer In Targets
-		      Var Containers() As Ark.MutableLootContainer = Organizer.Containers
+		      Var Overrides() As Ark.MutableLootDropOverride = Organizer.Overrides
 		      Var Mask As UInt64 = Self.Project.MapMask
 		      
-		      For Each Container As Ark.MutableLootContainer In Containers
-		        Var Set As Ark.LootItemSet = Organizer.SetForContainer(Container)
+		      For Each Override As Ark.MutableLootDropOverride In Overrides
+		        Var Set As Ark.LootItemSet = Organizer.SetForOverride(Override)
 		        If Set Is Nil Or Set.TemplateUUID.IsEmpty Then
 		          Continue
 		        End If
@@ -1196,15 +1158,15 @@ End
 		        
 		        Var MutableSet As Ark.MutableLootItemSet = Set.MutableVersion
 		        Var Template As Ark.LootTemplate = Templates.Value(Set.TemplateUUID)
-		        If Template.RebuildLootItemSet(MutableSet, Mask, Container, Self.Project.ContentPacks) Then
-		          Var Idx As Integer = Container.IndexOf(Set)
-		          Container(Idx) = MutableSet
+		        If Template.RebuildLootItemSet(MutableSet, Mask, Override, Self.Project.ContentPacks) Then
+		          Var Idx As Integer = Override.IndexOf(Set)
+		          Override.SetAt(Idx) = MutableSet
 		          AffectedItemSets.Add(MutableSet)
 		        End If
 		      Next
 		    Next
 		    
-		    If AffectedItemSets.LastIndex = -1 Then
+		    If AffectedItemSets.Count = 0 Then
 		      If Targets.LastIndex = 0 Then
 		        Self.ShowAlert("No changes made", "This item set is already identical to the template.")
 		      Else
@@ -1221,39 +1183,7 @@ End
 		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their template.")
 		    End If
 		  Case "copyjson"
-		    If Targets.LastIndex = 0 Then
-		      Var Dict As Dictionary = Targets(0).Template.SaveData()
-		      Var Board As New Clipboard
-		      Board.Text = Beacon.GenerateJSON(Dict, True)
-		    Else
-		      Var Arr() As Dictionary
-		      For Each Organizer As Ark.LootItemSetOrganizer In Targets
-		        Arr.Add(Organizer.Template.SaveData())
-		      Next
-		      Var Board As New Clipboard
-		      Board.Text = Beacon.GenerateJSON(Arr, True)
-		    End If
-		  Case "copyconfig"
-		    Var Multipliers As Beacon.Range
-		    Var UseBlueprints As Boolean = False
-		    Var Difficulty As Ark.Configs.Difficulty = Self.Project.Difficulty
-		    If Self.mContainers.LastIndex = 0 Then
-		      Multipliers = Self.mContainers(0).Multipliers
-		    Else
-		      Multipliers = New Beacon.Range(1, 1)
-		    End If
-		    
-		    Var Parts() As String
-		    For Each Organizer As Ark.LootItemSetOrganizer In Targets
-		      Parts.Add(Organizer.Template.StringValue(Multipliers, UseBlueprints, Difficulty.DifficultyValue))
-		    Next
-		    
-		    Var Board As New Clipboard
-		    If Parts.LastIndex = 0 Then
-		      Board.Text = Parts(0)
-		    Else
-		      Board.Text = "ItemSets=(" + Parts.Join(",") + ")"
-		    End If
+		    Me.DoCopy()
 		  End Select
 		  
 		  Return True
@@ -1279,8 +1209,8 @@ End
 		  
 		  RaiseEvent Updated
 		  
-		  If Self.SimulatorVisible And Self.mContainers.LastIndex = 0 Then
-		    Self.Simulator.Simulate(Self.mContainers(0))
+		  If Self.SimulatorVisible And Self.mOverrides.Count = 1 Then
+		    Self.Simulator.Simulate(Self.mOverrides(0))
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1325,7 +1255,7 @@ End
 		  RaiseEvent Updated
 		  
 		  If Self.SimulatorVisible Then
-		    Self.Simulator.Simulate(Self.mContainers(0))
+		    Self.Simulator.Simulate(Self.mOverrides(0))
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1355,13 +1285,13 @@ End
 		  Select Case Item.Name
 		  Case "AddSetButton"
 		    Var Set As New Ark.MutableLootItemSet
-		    Set.RawWeight = Self.mContainers(0).DefaultItemSetWeight
+		    Set.RawWeight = Self.mOverrides(0).DefaultWeight
 		    Self.AddSet(Set)
 		  Case "SimulatorButton"
 		    If Self.SimulatorVisible Then
 		      Self.SimulatorVisible = False
 		    Else
-		      Self.Simulator.Simulate(Self.mContainers(0))
+		      Self.Simulator.Simulate(Self.mOverrides(0))
 		      Self.SimulatorVisible = True
 		    End If
 		  End Select

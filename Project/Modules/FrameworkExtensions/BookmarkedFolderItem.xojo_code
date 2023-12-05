@@ -1,6 +1,50 @@
 #tag Class
 Class BookmarkedFolderItem
 Inherits FolderItem
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag Method, Flags = &h0
+		Shared Function CreateSaveInfo(File As FolderItem, Raw As Boolean = False) As String
+		  If File Is Nil Then
+		    Return ""
+		  End If
+		  
+		  If File IsA BookmarkedFolderItem Then
+		    Return BookmarkedFolderItem(File).SaveInfo(Raw)
+		  End If
+		  
+		  Var Bookmark As New BookmarkedFolderItem(File)
+		  Return Bookmark.SaveInfo(Raw)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function Decode(Source As String) As MemoryBlock
+		  If Source.IsEmpty Then
+		    Return Nil
+		  End If
+		  
+		  Var Tag As String = Source.Left(8)
+		  If Tag.Compare("yrbq7ymg", ComparisonOptions.CaseSensitive) = 0 Then
+		    // Minimized
+		    Return Beacon.Decompress(DecodeBase64URLMBS(Source.Middle(8)))
+		  End If
+		  
+		  Static Reg As Regex
+		  If Reg Is Nil Then
+		    Reg = New Regex
+		    Reg.SearchPattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"
+		  End If
+		  
+		  If Reg.Search(Source) Is Nil Then
+		    // Raw
+		    Return Source
+		  Else
+		    // Legacy
+		    Return DecodeBase64(Source)
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Destructor()
 		  #if TargetMacOS
@@ -17,11 +61,25 @@ Inherits FolderItem
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function Encode(Mem As MemoryBlock, Version As Integer) As String
+		  Select Case Version
+		  Case VersionMinimized
+		    // Minimized
+		    Return "yrbq7ymg" + EncodeBase64URLMBS(Beacon.Compress(Mem))
+		  Case VersionRaw
+		    // Raw
+		    Return Mem
+		  Case VersionLegacy
+		    // Legacy
+		    Return EncodeBase64(Mem, 0)
+		  End Select
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Shared Function FromSaveInfo(SaveInfo As String, Raw As Boolean = False) As BookmarkedFolderItem
-		  If Raw = False Then
-		    SaveInfo = DecodeBase64(SaveInfo)
-		  End If
+		Shared Function FromSaveInfo(SaveInfo As String) As BookmarkedFolderItem
+		  SaveInfo = Decode(SaveInfo)
 		  
 		  #if TargetiOS
 		    Return Nil
@@ -65,6 +123,12 @@ Inherits FolderItem
 
 	#tag Method, Flags = &h0
 		Function SaveInfo(Raw As Boolean = False) As String
+		  Return Self.SaveInfo(If(Raw, Self.VersionRaw, Self.VersionMinimized))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveInfo(Version As Integer) As String
 		  #if TargetiOS
 		    Return ""
 		  #elseif TargetMacOS
@@ -83,11 +147,7 @@ Inherits FolderItem
 		        Var DataLen As UInteger = DataLength(DataRef)
 		        Var Mem As New MemoryBlock(CType(DataLen, Integer))
 		        DataBytes(DataRef, Mem, DataLen)
-		        If Raw Then
-		          Return Mem
-		        Else
-		          Return EncodeBase64(Mem, 0)
-		        End If
+		        Return Encode(Mem, Version)
 		      Else
 		        Declare Function ErrorCode Lib "Cocoa" Selector "code" (Target As Ptr) As Integer
 		        Declare Function ErrorDescription Lib "Cocoa" Selector "localizedDescription" (Target As Ptr) As CFStringRef
@@ -95,11 +155,7 @@ Inherits FolderItem
 		      End If
 		    End If
 		  #else
-		    If Raw Then
-		      Return Self.SaveInfo(Nil)
-		    Else
-		      Return EncodeBase64(Self.SaveInfo(Nil), 0)
-		    End If
+		    Return Encode(Self.SaveInfo(Nil), Version)
 		  #endif
 		End Function
 	#tag EndMethod
@@ -108,6 +164,16 @@ Inherits FolderItem
 	#tag Property, Flags = &h21
 		Private mBookmark As Ptr
 	#tag EndProperty
+
+
+	#tag Constant, Name = VersionLegacy, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = VersionMinimized, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = VersionRaw, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

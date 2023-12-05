@@ -306,6 +306,39 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function IdealWidth(ParamArray Targets() As DesktopCheckBox) As Integer
+		  Return IdealWidth(Targets)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IdealWidth(Targets() As DesktopCheckBox) As Integer
+		  Var MaxWidth As Integer
+		  Var Pic As New Picture(20, 20)
+		  Var G As Graphics = Pic.Graphics
+		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    If Targets(Idx) Is Nil Or Targets(Idx).Visible = False Then
+		      Continue
+		    End If
+		    
+		    G.FontName = Targets(Idx).FontName
+		    G.FontSize = Targets(Idx).FontSize
+		    G.FontUnit = Targets(Idx).FontUnit
+		    G.Bold = Targets(Idx).Bold
+		    G.Italic = Targets(Idx).Italic
+		    G.Underline = Targets(Idx).Underline
+		    
+		    MaxWidth = Max(MaxWidth, Ceiling(G.TextWidth(Targets(Idx).Caption)))
+		  Next Idx
+		  #if TargetWindows
+		    Return Round(MaxWidth * 1.05) + 20
+		  #else
+		    Return MaxWidth + 20
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function IdealWidth(Targets() As DesktopLabel) As Integer
 		  Var MaxWidth As Integer
 		  Var Pic As New Picture(20, 20)
@@ -335,6 +368,12 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h1
 		Protected Function IdealWidth(ParamArray Targets() As DesktopLabel) As Integer
 		  Return IdealWidth(Targets)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function IdealWidth(Extends Target As DesktopCheckBox) As Integer
+		  Return IdealWidth(Target)
 		End Function
 	#tag EndMethod
 
@@ -436,7 +475,7 @@ Protected Module BeaconUI
 		    Dialog.Explanation = Explanation
 		    
 		    Try
-		      If Win = Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
+		      If Win Is Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
 		        Call Dialog.ShowModal()
 		      Else
 		        Var FocusControl As DesktopUIControl = Win.Focus
@@ -484,28 +523,6 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Account As Beacon.ExternalAccount) As Boolean
-		  If Account Is Nil Then
-		    Return False
-		  End If
-		  
-		  Var Provider As String = Account.Provider
-		  Var Message As String
-		  Var Explanation As String = "This can happen if unused for a while or permission was revoked."
-		  If Account.Label.IsEmpty Then
-		    // Unnamed account
-		    Message = "Beacon needs permission to access an account on " + Provider + ". Open your browser to authorize " + Provider + "?"
-		  Else
-		    // Named account
-		    Message = "Beacon needs permission to access the " + Provider + " account " + Account.Label + ". Open your browser to authorize " + Provider + "?"
-		    Explanation = " Make sure you authenticate with the account " + Account.Label + " to prevent errors."
-		  End If
-		  
-		  Return ShowConfirm(Win, Message, Explanation, "Continue", "Cancel")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
 		End Function
@@ -513,11 +530,13 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateAction As String) As BeaconUI.ConfirmResponses
-		  Try
-		    Win = Win.TrueWindow
-		  Catch Err As RuntimeException
-		    Win = Nil
-		  End Try
+		  If (Win Is Nil) = False Then
+		    Try
+		      Win = Win.TrueWindow
+		    Catch Err As RuntimeException
+		      Win = Nil
+		    End Try
+		  End If
 		  
 		  #if TargetWindows
 		    Var Dialog As New TaskDialogMBS
@@ -576,7 +595,7 @@ Protected Module BeaconUI
 		    
 		    Var Result As MessageDialogButton
 		    Try
-		      If Win = Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
+		      If Win Is Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
 		        Result = Dialog.ShowModal()
 		      Else
 		        Var FocusControl As DesktopUIControl = Win.Focus
@@ -597,12 +616,6 @@ Protected Module BeaconUI
 		      Return ConfirmResponses.Alternate
 		    End Select
 		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ShowConfirm(Extends Win As DesktopWindow, Account As Beacon.ExternalAccount) As Boolean
-		  Return ShowConfirm(Win, Account)
 		End Function
 	#tag EndMethod
 
@@ -677,13 +690,32 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub SizeColumnToFit(Extends List As DesktopListbox, ColumnIndex As Integer)
+		Sub SizeColumnToFit(Extends List As DesktopListbox, ColumnIndex As Integer, MinWidth As Integer = 0)
 		  Var TestPic As New Picture(10, 10)
-		  Var MaxWidth As Integer
+		  Var MaxWidth As Integer = Max(Ceiling(TestPic.Graphics.TextWidth(List.HeaderAt(ColumnIndex)) + 30), MinWidth)
 		  For Row As Integer = 0 To List.LastRowIndex
 		    MaxWidth = Max(MaxWidth, Ceiling(TestPic.Graphics.TextWidth(List.CellTextAt(Row, ColumnIndex)) + 30))
 		  Next
 		  List.ColumnAttributesAt(ColumnIndex).WidthExpression = MaxWidth.ToString(Locale.Raw, "0")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub SizeToFit(ParamArray Targets() As DesktopCheckBox)
+		  SizeToFit(Targets)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub SizeToFit(Targets() As DesktopCheckBox)
+		  Var Width As Integer = IdealWidth(Targets)
+		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    If Targets(Idx) Is Nil Then
+		      Continue
+		    End If
+		    
+		    Targets(Idx).Width = Width
+		  Next Idx
 		End Sub
 	#tag EndMethod
 
@@ -707,9 +739,30 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SizeToFit(Extends Target As DesktopCheckBox)
+		  SizeToFit(Target)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SizeToFit(Extends Target As DesktopLabel)
 		  SizeToFit(Target)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ViewIcon(Extends Url As Beacon.ProjectUrl) As Picture
+		  Select Case Url.Type
+		  Case Beacon.ProjectURL.TypeCloud
+		    Return IconCloudDocument
+		  Case Beacon.ProjectURL.TypeCommunity
+		    Return IconCommunityDocument
+		  Case Beacon.ProjectURL.TypeShared
+		    Return IconSharedDocument
+		  Case Beacon.ProjectURL.TypeWeb
+		    Return IconWebDocument
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1

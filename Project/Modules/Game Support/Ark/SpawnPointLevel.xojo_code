@@ -22,7 +22,9 @@ Protected Class SpawnPointLevel
 		    Return Nil
 		  End If
 		  
-		  If Dict.HasAllKeys("min_level", "max_level", "difficulty") Then
+		  If Dict.HasAllKeys("minLevel", "maxLevel", "difficulty") Then
+		    Return New Ark.SpawnPointLevel(Dict.Value("minLevel"), Dict.Value("maxLevel"), Dict.Value("difficulty"))
+		  ElseIf Dict.HasAllKeys("min_level", "max_level", "difficulty") Then
 		    Return New Ark.SpawnPointLevel(Dict.Value("min_level"), Dict.Value("max_level"), Dict.Value("difficulty"))
 		  ElseIf Dict.HasAllKeys("Min", "Max", "Diff") = False Then
 		    Return New Ark.SpawnPointLevel(Dict.Value("Min"), Dict.Value("Max"), Dict.Value("Diff"))
@@ -74,8 +76,8 @@ Protected Class SpawnPointLevel
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("min_level") = Self.MinLevel
-		  Dict.Value("max_level") = Self.MaxLevel
+		  Dict.Value("minLevel") = Self.MinLevel
+		  Dict.Value("maxLevel") = Self.MaxLevel
 		  Dict.Value("difficulty") = Self.Difficulty
 		  Return Dict
 		End Function

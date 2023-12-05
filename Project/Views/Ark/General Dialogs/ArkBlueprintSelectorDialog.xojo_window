@@ -98,6 +98,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
@@ -107,6 +108,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   165
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -218,6 +220,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -227,6 +230,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   165
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -433,13 +437,27 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Ark.Blueprint, Mods As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
-		  Self.mSettingUp = True
+		  Var References() As Ark.BlueprintReference
 		  For Each Blueprint As Ark.Blueprint In Exclude
 		    If Blueprint Is Nil Then
 		      Continue
 		    End If
 		    
-		    Self.mExcluded.Add(Blueprint.ObjectID)
+		    References.Add(New Ark.BlueprintReference(Blueprint))
+		  Next
+		  Self.Constructor(Category, Subgroup, References, Mods, SelectMode, ShowLoadDefaults)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Ark.BlueprintReference, Mods As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
+		  Self.mSettingUp = True
+		  For Each Reference As Ark.BlueprintReference In Exclude
+		    If Reference Is Nil Then
+		      Continue
+		    End If
+		    
+		    Self.mExcluded.Add(Reference.BlueprintId)
 		  Next
 		  Self.mMods = Mods
 		  Self.mCategory = Category
@@ -447,13 +465,13 @@ End
 		  Super.Constructor
 		  
 		  If SelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultipleWithExcluded Then
-		    For Each Blueprint As Ark.Blueprint In Exclude
-		      If Blueprint Is Nil Then
+		    For Each Reference As Ark.BlueprintReference In Exclude
+		      If Reference Is Nil Then
 		        Continue
 		      End If
 		      
-		      Self.SelectedList.AddRow(Blueprint.Label)
-		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Blueprint
+		      Self.SelectedList.AddRow(Reference.Label)
+		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Reference.Resolve
 		    Next
 		    SelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple
 		  End If
@@ -495,7 +513,7 @@ End
 		      Self.SelectedList.AddRow(Self.List.CellTextAt(I, 0))
 		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
 		      If Self.mSelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple Then
-		        Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(I)).ObjectID)
+		        Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(I)).BlueprintId)
 		        Self.List.RemoveRowAt(I)
 		      End If
 		    Next
@@ -503,7 +521,7 @@ End
 		    Self.SelectedList.AddRow(Self.List.CellTextAt(Self.List.SelectedRowIndex, 0))
 		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    If Self.mSelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple Then
-		      Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).ObjectID)
+		      Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).BlueprintId)
 		      Self.List.RemoveRowAt(Self.List.SelectedRowIndex)
 		    End If
 		  End If
@@ -597,6 +615,42 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As Ark.BlueprintReference, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes) As Ark.BlueprintReference()
+		  Var WithDefaults As Boolean
+		  Return Present(Parent, Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As Ark.BlueprintReference, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Ark.BlueprintReference()
+		  Var Blueprints() As Ark.BlueprintReference
+		  If Parent Is Nil Then
+		    Return Blueprints
+		  End If
+		  
+		  If ContentPacks Is Nil Then
+		    ContentPacks = New Beacon.StringList
+		  End If
+		  
+		  Var Win As New ArkBlueprintSelectorDialog(Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		  Win.ShowModal(Parent)
+		  If Win.mCancelled Then
+		    Win.Close
+		    Return Blueprints
+		  End If
+		  
+		  For Idx As Integer = 0 To Win.SelectedList.RowCount - 1
+		    Var Blueprint As Ark.Blueprint = Win.SelectedList.RowTagAt(Idx)
+		    Blueprints.Add(New Ark.BlueprintReference(Blueprint))
+		  Next
+		  
+		  WithDefaults = Win.WithDefaultsCheck.Value
+		  Win.Close
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Resize()
 		  Self.Picker.AutoResize()
@@ -616,11 +670,11 @@ End
 		    End If
 		    
 		    Var Blueprint As Ark.Blueprint = Self.SelectedList.RowTagAt(I)
-		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.ObjectID)
+		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.BlueprintId)
 		    If Idx > -1 Then
 		      Self.mExcluded.RemoveAt(Idx)
 		    End If
-		    Selections.Add(Blueprint.ObjectID)
+		    Selections.Add(Blueprint.BlueprintId)
 		    Self.SelectedList.RemoveRowAt(I)
 		  Next
 		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0
@@ -629,7 +683,7 @@ End
 		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    Var Blueprint As Ark.Blueprint = Self.List.RowTagAt(I)
-		    Self.List.RowSelectedAt(I) = Selections.IndexOf(Blueprint.ObjectID) > -1
+		    Self.List.RowSelectedAt(I) = Selections.IndexOf(Blueprint.BlueprintId) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
 		  Self.List.SelectionChangeBlocked = False
@@ -645,7 +699,7 @@ End
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.RemoveAllRows
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    If Self.mExcluded.IndexOf(Blueprint.ObjectID) > -1 Then
+		    If Self.mExcluded.IndexOf(Blueprint.BlueprintId) > -1 Then
 		      Continue
 		    End If
 		    
@@ -874,8 +928,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

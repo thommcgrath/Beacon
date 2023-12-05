@@ -10,20 +10,20 @@ Begin BeaconWindow PreferencesWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   478
+   Height          =   388
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   478
-   MinimumWidth    =   320
+   MinimumHeight   =   388
+   MinimumWidth    =   652
    Resizeable      =   False
    Title           =   "#WindowTitle"
    Type            =   0
    Visible         =   True
-   Width           =   320
+   Width           =   692
    Begin DesktopGroupBox SoundsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -36,14 +36,14 @@ Begin BeaconWindow PreferencesWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   352
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -51,7 +51,7 @@ Begin BeaconWindow PreferencesWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   280
+      Width           =   320
       Begin DesktopCheckBox ImportSoundCheck
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -64,7 +64,7 @@ Begin BeaconWindow PreferencesWindow
          Index           =   -2147483648
          InitialParent   =   "SoundsGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   372
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -81,7 +81,7 @@ Begin BeaconWindow PreferencesWindow
          Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   240
+         Width           =   280
       End
       Begin DesktopCheckBox DeploySoundCheck
          AllowAutoDeactivate=   True
@@ -95,7 +95,7 @@ Begin BeaconWindow PreferencesWindow
          Index           =   -2147483648
          InitialParent   =   "SoundsGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   372
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -112,7 +112,7 @@ Begin BeaconWindow PreferencesWindow
          Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   240
+         Width           =   280
       End
       Begin DesktopCheckBox UpdateSoundCheck
          AllowAutoDeactivate=   True
@@ -126,7 +126,7 @@ Begin BeaconWindow PreferencesWindow
          Index           =   -2147483648
          InitialParent   =   "SoundsGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   372
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -143,7 +143,7 @@ Begin BeaconWindow PreferencesWindow
          Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   240
+         Width           =   280
       End
    End
    Begin DesktopGroupBox ConnectionsGroup
@@ -158,22 +158,22 @@ Begin BeaconWindow PreferencesWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   352
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   380
+      Top             =   172
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   280
+      Width           =   320
       Begin UITweaks.ResizedTextField MaxConnectionsField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
@@ -192,7 +192,7 @@ Begin BeaconWindow PreferencesWindow
          Index           =   -2147483648
          InitialParent   =   "ConnectionsGroup"
          Italic          =   False
-         Left            =   200
+         Left            =   532
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -209,7 +209,7 @@ Begin BeaconWindow PreferencesWindow
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   416
+         Top             =   208
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -227,7 +227,7 @@ Begin BeaconWindow PreferencesWindow
          Index           =   -2147483648
          InitialParent   =   "ConnectionsGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   372
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -243,7 +243,7 @@ Begin BeaconWindow PreferencesWindow
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   416
+         Top             =   208
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -266,10 +266,10 @@ Begin BeaconWindow PreferencesWindow
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -277,7 +277,7 @@ Begin BeaconWindow PreferencesWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   280
+      Width           =   320
       Begin UITweaks.ResizedPopupMenu ChannelMenu
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -290,7 +290,7 @@ Begin BeaconWindow PreferencesWindow
          InitialParent   =   "UpdatesGroup"
          InitialValue    =   "Automatic\nStable\nBeta\nAlpha"
          Italic          =   False
-         Left            =   118
+         Left            =   122
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -298,15 +298,15 @@ Begin BeaconWindow PreferencesWindow
          LockTop         =   True
          Scope           =   2
          SelectedRowIndex=   0
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   328
+         Top             =   296
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   162
+         Width           =   198
       End
       Begin UITweaks.ResizedLabel ChannelLabel
          AllowAutoDeactivate=   True
@@ -323,28 +323,28 @@ Begin BeaconWindow PreferencesWindow
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   True
+         LockRight       =   False
          LockTop         =   True
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Channel:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   328
+         Top             =   296
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   66
+         Width           =   70
       End
       Begin DesktopCheckBox AutoupdateCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
-         Caption         =   "Automatically Download Updates"
+         Caption         =   "Automatically Update"
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -353,24 +353,24 @@ Begin BeaconWindow PreferencesWindow
          Index           =   -2147483648
          InitialParent   =   "UpdatesGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   122
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   296
+         Top             =   328
          Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
          VisualState     =   1
-         Width           =   240
+         Width           =   198
       End
    End
    Begin DesktopGroupBox AppearanceGroup
@@ -381,7 +381,7 @@ Begin BeaconWindow PreferencesWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   76
+      Height          =   140
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -389,18 +389,18 @@ Begin BeaconWindow PreferencesWindow
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   172
+      Top             =   108
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   280
+      Width           =   320
       Begin UITweaks.ResizedPopupMenu DarkModeMenu
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -413,7 +413,7 @@ Begin BeaconWindow PreferencesWindow
          InitialParent   =   "AppearanceGroup"
          InitialValue    =   "Match System"
          Italic          =   False
-         Left            =   128
+         Left            =   122
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -425,11 +425,11 @@ Begin BeaconWindow PreferencesWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   208
+         Top             =   144
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   152
+         Width           =   198
       End
       Begin UITweaks.ResizedLabel DarkModeLabel
          AllowAutoDeactivate=   True
@@ -458,11 +458,196 @@ Begin BeaconWindow PreferencesWindow
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   208
+         Top             =   144
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   76
+         Width           =   70
+      End
+      Begin UITweaks.ResizedPopupMenu ProfileIconMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AppearanceGroup"
+         InitialValue    =   "Does not have a ponytail\nHas a ponytail\nIs a cat"
+         Italic          =   False
+         Left            =   122
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   176
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   198
+      End
+      Begin UITweaks.ResizedLabel ProfileIconLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AppearanceGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Profile Icon:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   176
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   70
+      End
+      Begin DesktopCheckBox SwitchesShowCaptionsCheck
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Switches Show Symbols"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AppearanceGroup"
+         Italic          =   False
+         Left            =   122
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   208
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   198
+      End
+   End
+   Begin DesktopGroupBox NewProjectGroup
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "New Projects"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   76
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   320
+      Begin UITweaks.ResizedPopupMenu NewProjectGameMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "NewProjectGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   122
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   56
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   198
+      End
+      Begin DesktopLabel NewProjectGameLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "NewProjectGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Game:"
+         TextAlignment   =   3
+         TextColor       =   &c000000
+         Tooltip         =   ""
+         Top             =   56
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   70
       End
    End
 End
@@ -479,26 +664,81 @@ End
 
 	#tag Event
 		Sub Opening()
+		  Var DarkModeSupported As Boolean = BeaconUI.DarkModeSupported
+		  Var MultiGameSupported As Boolean = Beacon.Games.Count > 1
+		  
+		  Var Labels() As DesktopLabel
+		  Labels.Add(Self.ChannelLabel)
+		  Labels.Add(Self.ProfileIconLabel)
+		  If MultiGameSupported Then
+		    Labels.Add(Self.NewProjectGameLabel)
+		  End If
+		  If DarkModeSupported Then
+		    Labels.Add(Self.DarkModeLabel)
+		  End If
+		  BeaconUI.SizeToFit(Labels)
+		  
+		  Var LeftMenusLeft As Integer = Self.ChannelLabel.Right + 12
+		  Var LeftMenusWidth As Integer = Self.ChannelMenu.Right - LeftMenusLeft
+		  Self.ChannelMenu.Left = LeftMenusLeft
+		  Self.ChannelMenu.Width = LeftMenusWidth
+		  If DarkModeSupported Then
+		    Self.DarkModeMenu.Left = LeftMenusLeft
+		    Self.DarkModeMenu.Width = LeftMenusWidth
+		  End If
+		  If MultiGameSupported Then
+		    Self.NewProjectGameMenu.Left = LeftMenusLeft
+		    Self.NewProjectGameMenu.Width = LeftMenusWidth
+		  End If
+		  Self.ProfileIconMenu.Left = LeftMenusLeft
+		  Self.ProfileIconMenu.Width = LeftMenusWidth
+		  Self.SwitchesShowCaptionsCheck.Left = LeftMenusLeft
+		  Self.SwitchesShowCaptionsCheck.Width = LeftMenusWidth
+		  Self.AutoupdateCheckbox.Left = LeftMenusLeft
+		  Self.AutoupdateCheckbox.Width = LeftMenusWidth
+		  
 		  Var Delta As Integer
+		  Var LeftGroups() As DesktopGroupBox = Array(Self.AppearanceGroup, Self.UpdatesGroup)
+		  Var RightGroups() As DesktopGroupBox = Array(Self.SoundsGroup, Self.ConnectionsGroup)
+		  If MultiGameSupported Then
+		    LeftGroups.AddAt(0, Self.NewProjectGroup)
+		  Else
+		    Self.NewProjectGroup.Visible = False
+		  End If
 		  
 		  #if UpdatesKit.UseSparkle
 		    Self.UpdateSoundCheck.Visible = False
-		    
-		    Delta = Self.UpdateSoundCheck.Height + 12
-		    Self.SoundsGroup.Height = Self.SoundsGroup.Height - Delta
-		    Self.AppearanceGroup.Top = Self.AppearanceGroup.Top - Delta
-		    Self.UpdatesGroup.Top = Self.UpdatesGroup.Top - Delta
-		    Self.ConnectionsGroup.Top = Self.ConnectionsGroup.Top - Delta
-		    Self.Height = Self.Height - Delta
+		    Self.SoundsGroup.Height = Self.SoundsGroup.Height - (Self.UpdateSoundCheck.Height + 12)
 		  #endif
 		  
-		  If BeaconUI.DarkModeSupported = False Then
-		    Self.AppearanceGroup.Visible = False
+		  If DarkModeSupported = False Then
+		    Self.DarkModeLabel.Visible = False
+		    Self.DarkModeMenu.Visible = False
 		    
-		    Delta = Self.AppearanceGroup.Height + 12
-		    Self.UpdatesGroup.Top = Self.UpdatesGroup.Top - Delta
-		    Self.ConnectionsGroup.Top = Self.ConnectionsGroup.Top - Delta
-		    Self.Height = Self.Height - Delta
+		    Delta = Self.ProfileIconMenu.Top - Self.DarkModeMenu.Top
+		    Self.ProfileIconLabel.Top = Self.ProfileIconLabel.Top - Delta
+		    Self.ProfileIconMenu.Top = Self.ProfileIconMenu.Top - Delta
+		    Self.SwitchesShowCaptionsCheck.Top = Self.SwitchesShowCaptionsCheck.Top - Delta
+		    Self.AppearanceGroup.Height = Self.AppearanceGroup.Height - Delta
+		  End If
+		  
+		  Var TargetHeight As Integer
+		  Var NextTop As Integer = 20
+		  For Each Group As DesktopGroupBox In LeftGroups
+		    Group.Top = NextTop
+		    NextTop = Group.Bottom + 12
+		    TargetHeight = Max(TargetHeight, Group.Bottom + 20)
+		  Next
+		  NextTop = 20
+		  For Each Group As DesktopGroupBox In RightGroups
+		    Group.Top = NextTop
+		    NextTop = Group.Bottom + 12
+		    TargetHeight = Max(TargetHeight, Group.Bottom + 20)
+		  Next
+		  If Self.Height <> TargetHeight Then
+		    Self.Height = TargetHeight
+		    Self.MinimumHeight = TargetHeight
+		    Self.MaximumHeight = TargetHeight
 		  End If
 		End Sub
 	#tag EndEvent
@@ -652,15 +892,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ChannelLabel
-	#tag Event
-		Sub Open()
-		  Me.SizeToFit
-		  Self.ChannelMenu.Left = Me.Right + 12
-		  Self.ChannelMenu.Width = Self.UpdatesGroup.Width - (Me.Width + 52)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events AutoupdateCheckbox
 	#tag Event
 		Sub ValueChanged()
@@ -715,16 +946,82 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events DarkModeLabel
+#tag Events ProfileIconMenu
 	#tag Event
-		Sub Open()
-		  Me.SizeToFit
-		  Self.DarkModeMenu.Left = Me.Right + 12
-		  Self.DarkModeMenu.Width = Self.AppearanceGroup.Width - (Me.Width + 52)
+		Sub Opening()
+		  Me.RemoveAllRows
+		  Me.AddRow("Does not have a ponytail", Preferences.ProfileIconChoices.WithoutPonytail)
+		  Me.AddRow("Has a ponytail", Preferences.ProfileIconChoices.WithPonytail)
+		  Me.AddRow("Is a cat", Preferences.ProfileIconChoices.Cat)
+		  
+		  Try
+		    Me.SelectRowWithTag(Preferences.ProfileIcon)
+		  Catch Err As RuntimeException
+		    Me.SelectedRowIndex = 0
+		  End Try
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Var Icon As Preferences.ProfileIconChoices = Me.RowTagAt(Me.SelectedRowIndex)
+		  Preferences.ProfileIcon = Icon
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SwitchesShowCaptionsCheck
+	#tag Event
+		Sub Opening()
+		  Me.Value = Preferences.SwitchesShowCaptions
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ValueChanged()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Preferences.SwitchesShowCaptions = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NewProjectGameMenu
+	#tag Event
+		Sub Opening()
+		  Me.AddRow("Show Game Picker", "")
+		  
+		  Var Games() As Beacon.Game = Beacon.Games
+		  For Each Game As Beacon.Game In Games
+		    Me.AddRow(Game.Name, Game.Identifier)
+		  Next
+		  
+		  Me.SelectByTag(Preferences.NewProjectGameId)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Preferences.NewProjectGameId = Item.Tag.StringValue
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
 		Visible=true
@@ -814,8 +1111,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

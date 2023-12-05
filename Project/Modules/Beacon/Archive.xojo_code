@@ -54,6 +54,16 @@ Protected Class Archive
 		  Entry.Size = CType(Data.Size, UInt64)
 		  Entry.Permissions = &o0644
 		  Entry.FileType = ArchiveEntryMBS.kFileTypeRegular
+		  Entry.UID = 0
+		  Entry.GID = 0
+		  Entry.UnsetATime
+		  Entry.UnsetBTime
+		  Entry.UnsetCTime
+		  Entry.UnsetGName
+		  Entry.UnsetHardLink
+		  Entry.UnsetMTime
+		  Entry.UnsetSymLink
+		  Entry.UnsetUName
 		  
 		  Self.mWriter.WriteHeader(Entry)
 		  Call Self.mWriter.WriteData(Data)
@@ -140,7 +150,8 @@ Protected Class Archive
 		    Writer.SetOption("zip", "encryption", "aes256")
 		    Writer.SetPassphrase(Password)
 		  End If
-		  // Writer.Yield = True
+		  Writer.SetOptions("compression-level=9,!timestamp,hdrcharset=UTF-8")
+		  Writer.Yield = True
 		  Return Writer
 		End Function
 	#tag EndMethod
@@ -218,8 +229,15 @@ Protected Class Archive
 		      If Entry Is Nil Then
 		        Exit
 		      End If
+		      
+		      Var TargetSize As UInt64 = Entry.Size
 		      Var Offset As Int64
-		      Self.mFileContents.Value(Entry.PathName) = Self.mReader.ReadDataBlockMemory(Offset)
+		      Var FileContents As New MemoryBlock(0)
+		      While FileContents.Size <> CType(TargetSize, Integer)
+		        FileContents = FileContents +  Self.mReader.ReadDataBlockMemory(Offset)
+		      Wend
+		      
+		      Self.mFileContents.Value(Entry.PathName) = FileContents
 		    Loop
 		  End If
 		  

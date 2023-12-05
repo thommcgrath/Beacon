@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MutableSpawnPointSet
 Inherits Ark.SpawnPointSet
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Append(Entry As Ark.SpawnPointSetEntry)
 		  Var Idx As Integer = Self.IndexOf(Entry)
@@ -13,10 +14,12 @@ Inherits Ark.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub ColorSetClass(Assigns Value As String)
-		  If Self.mColorSetClass <> Value Then
-		    Self.mColorSetClass = Value
-		    Self.Modified = True
+		  If Self.mColorSetClass = Value Then
+		    Return
 		  End If
+		  
+		  Self.mColorSetClass = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -109,9 +112,9 @@ Inherits Ark.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String, Assigns Weight As NullableDouble)
-		  Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromCreatureID)
-		  Var ToCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ToCreatureID)
+		Sub CreatureReplacementWeight(FromCreatureId As String, ToCreatureId As String, Assigns Weight As NullableDouble)
+		  Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(FromCreatureId)
+		  Var ToCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(ToCreatureId)
 		  Self.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
 		End Sub
 	#tag EndMethod
@@ -147,14 +150,6 @@ Inherits Ark.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ID(Assigns Value As v4UUID)
-		  If Not IsNull(Value) Then
-		    Self.mID = Value
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Ark.SpawnPointSet
 		  Return New Ark.SpawnPointSet(Self)
 		End Function
@@ -173,37 +168,45 @@ Inherits Ark.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub LevelOffsetBeforeMultiplier(Assigns Value As Boolean)
-		  If Self.mOffsetBeforeMultiplier <> Value Then
-		    Self.mOffsetBeforeMultiplier = Value
-		    Self.Modified = True
+		  If Self.mOffsetBeforeMultiplier = Value Then
+		    Return
 		  End If
+		  
+		  Self.mOffsetBeforeMultiplier = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MinDistanceFromPlayersMultiplier(Assigns Value As NullableDouble)
-		  If Self.mMinDistanceFromPlayersMultiplier <> Value Then
-		    Self.mMinDistanceFromPlayersMultiplier = Value
-		    Self.Modified = True
+		  If Self.mMinDistanceFromPlayersMultiplier = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMinDistanceFromPlayersMultiplier = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MinDistanceFromStructuresMultiplier(Assigns Value As NullableDouble)
-		  If Self.mMinDistanceFromStructuresMultiplier <> Value Then
-		    Self.mMinDistanceFromStructuresMultiplier = Value
-		    Self.Modified = True
+		  If Self.mMinDistanceFromStructuresMultiplier = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMinDistanceFromStructuresMultiplier = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MinDistanceFromTamedDinosMultiplier(Assigns Value As NullableDouble)
-		  If Self.mMinDistanceFromTamedDinosMultiplier <> Value Then
-		    Self.mMinDistanceFromTamedDinosMultiplier = Value
-		    Self.Modified = True
+		  If Self.mMinDistanceFromTamedDinosMultiplier = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMinDistanceFromTamedDinosMultiplier = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -220,6 +223,18 @@ Inherits Ark.SpawnPointSet
 		Function MutableVersion() As Ark.MutableSpawnPointSet
 		  Return Self
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RawWeight(Assigns Value As Double)
+		  Value = Max(Abs(Value), 0.00001)
+		  If Self.mWeight = Value Then
+		    Return
+		  End If
+		  
+		  Self.mWeight = Value
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -251,30 +266,36 @@ Inherits Ark.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SpreadRadius(Assigns Value As NullableDouble)
-		  If Self.mSpreadRadius <> Value Then
-		    Self.mSpreadRadius = Value
-		    Self.Modified = True
+		Sub SetId(Assigns Value As String)
+		  // Calling the overridden superclass method.
+		  If Self.mSetId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mSetId = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SpreadRadius(Assigns Value As NullableDouble)
+		  If Self.mSpreadRadius = Value Then
+		    Return
+		  End If
+		  
+		  Self.mSpreadRadius = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub WaterOnlyMinimumHeight(Assigns Value As NullableDouble)
-		  If Self.mWaterOnlyMinimumHeight <> Value Then
-		    Self.mWaterOnlyMinimumHeight = Value
-		    Self.Modified = True
+		  If Self.mWaterOnlyMinimumHeight = Value Then
+		    Return
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Weight(Assigns Value As Double)
-		  Value = Abs(Value)
-		  If Self.mWeight <> Value Then
-		    Self.mWeight = Value
-		    Self.Modified = True
-		  End If
+		  
+		  Self.mWaterOnlyMinimumHeight = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 

@@ -183,6 +183,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -192,6 +193,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          TabStop         =   True
          Tooltip         =   ""
          Top             =   160
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -643,14 +645,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ProcessSpawnPoint(Point As Ark.MutableSpawnPoint)
+		Private Sub ProcessSpawnPoint(Point As Ark.MutableSpawnPointOverride)
 		  For SetIdx As Integer = 0 To Point.LastIndex
-		    Var MutableSet As Ark.MutableSpawnPointSet = Point.Set(SetIdx).MutableVersion
+		    Var MutableSet As Ark.MutableSpawnPointSet = Point.SetAt(SetIdx).MutableVersion
 		    Var ChangeThisColorSet As Boolean
 		    
 		    For EntryIdx As Integer = 0 To MutableSet.LastIndex
 		      Var Entry As Ark.MutableSpawnPointSetEntry = MutableSet.Entry(EntryIdx).MutableVersion
-		      If Self.mCreatureIds.IndexOf(Entry.Creature.ObjectID) = -1 Then
+		      If Self.mCreatureIds.IndexOf(Entry.Creature.CreatureId) = -1 Then
 		        Continue
 		      End If
 		      
@@ -672,7 +674,7 @@ End
 		      MutableSet.ColorSetClass = Self.mSelectedColorClass
 		    End If
 		    
-		    Point.Set(SetIdx) = MutableSet
+		    Point.SetAt(SetIdx) = MutableSet
 		  Next SetIdx
 		  
 		  Self.mConfig.Add(Point)
@@ -815,13 +817,13 @@ End
 		  If AllCreaturesRadio.Value Then
 		    Creatures = Ark.DataSource.Pool.Get(False).GetCreatures("", Self.mMods)
 		    For Each Creature As Ark.Creature In Creatures
-		      CreatureIds.Add(Creature.ObjectID)
+		      CreatureIds.Add(Creature.CreatureId)
 		    Next
 		  Else
 		    For RowIdx As Integer = 0 To Self.CreatureList.LastRowIndex
 		      Var Creature As Ark.Creature = Self.CreatureList.RowTagAt(RowIdx)
 		      Creatures.Add(Creature)
-		      CreatureIds.Add(Creature.ObjectID)
+		      CreatureIds.Add(Creature.CreatureId)
 		    Next RowIdx
 		  End If
 		  
@@ -908,16 +910,15 @@ End
 		        Continue
 		      End If
 		      
-		      Var Original As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Ark.SpawnPoint.ModeOverride)
+		      Var Original As Ark.SpawnPointOverride = Self.mConfig.OverrideForSpawnPoint(Definition, Ark.SpawnPointOverride.ModeOverride)
 		      If (Original Is Nil) = False Then
 		        Continue
 		      End If
 		      
-		      Var Mutable As Ark.MutableSpawnPoint = Definition.MutableClone
-		      Mutable.Mode = Ark.SpawnPoint.ModeOverride
+		      Var Mutable As New Ark.MutableSpawnPointOverride(Definition, Ark.SpawnPointOverride.ModeOverride)
 		      Ark.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		      
-		      Var Remove As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Ark.SpawnPoint.ModeRemove)
+		      Var Remove As Ark.SpawnPointOverride = Self.mConfig.OverrideForSpawnPoint(Definition, Ark.SpawnPointOverride.ModeRemove)
 		      If (Remove Is Nil) = False Then
 		        For Each Set As Ark.SpawnPointSet In Remove
 		          For Each Entry As Ark.SpawnPointSetEntry In Set
@@ -927,17 +928,16 @@ End
 		        Self.mConfig.Remove(Remove)
 		      End If
 		      
-		      Var Append As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Ark.SpawnPoint.ModeAppend)
+		      Var Append As Ark.SpawnPointOverride = Self.mConfig.OverrideForSpawnPoint(Definition, Ark.SpawnPointOverride.ModeAppend)
 		      If (Append Is Nil) = False Then
 		        For Each Set As Ark.SpawnPointSet In Append
-		          Mutable.AddSet(Set.Clone)
+		          Mutable.Add(Set.Clone)
 		        Next Set
-		        Var Limits As Dictionary = Append.Limits
-		        For Each Entry As DictionaryEntry In Limits
-		          Var LimitCreature As Ark.Creature = Entry.Key
-		          Var Percent As Double = Entry.Value
-		          Mutable.Limit(LimitCreature) = Percent
-		        Next Entry
+		        Var LimitedCreatureRefs() As Ark.BlueprintReference = Append.LimitedCreatureRefs
+		        For Each CreatureRef As Ark.BlueprintReference In LimitedCreatureRefs
+		          Var Percent As Double = Append.Limit(CreatureRef)
+		          Mutable.Limit(CreatureRef) = Percent
+		        Next
 		        Self.mConfig.Remove(Append)
 		      End If
 		      
@@ -948,17 +948,17 @@ End
 		  Next Creature
 		  
 		  // Next, process everything
-		  Var Points() As Ark.SpawnPoint = Self.mConfig.Points
-		  Var PointCount As Integer = Points.Count
-		  Var TotalPointsText As String = Language.NounWithQuantity(PointCount, "spawn point", "spawn points")
+		  Var Overrides() As Ark.SpawnPointOverride = Self.mConfig.Overrides
+		  Var OverrideCount As Integer = Overrides.Count
+		  Var TotalPointsText As String = Language.NounWithQuantity(OverrideCount, "spawn point", "spawn points")
 		  Var PointsProcessed As Integer
 		  Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed 0 of " + TotalPointsText + "…"))
-		  For Each Point As Ark.SpawnPoint In Points
-		    Var Mutable As Ark.MutableSpawnPoint = Point.MutableVersion
+		  For Each Override As Ark.SpawnPointOverride In Overrides
+		    Var Mutable As Ark.MutableSpawnPointOverride = Override.MutableVersion
 		    Self.ProcessSpawnPoint(Mutable)
 		    PointsProcessed = PointsProcessed + 1
 		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed " + PointsProcessed.ToString(Locale.Current, "#,##0") + " of " + TotalPointsText + "…"))
-		  Next Point
+		  Next
 		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Status": "Finished"))
 		End Sub
@@ -1028,8 +1028,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

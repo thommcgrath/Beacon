@@ -248,16 +248,16 @@ End
 		  Self.GetPadding(PaddingLeft, PaddingTop, PaddingRight, PaddingBottom)
 		  Var HeaderHeight As Integer = PaddingTop + Max(Self.ViewSelector.Height, Self.FilterField.Height) + InnerSpacing
 		  
-		  Var RequiredType As Ark.ContentPack.Types
+		  Var RequiredType As Beacon.ContentPack.Types
 		  For Idx As Integer = 0 To Self.ViewSelector.LastIndex
 		    If Self.ViewSelector.Segment(Idx).Selected Then
 		      Select Case Idx
 		      Case PageUniversal
-		        RequiredType = Ark.ContentPack.Types.Universal
+		        RequiredType = Beacon.ContentPack.Types.Official
 		      Case PageSteam
-		        RequiredType = Ark.ContentPack.Types.Steam
+		        RequiredType = Beacon.ContentPack.Types.ThirdParty
 		      Case PageLocal
-		        RequiredType = Ark.ContentPack.Types.Custom
+		        RequiredType = Beacon.ContentPack.Types.Custom
 		      End Select
 		      Exit For Idx
 		    End If
@@ -268,10 +268,10 @@ End
 		  Next
 		  
 		  If Self.mOffset = 0 Then
-		    Self.mResultCount = Ark.DataSource.Pool.Get(False).CountContentPacks(Self.FilterField.Text.Trim, RequiredType)
+		    Self.mResultCount = Self.mDataSource.CountContentPacks(Self.FilterField.Text.Trim, RequiredType)
 		  End If
 		  
-		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
+		  Var Packs() As Beacon.ContentPack = Self.mDataSource.GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
 		  Var Measure As New Picture(20, 20)
 		  Var MeasuredWidth As Double
 		  Self.CheckboxesBound = Packs.LastIndex
@@ -293,8 +293,8 @@ End
 		    Check.Width = CheckboxWidth
 		    Check.Left = NextLeft
 		    Check.Top = NextTop
-		    Check.Value = Self.ModEnabled(Packs(Idx).UUID)
-		    Self.mMap(Idx) = Packs(Idx).UUID
+		    Check.Value = Self.ModEnabled(Packs(Idx).ContentPackId)
+		    Self.mMap(Idx) = Packs(Idx).ContentPackId
 		    
 		    If (Idx + 1) Mod ColumnCount = 0 Then
 		      NextLeft = PaddingLeft
@@ -340,9 +340,25 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Constructor()
+		  // Calling the overridden superclass constructor.
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Sub Constructor(EnabledMods As Beacon.StringList)
+		Sub Constructor(DataSource As Beacon.DataSource, EnabledMods As Beacon.StringList)
+		  Self.mDataSource = DataSource
+		  Self.Constructor()
 		  Self.EnabledMods = EnabledMods
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Project As Beacon.Project)
+		  Self.Constructor(Project.DataSource(False), Project.ContentPacks)
 		End Sub
 	#tag EndMethod
 
@@ -398,6 +414,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private CheckboxesBound As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDataSource As Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -480,6 +500,17 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Segment(0).Selected = True
+		  
+		  Select Case Self.mDataSource.Identifier
+		  Case Ark.Identifier
+		    Me.Segment(0).Caption = "Universal"
+		    Me.Segment(1).Caption = "Steam Only"
+		    Me.Segment(2).Caption = "Custom"
+		  Case ArkSA.Identifier
+		    Me.Segment(0).Caption = "Official"
+		    Me.Segment(1).Caption = "CurseForge"
+		    Me.Segment(2).Caption = "Custom"
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -105,6 +105,7 @@ Begin BeaconContainer ColumnBrowser
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
@@ -114,6 +115,7 @@ Begin BeaconContainer ColumnBrowser
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False

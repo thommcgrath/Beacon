@@ -289,7 +289,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RebuildLootItemSet(Destination As Ark.MutableLootItemSet, Mask As UInt64, Container As Ark.MutableLootContainer, ContentPacks As Beacon.StringList) As Boolean
+		Function RebuildLootItemSet(Destination As Ark.MutableLootItemSet, Mask As UInt64, Container As Ark.LootContainer, ContentPacks As Beacon.StringList) As Boolean
 		  Var Source As Ark.LootItemSet = Ark.LootItemSet.FromTemplate(Self, Container, Mask, ContentPacks)
 		  If Source Is Nil Then
 		    Return False
@@ -312,6 +312,16 @@ Implements Beacon.Countable,Iterable
 		    End If
 		  Next Idx
 		  Return Changed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RebuildLootItemSet(Destination As Ark.MutableLootItemSet, Mask As UInt64, Override As Ark.LootDropOverride, ContentPacks As Beacon.StringList) As Boolean
+		  Var LootDrop As Ark.LootContainer = Override.LootDrop(ContentPacks)
+		  If LootDrop Is Nil Then
+		    Return False
+		  End If
+		  Return Self.RebuildLootItemSet(Destination, Mask, LootDrop, ContentPacks)
 		End Function
 	#tag EndMethod
 

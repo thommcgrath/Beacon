@@ -13,27 +13,42 @@ Inherits Ark.LootTemplateEntry
 
 	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
-		  If Self.mAvailability <> Value Then
-		    Self.mAvailability = Value
-		    Self.Modified = True
+		  If Self.mAvailability = Value Then
+		    Return
 		  End If
+		  
+		  Self.mAvailability = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ChanceToBeBlueprint(Assigns Value As Double)
-		  If Self.mChanceToBeBlueprint <> Value Then
-		    Self.mChanceToBeBlueprint = Value
-		    Self.Modified = True
+		  If Self.mChanceToBeBlueprint = Value Then
+		    Return
 		  End If
+		  
+		  Self.mChanceToBeBlueprint = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mUUID = New v4UUID
+		  Self.mEntryId = Beacon.UUID.v4
 		  Super.Constructor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EntryId(Assigns Value As String)
+		  If Self.mEntryId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mEntryId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -45,37 +60,47 @@ Inherits Ark.LootTemplateEntry
 
 	#tag Method, Flags = &h0
 		Sub MaxQuality(Assigns Value As Ark.Quality)
-		  If Self.mMaxQuality <> Value Then
-		    Self.mMaxQuality = Value
-		    Self.Modified = True
+		  If Self.mMaxQuality = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMaxQuality = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MaxQuantity(Assigns Value As Integer)
-		  If Self.mMaxQuantity <> Value Then
-		    Self.mMaxQuantity = Value
-		    Self.Modified = True
+		  Value = Max(Value, 0)
+		  If Self.mMaxQuantity = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMaxQuantity = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MinQuality(Assigns Value As Ark.Quality)
-		  If Self.mMinQuality <> Value Then
-		    Self.mMinQuality = Value
-		    Self.Modified = True
+		  If Self.mMinQuality = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMinQuality = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MinQuantity(Assigns Value As Integer)
-		  If Self.mMinQuantity <> Value Then
-		    Self.mMinQuantity = Value
-		    Self.Modified = True
+		  Value = Max(Value, 0)
+		  If Self.mMinQuantity = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMinQuantity = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -97,6 +122,10 @@ Inherits Ark.LootTemplateEntry
 
 	#tag Method, Flags = &h0
 		Sub PreventGrinding(Assigns Value As Boolean)
+		  If Self.mPreventGrinding = Value Then
+		    Return
+		  End If
+		  
 		  Self.mPreventGrinding = Value
 		  Self.Modified = True
 		End Sub
@@ -104,10 +133,13 @@ Inherits Ark.LootTemplateEntry
 
 	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
-		  If Self.mWeight <> Value Then
-		    Self.mWeight = Value
-		    Self.Modified = True
+		  Value = Max(Value, 0)
+		  If Self.mWeight = Value Then
+		    Return
 		  End If
+		  
+		  Self.mWeight = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -129,42 +161,54 @@ Inherits Ark.LootTemplateEntry
 
 	#tag Method, Flags = &h0
 		Sub RespectBlueprintChanceMultipliers(Assigns Value As Boolean)
-		  If Self.mRespectBlueprintChanceMultipliers <> Value Then
-		    Self.mRespectBlueprintChanceMultipliers = Value
-		    Self.Modified = True
+		  If Self.mRespectBlueprintChanceMultipliers = Value Then
+		    Return
 		  End If
+		  
+		  Self.mRespectBlueprintChanceMultipliers = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RespectQualityOffsets(Assigns Value As Boolean)
-		  If Self.mRespectQualityOffsets <> Value Then
-		    Self.mRespectQualityOffsets = Value
-		    Self.Modified = True
+		  If Self.mRespectQualityOffsets = Value Then
+		    Return
 		  End If
+		  
+		  Self.mRespectQualityOffsets = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RespectQuantityMultipliers(Assigns Value As Boolean)
-		  If Self.mRespectQuantityMultipliers <> Value Then 
-		    Self.mRespectQuantityMultipliers = Value
-		    Self.Modified = True
+		  If Self.mRespectQuantityMultipliers = Value Then
+		    Return
 		  End If
+		  
+		  Self.mRespectQuantityMultipliers = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RespectWeightMultipliers(Assigns Value As Boolean)
-		  If Self.mRespectWeightMultipliers <> Value Then 
-		    Self.mRespectWeightMultipliers = Value
-		    Self.Modified = True
+		  If Self.mRespectWeightMultipliers = Value Then
+		    Return
 		  End If
+		  
+		  Self.mRespectWeightMultipliers = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SingleItemQuantity(Assigns Value As Boolean)
+		  If Self.mSingleItemQuantity = Value Then
+		    Return
+		  End If
+		  
 		  Self.mSingleItemQuantity = Value
 		  Self.Modified = True
 		End Sub
@@ -172,14 +216,12 @@ Inherits Ark.LootTemplateEntry
 
 	#tag Method, Flags = &h0
 		Sub StatClampMultiplier(Assigns Value As Double)
+		  If Self.mStatClampMultiplier = Value Then
+		    Return
+		  End If
+		  
 		  Self.mStatClampMultiplier = Value
 		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UUID(Assigns Value As String)
-		  Self.mUUID = Value
 		End Sub
 	#tag EndMethod
 

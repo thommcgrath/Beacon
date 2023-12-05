@@ -17,6 +17,15 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddLines(Extends Shape As FigureShape, ParamArray Points() As Pair)
+		  For Idx As Integer = 0 To Points.LastIndex
+		    Var NextIdx As Integer = If(Idx = Points.LastIndex, 0, Idx + 1)
+		    Shape.AddLine(Points(Idx).Left, Points(Idx).Right, Points(NextIdx).Left, Points(NextIdx).Right)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AddSuffix(Extends Title As String, Suffix As String) As String
 		  Var Words() As String = Title.Split(" ")
 		  If Words.LastIndex >= 0 And Words(Words.LastIndex) = Suffix Then
@@ -47,6 +56,34 @@ Protected Module FrameworkExtensions
 		  Target.Size = Target.Size + NewData.Size
 		  Target.StringValue(Target.Size - NewData.Size, NewData.Size) = NewData.StringValue(0, NewData.Size)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BestDisplay(Extends Win As DesktopWindow) As DesktopDisplay
+		  Var IdealScreen As DesktopDisplay = DesktopDisplay.DisplayAt(0)
+		  Var Bound As Integer = DesktopDisplay.DisplayCount - 1
+		  Var WindowBounds As Rect = Win.Bounds
+		  If Bound > 0 Then
+		    Var MaxArea As Integer
+		    For I As Integer = 0 To Bound
+		      Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(I)
+		      Var ScreenBounds As New Rect(Display.AvailableLeft, Display.AvailableTop, Display.AvailableWidth, Display.AvailableHeight)
+		      Var Intersection As Rect = ScreenBounds.Intersection(WindowBounds)
+		      If Intersection Is Nil Then
+		        Continue
+		      End If
+		      Var Area As Integer = Intersection.Width * Intersection.Height
+		      If Area <= 0 Then
+		        Continue
+		      End If
+		      If Area > MaxArea Then
+		        MaxArea = Area
+		        IdealScreen = Display
+		      End If
+		    Next
+		  End If
+		  Return IdealScreen
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
@@ -168,7 +205,7 @@ Protected Module FrameworkExtensions
 		    End If
 		    
 		    If Win.DefaultLocation = DesktopWindow.Locations.ParentWindow Then
-		      Win.Top = Parent.Top
+		      Win.Top = Parent.Top + ((Parent.Height - Win.Height) / 4)
 		      Win.Left = Parent.Left + ((Parent.Width - Win.Width) / 2)
 		    End If
 		  #else
@@ -218,6 +255,12 @@ Protected Module FrameworkExtensions
 		  Var Value As Variant = Dict.Value(Key)
 		  Return VariantToDouble(Value, ResolveWithFirst)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DrawRectangle(Extends G As Graphics, Source As Rect)
+		  G.DrawRectangle(Source.Left, Source.Top, Source.Width, Source.Height)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -294,6 +337,12 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub FillRectangle(Extends G As Graphics, Source As Rect)
+		  G.FillRectangle(Source.Left, Source.Top, Source.Width, Source.Height)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function FindNode(Extends Parent As XMLNode, Named As String) As XMLNode()
 		  Var Children() As XMLNode
 		  Var Bound As Integer = Parent.ChildCount - 1
@@ -304,6 +353,52 @@ Protected Module FrameworkExtensions
 		    End If
 		  Next
 		  Return Children
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FirstKey(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Variant
+		  For Idx As Integer = 0 To Keys.LastIndex
+		    If Dict.HasKey(Keys(Idx)) Then
+		      Return Keys(Idx)
+		    End If
+		  Next
+		  Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FirstKey(Extends Dict As JSONItem, ParamArray Keys() As String) As String
+		  For Idx As Integer = 0 To Keys.LastIndex
+		    If Dict.HasKey(Keys(Idx)) Then
+		      Return Keys(Idx)
+		    End If
+		  Next
+		  Return ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FirstValue(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Variant
+		  // Last element of Keys is the default
+		  For Idx As Integer = 0 To Keys.LastIndex - 1
+		    If Dict.HasKey(Keys(Idx)) Then
+		      Return Dict.Value(Keys(Idx))
+		    End If
+		  Next
+		  Return Keys(Keys.LastIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FirstValue(Extends Dict As JSONItem, ParamArray Keys() As String) As Variant
+		  // Last element of Keys is the default
+		  For Idx As Integer = 0 To Keys.LastIndex - 1
+		    If Dict.HasKey(Keys(Idx)) Then
+		      Return Dict.Value(Keys(Idx))
+		    End If
+		  Next
+		  Return Keys(Keys.LastIndex)
 		End Function
 	#tag EndMethod
 
@@ -495,38 +590,60 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function OneOf(Extends Target As String, ParamArray Options() As String) As Boolean
+		  For Each Option As String In Options
+		    If Target = Option Then
+		      Return True
+		    End If
+		  Next
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PartialPath(Extends File As FolderItem) As String
+		  Var NativePath As String = File.NativePath
+		  Var Components(), PathSeparator As String
+		  If NativePath.Contains("/") Then
+		    Components = NativePath.Split("/")
+		    PathSeparator = "/"
+		  ElseIf NativePath.Contains("\") Then
+		    Components = NativePath.Split("\")
+		    PathSeparator = "\"
+		  Else
+		    Components = Array(NativePath)
+		  End If
+		  While Components.Count > 3
+		    Components.RemoveAt(0)
+		  Wend
+		  Return String.FromArray(Components, PathSeparator)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem) As MemoryBlock
-		  #Pragma BreakOnExceptions False
-		  Try
-		    Const ChunkSize = 256000
-		    
-		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
-		    Var Contents As New MemoryBlock(CType(Stream.Length, Integer))
-		    Var Offset As Integer = 0
-		    While Stream.EndOfFile = False
-		      Var ReadBytes As Integer = Min(ChunkSize, CType(Stream.Length, Integer) - Offset)
-		      Contents.StringValue(Offset, ReadBytes) = Stream.Read(ReadBytes, Nil)
-		      Offset = Offset + ReadBytes
-		    Wend
-		    Stream.Close
-		    
-		    Return Contents
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
+		  Const ChunkSize = 256000
+		  
+		  Var Stream As BinaryStream = BinaryStream.Open(File, False)
+		  Var Contents As New MemoryBlock(CType(Stream.Length, Integer))
+		  Var Offset As Integer = 0
+		  While Stream.EndOfFile = False
+		    Var ReadBytes As Integer = Min(ChunkSize, CType(Stream.Length, Integer) - Offset)
+		    Contents.StringValue(Offset, ReadBytes) = Stream.Read(ReadBytes, Nil)
+		    Offset = Offset + ReadBytes
+		  Wend
+		  Stream.Close
+		  
+		  Return Contents
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem, Encoding As TextEncoding) As String
-		  Try
-		    Var Stream As TextInputStream = TextInputStream.Open(File)
-		    Var Contents As String = Stream.ReadAll(Encoding)
-		    Stream.Close
-		    Return Contents
-		  Catch Err As RuntimeException
-		    Return ""
-		  End Try
+		  Var Stream As TextInputStream = TextInputStream.Open(File)
+		  Var Contents As String = Stream.ReadAll(Encoding)
+		  Stream.Close
+		  Return Contents
 		End Function
 	#tag EndMethod
 
@@ -553,6 +670,24 @@ Protected Module FrameworkExtensions
 		  If Menu.SelectedRowIndex > -1 Then
 		    Return Menu.RowTagAt(Menu.SelectedRowIndex)
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub SetText(Extends Box As DesktopComboBox, Text As String)
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Box.SelectRowWithText(Text)
+		  Catch Err As RuntimeException
+		    Box.SelectedRowIndex = -1
+		    Box.Text = Text
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SimpleSQLDate(Extends Source As DateTime) As String
+		  Return Source.Year.ToString(Locale.Raw, "0000") + "-" + Source.Month.ToString(Locale.Raw, "00") + "-" + Source.Day.ToString(Locale.Raw, "00")
 		End Function
 	#tag EndMethod
 
@@ -774,7 +909,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Write(Extends File As FolderItem, Contents As MemoryBlock) As Boolean
+		Sub Write(Extends File As FolderItem, Contents As MemoryBlock)
 		  Static Locks As Dictionary
 		  If Locks = Nil Then
 		    Locks = New Dictionary
@@ -815,13 +950,12 @@ Protected Module FrameworkExtensions
 		    File.ModificationDateTime = DateTime.Now
 		    
 		    Lock.Leave
-		    Return True
 		  Catch Err As RuntimeException
 		    App.Log("Unable to write " + File.NativePath + ": " + Err.Message + " (" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ")")
 		    Lock.Leave
-		    Return False
+		    Raise Err
 		  End Try
-		End Function
+		End Sub
 	#tag EndMethod
 
 

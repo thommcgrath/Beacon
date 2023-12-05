@@ -15,6 +15,7 @@ Protected Module Maps
 	#tag Method, Flags = &h1
 		Protected Sub ClearCache()
 		  mUniversalMask = 0
+		  mLabels = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -43,12 +44,23 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Mask(Extends Maps() As Ark.Map) As UInt64
-		  Var Bits As UInt64
-		  For Each Map As Ark.Map In Maps
-		    Bits = Bits Or Map.Mask
-		  Next
-		  Return Bits
+		Protected Function LabelForMask(Mask As UInt64) As String
+		  If mLabels Is Nil Then
+		    mLabels = New Dictionary
+		  End If
+		  
+		  If mLabels.HasKey(Mask) Then
+		    Return mLabels.Value(Mask).StringValue
+		  End If
+		  
+		  Var Label As String
+		  If Mask = CType(0, UInt64) Then
+		    Label = "Unused"
+		  Else
+		    Label = ForMask(Mask).Label
+		  End If
+		  mLabels.Value(Mask) = Label
+		  Return Label
 		End Function
 	#tag EndMethod
 
@@ -60,6 +72,18 @@ Protected Module Maps
 		  End If
 		  
 		  Return Map.Mask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function MaskForMaps(Maps() As Beacon.Map) As UInt64
+		  Var Bits As UInt64
+		  For Each Map As Beacon.Map In Maps
+		    If Map IsA Ark.Map Then
+		      Bits = Bits Or Ark.Map(Map).Mask
+		    End If
+		  Next
+		  Return Bits
 		End Function
 	#tag EndMethod
 
@@ -102,6 +126,10 @@ Protected Module Maps
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mLabels As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mUniversalMask As UInt64

@@ -1,6 +1,7 @@
 #tag Class
 Protected Class SynchronousHTTPSocket
 Inherits URLConnection
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  Self.mLastContent = Content
@@ -8,7 +9,7 @@ Inherits URLConnection
 		  Self.mLastException = Nil
 		  Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Finished
 		  RaiseEvent PageReceived(URL, HTTPStatus, Content)
-		  If Self.mOriginThread <> Nil Then
+		  If (Self.mOriginThread Is Nil) = False Then
 		    Self.mOriginThread.Resume
 		  End If
 		  Self.mOriginThread = Nil
@@ -22,7 +23,7 @@ Inherits URLConnection
 		  Self.mLastException = e
 		  Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Finished
 		  RaiseEvent Error(Self.mLastURL, e)
-		  If Self.mOriginThread <> Nil Then
+		  If (Self.mOriginThread Is Nil) = False Then
 		    Self.mOriginThread.Resume
 		  End If
 		  Self.mOriginThread = Nil
@@ -43,7 +44,7 @@ Inherits URLConnection
 		  Self.mLastException = Nil
 		  Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Finished
 		  RaiseEvent PageReceived(URL, HTTPStatus, Content)
-		  If Self.mOriginThread <> Nil Then
+		  If (Self.mOriginThread Is Nil) = False Then
 		    Self.mOriginThread.Resume
 		  End If
 		  Self.mOriginThread = Nil
@@ -122,22 +123,32 @@ Inherits URLConnection
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Send(Method As String, URL As String)
+		Sub Send(Method As String, Url As String, File As FolderItem, Timeout As Integer = 60)
+		  // Don't call this method
+		  #Pragma Unused Method
+		  #Pragma Unused URL
+		  #Pragma Unused File
+		  #Pragma Unused Timeout
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Send(Method As String, Url As String, Timeout As Integer = 60)
 		  Try
 		    Self.mOriginThread = Thread.Current
 		    Self.RequestHeader("User-Agent") = App.UserAgent
-		    Self.mLastURL = URL
+		    Self.mLastURL = Url
 		    Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Connecting
 		    #if TargetWindows And XojoVersion >= 2022.01
-		      Super.Send(Method, URL, FolderItem.TemporaryFile)
+		      Super.Send(Method, Url, FolderItem.TemporaryFile, Timeout)
 		    #else
-		      Super.Send(Method, URL)
+		      Super.Send(Method, Url, Timeout)
 		    #endif
-		    If Self.mOriginThread <> Nil Then
+		    If (Self.mOriginThread Is Nil) = False Then
 		      Self.mOriginThread.Pause
 		    End If
 		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Invalid URL: `" + URL + "`")
+		    App.Log(Err, CurrentMethodName, "Invalid URL: `" + Url + "`")
 		    Self.mLastContent = Nil
 		    Self.mLastHTTPStatus = 0
 		    Self.mLastException = Err

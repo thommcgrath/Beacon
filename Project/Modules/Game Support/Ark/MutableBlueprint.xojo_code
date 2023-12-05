@@ -14,13 +14,19 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackName(Assigns Value As String)
+		Sub BlueprintId(Assigns Value As String)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackUUID(Assigns Value As String)
+		Sub ContentPackId(Assigns Value As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackName(Assigns Value As String)
 		  
 		End Sub
 	#tag EndMethod
@@ -33,6 +39,12 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LastUpdate(Assigns Value As Double)
 		  
 		End Sub
 	#tag EndMethod

@@ -1,152 +1,22 @@
 #tag Class
 Protected Class ArkDiscoveryView
-Inherits DesktopContainer
+Inherits DiscoveryView
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
-		Sub Closing()
-		  RaiseEvent Close
-		  Self.mClosed = True
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resized()
-		  RaiseEvent Resize
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  RaiseEvent Resize
-		End Sub
-	#tag EndEvent
-
-
-	#tag Method, Flags = &h0
-		Sub Begin()
-		  If Self.mClosed Then
-		    Return
-		  End If
-		  
-		  RaiseEvent Begin
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DesiredHeight() As Integer
-		  Return Self.mDesiredHeight
+		Function GameId() As String
+		  Return Ark.Identifier
 		End Function
-	#tag EndMethod
+	#tag EndEvent
 
-	#tag Method, Flags = &h1
-		Protected Sub DesiredHeight(Assigns Value As Integer)
-		  If Self.mClosed Then
-		    Return
-		  End If
-		  
-		  If Value <> Self.mDesiredHeight Then
-		    Self.mDesiredHeight = Value
-		  End If  
-		  RaiseEvent ShouldResize(Value)
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Project() As Ark.Project
-		  Return RaiseEvent GetDestinationProject()
+		  Var Temp As Beacon.Project = Super.Project
+		  If Temp IsA Ark.Project Then
+		    Return Ark.Project(Temp)
+		  End If
 		End Function
 	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub PullValuesFromProject(Project As Ark.Project)
-		  If Self.mClosed Then
-		    Return
-		  End If
-		  
-		  RaiseEvent GetValuesFromProject(Project)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ShouldCancel()
-		  If Self.mClosed Then
-		    Return
-		  End If
-		  
-		  RaiseEvent ShouldCancel()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Data() As Beacon.DiscoveredData)
-		  Self.ShouldFinish(Data, Nil)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(ParamArray Data() As Beacon.DiscoveredData)
-		  Self.ShouldFinish(Data, Nil)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  If Self.mClosed Then
-		    Return
-		  End If
-		  
-		  RaiseEvent Finished(Data, Accounts)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Data As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  Var Arr(0) As Beacon.DiscoveredData
-		  Arr(0) = Data
-		  Self.ShouldFinish(Arr, Accounts)
-		End Sub
-	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0
-		Event Begin()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Close()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event GetDestinationProject() As Ark.Project
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event GetValuesFromProject(Project As Beacon.Project)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Resize()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ShouldCancel()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ShouldResize(NewHeight As Integer)
-	#tag EndHook
-
-
-	#tag Property, Flags = &h21
-		Private mClosed As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDesiredHeight As Integer = 64
-	#tag EndProperty
 
 
 	#tag ViewBehavior

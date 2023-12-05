@@ -1,18 +1,19 @@
 #tag Class
 Protected Class BeaconContainer
 Inherits DesktopContainer
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Opening()
-		  RaiseEvent Opening
-		  
 		  #if XojoVersion >= 2018.01
 		    Self.Composited = False
-		    Self.Transparent = TargetMacOS or TargetLinux
+		    Self.Transparent = TargetMacOS
 		  #else
 		    Self.DoubleBuffer = TargetWin32
 		    Self.Transparent = Not Self.DoubleBuffer
 		    Self.EraseBackground = Not Self.DoubleBuffer
 		  #endif
+		  
+		  RaiseEvent Opening
 		  
 		  Self.SwapButtons()
 		  

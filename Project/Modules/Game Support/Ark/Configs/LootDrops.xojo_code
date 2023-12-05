@@ -2,11 +2,12 @@
 Protected Class LootDrops
 Inherits Ark.ConfigGroup
 Implements Iterable
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As Ark.ConfigGroup)
 		  Var Source As Ark.Configs.LootDrops = Ark.Configs.LootDrops(Other)
-		  For Each Entry As DictionaryEntry In Source.mContainers
-		    Self.Add(Ark.LootContainer(Entry.Value))
+		  For Each Override As Ark.LootDropOverride In Source.mOverrides
+		    Self.Add(Override)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -19,30 +20,34 @@ Implements Iterable
 		  End If
 		  Var DifficultyValue As Double = Difficulty.DifficultyValue
 		  
+		  Var ContentPackIds As Beacon.StringList = Project.ContentPacks
 		  Var Values() As Ark.ConfigValue
-		  For Each Entry As DictionaryEntry In Self.mContainers
-		    Var Container As Ark.LootContainer = Entry.Value
-		    If Container.ValidForMask(Profile.Mask) = False Then
+		  For Each Override As Ark.LootDropOverride In Self.mOverrides
+		    Var LootDrop As Ark.Blueprint = Override.LootDropReference.Resolve(ContentPackIds)
+		    If LootDrop Is Nil Or LootDrop.ValidForMask(Profile.Mask) = False Then
 		      Continue
 		    End If
 		    
-		    Self.BuildOverrides(Container, Values, DifficultyValue)
+		    Var Value As Ark.ConfigValue = Self.ConfigValueForOverride(Override, DifficultyValue)
+		    If (Value Is Nil) = False Then
+		      Values.Add(Value)
+		    End If
 		  Next
-		  Return Values()
+		  Return Values
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, ConfigOverrideSupplyCrateItems))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, ConfigOverrideSupplyCrateItems))
 		  Return Keys
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Function HasContent() As Boolean
-		  Return Self.mContainers.KeyCount > 0
+		  Return Self.mOverrides.Count > 0
 		End Function
 	#tag EndEvent
 
@@ -50,36 +55,58 @@ Implements Iterable
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
-		  If SaveData.HasKey("Contents") = False Then
-		    App.Log("Unable to load LootDrops because there is no Contents key.")
+		  If SaveData.HasKey("overrides") = False Then
+		    If SaveData.HasKey("Contents") Then
+		      // Old style
+		      Var Drops() As Dictionary
+		      Try
+		        Drops = SaveData.Value("Contents").DictionaryArrayValue
+		      Catch Err As RuntimeException
+		      End Try
+		      
+		      For Each DropData As Dictionary In Drops
+		        Var Override As Ark.LootDropOverride
+		        Try
+		          Override = Ark.LootDropOverride.FromLegacy(DropData)
+		        Catch Err As RuntimeException
+		        End Try
+		        If Override Is Nil Then
+		          Continue
+		        End If
+		        
+		        Self.mOverrides.Add(Override)
+		      Next
+		    End If
 		    Return
 		  End If
 		  
-		  // Only keep the most recent of the duplicates
-		  Var Contents() As Dictionary = SaveData.Value("Contents").DictionaryArrayValue
-		  For Each DropDict As Dictionary In Contents
-		    Var Container As Ark.LootContainer
+		  Var OverrideDicts() As Dictionary
+		  Try
+		    OverrideDicts = SaveData.Value("overrides").DictionaryArrayValue
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  For Each Dict As Dictionary In OverrideDicts
+		    Var Override As Ark.LootDropOverride
 		    Try
-		      Container = Ark.LootContainer.FromSaveData(DropDict)
-		      If Container Is Nil Then
-		        Continue For DropDict
-		      End If
-		      Self.mContainers.Value(Container.ClassString) = Container
+		      Override = Ark.LootDropOverride.FromSaveData(Dict)
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reading DropDict with Beacon.LoadLootSourceSaveData")
 		    End Try
-		    If Container Is Nil Then
+		    If Override Is Nil Then
 		      Continue
 		    End If
+		    
+		    Self.mOverrides.Add(Override)
 		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
-		  For Each Entry As DictionaryEntry In Self.mContainers
-		    Ark.LootContainer(Entry.Value).Validate(Location, Issues, Project)
-		  Next Entry
+		  For Each Override As Ark.LootDropOverride In Self.mOverrides
+		    Override.Validate(Location, Issues, Project)
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -87,89 +114,110 @@ Implements Iterable
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
-		  Var Contents() As Dictionary
-		  For Each Entry As DictionaryEntry In Self.mContainers
-		    Contents.Add(Ark.LootContainer(Entry.Value).SaveData)
+		  Var OverrideDicts() As Dictionary
+		  For Each Override As Ark.LootDropOverride In Self.mOverrides
+		    OverrideDicts.Add(Override.SaveData)
 		  Next
-		  SaveData.Value("Contents") = Contents
+		  SaveData.Value("overrides") = OverrideDicts
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub Add(Container As Ark.LootContainer)
-		  If (Container Is Nil) = False Then
-		    Self.mContainers.Value(Container.ClassString) = Container.ImmutableVersion
-		    Self.Modified = True
+		Sub Add(LootDropRef As Ark.BlueprintReference)
+		  If LootDropRef Is Nil Then
+		    Return
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Sub BuildOverrides(Container As Ark.LootContainer, Organizer As Ark.ConfigOrganizer, Difficulty As Double)
-		  Var Values() As Ark.ConfigValue
-		  BuildOverrides(Container, Values, Difficulty)
-		  For Each Value As Ark.ConfigValue In Values
-		    Organizer.Add(Value)
-		  Next Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Sub BuildOverrides(Container As Ark.LootContainer, Values() As Ark.ConfigValue, Difficulty As Double)
-		  Var Keys() As String
-		  Keys.Add("SupplyCrateClassString=""" + Container.ClassString + """")
 		  
-		  If Container.AppendMode Then
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = LootDropRef.BlueprintId Then
+		      Self.mOverrides(Idx) = New Ark.LootDropOverride(LootDropRef)
+		      Self.Modified = True
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mOverrides.Add(New Ark.LootDropOverride(LootDropRef))
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Add(LootDrop As Ark.LootContainer, IncludeItemSets As Boolean)
+		  If LootDrop Is Nil Then
+		    Return
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = LootDrop.LootDropId Then
+		      Self.mOverrides(Idx) = New Ark.LootDropOverride(LootDrop, IncludeItemSets)
+		      Self.Modified = True
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mOverrides.Add(New Ark.LootDropOverride(LootDrop, IncludeItemSets))
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Add(Override As Ark.LootDropOverride)
+		  If Override Is Nil Then
+		    Return
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = Override.LootDropId Then
+		      Self.mOverrides(Idx) = New Ark.LootDropOverride(Override)
+		      Self.Modified = True
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mOverrides.Add(New Ark.LootDropOverride(Override))
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ConfigValueForOverride(Override As Ark.LootDropOverride, DifficultyValue As Double) As Ark.ConfigValue
+		  Var Keys() As String
+		  Keys.Add("SupplyCrateClassString=""" + Override.LootDropReference.ClassString + """")
+		  
+		  If Override.AddToDefaults Then
 		    Keys.Add("bAppendItemSets=True")
 		  Else
-		    Var MinSets As Integer = Min(Container.MinItemSets, Container.MaxItemSets)
-		    Var MaxSets As Integer = Max(Container.MaxItemSets, Container.MinItemSets)
+		    Var MinSets As Integer = Min(Override.MinItemSets, Override.MaxItemSets)
+		    Var MaxSets As Integer = Max(Override.MaxItemSets, Override.MinItemSets)
 		    
-		    Keys.Add("MinItemSets=" + MinSets.ToString)
-		    Keys.Add("MaxItemSets=" + MaxSets.ToString)
+		    Keys.Add("MinItemSets=" + MinSets.ToString(Locale.Raw, "0"))
+		    Keys.Add("MaxItemSets=" + MaxSets.ToString(Locale.Raw, "0"))
 		    Keys.Add("NumItemSetsPower=1.0")
-		    Keys.Add("bSetsRandomWithoutReplacement=" + If(Container.PreventDuplicates, "True", "False"))
+		    Keys.Add("bSetsRandomWithoutReplacement=" + If(Override.PreventDuplicates, "True", "False"))
 		  End If
 		  
+		  // You don't need the content packs from the project because the caller (GenerateConfigValues) will
+		  // have already resolved the blueprint.
+		  Var Blueprint As Ark.Blueprint = Override.LootDropReference.Resolve()
+		  If Blueprint Is Nil Then
+		    Return Nil
+		  End If
+		  Var LootDrop As Ark.LootContainer = Ark.LootContainer(Blueprint)
+		  
 		  Var GeneratedSets() As String
-		  For Each Set As Ark.LootItemSet In Container
-		    GeneratedSets.Add(Set.StringValue(Container.Multipliers, False, Difficulty))
+		  For Each Set As Ark.LootItemSet In Override
+		    GeneratedSets.Add(Set.StringValue(LootDrop.Multipliers, False, DifficultyValue))
 		  Next
 		  Keys.Add("ItemSets=(" + GeneratedSets.Join(",") + ")")
 		  
-		  Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, ConfigOverrideSupplyCrateItems + "=(" + Keys.Join(",") + ")", ConfigOverrideSupplyCrateItems + ":" + Container.ClassString))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.mContainers = New Dictionary
-		  Super.Constructor
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Containers(Filter As String = "") As Ark.LootContainer()
-		  Filter = Filter.Trim
-		  
-		  Var Results() As Ark.LootContainer
-		  For Each Entry As DictionaryEntry In Self.mContainers
-		    Var Container As Ark.LootContainer = Entry.Value
-		    If Filter.IsEmpty = False And Container.Label.IndexOf(Filter) = -1 Then
-		      Continue
-		    End If
-		    
-		    Results.Add(Container.ImmutableVersion)
-		  Next
-		  Return Results
+		  Return New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, ConfigOverrideSupplyCrateItems + "=(" + Keys.Join(",") + ")", ConfigOverrideSupplyCrateItems + ":" + LootDrop.ClassString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mContainers.KeyCount
+		  Return Self.mOverrides.Count
 		End Function
 	#tag EndMethod
 
@@ -201,18 +249,18 @@ Implements Iterable
 		      Continue
 		    End If
 		    
-		    Var Container As Ark.LootContainer
+		    Var Override As Ark.LootDropOverride
 		    Try
-		      Container = Ark.LootContainer.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty, ContentPacks)
+		      Override = Ark.LootDropOverride.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty, ContentPacks)
 		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Importing override from ini")
 		      Continue
 		    End Try
-		    
-		    If Container Is Nil Then
+		    If Override Is Nil Then
 		      Continue
 		    End If
 		    
-		    LootDrops.Add(Container)
+		    LootDrops.Add(Override)
 		  Next
 		  If LootDrops.Count > 0 Then
 		    Return LootDrops
@@ -221,10 +269,44 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasContainer(Container As Ark.LootContainer) As Boolean
-		  If (Container Is Nil) = False Then
-		    Return Self.mContainers.HasKey(Container.ClassString)
+		Function HasOverride(LootDropRef As Ark.BlueprintReference) As Boolean
+		  If LootDropRef Is Nil Then
+		    Return False
 		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = LootDropRef.BlueprintId Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasOverride(LootDrop As Ark.LootContainer) As Boolean
+		  If LootDrop Is Nil Then
+		    Return False
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = LootDrop.LootDropId Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasOverride(Override As Ark.LootDropOverride) As Boolean
+		  If Override Is Nil Then
+		    Return False
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = Override.LootDropId Then
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -238,11 +320,55 @@ Implements Iterable
 		Function Iterator() As Iterator
 		  // Part of the Iterable interface.
 		  
-		  Var Items() As Variant
-		  For Each Entry As DictionaryEntry In Self.mContainers
-		    Items.Add(Ark.LootContainer(Entry.Value).ImmutableVersion)
+		  Var Overrides() As Variant
+		  For Each Override As Ark.LootDropOverride In Self.mOverrides
+		    Overrides.Add(Override.ImmutableVersion)
 		  Next
-		  Return New Beacon.GenericIterator(Items)
+		  Return New Beacon.GenericIterator(Overrides)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OverrideForLootDrop(LootDropRef As Ark.BlueprintReference) As Ark.LootDropOverride
+		  If LootDropRef Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = LootDropRef.BlueprintId Then
+		      Return Self.mOverrides(Idx)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OverrideForLootDrop(LootDrop As Ark.LootContainer) As Ark.LootDropOverride
+		  If LootDrop Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = LootDrop.LootDropId Then
+		      Return Self.mOverrides(Idx)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Overrides(Filter As String = "") As Ark.LootDropOverride()
+		  Filter = Filter.Trim
+		  
+		  Var Results() As Ark.LootDropOverride
+		  For Each Override As Ark.LootDropOverride In Self.mOverrides
+		    If Filter.IsEmpty = False And Override.LootDropReference.Label.IndexOf(Filter) = -1 Then
+		      Continue
+		    End If
+		    
+		    Results.Add(Override.ImmutableVersion)
+		  Next
+		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -253,34 +379,66 @@ Implements Iterable
 		  End If
 		  
 		  Var NumChanged As Integer
-		  For Each Entry As DictionaryEntry In Self.mContainers
-		    Var Mutable As Ark.MutableLootContainer = Ark.LootContainer(Entry.Value).MutableVersion
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    Var Mutable As Ark.MutableLootDropOverride = Self.mOverrides(Idx).MutableCopy
 		    Var Num As Integer = Mutable.RebuildItemSets(Mask, ContentPacks)
 		    If Num > 0 Then
 		      NumChanged = NumChanged + Num
-		      Self.mContainers.Value(Mutable.ClassString) = Mutable.ImmutableVersion
+		      Self.mOverrides(Idx) = Mutable.ImmutableCopy
 		    End If
-		  Next Entry
+		  Next
 		  Return NumChanged
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Container As Ark.LootContainer)
-		  If Container Is Nil Then
+		Sub Remove(LootDropRef As Ark.BlueprintReference)
+		  If LootDropRef Is Nil Then
 		    Return
 		  End If
 		  
-		  If Self.mContainers.HasKey(Container.ClassString) Then
-		    Self.mContainers.Remove(Container.ClassString)
-		    Self.Modified = True
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = LootDropRef.BlueprintId Then
+		      Self.mOverrides.RemoveAt(Idx)
+		      Return
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Remove(LootDrop As Ark.LootContainer)
+		  If LootDrop Is Nil Then
+		    Return
 		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = LootDrop.LootDropId Then
+		      Self.mOverrides.RemoveAt(Idx)
+		      Return
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Remove(Override As Ark.LootDropOverride)
+		  If Override Is Nil Then
+		    Return
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).LootDropId = Override.LootDropId Then
+		      Self.mOverrides.RemoveAt(Idx)
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RemoveAll()
-		  Self.mContainers = New Dictionary
+		  Self.mOverrides.ResizeTo(-1)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -293,7 +451,7 @@ Implements Iterable
 
 
 	#tag Property, Flags = &h21
-		Private mContainers As Dictionary
+		Private mOverrides() As Ark.LootDropOverride
 	#tag EndProperty
 
 

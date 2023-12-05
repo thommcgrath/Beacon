@@ -50,7 +50,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Self.mMaxQuality = Ark.Qualities.Tier3
 		  Self.mChanceToBeBlueprint = 0.25
 		  Self.mWeight = 250
-		  Self.mUUID = ""
+		  Self.mEntryId = Beacon.UUID.v4
 		  Self.mSingleItemQuantity = False
 		End Sub
 	#tag EndMethod
@@ -70,7 +70,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Self.mPreventGrinding = Source.mPreventGrinding
 		  Self.mStatClampMultiplier = Source.mStatClampMultiplier
 		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
-		  Self.mUUID = Source.mUUID
+		  Self.mEntryId = Source.mEntryId
 		  Self.mHash = Source.mHash
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
@@ -92,17 +92,25 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSetEntry
+		Function EntryId() As String
+		  Return Self.mEntryId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(Dict As Dictionary, NewEntryId As Boolean = False) As Ark.LootItemSetEntry
 		  Var Entry As New Ark.MutableLootItemSetEntry
 		  
-		  If NewUUID Then
-		    Entry.UUID = v4UUID.Create.StringValue
+		  If NewEntryId Then
+		    Entry.EntryId = Beacon.UUID.v4
 		  Else
 		    Try
-		      If Dict.HasKey("loot_item_set_entry_id") Then
-		        Entry.UUID = Dict.Value("loot_item_set_entry_id")
+		      If Dict.HasKey("lootItemSetEntryId") Then
+		        Entry.EntryId = Dict.Value("lootItemSetEntryId")
+		      ElseIf Dict.HasKey("loot_item_set_entry_id") Then
+		        Entry.EntryId = Dict.Value("loot_item_set_entry_id")
 		      ElseIf Dict.HasKey("UUID") Then
-		        Entry.UUID = Dict.Value("UUID")
+		        Entry.EntryId = Dict.Value("UUID")
 		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Reading UUID value")
@@ -122,7 +130,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("min_quality") Then
+		    If Dict.HasKey("minQuality") Then
+		      Entry.MinQuality = Ark.Qualities.ForKey(Dict.Value("minQuality"))
+		    ElseIf Dict.HasKey("min_quality") Then
 		      Entry.MinQuality = Ark.Qualities.ForKey(Dict.Value("min_quality"))
 		    ElseIf Dict.HasKey("MinQuality") Then
 		      Entry.MinQuality = Ark.Qualities.ForKey(Dict.Value("MinQuality"))
@@ -132,7 +142,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("max_quality") Then
+		    If Dict.HasKey("maxQuality") Then
+		      Entry.MaxQuality = Ark.Qualities.ForKey(Dict.Value("maxQuality"))
+		    ElseIf Dict.HasKey("max_quality") Then
 		      Entry.MaxQuality = Ark.Qualities.ForKey(Dict.Value("max_quality"))
 		    ElseIf Dict.HasKey("MaxQuality") Then
 		      Entry.MaxQuality = Ark.Qualities.ForKey(Dict.Value("MaxQuality"))
@@ -142,7 +154,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("min_quantity") Then
+		    If Dict.HasKey("minQuantity") Then
+		      Entry.MinQuantity = Dict.Value("minQuantity")
+		    ElseIf Dict.HasKey("min_quantity") Then
 		      Entry.MinQuantity = Dict.Value("min_quantity")
 		    ElseIf Dict.HasKey("MinQuantity") Then
 		      Entry.MinQuantity = Dict.Value("MinQuantity")
@@ -152,7 +166,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("max_quantity") Then
+		    If Dict.HasKey("maxQuantity") Then
+		      Entry.MaxQuantity = Dict.Value("maxQuantity")
+		    ElseIf Dict.HasKey("max_quantity") Then
 		      Entry.MaxQuantity = Dict.Value("max_quantity")
 		    ElseIf Dict.HasKey("MaxQuantity") Then
 		      Entry.MaxQuantity = Dict.Value("MaxQuantity")
@@ -162,7 +178,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("blueprint_chance") Then
+		    If Dict.HasKey("blueprintChance") Then
+		      Entry.ChanceToBeBlueprint = Dict.Value("blueprintChance")
+		    ElseIf Dict.HasKey("blueprint_chance") Then
 		      Entry.ChanceToBeBlueprint = Dict.Value("blueprint_chance")
 		    ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
 		      Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
@@ -183,17 +201,22 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  For Idx As Integer = 0 To Children.LastIndex
 		    Try
-		      Var Option As Ark.LootItemSetEntryOption = Ark.LootItemSetEntryOption.FromSaveData(Dictionary(Children(Idx)), NewUUID)
+		      Var Option As Ark.LootItemSetEntryOption = Ark.LootItemSetEntryOption.FromSaveData(Dictionary(Children(Idx)), NewEntryId)
 		      If (Option Is Nil) = False Then
 		        Entry.Add(Option)
 		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
-		  Next Idx
+		  Next
+		  If Entry.Count = 0 Then
+		    Return Nil
+		  End If
 		  
 		  Try
-		    If Dict.HasKey("prevent_grinding") Then
+		    If Dict.HasKey("preventGrinding") Then
+		      Entry.PreventGrinding = Dict.Value("preventGrinding")
+		    ElseIf Dict.HasKey("prevent_grinding") Then
 		      Entry.PreventGrinding = Dict.Value("prevent_grinding")
 		    ElseIf Dict.HasKey("PreventGrinding") Then
 		      Entry.PreventGrinding = Dict.Value("PreventGrinding")
@@ -203,7 +226,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("stat_clamp_multiplier") Then
+		    If Dict.HasKey("statClampMultiplier") Then
+		      Entry.StatClampMultiplier = Dict.Value("statClampMultiplier")
+		    ElseIf Dict.HasKey("stat_clamp_multiplier") Then
 		      Entry.StatClampMultiplier = Dict.Value("stat_clamp_multiplier")
 		    ElseIf Dict.HasKey("StatClampMultiplier") Then
 		      Entry.StatClampMultiplier = Dict.Value("StatClampMultiplier")
@@ -213,7 +238,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("single_item_quantity") Then
+		    If Dict.HasKey("singleItemQuantity") Then
+		      Entry.SingleItemQuantity = Dict.Value("singleItemQuantity")
+		    ElseIf Dict.HasKey("single_item_quantity") Then
 		      Entry.SingleItemQuantity = Dict.Value("single_item_quantity")
 		    ElseIf Dict.HasKey("SingleItemQuantity") Then
 		      Entry.SingleItemQuantity = Dict.Value("SingleItemQuantity")
@@ -347,7 +374,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		        Path = Path.Middle(10, Path.Length - 11)
 		      Else
 		        // No idea what this says
-		        Break
 		        Continue
 		      End If
 		      
@@ -466,7 +492,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		        Continue
 		      End If
 		      
-		      Var Key As String = Option.Engram.ObjectID
+		      Var Key As String = Option.Engram.EngramId
 		      If Key = "" Then
 		        Continue
 		      End If
@@ -567,12 +593,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Return 1
 		  End If
 		  
-		  If Self.mUUID.IsEmpty = False And Self.mUUID = Other.mUUID Then
+		  If Self.mEntryId.IsEmpty = False And Self.mEntryId = Other.mEntryId Then
 		    Return 0
 		  End If
 		  
-		  Var SelfHash As String = Self.mUUID + ":" + Self.Hash
-		  Var OtherHash As String = Other.mUUID + ":" + Other.Hash
+		  Var SelfHash As String = Self.mEntryId + ":" + Self.Hash
+		  Var OtherHash As String = Other.mEntryId + ":" + Other.Hash
 		  
 		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseSensitive)
 		End Function
@@ -593,16 +619,16 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next Idx
 		  
 		  Var Dict As New Dictionary
-		  Dict.Value("loot_item_set_entry_id") = Self.mUUID
-		  Dict.Value("min_quantity") = Self.mMinQuantity
-		  Dict.Value("max_quantity") = Self.mMaxQuantity
-		  Dict.Value("min_quality") = Self.mMinQuality.Key
-		  Dict.Value("max_quality") = Self.mMaxQuality.Key
-		  Dict.Value("blueprint_chance") = Self.mChanceToBeBlueprint
+		  Dict.Value("lootItemSetEntryId") = Self.mEntryId
+		  Dict.Value("minQuantity") = Self.mMinQuantity
+		  Dict.Value("maxQuantity") = Self.mMaxQuantity
+		  Dict.Value("minQuality") = Self.mMinQuality.Key
+		  Dict.Value("maxQuality") = Self.mMaxQuality.Key
+		  Dict.Value("blueprintChance") = Self.mChanceToBeBlueprint
 		  Dict.Value("weight") = Self.mWeight
-		  Dict.Value("single_item_quantity") = Self.mSingleItemQuantity
-		  Dict.Value("prevent_grinding") = Self.mPreventGrinding
-		  Dict.Value("stat_clamp_multiplier") = Self.mStatClampMultiplier
+		  Dict.Value("singleItemQuantity") = Self.mSingleItemQuantity
+		  Dict.Value("preventGrinding") = Self.mPreventGrinding
+		  Dict.Value("statClampMultiplier") = Self.mStatClampMultiplier
 		  Dict.Value("options") = Options
 		  Return Dict
 		End Function
@@ -655,7 +681,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End If
 		  
 		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
-		    If ContentPacks.IndexOf(Option.Engram.ContentPackUUID) = -1 Then
+		    If ContentPacks.IndexOf(Option.Engram.ContentPackId) = -1 Then
 		      Return False
 		    End If
 		  Next
@@ -665,29 +691,32 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(ForDefaults As Boolean = False) As Dictionary
-		  Var Children() As Dictionary
-		  For Each Item As Ark.LootItemSetEntryOption In Self.mOptions
-		    Children.Add(Item.SaveData)
-		  Next
+		Function SaveData(ForPreferences As Boolean = False) As Dictionary
+		  Var Options() As Dictionary
+		  If ForPreferences = False Then
+		    For Each Item As Ark.LootItemSetEntryOption In Self.mOptions
+		      Options.Add(Item.SaveData)
+		    Next
+		  End If
 		  
 		  Var Keys As New Dictionary
-		  If ForDefaults = False Then
-		    Keys.Value("UUID") = Self.mUUID
-		    Keys.Value("Items") = Children
+		  If ForPreferences = False Then
+		    Keys.Value("lootItemSetEntryId") = Self.mEntryId
 		  End If
-		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
-		  Keys.Value("MinQuality") = Self.MinQuality.Key
-		  Keys.Value("MaxQuality") = Self.MaxQuality.Key
-		  Keys.Value("MinQuantity") = Self.MinQuantity
-		  Keys.Value("MaxQuantity") = Self.MaxQuantity
-		  Keys.Value("Weight") = Self.RawWeight
-		  If ForDefaults = False Then
-		    Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  Keys.Value("minQuantity") = Self.MinQuantity
+		  Keys.Value("maxQuantity") = Self.MaxQuantity
+		  Keys.Value("minQuality") = Self.MinQuality.Key
+		  Keys.Value("maxQuality") = Self.MaxQuality.Key
+		  Keys.Value("blueprintChance") = Self.ChanceToBeBlueprint
+		  If ForPreferences = False Then
+		    Keys.Value("weight") = Self.RawWeight
 		  End If
-		  Keys.Value("PreventGrinding") = Self.PreventGrinding
-		  Keys.Value("StatClampMultiplier") = Self.StatClampMultiplier
-		  Keys.Value("SingleItemQuantity") = Self.SingleItemQuantity
+		  Keys.Value("singleItemQuantity") = Self.SingleItemQuantity
+		  Keys.Value("preventGrinding") = Self.PreventGrinding
+		  Keys.Value("statClampMultiplier") = Self.StatClampMultiplier
+		  If ForPreferences = False Then
+		    Keys.Value("options") = Options
+		  End If
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -766,7 +795,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    
 		    For Each Option As Ark.LootItemSetEntryOption In Entry
 		      Var Replacement As New Ark.MutableLootItemSetEntry(Entry)
-		      Replacement.UUID = New v4UUID
+		      Replacement.EntryId = Beacon.UUID.v4
 		      Replacement.ResizeTo(0)
 		      Replacement(0) = New Ark.LootItemSetEntryOption(Option)
 		      Replacements.Add(Replacement)
@@ -851,21 +880,11 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UUID(Create As Boolean = True) As String
-		  // For efficiency, don't create a UUID until it is needed
-		  If Self.mUUID.IsEmpty And Create Then
-		    Self.mUUID = New v4UUID
-		  End If
-		  Return Self.mUUID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
 		  
 		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
-		    Option.Validate(Location + "." + Self.UUID, Issues, Project)
+		    Option.Validate(Location + Beacon.Issue.Separator + Self.EntryId, Issues, Project)
 		  Next Option
 		End Sub
 	#tag EndMethod
@@ -873,6 +892,10 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Property, Flags = &h1
 		Protected mChanceToBeBlueprint As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mEntryId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -921,10 +944,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Property, Flags = &h1
 		Protected mStatClampMultiplier As Double = 1.0
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

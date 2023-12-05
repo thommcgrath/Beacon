@@ -93,7 +93,7 @@ Protected Class LootContainerSelector
 		      Reg.SearchPattern = Self.mCode
 		      
 		      Return Reg.Search(Source.ClassString) <> Nil
-		    Catch Err As RegExException
+		    Catch Err As RuntimeException
 		      Return False
 		    End Try
 		    #Pragma BreakOnExceptions Default
@@ -114,13 +114,13 @@ Protected Class LootContainerSelector
 		      Call Reg.Search("Testing")
 		      Message = ""
 		      Return True
-		    Catch Err As RegexException
+		    Catch Err As RuntimeException
 		      Message = Err.Message
 		      Return False
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		  Case Beacon.TemplateSelector.Languages.JavaScript
-		    Var Engine As JavaScriptEngineMBS = Self.CreateEngine(Ark.DataSource.Pool.Get(False).GetLootContainerByUUID("b537ea4d-e0a8-4c92-9763-24d3df5e1562"))
+		    Var Engine As JavaScriptEngineMBS = Self.CreateEngine(Ark.DataSource.Pool.Get(False).GetLootContainer("b537ea4d-e0a8-4c92-9763-24d3df5e1562"))
 		    Try
 		      Call Engine.Evaluate("function execute() {" + EndOfLine + Self.mCode + EndOfLine + "}")
 		      Call Engine.CallFunction("execute")

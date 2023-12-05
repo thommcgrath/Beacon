@@ -8,13 +8,13 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(SelectorUUID As String, Label As String, GameID As String, Language As Beacon.TemplateSelector.Languages, Code As String)
+		Sub Constructor(SelectorUUID As String, Label As String, GameId As String, Language As Beacon.TemplateSelector.Languages, Code As String)
 		  If SelectorUUID.IsEmpty Then
-		    SelectorUUID = New v4UUID
+		    SelectorUUID = Beacon.UUID.v4
 		  End If
 		  
 		  Self.mCode = Code
-		  Self.mGameID = GameID
+		  Self.mGameId = GameId
 		  Self.mLabel = Label
 		  Self.mLanguage = Language
 		  Self.mSelectorUUID = SelectorUUID
@@ -48,15 +48,15 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  Var Label As String = Dict.Lookup("Label", "Untitled Template Selector")
-		  Var GameID As String = Dict.Lookup("Game", Ark.Identifier)
+		  Var GameId As String = Dict.Lookup("Game", Ark.Identifier)
 		  
-		  Return New Beacon.TemplateSelector(SelectorUUID, Label, GameID, Language, Code)
+		  Return New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
-		  Return Self.mGameID
+		Function GameId() As String
+		  Return Self.mGameId
 		End Function
 	#tag EndMethod
 
@@ -86,7 +86,7 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("Game") = Self.mGameID
+		  Dict.Value("Game") = Self.mGameId
 		  Dict.Value("UUID") = Self.mSelectorUUID
 		  Dict.Value("Label") = Self.mLabel
 		  Dict.Value("Language") = Self.LanguageToString(Self.mLanguage)
@@ -123,7 +123,7 @@ Implements Beacon.NamedItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mGameID As String
+		Protected mGameId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

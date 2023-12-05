@@ -1,16 +1,22 @@
 #tag Class
 Protected Class CraftingCost
 Implements Beacon.NamedItem
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.mObjectID = New v4UUID
+	#tag Method, Flags = &h21
+		Private Sub Constructor()
+		  Self.mRecipeId = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Reference As Ark.BlueprintReference, LoadRecipe As Boolean = False)
+		  If Reference Is Nil Then
+		    Var Err As New NilObjectException
+		    Err.Message = "Reference is Nil"
+		    Raise Err
+		  End If
+		  
 		  Self.Constructor()
-		  Self.mEngram = Reference
+		  Self.mEngramRef = Reference
 		  
 		  If LoadRecipe Then
 		    Var Ingredients() As Ark.CraftingCostIngredient = Engram.Recipe
@@ -24,8 +30,14 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.CraftingCost)
+		  If Source Is Nil Then
+		    Var Err As New NilObjectException
+		    Err.Message = "Source is Nil"
+		    Raise Err
+		  End If
+		  
 		  Self.Constructor()
-		  Self.mEngram = Source.mEngram
+		  Self.mEngramRef = Source.mEngramRef
 		  Self.mIngredients.ResizeTo(Source.mIngredients.LastIndex)
 		  For Idx As Integer = 0 To Source.mIngredients.LastIndex
 		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
@@ -36,6 +48,12 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Engram As Ark.Engram, LoadRecipe As Boolean = False)
+		  If Engram Is Nil Then
+		    Var Err As New NilObjectException
+		    Err.Message = "Engram is Nil"
+		    Raise Err
+		  End If
+		  
 		  Self.Constructor(New Ark.BlueprintReference(Engram.ImmutableVersion), LoadRecipe)
 		End Sub
 	#tag EndMethod
@@ -48,16 +66,19 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Engram() As Ark.Engram
-		  Return Ark.Engram(Self.mEngram.Resolve)
+		  Return Ark.Engram(Self.mEngramRef.Resolve)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EngramId() As String
+		  // Alias for BlueprintId
+		  Return Self.mEngramRef.BlueprintId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  If Self.mEngram Is Nil Then
-		    Return Nil
-		  End If
-		  
 		  Var Ingredients() As Dictionary
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Var Resource As Dictionary = Self.mIngredients(Idx).SaveData
@@ -67,8 +88,8 @@ Implements Beacon.NamedItem
 		  Next
 		  
 		  Var Dict As New Dictionary
-		  Dict.Value("Blueprint") = Self.mEngram.SaveData
-		  Dict.Value("Ingredients") = Ingredients
+		  Dict.Value("engram") = Self.mEngramRef.SaveData
+		  Dict.Value("ingredients") = Ingredients
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -87,38 +108,40 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Ark.CraftingCost
-		  Var Cost As Ark.CraftingCost
-		  If Dict.HasKey("Blueprint") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
-		    If Reference Is Nil Then
+		  Var ReferenceDict As Dictionary = Dict.FirstValue("engram", "blueprint", "Blueprint", Nil)
+		  Var Reference As Ark.BlueprintReference
+		  If (ReferenceDict Is Nil) = False Then
+		    Try
+		      Reference = Ark.BlueprintReference.FromSaveData(ReferenceDict)
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  If Reference Is Nil Then
+		    Var BlueprintId As String = Dict.FirstValue("engramId", "EngramID", "Engram", "")
+		    If BlueprintId.IsEmpty = False Then
+		      If Beacon.UUID.Validate(BlueprintId) Then
+		        Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindEngram, BlueprintId, "", "", "", "")
+		      Else
+		        Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindEngram, "", "", BlueprintId, "", "")
+		      End If
+		    Else
 		      Return Nil
 		    End If
-		    Cost = New Ark.CraftingCost(Reference)
-		  ElseIf Dict.HasAnyKey("EngramID", "Engram") Then
-		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict, "EngramID", "", "Engram", Nil)
-		    If Engram Is Nil Then
-		      Return Nil
-		    End If
-		    Cost = New Ark.CraftingCost(Engram)
 		  End If
 		  
-		  If Dict.HasKey("Ingredients") Then
-		    Var Ingredients() As Dictionary = Dict.Value("Ingredients").DictionaryArrayValue
-		    For Each Ingredient As Dictionary In Ingredients
-		      Var Ref As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Ingredient, Nil)
-		      If (Ref Is Nil) = False Then
-		        Cost.mIngredients.Add(Ref)
-		      End If
-		    Next
-		  ElseIf Dict.HasKey("Resources") Then
-		    Var Resources() As Dictionary = Dict.Value("Resources").DictionaryArrayValue
-		    For Each Resource As Dictionary In Resources
-		      Var Quantity As Double = Resource.Lookup("Quantity", 1)
-		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
-		      
-		      Cost.mIngredients.Add(New Ark.CraftingCostIngredient(Ark.ResolveEngram(Resource, "EngramID", "", "Class", Nil), Quantity, RequireExact))
-		    Next
+		  Var Cost As New Ark.CraftingCost(Reference)
+		  Var Ingredients As Variant = Dict.FirstValue("ingredients", "Ingredients", "Resources", Nil)
+		  If Ingredients.IsNull Or Ingredients.IsArray = False Then
+		    Return Cost
 		  End If
+		  
+		  Var IngredientDicts() As Dictionary = Ingredients.DictionaryArrayValue
+		  For Each IngredientDict As Dictionary In IngredientDicts
+		    Var Ref As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(IngredientDict, Nil)
+		    If (Ref Is Nil) = False Then
+		      Cost.mIngredients.Add(Ref)
+		    End If
+		  Next
 		  
 		  Return Cost
 		End Function
@@ -128,7 +151,7 @@ Implements Beacon.NamedItem
 		Shared Function ImportFromConfig(Dict As Dictionary, ContentPacks As Beacon.StringList) As Ark.CraftingCost
 		  Try
 		    Var ClassString As String = Dict.Lookup("ItemClassString", "")
-		    If ClassString = "" Then
+		    If ClassString.IsEmpty Then
 		      Return Nil
 		    End If
 		    
@@ -175,11 +198,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If Self.mEngram Is Nil Then
-		    Return ""
-		  End If
-		  
-		  Return Self.Engram.Label
+		  Return Self.mEngramRef.Label
 		End Function
 	#tag EndMethod
 
@@ -214,23 +233,25 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
-		  Return Self.mObjectID
+		Attributes( Deprecated = "RecipeId" )  Function ObjectId() As String
+		  Return Self.mRecipeId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Ark.CraftingCost) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  If Self.mObjectID = Other.mObjectID Then
+		  If Self.mRecipeId = Other.mRecipeId Then
 		    Return 0
 		  End If
 		  
-		  // Uh... sort on the id I guess? How else would this be sorted?
-		  Return Self.mObjectID.StringValue.Compare(Other.mObjectID.StringValue, ComparisonOptions.CaseSensitive)
+		  Var MySortKey As String = Self.Label + ":" + Self.mRecipeId
+		  Var OtherSortKey As String = Other.Label + ":" + Other.mRecipeId
+		  
+		  Return MySortKey.Compare(OtherSortKey, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -241,6 +262,12 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  Return Self.mIngredients(Idx).Quantity
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RecipeId() As String
+		  Return Self.mRecipeId
 		End Function
 	#tag EndMethod
 
@@ -274,8 +301,9 @@ Implements Beacon.NamedItem
 		    Components.Add("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  
+		  Var Engram As Ark.Blueprint = Self.mEngramRef.Resolve
 		  Var Pieces() As String
-		  Pieces.Add("ItemClassString=""" + If((Self.mEngram Is Nil) = False, Self.mEngram.ClassString, "") + """")
+		  Pieces.Add("ItemClassString=""" + Engram.ClassString + """")
 		  Pieces.Add("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
 		  Return "(" + Pieces.Join(",") + ")"
 		End Function
@@ -283,7 +311,7 @@ Implements Beacon.NamedItem
 
 
 	#tag Property, Flags = &h1
-		Protected mEngram As Ark.BlueprintReference
+		Protected mEngramRef As Ark.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -295,7 +323,7 @@ Implements Beacon.NamedItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObjectID As v4UUID
+		Private mRecipeId As String
 	#tag EndProperty
 
 

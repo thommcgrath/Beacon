@@ -17,7 +17,7 @@ Protected Module PopupMenuExtensions
 	#tag Method, Flags = &h0
 		Sub SelectByCaption(Extends Menu As DesktopPopupMenu, Caption As String)
 		  For I As Integer = 0 To Menu.RowCount - 1
-		    If Menu.RowValueAt(I) = Caption Then
+		    If Menu.RowTextAt(I) = Caption Then
 		      Menu.SelectedRowIndex = I
 		      Return
 		    End If

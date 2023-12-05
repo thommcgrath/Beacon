@@ -1,6 +1,14 @@
 #tag Module
 Protected Module Language
 	#tag Method, Flags = &h1
+		Protected Function DefaultServerName(GameId As String) As String
+		  Var GameName As String = Language.GameName(GameId)
+		  Var GameArticle As String = Language.GameArticle(GameId)
+		  Return GameArticle.Titlecase + " " + GameName + " Server"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function EnglishOxfordList(Items() As Beacon.NamedItem, Conjunction As String = "and") As String
 		  Var Names() As String
 		  Names.ResizeTo(Items.LastIndex)
@@ -115,18 +123,33 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GameName(GameID As String) As String
-		  Select Case GameID
-		  Case Ark.Identifier
-		    Return "Ark: Survival Evolved"
-		  Else
-		    Return GameID
+		Protected Function GameArticle(GameId As String) As String
+		  Select Case GameId
+		  Case Ark.Identifier, ArkSA.Identifier
+		    Return "an"
+		  Case SDTD.Identifier
+		    Return "a"
 		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LabelForConfig(Config As Ark.ConfigGroup) As String
+		Protected Function GameName(GameId As String) As String
+		  Select Case GameId
+		  Case Ark.Identifier
+		    Return Ark.FullName
+		  Case SDTD.Identifier
+		    Return SDTD.FullName
+		  Case ArkSA.Identifier
+		    Return ArkSA.FullName
+		  Else
+		    Return GameId
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As String
 		  Return Language.LabelForConfig(Config.InternalName)
 		End Function
 	#tag EndMethod
@@ -134,43 +157,43 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(ConfigName As String) As String
 		  Select Case ConfigName
-		  Case Ark.Configs.NameDifficulty
+		  Case Ark.Configs.NameDifficulty, ArkSA.Configs.NameDifficulty
 		    Return "Difficulty"
-		  Case Ark.Configs.NameLootDrops
+		  Case Ark.Configs.NameLootDrops, ArkSA.Configs.NameLootDrops
 		    Return "Loot Drops"
-		  Case Ark.Configs.NameExperienceCurves
+		  Case Ark.Configs.NameLevelsAndXP, ArkSA.Configs.NameLevelsAndXP
 		    Return "Levels and XP"
-		  Case Ark.Configs.NameCustomContent
+		  Case Ark.Configs.NameCustomConfig, SDTD.Configs.NameCustomConfig, ArkSA.Configs.NameCustomConfig
 		    Return "Custom Config"
-		  Case Ark.Configs.NameCraftingCosts
+		  Case Ark.Configs.NameCraftingCosts, ArkSA.Configs.NameCraftingCosts
 		    Return "Crafting Costs"
-		  Case Ark.Configs.NameStackSizes
+		  Case Ark.Configs.NameStackSizes, ArkSA.Configs.NameStackSizes
 		    Return "Stack Sizes"
-		  Case Ark.Configs.NameBreedingMultipliers
+		  Case Ark.Configs.NameBreedingMultipliers, ArkSA.Configs.NameBreedingMultipliers
 		    Return "Breeding Multipliers"
-		  Case Ark.Configs.NameHarvestRates
+		  Case Ark.Configs.NameHarvestRates, ArkSA.Configs.NameHarvestRates
 		    Return "Harvest Rates"
-		  Case Ark.Configs.NameDinoAdjustments
+		  Case Ark.Configs.NameCreatureAdjustments, ArkSA.Configs.NameCreatureAdjustments
 		    Return "Creature Adjustments"
-		  Case Ark.Configs.NameStatMultipliers
+		  Case Ark.Configs.NameStatMultipliers, ArkSA.Configs.NameStatMultipliers
 		    Return "Stat Multipliers"
-		  Case Ark.Configs.NameDayCycle
+		  Case Ark.Configs.NameDayCycle, ArkSA.Configs.NameDayCycle
 		    Return "Day and Night Cycle"
-		  Case Ark.Configs.NameSpawnPoints
+		  Case Ark.Configs.NameCreatureSpawns, ArkSA.Configs.NameCreatureSpawns
 		    Return "Creature Spawns"
-		  Case Ark.Configs.NameStatLimits
+		  Case Ark.Configs.NameStatLimits, ArkSA.Configs.NameStatLimits
 		    Return "Item Stat Limits"
-		  Case Ark.Configs.NameEngramControl
+		  Case Ark.Configs.NameEngramControl, ArkSA.Configs.NameEngramControl
 		    Return "Engram Control"
-		  Case Ark.Configs.NameSpoilTimers
+		  Case Ark.Configs.NameDecayAndSpoil, ArkSA.Configs.NameDecayAndSpoil
 		    Return "Decay and Spoil"
-		  Case Ark.Configs.NameOtherSettings
+		  Case Ark.Configs.NameGeneralSettings, SDTD.Configs.NameGeneralSettings, ArkSA.Configs.NameGeneralSettings
 		    Return "General Settings"
-		  Case Ark.Configs.NameServersPseudo
+		  Case Ark.Configs.NameServers, SDTD.Configs.NameServers, ArkSA.Configs.NameServers
 		    Return "Servers"
-		  Case Ark.Configs.NameAccountsPsuedo
+		  Case Ark.Configs.NameAccounts, SDTD.Configs.NameAccounts, ArkSA.Configs.NameAccounts
 		    Return "Accounts"
-		  Case Ark.Configs.NameMetadataPsuedo
+		  Case Ark.Configs.NameProjectSettings, SDTD.Configs.NameProjectSettings, ArkSA.Configs.NameProjectSettings
 		    Return "Project Settings"
 		  End Select
 		End Function
@@ -179,6 +202,23 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
 		  Return Quantity.ToString(Locale.Current, "#,##0") + " " + If(Quantity = 1, Singular, Plural)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ProviderName(ProviderId As String) As String
+		  Select Case ProviderId
+		  Case Nitrado.Identifier
+		    Return "Nitrado"
+		  Case GameServerApp.Identifier
+		    Return "GameServerApp.com"
+		  Case FTP.Identifier
+		    Return "FTP"
+		  Case Local.Identifier
+		    Return "Local"
+		  Else
+		    Return ProviderId
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -192,6 +232,22 @@ Protected Module Language
 		End Function
 	#tag EndMethod
 
+
+	#tag Constant, Name = Clipboard, Type = String, Dynamic = False, Default = \"Clipboard", Scope = Protected
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"Pasteboard"
+	#tag EndConstant
+
+	#tag Constant, Name = CommonCancel, Type = String, Dynamic = True, Default = \"Cancel", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonChoose, Type = String, Dynamic = True, Default = \"Choose\xE2\x80\xA6", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonContinue, Type = String, Dynamic = True, Default = \"Continue", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonOk, Type = String, Dynamic = True, Default = \"OK", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = ExperimentalWarningActionCaption, Type = String, Dynamic = False, Default = \"Continue", Scope = Protected
 	#tag EndConstant

@@ -159,6 +159,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -168,6 +169,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   86
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -369,6 +371,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
+      AllowTabStop    =   True
       ClearMenuItemValue=   "Clear"
       DelayPeriod     =   250
       Enabled         =   True
@@ -388,7 +391,6 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
       Top             =   52
@@ -472,12 +474,12 @@ End
 		  Self.mDefinedSpawns = New Dictionary
 		  Self.mUIMode = UIMode
 		  
-		  If Project.HasConfigGroup(Ark.Configs.NameSpawnPoints) Then
-		    Var Config As Ark.Configs.SpawnPoints = Ark.Configs.SpawnPoints(Project.ConfigGroup(Ark.Configs.NameSpawnPoints, False))
+		  If Project.HasConfigGroup(Ark.Configs.NameCreatureSpawns) Then
+		    Var Config As Ark.Configs.SpawnPoints = Ark.Configs.SpawnPoints(Project.ConfigGroup(Ark.Configs.NameCreatureSpawns, False))
 		    If Config <> Nil Then
-		      Var SpawnPoints() As Ark.SpawnPoint = Config.Points
-		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
-		        Self.mDefinedSpawns.Value(SpawnPoint.UniqueKey) = True
+		      Var Overrides() As Ark.SpawnPointOverride = Config.Overrides
+		      For Each Override As Ark.SpawnPointOverride In Overrides
+		        Self.mDefinedSpawns.Value(Override.UniqueKey) = True
 		      Next
 		    End If
 		  End If
@@ -487,13 +489,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, UIMode As Integer = UIModeAdd) As Ark.SpawnPoint()
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, UIMode As Integer = UIModeAdd) As Ark.SpawnPointOverride()
 		  Var Win As New ArkAddSpawnPointDialog(Project, UIMode)
 		  Win.ShowModal(Parent)
 		  
-		  Var SpawnPoints() As Ark.SpawnPoint = Win.mSelectedPoints
+		  Var Overrides() As Ark.SpawnPointOverride = Win.mSelectedOverrides
 		  Win.Close
-		  Return SpawnPoints
+		  Return Overrides
 		End Function
 	#tag EndMethod
 
@@ -502,7 +504,7 @@ End
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8.Trim
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  
-		  If SearchText = "" Then
+		  If SearchText.IsEmpty Then
 		    SpawnPoints = Ark.DataSource.Pool.Get(False).GetSpawnPoints("", Self.mMods)
 		  Else
 		    Select Case Self.FilterMode
@@ -514,7 +516,7 @@ End
 		      For Each Creature As Ark.Creature In Creatures
 		        Var CreatureSpawnPoints() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, "")
 		        For Each SpawnPoint As Ark.SpawnPoint In CreatureSpawnPoints
-		          UniqueSpawnPoints.Value(SpawnPoint.ObjectID) = SpawnPoint
+		          UniqueSpawnPoints.Value(SpawnPoint.SpawnPointId) = SpawnPoint
 		        Next
 		      Next
 		      
@@ -532,11 +534,14 @@ End
 		      Continue
 		    End If
 		    
-		    If Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Remove")) Then
+		    Var OverrideKey As String = Ark.SpawnPointOverride.GetUniqueKey(SpawnPoint, Ark.SpawnPointOverride.ModeOverride)
+		    Var AppendKey As String = Ark.SpawnPointOverride.GetUniqueKey(SpawnPoint, Ark.SpawnPointOverride.ModeAppend)
+		    Var RemoveKey As String = Ark.SpawnPointOverride.GetUniqueKey(SpawnPoint, Ark.SpawnPointOverride.ModeRemove)
+		    If Self.mDefinedSpawns.HasKey(OverrideKey) Or (Self.mDefinedSpawns.HasKey(AppendKey) And Self.mDefinedSpawns.HasKey(RemoveKey)) Then
 		      Continue
 		    End If
 		    
-		    Self.List.AddRow(Labels.Lookup(SpawnPoint.ObjectID, SpawnPoint.Label).StringValue)
+		    Self.List.AddRow(Labels.Lookup(SpawnPoint.SpawnPointId, SpawnPoint.Label).StringValue)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = SpawnPoint
 		  Next
 		  Self.List.SortingColumn = 0
@@ -596,7 +601,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedPoints() As Ark.SpawnPoint
+		Private mSelectedOverrides() As Ark.SpawnPointOverride
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -624,13 +629,13 @@ End
 		Sub Pressed()
 		  Var Mode As Integer
 		  If Self.OverrideRadio.Value Then
-		    Mode = Ark.SpawnPoint.ModeOverride
+		    Mode = Ark.SpawnPointOverride.ModeOverride
 		  ElseIf Self.AppendRadio.Value Then
-		    Mode = Ark.SpawnPoint.ModeAppend
+		    Mode = Ark.SpawnPointOverride.ModeAppend
 		  ElseIf Self.RemoveRadio.Value Then
-		    Mode = Ark.SpawnPoint.ModeRemove
+		    Mode = Ark.SpawnPointOverride.ModeRemove
 		  End If
-		  Var LoadDefaults As Boolean = Mode = Ark.SpawnPoint.ModeOverride And Self.LoadDefaultsCheck.Value = True
+		  Var LoadDefaults As Boolean = Mode = Ark.SpawnPointOverride.ModeOverride And Self.LoadDefaultsCheck.Value = True
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.RowSelectedAt(I) Then
@@ -638,14 +643,13 @@ End
 		    End If
 		    
 		    Var SpawnPoint As Ark.SpawnPoint = Self.List.RowTagAt(I)
-		    Var MutableSpawnPoint As Ark.MutableSpawnPoint = SpawnPoint.MutableVersion
+		    Var MutableOverride As New Ark.MutableSpawnPointOverride(SpawnPoint, Mode)
 		    
 		    If LoadDefaults Then
-		      Ark.DataSource.Pool.Get(False).LoadDefaults(MutableSpawnPoint)
+		      Ark.DataSource.Pool.Get(False).LoadDefaults(MutableOverride)
 		    End If
 		    
-		    MutableSpawnPoint.Mode = Mode
-		    Self.mSelectedPoints.Add(MutableSpawnPoint)
+		    Self.mSelectedOverrides.Add(MutableOverride.ImmutableVersion)
 		  Next
 		  
 		  Self.Hide
@@ -662,7 +666,7 @@ End
 #tag Events List
 	#tag Event
 		Sub SelectionChanged()
-		  Var SupportedModes As Integer = Ark.SpawnPoint.ModeOverride Or Ark.SpawnPoint.ModeAppend Or Ark.SpawnPoint.ModeRemove
+		  Var SupportedModes As Integer = Ark.SpawnPointOverride.ModeOverride Or Ark.SpawnPointOverride.ModeAppend Or Ark.SpawnPointOverride.ModeRemove
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.RowSelectedAt(I) Then
 		      Continue
@@ -670,23 +674,23 @@ End
 		    
 		    Var DefinedModes As Integer
 		    Var Point As Ark.SpawnPoint = Me.RowTagAt(I)
-		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Override") Then
+		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Override") Then
 		      // Include Append and Remove here so they cannot be selected if Override is already defined
-		      DefinedModes = DefinedModes Or Ark.SpawnPoint.ModeOverride Or Ark.SpawnPoint.ModeAppend Or Ark.SpawnPoint.ModeRemove
+		      DefinedModes = DefinedModes Or Ark.SpawnPointOverride.ModeOverride Or Ark.SpawnPointOverride.ModeAppend Or Ark.SpawnPointOverride.ModeRemove
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Append") Then
-		      DefinedModes = DefinedModes Or Ark.SpawnPoint.ModeOverride Or Ark.SpawnPoint.ModeAppend
+		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Append") Then
+		      DefinedModes = DefinedModes Or Ark.SpawnPointOverride.ModeOverride Or Ark.SpawnPointOverride.ModeAppend
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Remove") Then
-		      DefinedModes = DefinedModes Or Ark.SpawnPoint.ModeOverride Or Ark.SpawnPoint.ModeRemove
+		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Remove") Then
+		      DefinedModes = DefinedModes Or Ark.SpawnPointOverride.ModeOverride Or Ark.SpawnPointOverride.ModeRemove
 		    End If
 		    
 		    SupportedModes = SupportedModes And (Not DefinedModes)
 		  Next
 		  
-		  Self.OverrideRadio.Enabled = (SupportedModes And Ark.SpawnPoint.ModeOverride) = Ark.SpawnPoint.ModeOverride
-		  Self.AppendRadio.Enabled = (SupportedModes And Ark.SpawnPoint.ModeAppend) = Ark.SpawnPoint.ModeAppend
-		  Self.RemoveRadio.Enabled = (SupportedModes And Ark.SpawnPoint.ModeRemove) = Ark.SpawnPoint.ModeRemove
+		  Self.OverrideRadio.Enabled = (SupportedModes And Ark.SpawnPointOverride.ModeOverride) = Ark.SpawnPointOverride.ModeOverride
+		  Self.AppendRadio.Enabled = (SupportedModes And Ark.SpawnPointOverride.ModeAppend) = Ark.SpawnPointOverride.ModeAppend
+		  Self.RemoveRadio.Enabled = (SupportedModes And Ark.SpawnPointOverride.ModeRemove) = Ark.SpawnPointOverride.ModeRemove
 		  
 		  If Self.OverrideRadio.Enabled = False And Self.OverrideRadio.Value = True Then
 		    Self.OverrideRadio.Value = False
@@ -797,8 +801,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -14,12 +14,9 @@ Inherits Thread
 		    Var Compress As Boolean = False
 		    If Self.mSource <> Nil Then
 		      Source = Self.mSource
-		    ElseIf (Self.mSourceProject Is Nil) = False And (Self.mSourceIdentity Is Nil) = False Then
-		      Source = Self.mSourceProject.SaveData(Self.mSourceIdentity)
-		      Compress = Self.mSourceProject.UseCompression
 		    Else
 		      Var Err As New NilObjectException
-		      Err.Message = "No source dictionary or document."
+		      Err.Message = "No source dictionary."
 		      Raise Err
 		    End If
 		    
@@ -48,15 +45,6 @@ Inherits Thread
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(Project As Beacon.Project, Identity As Beacon.Identity, Destination As FolderItem)
-		  Self.Constructor()
-		  Self.mSourceProject = Project
-		  Self.mSourceIdentity = Identity
-		  Self.mDestination = Destination
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
 		Sub Constructor(Source As Dictionary, Destination As FolderItem)
 		  Self.Constructor()
@@ -79,13 +67,19 @@ Inherits Thread
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
 		Shared Function WriteSynchronous(Source As Dictionary, File As FolderItem, Compress As Boolean) As Boolean
-		  Var Content As String = Beacon.GenerateJSON(Source, Not Compress)
-		  If Compress Then
-		    Var Bytes As MemoryBlock = Beacon.Compress(Content)
-		    Return File.Write(Bytes)
-		  Else
-		    Return File.Write(Content)
-		  End If
+		  Try
+		    Var Content As String = Beacon.GenerateJSON(Source, Not Compress)
+		    If Compress Then
+		      Var Bytes As MemoryBlock = Beacon.Compress(Content)
+		      File.Write(Bytes)
+		    Else
+		      File.Write(Content)
+		    End If
+		    Return True
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Writing JSON to disk")
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -143,10 +137,6 @@ Inherits Thread
 
 	#tag Property, Flags = &h21
 		Private mSourceIdentity As Beacon.Identity
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSourceProject As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

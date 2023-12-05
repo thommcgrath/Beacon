@@ -56,12 +56,12 @@ Protected Module DedicatedServer
 		  Var GameUserSettingsIniOriginal, GameIniOriginal As String
 		  If ConfigFolder.Child(Ark.ConfigFileGameUserSettings).Exists Then
 		    Var Stream As TextInputStream = TextInputStream.Open(ConfigFolder.Child(Ark.ConfigFileGameUserSettings))
-		    GameUserSettingsIniOriginal = Stream.ReadAll(Nil).GuessEncoding
+		    GameUserSettingsIniOriginal = Stream.ReadAll(Nil).GuessEncoding("/script/")
 		    Stream.Close
 		  End If
 		  If ConfigFolder.Child(Ark.ConfigFileGame).Exists Then
 		    Var Stream As TextInputStream = TextInputStream.Open(ConfigFolder.Child(Ark.ConfigFileGame))
-		    GameIniOriginal = Stream.ReadAll(Nil).GuessEncoding
+		    GameIniOriginal = Stream.ReadAll(Nil).GuessEncoding("/script/")
 		    Stream.Close
 		  End If
 		  
@@ -74,26 +74,30 @@ Protected Module DedicatedServer
 		  
 		  Var RewriteError As RuntimeException
 		  
-		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameIniOriginal, Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Ark.Project.UWPCompatibilityModes.Never, False, RewriteError)
+		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameIniOriginal, Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, Ark.Project.UWPCompatibilityModes.Never, False, RewriteError)
 		  If (RewriteError Is Nil) = False Then
 		    App.Log(RewriteError, CurrentMethodName, "Building Game.ini")
 		    Return False
 		  End If
 		  
-		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Ark.Project.UWPCompatibilityModes.Never, False, RewriteError)
+		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, Ark.Project.UWPCompatibilityModes.Never, False, RewriteError)
 		  If (RewriteError Is Nil) = False Then
 		    App.Log(RewriteError, CurrentMethodName, "Building GameUserSettings.ini")
 		    Return False
 		  End If
 		  
-		  If ConfigFolder.Child(Ark.ConfigFileGameUserSettings).Write(GameUserSettingsIniRewritten) = False Then
-		    App.Log("Could not write GameUserSettings.ini to platform config directory")
+		  Try
+		    ConfigFolder.Child(Ark.ConfigFileGameUserSettings).Write(GameUserSettingsIniRewritten)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Could not write GameUserSettings.ini to platform config directory")
 		    Return False
-		  End If
-		  If ConfigFolder.Child(Ark.ConfigFileGame).Write(GameIniRewritten) = False Then
-		    App.Log("Could not write Game.ini to platform config directory")
+		  End Try
+		  Try
+		    ConfigFolder.Child(Ark.ConfigFileGame).Write(GameIniRewritten)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Could not write Game.ini to platform config directory")
 		    Return False
-		  End If
+		  End Try
 		  
 		  Try
 		    HardLinkContents(ArkRoot, ServerFolder, False)
@@ -474,7 +478,7 @@ Protected Module DedicatedServer
 	#tag Method, Flags = &h21
 		Private Sub WriteFString(Stream As BinaryStream, Value As String)
 		  If Value.Encoding Is Nil Then
-		    Value = Value.GuessEncoding
+		    Value = Value.DefineEncoding(Encodings.UTF8)
 		  Else
 		    Value = Value.ConvertEncoding(Encodings.UTF8)
 		  End If
@@ -490,7 +494,7 @@ Protected Module DedicatedServer
 	#tag Method, Flags = &h21
 		Private Sub WriteUnrealString(Stream As BinaryStream, Value As String)
 		  If Value.Encoding Is Nil Then
-		    Value = Value.GuessEncoding
+		    Value = Value.DefineEncoding(Encodings.UTF8)
 		  Else
 		    Value = Value.ConvertEncoding(Encodings.UTF8)
 		  End If

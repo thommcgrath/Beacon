@@ -2,9 +2,14 @@
 Protected Class MutableEngram
 Inherits Ark.Engram
 Implements Ark.MutableBlueprint
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub AlternateLabel(Assigns Value As NullableString)
 		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  If Self.mAlternateLabel = Value Then
+		    Return
+		  End If
 		  
 		  Self.mAlternateLabel = Value
 		  Self.Modified = True
@@ -15,7 +20,22 @@ Implements Ark.MutableBlueprint
 		Sub Availability(Assigns Value As UInt64)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Self.mAvailability = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAvailability = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BlueprintId(Assigns Value As String)
+		  If Self.mEngramId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mEngramId = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -27,13 +47,33 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As String)
+		Sub Constructor()
+		  // Making it public
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Path As String, EngramId As String)
 		  Super.Constructor()
 		  
-		  Self.mObjectID = ObjectID
+		  Self.mEngramId = EngramId
 		  Self.mPath = Path
-		  Self.mClassString = Beacon.ClassStringFromPath(Path)
+		  Self.mClassString = Ark.ClassStringFromPath(Path)
 		  Self.mAvailability = Ark.Maps.UniversalMask
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackId(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  If Self.mContentPackId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mContentPackId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -41,23 +81,35 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Self.mContentPackName = Value Then
+		    Return
+		  End If
+		  
 		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackUUID(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
+		Sub EngramId(Assigns Value As String)
+		  If Self.mEngramId = Value Then
+		    Return
+		  End If
 		  
-		  Self.mContentPackUUID = Value
+		  Self.mEngramId = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub EntryString(Assigns Value As String)
-		  Self.mEngramEntryString = Value.Trim
+		  
+		  Value = Value.Trim
+		  If Self.mEngramEntryString = Value Then
+		    Return
+		  End If
+		  
+		  Self.mEngramEntryString = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -87,7 +139,12 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ItemID(Assigns Value As NullableDouble)
+		  If Self.mItemID = Value Then
+		    Return
+		  End If
+		  
 		  Self.mItemID = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -95,7 +152,22 @@ Implements Ark.MutableBlueprint
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Self.mLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mLabel = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LastUpdate(Assigns Value As Double)
+		  If Self.mLastUpdate = Value Then
+		    Return
+		  End If
+		  
+		  Self.mLastUpdate = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -110,8 +182,12 @@ Implements Ark.MutableBlueprint
 		Sub Path(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Self.mPath = Value Then
+		    Return
+		  End If
+		  
 		  Self.mPath = Value
-		  Self.mClassString = Beacon.ClassStringFromPath(Value)
+		  Self.mClassString = Ark.ClassStringFromPath(Value)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -134,6 +210,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub RequiredPlayerLevel(Assigns Level As NullableDouble)
+		  If Self.mRequiredPlayerLevel = Level Then
+		    Return
+		  End If
+		  
 		  Self.mRequiredPlayerLevel = Level
 		  Self.Modified = True
 		End Sub
@@ -141,6 +221,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub RequiredUnlockPoints(Assigns Points As NullableDouble)
+		  If Self.mRequiredUnlockPoints = Points Then
+		    Return
+		  End If
+		  
 		  Self.mRequiredUnlockPoints = Points
 		  Self.Modified = True
 		End Sub
@@ -148,6 +232,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub StackSize(Assigns Value As NullableDouble)
+		  If Self.mStackSize = Value Then
+		    Return
+		  End If
+		  
 		  Self.mStackSize = Value
 		  Self.Modified = True
 		End Sub
@@ -171,34 +259,43 @@ Implements Ark.MutableBlueprint
 		Sub Unpack(Dict As Dictionary)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  If Dict.HasAllKeys("entry_string", "required_points", "required_level") Then
-		    If IsNull(Dict.Value("entry_string")) Or Dict.Value("entry_string").StringValue.IsEmpty Then
-		      Self.mEngramEntryString = ""
-		      Self.mRequiredUnlockPoints = Nil
-		      Self.mRequiredPlayerLevel = Nil
-		      Self.mItemID = Nil
-		    Else
-		      Self.mEngramEntryString = Dict.Value("entry_string").StringValue
-		      
-		      If IsNull(Dict.Value("required_level")) = False Then
-		        Self.mRequiredPlayerLevel = Dict.Value("required_level").IntegerValue
-		      Else
-		        Self.mRequiredPlayerLevel = Nil
-		      End If
-		      
-		      If IsNull(Dict.Value("required_points")) = False Then
-		        Self.mRequiredUnlockPoints = Dict.Value("required_points").IntegerValue
-		      Else
-		        Self.mRequiredUnlockPoints = Nil
-		      End If
-		    End If
+		  Var EntryString As NullableString
+		  Var RequiredPoints, RequiredLevel, ItemId As NullableDouble
+		  If Dict.HasAllKeys("entryString", "requiredPoints", "requiredLevel") Then
+		    EntryString = NullableString.FromVariant(Dict.Value("entryString"))
+		    RequiredPoints = NullableDouble.FromVariant(Dict.Value("requiredPoints"))
+		    RequiredLevel = NullableDouble.FromVariant(Dict.Value("requiredLevel"))
+		  ElseIf Dict.HasAllKeys("entry_string", "required_points", "required_level") Then
+		    EntryString = NullableString.FromVariant(Dict.Value("entry_string"))
+		    RequiredPoints = NullableDouble.FromVariant(Dict.Value("required_points"))
+		    RequiredLevel = NullableDouble.FromVariant(Dict.Value("required_level"))
 		  End If
 		  
-		  If Dict.HasKey("stack_size") And IsNull(Dict.Value("stack_size")) = False Then
-		    Self.mStackSize = Dict.Value("stack_size").IntegerValue
-		  Else
-		    Self.mStackSize = Nil
+		  If Dict.HasKey("itemId") Then
+		    ItemId = NullableDouble.FromVariant(Dict.Value("itemId"))
+		  ElseIf Dict.HasKey("item_id") Then
+		    ItemId = NullableDouble.FromVariant(Dict.Value("item_id"))
 		  End If
+		  
+		  If EntryString Is Nil Or EntryString.IsEmpty Then
+		    Self.mEngramEntryString = ""
+		    Self.mRequiredUnlockPoints = Nil
+		    Self.mRequiredPlayerLevel = Nil
+		    Self.mItemID = Nil
+		  Else
+		    Self.mEngramEntryString = EntryString.StringValue
+		    Self.mRequiredUnlockPoints = RequiredPoints
+		    Self.mRequiredPlayerLevel = RequiredLevel
+		    Self.mItemID = ItemId
+		  End If
+		  
+		  Var StackSize As NullableDouble
+		  If Dict.HasKey("stackSize") Then
+		    StackSize = NullableDouble.FromVariant(Dict.Value("stackSize"))
+		  ElseIf Dict.HasKey("stack_size") Then
+		    StackSize = NullableDouble.FromVariant(Dict.Value("stack_size"))
+		  End If
+		  Self.mStackSize = StackSize
 		  
 		  If Dict.HasKey("recipe") And IsNull(Dict.Value("recipe")) = False Then
 		    Self.mIngredients = Ark.CraftingCostIngredient.FromVariant(Dict.Value("recipe"), Nil)

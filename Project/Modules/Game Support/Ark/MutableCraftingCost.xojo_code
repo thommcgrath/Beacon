@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MutableCraftingCost
 Inherits Ark.CraftingCost
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Add(Ingredient As Ark.CraftingCostIngredient)
 		  If Ingredient Is Nil Then
@@ -29,11 +30,11 @@ Inherits Ark.CraftingCost
 
 	#tag Method, Flags = &h0
 		Sub Engram(Assigns Value As Ark.Engram)
-		  If Value Is Nil Or Value = Self.mEngram Then
+		  If Value Is Nil Or Value = Self.mEngramRef Then
 		    Return
 		  End If
 		  
-		  Self.mEngram = New Ark.BlueprintReference(Value.ImmutableVersion)
+		  Self.mEngramRef = New Ark.BlueprintReference(Value.ImmutableVersion)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -101,7 +102,7 @@ Inherits Ark.CraftingCost
 		  Var Map As New Dictionary
 		  For Idx As Integer = Self.mIngredients.LastIndex DownTo 0
 		    Var Ingredient As Ark.CraftingCostIngredient = Self.mIngredients(Idx)
-		    Var Signature As String = Ingredient.Engram.ObjectId + ":" + If(Ingredient.RequireExact, "True", "False")
+		    Var Signature As String = Ingredient.Engram.BlueprintId + ":" + If(Ingredient.RequireExact, "True", "False")
 		    If Map.HasKey(Signature) Then
 		      Var OtherIngredient As Ark.CraftingCostIngredient = Map.Value(Signature)
 		      Map.Value(Signature) = New Ark.CraftingCostIngredient(Ingredient.Engram, Ingredient.Quantity + OtherIngredient.Quantity, Ingredient.RequireExact)

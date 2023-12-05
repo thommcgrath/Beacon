@@ -8,15 +8,15 @@ Begin BeaconDialog ShareWithUserDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   158
+   Height          =   190
    ImplicitInstance=   False
    MacProcID       =   0
-   MaxHeight       =   158
+   MaxHeight       =   190
    MaximizeButton  =   False
    MaxWidth        =   450
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   158
+   MinHeight       =   190
    MinimizeButton  =   False
    MinWidth        =   450
    Placement       =   0
@@ -84,7 +84,7 @@ Begin BeaconDialog ShareWithUserDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   118
+      Top             =   150
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -116,41 +116,13 @@ Begin BeaconDialog ShareWithUserDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   118
+      Top             =   150
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin DesktopProgressWheel Spinner
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowTabStop    =   True
-      Enabled         =   True
-      Height          =   16
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      Tooltip         =   ""
-      Top             =   122
-      Transparent     =   False
-      Visible         =   False
-      Width           =   16
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
-   Begin UITweaks.ResizedTextField UserIDField
+   Begin UITweaks.ResizedTextField ValueField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
@@ -191,7 +163,7 @@ Begin BeaconDialog ShareWithUserDialog
       Visible         =   True
       Width           =   337
    End
-   Begin UITweaks.ResizedLabel ExplanationLabel
+   Begin UITweaks.ResizedLabel ValueLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -252,41 +224,97 @@ Begin BeaconDialog ShareWithUserDialog
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   118
       Transparent     =   False
       Underline       =   True
       URL             =   ""
       Visible         =   True
       Width           =   337
    End
-   Begin URLConnection UserLookupSocket
-      AllowCertificateValidation=   False
-      HTTPStatusCode  =   0
+   Begin UITweaks.ResizedPopupMenu RoleMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
       Index           =   -2147483648
+      InitialValue    =   "Guest\nEditor\nAdmin"
+      Italic          =   False
+      Left            =   93
+      LockBottom      =   False
       LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   1
+      TabIndex        =   7
       TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   86
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   135
+   End
+   Begin UITweaks.ResizedLabel RoleLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Role:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   86
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   61
    End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ByRef UserID As String, ByRef Username As String, ByRef PublicKey As String) As Boolean
-		  If Parent = Nil Then
-		    Return False
+		Shared Function Present(Parent As DesktopWindow, ByRef UserIdentifier As String, ByRef Role As String) As Boolean
+		  If (Parent Is Nil) = False Then
+		    Parent = Parent.TrueWindow
 		  End If
 		  
 		  Var Win As New ShareWithUserDialog
+		  Win.ValueField.Text = UserIdentifier
+		  Win.RoleMenu.SelectByCaption(Role)
 		  Win.ShowModal(Parent)
-		  Var Cancelled As Boolean = Win.mCancelled
-		  If Not Cancelled Then
-		    UserID = Win.mUserID
-		    PublicKey = Win.mPublicKey
-		    Username = Win.mUserName
+		  If Win.mCancelled Then
+		    Win.Close
+		    Return False
 		  End If
+		  
+		  UserIdentifier = Win.ValueField.Text.Trim
+		  Role = Win.RoleMenu.SelectedRowText
 		  Win.Close
-		  Return Not Cancelled
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -295,34 +323,14 @@ End
 		Private mCancelled As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mPublicKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUserID As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUserName As String
-	#tag EndProperty
-
 
 #tag EndWindowCode
 
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var EnteredValue As String = Self.UserIDField.Text
-		  If v4UUID.IsValid(EnteredValue) Or (EnteredValue.Length > 9 And EnteredValue.Right(9).BeginsWith("#")) Or Beacon.ValidateEmail(EnteredValue) Then
-		    Self.UserLookupSocket.Send("GET", BeaconAPI.URL("/user/" + EncodeURLComponent(EnteredValue.ReplaceAll(",", ",,"))))
-		  Else
-		    Self.ShowAlert("User cannot be identified with the given value.", "Please enter the UUID, email address, or full username with suffix (such as User#ABCD1234) to continue.")
-		    Return
-		  End If
-		  
-		  Me.Enabled = False
-		  Self.Spinner.Visible = True
+		  Self.mCancelled = False
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -330,7 +338,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.mCancelled = True
-		  Self.UserLookupSocket.Disconnect
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -339,46 +346,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  System.GotoURL(Beacon.WebURL("/help/sharing_beacon_documents"))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UserLookupSocket
-	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
-		  #Pragma Unused URL
-		  
-		  If HTTPStatus = 200 Then
-		    Try
-		      Var UserData As Dictionary = Beacon.ParseJSON(Content)
-		      Self.mUserID = UserData.Value("user_id")
-		      Self.mUserName = UserData.Value("username_full")
-		      Self.mPublicKey = BeaconEncryption.PEMDecodePublicKey(UserData.Value("public_key"))
-		      Self.mCancelled = False
-		      Self.Hide
-		      Return
-		    Catch Err As RuntimeException
-		      Self.ShowAlert("Unable to add user", "There was an error parsing the response: " + Err.Message)
-		    End Try
-		  End If
-		  
-		  Self.Spinner.Visible = False
-		  Self.ActionButton.Enabled = True
-		  
-		  Var Message As String
-		  Select Case HTTPStatus
-		  Case 404
-		    Message = "User not found"
-		  Else
-		    Message = Content
-		  End Select
-		  Self.ShowAlert("Unable to add user", Message)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Error(e As RuntimeException)
-		  Self.Spinner.Visible = False
-		  Self.ActionButton.Enabled = True
-		  Self.ShowAlert("Unable to connect to server", "Beacon was unable to connect to the server to download the user's private key. Reason: " + e.Message)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -432,8 +399,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -3,51 +3,38 @@ Protected Class OmniLicense
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.OmniLicense)
 		  Self.mExpiration = Source.mExpiration
-		  Self.mExpirationString = Source.mExpirationString
+		  Self.mFirstUsed = Source.mFirstUsed
 		  Self.mFlags = Source.mFlags
-		  Self.mProductID = Source.mProductID
-		  Self.mValidationString = Source.mValidationString
+		  Self.mLicenseId = Source.mLicenseId
+		  Self.mProductId = Source.mProductId
+		  Self.mMaxBuild = Source.mMaxBuild
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Dictionary)
-		  Var ProductID As String = Source.Value("product_id").StringValue
-		  Var Flags As Integer = Source.Value("flags").IntegerValue
-		  Var ExpirationString As String = Source.Lookup("expires", "").StringValue
-		  
-		  Self.Constructor(ProductID, Flags, ExpirationString)
+		  Self.mExpiration = Source.Lookup("expires", "").StringValue
+		  Self.mFirstUsed = Source.Lookup("firstUsed", "").StringValue
+		  Self.mFlags = Source.Lookup("flags", 0).IntegerValue
+		  Self.mLicenseId = Source.Lookup("licenseId", "").StringValue
+		  Self.mProductId = Source.Lookup("productId", "").StringValue
+		  Self.mMaxBuild = Source.Lookup("maxBuild", 999999999).IntegerValue
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ProductID As String, Flags As Integer, ExpirationString As String)
-		  Self.mProductID = ProductID
-		  Self.mFlags = Flags
-		  Self.mValidationString = ProductID.Lowercase + ":" + Flags.ToString(Locale.Raw, "0")
-		  
-		  If ExpirationString.IsEmpty = False Then
-		    Self.mExpirationString = ExpirationString
-		    Self.mValidationString = Self.mValidationString + ":" + ExpirationString
-		    
-		    Try
-		      Self.mExpiration = NewDateFromSQLDateTime(ExpirationString)
-		    Catch Err As RuntimeException
-		      Self.mExpiration = DateTime.Now
-		    End Try
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Expiration() As DateTime
+		Function Expiration() As String
 		  Return Self.mExpiration
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ExpirationString() As String
-		  Return Self.mExpirationString
+		Function ExpirationDateTime() As DateTime
+		  If Self.mExpiration.IsEmpty Then
+		    Return Nil
+		  Else
+		    Return NewDateFromSQLDateTime(Self.mExpiration)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -58,53 +45,87 @@ Protected Class OmniLicense
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasBeenUsed() As Boolean
+		  Return Self.mFirstUsed.IsEmpty = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsExpired() As Boolean
-		  If Self.mExpiration Is Nil Then
+		  If Self.mExpiration.IsEmpty Then
 		    Return False
 		  End If
 		  
 		  Var Now As DateTime = DateTime.Now
-		  Return Self.mExpiration.SecondsFrom1970 < Now.SecondsFrom1970
+		  Var Expires As DateTime = NewDateFromSQLDateTime(Self.mExpiration)
+		  Return Expires.SecondsFrom1970 < Now.SecondsFrom1970
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsLifetime() As Boolean
-		  Return Self.mExpiration Is Nil
+		  Return Self.mExpiration.IsEmpty
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ProductID() As String
-		  Return Self.mProductID
+		Function IsValidForBuild(BuildNumber As Integer) As Boolean
+		  Return Self.mMaxBuild >= BuildNumber
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsValidForCurrentBuild() As Boolean
+		  Return Self.IsValidForBuild(App.BuildNumber)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LicenseId() As String
+		  Return Self.mLicenseId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MaxBuild() As Integer
+		  Return Self.mMaxBuild
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProductId() As String
+		  Return Self.mProductId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("product_id") = Self.mProductID
+		  Dict.Value("licenseId") = Self.mLicenseId
+		  Dict.Value("productId") = Self.mProductId
 		  Dict.Value("flags") = Self.mFlags
-		  If (Self.mExpiration Is Nil) = False Then
-		    Dict.Value("expires") = Self.mExpirationString
+		  If Self.mFirstUsed.IsEmpty Then
+		    Dict.Value("firstUsed") = Nil
+		  Else
+		    Dict.Value("firstUsed") = Self.mFirstUsed
 		  End If
+		  If Self.mExpiration.IsEmpty Then
+		    Dict.Value("expires") = Nil
+		  Else
+		    Dict.Value("expires") = Self.mExpiration
+		  End If
+		  Dict.Value("maxBuild") = Self.mMaxBuild
 		  Return Dict
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ValidationString() As String
-		  Return Self.mValidationString
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
-		Private mExpiration As DateTime
+		Private mExpiration As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExpirationString As String
+		Private mFirstUsed As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -112,11 +133,15 @@ Protected Class OmniLicense
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProductID As String
+		Private mLicenseId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mValidationString As String
+		Private mMaxBuild As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProductId As String
 	#tag EndProperty
 
 

@@ -9,6 +9,21 @@ Inherits Thread
 		    Return
 		  End If
 		  
+		  Var URL As String = Self.mResponse.URL
+		  Var BaseURL As String = BeaconAPI.URL("/files")
+		  If Not URL.BeginsWith(BaseURL) Then
+		    // What the hell is going on here?
+		    CleanupRequest(Self.mRequest)
+		    Return
+		  End If
+		  Var RemotePath As String = URL.Middle(BaseURL.Length)
+		  
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
+		  Var Filename As String
+		  If (LocalFile Is Nil) = False Then
+		    Filename = LocalFile.Name
+		  End If
+		  
 		  Var Content As MemoryBlock = Self.mResponse.Content
 		  If BeaconEncryption.IsEncrypted(Content) Then
 		    Try
@@ -19,21 +34,12 @@ Inherits Thread
 		      Return
 		    End Try
 		    
-		    Content = Beacon.Decompress(Content)
+		    If Filename.EndsWith(Beacon.FileExtensionDelta) = False Then
+		      Content = Beacon.Decompress(Content)
+		    End If
 		  End If
 		  
-		  // So where do we put the file now?
-		  Var URL As String = Self.mResponse.URL
-		  Var BaseURL As String = BeaconAPI.URL("/file")
-		  If Not URL.BeginsWith(BaseURL) Then
-		    // What the hell is going on here?
-		    CleanupRequest(Self.mRequest)
-		    Return
-		  End If
-		  
-		  Var RemotePath As String = URL.Middle(BaseURL.Length)
-		  Var LocalFile As FolderItem = LocalFile(RemotePath)
-		  If LocalFile <> Nil Then
+		  If (LocalFile Is Nil) = False Then
 		    Try
 		      If LocalFile.Exists Then
 		        #if Not TargetLinux

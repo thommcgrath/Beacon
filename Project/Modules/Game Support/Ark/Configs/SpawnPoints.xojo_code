@@ -4,19 +4,17 @@ Inherits Ark.ConfigGroup
 	#tag Event
 		Sub CopyFrom(Other As Ark.ConfigGroup)
 		  Var Source As Ark.Configs.SpawnPoints = Ark.Configs.SpawnPoints(Other)
-		  
-		  For Each Entry As DictionaryEntry In Source.mSpawnPoints
-		    Var SpawnPoint As Ark.SpawnPoint = Entry.Value
-		    If SpawnPoint.Mode = Ark.SpawnPoint.ModeOverride Then
+		  For Each Override As Ark.SpawnPointOverride In Source.mOverrides
+		    If Override.Mode = Ark.SpawnPointOverride.ModeOverride Then
 		      // Remove add and subtract
-		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeAppend))
-		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeRemove))
+		      Self.Remove(Override.SpawnPointReference, Ark.SpawnPointOverride.ModeAppend)
+		      Self.Remove(Override.SpawnPointReference, Ark.SpawnPointOverride.ModeRemove)
 		    Else
 		      // Remove replace
-		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeOverride))
+		      Self.Remove(Override.SpawnPointReference, Ark.SpawnPointOverride.ModeOverride)
 		    End If
 		    
-		    Self.Add(New Ark.SpawnPoint(SpawnPoint))
+		    Self.Add(Override)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -25,16 +23,16 @@ Inherits Ark.ConfigGroup
 		Function GenerateConfigValues(Project As Ark.Project, Profile As Ark.ServerProfile) As Ark.ConfigValue()
 		  #Pragma Unused Project
 		  
+		  Var ContentPackIds As Beacon.StringList = Project.ContentPacks
 		  Var Values() As Ark.ConfigValue
-		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
-		    Var SpawnPoint As Ark.SpawnPoint = Entry.Value
-		    
-		    If Not SpawnPoint.ValidForMask(Profile.Mask) Then
+		  For Each Override As Ark.SpawnPointOverride In Self.mOverrides
+		    Var SpawnPoint As Ark.Blueprint = Override.SpawnPointReference.Resolve(ContentPackIds)
+		    If SpawnPoint Is Nil Or SpawnPoint.ValidForMask(Profile.Mask) = False Then
 		      Continue
 		    End If
 		    
-		    Var Value As Ark.ConfigValue = Self.ConfigValueForSpawnPoint(SpawnPoint)
-		    If Value <> Nil Then
+		    Var Value As Ark.ConfigValue = Self.ConfigValueForOverride(Override)
+		    If (Value Is Nil) = False Then
 		      Values.Add(Value)
 		    End If
 		  Next
@@ -43,18 +41,18 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigOverrideNPCSpawnEntriesContainer"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigAddNPCSpawnEntriesContainer"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigSubtractNPCSpawnEntriesContainer"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigOverrideNPCSpawnEntriesContainer"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigAddNPCSpawnEntriesContainer"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigSubtractNPCSpawnEntriesContainer"))
 		  Return Keys
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Function HasContent() As Boolean
-		  Return (Self.mSpawnPoints Is Nil) = False And Self.mSpawnPoints.KeyCount > 0
+		  Return Self.mOverrides.Count > 0
 		End Function
 	#tag EndEvent
 
@@ -62,20 +60,50 @@ Inherits Ark.ConfigGroup
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
-		  If Not SaveData.HasKey("Points") Then
+		  If SaveData.HasKey("overrides") = False Then
+		    If SaveData.HasKey("Points") Then
+		      // Old style
+		      Var Points() As Dictionary
+		      Try
+		        Points = SaveData.Value("Points").DictionaryArrayValue
+		      Catch Err As RuntimeException
+		      End Try
+		      
+		      For Each PointData As Dictionary In Points
+		        Var Override As Ark.SpawnPointOverride
+		        Try
+		          Override = Ark.SpawnPointOverride.FromLegacy(PointData)
+		        Catch Err As RuntimeException
+		        End Try
+		        If Override Is Nil Then
+		          Continue
+		        End If
+		        
+		        Self.mOverrides.Add(Override)
+		      Next
+		    End If
 		    Return
 		  End If
 		  
+		  Var OverrideDicts() As Dictionary
 		  Try
-		    Var Points() As Dictionary = SaveData.Value("Points").DictionaryArrayValue
-		    For Each PointData As Dictionary In Points
-		      Var SpawnPoint As Ark.SpawnPoint = Ark.SpawnPoint.FromSaveData(PointData)
-		      If (SpawnPoint Is Nil) = False Then
-		        Self.mSpawnPoints.Value(SpawnPoint.UniqueKey) = SpawnPoint
-		      End If
-		    Next
+		    OverrideDicts = SaveData.Value("overrides").DictionaryArrayValue
 		  Catch Err As RuntimeException
+		    Return
 		  End Try
+		  
+		  For Each Dict As Dictionary In OverrideDicts
+		    Var Override As Ark.SpawnPointOverride
+		    Try
+		      Override = Ark.SpawnPointOverride.FromSaveData(Dict)
+		    Catch Err As RuntimeException
+		    End Try
+		    If Override Is Nil Then
+		      Continue
+		    End If
+		    
+		    Self.mOverrides.Add(Override)
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -83,42 +111,90 @@ Inherits Ark.ConfigGroup
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
-		  Var Points() As Dictionary
-		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
-		    Points.Add(Ark.SpawnPoint(Entry.Value).SaveData)
+		  Var Overrides() As Dictionary
+		  Overrides.ResizeTo(Self.mOverrides.LastIndex)
+		  For Idx As Integer = 0 To Overrides.LastIndex
+		    Overrides(Idx) = Self.mOverrides(Idx).SaveData
 		  Next
-		  SaveData.Value("Points") = Points
+		  SaveData.Value("overrides") = Overrides
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub Add(SpawnPoint As Ark.SpawnPoint)
-		  If (SpawnPoint Is Nil) = False Then
-		    Self.mSpawnPoints.Value(SpawnPoint.UniqueKey) = SpawnPoint.ImmutableVersion
-		    Self.Modified = True
+		Sub Add(SpawnPointRef As Ark.BlueprintReference, Mode As Integer)
+		  If SpawnPointRef Is Nil Then
+		    Return
 		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).SpawnPointId = SpawnPointRef.BlueprintId And Self.mOverrides(Idx).Mode = Mode Then
+		      Self.mOverrides(Idx) = New Ark.SpawnPointOverride(SpawnPointRef, Mode)
+		      Self.Modified = True
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mOverrides.Add(New Ark.SpawnPointOverride(SpawnPointRef, Mode))
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigValueForSpawnPoint(SpawnPoint As Ark.SpawnPoint) As Ark.ConfigValue
+		Sub Add(SpawnPoint As Ark.SpawnPoint, Mode As Integer)
+		  If SpawnPoint Is Nil Then
+		    Return
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).SpawnPointId = SpawnPoint.SpawnPointId And Self.mOverrides(Idx).Mode = Mode Then
+		      Self.mOverrides(Idx) = New Ark.SpawnPointOverride(SpawnPoint, Mode)
+		      Self.Modified = True
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mOverrides.Add(New Ark.SpawnPointOverride(SpawnPoint, Mode))
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Add(Override As Ark.SpawnPointOverride)
+		  If Override Is Nil Then
+		    Return
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).UniqueKey = Override.UniqueKey Then
+		      Self.mOverrides(Idx) = New Ark.SpawnPointOverride(Override)
+		      Self.Modified = True
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mOverrides.Add(New Ark.SpawnPointOverride(Override))
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ConfigValueForOverride(Override As Ark.SpawnPointOverride) As Ark.ConfigValue
 		  Var RenderedEntries() As String
-		  Var Limits As Dictionary = SpawnPoint.Limits
 		  
 		  Var Config As String
-		  Select Case SpawnPoint.Mode
-		  Case Ark.SpawnPoint.ModeOverride
+		  Select Case Override.Mode
+		  Case Ark.SpawnPointOverride.ModeOverride
 		    Config = "ConfigOverrideNPCSpawnEntriesContainer"
-		  Case Ark.SpawnPoint.ModeAppend
+		  Case Ark.SpawnPointOverride.ModeAppend
 		    Config = "ConfigAddNPCSpawnEntriesContainer"
-		  Case Ark.SpawnPoint.ModeRemove
+		  Case Ark.SpawnPointOverride.ModeRemove
 		    Config = "ConfigSubtractNPCSpawnEntriesContainer"
 		  Else
 		    Return Nil
 		  End Select
 		  
-		  For Each Set As Ark.SpawnPointSet In SpawnPoint
+		  For Each Set As Ark.SpawnPointSet In Override
 		    Var CreatureClasses(), LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelMultiplierMembers(), MinLevelOffsetMembers(), MaxLevelMultiplierMembers(), MaxLevelOffsetMembers(), LevelOverrideMembers() As String
 		    Var IncludeLevels, IncludeOffsets, IncludeSpawnChance, IncludeMinLevelMultiplier, IncludeMaxLevelMultiplier, IncludeMinLevelOffset, IncludeMaxLevelOffset, IncludeLevelOverride As Boolean
 		    Var Entries() As Ark.SpawnPointSetEntry = Set.Entries
@@ -181,8 +257,8 @@ Inherits Ark.ConfigGroup
 		        MaxLevelOffsetMembers.Add(Offset.PrettyText)
 		      End If
 		      If IncludeLevelOverride Then
-		        Var Override As UInt8 = Round(If(Entry.LevelOverride <> Nil, Entry.LevelOverride.DoubleValue, 1.0))
-		        LevelOverrideMembers.Add(Override.ToString)
+		        Var LevelOverride As UInt8 = Round(If(Entry.LevelOverride <> Nil, Entry.LevelOverride.DoubleValue, 1.0))
+		        LevelOverrideMembers.Add(LevelOverride.ToString(Locale.Raw, "0"))
 		      End If
 		    Next
 		    
@@ -280,35 +356,39 @@ Inherits Ark.ConfigGroup
 		  Next
 		  
 		  Var Pieces() As String
-		  Pieces.Add("NPCSpawnEntriesContainerClassString=""" + SpawnPoint.ClassString + """")
+		  Pieces.Add("NPCSpawnEntriesContainerClassString=""" + Override.SpawnPointReference.ClassString + """")
 		  Pieces.Add("NPCSpawnEntries=(" + RenderedEntries.Join(",") + ")")
-		  If Limits.KeyCount > 0 Then
+		  
+		  Var LimitedCreatureRefs() As Ark.BlueprintReference = Override.LimitedCreatureRefs
+		  If LimitedCreatureRefs.Count > 0 Then
 		    Var LimitConfigs() As String
-		    For Each Entry As DictionaryEntry In Limits
-		      If Entry.Value.DoubleValue < 1.0 Then
-		        LimitConfigs.Add("(NPCClassString=""" + Ark.Creature(Entry.Key).ClassString + """,MaxPercentageOfDesiredNumToAllow=" + Entry.Value.DoubleValue.PrettyText + ")")
+		    For Each CreatureRef As Ark.BlueprintReference In LimitedCreatureRefs
+		      Var Limit As Double = Override.Limit(CreatureRef)
+		      If Limit >= 1.0 Then
+		        Continue
 		      End If
+		      Var LimitClass As String = CreatureRef.ClassString
+		      If LimitClass.IsEmpty Then
+		        Var Creature As Ark.Blueprint = CreatureRef.Resolve()
+		        If Creature Is Nil Then
+		          Continue
+		        End If
+		        LimitClass = Creature.ClassString
+		      End If
+		      LimitConfigs.Add("(NPCClassString=""" + LimitClass + """,MaxPercentageOfDesiredNumToAllow=" + Limit.PrettyText + ")")
 		    Next
-		    If LimitConfigs.LastIndex > -1 Then
+		    If LimitConfigs.Count > 0 Then
 		      Pieces.Add("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
 		    End If
 		  End If
 		  
-		  Return New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, Config + "=(" + Pieces.Join(",") + ")", Config + ":" + SpawnPoint.ClassString)
+		  Return New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, Config + "=(" + Pieces.Join(",") + ")", Config + ":" + Override.SpawnPointReference.ClassString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.mSpawnPoints = New Dictionary
-		  Super.Constructor
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mSpawnPoints.KeyCount
+		  Return Self.mOverrides.Count
 		End Function
 	#tag EndMethod
 
@@ -328,48 +408,30 @@ Inherits Ark.ConfigGroup
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function GetSpawnPoint(ObjectID As String, Mode As Integer) As Ark.SpawnPoint
-		  Var Key As String = ObjectID
-		  Select Case Mode
-		  Case Ark.SpawnPoint.ModeOverride
-		    Key = Key + ":Override"
-		  Case Ark.SpawnPoint.ModeAppend
-		    Key = Key + ":Append"
-		  Case Ark.SpawnPoint.ModeRemove
-		    Key = Key + ":Remove"
-		  End Select
-		  If Self.mSpawnPoints.HasKey(Key) Then
-		    Return Ark.SpawnPoint(Self.mSpawnPoints.Value(Key)).ImmutableVersion
-		  End If
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
-		Private Shared Sub HandleConfig(SpawnPoints As Ark.Configs.SpawnPoints, ParsedData As Dictionary, ConfigKey As String, ContentPacks As Beacon.StringList)
-		  If Not ParsedData.HasKey(ConfigKey) Then
+		Private Shared Sub HandleConfig(SpawnPoints As Ark.Configs.SpawnPoints, ParsedData As Dictionary, ConfigOption As String, ContentPacks As Beacon.StringList)
+		  If Not ParsedData.HasKey(ConfigOption) Then
 		    Return
 		  End If
 		  
 		  Var Dicts() As Variant
 		  #Pragma BreakOnExceptions False
 		  Try
-		    Dicts = ParsedData.Value(ConfigKey)
+		    Dicts = ParsedData.Value(ConfigOption)
 		  Catch Err As RuntimeException
-		    Dicts.Add(ParsedData.Value(ConfigKey))
+		    Dicts.Add(ParsedData.Value(ConfigOption))
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		  
 		  Var Mode As Integer
-		  If ConfigKey.BeginsWith("ConfigAdd") Then
-		    Mode = Ark.SpawnPoint.ModeAppend
-		  ElseIf ConfigKey.BeginsWith("ConfigSubtract") Then
-		    Mode = Ark.SpawnPoint.ModeRemove
+		  If ConfigOption.BeginsWith("ConfigAdd") Then
+		    Mode = Ark.SpawnPointOverride.ModeAppend
+		  ElseIf ConfigOption.BeginsWith("ConfigSubtract") Then
+		    Mode = Ark.SpawnPointOverride.ModeRemove
 		  Else
-		    Mode = Ark.SpawnPoint.ModeOverride
+		    Mode = Ark.SpawnPointOverride.ModeOverride
 		  End If
 		  
-		  Var SpawnClasses As New Dictionary
 		  For Each Obj As Variant In Dicts
 		    If IsNull(Obj) Or Obj.Type <> Variant.TypeObject Or (Obj IsA Dictionary) = False Then
 		      Continue
@@ -377,27 +439,14 @@ Inherits Ark.ConfigGroup
 		    
 		    Try
 		      Var Dict As Dictionary = Obj
-		      
 		      If Not Dict.HasKey("NPCSpawnEntriesContainerClassString") Then
 		        Continue
 		      End If
 		      
-		      Var SpawnPoint As Ark.SpawnPoint
 		      Var ClassString As String = Dict.Value("NPCSpawnEntriesContainerClassString")
-		      If SpawnClasses.HasKey(ClassString) Then
-		        SpawnPoint = SpawnPoints.mSpawnPoints.Value(SpawnClasses.Value(ClassString))
-		      Else
-		        SpawnPoint = Ark.ResolveSpawnPoint("", "", ClassString, ContentPacks)
-		        
-		        Var Mutable As Ark.MutableSpawnPoint = SpawnPoint.MutableVersion
-		        Mutable.Mode = Mode
-		        SpawnPoint = Mutable
-		        SpawnClasses.Value(ClassString) = SpawnPoint.UniqueKey
-		      End If
-		      
-		      Var Clone As Ark.MutableSpawnPoint = SpawnPoint.MutableVersion
-		      Clone.ResizeTo(-1)
-		      Clone.LimitsString = "{}"
+		      Var SpawnPointRef As New Ark.BlueprintReference(Ark.BlueprintReference.KindSpawnPoint, "", "", ClassString, "", "")
+		      Var SpawnPoint As Ark.SpawnPoint = Ark.SpawnPoint(SpawnPointRef.Resolve(ContentPacks))
+		      Var Override As New Ark.MutableSpawnPointOverride(SpawnPoint, Mode)
 		      
 		      // make changes
 		      If Dict.HasKey("NPCSpawnEntries") Then
@@ -449,7 +498,7 @@ Inherits Ark.ConfigGroup
 		            
 		            Var Set As New Ark.MutableSpawnPointSet
 		            Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
-		            Set.Weight = Entry.Lookup("EntryWeight", 1.0)
+		            Set.RawWeight = Entry.Lookup("EntryWeight", 1.0)
 		            Set.ColorSetClass = Entry.Lookup("ColorSets", "")
 		            
 		            For I As Integer = 0 To Classes.LastIndex
@@ -546,7 +595,7 @@ Inherits Ark.ConfigGroup
 		            End If
 		            
 		            If Set.Count > 0 Then
-		              Clone.AddSet(Set)
+		              Override.Add(Set)
 		            End If
 		          Catch Err As RuntimeException
 		            
@@ -563,12 +612,12 @@ Inherits Ark.ConfigGroup
 		          
 		          Var Creature As Ark.Creature = Ark.ResolveCreature(Limit, "", "", "NPCClassString", ContentPacks)
 		          If (Creature Is Nil) = False Then
-		            Clone.Limit(Creature) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
+		            Override.Limit(Creature) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
 		          End If
 		        Next
 		      End If
 		      
-		      SpawnPoints.mSpawnPoints.Value(Clone.UniqueKey) = Clone.ImmutableVersion
+		      SpawnPoints.Add(Override)
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
@@ -576,24 +625,50 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasSpawnPoint(SpawnPoint As Ark.SpawnPoint) As Boolean
+		Function HasOverride(SpawnPointRef As Ark.BlueprintReference, Mode As Integer) As Boolean
+		  If SpawnPointRef Is Nil Then
+		    Return False
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).SpawnPointId = SpawnPointRef.BlueprintId And Self.mOverrides(Idx).Mode = Mode Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasOverride(SpawnPoint As Ark.SpawnPoint, Mode As Integer) As Boolean
 		  If SpawnPoint Is Nil Then
 		    Return False
 		  End If
 		  
-		  Return Self.HasSpawnPoint(SpawnPoint.UniqueKey)
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).SpawnPointId = SpawnPoint.SpawnPointId And Self.mOverrides(Idx).Mode = Mode Then
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function HasSpawnPoint(UniqueKey As String) As Boolean
-		  Return Self.mSpawnPoints.HasKey(UniqueKey)
+	#tag Method, Flags = &h0
+		Function HasOverride(Override As Ark.SpawnPointOverride) As Boolean
+		  If Override Is Nil Then
+		    Return False
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).UniqueKey = Override.UniqueKey Then
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameSpawnPoints
+		  Return Ark.Configs.NameCreatureSpawns
 		End Function
 	#tag EndMethod
 
@@ -601,51 +676,106 @@ Inherits Ark.ConfigGroup
 		Function Iterator() As Iterator
 		  // Part of the Iterable interface.
 		  
-		  Var Points() As Variant
-		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
-		    Points.Add(Ark.SpawnPoint(Entry.Value).ImmutableVersion)
+		  Var Overrides() As Variant
+		  For Each Override As Ark.SpawnPointOverride In Self.mOverrides
+		    Overrides.Add(Override.ImmutableVersion)
 		  Next
-		  Return New Beacon.GenericIterator(Points)
+		  Return New Beacon.GenericIterator(Overrides)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Points(Filter As String = "") As Ark.SpawnPoint()
+		Function OverrideForSpawnPoint(SpawnPointRef As Ark.BlueprintReference, Mode As Integer) As Ark.SpawnPointOverride
+		  If SpawnPointRef Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).SpawnPointId = SpawnPointRef.BlueprintId And Self.mOverrides(Idx).Mode = Mode Then
+		      Return Self.mOverrides(Idx)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OverrideForSpawnPoint(SpawnPoint As Ark.SpawnPoint, Mode As Integer) As Ark.SpawnPointOverride
+		  If SpawnPoint Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).SpawnPointId = SpawnPoint.SpawnPointId And Self.mOverrides(Idx).Mode = Mode Then
+		      Return Self.mOverrides(Idx)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Overrides(Filter As String = "") As Ark.SpawnPointOverride()
 		  Filter = Filter.Trim
 		  
-		  Var Results() As Ark.SpawnPoint
-		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
-		    Var Point As Ark.SpawnPoint = Entry.Value
-		    If Filter.IsEmpty = False And Point.Label.IndexOf(Filter) = -1 Then
+		  Var Results() As Ark.SpawnPointOverride
+		  For Each Override As Ark.SpawnPointOverride In Self.mOverrides
+		    If Filter.IsEmpty = False And Override.SpawnPointReference.Label.IndexOf(Filter) = -1 Then
 		      Continue
 		    End If
 		    
-		    Results.Add(Point.ImmutableVersion)
+		    Results.Add(Override.ImmutableVersion)
 		  Next
 		  Return Results
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(SpawnPoint As Ark.SpawnPoint)
-		  If (SpawnPoint Is Nil) = False Then
-		    Self.Remove(SpawnPoint.UniqueKey)
+		Sub Remove(SpawnPointRef As Ark.BlueprintReference, Mode As Integer)
+		  If SpawnPointRef Is Nil Then
+		    Return
 		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).SpawnPointId = SpawnPointRef.BlueprintId And Self.mOverrides(Idx).Mode = Mode Then
+		      Self.mOverrides.RemoveAt(Idx)
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub Remove(UniqueKey As String)
-		  If Self.HasSpawnPoint(UniqueKey) Then
-		    Self.mSpawnPoints.Remove(UniqueKey)
-		    Self.Modified = True
+	#tag Method, Flags = &h0
+		Sub Remove(SpawnPoint As Ark.SpawnPoint, Mode As Integer)
+		  If SpawnPoint Is Nil Then
+		    Return
 		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).SpawnPointId = SpawnPoint.SpawnPointId And Self.mOverrides(Idx).Mode = Mode Then
+		      Self.mOverrides.RemoveAt(Idx)
+		      Return
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Remove(Override As Ark.SpawnPointOverride)
+		  If Override Is Nil Then
+		    Return
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    If Self.mOverrides(Idx).UniqueKey = Override.UniqueKey Then
+		      Self.mOverrides.RemoveAt(Idx)
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RemoveAll()
-		  Self.mSpawnPoints = New Dictionary
+		  Self.mOverrides.ResizeTo(-1)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -802,7 +932,7 @@ Inherits Ark.ConfigGroup
 
 
 	#tag Property, Flags = &h21
-		Private mSpawnPoints As Dictionary
+		Private mOverrides() As Ark.SpawnPointOverride
 	#tag EndProperty
 
 

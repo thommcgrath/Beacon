@@ -73,7 +73,7 @@ Begin BeaconPagedSubview BlueprintsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   1
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -83,10 +83,10 @@ Begin BeaconPagedSubview BlueprintsComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   800
-      Begin ModsListView ModsListView1
+      Begin LocalModsListView LocalModsView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -108,6 +108,7 @@ Begin BeaconPagedSubview BlueprintsComponent
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -117,7 +118,79 @@ Begin BeaconPagedSubview BlueprintsComponent
          Top             =   38
          Transparent     =   True
          ViewIcon        =   0
-         ViewTitle       =   "Mods"
+         ViewTitle       =   "My Mods"
+         Visible         =   True
+         Width           =   800
+      End
+      Begin CommunityModsListView CommunityModsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   448
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Modified        =   False
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Community"
+         Visible         =   True
+         Width           =   800
+      End
+      Begin RemoteModsListView RemoteModsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   448
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Modified        =   False
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Developers"
          Visible         =   True
          Width           =   800
       End
@@ -134,7 +207,9 @@ End
 
 	#tag Event
 		Sub Opening()
-		  Self.AppendPage(Self.ModsListView1)
+		  Self.AppendPage(Self.LocalModsView)
+		  Self.AppendPage(Self.CommunityModsView)
+		  Self.AppendPage(Self.RemoteModsView)
 		End Sub
 	#tag EndEvent
 
@@ -170,7 +245,22 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Function CloseView(View As BeaconSubview) As Boolean
+		Private Function CloseModView(ModId As String) As Boolean
+		  Var Idx As Integer = Self.Nav.IndexOf(ModId)
+		  If Idx = -1 Then
+		    Return True
+		  End If
+		  
+		  Var View As BeaconSubview = Self.Page(Idx - 1) // Don't forget the separator
+		  If View IsA ModEditorView Then
+		    Return Self.CloseView(ModEditorView(View))
+		  End If
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CloseView(View As BeaconSubview) As Boolean
 		  If View.CanBeClosed = False Or View.ConfirmClose() = False Then
 		    Return False
 		  End If
@@ -194,6 +284,60 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowMod(Sender As ModsListView, ModInfo As BeaconAPI.ContentPack)
+		  If ModInfo.Confirmed = False Then
+		    If ModInfo.GameId = Ark.Identifier And ArkRegisterModDialog.Present(Self, ModInfo) Then
+		      Sender.RefreshMods()
+		    ElseIf ModInfo.GameId = ArkSA.Identifier And ArkSARegisterModDialog.Present(Self, ModInfo) Then
+		      Sender.RefreshMods()
+		    Else
+		      Return
+		    End If
+		  End If
+		  
+		  Var View As BeaconSubview
+		  Var Idx As Integer = Self.Nav.IndexOf(ModInfo.ContentPackId)
+		  If Idx > -1 Then
+		    View = Self.Page(Idx - 1) // Don't forget the separator
+		  Else
+		    Select Case ModInfo.GameId
+		    Case Ark.Identifier
+		      Var Controller As Ark.BlueprintController
+		      If ModInfo.IsLocal Then
+		        Controller = New Ark.LocalBlueprintController(ModInfo)
+		      Else
+		        Controller = New Ark.RemoteBlueprintController(ModInfo)
+		      End If
+		      
+		      View = New ArkModEditorView(Controller)
+		      Self.EmbedView(View)
+		    Case ArkSA.Identifier
+		      Var Controller As ArkSA.BlueprintController
+		      If ModInfo.IsLocal Then
+		        Controller = New ArkSA.LocalBlueprintController(ModInfo)
+		      Else
+		        Controller = New ArkSA.RemoteBlueprintController(ModInfo)
+		      End If
+		      
+		      View = New ArkSAModEditorView(Controller)
+		      Self.EmbedView(View)
+		    End Select
+		  End If
+		  Self.ShowView(View)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Constant, Name = PageCommunity, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageLocal, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageRemote, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
@@ -213,12 +357,17 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Var Mods As OmniBarItem = OmniBarItem.CreateTab(Self.ModsListView1.ViewID, "Mods")
-		  Mods.Toggled = True
+		  Var LocalModsItem As OmniBarItem = OmniBarItem.CreateTab(Self.LocalModsView.ViewID, "My Mods")
+		  LocalModsItem.Toggled = True
+		  Self.LocalModsView.LinkedOmniBarItem = LocalModsItem
 		  
-		  Me.Append(Mods, OmniBarItem.CreateSeparator)
+		  Var CommunityModsItem As OmniBarItem = OmniBarItem.CreateTab(Self.CommunityModsView.ViewID, "Community")
+		  Self.CommunityModsView.LinkedOmniBarItem = CommunityModsItem
 		  
-		  Self.ModsListView1.LinkedOmniBarItem = Mods
+		  Var RemoteModsItem As OmniBarItem = OmniBarItem.CreateTab(Self.RemoteModsView.ViewID, "Authored")
+		  Self.RemoteModsView.LinkedOmniBarItem = RemoteModsItem
+		  
+		  Me.Append(LocalModsItem, CommunityModsItem, RemoteModsItem, OmniBarItem.CreateSeparator)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -249,49 +398,40 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ModsListView1
+#tag Events LocalModsView
 	#tag Event
-		Sub ShowMod(ModInfo As BeaconAPI.WorkshopMod)
-		  If ModInfo.Confirmed = False Then
-		    Var ModUUID As String =  RegisterModDialog.Present(Self, ModInfo)
-		    If ModUUID.IsEmpty = False Then
-		      Me.RefreshMods()
-		    Else
-		      Return
-		    End If
-		  End If
-		  
-		  Var View As BeaconSubview
-		  Var Idx As Integer = Self.Nav.IndexOf(ModInfo.ModID)
-		  If Idx > -1 Then
-		    View = Self.Page(Idx - 1) // Don't forget the separator
-		  Else
-		    Var Controller As BlueprintController
-		    If ModInfo.IsLocalMod Then
-		      Controller = New LocalBlueprintController(ModInfo.ModID, ModInfo.Name)
-		    Else
-		      Controller = New RemoteBlueprintController(ModInfo.ModID, ModInfo.Name)
-		    End If
-		    
-		    View = New ModEditorView(Controller)
-		    Self.EmbedView(View)
-		  End If
-		  Self.ShowView(View)
+		Sub ShowMod(ModInfo As BeaconAPI.ContentPack)
+		  Self.ShowMod(Me, ModInfo)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CloseModView(ModUUID As String) As Boolean
-		  Var Idx As Integer = Self.Nav.IndexOf(ModUUID)
-		  If Idx = -1 Then
-		    Return True
-		  End If
-		  
-		  Var View As BeaconSubview = Self.Page(Idx - 1) // Don't forget the separator
-		  If View IsA ModEditorView Then
-		    Return Self.CloseView(ModEditorView(View))
-		  End If
-		  Return True
+		Function CloseModView(ModId As String) As Boolean
+		  Return Self.CloseModView(ModId)
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events CommunityModsView
+	#tag Event
+		Sub ShowMod(ModInfo As BeaconAPI.ContentPack)
+		  Self.ShowMod(Me, ModInfo)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CloseModView(ModId As String) As Boolean
+		  Return Self.CloseModView(ModId)
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events RemoteModsView
+	#tag Event
+		Function CloseModView(ModId As String) As Boolean
+		  Return Self.CloseModView(ModId)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShowMod(ModInfo As BeaconAPI.ContentPack)
+		  Self.ShowMod(Me, ModInfo)
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

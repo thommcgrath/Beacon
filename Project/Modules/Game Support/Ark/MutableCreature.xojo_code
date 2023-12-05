@@ -2,6 +2,7 @@
 Protected Class MutableCreature
 Inherits Ark.Creature
 Implements Ark.MutableBlueprint
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub AddStatValue(Values As Ark.CreatureStatValue)
 		  If Values Is Nil Then
@@ -24,6 +25,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub AlternateLabel(Assigns Value As NullableString)
+		  If Self.mAlternateLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAlternateLabel = Value
 		  Self.Modified = True
 		End Sub
@@ -31,7 +36,22 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
+		  If Self.mAvailability = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAvailability = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BlueprintId(Assigns Value As String)
+		  If Self.mCreatureId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mCreatureId = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -50,12 +70,19 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As String)
+		Sub Constructor()
+		  // Making it public
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Path As String, CreatureId As String)
 		  Super.Constructor()
 		  
-		  Self.mObjectID = ObjectID
+		  Self.mCreatureId = CreatureId
 		  Self.mPath = Path
-		  Self.mClassString = Beacon.ClassStringFromPath(Path)
+		  Self.mClassString = Ark.ClassStringFromPath(Path)
 		  Self.mAvailability = Ark.Maps.UniversalMask
 		End Sub
 	#tag EndMethod
@@ -98,15 +125,34 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ContentPackId(Assigns Value As String)
+		  If Self.mContentPackId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mContentPackId = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ContentPackName(Assigns Value As String)
+		  If Self.mContentPackName = Value Then
+		    Return
+		  End If
+		  
 		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackUUID(Assigns Value As String)
-		  Self.mContentPackUUID = Value
+		Sub CreatureId(Assigns Value As String)
+		  If Self.mCreatureId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mCreatureId = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -145,6 +191,9 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
+		  If Self.mLabel = Value Then
+		    Return
+		  End If
 		  
 		  Self.mLabel = Value
 		  Self.Modified = True
@@ -152,7 +201,22 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub LastUpdate(Assigns Value As Double)
+		  If Self.mLastUpdate = Value Then
+		    Return
+		  End If
+		  
+		  Self.mLastUpdate = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub MatureTime(Assigns Value As Double)
+		  If Self.mMatureTime = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMatureTime = Value
 		  Self.Modified = True
 		End Sub
@@ -160,6 +224,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MaxMatingInterval(Assigns Value As Double)
+		  If Self.mMaxMatingInterval = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMaxMatingInterval = Value
 		  Self.Modified = True
 		End Sub
@@ -167,6 +235,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub MinMatingInterval(Assigns Value As Double)
+		  If Self.mMinMatingInterval = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMinMatingInterval = Value
 		  Self.Modified = True
 		End Sub
@@ -182,14 +254,22 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
+		  If Self.mPath = Value Then
+		    Return
+		  End If
+		  
 		  Self.mPath = Value
-		  Self.mClassString = Beacon.ClassStringFromPath(Value)
+		  Self.mClassString = Ark.ClassStringFromPath(Value)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub StatsMask(Assigns Value As UInt16)
+		  If Self.mStatsMask = Value Then
+		    Return
+		  End If
+		  
 		  Self.mStatsMask = Value
 		  Self.Modified = True
 		End Sub
@@ -211,45 +291,35 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Unpack(Dict As Dictionary)
-		  If Dict.HasKey("incubation_time") And IsNull(Dict.Value("incubation_time")) = False Then
-		    Self.mIncubationTime = Dict.Value("incubation_time").UInt64Value
-		  Else
-		    Self.mIncubationTime = 0
-		  End If
-		  
-		  If Dict.HasKey("mature_time") ANd IsNull(Dict.Value("mature_time")) = False Then
-		    Self.mMatureTime = Dict.Value("mature_time").UInt64Value
-		  Else
-		    Self.mMatureTime = 0
-		  End If
+		  Self.mIncubationTime = Dict.FirstValue("incubationTime", "incubation_time", 0)
+		  Self.mMatureTime = Dict.FirstValue("matureTime", "mature_time", 0)
+		  Self.mStatsMask = Dict.FirstValue("usedStats", "used_stats", 0)
 		  
 		  If Dict.HasKey("stats") And IsNull(Dict.Value("stats")) = False Then
-		    Var Dicts() As Dictionary
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Dict.Value("stats"))
-		    Select Case Info.FullName
-		    Case "Dictionary()"
-		      Dicts = Dict.Value("stats")
-		    Case "Object()"
-		      Var Temp() As Object = Dict.Value("stats")
-		      For Each Obj As Object In Temp
-		        If (Obj Is Nil) = False And Obj IsA Dictionary Then
-		          Dicts.Add(Dictionary(Obj))
-		        End If
-		      Next
-		    End Select
+		    Var Stats() As Dictionary = Dict.Value("stats").DictionaryArrayValue
 		    
 		    Self.mStats = New Dictionary
-		    For Each StatInfo As Dictionary In Dicts
-		      If Not StatInfo.HasAllKeys("stat_index", "base_value", "per_level_wild_multiplier", "per_level_tamed_multiplier", "add_multiplier", "affinity_multiplier") Then
+		    For Each StatInfo As Dictionary In Stats
+		      Var StatIndex As Integer
+		      Var Base, PerLevelWild, PerLevelTamed, Add, Affinity As Double
+		      
+		      If StatInfo.HasAllKeys("statIndex", "baseValue", "perLevelWildMultiplier", "perLevelTamedMultiplier", "addMultiplier", "affinityMultiplier") Then
+		        StatIndex = StatInfo.Value("statIndex")
+		        Base = StatInfo.Value("baseValue")
+		        PerLevelWild = StatInfo.Value("perLevelWildMultiplier")
+		        PerLevelTamed = StatInfo.Value("perLevelTamedMultiplier")
+		        Add = StatInfo.Value("addMultiplier")
+		        Affinity = StatInfo.Value("affinityMultiplier")
+		      ElseIf StatInfo.HasAllKeys("stat_index", "base_value", "per_level_wild_multiplier", "per_level_tamed_multiplier", "add_multiplier", "affinity_multiplier") Then
+		        StatIndex = StatInfo.Value("stat_index")
+		        Base = StatInfo.Value("base_value")
+		        PerLevelWild = StatInfo.Value("per_level_wild_multiplier")
+		        PerLevelTamed = StatInfo.Value("per_level_tamed_multiplier")
+		        Add = StatInfo.Value("add_multiplier")
+		        Affinity = StatInfo.Value("affinity_multiplier")
+		      Else
 		        Continue
 		      End If
-		      
-		      Var StatIndex As Integer = StatInfo.Value("stat_index")
-		      Var Base As Double = StatInfo.Value("base_value")
-		      Var PerLevelWild As Double = StatInfo.Value("per_level_wild_multiplier")
-		      Var PerLevelTamed As Double = StatInfo.Value("per_level_tamed_multiplier")
-		      Var Add As Double = StatInfo.Value("add_multiplier")
-		      Var Affinity As Double = StatInfo.Value("affinity_multiplier")
 		      
 		      If StatIndex = Self.MissingStatValue Or Base = Self.MissingStatValue Or PerLevelWild = Self.MissingStatValue Or PerLevelTamed = Self.MissingStatValue Or Add = Self.MissingStatValue Or Affinity = Self.MissingStatValue Then
 		        Continue
@@ -267,13 +337,10 @@ Implements Ark.MutableBlueprint
 		    Self.mStats = New Dictionary
 		  End If
 		  
-		  If Dict.HasKey("used_stats") And IsNull(Dict.Value("used_stats")) = False Then
-		    Self.mStatsMask = Dict.Value("used_stats").UInt32Value
-		  Else
-		    Self.mStatsMask = 0
-		  End If
-		  
-		  If Dict.HasAllKeys("mating_interval_min", "mating_interval_max") And IsNull(Dict.Value("mating_interval_min")) = False And IsNull(Dict.Value("mating_interval_max")) = False Then
+		  If Dict.HasAllKeys("minMatingInterval", "maxMatingInterval") And IsNull(Dict.Value("minMatingInterval")) = False And IsNull(Dict.Value("maxMatingInterval")) = False Then
+		    Self.mMinMatingInterval = Dict.Value("minMatingInterval").UInt64Value
+		    Self.mMaxMatingInterval = Dict.Value("maxMatingInterval").UInt64Value
+		  ElseIf Dict.HasAllKeys("mating_interval_min", "mating_interval_max") And IsNull(Dict.Value("mating_interval_min")) = False And IsNull(Dict.Value("mating_interval_max")) = False Then
 		    Self.mMinMatingInterval = Dict.Value("mating_interval_min").UInt64Value
 		    Self.mMaxMatingInterval = Dict.Value("mating_interval_max").UInt64Value
 		  Else

@@ -488,7 +488,7 @@ End
 		  Base.AddMenu(CopyItem)
 		  Base.AddMenu(PasteItem)
 		  Base.AddMenu(ClearItem)
-		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		  Base.AddMenu(ColorItem)
 		  Return True
 		End Function

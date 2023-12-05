@@ -725,7 +725,7 @@ Begin DesktopWindow ExceptionWindow
       LockTop         =   False
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
@@ -897,7 +897,8 @@ End
 		    
 		    Var Filename As String = Fields.Value("hash").StringValue + ".beaconerror"
 		    Var ErrorFile As FolderItem = ErrorsFolder.Child(Filename)
-		    Return ErrorFile.Write(Beacon.GenerateJSON(Fields, True))
+		    ErrorFile.Write(Beacon.GenerateJSON(Fields, True))
+		    Return True
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try
@@ -933,7 +934,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Sub SubmitPendingReports_Run(Sender As Thread)
-		  #Pragma Unused Sender
+		  Sender.YieldToNext
 		  
 		  If SubmitLock Is Nil Then
 		    SubmitLock = New CriticalSection
@@ -1154,8 +1155,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

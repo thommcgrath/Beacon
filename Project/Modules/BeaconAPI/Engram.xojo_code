@@ -32,7 +32,7 @@ Protected Class Engram
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mAvailability = Ark.Maps.UniversalMask
-		  Self.mID = New v4UUID
+		  Self.mID = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 
@@ -42,7 +42,7 @@ Protected Class Engram
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.Availability
 		  Self.mPath = Source.Path
-		  Self.mID = New v4UUID
+		  Self.mID = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 
@@ -80,7 +80,7 @@ Protected Class Engram
 		  If Source.HasKey("id") Then
 		    Self.mID = Source.Value("id").StringValue
 		  Else
-		    Self.mID = new v4UUID
+		    Self.mID = Beacon.UUID.v4
 		  End If
 		  
 		  If Source.HasKey("availability") Then

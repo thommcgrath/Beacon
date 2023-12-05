@@ -108,6 +108,7 @@ Begin BeaconPagedSubview TemplatesComponent
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -143,6 +144,7 @@ Begin BeaconPagedSubview TemplatesComponent
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -229,8 +231,8 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function CloseView(View As TemplateEditorView) As Boolean
+	#tag Method, Flags = &h0
+		Function CloseView(View As BeaconSubview) As Boolean
 		  If View.CanBeClosed = False Or View.ConfirmClose() = False Then
 		    Return False
 		  End If
@@ -268,6 +270,33 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function CreateTemplate(ItemSet As ArkSA.LootItemSet) As ArkSA.LootTemplate
+		  Var Template As ArkSA.MutableLootTemplate
+		  If ItemSet.TemplateUUID.IsEmpty = False Then
+		    Var SourceTemplate As Beacon.Template = Beacon.CommonData.Pool.Get(False).GetTemplateByUUID(ItemSet.TemplateUUID)
+		    If (SourceTemplate Is Nil) = False And SourceTemplate IsA ArkSA.LootTemplate Then
+		      Template = New ArkSA.MutableLootTemplate(ArkSA.LootTemplate(SourceTemplate))
+		    End If
+		  End If
+		  If Template Is Nil Then
+		    Template = New ArkSA.MutableLootTemplate()
+		  End If
+		  
+		  Template.Label = ItemSet.Label
+		  Template.MinEntriesSelected = ItemSet.MinNumItems
+		  Template.MaxEntriesSelected = ItemSet.MaxNumItems
+		  
+		  Template.ResizeTo(-1)
+		  For Each Entry As ArkSA.LootItemSetEntry In ItemSet
+		    Template.Add(New ArkSA.LootTemplateEntry(Entry))
+		  Next Entry
+		  
+		  Self.OpenTemplate(Template, True)
+		  Return Template
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub EmbedView(View As TemplateEditorView)
 		  Self.AppendPage(View)
@@ -283,16 +312,23 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewTemplate()
-		  Var GameID As String = GameSelectorWindow.Present(Self)
-		  Self.NewTemplate(GameID)
+		  Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureTemplates, False)
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
+		  Self.NewTemplate(GameId)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewTemplate(GameID As String)
-		  Select Case GameID
+		Sub NewTemplate(GameId As String)
+		  Select Case GameId
 		  Case Ark.Identifier
 		    Self.OpenTemplate(New Ark.LootTemplate)
+		  Case ArkSA.Identifier
+		    Self.OpenTemplate(New ArkSA.LootTemplate)
+		  Else
+		    Self.ShowAlert("Beacon does not yet support templates for " + Language.GameName(GameId), "This feature is coming, but isn't ready in this version.")
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -321,6 +357,11 @@ End
 		    Select Case Template
 		    Case IsA Ark.LootTemplate
 		      View = New ArkLootTemplateEditorView(Ark.LootTemplate(Template))
+		    Case IsA ArkSA.LootTemplate
+		      View = New ArkSALootTemplateEditorView(ArkSA.LootTemplate(Template))
+		    Else
+		      Self.ShowAlert("Beacon does not yet support templates for this game.", "This feature is coming, but isn't ready in this version.")
+		      Return
 		    End Select
 		    Self.EmbedView(TemplateEditorView(View))
 		  End If
@@ -360,6 +401,8 @@ End
 		    Select Case Template
 		    Case IsA Ark.LootTemplate
 		      View = New ArkLootTemplateEditorView(Ark.LootTemplate(Template))
+		    Case IsA ArkSA.LootTemplate
+		      View = New ArkSALootTemplateEditorView(ArkSA.LootTemplate(Template))
 		    End Select
 		    Self.EmbedView(TemplateEditorView(View))
 		  End If

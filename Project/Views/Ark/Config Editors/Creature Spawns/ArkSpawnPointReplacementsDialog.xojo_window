@@ -318,6 +318,7 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -327,6 +328,7 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
          TabStop         =   True
          Tooltip         =   ""
          Top             =   290
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -413,14 +415,14 @@ End
 		    Self.TargetCreatureField.Text = Self.mTargetCreature.Label
 		    Self.TargetCreatureField.Italic = False
 		    
-		    Var Replacements() As Ark.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
-		    For Each Replacement As Ark.Creature In Replacements
-		      Var Weight As NullableDouble = Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, Replacement)
+		    Var ReplacementRefs() As Ark.BlueprintReference = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
+		    For Each ReplacementRef As Ark.BlueprintReference In ReplacementRefs
+		      Var Weight As NullableDouble = Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, ReplacementRef)
 		      If Weight Is Nil Then
 		        Continue
 		      End If
-		      Self.ReplacementsList.AddRow(Weight.DoubleValue.PrettyText, Replacement.Label)
-		      Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastAddedRowIndex) = Replacement
+		      Self.ReplacementsList.AddRow(Weight.DoubleValue.PrettyText, ReplacementRef.Label)
+		      Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastAddedRowIndex) = ReplacementRef
 		    Next
 		  End If
 		  
@@ -433,11 +435,11 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Mods As Beacon.StringList, SpawnSet As Ark.MutableSpawnPointSet, TargetCreature As Ark.Creature)
+		Sub Constructor(Mods As Beacon.StringList, SpawnSet As Ark.MutableSpawnPointSet, TargetCreature As Ark.BlueprintReference)
 		  // The target creature should not be in the defined creatures list
-		  Var DefinedCreatures() As Ark.Creature = SpawnSet.ReplacedCreatures
+		  Var DefinedCreatures() As Ark.BlueprintReference = SpawnSet.ReplacedCreatureRefs
 		  
-		  If TargetCreature <> Nil Then
+		  If (TargetCreature Is Nil) = False Then
 		    For I As Integer = 0 To DefinedCreatures.LastIndex
 		      If DefinedCreatures(I) = TargetCreature Then
 		        DefinedCreatures.RemoveAt(I)
@@ -455,8 +457,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Mods As Beacon.StringList, SpawnSet As Ark.MutableSpawnPointSet, TargetCreature As Ark.Creature = Nil) As Ark.Creature
-		  If Parent = Nil Then
+		Shared Function Present(Parent As DesktopWindow, Mods As Beacon.StringList, SpawnSet As Ark.MutableSpawnPointSet, TargetCreature As Ark.BlueprintReference = Nil) As Ark.BlueprintReference
+		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
@@ -483,7 +485,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDefinedCreatures() As Ark.Creature
+		Private mDefinedCreatures() As Ark.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -495,7 +497,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTargetCreature As Ark.Creature
+		Private mTargetCreature As Ark.BlueprintReference
 	#tag EndProperty
 
 
@@ -511,9 +513,9 @@ End
 #tag Events TargetCreatureButton
 	#tag Event
 		Sub Pressed()
-		  Var Creatures() As Ark.Creature = ArkBlueprintSelectorDialog.Present(Self, "", Self.mDefinedCreatures, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.Single)
-		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
-		    Self.mTargetCreature = Creatures(0)
+		  Var CreatureRefs() As Ark.BlueprintReference = ArkBlueprintSelectorDialog.Present(Self, Ark.CategoryCreatures, "", Self.mDefinedCreatures, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.Single)
+		  If (CreatureRefs Is Nil) = False And CreatureRefs.Count = 1 Then
+		    Self.mTargetCreature = CreatureRefs(0)
 		    Self.TargetCreatureField.Text = Self.mTargetCreature.Label
 		    Self.TargetCreatureField.Italic = False
 		  End If
@@ -523,12 +525,12 @@ End
 #tag Events ReplacementAddButton
 	#tag Event
 		Sub Pressed()
-		  Var Exclude() As Ark.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
-		  Var Creatures() As Ark.Creature = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple)
+		  Var ExcludeRefs() As Ark.BlueprintReference = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
+		  Var CreatureRefs() As Ark.BlueprintReference = ArkBlueprintSelectorDialog.Present(Self, Ark.CategoryCreatures, "", ExcludeRefs, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple)
 		  Self.ReplacementsList.SelectionChangeBlocked = True
-		  For Each Creature As Ark.Creature In Creatures
-		    Self.ReplacementsList.AddRow("50", Creature.Label)
-		    Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastAddedRowIndex) = Creature
+		  For Each CreatureRef As Ark.BlueprintReference In CreatureRefs
+		    Self.ReplacementsList.AddRow("50", CreatureRef.Label)
+		    Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastAddedRowIndex) = CreatureRef
 		  Next
 		  Self.ReplacementsList.Sort
 		  Self.ReplacementsList.SelectionChangeBlocked = False
@@ -550,25 +552,25 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var Creatures() As Ark.Creature
+		  Var CreatureRefs() As Ark.BlueprintReference
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
 		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
-		    Creatures.Add(Me.RowTagAt(I))
+		    CreatureRefs.Add(Me.RowTagAt(I))
 		  Next
 		  
-		  If Warn And Self.ShowDeleteConfirmation(Creatures, "replacement", "replacements") = False Then
+		  If Warn And Self.ShowDeleteConfirmation(CreatureRefs, "replacement", "replacements") = False Then
 		    Return
 		  End If
 		  
 		  For I As Integer = Bound DownTo 0
-		    For X As Integer = 0 To Creatures.LastIndex
-		      If Me.RowTagAt(I) = Creatures(X) Then
+		    For X As Integer = 0 To CreatureRefs.LastIndex
+		      If Me.RowTagAt(I) = CreatureRefs(X) Then
 		        Me.RemoveRowAt(I)
-		        Creatures.RemoveAt(X)
+		        CreatureRefs.RemoveAt(X)
 		        Continue For I
 		      End If
 		    Next
@@ -591,25 +593,25 @@ End
 		  
 		  Var Replacements As New Dictionary
 		  For I As Integer = 0 To Self.ReplacementsList.RowCount - 1
-		    Var Creature As Ark.Creature = Self.ReplacementsList.RowTagAt(I)
+		    Var CreatureRef As Ark.BlueprintReference = Self.ReplacementsList.RowTagAt(I)
 		    Var WeightString As String = Self.ReplacementsList.CellTextAt(I, Self.ColumnWeight)
 		    If IsNumeric(WeightString) = False Then
-		      Self.ShowAlert("The weight value """ + WeightString + """ for " + Creature.Label + " is not a number.", "Please use only numbers for weight values.")
+		      Self.ShowAlert("The weight value """ + WeightString + """ for " + CreatureRef.Label + " is not a number.", "Please use only numbers for weight values.")
 		      Return
 		    End If
 		    Var Weight As Double = CDbl(WeightString)
-		    Replacements.Value(Creature) = Weight
+		    Replacements.Value(CreatureRef) = Weight
 		  Next
 		  
-		  Var OriginalCreatures() As Ark.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
-		  For Each Creature As Ark.Creature In OriginalCreatures
-		    Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, Creature) = Nil
+		  Var OriginalCreatureRefs() As Ark.BlueprintReference = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
+		  For Each CreatureRef As Ark.BlueprintReference In OriginalCreatureRefs
+		    Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, CreatureRef) = Nil
 		  Next
 		  
 		  For Each Entry As DictionaryEntry In Replacements
-		    Var Creature As Ark.Creature = Entry.Key
+		    Var CreatureRef As Ark.BlueprintReference = Entry.Key
 		    Var Weight As Double = Entry.Value
-		    Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, Creature) = Weight
+		    Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, CreatureRef) = Weight
 		  Next
 		  
 		  Self.mCancelled = False
@@ -675,8 +677,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -265,10 +265,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CheckGameDatabase(GameID As String) As Boolean
-		  Var DataSource As Beacon.DataSource = App.DataSourceForGame(GameID)
+		Private Function CheckGameDatabase(GameId As String) As Boolean
+		  Var DataSource As Beacon.DataSource = App.DataSourceForGame(GameId)
 		  If DataSource Is Nil Or DataSource.HasContent = False Then
-		    Var GameName As String = Language.GameName(GameID)
+		    Var GameName As String = Language.GameName(GameId)
 		    BeaconUI.ShowAlert("Game database is not ready", "Sit tight a few moments while Beacon prepares its database for " + GameName + ".")
 		    
 		    App.SyncGamedata(False, False)
@@ -288,16 +288,10 @@ End
 		  
 		  Var View As DocumentEditorView = DocumentEditorView.Create(Sender)
 		  View.Modified = Sender.Project.Modified
-		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  View.LinkedOmniBarItem.CanBeClosed = True
 		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Modified
-		  
-		  Select Case Sender.URL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
-		    View.ViewIcon = IconCloudDocument
-		  Case Beacon.ProjectURL.TypeWeb
-		    View.ViewIcon = IconCommunityDocument
-		  End Select
+		  View.UpdateViewIcon()
 		  
 		  // Self.Views.AddPanel
 		  // Var PanelIndex As Integer = Self.Views.LastAddedPanelIndex
@@ -314,9 +308,15 @@ End
 		Private Sub Controller_LoadError(Sender As Beacon.ProjectController, Reason As String)
 		  Self.DetachControllerEvents(Sender)
 		  
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  If (NavItem Is Nil) = False Then
 		    Self.Nav.Remove(NavItem)
+		  End If
+		  
+		  If Reason = "Unauthorized" Then
+		    App.Log("Presenting login window because DocumentsComponent received an unauthorized response while loading a project.")
+		    UserWelcomeWindow.Present(False)
+		    Return
 		  End If
 		  
 		  Var RecentIdx As Integer = -1
@@ -349,7 +349,7 @@ End
 		Private Sub Controller_LoadProgress(Sender As Beacon.ProjectController, BytesReceived As Int64, BytesTotal As Int64)
 		  #Pragma Unused Sender
 		  
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  If (NavItem Is Nil) = False Then
 		    NavItem.Progress = BytesReceived / BytesTotal
 		  End If
@@ -358,7 +358,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_LoadStarted(Sender As Beacon.ProjectController)
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  If NavItem Is Nil Then
 		    Return
 		  End If
@@ -419,7 +419,7 @@ End
 		  Var Bound As Integer = Self.PageCount - 1
 		  For Idx As Integer = 0 To Bound
 		    Var Page As BeaconSubview = Self.Page(Idx)
-		    If Page IsA DocumentEditorView And (DocumentEditorView(Page).Project Is Nil) = False And DocumentEditorView(Page).Project.UUID = Project.UUID Then
+		    If Page IsA DocumentEditorView And (DocumentEditorView(Page).Project Is Nil) = False And DocumentEditorView(Page).Project.ProjectId = Project.ProjectId Then
 		      Return DocumentEditorView(Page)
 		    End If
 		  Next
@@ -427,7 +427,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FrontmostDocumentEditor(GameID As String) As DocumentEditorView
+		Function FrontmostDocumentEditor(GameId As String) As DocumentEditorView
 		  For Offset As Integer = 0 To Self.LastPageIndex
 		    Var Page As BeaconSubview = Self.FrontmostPage(Offset)
 		    If (Page IsA DocumentEditorView) = False Then
@@ -435,7 +435,7 @@ End
 		    End If
 		    
 		    Var Editor As DocumentEditorView = DocumentEditorView(Page)
-		    If Editor.GameID = GameID Then
+		    If Editor.GameId = GameId Then
 		      Return Editor
 		    End If
 		  Next Offset
@@ -444,10 +444,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Var GameID As String = Beacon.DetectGame(File)
-		  If GameID.IsEmpty Then
+		  Var GameId As String = Beacon.DetectGame(File)
+		  If GameId.IsEmpty Then
 		    // Show a game selection prompt later
-		    Return
+		    GameId = GameSelectorWindow.Present(Self.TrueWindow)
 		  End If
 		  
 		  Var OtherProjects() As Beacon.Project
@@ -456,10 +456,22 @@ End
 		    OtherProjects.Add(Editor.Project)
 		  Next Editor
 		  
-		  Select Case GameID
+		  Select Case GameId
 		  Case Ark.Identifier
 		    Var ImportView As New ArkImportView
 		    Var ImportWindow As New DocumentImportWindow(ImportView, New Ark.Project, OtherProjects)
+		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
+		    ImportWindow.Show()
+		    ImportView.Import(File)
+		  Case SDTD.Identifier
+		    Var ImportView As New SDTDImportView
+		    Var ImportWindow As New DocumentImportWindow(ImportView, New SDTD.Project, OtherProjects)
+		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
+		    ImportWindow.Show()
+		    ImportView.Import(File)
+		  Case ArkSA.Identifier
+		    Var ImportView As New ArkSAImportView
+		    Var ImportWindow As New DocumentImportWindow(ImportView, New ArkSA.Project, OtherProjects)
 		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
 		    ImportWindow.Show()
 		    ImportView.Import(File)
@@ -472,7 +484,7 @@ End
 		  #Pragma Unused Sender
 		  
 		  For Each Project As Beacon.Project In Projects
-		    Self.NewDocument(Project)
+		    Self.NewProject(Project)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -480,68 +492,77 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mAutosaveController_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project, Actions() As Beacon.ScriptAction)
 		  RemoveHandler Sender.Loaded, AddressOf mAutosaveController_Loaded
+		  RemoveHandler Sender.LoadError, AddressOf mAutosaveController_LoadError
 		  
 		  // Create a modified transient document
 		  Project.Modified = True
-		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity)
-		  Controller.AutosaveURL = Sender.URL
+		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity, Sender.URL)
+		  Controller.AutosaveURL = Sender.AutosaveURL
 		  Self.OpenController(Controller, False, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub mAutosaveController_LoadError(Sender As Beacon.ProjectController, Reason As String)
+		  RemoveHandler Sender.Loaded, AddressOf mAutosaveController_Loaded
+		  RemoveHandler Sender.LoadError, AddressOf mAutosaveController_LoadError
+		  
 		  App.Log("Failed to restore autosave file: " + Reason)
 		  Sender.Delete
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewDocument()
-		  // This version prompts the user to select a game
-		  
-		  // At the moment, since Ark is the only supported game, we'll just forward this to the game-specific version
-		  Self.NewDocument(Ark.Identifier)
+		Sub NewProject()
+		  Self.NewProject(Preferences.NewProjectGameId)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewDocument(Project As Beacon.Project)
+		Sub NewProject(Project As Beacon.Project)
 		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity)
-		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Path, Controller.Name)
 		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
 		  Self.AttachControllerEvents(Controller)
 		  
 		  Controller.Load()
+		  
+		  Self.RequestFrontmost()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewDocument(GameID As String)
-		  If Self.CheckGameDatabase(GameID) = False Then
+		Sub NewProject(GameId As String)
+		  If GameId.IsEmpty Then
+		    GameId = GameSelectorWindow.Present(Self.TrueWindow)
+		  End If
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
+		  If Self.CheckGameDatabase(GameId) = False Then
 		    Return
 		  End If
 		  
-		  Var Project As Beacon.Project = Beacon.Project.CreateForGameID(GameID)
+		  Var Project As Beacon.Project = Beacon.Project.CreateForGameId(GameId)
 		  
 		  Static NewDocumentNumber As Integer = 1
 		  Project.Title = "Untitled Project " + NewDocumentNumber.ToString
 		  Project.Modified = False
 		  NewDocumentNumber = NewDocumentNumber + 1
 		  
-		  Self.NewDocument(Project)
+		  Self.NewProject(Project)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub OpenController(Controller As Beacon.ProjectController, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
-		  If Self.CheckGameDatabase(Controller.GameID) = False Then
+		  If Self.CheckGameDatabase(Controller.GameId) = False Then
 		    Return
 		  End If
 		  
-		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Path, Controller.Name)
 		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
@@ -558,29 +579,28 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL)
+		Sub OpenProject(URL As Beacon.ProjectURL)
 		  Var Actions() As Beacon.ScriptAction
-		  Self.OpenDocument(URL, True, Actions)
+		  Self.OpenProject(URL, True, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL, Actions() As Beacon.ScriptAction)
-		  Self.OpenDocument(URL, True, Actions)
+		Sub OpenProject(URL As Beacon.ProjectURL, Actions() As Beacon.ScriptAction)
+		  Self.OpenProject(URL, True, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean)
+		Sub OpenProject(URL As Beacon.ProjectURL, AddToRecents As Boolean)
 		  Var Actions() As Beacon.ScriptAction
-		  Self.OpenDocument(URL, AddToRecents, Actions)
+		  Self.OpenProject(URL, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
-		  Var Hash As String = URL.Hash
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
+		Sub OpenProject(URL As Beacon.ProjectURL, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Url.Path)
 		  If (NavItem Is Nil) = False Then
 		    // We've already started loading this item
 		    For Idx As Integer = 0 To Self.LastPageIndex
@@ -608,29 +628,29 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem)
+		Sub OpenProject(File As FolderItem)
 		  Var Actions() As Beacon.ScriptAction
-		  Self.OpenDocument(File, True, Actions)
+		  Self.OpenProject(File, True, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem, Actions() As Beacon.ScriptAction)
-		  Self.OpenDocument(File, True, Actions)
+		Sub OpenProject(File As FolderItem, Actions() As Beacon.ScriptAction)
+		  Self.OpenProject(File, True, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean)
+		Sub OpenProject(File As FolderItem, AddToRecents As Boolean)
 		  Var Actions() As Beacon.ScriptAction
-		  Self.OpenDocument(File, AddToRecents, Actions)
+		  Self.OpenProject(File, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
-		  Var URL As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(File))
-		  Self.OpenDocument(URL, AddToRecents, Actions)
+		Sub OpenProject(File As FolderItem, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
+		  Var URL As Beacon.ProjectURL = Beacon.ProjectURL.Create(New BookmarkedFolderItem(File))
+		  Self.OpenProject(URL, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
@@ -657,10 +677,11 @@ End
 		    For Idx As Integer = 0 To Files.LastIndex
 		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(Files(Idx))
 		      
-		      Var FileURL As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(File)
-		      App.Log("Attempting to restore autosave " + FileURL.URL(Beacon.ProjectURL.URLTypes.Reading))
+		      Var FileURL As Beacon.ProjectURL = Beacon.ProjectURL.Create(File)
+		      App.Log("Attempting to restore autosave " + FileURL.Path)
 		      
 		      Var Controller As New Beacon.ProjectController(FileURL, App.IdentityManager.CurrentIdentity)
+		      Controller.AutosaveURL = FileURL
 		      AddHandler Controller.Loaded, AddressOf mAutosaveController_Loaded
 		      AddHandler Controller.LoadError, AddressOf mAutosaveController_LoadError
 		      Controller.Load()
@@ -671,7 +692,7 @@ End
 		      
 		      Try
 		        File.Remove
-		      Catch Err As IOException
+		      Catch Err As RuntimeException
 		      End Try
 		    Next
 		  End If
@@ -750,31 +771,30 @@ End
 #tag EndEvents
 #tag Events RecentDocumentsComponent1
 	#tag Event
-		Sub OpenDocument(URL As Beacon.ProjectURL)
-		  Self.OpenDocument(URL)
+		Sub OpenProject(URL As Beacon.ProjectURL)
+		  Self.OpenProject(URL)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CloudDocumentsComponent1
 	#tag Event
-		Sub OpenDocument(URL As Beacon.ProjectURL)
-		  Self.OpenDocument(URL)
+		Sub OpenProject(URL As Beacon.ProjectURL)
+		  Self.OpenProject(URL)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CloseDocument(URL As Beacon.ProjectURL) As Boolean
-		  Var Hash As String = URL.Hash
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
+		Function CloseProject(URL As Beacon.ProjectURL) As Boolean
+		  Var NavItem As OmniBarItem = Self.Nav.Item(URL.Path)
 		  If NavItem Is Nil Then
 		    // Document is not open
 		    Return True
@@ -793,13 +813,13 @@ End
 #tag EndEvents
 #tag Events CommunityDocumentsComponent1
 	#tag Event
-		Sub OpenDocument(URL As Beacon.ProjectURL)
-		  Self.OpenDocument(URL)
+		Sub OpenProject(URL As Beacon.ProjectURL)
+		  Self.OpenProject(URL)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

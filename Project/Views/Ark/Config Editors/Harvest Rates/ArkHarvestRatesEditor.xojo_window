@@ -169,6 +169,7 @@ Begin ArkConfigEditor ArkHarvestRatesEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -178,6 +179,7 @@ Begin ArkConfigEditor ArkHarvestRatesEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   206
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -639,13 +641,13 @@ End
 		  Var SkippedEngrams As New Dictionary
 		  Var Engrams() As Ark.Engram = Config.Engrams
 		  For Each Engram As Ark.Engram In Engrams
-		    SkippedEngrams.Value(Engram.ObjectID) = True
+		    SkippedEngrams.Value(Engram.EngramId) = True
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
 		  Engrams = Ark.DataSource.Pool.Get(False).GetEngrams("", Self.Project.ContentPacks, "{""required"":[""harvestable""],""excluded"":[]}")
 		  For Each Engram As Ark.Engram In Engrams
-		    If SkippedEngrams.HasKey(Engram.ObjectID) Then
+		    If SkippedEngrams.HasKey(Engram.EngramId) Then
 		      Continue
 		    End If
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
@@ -719,7 +721,7 @@ End
 		      Continue
 		    End If
 		    
-		    Selections.Add(Ark.Engram(Self.List.RowTagAt(I)).ObjectID)
+		    Selections.Add(Ark.Engram(Self.List.RowTagAt(I)).EngramId)
 		  Next
 		  Self.UpdateList(Selections)
 		End Sub
@@ -729,7 +731,7 @@ End
 		Private Sub UpdateList(SelectEngrams() As Ark.Engram)
 		  Var Selections() As String
 		  For Each Engram As Ark.Engram In SelectEngrams
-		    Selections.Add(Engram.ObjectID)
+		    Selections.Add(Engram.EngramId)
 		  Next
 		  Self.UpdateList(Selections) 
 		End Sub
@@ -755,7 +757,7 @@ End
 		    Var EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
 		    Self.List.AddRow(Engram.Label, Rate.PrettyText, EffectiveRate.PrettyText)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Engram.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Engram.EngramId) > -1
 		  Next Engram
 		  
 		  Self.List.Sort
@@ -832,7 +834,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -842,7 +844,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("HarvestAmountMultiplier") > -1)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -884,48 +886,49 @@ End
 		    
 		    Var Engram As Ark.Engram = Me.RowTagAt(I)
 		    Var Rate As Double = Config.Override(Engram)
-		    Items.Value(Engram.ObjectID) = Rate
+		    Items.Value(Engram.EngramId) = Rate
 		  Next
 		  
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)
+		  If Items.KeyCount = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kClipboardType, Items)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Var Items As Dictionary
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Items = Beacon.ParseJSON(JSON)
-		    Catch Err As RuntimeException
-		      Items = New Dictionary
-		    End Try
-		    
-		    If Items.KeyCount = 0 Then
-		      Return
-		    End If
-		    
-		    Var Config As Ark.Configs.HarvestRates = Self.Config(True)
-		    Var SelectEngrams() As Ark.Engram
-		    For Each Entry As DictionaryEntry In Items
-		      Var UUID As String = Entry.Key
-		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(UUID)
-		      If Engram Is Nil Then
-		        Continue
+		      Var Rates As Dictionary = Contents
+		      If Rates.KeyCount = 0 Then
+		        Return
 		      End If
 		      
-		      Var Rate As Double = Entry.Value
-		      SelectEngrams.Add(Engram)
-		      Config.Override(Engram) = Rate
-		    Next
-		    Self.Modified = True
-		    Self.UpdateList(SelectEngrams)
-		    Return
-		  End If
-		  
-		  If Board.TextAvailable Then
-		    Var ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse("", ImportText, "Clipboard")
+		      Var SelectEngrams() As Ark.Engram
+		      Var Config As Ark.Configs.HarvestRates = Self.Config(True)
+		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		      For Each Entry As DictionaryEntry In Rates
+		        Var EngramId As String = Entry.Key
+		        Var Engram As Ark.Engram = DataSource.GetEngram(EngramId)
+		        If Engram Is Nil Then
+		          Continue
+		        End If
+		        
+		        Var Rate As Double = Entry.Value
+		        Config.Override(Engram) = Rate
+		        SelectEngrams.Add(Engram)
+		      Next
+		      
+		      If SelectEngrams.Count > 0 Then
+		        Self.Modified = True
+		        Self.UpdateList(SelectEngrams)
+		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
 		End Sub

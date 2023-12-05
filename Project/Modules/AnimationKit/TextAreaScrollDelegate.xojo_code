@@ -59,9 +59,9 @@ Implements AnimationKit.Scrollable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Target() As TextArea
+		Function Target() As DesktopTextArea
 		  If (TargetRef Is Nil) = False And (TargetRef.Value Is Nil) = False Then
-		    Return TextArea(TargetRef.Value)
+		    Return DesktopTextArea(TargetRef.Value)
 		  End If
 		End Function
 	#tag EndMethod

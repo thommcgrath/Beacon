@@ -6,17 +6,17 @@ Protected Module Configs
 		  If Names.LastIndex = -1 Then
 		    Names.Add(NameBreedingMultipliers)
 		    Names.Add(NameCraftingCosts)
-		    Names.Add(NameCustomContent)
+		    Names.Add(NameCustomConfig)
 		    Names.Add(NameDayCycle)
 		    Names.Add(NameDifficulty)
-		    Names.Add(NameDinoAdjustments)
+		    Names.Add(NameCreatureAdjustments)
 		    Names.Add(NameEngramControl)
-		    Names.Add(NameExperienceCurves)
+		    Names.Add(NameLevelsAndXP)
 		    Names.Add(NameHarvestRates)
 		    Names.Add(NameLootDrops)
-		    Names.Add(NameOtherSettings)
-		    Names.Add(NameSpawnPoints)
-		    Names.Add(NameSpoilTimers)
+		    Names.Add(NameGeneralSettings)
+		    Names.Add(NameCreatureSpawns)
+		    Names.Add(NameDecayAndSpoil)
 		    Names.Add(NameStackSizes)
 		    Names.Add(NameStatLimits)
 		    Names.Add(NameStatMultipliers)
@@ -45,15 +45,15 @@ Protected Module Configs
 		    Tools.Add(New Ark.ProjectTool("Adjust Crafting Costs", "6600245b-54b4-4b85-8f26-3792084ca2fa", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Setup Fibercraft Server", "94eced5b-be7d-441a-a5b3-f4a9bf40a856", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Setup Transferrable Element", "3db64fe3-9134-4a19-a255-7712c8c70a83", NameCraftingCosts))
-		    Tools.Add(New Ark.ProjectTool("Convert Creature Replacements to Spawn Point Additions", "614cfc80-b7aa-437d-b17e-01534f2ab778", NameSpawnPoints, NameDinoAdjustments))
-		    Tools.Add(New Ark.ProjectTool("Quick Edit Creature Spawns", "8913bca3-fbae-43bd-a94b-7c3ac06b6ca1", NameSpawnPoints))
+		    Tools.Add(New Ark.ProjectTool("Convert Creature Replacements to Spawn Point Additions", "614cfc80-b7aa-437d-b17e-01534f2ab778", NameCreatureSpawns, NameCreatureAdjustments))
+		    Tools.Add(New Ark.ProjectTool("Quick Edit Creature Spawns", "8913bca3-fbae-43bd-a94b-7c3ac06b6ca1", NameCreatureSpawns))
 		    #if False
-		      Tools.Add(New Ark.ProjectTool("Show Creature Spawn Simulator", ArkCreatureSpawnsEditor.ToolSpawnSimulator, NameSpawnPoints))
+		      Tools.Add(New Ark.ProjectTool("Show Creature Spawn Simulator", ArkCreatureSpawnsEditor.ToolSpawnSimulator, NameCreatureSpawns))
 		    #endif
-		    Tools.Add(New Ark.ProjectTool("Setup Guided Editors", "d29dc6f8-e834-4969-9cfe-b38e1c052156", NameCustomContent))
+		    Tools.Add(New Ark.ProjectTool("Setup Guided Editors", "d29dc6f8-e834-4969-9cfe-b38e1c052156", NameCustomConfig))
 		    Tools.Add(New Ark.ProjectTool("Convert Global Harvest Rate to Individual Rates", "5265adcd-5c7e-437c-bce2-d10721afde43", NameHarvestRates))
 		    Tools.Add(New Ark.ProjectTool("Rebuild Item Sets from Templates", "08efc49c-f39f-4147-820d-201637c206b5", NameLootDrops))
-		    Tools.Add(New Ark.ProjectTool("Compute GFI Codes", "6bcf5785-b8e2-4889-91c8-545c34f30d8a", NameMetadataPsuedo))
+		    Tools.Add(New Ark.ProjectTool("Compute GFI Codes", "6bcf5785-b8e2-4889-91c8-545c34f30d8a", NameProjectSettings))
 		    
 		    Var Names() As String
 		    Names.ResizeTo(Tools.LastIndex)
@@ -93,7 +93,7 @@ Protected Module Configs
 		  Var RequiresOmni As Boolean
 		  If mConfigOmniCache.HasKey(InternalName) = False Then
 		    Select Case InternalName
-		    Case NameServersPseudo, NameMetadataPsuedo, NameAccountsPsuedo
+		    Case NameServers, NameProjectSettings, NameAccounts
 		      RequiresOmni = False
 		    Else
 		      Var Instance As Ark.ConfigGroup = CreateInstance(InternalName)
@@ -121,23 +121,23 @@ Protected Module Configs
 		    Return New Ark.Configs.BreedingMultipliers()
 		  Case NameCraftingCosts
 		    Return New Ark.Configs.CraftingCosts()
-		  Case NameCustomContent
+		  Case NameCustomConfig
 		    Return New Ark.Configs.CustomContent()
 		  Case NameDayCycle
 		    Return New Ark.Configs.DayCycle()
 		  Case NameDifficulty
 		    Return New Ark.Configs.Difficulty()
-		  Case NameDinoAdjustments
+		  Case NameCreatureAdjustments
 		    Return New Ark.Configs.DinoAdjustments()
 		  Case NameEngramControl
 		    Return New Ark.Configs.EngramControl()
-		  Case NameExperienceCurves
+		  Case NameLevelsAndXP
 		    Return New Ark.Configs.ExperienceCurves()
 		  Case NameHarvestRates
 		    Return New Ark.Configs.HarvestRates()
 		  Case NameLootDrops
 		    Return New Ark.Configs.LootDrops()
-		  Case NameSpawnPoints
+		  Case NameCreatureSpawns
 		    Return New Ark.Configs.SpawnPoints()
 		  Case NameStackSizes
 		    Return New Ark.Configs.StackSizes()
@@ -145,9 +145,9 @@ Protected Module Configs
 		    Return New Ark.Configs.StatLimits()
 		  Case NameStatMultipliers
 		    Return New Ark.Configs.StatMultipliers()
-		  Case NameSpoilTimers
+		  Case NameDecayAndSpoil
 		    Return New Ark.Configs.SpoilTimers()
-		  Case NameOtherSettings
+		  Case NameGeneralSettings
 		    Return New Ark.Configs.OtherSettings()
 		  Else
 		    Var Err As New FunctionNotFoundException
@@ -173,23 +173,23 @@ Protected Module Configs
 		    Return New Ark.Configs.BreedingMultipliers(SaveData, EncryptedData)
 		  Case NameCraftingCosts
 		    Return New Ark.Configs.CraftingCosts(SaveData, EncryptedData)
-		  Case NameCustomContent
+		  Case NameCustomConfig
 		    Return New Ark.Configs.CustomContent(SaveData, EncryptedData)
 		  Case NameDayCycle
 		    Return New Ark.Configs.DayCycle(SaveData, EncryptedData)
 		  Case NameDifficulty
 		    Return New Ark.Configs.Difficulty(SaveData, EncryptedData)
-		  Case NameDinoAdjustments
+		  Case NameCreatureAdjustments
 		    Return New Ark.Configs.DinoAdjustments(SaveData, EncryptedData)
 		  Case NameEngramControl
 		    Return New Ark.Configs.EngramControl(SaveData, EncryptedData)
-		  Case NameExperienceCurves
+		  Case NameLevelsAndXP
 		    Return New Ark.Configs.ExperienceCurves(SaveData, EncryptedData)
 		  Case NameHarvestRates
 		    Return New Ark.Configs.HarvestRates(SaveData, EncryptedData)
 		  Case NameLootDrops
 		    Return New Ark.Configs.LootDrops(SaveData, EncryptedData)
-		  Case NameSpawnPoints
+		  Case NameCreatureSpawns
 		    Return New Ark.Configs.SpawnPoints(SaveData, EncryptedData)
 		  Case NameStackSizes
 		    Return New Ark.Configs.StackSizes(SaveData, EncryptedData)
@@ -197,9 +197,9 @@ Protected Module Configs
 		    Return New Ark.Configs.StatLimits(SaveData, EncryptedData)
 		  Case NameStatMultipliers
 		    Return New Ark.Configs.StatMultipliers(SaveData, EncryptedData)
-		  Case NameSpoilTimers
+		  Case NameDecayAndSpoil
 		    Return New Ark.Configs.SpoilTimers(SaveData, EncryptedData)
-		  Case NameOtherSettings
+		  Case NameGeneralSettings
 		    Return New Ark.Configs.OtherSettings(SaveData, EncryptedData)
 		  Else
 		    Var Err As New FunctionNotFoundException
@@ -222,23 +222,23 @@ Protected Module Configs
 		    Return Ark.Configs.BreedingMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameCraftingCosts
 		    Return Ark.Configs.CraftingCosts.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case Ark.Configs.NameCustomContent
+		  Case Ark.Configs.NameCustomConfig
 		    Return Nil
 		  Case Ark.Configs.NameDayCycle
 		    Return Ark.Configs.DayCycle.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameDifficulty
 		    Return Nil
-		  Case Ark.Configs.NameDinoAdjustments
+		  Case Ark.Configs.NameCreatureAdjustments
 		    Return Ark.Configs.DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameEngramControl
 		    Return Ark.Configs.EngramControl.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case Ark.Configs.NameExperienceCurves
+		  Case Ark.Configs.NameLevelsAndXP
 		    Return Ark.Configs.ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameHarvestRates
 		    Return Ark.Configs.HarvestRates.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameLootDrops
 		    Return Ark.Configs.LootDrops.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case Ark.Configs.NameSpawnPoints
+		  Case Ark.Configs.NameCreatureSpawns
 		    Return Ark.Configs.SpawnPoints.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameStackSizes
 		    Return Ark.Configs.StackSizes.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
@@ -246,9 +246,9 @@ Protected Module Configs
 		    Return Ark.Configs.StatLimits.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameStatMultipliers
 		    Return Ark.Configs.StatMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case Ark.Configs.NameSpoilTimers
+		  Case Ark.Configs.NameDecayAndSpoil
 		    Return Ark.Configs.SpoilTimers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case Ark.Configs.NameOtherSettings
+		  Case Ark.Configs.NameGeneralSettings
 		    Return Ark.Configs.OtherSettings.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Else
 		    Var Err As New FunctionNotFoundException
@@ -379,61 +379,61 @@ Protected Module Configs
 	#tag EndProperty
 
 
-	#tag Constant, Name = NameAccountsPsuedo, Type = String, Dynamic = False, Default = \"accounts", Scope = Protected
+	#tag Constant, Name = NameAccounts, Type = String, Dynamic = False, Default = \"Ark.Accounts", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameBreedingMultipliers, Type = String, Dynamic = False, Default = \"BreedingMultipliers", Scope = Protected
+	#tag Constant, Name = NameBreedingMultipliers, Type = String, Dynamic = False, Default = \"Ark.BreedingMultipliers", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameCraftingCosts, Type = String, Dynamic = False, Default = \"CraftingCosts", Scope = Protected
+	#tag Constant, Name = NameCraftingCosts, Type = String, Dynamic = False, Default = \"Ark.CraftingCosts", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameCustomContent, Type = String, Dynamic = False, Default = \"CustomContent", Scope = Protected
+	#tag Constant, Name = NameCreatureAdjustments, Type = String, Dynamic = False, Default = \"Ark.CreatureAdjustments", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameDayCycle, Type = String, Dynamic = False, Default = \"DayCycle", Scope = Protected
+	#tag Constant, Name = NameCreatureSpawns, Type = String, Dynamic = False, Default = \"Ark.CreatureSpawns", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameDifficulty, Type = String, Dynamic = False, Default = \"Difficulty", Scope = Protected
+	#tag Constant, Name = NameCustomConfig, Type = String, Dynamic = False, Default = \"Ark.CustomConfig", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameDinoAdjustments, Type = String, Dynamic = False, Default = \"DinoAdjustments", Scope = Protected
+	#tag Constant, Name = NameDayCycle, Type = String, Dynamic = False, Default = \"Ark.DayCycle", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameEngramControl, Type = String, Dynamic = False, Default = \"EngramControl", Scope = Protected
+	#tag Constant, Name = NameDecayAndSpoil, Type = String, Dynamic = False, Default = \"Ark.DecayAndSpoil", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameExperienceCurves, Type = String, Dynamic = False, Default = \"ExperienceCurves", Scope = Protected
+	#tag Constant, Name = NameDifficulty, Type = String, Dynamic = False, Default = \"Ark.Difficulty", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameHarvestRates, Type = String, Dynamic = False, Default = \"HarvestRates", Scope = Protected
+	#tag Constant, Name = NameEngramControl, Type = String, Dynamic = False, Default = \"Ark.EngramControl", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameLootDrops, Type = String, Dynamic = False, Default = \"LootDrops", Scope = Protected
+	#tag Constant, Name = NameGeneralSettings, Type = String, Dynamic = False, Default = \"Ark.GeneralSettings", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameMetadataPsuedo, Type = String, Dynamic = False, Default = \"metadata", Scope = Protected
+	#tag Constant, Name = NameHarvestRates, Type = String, Dynamic = False, Default = \"Ark.HarvestRates", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameOtherSettings, Type = String, Dynamic = False, Default = \"OtherSettings", Scope = Protected
+	#tag Constant, Name = NameLevelsAndXP, Type = String, Dynamic = False, Default = \"Ark.LevelsAndXP", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameServersPseudo, Type = String, Dynamic = False, Default = \"deployments", Scope = Protected
+	#tag Constant, Name = NameLootDrops, Type = String, Dynamic = False, Default = \"Ark.LootDrops", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameSpawnPoints, Type = String, Dynamic = False, Default = \"SpawnPoints", Scope = Protected
+	#tag Constant, Name = NameProjectSettings, Type = String, Dynamic = False, Default = \"Ark.ProjectSettings", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameSpoilTimers, Type = String, Dynamic = False, Default = \"SpoilTimers", Scope = Protected
+	#tag Constant, Name = NameServers, Type = String, Dynamic = False, Default = \"Ark.Servers", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameStackSizes, Type = String, Dynamic = False, Default = \"StackSizes", Scope = Protected
+	#tag Constant, Name = NameStackSizes, Type = String, Dynamic = False, Default = \"Ark.StackSizes", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameStatLimits, Type = String, Dynamic = False, Default = \"StatLimits", Scope = Protected
+	#tag Constant, Name = NameStatLimits, Type = String, Dynamic = False, Default = \"Ark.StatLimits", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameStatMultipliers, Type = String, Dynamic = False, Default = \"StatMultipliers", Scope = Protected
+	#tag Constant, Name = NameStatMultipliers, Type = String, Dynamic = False, Default = \"Ark.StatMultipliers", Scope = Protected
 	#tag EndConstant
 
 

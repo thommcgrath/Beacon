@@ -22,6 +22,8 @@ Protected Class Quality
 	#tag Method, Flags = &h0
 		Function Label(Full As Boolean = True) As String
 		  Select Case Self.mKey
+		  Case Ark.Qualities.Tier0.Key
+		    Return If(Full, Self.QualityTier00, Self.QualityTier00Short)
 		  Case Ark.Qualities.Tier1.Key
 		    Return If(Full, Self.QualityTier01, Self.QualityTier01Short)
 		  Case Ark.Qualities.Tier2.Key
@@ -50,7 +52,7 @@ Protected Class Quality
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Ark.Quality) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
@@ -80,6 +82,12 @@ Protected Class Quality
 		Private mKey As String
 	#tag EndProperty
 
+
+	#tag Constant, Name = QualityTier00, Type = String, Dynamic = False, Default = \"No Quality", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = QualityTier00Short, Type = String, Dynamic = False, Default = \"None", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = QualityTier01, Type = String, Dynamic = False, Default = \"Primitive", Scope = Public
 	#tag EndConstant

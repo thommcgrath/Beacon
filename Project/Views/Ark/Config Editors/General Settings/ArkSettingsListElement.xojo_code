@@ -15,7 +15,7 @@ Inherits DesktopContainer
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Key As Ark.ConfigKey)
+		Sub Constructor(Key As Ark.ConfigOption)
 		  Self.mKey = Key
 		  Super.Constructor
 		  Self.NameLabel.Text = Key.Label.ReplaceAll("&", "&&").Trim + ":"
@@ -45,7 +45,7 @@ Inherits DesktopContainer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Key() As Ark.ConfigKey
+		Function Key() As Ark.ConfigOption
 		  Return Self.mKey
 		End Function
 	#tag EndMethod
@@ -148,7 +148,7 @@ Inherits DesktopContainer
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h1
-		Protected mKey As Ark.ConfigKey
+		Protected mKey As Ark.ConfigOption
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -100,16 +100,16 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PlayerBaseStatMultipliers"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_Player"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed_Add"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed_Affinity"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoWild"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoost"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoostBred"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PlayerBaseStatMultipliers"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_Player"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed_Add"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed_Affinity"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoWild"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoost"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoostBred"))
 		  Return Keys
 		End Function
 	#tag EndEvent
@@ -251,14 +251,14 @@ Inherits Ark.ConfigGroup
 		    Var Members() As Variant
 		    Try
 		      Members = Value
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		    
 		    Values.ResizeTo(Members.LastIndex)
 		    For Idx As Integer = 0 To Members.LastIndex
 		      Try
 		        Values(Idx) = Members(Idx)
-		      Catch Err As TypeMismatchException
+		      Catch Err As RuntimeException
 		      End Try
 		    Next Idx
 		  End If

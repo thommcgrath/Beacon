@@ -192,6 +192,7 @@ Begin BeaconDialog DocumentVersionListWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
@@ -201,6 +202,7 @@ Begin BeaconDialog DocumentVersionListWindow
       TabStop         =   True
       Tooltip         =   ""
       Top             =   143
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -215,8 +217,8 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub AddVersion(Version As Dictionary)
-		  Var DocumentURL As String = Version.Value("resource_url")
+		Private Sub AddVersion(BaseUrl As String, Version As Dictionary)
+		  Var DocumentURL As String = BaseUrl + "/" + Version.Value("versionId")
 		  Var SizeInBytes As Double = Version.Value("size")
 		  Var SaveDate As DateTime = NewDateFromSQLDateTime(Version.Value("date").StringValue)
 		  Var LocalDate As DateTime = SaveDate.LocalTime
@@ -227,7 +229,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As DesktopWindow, Versions() As Dictionary)
+		Shared Sub Present(Parent As DesktopWindow, BaseUrl As String, Versions() As Dictionary)
 		  If Parent Is Nil Then
 		    Return
 		  End If
@@ -242,7 +244,7 @@ End
 		      Win = New DocumentVersionListWindow
 		    End If
 		    
-		    Win.AddVersion(Version)
+		    Win.AddVersion(BaseUrl, Version)
 		  Next
 		  
 		  If Win Is Nil Then
@@ -289,7 +291,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  Var DocumentURL As String = Me.RowTagAt(Me.SelectedRowIndex)
-		  App.MainWindow.Documents.OpenDocument(DocumentURL.Replace("https://", Beacon.ProjectURL.TypeCloud + "://"), False)
+		  App.MainWindow.Documents.OpenProject(DocumentURL.Replace("https://", Beacon.ProjectURL.TypeCloud + "://"), False)
 		  Self.Close
 		End Sub
 	#tag EndEvent
@@ -344,8 +346,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

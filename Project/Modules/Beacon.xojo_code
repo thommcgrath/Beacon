@@ -1,5 +1,16 @@
 #tag Module
 Protected Module Beacon
+	#tag Method, Flags = &h0
+		Sub AddClipboardData(Extends Board As Clipboard, Type As String, Data As Variant)
+		  Var Wrapper As New Dictionary
+		  Wrapper.Value("type") = Type
+		  Wrapper.Value("data") = Data
+		  
+		  Board.Text = Beacon.GenerateJson(Wrapper, True)
+		  Board.RawData(Type) = Beacon.GenerateJson(Data, False)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function AreElementsEqual(Items() As Variant) As Boolean
 		  If Items = Nil Or Items.LastIndex <= 0 Then
@@ -61,6 +72,118 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function BuildExport(ContentPacks() As Beacon.ContentPack, Archive As Beacon.Archive, IsUserData As Boolean) As Boolean
+		  Var Filenames() As String
+		  Var ArkDataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var ArkSADataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  For Each ContentPack As Beacon.ContentPack In ContentPacks
+		    Select Case ContentPack.GameId
+		    Case Ark.Identifier
+		      Var Blueprints() As Ark.Blueprint = ArkDataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		      Var Filename As String = Ark.AddToArchive(Archive, ContentPack, Blueprints)
+		      If Filename.IsEmpty = False Then
+		        Filenames.Add(Filename)
+		      End If
+		    Case ArkSA.Identifier
+		      Var Blueprints() As ArkSA.Blueprint = ArkSADataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		      Var Filename As String = ArkSA.AddToArchive(Archive, ContentPack, Blueprints)
+		      If Filename.IsEmpty = False Then
+		        Filenames.Add(Filename)
+		      End If
+		    End Select
+		  Next
+		  If Filenames.Count = 0 Then
+		    Return False
+		  End If
+		  Filenames.Sort
+		  
+		  Var Manifest As New Dictionary
+		  Manifest.Value("version") = 7
+		  Manifest.Value("minVersion") = 7
+		  Manifest.Value("generatedWith") = App.BuildNumber
+		  Manifest.Value("isFull") = False
+		  Manifest.Value("files") = Filenames
+		  Manifest.Value("isUserData") = IsUserData
+		  Archive.AddFile("Manifest.json", Beacon.GenerateJson(Manifest, False))
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(ContentPacks() As Beacon.ContentPack, IsUserData As Boolean) As MemoryBlock
+		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Then
+		    App.Log("Could not export blueprints because there are no mods to export.")
+		    Return Nil
+		  End If
+		  
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create()
+		  Var Success As Boolean = BuildExport(ContentPacks, Archive, IsUserData)
+		  Var Mem As MemoryBlock = Archive.Finalize
+		  If Success Then
+		    Return Mem
+		  Else
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(ContentPacks() As Beacon.ContentPack, Destination As FolderItem, IsUserData As Boolean) As Boolean
+		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Or Destination Is Nil Then
+		    App.Log("Could not export blueprints because the destination is invalid or there are no mods to export.")
+		    Return False
+		  End If
+		  
+		  Var Temp As FolderItem = FolderItem.TemporaryFile
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Temp)
+		  Var Success As Boolean = BuildExport(ContentPacks, Archive, IsUserData)
+		  Call Archive.Finalize
+		  
+		  If Success Then
+		    Try
+		      If Destination.Exists Then
+		        Destination.Remove
+		      End If
+		      Temp.MoveTo(Destination)
+		      Return True
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		  End If
+		  
+		  Try
+		    Temp.Remove
+		  Catch Err As RuntimeException
+		  End Try
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(IsUserData As Boolean, ParamArray ContentPacks() As Beacon.ContentPack) As MemoryBlock
+		  Return BuildExport(ContentPacks, IsUserData)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Destination As FolderItem, IsUserData As Boolean, ParamArray ContentPacks() As Beacon.ContentPack) As Boolean
+		  Return BuildExport(ContentPacks, Destination, IsUserData)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildPath(Components() As String) As String
+		  Return String.FromArray(Components, Beacon.PathSeparator)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildPath(ParamArray Components() As String) As String
+		  Return Beacon.BuildPath(Components)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function BytesToString(Bytes As Double, Locale As Locale = Nil) As String
 		  If Bytes < 1024 Then
@@ -87,28 +210,6 @@ Protected Module Beacon
 		  
 		  Var Tebibytes As Double = Gibibytes / 1024
 		  Return Tebibytes.ToString(Locale, "#,##0.00") + " TiB"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ClassStringFromPath(Path As String) As String
-		  If Path.Length <= 6 Or Path.Left(6) <> "/Game/" Then
-		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
-		  End If
-		  
-		  Var Components() As String = Path.Split("/")
-		  Var Tail As String = Components(Components.LastIndex)
-		  Components = Tail.Split(".")
-		  
-		  Var FirstPart As String = Components(Components.FirstIndex)
-		  Var SecondPart As String = Components(Components.LastIndex)
-		  
-		  If SecondPart.EndsWith("_C") And FirstPart.EndsWith("_C") = False Then
-		    // Appears to be a BlueprintGeneratedClass Path
-		    SecondPart = SecondPart.Left(SecondPart.Length - 2)
-		  End If
-		  
-		  Return SecondPart + "_C"
 		End Function
 	#tag EndMethod
 
@@ -276,27 +377,54 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ComputeDifficultySettings(BaseDifficulty As Double, DesiredDinoLevel As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
-		  OverrideOfficialDifficulty = Max(Ceiling(DesiredDinoLevel / 30), BaseDifficulty)
-		  DifficultyOffset = Max((DesiredDinoLevel - 15) / ((OverrideOfficialDifficulty * 30) - 15), 0.001)
-		  DifficultyValue = (DifficultyOffset * (OverrideOfficialDifficulty - 0.5)) + 0.5
-		End Sub
+		Protected Function ConfigHelpPath(ConfigGroup As Beacon.ConfigGroup) As String
+		  Return ConfigHelpPath(ConfigGroup.InternalName)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ComputeDifficultySettings(MaxDinoLevel As Integer, DinoLevelSteps As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
-		  MaxDinoLevel = Max(MaxDinoLevel, 15)
-		  DinoLevelSteps = Max(DinoLevelSteps, 1)
-		  DifficultyValue = MaxDinoLevel / 30 
-		  OverrideOfficialDifficulty = DinoLevelSteps
-		  DifficultyOffset = Max(((MaxDinoLevel / 30) - 0.5) / (DinoLevelSteps - 0.5), 0.01)
-		End Sub
+		Protected Function ConfigHelpPath(ConfigName As String) As String
+		  Var GameId, Slug As String
+		  
+		  // Weird at the moment because we don't need to special-case anything
+		  Select Case ConfigName
+		  Else
+		    Var Parts() As String = ConfigName.Split(".")
+		    If Parts.Count < 2 Then
+		      Return "/"
+		    End If
+		    
+		    GameId = Parts(0)
+		    
+		    Var Replacer As New Regex
+		    Replacer.SearchPattern = "[A-Z0-9]+"
+		    Replacer.ReplacementPattern = " $0"
+		    Replacer.Options.ReplaceAllMatches = True
+		    Replacer.Options.CaseSensitive = True
+		    
+		    Slug = Replacer.Replace(Parts(1))
+		    
+		    Replacer.SearchPattern = "\s+"
+		    Replacer.ReplacementPattern = "_"
+		    Slug = Replacer.Replace(Slug.Trim)
+		  End Select
+		  
+		  Return "/configs/" + EncodeURLComponent(GameId.Lowercase) + "/" + EncodeURLComponent(Slug.Lowercase) + "/"
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ComputeMaxDinoLevel(Offset As Double, Steps As Integer) As Integer
-		  Var DifficultyValue As Double = (Offset * (Steps - 0.5)) + 0.5
-		  Return DifficultyValue * 30
+		Protected Function CurseForgeApiKey() As String
+		  Static ApiKey As String
+		  If ApiKey.IsEmpty Then
+		    #if DebugBuild
+		      Var Chars As String = App.ResourcesFolder.Child("CurseForge.txt").Read
+		    #else
+		      Var Chars As String = CurseForgeApiKeyEncoded
+		    #endif
+		    ApiKey = DefineEncoding(DecodeBase64(Chars.Middle(0, 1) + Chars.Middle(3, 1) + Chars.Middle(0, 1) + Chars.Middle(38, 1) + Chars.Middle(0, 1) + Chars.Middle(3, 1) + Chars.Middle(5, 1) + Chars.Middle(34, 1) + Chars.Middle(0, 1) + Chars.Middle(3, 1) + Chars.Middle(38, 1) + Chars.Middle(6, 1) + Chars.Middle(33, 1) + Chars.Middle(18, 1) + Chars.Middle(35, 1) + Chars.Middle(40, 1) + Chars.Middle(35, 1) + Chars.Middle(5, 1) + Chars.Middle(0, 1) + Chars.Middle(28, 1) + Chars.Middle(19, 1) + Chars.Middle(5, 1) + Chars.Middle(25, 1) + Chars.Middle(12, 1) + Chars.Middle(35, 1) + Chars.Middle(8, 1) + Chars.Middle(29, 1) + Chars.Middle(41, 1) + Chars.Middle(17, 1) + Chars.Middle(27, 1) + Chars.Middle(22, 1) + Chars.Middle(11, 1) + Chars.Middle(19, 1) + Chars.Middle(7, 1) + Chars.Middle(35, 1) + Chars.Middle(22, 1) + Chars.Middle(22, 1) + Chars.Middle(32, 1) + Chars.Middle(14, 1) + Chars.Middle(2, 1) + Chars.Middle(27, 1) + Chars.Middle(31, 1) + Chars.Middle(14, 1) + Chars.Middle(4, 1) + Chars.Middle(22, 1) + Chars.Middle(24, 1) + Chars.Middle(38, 1) + Chars.Middle(20, 1) + Chars.Middle(1, 1) + Chars.Middle(13, 1) + Chars.Middle(25, 1) + Chars.Middle(22, 1) + Chars.Middle(17, 1) + Chars.Middle(36, 1) + Chars.Middle(0, 1) + Chars.Middle(32, 1) + Chars.Middle(33, 1) + Chars.Middle(16, 1) + Chars.Middle(16, 1) + Chars.Middle(24, 1) + Chars.Middle(1, 1) + Chars.Middle(26, 1) + Chars.Middle(9, 1) + Chars.Middle(37, 1) + Chars.Middle(36, 1) + Chars.Middle(36, 1) + Chars.Middle(15, 1) + Chars.Middle(3, 1) + Chars.Middle(21, 1) + Chars.Middle(25, 1) + Chars.Middle(30, 1) + Chars.Middle(11, 1) + Chars.Middle(21, 1) + Chars.Middle(10, 1) + Chars.Middle(16, 1) + Chars.Middle(19, 1) + Chars.Middle(2, 1) + Chars.Middle(30, 1) + Chars.Middle(39, 1) + Chars.Middle(23, 1)),Encodings.UTF8)
+		  End If
+		  Return ApiKey
 		End Function
 	#tag EndMethod
 
@@ -334,8 +462,11 @@ Protected Module Beacon
 		Protected Function DetectGame(Content As String) As String
 		  // At the moment there is only one game supported, so the logic is really simple
 		  
-		  #Pragma Unused Content
-		  Return Ark.Identifier
+		  If Content.BeginsWith("<?xml") Then
+		    Return SDTD.Identifier
+		  Else
+		    Return Ark.Identifier
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -357,7 +488,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function DictionaryArrayValue(Extends Value As Variant) As Dictionary()
 		  If Value.IsNull Then
-		    Var Err As NilObjectException
+		    Var Err As New NilObjectException
 		    Err.Message = "Value is nil"
 		    Raise Err
 		  End If
@@ -405,16 +536,53 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function DifficultyOffset(Value As Double, Scale As Double) As Double
-		  Return Min((Value - 0.5) / (Scale - 0.5), 1.0)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function DifficultyValue(Offset As Double, Scale As Double) As Double
-		  Offset = Max(Offset, 0.0001)
-		  Return (Offset * (Scale - 0.5)) + 0.5
+	#tag Method, Flags = &h0
+		Function Disambiguate(Extends Candidates() As Beacon.DisambiguationCandidate, Mask As UInt64, GuaranteedMembers() As Beacon.DisambiguationCandidate = Nil) As Dictionary
+		  Var Mapper As New SQLiteDatabase
+		  Mapper.Connect
+		  Mapper.ExecuteSQL("CREATE TABLE labels (id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, suffix TEXT COLLATE NOCASE NOT NULL);")
+		  Mapper.ExecuteSQL("CREATE INDEX labels_label_idx ON labels(label);")
+		  
+		  Var Results As New Dictionary
+		  For Idx As Integer = 0 To Candidates.LastIndex
+		    If (Candidates(Idx).DisambiguationMask And Mask) = CType(0, UInt64) Then
+		      Continue For Idx
+		    End If
+		    
+		    Results.Value(Candidates(Idx).DisambiguationId) = Candidates(Idx).Label
+		    Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (id, label, suffix) VALUES (?1, ?2, ?3);", Candidates(Idx).DisambiguationId, Candidates(Idx).Label, Candidates(Idx).DisambiguationSuffix(Mask))
+		  Next
+		  
+		  If (GuaranteedMembers Is Nil) = False Then
+		    For Each Candidate As Beacon.DisambiguationCandidate In GuaranteedMembers
+		      Results.Value(Candidate.DisambiguationId) = Candidate.Label
+		      Mapper.ExecuteSQL("INSERT OR IGNORE INTO labels (id, label, suffix) VALUES (?1, ?2, ?3);", Candidate.DisambiguationId, Candidate.Label, Candidate.DisambiguationSuffix(Mask))
+		    Next
+		  End If
+		  
+		  Var Labels As New Dictionary
+		  For Each Candidate As Beacon.DisambiguationCandidate In Candidates
+		    If Labels.HasKey(Candidate.DisambiguationId) Then
+		      // No need to check this one again
+		      Continue
+		    End If
+		    
+		    Var CommonLabel As String = Candidate.Label
+		    Var SiblingRows As RowSet = Mapper.SelectSQL("SELECT id, suffix FROM labels WHERE label = ?1;", CommonLabel)
+		    If SiblingRows.RowCount = 1 Then
+		      // Unique already
+		      Labels.Value(SiblingRows.Column("id").StringValue) = CommonLabel
+		      Continue
+		    End If
+		    
+		    For Each SiblingRow As DatabaseRow In SiblingRows
+		      Var Id As String = SiblingRow.Column("id").StringValue
+		      Var Suffix As String = SiblingRow.Column("suffix").StringValue
+		      Labels.Value(Id) = CommonLabel + " (" + Suffix + ")"
+		    Next
+		  Next
+		  
+		  Return Labels
 		End Function
 	#tag EndMethod
 
@@ -479,11 +647,35 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function FlagsForGameId(GameId As String) As Integer
+		  Var Games() As Beacon.Game = Beacon.Games
+		  For Each Game As Beacon.Game In Games
+		    If Game.Identifier = GameId Then
+		      Return Game.Flags
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Games() As Beacon.Game()
 		  Static GameList() As Beacon.Game
 		  If GameList.Count = 0 Then
-		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName))
+		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName, Ark.OmniFlag, Beacon.Game.FeatureTemplates Or Beacon.Game.FeatureMods Or Beacon.Game.FeatureModDiscovery))
+		    #if SDTD.Enabled
+		      GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag, 0))
+		    #endif
+		    #if ArkSA.Enabled
+		      GameList.Add(New Beacon.Game(ArkSA.Identifier, ArkSA.FullName, ArkSA.OmniFlag, Beacon.Game.FeatureTemplates Or Beacon.Game.FeatureMods))
+		    #endif
+		    
+		    Var Names() As String
+		    Names.ResizeTo(GameList.LastIndex)
+		    For Idx As Integer = Names.FirstIndex To Names.LastIndex
+		      Names(Idx) = GameList(Idx).Name
+		    Next
+		    Names.SortWith(GameList)
 		  End If
 		  Return GameList
 		End Function
@@ -497,6 +689,15 @@ Protected Module Beacon
 		    Var Temp As JSONMBS = JSONMBS.Convert(Source)
 		    Return Temp.ToString(Pretty)
 		  #else
+		    If Source.Type = Variant.TypeObject And Source.ObjectValue IsA JSONItem Then
+		      Var Item As JSONItem = Source
+		      Var OriginalCompact As Boolean = Item.Compact
+		      Item.Compact = Not Pretty
+		      Var Json As String = Item.ToString()
+		      Item.Compact = OriginalCompact
+		      Return Json
+		    End If
+		    
 		    Var Result As String = Xojo.GenerateJSON(Source, Pretty)
 		    #if TargetARM And XojoVersion < 2022.01
 		      If Pretty Then
@@ -507,6 +708,52 @@ Protected Module Beacon
 		    #endif
 		    Return Result
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GenerateRandomKey(CharacterCount As Integer = 12, Pool As String = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") As String
+		  Var Rand As Random = System.Random
+		  Var PoolMax As Integer = Pool.Length - 1
+		  Var Chars() As String
+		  For Idx As Integer = 1 To CharacterCount
+		    Var Offset As Integer = Rand.InRange(0, PoolMax)
+		    Chars.Add(Pool.Middle(Offset, 1))
+		  Next
+		  Return String.FromArray(Chars, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetClipboardData(Extends Board As Clipboard, Type As String) As Variant
+		  If Board.RawDataAvailable(Type) Then
+		    Try
+		      Return Beacon.ParseJson(Board.RawData(Type))
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  End If
+		  
+		  If Board.TextAvailable = False Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Var Parsed As Variant = Beacon.ParseJson(Board.Text)
+		    If Parsed.Type <> Variant.TypeObject Or (Parsed.ObjectValue IsA Dictionary) = False Then
+		      Return Nil
+		    End If
+		    
+		    Var Dict As Dictionary = Dictionary(Parsed.ObjectValue)
+		    If Dict.Lookup("type", "").StringValue <> Type Or Dict.HasKey("data") = False Then
+		      Return Nil
+		    End If
+		    
+		    Return Dict.Value("data")
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		  
 		End Function
 	#tag EndMethod
 
@@ -555,9 +802,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GuessEncoding(Extends Value As String) As String
+		Function GuessEncoding(Extends Value As String, TestValue As String) As String
 		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
 		  // remove them, and convert to UTF-8.
+		  
+		  If Value.IsEmpty Then
+		    Return ""
+		  End If
 		  
 		  Var Mem As MemoryBlock = Value
 		  If Mem.Size >= 3 And Mem.StringValue(0, 3) = Encodings.ASCII.Chr(239) + Encodings.ASCII.Chr(187) + Encodings.ASCII.Chr(191) Then
@@ -573,7 +824,6 @@ Protected Module Beacon
 		    // Ok, now we need to get fancy. It's a safe bet that all files contain a "/script/" string, right?
 		    // Let's interpret the file as each of the 3 and see which one matches.
 		    
-		    Const TestValue = "/script/"
 		    Static EncodingsList() As TextEncoding
 		    If EncodingsList.LastIndex = -1 Then
 		      EncodingsList = Array(Encodings.UTF8, Encodings.UTF16LE, Encodings.UTF16BE)
@@ -588,9 +838,14 @@ Protected Module Beacon
 		    
 		    For Each Encoding As TextEncoding In EncodingsList
 		      Var TestVersion As String = Value.DefineEncoding(Encoding)
-		      If TestVersion.IndexOf(TestValue) > -1 Then
-		        Return TestVersion.ConvertEncoding(Encodings.UTF8)
-		      End If
+		      Try
+		        #Pragma BreakOnExceptions False
+		        If TestVersion.IndexOf(TestValue) > -1 Then
+		          Return TestVersion.ConvertEncoding(Encodings.UTF8)
+		        End If
+		      Catch Err As RuntimeException
+		        // IndexOf firing exceptions is stupid
+		      End Try
 		    Next
 		    
 		    // Who knows what the heck it could be, so it's ASCII now.
@@ -600,18 +855,19 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function HardwareID() As String
+		Protected Function HardwareId(ForceModern As Boolean = False) As String
 		  #if TargetMacOS
+		    #Pragma Unused ForceModern
 		    Return SystemInformationMBS.MacUUID.Lowercase
 		  #elseif TargetWindows Or TargetLinux
 		    Var Source As String = SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey
-		    Select Case Preferences.HardwareIdVersion
-		    Case 4
-		      Return v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Source)
+		    If ForceModern = False And Preferences.HardwareIdVersion = 4 Then
+		      Return Beacon.UUID.v4(Crypto.HashAlgorithms.MD5, Source)
 		    Else
 		      Return Beacon.UUID.v5(Source)
-		    End Select
+		    End If
 		  #elseif TargetiOS
+		    #Pragma Unused ForceModern
 		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 		    
 		    Const UIKitFramework = "UIKit.framework"
@@ -631,8 +887,24 @@ Protected Module Beacon
 		    
 		    Return Identifier.DefineEncoding(Encodings.UTF8).Lowercase
 		  #else
+		    #Pragma Unused ForceModern
 		    #Pragma Error "HardwareID not implemented for this platform"
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasClipboardData(Extends Board As Clipboard, Type As String) As Boolean
+		  If Board.RawDataAvailable(Type) Then
+		    Return True
+		  End If
+		  
+		  If Board.TextAvailable = False Then
+		    Return False
+		  End If
+		  
+		  Var Contents As String = Board.Text
+		  Return Contents.Contains("""type"": """ + Type + """")
 		End Function
 	#tag EndMethod
 
@@ -644,11 +916,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function HelpURL(Path As String = "/") As String
-		  Const NewHelpSystem = False
-		  
-		  #if NewHelpSystem And Not DebugBuild
-		    #Pragma Error "Are you sure about this?"
-		  #endif
+		  Const NewHelpSystem = True
 		  
 		  If Path.IsEmpty Or Path.BeginsWith("/") = False Then
 		    Path = "/" + Path
@@ -714,82 +982,25 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function LabelFromClassString(ClassString As String) As String
-		  If ClassString.EndsWith("_C") Then
-		    ClassString = ClassString.Left(ClassString.Length - 2)
-		  End If
-		  
-		  If ClassString.IsEmpty Then
-		    Return ""
-		  End If
-		  
-		  Var Prefixes() As String = Array("DinoDropInventoryComponent", "DinoSpawnEntries")
-		  Var Blacklist() As String = Array("Character", "BP", "DinoSpawnEntries", "SupplyCrate", "SupplyCreate", "DinoDropInventoryComponent")
-		  
+	#tag Method, Flags = &h0
+		Function IsTruthy(Extends Value As Variant) As Boolean
 		  Try
-		    ClassString = ClassString.Replace("T_Ext", "Ext")
-		    
-		    Var MapName As String
-		    
-		    Var Parts() As String = ClassString.Split("_")
-		    If Parts(0).BeginsWith("PrimalItem") Then
-		      Parts.RemoveAt(0)
+		    If IsNumeric(Value) Then
+		      Return Value.DoubleValue = 1.0
 		    End If
 		    
-		    For I As Integer = Parts.LastIndex DownTo 0
-		      Select Case Parts(I)
-		      Case "AB"
-		        MapName = "Aberration"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "Val"
-		        MapName = "Valguero"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "SE"
-		        MapName = "Scorched"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "Ext", "EX"
-		        MapName = "Extinction"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "JacksonL", "Ragnarok"
-		        MapName = "Ragnarok"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "TheCenter"
-		        MapName = "The Center"
-		        Parts.RemoveAt(I)
-		        Continue
-		      End Select
-		      
-		      For Each Prefix As String In Prefixes
-		        If Parts(I).BeginsWith(Prefix) Then
-		          Parts(I) = Parts(I).Middle(Prefix.Length)
-		        End If
-		      Next
-		      
-		      For Each Member As String In Blacklist
-		        If Parts(I) = Member Then
-		          Parts.RemoveAt(I)
-		          Continue For I
-		        End If
-		      Next
-		    Next
-		    
-		    If MapName <> "" Then
-		      Parts.AddAt(0, MapName)
-		    End If
-		    
-		    If Parts.Count > 0 Then
-		      Return Beacon.MakeHumanReadable(Parts.Join(" "))
-		    End If
+		    Select Case Value.Type
+		    Case Variant.TypeBoolean
+		      Return Value.BooleanValue
+		    Case Variant.TypeString, Variant.TypeText
+		      Var StringValue As String = Value.StringValue
+		      Return StringValue = "True" Or StringValue = "t"
+		    Else
+		      Return False
+		    End Select
 		  Catch Err As RuntimeException
+		    Return False
 		  End Try
-		  
-		  Return Beacon.MakeHumanReadable(ClassString)
 		End Function
 	#tag EndMethod
 
@@ -824,6 +1035,16 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MapIds(Extends Maps() As Beacon.Map) As String()
+		  Var Ids() As String
+		  For Each Map As Beacon.Map In Maps
+		    Ids.Add(Map.MapId)
+		  Next
+		  Return Ids
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function MD5(Value As MemoryBlock) As String
 		  Return EncodeHex(Crypto.MD5(Value))
@@ -834,16 +1055,52 @@ Protected Module Beacon
 		Protected Function Merge(Array1() As Ark.Engram, Array2() As Ark.Engram) As Ark.Engram()
 		  Var Unique As New Dictionary
 		  For Each Engram As Ark.Engram In Array1
-		    Unique.Value(Engram.ObjectID) = Engram
+		    Unique.Value(Engram.EngramId) = Engram
 		  Next
 		  For Each Engram As Ark.Engram In Array2
-		    Unique.Value(Engram.ObjectID) = Engram
+		    Unique.Value(Engram.EngramId) = Engram
 		  Next
 		  Var Merged() As Ark.Engram
 		  For Each Entry As DictionaryEntry In Unique
 		    Merged.Add(Entry.Value)
 		  Next
 		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Merge(Array1() As ArkSA.Engram, Array2() As ArkSA.Engram) As ArkSA.Engram()
+		  Var Unique As New Dictionary
+		  For Each Engram As ArkSA.Engram In Array1
+		    Unique.Value(Engram.EngramId) = Engram
+		  Next
+		  For Each Engram As ArkSA.Engram In Array2
+		    Unique.Value(Engram.EngramId) = Engram
+		  Next
+		  Var Merged() As ArkSA.Engram
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Merge(LeftArray() As Beacon.Map, RightArray() As Beacon.Map) As Beacon.Map()
+		  Var Merged() As Beacon.Map
+		  For Each Map As Beacon.Map In LeftArray
+		    Merged.Add(Map)
+		  Next
+		  For Each Map As Beacon.Map In RightArray
+		    Merged.Add(Map)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends LeftArray() As Beacon.Map, RightArray() As Beacon.Map) As Beacon.Map()
+		  Return Merge(LeftArray, RightArray)
 		End Function
 	#tag EndMethod
 
@@ -966,78 +1223,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ParseCommandLine(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
-		  // This shouldn't take long, but still, probably best to only use this on a thread
-		  
-		  Var InQuotes As Boolean
-		  Var Characters() As String = CommandLine.Split("")
-		  Var Buffer, Params() As String
-		  For Each Char As String In Characters
-		    If Char = """" Then
-		      If InQuotes Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		        InQuotes = False
-		      Else
-		        InQuotes = True
-		      End If
-		    ElseIf Char = " " Then
-		      If InQuotes = False And Buffer.Length > 0 Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		      End If
-		    ElseIf Char = "-" And Buffer.Length = 0 Then
-		      Continue
-		    Else
-		      Buffer = Buffer + Char
-		    End If
-		  Next
-		  If Buffer.Length > 0 Then
-		    Params.Add(Buffer)
-		    Buffer = ""
-		  End If
-		  
-		  Var StartupParams() As String = Params.Shift.Split("?")
-		  Var Map As String = StartupParams.Shift
-		  Call StartupParams.Shift // The listen statement
-		  If PreserveSyntax Then
-		    For Idx As Integer = 0 To Params.LastIndex
-		      Params(Idx) = "-" + Params(Idx)
-		    Next
-		    For Idx As Integer = 0 To StartupParams.LastIndex
-		      StartupParams(Idx) = "?" + StartupParams(Idx)
-		    Next
-		  End If
-		  StartupParams.Merge(Params)
-		  
-		  Var CommandLineOptions As New Dictionary
-		  For Each Parameter As String In StartupParams
-		    Var KeyPos As Integer = Parameter.IndexOf("=")
-		    Var Key As String
-		    Var Value As Variant
-		    If KeyPos = -1 Then
-		      Key = Parameter
-		      Value = True
-		    Else
-		      Key = Parameter.Left(KeyPos)
-		      Value = Parameter.Middle(KeyPos + 1)
-		    End If
-		    If PreserveSyntax Then
-		      Value = Parameter
-		    End If
-		    CommandLineOptions.Value(Key) = Value
-		  Next
-		  
-		  If PreserveSyntax Then
-		    CommandLineOptions.Value("?Map") = Map
-		  Else
-		    CommandLineOptions.Value("Map") = Map
-		  End If
-		  Return CommandLineOptions
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function ParseInterval(Input As String) As DateInterval
 		  Input = Input.Trim
 		  If Input.IsEmpty Then
@@ -1087,7 +1272,7 @@ Protected Module Beacon
 		  Const UseMBS = False
 		  
 		  If Source.Encoding Is Nil Then
-		    Source = Source.GuessEncoding
+		    Source = Source.DefineEncoding(Encodings.UTF8)
 		  ElseIf Source.Encoding <> Encodings.UTF8 Then
 		    Source = Source.ConvertEncoding(Encodings.UTF8)
 		  End If
@@ -1217,7 +1402,8 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function SafeToInvoke(Callback As Variant) As Boolean
-		  Return Callback.IsNull = False And (GetDelegateWeakMBS(Callback) = False Or (GetDelegateTargetMBS(Callback) Is Nil) = False)
+		  // Module methods will have a Nil target, but can never be weak. Non-weak methods are always safe to invoke.
+		  Return Callback.IsNull = False And (GetDelegateWeakMBS(Callback) = False Or GetDelegateTargetMBS(Callback).IsNull = False)
 		End Function
 	#tag EndMethod
 
@@ -1296,8 +1482,19 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SecondsToString(Human As Boolean, ParamArray Intervals() As Double) As String
-		  Return SecondsToString(Human, Intervals)
+		Protected Function SanitizeText(Source As String, ASCIIOnly As Boolean = True) As String
+		  Var Sanitizer As New RegEx
+		  If ASCIIOnly Then
+		    Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
+		  Else
+		    Sanitizer.SearchPattern = "[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]+"
+		  End If
+		  Sanitizer.ReplacementPattern = ""
+		  If ASCIIOnly Then
+		    Return Sanitizer.Replace(Source.SanitizeIni).ConvertEncoding(Encodings.ASCII)
+		  Else
+		    Return Sanitizer.Replace(Source.SanitizeIni)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1322,6 +1519,12 @@ Protected Module Beacon
 		  Else
 		    Return Values.Join(", ")
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SecondsToString(Human As Boolean, ParamArray Intervals() As Double) As String
+		  Return SecondsToString(Human, Intervals)
 		End Function
 	#tag EndMethod
 
@@ -1409,16 +1612,67 @@ Protected Module Beacon
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
-		Protected Function WebURL(Path As String = "/") As String
+		Protected Function VariantToString(Value As Variant) As String
+		  #Pragma BreakOnExceptions False
+		  
+		  If Value.IsNull Then
+		    Return "Null"
+		  End If
+		  
+		  Select Case Value.Type
+		  Case Variant.TypeDouble, Variant.TypeSingle
+		    Return Value.DoubleValue.PrettyText(False)
+		  Case Variant.TypeInt32, Variant.TypeInt64
+		    Return Value.Int64Value.ToString(Locale.Raw, "0")
+		  Case Variant.TypeString, Variant.TypeText
+		    Return Value.StringValue
+		  Case Variant.TypeBoolean
+		    Return If(Value.BooleanValue, "True", "False")
+		  Else
+		    Return ""
+		  End Select
+		  
+		  Exception
+		    Return ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function WebURL(Path As String = "/", Authenticate As Boolean = False) As String
 		  #if DebugBuild And App.ForceLiveData = False
 		    Var Domain As String = "https://local.usebeacon.app"
 		  #else
 		    Var Domain As String = "https://usebeacon.app"
 		  #endif
+		  
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path
 		  End If
+		  
+		  If Authenticate Then
+		    Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		    If (Identity Is Nil) = False And Identity.IsAnonymous Then
+		      Var Expiration As String = Ceiling(DateTime.Now.SecondsFrom1970 + 90).ToString(Locale.Raw, "0")
+		      Var StringToSign As String = Identity.UserId + ";" + Expiration
+		      Var Signature As String = Identity.Sign(StringToSign)
+		      
+		      Path = "/account/auth/app?path=" + EncodeURLComponent(Path) + "&userId=" + EncodeURLComponent(Identity.UserId) + "&expiration=" + EncodeURLComponent(Expiration) + "&signature=" + EncodeBase64URLMBS(Signature)
+		    End If
+		  End If
+		  
 		  Return Domain + Path
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function XmlMessage(Extends Err As XmlException) As String
+		  Var ErrNum As Integer = Err.ErrorNumber
+		  
+		  If ErrNum = 2 Then
+		    Return "Syntax error"
+		  Else
+		    Return Err.Message
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1432,6 +1686,9 @@ Protected Module Beacon
 		
 	#tag EndNote
 
+
+	#tag Constant, Name = CurseForgeApiKeyEncoded, Type = String, Dynamic = False, Default = \"Biggle bongos!", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrettyDecimals, Type = Double, Dynamic = False, Default = \"9", Scope = Private
 	#tag EndConstant
@@ -1469,6 +1726,12 @@ Protected Module Beacon
 	#tag Constant, Name = FileExtensionTemplate, Type = String, Dynamic = False, Default = \".beacontemplate", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = FileExtensionXml, Type = String, Dynamic = False, Default = \".xml", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FixedTimestamp, Type = Double, Dynamic = False, Default = \"1695052800", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = FTPModeExplicitTLS, Type = String, Dynamic = False, Default = \"ftp+tls", Scope = Protected
 	#tag EndConstant
 
@@ -1484,10 +1747,47 @@ Protected Module Beacon
 	#tag Constant, Name = FTPModeSSH, Type = String, Dynamic = False, Default = \"sftp", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = MarketplaceCurseForge, Type = String, Dynamic = False, Default = \"CurseForge", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = MarketplaceSteam, Type = String, Dynamic = False, Default = \"Steam", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = MarketplaceSteamWorkshop, Type = String, Dynamic = False, Default = \"Steam Workshop", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = PathSeparator, Type = String, Dynamic = False, Default = \"/", Scope = Protected
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"\\"
+	#tag EndConstant
+
 	#tag Constant, Name = Pi, Type = Double, Dynamic = False, Default = \"3.141592653589793", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformPC, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformPlayStation, Type = Double, Dynamic = False, Default = \"3", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformSwitch, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformUniversal, Type = Double, Dynamic = False, Default = \"999", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformUnknown, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformUnsupported, Type = Double, Dynamic = False, Default = \"-1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformXbox, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PrettyPrintXsl, Type = String, Dynamic = False, Default = \"<\?xml version\x3D\"1.0\" encoding\x3D\"UTF-8\"\?>\n<xsl:transform version\x3D\"1.0\" xmlns:xsl\x3D\"http://www.w3.org/1999/XSL/Transform\">\n      <xsl:output method\x3D\"xml\" indent\x3D\"yes\" />\n      <xsl:template match\x3D\"/\">\n              <xsl:copy-of select\x3D\"/\" />\n      </xsl:template>\n</xsl:transform>", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = SecondsPerDay, Type = Double, Dynamic = False, Default = \"86400", Scope = Private

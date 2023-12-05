@@ -65,6 +65,7 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -74,6 +75,7 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -189,11 +191,11 @@ End
 #tag WindowCode
 	#tag Event
 		Function ParsingFinished(Project As Ark.Project) As Boolean
-		  If Project Is Nil Or Project.HasConfigGroup(Ark.Configs.NameDinoAdjustments) = False Then
+		  If Project Is Nil Or Project.HasConfigGroup(Ark.Configs.NameCreatureAdjustments) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Project.ConfigGroup(Ark.Configs.NameDinoAdjustments))
+		  Var OtherConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Project.ConfigGroup(Ark.Configs.NameCreatureAdjustments))
 		  If OtherConfig = Nil Then
 		    Return True
 		  End If
@@ -203,7 +205,7 @@ End
 		  Var Selections() As String
 		  For Each Behavior As Ark.CreatureBehavior In Behaviors
 		    Config.Add(Behavior)
-		    Selections.Add(Behavior.TargetCreature.ObjectID)
+		    Selections.Add(Behavior.TargetCreature.CreatureId)
 		  Next
 		  Self.Modified = True
 		  Self.UpdateList(Selections)
@@ -259,7 +261,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameDinoAdjustments
+		  Return Ark.Configs.NameCreatureAdjustments
 		End Function
 	#tag EndMethod
 
@@ -308,7 +310,7 @@ End
 		  For Each Creature As Ark.Creature In Creatures
 		    Var Behavior As Ark.CreatureBehavior = SelectedBehavior.Clone(Creature)
 		    Config.Add(Behavior)
-		    Selections.Add(Behavior.TargetCreature.ObjectID)
+		    Selections.Add(Behavior.TargetCreature.CreatureId)
 		  Next
 		  Self.UpdateList(Selections)
 		  Self.Modified = True
@@ -320,7 +322,7 @@ End
 		  Var Selections() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.RowSelectedAt(I) Then
-		      Selections.Add(Ark.Creature(Self.List.RowTagAt(I)).ObjectID)
+		      Selections.Add(Ark.Creature(Self.List.RowTagAt(I)).CreatureId)
 		    End If
 		  Next
 		  Self.UpdateList(Selections)
@@ -331,7 +333,7 @@ End
 		Private Sub UpdateList(SelectCreatures() As Ark.Creature)
 		  Var Selections() As String
 		  For Each Creature As Ark.Creature In SelectCreatures
-		    Selections.Add(Creature.ObjectID)
+		    Selections.Add(Creature.CreatureId)
 		  Next
 		  Self.UpdateList(Selections)
 		End Sub
@@ -374,7 +376,7 @@ End
 		      Self.List.AddRow(Label, Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####"))
 		    End If
 		    
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.CreatureId) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetCreature
 		  Next
 		  
@@ -416,7 +418,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -426,7 +428,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And (Board.Text.IndexOf("DinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("DinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("NPCReplacements") > -1 Or Board.Text.IndexOf("PreventTransferForClassName") > -1))
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -475,42 +477,39 @@ End
 		    Dicts.Add(Behavior.ToDictionary)
 		  Next
 		  
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
+		  If Dicts.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Var Items() As Variant
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Items = Beacon.ParseJSON(JSON)
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    If Items.LastIndex = -1 Then
-		      Return
-		    End If
-		    
-		    Var Config As Ark.Configs.DinoAdjustments = Self.Config(True)
-		    Var Selections() As String
-		    For Each Entry As Dictionary In Items
-		      Var Behavior As Ark.CreatureBehavior = Ark.CreatureBehavior.FromDictionary(Entry)
-		      If Behavior = Nil Then
-		        Continue
-		      End If
+		      Var Dicts() As Variant = Contents
+		      Var Config As Ark.Configs.DinoAdjustments = Self.Config(True)
+		      Var Selections() As String
+		      For Each Dict As Dictionary In Dicts
+		        Var Behavior As Ark.CreatureBehavior = Ark.CreatureBehavior.FromDictionary(Dict)
+		        If Behavior Is Nil Then
+		          Continue
+		        End If
+		        
+		        Selections.Add(Behavior.TargetCreature.BlueprintId)
+		        Config.Add(Behavior)
+		      Next
 		      
-		      Selections.Add(Behavior.TargetCreature.ObjectID)
-		      Config.Add(Behavior)
-		    Next
-		    Self.Modified = True
-		    Self.UpdateList(Selections)
-		    Return
-		  End If
-		  
-		  If Board.TextAvailable Then
-		    Var ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse("", ImportText, "Clipboard")
+		      If Selections.Count > 0 Then
+		        Self.Modified = True
+		        Self.UpdateList(Selections)
+		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
 		End Sub

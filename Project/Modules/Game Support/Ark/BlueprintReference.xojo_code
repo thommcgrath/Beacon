@@ -1,42 +1,164 @@
 #tag Class
 Protected Class BlueprintReference
+Implements Beacon.NamedItem
+	#tag Method, Flags = &h0
+		Function BlueprintId() As String
+		  Return Self.mBlueprintId
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ClassString() As String
 		  If (Self.mBlueprint Is Nil) = False Then
 		    Return Self.mBlueprint.ClassString
-		  Else
-		    Return Self.mSaveData.Value("Class")
 		  End If
+		  
+		  If Self.mClassString.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mClassString
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Blueprint As Ark.Blueprint)
+		  If Blueprint Is Nil Then
+		    Return
+		  End If
+		  
 		  Self.mBlueprint = Blueprint
+		  Self.mBlueprintId = Blueprint.BlueprintId
+		  Self.mClassString = Blueprint.ClassString
+		  Self.mContentPackId = Blueprint.ContentPackId
+		  Self.mContentPackName = Blueprint.ContentPackName
+		  Self.mLabel = Blueprint.Label
+		  Self.mPath = Blueprint.Path
+		  
+		  Select Case Blueprint
+		  Case IsA Ark.Engram
+		    Self.mKind = Self.KindEngram
+		  Case IsA Ark.Creature
+		    Self.mKind = Self.KindCreature
+		  Case IsA Ark.SpawnPoint
+		    Self.mKind = Self.KindSpawnPoint
+		  Case IsA Ark.LootContainer
+		    Self.mKind = Self.KindLootContainer
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Reference As Ark.BlueprintReference)
+		  Self.mBlueprint = Reference.mBlueprint
+		  Self.mBlueprintId = Reference.mBlueprintId
+		  Self.mClassString = Reference.mClassString
+		  Self.mContentPackId = Reference.mContentPackId
+		  Self.mContentPackName = Reference.mContentPackName
+		  Self.mKind = Reference.mKind
+		  Self.mLabel = Reference.mLabel
+		  Self.mPath = Reference.mPath
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(SaveData As Dictionary)
-		  Self.mSaveData = SaveData
+		  If SaveData Is Nil Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "SaveData is Nil"
+		    Raise Err
+		  End If
+		  
+		  Var Version As Integer = SaveData.FirstValue("version", "Version", 0)
+		  If Version < 1 Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Version is too old"
+		    Raise Err
+		  End If
+		  
+		  Select Case Version
+		  Case 1
+		    Self.mBlueprintId = SaveData.Value("UUID")
+		    Self.mClassString = SaveData.FirstValue("ClassString", "Class", "")
+		    Self.mContentPackId = SaveData.Value("ModUUID")
+		    Self.mContentPackName = ""
+		    
+		    Self.mLabel = "" // Intentionally leave blank so it'll be resolved
+		    Self.mPath = SaveData.Value("Path")
+		    
+		    Select Case SaveData.Value("Kind").StringValue
+		    Case "Engram"
+		      Self.mKind = Self.KindEngram
+		    Case "Creature"
+		      Self.mKind = Self.KindCreature
+		    Case "Spawn Point"
+		      Self.mKind = Self.KindSpawnPoint
+		    Case "Loot Container"
+		      Self.mKind = Self.KindLootContainer
+		    Else
+		      Self.mKind = SaveData.Value("Kind")
+		    End Select
+		  Case 2
+		    Self.mBlueprintId = SaveData.Value("blueprintId")
+		    Self.mClassString = SaveData.Value("classString")
+		    Self.mContentPackId = SaveData.Value("contentPackId")
+		    Self.mContentPackName = SaveData.Lookup("contentPackName", "")
+		    Self.mKind = SaveData.Value("kind")
+		    Self.mLabel = SaveData.Value("label")
+		    Self.mPath = SaveData.Value("path")
+		  Else
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Unknown reference version " + Version.ToString(Locale.Raw, "0")
+		    Raise Err
+		  End Select
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackUUID() As String
-		  If (Self.mBlueprint Is Nil) = False Then
-		    Return Self.mBlueprint.ContentPackUUID
-		  Else
-		    Return Self.mSaveData.Value("ModUUID")
+		Sub Constructor(Kind As String, BlueprintId As String, Path As String = "", ClassString As String = "", Label As String = "", ContentPackId As String = "", ContentPackName As String = "")
+		  Self.mBlueprintId = BlueprintId
+		  Self.mClassString = ClassString
+		  Self.mContentPackId = ContentPackId
+		  Self.mContentPackName = ContentPackName
+		  Self.mKind = Kind
+		  Self.mLabel = Label
+		  Self.mPath = Path
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackId() As String
+		  If Self.mBlueprint Is Nil Then
+		    Return Self.mContentPackId
 		  End If
+		  
+		  If Self.mContentPackId.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mBlueprint.ContentPackId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromDict(Kind As String, Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassStringKey As String, ContentPackUUIDKey As String) As Ark.BlueprintReference
-		  Var ObjectID, Path, ClassString, ContentPackUUID As String
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		Function ContentPackName() As String
+		  If Self.mBlueprint Is Nil Then
+		    Return Self.mContentPackName
+		  End If
+		  
+		  If Self.mContentPackName.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mBlueprint.ContentPackName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateFromDict(Kind As String, Dict As Dictionary, BlueprintIdKey As String, PathKey As String, ClassStringKey As String, LabelKey As String, ContentPackIdKey As String) As Ark.BlueprintReference
+		  Var BlueprintId, Path, ClassString, Label, ContentPackId As String
+		  If BlueprintIdKey.IsEmpty = False And Dict.HasKey(BlueprintIdKey) Then
+		    BlueprintId = Dict.Value(BlueprintIdKey)
 		  End If
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
 		    Path = Dict.Value(PathKey)
@@ -44,24 +166,13 @@ Protected Class BlueprintReference
 		  If ClassStringKey.IsEmpty = False And Dict.HasKey(ClassStringKey) Then
 		    ClassString = Dict.Value(ClassStringKey)
 		  End If
-		  If ContentPackUUIDKey.IsEmpty = False And Dict.HasKey(ContentPackUUIDKey) Then
-		    ContentPackUUID = Dict.Value(ContentPackUUIDKey)
+		  If LabelKey.IsEmpty = False And Dict.HasKey(LabelKey) Then
+		    Label = Dict.Value(LabelKey)
 		  End If
-		  Return CreateFromDict(Kind, ObjectID, Path, ClassString, ContentPackUUID)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromDict(Kind As String, ObjectID As String, Path As String, ClassString As String, ContentPackUUID As String) As Ark.BlueprintReference
-		  Var Dict As New Dictionary
-		  Dict.Value("Schema") = "Beacon.BlueprintReference"
-		  Dict.Value("Version") = Version
-		  Dict.Value("Kind") = Kind
-		  Dict.Value("UUID") = ObjectID
-		  Dict.Value("Path") = Path
-		  Dict.Value("Class") = ClassString
-		  Dict.Value("ModUUID") = ContentPackUUID
-		  Return New Ark.BlueprintReference(Dict)
+		  If ContentPackIdKey.IsEmpty = False And Dict.HasKey(ContentPackIdKey) Then
+		    ContentPackId = Dict.Value(ContentPackIdKey)
+		  End If
+		  Return New Ark.BlueprintReference(Kind, BlueprintId, Path, ClassString, Label, ContentPackId, "")
 		End Function
 	#tag EndMethod
 
@@ -84,19 +195,25 @@ Protected Class BlueprintReference
 
 	#tag Method, Flags = &h0
 		Function IsCreature() As Boolean
-		  Return Self.Kind = Self.KindCreature
+		  Return Self.mKind = Self.KindCreature
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsEngram() As Boolean
-		  Return Self.Kind = Self.KindEngram
+		  Return Self.mKind = Self.KindEngram
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsLootContainer() As Boolean
-		  Return Self.Kind = Self.KindLootContainer
+		  Return Self.mKind = Self.KindLootContainer
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsResolved() As Boolean
+		  Return (Self.mBlueprint Is Nil) = False
 		End Function
 	#tag EndMethod
 
@@ -107,17 +224,18 @@ Protected Class BlueprintReference
 		  End If
 		  
 		  Var Dict As Dictionary = Value
-		  If Dict.HasKey("Version") = False Or Dict.HasKey("Schema") = False Then
+		  
+		  Var VersionValue As Variant = Dict.FirstValue("version", "Version", 0)
+		  If VersionValue.IsNull Or VersionValue.IsNumeric = False Or VersionValue.IntegerValue > Ark.BlueprintReference.Version  Then
+		    Return False
+		  End If
+		  Var Version As Integer = VersionValue.IntegerValue
+		  If Version > Ark.BlueprintReference.Version Or Version <= 0 Then
 		    Return False
 		  End If
 		  
-		  Var SchemaValue As Variant = Dict.Value("Schema")
-		  If SchemaValue.IsNull Or SchemaValue.Type <> Variant.TypeString Or SchemaValue.StringValue <> "Beacon.BlueprintReference" Then
-		    Return False
-		  End If
-		  
-		  Var VersionValue As Variant = Dict.Value("Version")
-		  If VersionValue.IsNull Or VersionValue.IsNumeric = False Or VersionValue.IntegerValue > Ark.BlueprintReference.Version Then
+		  Var SchemaValue As Variant = Dict.FirstValue("schema", "Schema", "")
+		  If SchemaValue.IsNull Or SchemaValue.Type <> Variant.TypeString Or (Version = 1 And SchemaValue.StringValue <> "Beacon.BlueprintReference") Or (Version = 2 And SchemaValue.StringValue <> "blueprintReference") Then
 		    Return False
 		  End If
 		  
@@ -127,36 +245,33 @@ Protected Class BlueprintReference
 
 	#tag Method, Flags = &h0
 		Function IsSpawnPoint() As Boolean
-		  Return Self.Kind = Self.KindSpawnPoint
+		  Return Self.mKind = Self.KindSpawnPoint
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Kind() As String
-		  If (Self.mSaveData Is Nil) = False Then
-		    Return Self.mSaveData.Value("Kind")
-		  End If
-		  
-		  Select Case Self.mBlueprint
-		  Case IsA Ark.Engram
-		    Return Self.KindEngram
-		  Case IsA Ark.Creature
-		    Return Self.KindCreature
-		  Case IsA Ark.SpawnPoint
-		    Return Self.KindSpawnPoint
-		  Case IsA Ark.LootContainer
-		    Return Self.KindLootContainer
-		  End Select
+		  Return Self.mKind
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
+		Function Label() As String
 		  If (Self.mBlueprint Is Nil) = False Then
-		    Return Self.mBlueprint.ObjectID
-		  Else
-		    Return Self.mSaveData.Value("UUID")
+		    Return Self.mBlueprint.Label
 		  End If
+		  
+		  If Self.mLabel.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "BlueprintId" )  Function ObjectID() As String
+		  Return Self.mBlueprintId
 		End Function
 	#tag EndMethod
 
@@ -166,11 +281,14 @@ Protected Class BlueprintReference
 		    Return 1
 		  End If
 		  
-		  If Self.ObjectID = Other.ObjectID Then
+		  If Self.mBlueprintId = Other.BlueprintId Then
 		    Return 0
 		  End If
 		  
-		  Return Self.ObjectID.Compare(Other.ObjectID, ComparisonOptions.CaseInsensitive)
+		  Var MySortKey As String = Self.mLabel + ":" + Self.mBlueprintId
+		  Var OtherSortKey As String = Other.Label + ":" + Other.BlueprintId
+		  
+		  Return MySortKey.Compare(OtherSortKey, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -180,11 +298,14 @@ Protected Class BlueprintReference
 		    Return 1
 		  End If
 		  
-		  If Self.ObjectID = Other.ObjectID Then
+		  If Self.BlueprintId = Other.BlueprintId Then
 		    Return 0
 		  End If
 		  
-		  Return Self.ObjectID.Compare(Other.ObjectID, ComparisonOptions.CaseInsensitive)
+		  Var MySortKey As String = Self.mLabel + ":" + Self.mBlueprintId
+		  Var OtherSortKey As String = Other.mLabel + ":" + Other.mBlueprintId
+		  
+		  Return MySortKey.Compare(OtherSortKey, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -192,67 +313,63 @@ Protected Class BlueprintReference
 		Function Path() As String
 		  If (Self.mBlueprint Is Nil) = False Then
 		    Return Self.mBlueprint.Path
-		  Else
-		    Return Self.mSaveData.Value("Path")
 		  End If
+		  
+		  If Self.mPath.IsEmpty Then
+		    Call Self.Resolve()
+		  End If
+		  
+		  Return Self.mPath
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Resolve() As Ark.Blueprint
-		  If Self.mBlueprint Is Nil Then
-		    Try
-		      Var Version As Integer = Self.mSaveData.Value("Version")
-		      Var Packs As Beacon.StringList
-		      If Self.mSaveData.HasKey("ModUUID") And v4UUID.IsValid(Self.mSaveData.Value("ModUUID").StringValue) Then
-		        Packs = New Beacon.StringList
-		        Packs.Append(Self.mSaveData.Value("ModUUID").StringValue)
-		      End If
-		      Select Case Version
-		      Case 1
-		        Var Kind As String = Self.mSaveData.Value("Kind")
-		        Select Case Kind
-		        Case Self.KindEngram
-		          Self.mBlueprint = Ark.ResolveEngram(Self.mSaveData, "UUID", "Path", "Class", Packs)
-		        Case Self.KindCreature
-		          Self.mBlueprint = Ark.ResolveCreature(Self.mSaveData, "UUID", "Path", "Class", Packs)
-		        Case Self.KindSpawnPoint
-		          Self.mBlueprint = Ark.ResolveSpawnPoint(Self.mSaveData, "UUID", "Path", "Clas", Packs)
-		        Case Self.KindLootContainer
-		          Self.mBlueprint = Ark.ResolveLootContainer(Self.mSaveData, "UUID", "Path", "Class", Packs)
-		        End Select
-		      End Select
-		    Catch Err As RuntimeException
-		    End Try
+		Function Resolve(Packs As Beacon.StringList = Nil, Options As Integer = 3) As Ark.Blueprint
+		  If (Options And Self.OptionUseCache) = Self.OptionUseCache And (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint
 		  End If
 		  
-		  Return Self.mBlueprint
+		  If Beacon.UUID.Validate(Self.mContentPackId) Then
+		    Packs = New Beacon.StringList(Self.mContentPackId)
+		  End If
+		  
+		  Var Create As Boolean = (Options And Self.OptionCreate) = Self.OptionCreate
+		  Var Blueprint As Ark.Blueprint
+		  Select Case Self.mKind
+		  Case Self.KindEngram
+		    Blueprint = Ark.ResolveEngram(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs)
+		  Case Self.KindCreature
+		    Blueprint = Ark.ResolveCreature(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs)
+		  Case Self.KindSpawnPoint
+		    Blueprint = Ark.ResolveSpawnPoint(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs)
+		  Case Self.KindLootContainer
+		    Blueprint = Ark.ResolveLootContainer(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs)
+		  Else
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Unknown blueprint reference kind " + Self.mKind
+		    Raise Err
+		  End Select
+		  
+		  // Will update all the properties with correct values
+		  Self.Constructor(Blueprint)
+		  
+		  Return Blueprint
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
-		  If Self.mSaveData Is Nil Then
-		    Var Dict As New Dictionary
-		    Dict.Value("Schema") = "Beacon.BlueprintReference"
-		    Dict.Value("Version") = Self.Version
-		    Select Case Self.mBlueprint
-		    Case IsA Ark.Engram
-		      Dict.Value("Kind") = Self.KindEngram
-		    Case IsA Ark.Creature
-		      Dict.Value("Kind") = Self.KindCreature
-		    Case IsA Ark.SpawnPoint
-		      Dict.Value("Kind") = Self.KindSpawnPoint
-		    Case IsA Ark.LootContainer
-		      Dict.Value("Kind") = Self.KindLootContainer
-		    End Select
-		    Dict.Value("UUID") = Self.mBlueprint.ObjectID
-		    Dict.Value("Path") = Self.mBlueprint.Path
-		    Dict.Value("Class") = Self.mBlueprint.ClassString
-		    Dict.Value("ModUUID") = Self.mBlueprint.ContentPackUUID
-		    Self.mSaveData = Dict
-		  End If
-		  Return Self.mSaveData
+		  Var Dict As New Dictionary
+		  Dict.Value("schema") = "blueprintReference"
+		  Dict.Value("version") = Self.Version
+		  Dict.Value("kind") = Self.mKind
+		  Dict.Value("label") = Self.mLabel
+		  Dict.Value("blueprintId") = Self.mBlueprintId
+		  Dict.Value("path") = Self.mPath
+		  Dict.Value("classString") = Self.mClassString
+		  Dict.Value("contentPackId") = Self.mContentPackId
+		  Dict.Value("contentPackName") = Self.mContentPackName
+		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -262,23 +379,53 @@ Protected Class BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSaveData As Dictionary
+		Private mBlueprintId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mClassString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPackName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mKind As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLabel As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPath As String
 	#tag EndProperty
 
 
-	#tag Constant, Name = KindCreature, Type = String, Dynamic = False, Default = \"Creature", Scope = Public
+	#tag Constant, Name = KindCreature, Type = String, Dynamic = False, Default = \"creature", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = KindEngram, Type = String, Dynamic = False, Default = \"Engram", Scope = Public
+	#tag Constant, Name = KindEngram, Type = String, Dynamic = False, Default = \"engram", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = KindLootContainer, Type = String, Dynamic = False, Default = \"Loot Container", Scope = Public
+	#tag Constant, Name = KindLootContainer, Type = String, Dynamic = False, Default = \"lootDrop", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = KindSpawnPoint, Type = String, Dynamic = False, Default = \"Spawn Point", Scope = Public
+	#tag Constant, Name = KindSpawnPoint, Type = String, Dynamic = False, Default = \"spawnPoint", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = OptionCreate, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionUseCache, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 

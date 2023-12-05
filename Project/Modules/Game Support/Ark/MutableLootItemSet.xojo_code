@@ -14,22 +14,22 @@ Inherits Ark.LootItemSet
 		    Return Nil
 		  End If
 		  
-		  Var UUIDs() As String
+		  Var EntryIds() As String
 		  For Idx As Integer = Sources.FirstIndex To Sources.LastIndex
-		    UUIDs.Add(Sources(Idx).UUID)
-		  Next Idx
+		    EntryIds.Add(Sources(Idx).EntryId)
+		  Next
 		  
 		  Var MissingWeight, MinQualitySum, MaxQualitySum As Double
 		  Var EntryCount As Double
 		  Var References As New Dictionary
 		  For Idx As Integer = Self.mEntries.LastIndex DownTo Self.mEntries.FirstIndex
-		    If UUIDs.IndexOf(Self.mEntries(Idx).UUID) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
+		    If EntryIds.IndexOf(Self.mEntries(Idx).EntryId) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
 		      Continue
 		    End If
 		    
 		    For Each Option As Ark.LootItemSetEntryOption In Self.mEntries(Idx)
-		      If References.HasKey(Option.Reference.ObjectID) = False Then
-		        References.Value(Option.Reference.ObjectID) = Option
+		      If References.HasKey(Option.Reference.BlueprintId) = False Then
+		        References.Value(Option.Reference.BlueprintId) = Option
 		      End If
 		    Next Option
 		    
@@ -101,6 +101,10 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
+		  If Self.mLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mLabel = Value
 		  Self.Modified = True
 		End Sub
@@ -108,6 +112,11 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub MaxNumItems(Assigns Value As Integer)
+		  Value = Max(Value, 0)
+		  If Self.mMaxNumItems = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMaxNumItems = Value
 		  Self.Modified = True
 		End Sub
@@ -115,6 +124,11 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub MinNumItems(Assigns Value As Integer)
+		  Value = Max(Value, 0)
+		  If Self.mMinNumItems = Value Then
+		    Return
+		  End If
+		  
 		  Self.mMinNumItems = Value
 		  Self.Modified = True
 		End Sub
@@ -128,6 +142,10 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub NumItemsPower(Assigns Value As Double)
+		  If Self.mNumItemsPower = Value Then
+		    Return
+		  End If
+		  
 		  Self.mNumItemsPower = Value
 		  Self.Modified = True
 		End Sub
@@ -142,6 +160,11 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
+		  Value = Max(Value, 0)
+		  If Self.mSetWeight = Value Then
+		    Return
+		  End If
+		  
 		  Self.mSetWeight = Value
 		  Self.Modified = True
 		End Sub
@@ -172,6 +195,10 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub TemplateUUID(Assigns Value As String)
+		  If Self.mTemplateUUID = Value Then
+		    Return
+		  End If
+		  
 		  Self.mTemplateUUID = Value
 		  Self.Modified = True
 		End Sub
@@ -179,6 +206,10 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub UUID(Assigns Value As String)
+		  If Self.mUUID = Value Then
+		    Return
+		  End If
+		  
 		  Self.mUUID = Value
 		  Self.Modified = True
 		End Sub

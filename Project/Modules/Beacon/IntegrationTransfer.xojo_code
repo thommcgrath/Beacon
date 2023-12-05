@@ -1,30 +1,16 @@
 #tag Class
 Protected Class IntegrationTransfer
 	#tag Method, Flags = &h0
-		Sub Constructor(Filename As String)
-		  If Filename.IndexOf("/") > -1 Then
-		    // Given a full path
-		    Var Components() As String = Filename.Split("/")
-		    Self.mFilename = Components(Components.LastIndex)
-		    Components.RemoveAt(Components.LastIndex)
-		    Self.mPath = Components.Join("/")
-		  Else
-		    Self.mFilename = Filename
-		  End If
+		Sub Constructor(Path As String)
+		  Self.mPath = Path
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Filename As String, Content As String)
-		  Self.Constructor(Filename)
+		Sub Constructor(Path As String, Content As String)
+		  Self.Constructor(Path)
 		  Self.Content = Content
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Filename() As String
-		  Return Self.mFilename
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -73,10 +59,6 @@ Protected Class IntegrationTransfer
 
 	#tag Property, Flags = &h0
 		ErrorMessage As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mFilename As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

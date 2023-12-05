@@ -1,6 +1,7 @@
 #tag Class
 Protected Class ServersListbox
 Inherits BeaconListbox
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused Column
@@ -72,7 +73,9 @@ Inherits BeaconListbox
 		  Profiles.ResizeTo(Bound)
 		  For Idx As Integer = 0 To Bound
 		    Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
-		    Names(Idx) = Profile.Name
+		    If Profile.Nickname.IsEmpty Then
+		      Names(Idx) = Profile.Name
+		    End If
 		    Profiles(Idx) = Profile
 		  Next Idx
 		  If Preferences.ServersListNameStyle = Self.NamesAbbreviated Then
@@ -81,7 +84,7 @@ Inherits BeaconListbox
 		  
 		  Var Lookup As New Dictionary
 		  For Idx As Integer = 0 To Bound
-		    Lookup.Value(Profiles(Idx).ProfileID) = If(Names(Idx).IsEmpty = False, Names(Idx), Profiles(Idx).Name)
+		    Lookup.Value(Profiles(Idx).ProfileID) = If(Names(Idx).IsEmpty = False, Names(Idx), Profiles(Idx).DisplayName)
 		  Next Idx
 		  Return Lookup
 		End Function
@@ -94,9 +97,7 @@ Inherits BeaconListbox
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateList()
-		  // Updates the list, maintaining the current selection
-		  
+		Function SelectedProfiles() As Beacon.ServerProfile()
 		  Var Profiles() As Beacon.ServerProfile
 		  For Idx As Integer = 0 To Self.LastRowIndex
 		    If Self.RowSelectedAt(Idx) = False Then
@@ -105,7 +106,15 @@ Inherits BeaconListbox
 		    
 		    Profiles.Add(Self.RowTagAt(Idx))
 		  Next
-		  Self.UpdateList(Profiles, False)
+		  Return Profiles
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateList()
+		  // Updates the list, maintaining the current selection
+		  
+		  Self.UpdateList(Self.SelectedProfiles, False)
 		End Sub
 	#tag EndMethod
 
@@ -115,7 +124,12 @@ Inherits BeaconListbox
 		    Return
 		  End If
 		  
-		  Var Profiles() As Beacon.ServerProfile = Self.Project.ServerProfiles(Self.mFilter)
+		  Var Project As Beacon.Project = Self.Project
+		  If Project Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Profiles() As Beacon.ServerProfile = Project.ServerProfiles(Self.mFilter)
 		  
 		  Self.SelectionChangeBlocked = True
 		  Self.RowCount = Profiles.Count
@@ -136,7 +150,10 @@ Inherits BeaconListbox
 		  For Idx As Integer = Profiles.FirstIndex To Profiles.LastIndex
 		    Var Profile As Beacon.ServerProfile = Profiles(Idx)
 		    Var SortName As String = Names.Value(Profile.ProfileID)
-		    Var Name As String = SortName + EndOfLine + If(Preferences.ServersListShowIds, Profile.ProfileID.Left(8) + "  ", "") + Profile.SecondaryName
+		    Var Name As String = SortName
+		    If Self.SingleLineMode = False Then
+		      Name = Name + EndOfLine + If(Preferences.ServersListShowIds, Profile.ProfileID.Left(8) + "  ", "") + Profile.SecondaryName
+		    End If
 		    Var Selected As Boolean = SelectIDs.IndexOf(Profile.ProfileID) > -1
 		    
 		    Select Case SortBy
@@ -228,6 +245,29 @@ Inherits BeaconListbox
 		Private mFilter As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSingleLineMode As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSingleLineMode
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mSingleLineMode = Value Then
+			    Return
+			  End If
+			  
+			  Self.mSingleLineMode = Value
+			  Self.UpdateList()
+			End Set
+		#tag EndSetter
+		SingleLineMode As Boolean
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = NamesAbbreviated, Type = String, Dynamic = False, Default = \"abbreviated", Scope = Public
 	#tag EndConstant
@@ -247,18 +287,20 @@ Inherits BeaconListbox
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="GridLineStyle"
+			Name="TotalPages"
 			Visible=true
-			Group="Appearance"
-			InitialValue="0"
-			Type="GridLineStyles"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Horizontal"
-				"2 - Vertical"
-				"3 - Both"
-			#tag EndEnumValues
+			Group="Behavior"
+			InitialValue="-1"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PageSize"
+			Visible=true
+			Group="Behavior"
+			InitialValue="100"
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -363,6 +405,20 @@ Inherits BeaconListbox
 			InitialValue="100"
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GridLineStyle"
+			Visible=true
+			Group="Appearance"
+			InitialValue="0"
+			Type="GridLineStyles"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Horizontal"
+				"2 - Vertical"
+				"3 - Both"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Tooltip"
@@ -606,6 +662,22 @@ Inherits BeaconListbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Filter"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SingleLineMode"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="FontName"
 			Visible=true
 			Group="Font"
@@ -691,14 +763,6 @@ Inherits BeaconListbox
 			InitialValue="-1"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Filter"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -47,7 +47,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RightPadding    =   -1
+      RightPadding    =   14
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False
@@ -83,7 +83,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   1420
       Begin DashboardPane DashboardPane1
@@ -154,7 +154,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Top             =   38
          Transparent     =   True
          ViewIcon        =   0
-         ViewTitle       =   "Blueprints"
+         ViewTitle       =   "Mods"
          Visible         =   True
          Width           =   1420
       End
@@ -365,7 +365,7 @@ End
 
 	#tag Event
 		Sub Closing()
-		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable)
+		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged, Beacon.PusherSocket.Notification_StateChanged, IdentityManager.Notification_IdentityChanged)
 		  #if TargetMacOS
 		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
 		  #endif
@@ -403,11 +403,13 @@ End
 		  Var Bounds As Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
-		    Var IdealScreen As Screen = Screen(0)
-		    If ScreenCount > 1 Then
+		    Var IdealScreen As DesktopDisplay = DesktopDisplay.DisplayAt(0)
+		    Var Bound As Integer = DesktopDisplay.DisplayCount - 1
+		    If Bound > 0 Then
 		      Var MaxArea As Integer
-		      For I As Integer = 0 To ScreenCount - 1
-		        Var ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		      For I As Integer = 0 To Bound
+		        Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(I)
+		        Var ScreenBounds As New Rect(Display.AvailableLeft, Display.AvailableTop, Display.AvailableWidth, Display.AvailableHeight)
 		        Var Intersection As Rect = ScreenBounds.Intersection(Bounds)
 		        If Intersection = Nil Then
 		          Continue
@@ -418,7 +420,7 @@ End
 		        End If
 		        If Area > MaxArea Then
 		          MaxArea = Area
-		          IdealScreen = Screen(I)
+		          IdealScreen = Display
 		        End If
 		      Next
 		    End If
@@ -454,7 +456,7 @@ End
 		  #endif
 		  
 		  UpdatesKit.Init()
-		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable)
+		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged, Beacon.PusherSocket.Notification_StateChanged, IdentityManager.Notification_IdentityChanged)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
@@ -536,6 +538,26 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  If Super.CanBeClosed() = False Then
+		    Return False
+		  End If
+		  
+		  Select Case Self.Pages.SelectedPanelIndex
+		  Case Self.PageDocuments
+		    Var Frontmost As BeaconSubview = Self.DocumentsComponent1.FrontmostPage
+		    Return (Frontmost Is Nil) = False And Frontmost.CanBeClosed
+		  Case Self.PageBlueprints
+		    Var Frontmost As BeaconSubview = Self.BlueprintsComponent1.FrontmostPage
+		    Return (Frontmost Is Nil) = False And Frontmost.CanBeClosed
+		  Case Self.PageTemplates
+		    Var Frontmost As BeaconSubview = Self.TemplatesComponent1.FrontmostPage
+		    Return (Frontmost Is Nil) = False And Frontmost.CanBeClosed
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  #if TargetMacOS
 		    Self.mObserver = New NSNotificationObserverMBS
@@ -589,13 +611,35 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub DoFileClose()
+		  Select Case Self.Pages.SelectedPanelIndex
+		  Case Self.PageDocuments
+		    Var Frontmost As BeaconSubview = Self.DocumentsComponent1.FrontmostPage
+		    If (Frontmost Is Nil) = False And Frontmost.CanBeClosed Then
+		      Call Self.DocumentsComponent1.DiscardView(Frontmost)
+		    End If
+		  Case Self.PageBlueprints
+		    Var Frontmost As BeaconSubview = Self.BlueprintsComponent1.FrontmostPage
+		    If (Frontmost Is Nil) = False And Frontmost.CanBeClosed Then
+		      Call Self.BlueprintsComponent1.CloseView(Frontmost)
+		    End If
+		  Case Self.PageTemplates
+		    Var Frontmost As BeaconSubview = Self.TemplatesComponent1.FrontmostPage
+		    If (Frontmost Is Nil) = False And Frontmost.CanBeClosed Then
+		      Call Self.TemplatesComponent1.CloseView(Frontmost)
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Function FrontmostDocumentView(GameID As String) As DocumentEditorView
+		Function FrontmostDocumentView(GameId As String) As DocumentEditorView
 		  If Self.DocumentsComponent1 Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Return Self.DocumentsComponent1.FrontmostDocumentEditor(GameID)
+		  Return Self.DocumentsComponent1.FrontmostDocumentEditor(GameId)
 		End Function
 	#tag EndMethod
 
@@ -678,9 +722,30 @@ End
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
+		  If Self.NavBar Is Nil Then
+		    Return
+		  End If
+		  
 		  Select Case Notification.Name
 		  Case UpdatesKit.Notification_UpdateAvailable
 		    Self.SetupUpdateUI()
+		  Case Preferences.Notification_ProfileIconChanged
+		    Var ProfileButton As OmniBarItem = Self.NavBar.Item("NavUser")
+		    If (ProfileButton Is Nil) = False Then
+		      ProfileButton.Icon = Self.ProfileIcon()
+		    End If
+		  Case Beacon.PusherSocket.Notification_StateChanged
+		    Self.UpdatePusherStatus()
+		  Case IdentityManager.Notification_IdentityChanged
+		    Var ProfileButton As OmniBarItem = Self.NavBar.Item("NavUser")
+		    If (ProfileButton Is Nil) = False Then
+		      Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		      If (Identity Is Nil) = False Then
+		        ProfileButton.Caption = Identity.Username(True)
+		      Else
+		        ProfileButton.Caption = ""
+		      End If
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -703,16 +768,30 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function ProfileIcon() As Picture
+		  Select Case Preferences.ProfileIcon
+		  Case Preferences.ProfileIconChoices.Cat
+		    Return IconToolbarCat
+		  Case Preferences.ProfileIconChoices.WithoutPonytail
+		    Return IconToolbarUser
+		  Case Preferences.ProfileIconChoices.WithPonytail
+		    Return IconToolbarUserPonytail
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SetupUpdateUI()
 		  If Self.NavBar Is Nil Then
 		    Return
 		  End If
 		  
-		  Var ShowUpdateBar As Boolean = UpdatesKit.IsUpdateAvailable And Preferences.AutomaticallyDownloadsUpdates = False
+		  Var ShowUpdateBar As Boolean = UpdatesKit.IsUpdateAvailable And UpdatesKit.AutomaticallyDownloadsUpdates = False
 		  If UpdatesKit.AvailableUpdateRequired Then
 		    ShowUpdateBar = False
 		    Call App.HandleURL("beacon://action/checkforupdate")
 		    Self.Hide
+		    Return
 		  End If
 		  
 		  If ShowUpdateBar Then
@@ -724,23 +803,11 @@ End
 		    End If
 		    
 		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")
-		    If UpdateItem Is Nil Then
-		      UpdateItem = OmniBarItem.CreateButton("NavUpdate", "", IconToolbarUpdate, Preview)
-		      UpdateItem.AlwaysUseActiveColor = True
-		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
-		      UpdateItem.Caption = "Update Ready"
-		      
-		      Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
-		      If Idx > -1 Then
-		        Self.NavBar.Insert(Idx, UpdateItem)
-		      Else
-		        Self.NavBar.Append(UpdateItem)
-		      End If
-		      
-		      If Preferences.PlaySoundForUpdate Then
+		    If (UpdateItem Is Nil) = False Then
+		      If UpdateItem.Visible = False Then
 		        SoundUpdateAvailable.Play
 		      End If
-		    Else
+		      UpdateItem.Visible = True
 		      UpdateItem.HelpTag = Preview
 		    End If
 		    
@@ -753,14 +820,14 @@ End
 		      
 		      UpdateWindow.Present
 		    Else
-		      Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Blue
+		      Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Natural
 		    End If
 		  Else
 		    Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Natural
 		    
 		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")
 		    If (UpdateItem Is Nil) = False Then
-		      Self.NavBar.Remove(UpdateItem)
+		      UpdateItem.Visible = False
 		    End If
 		  End If
 		End Sub
@@ -803,18 +870,16 @@ End
 		  If Not Preferences.OnlineEnabled Then
 		    Base.AddMenu(New DesktopMenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
 		  Else
-		    If App.IdentityManager.CurrentIdentity Is Nil Or App.IdentityManager.CurrentIdentity.Username.IsEmpty Then
+		    If App.IdentityManager.CurrentIdentity Is Nil Then
 		      Base.AddMenu(New DesktopMenuItem("Log In", "beacon://action/signin"))
 		    Else
-		      Var IdentityItem As New DesktopMenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
-		      IdentityItem.Enabled = False
-		      Base.AddMenu(IdentityItem)
-		      Base.AddMenu(New DesktopMenuItem("Manage Account", "beacon://action/showaccount"))
-		      Base.AddMenu(New DesktopMenuItem("Log Out", "beacon://action/signout"))
+		      Base.AddMenu(New DesktopMenuItem("Refresh Purchases", "beacon://action/refreshuser?silent=false"))
+		      Base.AddMenu(New DesktopMenuItem("Account Control Panel", "beacon://action/showaccount"))
+		      Base.AddMenu(New DesktopMenuItem("Show Account Info…", "beacon://action/showidentity"))
+		      Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
+		      Base.AddMenu(New DesktopMenuItem("Change Account…", "beacon://action/signout"))
 		    End If
 		  End If
-		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
-		  Base.AddMenu(New DesktopMenuItem("User Info…", "beacon://action/showidentity"))
 		  
 		  Var Choice As DesktopMenuItem = Base.PopUp(X, Y)
 		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Then
@@ -917,6 +982,63 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdatePusherStatus()
+		  Var State As Beacon.PusherSocket.States
+		  If (App.Pusher Is Nil) = False Then
+		    State = App.Pusher.State
+		  Else
+		    State = Beacon.PusherSocket.States.Disabled
+		  End If
+		  Var Button As OmniBarItem = Self.NavBar.Item("NavPusher")
+		  If Button Is Nil Then
+		    Return
+		  End If
+		  
+		  If State = Beacon.PusherSocket.States.Disabled Then
+		    Button.Visible = False
+		    Return
+		  End If
+		  
+		  Button.Visible = True
+		  
+		  Select Case State
+		  Case Beacon.PusherSocket.States.Connected
+		    Button.AlwaysUseActiveColor = False
+		    Button.ActiveColor = OmniBarItem.ActiveColors.Green
+		    Button.HelpTag = "Beacon is connected. Status updates happen in real time."
+		    Button.Icon = IconToolbarCloud
+		  Case Beacon.PusherSocket.States.Disconnected
+		    Button.AlwaysUseActiveColor = False
+		    Button.ActiveColor = OmniBarItem.ActiveColors.Orange
+		    Button.HelpTag = "Beacon is disconnected. Most features will continue to work, but Beacon will not receive live status updates. Click to attempt to connect."
+		    Button.Icon = IconToolbarCloudDisconnected
+		  Case Beacon.PusherSocket.States.Errored
+		    Button.AlwaysUseActiveColor = True
+		    Button.ActiveColor = OmniBarItem.ActiveColors.Red
+		    Button.HelpTag = "Beacon is disconnected due to an error. Most features will continue to work, but Beacon will not receive live status updates. Click to attempt to connect."
+		    Button.Icon = IconToolbarCloudError
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function WindowTypeLabel() As String
+		  Select Case Self.Pages.SelectedPanelIndex
+		  Case Self.PageHome
+		    Return "Home"
+		  Case Self.PageDocuments
+		    Return "Project"
+		  Case Self.PageBlueprints
+		    Return "Mod"
+		  Case Self.PageTemplates
+		    Return "Template"
+		  Case Self.PageHelp
+		    Return "Help"
+		  End Select
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mBusyWatcher As Timer
@@ -974,7 +1096,7 @@ End
 		  Var Documents As OmniBarItem = OmniBarItem.CreateTab("NavDocuments", "Projects")
 		  Self.DocumentsComponent1.LinkedOmniBarItem = Documents
 		  
-		  Var Blueprints As OmniBarItem = OmniBarItem.CreateTab("NavBlueprints", "Blueprints")
+		  Var Blueprints As OmniBarItem = OmniBarItem.CreateTab("NavBlueprints", "Mods")
 		  Self.BlueprintsComponent1.LinkedOmniBarItem = Blueprints
 		  
 		  Var Templates As OmniBarItem = OmniBarItem.CreateTab("NavTemplates", "Templates")
@@ -983,9 +1105,20 @@ End
 		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Support")
 		  Self.HelpComponent1.LinkedOmniBarItem = Help
 		  
-		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", IconToolbarUser, "Access user settings")
+		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", Self.ProfileIcon, "Access user settings")
+		  User.ButtonStyle = OmniBarItem.ButtonStyleLeftCaption
 		  
-		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace, User)
+		  Var Update As OmniBarItem = OmniBarItem.CreateButton("NavUpdate", "Update Ready", IconToolbarUpdate, "")
+		  Update.AlwaysUseActiveColor = True
+		  Update.ActiveColor = OmniBarItem.ActiveColors.Green
+		  Update.Visible = False
+		  
+		  Var Pusher As OmniBarItem = OmniBarItem.CreateButton("NavPusher", "", IconToolbarCloudDisconnected, "")
+		  Pusher.Visible = False
+		  
+		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace("MidSpacer"), Update, Pusher, OmniBarItem.CreateSeparator("UserSeparator"), User)
+		  
+		  Self.UpdatePusherStatus
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1008,6 +1141,11 @@ End
 		  Case "NavUser"
 		    Self.ShowUserMenu(Self.Left + Me.Left + ItemRect.Left, Self.Top + Me.Top + ItemRect.Bottom)
 		    Return
+		  Case "NavPusher"
+		    If (App.Pusher Is Nil) = False And App.Pusher.State <> Beacon.PusherSocket.States.Connected Then
+		      App.Pusher.Start()
+		    End If
+		    Return
 		  Else
 		    Return
 		  End Select
@@ -1019,8 +1157,7 @@ End
 #tag Events DashboardPane1
 	#tag Event
 		Sub NewDocument()
-		  Self.SwitchView(Self.PageDocuments)
-		  Self.DocumentsComponent1.NewDocument()
+		  Self.DocumentsComponent1.NewProject()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1138,8 +1275,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -27,7 +27,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    // Whatever
 		  End Try
 		  
+		  If (Self.mPusher Is Nil) = False Then
+		    Self.mPusher.Stop
+		    Self.mPusher = Nil
+		  End If
+		  
 		  Ark.DataSource.Pool.CloseAll
+		  SDTD.DataSource.Pool.CloseAll
 		  Beacon.CommonData.Pool.CloseAll
 		  
 		  UpdatesKit.Cleanup
@@ -68,15 +74,41 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Event
 		Sub MenuBarSelected()
-		  FileNew.Enabled = True
-		  FileNewPreset.Enabled = True
-		  FileOpen.Enabled = True
-		  FileImport.Enabled = True
+		  If (Self.mMainWindow Is Nil) = False Then
+		    FileNew.Enabled = True
+		    FileNewPreset.Enabled = True
+		    FileOpen.Enabled = True
+		    FileImport.Enabled = True
+		    
+		    Var DefaultGameId As String = Preferences.NewProjectGameId
+		    If DefaultGameId.IsEmpty Then
+		      FileNew.Text = "New Project"
+		    Else
+		      FileNew.Text = "New " + Language.GameName(DefaultGameId) + " Project"
+		    End If
+		    
+		    Var GameMenu As DesktopMenuItem = FileNewProjectForGame
+		    Var Bound As Integer = GameMenu.Count - 1
+		    For Idx As Integer = 0 To Bound
+		      GameMenu.MenuAt(Idx).Enabled = True
+		    Next
+		  End If
 		  
 		  If Preferences.OnlineEnabled Then
 		    HelpSyncCloudFiles.Visible = True
 		    HelpUpdateEngrams.Visible = True
-		    HelpSeparator2.Visible = True
+		    HelpRefreshBlueprints.Visible = True
+		    HelpUpdateEngramsSeparator.Visible = True
+		    
+		    Var Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
+		    If Identity Is Nil Or Identity.IsAnonymous Then
+		      HelpMigrateAccounts.Visible = False
+		      HelpMigrateAccountsSeparator.Visible = False
+		    Else
+		      HelpMigrateAccounts.Visible = True
+		      HelpMigrateAccounts.Enabled = True
+		      HelpMigrateAccountsSeparator.Visible = True
+		    End If
 		    
 		    If UserCloud.IsBusy = False Then
 		      HelpSyncCloudFiles.Enabled = True
@@ -87,7 +119,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Else
 		    HelpSyncCloudFiles.Visible = False
 		    HelpUpdateEngrams.Visible = False
-		    HelpSeparator2.Visible = False
+		    HelpRefreshBlueprints.Visible = False
+		    HelpUpdateEngramsSeparator.Visible = False
+		    HelpMigrateAccounts.Visible = False
+		    HelpMigrateAccountsSeparator.Visible = False
 		  End If
 		  
 		  Var Counter As Integer = 1
@@ -172,7 +207,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  #if TargetMacOS
-		    UntitledSeparator6.Visible = False
+		    //Help.Visible = False
 		  #endif
 		  Self.RebuildRecentMenu
 		  
@@ -194,11 +229,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  SystemColors.Init
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped)
+		  NotificationKit.Watch(Self, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped, IdentityManager.Notification_IdentityChanged)
 		  
-		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)
-		  Self.mIdentityManager = New IdentityManager(IdentityFile)
-		  AddHandler mIdentityManager.NeedsLogin, WeakAddressOf mIdentityManager_NeedsLogin
+		  Self.mIdentityManager = New IdentityManager()
 		  
 		  Try
 		    Self.TemporarilyInstallFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
@@ -218,6 +251,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupDatabases)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CleanupConfigBackups)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupNewProjectMenuItems)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_ShowMainWindow)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_RequestUser)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
@@ -227,6 +261,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If BeaconUI.WebContentSupported Then
 		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_WelcomeWindow)
 		  End If
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_StartPusher)
 		  Self.NextLaunchQueueTask
 		  
 		  #if Not TargetMacOS
@@ -263,7 +298,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
+		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.XmlFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
 		  Dialog.AllowMultipleSelections = True
 		  
 		  Var File As FolderItem = Dialog.ShowModal
@@ -273,7 +308,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  For Each File In Dialog.SelectedFiles
 		    Self.OpenFile(File, True)
-		  Next File
+		  Next
 		  
 		  Return True
 		End Function
@@ -282,7 +317,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
 		  If (Self.mMainWindow Is Nil) = False Then
-		    Self.mMainWindow.Documents.NewDocument
+		    Self.mMainWindow.Documents(False).NewProject()
 		  End If
 		  Return True
 		End Function
@@ -321,14 +356,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function HelpAPIBuilder() As Boolean Handles HelpAPIBuilder.Action
-		  Call Self.HandleURL("beacon://action/showapibuilder")
-		  Return True
-		  
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function HelpAPIGuide() As Boolean Handles HelpAPIGuide.Action
 		  Call Self.HandleURL("beacon://action/showguide")
 		  Return True
@@ -351,38 +378,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function HelpCreateOfflineAuthorizationRequest() As Boolean Handles HelpCreateOfflineAuthorizationRequest.Action
-		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = "Authorization Request" + Beacon.FileExtensionAuth
-		  
-		  Var File As FolderItem = Dialog.ShowModal()
-		  If File = Nil Then
-		    Return True
-		  End If
-		  
-		  Var Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
-		  
-		  Var HardwareID As String = Beacon.HardwareID
-		  Var Signed As MemoryBlock = Identity.Sign(HardwareID)
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("UserID") = Identity.UserID
-		  Dict.Value("Signed") = EncodeHex(Signed)
-		  Dict.Value("Device") = HardwareID
-		  
-		  Var JSON As String = Beacon.GenerateJSON(Dict, False)
-		  If Not File.Write(JSON) Then
-		    BeaconUI.ShowAlert("Could not create offline authorization request.", "There was a problem writing the file to disk.")
-		  End If
-		  
+		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
+		  Self.StartTicket()
 		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
-		  Self.StartTicket()
+		Function HelpMigrateAccounts() As Boolean Handles HelpMigrateAccounts.Action
+		  UserMigratorDialog.Present(False)
 		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 
@@ -410,6 +416,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpShowDiagnosticInfo() As Boolean Handles HelpShowDiagnosticInfo.Action
+		  DebugWindow.Present
+		  Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpShowWhatsNewWindow() As Boolean Handles HelpShowWhatsNewWindow.Action
 		  WhatsNewWindow.Present(99999999)
 		  Return True
@@ -426,6 +439,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function HelpUpdateEngrams() As Boolean Handles HelpUpdateEngrams.Action
 		  Self.SyncGamedata(False, False)
+		  Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function NewProjectForGameShowGamePicker() As Boolean Handles NewProjectForGameShowGamePicker.Action
+		  If (Self.mMainWindow Is Nil) = False Then
+		    Self.mMainWindow.Documents(False).NewProject("")
+		  End If
 		  Return True
 		End Function
 	#tag EndMenuHandler
@@ -458,6 +480,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
+		  #if DebugBuild
+		    Const UsePreviewAppSupport = False
+		  #else
+		    Const UsePreviewAppSupport = Self.UsePreviewMode
+		  #endif
+		  
 		  If (Self.mDataFolder Is Nil) = False Then
 		    Return Self.mDataFolder
 		  End If
@@ -470,11 +498,32 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return Self.mDataFolder
 		  End If
 		  
+		  Var FolderName As String = "Beacon"
+		  #if DebugBuild
+		    FolderName = "Beacon Dev"
+		  #endif
+		  Var PreviewFolderName As String = FolderName + " Preview"
+		  
 		  Var AppSupport As FolderItem = SpecialFolder.ApplicationData
 		  Call AppSupport.CheckIsFolder
 		  Var CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
 		  Call CompanyFolder.CheckIsFolder
-		  Var AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
+		  
+		  If UsePreviewAppSupport Then
+		    Var StableFolderName As String = FolderName
+		    FolderName = PreviewFolderName
+		    
+		    If CompanyFolder.Child(StableFolderName).Exists = True And CompanyFolder.Child(FolderName).Exists = False Then
+		      CompanyFolder.Child(StableFolderName).CopyTo(CompanyFolder.Child(FolderName))
+		    End If
+		  ElseIf CompanyFolder.Child(PreviewFolderName).Exists Then
+		    If CompanyFolder.Child(FolderName).Exists Then
+		      Call CompanyFolder.Child(FolderName).DeepDelete(False)
+		    End If
+		    CompanyFolder.Child(PreviewFolderName).MoveTo(CompanyFolder.Child(FolderName))
+		  End If
+		  
+		  Var AppFolder As FolderItem = CompanyFolder.Child(FolderName)
 		  Call AppFolder.CheckIsFolder
 		  Self.mDataFolder = AppFolder
 		  Return Self.mDataFolder
@@ -490,15 +539,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function BuildVersion() As String
 		  Var VersionString As String = Self.MajorVersion.ToString(Locale.Raw, "0") + "." + Self.MinorVersion.ToString(Locale.Raw, "0")
-		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> Application.Final Then
+		  If Self.BugVersion > 0 Or (Self.StageCode = DesktopApplication.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> DesktopApplication.Final Then
 		    VersionString = VersionString + "." + Self.BugVersion.ToString(Locale.Raw, "0")
 		  End If
 		  Select Case Self.StageCode
-		  Case Application.Development
+		  Case DesktopApplication.Development
 		    Return VersionString + "pa" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
-		  Case Application.Alpha
+		  Case DesktopApplication.Alpha
 		    Return VersionString + "a" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
-		  Case Application.Beta
+		  Case DesktopApplication.Beta
 		    Return VersionString + "b" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		  Else
 		    If Self.NonReleaseVersion <= 0 Then
@@ -531,9 +580,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DataSourceForGame(GameID As String) As Beacon.DataSource
+		Function DataSourceForGame(GameId As String) As Beacon.DataSource
 		  For Idx As Integer = 0 To Self.mDataSources.LastIndex
-		    If Self.mDataSources(Idx).Identifier = GameID Then
+		    If Self.mDataSources(Idx).Identifier = GameId Then
 		      Return Self.mDataSources(Idx)
 		    End If
 		  Next Idx
@@ -603,8 +652,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return True
 		  End If
 		  
+		  App.Log("Presenting login window because GetOnlinePermission was called and the identity is nil or online access is disabled.")
 		  UserWelcomeWindow.Present(False)
-		  
 		  Return Preferences.OnlineEnabled
 		End Function
 	#tag EndMethod
@@ -687,7 +736,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If URL.Left(7) = "action/" Then
 		    Var Instructions As String = URL.Middle(7)
 		    Var ParamsPos As Integer = Instructions.IndexOf("?")
+		    Var Query As String
 		    If ParamsPos > -1 Then
+		      Query = Instructions.Middle(ParamsPos + 1)
 		      Instructions = Instructions.Left(ParamsPos)
 		    End If
 		    
@@ -702,8 +753,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      IdentityWindow.Show()
 		    Case "showguide"
 		      System.GotoURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
-		    Case "showapibuilder"
-		      APIBuilderWindow.Show()
 		    Case "checkforupdate"
 		      Self.CheckForUpdates()
 		    Case "checkforengrams"
@@ -711,15 +760,21 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "refreshengrams"
 		      Self.SyncGamedata(False, True)
 		    Case "refreshuser"
-		      Self.IdentityManager.RefreshUserDetails()
+		      If Query = "silent=false" Then
+		        BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityFull)
+		      Else
+		        BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityLoginOnly)
+		      End If
 		    Case "releasenotes"
 		      Self.ShowReleaseNotes()
 		    Case "enableonline"
+		      App.Log("Presenting login window as a result of following beacon://action/enableonline.")
 		      UserWelcomeWindow.Present(False)
 		    Case "signin"
+		      App.Log("Presenting login window as a result of following beacon://action/signin.")
 		      UserWelcomeWindow.Present(True)
 		    Case "showaccount"
-		      System.GotoURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
+		      System.GotoURL(Beacon.WebURL("/account/", True))
 		    Case "spawncodes"
 		      Self.ShowSpawnCodes()
 		    Case "reportproblem", "newhelpticket"
@@ -727,17 +782,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "exit"
 		      Quit
 		    Case "signout"
-		      Var Token As String = Preferences.OnlineToken
-		      If Token.IsEmpty = False Then
-		        Var Request As New BeaconAPI.Request("/session/" + EncodeURLComponent(Token), "DELETE", Nil)
-		        Request.Authenticate(Token)
+		      Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
+		      If (Token Is Nil) = False Then
+		        Var Request As New BeaconAPI.Request("/session", "DELETE")
+		        Request.ForceAuthorize(Token)
 		        BeaconAPI.Send(Request)
 		      End If
 		      
 		      Preferences.OnlineEnabled = False
-		      Preferences.OnlineToken = ""
+		      Preferences.BeaconAuth = Nil
 		      Self.IdentityManager.CurrentIdentity = Nil
 		      
+		      App.Log("Presenting login window as a result of following beacon://action/signout.")
 		      UserWelcomeWindow.Present(False)
 		    Case "syncusercloud"
 		      UserCloud.Sync(True)
@@ -772,18 +828,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		    
 		    // Something could be done with the query and path
-		    Var GameID As String = Ark.Identifier
+		    Var GameId As String = Ark.Identifier
 		    If Parameters.HasKey("game") Then
 		      Try
-		        GameID = Parameters.Value("game").StringValue
+		        GameId = Parameters.Value("game").StringValue
 		      Catch Err As RuntimeException
 		      End Try
 		    End If
 		    
-		    Var FrontmostView As DocumentEditorView = Self.mMainWindow.FrontmostDocumentView(GameID)
+		    Var FrontmostView As DocumentEditorView = Self.mMainWindow.FrontmostDocumentView(GameId)
 		    If FrontmostView Is Nil Then
-		      Self.mMainWindow.Documents.NewDocument(GameID)
-		      FrontmostView = Self.mMainWindow.FrontmostDocumentView(GameID)
+		      Self.mMainWindow.Documents.NewProject(GameId)
+		      FrontmostView = Self.mMainWindow.FrontmostDocumentView(GameId)
 		    End If
 		    If (FrontmostView Is Nil) = False Then
 		      FrontmostView.SwitchToEditor(ConfigName)
@@ -809,16 +865,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Actions(0) = Action
 		      
 		      If SaveInfo.BeginsWith(Beacon.ProjectURL.TypeCloud + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeLocal + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeWeb + "://") Then
-		        Self.mMainWindow.Documents.OpenDocument(SaveInfo, Actions)
+		        Self.mMainWindow.Documents.OpenProject(SaveInfo, Actions)
 		      Else
 		        Var File As BookmarkedFolderItem
 		        Try
-		          File = BookmarkedFolderItem.FromSaveInfo(SaveInfo, True)
+		          File = BookmarkedFolderItem.FromSaveInfo(SaveInfo)
 		        Catch Err As RuntimeException
 		          Self.Log(Err, CurrentMethodName, "Decoding save info")
 		        End Try
 		        If (File Is Nil) = False And File.Exists Then
-		          Self.mMainWindow.Documents.OpenDocument(File, Actions)
+		          Self.mMainWindow.Documents.OpenProject(File, Actions)
 		        End If
 		      End If
 		    End If
@@ -827,11 +883,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Var Idx As Integer = URL.IndexOf(LegacyURL)
 		    If Idx > -1 Then
 		      Var DocID As String = URL.Middle(Idx + LegacyURL.Length)
-		      URL = BeaconAPI.URL("/project/" + DocID)
+		      URL = BeaconAPI.URL("/projects/" + DocID)
 		    End If
 		    
 		    Var FileURL As String = "https://" + URL
-		    Self.mMainWindow.Documents.OpenDocument(FileURL)
+		    Self.mMainWindow.Documents.OpenProject(FileURL)
 		  End If
 		  
 		  Try
@@ -879,32 +935,24 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Sub ImportIdentityFile(File As FolderItem, ParentWindow As DesktopWindow = Nil)
-		  If ParentWindow = Nil Then
+		  If ParentWindow Is Nil Then
 		    ParentWindow = MainWindow
 		  End If
 		  
-		  Var Stream As TextInputStream = TextInputStream.Open(File)
-		  Var Contents As String = Stream.ReadAll(Encodings.UTF8)
-		  Stream.Close
-		  
-		  Var Dict As Dictionary
-		  Try
-		    Dict = Beacon.ParseJSON(Contents)
-		  Catch Err As RuntimeException
-		    ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
-		    Return
-		  End Try
-		  
-		  Var Identity As Beacon.Identity = Beacon.Identity.Import(Dict, "")
+		  Var Identity As Beacon.Identity = Self.mIdentityManager.Import(File)
 		  If Identity Is Nil Then
-		    // Password is needed to decrypt
-		    Identity = IdentityDecryptDialog.ShowDecryptIdentityDict(ParentWindow, Dict)
-		    If Identity Is Nil Then
+		    // Try with password
+		    Var Password As String = IdentityDecryptDialog.Present(ParentWindow)
+		    If Password.IsEmpty Then
 		      Return
 		    End If
+		    
+		    Identity = Self.mIdentityManager.Import(File, Password)
 		  End If
 		  
-		  Self.IdentityManager.CurrentIdentity = Identity
+		  If (Identity Is Nil) = False Then
+		    Self.mIdentityManager.CurrentIdentity = Identity
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -940,19 +988,20 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_CheckScreenSize()
 		  // Find the largest screen
-		  Var LargestScreen As Integer = -1
-		  Var Bound As Integer = ScreenCount - 1
+		  Var LargestDisplay As DesktopDisplay
+		  Var Bound As Integer = DesktopDisplay.DisplayCount - 1
 		  For Idx As Integer = 0 To Bound
-		    If LargestScreen = -1 Then
-		      LargestScreen = Idx
+		    Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(Idx)
+		    If LargestDisplay Is Nil Then
+		      LargestDisplay = Display
 		    Else
-		      If (Screen(Idx).Width * Screen(Idx).Height) > (Screen(LargestScreen).Width * Screen(LargestScreen).Height) Then
-		        LargestScreen = Idx
+		      If (Display.Width * Display.Height) > (LargestDisplay.Width * LargestDisplay.Height) Then
+		        LargestDisplay = Display
 		      End If
 		    End If
 		  Next
 		  
-		  Var ScreenSize As New Size(Screen(LargestScreen).Width, Screen(LargestScreen).Height)
+		  Var ScreenSize As New Size(LargestDisplay.Width, LargestDisplay.Height)
 		  Var LastScreen As Size = Preferences.LastUsedScreenSize
 		  If LastScreen Is Nil Or ScreenSize.Width <> LastScreen.Width Or ScreenSize.Height <> LastScreen.Height Then
 		    // Warn
@@ -985,6 +1034,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_PrivacyCheck()
 		  If Self.mIdentityManager.CurrentIdentity Is Nil Then
+		    App.Log("Presenting login window because identity is nil during launch steps.")
 		    UserWelcomeWindow.Present(False)
 		  Else
 		    Self.NextLaunchQueueTask()
@@ -994,7 +1044,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_RequestUser()
-		  Self.mIdentityManager.RefreshUserDetails()
+		  BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityLoginOnly)
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
@@ -1004,6 +1054,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Try
 		    Self.mDataSources.Add(Ark.DataSource.Pool.Get(False))
 		    Self.mDataSources.Add(Beacon.CommonData.Pool.Get(False))
+		    #if SDTD.Enabled
+		      Self.mDataSources.Add(SDTD.DataSource.Pool.Get(False))
+		    #endif
+		    #if ArkSA.Enabled
+		      Self.mDataSources.Add(ArkSA.DataSource.Pool.Get(False))
+		    #endif
 		  Catch Err As RuntimeException
 		    // Something is still wrong
 		    BeaconUI.ShowAlert("Beacon cannot start due to a problem with a local database.", "Beacon is unable to create or repair a local database. The database error was: `" + Err.Message + "`.")
@@ -1074,6 +1130,24 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_SetupNewProjectMenuItems()
+		  Var Base As DesktopMenuItem = FileNewProjectForGame
+		  Var Games() As Beacon.Game = Beacon.Games
+		  If Games.Count = 1 Then
+		    Base.Visible = False
+		  Else
+		    For Each Game As Beacon.Game In Games
+		      Var Item As New DesktopMenuItem(Game.Name, Game.Identifier)
+		      Item.AutoEnabled = False
+		      AddHandler Item.MenuItemSelected, AddressOf mGameMenu_MenuItemSelected
+		      Base.AddMenu(Item)
+		    Next
+		  End If
+		  Self.NextLaunchQueueTask
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_ShowMainWindow()
 		  Self.mMainWindow = New MainWindow
 		  Self.mMainWindow.Show()
@@ -1099,6 +1173,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mDataUpdateTimer = DataUpdateTimer
 		  
 		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_StartPusher()
+		  Self.mPusher = New Beacon.PusherSocket
+		  If (Self.mIdentityManager Is Nil) = False And Self.mIdentityManager.CurrentUserId.IsEmpty = False Then
+		    Self.mPusher.Start()
+		  End If
+		  Self.NextLaunchQueueTask
 		End Sub
 	#tag EndMethod
 
@@ -1208,6 +1292,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function mGameMenu_MenuItemSelected(Sender As DesktopMenuItem) As Boolean
+		  If (Self.mMainWindow Is Nil) = False Then
+		    Self.mMainWindow.Documents(False).NewProject(Sender.Tag.StringValue)
+		  End If
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mHandoffSocket_DataReceived(Sender As IPCSocket)
 		  Do
 		    Var Buffer As String = DefineEncoding(Sender.Lookahead, Encodings.UTF8)
@@ -1236,14 +1329,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mIdentityManager_NeedsLogin(Sender As IdentityManager)
-		  #Pragma Unused Sender
-		  
-		  Call CallLater.Schedule(100, AddressOf ShowLoginWindow)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function mOpenRecent_ClearMenu(Sender As DesktopMenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
@@ -1257,7 +1342,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Function mOpenRecent_OpenFile(Sender As DesktopMenuItem) As Boolean
 		  If (Self.mMainWindow Is Nil) = False Then
 		    Var Project As Beacon.ProjectURL = Sender.Tag
-		    Self.mMainWindow.Documents.OpenDocument(Project)
+		    Self.mMainWindow.Documents.OpenProject(Project)
 		    Return True
 		  End If
 		End Function
@@ -1281,8 +1366,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case BeaconAPI.Socket.Notification_Unauthorized
-		    Preferences.OnlineToken = ""
 		  Case Preferences.Notification_RecentsChanged
 		    Self.RebuildRecentMenu()
 		  Case UserCloud.Notification_SyncStarted
@@ -1291,6 +1374,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Case UserCloud.Notification_SyncFinished
 		    HelpSyncCloudFiles.Text = "Sync Cloud Files"
 		    HelpSyncCloudFiles.Enabled = True
+		    If Self.mMigrateAfterSync Then
+		      UserMigratorDialog.Present(True)
+		      Self.mMigrateAfterSync = False
+		    End If
 		  Case Preferences.Notification_OnlineStateChanged
 		    UpdatesKit.IsCheckingAutomatically = Preferences.OnlineEnabled
 		  Case DataUpdater.Notification_ImportStopped
@@ -1308,6 +1395,24 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Next Source
 		      Self.mHasTestedDatabases = True
 		    End If
+		  Case IdentityManager.Notification_IdentityChanged
+		    If (Self.mPusher Is Nil) = False Then
+		      Self.mPusher.Stop
+		      Self.mPusher = Nil
+		    End If
+		    
+		    Self.mPusher = New Beacon.PusherSocket
+		    If (Self.mIdentityManager Is Nil) = False Then
+		      Var UserId As String = Self.mIdentityManager.CurrentUserId
+		      If UserId.IsEmpty = False Then
+		        Self.mPusher.Start()
+		        Var UserChannelName As String = Beacon.PusherSocket.UserChannelName(UserId)
+		        Self.mPusher.Listen(UserChannelName, "user-updated", AddressOf Pusher_UserUpdated)
+		        Self.mPusher.Listen(UserChannelName, "cloud-updated", AddressOf Pusher_CloudUpdated)
+		      End If
+		    End If
+		    
+		    Self.mMigrateAfterSync = True
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1361,7 +1466,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If File.ExtensionMatches(Beacon.FileExtensionINI) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionINI) Or File.ExtensionMatches(Beacon.FileExtensionXml) Then
 		    Self.mMainWindow.BringToFront()
 		    Self.mMainWindow.Documents.ImportFile(File)
 		    Return
@@ -1369,7 +1474,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  If File.ExtensionMatches(Beacon.FileExtensionProject) Then
 		    Self.mMainWindow.BringToFront()
-		    Self.mMainWindow.Documents.OpenDocument(File)
+		    Self.mMainWindow.Documents.OpenProject(File)
 		    Return
 		  End If
 		  
@@ -1401,6 +1506,33 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub PresentException(Err As Variant)
 		  ExceptionWindow.Present(Err)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Pusher() As Beacon.PusherSocket
+		  Return Self.mPusher
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Pusher_CloudUpdated(ChannelName As String, EventName As String, Payload As String)
+		  #Pragma Unused ChannelName
+		  #Pragma Unused EventName
+		  #Pragma Unused Payload
+		  
+		  // Even though the server is telling us changes were made, wait just in case
+		  UserCloud.Sync(False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Pusher_UserUpdated(ChannelName As String, EventName As String, Payload As String)
+		  #Pragma Unused ChannelName
+		  #Pragma Unused EventName
+		  #Pragma Unused Payload
+		  
+		  BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityLoginOnly)
 		End Sub
 	#tag EndMethod
 
@@ -1458,28 +1590,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  #endif
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowLoginWindow()
-		  Var RestoreMainWindow As Boolean
-		  If (Self.mMainWindow Is Nil) = False And Self.mMainWindow.Visible Then
-		    Self.mMainWindow.Hide
-		    RestoreMainWindow = True
-		  End If
-		  
-		  UserWelcomeWindow.Present(False, AddressOf ShowLoginWindowMessage)
-		  
-		  If RestoreMainWindow Then
-		    Self.mMainWindow.Show
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowLoginWindowMessage(WelcomeWindow As UserWelcomeWindow)
-		  WelcomeWindow.ShowAlert("Please log in again", "There was a problem with your user data. You will need to log in again.")
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1596,10 +1706,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 
 	#tag Property, Flags = &h21
-		Private mAPISocket As BeaconAPI.Socket
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mDataFolder As FolderItem
 	#tag EndProperty
 
@@ -1640,11 +1746,19 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mMigrateAfterSync As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPendingURLs() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mPortableMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPusher As Beacon.PusherSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1685,6 +1799,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = String, Dynamic = False, Default = \"Appearance Changed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = UsePreviewMode, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
 	#tag EndConstant
 
 

@@ -40,6 +40,10 @@ Protected Class Issue
 	#tag EndProperty
 
 
+	#tag Constant, Name = Separator, Type = String, Dynamic = False, Default = \"/", Scope = Public
+	#tag EndConstant
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Name"

@@ -159,6 +159,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -168,6 +169,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -215,6 +217,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -224,6 +227,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -452,7 +456,7 @@ End
 		  Var OldEngramRows As New Dictionary
 		  For Idx As Integer = 0 To Self.EngramList.LastRowIndex
 		    Var Engram As Ark.Engram = Self.EngramList.RowTagAt(Idx)
-		    OldEngramRows.Value(Engram.ObjectID) = Self.EngramList.CellTextAt(Idx, 1)
+		    OldEngramRows.Value(Engram.EngramId) = Self.EngramList.CellTextAt(Idx, 1)
 		  Next Idx
 		  Return OldEngramRows
 		End Function
@@ -463,7 +467,7 @@ End
 		  Var SelectEngrams() As Ark.Engram
 		  For Idx As Integer = 0 To Self.EngramList.LastRowIndex
 		    Var Engram As Ark.Engram = Self.EngramList.RowTagAt(Idx)
-		    If OldEngramRows.HasKey(Engram.ObjectID) = False Or OldEngramRows.Value(Engram.ObjectID).StringValue <> Self.EngramList.CellTextAt(Idx, 1) Then
+		    If OldEngramRows.HasKey(Engram.EngramId) = False Or OldEngramRows.Value(Engram.EngramId).StringValue <> Self.EngramList.CellTextAt(Idx, 1) Then
 		      SelectEngrams.Add(Engram)
 		    End If
 		  Next Idx
@@ -513,12 +517,12 @@ End
 		    Var Bound As Integer = Self.EngramList.LastRowIndex
 		    For Idx As Integer = 0 To Bound
 		      If Self.EngramList.RowSelectedAt(Idx) Then
-		        Selected.Add(Ark.Engram(Self.EngramList.RowTagAt(Idx)).ObjectID)
+		        Selected.Add(Ark.Engram(Self.EngramList.RowTagAt(Idx)).EngramId)
 		      End If
 		    Next
 		  Else
 		    For Each Engram As Ark.Engram In SelectEngrams
-		      Selected.Add(Engram.ObjectID)
+		      Selected.Add(Engram.EngramId)
 		    Next
 		  End If
 		  
@@ -589,7 +593,7 @@ End
 		    End If
 		    
 		    Self.EngramList.CellTextAt(Idx, 1) = Behaviors.Join("; ")
-		    Self.EngramList.RowSelectedAt(Idx) = Selected.IndexOf(Engram.ObjectID) > -1
+		    Self.EngramList.RowSelectedAt(Idx) = Selected.IndexOf(Engram.EngramId) > -1
 		  Next
 		  
 		  Self.EngramList.Sort()
@@ -708,7 +712,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -725,56 +729,37 @@ End
 		  
 		  Var Config As Ark.Configs.EngramControl = Self.Config(False)
 		  Var Overrides() As Dictionary = Config.Export(Engrams)
+		  If Overrides.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
 		  
-		  Board.Text = Beacon.GenerateJSON(Overrides, True)
-		  Board.RawData(Self.kEngramsClipboardType) = Board.Text
+		  Board.AddClipboardData(Self.kEngramsClipboardType, Overrides)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  If Board.RawDataAvailable(Self.kEngramsClipboardType) Then
-		    Return True
-		  End If
-		  
-		  If Board.TextAvailable = False Then
-		    Return False
-		  End If
-		  
-		  Var Content As String = Board.Text.Trim
-		  If (Content.BeginsWith("{") And Content.EndsWith("}")) Or (Content.BeginsWith("[") And Content.EndsWith("]")) Then
-		    Return True
-		  End If
-		  
-		  Var Keys() As Ark.ConfigKey = Self.Config(False).ManagedKeys
-		  For Each Key As Ark.ConfigKey In Keys
-		    Var SearchFor As String = Key.Key + "="
-		    If Content.IndexOf(SearchFor) > -1 Then
-		      Return True
-		    End If
-		  Next Key
-		  
-		  Return False
+		  Return Board.HasClipboardData(Self.kEngramsClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var InputString As String
-		  If Board.RawDataAvailable(Self.kPointsClipboardType) Then
-		    InputString = Board.RawData(Self.kPointsClipboardType)
-		  Else
-		    InputString = Board.Text
-		  End If
-		  
-		  Var Config As Ark.Configs.EngramControl = Self.Config(False)
-		  Var OldEngramRows As Dictionary = Self.PrepareEngramComparison()
-		  Var Changed As Boolean = Config.Import(InputString)
-		  If Changed Then
-		    Call Self.Config(True) // Will cause the previous retreival to become permanent since we still have a reference
-		    Self.SetupUI
-		    Self.Modified = Config.Modified
-		    Self.ProcessEngramComparison(OldEngramRows)
-		  Else
-		    Self.Parse("", InputString, "clipboard")
+		  Var Contents As Variant = Board.GetClipboardData(Self.kEngramsClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Config As Ark.Configs.EngramControl = Self.Config(False)
+		      Var OldEngramRows As Dictionary = Self.PrepareEngramComparison()
+		      Var Changed As Boolean = Config.Import(Contents)
+		      If Changed Then
+		        Call Self.Config(True) // Will cause the previous retreival to become permanent since we still have a reference
+		        Self.SetupUI
+		        Self.Modified = Config.Modified
+		        Self.ProcessEngramComparison(OldEngramRows)
+		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
+		    Return
 		  End If
 		End Sub
 	#tag EndEvent
@@ -887,74 +872,59 @@ End
 		    Var Points As NullableDouble = Config.PointsForLevel(Level)
 		    
 		    Var Dict As New Dictionary
-		    Dict.Value("Level") = Level
+		    Dict.Value("level") = Level
 		    If IsNull(Points) Then
-		      Dict.Value("Points") = Nil
+		      Dict.Value("points") = Nil
 		    Else
-		      Dict.Value("Points") = Points.IntegerValue
+		      Dict.Value("points") = Points.IntegerValue
 		    End If
 		    
 		    Dicts.Add(Dict)
 		  Next
 		  
-		  Board.Text = Beacon.GenerateJSON(Dicts, True)
-		  Board.RawData(Self.kPointsClipboardType) = Board.Text
+		  If Dicts.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kPointsClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kPointsClipboardType) Or (Board.TextAvailable And Board.Text.Trim.BeginsWith("[") And Board.Text.Trim.EndsWith("]"))
+		  Return Board.HasClipboardData(Self.kPointsClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var JSONString As String
-		  If Board.RawDataAvailable(Self.kPointsClipboardType) Then
-		    JSONString = Board.RawData(Self.kPointsClipboardType)
-		  Else
-		    JSONString = Board.Text
-		  End If
-		  
-		  Var Dicts() As Variant
-		  Try
-		    Dicts = Beacon.ParseJSON(JSONString)
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Var Config As Ark.Configs.EngramControl
-		  Var Changed As Boolean
-		  For Each Member As Variant In Dicts
+		  Var Contents As Variant = Board.GetClipboardData(Self.kPointsClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      If (Member IsA Dictionary) = False Then
-		        Continue
-		      End If
+		      Var Config As Ark.Configs.EngramControl
+		      Var Changed As Boolean
+		      Var Dicts() As Variant = Contents
+		      For Each Dict As Dictionary In Dicts
+		        Var Level As Integer = Dict.Value("level")
+		        Var Points As NullableDouble = NullableDouble.FromVariant(Dict.Value("points"))
+		        
+		        If Config Is Nil Then
+		          Config = Self.Config(True)
+		        End If
+		        
+		        Config.PointsForLevel(Level) = Points
+		        Changed = True
+		      Next
 		      
-		      Var Dict As Dictionary = Member
-		      If Not Dict.HasAllKeys("Level", "Points") Then
-		        Continue
+		      If Changed Then
+		        Self.SetupUI
 		      End If
-		      
-		      Var Level As Integer = Dict.Value("Level")
-		      Var Points As NullableDouble
-		      If IsNull(Dict.Value("Points")) = False Then
-		        Points = Dict.Value("Points").IntegerValue
+		      If (Config Is Nil) = False Then
+		        Self.Modified = Config.Modified
 		      End If
-		      
-		      If Config = Nil Then
-		        Config = Self.Config(True)
-		      End If
-		      
-		      Config.PointsForLevel(Level) = Points
-		      Changed = True
 		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    End Try
-		  Next
-		  
-		  If Changed Then
-		    Self.SetupUI
-		  End If
-		  If Config <> Nil Then
-		    Self.Modified = Config.Modified
+		    Return
 		  End If
 		End Sub
 	#tag EndEvent

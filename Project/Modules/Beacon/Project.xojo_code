@@ -2,35 +2,120 @@
 Protected Class Project
 Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
-		Function Accounts() As Beacon.ExternalAccountManager
-		  Return Self.mAccounts
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ActiveConfigSet() As String
+		Function ActiveConfigSet() As Beacon.ConfigSet
 		  Return Self.mActiveConfigSet
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ActiveConfigSet(Assigns SetName As String)
-		  If Self.mConfigSets.HasKey(SetName) Then
-		    Self.mActiveConfigSet = SetName
+		Sub ActiveConfigSet(Assigns Set As Beacon.ConfigSet)
+		  If Set Is Nil Then
+		    Set = Beacon.ConfigSet.BaseConfigSet
+		  End If
+		  
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  If Idx = -1 Then
+		    Self.mActiveConfigSet = Beacon.ConfigSet.BaseConfigSet
 		  Else
-		    Self.mActiveConfigSet = Self.BaseConfigSetName
+		    Self.mActiveConfigSet = Self.mConfigSets(Idx)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigSet(SetName As String)
-		  If Self.mConfigSets.HasKey(SetName) = False Then
-		    Self.mConfigSets.Value(SetName) = New Dictionary
-		    Self.mConfigSetStates.Add(New Beacon.ConfigSetState(SetName, False))
-		    Self.Modified = True
-		  End If
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
+		  Self.AddConfigGroup(Group, Self.ActiveConfigSet)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup, Set As Beacon.ConfigSet)
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		  If SetDict Is Nil Then
+		    SetDict = New Dictionary
+		  End If
+		  SetDict.Value(Group.InternalName) = Group
+		  Self.ConfigSetData(Set) = SetDict
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddConfigSet(Set As Beacon.ConfigSet)
+		  If Set Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  If Idx > -1 Then
+		    Return
+		  End If
+		  
+		  If Self.HasConfigSet(Set.Name) Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "There is already a config set named " + Set.Name + "."
+		    Raise Err
+		  End If
+		  
+		  Self.mConfigSets.Add(Set)
+		  Self.mConfigSetData.Value(Set.ConfigSetId) = New Dictionary
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddFile(Filename As String, Contents As String)
+		  Self.mAdditionalFiles.Value(Filename) = Contents
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AdditionalFilesLoaded()
+		  RaiseEvent AdditionalFilesLoaded()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AddMember(Identity As Beacon.Identity, Role As String) As Boolean
+		  If Identity Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.AddMember(New Beacon.ProjectMember(Identity, Role))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AddMember(Member As Beacon.ProjectMember) As Boolean
+		  If Member Is Nil Then
+		    Return False
+		  End If
+		  
+		  // If this is the active user, make sure the stored role is correct
+		  If Member.UserId = Self.mLoadedUserId And Self.mRole <> Member.Role Then
+		    Var OldRole As String = Self.mRole
+		    Self.mRole = Member.Role
+		    Self.NotifyObservers("Role", OldRole, Member.Role)
+		  End If
+		  
+		  // If the project doesn't have a password, none of this makes sense
+		  If Self.mProjectPassword.IsEmpty Then
+		    Return False
+		  End If
+		  
+		  // Need to set the password to generate the fingerprint
+		  Var PasswordMissing As Boolean = Member.EncryptedPassword.IsEmpty
+		  Member.SetPassword(Self.mProjectPassword)
+		  
+		  Var ExistingMember As Beacon.ProjectMember = Self.mMembers.Lookup(Member.UserId.Lowercase, Nil)
+		  If PasswordMissing = False And (ExistingMember Is Nil) = False And Member.Fingerprint = ExistingMember.Fingerprint And Member.Role = ExistingMember.Role Then
+		    // No change
+		    Return False
+		  End If
+		  
+		  Self.mMembers.Value(Member.UserId) = Member
+		  Self.Modified = True
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -64,6 +149,22 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddProviderToken(Token As BeaconAPI.ProviderToken)
+		  If Token Is Nil Then
+		    Return
+		  End If
+		  
+		  If Token.IsEncrypted Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Provider token is still encrypted"
+		    Raise Err
+		  End If
+		  
+		  Self.ProviderTokenKey(Token.TokenId) = DecodeBase64(Token.EncryptionKey)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AddServerProfile(Profile As Beacon.ServerProfile)
 		  If Profile Is Nil Then
 		    Return
@@ -87,23 +188,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddUser(UserID As String, PublicKey As String)
-		  Self.mEncryptedPasswords.Value(UserID.Lowercase) = EncodeBase64(Crypto.RSAEncrypt(Self.mProjectPassword, PublicKey), 0)
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Clone(Identity As Beacon.Identity) As Beacon.Project
 		  // Yes, run this through JSON first to ensure parsing is exactly as compatible as coming from the
 		  // disk or cloud. The object types put into the dictionary are not always the same as comes back
 		  // in the parsed JSON.
 		  
 		  Try
-		    Var Dict As Dictionary = Self.SaveData(Identity)
-		    Var JSONValue As String = Beacon.GenerateJSON(Dict, False)
-		    Var FailureReason As String
-		    Return FromSaveData(JSONValue, Identity, FailureReason)
+		    Var SaveData As MemoryBlock = Self.SaveData(Identity)
+		    Return FromSaveData(SaveData, Identity)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
@@ -111,154 +203,140 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CloudSaveData() As Dictionary
-		  // Make sure all values are strings
+		Function ConfigGroup(InternalName As String, Set As Beacon.ConfigSet, Create As Boolean = False) As Beacon.ConfigGroup
+		  #Pragma Unused InternalName
+		  #Pragma Unused Set
+		  #Pragma Unused Create
 		  
-		  Var Dict As New Dictionary
-		  Dict.Value("version") = Self.SaveDataVersion.ToString(Locale.Raw, "0")
-		  Dict.Value("uuid") = Self.mUUID
-		  Dict.Value("description") = Self.mDescription
-		  Dict.Value("title") = Self.mTitle
-		  Dict.Value("game_id") = Self.GameID()
-		  
-		  Var Keys() As String
-		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
-		    Keys.Add(Entry.Key.StringValue + ":" + Entry.Value.StringValue)
-		  Next
-		  Dict.Value("keys") = Keys.Join(",")
-		  
-		  RaiseEvent AddCloudSaveData(Dict)
-		  
-		  Return Dict
+		  Var Err As New UnsupportedOperationException
+		  Err.Message = "Subclass needs to override ConfigGroup(InternalName As String, Set As Beacon.ConfigSet, Create As Boolean = False) As Beacon.ConfigGroup"
+		  Raise Err
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ConfigSet(SetName As String) As Dictionary
-		  If SetName.IsEmpty Then
-		    SetName = Self.ActiveConfigSet
-		  End If
-		  
-		  If Self.mConfigSets.HasKey(SetName) Then
-		    Return Self.mConfigSets.Value(SetName)
-		  End If
+	#tag Method, Flags = &h0
+		Function ConfigGroup(InternalName As String, Create As Boolean = False) As Beacon.ConfigGroup
+		  Return Self.ConfigGroup(InternalName, Self.ActiveConfigSet, Create)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub ConfigSet(SetName As String, Assigns Dict As Dictionary)
-		  If SetName.IsEmpty Then
-		    SetName = Self.ActiveConfigSet
-		  End If
-		  
-		  // Empty sets are valid
-		  If Dict Is Nil Then
-		    If Self.mConfigSets.HasKey(SetName) Then
-		      Self.mConfigSets.Remove(SetName)
-		      For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 1
-		        If Self.mConfigSetStates(Idx).Name = SetName Then
-		          Self.mConfigSetStates.RemoveAt(Idx)
-		        End If
-		      Next
-		      Self.Modified = True
+	#tag Method, Flags = &h0
+		Function ConfigSet(Named As String) As Beacon.ConfigSet
+		  For Idx As Integer = 0 To Self.mConfigSets.LastIndex
+		    If Self.mConfigSets(Idx).Name = Named Then
+		      Return Self.mConfigSets(Idx)
 		    End If
-		    Return
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigSetCount() As Integer
+		  Return Self.mConfigSets.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigSetData(Set As Beacon.ConfigSet) As Dictionary
+		  If Set Is Nil Then
+		    Set = Self.ActiveConfigSet
 		  End If
 		  
-		  If Self.mConfigSets.HasKey(SetName) = False Then
-		    Var Add As Boolean = True
-		    For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
-		      If Self.mConfigSetStates(Idx).Name = SetName Then
-		        Add = False
+		  If Self.mConfigSetData.HasKey(Set.ConfigSetId) = False Then
+		    Self.mConfigSetData.Value(Set.ConfigSetId) = New Dictionary
+		    Self.Modified = True
+		  End If
+		  
+		  Return Self.mConfigSetData.Value(Set.ConfigSetId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConfigSetData(Set As Beacon.ConfigSet, Assigns Dict As Dictionary)
+		  If Set Is Nil Then
+		    Set = Self.ActiveConfigSet
+		  End If
+		  
+		  // Nil dict should remove the config set
+		  If Dict Is Nil Then
+		    If Self.mConfigSetData.HasKey(Set.ConfigSetId) Then
+		      Self.mConfigSetData.Remove(Set.ConfigSetId)
+		    End If
+		    
+		    Var Idx As Integer = Self.IndexOf(Set)
+		    If Idx > -1 Then
+		      Self.mConfigSets.RemoveAt(Idx)
+		    End If
+		    
+		    For Idx = 0 To Self.mConfigSetPriorities.LastIndex
+		      If Self.mConfigSetPriorities(Idx) = Set Then
+		        Self.mConfigSetPriorities.RemoveAt(Idx)
 		        Exit
 		      End If
 		    Next
-		    If Add Then
-		      Self.mConfigSetStates.Add(New Beacon.ConfigSetState(SetName, False))
-		    End If
+		    
+		    Self.Modified = True
+		    Return
 		  End If
-		  Self.mConfigSets.Value(SetName) = Dict
+		  
+		  // Set will not be added unless necessary
+		  Self.AddConfigSet(Set)
+		  
+		  Self.mConfigSetData.Value(Set.ConfigSetId) = Dict
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigSetCount() As Integer
-		  Return Self.mConfigSets.KeyCount
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ConfigSetNames() As String()
 		  Var Names() As String
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    Names.Add(Entry.Key)
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    Names.Add(Set.Name)
 		  Next
 		  Return Names
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigSetStates() As Beacon.ConfigSetState()
-		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
-		  Var Clone(0) As Beacon.ConfigSetState
+		Function ConfigSetPriorities() As Beacon.ConfigSetState()
+		  Return Beacon.ConfigSetState.CloneArray(Self.mConfigSetPriorities)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConfigSetPriorities(Assigns List() As Beacon.ConfigSetState)
+		  If Beacon.ConfigSetState.AreArraysEqual(Self.mConfigSetPriorities, List) Then
+		    Return
+		  End If
 		  
-		  // First should always be an enabled base
-		  Clone(0) = New Beacon.ConfigSetState(Self.BaseConfigSetName, True)
-		  
-		  Var Names() As String = Array(Self.BaseConfigSetName)
-		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    // Do not include any states for sets that don't exist. Should be zero, but just to be sure.
-		    If Self.mConfigSets.HasKey(State.Name) = False Then
-		      Continue
-		    End If
-		    
-		    // Do not include duplicate states
-		    If Names.IndexOf(State.Name) > -1 Then
-		      Continue
-		    End If
-		    
-		    Clone.Add(State)
-		    Names.Add(State.Name)
+		  Self.mConfigSetPriorities = Beacon.ConfigSetState.CloneArray(List)
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigSets() As Beacon.ConfigSet()
+		  // Make sure to return a clone of the array.
+		  Var Clone() As Beacon.ConfigSet
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    Clone.Add(New Beacon.ConfigSet(Set))
 		  Next
-		  
-		  // Make sure any new sets have a state
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    If Names.IndexOf(Entry.Key.StringValue) = -1 Then
-		      Clone.Add(New Beacon.ConfigSetState(Entry.Key.StringValue, False))
-		    End If
-		  Next
-		  
 		  Return Clone
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ConfigSetStates(Assigns States() As Beacon.ConfigSetState)
-		  // First decide if the States() array is different from the mConfigSetStates() array. Then, 
-		  // update mConfigSetStates() to match. Do not need to clone the members since they are immutable.
-		  
-		  Var Different As Boolean
-		  If Self.mConfigSetStates.Count <> States.Count Then
-		    Different = True
-		  Else
-		    For Idx As Integer = 0 To States.LastIndex
-		      If Self.mConfigSetStates(Idx) <> States(Idx) Then
-		        Different = True
-		        Exit
-		      End If
-		    Next
+		Function ConsoleSafe() As Boolean
+		  Return Self.mConsoleSafe
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConsoleSafe(Assigns Value As Boolean)
+		  If Self.mConsoleSafe <> Value Then
+		    Self.mConsoleSafe = Value
+		    Self.Modified = True
 		  End If
-		  
-		  If Not Different Then
-		    Return
-		  End If
-		  
-		  Self.mConfigSetStates.ResizeTo(States.LastIndex)
-		  For Idx As Integer = 0 To States.LastIndex
-		    Self.mConfigSetStates(Idx) = States(Idx)
-		  Next
-		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -266,23 +344,103 @@ Implements ObservationKit.Observable
 		Protected Sub Constructor()
 		  // This class should only be created as a subclass
 		  
-		  Self.mAccounts = New Beacon.ExternalAccountManager
-		  Self.mEncryptedPasswords = New Dictionary
+		  Self.mMembers = New Dictionary
 		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
-		  Self.mUUID = New v4UUID
-		  Self.mConfigSets = New Dictionary
-		  Self.mConfigSets.Value(Self.BaseConfigSetName) = New Dictionary
-		  Self.mActiveConfigSet = Self.BaseConfigSetName
+		  Self.mProjectId = Beacon.UUID.v4
+		  Self.mRole = Beacon.ProjectMember.RoleOwner
+		  
+		  Self.mConfigSetData = New Dictionary
+		  Var BaseSet As Beacon.ConfigSet = Beacon.ConfigSet.BaseConfigSet
+		  Self.AddConfigSet(BaseSet)
+		  Self.mActiveConfigSet = BaseSet
+		  Self.mConfigSetPriorities.ResizeTo(0)
+		  Self.mConfigSetPriorities(0) = New Beacon.ConfigSetState(BaseSet, True)
+		  
+		  Self.mProviderTokenKeys = New Dictionary
+		  Self.mAdditionalFiles = New Dictionary
+		  Self.mEmbeddedContentPacks = New Dictionary
+		  
+		  Self.mContentPacks = New Dictionary
+		  Var DataSource As Beacon.DataSource = Self.DataSource(False)
+		  If (DataSource Is Nil) = False Then
+		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks
+		    For Idx As Integer = 0 To Packs.LastIndex
+		      Self.mContentPacks.Value(Packs(Idx).ContentPackId) = Packs(Idx).IsDefaultEnabled
+		    Next
+		  End If
+		  
 		  Self.mUseCompression = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateForGameID(GameID As String) As Beacon.Project
-		  // At the moment, only Ark is supported.
+		Function ContentPackEnabled(Pack As Beacon.ContentPack) As Boolean
+		  Return Self.ContentPackEnabled(Pack.ContentPackId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackEnabled(Pack As Beacon.ContentPack, Assigns Value As Boolean)
+		  If Pack Is Nil Then
+		    Return
+		  End If
 		  
-		  #Pragma Unused GameID 
-		  Return New Ark.Project
+		  Self.ContentPackEnabled(Pack.ContentPackId) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackEnabled(ContentPackId As String) As Boolean
+		  Return Self.mContentPacks.Lookup(ContentPackId, False)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackEnabled(ContentPackId As String, Assigns Value As Boolean)
+		  Var WasEnabled As Boolean = Self.mContentPacks.Lookup(ContentPackId, False)
+		  If WasEnabled = Value Then
+		    Return
+		  End If
+		  
+		  Self.mContentPacks.Value(ContentPackId) = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPacks() As Beacon.StringList
+		  Var List As New Beacon.StringList
+		  For Each Entry As DictionaryEntry In Self.mContentPacks
+		    If Entry.Value.BooleanValue = True Then
+		      List.Append(Entry.Key.StringValue)
+		    End If
+		  Next
+		  Return List
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateForGameId(GameId As String) As Beacon.Project
+		  Select Case GameId
+		  Case Ark.Identifier
+		    Return New Ark.Project()
+		  Case SDTD.Identifier
+		    Return New SDTD.Project()
+		  Case ArkSA.Identifier
+		    Return New ArkSA.Project()
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DataSource(AllowWriting As Boolean) As Beacon.DataSource
+		  #Pragma Unused AllowWriting
+		  
+		  // Subclasses should override
+		  
+		  Var Err As New UnsupportedOperationException
+		  Err.Message = "A subclass forgot to override Project.DataSource"
+		  Raise Err
 		End Function
 	#tag EndMethod
 
@@ -310,87 +468,204 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EmbeddedContentPacks() As Beacon.ContentPack()
+		  Var Packs() As Beacon.ContentPack
+		  For Each Entry As DictionaryEntry In Self.mEmbeddedContentPacks
+		    Packs.Add(Entry.Value)
+		  Next
+		  Return Packs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Encrypt(Data As String) As String
 		  Return EncodeBase64(BeaconEncryption.SymmetricEncrypt(Self.mProjectPassword, Data), 0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Project
-		  Var Version As Integer = SaveData.Lookup("Version", 0).IntegerValue
-		  Var MinVersion As Integer = SaveData.Lookup("MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
-		  Var SavedWithVersion As Integer = SaveData.Lookup("SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
-		  Var GameID As String = SaveData.Lookup("Game", Ark.Identifier).StringValue
-		  Var UUID As String
-		  If SaveData.HasKey("Identifier") Then
-		    UUID = SaveData.Value("Identifier").StringValue
+		Function Files() As String()
+		  Var Filenames() As String
+		  For Each Entry As DictionaryEntry In Self.mAdditionalFiles
+		    Filenames.Add(Entry.Key)
+		  Next
+		  Return Filenames
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FindConfigSet(NameOrId As String) As Beacon.ConfigSet
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    If Set.Name = NameOrId Or Set.ConfigSetId = NameOrId Then
+		      Return Set
+		    End If
+		  Next
+		  Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity) As Beacon.Project
+		  Var AdditionalProperties As New Dictionary
+		  Return FromSaveData(SaveData, Identity, AdditionalProperties)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity, AdditionalProperties As Dictionary) As Beacon.Project
+		  Var Version As Integer = SaveData.FirstValue("version", "Version", 0).IntegerValue
+		  If Version < 2 Then
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "This project is too old to be opened with this version of Beacon."
+		    Raise Err
 		  End If
-		  If v4UUID.IsValid(UUID) = False Then
-		    UUID = New v4UUID
+		  
+		  Var MinVersion As Integer = SaveData.FirstValue("minVersion", "MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
+		  Var SavedWithVersion As Integer = SaveData.FirstValue("savedWith", "SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
+		  Var GameId As String = SaveData.FirstValue("gameId", "Game", Ark.Identifier).StringValue
+		  
+		  Var ProjectId As String = SaveData.FirstValue("projectId", "Identifier", "").StringValue
+		  If Beacon.UUID.Validate(ProjectId) = False Then
+		    ProjectId = Beacon.UUID.v4
 		  End If
 		  
 		  If MinVersion > Beacon.Project.SaveDataVersion Then
-		    FailureReason = "Unable to load project because the version is " + Version.ToString + " but this version of Beacon only supports up to version " + MinVersion.ToString + "."
-		    App.Log(FailureReason)
-		    Return Nil
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "This is a v" + Version.ToString(Locale.Raw, "0") + " project, but this version of Beacon only supports up to v" + MinVersion.ToString(Locale.Raw, "0") + " projects. There may be an update available."
+		    Raise Err
 		  End If
 		  
 		  Var Project As Beacon.Project
-		  Select Case GameID
+		  Select Case GameId
 		  Case Ark.Identifier
 		    Project = New Ark.Project
+		  Case SDTD.Identifier
+		    Project = New SDTD.Project
+		  Case ArkSA.Identifier
+		    Project = New ArkSA.Project
 		  Else
-		    FailureReason = "Unknown game " + GameID + "."
-		    App.Log(FailureReason)
-		    Return Nil
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "Unknown game " + GameId + "."
+		    Raise Err
 		  End Select
 		  
-		  Project.mUUID = UUID
-		  If SaveData.HasKey("Description") Then
-		    Project.mDescription = SaveData.Value("Description")
-		  End If
-		  If SaveData.HasKey("Title") Then
-		    Project.mTitle = SaveData.Value("Title")
-		  End If
-		  If SaveData.HasKey("UseCompression") Then
-		    Project.mUseCompression = SaveData.Value("UseCompression")
-		  End If
-		  If SaveData.HasKey("Trust") Then
-		    Project.mLegacyTrustKey = SaveData.Value("Trust")
+		  Select Case Version
+		  Case 2
+		    // It's ok for Ark-specific stuff to be here
+		    Var DifficultyValue As Double = SaveData.Value("DifficultyValue")
+		    Var LootSources() As Variant = SaveData.Value("LootSources")
+		    
+		    Var Loot As New Ark.Configs.LootDrops
+		    For Each Source As Variant In LootSources
+		      Try
+		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dictionary(Source))
+		        If Container Is Nil Then
+		          Continue
+		        End If
+		        
+		        Loot.Add(Container, True)
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    
+		    Var ConfigSet As New Dictionary
+		    ConfigSet.Value(Ark.Configs.NameDifficulty) = New Ark.Configs.Difficulty(DifficultyValue)
+		    ConfigSet.Value(Ark.Configs.NameLootDrops) = Loot
+		    
+		    Project.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
+		  Case 3, 4
+		    Var ConfigsDict As Dictionary = SaveData.Value("Configs")
+		    Var MetadataDict As Dictionary = ConfigsDict.Value("Metadata")
+		    SaveData.Value("description") = MetadataDict.Value("Description")
+		    SaveData.Value("name") = MetadataDict.Value("Title")
+		  Case 5
+		    Var ConfigSetsDict As Dictionary = SaveData.Value("Config Sets")
+		    Var BaseDict As Dictionary = ConfigSetsDict.Value("Base")
+		    Var MetadataDict As Dictionary = BaseDict.Value("Metadata")
+		    SaveData.Value("description") = MetadataDict.Value("Description")
+		    SaveData.Value("name") = MetadataDict.Value("Title")
+		  End Select
+		  
+		  Project.mProjectId = ProjectId
+		  
+		  Var DescriptionKey As Variant = SaveData.FirstKey("description", "Description")
+		  If DescriptionKey.IsNull = False Then
+		    Project.mDescription = SaveData.Value(DescriptionKey)
 		  End If
 		  
-		  If Version >= 4 And SaveData.HasKey("EncryptionKeys") And SaveData.Value("EncryptionKeys") IsA Dictionary Then
+		  Var TitleKey As Variant = SaveData.FirstKey("name", "Title")
+		  If TitleKey.IsNull = False Then
+		    Project.mTitle = SaveData.Value(TitleKey)
+		  End If
+		  
+		  Var LegacyTrustKey As Variant = SaveData.FirstKey("legacyTrustKey", "LegacyTrustKey", "Trust")
+		  If LegacyTrustKey.IsNull = False Then
+		    Project.mLegacyTrustKey = SaveData.Value(LegacyTrustKey)
+		  End If
+		  
+		  If SaveData.HasKey("keepLocalBackup") Then
+		    Project.mKeepLocalBackup = SaveData.Value("keepLocalBackup")
+		  End If
+		  
+		  Project.mConsoleSafe = SaveData.FirstValue("isConsole", "IsConsole", Project.mConsoleSafe).BooleanValue
+		  
+		  Var UseCompressionKey As Variant = SaveData.FirstKey("useCompression", "UseCompression")
+		  If UseCompressionKey.IsNull = False Then
+		    Project.mUseCompression = SaveData.Value(UseCompressionKey)
+		  End If
+		  
+		  Var Passwords As Dictionary = SaveData.FirstValue("members", "EncryptionKeys", New Dictionary)
+		  If Version >= 4 And (Passwords Is Nil) = False Then
 		    Var PossibleIdentities(0) As Beacon.Identity
 		    PossibleIdentities(0) = Identity
 		    
-		    Var Passwords As Dictionary = SaveData.Value("EncryptionKeys")
+		    Var Temp As New Dictionary
 		    For Each Entry As DictionaryEntry In Passwords
-		      Var UserID As String = Entry.Key
-		      If UserID = Identity.UserID Then
+		      Var UserId As String = Entry.Key
+		      
+		      If Entry.Value.Type = Variant.TypeObject THen
+		        Try
+		          Temp.Value(Entry.Key) = New Beacon.ProjectMember(UserId, Dictionary(Entry.Value))
+		        Catch MemberDecodeError As RuntimeException
+		          Continue
+		        End Try
+		      ElseIf Entry.Value.Type = Variant.TypeString Then
+		        Var Role As String = If(UserId = Identity.UserId, Beacon.ProjectMember.RoleOwner, Beacon.ProjectMember.RoleEditor)
+		        Temp.Value(Entry.Key) = New Beacon.ProjectMember(UserId, Role, Entry.Value.StringValue)
+		      End If
+		      
+		      If UserId = Identity.UserId Then
 		        Continue
 		      End If
 		      
-		      Var MergedIdentity As Beacon.Identity = IdentityManager.FindMergedIdentity(UserID)
+		      Var MergedIdentity As Beacon.Identity = App.IdentityManager.Fetch(UserId, False)
 		      If (MergedIdentity Is Nil) = False Then
 		        PossibleIdentities.Add(MergedIdentity)
 		      End If
 		    Next
+		    Passwords = Temp
 		    
 		    For Each PossibleIdentity As Beacon.Identity In PossibleIdentities
-		      Var UserID As String = PossibleIdentity.UserID
-		      If Passwords.HasKey(UserID) = False Then
+		      Var UserId As String = PossibleIdentity.UserId.Lowercase
+		      If Passwords.HasKey(UserId) = False Then
 		        Continue
 		      End If
 		      
+		      // At this point we are certain the user *should* have explicit permission to this project.
+		      // Default to safe lockdown values
+		      Project.mProjectPassword = ""
+		      Project.mRole = Beacon.ProjectMember.RoleGuest
+		      
 		      Try
-		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(UserID)), PossibleIdentity.PrivateKey)
-		        Project.mProjectPassword = DocumentPassword
-		        Project.mEncryptedPasswords = Passwords
-		        
-		        If Passwords.HasKey(UserID) = False Then
-		          // Add a password for the current user
-		          Project.AddUser(UserID, Identity.PublicKey)
+		        Var Member As Beacon.ProjectMember = Passwords.Value(UserId)
+		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64MBS(Member.EncryptedPassword), PossibleIdentity.PrivateKey)
+		        If Member.Fingerprint.IsEmpty Then
+		          Member = New Beacon.ProjectMember(PossibleIdentity, Member.Role)
+		          Member.SetPassword(DocumentPassword)
+		          Passwords.Value(UserId) = Member
 		        End If
+		        Project.mProjectPassword = DocumentPassword
+		        Project.mRole = Member.Role
 		        
 		        Exit
 		      Catch Err As RuntimeException
@@ -399,12 +674,13 @@ Implements ObservationKit.Observable
 		      End Try
 		    Next
 		  End If
+		  Project.mMembers = Passwords
 		  
 		  Var SecureDict As Dictionary
 		  #Pragma BreakOnExceptions False
-		  If SaveData.HasKey("EncryptedData") Then
+		  If SaveData.HasAnyKey("encryptedData", "EncryptedData") Then
 		    Try
-		      Project.mLastSecureData = SaveData.Value("EncryptedData")
+		      Project.mLastSecureData = SaveData.FirstValue("encryptedData", "EncryptedData", "")
 		      Var Decrypted As String = Project.Decrypt(Project.mLastSecureData)
 		      Project.mLastSecureHash = Beacon.Hash(Decrypted)
 		      SecureDict = Beacon.ParseJSON(Decrypted)
@@ -415,42 +691,79 @@ Implements ObservationKit.Observable
 		    SecureDict = ReadLegacySecureData(SaveData.Value("Secure"), Identity)
 		  End If
 		  #Pragma BreakOnExceptions Default
-		  If (SecureDict Is Nil) = False Then
-		    Var AccountManager As Beacon.ExternalAccountManager
-		    Try
-		      If SecureDict.HasKey("ExternalAccounts") Then
-		        AccountManager = Beacon.ExternalAccountManager.FromDict(SecureDict.Value("ExternalAccounts"))
-		      ElseIf SecureDict.HasKey("OAuth") Then
-		        AccountManager = Beacon.ExternalAccountManager.FromLegacyDict(SecureDict.Value("OAuth"))
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		    If IsNull(AccountManager) = False Then
-		      Project.mAccounts = AccountManager
-		    End If
-		  Else
+		  If SecureDict Is Nil Then
 		    SecureDict = New Dictionary
 		  End If
 		  
-		  If SecureDict.HasKey("Servers") And SecureDict.Value("Servers").IsArray Then
-		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
-		    For Each ServerDict As Variant In ServerDicts
-		      Try
-		        Var Dict As Dictionary = ServerDict
-		        Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromSaveData(Dict)
-		        If Profile Is Nil Then
-		          Continue
-		        End If
-		        
-		        // Something about migrating the nitrado account?
-		        
-		        Project.mServerProfiles.Add(Profile)
-		      Catch Err As RuntimeException
-		      End Try
-		    Next ServerDict
+		  If SaveData.HasKey("additionalFiles") Then
+		    If Project.mUseCompression Then
+		      Project.mAdditionalFiles = SaveData.Value("additionalFiles")
+		    Else
+		      Var AdditionalFiles As Dictionary = SaveData.Value("additionalFiles")
+		      For Each Entry As DictionaryEntry In AdditionalFiles
+		        Project.mAdditionalFiles.Value(Entry.Key) = Beacon.Decompress(DecodeBase64(Entry.Value.StringValue))
+		      Next
+		    End If
+		  End If
+		  Project.AdditionalFilesLoaded()
+		  Project.ProcessEmbeddedContent()
+		  
+		  If SaveData.HasKey("modSelections") Or SaveData.HasKey("ModSelections") Then
+		    // Newest mod, keys are uuids and values are boolean
+		    Var AllPacks() As Beacon.ContentPack = Project.DataSource(False).GetContentPacks()
+		    Var Selections As Dictionary = SaveData.FirstValue("modSelections", "ModSelections", Nil)
+		    Var ConsoleMode As Boolean = Project.ConsoleSafe
+		    For Each Pack As Beacon.ContentPack In AllPacks
+		      If Selections.HasKey(Pack.ContentPackId) = False Then
+		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And (Pack.IsConsoleSafe Or ConsoleMode = False)
+		      End If
+		    Next
+		    Project.mContentPacks = Selections
 		  End If
 		  
-		  If SaveData.HasKey("Config Sets") Then
+		  If SaveData.HasKey("configSetData") Then
+		    Project.mConfigSets.ResizeTo(-1)
+		    Var Definitions() As Variant = SaveData.Value("configSets")
+		    For Each Definition As Variant In Definitions
+		      If Definition.Type = Variant.TypeObject And Definition.ObjectValue IsA Dictionary Then
+		        Var ConfigSet As Beacon.ConfigSet = Beacon.ConfigSet.FromSaveData(Dictionary(Definition.ObjectValue))
+		        Project.mConfigSets.Add(ConfigSet)
+		      End If
+		    Next
+		    
+		    Project.mConfigSetPriorities = Beacon.ConfigSetState.DecodeArray(SaveData.Value("configSetPriorities"))
+		    
+		    Var SetDicts As Dictionary = SaveData.Value("configSetData")
+		    Var EncryptedDicts As Dictionary
+		    If SecureDict.HasKey("configSetData") Then
+		      Try
+		        EncryptedDicts = SecureDict.Value("configSetData")
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    If EncryptedDicts Is Nil Then
+		      EncryptedDicts = New Dictionary
+		    End If
+		    
+		    Project.mConfigSetData = New Dictionary
+		    For Each Entry As DictionaryEntry In SetDicts
+		      Var SetId As String = Entry.Key
+		      
+		      If Entry.Value IsA Dictionary Then
+		        Var EncryptedSetData As Dictionary
+		        If EncryptedDicts.HasKey(SetId) Then
+		          Try
+		            EncryptedSetData = EncryptedDicts.Value(SetId)
+		          Catch Err As RuntimeException
+		          End Try
+		        End If
+		        
+		        Project.mConfigSetData.Value(SetId) = Project.LoadConfigSet(Dictionary(Entry.Value), EncryptedSetData)
+		      Else
+		        Project.mConfigSetData.Value(SetId) = New Dictionary
+		      End If
+		    Next
+		  ElseIf SaveData.HasKey("Config Sets") Then
 		    Var Sets As Dictionary = SaveData.Value("Config Sets")
 		    Var EncryptedSets As Dictionary
 		    If SecureDict.HasKey("Config Sets") Then
@@ -463,8 +776,20 @@ Implements ObservationKit.Observable
 		      EncryptedSets = New Dictionary
 		    End If
 		    
+		    Project.mConfigSets.ResizeTo(-1)
+		    Project.mConfigSetData = New Dictionary
+		    Project.mConfigSetPriorities.ResizeTo(-1)
+		    Var SetsMap As New Dictionary
 		    For Each Entry As DictionaryEntry In Sets
 		      Var SetName As String = Entry.Key
+		      Var Set As Beacon.ConfigSet
+		      If SetName = "Base" Then
+		        Set = Beacon.ConfigSet.BaseConfigSet
+		      Else
+		        Set = New Beacon.ConfigSet(SetName)
+		      End If
+		      SetsMap.Value(Set.Name) = Set
+		      Project.mConfigSets.Add(Set)
 		      
 		      If Entry.Value IsA Dictionary Then
 		        Var EncryptedSetData As Dictionary
@@ -475,91 +800,323 @@ Implements ObservationKit.Observable
 		          End Try
 		        End If
 		        
-		        Project.ConfigSet(SetName) = Project.LoadConfigSet(Dictionary(Entry.Value), EncryptedSetData)
+		        Project.mConfigSetData.Value(Set.ConfigSetId) = Project.LoadConfigSet(Dictionary(Entry.Value), EncryptedSetData)
 		      Else
-		        Project.ConfigSet(SetName) = New Dictionary
+		        Project.mConfigSetData.Value(Set.ConfigSetId) = New Dictionary
 		      End If
 		    Next
 		    
-		    // Doc.ConfigSet will add the states. We don't need them.
-		    Project.mConfigSetStates.ResizeTo(-1)
 		    If SaveData.HasKey("Config Set Priorities") Then
-		      Try
-		        Var States() As Variant = SaveData.Value("Config Set Priorities")
-		        For Each State As Dictionary In States
-		          Project.mConfigSetStates.Add(Beacon.ConfigSetState.FromSaveData(State))
-		        Next
-		      Catch Err As RuntimeException
-		      End Try
+		      Var States() As Variant = SaveData.Value("Config Set Priorities")
+		      For Each State As Variant In States
+		        Try
+		          If State.Type = Variant.TypeObject And State.ObjectValue IsA Dictionary Then
+		            Var StateDict As Dictionary = Dictionary(State.ObjectValue)
+		            Var Name As String = StateDict.Value("Name")
+		            Var Enabled As Boolean = StateDict.Value("Enabled")
+		            If SetsMap.HasKey(Name) = False Then
+		              Continue
+		            End If
+		            Var Set As Beacon.ConfigSet = SetsMap.Value(Name)
+		            
+		            Project.mConfigSetPriorities.Add(New Beacon.ConfigSetState(Set, Enabled))
+		          End If
+		        Catch Err As RuntimeException
+		        End Try
+		      Next
 		    End If
 		  ElseIf SaveData.HasKey("Configs") Then
-		    Project.ConfigSet(BaseConfigSetName) = Project.LoadConfigSet(SaveData.Value("Configs"), Nil)
+		    Project.mConfigSets.ResizeTo(0)
+		    Project.mConfigSets(0) = Beacon.ConfigSet.BaseConfigSet
+		    Project.mConfigSetPriorities.ResizeTo(0)
+		    Project.mConfigSetPriorities(0) = New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True)
+		    Project.mConfigSetData = New Dictionary
+		    Project.mConfigSetData.Value(Beacon.ConfigSet.BaseConfigSetId) = Project.LoadConfigSet(SaveData.Value("Configs"), Nil)
 		  End If
 		  
-		  If Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion, FailureReason) = False Then
-		    App.Log(FailureReason)
-		    Return Nil
+		  Var LegacyAccountIdMap As New Dictionary
+		  If SecureDict.HasKey("providerTokenKeys") Then
+		    Var KeysDict As Dictionary = SecureDict.Value("providerTokenKeys")
+		    For Each Entry As DictionaryEntry In KeysDict
+		      Project.mProviderTokenKeys.Value(Entry.Key) = DecodeBase64(Entry.Value)
+		    Next
+		  ElseIf SecureDict.HasKey("ExternalAccounts") And Project.mRole = "Owner" Then
+		    Var Accounts() As Variant = Dictionary(SecureDict.Value("ExternalAccounts").ObjectValue).Value("Accounts")
+		    For Each AccountDict As Dictionary In Accounts
+		      Var AccountId As String = AccountDict.Value("UUID")
+		      Var AccessToken As String = AccountDict.Value("AccessToken")
+		      Var RefreshToken As String = AccountDict.Value("RefreshToken")
+		      Var Provider As String = AccountDict.Value("Provider")
+		      Var AccountLabel As String = AccountDict.Value("Label")
+		      
+		      Var RequestBody As New Dictionary
+		      RequestBody.Value("provider") = Provider
+		      RequestBody.Value("accessToken") = AccessToken
+		      Select Case Provider
+		      Case "Nitrado"
+		        RequestBody.Value("type") = "OAuth"
+		        RequestBody.Value("refreshToken") = RefreshToken
+		      Case "GameServerApp.com"
+		        RequestBody.Value("type") = "Static"
+		        RequestBody.Value("providerSpecific") = New Dictionary("tokenName": AccountLabel)
+		      End Select
+		      
+		      Var ImportRequest As New BeaconApi.Request("/user/tokens", "POST", Beacon.GenerateJson(RequestBody, False), "application/json")
+		      Var ImportResponse As BeaconApi.Response = BeaconApi.SendSync(ImportRequest)
+		      If ImportResponse.HttpStatus = 200 And (ImportResponse.Content Is Nil) = False Then
+		        Try
+		          Var Token As BeaconApi.ProviderToken = BeaconApi.ProviderToken.Load(Dictionary(ImportResponse.Json.ObjectValue))
+		          If (Token Is Nil) = False Then
+		            LegacyAccountIdMap.Value(AccountId) = Token
+		            Project.AddProviderToken(Token)
+		          End If
+		        Catch Err As RuntimeException
+		        End Try
+		      End If
+		    Next
 		  End If
 		  
+		  Var ServerDicts() As Variant
+		  If SecureDict.HasKey("servers") And SecureDict.Value("servers").IsArray Then
+		    ServerDicts = SecureDict.Value("servers")
+		  ElseIf SecureDict.HasKey("Servers") And SecureDict.Value("Servers").IsArray Then
+		    ServerDicts = SecureDict.Value("Servers")
+		  End If
+		  For Each ServerDict As Variant In ServerDicts
+		    Try
+		      Var Dict As Dictionary = ServerDict
+		      Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromSaveData(Dict, Project)
+		      If Profile Is Nil Then
+		        Continue
+		      End If
+		      
+		      If Dict.HasKey("External Account") Then
+		        Var ExternalAccountId As String = Dict.Value("External Account")
+		        If LegacyAccountIdMap.HasKey(ExternalAccountId) Then
+		          Var Token As BeaconApi.ProviderToken = LegacyAccountIdMap.Value(ExternalAccountId)
+		          Var Config As Beacon.HostConfig = Profile.HostConfig
+		          If (Token Is Nil) = False And (Config Is Nil) = False And Config IsA Beacon.OAuthConsumer Then
+		            Beacon.OAuthConsumer(Config).TokenId = Token.TokenId
+		          End If
+		        End If
+		      End If
+		      
+		      Project.mServerProfiles.Add(Profile)
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion)
+		  
+		  If SaveData.HasKey("otherProperties") And (AdditionalProperties Is Nil) = False Then
+		    Var Dict As Dictionary = SaveData.Value("otherProperties")
+		    For Each Entry As DictionaryEntry In Dict
+		      AdditionalProperties.Value(Entry.Key) = Entry.Value
+		    Next
+		  End If
+		  
+		  Project.mLoadedUserId = Identity.UserId
 		  Project.Modified = Version < Beacon.Project.SaveDataVersion
+		  
+		  If Project.PasswordDecrypted = False Then
+		    App.Log("Project " + Project.ProjectId + " did not decrypt password.")
+		  End If
 		  
 		  Return Project
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As String, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Project
-		  If Beacon.IsCompressed(SaveData) Then
-		    SaveData = Beacon.Decompress(SaveData)
-		  End If
-		  
-		  Var Parsed As Dictionary
-		  Try
-		    Parsed = Beacon.ParseJSON(SaveData)
-		  Catch Err As RuntimeException
-		    FailureReason = "JSON parse error"
-		    App.Log(Err, CurrentMethodName, "Failed to parse JSON")
-		    Return Nil
-		  End Try
-		  
-		  Try
-		    Return FromSaveData(Parsed, Identity, FailureReason)
-		  Catch Err As RuntimeException
-		    FailureReason = "Untrapped error inside project loader"
-		    App.Log(Err, CurrentMethodName, FailureReason)
-		    Return Nil
-		  End Try
+		Shared Function FromSaveData(SaveData As MemoryBlock, Identity As Beacon.Identity) As Beacon.Project
+		  Var AdditionalProperties As New Dictionary
+		  Return FromSaveData(SaveData, Identity, AdditionalProperties)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Shared Function FromSaveData(SaveData As MemoryBlock, Identity As Beacon.Identity, AdditionalProperties As Dictionary) As Beacon.Project
+		  If SaveData Is Nil Or SaveData.Size = 0 Then
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "File is empty."
+		    Raise Err
+		  End If
+		  
+		  Var UseCompression As Boolean
+		  Var ProjectDict As Dictionary
+		  If SaveData.Size >= 8 And (SaveData.UInt64Value(0) = CType(Beacon.Project.BinaryFormatBEBOM, UInt64) Or SaveData.UInt64Value(0) = CType(Beacon.Project.BinaryFormatLEBOM, UInt64)) Then
+		    SaveData = SaveData.Middle(8, SaveData.Size - 8)
+		    
+		    Var Archive As Beacon.Archive = Beacon.Archive.Open(SaveData)
+		    Var ManifestData As Dictionary = Beacon.ParseJSON(Archive.GetFile("Manifest.json"))
+		    Var Version As Integer = ManifestData.Value("version")
+		    Var ProjectData As Dictionary = Beacon.ParseJSON(Archive.GetFile("v" + Version.ToString(Locale.Raw, "0") + ".json"))
+		    
+		    If ManifestData.HasKey("additionalFiles") Then
+		      Var AdditionalFiles As New Dictionary
+		      Var Filenames() As Variant = ManifestData.Value("additionalFiles")
+		      For Each Filename As Variant In Filenames
+		        If Filename.Type <> Variant.TypeString Then
+		          Continue
+		        End If
+		        
+		        Var Contents As String = Archive.GetFile(Filename)
+		        If Contents.IsEmpty = False Then
+		          AdditionalFiles.Value(Filename) = Contents
+		        End If
+		      Next
+		      ProjectData.Value("additionalFiles") = AdditionalFiles
+		      ManifestData.Remove("additionalFiles") // Don't want to replace the loaded files with the list from the manifest
+		    End If
+		    
+		    For Each Entry As DictionaryEntry In ManifestData
+		      ProjectData.Value(Entry.Key) = Entry.Value
+		    Next
+		    
+		    ProjectDict = ProjectData
+		    UseCompression = True
+		  Else
+		    If SaveData.Size >= 2 And SaveData.UInt8Value(0) = &h1F And SaveData.UInt8Value(1) = &h8B Then
+		      Var Decompressed As String = Beacon.Decompress(SaveData)
+		      If Decompressed.IsEmpty = False Then
+		        SaveData = Decompressed.DefineEncoding(Encodings.UTF8)
+		        UseCompression = True
+		      Else
+		        Var Err As New Beacon.ProjectLoadException
+		        Err.Message = "Failed to decompress project."
+		        Raise Err
+		      End If
+		    End If
+		    
+		    ProjectDict = Beacon.ParseJSON(SaveData)
+		  End If
+		  
+		  ProjectDict.Value("useCompression") = UseCompression
+		  
+		  Return FromSaveData(ProjectDict, Identity, AdditionalProperties)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameId() As String
 		  Var Err As New UnsupportedOperationException
-		  Err.Message = "Project.GameID not overridden"
+		  Err.Message = "Project.GameId not overridden"
 		  Raise Err
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetUsers() As String()
-		  Var Users() As String
-		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
-		    Users.Add(Entry.Key)
+		Function GetFile(Filename As String) As String
+		  If Self.mAdditionalFiles.HasKey(Filename) Then
+		    Return Self.mAdditionalFiles.Value(Filename)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMembers() As Beacon.ProjectMember()
+		  Var Members() As Beacon.ProjectMember
+		  For Each Entry As DictionaryEntry In Self.mMembers
+		    Members.Add(Entry.Value)
 		  Next
-		  Return Users
+		  Return Members
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasConfigSet(SetName As String) As Boolean
-		  Return Self.mConfigSets.HasKey(SetName)
+		Function HasConfigSet(Set As Beacon.ConfigSet) As Boolean
+		  Return Self.IndexOf(Set) > -1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasUser(UserID As String) As Boolean
-		  Return Self.mEncryptedPasswords.HasKey(UserID.Lowercase)
+		Function HasConfigSet(Named As String) As Boolean
+		  For Idx As Integer = 0 To Self.mConfigSets.LastIndex
+		    If Self.mConfigSets(Idx).Name = Named Then
+		      Return True
+		    End If
+		  Next
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasEmbeddedContentPacks() As Boolean
+		  Return Self.mEmbeddedContentPacks.KeyCount > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasMember(Identity As Beacon.Identity) As Boolean
+		  If Identity Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.HasMember(Identity.UserId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasMember(UserId As String) As Boolean
+		  Return Self.mMembers.HasKey(UserId.Lowercase)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImplementedConfigs() As Iterable
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		  Var Groups() As Variant
+		  For Each Set As Beacon.ConfigSet In Sets
+		    For Each Group As Beacon.ConfigGroup In Self.ImplementedConfigs(Set)
+		      Groups.Add(Group)
+		    Next
+		  Next
+		  Return New Beacon.GenericIterator(Groups)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImplementedConfigs(Set As Beacon.ConfigSet) As Iterable
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		  Var Groups() As Variant
+		  If (SetDict Is Nil) = False Then
+		    For Each Entry As DictionaryEntry In SetDict
+		      Var Group As Beacon.ConfigGroup = Entry.Value
+		      If Group.IsImplicit = False Or Set.IsBase Then
+		        Groups.Add(Group)
+		      End If
+		    Next
+		  End If
+		  Return New Beacon.GenericIterator(Groups)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IndexOf(Set As Beacon.ConfigSet) As Integer
+		  If Set Is Nil Then
+		    Return -1
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mConfigSets.LastIndex
+		    If Self.mConfigSets(Idx) = Set Then
+		      Return Idx
+		    End If
+		  Next
+		  Return -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function KeepLocalBackup() As Boolean
+		  Return Self.mKeepLocalBackup
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub KeepLocalBackup(Assigns Value As Boolean)
+		  If Self.mKeepLocalBackup <> Value Then
+		    Self.mKeepLocalBackup = Value
+		    Self.Modified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -579,12 +1136,18 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MemberCount() As Integer
+		  Return Self.mMembers.KeyCount
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
-		  If Self.mModified Then
-		    Return True
+		  If Self.ReadOnly Then
+		    Return False
 		  End If
 		  
-		  If Self.mAccounts.Modified Then
+		  If Self.mModified Then
 		    Return True
 		  End If
 		  
@@ -593,6 +1156,26 @@ Implements ObservationKit.Observable
 		      Return True
 		    End If
 		  Next Profile
+		  
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    If Set.Modified Then
+		      Return True
+		    End If
+		  Next
+		  
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		  For Each Set As Beacon.ConfigSet In Sets
+		    Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		    If SetDict Is Nil Then
+		      Continue
+		    End If
+		    For Each GroupEntry As DictionaryEntry In SetDict
+		      Var Group As Beacon.ConfigGroup = GroupEntry.Value
+		      If Group.Modified Then
+		        Return True
+		      End If
+		    Next
+		  Next
 		  
 		  Return False
 		End Function
@@ -607,16 +1190,29 @@ Implements ObservationKit.Observable
 		      Profile.Modified = False
 		    Next Profile
 		    
-		    If (Self.mAccounts Is Nil) = False Then
-		      Self.mAccounts.Modified = False
-		    End If
+		    For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		      Set.Modified = False
+		    Next
+		    
+		    Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		    For Each Set As Beacon.ConfigSet In Sets
+		      Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		      If SetDict Is Nil Then
+		        Continue
+		      End If
+		      For Each GroupEntry As DictionaryEntry In SetDict
+		        Var Group As Beacon.ConfigGroup = GroupEntry.Value
+		        Group.Modified = False
+		      Next
+		    Next
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub NewIdentifier()
-		  Self.mUUID = New v4UUID
+		  Self.mProjectId = Beacon.UUID.v4
+		  Self.mMembers = New Dictionary
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -652,14 +1248,151 @@ Implements ObservationKit.Observable
 		    Return 1
 		  End If
 		  
-		  If Self.mUUID = Other.mUUID Then
+		  If Self.mProjectId = Other.mProjectId Then
 		    Return 0
 		  End If
 		  
-		  Var MySort As String = Self.mTitle + ":" + Self.mDescription + ":" + Self.mUUID
-		  Var OtherSort As String = Other.mTitle + ":" + Other.mDescription + ":" + Other.mUUID
+		  Var MySort As String = Self.mTitle + ":" + Self.mDescription + ":" + Self.mProjectId
+		  Var OtherSort As String = Other.mTitle + ":" + Other.mDescription + ":" + Other.mProjectId
 		  Return MySort.Compare(OtherSort, ComparisonOptions.CaseInsensitive)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Password() As String
+		  Return Self.mProjectPassword
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Password(Assigns Value As String)
+		  If Self.mProjectPassword.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mProjectPassword = Value
+		  
+		  For Each Entry As DictionaryEntry In Self.mMembers
+		    Var Member As Beacon.ProjectMember = Entry.Value
+		    Member.SetPassword(Self.mProjectPassword)
+		    
+		    // In case it was loaded as guest with no password
+		    If Member.UserId = Self.mLoadedUserId And Member.Role <> Self.mRole Then
+		      Var OldRole As String = Self.mRole
+		      Self.mRole = Member.Role
+		      Self.NotifyObservers("Role", OldRole, Member.Role)
+		    End If
+		  Next
+		  
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PasswordDecrypted() As Boolean
+		  Return Self.mProjectPassword.IsEmpty = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ProcessEmbeddedContent()
+		  Var ContentPacksJson As String = Self.GetFile("Content Packs.json")
+		  If ContentPacksJson.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var PackSaveData() As Variant
+		  Try
+		    PackSaveData = Beacon.ParseJSON(ContentPacksJson)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Self.mEmbeddedContentPacks = New Dictionary
+		  
+		  For Each SaveData As Variant In PackSaveData
+		    If SaveData.Type <> Variant.TypeObject Or (SaveData.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
+		    If Pack Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var Filename As String = Pack.ContentPackId + ".json"
+		    Var FileContent As String = Self.GetFile(Filename)
+		    If FileContent.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    If RaiseEvent ProcessEmbeddedContentPack(Pack, FileContent) Then
+		      Self.mEmbeddedContentPacks.Value(Pack.ContentPackId) = Pack
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProjectId() As String
+		  Return Self.mProjectId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProviderTokenIds() As String()
+		  Var TokenIds() As String
+		  For Each Entry As DictionaryEntry In Self.mProviderTokenKeys
+		    TokenIds.Add(Entry.Key)
+		  Next
+		  Return TokenIds
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProviderTokenKey(TokenId As String) As String
+		  Return Self.mProviderTokenKeys.Lookup(TokenId, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ProviderTokenKey(TokenId As String, Assigns Key As String)
+		  If Key.IsEmpty Then
+		    Self.RemoveProviderTokenKey(TokenId)
+		    Return
+		  End If
+		  
+		  If Self.mProviderTokenKeys.HasKey(TokenId) And Self.mProviderTokenKeys.Value(TokenId).StringValue.Compare(Key, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mProviderTokenKeys.Value(TokenId) = Key
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProviderTokenKeyCount() As Integer
+		  Return Self.mProviderTokenKeys.KeyCount
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PruneUnknownContent()
+		  Var PackIds As Beacon.StringList = Self.ContentPacks
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    Var SetDict As Dictionary = Self.mConfigSetData.Value(Set.ConfigSetId)
+		    Var Keys() As Variant = SetDict.Keys
+		    For Each Key As Variant In Keys
+		      Var Group As Beacon.ConfigGroup = SetDict.Value(Key)
+		      Group.PruneUnknownContent(PackIds)
+		      If Group.HasContent = False Then
+		        SetDict.Remove(Key)
+		        Self.Modified = True
+		      End If
+		    Next
+		  Next
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -711,33 +1444,77 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ReadOnly() As Boolean
+		  Return Self.mRole = "Guest"
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
-		Protected Function ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SavedDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
-		  Try
-		    Return RaiseEvent ReadSaveData(PlainData, EncryptedData, SavedDataVersion, SavedWithVersion, FailureReason)
-		  Catch Err As RuntimeException
-		    FailureReason = "Untrapped exception in raised event ReadSaveData"
-		    App.Log(Err, CurrentMethodName, FailureReason)
+		Protected Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SavedDataVersion As Integer, SavedWithVersion As Integer)
+		  RaiseEvent ReadSaveData(PlainData, EncryptedData, SavedDataVersion, SavedWithVersion)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigSet(Set As Beacon.ConfigSet)
+		  If Set Is Nil Or Set.IsBase Then
+		    Return
+		  End If
+		  
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  If Idx = -1 Then
+		    Return
+		  End If
+		  
+		  Self.mConfigSets.RemoveAt(Idx)
+		  Self.mConfigSetData.Remove(Set.ConfigSetId)
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveFile(Filename As String)
+		  If Self.mAdditionalFiles.HasKey(Filename) Then
+		    Self.mAdditionalFiles.Remove(Filename)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RemoveMember(Identity As Beacon.Identity) As Boolean
+		  If Identity Is Nil Then
 		    Return False
-		  End Try
+		  End If
+		  
+		  Return Self.RemoveMember(Identity.UserId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigSet(SetName As String)
-		  If SetName.IsEmpty Or SetName = Self.BaseConfigSetName Then
-		    Return
+		Function RemoveMember(Member As Beacon.ProjectMember) As Boolean
+		  If Member Is Nil Then
+		    Return False
 		  End If
 		  
-		  For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 1
-		    If Self.mConfigSetStates(Idx).Name = SetName Then
-		      Self.mConfigSetStates.RemoveAt(Idx)
-		      Self.Modified = True
+		  Return Self.RemoveMember(Member.UserId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RemoveMember(UserId As String) As Boolean
+		  UserId = UserId.Lowercase
+		  If Self.mMembers.HasKey(UserId) Then
+		    If Self.mLoadedUserId = UserId And Self.mRole <> Beacon.ProjectMember.RoleGuest Then
+		      Var OldRole As String = Self.mRole
+		      Self.mRole = Beacon.ProjectMember.RoleGuest
+		      Self.NotifyObservers("Role", OldRole, Beacon.ProjectMember.RoleGuest)
 		    End If
-		  Next
-		  
-		  Self.ConfigSet(SetName) = Nil
-		End Sub
+		    Self.mMembers.Remove(UserId)
+		    Self.Modified = True
+		    Return True
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -766,6 +1543,25 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RemoveProviderToken(Token As BeaconAPI.ProviderToken)
+		  If Token Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RemoveProviderTokenKey(Token.TokenId)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveProviderTokenKey(TokenId As String)
+		  If Self.mProviderTokenKeys.HasKey(TokenId) Then
+		    Self.mProviderTokenKeys.Remove(TokenId)
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveServerProfile(Profile As Beacon.ServerProfile)
 		  For Idx As Integer = 0 To Self.mServerProfiles.LastIndex
 		    If Self.mServerProfiles(Idx) = Profile Then
@@ -778,146 +1574,125 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveUser(UserID As String)
-		  UserID = UserID.Lowercase
-		  If Self.mEncryptedPasswords.HasKey(UserID) Then
-		    Self.mEncryptedPasswords.Remove(UserID)
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RenameConfigSet(OldName As String, NewName As String)
-		  If Self.mConfigSets.HasKey(OldName) = False Then
+		Sub RenameConfigSet(Set As Beacon.ConfigSet, NewName As String)
+		  Var OldNameIdx As Integer = Self.IndexOf(Set)
+		  If OldNameIdx = -1 Then
 		    Return
 		  End If
 		  
-		  For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
-		    If Self.mConfigSetStates(Idx).Name = OldName Then
-		      Self.mConfigSetStates(Idx) = New Beacon.ConfigSetState(NewName, Self.mConfigSetStates(Idx).Enabled)
-		    End If
-		  Next
-		  
-		  Var OldSet As Dictionary = Self.mConfigSets.Value(OldName)
-		  Self.ConfigSet(OldName) = Nil
-		  Self.ConfigSet(NewName) = OldSet
-		  
-		  For Idx As Integer = 0 To Self.mServerProfiles.LastIndex
-		    Var Profile As Beacon.ServerProfile = Self.mServerProfiles(Idx)
-		    Var ConfigSets() As Beacon.ConfigSetState = Profile.ConfigSetStates
-		    For SetIdx As Integer = 0 To ConfigSets.LastIndex
-		      If ConfigSets(SetIdx).Name = OldName Then
-		        ConfigSets(SetIdx) = New Beacon.ConfigSetState(NewName, ConfigSets(SetIdx).Enabled)
-		      End If
-		    Next
-		    Profile.ConfigSetStates = ConfigSets
-		  Next
-		  
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ReplaceAccount(OldAccount As Beacon.ExternalAccount, NewAccount As Beacon.ExternalAccount)
-		  If OldAccount Is Nil Or NewAccount Is Nil Then
+		  Set = Self.mConfigSets(OldNameIdx)
+		  If Set.Name.Compare(NewName, ComparisonOptions.CaseSensitive) = 0 Then
 		    Return
 		  End If
 		  
-		  Self.ReplaceAccount(OldAccount.UUID, NewAccount)
+		  If Self.HasConfigSet(NewName) Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "There is already a config set named " + NewName + "."
+		    Raise Err
+		  End If
+		  
+		  Set.Name = NewName
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReplaceAccount(OldUUID As String, Account As Beacon.ExternalAccount)
-		  If Account Is Nil Then
-		    Return
+		Function Role() As String
+		  Return Self.mRole
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Identity As Beacon.Identity) As MemoryBlock
+		  Return Self.SaveData(Identity, Self.mUseCompression, Nil)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Identity As Beacon.Identity, Compress As Boolean) As MemoryBlock
+		  Return Self.SaveData(Identity, Compress, Nil)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Identity As Beacon.Identity, Compress As Boolean, AdditionalProperties As Dictionary) As MemoryBlock
+		  If Self.mProjectPassword.IsEmpty Then
+		    App.Log("Project " + Self.mProjectId + " save was aborted because the password is empty.")
+		    Return Nil
 		  End If
 		  
-		  // These will all handle their own modification states
-		  
-		  If (Self.mAccounts.GetByUUID(OldUUID) Is Nil) = False Then
-		    Self.mAccounts.Remove(OldUUID)
-		    Self.Modified = True
+		  Var Members As New Dictionary
+		  If Self.mMembers.KeyCount = 0 Then
+		    Call Self.AddMember(Identity, Beacon.ProjectMember.RoleOwner)
 		  End If
-		  If Self.mAccounts.GetByUUID(Account.UUID) Is Nil Then
-		    Self.mAccounts.Add(Account)
-		    Self.Modified = True
-		  End If
-		  
-		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
-		    If Profile.ExternalAccountUUID = OldUUID Then
-		      Profile.ExternalAccountUUID = Account.UUID
-		      Self.Modified = True
-		    End If
+		  For Each Entry As DictionaryEntry In Self.mMembers
+		    Members.Value(Entry.Key) = Beacon.ProjectMember(Entry.Value).DictionaryValue()
 		  Next
 		  
-		  RaiseEvent AccountReplaced(OldUUID, Account.UUID)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SaveData(Identity As Beacon.Identity) As Dictionary
-		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserID) Then
-		    Self.AddUser(Identity.UserID, Identity.PublicKey)
+		  Var Manifest, ProjectData As Dictionary = New Dictionary // Intentionally assigning both to the same dictionary
+		  If Compress Then
+		    ProjectData = New Dictionary
 		  End If
 		  
-		  Var Dict As New Dictionary
-		  Dict.Value("Version") = Self.SaveDataVersion
-		  Dict.Value("MinVersion") = 6
-		  Dict.Value("Identifier") = Self.mUUID
-		  Dict.Value("Title") = Self.mTitle
-		  Dict.Value("Game") = Self.GameID
-		  Dict.Value("SavedWith") = App.BuildNumber
-		  Dict.Value("EncryptionKeys") = Self.mEncryptedPasswords
-		  Dict.Value("UseCompression") = Self.mUseCompression
-		  Dict.Value("Timestamp") = DateTime.Now.SQLDateTimeWithOffset
-		  Dict.Value("Description") = Self.mDescription
+		  Manifest.Value("version") = Self.SaveDataVersion
+		  Manifest.Value("minVersion") = 7
+		  Manifest.Value("projectId") = Self.mProjectId
+		  Manifest.Value("userId") = Identity.UserId
+		  Manifest.Value("name") = Self.mTitle
+		  Manifest.Value("description") = Self.mDescription
+		  Manifest.Value("gameId") = Self.GameId()
+		  Manifest.Value("members") = Members
+		  Manifest.Value("savedWidth") = App.BuildNumber
+		  Manifest.Value("timestamp") = DateTime.Now.SecondsFrom1970
+		  Manifest.Value("modSelections") = Self.mContentPacks
+		  Manifest.Value("isConsole") = Self.mConsoleSafe
 		  If Self.mLegacyTrustKey.IsEmpty = False Then
-		    Dict.Value("Trust") = Self.mLegacyTrustKey
+		    Manifest.Value("legacyTrustKey") = Self.mLegacyTrustKey
 		  End If
 		  
 		  Var EncryptedData As New Dictionary
-		  RaiseEvent AddSaveData(Dict, EncryptedData)
+		  RaiseEvent AddSaveData(Manifest, ProjectData, EncryptedData)
 		  
-		  If Self.mAccounts.Count > 0 Then
-		    EncryptedData.Value("ExternalAccounts") = Self.mAccounts.AsDictionary
-		  End If
+		  Self.SaveEmbeddedContent()
 		  
 		  If Self.mServerProfiles.Count > 0 Then
 		    Var Profiles() As Dictionary
 		    For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
 		      Profiles.Add(Profile.SaveData)
 		    Next
-		    EncryptedData.Value("Servers") = Profiles
+		    EncryptedData.Value("servers") = Profiles
 		  End If
 		  
 		  Var Sets As New Dictionary
 		  Var EncryptedSets As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    Var SetName As String = Entry.Key
-		    Var SetDict As Dictionary = Entry.Value
+		  Var Definitions() As Dictionary
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    Definitions.Add(Set.SaveData)
+		    
+		    Var SetDict As Dictionary = Self.mConfigSetData.Value(Set.ConfigSetId)
 		    Var SetPlainData As New Dictionary
 		    Var SetEncryptedData As New Dictionary
 		    RaiseEvent SaveConfigSet(SetDict, SetPlainData, SetEncryptedData)
 		    
-		    If SetPlainData.KeyCount > 0 Then
-		      Sets.Value(SetName) = SetPlainData
-		      If SetEncryptedData.KeyCount > 0 Then
-		        EncryptedSets.Value(SetName) = SetEncryptedData
-		      End If
+		    Sets.Value(Set.ConfigSetId) = SetPlainData
+		    If SetEncryptedData.KeyCount > 0 Then
+		      EncryptedSets.Value(Set.ConfigSetId) = SetEncryptedData
 		    End If
 		  Next
-		  Dict.Value("Config Sets") = Sets
+		  ProjectData.Value("configSets") = Definitions
+		  ProjectData.Value("configSetPriorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetPriorities)
+		  
+		  ProjectData.Value("configSetData") = Sets
 		  If EncryptedSets.KeyCount > 0 Then
-		    EncryptedData.Value("Config Sets") = EncryptedSets
+		    EncryptedData.Value("configSetData") = EncryptedSets
 		  End If
 		  
-		  Var States() As Dictionary
-		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    States.Add(State.SaveData)
-		  Next
-		  Dict.Value("Config Set Priorities") = States
+		  If Self.mProviderTokenKeys.KeyCount > 0 Then
+		    Var KeysDict As New Dictionary
+		    For Each Entry As DictionaryEntry In Self.mProviderTokenKeys
+		      KeysDict.Value(Entry.Key) = EncodeBase64(Entry.Value)
+		    Next
+		    EncryptedData.Value("providerTokenKeys") = KeysDict
+		  End If
 		  
 		  If EncryptedData.KeyCount > 0 Then
 		    Var Content As String = Beacon.GenerateJSON(EncryptedData, False)
@@ -926,11 +1701,117 @@ Implements ObservationKit.Observable
 		      Self.mLastSecureData = Self.Encrypt(Content)
 		      Self.mLastSecureHash = Hash
 		    End If
-		    Dict.Value("EncryptedData") = Self.mLastSecureData
+		    ProjectData.Value("encryptedData") = Self.mLastSecureData
 		  End If
 		  
-		  Return Dict
+		  If (AdditionalProperties Is Nil) = False And AdditionalProperties.KeyCount > 0 Then
+		    ProjectData.Value("otherProperties") = AdditionalProperties
+		  End If
+		  
+		  ProjectData.Value("keepLocalBackup") = Self.mKeepLocalBackup
+		  
+		  If Compress Then
+		    Var Archive As Beacon.Archive = Beacon.Archive.Create()
+		    Var AdditionalFiles() As String
+		    For Each Entry As DictionaryEntry In Self.mAdditionalFiles
+		      Var Filename As String = Entry.Key
+		      Var Contents As String = Entry.Value
+		      AdditionalFiles.Add(Filename)
+		      Archive.AddFile(Filename, Contents)
+		    Next
+		    Manifest.Value("additionalFiles") = AdditionalFiles
+		    Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, True))
+		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", Beacon.GenerateJSON(ProjectData, False))
+		    Var ArchiveData As MemoryBlock = Archive.Finalize
+		    Var BOM As New MemoryBlock(8)
+		    BOM.LittleEndian = ArchiveData.LittleEndian
+		    BOM.UInt64Value(0) = If(ArchiveData.LittleEndian, CType(Beacon.Project.BinaryFormatLEBOM, UInt64), CType(Beacon.Project.BinaryFormatBEBOM, UInt64))
+		    Return BOM + ArchiveData
+		  Else
+		    Var AdditionalFiles As New Dictionary
+		    For Each Entry As DictionaryEntry In Self.mAdditionalFiles
+		      AdditionalFiles.Value(Entry.Key) = EncodeBase64(Beacon.Compress(Entry.Value.StringValue), 0)
+		    Next
+		    ProjectData.Value("additionalFiles") = AdditionalFiles
+		    
+		    Return Beacon.GenerateJSON(ProjectData, True)
+		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Identity As Beacon.Identity, AdditionalProperties As Dictionary) As MemoryBlock
+		  Return Self.SaveData(Identity, Self.mUseCompression, AdditionalProperties)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveEmbeddedContent()
+		  Var PackSaveData() As Variant
+		  Var PackSaveJson As String = Self.GetFile("Content Packs.json")
+		  If PackSaveJson.IsEmpty = False Then
+		    Try
+		      PackSaveData = Beacon.ParseJSON(PackSaveJson)
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Var PacksCache As New Dictionary
+		  Var PackSaveDicts As New Dictionary
+		  For Idx As Integer = PackSaveData.LastIndex DownTo 0
+		    If PackSaveData(Idx).Type = Variant.TypeObject And PackSaveData(Idx).ObjectValue IsA Dictionary Then
+		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(PackSaveData(Idx))
+		      If Pack Is Nil Then
+		        PackSaveData.RemoveAt(Idx)
+		        Continue
+		      End If
+		      
+		      If Self.ContentPackEnabled(Pack) = False Then
+		        PackSaveData.RemoveAt(Idx)
+		        Self.RemoveFile(Pack.ContentPackId + ".json")
+		        Continue
+		      End If
+		      
+		      PacksCache.Value(Pack.ContentPackId) = Pack
+		      PackSaveDicts.Value(Pack.ContentPackId) = PackSaveData(Idx)
+		    Else
+		      PackSaveData.RemoveAt(Idx)
+		    End If
+		  Next
+		  
+		  Var DataSource As Beacon.DataSource = Self.DataSource(False)
+		  Var LocalPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.Types.Custom)
+		  For Each LocalPack As Beacon.ContentPack In LocalPacks
+		    If Self.ContentPackEnabled(LocalPack) = False Then
+		      Continue
+		    End If
+		    
+		    If PacksCache.HasKey(LocalPack.ContentPackId) = True And Beacon.ContentPack(PacksCache.Value(LocalPack.ContentPackId)).LastUpdate >= LocalPack.LastUpdate Then
+		      Continue
+		    End If
+		    
+		    Var PackContent As String = RaiseEvent ExportContentPack(LocalPack)
+		    If PackContent.IsEmpty = False Then
+		      Self.AddFile(LocalPack.ContentPackId + ".json", PackContent)
+		      PackSaveDicts.Value(LocalPack.ContentPackId) = LocalPack.SaveData
+		    Else
+		      Self.RemoveFile(LocalPack.ContentPackId + ".json")
+		      If PackSaveDicts.HasKey(LocalPack.ContentPackId) Then
+		        PackSaveDicts.Remove(LocalPack.ContentPackId)
+		      End If
+		    End If
+		  Next
+		  
+		  If PackSaveDicts.KeyCount = 0 Then
+		    Self.RemoveFile("Content Packs.json")
+		  Else
+		    PackSaveData.ResizeTo(-1)
+		    For Each Entry As DictionaryEntry In PackSaveDicts
+		      PackSaveData.Add(Entry.Value)
+		    Next
+		    Self.AddFile("Content Packs.json", Beacon.GenerateJSON(PackSaveData, False))
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -967,13 +1848,13 @@ Implements ObservationKit.Observable
 		  Filter = Filter.Trim
 		  
 		  Var Results() As Beacon.ServerProfile
-		  For Idx As Integer = Self.mServerProfiles.FirstIndex To Self.mServerProfiles.LastIndex
-		    If Filter.IsEmpty = False And Self.mServerProfiles(Idx).Name.IndexOf(Filter) = -1 And Self.mServerProfiles(Idx).SecondaryName.IndexOf(Filter) = -1 Then
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    If Filter.IsEmpty = False And Profile.Name.IndexOf(Filter) = -1 And Profile.SecondaryName.IndexOf(Filter) = -1 And Profile.Nickname.IndexOf(Filter) = -1 Then
 		      Continue
 		    End If
 		    
-		    Results.Add(Self.mServerProfiles(Idx))
-		  Next Idx
+		    Results.Add(Profile)
+		  Next
 		  Return Results
 		End Function
 	#tag EndMethod
@@ -1011,14 +1892,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UUID() As String
-		  Return Self.mUUID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Validate() As Beacon.ProjectValidationResults
 		  Var Issues As New Beacon.ProjectValidationResults
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets()
+		  For Each Set As Beacon.ConfigSet In Sets
+		    For Each Config As Beacon.ConfigGroup In Self.ImplementedConfigs(Set)
+		      Config.Validate(Set.ConfigSetId, Issues, Self)
+		    Next
+		  Next
 		  RaiseEvent Validate(Issues)
 		  Return Issues
 		End Function
@@ -1026,19 +1907,19 @@ Implements ObservationKit.Observable
 
 
 	#tag Hook, Flags = &h0
-		Event AccountReplaced(OldUUID As String, NewUUID As String)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event AddCloudSaveData(Dict As Dictionary)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event AddingProfile(Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event AddSaveData(PlainData As Dictionary, EncryptedData As Dictionary)
+		Event AdditionalFilesLoaded()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ExportContentPack(Pack As Beacon.ContentPack) As String
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -1046,7 +1927,11 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
+		Event ProcessEmbeddedContentPack(Pack As Beacon.ContentPack, FileContent As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -1063,19 +1948,31 @@ Implements ObservationKit.Observable
 
 
 	#tag Property, Flags = &h21
-		Private mAccounts As Beacon.ExternalAccountManager
+		Private mActiveConfigSet As Beacon.ConfigSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mActiveConfigSet As String
+		Private mAdditionalFiles As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigSets As Dictionary
+		Private mConfigSetData As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigSetStates() As Beacon.ConfigSetState
+		Private mConfigSetPriorities() As Beacon.ConfigSetState
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigSets() As Beacon.ConfigSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConsoleSafe As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPacks As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1083,7 +1980,11 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEncryptedPasswords As Dictionary
+		Private mEmbeddedContentPacks As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mKeepLocalBackup As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1099,6 +2000,14 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLoadedUserId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMembers As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModified As Boolean
 	#tag EndProperty
 
@@ -1107,7 +2016,19 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProjectId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProjectPassword As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProviderTokenKeys As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRole As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1122,13 +2043,6 @@ Implements ObservationKit.Observable
 		Private mUseCompression As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUUID As String
-	#tag EndProperty
-
-
-	#tag Constant, Name = BaseConfigSetName, Type = String, Dynamic = False, Default = \"Base", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = BinaryFormatBEBOM, Type = Double, Dynamic = False, Default = \"3470482855257601832", Scope = Public
 	#tag EndConstant
@@ -1136,7 +2050,7 @@ Implements ObservationKit.Observable
 	#tag Constant, Name = BinaryFormatLEBOM, Type = Double, Dynamic = False, Default = \"2916000471902660912", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SaveDataVersion, Type = Double, Dynamic = False, Default = \"6", Scope = Protected
+	#tag Constant, Name = SaveDataVersion, Type = Double, Dynamic = False, Default = \"7", Scope = Protected
 	#tag EndConstant
 
 

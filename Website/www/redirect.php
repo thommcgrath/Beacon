@@ -29,6 +29,9 @@ case 'refreshengrams':
 case 'checkforupdate':
 	BeaconCommon::Redirect("beacon://action/{$destination}");
 	break;
+case 'connectionhelp':
+	BeaconCommon::Redirect('https://help.usebeacon.app/troubleshooting/connections/');
+	break;
 }
 
 ?>

@@ -160,6 +160,7 @@ Begin BeaconDialog ArkLootEntryEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   0
@@ -169,6 +170,7 @@ Begin BeaconDialog ArkLootEntryEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   169
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   1
          Underline       =   False
@@ -434,6 +436,7 @@ Begin BeaconDialog ArkLootEntryEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   0
@@ -443,6 +446,7 @@ Begin BeaconDialog ArkLootEntryEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   379
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -604,16 +608,16 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mModSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
-		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
+		    Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
 		    Var ModList As New Beacon.StringList
 		    Var PrefsDict As New Dictionary
-		    For Each Pack As Ark.ContentPack In ContentPacks
-		      If Editor.ModEnabled(Pack.UUID) Then
-		        ModList.Append(Pack.UUID)
-		        PrefsDict.Value(Pack.UUID) = True
+		    For Each Pack As Beacon.ContentPack In ContentPacks
+		      If Editor.ModEnabled(Pack.ContentPackId) Then
+		        ModList.Append(Pack.ContentPackId)
+		        PrefsDict.Value(Pack.ContentPackId) = True
 		      Else
-		        PrefsDict.Value(Pack.UUID) = False
+		        PrefsDict.Value(Pack.ContentPackId) = False
 		      End If
 		    Next
 		    Self.mMods = ModList
@@ -635,10 +639,10 @@ End
 		    TemplatePacksDict = New Dictionary
 		  End If
 		  Var PackList As New Beacon.StringList
-		  Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
-		  For Each Pack As Ark.ContentPack In ContentPacks
-		    If TemplatePacksDict.Lookup(Pack.UUID, Pack.DefaultEnabled).BooleanValue = True Then
-		      PackList.Append(Pack.UUID)
+		  Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
+		  For Each Pack As Beacon.ContentPack In ContentPacks
+		    If TemplatePacksDict.Lookup(Pack.ContentPackId, Pack.IsDefaultEnabled).BooleanValue = True Then
+		      PackList.Append(Pack.ContentPackId)
 		    End If
 		  Next
 		  
@@ -696,7 +700,7 @@ End
 		Private Sub SetupUI(Prefilter As String = "")
 		  If Self.mOriginalEntry <> Nil Then
 		    For Each Option As Ark.LootItemSetEntryOption In Self.mOriginalEntry
-		      Self.mSelectedEngrams.Value(Option.Engram.ObjectID) = Option
+		      Self.mSelectedEngrams.Value(Option.Engram.EngramId) = Option
 		    Next
 		    Self.SingleItemCheckbox.Value = Self.mOriginalEntry.SingleItemQuantity
 		  End If
@@ -728,15 +732,15 @@ End
 		  Self.mEngramRowIndexes = New Dictionary
 		  For Each Engram As Ark.Engram In Engrams
 		    Var Weight As String = ""
-		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
-		      Var WeightValue As Double = Ark.LootItemSetEntryOption(Self.mSelectedEngrams.Value(Engram.ObjectID)).RawWeight * 100
+		    If Self.mSelectedEngrams.HasKey(Engram.EngramId) Then
+		      Var WeightValue As Double = Ark.LootItemSetEntryOption(Self.mSelectedEngrams.Value(Engram.EngramId)).RawWeight * 100
 		      Weight = WeightValue.PrettyText
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ContentPackName, Weight)
 		    EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Engram
-		    Self.mEngramRowIndexes.Value(Engram.ObjectID) = EngramList.LastAddedRowIndex
-		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.ObjectID)
+		    Self.mEngramRowIndexes.Value(Engram.EngramId) = EngramList.LastAddedRowIndex
+		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.EngramId)
 		  Next
 		  
 		  Self.ListUnknownEngrams()
@@ -883,7 +887,7 @@ End
 		  Case Self.ColumnIncluded
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    If Checked Then
-		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = False Then
+		      If Self.mSelectedEngrams.HasKey(Engram.EngramId) = False Then
 		        Var WeightString As String = Me.CellTextAt(Row, Self.ColumnWeight)
 		        If WeightString = "" Then
 		          WeightString = "50"
@@ -892,21 +896,21 @@ End
 		        
 		        Var Weight As Double = Abs(CDbl(WeightString)) / 100
 		        Var Option As New Ark.LootItemSetEntryOption(Engram, Weight)
-		        Self.mSelectedEngrams.Value(Engram.ObjectID) = Option
+		        Self.mSelectedEngrams.Value(Engram.EngramId) = Option
 		      Else
 		        Return
 		      End If
 		    Else
-		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = True Then
-		        Self.mSelectedEngrams.Remove(Engram.ObjectID)
+		      If Self.mSelectedEngrams.HasKey(Engram.EngramId) = True Then
+		        Self.mSelectedEngrams.Remove(Engram.EngramId)
 		      Else
 		        Return
 		      End If
 		    End If
 		  Case Self.ColumnWeight
-		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
+		    If Self.mSelectedEngrams.HasKey(Engram.EngramId) Then
 		      Var Weight As Double = Abs(CDbl(Me.CellTextAt(Row, Column))) / 100
-		      Self.mSelectedEngrams.Value(Engram.ObjectID) = New Ark.LootItemSetEntryOption(Engram, Weight)
+		      Self.mSelectedEngrams.Value(Engram.EngramId) = New Ark.LootItemSetEntryOption(Engram, Weight)
 		    End If
 		  Else
 		    Return
@@ -993,7 +997,7 @@ End
 		    Return
 		  End If
 		  
-		  Var ModPicker As New ModSelectionGrid(Self.mMods)
+		  Var ModPicker As New ModSelectionGrid(Ark.DataSource.Pool.Get(False), Self.mMods)
 		  Var Controller As New PopoverController("Select Mods", ModPicker)
 		  Controller.Show(Me)
 		  
@@ -1158,8 +1162,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

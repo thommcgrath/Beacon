@@ -1,17 +1,37 @@
 #tag Class
 Protected Class Project
 Inherits Beacon.Project
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
-		Sub AddCloudSaveData(Dict As Dictionary)
-		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.BaseConfigSetName, True))
-		  Dict.Value("difficulty") = Difficulty.DifficultyValue
+		Sub AddingProfile(Profile As Beacon.ServerProfile)
+		  If Profile.IsConsole Then
+		    Self.ConsoleSafe = True
+		    
+		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		    Var PackIds() As String = Self.ContentPacks()
+		    For Each PackId As String In PackIds
+		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(PackId)
+		      If Pack Is Nil Or Pack.IsConsoleSafe = False Then
+		        Self.ContentPackEnabled(PackId) = False
+		      End If
+		    Next
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused PlainData
+		  #Pragma Unused EncryptedData
 		  
-		  Dict.Value("map") = Self.MapMask
+		  ManifestData.Value("allowUcs") = Self.AllowUCS2
+		  ManifestData.Value("map") = Self.MapMask
+		  ManifestData.Value("uwpCompatibilityMode") = CType(Self.UWPMode, Integer)
 		  
-		  Var ConfigSets() As String = Self.ConfigSetNames
+		  Var ConfigSets() As Beacon.ConfigSet = Self.ConfigSets
 		  Var Editors() As String
-		  For Each ConfigSet As String In ConfigSets
-		    Var SetDict As Dictionary = Self.ConfigSet(ConfigSet)
+		  For Each ConfigSet As Beacon.ConfigSet In ConfigSets
+		    Var SetDict As Dictionary = Self.ConfigSetData(ConfigSet)
 		    For Each Entry As DictionaryEntry In SetDict
 		      Var ConfigName As String = Entry.Key.StringValue
 		      If Editors.IndexOf(ConfigName) = -1 Then
@@ -20,37 +40,31 @@ Inherits Beacon.Project
 		    Next Entry
 		  Next ConfigSet
 		  Editors.Sort
-		  Dict.Value("editors") = String.FromArray(Editors, ",")
+		  ManifestData.Value("editors") = Editors
 		  
-		  Dict.Value("mods") = Self.ContentPacks.Join(",")
+		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Beacon.ConfigSet.BaseConfigSet, True))
+		  ManifestData.Value("difficulty") = Difficulty.DifficultyValue
+		  
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub AddingProfile(Profile As Beacon.ServerProfile)
-		  If Profile.IsConsole Then
-		    Self.ConsoleSafe = True
-		    
-		    For Each Entry As DictionaryEntry In Self.mContentPacks
-		      Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithUUID(Entry.Key.StringValue)
-		      If (Pack Is Nil Or Pack.ConsoleSafe = False) And Self.mContentPacks.Value(Entry.Key).BooleanValue = True Then
-		        Self.mContentPacks.Value(Entry.Key) = False
-		      End If
-		    Next
+		Function ExportContentPack(Pack As Beacon.ContentPack) As String
+		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints("", New Beacon.StringList(Pack.ContentPackId), "")
+		  If Blueprints.Count = 0 Then
+		    Return ""
 		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub AddSaveData(PlainData As Dictionary, EncryptedData As Dictionary)
-		  #Pragma Unused EncryptedData
 		  
-		  PlainData.Value("AllowUCS") = Self.AllowUCS2
-		  PlainData.Value("IsConsole") = Self.ConsoleSafe
-		  PlainData.Value("Map") = Self.MapMask
-		  PlainData.Value("ModSelections") = Self.mContentPacks
-		  PlainData.Value("UWPCompatibilityMode") = CType(Self.UWPMode, Integer)
-		End Sub
+		  Var PackedBlueprints() As Dictionary
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var Packed As Dictionary = Blueprint.Pack
+		    If (Packed Is Nil) = False Then
+		      PackedBlueprints.Add(Packed)
+		    End If
+		  Next
+		  
+		  Return Beacon.GenerateJson(PackedBlueprints, False)
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -61,10 +75,53 @@ Inherits Beacon.Project
 		    Try
 		      Var InternalName As String = Entry.Key
 		      Var GroupData As Dictionary = Entry.Value
+		      
+		      // Convert old names into new ones
+		      Select Case InternalName
+		      Case "Accounts", "accounts"
+		        InternalName = Ark.Configs.NameAccounts
+		      Case "BreedingMultipliers"
+		        InternalName = Ark.Configs.NameBreedingMultipliers
+		      Case "CraftingCosts"
+		        InternalName = Ark.Configs.NameCraftingCosts
+		      Case "CustomContent"
+		        InternalName = Ark.Configs.NameCustomConfig
+		      Case "DayCycle"
+		        InternalName = Ark.Configs.NameDayCycle
+		      Case "Deployments", "deployments"
+		        InternalName = Ark.Configs.NameServers
+		      Case "Difficulty"
+		        InternalName = Ark.Configs.NameDifficulty
+		      Case "DinoAdjustments"
+		        InternalName = Ark.Configs.NameCreatureAdjustments
+		      Case "EngramControl"
+		        InternalName = Ark.Configs.NameEngramControl
+		      Case "ExperienceCurves"
+		        InternalName = Ark.Configs.NameLevelsAndXP
+		      Case "HarvestRates"
+		        InternalName = Ark.Configs.NameHarvestRates
+		      Case "LootDrops"
+		        InternalName = Ark.Configs.NameLootDrops
+		      Case "Metadata", "metadata"
+		        InternalName = Ark.Configs.NameProjectSettings
+		      Case "OtherSettings"
+		        InternalName = Ark.Configs.NameGeneralSettings
+		      Case "SpawnPoints"
+		        InternalName = Ark.Configs.NameCreatureSpawns
+		      Case "SpoilTimers"
+		        InternalName = Ark.Configs.NameDecayAndSpoil
+		      Case "StackSizes"
+		        InternalName = Ark.Configs.NameStackSizes
+		      Case "StatLimits"
+		        InternalName = Ark.Configs.NameStatLimits
+		      Case "StatMultipliers"
+		        InternalName = Ark.Configs.NameStatMultipliers
+		      End Select
+		      
 		      Select Case InternalName
 		      Case "LootScale"
 		        ConvertLootScale = GroupData
-		      Case "Metadata"
+		      Case Ark.Configs.NameProjectSettings
 		      Else
 		        Var EncryptedGroupData As Dictionary
 		        If EncryptedData.HasKey(InternalName) Then
@@ -80,24 +137,24 @@ Inherits Beacon.Project
 		        End If
 		      End Select
 		    Catch Err As RuntimeException
-		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.UUID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
+		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.ProjectId + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
 		    End Try
 		  Next
 		  If (ConvertLootScale Is Nil) = False Then
 		    Try
 		      Var OtherSettings As Ark.Configs.OtherSettings
-		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) Then
-		        OtherSettings = SetDict.Value(Ark.Configs.NameOtherSettings)
+		      If SetDict.HasKey(Ark.Configs.NameGeneralSettings) Then
+		        OtherSettings = SetDict.Value(Ark.Configs.NameGeneralSettings)
 		      Else
 		        // Don't add it until we know everything worked
-		        OtherSettings = Ark.Configs.OtherSettings(Ark.Configs.CreateInstance(Ark.Configs.NameOtherSettings))
+		        OtherSettings = Ark.Configs.OtherSettings(Ark.Configs.CreateInstance(Ark.Configs.NameGeneralSettings))
 		      End If
 		      
 		      Var Multiplier As Double = ConvertLootScale.Value("Multiplier")
-		      OtherSettings.Value(Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
+		      OtherSettings.Value(Ark.DataSource.Pool.Get(False).GetConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
 		      
-		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) = False Then
-		        SetDict.Value(Ark.Configs.NameOtherSettings) = OtherSettings
+		      If SetDict.HasKey(Ark.Configs.NameGeneralSettings) = False Then
+		        SetDict.Value(Ark.Configs.NameGeneralSettings) = OtherSettings
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
@@ -107,16 +164,45 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Function ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
+		Function ProcessEmbeddedContentPack(Pack As Beacon.ContentPack, FileContent As String) As Boolean
+		  Var BlueprintDicts() As Variant
+		  Try
+		    BlueprintDicts = Beacon.ParseJSON(FileContent)
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  
+		  Var FreshBlueprints() As Ark.Blueprint
+		  For Each BlueprintDict As Variant In BlueprintDicts
+		    If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
+		    Var ProjectBlueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dictionary(BlueprintDict.ObjectValue))
+		    If ProjectBlueprint Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var StoredBlueprint As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprint(ProjectBlueprint.BlueprintId, False)
+		    If StoredBlueprint Is Nil Or ProjectBlueprint.LastUpdate > StoredBlueprint.LastUpdate Then
+		      FreshBlueprints.Add(ProjectBlueprint)
+		    End If
+		  Next
+		  
+		  If FreshBlueprints.Count > 0 Then
+		    Self.mEmbeddedBlueprints.Value(Pack.ContentPackId) = FreshBlueprints
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
 		  #Pragma Unused EncryptedData
 		  #Pragma Unused SaveDataVersion
 		  #Pragma Unused SavedWithVersion
-		  #Pragma Unused FailureReason
 		  
-		  If SaveDataVersion < 2 Then
-		    FailureReason = "This project is too old to be opened with this version of Beacon."
-		    Return False
-		  ElseIf SaveDataVersion = 2 And PlainData.HasAllKeys("DifficultyValue", "LootSources") Then
+		  If SaveDataVersion = 2 And PlainData.HasAllKeys("DifficultyValue", "LootSources") Then
 		    Var DifficultyValue As Double = PlainData.Value("DifficultyValue")
 		    Var LootSources() As Variant = PlainData.Value("LootSources")
 		    
@@ -125,7 +211,7 @@ Inherits Beacon.Project
 		      Try
 		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dictionary(Source))
 		        If (Container Is Nil) = False Then
-		          Loot.Add(Container)
+		          Loot.Add(Container, True)
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -135,60 +221,38 @@ Inherits Beacon.Project
 		    ConfigSet.Value(Ark.Configs.NameDifficulty) = New Ark.Configs.Difficulty(DifficultyValue)
 		    ConfigSet.Value(Ark.Configs.NameLootDrops) = Loot
 		    
-		    Self.ConfigSet(BaseConfigSetName) = ConfigSet
+		    Self.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  End If
 		  
-		  Self.AllowUCS2 = PlainData.Lookup("AllowUCS", Self.AllowUCS2).BooleanValue
-		  Self.ConsoleSafe = PlainData.Lookup("IsConsole", Self.ConsoleSafe).BooleanValue
-		  Self.UWPMode = CType(PlainData.Lookup("UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
+		  Self.AllowUCS2 = PlainData.FirstValue("allowUcs", "AllowUCS", Self.AllowUCS2).BooleanValue
+		  Self.UWPMode = CType(PlainData.FirstValue("uwpCompatibilityMode", "UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
 		  
-		  If PlainData.HasKey("Map") Then
-		    Self.MapMask = PlainData.Value("Map")
-		  ElseIf PlainData.HasKey("MapPreference") Then
-		    Self.MapMask = PlainData.Value("MapPreference")
-		  End If
+		  Self.MapMask = PlainData.FirstValue("map", "Map", "MapPreference", 1)
 		  
-		  If PlainData.HasKey("ModSelections") Then
-		    // Newest mod, keys are uuids and values are boolean
-		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
-		    Var Selections As Dictionary = PlainData.Value("ModSelections")
-		    Var ConsoleMode As Boolean = Self.ConsoleSafe
-		    For Each Pack As Ark.ContentPack In AllPacks
-		      If Selections.HasKey(Pack.UUID) = False Then
-		        Selections.Value(Pack.UUID) = Pack.DefaultEnabled And (Pack.ConsoleSafe Or ConsoleMode = False)
-		      End If
-		    Next
-		    
-		    Self.mContentPacks = Selections
+		  If PlainData.HasKey("modSelections") Or PlainData.HasKey("ModSelections") Then
+		    // Handled by the parent class
 		  ElseIf PlainData.HasKey("Mods") Then
 		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
 		    
-		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
+		    Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
 		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
-		    Var Selections As New Dictionary
-		    For Each Pack As Ark.ContentPack In AllPacks
-		      Selections.Value(Pack.UUID) = (Pack.ConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.UUID) > -1)
+		    For Each Pack As Beacon.ContentPack In AllPacks
+		      Self.ContentPackEnabled(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
 		    Next
-		    
-		    Self.mContentPacks = Selections
 		  ElseIf PlainData.HasKey("ConsoleModsOnly") Then
 		    Var ConsolePacksOnly As Boolean = PlainData.Value("ConsoleModsOnly")
 		    If ConsolePacksOnly Then
-		      Var Selections As New Dictionary
-		      Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
-		      For Each Pack As Ark.ContentPack In AllPacks
-		        Selections.Value(Pack.UUID) = Pack.DefaultEnabled And Pack.ConsoleSafe
+		      Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
+		      For Each Pack As Beacon.ContentPack In AllPacks
+		        Self.ContentPackEnabled(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
 		      Next
 		      
 		      Self.ConsoleSafe = True
-		      Self.mContentPacks = Selections
 		    End If
 		  End If
-		  
-		  Return True
-		End Function
+		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -216,32 +280,31 @@ Inherits Beacon.Project
 		  If Self.mMapMask = CType(0, UInt64) Then
 		    Issues.Add(New Beacon.Issue("MapMask", "No map has been selected."))
 		  End If
-		  
-		  Var SetNames() As String = Self.ConfigSetNames()
-		  For Each SetName As String In SetNames
-		    Var Configs() As Ark.ConfigGroup = Self.ImplementedConfigs(SetName)
-		    For Each Config As Ark.ConfigGroup In Configs
-		      Config.Validate(SetName, Issues, Self)
-		    Next Config
-		  Next SetName
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As Ark.ConfigGroup)
-		  Self.AddConfigGroup(Group, Self.ActiveConfigSet)
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
+		  If Group IsA Ark.ConfigGroup Then
+		    Super.AddConfigGroup(Group, Self.ActiveConfigSet)
+		  Else
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Wrong config group subclass for project"
+		    Raise Err
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As Ark.ConfigGroup, SetName As String)
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
-		  If SetDict Is Nil Then
-		    SetDict = New Dictionary
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup, Set As Beacon.ConfigSet)
+		  If Group IsA Ark.ConfigGroup Then
+		    Super.AddConfigGroup(Group, Set)
+		  Else
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Wrong config group subclass for project"
+		    Raise Err
 		  End If
-		  SetDict.Value(Group.InternalName) = Group
-		  Self.ConfigSet(SetName) = SetDict
 		End Sub
 	#tag EndMethod
 
@@ -267,34 +330,18 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfig(GroupName As String, States() As Beacon.ConfigSetState) As Ark.ConfigGroup
-		  Var SetNames() As String
-		  If States Is Nil Then
-		    SetNames.Add(Self.BaseConfigSetName)
-		  Else
-		    For Each State As Beacon.ConfigSetState In States
-		      If State.Enabled Then
-		        SetNames.Add(State.Name)
-		      End If
-		    Next
-		  End If
-		  Return Self.CombinedConfig(GroupName, SetNames)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function CombinedConfig(GroupName As String, SetNames() As String) As Ark.ConfigGroup
-		  If SetNames Is Nil Then
-		    SetNames = Array(Self.BaseConfigSetName)
-		  ElseIf SetNames.Count = 0 Then
-		    SetNames.Add(Self.BaseConfigSetName)
+		Function CombinedConfig(GroupName As String, Sets() As Beacon.ConfigSet) As Ark.ConfigGroup
+		  If Sets Is Nil Then
+		    Sets = Array(Beacon.ConfigSet.BaseConfigSet)
+		  ElseIf Sets.Count = 0 Then
+		    Sets.Add(Beacon.ConfigSet.BaseConfigSet)
 		  End If
 		  
 		  Var Siblings() As Ark.ConfigGroup
-		  For Idx As Integer = 0 To SetNames.LastIndex
-		    Var SetName As String = SetNames(Idx)
-		    Var SetDict As Dictionary = Self.ConfigSet(SetName)
-		    If SetDict Is Nil Or SetDict.HasKey(SetName) = False Then
+		  For Idx As Integer = 0 To Sets.LastIndex
+		    Var Set As Beacon.ConfigSet = Sets(Idx)
+		    Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		    If SetDict Is Nil Or SetDict.HasKey(GroupName) = False Then
 		      Continue
 		    End If
 		    
@@ -307,34 +354,24 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Ark.ConfigGroup()
-		  Var Names() As String
-		  If States Is Nil Then
-		    Names.Add(Self.BaseConfigSetName)
-		  Else
-		    For Each State As Beacon.ConfigSetState In States
-		      If State.Enabled Then
-		        Names.Add(State.Name)
-		      End If
-		    Next
-		  End If
-		  Return Self.CombinedConfigs(Names)
+		Function CombinedConfig(GroupName As String, States() As Beacon.ConfigSetState) As Ark.ConfigGroup
+		  Var Sets() As Beacon.ConfigSet = Beacon.ConfigSetState.FilterSets(States, Self.ConfigSets)
+		  Return Self.CombinedConfig(GroupName, Sets)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfigs(SetNames() As String) As Ark.ConfigGroup()
-		  If SetNames Is Nil Then
-		    SetNames = Array(Self.BaseConfigSetName)
-		  ElseIf SetNames.Count = 0 Then
-		    SetNames.Add(Self.BaseConfigSetName)
+		Function CombinedConfigs(Sets() As Beacon.ConfigSet) As Ark.ConfigGroup()
+		  If Sets Is Nil Then
+		    Sets = Array(Beacon.ConfigSet.BaseConfigSet)
+		  ElseIf Sets.Count = 0 Then
+		    Sets.Add(Beacon.ConfigSet.BaseConfigSet)
 		  End If
 		  
 		  Var Instances As New Dictionary
-		  For Idx As Integer = 0 To SetNames.LastIndex
-		    Var SetName As String = SetNames(Idx)
-		    Var Groups() As Ark.ConfigGroup = Self.ImplementedConfigs(SetName)
-		    For Each Group As Ark.ConfigGroup In Groups
+		  For Idx As Integer = 0 To Sets.LastIndex
+		    Var Set As Beacon.ConfigSet = Sets(Idx)
+		    For Each Group As Ark.ConfigGroup In Self.ImplementedConfigs(Set)
 		      Var Siblings() As Ark.ConfigGroup
 		      If Instances.HasKey(Group.InternalName) Then
 		        Siblings = Instances.Value(Group.InternalName)
@@ -357,14 +394,15 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigGroup(InternalName As String, Create As Boolean = False) As Ark.ConfigGroup
-		  Return Self.ConfigGroup(InternalName, Self.ActiveConfigSet, Create)
+		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Ark.ConfigGroup()
+		  Var Sets() As Beacon.ConfigSet = Beacon.ConfigSetState.FilterSets(States, Self.ConfigSets)
+		  Return Self.CombinedConfigs(Sets)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigGroup(InternalName As String, SetName As String, Create As Boolean = False) As Ark.ConfigGroup
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Function ConfigGroup(InternalName As String, Set As Beacon.ConfigSet, Create As Boolean = False) As Ark.ConfigGroup
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		  If (SetDict Is Nil) = False And SetDict.HasKey(InternalName) Then
 		    Return SetDict.Value(InternalName)
 		  End If
@@ -373,13 +411,13 @@ Inherits Beacon.Project
 		    Var Group As Ark.ConfigGroup = Ark.Configs.CreateInstance(InternalName)
 		    If (Group Is Nil) = False Then
 		      Group.IsImplicit = True
-		      Self.AddConfigGroup(Group, SetName)
+		      Self.AddConfigGroup(Group, Set)
 		    End If
 		    Return Group
-		  ElseIf SetName <> BaseConfigSetName And InternalName = Ark.Configs.NameDifficulty Then
+		  ElseIf Set.IsBase = False And InternalName = Ark.Configs.NameDifficulty Then
 		    // Create is false, we're not in the base config set, and we're looking for difficulty.
 		    // Return a *clone* of the base difficulty, but don't add it to the config set.
-		    Var BaseDifficulty As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, BaseConfigSetName, False)
+		    Var BaseDifficulty As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, Beacon.ConfigSet.BaseConfigSet, False)
 		    Var Clone As Ark.ConfigGroup
 		    If BaseDifficulty Is Nil Then
 		      // Should never happen, but just in case
@@ -395,90 +433,29 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  Return Self.mConsoleSafe
+		Function ConfigGroup(InternalName As String, Create As Boolean = False) As Ark.ConfigGroup
+		  Return Self.ConfigGroup(InternalName, Self.ActiveConfigSet, Create)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConsoleSafe(Assigns Value As Boolean)
-		  If Self.mConsoleSafe <> Value Then
-		    Self.mConsoleSafe = Value
-		    Self.Modified = True
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMapMask = 1 // Play it safe, do not bother calling Ark.Maps here in case database access is fubar
-		  
-		  Self.mContentPacks = New Dictionary
-		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  If (DataSource Is Nil) = False Then
-		    Var Packs() As Ark.ContentPack = DataSource.GetContentPacks
-		    For Idx As Integer = 0 To Packs.LastIndex
-		      Self.mContentPacks.Value(Packs(Idx).UUID) = Packs(Idx).DefaultEnabled
-		    Next Idx
-		  End If
-		  If Self.mContentPacks.HasKey(Ark.UserContentPackUUID) Then
-		    Self.mContentPacks.Value(Ark.UserContentPackUUID) = True // Force this, if it exists
-		  End If
+		  Self.mEmbeddedBlueprints = New Dictionary
 		  
 		  Super.Constructor
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ContentPackEnabled(Pack As Ark.ContentPack) As Boolean
-		  Return Self.ContentPackEnabled(Pack.UUID)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ContentPackEnabled(Pack As Ark.ContentPack, Assigns Value As Boolean)
-		  Self.ContentPackEnabled(Pack.UUID) = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ContentPackEnabled(UUID As String) As Boolean
-		  Return Self.mContentPacks.Lookup(UUID, False)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ContentPackEnabled(UUID As String, Assigns Value As Boolean)
-		  If v4UUID.IsValid(UUID) = False Then
-		    Return
-		  End If
 		  
-		  If Self.mContentPacks.HasKey(UUID) = False Or Self.mContentPacks.Value(UUID).BooleanValue <> Value Then
-		    Self.mContentPacks.Value(UUID) = Value
-		    Self.Modified = True
-		  End If
+		  Self.ContentPackEnabled(Ark.UserContentPackId) = True // Force it
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ContentPacks() As Beacon.StringList
-		  Var List As New Beacon.StringList
-		  For Each Entry As DictionaryEntry In Self.mContentPacks
-		    If Entry.Value.BooleanValue = True Then
-		      List.Append(Entry.Key.StringValue)
-		    End If
-		  Next
-		  Return List
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ConvertDinoReplacementsToSpawnOverrides() As Integer
-		  If Self.HasConfigGroup(Ark.Configs.NameDinoAdjustments) = False Then
+		  If Self.HasConfigGroup(Ark.Configs.NameCreatureAdjustments) = False Then
 		    Return 0
 		  End If
 		  
-		  Var DinoConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Self.ConfigGroup(Ark.Configs.NameDinoAdjustments))
+		  Var DinoConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Self.ConfigGroup(Ark.Configs.NameCreatureAdjustments))
 		  If DinoConfig = Nil Then
 		    Return 0
 		  End If
@@ -501,12 +478,12 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      Var SpawnPoint As Ark.MutableSpawnPoint = SourceSpawnPoint.MutableClone
-		      Ark.DataSource.Pool.Get(False).LoadDefaults(SpawnPoint)
+		      Var SourceOverride As New Ark.MutableSpawnPointOverride(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend)
+		      SourceOverride.LoadDefaults()
 		      
-		      Var Limit As Double = SpawnPoint.Limit(ReplacedCreature)
+		      Var Limit As Double = SourceOverride.Limit(ReplacedCreature)
 		      Var NewSets() As Ark.SpawnPointSet
-		      For Each Set As Ark.SpawnPointSet In SpawnPoint
+		      For Each Set As Ark.SpawnPointSet In SourceOverride
 		        Var NewSet As Ark.MutableSpawnPointSet
 		        For Each Entry As Ark.SpawnPointSetEntry In Set
 		          If Entry.Creature <> ReplacedCreature Then
@@ -517,12 +494,12 @@ Inherits Beacon.Project
 		            NewSet = New Ark.MutableSpawnPointSet(Set)
 		            NewSet.Label = ReplacementCreature.Label + " (Converted)"
 		            NewSet.RemoveAll()
-		            NewSet.ID = New v4UUID
+		            NewSet.SetId = Beacon.UUID.v4
 		          End If
 		          
 		          Var NewEntry As New Ark.MutableSpawnPointSetEntry(Entry)
 		          NewEntry.Creature = ReplacementCreature
-		          NewEntry.ID = New v4UUID
+		          NewEntry.EntryId = Beacon.UUID.v4
 		          NewSet.Append(NewEntry)
 		        Next
 		        If (NewSet Is Nil) = False And NewSet.Count > 0 Then
@@ -532,25 +509,22 @@ Inherits Beacon.Project
 		      
 		      If NewSets.Count > 0 Then
 		        If SpawnConfig Is Nil Then
-		          SpawnConfig = Ark.Configs.SpawnPoints(Self.ConfigGroup(Ark.Configs.NameSpawnPoints, True))
+		          SpawnConfig = Ark.Configs.SpawnPoints(Self.ConfigGroup(Ark.Configs.NameCreatureSpawns, True))
 		          SpawnConfig.IsImplicit = False
 		        End If
 		        
-		        Var Override As Ark.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeAppend)
-		        If Override = Nil Then
-		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeOverride)
-		        End If
-		        If Override = Nil Then
-		          Override = New Ark.MutableSpawnPoint(SpawnPoint)
-		          Ark.MutableSpawnPoint(Override).ResizeTo(-1)
-		          Ark.MutableSpawnPoint(Override).LimitsString = "{}"
-		          Ark.MutableSpawnPoint(Override).Mode = Ark.SpawnPoint.ModeAppend
+		        Var Override As Ark.SpawnPointOverride = SpawnConfig.OverrideForSpawnPoint(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend)
+		        If Override Is Nil Then
+		          Override = SpawnConfig.OverrideForSpawnPoint(SourceSpawnPoint, Ark.SpawnPointOverride.ModeOverride)
+		          If Override Is Nil Then
+		            Override = New Ark.MutableSpawnPointOverride(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend)
+		          End If
 		        End If
 		        
-		        Var Mutable As Ark.MutableSpawnPoint = Override.MutableVersion
+		        Var Mutable As Ark.MutableSpawnPointOverride = Override.MutableVersion
 		        Mutable.Limit(ReplacementCreature) = Limit
 		        For Each Set As Ark.SpawnPointSet In NewSets
-		          Mutable.AddSet(Set)
+		          Mutable.Add(Set)
 		        Next
 		        
 		        SpawnConfig.Add(Mutable)
@@ -589,7 +563,7 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      If Groups(Idx).InternalName = Ark.Configs.NameCustomContent Then
+		      If Groups(Idx).InternalName = Ark.Configs.NameCustomConfig Then
 		        Organizer.AddManagedKeys(Groups(Idx).ManagedKeys)
 		        Organizer.Add(Groups(Idx).GenerateConfigValues(Self, Identity, Profile))
 		        Groups.RemoveAt(Idx)
@@ -602,7 +576,7 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      Var ManagedKeys() As Ark.ConfigKey = Group.ManagedKeys
+		      Var ManagedKeys() As Ark.ConfigOption = Group.ManagedKeys
 		      Organizer.AddManagedKeys(ManagedKeys)
 		      Organizer.Remove(ManagedKeys) // Removes overlapping values found in custom config
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
@@ -687,8 +661,9 @@ Inherits Beacon.Project
 		  
 		  Var Packs As Beacon.StringList = Self.ContentPacks
 		  Var Containers() As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainers("", Packs, "", True)
-		  Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
+		  Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
 		  Var Mask As UInt64 = Self.MapMask
+		  Var LootDrops As New Ark.Configs.LootDrops
 		  For Each Container As Ark.LootContainer In Containers
 		    If Container.ValidForMask(Mask) = False Then
 		      Continue For Container
@@ -709,15 +684,20 @@ Inherits Beacon.Project
 		    ItemSet.MaxNumItems = 1
 		    ItemSet.Add(Entry)
 		    
-		    Var Mutable As Ark.MutableLootContainer = Container.MutableVersion
-		    Mutable.MinItemSets = 1
-		    Mutable.MaxItemSets = 1
-		    Mutable.PreventDuplicates = True
-		    Mutable.AppendMode = False
-		    Mutable.Add(ItemSet)
+		    Var Override As New Ark.MutableLootDropOverride(Container, False)
+		    Override.MinItemSets = 1
+		    Override.MaxItemSets = 1
+		    Override.PreventDuplicates = True
+		    Override.AddToDefaults = False
+		    Override.Add(ItemSet)
 		    
-		    Ark.Configs.LootDrops.BuildOverrides(Mutable, Values, 5.0)
+		    LootDrops.Add(Override)
 		  Next Container
+		  
+		  Var LootValues() As Ark.ConfigValue = LootDrops.GenerateConfigValues(Self, App.IdentityManager.CurrentIdentity, Profile)
+		  For Each LootValue As Ark.ConfigValue In LootValues
+		    Values.Add(LootValue)
+		  Next
 		  
 		  Var Craftable() As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
 		  Var CoinFlip As Integer = Rand.InRange(0, 1)
@@ -748,8 +728,14 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DataSource(AllowWriting As Boolean) As Beacon.DataSource
+		  Return Ark.DataSource.Pool.Get(AllowWriting)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Difficulty() As Ark.Configs.Difficulty
-		  Var Group As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.ActiveConfigSet = Self.BaseConfigSetName)
+		  Var Group As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.ActiveConfigSet.IsBase)
 		  If Group Is Nil Then
 		    Return Nil
 		  End If
@@ -758,7 +744,17 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Function EmbeddedBlueprints(Pack As Beacon.ContentPack) As Ark.Blueprint()
+		  Var Blueprints() As Ark.Blueprint
+		  If Pack Is Nil Or Self.mEmbeddedBlueprints.HasKey(Pack.ContentPackId) = False Then
+		    Return Blueprints
+		  End If
+		  Return Self.mEmbeddedBlueprints.Value(Pack.ContentPackId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameId() As String
 		  Return Ark.Identifier
 		End Function
 	#tag EndMethod
@@ -770,41 +766,11 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasConfigGroup(InternalName As String, SetName As String) As Boolean
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Function HasConfigGroup(InternalName As String, Set As Beacon.ConfigSet) As Boolean
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		  If (SetDict Is Nil) = False Then
 		    Return SetDict.HasKey(InternalName)
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ImplementedConfigs() As Ark.ConfigGroup()
-		  Var Names() As String = Self.ConfigSetNames
-		  Var Groups() As Ark.ConfigGroup
-		  For Each SetName As String In Names
-		    Var SetGroups() As Ark.ConfigGroup = Self.ImplementedConfigs(SetName)
-		    For Each Group As Ark.ConfigGroup In SetGroups
-		      Groups.Add(Group)
-		    Next
-		  Next
-		  Return Groups
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ImplementedConfigs(SetName As String) As Ark.ConfigGroup()
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
-		  Var Groups() As Ark.ConfigGroup
-		  If (SetDict Is Nil) = False Then
-		    For Each Entry As DictionaryEntry In SetDict
-		      Var Group As Ark.ConfigGroup = Entry.Value
-		      If Group.IsImplicit = False Or SetName = Self.BaseConfigSetName Then
-		        Groups.Add(Group)
-		      End If
-		    Next
-		  End If
-		  Return Groups
 		End Function
 	#tag EndMethod
 
@@ -840,44 +806,10 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Modified() As Boolean
-		  If Super.Modified Then
-		    Return True
-		  End If
+		Sub ProcessEmbeddedContent()
+		  Self.mEmbeddedBlueprints = New Dictionary
+		  Super.ProcessEmbeddedContent()
 		  
-		  Var ConfigSetNames() As String = Self.ConfigSetNames
-		  For Each ConfigSetName As String In ConfigSetNames
-		    Var SetDict As Dictionary = Self.ConfigSet(ConfigSetName)
-		    If SetDict Is Nil Then
-		      Continue
-		    End If
-		    For Each GroupEntry As DictionaryEntry In SetDict
-		      Var Group As Ark.ConfigGroup = GroupEntry.Value
-		      If Group.Modified Then
-		        Return True
-		      End If
-		    Next GroupEntry
-		  Next ConfigSetName
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Modified(Assigns Value As Boolean)
-		  Super.Modified = Value
-		  
-		  If Value = False Then
-		    Var ConfigSetNames() As String = Self.ConfigSetNames
-		    For Each ConfigSetName As String In ConfigSetNames
-		      Var SetDict As Dictionary = Self.ConfigSet(ConfigSetName)
-		      If SetDict Is Nil Then
-		        Continue
-		      End If
-		      For Each GroupEntry As DictionaryEntry In SetDict
-		        Var Group As Ark.ConfigGroup = GroupEntry.Value
-		        Group.Modified = False
-		      Next GroupEntry
-		    Next ConfigSetName
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -892,12 +824,12 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigGroup(Group As Ark.ConfigGroup, SetName As String)
+		Sub RemoveConfigGroup(Group As Ark.ConfigGroup, Set As Beacon.ConfigSet)
 		  If Group Is Nil Then
 		    Return
 		  End If
 		  
-		  Self.RemoveConfigGroup(Group.InternalName, SetName)
+		  Self.RemoveConfigGroup(Group.InternalName, Set)
 		End Sub
 	#tag EndMethod
 
@@ -908,11 +840,11 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigGroup(InternalName As String, SetName As String)
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Sub RemoveConfigGroup(InternalName As String, Set As Beacon.ConfigSet)
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		  If (SetDict Is Nil) = False And SetDict.HasKey(InternalName) Then
 		    SetDict.Remove(InternalName)
-		    Self.ConfigSet(SetName) = SetDict
+		    Self.ConfigSetData(Set) = SetDict
 		  End If
 		End Sub
 	#tag EndMethod
@@ -935,9 +867,8 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function UsesOmniFeaturesWithoutOmni(Identity As Beacon.Identity) As Ark.ConfigGroup()
-		  Var Configs() As Ark.ConfigGroup = Self.ImplementedConfigs()
 		  Var ExcludedConfigs() As Ark.ConfigGroup
-		  For Each Config As Ark.ConfigGroup In Configs
+		  For Each Config As Ark.ConfigGroup In Self.ImplementedConfigs()
 		    If Ark.Configs.ConfigUnlocked(Config, Identity) = False Then
 		      ExcludedConfigs.Add(Config)
 		    End If
@@ -966,12 +897,8 @@ Inherits Beacon.Project
 		Protected mAllowUCS2 As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mConsoleSafe As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mContentPacks As Dictionary
+	#tag Property, Flags = &h21
+		Private mEmbeddedBlueprints As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

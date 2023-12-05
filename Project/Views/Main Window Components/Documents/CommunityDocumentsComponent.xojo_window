@@ -37,6 +37,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       Composited      =   False
       ConsoleSafe     =   False
       Enabled         =   True
+      GameId          =   ""
       HasBackgroundColor=   False
       Height          =   62
       Index           =   -2147483648
@@ -47,7 +48,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
       RequireAllMaps  =   False
       Scope           =   2
       SearchDelayPeriod=   1000
@@ -101,8 +101,8 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   5
-      ColumnWidths    =   "2*,*,100,*,125"
+      ColumnCount     =   6
+      ColumnWidths    =   "2*,200,*,100,*,125"
       DefaultRowHeight=   26
       DefaultSortColumn=   "#ColumnDownloads"
       DefaultSortDirection=   -1
@@ -118,10 +118,10 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   457
+      Height          =   426
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Name	Map	Console Safe	Last Updated	Downloads"
+      InitialValue    =   "Name	Game	Map	Console Safe	Last Updated	Downloads"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -129,6 +129,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   "Community Documents"
       RequiresSelection=   False
       RowSelectionType=   1
@@ -138,6 +139,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       TabStop         =   True
       Tooltip         =   ""
       Top             =   63
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   "#ColumnName"
       Underline       =   False
@@ -154,97 +156,217 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin DesktopLabel StatusbarLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   495
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   736
+   End
+   Begin FadedSeparator StatusbarSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   489
+      Transparent     =   True
+      Visible         =   True
+      Width           =   776
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
+		Sub Hidden()
+		  Self.List.PauseScrollWatching
+		  RaiseEvent Hidden
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Opening()
+		  RaiseEvent Opening
+		  Self.UpdateStatusbar()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  If Self.mHasBeenShown = False Then
-		    Self.mHasBeenShown = True
-		    Self.Load
+		  Self.mHasBeenShown = True
+		  Self.List.ResumeScrollWatching
+		  If Self.List.IsLoading = False Then
+		    Self.List.ReloadAllPages
 		  End If
+		  RaiseEvent Shown
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListDocuments(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Private Sub APICallback_ListProjects(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
 		  If Not Response.Success Then
 		    Break
+		    Self.List.CompleteRowLoadRequest(Request.Tag)
 		    Return
 		  End If
 		  
-		  Var Dicts() As Variant = Response.JSON
-		  If Dicts.Count = 0 Then
+		  Var Page As Integer
+		  Var Results() As Variant
+		  Try
+		    Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
+		    Self.List.RowCount = Parsed.Value("totalResults")
+		    Self.List.TotalPages = Parsed.Value("pages")
+		    Page = Parsed.Value("page")
+		    Results = Parsed.Value("results")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing page of results.")
+		    Self.List.CompleteRowLoadRequest(Request.Tag)
 		    Return
-		  End If
+		  End Try
 		  
-		  Var SelectedDocuments() As String
-		  For I As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.RowSelectedAt(I) Then
-		      Var Document As BeaconAPI.Document = Self.List.RowTagAt(I)
-		      SelectedDocuments.Add(Document.ResourceURL)
+		  Var StartIdx As Integer = Self.List.RowIndexOfPage(Page)
+		  Var UserId As String = App.IdentityManager.CurrentUserId
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Var RowIdx As Integer = StartIdx + Idx
+		    If IsNull(Results(Idx)) Or Results(Idx).Type <> Variant.TypeObject Or (Results(Idx) IsA Dictionary) = False Then
+		      Self.List.RowTagAt(RowIdx) = Nil
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnGame) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnDownloads) = ""
+		      Continue
 		    End If
-		  Next
-		  
-		  For Each Dict As Dictionary In Dicts
-		    Var Document As New BeaconAPI.Document(Dict)
 		    
-		    Self.List.AddRow("")
-		    Var Idx As Integer = Self.List.LastAddedRowIndex
-		    Self.List.CellTextAt(Idx, Self.ColumnName) = Document.Name
-		    Self.List.CellTextAt(Idx, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
-		    Self.List.CellTextAt(Idx, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
-		    Self.List.CellTextAt(Idx, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		    Self.List.CellTextAt(Idx, Self.ColumnDownloads) = Document.DownloadCount.ToString(Locale.Raw, "#,##0")
-		    Self.List.RowTagAt(Idx) = Document
-		    Self.List.RowSelectedAt(Idx) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
+		    Try
+		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue), UserId)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
+		      Self.List.CellTextAt(RowIdx, Self.ColumnGame) = Language.GameName(Project.GameId)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
+		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnDownloads) = Project.DownloadCount.ToString(Locale.Current, "#,##0")
+		      Self.List.RowTagAt(RowIdx) = Project
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Adding result to list.")
+		      Continue
+		    End Try
 		  Next
 		  
-		  Self.List.InvalidateScrollPosition
+		  Self.List.SizeColumnToFit(Self.ColumnGame)
+		  Self.List.SizeColumnToFit(Self.ColumnUpdated)
+		  Self.List.SizeColumnToFit(Self.ColumnDownloads)
+		  
+		  Self.List.CompleteRowLoadRequest(Request.Tag)
+		  Self.UpdateStatusbar()
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
-		Private Sub Load()
-		  If Not Self.mHasBeenShown Then
-		    Return
+		Private Sub UpdateStatusbar()
+		  Var Status As String
+		  If Self.List.SelectedRowCount > 0 Then
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.List.RowCount, "project", "projects") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.List.RowCount, "project", "projects")
 		  End If
-		  
-		  // This should trigger List.LoadMoreRows which will do the actual work.
-		  Self.List.ScrollPosition = 0
-		  Self.List.RemoveAllRows()
+		  If Self.StatusbarLabel.Text <> Status Then
+		    Self.StatusbarLabel.Text = Status
+		  End If
 		End Sub
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Hidden()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
+	#tag EndHook
 
 
 	#tag Property, Flags = &h21
 		Private mHasBeenShown As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mLoadedBound As Integer
-	#tag EndProperty
 
-
-	#tag Constant, Name = ColumnConsole, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = ColumnConsole, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnDownloads, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnDownloads, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnMaps, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnMaps, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 
@@ -252,43 +374,45 @@ End
 
 #tag Events FilterBar
 	#tag Event
-		Sub Opening()
-		  Me.Mask = Ark.Maps.UniversalMask
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Changed()
-		  Self.Load()
+		  Self.List.ReloadAllPages
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub LoadMoreRows(Offset As Integer, RowCount As Integer)
-		  If Not Self.mHasBeenShown Then
-		    Return
+		Function LoadMoreRows(Page As Integer, RequestToken As String) As Boolean
+		  If Self.mHasBeenShown = False Then
+		    Me.PauseScrollWatching()
+		    Return True
 		  End If
-		  
-		  Var Bound As Integer = Offset + RowCount
-		  If Bound > Self.mLoadedBound Then
-		    
-		  End If
-		  Self.mLoadedBound = Bound
 		  
 		  #if DebugBuild
-		    System.DebugLog("Looking for projects " + Offset.ToString + "-" + Bound.ToString + "…")
+		    Var LowerBound As Integer = ((Page - 1) * Me.PageSize) + 1
+		    Var UpperBound As Integer = Page * Me.PageSize
+		    System.DebugLog("Looking for community projects " + LowerBound.ToString + "-" + UpperBound.ToString + "…")
 		  #endif
 		  
 		  Var Params As New Dictionary
-		  Params.Value("offset") = Offset
-		  Params.Value("count") = RowCount
-		  If Self.FilterBar.Mask > CType(0, UInt64) Then
-		    Params.Value("mask") = Self.FilterBar.Mask
+		  Params.Value("page") = Page
+		  Params.Value("pageSize") = Me.PageSize
+		  If Self.FilterBar.GameId.IsEmpty = False Then
+		    Params.Value("gameId") = Self.FilterBar.GameId
+		  End If
+		  
+		  Var Maps() As Beacon.Map = Self.FilterBar.Maps
+		  If (Maps Is Nil) = False And Maps.Count > 0 Then
+		    Var MapValue As String = String.FromArray(Maps.MapIds, ",")
+		    If Self.FilterBar.RequireAllMaps Then
+		      Params.Value("allMaps") = MapValue
+		    Else
+		      Params.Value("anyMaps") = MapValue
+		    End If
 		  End If
 		  
 		  Var Filter As String = Self.FilterBar.SearchText
@@ -297,11 +421,7 @@ End
 		  End If
 		  
 		  If Self.FilterBar.ConsoleSafe Then
-		    Params.Value("console_only") = True
-		  End If
-		  
-		  If Self.FilterBar.RequireAllMaps Then
-		    Params.Value("mask_require_all") = True
+		    Params.Value("consoleSafe") = True
 		  End If
 		  
 		  Select Case Me.SortingColumn
@@ -310,11 +430,11 @@ End
 		  Case Self.ColumnMaps
 		    Params.Value("sort") = "map"
 		  Case Self.ColumnConsole
-		    Params.Value("sort") = "console_safe"
+		    Params.Value("sort") = "consoleSafe"
 		  Case Self.ColumnUpdated
-		    Params.Value("sort") = "last_update"
+		    Params.Value("sort") = "lastUpdate"
 		  Case Self.ColumnDownloads
-		    Params.Value("sort") = "download_count"
+		    Params.Value("sort") = "downloadCount"
 		  End Select
 		  
 		  If Me.ColumnSortDirectionAt(Me.SortingColumn) = DesktopListbox.SortDirections.Descending Then
@@ -323,16 +443,16 @@ End
 		    Params.Value("direction") = "asc"
 		  End If
 		  
-		  Var Request As New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocuments)
+		  Var Request As New BeaconAPI.Request("/projects", "GET", Params, AddressOf APICallback_ListProjects)
+		  Request.Tag = RequestToken
 		  Self.APISocket.Start(Request)
-		End Sub
+		End Function
 	#tag EndEvent
 	#tag Event
 		Function HeaderPressed(column as Integer) As Boolean
 		  #Pragma Unused Column
 		  
-		  Self.Load()
-		  
+		  Call CallLater.Schedule(1, WeakAddressof List.ReloadAllPages)
 		  Return False
 		End Function
 	#tag EndEvent
@@ -348,8 +468,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
-		    Self.OpenDocument(Document.ResourceURL)
+		    Var Project As BeaconAPI.Project = Me.RowTagAt(Row)
+		    Self.OpenProject(Project.Url())
 		  Next
 		End Sub
 	#tag EndEvent
@@ -359,18 +479,23 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Self.UpdateStatusbar()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnConsole) = DesktopListBox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnDownloads) = DesktopListBox.Alignments.Right
+		  Me.SizeColumnToFit(Self.ColumnDownloads)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events APISocket
 	#tag Event
 		Sub WorkCompleted()
 		  Self.Progress = BeaconSubview.ProgressNone
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub WorkProgress(Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
-		  #Pragma Unused Request
-		  
-		  Self.Progress = BytesReceived / BytesTotal
 		End Sub
 	#tag EndEvent
 	#tag Event

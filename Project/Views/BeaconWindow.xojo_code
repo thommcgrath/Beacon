@@ -25,18 +25,11 @@ Inherits DesktopWindow
 
 	#tag Event
 		Sub MenuBarSelected()
-		  If Self.HasCloseButton Then
-		    FileClose.Enabled = True
-		  End If
-		  If Self.HasMinimizeButton Then
-		    WindowMinimize.Enabled = True
-		  End If
-		  If Self.Resizeable Then
-		    WindowZoom.Enabled = True
-		  End If
-		  If Self.mWindowMenuItem <> Nil Then
-		    Self.mWindowMenuItem.Enabled = True
-		  End If
+		  FileClose.Text = "Close " + Self.WindowTypeLabel()
+		  FileClose.Enabled = Self.CanBeClosed
+		  WindowMinimize.Enabled = Self.HasMinimizeButton
+		  WindowZoom.Enabled = Self.Resizeable
+		  Self.mWindowMenuItem.Enabled = (Self.mWindowMenuItem Is Nil) = False
 		  
 		  RaiseEvent MenuBarSelected
 		End Sub
@@ -97,7 +90,9 @@ Inherits DesktopWindow
 
 	#tag MenuHandler
 		Function FileClose() As Boolean Handles FileClose.Action
-		  Self.Close
+		  If Self.CanBeClosed() Then
+		    Self.DoFileClose()
+		  End If
 		  Return True
 		End Function
 	#tag EndMenuHandler
@@ -137,6 +132,18 @@ Inherits DesktopWindow
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return Self.HasCloseButton
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub DoFileClose()
+		  Self.Close
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function mWindowMenuItem_MenuItemSelected(Sender As DesktopMenuItem) As Boolean
 		  #Pragma Unused Sender
@@ -160,6 +167,12 @@ Inherits DesktopWindow
 		    Self.mWindowMenuItem.Enabled = True
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function WindowTypeLabel() As String
+		  Return "Window"
+		End Function
 	#tag EndMethod
 
 
@@ -305,8 +318,7 @@ Inherits DesktopWindow
 				"6 - Rounded Window"
 				"7 - Global Floating Window"
 				"8 - Sheet Window"
-				"9 - Metal Window"
-				"11 - Modeless Dialog"
+				"9 - Modeless Dialog"
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty

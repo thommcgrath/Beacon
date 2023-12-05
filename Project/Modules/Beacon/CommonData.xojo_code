@@ -1,6 +1,7 @@
 #tag Class
 Protected Class CommonData
 Inherits Beacon.DataSource
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE news (uuid TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT NOT NULL, detail TEXT, url TEXT, min_version INTEGER, max_version INTEGER, moment TEXT NOT NULL, min_os_version TEXT);")
@@ -93,46 +94,48 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
-		  Self.DropIndexes()
 		  
-		  For Each Dict As Dictionary In Deletions
-		    Try
-		      If Dict.HasKey("min_version") Then
-		        Var MinVersion As Integer = Dict.Value("min_version").IntegerValue
-		        If MinVersion > BuildNumber Then
-		          Continue
+		  If ChangeDict.HasKey("deletions") Then
+		    Var Deletions() As Variant = ChangeDict.Value("deletions")
+		    For Each Dict As Dictionary In Deletions
+		      Try
+		        If Dict.HasKey("minVersion") Then
+		          Var MinVersion As Integer = Dict.Value("minVersion").IntegerValue
+		          If MinVersion > BuildNumber Then
+		            Continue
+		          End If
 		        End If
-		      End If
-		      
-		      Var ObjectID As String = Dict.Value("object_id").StringValue
-		      Var GameID As String = Dict.Value("game").StringValue
-		      Var TableName As String = Dict.Value("group").StringValue
-		      If GameID = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
-		        Select Case TableName
-		        Case "presets"
-		          Self.SQLExecute("DELETE FROM official_templates WHERE object_id = :object_id;", ObjectID)
-		        Case "preset_modifiers"
-		          Self.SQLExecute("DELETE FROM official_template_selectors WHERE object_id = :object_id;", ObjectID)
-		        End Select
-		      End If
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Handling delete records")
-		    End Try
-		  Next Dict
+		        
+		        Var ObjectId As String = Dict.Value("objectId").StringValue
+		        Var GameId As String = Dict.Value("gameId").StringValue
+		        Var TableName As String = Dict.Value("group").StringValue
+		        If GameId = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
+		          Select Case TableName
+		          Case "presets"
+		            Self.SQLExecute("DELETE FROM official_templates WHERE object_id = :object_id;", ObjectId)
+		          Case "preset_modifiers"
+		            Self.SQLExecute("DELETE FROM official_template_selectors WHERE object_id = :object_id;", ObjectId)
+		          End Select
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Handling delete records")
+		      End Try
+		    Next
+		  End If
 		  
 		  If ChangeDict.HasKey("templates") Then
 		    Var Templates() As Variant = ChangeDict.Value("templates")
 		    For Each Value As Variant In Templates
 		      Try
 		        Var Dict As Dictionary = Value
-		        Var MinVersion As Integer = Dict.Value("min_version").IntegerValue
+		        Var MinVersion As Integer = Dict.Value("minVersion").IntegerValue
 		        If MinVersion > BuildNumber Then
 		          Continue
 		        End If
 		        
-		        Var Contents As String = Dict.Value("contents")
+		        Var Contents As String = Beacon.Decompress(DecodeBase64(Dict.Value("contents")))
 		        Var Raw As Dictionary = Beacon.ParseJSON(Contents)
 		        
 		        Var Template As Beacon.Template = Beacon.Template.FromSaveData(Raw)
@@ -140,7 +143,7 @@ Inherits Beacon.DataSource
 		          Continue
 		        End If
 		        
-		        Self.SaveTemplate(Template, True)
+		        Self.SaveTemplate(Template, True, IsUserData)
 		        StatusData.Value("Imported Template") = True
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Importing template")
@@ -153,19 +156,19 @@ Inherits Beacon.DataSource
 		    For Each Value As Variant In TemplateSelectors
 		      Try
 		        Var Dict As Dictionary = Value
-		        Var MinVersion As Integer = Dict.Value("min_version").IntegerValue
+		        Var MinVersion As Integer = Dict.Value("minVersion").IntegerValue
 		        If MinVersion > BuildNumber Then
 		          Continue
 		        End If
 		        
 		        Var SelectorUUID As String = Dict.Value("id").StringValue
-		        Var GameID As String = Dict.Value("game").StringValue
+		        Var GameId As String = Dict.Value("game").StringValue
 		        Var Label As String = Dict.Value("label").StringValue
 		        Var Language As Beacon.TemplateSelector.Languages = Beacon.TemplateSelector.StringToLanguage(Dict.Value("language").StringValue)
 		        Var Code As String = Dict.Value("code").StringValue
 		        
-		        Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameID, Language, Code)
-		        Self.SaveTemplateSelector(TemplateSelector, True)
+		        Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
+		        Self.SaveTemplateSelector(TemplateSelector, True, IsUserData)
 		        StatusData.Value("Imported Template Selector") = True
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Importing template selector")
@@ -173,7 +176,6 @@ Inherits Beacon.DataSource
 		    Next Value
 		  End If
 		  
-		  Self.BuildIndexes()
 		  Return True
 		End Function
 	#tag EndEvent
@@ -216,7 +218,7 @@ Inherits Beacon.DataSource
 		        Var Parsed As Dictionary = Beacon.ParseJSON(StringValue.DefineEncoding(Encodings.UTF8))
 		        Var Template As Beacon.Template = Beacon.Template.FromSaveData(Parsed)
 		        If (Template Is Nil) = False Then
-		          Self.SaveTemplate(Template, False)
+		          Self.SaveTemplate(Template, False, False)
 		          RemoveTemplateUUIDs.Remove(Template.UUID)
 		        End If
 		      Catch Err As RuntimeException
@@ -227,7 +229,7 @@ Inherits Beacon.DataSource
 		    Exit For FolderName
 		  Next FolderName
 		  For Each TemplateUUID As String In RemoveTemplateUUIDs
-		    Self.DeleteTemplate(TemplateUUID)
+		    Self.DeleteTemplate(TemplateUUID, False)
 		  Next TemplateUUID
 		  
 		  
@@ -249,7 +251,7 @@ Inherits Beacon.DataSource
 		      For Each Dict As Dictionary In Parsed
 		        Var TemplateSelector As Beacon.TemplateSelector = Beacon.TemplateSelector.FromSaveData(Dict)
 		        If (TemplateSelector Is Nil) = False Then
-		          Self.SaveTemplateSelector(TemplateSelector, False)
+		          Self.SaveTemplateSelector(TemplateSelector, False, False)
 		          RemoveSelectorUUIDs.Remove(TemplateSelector.UUID)
 		        End If
 		      Next Dict
@@ -260,7 +262,7 @@ Inherits Beacon.DataSource
 		    End Try
 		  Next FileName
 		  For Each SelectorUUID As String In RemoveSelectorUUIDs
-		    Self.DeleteTemplateSelector(SelectorUUID)
+		    Self.DeleteTemplateSelector(SelectorUUID, False)
 		  Next SelectorUUID
 		  
 		  Self.CommitTransaction()
@@ -313,54 +315,56 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplate(Template As Beacon.Template)
+		Sub DeleteTemplate(Template As Beacon.Template, DoCloudExport As Boolean)
 		  If Template Is Nil Then
 		    Return
 		  End If
 		  
-		  Self.DeleteTemplate(Template.UUID)
+		  Self.DeleteTemplate(Template.UUID, DoCloudExport)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplate(TemplateUUID As String)
+		Sub DeleteTemplate(TemplateId As String, DoCloudExport As Boolean)
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateUUID) Then
-		    Self.mTemplateCache.Remove(UserID + ":" + TemplateUUID)
+		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateId) Then
+		    Self.mTemplateCache.Remove(UserID + ":" + TemplateId)
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM custom_templates WHERE object_id = ?1 AND user_id = ?2;", TemplateUUID, UserID)
+		  Self.SQLExecute("DELETE FROM custom_templates WHERE object_id = ?1 AND user_id = ?2;", TemplateId, UserID)
 		  Self.CommitTransaction()
 		  
-		  Self.ExportCloudFiles()
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(ParamArray TemplateSelectors() As Beacon.TemplateSelector)
-		  Self.DeleteTemplateSelector(TemplateSelectors)
+		Sub DeleteTemplateSelector(TemplateSelector As Beacon.TemplateSelector, DoCloudExport As Boolean)
+		  Self.DeleteTemplateSelectors(Array(TemplateSelector.UUID), DoCloudExport)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector)
+		Sub DeleteTemplateSelector(TemplateSelectorId As String, DoCloudExport As Boolean)
+		  Self.DeleteTemplateSelectors(Array(TemplateSelectorId), DoCloudExport)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteTemplateSelectors(TemplateSelectors() As Beacon.TemplateSelector, DoCloudExport As Boolean)
 		  Var SelectorUUIDs() As String
 		  For Idx As Integer = TemplateSelectors.FirstIndex To TemplateSelectors.LastIndex
 		    SelectorUUIDs.Add(TemplateSelectors(Idx).UUID)
 		  Next Idx
-		  Self.DeleteTemplateSelector(SelectorUUIDs)
+		  Self.DeleteTemplateSelectors(SelectorUUIDs, DoCloudExport)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(ParamArray SelectorUUIDs() As String)
-		  Self.DeleteTemplateSelector(SelectorUUIDs)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(SelectorUUIDs() As String)
+		Sub DeleteTemplateSelectors(SelectorUUIDs() As String, DoCloudExport As Boolean)
 		  Var UserID As String = App.IdentityManager.CurrentUserID
 		  
 		  Self.BeginTransaction()
@@ -372,8 +376,29 @@ Inherits Beacon.DataSource
 		  Next Idx
 		  Self.CommitTransaction()
 		  
-		  Self.ExportCloudFiles()
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  #Pragma Unused Filter
+		  #Pragma Unused Type
+		  #Pragma Unused Offset
+		  #Pragma Unused Limit
+		  
+		  Var Packs() As Beacon.ContentPack
+		  Return Packs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPackWithId(ContentPackId As String) As Beacon.ContentPack
+		  #Pragma Unused ContentPackId
+		  Return Nil
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -412,7 +437,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetTemplateByUUID(TemplateUUID As String) As Beacon.Template
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  Var NullUUID As String = v4UUID.CreateNull
+		  Var NullUUID As String = Beacon.UUID.Null
 		  
 		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateUUID) Then
 		    Return Self.mTemplateCache.Value(UserID + ":" + TemplateUUID)
@@ -434,7 +459,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplates(Flags As Integer, Filter As String = "", GameID As String = "") As Beacon.Template()
+		Function GetTemplates(Flags As Integer, Filter As String = "", GameId As String = "") As Beacon.Template()
 		  Var Templates() As Beacon.Template
 		  Var Rows As RowSet
 		  Var Clauses() As String
@@ -442,7 +467,7 @@ Inherits Beacon.DataSource
 		  
 		  Var UserIDs() As String
 		  If (Flags And Self.FlagIncludeOfficialItems) = Self.FlagIncludeOfficialItems Then
-		    UserIDs.Add("'" + v4UUID.CreateNull + "'")
+		    UserIDs.Add("'" + Beacon.UUID.Null + "'")
 		  End If
 		  If (Flags And Self.FlagIncludeUserItems) = Self.FlagIncludeUserItems Then
 		    UserIDs.Add(":user_id")
@@ -453,9 +478,9 @@ Inherits Beacon.DataSource
 		  End If
 		  Clauses.Add("user_id IN (" + String.FromArray(UserIDs, ", ") + ")")
 		  
-		  If GameID.IsEmpty = False Then
+		  If GameId.IsEmpty = False Then
 		    Clauses.Add("game_id = :game_id")
-		    Values.Add(GameID)
+		    Values.Add(GameId)
 		  End If
 		  
 		  If Filter.IsEmpty = False Then
@@ -486,15 +511,15 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplates(Filter As String = "", GameID As String = "") As Beacon.Template()
-		  Return Self.GetTemplates(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter, GameID)
+		Function GetTemplates(Filter As String = "", GameId As String = "") As Beacon.Template()
+		  Return Self.GetTemplates(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter, GameId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetTemplateSelectorByUUID(SelectorUUID As String) As Beacon.TemplateSelector
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  Var NullUUID As String = v4UUID.CreateNull
+		  Var NullUUID As String = Beacon.UUID.Null
 		  
 		  If Self.mSelectorCache.HasKey(UserID + ":" + SelectorUUID) Then
 		    Return Self.mSelectorCache.Value(UserID + ":" + SelectorUUID)
@@ -508,11 +533,11 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Var CacheKey As String = Rows.Column("user_id").StringValue + ":" + SelectorUUID
-		  Var GameID As String = Rows.Column("game_id").StringValue
+		  Var GameId As String = Rows.Column("game_id").StringValue
 		  Var Label As String = Rows.Column("label").StringValue
 		  Var Language As Beacon.TemplateSelector.Languages = Beacon.TemplateSelector.StringToLanguage(Rows.Column("language").StringValue)
 		  Var Code As String = Rows.Column("code").StringValue
-		  Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameID, Language, Code)
+		  Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
 		  
 		  Self.mSelectorCache.Value(CacheKey) = TemplateSelector
 		  Return TemplateSelector
@@ -520,7 +545,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplateSelectors(Flags As Integer, Filter As String = "", GameID As String = "") As Beacon.TemplateSelector()
+		Function GetTemplateSelectors(Flags As Integer, Filter As String = "", GameId As String = "") As Beacon.TemplateSelector()
 		  Var Selectors() As Beacon.TemplateSelector
 		  Var Rows As RowSet
 		  Var Clauses() As String
@@ -528,7 +553,7 @@ Inherits Beacon.DataSource
 		  
 		  Var UserIDs() As String
 		  If (Flags And Self.FlagIncludeOfficialItems) = Self.FlagIncludeOfficialItems Then
-		    UserIDs.Add("'" + v4UUID.CreateNull + "'")
+		    UserIDs.Add("'" + Beacon.UUID.Null + "'")
 		  End If
 		  If (Flags And Self.FlagIncludeUserItems) = Self.FlagIncludeUserItems Then
 		    UserIDs.Add(":user_id")
@@ -539,9 +564,9 @@ Inherits Beacon.DataSource
 		  End If
 		  Clauses.Add("user_id IN (" + String.FromArray(UserIDs, ", ") + ")")
 		  
-		  If GameID.IsEmpty = False Then
+		  If GameId.IsEmpty = False Then
 		    Clauses.Add("game_id = :game_id")
-		    Values.Add(GameID)
+		    Values.Add(GameId)
 		  End If
 		  
 		  If Filter.IsEmpty = False Then
@@ -570,8 +595,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplateSelectors(Filter As String = "", GameID As String = "") As Beacon.TemplateSelector()
-		  Return Self.GetTemplateSelectors(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter, GameID)
+		Function GetTemplateSelectors(Filter As String = "", GameId As String = "") As Beacon.TemplateSelector()
+		  Return Self.GetTemplateSelectors(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter, GameId)
 		End Function
 	#tag EndMethod
 
@@ -641,13 +666,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveTemplate(Template As Beacon.Template)
-		  Self.SaveTemplate(Template, False)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub SaveTemplate(Template As Beacon.Template, Official As Boolean)
+		Sub SaveTemplate(Template As Beacon.Template, Official As Boolean, DoCloudExport As Boolean)
 		  If Template Is Nil Then
 		    Return
 		  End If
@@ -656,31 +675,37 @@ Inherits Beacon.DataSource
 		  Self.BeginTransaction()
 		  Var CacheKey As String
 		  If Official Then
-		    CacheKey = v4UUID.CreateNull + ":" + Template.UUID
-		    Self.SQLExecute("INSERT OR REPLACE INTO official_templates (object_id, game_id, label, contents) VALUES (:object_id, :game_id, :label, :contents);", Template.UUID, Template.GameID, Template.Label, Contents)
+		    CacheKey = Beacon.UUID.Null + ":" + Template.UUID
+		    Self.SQLExecute("INSERT OR REPLACE INTO official_templates (object_id, game_id, label, contents) VALUES (:object_id, :game_id, :label, :contents);", Template.UUID, Template.GameId, Template.Label, Contents)
 		  Else
 		    Var UserID As String = App.IdentityManager.CurrentUserID
 		    CacheKey = UserID + ":" + Template.UUID
-		    Self.SQLExecute("INSERT OR REPLACE INTO custom_templates (object_id, game_id, label, contents, user_id) VALUES (:object_id, :game_id, :label, :contents, :user_id);", Template.UUID, Template.GameID, Template.Label, Contents, UserID)
+		    Self.SQLExecute("INSERT OR REPLACE INTO custom_templates (object_id, game_id, label, contents, user_id) VALUES (:object_id, :game_id, :label, :contents, :user_id);", Template.UUID, Template.GameId, Template.Label, Contents, UserID)
 		  End If
 		  Self.CommitTransaction()
 		  
 		  Self.mTemplateCache.Value(CacheKey) = Template
 		  
-		  If Official = False Then
+		  If Official = False And DoCloudExport Then
 		    Self.ExportCloudFiles() 
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector)
-		  Self.SaveTemplateSelector(TemplateSelectors, False)
+		Sub SaveTemplateSelector(TemplateSelector As Beacon.TemplateSelector, Official As Boolean, DoCloudExport As Boolean)
+		  If TemplateSelector Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Arr(0) As Beacon.TemplateSelector
+		  Arr(0) = TemplateSelector
+		  Self.SaveTemplateSelectors(Arr, Official, DoCloudExport)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub SaveTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector, Official As Boolean)
+	#tag Method, Flags = &h0
+		Sub SaveTemplateSelectors(TemplateSelectors() As Beacon.TemplateSelector, Official As Boolean, DoCloudExport As Boolean)
 		  Self.BeginTransaction()
 		  For Each TemplateSelector As Beacon.TemplateSelector In TemplateSelectors
 		    If TemplateSelector Is Nil Then
@@ -689,38 +714,20 @@ Inherits Beacon.DataSource
 		    
 		    Var CacheKey As String
 		    If Official Then
-		      CacheKey = v4UUID.CreateNull + ":" + TemplateSelector.UUID
-		      Self.SQLExecute("INSERT OR REPLACE INTO official_template_selectors (object_id, game_id, label, language, code) VALUES (:object_id, :game_id, :label, :language, :code);", TemplateSelector.UUID, TemplateSelector.GameID, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code)
+		      CacheKey = Beacon.UUID.Null + ":" + TemplateSelector.UUID
+		      Self.SQLExecute("INSERT OR REPLACE INTO official_template_selectors (object_id, game_id, label, language, code) VALUES (:object_id, :game_id, :label, :language, :code);", TemplateSelector.UUID, TemplateSelector.GameId, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code)
 		    Else
 		      Var UserID As String = App.IdentityManager.CurrentUserID
 		      CacheKey = UserID + ":" + TemplateSelector.UUID
-		      Self.SQLExecute("INSERT OR REPLACE INTO custom_template_selectors (object_id, game_id, label, language, code, user_id) VALUES (:object_id, :game_id, :label, :language, :code, :user_id);", TemplateSelector.UUID, TemplateSelector.GameID, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code, UserID)
+		      Self.SQLExecute("INSERT OR REPLACE INTO custom_template_selectors (object_id, game_id, label, language, code, user_id) VALUES (:object_id, :game_id, :label, :language, :code, :user_id);", TemplateSelector.UUID, TemplateSelector.GameId, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code, UserID)
 		    End If
 		    Self.mSelectorCache.Value(CacheKey) = TemplateSelector
 		  Next TemplateSelector
 		  Self.CommitTransaction()
 		  
-		  If Official = False Then
+		  If Official = False And DoCloudExport Then
 		    Self.ExportCloudFiles()
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SaveTemplateSelector(TemplateSelector As Beacon.TemplateSelector)
-		  Self.SaveTemplateSelector(TemplateSelector, False)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub SaveTemplateSelector(TemplateSelector As Beacon.TemplateSelector, Official As Boolean)
-		  If TemplateSelector Is Nil Then
-		    Return
-		  End If
-		  
-		  Var Arr(0) As Beacon.TemplateSelector
-		  Arr(0) = TemplateSelector
-		  Self.SaveTemplateSelector(Arr, Official)
 		End Sub
 	#tag EndMethod
 
@@ -738,31 +745,30 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Var Th As New Thread
+		  Var Th As New Beacon.Thread
 		  Th.Priority = Thread.LowestPriority
-		  Th.DebugIdentifier = "News Updater"
-		  AddHandler Th.Run, WeakAddressOf UpdateNewsThread_Run
+		  Th.DebugIdentifier = CurrentMethodName
+		  AddHandler Th.Run, AddressOf UpdateNewsThread_Run
 		  Th.Start
 		  Self.mUpdateNewsThread = Th
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateNewsThread_Run(Sender As Thread)
-		  #Pragma Unused Sender
-		  
-		  Var Socket As New URLConnection
+		Private Sub UpdateNewsThread_Run(Sender As Beacon.Thread)
+		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  Socket.RequestHeader("User-Agent") = App.UserAgent
 		  Var Content As String
 		  #Pragma BreakOnExceptions False
 		  Try
-		    Content = Socket.SendSync("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
+		    Socket.Send("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
+		    Content = Socket.LastContent
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Updating local news cache")
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		  
-		  If Socket.HTTPStatusCode <> 200 Then
+		  If Socket.LastHTTPStatus <> 200 Then
 		    Self.mUpdateNewsThread = Nil
 		    Return
 		  End If
@@ -833,7 +839,10 @@ Inherits Beacon.DataSource
 		    NotificationKit.Post(Self.Notification_NewsUpdated, Nil)
 		  End If
 		  
-		  Self.mUpdateNewsThread = Nil
+		  RemoveHandler Sender.Run, AddressOf UpdateNewsThread_Run
+		  If Self.mUpdateNewsThread = Sender Then
+		    Self.mUpdateNewsThread = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -861,7 +870,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdateNewsThread As Thread
+		Private mUpdateNewsThread As Beacon.Thread
 	#tag EndProperty
 
 

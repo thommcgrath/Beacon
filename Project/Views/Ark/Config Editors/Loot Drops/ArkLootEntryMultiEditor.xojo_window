@@ -43,6 +43,7 @@ Begin DesktopWindow ArkLootEntryMultiEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Modified        =   False
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -247,8 +248,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

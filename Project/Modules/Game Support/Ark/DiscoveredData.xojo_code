@@ -1,6 +1,7 @@
 #tag Class
 Protected Class DiscoveredData
 Inherits Beacon.DiscoveredData
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Method, Flags = &h0
 		Function CommandLineOptions() As Dictionary
 		  Return Self.mCommandLineOptions
@@ -21,7 +22,7 @@ Inherits Beacon.DiscoveredData
 
 	#tag Method, Flags = &h0
 		Sub GameIniContent(Assigns Value As String)
-		  Self.mGameIniContent = Value.GuessEncoding
+		  Self.mGameIniContent = Value.GuessEncoding("/script/")
 		End Sub
 	#tag EndMethod
 
@@ -33,7 +34,7 @@ Inherits Beacon.DiscoveredData
 
 	#tag Method, Flags = &h0
 		Sub GameUserSettingsIniContent(Assigns Value As String)
-		  Self.mGameUserSettingsIniContent = Value.GuessEncoding
+		  Self.mGameUserSettingsIniContent = Value.GuessEncoding("/script/")
 		End Sub
 	#tag EndMethod
 

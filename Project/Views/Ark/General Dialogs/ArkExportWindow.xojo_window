@@ -64,7 +64,6 @@ Begin BeaconDialog ArkExportWindow
       Enabled         =   True
       HasBorder       =   False
       Height          =   428
-      HelpTag         =   ""
       HorizontalScrollPosition=   0
       Index           =   -2147483648
       InitialParent   =   ""
@@ -80,6 +79,7 @@ Begin BeaconDialog ArkExportWindow
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   111
       VerticalScrollPosition=   0
       Visible         =   True
@@ -164,7 +164,7 @@ Begin BeaconDialog ArkExportWindow
       TabIndex        =   16
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   562
+      Top             =   564
       Transparent     =   False
       Visible         =   False
       Width           =   16
@@ -200,7 +200,7 @@ Begin BeaconDialog ArkExportWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   562
+      Top             =   564
       Transparent     =   False
       Underline       =   False
       Visible         =   False
@@ -724,13 +724,15 @@ End
 		  End If
 		  
 		  Var File As FolderItem = Dialog.ShowModal()
-		  If File = Nil Then
+		  If File Is Nil Then
 		    Return
 		  End If
 		  
-		  If Not File.Write(Self.CurrentContent) Then
+		  Try
+		    File.Write(Self.CurrentContent)
+		  Catch Err As RuntimeException
 		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
-		  End If
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -834,11 +836,11 @@ End
 		    Var InStream As TextInputStream = TextInputStream.Open(File)
 		    Content = InStream.ReadAll()
 		    InStream.Close
-		  Catch Err As IOException
+		  Catch Err As RuntimeException
 		    Self.ShowAlert("Unable to open " + File.DisplayName, "Beacon was unable to read the current content of the file to rewriting. The file has not been changed.")
 		    Return
 		  End Try
-		  Content = Content.GuessEncoding
+		  Content = Content.GuessEncoding("/script/")
 		  
 		  Var HeaderFound As Boolean
 		  For Each Header As String In RequiredHeader
@@ -880,9 +882,11 @@ End
 		  End If
 		  
 		  If (Self.mFileDestination Is Nil) = False Then
-		    If Not Self.mFileDestination.Write(Content) Then
+		    Try
+		      Self.mFileDestination.Write(Content)
+		    Catch Err As RuntimeException
 		      Self.ShowAlert("Unable to update file", "There was an error trying to rewrite the ini content in the selected file.")
-		    End If
+		    End Try
 		    Return
 		  End If
 		End Sub
@@ -896,6 +900,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As DesktopWindow, Project As Ark.Project, ForceTrollMode As Boolean = False)
+		  If (Parent Is Nil) = False Then
+		    Parent = Parent.TrueWindow
+		  End If
+		  
 		  Var Win As New ArkExportWindow
 		  Win.mProject = Project
 		  Win.mForceTrollMode = ForceTrollMode
@@ -996,11 +1004,12 @@ End
 		    End If
 		    
 		    If Self.ConfigSetsOverrideCheck.Value Then
-		      Profile.ConfigSetStates = Self.mProject.ConfigSetStates
+		      Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		    End If
 		  ElseIf Self.MapMenu.SelectedRowIndex > -1 Then
-		    Profile = New Ark.GenericServerProfile(Self.mProject.Title, Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex))
-		    Profile.ConfigSetStates = Self.mProject.ConfigSetStates
+		    Profile = New Ark.ServerProfile(Local.Identifier, Self.mProject.Title)
+		    Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
+		    Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		  Else
 		    Return
 		  End If
@@ -1022,11 +1031,22 @@ End
 		  Self.SharedRewriter.Profile = Self.mCurrentProfile
 		  
 		  Try
-		    If Profile IsA Ark.LocalServerProfile Then
-		      Var LocalProfile As Ark.LocalServerProfile = Ark.LocalServerProfile(Profile)
-		      If (LocalProfile.GameIniFile Is Nil) = False And LocalProfile.GameIniFile.Exists And (LocalProfile.GameUserSettingsIniFile Is Nil) = False And LocalProfile.GameUserSettingsIniFile.Exists Then
-		        Self.SharedRewriter.InitialGameIniContent = LocalProfile.GameIniFile.Read
-		        Self.SharedRewriter.InitialGameUserSettingsIniContent = LocalProfile.GameUserSettingsIniFile.Read
+		    If Profile.ProviderId = Local.Identifier Then
+		      Var GameIniPath As String = Profile.GameIniPath
+		      Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
+		      
+		      If GameIniPath.IsEmpty = False Then
+		        Var GameIniFile As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(GameIniPath)
+		        If (GameIniFile Is Nil) = False And GameIniFile.Exists Then
+		          Self.SharedRewriter.InitialGameIniContent = GameIniFile.Read
+		        End If
+		      End If
+		      
+		      If GameUserSettingsIniPath.IsEmpty = False Then
+		        Var GameUserSettingsIniFile As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(GameUserSettingsIniPath)
+		        If (GameUserSettingsIniFile Is Nil) = False And GameUserSettingsIniFile.Exists Then
+		          Self.SharedRewriter.InitialGameUserSettingsIniContent = GameUserSettingsIniFile.Read
+		        End If
 		      End If
 		    End If
 		  Catch Err As RuntimeException
@@ -1043,17 +1063,15 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateConfigSetControls()
 		  If Self.mProject.ConfigSetCount > 1 Then
-		    Var States() As Beacon.ConfigSetState = Self.mProject.ConfigSetStates
+		    Var Sets() As Beacon.ConfigSet = Beacon.ConfigSetState.FilterSets(Self.mProject.ConfigSetPriorities, Self.mProject.ConfigSets)
 		    Var EnabledSets() As String
-		    For Each State As Beacon.ConfigSetState In States
-		      If State.Enabled Then
-		        EnabledSets.Add(State.Name)
-		      End If
+		    For Each Set As Beacon.ConfigSet In Sets
+		      EnabledSets.Add(Set.Name)
 		    Next
 		    
 		    Self.ConfigSetsField.Text = EnabledSets.EnglishOxfordList()
 		  Else
-		    Self.ConfigSetsField.Text = Ark.Project.BaseConfigSetName
+		    Self.ConfigSetsField.Text = Beacon.ConfigSet.BaseConfigSet.Name
 		    Self.ConfigSetsField.Enabled = False
 		    Self.ConfigSetsButton.Enabled = False
 		    Self.ConfigSetsLabel.Enabled = False
@@ -1266,8 +1284,8 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
-		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
+		  Me.Add(IconFileIniFilled, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
+		  Me.Add(IconFileIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
 		  Me.Add(IconCommandLine, "Command Line", "cli")
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1
@@ -1319,7 +1337,12 @@ End
 #tag Events ConfigSetsButton
 	#tag Event
 		Sub Pressed()
-		  Self.mProject.ConfigSetStates = ArkConfigSetSelectorDialog.Present(Self, Self.mProject.ConfigSetStates)
+		  Var Sets() As Beacon.ConfigSet = Self.mProject.ConfigSets
+		  Var States() As Beacon.ConfigSetState = Self.mProject.ConfigSetPriorities
+		  If ConfigSetSelectorDialog.Present(Self, Sets, States) Then
+		    Self.mProject.ConfigSetPriorities = States
+		  End If
+		  
 		  Self.UpdateConfigSetControls()
 		  Self.Setup()
 		End Sub
@@ -1449,8 +1472,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

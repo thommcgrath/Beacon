@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ConfigValue
 	#tag Method, Flags = &h0
-		Sub Constructor(Key As Ark.ConfigKey, Command As String, Index As Integer = 0)
+		Sub Constructor(Key As Ark.ConfigOption, Command As String, Index As Integer = 0)
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = Self.mSimplifiedKey + ":" + Index.ToString("00000")
 		  Self.mKeyDetails = Key
@@ -9,7 +9,7 @@ Protected Class ConfigValue
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Key As Ark.ConfigKey, Command As String, SortKey As String)
+		Sub Constructor(Key As Ark.ConfigOption, Command As String, SortKey As String)
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = SortKey
 		  Self.mKeyDetails = Key
@@ -21,15 +21,15 @@ Protected Class ConfigValue
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = Self.mSimplifiedKey + ":" + Index.ToString("00000")
 		  
-		  Var Keys() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys(File, Header, Self.mSimplifiedKey, False)
-		  Var ConfigKey As Ark.ConfigKey
+		  Var Keys() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions(File, Header, Self.mSimplifiedKey, False)
+		  Var ConfigOption As Ark.ConfigOption
 		  If Keys.Count >= 1 Then
-		    ConfigKey = Keys(0)
+		    ConfigOption = Keys(0)
 		  Else
-		    ConfigKey = New Ark.ConfigKey(File, Header, Self.mSimplifiedKey)
+		    ConfigOption = New Ark.ConfigOption(File, Header, Self.mSimplifiedKey)
 		  End If
 		  
-		  Self.mKeyDetails = ConfigKey
+		  Self.mKeyDetails = ConfigOption
 		End Sub
 	#tag EndMethod
 
@@ -38,15 +38,15 @@ Protected Class ConfigValue
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = SortKey
 		  
-		  Var Keys() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys(File, Header, Self.mSimplifiedKey, False)
-		  Var ConfigKey As Ark.ConfigKey
+		  Var Keys() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions(File, Header, Self.mSimplifiedKey, False)
+		  Var ConfigOption As Ark.ConfigOption
 		  If Keys.Count >= 1 Then
-		    ConfigKey = Keys(0)
+		    ConfigOption = Keys(0)
 		  Else
-		    ConfigKey = New Ark.ConfigKey(File, Header, Self.mSimplifiedKey)
+		    ConfigOption = New Ark.ConfigOption(File, Header, Self.mSimplifiedKey)
 		  End If
 		  
-		  Self.mKeyDetails = ConfigKey
+		  Self.mKeyDetails = ConfigOption
 		  
 		End Sub
 	#tag EndMethod
@@ -104,7 +104,7 @@ Protected Class ConfigValue
 			  Return Self.mKeyDetails
 			End Get
 		#tag EndGetter
-		Details As Ark.ConfigKey
+		Details As Ark.ConfigOption
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -155,7 +155,7 @@ Protected Class ConfigValue
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mKeyDetails As Ark.ConfigKey
+		Private mKeyDetails As Ark.ConfigOption
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

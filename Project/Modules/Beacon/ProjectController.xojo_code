@@ -38,8 +38,8 @@ Protected Class ProjectController
 		  End If
 		  
 		  Var SaveInfo As String
-		  Select Case Self.mProjectURL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeWeb
+		  Select Case Self.mProjectURL.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeWeb, Beacon.ProjectURL.TypeShared
 		    SaveInfo = Self.mProjectURL
 		  Case Beacon.ProjectURL.TypeLocal
 		    Var File As BookmarkedFolderItem = Self.mProjectURL.File
@@ -68,13 +68,13 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h0
 		Function Busy() As Boolean
-		  Return Self.mActiveThread <> Nil And Self.mActiveThread.ThreadState <> Thread.ThreadStates.NotRunning
+		  Return (Self.mActiveThread Is Nil) = False And Self.mActiveThread.ThreadState <> Thread.ThreadStates.NotRunning
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CanWrite() As Boolean
-		  If Self.mProjectURL.Scheme = Beacon.ProjectURL.TypeWeb Then
+		  If Self.mProjectURL.Type = Beacon.ProjectURL.TypeWeb Or Self.mProjectURL.Type = Beacon.ProjectURL.TypeCommunity Then
 		    Return False
 		  End If
 		  
@@ -83,8 +83,12 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Project As Beacon.Project, WithIdentity As Beacon.Identity)
-		  Self.mProjectURL = Beacon.ProjectURL.TypeTransient + "://" + Project.UUID + "?name=" + EncodeURLComponent(Project.Title) + "&game=" + EncodeURLComponent(Project.GameID.Lowercase)
+		Sub Constructor(Project As Beacon.Project, WithIdentity As Beacon.Identity, CustomProjectUrl As Beacon.ProjectURL = Nil)
+		  If (CustomProjectUrl Is Nil) = False Then
+		    Self.mProjectURL = CustomProjectUrl
+		  Else
+		    Self.mProjectURL = Beacon.ProjectURL.TypeTransient + "://" + Project.ProjectId + "?name=" + EncodeURLComponent(Project.Title) + "&game=" + EncodeURLComponent(Project.GameId.Lowercase)
+		  End If
 		  Self.mLoaded = True
 		  Self.mProject = Project
 		  Self.mIdentity = WithIdentity
@@ -99,8 +103,8 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(GameID As String, WithIdentity As Beacon.Identity)
-		  Self.Constructor(Beacon.ProjectURL.TypeTransient + "://" + v4UUID.Create + "?game=" + EncodeURLComponent(GameID.Lowercase), WithIdentity)
+		Sub Constructor(GameId As String, WithIdentity As Beacon.Identity)
+		  Self.Constructor(Beacon.ProjectURL.TypeTransient + "://" + Beacon.UUID.v4 + "?game=" + EncodeURLComponent(GameId.Lowercase), WithIdentity)
 		End Sub
 	#tag EndMethod
 
@@ -110,9 +114,10 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  Self.mActiveThread = New Thread
+		  Self.mActiveThread = New Beacon.Thread
 		  Self.mActiveThread.Priority = Thread.LowestPriority
-		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Delete
+		  Self.mActiveThread.DebugIdentifier = CurrentMethodName
+		  AddHandler Self.mActiveThread.Run, AddressOf Thread_Delete
 		  Self.mActiveThread.Start
 		End Sub
 	#tag EndMethod
@@ -124,7 +129,41 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Function ErrorMessageFromResponse(Response As BeaconAPI.Response) As String
+		  If Response.HTTPStatus = 401 Then
+		    Return "Unauthorized"
+		  ElseIf Response.HTTPStatus = 403 Then
+		    Return "You do not have permission to access this project."
+		  End If
+		  
+		  Var Message As String = "The error reason is unknown"
+		  If (Response.Content Is Nil) = False Then
+		    Try
+		      Message = Response.Content
+		      Var Dict As Dictionary = Beacon.ParseJSON(Message)
+		      If Dict.HasKey("message") Then
+		        Message = Dict.Value("message")
+		      ElseIf Dict.HasKey("description") Then
+		        Message = Dict.Value("description")
+		      End If
+		    Catch Err As RuntimeException
+		      
+		    End Try
+		  ElseIf Response.Message.IsEmpty = False Then
+		    Message = Response.Message
+		  End If
+		  Return Message
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Shared Function ErrorMessageFromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As String
+		  If Socket.HTTPStatusCode = 401 Then
+		    Return "Unauthorized"
+		  ElseIf Socket.HTTPStatusCode = 403 Then
+		    Return "You do not have permission to access this project."
+		  End If
+		  
 		  Var Message As String = "The error reason is unknown"
 		  If (Socket.LastContent Is Nil) = False Then
 		    Try
@@ -146,8 +185,12 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
-		  Return Self.mProjectURL.GameID
+		Function GameId() As String
+		  If (Self.mProject Is Nil) = False Then
+		    Return Self.mProject.GameId
+		  Else
+		    Return Self.mProjectURL.GameId
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -171,12 +214,13 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  Self.mActiveThread = New Thread
+		  Self.mActiveThread = New Beacon.Thread
 		  Self.mActiveThread.Priority = Thread.LowestPriority
-		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Load
+		  Self.mActiveThread.DebugIdentifier = CurrentMethodName
+		  AddHandler Self.mActiveThread.Run, AddressOf Thread_Load
 		  Self.mActiveThread.Start
 		  
-		  Self.mLoadStartedCallbackKey = CallLater.Schedule(1500, WeakAddressOf TriggerLoadStarted)
+		  Self.mLoadStartedCallbackKey = CallLater.Schedule(1500, AddressOf TriggerLoadStarted)
 		End Sub
 	#tag EndMethod
 
@@ -215,9 +259,10 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  If Self.mProject.Title <> "" Then
-		    Self.mProjectURL.Name = Self.mProject.Title
+		  If Self.mProject.Title.Compare(Self.mProjectUrl.Name, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mProjectUrl = Beacon.ProjectUrl.Create(Self.mProject, Self.mProjectUrl)
 		  End If
+		  
 		  Self.WriteTo(Self.mProjectURL, True)
 		End Sub
 	#tag EndMethod
@@ -230,10 +275,15 @@ Protected Class ProjectController
 		  End If
 		  
 		  Var Controller As New Beacon.ProjectController(Self.mProject, Self.mIdentity)
-		  Controller.mProjectURL = Destination
-		  If Self.mProject.Title <> "" Then
-		    Destination.Name = Self.mProject.Title
+		  If Self.mProject.Title.Compare(Destination.Name, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Destination = Beacon.ProjectUrl.Create(Self.mProject, Destination)
 		  End If
+		  
+		  Controller.mProjectURL = Destination
+		  If Destination.Autosave Then
+		    Controller.mOriginalUrl = Self.mProjectURL
+		  End If
+		  
 		  Controller.WriteTo(Destination, False)
 		  Return Controller
 		End Function
@@ -251,23 +301,19 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Delete(Sender As Thread)
-		  #Pragma Unused Sender
-		  
+		Private Sub Thread_Delete(Sender As Beacon.Thread)
 		  If Not Self.CanWrite Then
 		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Project is not writeable")
 		    Return
 		  End If
 		  
-		  Select Case Self.mProjectURL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
-		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
-		    Socket.Send("DELETE", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Writing))
-		    If Socket.LastHTTPStatus = 200 Then
+		  Select Case Self.mProjectURL.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.Path, "DELETE"))
+		    If Response.HTTPStatus = 200 Then
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		    Else
-		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
+		      Var Message As String = Self.ErrorMessageFromResponse(Response)
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Message)
 		    End If
 		  Case Beacon.ProjectURL.TypeLocal
@@ -282,39 +328,37 @@ Protected Class ProjectController
 		  Case Beacon.ProjectURL.TypeTransient
 		    Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		  Else
-		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Unknown storage scheme " + Self.mProjectURL.Scheme)
+		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Unknown storage url type " + Self.mProjectURL.Type)
 		  End Select
+		  
+		  RemoveHandler Sender.Run, AddressOf Thread_Delete
+		  If Self.mActiveThread = Sender Then
+		    Self.mActiveThread = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Load(Sender As Thread)
-		  #Pragma Unused Sender
-		  
+		Private Sub Thread_Load(Sender As Beacon.Thread)
 		  Var FileContent As MemoryBlock
 		  
-		  Select Case Self.mProjectURL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
+		  Select Case Self.mProjectURL.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared, Beacon.ProjectURL.TypeCommunity
 		    // authenticated api request
-		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		    Socket.RequestHeader("Accept-Encoding") = "gzip=1.0, identity=0.5"
-		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
-		    Socket.RequestHeader("Cache-Control") = "no-cache"
-		    Socket.Send("GET", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading))
-		    If Socket.LastHTTPStatus >= 200 And Socket.LastHTTPStatus < 300 Then
-		      FileContent = Socket.LastContent
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.Path, "GET"))
+		    If Response.HTTPStatus >= 200 And Response.HTTPStatus < 300 Then
+		      FileContent = Response.Content
 		    Else
-		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
+		      Var Message As String = Self.ErrorMessageFromResponse(Response)
 		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
 		      Return
 		    End If
 		  Case Beacon.ProjectURL.TypeWeb
 		    // basic https request
 		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		    Socket.RequestHeader("Accept-Encoding") = "gzip=1.0, identity=0.5"
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
-		    Socket.Send("GET", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading))
-		    If Socket.LastHTTPStatus >= 200 Then
+		    Socket.Send("GET", Self.mProjectURL.Path)
+		    If Socket.LastHTTPStatus >= 200 And Socket.LastHTTPStatus < 300 Then
 		      FileContent = Socket.LastContent
 		    Else
 		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
@@ -324,7 +368,7 @@ Protected Class ProjectController
 		  Case Beacon.ProjectURL.TypeLocal
 		    // just a local file
 		    Var Success As Boolean
-		    Var Message As String = "Could not load data from file"
+		    Var Message As String
 		    Try
 		      Var File As BookmarkedFolderItem = Self.mProjectURL.File
 		      If File <> Nil And File.Exists Then
@@ -333,7 +377,14 @@ Protected Class ProjectController
 		        Success = True
 		      End If
 		    Catch Err As RuntimeException
-		      Message = Err.Explanation
+		      If Err.ErrorNumber = 1 And TargetMacOS Then
+		        Message = "The macOS sandbox denied Beacon permission to read the file. This can happen if the project is locked in Finder. Open the project using the File menu or by dragging it to the Beacon icon in the dock."
+		      Else
+		        Message = Err.Explanation
+		        If Message.IsEmpty Then
+		          Message = "Could not load any data from file."
+		        End If
+		      End If
 		    End Try
 		    
 		    If Not Success Then
@@ -341,74 +392,167 @@ Protected Class ProjectController
 		      Return
 		    End If
 		  Case Beacon.ProjectURL.TypeTransient
-		    Var Temp As Beacon.Project = Beacon.Project.CreateForGameID(Self.mProjectURL.GameID)
+		    Var Temp As Beacon.Project = Beacon.Project.CreateForGameId(Self.mProjectURL.GameId)
 		    FileContent = Beacon.GenerateJSON(Temp.SaveData(Self.mIdentity), False)
 		  Else
 		    Return
 		  End Select
 		  
-		  If FileContent = Nil Then
+		  If FileContent Is Nil Then
 		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "File is empty")
 		    Return
 		  End If
 		  
-		  If FileContent.Size >= 8 And (FileContent.UInt64Value(0) = CType(Beacon.Project.BinaryFormatBEBOM, UInt64) Or FileContent.UInt64Value(0) = CType(Beacon.Project.BinaryFormatLEBOM, UInt64)) Then
-		    // New binary project format
-		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Project format is newer than this version of Beacon understands")
+		  Var Project As Beacon.Project
+		  Var AdditionalProperties As New Dictionary
+		  Try
+		    Project = Beacon.Project.FromSaveData(FileContent, Self.mIdentity, AdditionalProperties)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Loading project")
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, Err.Message)
 		    Return
-		  ElseIf FileContent.Size >= 2 And FileContent.UInt8Value(0) = &h1F And FileContent.UInt8Value(1) = &h8B Then
-		    Var Decompressed As String = Beacon.Decompress(FileContent)
-		    If Decompressed.IsEmpty = False Then
-		      FileContent = Decompressed.DefineEncoding(Encodings.UTF8)
-		    Else
-		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to decompress file")
-		      Return
-		    End If
-		  End If
-		  
-		  Var FailureReason As String
-		  Var Project As Beacon.Project = Beacon.Project.FromSaveData(FileContent, Self.mIdentity, FailureReason)
-		  If Project = Nil Then
-		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, FailureReason)
-		    Return
-		  End If
+		  End Try
 		  
 		  If Project.Title.Trim = "" Then
 		    Project.Title = Self.Name
 		  End If
 		  
+		  If AdditionalProperties.HasKey("OriginalUrl") Then
+		    Try
+		      Var OriginalUrlString As String = Beacon.Decompress(DecodeBase64MBS(AdditionalProperties.Value("OriginalUrl").StringValue)).DefineEncoding(Encodings.UTF8)
+		      Var OriginalUrl As New Beacon.ProjectURL(OriginalUrlString)
+		      Self.mProjectURL = OriginalUrl
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Restoring original url")
+		    End Try
+		  End If
+		  
 		  Self.mProject = Project
+		  Self.UpdateProjectMembers()
+		  
 		  Self.mLoaded = True
 		  Call CallLater.Schedule(0, AddressOf TriggerLoadSuccess)
+		  
+		  RemoveHandler Sender.Run, AddressOf Thread_Load
+		  If Self.mActiveThread = Sender Then
+		    Self.mActiveThread = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Upload(Sender As Thread)
-		  #Pragma Unused Sender
+		Private Sub Thread_UpdateProjectMembers(Sender As Beacon.Thread)
+		  Self.UpdateProjectMembers()
+		  RemoveHandler Sender.Run, AddressOf Thread_UpdateProjectMembers
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_Upload(Sender As Beacon.Thread)
+		  Var SaveData As MemoryBlock
+		  Var Saved As Boolean
+		  Var Message As String
+		  Try
+		    Self.UpdateProjectMembers()
+		    
+		    // Download the most recent token keys for the user
+		    Var TokenIds() As String = Self.mProject.ProviderTokenIds
+		    If (TokenIds Is Nil) = False And TokenIds.Count > 0 Then
+		      Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(Self.mIdentity.UserId, TokenIds)
+		      If (Tokens Is Nil) = False Then
+		        For Each Token As BeaconAPI.ProviderToken In Tokens
+		          Try
+		            Self.mProject.AddProviderToken(Token)
+		          Catch Err As RuntimeException
+		          End Try
+		        Next
+		      End If
+		    End If
+		    
+		    SaveData = Self.mProject.SaveData(Self.mIdentity, True)
+		    
+		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
+		      Var Request As New BeaconAPI.Request("/projects", "POST", SaveData, "application/x-beacon-project")
+		      If App.Pusher.SocketId.IsEmpty = False Then
+		        Request.RequestHeader("X-Beacon-Pusher-Id") = App.Pusher.SocketId
+		      End If
+		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
+		      Saved = Response.HTTPStatus = 200 Or Response.HTTPStatus = 201
+		      Message = Self.ErrorMessageFromResponse(Response)
+		    End If
+		    
+		    If Self.mProject.KeepLocalBackup Then
+		      Var BackupFolder As FolderItem = App.BackupsFolder.Child("Projects")
+		      If BackupFolder.CheckIsFolder Then
+		        Var BackupFile As FolderItem = BackupFolder.Child(Self.mProject.ProjectId + ".beacon")
+		        Try
+		          BackupFile.Write(SaveData)
+		          Saved = True
+		        Catch LocalErr As RuntimeException
+		          App.Log(LocalErr, CurrentMethodName, "Writing local backup")
+		        End Try
+		      End If
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Uploading cloud project")
+		    Message = Err.Message
+		  End Try
 		  
-		  Var EOL As String = EndOfLine.Windows
-		  Var Parts() As String
-		  Parts.Add("Content-Disposition: form-data; name=""contents""; filename=""" + Self.mProject.UUID + ".beacon""" + EOL + "Content-Type: application/octet-stream" + EOL + EOL + Beacon.Compress(Beacon.GenerateJSON(Self.mProject.SaveData(Self.mIdentity), False)))
-		  
-		  Var SaveData As Dictionary = Self.mProject.CloudSaveData()
-		  For Each Entry As DictionaryEntry In SaveData
-		    Parts.Add("Content-Disposition: form-data; name=""" + Entry.Key.StringValue + """;" + EOL + EOL + Entry.Value.StringValue)
-		  Next
-		  
-		  Var Boundary As String = new v4UUID
-		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
-		  Socket.SetRequestContent("--" + Boundary + EOL + Parts.Join(EOL + "--" + Boundary + EOL) + EOL + "--" + Boundary + "--", "multipart/form-data; charset=utf-8; boundary=" + Boundary)
-		  Socket.Send("POST", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Writing))
-		  If Socket.LastHTTPStatus = 200 Or Socket.LastHTTPStatus = 201 Then
+		  If Saved Then
 		    If Self.mClearModifiedOnWrite Then
 		      Self.mProject.Modified = False
 		    End If
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteSuccess)
 		  Else
-		    Var Message As String = Self.ErrorMessageFromSocket(Socket)
+		    If Message.IsEmpty Then
+		      Message = "Unknown error"
+		    End If
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
+		  End If
+		  
+		  RemoveHandler Sender.Run, AddressOf Thread_Upload
+		  If Self.mActiveThread = Sender Then
+		    Self.mActiveThread = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_Write(Sender As Beacon.Thread)
+		  Var SaveData As MemoryBlock
+		  Var Saved As Boolean
+		  Var Message As String
+		  Try
+		    Var AdditionalProperties As New Dictionary
+		    If (Self.mOriginalUrl Is Nil) = False Then
+		      AdditionalProperties.Value("OriginalUrl") = EncodeBase64MBS(Beacon.Compress(Self.mOriginalUrl.StringValue))
+		    End If
+		    
+		    SaveData = Self.mProject.SaveData(Self.mIdentity, AdditionalProperties)
+		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
+		      Self.mDestination.File.Write(SaveData)
+		      Saved = True
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Writing save data to disk")
+		    Message = Err.Message
+		  End Try
+		  
+		  If Saved Then
+		    If Self.mClearModifiedOnWrite Then
+		      Self.mProject.Modified = False
+		    End If
+		    Call CallLater.Schedule(0, AddressOf TriggerWriteSuccess)
+		  Else
+		    If Message.IsEmpty Then
+		      Message = "Unknown error"
+		    End If
+		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
+		  End If
+		  
+		  RemoveHandler Sender.Run, AddressOf Thread_Write
+		  If Self.mActiveThread = Sender Then
+		    Self.mActiveThread = Nil
 		  End If
 		End Sub
 	#tag EndMethod
@@ -464,6 +608,73 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub UpdateProjectMembers()
+		  // This routine will download the member list and update the project if necessary
+		  
+		  If Global.Thread.Current Is Nil Then
+		    Var UpdaterThread As New Beacon.Thread
+		    UpdaterThread.DebugIdentifier = CurrentMethodName
+		    AddHandler UpdaterThread.Run, AddressOf Thread_UpdateProjectMembers
+		    UpdaterThread.Retain
+		    UpdaterThread.Start
+		    Return
+		  End If
+		  
+		  Var CurrentThread As Global.Thread = Global.Thread.Current
+		  
+		  If Self.mMemberUpdateLock Is Nil Then
+		    Self.mMemberUpdateLock = New CriticalSection
+		  End If
+		  Self.mMemberUpdateLock.Enter
+		  
+		  Try
+		    // If we don't know the password, don't do anything
+		    If Project.PasswordDecrypted = False Then
+		      Self.mMemberUpdateLock.Leave
+		      Return
+		    End If
+		    
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request("/projects/" + EncodeURLComponent(Project.ProjectId) + "/members", "GET"))
+		    If Response.Success Then
+		      // Could be 404 error because the project is new, which is ok
+		      Var CurrentMembers() As Beacon.ProjectMember = Project.GetMembers
+		      Var RemoveMembers As New Dictionary
+		      For Each Member As Beacon.ProjectMember In CurrentMembers
+		        RemoveMembers.Value(Member.UserId) = True
+		      Next
+		      
+		      Var MemberList() As Variant = Response.JSON
+		      For Each MemberInfo As Variant In MemberList
+		        Var MemberDict As Dictionary = MemberInfo
+		        Var UserId As String = MemberDict.Value("userId")
+		        Var Member As Beacon.ProjectMember = New Beacon.ProjectMember(UserId, MemberDict)
+		        
+		        // Returns true only if changes are needed and they were made
+		        If Project.AddMember(Member) Then
+		          App.Log("Encrypted project password for user `" + UserId + "` needs to be updated…")
+		        End If
+		        
+		        If RemoveMembers.HasKey(Member.UserId) Then
+		          RemoveMembers.Remove(Member.UserId)
+		        End If
+		      Next
+		      
+		      For Each Entry As DictionaryEntry In RemoveMembers
+		        Call Project.RemoveMember(Entry.Key.StringValue)
+		      Next
+		    End If
+		  Catch MemberListError As RuntimeException
+		  End Try
+		  
+		  Self.mMemberUpdateLock.Leave
+		  
+		  If CurrentThread IsA Beacon.Thread Then
+		    Beacon.Thread(CurrentThread).Release
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function URL() As ProjectURL
 		  Return Self.mProjectURL
 		End Function
@@ -482,9 +693,9 @@ Protected Class ProjectController
 		    
 		    // Update the project url to regenerate saveinfo/bookmarks
 		    If Destination IsA BookmarkedFolderItem Then
-		      Self.mProjectURL = Beacon.ProjectURL.URLForFile(BookmarkedFolderItem(Destination))
+		      Self.mProjectURL = Beacon.ProjectURL.Create(Self.mProject, BookmarkedFolderItem(Destination))
 		    Else
-		      Self.mProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(Destination))
+		      Self.mProjectURL = Beacon.ProjectURL.Create(Self.mProject, New BookmarkedFolderItem(Destination))
 		    End If
 		    
 		    RaiseEvent WriteSuccess()
@@ -512,22 +723,26 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Sub WriteTo(Destination As Beacon.ProjectURL, ClearModified As Boolean)
-		  If Self.Busy Or Self.Loaded = False Or Destination.Scheme = Beacon.ProjectURL.TypeWeb Then
+		  If Self.Busy Or Self.Loaded = False Or Destination.Type.OneOf(Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared, Beacon.ProjectURL.TypeLocal) = False Then
 		    Return
 		  End If
 		  
 		  Self.mClearModifiedOnWrite = ClearModified
+		  Self.mDestination = Destination
 		  
-		  Select Case Destination.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
-		    Self.mActiveThread = New Thread
+		  Select Case Destination.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared
+		    Self.mActiveThread = New Beacon.Thread
+		    Self.mActiveThread.DebugIdentifier = CurrentMethodName
 		    Self.mActiveThread.Priority = Thread.LowestPriority
-		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
+		    AddHandler Self.mActiveThread.Run, AddressOf Thread_Upload
 		    Self.mActiveThread.Start
 		  Case Beacon.ProjectURL.TypeLocal
-		    Var Writer As New Beacon.JSONWriter(Self.mProject, Self.mIdentity, Destination.File)
-		    AddHandler Writer.Finished, AddressOf Writer_Finished
-		    Writer.Start
+		    Self.mActiveThread = New Beacon.Thread
+		    Self.mActiveThread.DebugIdentifier = CurrentMethodName
+		    Self.mActiveThread.Priority = Thread.LowestPriority
+		    AddHandler Self.mActiveThread.Run, AddressOf Thread_Write
+		    Self.mActiveThread.Start
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -575,11 +790,15 @@ Protected Class ProjectController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mActiveThread As Thread
+		Private mActiveThread As Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mClearModifiedOnWrite As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDestination As Beacon.ProjectURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -596,6 +815,14 @@ Protected Class ProjectController
 
 	#tag Property, Flags = &h21
 		Private mLoadStartedCallbackKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMemberUpdateLock As CriticalSection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOriginalUrl As Beacon.ProjectURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1,6 +1,8 @@
 #tag Class
 Protected Class ArkConfigEditor
 Inherits BeaconSubview
+Implements BeaconUI.ConfigEditorView
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) )
 	#tag Event
 		Sub Opening()
 		  RaiseEvent Opening
@@ -89,17 +91,18 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h1
 		Protected Sub Parse(GameUserSettingsIniContent As String, GameIniContent As String, Source As String)
+		  #Pragma Unused Source
+		  
 		  Var Data As New Ark.DiscoveredData
 		  Data.GameUserSettingsIniContent = GameUserSettingsIniContent
 		  Data.GameIniContent = GameIniContent
 		  
 		  Var Parser As New Ark.ImportThread(Data, Self.mProject)
+		  Parser.DebugIdentifier = CurrentMethodName
 		  Parser.Priority = Thread.NormalPriority
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
-		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  
-		  Var Win As New ImporterWindow
-		  Win.Source = Source
+		  Var Win As New ProgressWindow
 		  Win.ShowDelayed(Self.TrueWindow)
 		  
 		  If Self.mParserWindows = Nil Then
@@ -107,6 +110,7 @@ Inherits BeaconSubview
 		  End If
 		  Self.mParserWindows.Value(Parser) = Win
 		  
+		  Parser.Progress = Win
 		  Parser.Start
 		End Sub
 	#tag EndMethod
@@ -125,9 +129,8 @@ Inherits BeaconSubview
 	#tag Method, Flags = &h21
 		Private Sub Parser_Finished(Sender As Ark.ImportThread, Project As Ark.Project)
 		  RemoveHandler Sender.Finished, AddressOf Parser_Finished
-		  RemoveHandler Sender.UpdateUI, AddressOf Parser_UpdateUI
 		  
-		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
+		  Var Win As ProgressWindow = Self.mParserWindows.Value(Sender)
 		  Win.Close
 		  Self.mParserWindows.Remove(Sender)
 		  
@@ -175,13 +178,6 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub Parser_UpdateUI(Sender As Ark.ImportThread)
-		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
-		  Win.Progress = Sender.Progress
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Project() As Ark.Project
 		  Return Self.mProject
@@ -198,23 +194,6 @@ Inherits BeaconSubview
 		    End If
 		  Next
 		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Shared Function SanitizeText(Source As String, ASCIIOnly As Boolean = True) As String
-		  Var Sanitizer As New RegEx
-		  If ASCIIOnly Then
-		    Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
-		  Else
-		    Sanitizer.SearchPattern = "[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]+"
-		  End If
-		  Sanitizer.ReplacementPattern = ""
-		  If ASCIIOnly Then
-		    Return Sanitizer.Replace(Source.SanitizeIni).ConvertEncoding(Encodings.ASCII)
-		  Else
-		    Return Sanitizer.Replace(Source.SanitizeIni)
-		  End If
 		End Function
 	#tag EndMethod
 

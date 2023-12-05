@@ -70,6 +70,7 @@ Begin BeaconContainer ArkLootItemSetEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -79,6 +80,7 @@ Begin BeaconContainer ArkLootItemSetEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   64
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -263,10 +265,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GoToChild(EntryUUID As String, EngramClass As String = "") As Boolean
+		Function GoToChild(EntryId As String, EngramClass As String = "") As Boolean
 		  For Idx As Integer = 0 To Self.EntryList.LastRowIndex
 		    Var Entry As Ark.LootItemSetEntry = Self.EntryList.RowTagAt(Idx)
-		    If Entry Is Nil Or Entry.UUID <> EntryUUID Then
+		    If Entry Is Nil Or Entry.EntryId <> EntryId Then
 		      Continue
 		    End If
 		    
@@ -363,7 +365,7 @@ End
 		  If (SelectEntries Is Nil) = False Then
 		    For Each Entry As Ark.LootItemSetEntry In SelectEntries
 		      If (Entry Is Nil) = False Then
-		        Selected.Add(Entry.UUID)
+		        Selected.Add(Entry.EntryId)
 		      End If
 		    Next
 		    ScrollToSelection = True
@@ -371,7 +373,7 @@ End
 		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.RowSelectedAt(I) Then
 		        Var Entry As Ark.LootItemSetEntry = EntryList.RowTagAt(I)
-		        Selected.Add(Entry.UUID)
+		        Selected.Add(Entry.EntryId)
 		      End If
 		    Next
 		  End If
@@ -465,7 +467,7 @@ End
 		    
 		    EntryList.CellTagAt(Idx, Self.ColumnLabel) = MainColumnTag
 		    EntryList.RowTagAt(Idx) = Entry
-		    EntryList.RowSelectedAt(Idx) = Selected.IndexOf(Entry.UUID) > -1
+		    EntryList.RowSelectedAt(Idx) = Selected.IndexOf(Entry.EntryId) > -1
 		  Next
 		  
 		  Self.EntryList.Sort
@@ -554,12 +556,12 @@ End
 #tag Events EntryList
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowIndex > -1
+		  Return Me.SelectedRowIndex > -1 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -578,54 +580,32 @@ End
 		    End If
 		  Next
 		  
-		  If Entries.LastIndex = -1 Then
+		  If Entries.Count = 0 Then
+		    System.Beep
 		    Return
 		  End If
 		  
-		  Var Contents As String
-		  If Entries.LastIndex = 0 Then
-		    Contents = Beacon.GenerateJSON(Entries(0), False)
-		  Else
-		    Contents = Beacon.GenerateJSON(Entries, False)
-		  End If
-		  
-		  Board.RawData(Self.kClipboardType) = Contents
+		  Board.AddClipboardData(Self.kClipboardType, Entries)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return
-		  End If
-		  
-		  Var Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Var Parsed As Variant
-		  Try
-		    Parsed = Beacon.ParseJSON(Contents)
-		  Catch Err As RuntimeException
-		    System.Beep
-		    Return
-		  End Try
-		  
 		  Var Modified As Boolean
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
-		  If Info.FullName = "Dictionary" Then
-		    // Single item
-		    Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Parsed, True)
-		    If (Entry Is Nil) = False Then
-		      Self.LootItemSet.Add(Entry)
-		      Modified = True
-		    End If
-		  ElseIf Info.FullName = "Object()" Then
-		    // Multiple items
-		    Var Dicts() As Variant = Parsed
-		    For Each Dict As Dictionary In Dicts
-		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict, True)
-		      If Entry <> Nil Then
-		        Self.LootItemSet.Add(Entry)
-		        Modified = True
-		      End If
-		    Next
+		  
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Dicts() As Variant = Contents
+		      For Each Dict As Dictionary In Dicts
+		        Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict, True)
+		        If (Entry Is Nil) = False Then
+		          Self.LootItemSet.Add(Entry)
+		          Modified = True
+		        End If
+		      Next
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		  End If
 		  
 		  If Modified Then

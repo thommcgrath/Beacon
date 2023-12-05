@@ -25,6 +25,12 @@ Protected Module UpdatesKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function AutomaticallyDownloadsUpdates() As Boolean
+		  Return Preferences.AutomaticallyDownloadsUpdates And (mAvailableVersionIsLicensed Or mAvailableUpdateRequired)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function AvailableDisplayVersion() As String
 		  Return mAvailableDisplayVersion
 		End Function
@@ -75,6 +81,12 @@ Protected Module UpdatesKit
 	#tag Method, Flags = &h1
 		Protected Function AvailableUpdateRequired() As Boolean
 		  Return mAvailableUpdateRequired
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function AvailableVersionIsLicensed() As Boolean
+		  Return mAvailableVersionIsLicensed
 		End Function
 	#tag EndMethod
 
@@ -254,6 +266,7 @@ Protected Module UpdatesKit
 		      Updater.UpdateCheckInterval = CheckInterval
 		      Updater.SendsSystemProfile = False
 		      Updater.UserAgentString = App.UserAgent
+		      AddHandler Updater.didFindValidUpdate, AddressOf MacSparkle_DidFindValidUpdate
 		      If Updater.AutomaticallyChecksForUpdates And (Updater.LastUpdateCheckDateTime Is Nil Or DateTime.Now.SecondsFrom1970 - Updater.LastUpdateCheckDateTime.SecondsFrom1970 >= Updater.UpdateCheckInterval) Then 
 		        Updater.CheckForUpdatesInBackground
 		      End If
@@ -365,9 +378,7 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h1
 		Protected Function IsUpdateAvailable() As Boolean
-		  #if Not UseSparkle
-		    Return mAvailableDisplayVersion.IsEmpty = False
-		  #endif
+		  Return mAvailableDisplayVersion.IsEmpty = False
 		End Function
 	#tag EndMethod
 
@@ -418,6 +429,40 @@ Protected Module UpdatesKit
 		    Return AppArchitecture()
 		  #endif
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MacSparkle_DidFindValidUpdate(Sender As SUUpdaterMBS, Update As SUAppcastItemMBS)
+		  Var MaxLicensedBuild As Integer
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  If Identity Is Nil Then
+		    MaxLicensedBuild = 999999999
+		  Else
+		    MaxLicensedBuild = Identity.MaxLicensedBuild
+		  End If
+		  
+		  Var VersionParts() As String = Update.VersionString.Split(".")
+		  Var UpdateBuild As Integer
+		  Try
+		    Var Series As Integer = Integer.FromString(VersionParts(0), Locale.Raw)
+		    Var Major As Integer = Integer.FromString(VersionParts(1), Locale.Raw)
+		    Var Minor As Integer = Integer.FromString(VersionParts(2), Locale.Raw)
+		    Var Stage As Integer = Integer.FromString(VersionParts(3), Locale.Raw)
+		    Var Bug As Integer = Integer.FromString(VersionParts(4), Locale.Raw)
+		    UpdateBuild = (Series * 10000000) + (Major * 100000) + (Minor * 1000) + (Stage * 100) + Bug
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  mAvailableDisplayVersion = Update.DisplayVersionString
+		  mAvailableDownloadURL = Update.FileURL
+		  mAvailableUpdateRequired = Update.CriticalUpdate
+		  mAvailableVersionIsLicensed = MaxLicensedBuild >= UpdateBuild
+		  
+		  Sender.automaticallyDownloadsUpdates = AutomaticallyDownloadsUpdates
+		  
+		  NotificationKit.Post(Notification_UpdateAvailable, UpdateBuild)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -520,6 +565,8 @@ Protected Module UpdatesKit
 		      Return
 		    End If
 		    
+		    Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		    mAvailableVersionIsLicensed = Identity Is Nil Or Identity.MaxLicensedBuild >= LatestBuild
 		    mAvailableDisplayVersion = Dict.Value("version")
 		    mAvailableNotes = Dict.Value("notes")
 		    mAvailableNotesURL = Dict.Lookup("notes_url", "")
@@ -540,7 +587,7 @@ Protected Module UpdatesKit
 		    mAvailableDownloadURL = Location.Value("url")
 		    mAvailableSignature = Location.Value("signature")
 		    
-		    If Preferences.AutomaticallyDownloadsUpdates Then
+		    If AutomaticallyDownloadsUpdates Then
 		      DownloadUpdate()
 		    End If
 		    
@@ -756,6 +803,10 @@ Protected Module UpdatesKit
 
 	#tag Property, Flags = &h21
 		Private mAvailableUpdateRequired As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAvailableVersionIsLicensed As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

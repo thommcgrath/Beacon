@@ -20,10 +20,10 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DifficultyOffset"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "OverrideOfficialDifficulty"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DifficultyOffset"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "OverrideOfficialDifficulty"))
 		  Return Keys
 		End Function
 	#tag EndEvent
@@ -90,12 +90,6 @@ Inherits Ark.ConfigGroup
 		    Results.Add(Floor(Self.DifficultyValue * I))
 		  Next
 		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RunWhenBanned() As Boolean
-		  Return True
 		End Function
 	#tag EndMethod
 

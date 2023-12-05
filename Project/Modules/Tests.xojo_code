@@ -15,7 +15,7 @@ Protected Module Tests
 	#tag Method, Flags = &h21
 		Private Sub CreateEncryptionTest(Name As String, KeySizeBytes As Integer)
 		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(KeySizeBytes)
-		  Var Message As String = v4UUID.Create.StringValue
+		  Var Message As String = Beacon.UUID.v4
 		  Var EncryptedLegacy As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 1)
 		  Var EncryptedModern As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 2)
 		  
@@ -37,15 +37,29 @@ Protected Module Tests
 		    TestBlueprintSerialization()
 		    TestLimitCalculations()
 		    TestNamingThings()
-		    TestConfigKeys()
+		    TestConfigOptions()
 		    TestNumberFormatting()
 		    TestArkML()
 		    TestFilenames()
 		    TestIntervalParsing()
 		    TestIniValidation()
 		    TestArkClassStrings()
+		    TestCachingTimes()
+		    TestXmlParsing()
+		    TestSaveInfo()
+		    TestDelegateDetection()
 		    App.Log("Tests complete")
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag DelegateDeclaration, Flags = &h21
+		Private Delegate Sub SampleDelegate()
+	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h21
+		Private Sub SampleDelegateTarget()
+		  
 		End Sub
 	#tag EndMethod
 
@@ -55,9 +69,9 @@ Protected Module Tests
 		  Const ScorpionPath = "/Game/Mods/LostIsland/Assets/Spawners/Scorpion/DinoSpawnEntriesCave2-LowSpiderScorp_C.DinoSpawnEntriesCave2-LowSpiderScorp_C"
 		  Const ReaperPath = "/Game/Genesis2/Dinos/BiomeVariants/Xenomorph_Character_Female_BP_Gen2.Xenomorph_Character_BP_Female_Gen2"
 		  
-		  Var NormalClass As String = Beacon.ClassStringFromPath(NormalPath)
-		  Var ScorpionClass As String = Beacon.ClassStringFromPath(ScorpionPath)
-		  Var ReaperClass As String = Beacon.ClassStringFromPath(ReaperPath)
+		  Var NormalClass As String = Ark.ClassStringFromPath(NormalPath)
+		  Var ScorpionClass As String = Ark.ClassStringFromPath(ScorpionPath)
+		  Var ReaperClass As String = Ark.ClassStringFromPath(ReaperPath)
 		  
 		  Call Assert(NormalClass = "AB_DinoSpawnEntriesRockDrake_C", "Class from path is wrong. Expected AB_DinoSpawnEntriesRockDrake_C, got " + NormalClass + ".")
 		  Call Assert(ScorpionClass = "DinoSpawnEntriesCave2-LowSpiderScorp_C_C", "Class from path is wrong. Expected DinoSpawnEntriesCave2-LowSpiderScorp_C_C, got " + ScorpionClass + ".")
@@ -80,10 +94,10 @@ Protected Module Tests
 		Private Sub TestBlueprintSerialization()
 		  // Use object ids here just in case
 		  
-		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetEngramByUUID("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
-		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetCreatureByUUID("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
-		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetSpawnPointByUUID("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
-		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetLootContainerByUUID("40f02506-f341-46c5-85c0-31e0d37509b6")) // SupplyCrate_IceCaveTier2_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetEngram("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetCreature("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetSpawnPoint("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetLootContainer("40f02506-f341-46c5-85c0-31e0d37509b6")) // SupplyCrate_IceCaveTier2_C
 		End Sub
 	#tag EndMethod
 
@@ -123,25 +137,78 @@ Protected Module Tests
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub TestConfigKeys()
+		Private Sub TestCachingTimes()
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var StartTime As Double = System.Microseconds
+		  Var Container As Ark.LootContainer = DataSource.GetLootContainer("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
+		  Var InitialDuration As Double = System.Microseconds - StartTime
+		  
+		  StartTime = System.Microseconds
+		  Container = DataSource.GetLootContainer("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
+		  Var CachedDuration As Double = System.Microseconds - StartTime
+		  
+		  System.DebugLog("Single initial duration: " + InitialDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		  System.DebugLog("Single cached duration: " + CachedDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		  
+		  StartTime = System.Microseconds
+		  Call DataSource.GetBlueprints("", New Beacon.StringList("38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"), "")
+		  InitialDuration = System.Microseconds - StartTime
+		  
+		  StartTime = System.Microseconds
+		  Call DataSource.GetBlueprints("", New Beacon.StringList("38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"), "")
+		  CachedDuration = System.Microseconds - StartTime
+		  
+		  System.DebugLog("Search initial duration: " + InitialDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		  System.DebugLog("Search cached duration: " + CachedDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestConfigOptions()
 		  Var Source As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
-		  Var AllConfigKeys() As Ark.ConfigKey = Source.GetConfigKeys("", "", "", False)
-		  Call Assert(AllConfigKeys.Count > 0, "No config keys returned.")
+		  Var AllConfigOptions() As Ark.ConfigOption = Source.GetConfigOptions("", "", "", False)
+		  Call Assert(AllConfigOptions.Count > 0, "No config keys returned.")
 		  
-		  Var SpecificConfigKey As Ark.ConfigKey = Source.GetConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DayTimeSpeedScale")
-		  Call Assert((SpecificConfigKey Is Nil) = False, "Could not find DayTimeSpeedScale key.")
+		  Var SpecificConfigOption As Ark.ConfigOption = Source.GetConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DayTimeSpeedScale")
+		  Call Assert((SpecificConfigOption Is Nil) = False, "Could not find DayTimeSpeedScale key.")
 		  
-		  Var SpeedScales() As Ark.ConfigKey = Source.GetConfigKeys(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "*SpeedScale", False)
+		  Var SpeedScales() As Ark.ConfigOption = Source.GetConfigOptions(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "*SpeedScale", False)
 		  Call Assert(SpeedScales.Count = 3, "Found incorrect number of *SpeedScale keys, expected 3, got " + SpeedScales.Count.ToString + ".")
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub TestDelegateDetection()
+		  Var ModuleDelegate As SampleDelegate = AddressOf SampleDelegateTarget
+		  Var ModuleTarget As Variant = GetDelegateTargetMBS(ModuleDelegate)
+		  Var ModuleWeak As Boolean = GetDelegateWeakMBS(ModuleDelegate)
+		  
+		  Var ClassInstance As New DelegateClass
+		  Var ClassDelegate As SampleDelegate = WeakAddressOf ClassInstance.TriggerMethod
+		  Var ClassTarget As Variant = GetDelegateTargetMBS(ClassDelegate)
+		  Var ClassWeak As Boolean = GetDelegateWeakMBS(ClassDelegate)
+		  
+		  Call Assert(ModuleTarget.IsNull = True, "Module method delegate has a target when it should not.")
+		  Call Assert(ModuleWeak = False, "Module method delegate is weak but that should not be possible.")
+		  
+		  Call Assert(ClassTarget.IsNull = False, "Instance method delegate does not have a target.")
+		  Call Assert(ClassWeak = True, "Instance method delegate is not weak.")
+		  
+		  ClassInstance = Nil
+		  ClassTarget = Nil
+		  Var UnsafeClassTarget As Variant = GetDelegateTargetMBS(ClassDelegate)
+		  Var UnsafeClassWeak As Boolean = GetDelegateWeakMBS(ClassDelegate)
+		  
+		  Call Assert(UnsafeClassTarget.IsNull = True, "Unsafe instance method delegate has a target.")
+		  Call Assert(UnsafeClassWeak = True, "Unsafe instance method delegate is not weak.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub TestEncryption()
-		  Var Identity As New Beacon.Identity
-		  Var PublicKey As String = Identity.PublicKey
-		  Var PrivateKey As String = Identity.PrivateKey
+		  Var PublicKey, PrivateKey As String 
+		  Call Crypto.RSAGenerateKeyPair(2048, PrivateKey, PublicKey)
 		  Call Assert(Crypto.RSAVerifyKey(PublicKey), "Unable to validate public key")
 		  Call Assert(Crypto.RSAVerifyKey(PrivateKey), "Unable to validate private key")
 		  
@@ -157,13 +224,13 @@ Protected Module Tests
 		  Var Encrypted, Decrypted As MemoryBlock
 		  
 		  Try
-		    Encrypted = Identity.Encrypt(TestValue)
+		    Encrypted = Crypto.RSAEncrypt(TestValue, PublicKey)
 		  Catch Err As RuntimeException
 		    System.DebugLog("Unable to encrypt test value")
 		  End Try
 		  
 		  Try
-		    Decrypted = Identity.Decrypt(Encrypted)
+		    Decrypted = Crypto.RSADecrypt(Encrypted, PrivateKey)
 		  Catch Err As RuntimeException
 		    System.DebugLog("Unable to decrypt encrypted test value")
 		  End Try
@@ -192,7 +259,7 @@ Protected Module Tests
 		  
 		  // Make sure slow encryption works
 		  Try
-		    Var SlowKey As String = v4UUID.Create.StringValue
+		    Var SlowKey As String = Beacon.UUID.v4
 		    Var SlowData As MemoryBlock = Crypto.GenerateRandomBytes(32)
 		    Var SlowEncrypted As String = BeaconEncryption.SlowEncrypt(SlowKey, SlowData)
 		    Var SlowDecrypted As MemoryBlock = BeaconEncryption.SlowDecrypt(SlowKey, SlowEncrypted)
@@ -462,31 +529,31 @@ Protected Module Tests
 		  // Now we need to test Beacon's ability to resolve saved data into various objects
 		  Const DrakeSaddleID = "d45d0691-a430-4443-98e3-bcc501067317"
 		  Var ObjectData As New Dictionary
-		  ObjectData.Value("ObjectID") = DrakeSaddleID
+		  ObjectData.Value("EngramId") = DrakeSaddleID
 		  ObjectData.Value("Path") = "/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle"
 		  ObjectData.Value("Class") = "PrimalItemArmor_RockDrakeSaddle_C"
 		  
-		  Var Engram As Ark.Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Var Engram As Ark.Engram = Ark.ResolveEngram(ObjectData, "EngramId", "Path", "Class", Nil)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
-		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Engram = Ark.ResolveEngram(ObjectData, "EngramId", "", "", Nil)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
 		  Engram = Ark.ResolveEngram(ObjectData, "", "", "Class", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
 		  Engram = Ark.ResolveEngram(ObjectData, "", "Path", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
 		  // Now use faulty data and see how it resolves
 		  Const BadEngramID = "fd8b3b03-781b-4211-bc42-38a8639df878"
-		  ObjectData.Value("ObjectID") = BadEngramID
+		  ObjectData.Value("EngramId") = BadEngramID
 		  
-		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Engram = Ark.ResolveEngram(ObjectData, "EngramId", "Path", "Class", Nil)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
-		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID)
+		  Engram = Ark.ResolveEngram(ObjectData, "EngramId", "", "", Nil)
+		  Call Assert(Engram <> Nil And Engram.EngramId = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.EngramId)
 		End Sub
 	#tag EndMethod
 
@@ -528,6 +595,26 @@ Protected Module Tests
 		    Call Assert(ExtremeQualityMin = Quality, "Expected quality min " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + ExtremeQualityMin.Label + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
 		    Call Assert(ExtremeQualityMin = Quality, "Expected quality max " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + ExtremeQualityMax.Label + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestSaveInfo()
+		  Const LegacySaveInfo = "Ym9va9ACAAAAAAQQMAAAAM6I4fbCN9XOSgfPNDeYh52bNsTKTJMhWHVwjfqBytzmzAEAAAQAAAADAwAAAAgAKAUAAAABAQAAVXNlcnMAAAALAAAAAQEAAHRob21tY2dyYXRoAAcAAAABAQAAU2NyYXRjaAAdAAAAAQEAAE5pdHJhZG8gTWlncmF0aW9uIFRlc3QuYmVhY29uAAAAEAAAAAEGAAAQAAAAIAAAADQAAABEAAAACAAAAAQDAAC5XAAAAAAAAAgAAAAEAwAAgbQDAAAAAAAIAAAABAMAAPE3IQAAAAAACAAAAAQDAAAqxsMFAAAAABAAAAABBgAAhAAAAJQAAACkAAAAtAAAAAgAAAAABAAAQcVUK13hI4AYAAAAAQIAAAEAAAAAAAAADwAAAAAAAAAAAAAAAAAAAAgAAAAEAwAAAgAAAAAAAAAEAAAAAwMAAPUBAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQIAAAABAMAAAAgRYzQAQAACAAAAAAEAABBxT0uhwAAACQAAAABAQAAREIwOTI5RDItOUQ1MS00NTM2LUE5MEUtOEMzNUZBQjQxRUFCGAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAABAAAAAQEAAC8AAAAAAAAAAQUAAMwAAAD+////AQAAAAAAAAAQAAAABBAAAGwAAAAAAAAABRAAAMQAAAAAAAAAEBAAAOwAAAAAAAAAQBAAANwAAAAAAAAAAiAAALgBAAAAAAAABSAAACgBAAAAAAAAECAAADgBAAAAAAAAESAAAGwBAAAAAAAAEiAAAEwBAAAAAAAAEyAAAFwBAAAAAAAAICAAAJgBAAAAAAAAMCAAAMQBAAAAAAAAAcAAAAwBAAAAAAAAEcAAACAAAAAAAAAAEsAAABwBAAAAAAAAENAAAAQAAAAAAAAA"
+		  
+		  Var LegacyFile As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(LegacySaveInfo)
+		  Call Assert((LegacyFile Is Nil) = False, "Did not get FolderItem from legacy save info.")
+		  
+		  Var TempFile As FolderItem = FolderItem.TemporaryFile
+		  Var Stream As TextOutputStream = TextOutputStream.Create(TempFile)
+		  Stream.Write("Hello World")
+		  Stream.Close
+		  Var NewSaveInfo As String = BookmarkedFolderItem.CreateSaveInfo(TempFile)
+		  Var Restored As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(NewSaveInfo)
+		  If Assert((Restored Is Nil) = False, "Did not restore temporary FolderItem from save info.") And Assert(Restored.Exists, "Temporary FolderItem was restored but does not exist.") Then
+		    // Do nothing
+		  End If
+		  TempFile.Remove
 		End Sub
 	#tag EndMethod
 
@@ -583,7 +670,7 @@ Protected Module Tests
 		    UUID = Beacon.UUID.Null
 		    Call Assert(UUID = "00000000-0000-0000-0000-000000000000", "Null UUID is not correct")
 		    Call Assert(UUID = Nil, "Null UUID does not compare against Nil correctly")
-		  Catch Err As UnsupportedFormatException
+		  Catch Err As RuntimeException
 		    System.DebugLog("Validator will not accept null UUID")
 		  End Try
 		  
@@ -591,7 +678,7 @@ Protected Module Tests
 		    UUID = "ffc93232-2484-4947-8c9a-a691cf938d75"
 		    Call Assert(UUID.IsNull = False, "UUID is listed as null when it should not be")
 		    Call Assert(UUID <> Nil, "Valid UUID is successfully matching against Nil")
-		  Catch Err As UnsupportedFormatException
+		  Catch Err As RuntimeException
 		    System.DebugLog("Validator will not accept valid UUID")
 		  End Try
 		  
@@ -618,9 +705,20 @@ Protected Module Tests
 		  Try
 		    UUID = Beacon.UUID.v5("Frog Blast The Vent Core")
 		    Call Assert(UUID = "99fac599-25d2-595a-aea3-12f756d2961b", "Incorrect v5 UUID, computed " + UUID.StringValue)
-		  Catch Err As UnsupportedFormatException
+		  Catch Err As RuntimeException
 		    System.DebugLog("Incorrect v5 UUID, computed " + UUID.StringValue)
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestXmlParsing()
+		  #if SDTD.Enabled
+		    Const TestXml = "<?xml version=""1.0""?><ServerSettings><property name=""ServerName"" value=""3bc0f2f0"" /><property name=""Region"" value=""NorthAmericaEast"" /></ServerSettings>"
+		    
+		    Var ServerSettings As SDTD.ServerConfigXml = SDTD.ServerConfigXml.Create(TestXml)
+		    Var Regenerated As String = ServerSettings.BuildString
+		  #endif
 		End Sub
 	#tag EndMethod
 

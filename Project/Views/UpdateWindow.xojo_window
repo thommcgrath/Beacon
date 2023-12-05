@@ -49,7 +49,7 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin DesktopLabel CheckMessageLabel
@@ -547,13 +547,13 @@ End
 		    If UpdatesKit.AvailableUpdateRequired Then
 		      Self.DownloadMessageLabel.Text = "Downloading required update…"
 		    End If
-		    If Preferences.AutomaticallyDownloadsUpdates Then
+		    If UpdatesKit.AutomaticallyDownloadsUpdates Then
 		      Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
 		    Else
-		      Self.ShowResults(UpdatesKit.AvailableDisplayVersion, UpdatesKit.AvailableNotesURL, UpdatesKit.AvailableDownloadURL, UpdatesKit.AvailableSignature)
+		      Self.ShowResults(UpdatesKit.AvailableDisplayVersion, UpdatesKit.AvailableNotesURL, UpdatesKit.AvailableDownloadURL, UpdatesKit.AvailableSignature, UpdatesKit.AvailableVersionIsLicensed)
 		    End If
 		  Case UpdatesKit.Notification_UpdateDownloaded
-		    If Preferences.AutomaticallyDownloadsUpdates Then
+		    If UpdatesKit.AutomaticallyDownloadsUpdates Then
 		      Self.Hide
 		      Var InstallNow As Boolean
 		      If UpdatesKit.AvailableUpdateRequired Then
@@ -644,7 +644,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowResults(Version As String, NotesURL As String, URL As String, Signature As String)
+		Private Sub ShowResults(Version As String, NotesURL As String, URL As String, Signature As String, IsLicensed As Boolean)
 		  #Pragma Unused Version
 		  
 		  Self.mURL = URL
@@ -818,6 +818,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false
 		Group="Frame"
@@ -882,8 +890,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

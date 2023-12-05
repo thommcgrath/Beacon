@@ -32,7 +32,6 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
       Enabled         =   True
       HasBorder       =   False
       Height          =   341
-      HelpTag         =   ""
       HorizontalScrollPosition=   0
       Index           =   -2147483648
       InitialParent   =   ""
@@ -48,6 +47,7 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   41
       VerticalScrollPosition=   0
       Visible         =   True
@@ -114,7 +114,7 @@ End
 		  
 		  For Each CreatedConfig As Ark.ConfigGroup In Project.ImplementedConfigs(Project.ActiveConfigSet)
 		    Var InternalName As String = CreatedConfig.InternalName
-		    If InternalName = Ark.Configs.NameCustomContent Then
+		    If InternalName = Ark.Configs.NameCustomConfig Then
 		      Continue
 		    End If
 		    
@@ -153,6 +153,7 @@ End
 		    Call Self.Config(True)
 		    Config.GameIniContent() = Organizer
 		    Config.GameUserSettingsIniContent() = Organizer
+		    Self.Modified = True
 		  End If
 		  
 		  Self.SetupUI()
@@ -250,7 +251,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameCustomContent
+		  Return Ark.Configs.NameCustomConfig
 		End Function
 	#tag EndMethod
 
@@ -385,8 +386,8 @@ End
 		    Next
 		    Var EndPos As Integer = Source.IndexOf(StartPos, Tag)
 		    If EndPos = -1 Then
-		      Source = Source + Tag
 		      EndPos = Source.Length
+		      Source = Source + Tag
 		    End If
 		    
 		    Var ContentLen As Integer = EndPos - StartPos
@@ -420,7 +421,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Configs() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys(CurrentFile, CurrentHeader, "", False)
+		  Var Configs() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions(CurrentFile, CurrentHeader, "", False)
 		  Self.mAutocompleteWords.ResizeTo(Configs.LastIndex)
 		  For Idx As Integer = Configs.FirstIndex To Configs.LastIndex
 		    Self.mAutocompleteWords(Idx) = Configs(Idx).Key
@@ -478,17 +479,14 @@ End
 		  Var Source As String = Self.ConfigArea.Text
 		  Var Tag As String = Ark.Configs.CustomContent.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
-		  // Var Styles As StyledText = Self.ConfigArea.StyledText
-		  // If Styles <> Nil Then
-		  // Styles.TextColor(0, Source.Length) = SystemColors.LabelColor
-		  // Styles.Bold(0, Source.Length) = False
-		  // Styles.Italic(0, Source.Length) = False
-		  // End If
 		  
 		  Do
+		    If Pos > Source.Length Then
+		      Exit
+		    End If
 		    Pos = Source.IndexOf(Pos, Tag)
 		    If Pos = -1 Then
-		      Return
+		      Exit
 		    End If
 		    
 		    Var StartPos As Integer = Pos + TagLen
@@ -498,15 +496,6 @@ End
 		    End If
 		    
 		    Self.mEncryptedRanges.Add(New Beacon.Range(StartPos, EndPos))
-		    
-		    // If Styles <> Nil Then
-		    // Styles.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor
-		    // Styles.Italic(StartPos - TagLen, TagLen) = True
-		    // Styles.TextColor(StartPos, EndPos - StartPos) = SystemColors.SystemGreenColor
-		    // Styles.Bold(StartPos, EndPos - StartPos) = True
-		    // Styles.TextColor(EndPos, Min(TagLen, Source.Length - EndPos)) = SystemColors.TertiaryLabelColor
-		    // Styles.Italic(EndPos, Min(TagLen, Source.Length - EndPos)) = True
-		    // End If
 		    
 		    Pos = EndPos + TagLen
 		  Loop
@@ -584,7 +573,7 @@ End
 		    Return
 		  End If
 		  
-		  Var SanitizedText As String = Self.SanitizeText(Me.Text)
+		  Var SanitizedText As String = Beacon.SanitizeText(Me.Text)
 		  If SanitizedText <> Me.Text Then
 		    Var SelectionStart As Integer = Me.SelectionStart
 		    Var SelectionLength As Integer = Me.SelectionLength
@@ -658,7 +647,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Key As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
+		  Var Key As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOption(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
 		  If Key Is Nil Or Key.Description.IsEmpty Then
 		    Me.CallTipCancel
 		    Return

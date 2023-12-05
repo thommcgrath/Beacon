@@ -1,6 +1,7 @@
 #tag Class
 Protected Class Rewriter
 Inherits Global.Thread
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
@@ -36,7 +37,7 @@ Inherits Global.Thread
 		  Var Error As RuntimeException
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameIni) = Self.FlagCreateGameIni Then
-		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Project.UWPMode, False, Error)
+		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, Self.mOrganizer, Project.ProjectId, LegacyTrustKey, Format, Project.UWPMode, False, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -47,7 +48,7 @@ Inherits Global.Thread
 		  End If
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameUserSettingsIni) = Self.FlagCreateGameUserSettingsIni Then
-		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Project.UWPMode, False, Error)
+		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Self.mOrganizer, Project.ProjectId, LegacyTrustKey, Format, Project.UWPMode, False, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -134,7 +135,7 @@ Inherits Global.Thread
 		    Reg.Options.ReplaceAllMatches = True
 		    Try
 		      Content = Reg.Replace(Content)
-		    Catch Err As RegExSearchPatternException
+		    Catch Err As RuntimeException
 		      Return Content.ConvertEncoding(Encodings.ASCII)
 		    End Try
 		    
@@ -199,7 +200,7 @@ Inherits Global.Thread
 		  
 		  Try
 		    // Even if we're about to nuke the file, determine the mode so the file can be rebuilt in the same format
-		    InitialContent = InitialContent.GuessEncoding.SanitizeIni
+		    InitialContent = InitialContent.GuessEncoding("/script/").SanitizeIni
 		    Var DesiredLineEnding As String = InitialContent.DetectLineEnding
 		    Var ConvertToUWP As Boolean
 		    Select Case UWPMode
@@ -217,10 +218,10 @@ Inherits Global.Thread
 		      Organizer = Organizer.Clone
 		      
 		      Var GameIniValues() As Ark.ConfigValue = Organizer.FilteredValues(Ark.ConfigFileGame, Ark.HeaderShooterGame)
-		      Var ClonedKeys() As Ark.ConfigKey
+		      Var ClonedKeys() As Ark.ConfigOption
 		      Var ClonedValues() As Ark.ConfigValue
 		      For Each Value As Ark.ConfigValue In GameIniValues
-		        Var SiblingKey As New Ark.ConfigKey(Value.Details.File, Ark.HeaderShooterGameUWP, Value.Details.Key)
+		        Var SiblingKey As New Ark.ConfigOption(Value.Details.File, Ark.HeaderShooterGameUWP, Value.Details.Key)
 		        ClonedKeys.Add(SiblingKey)
 		        ClonedValues.Add(New Ark.ConfigValue(SiblingKey, Value.Command, Value.SortKey))
 		      Next Value
@@ -535,7 +536,7 @@ Inherits Global.Thread
 		      End If
 		      
 		      If FinalOrganizer.HasHeader(Ark.ConfigFileGameUserSettings, "SessionSettings") = False Then
-		        FinalOrganizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "SessionSettings", "SessionName=An Ark Server Managed by Beacon"))
+		        FinalOrganizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Language.DefaultServerName(Ark.Identifier) + " Managed by Beacon"))
 		      End If
 		    End If
 		    
@@ -553,7 +554,7 @@ Inherits Global.Thread
 		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Project As Ark.Project, Identity As Beacon.Identity, Profile As Ark.ServerProfile, Format As Ark.Rewriter.EncodingFormat, Nuke As Boolean, ByRef Error As RuntimeException) As String
 		  Try
 		    Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Identity, Profile)
-		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Project.UWPMode, Nuke, Error)
+		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, Project.UWPMode, Nuke, Error)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try
@@ -568,8 +569,8 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Run()
-		  Super.Start
+		Private Sub Start()
+		  Super.Start()
 		End Sub
 	#tag EndMethod
 

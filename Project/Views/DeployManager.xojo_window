@@ -63,15 +63,18 @@ Begin BeaconAutopositionWindow DeployManager
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
+      SingleLineMode  =   False
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   1
       Underline       =   False
@@ -693,13 +696,6 @@ Begin BeaconAutopositionWindow DeployManager
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin Beacon.OAuth2Client Authorizer
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
 End
 #tag EndDesktopWindow
 
@@ -721,7 +717,7 @@ End
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
+		    Var Engine As Beacon.DeployIntegration = Entry.Key
 		    Engine.Terminate
 		  Next
 		  
@@ -734,9 +730,9 @@ End
 		Sub Opening()
 		  Self.Title = "Deploy: " + Self.Project.Title
 		  
-		  Self.CreateBackupCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionBackup
-		  Self.ReviewChangesCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionReview
-		  Self.RunAdvisorCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionAdvise
+		  Self.CreateBackupCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionBackup, UInt64)
+		  Self.ReviewChangesCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionReview, UInt64)
+		  Self.RunAdvisorCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  
 		  Self.ServerList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
 		  Self.ServerList.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
@@ -744,7 +740,7 @@ End
 		  
 		  Self.CheckOptionsActionEnabled
 		  
-		  If (Self.Settings.Options And Beacon.DeploySettings.OptionRunImmediately) = Beacon.DeploySettings.OptionRunImmediately Then
+		  If (Self.Settings.Options And CType(Beacon.DeploySettings.OptionRunImmediately, UInt64)) = CType(Beacon.DeploySettings.OptionRunImmediately, UInt64) Then
 		    Self.Begin()
 		  End If
 		End Sub
@@ -787,7 +783,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ActiveWaitController() As Beacon.TaskWaitController
-		  Var Engine As Beacon.IntegrationEngine = Self.SelectedEngine
+		  Var Engine As Beacon.DeployIntegration = Self.SelectedEngine
 		  If Engine = Nil Then
 		    Return Nil
 		  End If
@@ -800,7 +796,7 @@ End
 		Private Sub Begin()
 		  Var NowGMT As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		  Var Now As DateTime = DateTime.Now
-		  Self.DeployLabel = NowGMT.Year.ToString(Locale.Raw, "0000") + "-" + NowGMT.Month.ToString(Locale.Raw, "00") + "-" + NowGMT.Day.ToString(Locale.Raw, "00") + " " + NowGMT.Hour.ToString(Locale.Raw, "00") + ":" + NowGMT.Minute.ToString(Locale.Raw, "00") + ":" + NowGMT.Second.ToString(Locale.Raw, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short) + " " + Now.Timezone.Abbreviation + ")"
+		  Self.DeployLabel = NowGMT.Year.ToString(Locale.Raw, "0000") + "-" + NowGMT.Month.ToString(Locale.Raw, "00") + "-" + NowGMT.Day.ToString(Locale.Raw, "00") + " " + NowGMT.Hour.ToString(Locale.Raw, "00") + ":" + NowGMT.Minute.ToString(Locale.Raw, "00") + ":" + NowGMT.Second.ToString(Locale.Raw, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short).ReplaceAll(&u202f, " ") + " " + Now.Timezone.Abbreviation + ")"
 		  
 		  Var ProfileProblems As New Dictionary
 		  
@@ -817,22 +813,21 @@ End
 		      Continue
 		    End If
 		    
-		    Var Engine As Beacon.IntegrationEngine
+		    Var Engine As Beacon.DeployIntegration
 		    Select Case Profile
-		    Case IsA Ark.NitradoServerProfile
-		      Engine = New Ark.NitradoIntegrationEngine(Profile)
-		    Case IsA Ark.FTPServerProfile
-		      Engine = New Ark.FTPIntegrationEngine(Profile)
-		    Case IsA Ark.ConnectorServerProfile
-		      //DeploymentEngine = New Beacon.ConnectorDeploymentEngine(Beacon.ConnectorServerProfile(Profile))
-		    Case IsA Ark.LocalServerProfile
-		      Engine = New Ark.LocalIntegrationEngine(Profile)
-		    Case IsA Ark.GSAServerProfile
-		      Engine = New Ark.GSAIntegrationEngine(Profile)
+		    Case IsA Ark.ServerProfile
+		      Engine = New Ark.DeployIntegration(Project, Profile)
+		    Case IsA SDTD.ServerProfile
+		      #if DebugBuild Or SDTD.Enabled = False
+		        #Pragma Warning "Need 7DTD DeployIntegration"
+		      #else
+		        #Pragma Error "Need 7DTD DeployIntegration"
+		      #endif
+		    Case IsA ArkSA.ServerProfile
+		      Engine = New ArkSA.DeployIntegration(Project, Profile)
 		    End Select
 		    If Engine Is Nil Then
-		      Var ProfileInfo As Introspection.TypeInfo = Introspection.GetType(Profile)
-		      ProfileProblems.Value("profile """ + Profile.Name + """") = "Unknown profile class: " + ProfileInfo.FullName
+		      Self.ShowAlert("The developer messed up.", "There is no DeployIntegration defined for server profile " + Profile.Name + ".")
 		      Continue
 		    End If
 		    
@@ -857,8 +852,8 @@ End
 		  // Prompt for the stop message
 		  Var StopMessage As String
 		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    If Not Engine.SupportsStopMessage Then
+		    Var Engine As Beacon.DeployIntegration = Entry.Key
+		    If Not Engine.Provider.SupportsStopMessage Then
 		      Continue
 		    End If
 		    
@@ -893,20 +888,20 @@ End
 		  // Start the engines!
 		  Var Options As UInt64
 		  If Self.CreateBackupCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionBackup, UInt64)
+		    Options = Options Or CType(Beacon.DeployIntegration.OptionBackup, UInt64)
 		  End If
 		  If Self.ReviewChangesCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionReview, UInt64)
+		    Options = Options Or CType(Beacon.DeployIntegration.OptionReview, UInt64)
 		  End If
 		  If Self.RunAdvisorCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionAnalyze, UInt64)
+		    Options = Options Or CType(Beacon.DeployIntegration.OptionAnalyze, UInt64)
 		  End If
 		  If Self.NukeConfigCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionNuke, UInt64)
+		    Options = Options Or CType(Beacon.DeployIntegration.OptionNuke, UInt64)
 		  End If
 		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    Engine.BeginDeploy(Self.DeployLabel, Self.Project, App.IdentityManager.CurrentIdentity, StopMessage, Options)
+		    Var Engine As Beacon.DeployIntegration = Entry.Key
+		    Engine.Begin(Self.DeployLabel, App.IdentityManager.CurrentIdentity, StopMessage, Options)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -936,7 +931,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Engine_Wait(Sender As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
+		Private Function Engine_Wait(Sender As Beacon.DeployIntegration, Controller As Beacon.TaskWaitController) As Boolean
 		  Select Case Controller.Action
 		  Case "Backup"
 		    Try
@@ -991,67 +986,27 @@ End
 		    If Sender = Self.SelectedEngine Then
 		      Self.UpdateMainView()
 		    End If
-		  Case "Auth External"
-		    Self.UpdateMainView()
-		    
-		    Var UserData As Dictionary = Controller.UserData
-		    Var Account As Beacon.ExternalAccount
-		    If UserData.HasKey("Account") And IsNull(UserData.Value("Account")) = False Then
-		      Account = UserData.Value("Account")
-		    End If
-		    If Account Is Nil And UserData.HasKey("Account UUID") And UserData.Value("Account UUID").StringValue.IsEmpty = False Then
-		      Account = New Beacon.ExternalAccount(UserData.Value("Account UUID").StringValue, "", UserData.Value("Provider").StringValue, "", "", Nil)
-		    End If
-		    If Account Is Nil Then
-		      If UserData.HasKey("Provider") Then
-		        Account = New Beacon.ExternalAccount(UserData.Value("Provider").StringValue)
-		      Else
-		        Controller.Cancelled = True
-		        Controller.ShouldResume = True
-		        Return True
-		      End If
-		    End If
-		    
-		    UserData.Value("Account UUID") = Account.UUID.StringValue
-		    
-		    Var FoundInQueue As Boolean = False
-		    For Each QueueItem As Beacon.ExternalAccount In Self.AuthQueue
-		      If QueueItem.UUID = Account.UUID Then
-		        FoundInQueue = True
-		        Exit
-		      End If
-		    Next
-		    If FoundInQueue = False Then
-		      Self.AuthQueue.Add(Account)
-		      If Self.Authorizer.Busy = False And Self.AuthQueue.Count = 1 Then
-		        Self.RunNextAuth()
-		      End If
-		    End If
 		  Case "Needs Expert Mode"
 		    Var Message As String = Sender.Name + " must be converted into expert mode"
 		    Var Explanation As String
-		    #if Ark.NitradoIntegrationEngine.GuidedModeSupportEnabled
-		      Var UserData As Dictionary = Controller.UserData
-		      Var OffendingKey As String = UserData.Lookup("OffendingKey", "")
-		      Var ContentLength As Integer = UserData.Lookup("ContentLength", 0)
-		      If ContentLength = 0 Then
-		        If OffendingKey.IsEmpty = False Then
-		          Explanation = "The config key '" + OffendingKey + "' needs to be placed in your GameUserSettings.ini file but Nitrado does not have a built-in config for it."
-		        Else
-		          Explanation = "There are one or more settings that need to be placed in your GameUserSettings.ini file, but Nitrado does not have a built-in config for them."
-		        End If
-		        Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		    Var UserData As Dictionary = Controller.UserData
+		    Var OffendingKey As String = UserData.Lookup("OffendingKey", "")
+		    Var ContentLength As Integer = UserData.Lookup("ContentLength", 0)
+		    If ContentLength = 0 Then
+		      If OffendingKey.IsEmpty = False Then
+		        Explanation = "The config key '" + OffendingKey + "' needs to be placed in your GameUserSettings.ini file but Nitrado does not have a built-in config for it."
 		      Else
-		        If OffendingKey.IsEmpty = False Then
-		          Explanation = "The config key '" + OffendingKey + "' needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
-		        Else
-		          Explanation = "There is a config key that needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
-		        End If
-		        Explanation = Explanation + " In order to build your ini files correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		        Explanation = "There are one or more settings that need to be placed in your GameUserSettings.ini file, but Nitrado does not have a built-in config for them."
 		      End If
-		    #else
-		      Explanation = "Beacon cannot manage Nitrado's beginner mode settings. If you choose to continue, Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
-		    #endif
+		      Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		    Else
+		      If OffendingKey.IsEmpty = False Then
+		        Explanation = "The config key '" + OffendingKey + "' needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		      Else
+		        Explanation = "There is a config key that needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		      End If
+		      Explanation = Explanation + " In order to build your ini files correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		    End If
 		    
 		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, "Turn on expert mode", "Cancel", "Learn More")
 		    Select Case Choice
@@ -1079,50 +1034,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function FindEnginesForAccount(Account As Beacon.ExternalAccount) As Beacon.IntegrationEngine()
-		  Var AccountUUID As String = Account.UUID
-		  Var Engines() As Beacon.IntegrationEngine
-		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
-		    If Controller = Nil Or Controller.Action <> "Auth External" Then
-		      Continue
-		    End If
-		    
-		    Var UserData As Dictionary = Controller.UserData
-		    If UserData.Lookup("Account UUID", "").StringValue = AccountUUID Then
-		      Engines.Add(Engine)
-		    End If
-		  Next
-		  Return Engines
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub RunNextAuth()
-		  If Self.AuthQueue.Count = 0 Then
-		    Return
-		  End If
-		  
-		  Var Account As Beacon.ExternalAccount = Self.AuthQueue(0)
-		  
-		  If Not Self.Authorizer.SetAccount(Account) Then
-		    Self.ShowAlert("This version of Beacon does not support " + Account.Provider + " servers.", "This probably means an upgrade is available.")
-		    Return
-		  End If
-		  
-		  Self.Authorizer.Authenticate(App.IdentityManager.CurrentIdentity)
-		  Self.AuthQueue.RemoveAt(0)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function SelectedEngine() As Beacon.IntegrationEngine
+		Private Function SelectedEngine() As Beacon.DeployIntegration
 		  If Self.ServerList.SelectedRowIndex = -1 Then
 		    Return Nil
 		  End If
 		  
-		  Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
+		  Var Engine As Beacon.DeployIntegration = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
 		  Return Engine
 		End Function
 	#tag EndMethod
@@ -1135,15 +1052,27 @@ End
 		  
 		  Var Idx As Integer = Self.ServerList.SelectedRowIndex
 		  If Idx = -1 Then
-		    Self.LogsArea.Text = ""
+		    If Self.LogsArea.Text.IsEmpty = False Then
+		      Self.LogsArea.Text = ""
+		      Self.LogsArea.VerticalScrollPosition = 0
+		    End If
 		    Return
 		  End If
 		  
-		  Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
-		  Var ShouldScroll As Boolean = True// = Self.LogsArea.VerticalScrollPosition = Self.LogsArea.
-		  Self.LogsArea.Text = Engine.Logs
-		  If ShouldScroll Then
+		  Var Engine As Beacon.DeployIntegration = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
+		  
+		  Var Logs As String = Engine.Logs
+		  If Self.LogsArea.Text = Logs Then
+		    Return
+		  End If
+		  
+		  Var ScrollPosition As Integer = Self.LogsArea.VerticalScrollPosition
+		  Var IsAtBottom As Boolean = ScrollPosition = Self.LogsArea.LineNumber(Self.LogsArea.Text.Length)
+		  Self.LogsArea.Text = Logs
+		  If IsAtBottom Then
 		    Self.LogsArea.VerticalScrollPosition = 99999999
+		  ElseIf Self.LogsArea.VerticalScrollPosition <> ScrollPosition Then // Just in case changing the content changes the scroll position
+		    Self.LogsArea.VerticalScrollPosition = ScrollPosition
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1197,10 +1126,6 @@ End
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private AuthQueue() As Beacon.ExternalAccount
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Controller As Beacon.ProjectController
@@ -1394,8 +1319,8 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
-		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
+		  Me.Add(IconFileIniFilled, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
+		  Me.Add(IconFileIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1
 		End Sub
@@ -1442,16 +1367,16 @@ End
 		  Var Settings As New Beacon.DeploySettings
 		  Settings.Options = Beacon.DeploySettings.OptionRunImmediately
 		  If Self.CreateBackupCheckbox.Value Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionBackup
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
 		  End If
 		  If Self.NukeConfigCheckbox.Value Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionErase
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionErase, UInt64)
 		  End If
 		  If Self.ReviewChangesCheckbox.Value Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionReview
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionReview, UInt64)
 		  End If
 		  If Self.RunAdvisorCheckbox.Value Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  End If
 		  
 		  Var UseStopMessage As Boolean
@@ -1501,13 +1426,13 @@ End
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
 		    Var Label As String = Profile.Name
 		    
-		    Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(I, 1)
+		    Var Engine As Beacon.DeployIntegration = Self.ServerList.CellTagAt(I, 1)
 		    If IsNull(Engine) = False Then
 		      If Engine.Cancelled Then
 		        AnyCancelled = True
 		      End If
 		      
-		      Label = Label + EndOfLine + Engine.Status
+		      Label = Label + EndOfLine + Engine.StatusMessage
 		      
 		      If Engine.Finished then
 		        If Engine.Errored Then
@@ -1562,89 +1487,12 @@ End
 		    End If
 		    
 		    // If this was an auto-run, just close the deploy window.
-		    If (Self.Settings.Options And Beacon.DeploySettings.OptionRunImmediately) = Beacon.DeploySettings.OptionRunImmediately Then
+		    If (Self.Settings.Options And CType(Beacon.DeploySettings.OptionRunImmediately, UInt64)) = CType(Beacon.DeploySettings.OptionRunImmediately, UInt64) Then
 		      Self.Close
 		    Else
 		      Self.ShowAlert("The deploy process has finished.", Explanation)
 		    End If
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Authorizer
-	#tag Event
-		Sub Authenticated()
-		  Var Engines() As Beacon.IntegrationEngine = Self.FindEnginesForAccount(Me.Account)
-		  For Each Engine As Beacon.IntegrationEngine In Engines
-		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
-		    If (Controller Is Nil) = False Then
-		      Dictionary(Controller.UserData).Value("Account") = Me.Account
-		      Controller.Cancelled = False
-		      Controller.ShouldResume = True
-		    End If
-		  Next
-		  
-		  Self.UpdateMainView()
-		  Self.RunNextAuth()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub AuthenticationError(Reason As String)
-		  #Pragma Unused Reason
-		  
-		  Var Engines() As Beacon.IntegrationEngine = Self.FindEnginesForAccount(Me.Account)
-		  For Each Engine As Beacon.IntegrationEngine In Engines
-		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
-		    If (Controller Is Nil) = False Then
-		      Dictionary(Controller.UserData).Value("Account") = Nil
-		      Controller.Cancelled = True
-		      Controller.ShouldResume = True
-		    End If
-		  Next
-		  
-		  Self.UpdateMainView()
-		  Self.RunNextAuth()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
-		  If Not Self.ShowConfirm(Account) Then
-		    Var Engines() As Beacon.IntegrationEngine = Self.FindEnginesForAccount(Account)
-		    For Each Engine As Beacon.IntegrationEngine In Engines
-		      If Engine <> Nil And Engine.ActiveWaitController <> Nil Then
-		        Engine.ActiveWaitController.Cancelled = True
-		        Engine.ActiveWaitController.ShouldResume = True
-		      End If
-		    Next
-		    
-		    Return False
-		  End If
-		  
-		  System.GotoURL(URL)
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub AccountUUIDChanged(OldUUID As v4UUID)
-		  Self.Project.ReplaceAccount(OldUUID, Me.Account)
-		  
-		  Var AccountUUID As String = Me.Account.UUID
-		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
-		    If Controller = Nil Or Controller.Action <> "Auth External" Then
-		      Continue
-		    End If
-		    
-		    Var UserData As Dictionary = Controller.UserData
-		    If UserData.HasKey("Account UUID") And UserData.Value("Account UUID").StringValue = OldUUID Then
-		      UserData.Value("Account UUID") = AccountUUID
-		    End If
-		    
-		    If Engine.Profile.ExternalAccountUUID = OldUUID Then
-		      Engine.Profile.ExternalAccountUUID = AccountUUID
-		    End If
-		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1722,8 +1570,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

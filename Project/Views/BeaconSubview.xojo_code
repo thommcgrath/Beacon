@@ -235,16 +235,16 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewID() As String
+		Function ViewId() As String
 		  If Self.mViewID.IsEmpty Then
-		    Self.mViewID = New v4UUID
+		    Self.mViewID = Beacon.UUID.v4
 		  End If
 		  Return Self.mViewID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ViewID(Assigns Value As String)
+		Protected Sub ViewId(Assigns Value As String)
 		  If Self.mViewID <> Value Then
 		    Var OldViewID As String = Self.mViewID
 		    Self.mViewID = Value

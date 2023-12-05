@@ -47,10 +47,12 @@ Inherits Ark.CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub ReplacementCreature(Assigns Value As Ark.Creature)
-		  If Self.mReplacementCreature <> Value Then
-		    Self.mReplacementCreature = New Ark.BlueprintReference(Value)
-		    Self.mModified = True
+		  If Self.mReplacementCreature = Value Then
+		    Return
 		  End If
+		  
+		  Self.mReplacementCreature = New Ark.BlueprintReference(Value)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 

@@ -222,22 +222,12 @@ End
 			  
 			  Self.mDocumentURL = Value
 			  
-			  Self.URLLabel.Text = Self.mDocumentURL.URL(Beacon.ProjectURL.URLTypes.Reading)
+			  Self.URLLabel.Text = Self.mDocumentURL.HumanPath
 			  
-			  Select Case Self.mDocumentURL.Scheme
-			  Case Beacon.ProjectURL.TypeLocal
-			    Try
-			      Var File As New FolderItem(Self.mDocumentURL.URL(Beacon.ProjectURL.URLTypes.Unmodified), FolderItem.PathModes.URL)
-			      Self.URLLabel.Text = File.NativePath
-			    Catch Err As RuntimeException
-			      Self.URLLabel.Text = Self.mDocumentURL.URL(Beacon.ProjectURL.URLTypes.Reading)
-			    End Try
-			    Self.MessageLabel.Text = "Loading " + Self.mDocumentURL.Name + "…"
-			  Case Beacon.ProjectURL.TypeWeb
-			    Self.URLLabel.Text = Self.mDocumentURL.Path
+			  Select Case Self.mDocumentURL.Type
+			  Case Beacon.ProjectURL.TypeWeb, Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeCommunity, Beacon.ProjectURL.TypeShared
 			    Self.MessageLabel.Text = "Downloading " + Self.mDocumentURL.Name + "…"
 			  Else
-			    Self.URLLabel.Text = Self.mDocumentURL.Path
 			    Self.MessageLabel.Text = "Loading " + Self.mDocumentURL.Name + "…"
 			  End Select
 			End Set
@@ -321,8 +311,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

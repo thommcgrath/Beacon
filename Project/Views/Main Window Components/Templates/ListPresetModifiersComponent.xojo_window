@@ -71,8 +71,8 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   1
-      ColumnWidths    =   ""
+      ColumnCount     =   2
+      ColumnWidths    =   "*,150"
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -84,14 +84,14 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       FontUnit        =   0
       GridLineStyle   =   0
       HasBorder       =   False
-      HasHeader       =   False
+      HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   259
+      Height          =   228
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
+      InitialValue    =   "Name	Game"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -99,6 +99,7 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -108,6 +109,7 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -116,6 +118,67 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin DesktopLabel StatusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Loading template selectors"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   275
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   260
+   End
+   Begin FadedSeparator StatusSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   269
+      Transparent     =   True
+      Visible         =   True
+      Width           =   300
    End
 End
 #tag EndDesktopWindow
@@ -136,6 +199,12 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub CloneSelected()
 		  Var Siblings() As String
@@ -152,7 +221,7 @@ End
 		    Var Source As Beacon.TemplateSelector = Self.List.RowTagAt(Idx)
 		    Var Label As String = Beacon.FindUniqueLabel(Source.Label, Siblings)
 		    Siblings.Add(Label)
-		    Clones.Add(New Beacon.TemplateSelector(New v4UUID, Label, Source.GameID, Source.Language, Source.Code))
+		    Clones.Add(New Beacon.TemplateSelector(Beacon.UUID.v4, Label, Source.GameId, Source.Language, Source.Code))
 		  Next
 		  
 		  Self.SaveSelectors(Clones)
@@ -177,7 +246,26 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EditSelector(TemplateSelector As Beacon.TemplateSelector)
-		  Var CreatedSelector As Beacon.TemplateSelector = ArkLootContainerSelectorEditorDialog.Present(Self, TemplateSelector)
+		  Var GameId As String
+		  If TemplateSelector Is Nil Then
+		    GameId = GameSelectorWindow.Present(Self, Beacon.Game.FeatureTemplates, False)
+		  Else
+		    GameId = TemplateSelector.GameId
+		  End If
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var CreatedSelector As Beacon.TemplateSelector
+		  Select Case GameId
+		  Case Ark.Identifier
+		    CreatedSelector = ArkLootContainerSelectorEditorDialog.Present(Self, TemplateSelector)
+		  Case ArkSA.Identifier
+		    CreatedSelector = ArkSALootContainerSelectorEditorDialog.Present(Self, TemplateSelector)
+		  Else
+		    Self.ShowAlert("Game does not support templates", "Beacon does not have support for templates in " + Language.GameName(GameId) + ".")
+		    Return
+		  End Select
 		  If CreatedSelector Is Nil Then
 		    Return
 		  End If
@@ -225,12 +313,16 @@ End
 		  
 		  Self.List.RowCount = Modifiers.Count
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    Self.List.CellTextAt(Idx, 0) = Modifiers(Idx).Label
+		    Self.List.CellTextAt(Idx, Self.ColumnName) = Modifiers(Idx).Label
+		    Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(Modifiers(Idx).GameId)
 		    Self.List.RowTagAt(Idx) = Modifiers(Idx)
 		    Self.List.RowSelectedAt(Idx) = SelectIDs.IndexOf(Modifiers(Idx).UUID) > -1
 		  Next
 		  
 		  Self.List.Sort
+		  Self.List.SizeColumnToFit(Self.ColumnGame)
+		  
+		  Self.UpdateStatus
 		End Sub
 	#tag EndMethod
 
@@ -245,13 +337,33 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Var Status As String
+		  If Self.List.SelectedRowCount > 0 Then
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.List.RowCount, "template selector", "template selectors") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.List.RowCount, "template selector", "template selectors")
+		  End If
+		  If Self.StatusLabel.Text <> Status Then
+		    Self.StatusLabel.Text = Status
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Beacon.TemplateSelector", Scope = Private
+	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.templateselector", Scope = Private
 	#tag EndConstant
 
 
@@ -299,7 +411,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""ModifierID""") > -1)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -327,9 +439,12 @@ End
 		    End If
 		  Next
 		  
-		  Var JSON As String = Beacon.GenerateJSON(Dictionaries, True)
-		  Board.Text = JSON
-		  Board.RawData(Self.kClipboardType) = JSON
+		  If Dictionaries.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kClipboardType, Dictionaries)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -339,40 +454,23 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var JSON As String
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    JSON = Board.RawData(Self.kClipboardType)
-		  ElseIf Board.TextAvailable And Board.Text.IndexOf("""ModifierID""") > -1 Then
-		    JSON = Board.Text.Trim
-		  Else
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Dicts() As Variant = Contents
+		      Var Added() As Beacon.TemplateSelector
+		      For Each Dict As Dictionary In Dicts
+		        Var Modifier As Beacon.TemplateSelector = Beacon.TemplateSelector.FromSaveData(Dict)
+		        If (Modifier Is Nil) = False Then
+		          Added.Add(Modifier)
+		        End If
+		      Next
+		      Self.SaveSelectors(Added)
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
-		  
-		  Var Members() As Variant
-		  Try
-		    Members = Beacon.ParseJSON(JSON)
-		  Catch Err As RuntimeException
-		    System.Beep
-		    Self.ShowAlert("Could not paste preset selectors", Err.Message)
-		    Return
-		  End Try
-		  
-		  Var Added() As Beacon.TemplateSelector
-		  For Each Member As Variant In Members
-		    If (Member IsA Dictionary) = False Then
-		      Continue
-		    End If
-		    
-		    Try
-		      Var Modifier As Beacon.TemplateSelector = Beacon.TemplateSelector.FromSaveData(Dictionary(Member))
-		      If (Modifier Is Nil) = False Then
-		        Added.Add(Modifier)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
-		  
-		  Self.SaveSelectors(Added)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -383,6 +481,8 @@ End
 		  If (Self.ModifiersToolbar.Item("EditModifier") Is Nil) = False Then
 		    Self.ModifiersToolbar.Item("EditModifier").Enabled = Me.CanEdit()
 		  End If
+		  
+		  Self.UpdateStatus
 		End Sub
 	#tag EndEvent
 #tag EndEvents

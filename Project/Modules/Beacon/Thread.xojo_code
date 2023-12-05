@@ -1,9 +1,17 @@
 #tag Class
 Protected Class Thread
 Inherits Global.Thread
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Run()
+		  #if DebugBuild
+		    If Self.DebugIdentifier.IsEmpty Then
+		      Break
+		    End If
+		  #endif
+		  
 		  Self.mShouldStop = False
+		  Self.YieldToNext // The first iteration always happens on the main thread.
 		  RaiseEvent Run
 		End Sub
 	#tag EndEvent

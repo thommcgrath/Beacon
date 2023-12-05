@@ -2,7 +2,7 @@
 Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Sub AddToRecentDocuments(URL As Beacon.ProjectURL)
-		  If URL.Scheme = Beacon.ProjectURL.TypeTransient Then
+		  If URL.Type = Beacon.ProjectURL.TypeTransient Then
 		    Return
 		  End If
 		  
@@ -22,6 +22,13 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub EncryptPrivateKey()
+		  mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(mDevicePublicKey), 0)
+		  mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, DecodeHex(mDevicePrivateKey))
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function HiddenTags() As String()
 		  Init
@@ -38,53 +45,90 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h21
 		Private Sub Init()
-		  If mManager Is Nil Then
-		    mManager = New PreferencesManager(App.ApplicationSupport.Child("Preferences.json"))
-		    mManager.ClearValue("Last Used Config")
-		    
-		    // Cleanup project states
-		    Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
-		    Var Timestamps() As Double
-		    Var Map As New Dictionary
-		    For Each Entry As DictionaryEntry In Dict
-		      Try
-		        Var ProjectUUID As String = Entry.Key.StringValue
-		        Var State As Dictionary = Entry.Value
-		        Var Timestamp as Double = State.Value("Timestamp").DoubleValue
-		        
-		        Timestamps.Add(Timestamp)
-		        Map.Value(Timestamp) = ProjectUUID
-		      Catch Err As RuntimeException
-		      End Try
-		    Next Entry
-		    
-		    Var Changed As Boolean
-		    Timestamps.Sort
-		    Var Cutoff As DateTime = DateTime.Now - New DateInterval(0, 6)
-		    Var CutoffSeconds As Double = Cutoff.SecondsFrom1970
-		    For Idx As Integer = Timestamps.LastIndex DownTo Timestamps.FirstIndex
-		      If Timestamps(Idx) < CutoffSeconds Then
-		        Timestamps.RemoveAt(Idx)
-		        Changed = True
-		      End If
-		    Next Idx
-		    While Timestamps.Count > 20
-		      Timestamps.RemoveAt(Timestamps.LastIndex)
+		  If (mManager Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  mManager = New PreferencesManager(App.ApplicationSupport.Child("Preferences.json"))
+		  mManager.ClearValue("Last Used Config")
+		  
+		  // Cleanup project states
+		  Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
+		  Var Timestamps() As Double
+		  Var Map As New Dictionary
+		  For Each Entry As DictionaryEntry In Dict
+		    Try
+		      Var ProjectId As String = Entry.Key.StringValue
+		      Var State As Dictionary = Entry.Value
+		      Var Timestamp as Double = State.Value("Timestamp").DoubleValue
+		      
+		      Timestamps.Add(Timestamp)
+		      Map.Value(Timestamp) = ProjectId
+		    Catch Err As RuntimeException
+		    End Try
+		  Next Entry
+		  
+		  Var Changed As Boolean
+		  Timestamps.Sort
+		  Var Cutoff As DateTime = DateTime.Now - New DateInterval(0, 6)
+		  Var CutoffSeconds As Double = Cutoff.SecondsFrom1970
+		  For Idx As Integer = Timestamps.LastIndex DownTo Timestamps.FirstIndex
+		    If Timestamps(Idx) < CutoffSeconds Then
+		      Timestamps.RemoveAt(Idx)
 		      Changed = True
-		    Wend
-		    
-		    If Changed Then
-		      Var Replacement As New Dictionary
-		      For Each Timestamp As Double In Timestamps
-		        Var ProjectUUID As String = Map.Value(Timestamp)
-		        Replacement.Value(ProjectUUID) = Dict.Value(ProjectUUID)
-		      Next Timestamp
-		      mManager.DictionaryValue("Project State") = Replacement
 		    End If
-		    
-		    Var NewestUsedBuild As Integer = NewestUsedBuild
-		    If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
-		      HardwareIdVersion = 4
+		  Next Idx
+		  While Timestamps.Count > 20
+		    Timestamps.RemoveAt(Timestamps.LastIndex)
+		    Changed = True
+		  Wend
+		  
+		  If Changed Then
+		    Var Replacement As New Dictionary
+		    For Each Timestamp As Double In Timestamps
+		      Var ProjectId As String = Map.Value(Timestamp)
+		      Replacement.Value(ProjectId) = Dict.Value(ProjectId)
+		    Next Timestamp
+		    mManager.DictionaryValue("Project State") = Replacement
+		  End If
+		  
+		  If mManager.StringValue("Device Private Key").IsEmpty = False Then
+		    Try
+		      Var PrivateKey As String = EncodeHex(BeaconEncryption.SlowDecrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, mManager.StringValue("Device Private Key")))
+		      Var PublicKey As String = EncodeHex(DecodeBase64(mManager.StringValue("Device Public Key", "")))
+		      If Crypto.RSAVerifyKey(PublicKey) And Crypto.RSAVerifyKey(PrivateKey) Then
+		        mDevicePublicKey = PublicKey
+		        mDevicePrivateKey = PrivateKey
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If mDevicePrivateKey.IsEmpty Then
+		    Var PublicKey, PrivateKey As String
+		    Call Crypto.RSAGenerateKeyPair(4096, PrivateKey, PublicKey)
+		    mDevicePublicKey = PublicKey
+		    mDevicePrivateKey = PrivateKey
+		    EncryptPrivateKey()
+		  End If
+		  
+		  Var NewestUsedBuild As Integer = NewestUsedBuild
+		  If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
+		    HardwareIdVersion = 4
+		  End If
+		  
+		  Var DefaultGameId As String = NewProjectGameId
+		  If DefaultGameID.IsEmpty = False Then
+		    Var Found As Boolean
+		    Var Games() As Beacon.Game = Beacon.Games
+		    For Each Game As Beacon.Game In Games
+		      If Game.Identifier = DefaultGameId Then
+		        Found = True
+		        Exit
+		      End If
+		    Next
+		    If Not Found Then
+		      NewProjectGameId = ""
 		    End If
 		  End If
 		End Sub
@@ -127,11 +171,13 @@ Protected Module Preferences
 		  Var Bounds As Rect = mManager.RectValue(Info.Name + " Position")
 		  If Bounds <> Nil Then
 		    // Find the best screen
-		    Var IdealScreen As Screen = Screen(0)
-		    If ScreenCount > 1 Then
+		    Var IdealScreen As DesktopDisplay = DesktopDisplay.DisplayAt(0)
+		    Var Bound As Integer = DesktopDisplay.DisplayCount - 1
+		    If Bound > 0 Then
 		      Var MaxArea As Integer
-		      For I As Integer = 0 To ScreenCount - 1
-		        Var ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		      For I As Integer = 0 To Bound
+		        Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(I)
+		        Var ScreenBounds As New Rect(Display.AvailableLeft, Display.AvailableTop, Display.AvailableWidth, Display.AvailableHeight)
 		        Var Intersection As Rect = ScreenBounds.Intersection(Bounds)
 		        If Intersection = Nil Then
 		          Continue
@@ -142,7 +188,7 @@ Protected Module Preferences
 		        End If
 		        If Area > MaxArea Then
 		          MaxArea = Area
-		          IdealScreen = Screen(I)
+		          IdealScreen = Display
 		        End If
 		      Next
 		    End If
@@ -162,13 +208,13 @@ Protected Module Preferences
 		Protected Function NewDeploySettings() As Beacon.DeploySettings
 		  Var Settings As New Beacon.DeploySettings
 		  If Preferences.DeployCreateBackup Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionBackup
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
 		  End If
 		  If Preferences.DeployReviewChanges Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionReview
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionReview, UInt64)
 		  End If
 		  If Preferences.DeployRunAdvisor Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  End If
 		  Return Settings
 		End Function
@@ -217,48 +263,48 @@ Protected Module Preferences
 		  // Once the array is updated, the local copy will return Text()
 		  
 		  Var Temp As Variant = mManager.VariantValue("Documents")
-		  Var StoredData() As String
-		  If Temp <> Nil Then
+		  Var Values() As Beacon.ProjectURL
+		  If (Temp Is Nil) = False Then
 		    If Temp.IsArray Then
 		      Select Case Temp.ArrayElementType
 		      Case Variant.TypeString
-		        StoredData = Temp
+		        Try
+		          Var StringValues() As String = Temp
+		          For Each StringValue As String In StringValues
+		            Values.Add(New Beacon.ProjectUrl(StringValue))
+		          Next
+		        Catch Err As RuntimeException
+		        End Try
 		      Case Variant.TypeObject
-		        Var Objects() As Variant = Temp
-		        For Each Element As Variant In Objects
-		          Try
-		            StoredData.Add(Element.StringValue)
-		          Catch Err As RuntimeException
-		            Continue
-		          End Try
-		        Next
+		        Try
+		          Var Members() As Variant = Temp
+		          For Each Member As Variant In Members
+		            If Member.Type = Variant.TypeString Then
+		              Values.Add(New Beacon.ProjectUrl(Member.StringValue))
+		            ElseIf Member.Type = Variant.TypeObject And Member.ObjectValue IsA Dictionary Then
+		              Values.Add(New Beacon.ProjectUrl(Dictionary(Member.ObjectValue)))
+		            End If
+		          Next
+		        Catch Err As RuntimeException
+		        End Try
 		      End Select
 		    Else
 		      Try
-		        StoredData.Add(Temp.StringValue)
+		        Values.Add(New Beacon.ProjectUrl(Temp.StringValue))
 		      Catch Err As RuntimeException
 		      End Try
 		    End If
 		  End If
-		  
-		  Var Values() As Beacon.ProjectURL
-		  For Each Value As String In StoredData
-		    Try
-		      Values.Add(New Beacon.ProjectURL(Value))
-		    Catch Err As RuntimeException
-		      
-		    End Try
-		  Next
 		  Return Values
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.ProjectURL)
-		  Var URLs() As String
-		  URLs.ResizeTo(Values.LastIndex)
-		  For I As Integer = 0 To Values.LastIndex
-		    URLs(I) = Values(I).URL(Beacon.ProjectURL.URLTypes.Storage)
+		  Var Urls() As Variant
+		  Urls.ResizeTo(Values.LastIndex)
+		  For Idx As Integer = 0 To Values.LastIndex
+		    URLs(Idx) = Values(Idx).DictionaryValue
 		  Next
 		  
 		  Init
@@ -364,6 +410,82 @@ Protected Module Preferences
 		Protected ArkLootItemSetEntryDefaults As Dictionary
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.DictionaryValue("ArkSA Loot Item Set Entry Defaults", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.DictionaryValue("ArkSA Loot Item Set Entry Defaults") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSALootItemSetEntryDefaults As Dictionary
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("ArkSA Spawn Point Editor Limits Splitter Position", ArkSpawnPointEditor.LimitsListDefaultHeight)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("ArkSA Spawn Point Editor Limits Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSASpawnPointEditorLimitsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("ArkSA Spawn Point Editor Sets Splitter Position", ArkSpawnPointEditor.SetsListDefaultWidth)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("ArkSA Spawn Point Editor Sets Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSASpawnPointEditorSetsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Var Default As String
+			  #if TargetWindows
+			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK"
+			  #elseif TargetLinux
+			    Default = SpecialFolder.UserHome + "/.steam/steam/steamapps/common/ARK"
+			  #elseif TargetMacOS
+			    // This is pointless, but whatever
+			    Default = SpecialFolder.ApplicationData.NativePath + "/Steam/SteamApps/common/ARK"
+			  #endif
+			  Return mManager.StringValue("ArkSA Steam Path", Default)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If ArkSteamPath = Value Then
+			    Return
+			  End If
+			  
+			  mManager.StringValue("ArkSA Steam Path") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSASteamPath As String
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
@@ -439,6 +561,54 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected AutomaticallyDownloadsUpdates As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  
+			  If mAuthToken Is Nil Then
+			    Var AccountName As String = Beacon.SystemAccountName
+			    Var HardwareId As String = Beacon.HardwareId
+			    Var TokenSource As String
+			    Try
+			      Var TokenEncrypted As String = mManager.StringValue("Beacon Auth")
+			      TokenSource = BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5 " + AccountName + " " + HardwareId, TokenEncrypted)
+			    Catch Err As RuntimeException
+			      App.Log("Failed to decrypt token using account name `" + AccountName + "` and hardware id `" + HardwareId + "`: `" + Err.Message + "`.")
+			      Return Nil
+			    End Try
+			    
+			    Try
+			      mAuthToken = BeaconAPI.OAuthToken.Load(TokenSource)
+			    Catch Err As RuntimeException
+			      App.Log("OAuth token was decrypted, but could not be loaded.")
+			      Return Nil
+			    End Try
+			  End If
+			  
+			  Return mAuthToken
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  
+			  Try
+			    If (Value Is Nil) = False Then
+			      Var TokenSource As String = Value.StringValue
+			      mManager.StringValue("Beacon Auth") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5 " + Beacon.SystemAccountName + " " + Beacon.HardwareId, TokenSource)
+			    Else
+			      mManager.StringValue("Beacon Auth") = ""
+			    End If
+			    mAuthToken = Value
+			  Catch Err As RuntimeException
+			    App.Log(Err, CurrentMethodName, "Saving new auth token")
+			  End Try
+			End Set
+		#tag EndSetter
+		Protected BeaconAuth As BeaconAPI.OAuthToken
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -565,6 +735,24 @@ Protected Module Preferences
 		Protected DeployRunAdvisor As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Return mDevicePrivateKey
+			End Get
+		#tag EndGetter
+		Protected DevicePrivateKey As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Return mDevicePublicKey
+			End Get
+		#tag EndGetter
+		Protected DevicePublicKey As String
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
@@ -592,6 +780,9 @@ Protected Module Preferences
 			Set
 			  Init
 			  mManager.IntegerValue("Hardware Id Version") = Value
+			  
+			  // Update private key encryption in case the hardware id changes
+			  EncryptPrivateKey()
 			End Set
 		#tag EndSetter
 		Protected HardwareIdVersion As Integer
@@ -693,6 +884,10 @@ Protected Module Preferences
 		Protected MainWindowPosition As Rect
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h21
+		Private mAuthToken As BeaconAPI.OAuthToken
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
@@ -722,6 +917,14 @@ Protected Module Preferences
 
 	#tag Property, Flags = &h21
 		Private mConnectionLockCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDevicePrivateKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDevicePublicKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -756,6 +959,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.StringValue("New Project Game Id", "")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.StringValue("New Project Game Id") = Value
+			End Set
+		#tag EndSetter
+		Protected NewProjectGameId As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Online Enabled", False)
 			End Get
 		#tag EndGetter
@@ -771,45 +990,6 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected OnlineEnabled As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  
-			  If mOnlineToken.IsEmpty Then
-			    Var Token As String = mManager.StringValue("Online Token", "")
-			    If Token.IsEmpty Or v4UUID.IsValid(Token) Then
-			      mOnlineToken = Token
-			    Else
-			      Try
-			        mOnlineToken = DefineEncoding(BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Token), Encodings.UTF8)
-			      Catch Err As RuntimeException
-			        mOnlineToken = ""
-			      End Try
-			    End If
-			  End If
-			  
-			  Return mOnlineToken
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If OnlineToken = Value Then
-			    Return
-			  End If
-			  
-			  mOnlineToken = Value
-			  If Value.IsEmpty Then
-			    mManager.StringValue("Online Token") = ""
-			  Else
-			    mManager.StringValue("Online Token") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Value)
-			  End If
-			  NotificationKit.Post(Notification_OnlineTokenChanged, Value)
-			End Set
-		#tag EndSetter
-		Protected OnlineToken As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -887,6 +1067,29 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected PresetsEnabledMods As Dictionary
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  
+			  Var Default As Integer = CType(ProfileIconChoices.WithoutPonytail, Integer)
+			  Var IntValue As Integer = mManager.IntegerValue("Profile Icon", Default)
+			  Return CType(IntValue, ProfileIconChoices)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = ProfileIcon Then
+			    Return
+			  End If
+			  
+			  mManager.IntegerValue("Profile Icon") = CType(Value, Integer)
+			  NotificationKit.Post(Notification_ProfileIconChanged, Value)
+			End Set
+		#tag EndSetter
+		Protected ProfileIcon As Preferences.ProfileIconChoices
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -1041,6 +1244,26 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.BooleanValue("Switches Show Captions")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = SwitchesShowCaptions Then
+			    Return
+			  End If
+			  
+			  mManager.BooleanValue("Switches Show Captions") = Value
+			  NotificationKit.Post(Notification_SwitchCaptionVisibilityChanged, Value)
+			End Set
+		#tag EndSetter
+		Protected SwitchesShowCaptions As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.IntegerValue("Updates Channel", 0)
 			End Get
 		#tag EndGetter
@@ -1055,13 +1278,19 @@ Protected Module Preferences
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = Notification_OnlineStateChanged, Type = Text, Dynamic = False, Default = \"Online State Changed", Scope = Protected
+	#tag Constant, Name = Notification_OnlineStateChanged, Type = String, Dynamic = False, Default = \"Online State Changed", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_OnlineTokenChanged, Type = Text, Dynamic = False, Default = \"Online Token Changed", Scope = Protected
+	#tag Constant, Name = Notification_OnlineTokenChanged, Type = String, Dynamic = False, Default = \"Online Token Changed", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_RecentsChanged, Type = Text, Dynamic = False, Default = \"Recent Documents Changed", Scope = Protected
+	#tag Constant, Name = Notification_ProfileIconChanged, Type = String, Dynamic = False, Default = \"Profile Icon Changed", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_RecentsChanged, Type = String, Dynamic = False, Default = \"Recent Documents Changed", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_SwitchCaptionVisibilityChanged, Type = String, Dynamic = False, Default = \"Switch Caption Visibility Changed", Scope = Protected
 	#tag EndConstant
 
 
@@ -1069,6 +1298,12 @@ Protected Module Preferences
 		FollowSystem
 		  ForceLight
 		ForceDark
+	#tag EndEnum
+
+	#tag Enum, Name = ProfileIconChoices, Type = Integer, Flags = &h1
+		WithoutPonytail
+		  WithPonytail
+		Cat
 	#tag EndEnum
 
 

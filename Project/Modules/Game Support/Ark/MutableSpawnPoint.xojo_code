@@ -2,6 +2,7 @@
 Protected Class MutableSpawnPoint
 Inherits Ark.SpawnPoint
 Implements Ark.MutableBlueprint
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
 		Sub AddSet(Set As Ark.SpawnPointSet, Replace As Boolean = False)
 		  Var Idx As Integer = Self.IndexOf(Set)
@@ -17,6 +18,10 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub AlternateLabel(Assigns Value As NullableString)
+		  If Self.mAlternateLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAlternateLabel = Value
 		  Self.mModified = True
 		End Sub
@@ -26,7 +31,29 @@ Implements Ark.MutableBlueprint
 		Sub Availability(Assigns Value As UInt64)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Self.mAvailability = Value Then
+		    Return
+		  End If
+		  
 		  Self.mAvailability = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BlueprintId(Assigns Value As String)
+		  If Self.mSpawnPointId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mSpawnPointId = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ClearLimits()
+		  Self.mLimits = New Ark.BlueprintAttributeManager
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -38,13 +65,33 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As String)
+		Sub Constructor()
+		  // Making it public
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Path As String, SpawnPointId As String)
 		  Super.Constructor()
-		  Self.mObjectID = ObjectID
+		  Self.mSpawnPointId = SpawnPointId
 		  Self.mAvailability = Ark.Maps.UniversalMask
 		  Self.Path = Path
-		  Self.Label = Beacon.LabelFromClassString(Self.ClassString)
+		  Self.Label = Ark.LabelFromClassString(Self.ClassString)
 		  Self.Modified = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackId(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  If Self.mContentPackId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mContentPackId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -52,16 +99,11 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  Self.mContentPackName = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ContentPackUUID(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
+		  If Self.mContentPackName = Value Then
+		    Return
+		  End If
 		  
-		  Self.mContentPackUUID = Value
+		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -93,8 +135,42 @@ Implements Ark.MutableBlueprint
 		Sub Label(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Self.mLabel = Value Then
+		    Return
+		  End If
+		  
 		  Self.mLabel = Value
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LastUpdate(Assigns Value As Double)
+		  If Self.mLastUpdate = Value Then
+		    Return
+		  End If
+		  
+		  Self.mLastUpdate = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Limit(CreatureRef As Ark.BlueprintReference, Assigns Value As Double)
+		  Value = Min(Abs(Value), 1.0)
+		  
+		  Var Exists As Boolean = Self.mLimits.HasBlueprint(CreatureRef)
+		  
+		  If Exists And Value = 1.0 Then
+		    Self.mLimits.Remove(CreatureRef)
+		    Self.Modified = True
+		    Return
+		  End If
+		  
+		  If Exists = False Or Self.mLimits.Value(CreatureRef, Self.LimitAttribute).DoubleValue <> Value Then
+		    Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -143,10 +219,12 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Mode(Assigns Value As Integer)
-		  If Self.mMode <> Value Then
-		    Self.mMode = Value
-		    Self.Modified = True
+		  If Self.mMode = Value Then
+		    Return
 		  End If
+		  
+		  Self.mMode = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -160,8 +238,12 @@ Implements Ark.MutableBlueprint
 		Sub Path(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Self.mPath = Value Then
+		    Return
+		  End If
+		  
 		  Self.mPath = Value
-		  Self.mClassString = Beacon.ClassStringFromPath(Value)
+		  Self.mClassString = Ark.ClassStringFromPath(Value)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -173,7 +255,7 @@ Implements Ark.MutableBlueprint
 		  For SetIdx As Integer = Self.mSets.LastIndex DownTo 0
 		    Var MutableSet As Ark.MutableSpawnPointSet = Self.mSets(SetIdx).MutableVersion
 		    For EntryIdx As Integer = MutableSet.LastIndex DownTo 0
-		      If MutableSet.Entry(EntryIdx).Creature.ObjectID = Creature.ObjectID Then
+		      If MutableSet.Entry(EntryIdx).Creature.CreatureId = Creature.CreatureId Then
 		        MutableSet.Remove(EntryIdx)
 		      End If
 		    Next EntryIdx
@@ -191,6 +273,13 @@ Implements Ark.MutableBlueprint
 		    Self.mSets.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Reset()
+		  Self.ResizeTo(-1)
+		  Self.ClearLimits()
 		End Sub
 	#tag EndMethod
 
@@ -232,6 +321,17 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SpawnPointId(Assigns Value As String)
+		  If Self.mSpawnPointId = Value Then
+		    Return
+		  End If
+		  
+		  Self.mSpawnPointId = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Tags(Assigns Tags() As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
@@ -254,18 +354,23 @@ Implements Ark.MutableBlueprint
 		      If IsNull(Limits) = False And Limits.Type = Variant.TypeObject And Limits.ObjectValue IsA Dictionary Then
 		        Var LimitsDict As Dictionary = Dictionary(Limits.ObjectValue)
 		        For Each Entry As DictionaryEntry In LimitsDict
-		          Var Creature As Ark.Creature = Ark.ResolveCreature(Entry.Key.StringValue, "", "", Nil)
-		          If (Creature Is Nil) = False Then
-		            Self.mLimits.Value(Creature, Self.LimitAttribute) = Entry.Value.DoubleValue
-		          End If
+		          Var CreatureRef As New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "")
+		          Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = Entry.Value.DoubleValue
 		        Next
 		      ElseIf IsNull(Limits) = False And Limits.IsArray And Limits.ArrayElementType = Variant.TypeObject Then
 		        Var Members() As Dictionary = Limits.DictionaryArrayValue
 		        For Each Limit As Dictionary In Members
-		          Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Limit.Value("creature"))
-		          Var MaxPercent As Double = Limit.Value("max_percent").DoubleValue
-		          Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = MaxPercent
-		        Next Limit
+		          Var MaxPercent As Double = Limit.FirstValue("maxPercentage", "max_percent", 1.0).DoubleValue
+		          Var CreatureRef As Ark.BlueprintReference
+		          If Limit.HasKey("creatureId") Then
+		            CreatureRef = New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, Limit.Value("creatureId").StringValue, "", "", "", "")
+		          ElseIf Limit.HasKey("creature") Then
+		            CreatureRef = Ark.BlueprintReference.FromSaveData(Limit.Value("creature"))
+		          End If
+		          If (CreatureRef Is Nil) = False Then
+		            Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = MaxPercent
+		          End If
+		        Next
 		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Unpacking limits")
@@ -312,8 +417,8 @@ Implements Ark.MutableBlueprint
 		      
 		      Var Set As New Ark.MutableSpawnPointSet
 		      Set.Label = SpawnDict.Lookup("label", "Untitled Spawn Set").StringValue
-		      Set.ID = SpawnDict.Lookup("group_id", v4UUID.Create.StringValue).StringValue
-		      Set.Weight = SpawnDict.Lookup("weight", 0.1).DoubleValue
+		      Set.SetId = SpawnDict.Lookup("group_id", Beacon.UUID.v4).StringValue
+		      Set.RawWeight = SpawnDict.Lookup("weight", 0.1).DoubleValue
 		      For Each Path As String In Creatures
 		        Var Creature As Ark.Creature = Ark.ResolveCreature("", Path, "", Nil)
 		        Set.Append(New Ark.MutableSpawnPointSetEntry(Creature))

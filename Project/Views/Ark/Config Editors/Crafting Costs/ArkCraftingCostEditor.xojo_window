@@ -70,6 +70,7 @@ Begin BeaconContainer ArkCraftingCostEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -79,6 +80,7 @@ Begin BeaconContainer ArkCraftingCostEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -188,7 +190,7 @@ End
 		  For Idx As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.RowSelectedAt(Idx) Then
 		      Var Ingredient As Ark.CraftingCostIngredient = Self.List.RowTagAt(Idx)
-		      Selected.Add(Ingredient.Reference.ObjectID)
+		      Selected.Add(Ingredient.Reference.BlueprintId)
 		    End If
 		  Next
 		  
@@ -197,7 +199,7 @@ End
 		    Var Ingredient As Ark.CraftingCostIngredient = Self.mTarget.Ingredient(Idx)
 		    Self.List.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.PrettyText(True))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Ingredient.RequireExact
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.BlueprintId) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Ingredient
 		  Next
 		  Self.List.Sort
@@ -297,7 +299,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -336,39 +338,48 @@ End
 		    
 		    Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Idx)
 		    Var Dict As New Dictionary
-		    Dict.Value("UUID") = Ingredient.Reference.ObjectID
-		    Dict.Value("Class") = Ingredient.Reference.ClassString
-		    Dict.Value("Quantity") = Ingredient.Quantity
-		    Dict.Value("Exact") = Ingredient.RequireExact
+		    Dict.Value("blueprintId") = Ingredient.Reference.BlueprintId
+		    Dict.Value("quantity") = Ingredient.Quantity
+		    Dict.Value("exact") = Ingredient.RequireExact
 		    Dicts.Add(Dict)
 		  Next
 		  
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
+		  If Dicts.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Modified As Boolean
+		      Var Dicts() As Variant = Contents
+		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		      For Each Dict As Dictionary In Dicts
+		        Var Engram As Ark.Engram = DataSource.GetEngram(Dict.Value("blueprintId"))
+		        If Engram Is Nil Then
+		          Continue
+		        End If
+		        Var Quantity As Integer = Dict.Value("quantity")
+		        Var Exact As Boolean = Dict.Value("exact")
+		        
+		        Self.mTarget.Add(Engram, Quantity, Exact)
+		        Modified = True
+		      Next
+		      If Modified Then
+		        Self.UpdateList()
+		        Self.Modified = True
+		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
-		  
-		  Var Dicts() As Variant
-		  Try
-		    Var Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dicts = Beacon.ParseJSON(Contents)
-		    
-		    For Each Dict As Dictionary In Dicts
-		      Var Engram As Ark.Engram = Ark.ResolveEngram(Dict, "UUID", "Class", "", Nil)
-		      Var Quantity As Integer = Dict.Value("Quantity")
-		      Var Exact As Boolean = Dict.Value("Exact")
-		      Self.mTarget.Add(Engram, Quantity, Exact)
-		    Next
-		    
-		    Self.UpdateList()
-		    Self.Modified = True
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
 		End Sub
 	#tag EndEvent
 	#tag Event

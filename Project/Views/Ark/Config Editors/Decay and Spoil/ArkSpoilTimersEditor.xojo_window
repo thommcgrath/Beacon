@@ -152,6 +152,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             LockLeft        =   True
             LockRight       =   True
             LockTop         =   True
+            PageSize        =   100
             PreferencesKey  =   ""
             RequiresSelection=   False
             RowSelectionType=   0
@@ -161,6 +162,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             TabStop         =   False
             Tooltip         =   ""
             Top             =   282
+            TotalPages      =   -1
             Transparent     =   False
             TypeaheadColumn =   0
             Underline       =   False
@@ -1085,6 +1087,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   0
@@ -1094,6 +1097,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          TabStop         =   False
          Tooltip         =   ""
          Top             =   203
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -1804,7 +1808,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameSpoilTimers
+		  Return Ark.Configs.NameDecayAndSpoil
 		End Function
 	#tag EndMethod
 
@@ -2002,7 +2006,7 @@ End
 	#tag Constant, Name = TooltipFastDecayUnsnapped, Type = String, Dynamic = False, Default = \"When turned on\x2C core structures (such as foundations and pillars) that are not attached to anything will decay according to the Fast Decay Period setting.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = TooltipItemDecomposeTimeMultiplier, Type = String, Dynamic = False, Default = \"Adjusts the time required for loot bags and dropped items to be removed from the game world. Values higher than 1.0 will increase the time.", Scope = Private
+	#tag Constant, Name = TooltipItemDecomposeTimeMultiplier, Type = String, Dynamic = False, Default = \"Adjusts the time required for dropped items to be removed from the game world. Values higher than 1.0 will increase the time.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = TooltipOnlyAutoDestroyCoreStructures, Type = String, Dynamic = False, Default = \"When turned on\x2C only core structures (such as foundations and pillars) will be auto destroyed. Structures that can be placed on the ground without needing a foundation will not be auto destroyed.", Scope = Private

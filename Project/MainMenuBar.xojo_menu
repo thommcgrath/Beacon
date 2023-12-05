@@ -18,14 +18,39 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin DesktopMenuItem FileNewProjectForGame
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "New Project For Game"
+         AutoEnabled = False
+         AutoEnable = False
+         SubMenu = True
+         Visible = True
+         Begin DesktopMenuItem NewProjectForGameShowGamePicker
+            SpecialMenu = 0
+            Index = -2147483648
+            Text = "Show Game Picker"
+            ShortcutKey = "N"
+            Shortcut = "Cmd+Shift+N"
+            MenuModifier = True
+            AltMenuModifier = True
+            AutoEnabled = False
+            AutoEnable = False
+            Visible = True
+         End
+         Begin DesktopMenuItem UntitledSeparator8
+            SpecialMenu = 0
+            Index = -2147483648
+            Text = "-"
+            AutoEnabled = True
+            AutoEnable = True
+            Visible = True
+         End
+      End
       Begin DesktopMenuItem FileNewPreset
          SpecialMenu = 0
          Index = -2147483648
-         Text = "New Preset"
-         ShortcutKey = "N"
-         Shortcut = "Cmd+Shift+N"
-         MenuModifier = True
-         AltMenuModifier = True
+         Text = "New Template"
          AutoEnabled = False
          AutoEnable = False
          Visible = True
@@ -290,7 +315,7 @@ Begin Menu MainMenuBar
       Begin DesktopMenuItem ViewEngrams
          SpecialMenu = 0
          Index = -2147483648
-         Text = "Blueprints"
+         Text = "Mods"
          ShortcutKey = "2"
          Shortcut = "Cmd+2"
          MenuModifier = True
@@ -390,7 +415,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopApplicationMenuItem UntitledSeparator5
+      Begin DesktopApplicationMenuItem HelpShowWhatsNewWindowSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -422,7 +447,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopApplicationMenuItem HelpSeparator2
+      Begin DesktopApplicationMenuItem HelpUpdateEngramsSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -454,7 +479,23 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin DesktopMenuItem UntitledSeparator6
+      Begin DesktopMenuItem HelpMigrateAccountsSeparator
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "-"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin DesktopMenuItem HelpMigrateAccounts
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Migrate Anonymous Accounts"
+         AutoEnabled = False
+         AutoEnable = False
+         Visible = True
+      End
+      Begin DesktopMenuItem HelpAdminSpawnCodesSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -478,7 +519,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopMenuItem UntitledSeparator1
+      Begin DesktopMenuItem HelpCreateSupportTicketSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -502,15 +543,15 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopMenuItem HelpCreateOfflineAuthorizationRequest
+      Begin DesktopMenuItem HelpShowDiagnosticInfo
          SpecialMenu = 0
          Index = -2147483648
-         Text = "Create Offline Authorization Request…"
+         Text = "Show Diagnostic Information"
          AutoEnabled = True
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopMenuItem UntitledSeparator2
+      Begin DesktopMenuItem HelpAPIGuideSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -522,14 +563,6 @@ Begin Menu MainMenuBar
          SpecialMenu = 0
          Index = -2147483648
          Text = "API Guide…"
-         AutoEnabled = True
-         AutoEnable = True
-         Visible = True
-      End
-      Begin DesktopMenuItem HelpAPIBuilder
-         SpecialMenu = 0
-         Index = -2147483648
-         Text = "API Builder…"
          AutoEnabled = True
          AutoEnable = True
          Visible = True

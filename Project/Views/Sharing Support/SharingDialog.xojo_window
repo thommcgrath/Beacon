@@ -8,7 +8,7 @@ Begin BeaconDialog SharingDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   630
+   Height          =   563
    ImplicitInstance=   False
    MacProcID       =   0
    MaxHeight       =   32000
@@ -16,15 +16,15 @@ Begin BeaconDialog SharingDialog
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   630
+   MinHeight       =   563
    MinimizeButton  =   False
-   MinWidth        =   600
+   MinWidth        =   750
    Placement       =   0
    Resizable       =   "False"
    Resizeable      =   True
    Title           =   "Project Sharing"
    Visible         =   True
-   Width           =   600
+   Width           =   750
    Begin DesktopGroupBox WriteAccessGroup
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -33,7 +33,7 @@ Begin BeaconDialog SharingDialog
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   278
+      Height          =   299
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -44,22 +44,22 @@ Begin BeaconDialog SharingDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   300
+      Top             =   52
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   710
       Begin UITweaks.ResizedPushButton AddUserButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
          Caption         =   "Add User"
          Default         =   False
-         Enabled         =   True
+         Enabled         =   False
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
@@ -75,11 +75,11 @@ Begin BeaconDialog SharingDialog
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   538
+         Top             =   311
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -105,46 +105,18 @@ Begin BeaconDialog SharingDialog
          Multiline       =   True
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   3
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         Text            =   "Users listed here will be able to make changes to this project and deploy changes to servers. Only the project owner may add or remove users."
+         Text            =   "Users listed here will be able to make changes to this project and deploy changes to servers. Only the project owner and admins may add, remove, or change users."
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   336
+         Top             =   88
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   520
-      End
-      Begin DesktopProgressWheel UsernameLookupSpinner
-         Active          =   False
-         AllowAutoDeactivate=   True
-         AllowTabStop    =   True
-         Enabled         =   True
-         Height          =   16
-         Index           =   -2147483648
-         InitialParent   =   "WriteAccessGroup"
-         Left            =   544
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         PanelIndex      =   0
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   0
-         Tooltip         =   ""
-         Top             =   542
-         Transparent     =   False
-         Visible         =   False
-         Width           =   16
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
+         Width           =   670
       End
       Begin BeaconListbox UserList
          AllowAutoDeactivate=   True
@@ -156,8 +128,8 @@ Begin BeaconDialog SharingDialog
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   2
-         ColumnWidths    =   "*,312"
+         ColumnCount     =   3
+         ColumnWidths    =   "*,320,100"
          DefaultRowHeight=   26
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -172,11 +144,11 @@ Begin BeaconDialog SharingDialog
          HasHeader       =   True
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
-         HeadingIndex    =   -1
-         Height          =   130
+         HeadingIndex    =   0
+         Height          =   151
          Index           =   -2147483648
          InitialParent   =   "WriteAccessGroup"
-         InitialValue    =   "Username	Identifier"
+         InitialValue    =   "Username	Identifier	Role"
          Italic          =   False
          Left            =   40
          LockBottom      =   True
@@ -184,23 +156,89 @@ Begin BeaconDialog SharingDialog
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   0
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   388
+         Top             =   140
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
          Visible         =   True
          VisibleRowCount =   0
-         Width           =   520
+         Width           =   670
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin UITweaks.ResizedPushButton UserListRefreshButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Refresh"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "WriteAccessGroup"
+         Italic          =   False
+         Left            =   630
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   311
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton RemoveUserButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Remove"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "WriteAccessGroup"
+         Italic          =   False
+         Left            =   142
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   311
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
       End
    End
    Begin DesktopLabel MessageLabel
@@ -250,7 +288,7 @@ Begin BeaconDialog SharingDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   650
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -258,109 +296,15 @@ Begin BeaconDialog SharingDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   590
+      Top             =   523
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
-   End
-   Begin DesktopGroupBox ReadOnlyGroup
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "Read-Only Access"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   76
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
-      Begin DesktopLabel DownloadLinkLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "ReadOnlyGroup"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   True
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "https://api.usebeacon.app/v1/document"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   88
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   428
-      End
-      Begin ReactionButton CopyLinkButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Copy"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "ReadOnlyGroup"
-         Italic          =   False
-         Left            =   480
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   88
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
    End
    Begin DesktopGroupBox CommunityAccessGroup
       AllowAutoDeactivate=   True
@@ -375,21 +319,21 @@ Begin BeaconDialog SharingDialog
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   140
+      Top             =   363
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   710
       Begin DesktopLabel CommunityAccessLabel
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -413,15 +357,15 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         Text            =   "Projects shared with the community will be available for download from the Beacon website and the Community section of the Projects tab. Community members will have read-only access, unless listed below."
+         Text            =   "Projects shared with the community will be available for download from the Beacon website and the Community section of the Projects tab. Community members will have read-only access, unless listed above."
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   176
+         Top             =   399
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   520
+         Width           =   670
       End
       Begin DesktopLabel CommunityStatusLabel
          AllowAutoDeactivate=   True
@@ -450,7 +394,7 @@ Begin BeaconDialog SharingDialog
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   248
+         Top             =   471
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -483,11 +427,11 @@ Begin BeaconDialog SharingDialog
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   248
+         Top             =   471
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   316
+         Width           =   466
       End
       Begin UITweaks.ResizedPushButton CommunityShareButton
          AllowAutoDeactivate=   True
@@ -503,7 +447,7 @@ Begin BeaconDialog SharingDialog
          Index           =   -2147483648
          InitialParent   =   "CommunityAccessGroup"
          Italic          =   False
-         Left            =   480
+         Left            =   630
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -515,7 +459,7 @@ Begin BeaconDialog SharingDialog
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   248
+         Top             =   471
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -531,43 +475,132 @@ Begin BeaconDialog SharingDialog
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin BeaconAPI.Socket APISocket
+   Begin DesktopProgressWheel ActivitySpinner
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowTabStop    =   True
+      Enabled         =   True
+      Height          =   16
       Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   True
       LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      PanelIndex      =   0
       Scope           =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   527
+      Transparent     =   False
+      Visible         =   False
+      Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h21
-		Private Sub Constructor(Project As Beacon.Project)
-		  Self.mProject = Project
-		  Super.Constructor
+	#tag Event
+		Sub Opening()
+		  Self.UpdateUserList()
 		End Sub
-	#tag EndMethod
+	#tag EndEvent
 
-	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As DesktopWindow, Project As Beacon.Project)
-		  If Parent = Nil Then
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_AddUser(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  Self.DecrementRequestCount()
+		  
+		  If Not Response.Success Then
+		    Select Case Response.HTTPStatus
+		    Case 403
+		      Self.ShowAlert("Could not add user", If(Response.Message.IsEmpty = False, Response.Message, "You do not have permission to add or remove users."))
+		    Else
+		      Self.ShowAlert("There was an error adding the user", If(Response.Message.IsEmpty = False, Response.Message, "The server returned a " + Response.HTTPStatus.ToString(Locale.Raw, "0") + " status."))
+		    End Select
 		    Return
 		  End If
 		  
-		  Var Win As New SharingDialog(Project)
-		  Win.ShowModal(Parent)
-		  
-		  If Win.mUsersChanged Then
-		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your project.", "Adding or removing a user updates the encryption keys inside your project, so it is necessary to save the project before newly authorized users are able to access it.")
-		  End If
-		  
-		  Win.Close
+		  Try
+		    Var MemberInfo As Dictionary = Response.JSON
+		    Var UserId As String = MemberInfo.Value("userId")
+		    Var Member As New Beacon.ProjectMember(UserId, MemberInfo)
+		    
+		    Call Self.mProject.AddMember(Member)
+		    
+		    Self.UpdateUserList()
+		  Catch Err As RuntimeException
+		  End Try
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub StatusCheckReplyCallback(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Private Sub APICallback_DeleteUser(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  Self.DecrementRequestCount()
+		  
+		  Var Member As Beacon.ProjectMember = Request.Tag
+		  
+		  If Response.Success Then
+		    Call Self.mProject.RemoveMember(Member)
+		  End If
+		  
+		  Self.UpdateUserList()
+		  
+		  If Not Response.Success Then
+		    Self.ShowAlert("The user was not removed from the project", If(Response.Message.IsEmpty = False, Response.Message, "Users can remove themselves by deleting the project from their cloud list, or the user can be removed by the owner or admin."))
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_FindUser(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  Self.DecrementRequestCount()
+		  
+		  Var RequestDetails As Dictionary = Request.Tag
+		  Var UserIdentifier As String = RequestDetails.Value("UserIdentifier")
+		  Var Role As String = RequestDetails.Value("Role")
+		  
+		  If Not Response.Success Then
+		    If Response.HTTPStatus = 404 Then
+		      Self.ShowAlert("Could not find user '" + UserIdentifier + "'", "Please enter the UUID, email address, or full username with suffix (such as User#ABCD1234) to continue.")
+		      Self.ShowAddUser(UserIdentifier, Role)
+		    Else
+		      Self.ShowAlert("Could not find user '" + UserIdentifier + "'", If(Response.Message.IsEmpty = False, Response.Message, "The server returned a " + Response.HTTPStatus.ToString(Locale.Raw, "0") + " status."))
+		    End If
+		    
+		    Return
+		  End If
+		  
+		  Try
+		    Var UserInfo As Dictionary = Response.JSON
+		    Var Identity As Beacon.Identity = Beacon.Identity.FromUserApi(UserInfo)
+		    Var Member As New Beacon.ProjectMember(Identity, Role)
+		    Call Member.SetPassword(Self.mProject.Password)
+		    
+		    Var MemberInfo As Dictionary = Member.DictionaryValue
+		    BeaconAPI.Send(New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members/" + EncodeURLComponent(Member.UserId), "PUT", Beacon.GenerateJson(MemberInfo, False), "application/json", AddressOf APICallback_AddUser))
+		    Self.IncrementRequestCount()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing user lookup response")
+		    Self.ShowAlert("There was an error adding the user", If(Response.Message.IsEmpty = False, Response.Message, "Beacon encountered an exception while processing the user lookup."))
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_GetCommunityStatus(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
+		  
+		  Self.DecrementRequestCount()
 		  
 		  If Response.HTTPStatus <> 200 Or Response.JSONParsed = False Then
 		    If Response.HTTPStatus = 403 Then
@@ -582,7 +615,7 @@ End
 		  
 		  Try
 		    Var Payload As Dictionary = Response.JSON
-		    Var Status As String = Payload.Value("status")
+		    Var Status As String = Payload.Value("communityStatus")
 		    
 		    Select Case Status
 		    Case "Requested"
@@ -592,11 +625,11 @@ End
 		    Case "Approved"
 		      Self.CommunityStatusField.Text = "Shared"
 		      Self.CommunityShareButton.Caption = "Unshare"
-		      Self.CommunityShareButton.Enabled = True
+		      Self.CommunityShareButton.Enabled = Self.mHasAdminPermission
 		    Case "Private", "Approved But Private"
 		      Self.CommunityStatusField.Text = "Private"
 		      Self.CommunityShareButton.Caption = "Share"
-		      Self.CommunityShareButton.Enabled = True
+		      Self.CommunityShareButton.Enabled = Self.mHasAdminPermission
 		    Case "Denied"
 		      Self.CommunityStatusField.Text = "Private (Sharing Request Denied)"
 		      Self.CommunityShareButton.Caption = "Share"
@@ -612,46 +645,162 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UserLookupReplyCallback(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Private Sub APICallback_LoadMembers(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
+		  Self.DecrementRequestCount()
+		  
+		  If Response.Success = False Then
+		    Self.UpdateUserList
+		    Return
+		  End If
+		  
 		  Try
-		    Var Dicts() As Variant
-		    Var Parsed As Variant = Response.JSON
-		    If IsNull(Parsed) = False And Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
-		      Dicts.Add(Parsed)
-		    Else
-		      Dicts = Parsed
-		    End If
-		    
-		    Var Usernames As New Dictionary
-		    For Each UserDict As Dictionary In Dicts
-		      Var UserID As String = UserDict.Value("user_id").StringValue
-		      Var Username As String = UserDict.Value("username_full").StringValue
-		      Usernames.Value(UserID) = Username
+		    Var Members() As Beacon.ProjectMember = Self.mProject.GetMembers
+		    Var Map As New Dictionary
+		    For Each Member As Beacon.ProjectMember In Members
+		      Map.Value(Member.UserId) = Member
 		    Next
 		    
-		    For I As Integer = 0 To Self.UserList.RowCount - 1
-		      Var UserID As String = Self.UserList.CellTextAt(I, 1)
-		      If Usernames.HasKey(UserID) Then
-		        Self.UserList.CellTextAt(I, 0) = Usernames.Value(UserID).StringValue
+		    Var MemberDicts() As Variant = Response.JSON
+		    For Each MemberInfo As Variant In MemberDicts
+		      If MemberInfo.Type <> Variant.TypeObject Or (MemberInfo.ObjectValue IsA Dictionary) = False Then
+		        Continue
 		      End If
+		      
+		      Var UserId As String = Dictionary(MemberInfo.ObjectValue).Value("userId")
+		      Var Member As New Beacon.ProjectMember(UserId, Dictionary(MemberInfo.ObjectValue))
+		      If Map.HasKey(Member.UserId) Then
+		        Map.Remove(Member.UserId)
+		      End If
+		      
+		      // Add the user to make sure the public key is up to date
+		      Call Self.mProject.AddMember(Member)
+		    Next
+		    
+		    // Clean out unnecessary keys
+		    For Each Entry As DictionaryEntry In Map
+		      Call Self.mProject.RemoveMember(Entry.Key.StringValue)
 		    Next
 		  Catch Err As RuntimeException
-		    
 		  End Try
 		  
-		  Self.UsernameLookupSpinner.Visible = False
+		  Self.UpdateUserList()
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Constructor(Project As Beacon.Project)
+		  Self.mProject = Project
+		  Self.mHasAdminPermission = (Self.mProject.Role = Beacon.ProjectMember.RoleOwner Or Self.mProject.Role = Beacon.ProjectMember.RoleAdmin)
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DecrementRequestCount()
+		  Self.mRequestCount = Self.mRequestCount - 1
+		  Self.ActivitySpinner.Visible = Self.mRequestCount > 0
+		  Self.UserListRefreshButton.Enabled = Self.mRequestCount = 0
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub IncrementRequestCount()
+		  Self.mRequestCount = Self.mRequestCount + 1
+		  Self.ActivitySpinner.Visible = Self.mRequestCount > 0
+		  Self.UserListRefreshButton.Enabled = Self.mRequestCount = 0
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadGuests()
+		  Var Request As New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members", "GET", AddressOf APICallback_LoadMembers)
+		  BeaconAPI.Send(Request)
+		  Self.IncrementRequestCount()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Present(Parent As DesktopWindow, Project As Beacon.Project)
+		  If Parent = Nil Then
+		    Return
+		  End If
+		  
+		  Var Win As New SharingDialog(Project)
+		  Win.ShowModal(Parent)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowAddUser()
+		  Self.ShowAddUser("", Beacon.ProjectMember.RoleEditor)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowAddUser(DefaultValue As String, DefaultRole As String)
+		  Var UserIdentifier As String = DefaultValue
+		  Var Role As String = DefaultRole
+		  
+		  If Not ShareWithUserDialog.Present(Self, UserIdentifier, Role) Then
+		    Return
+		  End If
+		  
+		  Var Request As New BeaconAPI.Request("/users/" + EncodeURLComponent(UserIdentifier), "GET", AddressOf APICallback_FindUser)
+		  Request.Tag = New Dictionary("UserIdentifier": UserIdentifier, "Role": Role)
+		  BeaconAPI.Send(Request)
+		  Self.IncrementRequestCount()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUserList()
+		  Var Members() As Beacon.ProjectMember = Self.mProject.GetMembers
+		  For Idx As Integer = Members.LastIndex DownTo 0
+		    If Members(Idx).Role = Beacon.ProjectMember.RoleOwner Then
+		      Members.RemoveAt(Idx)
+		      Exit For Idx
+		    End If
+		  Next
+		  
+		  Var SelectedIds() As String
+		  For Idx As Integer = 0 To Self.UserList.LastRowIndex
+		    If Self.UserList.RowSelectedAt(Idx) Then
+		      SelectedIds.Add(Beacon.ProjectMember(Self.UserList.RowTagAt(Idx)).UserId)
+		    End If
+		  Next
+		  
+		  Self.UserList.SelectionChangeBlocked = True
+		  Self.UserList.RowCount = Members.Count
+		  For Idx As Integer = 0 To Self.UserList.LastRowIndex
+		    Self.UserList.CellTextAt(Idx, 0) = Members(Idx).Username
+		    Self.UserList.CellTextAt(Idx, 1) = Members(Idx).UserId
+		    Self.UserList.CellTextAt(Idx, 2) = Members(Idx).Role
+		    Self.UserList.RowTagAt(Idx) = Members(Idx)
+		    Self.UserList.RowSelectedAt(Idx) = SelectedIds.IndexOf(Members(Idx).UserId) > -1
+		  Next
+		  Self.UserList.Sort
+		  Self.UserList.SelectionChangeBlocked = False
+		  Self.AddUserButton.Enabled = Self.mHasAdminPermission
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mHasAdminPermission As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOwnerId As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProject As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUsersChanged As Boolean
+		Private mRequestCount As Integer
 	#tag EndProperty
 
 
@@ -660,33 +809,13 @@ End
 #tag Events AddUserButton
 	#tag Event
 		Sub Pressed()
-		  Var UserID, Username, PublicKey As String
-		  If ShareWithUserDialog.Present(Self, UserID, Username, PublicKey) Then
-		    If Self.mProject.HasUser(UserID) = False Then
-		      Self.UserList.AddRow(Username, UserID)
-		      Self.UserList.Sort
-		    End If
-		    
-		    // Even if the user is already on the document, call AddUser in case the public key has changed
-		    Self.mProject.AddUser(UserID, PublicKey)
-		    Self.mUsersChanged = True
-		  End If
+		  Self.ShowAddUser()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events UserList
 	#tag Event
 		Sub Opening()
-		  Var Users() As String = Self.mProject.GetUsers()
-		  Users.Sort
-		  
-		  For Each UserID As String In Users
-		    If UserID = App.IdentityManager.CurrentIdentity.UserID Then
-		      Continue
-		    End If
-		    Me.AddRow("", UserID)
-		  Next
-		  
 		  Me.SortingColumn = 0
 		End Sub
 	#tag EndEvent
@@ -699,43 +828,66 @@ End
 		    End If
 		  End If
 		  
-		  For I As Integer = Me.RowCount - 1 DownTo 0
-		    If Me.RowSelectedAt(I) Then
-		      Self.mProject.RemoveUser(Me.CellTextAt(I, 1))
-		      Me.RemoveRowAt(I)
-		      Self.mUsersChanged = True
+		  For Idx As Integer = Me.RowCount - 1 DownTo 0
+		    If Me.RowSelectedAt(Idx) = False Then
+		      Continue
 		    End If
+		    
+		    Var Member As Beacon.ProjectMember = Me.RowTagAt(Idx)
+		    Var Request As New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members/" + EncodeURLComponent(Member.UserId), "DELETE", AddressOf APICallback_DeleteUser)
+		    Request.Tag = Member
+		    BeaconAPI.Send(Request)
+		    Self.IncrementRequestCount()
+		    
+		    Me.RemoveRowAt(Idx)
 		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mHasAdminPermission
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Self.RemoveUserButton.Enabled = Me.CanDelete
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1 And Self.mHasAdminPermission
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  Var Idx As Integer = Me.SelectedRowIndex
+		  Self.ShowAddUser(Me.CellTextAt(Idx, 1), Me.CellTextAt(Idx, 2))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UserListRefreshButton
+	#tag Event
+		Sub Pressed()
+		  Self.LoadGuests()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RemoveUserButton
+	#tag Event
+		Sub Pressed()
+		  Self.UserList.DoClear
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Self.Hide
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DownloadLinkLabel
-	#tag Event
-		Sub Opening()
-		  Me.Text = BeaconAPI.URL("project/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CopyLinkButton
-	#tag Event
-		Sub Pressed()
-		  Var Board As New Clipboard
-		  Board.Text = Self.DownloadLinkLabel.Text
+		  If Self.ActivitySpinner.Visible Then
+		    Self.ShowAlert("Wait until the current action is finished", "This window is still doing work. Give it a chance to finish.")
+		    Return
+		  End If
 		  
-		  Me.Caption = "Copied!"
-		  Me.Enabled = False
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -748,10 +900,10 @@ End
 		    If Description.IsEmpty Then
 		      Self.ShowAlert("Your project has no description and will be rejected if shared.", "This might be the best project ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
 		      Try
-		        App.MainWindow.Documents.EditorForProject(Self.mProject).SwitchToEditor(Ark.Configs.NameMetadataPsuedo)
+		        App.MainWindow.Documents.EditorForProject(Self.mProject).SwitchToEditor(Ark.Configs.NameProjectSettings)
 		      Catch Err As RuntimeException
 		      End Try
-		      Self.Hide()
+		      Self.Close()
 		      Return
 		    End If
 		    
@@ -768,11 +920,10 @@ End
 		  End If
 		  
 		  Var Payload As New Dictionary
-		  Payload.Value("status") = DesiredStatus
+		  Payload.Value("communityStatus") = DesiredStatus
 		  
-		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("project/" + Self.mProject.UUID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
-		  Request.Authenticate(Preferences.OnlineToken)
-		  APISocket.Start(Request)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("projects/" + EncodeUrlComponent(Self.mProject.ProjectId) + "/metadata"), "PATCH", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf APICallback_GetCommunityStatus)
+		  BeaconAPI.Send(Request)
 		  
 		  Me.Enabled = False
 		  Self.CommunityStatusField.Text = "Sharing…"
@@ -782,15 +933,11 @@ End
 #tag Events StatusCheckTimer
 	#tag Event
 		Sub Action()
-		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("project/" + Self.mProject.UUID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
-		  APISocket.Start(Request)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("projects/" + EncodeUrlComponent(Self.mProject.ProjectId) + "/metadata"), "GET", AddressOf APICallback_GetCommunityStatus)
+		  BeaconAPI.Send(Request)
+		  Self.IncrementRequestCount()
 		  
-		  Var Users() As String = Self.mProject.GetUsers
-		  If Users.LastIndex > -1 Then
-		    Var UsersLookup As New BeaconAPI.Request(BeaconAPI.URL("user/" + EncodeURLComponent(Users.Join(","))), "GET", AddressOf UserLookupReplyCallback)
-		    APISocket.Start(UsersLookup)
-		    Self.UsernameLookupSpinner.Visible = True
-		  End If
+		  Self.LoadGuests()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -844,8 +991,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

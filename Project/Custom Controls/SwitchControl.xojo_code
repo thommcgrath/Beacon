@@ -1,10 +1,19 @@
 #tag Class
 Protected Class SwitchControl
 Inherits ControlCanvas
+Implements NotificationKit.Receiver
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) )
 	#tag Event
 		Sub Activated()
 		  RaiseEvent Activated
 		  Self.Refresh
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Closing()
+		  NotificationKit.Ignore(Self, Preferences.Notification_SwitchCaptionVisibilityChanged)
+		  RaiseEvent Closing
 		End Sub
 	#tag EndEvent
 
@@ -103,6 +112,13 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
+		Sub Opening()
+		  RaiseEvent Opening
+		  NotificationKit.Watch(Self, Preferences.Notification_SwitchCaptionVisibilityChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused SafeArea
@@ -124,6 +140,26 @@ Inherits ControlCanvas
 		  If Self.mAnimationState > 0.0 Then
 		    Full.Graphics.DrawingColor = OnColor.AtOpacity(Self.mAnimationState)
 		    Full.Graphics.FillRectangle(0, 0, Full.Graphics.Width, Full.Graphics.Height)
+		  End If
+		  
+		  If Preferences.SwitchesShowCaptions Then
+		    Var OffCaptionColor As Color = SystemColors.LabelColor
+		    Var OnCaptionColor As Color = If(Highlighted, SystemColors.AlternateSelectedControlTextColor, SystemColors.UnemphasizedSelectedTextColor)
+		    Var CaptionSpaceWidth As Integer = Self.Width - (ThumbRect.Width + (Self.ThumbPadding * 2))
+		    If Self.mAnimationState < 1.0 Then
+		      Var OffCaptionRect As New Rect(ThumbRect.Right, ThumbRect.Top, CaptionSpaceWidth, ThumbRect.Height)
+		      Var OffShape As New FigureShape
+		      OffShape.AddLines(0 : 1, 1 : 0, 3 : 2, 5 : 0, 6 : 1, 4 : 3, 6 : 5, 5 : 6, 3 : 4, 1 : 6, 0 : 5, 2 : 3)
+		      OffShape.FillColor = OffCaptionColor
+		      Full.Graphics.DrawObject(OffShape, NearestMultiple(OffCaptionRect.HorizontalCenter - 3, G.ScaleX), NearestMultiple(OffCaptionRect.VerticalCenter - 3, G.ScaleY))
+		    End If
+		    If Self.mAnimationState > 0.0 Then
+		      Var OnCaptionRect As New Rect(ThumbRect.Left - CaptionSpaceWidth, ThumbRect.Top, CaptionSpaceWidth, ThumbRect.Height)
+		      Var OnShape As New FigureShape
+		      OnShape.AddLines(0 : 3, 1 : 2, 3 : 4, 7 : 0, 8 : 1, 3 : 6)
+		      OnShape.FillColor = OnCaptionColor
+		      Full.Graphics.DrawObject(OnShape, NearestMultiple(OnCaptionRect.HorizontalCenter - 4, G.ScaleX), NearestMultiple(OnCaptionRect.VerticalCenter - 3, G.ScaleY))
+		    End If
 		  End If
 		  
 		  Var BorderMask As New Picture(G.Width * G.ScaleX, G.Height * G.ScaleY)
@@ -150,11 +186,13 @@ Inherits ControlCanvas
 		  Shadow.Offset = New Point(0, 1)
 		  Shadow.ShadowColor = &c00000080
 		  
+		  // Draw thumb
 		  Full.Graphics.ShadowBrush = Shadow
 		  Full.Graphics.DrawPicture(Border, 0, 0)
 		  Full.Graphics.DrawingColor = &cFFFFFF
 		  Full.Graphics.FillOval(ThumbRect.Left, ThumbRect.Top, ThumbRect.Width, ThumbRect.Height)
 		  Full.Graphics.ShadowBrush = Nil
+		  
 		  
 		  If Self.mPressedOpacity > 0.0 Then
 		    Var PressedColor As Color = &c000000D4
@@ -208,6 +246,21 @@ Inherits ControlCanvas
 		    Self.Refresh
 		  Case "PressedOpacity"
 		    Self.mPressedOpacity = Value
+		    Self.Refresh
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  If Notification Is Nil Then
+		    Return
+		  End If
+		  
+		  Select Case Notification.Name
+		  Case Preferences.Notification_SwitchCaptionVisibilityChanged
 		    Self.Refresh
 		  End Select
 		End Sub
@@ -305,11 +358,19 @@ Inherits ControlCanvas
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Closing()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Deactivated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event KeyDown(Key As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -34,8 +34,68 @@ Protected Module Ark
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function BlueprintPath(Extends Matches As RegExMatch) As String
+	#tag Method, Flags = &h1
+		Protected Function AddToArchive(Archive As Beacon.Archive, ContentPack As Beacon.ContentPack, Blueprints() As Ark.Blueprint) As String
+		  If Archive Is Nil Or ContentPack Is Nil Or Blueprints Is Nil Or Blueprints.Count = 0 Then
+		    Return ""
+		  End If
+		  
+		  Var Packs(0) As Dictionary
+		  Packs(0) = ContentPack.SaveData
+		  
+		  Var Payloads(0) As Dictionary
+		  Payloads(0) = New Dictionary("gameId": Ark.Identifier, "contentPacks": Packs)
+		  
+		  Var Engrams(), Creatures(), SpawnPoints(), LootDrops() As Dictionary
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var Packed As Dictionary = Blueprint.Pack
+		    If Packed Is Nil Then
+		      Continue
+		    End If
+		    
+		    Select Case Blueprint
+		    Case IsA Ark.Engram
+		      Engrams.Add(Packed)
+		    Case IsA Ark.Creature
+		      Creatures.Add(Packed)
+		    Case IsA Ark.SpawnPoint
+		      SpawnPoints.Add(Packed)
+		    Case IsA Ark.LootContainer
+		      LootDrops.Add(Packed)
+		    End Select
+		  Next
+		  
+		  If Engrams.Count = 0 And Creatures.Count = 0 And SpawnPoints.Count = 0 And LootDrops.Count = 0 Then
+		    Return ""
+		  End If
+		  
+		  Var Payload As New Dictionary
+		  Payload.Value("gameId") = Ark.Identifier
+		  If Creatures.Count > 0 Then
+		    Payload.Value("creatures") = Creatures
+		  End If
+		  If Engrams.Count > 0 Then
+		    Payload.Value("engrams") = Engrams
+		  End If
+		  If LootDrops.Count > 0 Then
+		    Payload.Value("lootDrops") = LootDrops
+		  End If
+		  If SpawnPoints.Count > 0 Then
+		    Payload.Value("spawnPoints") = SpawnPoints
+		  End If
+		  Payloads.Add(Payload)
+		  
+		  Var Filename As String = ContentPack.ContentPackId + ".json"
+		  Var FileContent As String = Beacon.GenerateJson(New Dictionary("payloads": Payloads), False)
+		  
+		  Archive.AddFile(Filename, FileContent)
+		  
+		  Return Filename
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BlueprintPath(Matches As RegExMatch) As String
 		  Var Path As String
 		  If Matches.SubExpressionCount >= 4 And Matches.SubExpressionString(4).IsEmpty = False Then
 		    Path = Matches.SubExpressionString(4)
@@ -43,6 +103,8 @@ Protected Module Ark
 		    Path = Matches.SubExpressionString(6)
 		  ElseIf Matches.SubExpressionCount >= 8 And Matches.SubExpressionString(8).IsEmpty = False Then
 		    Path = Matches.SubExpressionString(8)
+		  ElseIf Matches.SubExpressionCount >= 10 And Matches.SubExpressionString(10).IsEmpty = False Then
+		    Path = "/Game/Mods" + Matches.SubExpressionString(10)
 		  End If
 		  If Path.IsEmpty = False And Path.EndsWith("_C") Then
 		    Path = Path.Left(Path.Length - 2)
@@ -59,9 +121,117 @@ Protected Module Ark
 		    
 		    Regex = New Regex
 		    Regex.Options.CaseSensitive = False
-		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
+		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/Script/Engine\.Blueprint[" + QuotationCharacters + "]([^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
 		  End If
 		  Return Regex
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function BuildExport(Blueprints() As Ark.Blueprint, Archive As Beacon.Archive, IsUserData As Boolean) As Boolean
+		  Var OrganizedBlueprints As New Dictionary
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var ContentPackId As String = Blueprint.ContentPackId
+		    Var Siblings() As Ark.Blueprint
+		    If OrganizedBlueprints.HasKey(ContentPackId) Then
+		      Siblings = OrganizedBlueprints.Value(ContentPackId)
+		      Siblings.Add(Blueprint)
+		    Else
+		      Siblings.Add(Blueprint)
+		      OrganizedBlueprints.Value(ContentPackId) = Siblings
+		    End If
+		  Next
+		  
+		  Var Filenames() As String
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  For Each Entry As DictionaryEntry In OrganizedBlueprints
+		    Var ContentPack As Beacon.ContentPack = DataSource.GetContentPackWithId(Entry.Key.StringValue)
+		    If ContentPack Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var PackBlueprints() As Ark.Blueprint = Entry.Value
+		    Var Filename As String = AddToArchive(Archive, ContentPack, PackBlueprints)
+		    If Filename.IsEmpty = False Then
+		      Filenames.Add(Filename)
+		    End If
+		  Next
+		  If Filenames.Count = 0 Then
+		    Return False
+		  End If
+		  Filenames.Sort
+		  
+		  Var Manifest As New Dictionary
+		  Manifest.Value("version") = 7
+		  Manifest.Value("minVersion") = 7
+		  Manifest.Value("generatedWith") = App.BuildNumber
+		  Manifest.Value("isFull") = False
+		  Manifest.Value("files") = Filenames
+		  Manifest.Value("isUserData") = IsUserData
+		  Archive.AddFile("Manifest.json", Beacon.GenerateJson(Manifest, False))
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Blueprints() As Ark.Blueprint, IsUserData As Boolean) As MemoryBlock
+		  If Blueprints Is Nil Or Blueprints.Count = 0 Then
+		    App.Log("Could not export blueprints because there are no blueprints to export.")
+		    Return Nil
+		  End If
+		  
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create()
+		  Var Success As Boolean = BuildExport(Blueprints, Archive, IsUserData)
+		  Var Mem As MemoryBlock = Archive.Finalize
+		  If Success Then
+		    Return Mem
+		  Else
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Blueprints() As Ark.Blueprint, Destination As FolderItem, IsUserData As Boolean) As Boolean
+		  If Blueprints Is Nil Or Blueprints.Count = 0 Or Destination Is Nil Then
+		    App.Log("Could not export blueprints because the destination is invalid or there are no blueprints to export.")
+		    Return False
+		  End If
+		  
+		  Var Temp As FolderItem = FolderItem.TemporaryFile
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Temp)
+		  Var Success As Boolean = BuildExport(Blueprints, Archive, IsUserData)
+		  Call Archive.Finalize
+		  
+		  If Success Then
+		    Try
+		      If Destination.Exists Then
+		        Destination.Remove
+		      End If
+		      Temp.MoveTo(Destination)
+		      Return True
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		  End If
+		  
+		  Try
+		    Temp.Remove
+		  Catch Err As RuntimeException
+		  End Try
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(IsUserData As Boolean, ParamArray Blueprints() As Ark.Blueprint) As MemoryBlock
+		  Return BuildExport(Blueprints, IsUserData)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Destination As FolderItem, IsUserData As Boolean, ParamArray Blueprints() As Ark.Blueprint) As Boolean
+		  Return BuildExport(Blueprints, Destination, IsUserData)
 		End Function
 	#tag EndMethod
 
@@ -71,85 +241,148 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Disambiguate(Extends Creatures() As Ark.Creature, EnabledMaps As UInt64) As Dictionary
-		  Return Disambiguate(CategoryCreatures, Creatures, EnabledMaps)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Disambiguate(Extends Engrams() As Ark.Engram, EnabledMaps As UInt64) As Dictionary
-		  Return Disambiguate(CategoryEngrams, Engrams, EnabledMaps)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Disambiguate(Extends Containers() As Ark.LootContainer, EnabledMaps As UInt64) As Dictionary
-		  Return Disambiguate(CategoryLootContainers, Containers, EnabledMaps)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Disambiguate(Extends SpawnPoints() As Ark.SpawnPoint, EnabledMaps As UInt64) As Dictionary
-		  Return Disambiguate(CategorySpawnPoints, SpawnPoints, EnabledMaps)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function Disambiguate(Category As String, Blueprints() As Ark.Blueprint, EnabledMaps As UInt64) As Dictionary
-		  // Items in Blueprints() are always included, regardless of maps.
+	#tag Method, Flags = &h1
+		Protected Function ClassStringFromPath(Path As String) As String
+		  If Path.Length <= 6 Or Path.Left(6) <> "/Game/" Then
+		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
+		  End If
 		  
-		  Var Results As New Dictionary
-		  For Idx As Integer = 0 To Blueprints.LastIndex
-		    Results.Value(Blueprints(Idx).ObjectID) = Blueprints(Idx).Label
-		  Next Idx
+		  Var Components() As String = Path.Split("/")
+		  Var Tail As String = Components(Components.LastIndex)
+		  Components = Tail.Split(".")
 		  
-		  Var All() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Category, "", New Beacon.StringList, "")
-		  Var Labels As New Dictionary
-		  For Idx As Integer = 0 To All.LastIndex
-		    If All(Idx).ValidForMask(EnabledMaps) = False And Results.HasKey(All(Idx).ObjectID) = False Then
-		      Continue For Idx
+		  Var FirstPart As String = Components(Components.FirstIndex)
+		  Var SecondPart As String = Components(Components.LastIndex)
+		  
+		  If SecondPart.EndsWith("_C") And FirstPart.EndsWith("_C") = False Then
+		    // Appears to be a BlueprintGeneratedClass Path
+		    SecondPart = SecondPart.Left(SecondPart.Length - 2)
+		  End If
+		  
+		  Return SecondPart + "_C"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CopyFrom(Extends Destination As Ark.MutableBlueprint, Source As Ark.Blueprint) As Boolean
+		  If Source Is Nil Then
+		    Return False
+		  End If
+		  
+		  Var Packed As Dictionary = Source.Pack
+		  Return Destination.CopyFrom(Packed)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CopyFrom(Extends Destination As Ark.MutableBlueprint, Source As Dictionary) As Boolean
+		  If Source Is Nil Then
+		    Return False
+		  End If
+		  
+		  Var IdProperty, Category As String
+		  Var LegacyMode As Boolean
+		  If Source.HasKey("engramId") Then
+		    Category = Ark.CategoryEngrams
+		    IdProperty = "engramId"
+		  ElseIf Source.HasKey("creatureId") Then
+		    Category = Ark.CategoryCreatures
+		    IdProperty = "creatureId"
+		  ElseIf Source.HasKey("spawnPointId") Then
+		    Category = Ark.CategorySpawnPoints
+		    IdProperty = "spawnPointId"
+		  ElseIf Source.HasKey("lootDropId") Then
+		    Category = Ark.CategoryLootContainers
+		    IdProperty = "lootDropId"
+		  ElseIf Source.HasKey("group") Then
+		    Category = Source.Value("group")
+		    Select Case Category
+		    Case "spawnPoints"
+		      Category = Ark.CategorySpawnPoints
+		    Case "loot_sources", "lootDrops"
+		      Category = Ark.CategoryLootContainers
+		    End Select
+		    IdProperty = "id"
+		    LegacyMode = True
+		  End If
+		  
+		  If Category.IsEmpty Or Destination.Category <> Category Then
+		    Return False
+		  End If
+		  
+		  Var BlueprintId As String
+		  Var AlternateLabel As NullableString
+		  Var ContentPackId, ContentPackName As String
+		  Var LastUpdate As Double
+		  If LegacyMode Then
+		    BlueprintId = Source.Value("id")
+		    AlternateLabel = NullableString.FromVariant(Source.Value("alternate_label"))
+		    Var ContentPackInfo As Dictionary = Source.Value("mod")
+		    ContentPackId = ContentPackInfo.Value("id")
+		    ContentPackName = ContentPackInfo.Value("name")
+		  ElseIf Source.HasAllKeys(IdProperty, "label", "alternateLabel", "path", "tags", "availability", "contentPackId", "contentPackName", "lastUpdate") Then
+		    BlueprintId = Source.Value(IdProperty)
+		    AlternateLabel = NullableString.FromVariant(Source.Value("alternateLabel"))
+		    ContentPackId = Source.Value("contentPackId")
+		    ContentPackName = Source.Value("contentPackName")
+		    LastUpdate = Source.Value("lastUpdate")
+		  Else
+		    Return False
+		  End If
+		  
+		  Var Label As String = Source.Value("label")
+		  Var Path As String = Source.Value("path")
+		  
+		  If Path.IsEmpty Or BlueprintId.IsEmpty Or Label.IsEmpty Then
+		    Return False
+		  End If
+		  
+		  Var Tags() As String
+		  If Source.Value("tags").IsArray Then
+		    If Source.Value("tags").ArrayElementType = Variant.TypeString Then
+		      Tags = Source.Value("tags")
+		    ElseIf Source.Value("tags").ArrayElementType = Variant.TypeObject Then
+		      Var Temp() As Variant = Source.Value("tags")
+		      For Each Tag As Variant In Temp
+		        If Tag.Type = Variant.TypeString Then
+		          Tags.Add(Tag.StringValue)
+		        End If
+		      Next
 		    End If
-		    
-		    Var Siblings() As Ark.Blueprint
-		    If Labels.HasKey(All(Idx).Label) Then
-		      Siblings = Labels.Value(All(Idx).Label)
-		    End If
-		    Siblings.Add(All(Idx))
-		    Labels.Value(All(Idx).Label) = Siblings
-		  Next Idx
+		  End If
 		  
-		  For Each Entry As DictionaryEntry In Labels
-		    Var Siblings() As Ark.Blueprint = Entry.Value
-		    
-		    If Siblings.Count = 1 Then
-		      Continue For Entry
-		    End If
-		    
-		    Var Specifiers() As String
-		    Var UseClassStrings As Boolean
-		    For Idx As Integer = 0 To Siblings.LastIndex
-		      If Specifiers.IndexOf(Siblings(Idx).ContentPackName) > -1 Then
-		        UseClassStrings = True
-		        Exit For Idx
-		      Else
-		        Specifiers.Add(Siblings(Idx).ContentPackName)
-		      End If
-		    Next Idx
-		    
-		    For Idx As Integer = 0 To Siblings.LastIndex
-		      Results.Value(Siblings(Idx).ObjectID) = Siblings(Idx).Label.Disambiguate(If(UseClassStrings, Siblings(Idx).ClassString, Siblings(Idx).ContentPackName))
-		    Next Idx
-		  Next Entry
+		  Destination.Path = Path
+		  Destination.BlueprintId = BlueprintId
+		  Destination.AlternateLabel = AlternateLabel
+		  Destination.Availability = Source.Value("availability").UInt64Value
+		  Destination.Label = Label
+		  If ContentPackId.IsEmpty = False And ContentPackName.IsEmpty = False Then
+		    Destination.ContentPackId = ContentPackId
+		    Destination.ContentPackName = ContentPackName
+		  End If
+		  Destination.Tags = Tags
+		  Destination.LastUpdate = LastUpdate
 		  
-		  Return Results
+		  // Let the blueprint grab whatever additional data it needs
+		  Destination.Unpack(Source)
+		  
+		  Return True
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Copying blueprint data from dictionary")
+		    Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ExtractPath(Source As String) As String
 		  Var Matches As RegExMatch = BlueprintPathRegex.Search(Source)
-		  Return Matches.BlueprintPath
+		  Return Ark.BlueprintPath(Matches)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GenerateBlueprintId(ContentPackId As String, Path As String) As String
+		  Return Beacon.UUID.v5(ContentPackId.Lowercase + ":" + Path.Lowercase)
 		End Function
 	#tag EndMethod
 
@@ -186,6 +419,85 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function LabelFromClassString(ClassString As String) As String
+		  If ClassString.EndsWith("_C") Then
+		    ClassString = ClassString.Left(ClassString.Length - 2)
+		  End If
+		  
+		  If ClassString.IsEmpty Then
+		    Return ""
+		  End If
+		  
+		  Var Prefixes() As String = Array("DinoDropInventoryComponent", "DinoSpawnEntries")
+		  Var Blacklist() As String = Array("Character", "BP", "DinoSpawnEntries", "SupplyCrate", "SupplyCreate", "DinoDropInventoryComponent")
+		  
+		  Try
+		    ClassString = ClassString.Replace("T_Ext", "Ext")
+		    
+		    Var MapName As String
+		    
+		    Var Parts() As String = ClassString.Split("_")
+		    If Parts(0).BeginsWith("PrimalItem") Then
+		      Parts.RemoveAt(0)
+		    End If
+		    
+		    For I As Integer = Parts.LastIndex DownTo 0
+		      Select Case Parts(I)
+		      Case "AB"
+		        MapName = "Aberration"
+		        Parts.RemoveAt(I)
+		        Continue
+		      Case "Val"
+		        MapName = "Valguero"
+		        Parts.RemoveAt(I)
+		        Continue
+		      Case "SE"
+		        MapName = "Scorched"
+		        Parts.RemoveAt(I)
+		        Continue
+		      Case "Ext", "EX"
+		        MapName = "Extinction"
+		        Parts.RemoveAt(I)
+		        Continue
+		      Case "JacksonL", "Ragnarok"
+		        MapName = "Ragnarok"
+		        Parts.RemoveAt(I)
+		        Continue
+		      Case "TheCenter"
+		        MapName = "The Center"
+		        Parts.RemoveAt(I)
+		        Continue
+		      End Select
+		      
+		      For Each Prefix As String In Prefixes
+		        If Parts(I).BeginsWith(Prefix) Then
+		          Parts(I) = Parts(I).Middle(Prefix.Length)
+		        End If
+		      Next
+		      
+		      For Each Member As String In Blacklist
+		        If Parts(I) = Member Then
+		          Parts.RemoveAt(I)
+		          Continue For I
+		        End If
+		      Next
+		    Next
+		    
+		    If MapName <> "" Then
+		      Parts.AddAt(0, MapName)
+		    End If
+		    
+		    If Parts.Count > 0 Then
+		      Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Return Beacon.MakeHumanReadable(ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function LootColors() As Pair()
 		  Var Colors() As Pair
 		  Colors.Add("White" : "FFFFFF00")
@@ -207,6 +519,18 @@ Protected Module Ark
 		    Bits = Bits Or Map.Mask
 		  Next
 		  Return Bits
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Matches(Extends Blueprint As Ark.Blueprint, Rx As PCRE2CodeMBS) As Boolean
+		  Return (Rx.Match(Blueprint.Path) Is Nil) = False Or (Rx.Match(Blueprint.ClassString) Is Nil) = False Or (Rx.Match(Blueprint.Label) Is Nil) = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Matches(Extends Blueprint As Ark.Blueprint, Filter As String) As Boolean
+		  Return Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Label.IndexOf(Filter) > -1
 		End Function
 	#tag EndMethod
 
@@ -259,31 +583,35 @@ Protected Module Ark
 	#tag Method, Flags = &h1
 		Protected Function PackBlueprint(Blueprint As Ark.Blueprint) As Dictionary
 		  Var Dict As New Dictionary
+		  Var IdProperty As String
 		  
 		  Select Case Blueprint
 		  Case IsA Ark.Engram
 		    Dict.Value("group") = "engrams"
+		    IdProperty = "engramId"
 		  Case IsA Ark.Creature
 		    Dict.Value("group") = "creatures"
+		    IdProperty = "creatureId"
 		  Case IsA Ark.SpawnPoint
-		    Dict.Value("group") = "spawn_points"
+		    Dict.Value("group") = "spawnPoints"
+		    IdProperty = "spawnPointId"
 		  Case IsA Ark.LootContainer
-		    Dict.Value("group") = "loot_containers"
+		    Dict.Value("group") = "lootDrops"
+		    IdProperty = "lootDropId"
 		  Else
 		    Return Nil
 		  End Select
 		  
-		  Var ModInfo As New Dictionary
-		  ModInfo.Value("id") = Blueprint.ContentPackUUID
-		  ModInfo.Value("name") = Blueprint.ContentPackName
-		  
-		  Dict.Value("id") = Blueprint.ObjectID
+		  Dict.Value(IdProperty) = Blueprint.BlueprintId
 		  Dict.Value("label") = Blueprint.Label
-		  Dict.Value("alternate_label") = Blueprint.AlternateLabel
-		  Dict.Value("mod") = ModInfo
+		  Dict.Value("alternateLabel") = Blueprint.AlternateLabel
 		  Dict.Value("tags") = Blueprint.Tags
 		  Dict.Value("availability") = Blueprint.Availability
 		  Dict.Value("path") = Blueprint.Path
+		  Dict.Value("minVersion") = 20000000
+		  Dict.Value("lastUpdate") = Blueprint.LastUpdate
+		  Dict.Value("contentPackId") = Blueprint.ContentPackId
+		  Dict.Value("contentPackName") = Blueprint.ContentPackName
 		  
 		  // Let the blueprint add whatever additional data it needs
 		  Blueprint.Pack(Dict)
@@ -294,6 +622,78 @@ Protected Module Ark
 
 	#tag Method, Flags = &h1
 		Protected Function ParseCommandLine(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
+		  // This shouldn't take long, but still, probably best to only use this on a thread
+		  
+		  Var InQuotes As Boolean
+		  Var Characters() As String = CommandLine.Split("")
+		  Var Buffer, Params() As String
+		  For Each Char As String In Characters
+		    If Char = """" Then
+		      If InQuotes Then
+		        Params.Add(Buffer)
+		        Buffer = ""
+		        InQuotes = False
+		      Else
+		        InQuotes = True
+		      End If
+		    ElseIf Char = " " Then
+		      If InQuotes = False And Buffer.Length > 0 Then
+		        Params.Add(Buffer)
+		        Buffer = ""
+		      End If
+		    ElseIf Char = "-" And Buffer.Length = 0 Then
+		      Continue
+		    Else
+		      Buffer = Buffer + Char
+		    End If
+		  Next
+		  If Buffer.Length > 0 Then
+		    Params.Add(Buffer)
+		    Buffer = ""
+		  End If
+		  
+		  Var StartupParams() As String = Params.Shift.Split("?")
+		  Var Map As String = StartupParams.Shift
+		  Call StartupParams.Shift // The listen statement
+		  If PreserveSyntax Then
+		    For Idx As Integer = 0 To Params.LastIndex
+		      Params(Idx) = "-" + Params(Idx)
+		    Next
+		    For Idx As Integer = 0 To StartupParams.LastIndex
+		      StartupParams(Idx) = "?" + StartupParams(Idx)
+		    Next
+		  End If
+		  StartupParams.Merge(Params)
+		  
+		  Var CommandLineOptions As New Dictionary
+		  For Each Parameter As String In StartupParams
+		    Var KeyPos As Integer = Parameter.IndexOf("=")
+		    Var Key As String
+		    Var Value As Variant
+		    If KeyPos = -1 Then
+		      Key = Parameter
+		      Value = True
+		    Else
+		      Key = Parameter.Left(KeyPos)
+		      Value = Parameter.Middle(KeyPos + 1)
+		    End If
+		    If PreserveSyntax Then
+		      Value = Parameter
+		    End If
+		    CommandLineOptions.Value(Key) = Value
+		  Next
+		  
+		  If PreserveSyntax Then
+		    CommandLineOptions.Value("?Map") = Map
+		  Else
+		    CommandLineOptions.Value("Map") = Map
+		  End If
+		  Return CommandLineOptions
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ParseCommandLine1(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
 		  // This shouldn't take long, but still, probably best to only use this on a thread
 		  
 		  Var InQuotes As Boolean
@@ -399,6 +799,12 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RegenerateBlueprintId(Extends Blueprint As Ark.MutableBlueprint)
+		  Blueprint.BlueprintId = Ark.GenerateBlueprintId(Blueprint.ContentPackId, Blueprint.Path)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveTag(Extends Blueprint As Ark.MutableBlueprint, ParamArray TagsToRemove() As String)
 		  Blueprint.RemoveTags(TagsToRemove)
 		End Sub
@@ -434,11 +840,11 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Creature
-		  Var ObjectID, Path, ClassString As String
+		Protected Function ResolveCreature(Dict As Dictionary, CreatureIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Creature
+		  Var CreatureId, Path, ClassString As String
 		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		  If CreatureIdKey.IsEmpty = False And Dict.HasKey(CreatureIdKey) Then
+		    CreatureId = Dict.Value(CreatureIdKey)
 		  End If
 		  
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
@@ -449,15 +855,15 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveCreature(ObjectID, Path, ClassString, ContentPacks)
+		  Return Ark.ResolveCreature(CreatureId, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature
-		  If ObjectID.IsEmpty = False Then
+		Protected Function ResolveCreature(CreatureId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature
+		  If CreatureId.IsEmpty = False Then
 		    Try
-		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ObjectID)
+		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(CreatureId)
 		      If (Creature Is Nil) = False Then
 		        Return Creature
 		      End If
@@ -487,19 +893,19 @@ Protected Module Ark
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
-		    Return ResolveCreature(ObjectID, Path, ClassString, Nil)
+		    Return ResolveCreature(CreatureId, Path, ClassString, Nil)
 		  End If
 		  
-		  Return Ark.Creature.CreateCustom(ObjectID, Path, ClassString)
+		  Return Ark.Creature.CreateCustom(CreatureId, Path, ClassString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Engram
-		  Var ObjectID, Path, ClassString As String
+		Protected Function ResolveEngram(Dict As Dictionary, EngramIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Engram
+		  Var EngramId, Path, ClassString As String
 		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		  If EngramIdKey.IsEmpty = False And Dict.HasKey(EngramIdKey) Then
+		    EngramId = Dict.Value(EngramIdKey)
 		  End If
 		  
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
@@ -510,15 +916,15 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveEngram(ObjectID, Path, ClassString, ContentPacks)
+		  Return Ark.ResolveEngram(EngramId, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram
-		  If ObjectID.IsEmpty = False Then
+		Protected Function ResolveEngram(EngramId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram
+		  If EngramId.IsEmpty = False Then
 		    Try
-		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(ObjectID)
+		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram(EngramId)
 		      If (Engram Is Nil) = False Then
 		        Return Engram
 		      End If
@@ -548,19 +954,19 @@ Protected Module Ark
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
-		    Return ResolveEngram(ObjectID, Path, ClassString, Nil)
+		    Return ResolveEngram(EngramId, Path, ClassString, Nil)
 		  End If
 		  
-		  Return Ark.Engram.CreateCustom(ObjectID, Path, ClassString)
+		  Return Ark.Engram.CreateCustom(EngramId, Path, ClassString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveLootContainer(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
-		  Var ObjectID, Path, ClassString As String
+		Protected Function ResolveLootContainer(Dict As Dictionary, LootDropIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
+		  Var LootDropId, Path, ClassString As String
 		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		  If LootDropIdKey.IsEmpty = False And Dict.HasKey(LootDropIdKey) Then
+		    LootDropId = Dict.Value(LootDropIdKey)
 		  End If
 		  
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
@@ -571,15 +977,15 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveLootContainer(ObjectID, Path, ClassString, ContentPacks)
+		  Return Ark.ResolveLootContainer(LootDropId, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveLootContainer(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
-		  If ObjectID.IsEmpty = False Then
+		Protected Function ResolveLootContainer(LootDropId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
+		  If LootDropId.IsEmpty = False Then
 		    Try
-		      Var LootContainer As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainerByUUID(ObjectID)
+		      Var LootContainer As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainer(LootDropId)
 		      If (LootContainer Is Nil) = False Then
 		        Return LootContainer
 		      End If
@@ -609,19 +1015,19 @@ Protected Module Ark
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
-		    Return ResolveLootContainer(ObjectID, Path, ClassString, Nil)
+		    Return ResolveLootContainer(LootDropId, Path, ClassString, Nil)
 		  End If
 		  
-		  Return Ark.LootContainer.CreateCustom(ObjectID, Path, ClassString)
+		  Return Ark.LootContainer.CreateCustom(LootDropId, Path, ClassString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
-		  Var ObjectID, Path, ClassString As String
+		Protected Function ResolveSpawnPoint(Dict As Dictionary, SpawnPointIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
+		  Var SpawnPointId, Path, ClassString As String
 		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		  If SpawnPointIdKey.IsEmpty = False And Dict.HasKey(SpawnPointIdKey) Then
+		    SpawnPointId = Dict.Value(SpawnPointIdKey)
 		  End If
 		  
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
@@ -632,15 +1038,15 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveSpawnPoint(ObjectID, Path, ClassString, ContentPacks)
+		  Return Ark.ResolveSpawnPoint(SpawnPointId, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
-		  If ObjectID.IsEmpty = False Then
+		Protected Function ResolveSpawnPoint(SpawnPointId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
+		  If SpawnPointId.IsEmpty = False Then
 		    Try
-		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointByUUID(ObjectID)
+		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPoint(SpawnPointId)
 		      If (SpawnPoint Is Nil) = False Then
 		        Return SpawnPoint
 		      End If
@@ -670,10 +1076,10 @@ Protected Module Ark
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
-		    Return ResolveSpawnPoint(ObjectID, Path, ClassString, Nil)
+		    Return ResolveSpawnPoint(SpawnPointId, Path, ClassString, Nil)
 		  End If
 		  
-		  Return Ark.SpawnPoint.CreateCustom(ObjectID, Path, ClassString)
+		  Return Ark.SpawnPoint.CreateCustom(SpawnPointId, Path, ClassString)
 		End Function
 	#tag EndMethod
 
@@ -743,6 +1149,23 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Sort(Extends Overrides() As Ark.LootDropOverride)
+		  Var Bound As Integer = Overrides.LastIndex
+		  If Bound = -1 Then
+		    Return
+		  End If
+		  
+		  Var Order() As String
+		  Order.ResizeTo(Bound)
+		  For I As Integer = 0 To Bound
+		    Order(I) = Overrides(I).SortValue.ToString(Locale.Raw, "0000") + Overrides(I).Label + Overrides(I).LootDropReference.ClassString
+		  Next
+		  
+		  Order.SortWith(Overrides)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Sort(Extends Qualities() As Ark.Quality)
 		  Var Bound As Integer = Qualities.LastIndex
 		  If Bound = -1 Then
@@ -795,65 +1218,41 @@ Protected Module Ark
 
 	#tag Method, Flags = &h1
 		Protected Function UnpackBlueprint(Dict As Dictionary) As Ark.MutableBlueprint
-		  If Not Dict.HasAllKeys("id", "label", "alternate_label", "path", "group", "tags", "availability", "mod") Then
-		    Return Nil
+		  Var Group As String
+		  If Dict.HasKey("engramId") Then
+		    Group = Ark.CategoryEngrams
+		  ElseIf Dict.HasKey("creatureId") Then
+		    Group = Ark.CategoryCreatures
+		  ElseIf Dict.HasKey("spawnPointId") Then
+		    Group = Ark.CategorySpawnPoints
+		  ElseIf Dict.HasKey("lootDropId") Then
+		    Group = Ark.CategoryLootContainers
+		  ElseIf Dict.HasKey("group") Then
+		    Group = Dict.Value("group")
 		  End If
 		  
-		  Var Group As String = Dict.Value("group")
-		  Var Path As String = Dict.Value("path")
-		  Var ObjectID As String = Dict.Value("id")
-		  
-		  If Path.IsEmpty Or ObjectID.IsEmpty Or Group.IsEmpty Then
-		    Return Nil
-		  End If
-		  
-		  Var Blueprint As Ark.MutableBlueprint
+		  Var Destination As Ark.MutableBlueprint
 		  Select Case Group
 		  Case Ark.CategoryEngrams
-		    Blueprint = New Ark.MutableEngram(Path, ObjectID)
+		    Destination = New Ark.MutableEngram
 		  Case Ark.CategoryCreatures
-		    Blueprint = New Ark.MutableCreature(Path, ObjectID)
-		  Case Ark.CategorySpawnPoints
-		    Blueprint = New Ark.MutableSpawnPoint(Path, ObjectID)
-		  Case Ark.CategoryLootContainers, "loot_sources"
-		    Blueprint = New Ark.MutableLootContainer(Path, ObjectID)
+		    Destination = New Ark.MutableCreature
+		  Case Ark.CategorySpawnPoints, "spawnPoints"
+		    Destination = New Ark.MutableSpawnPoint
+		  Case Ark.CategoryLootContainers, "loot_sources", "lootDrops"
+		    Destination = New Ark.MutableLootContainer
 		  Else
 		    Return Nil
 		  End Select
 		  
-		  Var ModInfo As Dictionary = Dict.Value("mod")
-		  
-		  Var Tags() As String
-		  If Dict.Value("tags").IsArray Then
-		    If Dict.Value("tags").ArrayElementType = Variant.TypeString Then
-		      Tags = Dict.Value("tags")
-		    ElseIf Dict.Value("tags").ArrayElementType = Variant.TypeObject Then
-		      Var Temp() As Variant = Dict.Value("tags")
-		      For Each Tag As Variant In Temp
-		        If Tag.Type = Variant.TypeString Then
-		          Tags.Add(Tag.StringValue)
-		        End If
-		      Next
-		    End If
-		  End If
-		  
-		  If IsNull(Dict.Value("alternate_label")) = False And Dict.Value("alternate_label").StringValue.IsEmpty = False Then
-		    Blueprint.AlternateLabel = Dict.Value("alternate_label").StringValue
+		  If Destination.CopyFrom(Dict) Then
+		    Return Destination
 		  Else
-		    Blueprint.AlternateLabel = Nil
+		    Return Nil
 		  End If
-		  Blueprint.Availability = Dict.Value("availability").UInt64Value
-		  Blueprint.Label = Dict.Value("label").StringValue
-		  Blueprint.ContentPackUUID = ModInfo.Value("id").StringValue
-		  Blueprint.ContentPackName = ModInfo.Value("name").StringValue
-		  Blueprint.Tags = Tags
-		  
-		  // Let the blueprint grab whatever additional data it needs
-		  Blueprint.Unpack(Dict)
-		  
-		  Return Blueprint
 		  
 		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Unpacking blueprint")
 		    Return Nil
 		End Function
 	#tag EndMethod
@@ -927,7 +1326,7 @@ Protected Module Ark
 
 	#tag Method, Flags = &h0
 		Function ValidForProject(Extends Blueprint As Ark.Blueprint, Project As Ark.Project) As Boolean
-		  Return (Project Is Nil) = False And Project.ContentPackEnabled(Blueprint.ContentPackUUID)
+		  Return (Project Is Nil) = False And Project.ContentPackEnabled(Blueprint.ContentPackId)
 		End Function
 	#tag EndMethod
 
@@ -974,13 +1373,16 @@ Protected Module Ark
 	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = SteamAppId, Type = Double, Dynamic = False, Default = \"376030", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
+	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UserContentPackUUID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Protected
+	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"Ark: Survival Evolved User Content", Scope = Protected
 	#tag EndConstant
 
 

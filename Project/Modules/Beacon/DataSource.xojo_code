@@ -78,13 +78,19 @@ Implements NotificationKit.Receiver
 		  Var Savepoint As String = Self.mTransactions(0)
 		  Self.mTransactions.RemoveAt(0)
 		  
-		  If Savepoint = "" Then
-		    Self.mDatabase.ExecuteSQL("COMMIT TRANSACTION;")
-		  Else
-		    Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
-		  End If
-		  
-		  Self.ReleaseLock()
+		  Try
+		    If Savepoint.IsEmpty Then
+		      Self.mDatabase.ExecuteSQL("COMMIT TRANSACTION;")
+		    Else
+		      Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
+		    End If
+		    Self.ReleaseLock()
+		  Catch Err As RuntimeException
+		    // Put the transaction back into the stack
+		    Self.mTransactions.AddAt(0, Savepoint)
+		    Self.ReleaseLock()
+		    Raise Err
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -199,6 +205,81 @@ Implements NotificationKit.Receiver
 		  
 		  RaiseEvent Open()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CountContentPacks(Filter As String, Type As Beacon.ContentPack.Types) As Integer
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("name LIKE :filter ESCAPE '\'")
+		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
+		  End If
+		  Select Case Type
+		  Case Beacon.ContentPack.Types.Official
+		    Clauses.Add("is_local = 0 AND console_safe = 1")
+		  Case Beacon.ContentPack.Types.ThirdParty
+		    Clauses.Add("is_local = 0 AND console_safe = 0")
+		  Case Beacon.ContentPack.Types.Custom
+		    Clauses.Add("is_local = 1")
+		  End Select
+		  
+		  Var SQL As String = "SELECT COUNT(content_pack_id) FROM content_packs"
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + String.FromArray(Clauses, " AND ")
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
+		  Return Results.ColumnAt(0).IntegerValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateLocalContentPack(PackName As String, GameId As String, DoCloudExport As Boolean) As Beacon.ContentPack
+		  Return Self.CreateLocalContentPack(PackName, GameId, "", "", DoCloudExport)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateLocalContentPack(PackName As String, GameId As String, Marketplace As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
+		  Var ContentPackId As String
+		  If MarketplaceId.IsEmpty Or Marketplace.IsEmpty Then
+		    ContentPackId = Beacon.UUID.v4
+		    Marketplace = ""
+		    MarketplaceId = ""
+		  Else
+		    ContentPackId = Beacon.ContentPack.GenerateLocalContentPackId(Marketplace, MarketplaceId)
+		  End If
+		  Self.BeginTransaction()
+		  Var Rows As RowSet = Self.SQLSelect("INSERT OR IGNORE INTO content_packs (content_pack_id, game_id, marketplace, marketplace_id, name, console_safe, default_enabled, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9) RETURNING *;", ContentPackId, GameId, Marketplace, MarketplaceId, PackName, False, False, True, DateTime.Now.SecondsFrom1970)
+		  If Rows.RowCount <> 1 Then
+		    Self.RollbackTransaction()
+		    Return Nil
+		  End If
+		  Self.CommitTransaction()
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
+		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Rows)
+		  Return Packs(0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeleteContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean) As Boolean
+		  Return Self.DeleteContentPack(Pack.ContentPackId, DoCloudExport)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeleteContentPack(ContentPackId As String, DoCloudExport As Boolean) As Boolean
+		  Var Deleted As Boolean = RaiseEvent DeleteContentPack(ContentPackId)
+		  If Deleted And DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
+		  Return Deleted
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -336,6 +417,78 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetContentPacks(Type As Beacon.ContentPack.Types) As Beacon.ContentPack()
+		  Return Self.GetContentPacks("", Type, 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  Return Self.GetContentPacks("", Type, Offset, Limit)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String = "") As Beacon.ContentPack()
+		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack()
+		  Return Self.GetContentPacks(Filter, Type, 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("name LIKE :filter ESCAPE '\'")
+		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
+		  End If
+		  Select Case Type
+		  Case Beacon.ContentPack.Types.Official
+		    Clauses.Add("is_local = 0 AND console_safe = 1")
+		  Case Beacon.ContentPack.Types.ThirdParty
+		    Clauses.Add("is_local = 0 AND console_safe = 0")
+		  Case Beacon.ContentPack.Types.Custom
+		    Clauses.Add("is_local = 1")
+		  End Select
+		  
+		  Var SQL As String = "SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update FROM content_packs"
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + String.FromArray(Clauses, " AND ")
+		  End If
+		  SQL = SQL + " ORDER BY name"
+		  If Limit > 0 Then
+		    SQL = SQL + " LIMIT " + Limit.ToString(Locale.Raw, "0") + " OFFSET " + Offset.ToString(Locale.Raw, "0")
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
+		  Return Beacon.ContentPack.FromDatabase(Results)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), Offset, Limit)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPackWithId(ContentPackId As String) As Beacon.ContentPack
+		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
+		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
+		  If Packs.Count = 1 Then
+		    Return Packs(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasContent() As Boolean
 		  Try
 		    Var Rows As RowSet = Self.SQLSelect("SELECT EXISTS(SELECT 1 FROM variables) AS populated;")
@@ -355,30 +508,15 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Import(Data As Dictionary, ShouldTruncate As Boolean, Deletions() As Dictionary) As Boolean
+		Function Import(ShouldTruncate As Boolean, Payloads() As Dictionary, Timestamp As NullableDouble, IsUserData As Boolean) As Boolean
 		  // The DataUpdater module will call this method inside a thread with its own database connection
-		  
-		  If Data.HasKey(Self.Identifier.Lowercase) = False Then
-		    Return True
-		  End If
-		  
-		  Var Timestamp As Double
-		  Try
-		    Timestamp = Data.Value("timestamp").DoubleValue
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Invalid timestamp value")
-		    Return False
-		  End Try
-		  
-		  If Timestamp <= Self.LastSyncTimestamp And ShouldTruncate = False Then
-		    // Already imported
-		    Return True
-		  End If
 		  
 		  Var StatusData As New Dictionary
 		  Var OriginalDepth As Integer = Self.TransactionDepth
-		  Self.BeginTransaction()
 		  Self.mImporting = True
+		  Self.BeginTransaction()
+		  Self.SQLExecute("PRAGMA defer_foreign_keys = TRUE;")
+		  Self.DropIndexes()
 		  
 		  If ShouldTruncate Then
 		    Try
@@ -393,18 +531,44 @@ Implements NotificationKit.Receiver
 		    End Try
 		  End If
 		  
-		  Try
-		    Var ChangeDict As Dictionary = Data.Value(Self.Identifier.Lowercase)
-		    If Import(ChangeDict, StatusData, Deletions) Then
-		      Self.LastSyncTimestamp = Timestamp
-		      Self.CommitTransaction
-		    Else
-		      Self.RollbackTransaction
-		      Self.mImporting = False
-		      Return False
+		  For Each Parsed As Dictionary In Payloads
+		    If Parsed.HasKey("payloads") = False Then
+		      Continue
 		    End If
+		    
+		    Var ChildPayloads() As Variant = Parsed.Value("payloads")
+		    For Each ChildPayload As Dictionary In ChildPayloads
+		      Var GameId As String = ChildPayload.Lookup("gameId", "")
+		      If GameId <> Self.Identifier Then
+		        Continue
+		      End If
+		      
+		      Try
+		        If Import(ChildPayload, StatusData, IsUserData) = False Then
+		          Self.RollbackTransaction
+		          Self.mImporting = False
+		          Return False
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Importing")
+		        While Self.TransactionDepth > OriginalDepth
+		          Self.RollbackTransaction
+		        Wend
+		        Self.mImporting = False
+		        Return False
+		      End Try
+		    Next
+		  Next
+		  
+		  If (Timestamp Is Nil) = False Then
+		    Self.LastSyncTimestamp = Timestamp
+		  End If
+		  Self.BuildIndexes()
+		  
+		  Try
+		    Self.CommitTransaction()
 		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Importing")
+		    App.Log(Err, CurrentMethodName, "Trying to commit import")
 		    While Self.TransactionDepth > OriginalDepth
 		      Self.RollbackTransaction
 		    Wend
@@ -414,6 +578,7 @@ Implements NotificationKit.Receiver
 		  
 		  Try
 		    RaiseEvent ImportCleanup(StatusData)
+		    
 		    If ShouldTruncate Then
 		      RaiseEvent ImportCloudFiles()
 		    End If
@@ -434,10 +599,12 @@ Implements NotificationKit.Receiver
 		Sub ImportCloudFiles()
 		  If Self.mAllowWriting Then
 		    RaiseEvent ImportCloudFiles()
+		    NotificationKit.Post(Self.Notification_ImportCloudFilesFinished, Self.Identifier)
 		    Return
 		  End If
 		  
 		  Var Th As New Beacon.Thread
+		  Th.DebugIdentifier = CurrentMethodName
 		  Th.Retain
 		  AddHandler Th.Run, AddressOf ImportCloudFiles_Threaded
 		  Th.Start
@@ -530,7 +697,7 @@ Implements NotificationKit.Receiver
 		      For I As Integer = 1 To Dict.KeyCount
 		        FinalValues.Add(Dict.Value(I))
 		      Next
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		      FinalValues.ResizeTo(-1)
 		    End Try
 		  ElseIf Values.LastIndex = 0 And Values(0).IsArray Then
@@ -592,8 +759,12 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub Optimize()
 		  If Self.mAllowWriting Then
-		    Self.SQLExecute("ANALYZE;")
-		    Self.SQLExecute("VACUUM;")
+		    Try
+		      Self.SQLExecute("ANALYZE;")
+		      Self.SQLExecute("VACUUM;")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to optimize database")
+		    End Try
 		  End If
 		End Sub
 	#tag EndMethod
@@ -629,14 +800,20 @@ Implements NotificationKit.Receiver
 		  Var Savepoint As String = Self.mTransactions(0)
 		  Self.mTransactions.RemoveAt(0)
 		  
-		  If Savepoint = "" Then
-		    Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION;")
-		  Else
-		    Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION TO SAVEPOINT " + Savepoint + ";")
-		    Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
-		  End If
-		  
-		  Self.ReleaseLock()
+		  Try
+		    If Savepoint.IsEmpty Then
+		      Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION;")
+		    Else
+		      Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION TO SAVEPOINT " + Savepoint + ";")
+		      Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
+		    End If
+		    Self.ReleaseLock()
+		  Catch Err As RuntimeException
+		    // Put the transaction back into the stack
+		    Self.mTransactions.AddAt(0, Savepoint)
+		    Self.ReleaseLock()
+		    Raise Err
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -777,6 +954,10 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event DeleteContentPack(ContentPackId As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ExportCloudFiles()
 	#tag EndHook
 
@@ -785,7 +966,7 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
+		Event Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -867,6 +1048,9 @@ Implements NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = FlagUseWeakRef, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_ImportCloudFilesFinished, Type = String, Dynamic = False, Default = \"DataSource:ImportCloudFiles:Finished", Scope = Public
 	#tag EndConstant
 
 

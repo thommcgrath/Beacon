@@ -44,7 +44,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   132
+      Left            =   221
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -66,7 +66,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   476
+      Width           =   387
    End
    Begin UITweaks.ResizedLabel TitleLabel
       AllowAutoDeactivate=   True
@@ -99,7 +99,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   189
    End
    Begin DesktopTextArea DescriptionArea
       AllowAutoDeactivate=   True
@@ -121,7 +121,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
-      Left            =   132
+      Left            =   221
       LineHeight      =   0.0
       LineSpacing     =   1.0
       LockBottom      =   True
@@ -146,7 +146,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       UnicodeMode     =   0
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   476
+      Width           =   387
    End
    Begin UITweaks.ResizedLabel DescriptionLabel
       AllowAutoDeactivate=   True
@@ -179,7 +179,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   189
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
@@ -226,7 +226,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   132
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -246,7 +246,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   249
+      Width           =   189
    End
    Begin UITweaks.ResizedPopupMenu UWPModeMenu
       AllowAutoDeactivate=   True
@@ -260,7 +260,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       InitialParent   =   ""
       InitialValue    =   "Automatic\nNever\nAlways"
       Italic          =   False
-      Left            =   393
+      Left            =   221
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -289,7 +289,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   132
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -309,7 +309,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   249
+      Width           =   189
    End
    Begin DesktopLabel CompressedLabel
       AllowAutoDeactivate=   True
@@ -322,7 +322,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   132
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -342,7 +342,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   249
+      Width           =   189
    End
    Begin DesktopLabel AllowUCSLabel
       AllowAutoDeactivate=   True
@@ -355,7 +355,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   132
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -375,7 +375,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   249
+      Width           =   189
    End
    Begin SwitchControl ConsoleModeSwitch
       AllowAutoDeactivate=   True
@@ -388,7 +388,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   393
+      Left            =   221
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -418,7 +418,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   393
+      Left            =   221
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -448,7 +448,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   393
+      Left            =   221
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -469,6 +469,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
    End
    Begin Thread GFIComputeThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -500,8 +501,12 @@ End
 		  Self.ConsoleModeSwitch.Value(False) = Self.Project.ConsoleSafe
 		  Self.UWPModeMenu.SelectedRowIndex = CType(Self.Project.UWPMode, Integer)
 		  
-		  BeaconUI.SizeToFit(Self.ConsoleModeLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel)
-		  Var ControlLeft As Integer = Self.ConsoleModeLabel.Right + 12
+		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.ConsoleModeLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel)
+		  Var ControlLeft As Integer = Self.TitleLabel.Right + 12
+		  Self.TitleField.Left = ControlLeft
+		  Self.TitleField.Width = Self.Width - (ControlLeft + 20)
+		  Self.DescriptionArea.Left = ControlLeft
+		  Self.DescriptionArea.Width = Self.TitleField.Width
 		  Self.ConsoleModeSwitch.Left = ControlLeft
 		  Self.UWPModeMenu.Left = ControlLeft
 		  Self.CompressedSwitch.Left = ControlLeft
@@ -518,7 +523,7 @@ End
 		  
 		  Var SaveDialog As New SaveFileDialog
 		  SaveDialog.Filter = BeaconFileTypes.CSVFile
-		  SaveDialog.SuggestedFileName = "Ark GFI Codes " + DateTime.Now.SQLDate + ".csv"
+		  SaveDialog.SuggestedFileName = "Ark GFI Codes " + DateTime.Now.SimpleSQLDate + ".csv"
 		  
 		  Var OutputFile As FolderItem = SaveDialog.ShowModal(Self.TrueWindow)
 		  If OutputFile Is Nil Then
@@ -535,7 +540,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameMetadataPsuedo
+		  Return Ark.Configs.NameProjectSettings
 		End Function
 	#tag EndMethod
 
@@ -586,7 +591,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.Description = Self.SanitizeText(Me.Text.Trim, False)
+		  Self.Project.Description = Beacon.SanitizeText(Me.Text.Trim, False)
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
@@ -626,10 +631,10 @@ End
 		  Self.Project.ConsoleSafe = Me.Value
 		  
 		  If Me.Value Then
-		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
-		    For Each Pack As Ark.ContentPack In ContentPacks
-		      If Pack.ConsoleSafe = False Then
-		        Self.Project.ContentPackEnabled(Pack.UUID) = False
+		    Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
+		    For Each Pack As Beacon.ContentPack In ContentPacks
+		      If Pack.IsConsoleSafe = False Then
+		        Self.Project.ContentPackEnabled(Pack.ContentPackId) = False
 		      End If
 		    Next
 		  End If

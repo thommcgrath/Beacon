@@ -68,7 +68,7 @@ Implements Beacon.NamedItem
 		  Try
 		    Var Parsed() As Variant = Beacon.ParseJSON(RatesJSON)
 		    For Each Dict As Dictionary In Parsed
-		      Var RateUUID As String = Dict.Value("object_id")
+		      Var RateUUID As String = Dict.Value("configOptionId")
 		      Var Multiplier As Double = Dict.Value("multiplier")
 		      Self.mRates.Value(RateUUID) = Multiplier
 		    Next

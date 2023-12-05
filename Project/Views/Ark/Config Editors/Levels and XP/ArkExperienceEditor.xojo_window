@@ -65,6 +65,7 @@ Begin ArkConfigEditor ArkExperienceEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -74,6 +75,7 @@ Begin ArkConfigEditor ArkExperienceEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -167,7 +169,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameExperienceCurves
+		  Return Ark.Configs.NameLevelsAndXP
 		End Function
 	#tag EndMethod
 
@@ -355,7 +357,7 @@ End
 		  For I As Integer = 0 To Levels.LastIndex
 		    Var Level As Integer = I + IndexOffset
 		    Var TotalXP As UInt64 = Levels(I)
-		    Var LevelXP As UInt64 = If(TotalXP > LastXP, TotalXP - LastXP, 0)
+		    Var LevelXP As UInt64 = If(TotalXP > LastXP, TotalXP - LastXP, CType(0, UInt64))
 		    Var IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)
 		    LastXP = TotalXP
 		    
@@ -502,12 +504,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Type"":""" + Self.kClipboardType + """") > -1)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -537,45 +539,16 @@ End
 		    Overrides.Add(Override)
 		  Next
 		  
-		  Var Wrapper As New Dictionary
-		  Wrapper.Value("Type") = Self.kClipboardType
-		  Wrapper.Value("Levels") = Overrides
-		  
-		  Var JSON As String = Beacon.GenerateJSON(Wrapper, False)
-		  Board.RawData(Self.kClipboardType) = JSON
-		  Board.Text = JSON
+		  Board.AddClipboardData(Self.kClipboardType, Overrides)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var JSON As String
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    JSON = Board.RawData(Self.kClipboardType)
-		  Else
-		    JSON = Board.Text
-		  End If
-		  
-		  Var Parsed As Dictionary
-		  Try
-		    Parsed = Beacon.ParseJSON(JSON)
-		  Catch Err As RuntimeException
-		    Self.ShowAlert("Unable to paste.", "The copied data could not be read. The parser said: " + Err.Message)
-		    Return
-		  End Try
-		  
-		  If Parsed.Lookup("Type", "").StringValue <> Self.kClipboardType Then
-		    Self.ShowAlert("Unable to paste.", "The copied data has the wrong ""Type"" value.")
-		    Return
-		  ElseIf Parsed.HasKey("Levels") = False Then
-		    Self.ShowAlert("Unable to paste.", "The copied is missing the ""Levels"" array.")
-		    Return
-		  End If
-		  
 		  Var Levels() As Variant
 		  Try
-		    Levels = Parsed.Value("Levels")
+		    Levels = Board.GetClipboardData(Self.kClipboardType)
 		  Catch Err As RuntimeException
-		    Self.ShowAlert("Unable to paste.", "The ""Levels"" value is not an array.")
+		    Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    Return
 		  End Try
 		  

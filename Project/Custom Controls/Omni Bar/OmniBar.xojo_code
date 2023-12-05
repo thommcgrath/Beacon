@@ -67,7 +67,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      If OriginalRect.Left <> ChangedRect.Left Or OriginalRect.Top <> ChangedRect.Top Or OriginalRect.Width <> ChangedRect.Width Or OriginalRect.Height <> ChangedRect.Height Then
 		        // Determine how the button has moved
 		        Var OriginalButtonRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
-		        Self.Refresh(False)
+		        Self.Refresh(True)
 		        Var NewButtonRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
 		        
 		        Var ButtonDeltaX As Double = NewButtonRect.Left - OriginalButtonRect.Left
@@ -137,7 +137,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  End If
 		  
 		  #if TargetMacOS
-		    Self.Window.NSWindowMBS.Movable = True
+		    Try
+		      Self.Window.NSWindowMBS.Movable = True
+		    Catch Err As RuntimeException
+		    End Try
 		  #endif
 		End Sub
 	#tag EndEvent
@@ -224,7 +227,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
 		    Var ItemRect As Rect = Self.mItemRects(Idx)
-		    If Item Is Nil Or ItemRect Is Nil Then
+		    If Item Is Nil Or ItemRect Is Nil Or Item.Visible = False Then
 		      Continue
 		    End If
 		    
@@ -355,7 +358,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Var FirstMarginIndex As Integer = -1
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
-		    If Item Is Nil Then
+		    If Item Is Nil Or Item.Visible = False Then
 		      Continue
 		    End If
 		    
@@ -675,7 +678,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		          Menu.HasCheckMark = Item.Toggled
 		          Base.AddMenu(Menu)
 		        Case OmniBarItem.Types.Separator
-		          Var Menu As New DesktopMenuItem(MenuItem.TextSeparator)
+		          Var Menu As New DesktopMenuItem(DesktopMenuItem.TextSeparator)
 		          Base.AddMenu(Menu)
 		        Case OmniBarItem.Types.Title
 		          Var Menu As New DesktopMenuItem(Item.Caption)
@@ -837,7 +840,43 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  App.ShowTooltip(Self.mItems(Self.mMouseOverIndex).HelpTag, System.MouseX, System.MouseY + 16)
+		  Const MaxWidth = 510
+		  
+		  Var HelpTag As String = Self.mItems(Self.mMouseOverIndex).HelpTag
+		  If HelpTag.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var Measure As New Picture(10, 10)
+		  #if TargetMacOS
+		    Measure.Graphics.FontSize = 12
+		  #elseif TargetWindows
+		    Measure.Graphics.FontSize = 13
+		  #endif
+		  
+		  Var X As Integer = System.MouseX
+		  Var Y As Integer = System.MouseY
+		  Var DisplayBound As Integer = DesktopDisplay.DisplayCount - 1
+		  Var CursorDisplay As DesktopDisplay
+		  If DisplayBound = 0 Then
+		    CursorDisplay = DesktopDisplay.DisplayAt(0)
+		  ElseIf DisplayBound > 0 Then
+		    For Idx As Integer = 0 To DisplayBound
+		      Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(Idx)
+		      If X >= Display.Left And X <= Display.Left + Display.Width And Y >= Display.Top And Y <= Display.Top + Display.Height Then
+		        CursorDisplay = Display
+		        Exit For Idx
+		      End If
+		    Next
+		    If CursorDisplay Is Nil Then
+		      Return
+		    End If
+		  End If
+		  
+		  Var TooltipWidth As Integer = Min(Measure.Graphics.TextWidth(HelpTag), MaxWidth)
+		  Var MaxX As Integer = (CursorDisplay.AvailableLeft + CursorDisplay.AvailableWidth) - TooltipWidth
+		  
+		  App.ShowTooltip(Self.mItems(Self.mMouseOverIndex).HelpTag, Min(X, MaxX), Y + 16)
 		End Sub
 	#tag EndMethod
 

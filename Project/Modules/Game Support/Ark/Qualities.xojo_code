@@ -2,17 +2,18 @@
 Protected Module Qualities
 	#tag Method, Flags = &h1
 		Protected Function All() As Ark.Quality()
-		  Var Qualities(9) As Ark.Quality
-		  Qualities(0) = Tier1
-		  Qualities(1) = Tier2
-		  Qualities(2) = Tier3
-		  Qualities(3) = Tier4
-		  Qualities(4) = Tier5
-		  Qualities(5) = Tier6
-		  Qualities(6) = Tier7
-		  Qualities(7) = Tier8
-		  Qualities(8) = Tier9
-		  Qualities(9) = Tier10
+		  Var Qualities(10) As Ark.Quality
+		  Qualities(0) = Tier0
+		  Qualities(1) = Tier1
+		  Qualities(2) = Tier2
+		  Qualities(3) = Tier3
+		  Qualities(4) = Tier4
+		  Qualities(5) = Tier5
+		  Qualities(6) = Tier6
+		  Qualities(7) = Tier7
+		  Qualities(8) = Tier8
+		  Qualities(9) = Tier9
+		  Qualities(10) = Tier10
 		  Return Qualities
 		End Function
 	#tag EndMethod
@@ -55,6 +56,12 @@ Protected Module Qualities
 		  Quality = Round(Quality * 10000) / 10000
 		  
 		  Return ForBaseValue(Quality)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Tier0() As Ark.Quality
+		  Return New Ark.Quality(0.0, "Tier0")
 		End Function
 	#tag EndMethod
 

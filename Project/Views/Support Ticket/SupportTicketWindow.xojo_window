@@ -268,6 +268,7 @@ Begin BeaconWindow SupportTicketWindow
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -277,6 +278,7 @@ Begin BeaconWindow SupportTicketWindow
          TabStop         =   True
          Tooltip         =   ""
          Top             =   56
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -842,7 +844,7 @@ End
 		Private Sub RefreshDocumentMenu()
 		  Var SelectedDocumentID As String
 		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
-		    SelectedDocumentID = Beacon.Project(Self.DocumentMenu.SelectedRowTag).UUID
+		    SelectedDocumentID = Beacon.Project(Self.DocumentMenu.SelectedRowTag).ProjectId
 		  End If
 		  
 		  Self.DocumentMenu.RemoveAllRows
@@ -863,7 +865,7 @@ End
 		    End If
 		    
 		    Self.DocumentMenu.AddRow(Project.Title, Project)
-		    If Project.UUID = SelectedDocumentID Then
+		    If Project.ProjectId = SelectedDocumentID Then
 		      Self.DocumentMenu.SelectedRowIndex = Self.DocumentMenu.LastAddedRowIndex
 		    End If
 		  Next
@@ -1059,11 +1061,11 @@ End
 		    If (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
 		      Identity = App.IdentityManager.CurrentIdentity
 		    Else
-		      Identity = New Beacon.Identity
+		      Identity = App.IdentityManager.Create
 		    End If
 		    Self.mProgress.Detail = "Attaching project…"
 		    Var FileName As String = Self.mTicketDocument.Title + ".beacon"
-		    Var FileContent As String = Beacon.GenerateJSON(Self.mTicketDocument.SaveData(Identity), True)
+		    Var FileContent As String = Self.mTicketDocument.SaveData(Identity)
 		    Archive.AddFile(Beacon.SanitizeFilename(FileName), FileContent)
 		    
 		    Self.mProgress.Detail = "Attaching backup files…"
@@ -1111,7 +1113,7 @@ End
 		  Var ArchiveBytes As MemoryBlock = Archive.Finalize
 		  Archive = Nil
 		  
-		  Var Boundary As String = new v4UUID
+		  Var Boundary As String = Beacon.UUID.v4
 		  Var ContentType As String = "multipart/form-data; charset=utf-8; boundary=" + Boundary
 		  
 		  Var Platform As String
@@ -1422,8 +1424,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -320,7 +320,7 @@ End
 		Sub Constructor(Config As Ark.Configs.CraftingCosts, Mods As Beacon.StringList)
 		  Self.mConfig = Config
 		  Self.mMods = Mods
-		  Self.mIntermediate = Ark.DataSource.Pool.Get(False).GetEngramByUUID("0e795209-d421-432c-86a2-cd22bf5484a3")
+		  Self.mIntermediate = Ark.DataSource.Pool.Get(False).GetEngram("0e795209-d421-432c-86a2-cd22bf5484a3")
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -374,14 +374,14 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Element As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("904af0d9-ec92-447b-bcaa-d1a8bf1ab3cf")
+		  Var Element As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram("904af0d9-ec92-447b-bcaa-d1a8bf1ab3cf")
 		  
 		  Var IntermediateCost As New Ark.MutableCraftingCost(Self.mIntermediate, False)
 		  IntermediateCost.Add(Element, 1, True)
 		  Self.mConfig.Add(IntermediateCost)
 		  
 		  If Self.CraftIntoShardsRadio.Value Then
-		    Var ShardsCost As New Ark.MutableCraftingCost(Ark.DataSource.Pool.Get(False).GetEngramByUUID("c1ee52b8-e6c4-475d-96e9-b1b491b67063"), False)
+		    Var ShardsCost As New Ark.MutableCraftingCost(Ark.DataSource.Pool.Get(False).GetEngram("c1ee52b8-e6c4-475d-96e9-b1b491b67063"), False)
 		    ShardsCost.Add(Self.mIntermediate, 1, True)
 		    Self.mConfig.Add(ShardsCost)
 		    
@@ -455,8 +455,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

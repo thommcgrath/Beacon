@@ -335,7 +335,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Ark.Creature, DefinedCreatures() As Ark.Creature, CreaturesInSpawnPoint() As Ark.Creature)
+		Private Sub Constructor(Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Ark.BlueprintReference, DefinedCreatures() As Ark.BlueprintReference, CreaturesInSpawnPoint() As Ark.BlueprintReference)
 		  If SelectedCreatures.LastIndex = -1 Then
 		    Self.mDisableSelection = False
 		    Self.mSelectedCreature = Nil
@@ -347,33 +347,39 @@ End
 		    Self.mSelectedCreature = Nil
 		  End If
 		  
-		  Var SelectableCreatures() As Ark.Creature
+		  Var SelectableCreatures() As Ark.BlueprintReference
 		  Var Map As New Dictionary
 		  If (Self.mSelectedCreature Is Nil) = False Then
-		    Map.Value(Self.mSelectedCreature.ObjectID) = Self.mSelectedCreature
+		    Map.Value(Self.mSelectedCreature.BlueprintId) = Self.mSelectedCreature
 		  End If 
-		  For Each Creature As Ark.Creature In DefinedCreatures
-		    If Creature Is Nil Then
+		  For Each CreatureRef As Ark.BlueprintReference In DefinedCreatures
+		    If CreatureRef Is Nil Then
 		      Continue
 		    End If
 		    
-		    Map.Value(Creature.ObjectID) = Creature
+		    Call CreatureRef.Resolve
+		    Map.Value(CreatureRef.BlueprintId) = CreatureRef
 		  Next
 		  
 		  Var CreatureLabels() As String
-		  For Each Creature As Ark.Creature In CreaturesInSpawnPoint
-		    If Creature Is Nil Or Map.HasKey(Creature.ObjectID) Then
+		  For Each CreatureRef As Ark.BlueprintReference In CreaturesInSpawnPoint
+		    If CreatureRef Is Nil Then
 		      Continue
 		    End If
 		    
-		    SelectableCreatures.Add(Creature)
-		    CreatureLabels.Add(Creature.Label)
-		    Map.Value(Creature.ObjectID) = Creature
+		    Call CreatureRef.Resolve
+		    If Map.HasKey(CreatureRef.BlueprintId) Then
+		      Continue
+		    End If
+		    
+		    SelectableCreatures.Add(CreatureRef)
+		    CreatureLabels.Add(CreatureRef.Label)
+		    Map.Value(CreatureRef.BlueprintId) = CreatureRef
 		  Next
 		  CreatureLabels.SortWith(SelectableCreatures)
 		  
 		  // Do this after the sort so the indexes match up
-		  If IsNull(Self.mSelectedCreature) = False Then
+		  If (Self.mSelectedCreature Is Nil) = False Then
 		    SelectableCreatures.Add(Self.mSelectedCreature)
 		  End If
 		  
@@ -383,11 +389,11 @@ End
 		  
 		  Var AllCreatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures("", Mods, "")
 		  For Each Creature As Ark.Creature In AllCreatures
-		    If IsNull(Creature) Or Map.HasKey(Creature.ObjectID) Then
+		    If IsNull(Creature) Or Map.HasKey(Creature.CreatureId) Then
 		      Continue
 		    End If
 		    
-		    SelectableCreatures.Add(Creature)
+		    SelectableCreatures.Add(New Ark.BlueprintReference(Creature))
 		  Next
 		  
 		  Self.mSelectableCreatures = SelectableCreatures
@@ -399,8 +405,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Ark.Creature, DefinedCreatures() As Ark.Creature, CreaturesInSpawnPoint() As Ark.Creature) As NullableDouble
-		  If Parent = Nil Then
+		Shared Function Present(Parent As DesktopWindow, Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Ark.BlueprintReference, DefinedCreatures() As Ark.BlueprintReference, CreaturesInSpawnPoint() As Ark.BlueprintReference) As NullableDouble
+		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
@@ -428,11 +434,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectableCreatures() As Ark.Creature
+		Private mSelectableCreatures() As Ark.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedCreature As Ark.Creature
+		Private mSelectedCreature As Ark.BlueprintReference
 	#tag EndProperty
 
 
@@ -442,7 +448,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  Var Title, Body, HelpURL As String
-		  Call Ark.DataSource.Pool.Get(False).GetConfigHelp(Ark.Configs.NameSpawnPoints, Title, Body, HelpURL)
+		  Call Ark.DataSource.Pool.Get(False).GetConfigHelp(Ark.Configs.NameCreatureSpawns, Title, Body, HelpURL)
 		  System.GotoURL(HelpURL)
 		End Sub
 	#tag EndEvent
@@ -455,17 +461,17 @@ End
 		    Me.SelectedRowIndex = 0
 		    Me.Enabled = False
 		  Else
-		    For Each Creature As Ark.Creature In Self.mSelectableCreatures
-		      If Creature Is Nil Then
+		    For Each CreatureRef As Ark.BlueprintReference In Self.mSelectableCreatures
+		      If CreatureRef Is Nil Then
 		        #if TargetMacOS
 		          Me.AddSeparator
 		        #endif
 		        Continue
 		      End If
 		      
-		      Me.AddRow(Creature.Label, Creature)
+		      Me.AddRow(CreatureRef.Label, CreatureRef)
 		      
-		      If (Self.mSelectedCreature Is Nil) = False And Self.mSelectedCreature = Creature Then
+		      If (Self.mSelectedCreature Is Nil) = False And Self.mSelectedCreature = CreatureRef Then
 		        Me.SelectedRowIndex = Me.RowCount - 1
 		      End If
 		    Next
@@ -574,8 +580,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

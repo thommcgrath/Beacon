@@ -34,7 +34,7 @@
 
 	#tag FileType
 		CodeName=BeaconIdentity
-		DocIcon=Beacon.xojo_resources;&h6738C
+		DocIcon=Beacon.xojo_resources;&h6739C
 		Extension=.beaconidentity
 		Flags=&h5
 		MacCreator=
@@ -51,7 +51,7 @@
 
 	#tag FileType
 		CodeName=BeaconPreset
-		DocIcon=Beacon.xojo_resources;&hA66D2
+		DocIcon=Beacon.xojo_resources;&hA67A5
 		Extension=.beacontemplate;.beaconpreset
 		Flags=&h5
 		MacCreator=
@@ -116,7 +116,7 @@
 
 	#tag FileType
 		CodeName=BeaconAuth
-		DocIcon=Beacon.xojo_resources;&hE62A4
+		DocIcon=Beacon.xojo_resources;&hE6446
 		Extension=.beaconauth
 		Flags=&h9
 		MacCreator=
@@ -133,7 +133,7 @@
 
 	#tag FileType
 		CodeName=BeaconData
-		DocIcon=Beacon.xojo_resources;&h125145
+		DocIcon=Beacon.xojo_resources;&h12539D
 		Extension=.beacondata
 		Flags=&h9
 		MacCreator=
@@ -156,11 +156,27 @@
 		MacType=????
 		Name=special/any
 		UTI=public.data
-		UTIConformsTo=,public.data
+		UTIConformsTo=, public.data
 		Description=
 		MimeType=
 		Imported=True
 		HandlerRank=&h9
+		UTIPhysicalType=public.data
+	#tag EndFileType
+
+	#tag FileType
+		CodeName=XmlFile
+		Extension=.xml
+		Flags=&h9
+		MacCreator=
+		MacType=TEXT
+		Name=XML File
+		UTI=
+		UTIConformsTo=public.text, public.data
+		Description=
+		MimeType=
+		Imported=True
+		HandlerRank=&h5
 		UTIPhysicalType=public.data
 	#tag EndFileType
 

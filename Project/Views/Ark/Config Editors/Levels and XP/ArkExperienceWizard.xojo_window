@@ -441,6 +441,7 @@ Begin BeaconDialog ArkExperienceWizard
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
@@ -450,6 +451,7 @@ Begin BeaconDialog ArkExperienceWizard
       TabStop         =   True
       Tooltip         =   ""
       Top             =   276
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -766,6 +768,7 @@ End
 		  Self.mSettingUp = False
 		  
 		  Self.Designer.Curve = New Beacon.Curve(0, 0, 1, 1)
+		  Self.NextLevelField.Text = Self.mStartingLevel.ToString(Locale.Current, "#,##0")
 		End Sub
 	#tag EndEvent
 
@@ -799,6 +802,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mComputeThread_Run(Sender As Thread)
+		  Sender.YieldToNext()
+		  
 		  Var AdditionalLevels As Integer = Self.mDesiredLevels
 		  Var AdditionalXP As UInt64 = Self.mDesiredXP
 		  Var Curve As Beacon.Curve = Self.mDesiredCurve
@@ -1131,8 +1136,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

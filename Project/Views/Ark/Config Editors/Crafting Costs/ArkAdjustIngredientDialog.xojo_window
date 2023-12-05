@@ -391,6 +391,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    End
    Begin Thread ProcessorThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1276,18 +1277,18 @@ End
 		  Var Engrams() As Ark.Engram = WorkingConfig.Engrams
 		  Var Filter As New Dictionary
 		  For Each Engram As Ark.Engram In Engrams
-		    Filter.Value(Engram.ObjectId) = True
+		    Filter.Value(Engram.EngramId) = True
 		  Next
 		  
 		  Var ContentPacks As Beacon.StringList = Self.mProject.ContentPacks
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  Var ObjectIds() As String = DataSource.GetEngramUUIDsThatHaveCraftingCosts(ContentPacks, Ark.Maps.UniversalMask)
-		  For Each ObjectId As String In ObjectIds
-		    If Filter.HasKey(ObjectId) Then
+		  Var EngramIds() As String = DataSource.GetRecipeEngramIds(ContentPacks, Ark.Maps.UniversalMask)
+		  For Each EngramId As String In EngramIds
+		    If Filter.HasKey(EngramId) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = DataSource.GetEngramByUUID(ObjectId)
+		    Var Engram As Ark.Engram = DataSource.GetEngram(EngramId)
 		    If (Engram Is Nil) = False Then
 		      Engrams.Add(Engram)
 		    End If
@@ -1301,7 +1302,7 @@ End
 		  End If
 		  Var TargetRecipeMap As New Dictionary
 		  For Each Recipe As Ark.Engram In TargetRecipes
-		    TargetRecipeMap.Value(Recipe.ObjectId) = Recipe
+		    TargetRecipeMap.Value(Recipe.EngramId) = Recipe
 		  Next
 		  
 		  Var TargetIngredients() As Ark.Engram
@@ -1312,7 +1313,7 @@ End
 		  End If
 		  Var TargetMap As New Dictionary
 		  For Each Ingredient As Ark.Engram In TargetIngredients
-		    TargetMap.Value(Ingredient.ObjectId) = Ingredient
+		    TargetMap.Value(Ingredient.EngramId) = Ingredient
 		  Next
 		  
 		  Var NumProcessed As Integer
@@ -1330,7 +1331,7 @@ End
 		      Return
 		    End If
 		    
-		    If TargetRecipeMap.HasKey(Engram.ObjectId) = False Then
+		    If TargetRecipeMap.HasKey(Engram.EngramId) = False Then
 		      Continue
 		    End If
 		    
@@ -1349,18 +1350,18 @@ End
 		    Var Changed As Boolean
 		    For IngredientIdx As Integer = Cost.LastIndex DownTo 0
 		      Var Ingredient As Ark.CraftingCostIngredient = Cost.Ingredient(IngredientIdx)
-		      If TargetMap.HasKey(Ingredient.Engram.ObjectId) = False Then
+		      If TargetMap.HasKey(Ingredient.Engram.EngramId) = False Then
 		        Continue
 		      End If
-		      Var IngredientIsChanging As Boolean = (Self.mReplacement Is Nil) = False And Ingredient.Engram.ObjectId <> Self.mReplacement.ObjectId
+		      Var IngredientIsChanging As Boolean = (Self.mReplacement Is Nil) = False And Ingredient.Engram.EngramId <> Self.mReplacement.EngramId
 		      
 		      Var Replacement As Ark.Engram = If(Self.mReplacement Is Nil, Ingredient.Engram, Self.mReplacement)
-		      If ReplacementIngredients.HasKey(Replacement.ObjectId) Then
+		      If ReplacementIngredients.HasKey(Replacement.EngramId) Then
 		        Cost.Remove(IngredientIdx)
 		        Changed = True
 		        Continue
 		      End If
-		      ReplacementIngredients.Value(Replacement.ObjectId) = True
+		      ReplacementIngredients.Value(Replacement.EngramId) = True
 		      
 		      Var OriginalQuantity As Double = Ingredient.Quantity
 		      Var Quantity As Double = Round(OriginalQuantity * Self.mMultiplier, Self.mRoundingMode)
@@ -1539,8 +1540,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -31,7 +31,7 @@ Protected Module UserCloud
 		    If Response.HTTPStatus = 446 Then
 		      // This response means the path is not allowed, so we're going to delete the local file
 		      Var URL As String = Response.URL
-		      Var BaseURL As String = BeaconAPI.URL("/file")
+		      Var BaseURL As String = BeaconAPI.URL("/files")
 		      Var RemotePath As String = URL.Middle(BaseURL.Length)
 		      Var LocalFile As FolderItem = LocalFile(RemotePath)
 		      Try
@@ -47,7 +47,7 @@ Protected Module UserCloud
 		  
 		  // So where do we put the file now?
 		  Var URL As String = Response.URL
-		  Var BaseURL As String = BeaconAPI.URL("/file")
+		  Var BaseURL As String = BeaconAPI.URL("/files")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
 		    CleanupRequest(Request)
@@ -129,6 +129,33 @@ Protected Module UserCloud
 		    Sync()
 		    Return True
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function FileExists(RemotePath As String) As Boolean
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
+		  If LocalFile Is Nil Then
+		    Return False
+		  End If
+		  Return LocalFile.Exists
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GetWriter(RemotePath As String) As UserCloud.FileWriter
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
+		  If LocalFile Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var OriginalHash As String
+		  If LocalFile.Exists Then
+		    Var ExistingContent As MemoryBlock = LocalFile.Read
+		    OriginalHash = EncodeHex(Crypto.SHA2_256(ExistingContent))
+		  End If
+		  
+		  Return New UserCloud.FileWriter(RemotePath, LocalFile, OriginalHash)
 		End Function
 	#tag EndMethod
 
@@ -249,7 +276,7 @@ Protected Module UserCloud
 		    End Try
 		  End If
 		  
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
+		  SendRequest(New BeaconAPI.Request("files" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
 		  
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "DELETE"
@@ -264,7 +291,7 @@ Protected Module UserCloud
 		      mIndex.ExecuteSQL("DELETE FROM usercloud WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Unable to remove cloud file from local index: " + Err.Message)
 		    End Try
 		  End If
@@ -273,7 +300,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub RequestFileFrom(LocalFile As FolderItem, RemotePath As String, ModificationDate As DateTime, ServerSizeBytes As Integer, ServerHash As String)
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "GET", AddressOf Callback_GetFile))
+		  SendRequest(New BeaconAPI.Request("files" + RemotePath, "GET", AddressOf Callback_GetFile))
 		  
 		  If Not LocalFile.Exists Then
 		    Var Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
@@ -297,7 +324,7 @@ Protected Module UserCloud
 		      End If
 		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Unable to add cloud file to local index: " + Err.Message)
 		    End Try
 		  End If
@@ -318,7 +345,10 @@ Protected Module UserCloud
 		  
 		  Var Fresh As Boolean = PendingRequests.KeyCount = 0
 		  
-		  Request.Authenticate(Preferences.OnlineToken)
+		  If App.Pusher.SocketId.IsEmpty = False Then
+		    Request.RequestHeader("X-Beacon-Pusher-Id") = App.Pusher.SocketId
+		  End If
+		  
 		  PendingRequests.Value(Request.RequestID) = Request
 		  BeaconAPI.Send(Request)
 		  
@@ -352,7 +382,7 @@ Protected Module UserCloud
 		        mIndex.CommitTransaction
 		      End If
 		    End If
-		  Catch Err As DatabaseException
+		  Catch Err As RuntimeException
 		    App.Log("Unable to add " + Action + " action to cloud index: " + Err.Message)
 		  End Try
 		End Sub
@@ -382,12 +412,12 @@ Protected Module UserCloud
 		  If Index.DatabaseFile.Exists Then
 		    Try
 		      Index.Connect
-		    Catch DBErr As DatabaseException
+		    Catch DBErr As RuntimeException
 		      App.Log("Unable to connect to database at " + Index.DatabaseFile.NativePath + ": " + DBErr.Message)
 		      Try
 		        Index.DatabaseFile.Remove
-		      Catch IOErr As IOException
-		        App.Log("Unable to remove bad database at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		      Catch DelErr As RuntimeException
+		        App.Log("Unable to remove bad database at " + Index.DatabaseFile.NativePath + ": " + DelErr.Message)
 		        Return False
 		      End Try
 		      Try
@@ -422,13 +452,13 @@ Protected Module UserCloud
 		      Index.ExecuteSQL("INSERT INTO actions (user_id, remote_path, action) SELECT ?1 AS user_id, remote_path, action FROM actions_old;", UserID)
 		      Index.ExecuteSQL("DROP TABLE usercloud_old;")
 		      Index.ExecuteSQL("DROP TABLE actions_old;")
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Could not update database schema: " + Err.Message)
 		      Index.Close
 		      Try
 		        Index.DatabaseFile.Remove
-		      Catch IOErr As IOException
-		        App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		      Catch DelErr As RuntimeException
+		        App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + DelErr.Message)
 		      End Try
 		      Return False
 		    End Try
@@ -454,13 +484,13 @@ Protected Module UserCloud
 		    Index.ExecuteSQL("PRAGMA journal_mode = WAL;")
 		    Index.UserVersion = 2
 		    Return True
-		  Catch Err As DatabaseException
+		  Catch Err As RuntimeException
 		    App.Log("Could not create database schema: " + Err.Message)
 		    Index.Close
 		    Try
 		      Index.DatabaseFile.Remove
-		    Catch IOErr As IOException
-		      App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		    Catch DelErr As RuntimeException
+		      App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + DelErr.Message)
 		    End Try
 		    Return False
 		  End Try
@@ -469,17 +499,17 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Sub Sync(NoWait As Boolean = False)
-		  If Preferences.OnlineEnabled = False Or Preferences.OnlineToken = "" Then
+		  If Preferences.OnlineEnabled = False Or Preferences.BeaconAuth Is Nil Then
 		    Return
 		  End If
 		  If IsBusy Then
-		    If SyncKey = "" Then
+		    If SyncKey.IsEmpty Then
 		      SyncWhenFinished = True
 		    End If
 		    Return
 		  End If
 		  
-		  If SyncKey <> "" Then
+		  If SyncKey.IsEmpty = False Then
 		    CallLater.Cancel(SyncKey)
 		    SyncKey = ""
 		  End If
@@ -505,7 +535,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  SyncActions.ResizeTo(-1)
-		  SendRequest(New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles))
+		  SendRequest(New BeaconAPI.Request("files", "GET", AddressOf Callback_ListFiles))
 		End Sub
 	#tag EndMethod
 
@@ -515,12 +545,18 @@ Protected Module UserCloud
 		    Return
 		  End If
 		  
-		  Var Contents As MemoryBlock = LocalFile.Read()
+		  Var Contents As MemoryBlock
+		  Try
+		    Contents = LocalFile.Read()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Could not read local file for remote path '" + RemotePath + "'.")
+		    Return
+		  End Try
 		  Contents = Beacon.Compress(Contents)
 		  
 		  Var EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
 		  
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
+		  SendRequest(New BeaconAPI.Request("files" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
 		  
 		  If SetupIndexDatabase Then
 		    Var EncryptedContentsHash As String = EncodeHex(Crypto.SHA2_256(EncryptedContents)).Lowercase
@@ -537,7 +573,7 @@ Protected Module UserCloud
 		      End If
 		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Unable to add cloud file to local index: " + Err.Message)
 		    End Try
 		  End If
@@ -554,11 +590,11 @@ Protected Module UserCloud
 		Private Function UserID() As String
 		  Try
 		    If (App.IdentityManager.CurrentIdentity Is Nil) = False Then
-		      Return App.IdentityManager.CurrentIdentity.UserID
+		      Return App.IdentityManager.CurrentIdentity.UserId
 		    End If
 		  Catch Err As RuntimeException
 		  End Try
-		  Return v4UUID.CreateNull
+		  Return Beacon.UUID.Null
 		End Function
 	#tag EndMethod
 
@@ -579,11 +615,38 @@ Protected Module UserCloud
 		    End If
 		  End If
 		  
-		  If Not LocalFile.Write(Content) Then
+		  Try
+		    LocalFile.Write(Content)
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  
+		  SetActionForPath(RemotePath, "PUT")
+		  Sync()
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Write(Writer As UserCloud.FileWriter) As Boolean
+		  If Writer Is Nil Or Writer.LocalFile.Exists = False Then
 		    Return False
 		  End If
 		  
-		  SetActionForPath(RemotePath, "PUT")
+		  Var NewContent As MemoryBlock
+		  Var NewHash As String
+		  Try
+		    NewContent = Writer.LocalFile.Read()
+		    NewHash = EncodeHex(Crypto.SHA2_256(NewContent))
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  If NewHash = Writer.OriginalHash Then
+		    // No changes were made
+		    Return True
+		  End If
+		  
+		  SetActionForPath(Writer.RemotePath, "PUT")
 		  Sync()
 		  Return True
 		End Function

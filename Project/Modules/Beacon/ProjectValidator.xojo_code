@@ -2,9 +2,10 @@
 Protected Class ProjectValidator
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mThread = New Thread
-		  AddHandler mThread.Run, WeakAddressOf mThread_Run
-		  AddHandler mThread.UserInterfaceUpdate, WeakAddressOf mThread_UserInterfaceUpdate
+		  Self.mThread = New Beacon.Thread
+		  Self.mThread.DebugIdentifier = CurrentMethodName
+		  AddHandler mThread.Run, AddressOf mThread_Run
+		  AddHandler mThread.UserInterfaceUpdate, AddressOf mThread_UserInterfaceUpdate
 		  Self.mShowUITimer = New Timer
 		  Self.mShowUITimer.Period = 1000
 		  Self.mShowUITimer.RunMode = Timer.RunModes.Off
@@ -21,22 +22,60 @@ Protected Class ProjectValidator
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_Run(Sender As Thread)
+		Private Sub mThread_Run(Sender As Beacon.Thread)
 		  Var Issues As Beacon.ProjectValidationResults = Self.mProject.Validate
+		  
+		  If Issues.Count = 0 Then
+		    // No issues, so report license usage to the api.
+		    Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		    If (Identity Is Nil) = False Then
+		      Var Flags As Integer = Beacon.FlagsForGameId(Self.mProject.GameId)
+		      Var Licenses() As Beacon.OmniLicense = Identity.Licenses(Flags)
+		      Var Reported As Boolean = True
+		      Var NeedsRefresh As Boolean
+		      For Each License As Beacon.OmniLicense In Licenses
+		        If License.HasBeenUsed Then
+		          Continue
+		        End If
+		        
+		        Try
+		          Var Request As New BeaconAPI.Request("/licenses/" + EncodeURLComponent(License.LicenseId), "PUT", "{}", "application/json")
+		          Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
+		          Reported = Reported And Response.Success
+		          NeedsRefresh = NeedsRefresh Or Response.Success
+		        Catch Err As RuntimeException
+		          Reported = False
+		        End Try
+		      Next
+		      If NeedsRefresh Then
+		        BeaconAPI.UserController.RefreshUserDetails(BeaconAPI.UserController.VerbosityLoginOnly)
+		      End If
+		      If Not Reported Then
+		        Issues.Add(New Beacon.Issue("", "First time license check has failed."))
+		      End If
+		    Else
+		      Issues.Add(New Beacon.Issue("", "There is no valid identity file."))
+		    End If
+		  End If
+		  
 		  Self.mShowUITimer.RunMode = Timer.RunModes.Off
 		  Sender.AddUserInterfaceUpdate("Issues" : Issues)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_UserInterfaceUpdate(Sender As Thread, Updates() As Dictionary)
-		  #Pragma Unused Sender
-		  
+		Private Sub mThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
 		  For Idx As Integer = 0 To Updates.LastIndex
 		    Var Dict As Dictionary = Updates(Idx)
 		    If Dict.HasKey("Issues") Then
 		      Var Issues As Beacon.ProjectValidationResults = Dict.Value("Issues")
 		      RaiseEvent ValidationComplete(Issues, Self.mUserData)
+		      
+		      RemoveHandler Sender.Run, AddressOf mThread_Run
+		      RemoveHandler Sender.UserInterfaceUpdate, AddressOf mThread_UserInterfaceUpdate
+		      If Self.mThread = Sender Then
+		        Self.mThread = Nil
+		      End If
 		    End If
 		  Next Idx
 		End Sub

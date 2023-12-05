@@ -37,8 +37,8 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   "46,*"
+      ColumnCount     =   4
+      ColumnWidths    =   "46,*,200,*"
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -50,14 +50,14 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       FontUnit        =   0
       GridLineStyle   =   0
       HasBorder       =   False
-      HasHeader       =   False
+      HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   311
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
+      InitialValue    =   " 	Name	Game	Path"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -65,6 +65,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -74,6 +75,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       TabStop         =   True
       Tooltip         =   ""
       Top             =   63
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   1
       Underline       =   False
@@ -123,6 +125,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       Composited      =   False
       ConsoleSafe     =   False
       Enabled         =   True
+      GameId          =   ""
       HasBackgroundColor=   False
       Height          =   62
       Index           =   -2147483648
@@ -133,7 +136,6 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
       RequireAllMaps  =   False
       Scope           =   2
       SearchDelayPeriod=   250
@@ -173,6 +175,12 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
@@ -202,7 +210,11 @@ End
 		    
 		    For Idx As Integer = 0 To Recents.LastIndex
 		      Var URL As Beacon.ProjectURL = Recents(Idx)
+		      
 		      Self.List.CellTextAt(Idx, Self.ColumnName) = URL.Name
+		      Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(URL.GameId)
+		      Self.List.CellTextAt(Idx, Self.ColumnPath) = URL.HumanPath
+		      Self.List.CellTooltipAt(Idx, Self.ColumnPath) = Self.List.CellTextAt(Idx, Self.ColumnPath)
 		      Self.List.RowTagAt(Idx) = URL
 		      Self.List.RowSelectedAt(Idx) = SelectedURLs.IndexOf(URL) > -1
 		    Next
@@ -213,23 +225,33 @@ End
 		        Continue
 		      End If
 		      
-		      Self.List.AddRow("", URL.Name)
+		      Self.List.AddRow("")
 		      Var Idx As Integer = Self.List.LastAddedRowIndex
+		      Self.List.CellTextAt(Idx, Self.ColumnName) = URL.Name
+		      Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(URL.GameId)
+		      Self.List.CellTextAt(Idx, Self.ColumnPath) = URL.HumanPath
+		      Self.List.CellTooltipAt(Idx, Self.ColumnPath) = Self.List.CellTextAt(Idx, Self.ColumnPath)
 		      Self.List.RowTagAt(Idx) = URL
 		      Self.List.RowSelectedAt(Idx) = SelectedURLs.IndexOf(URL) > -1
 		    Next
 		  End If
-		  
+		  Self.List.SizeColumnToFit(Self.ColumnGame)
 		  
 		  
 		End Sub
 	#tag EndMethod
 
 
+	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = ColumnIcon, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnPath, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
@@ -246,22 +268,15 @@ End
 		  End If
 		  
 		  Var URL As Beacon.ProjectURL = Me.RowTagAt(Row)
-		  If URL = Nil Then
+		  If URL Is Nil Then
 		    Return
 		  End If
 		  
-		  Var IconColor As Color = TextColor.AtOpacity(0.5)
-		  Var Icon As Picture
-		  Select Case URL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
-		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
-		  Case Beacon.ProjectURL.TypeWeb
-		    Icon = BeaconUI.IconWithColor(IconCommunityDocument, IconColor)
-		  End Select
-		  
-		  If Icon = Nil Then
+		  Var Icon As Picture = Url.ViewIcon
+		  If Icon Is Nil Then
 		    Return
 		  End If
+		  Icon = BeaconUI.IconWithColor(Icon, TextColor.AtOpacity(0.5))
 		  
 		  G.DrawPicture(Icon, (G.Width - Icon.Width) / 2, (G.Height - Icon.Height) / 2)
 		End Sub
@@ -325,7 +340,7 @@ End
 		    End If
 		    
 		    Var URL As Beacon.ProjectURL = Me.RowTagAt(Row)
-		    Self.OpenDocument(URL)
+		    Self.OpenProject(URL)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -345,8 +360,8 @@ End
 #tag EndEvents
 #tag Events FilterBar
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 	#tag Event
