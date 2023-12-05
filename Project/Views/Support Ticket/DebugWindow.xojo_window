@@ -26,6 +26,7 @@ Begin BeaconWindow DebugWindow Implements NotificationKit.Receiver
    Width           =   600
    Begin Beacon.Thread CollectionThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -668,6 +669,7 @@ End
 		  ElseIf Self.mLicenseFieldCount < FieldCount Then
 		    For Idx As Integer = Self.mLicenseFieldCount + 1 To FieldCount
 		      Var Field As DesktopLabel = New LicenseField
+		      Call Field.Text // To silence the warning
 		    Next
 		  End If
 		  Self.mLicenseFieldCount = FieldCount
@@ -701,6 +703,7 @@ End
 		  ElseIf Self.mProjectFieldCount < FieldCount Then
 		    For Idx As Integer = Self.mProjectFieldCount + 1 To FieldCount
 		      Var Field As DesktopLabel = New ProjectField
+		      Call Field.Text // To silence the warning
 		    Next
 		  End If
 		  Self.mProjectFieldCount = FieldCount

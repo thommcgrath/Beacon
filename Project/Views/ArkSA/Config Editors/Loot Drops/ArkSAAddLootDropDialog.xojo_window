@@ -779,7 +779,6 @@ End
 		  Var Data As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
 		  Var Overrides() As ArkSA.LootDropOverride = Self.mConfig.Overrides
-		  Var AllContainers() As ArkSA.LootContainer = Data.GetLootContainers("", Self.mContentPacks, "")
 		  Var AllowedLootContainers() As ArkSA.LootContainer = Data.GetLootContainers(Self.FilterField.Text.MakeUTF8, Self.mContentPacks, "", Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootContainers.LastIndex DownTo 0
 		    If Not AllowedLootContainers(X).ValidForMask(Self.mMask) Then

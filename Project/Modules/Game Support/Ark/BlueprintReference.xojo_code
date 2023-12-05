@@ -333,7 +333,6 @@ Implements Beacon.NamedItem
 		    Packs = New Beacon.StringList(Self.mContentPackId)
 		  End If
 		  
-		  Var Create As Boolean = (Options And Self.OptionCreate) = Self.OptionCreate
 		  Var Blueprint As Ark.Blueprint
 		  Select Case Self.mKind
 		  Case Self.KindEngram
