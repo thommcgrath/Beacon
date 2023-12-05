@@ -20,26 +20,26 @@ $_SERVER['API_VERSION'] = $api_version;
 
 spl_autoload_register(function($class_name) {
 	$original_class_name = $class_name;
-	
+
 	$apiVersion = $_SERVER['API_VERSION'];
 	$apiRoot = dirname(__FILE__, 2) . '/api';
 	$paths = [
 		dirname(__FILE__) . '/classes'
 	];
-	
+
 	/*
 	Modern:
 		BeaconAPI\v4\Project = v4/classes/Project.php
 		BeaconAPI\v4\Ark\Project = v4/classes/Ark/Project.php
 		BeaconAPI\v4\User = v4/classes/User.php
-		
+
 	Legacy:
 		BeaconAPI\Project = common/classes/Project.php
 		BeaconAPI\Ark\Project = common/Ark/classes/Project.php
 		Ark\Project = v3/ark/classes/Project.php
 		BeaconUser = v3/classes/BeaconUser.php
 	*/
-	
+
 	if (str_starts_with($class_name, 'BeaconAPI\\')) {
 		$class_name = substr($class_name, 10);
 		if (preg_match('/^(v\d+)\\\/', $class_name, $matches) === 1) {
@@ -62,10 +62,10 @@ spl_autoload_register(function($class_name) {
 		$paths[] = "{$apiRoot}/v{$apiVersion}/ark/classes";
 		$paths[] = "{$apiRoot}/v{$apiVersion}/classes/Ark";
 	}
-	
+
 	// Search the v3 classes last
 	$paths[] = "{$apiRoot}/v{$apiVersion}/classes";
-	
+
 	$filename = str_replace('\\', '/', $class_name) . '.php';
 	foreach ($paths as $path) {
 		if (file_exists("{$path}/{$filename}")) {
@@ -115,7 +115,7 @@ BeaconErrors::StartWatching();
 
 (function() {
 	$_SERVER['CSP_NONCE'] = base64_encode(random_bytes(12));
-	
+
 	$policies = [
 		'default-src' => [
 			"'self'",
@@ -152,7 +152,7 @@ BeaconErrors::StartWatching();
 		],
 		'upgrade-insecure-requests' => []
 	];
-	
+
 	$groups = array();
 	foreach ($policies as $group => $attributes) {
 		if (count($attributes) > 0) {
@@ -162,10 +162,10 @@ BeaconErrors::StartWatching();
 		}
 	}
 	$policy = implode(' ', $groups);
-	
-	//header('Content-Security-Policy: ' . $policy);
-	//header('Cache-Control: public, max-age=3600, must-revalidate');
-	//header('X-Endpoint-Server: ' . gethostname());
+
+	header('Content-Security-Policy: ' . $policy);
+	header('Cache-Control: public, max-age=3600, must-revalidate');
+	header('X-Endpoint-Server: ' . gethostname());
 })();
 
 BeaconTemplate::Start();
