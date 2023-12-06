@@ -249,9 +249,6 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 		</table>
 	</div>
 	<div id="page-cart" class="hidden invisible">
-		<div id="storefront-cart-asanotice" class="storefront-cart-section">
-			<div class="notice-block notice-info">Support for Ark: Survival Ascended requires the Beacon 2.0 Beta Preview. You can download this preview version from <a href="/download#preview">the download page</a>.</div>
-		</div>
 		<div id="storefront-cart-header" class="storefront-cart-section">
 			<div><button id="cart-back-button">&laquo; Back</button></div>
 			<div id="storefront-cart-header-email-field">&nbsp;</div>

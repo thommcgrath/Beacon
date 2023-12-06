@@ -20,8 +20,7 @@ if (isset($_GET['build']) && isset($_GET['token']) && isset($_GET['expires'])) {
 	}
 }
 
-?><p class="notice-block notice-info">Support for Ark: Survival Ascended requires the Beacon 2.0 Beta Preview. You can download this preview version from <a href="#preview">below</a>.</p>
-<p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
+?><p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
 <div id="stable" class="downloads-table"></div>
 <div id="preview" class="downloads-table"></div>
 <div id="legacy" class="downloads-table"></div>

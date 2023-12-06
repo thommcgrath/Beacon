@@ -1,5 +1,5 @@
 <?php
-	
+
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
@@ -35,8 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
 BeaconTemplate::FinishScript();
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
-$showConnections = BeaconCommon::ShowBeacon2Features($user);
-$showNewOmniInstructions = $showConnections;
 
 ?><div id="account-user-header" class="header-with-subtitle" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>">
 	<h1><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span></h1>
@@ -52,7 +50,7 @@ $showNewOmniInstructions = $showConnections;
 			<li><a href="#security" page="security">Security</a></li>
 			<li><a href="#sessions" page="sessions">Sessions</a></li>
 			<?php } ?>
-			<?php if ($showConnections) { ?><li><a href="#services" page="services">Connections</a></li><?php } ?>
+			<li><a href="#services" page="services">Connections</a></li>
 		</ul>
 	</div>
 	<div class="page-panel-pages">
@@ -78,10 +76,10 @@ $showNewOmniInstructions = $showConnections;
 			<?php include('includes/sessions.php'); ?>
 		</div>
 		<?php } ?>
-		<?php if ($showConnections) { ?><div class="page-panel-page" page="services">
+		<div class="page-panel-page" page="services">
 			<h1>Connected Services</h1>
 			<?php include('includes/services.php'); ?>
-		</div><?php } ?>
+		</div>
 	</div>
 	<div class="page-panel-footer">&nbsp;</div>
 </div>
