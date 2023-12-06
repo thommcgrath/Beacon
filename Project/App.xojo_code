@@ -786,6 +786,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      If (Token Is Nil) = False Then
 		        Var Request As New BeaconAPI.Request("/session", "DELETE")
 		        Request.ForceAuthorize(Token)
+		        Request.AutoRenew = False
 		        BeaconAPI.Send(Request)
 		      End If
 		      
