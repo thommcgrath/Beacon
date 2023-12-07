@@ -67,8 +67,8 @@ function MergeUser(User $authenticatedUser, array $anonymousUser): Response {
 	}
 
 	$authenticatedUserId = $authenticatedUser->UserId();
-	$singleTables = ['public.user_backup_codes', 'public.user_challenges'];
-	$multiTables = ['public.affiliate_links', 'public.applications', 'public.exception_comments', 'public.exception_users', 'public.gift_code_log', 'public.trusted_devices', 'public.user_authenticators'];
+	$singleTables = ['public.user_backup_codes', 'public.user_challenges', 'public.exception_users'];
+	$multiTables = ['public.affiliate_links', 'public.applications', 'public.exception_comments', 'public.gift_code_log', 'public.trusted_devices', 'public.user_authenticators'];
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
 	foreach ($singleTables as $table) {
