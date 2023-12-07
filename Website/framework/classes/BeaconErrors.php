@@ -3,44 +3,44 @@
 abstract class BeaconErrors {
 	private static $handlers = [];
 	private static $secure_mode = true;
-	
+
 	public static function SecureMode(): bool {
 		return static::$secure_mode;
 	}
-	
+
 	public static function SetSecureMode(bool $secure_mode): void {
 		static::$secure_mode = $secure_mode;
 	}
-	
+
 	public static function AddHandler(callable $handler): void {
 		array_unshift(static::$handlers, $handler);
 	}
-	
+
 	public static function RemoveLastHandler(): void {
 		array_shift(static::$handlers);
 	}
-	
+
 	public static function StartWatching(): void {
 		ini_set('display_errors', '1');
 		error_reporting(E_ALL);
 		set_exception_handler(['BeaconErrors', 'HandleException']);
 		set_error_handler(['BeaconErrors', 'HandleError'], E_ALL);
 	}
-	
+
 	public static function HandleException(Throwable $err): void {
 		$message = html_entity_decode($err->getMessage(), ENT_COMPAT, 'UTF-8');
 		if ($err instanceof BeaconQueryException) {
 			$message .= "\n" . $err->getSQL();
 		}
-		
+
 		static::LogTrace(get_class($err), $message, $err->getFile(), $err->getLine());
 	}
-	
+
 	public static function HandleError(int $errno, string $errstr, string $errfile, int $errline): bool {
 		if ((error_reporting() & $errno) !== $errno) {
 			return true;
 		}
-		
+
 		if (static::$secure_mode) {
 			switch ($errno) {
 			case E_NOTICE:
@@ -53,23 +53,23 @@ abstract class BeaconErrors {
 				return true;
 			}
 		}
-		
+
 		static::LogTrace('Error', html_entity_decode($errstr, ENT_COMPAT, 'UTF-8'), $errfile, $errline);
-		
+
 		return true;
 	}
-	
+
 	protected static function LogTrace(string $type, string $message, string $file, int $line): void {
 		// explain it
 		$description = 'Unhandled ' . $type . ' in ' . $file . ' at line ' . $line . ': ' . $message;
-		
+
 		// collect the stack and remove the noise
 		$ignore_methods = ['HandleException', 'HandleError', 'LogTrace', 'trigger_error'];
 		$stack = debug_backtrace();
 		while ((count($stack) > 0) && (in_array($stack[0]['function'], $ignore_methods))) {
 			array_shift($stack);
 		}
-		
+
 		// assemble the trace
 		$trace = [];
 		foreach ($stack as $frame) {
@@ -79,7 +79,7 @@ abstract class BeaconErrors {
 					$values[] = var_export($arg, true);
 				}
 			}
-			
+
 			$fn = $frame['function'] . '(' . implode(', ', $values) . ')';
 			if (array_key_exists('file', $frame) && array_key_exists('line', $frame)) {
 				$trace[] = $frame['file'] . '(' . $frame['line'] . '): ' . $fn;
@@ -87,7 +87,7 @@ abstract class BeaconErrors {
 				$trace[] = $fn;
 			}
 		}
-		
+
 		// notify
 		if (static::$secure_mode) {
 			$attachments = [
@@ -99,13 +99,13 @@ abstract class BeaconErrors {
 							'value' => implode("\n", $trace)
 						],
 						[
-							'title' => 'Request Method',
-							'value' => $_SERVER['REQUEST_METHOD'],
-							'short' => true
+							'title' => 'Request URI',
+							'value' => $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 						],
 						[
-							'title' => 'Request URI',
-							'value' => $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+							'title' => 'Hostname',
+							'value' => gethostname(),
+							'short' => true
 						],
 						[
 							'title' => 'GET',
@@ -129,7 +129,7 @@ abstract class BeaconErrors {
 			];
 			BeaconCommon::PostSlackRaw(json_encode(['text' => $description, 'attachments' => $attachments]));
 		}
-		
+
 		// pass to handlers
 		$handled = false;
 		foreach (static::$handlers as $handler) {
@@ -140,7 +140,7 @@ abstract class BeaconErrors {
 				}
 			}
 		}
-		
+
 		// if not handled, then do it ourselves
 		if (!$handled) {
 			if (static::$secure_mode) {
@@ -168,7 +168,7 @@ abstract class BeaconErrors {
 				}
 			}
 		}
-		
+
 		// end the script
 		http_response_code(500);
 		exit;
