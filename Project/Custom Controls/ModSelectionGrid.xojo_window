@@ -238,6 +238,9 @@ End
 		  Self.mSettingUp = True
 		  
 		  Const MinWidth = 532
+		  Const MinColumns = 2
+		  Const MaxColumnWidth = 300
+		  Const MaxWidth = MaxColumnWidth * MinColumns
 		  Const InnerSpacing = 20
 		  
 		  Const PageUniversal = 0
@@ -279,8 +282,8 @@ End
 		    MeasuredWidth = Max(MeasuredWidth, Measure.Graphics.TextWidth(Packs(Idx).Name))
 		  Next Idx
 		  
-		  Var CheckboxWidth As Integer = Ceiling(MeasuredWidth + 40)
-		  Var ColumnCount As Integer = Min(Floor(MinWidth / CheckboxWidth), Packs.Count)
+		  Var CheckboxWidth As Integer = Min(Ceiling(MeasuredWidth + 40), MaxColumnWidth)
+		  Var ColumnCount As Integer = Min(Floor(MaxWidth / CheckboxWidth), Packs.Count)
 		  Var RowCount As Integer = Ceiling(Packs.Count / ColumnCount)
 		  
 		  Self.mMap.ResizeTo(Packs.LastIndex)
