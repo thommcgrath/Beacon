@@ -2659,6 +2659,10 @@ End
 		  ElseIf RequiredLevelString.IsEmpty = False Or RequiredPointsString.IsEmpty = False Then
 		    Self.ShowAlert("Entry string is required to set level and point requirements.", "If you want to set level and point requirements for this engram, please provide the engram's entry string so Beacon can control it in the Engram Control editor.")
 		    Return False
+		  Else
+		    Engram.EntryString = ""
+		    Engram.RequiredPlayerLevel = Nil
+		    Engram.RequiredUnlockPoints = Nil
 		  End If
 		  
 		  Var StackSizeString As String = Self.EngramStackSizeField.Text.Trim
