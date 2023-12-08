@@ -27,6 +27,9 @@ case 'ark2':
 case 'arksa':
 	$product = BeaconShop::GetProductByTag('USD', 'ArkSA', 'Base');
 	break;
+case 'moderator':
+	$product = BeaconShop::GetProductByTag('USD', 'Moderator', 'Base');
+	break;
 default:
 	PostReply('Unknown game_id value.');
 	return;

@@ -263,7 +263,7 @@ abstract class BeaconShop {
 		}
 
 		// Include all products, so that prices can be ready before products are activated
-		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products ORDER BY product_name;');
+		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products WHERE retail_price > 0 ORDER BY product_name;');
 		while (!$products->EOF()) {
 			$productId = $products->Field('product_id');
 			$productName = $products->Field('product_name');
