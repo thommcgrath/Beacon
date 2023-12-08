@@ -26,7 +26,6 @@ Begin BeaconWindow DebugWindow Implements NotificationKit.Receiver
    Width           =   600
    Begin Beacon.Thread CollectionThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -640,14 +639,17 @@ End
 		    Var IdentityLicenses() As Beacon.OmniLicense = Identity.Licenses
 		    For Each License As Beacon.OmniLicense In IdentityLicenses
 		      Var GameNames() As String
-		      If (License.Flags And Ark.OmniFlag) > 0 Then
+		      If License.IsFlagged(Ark.OmniFlag) Then
 		        GameNames.Add(Language.GameName(Ark.Identifier))
 		      End If
-		      If (License.Flags And ArkSA.OmniFlag) > 0 Then
+		      If License.IsFlagged(ArkSA.OmniFlag) Then
 		        GameNames.Add(Language.GameName(ArkSA.Identifier))
 		      End If
-		      If (License.Flags And SDTD.OmniFlag) > 0 Then
+		      If License.IsFlagged(SDTD.OmniFlag)Then
 		        GameNames.Add(Language.GameName(SDTD.Identifier))
+		      End If
+		      If License.IsFlagged(Beacon.OmniLicense.ModeratorFlag) Then
+		        GameNames.Add("Moderator Access")
 		      End If
 		      
 		      Var LicenseText As String = Language.EnglishOxfordList(GameNames)

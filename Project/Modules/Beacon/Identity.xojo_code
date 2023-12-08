@@ -70,6 +70,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsModerator() As Boolean
+		  Return Self.IsOmniFlagged(Beacon.OmniLicense.ModeratorFlag)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsOmniFlagged(Value As Integer) As Boolean
 		  Return (Self.OmniFlags And Value) = Value
 		End Function

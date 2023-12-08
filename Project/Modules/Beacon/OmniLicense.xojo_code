@@ -63,6 +63,12 @@ Protected Class OmniLicense
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsFlagged(Flags As Integer) As Boolean
+		  Return (Self.mFlags And Flags) = Flags
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsLifetime() As Boolean
 		  Return Self.mExpiration.IsEmpty
 		End Function
@@ -143,6 +149,10 @@ Protected Class OmniLicense
 	#tag Property, Flags = &h21
 		Private mProductId As String
 	#tag EndProperty
+
+
+	#tag Constant, Name = ModeratorFlag, Type = Double, Dynamic = False, Default = \"8", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

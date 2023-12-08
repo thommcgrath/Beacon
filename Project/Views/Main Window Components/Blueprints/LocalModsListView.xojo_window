@@ -338,17 +338,38 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DeleteMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Private Sub APICallback_UploadMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
-		  
-		  Self.FinishJob()
+		  #Pragma Unused Response
 		  
 		  If Response.Success Then
-		    Self.RefreshMods()
-		    Return
+		    Self.mUploadSuccessCount = Self.mUploadSuccessCount + 1
+		  Else
+		    Self.mUploadErrorCount = Self.mUploadErrorCount + 1
+		    
+		    App.Log("Upload to " + Request.URL + " failed with status " + Response.HTTPStatus.ToString(Locale.Raw, "0"))
+		    If (Response.Content Is Nil) = False Then
+		      App.Log(EncodeBase64MBS(Response.Content))
+		    Else
+		      App.Log("Null response body")
+		    End If
 		  End If
 		  
-		  Self.ShowAlert("Sorry, the selected mod or mods were not deleted.", Response.Message)
+		  Self.mRemainingUploads = Self.mRemainingUploads - 1
+		  If Self.mRemainingUploads = 0 Then
+		    Self.mUploadProgress.Close
+		    Self.mUploadProgress = Nil
+		    
+		    If Self.mUploadSuccessCount > 0 And Self.mUploadErrorCount = 0 Then
+		      Self.ShowAlert("All mods uploaded successfully", "Beacon uploaded " + Language.NounWithQuantity(Self.mUploadSuccessCount, "mod", "mods") + " to the community.")
+		    ElseIf Self.mUploadSuccessCount = 0 And Self.mUploadErrorCount > 0 Then
+		      Self.ShowAlert("Mod upload failed", "Beacon did not upload any mods to the community.")
+		    Else
+		      Self.ShowAlert("Some mods were not uploaded", "Beacon uploaded " + Language.NounWithQuantity(Self.mUploadSuccessCount, "mod", "mods") + " to the community. " + Language.NounWithQuantity(Self.mUploadErrorCount, "mod", "mods") + " were not uploaded.")
+		    End If
+		  Else
+		    Self.mUploadProgress.Detail = Language.NounWithQuantity(Self.mRemainingUploads, "mod", "mods") + " remaining"
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -653,6 +674,79 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UploadSelectedMods()
+		  If Self.mRemainingUploads > 0 Or (Self.mUploadProgress Is Nil) = False Then
+		    Self.ShowAlert("There is already an upload running", "Wait for the uploads to finish")
+		    Return
+		  End If
+		  
+		  Var Packs() As Beacon.ContentPack
+		  Var ArkDataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var ArkSADataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  
+		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
+		    If Self.ModsList.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Var WorkshopMod As BeaconAPI.ContentPack = Self.ModsList.RowTagAt(Idx)
+		    If WorkshopMod Is Nil Then
+		      Continue
+		    End If
+		    
+		    If WorkshopMod.MarketplaceId.IsEmpty Then
+		      Self.ShowAlert("Cannot upload to community", "The mod '" + WorkshopMod.Name + "' does not have an official id and cannot be uploaded.")
+		      Return
+		    End If
+		    
+		    If Self.CloseModView(WorkshopMod.MarketplaceId) = False Then
+		      Self.ShowAlert("Close your mod editors to continue", "There is an editor open for mod '" + WorkshopMod.Name + "' that needs to be closed first.")
+		      Return
+		    End If
+		    
+		    Var Pack As Beacon.ContentPack
+		    Select Case WorkshopMod.GameId
+		    Case Ark.Identifier
+		      Pack = ArkDataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
+		    Case ArkSA.Identifier
+		      Pack = ArkSADataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
+		    End Select
+		    
+		    If Pack Is Nil Then
+		      Continue
+		    End If
+		    
+		    Packs.Add(Pack)
+		  Next
+		  
+		  If Packs.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mRemainingUploads = Packs.Count
+		  Self.mUploadErrorCount = 0
+		  Self.mUploadSuccessCount = 0
+		  Self.mUploadProgress = New ProgressWindow
+		  Self.mUploadProgress.Message = "Uploading " + Language.NounWithQuantity(Self.mRemainingUploads, "mod", "mods")
+		  
+		  For Each Pack As Beacon.ContentPack In Packs
+		    Var Exported As MemoryBlock = Beacon.BuildExport(True, Pack)
+		    If Exported Is Nil Then
+		      Self.mRemainingUploads = Self.mRemainingUploads - 1
+		      Self.mUploadErrorCount = Self.mUploadErrorCount + 1
+		      Continue
+		    End If
+		    
+		    Var Request As New BeaconAPI.Request("discovery/" + Pack.ContentPackId, "PUT", Exported, "application/octet-stream", AddressOf APICallback_UploadMod)
+		    BeaconAPI.Send(Request)
+		  Next
+		  
+		  Self.mUploadProgress.Detail = Language.NounWithQuantity(Self.mRemainingUploads, "mod", "mods") + " remaining"
+		  Self.mUploadProgress.Show(Self)
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Hidden()
@@ -697,6 +791,22 @@ End
 
 	#tag Property, Flags = &h21
 		Private mProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRemainingUploads As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUploadErrorCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUploadProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUploadSuccessCount As Integer
 	#tag EndProperty
 
 
@@ -820,7 +930,29 @@ End
 		  Case "ImportButton"
 		    Self.ShowImportDialog()
 		  Case "ExportButton"
-		    Self.ExportSelectedMods()
+		    Var IsModerator As Boolean = (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False And App.IdentityManager.CurrentIdentity.IsModerator
+		    If IsModerator = False Then
+		      Self.ExportSelectedMods()
+		      Return
+		    End If
+		    
+		    Var ExportFileItem As New DesktopMenuItem("Export To File")
+		    Var ExportCommunityItem As New DesktopMenuItem("Export To Community")
+		    
+		    Var ExportMenu As New DesktopMenuItem
+		    ExportMenu.AddMenu(ExportFileItem)
+		    ExportMenu.AddMenu(ExportCommunityItem)
+		    
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = ExportMenu.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    If (Choice Is Nil) = False Then
+		      Select Case Choice
+		      Case ExportFileItem
+		        Self.ExportSelectedMods()
+		      Case ExportCommunityItem
+		        Self.UploadSelectedMods()
+		      End Select
+		    End If 
 		  End Select
 		End Sub
 	#tag EndEvent
