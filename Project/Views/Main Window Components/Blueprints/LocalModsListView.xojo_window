@@ -930,8 +930,8 @@ End
 		  Case "ImportButton"
 		    Self.ShowImportDialog()
 		  Case "ExportButton"
-		    Var IsModerator As Boolean = (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False And App.IdentityManager.CurrentIdentity.IsModerator
-		    If IsModerator = False Then
+		    Var IsCurator As Boolean = (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False And App.IdentityManager.CurrentIdentity.IsCurator
+		    If IsCurator = False Then
 		      Self.ExportSelectedMods()
 		      Return
 		    End If

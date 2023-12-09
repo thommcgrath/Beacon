@@ -26,6 +26,7 @@ Begin BeaconWindow DebugWindow Implements NotificationKit.Receiver
    Width           =   600
    Begin Beacon.Thread CollectionThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -648,8 +649,8 @@ End
 		      If License.IsFlagged(SDTD.OmniFlag)Then
 		        GameNames.Add(Language.GameName(SDTD.Identifier))
 		      End If
-		      If License.IsFlagged(Beacon.OmniLicense.ModeratorFlag) Then
-		        GameNames.Add("Moderator Access")
+		      If License.IsFlagged(Beacon.OmniLicense.CuratorFlag) Then
+		        GameNames.Add("Curator Access")
 		      End If
 		      
 		      Var LicenseText As String = Language.EnglishOxfordList(GameNames)

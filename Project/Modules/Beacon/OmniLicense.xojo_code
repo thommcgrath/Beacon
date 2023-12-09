@@ -151,7 +151,7 @@ Protected Class OmniLicense
 	#tag EndProperty
 
 
-	#tag Constant, Name = ModeratorFlag, Type = Double, Dynamic = False, Default = \"8", Scope = Public
+	#tag Constant, Name = CuratorFlag, Type = Double, Dynamic = False, Default = \"8", Scope = Public
 	#tag EndConstant
 
 

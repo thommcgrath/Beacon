@@ -59,6 +59,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsCurator() As Boolean
+		  Return Self.IsOmniFlagged(Beacon.OmniLicense.CuratorFlag)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsExpired() As Boolean
 		  If Self.mExpiration Is Nil Then
 		    Return False
@@ -66,12 +72,6 @@ Protected Class Identity
 		  
 		  Var Now As DateTime = DateTime.Now
 		  Return Now.SecondsFrom1970 < Self.mExpiration.SecondsFrom1970
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsModerator() As Boolean
-		  Return Self.IsOmniFlagged(Beacon.OmniLicense.ModeratorFlag)
 		End Function
 	#tag EndMethod
 
