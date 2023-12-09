@@ -286,6 +286,16 @@ class User extends DatabaseObject implements JsonSerializable {
 		return $this->enabled;
 	}
 
+	public function IsCurator(): bool {
+		$this->LoadLicenses();
+		foreach ($this->licenses as $license) {
+			if (($license->ProductFlags() & 8) === 8) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function CanSignIn(): bool {
 		// Use the methods here so subclasses can override correctly.
 		return $this->IsEnabled() === true && $this->RequiresPasswordChange() === false;
