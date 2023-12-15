@@ -263,6 +263,37 @@ Protected Module ArkSA
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function CleanupBlueprintPath(Path As String) As String
+		  // Rather than just looking at wether or not the path ends in _C and remove it,
+		  // this looks at the namespace to see if it also ends in _C. Some mod authors
+		  // make this mistake and the resulting class ends up being Namespace_C.Class_C_C.
+		  
+		  Var Components() As String = Path.Split("/")
+		  Var LastComponent As String = Components(Components.LastIndex)
+		  Components.RemoveAt(Components.LastIndex)
+		  Var Pos As Integer = LastComponent.IndexOf(".")
+		  Var NamespaceString As String = LastComponent.Left(Pos)
+		  Var ClassString As String = LastComponent.Middle(Pos + 1)
+		  
+		  If NamespaceString.EndsWith("_C") Then
+		    // Class should have one _C
+		    If ClassString.EndsWith("_C_C") Then
+		      ClassString = ClassString.Left(ClassString.Length - 2)
+		    End If
+		  Else
+		    // Class should have no _C
+		    If ClassString.EndsWith("_C_C") Then
+		      ClassString = ClassString.Left(ClassString.Length - 4)
+		    ElseIf ClassString.EndsWith("_C") Then
+		      ClassString = ClassString.Left(ClassString.Length - 2)
+		    End If
+		  End If
+		  
+		  Return String.FromArray(Components, "/") + "/" + NamespaceString + "." + ClassString
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function CopyFrom(Extends Destination As ArkSA.MutableBlueprint, Source As ArkSA.Blueprint) As Boolean
 		  If Source Is Nil Then

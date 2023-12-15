@@ -233,7 +233,8 @@ Inherits ArkSA.ConfigGroup
 		      IncludeLevelOverride = IncludeLevelOverride Or Entry.LevelOverride <> Nil
 		    Next
 		    For Each Entry As ArkSA.SpawnPointSetEntry In Entries
-		      CreatureClasses.Add("""" + Entry.Creature.ClassString + """")
+		      // ASA uses full paths *with* _C suffix.
+		      CreatureClasses.Add("""" + Entry.Creature.Path + "_C""")
 		      
 		      If IncludeLevels Then
 		        Var Levels() As ArkSA.SpawnPointLevel = Entry.Levels
@@ -525,7 +526,14 @@ Inherits ArkSA.ConfigGroup
 		            Set.ColorSetClass = Entry.Lookup("ColorSets", "")
 		            
 		            For I As Integer = 0 To Classes.LastIndex
-		              Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", "", Classes(I), ContentPacks, True)
+		              Var CreaturePath As String
+		              Var CreatureClass As String = Classes(I).StringValue
+		              If CreatureClass.BeginsWith("/") Then
+		                CreaturePath = ArkSA.CleanupBlueprintPath(CreatureClass)
+		                CreatureClass = ""
+		              End If
+		              
+		              Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", CreaturePath, CreatureClass, ContentPacks, True)
 		              
 		              Var SetEntry As New ArkSA.MutableSpawnPointSetEntry(Creature)
 		              If LevelMembers.LastIndex >= I Then
