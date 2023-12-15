@@ -209,6 +209,11 @@ Protected Class PusherSocket
 		      End Select
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Receiving event from pusher")
+		      If (Message.Data Is Nil) = False And Message.Data.Size > 0 Then
+		        App.Log("Pusher data: " + EncodeBase64MBS(Message.Data))
+		      Else
+		        App.Log("No message from pusher")
+		      End If
 		    End Try
 		    
 		    Sender.Sleep(500)
