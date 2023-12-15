@@ -393,7 +393,7 @@ End
 		      If Me.RowTagAt(Idx).ObjectValue IsA Ark.Blueprint And Ark.Blueprint(Me.RowTagAt(Idx)).ContentPackId = Pack.ContentPackId Then
 		        Me.CellCheckBoxValueAt(Idx, Column) = Checked
 		      End If
-		      SomethingSelected = SomethingSelected Or Me.CellCheckBoxValueAt(Row, Column)
+		      SomethingSelected = SomethingSelected Or Me.CellCheckBoxValueAt(Idx, Column)
 		    Next
 		  Case IsA Ark.Blueprint
 		    Var Blueprint As Ark.Blueprint = RowTag

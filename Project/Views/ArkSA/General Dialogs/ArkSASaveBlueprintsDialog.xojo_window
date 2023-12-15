@@ -237,7 +237,6 @@ Begin BeaconDialog ArkSASaveBlueprintsDialog
    End
    Begin Thread SaveThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -393,7 +392,7 @@ End
 		      If Me.RowTagAt(Idx).ObjectValue IsA ArkSA.Blueprint And ArkSA.Blueprint(Me.RowTagAt(Idx)).ContentPackId = Pack.ContentPackId Then
 		        Me.CellCheckBoxValueAt(Idx, Column) = Checked
 		      End If
-		      SomethingSelected = SomethingSelected Or Me.CellCheckBoxValueAt(Row, Column)
+		      SomethingSelected = SomethingSelected Or Me.CellCheckBoxValueAt(Idx, Column)
 		    Next
 		  Case IsA ArkSA.Blueprint
 		    Var Blueprint As ArkSA.Blueprint = RowTag
