@@ -160,7 +160,7 @@ Implements ObservationKit.Observable
 		    Raise Err
 		  End If
 		  
-		  Self.ProviderTokenKey(Token.TokenId) = DecodeBase64(Token.EncryptionKey)
+		  Self.ProviderTokenKey(Token.TokenId) = Token.EncryptionKey
 		End Sub
 	#tag EndMethod
 
