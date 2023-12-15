@@ -125,7 +125,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 100
+		  Return 101
 		End Function
 	#tag EndEvent
 
@@ -154,6 +154,8 @@ Inherits Beacon.DataSource
 		        Self.SQLExecute("DELETE FROM colors WHERE color_uuid = ?1;", ObjectId)
 		      Case "events"
 		        Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectId)
+		      Case "ini_options"
+		        Self.SQLExecute("DELETE FROM ini_options WHERE object_id = ?1;", ObjectId)
 		      End Select
 		    Next Deletion
 		    For Each IconID As String In DeleteIcons
