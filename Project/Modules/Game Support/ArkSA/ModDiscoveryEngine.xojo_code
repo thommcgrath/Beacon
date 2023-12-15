@@ -297,6 +297,7 @@ Protected Class ModDiscoveryEngine
 		    Engram.ContentPackName = ModName
 		    Engram.RegenerateBlueprintId()
 		    Engram.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    Engram.Tags = Array("blueprintable")
 		    
 		    If Unlocks.HasKey(ClassString) Then
 		      Engram.EntryString = Unlocks.Value(ClassString).StringValue
