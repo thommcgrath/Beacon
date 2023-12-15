@@ -390,12 +390,14 @@ End
 		  
 		  Var AddMask As UInt64 = ArkSA.Maps.MaskForMaps(Self.MapSelector.CheckedMaps)
 		  Var ClearMask As UInt64 = ArkSA.Maps.MaskForMaps(Self.MapSelector.UncheckedMaps)
+		  Var LastUpdate As Double = DateTime.Now.SecondsFrom1970
 		  
 		  For Idx As Integer = 0 To Self.mBlueprints.LastIndex
 		    Var Blueprint As ArkSA.MutableBlueprint = Self.mBlueprints(Idx).MutableVersion
 		    Blueprint.Availability = (Blueprint.Availability Or AddMask) And Not ClearMask
 		    Blueprint.AddTags(AddTags)
 		    Blueprint.RemoveTags(RemoveTags)
+		    Blueprint.LastUpdate = LastUpdate
 		    Self.mBlueprints(Idx) = Blueprint.ImmutableVersion
 		  Next
 		  
