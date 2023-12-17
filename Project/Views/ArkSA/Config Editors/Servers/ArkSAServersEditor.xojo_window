@@ -802,7 +802,14 @@ End
 		      Continue
 		    End If
 		    
-		    Var Profiles() As Beacon.ServerProfile = Provider.ListServers(Config, ArkSA.Identifier)
+		    Var Profiles() As Beacon.ServerProfile
+		    Try
+		      Profiles = Provider.ListServers(Config, ArkSA.Identifier)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Refreshing server profiles")
+		      Continue
+		    End Try
+		    
 		    For Each Profile As Beacon.ServerProfile In Profiles
 		      If ProfileMap.HasKey(Profile.ProfileId) Then
 		        Beacon.ServerProfile(ProfileMap.Value(Profile.ProfileId).ObjectValue).SecondaryName = Profile.SecondaryName
