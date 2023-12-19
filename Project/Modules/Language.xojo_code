@@ -195,6 +195,8 @@ Protected Module Language
 		    Return "Accounts"
 		  Case Ark.Configs.NameProjectSettings, SDTD.Configs.NameProjectSettings, ArkSA.Configs.NameProjectSettings
 		    Return "Project Settings"
+		  Case ArkSA.Configs.NamePlayerLists
+		    Return "Player Lists"
 		  End Select
 		End Function
 	#tag EndMethod

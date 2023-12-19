@@ -20,6 +20,7 @@ Protected Module Configs
 		    Names.Add(NameStackSizes)
 		    Names.Add(NameStatLimits)
 		    Names.Add(NameStatMultipliers)
+		    Names.Add(NamePlayerLists)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
@@ -150,6 +151,8 @@ Protected Module Configs
 		    Return New ArkSA.Configs.SpoilTimers()
 		  Case NameGeneralSettings
 		    Return New ArkSA.Configs.OtherSettings()
+		  Case NamePlayerLists
+		    Return New ArkSA.Configs.PlayerLists()
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."
@@ -202,6 +205,8 @@ Protected Module Configs
 		    Return New ArkSA.Configs.SpoilTimers(SaveData, EncryptedData)
 		  Case NameGeneralSettings
 		    Return New ArkSA.Configs.OtherSettings(SaveData, EncryptedData)
+		  Case NamePlayerLists
+		    Return New ArkSA.Configs.PlayerLists(SaveData, EncryptedData)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."
@@ -251,6 +256,8 @@ Protected Module Configs
 		    Return ArkSA.Configs.SpoilTimers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case ArkSA.Configs.NameGeneralSettings
 		    Return ArkSA.Configs.OtherSettings.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NamePlayerLists
+		    Return ArkSA.Configs.PlayerLists.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."
@@ -420,6 +427,9 @@ Protected Module Configs
 	#tag EndConstant
 
 	#tag Constant, Name = NameLootDrops, Type = String, Dynamic = False, Default = \"ArkSA.LootDrops", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NamePlayerLists, Type = String, Dynamic = False, Default = \"ArkSA.PlayerLists", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = NameProjectSettings, Type = String, Dynamic = False, Default = \"ArkSA.ProjectSettings", Scope = Protected

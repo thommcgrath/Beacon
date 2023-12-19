@@ -740,6 +740,8 @@ End
 		        NewPanel = New ArkSASpoilTimersEditor(Self.Project)
 		      Case ArkSA.Configs.NameGeneralSettings
 		        NewPanel = New ArkSAGeneralSettingsEditor(Self.Project)
+		      Case ArkSA.Configs.NamePlayerLists
+		        NewPanel = New ArkSAPlayerListsEditor(Self.Project)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(CacheKey) = NewPanel

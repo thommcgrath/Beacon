@@ -1696,6 +1696,9 @@ Protected Module Beacon
 	#tag Constant, Name = DefaultPrettyLocalized, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = FileExtensionArkProfile, Type = String, Dynamic = False, Default = \".arkprofile", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = FileExtensionAuth, Type = String, Dynamic = False, Default = \".beaconauth", Scope = Protected
 	#tag EndConstant
 

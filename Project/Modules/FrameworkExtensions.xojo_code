@@ -414,6 +414,17 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasAllKeys(Extends JSON As JSONItem, ParamArray Keys() As Variant) As Boolean
+		  For Each Key As Variant In Keys
+		    If JSON.HasKey(Key) = False Then
+		      Return False
+		    End If
+		  Next
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasAnyKey(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Boolean
 		  For Each Key As Variant In Keys
 		    If Dict.HasKey(Key) = True Then

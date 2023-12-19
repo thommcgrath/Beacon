@@ -430,6 +430,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.IntegerValue("ArkSA Player Lists Splitter Position", ArkSAPlayerListsEditor.ListDefaultWidth)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("ArkSA Player Lists Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSAPlayerListsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.IntegerValue("ArkSA Spawn Point Editor Limits Splitter Position", ArkSpawnPointEditor.LimitsListDefaultHeight)
 			End Get
 		#tag EndGetter
