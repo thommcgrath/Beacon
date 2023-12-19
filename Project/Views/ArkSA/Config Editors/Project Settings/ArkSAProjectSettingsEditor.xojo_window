@@ -115,7 +115,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       HasBorder       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   343
+      Height          =   311
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -240,7 +240,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpUWPMode"
-      Top             =   450
+      Top             =   418
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -270,7 +270,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpUWPMode"
-      Top             =   450
+      Top             =   418
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -303,7 +303,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpCompressed"
-      Top             =   482
+      Top             =   450
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -336,7 +336,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpAllowUCS"
-      Top             =   514
+      Top             =   482
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -367,7 +367,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpCompressed"
-      Top             =   482
+      Top             =   450
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -397,6 +397,67 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpAllowUCS"
+      Top             =   482
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin DesktopLabel LocalBackupLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Keep Local Project Backup:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   "#HelpLocalBackup"
+      Top             =   514
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   189
+   End
+   Begin SwitchControl LocalBackupSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   221
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "#HelpLocalBackup"
       Top             =   514
       Transparent     =   True
       Visible         =   True
@@ -413,8 +474,9 @@ End
 		  Self.CompressedSwitch.Value(False) = Self.Project.UseCompression
 		  Self.AllowUCSSwitch.Value(False) = Self.Project.AllowUCS2
 		  Self.UWPModeMenu.SelectedRowIndex = CType(Self.Project.UWPMode, Integer)
+		  Self.LocalBackupSwitch.Value(False) = Self.Project.KeepLocalBackup
 		  
-		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel)
+		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel, Self.LocalBackupLabel)
 		  Var ControlLeft As Integer = Self.TitleLabel.Right + 12
 		  Self.TitleField.Left = ControlLeft
 		  Self.TitleField.Width = Self.Width - (ControlLeft + 20)
@@ -423,6 +485,7 @@ End
 		  Self.UWPModeMenu.Left = ControlLeft
 		  Self.CompressedSwitch.Left = ControlLeft
 		  Self.AllowUCSSwitch.Left = ControlLeft
+		  Self.LocalBackupSwitch.Left = ControlLeft
 		End Sub
 	#tag EndEvent
 
@@ -434,16 +497,19 @@ End
 	#tag EndMethod
 
 
-	#tag Constant, Name = HelpAllowUCS, Type = String, Dynamic = False, Default = \"When two-byte characters are used in the server name or message of the day\x2C Ark needs the ini file formatted differently\x2C but this different format is not compatible with most text editors. When this setting is off\x2C Beacon will remove two-byte characters\x2C keeping the ini files compatible with all text editors.", Scope = Private
+	#tag Constant, Name = HelpAllowUCS, Type = String, Dynamic = True, Default = \"When two-byte characters are used in the server name or message of the day\x2C Ark needs the ini file formatted differently\x2C but this different format is not compatible with most text editors. When this setting is off\x2C Beacon will remove two-byte characters\x2C keeping the ini files compatible with all text editors.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HelpCompressed, Type = String, Dynamic = False, Default = \"When enabled\x2C the project will be compressed to save disk space. Turn this setting off to save the project as a plain text JSON file.", Scope = Private
+	#tag Constant, Name = HelpCompressed, Type = String, Dynamic = True, Default = \"When enabled\x2C the project will be compressed to save disk space. Turn this setting off to save the project as a plain text JSON file.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HelpConsoleMode, Type = String, Dynamic = False, Default = \"Turns off any Steam-exclusive mods so their contents are not accidentally used in the project. Custom mods are not affected.", Scope = Private
+	#tag Constant, Name = HelpConsoleMode, Type = String, Dynamic = True, Default = \"Turns off any Steam-exclusive mods so their contents are not accidentally used in the project. Custom mods are not affected.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HelpUWPMode, Type = String, Dynamic = False, Default = \"Use the [ShooterGameMode_Options] header needed by the Windows Store version of Ark in single player.", Scope = Private
+	#tag Constant, Name = HelpLocalBackup, Type = String, Dynamic = True, Default = \"When turned on\x2C projects saved to the cloud will also save a backup copy to your computer.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HelpUWPMode, Type = String, Dynamic = True, Default = \"Use the [ShooterGameMode_Options] header needed by the Windows Store version of Ark in single player.", Scope = Private
 	#tag EndConstant
 
 
@@ -523,6 +589,20 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Project.AllowUCS2 = Me.Value
+		  Self.Modified = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LocalBackupSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Project.KeepLocalBackup = Me.Value
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
