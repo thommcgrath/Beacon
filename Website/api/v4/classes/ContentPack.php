@@ -95,6 +95,11 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			$parameters->values[] = $filters['contentPackId'];
 		}
 
+		if (isset($filters['search']) && empty($filters['search']) === false) {
+			$searchValue = '%' . str_replace(['%', '_'], ['\\%', '\\_'], trim($filters['search'])) . '%';
+			$parameters->clauses[] = $schema->Accessor('name') . ' LIKE $' . $parameters->AddValue($searchValue);
+		}
+
 		$parameters->allowAll = true;
 		$parameters->orderBy = $schema->Accessor('name');
 	}
