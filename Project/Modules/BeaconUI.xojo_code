@@ -333,7 +333,7 @@ Protected Module BeaconUI
 		  #if TargetWindows
 		    Return Round(MaxWidth * 1.05) + 20
 		  #else
-		    Return MaxWidth + 20
+		    Return MaxWidth + 22
 		  #endif
 		End Function
 	#tag EndMethod
