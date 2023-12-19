@@ -48,6 +48,11 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 		$parameters->AddFromFilter($schema, $filters, 'marketplaceId');
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		$parameters->allowAll = true;
+
+		if (isset($filters['search']) && empty($filters['search']) === false) {
+			$searchValue = '%' . str_replace(['%', '_'], ['\\%', '\\_'], trim($filters['search'])) . '%';
+			$parameters->clauses[] = $schema->Accessor('name') . ' LIKE $' . $parameters->AddValue($searchValue);
+		}
 	}
 
 	public function jsonSerialize(): mixed {
