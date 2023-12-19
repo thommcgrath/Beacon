@@ -840,7 +840,7 @@ Implements ObservationKit.Observable
 		    For Each Entry As DictionaryEntry In KeysDict
 		      Project.mProviderTokenKeys.Value(Entry.Key) = DecodeBase64(Entry.Value)
 		    Next
-		  ElseIf SecureDict.HasKey("ExternalAccounts") And Project.mRole = "Owner" Then
+		  ElseIf SecureDict.HasKey("ExternalAccounts") And Project.mRole = Beacon.ProjectMember.RoleOwner Then
 		    Var Accounts() As Variant = Dictionary(SecureDict.Value("ExternalAccounts").ObjectValue).Value("Accounts")
 		    For Each AccountDict As Dictionary In Accounts
 		      Var AccountId As String = AccountDict.Value("UUID")
