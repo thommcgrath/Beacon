@@ -46,6 +46,8 @@ Protected Class PusherSocket
 		Private Sub mRunThread_Run(Sender As Global.Thread)
 		  Const SleepTime = 500
 		  
+		  ReconnectPoint:
+		  
 		  If Preferences.OnlineEnabled = False Then
 		    Self.State = Beacon.PusherSocket.States.Disabled
 		    Return
@@ -123,8 +125,10 @@ Protected Class PusherSocket
 		  Var SentPing As Boolean
 		  Var ActivityTimeout As Integer = 120
 		  Var PongWaitTime As Integer = 30
+		  Var ShouldReconnect As Boolean
 		  Self.State = Beacon.PusherSocket.States.Connected
 		  While Self.mStopped = False
+		    ShouldReconnect = False
 		    
 		    If Self.mPendingMessages.Count > 0 Then
 		      Var Dict As Dictionary = Self.mPendingMessages(0)
@@ -197,6 +201,14 @@ Protected Class PusherSocket
 		        #if DebugBuild
 		          System.DebugLog("Connected, socket is " + Self.mSocketId)
 		        #endif
+		      Case "pusher:error"
+		        Var ErrorInfo As New JSONItem(Payload)
+		        Var ErrorCode As Integer = ErrorInfo.Value("code")
+		        Var ErrorMessage As String = ErrorInfo.Value("message")
+		        App.Log("Pusher error #" + ErrorCode.ToString(Locale.Raw, "0") + ": " + ErrorMessage)
+		        ShouldReconnect = True
+		        Sender.Sleep(500)
+		        Exit While
 		      Else
 		        If Json.HasKey("channel") Then
 		          Var ChannelName As String = Json.Value("channel")
@@ -219,6 +231,10 @@ Protected Class PusherSocket
 		    Sender.Sleep(500)
 		  Wend
 		  Self.State = Beacon.PusherSocket.States.Disconnected
+		  
+		  If ShouldReconnect Then
+		    GoTo ReconnectPoint
+		  End If
 		  
 		  Self.mCurl = Nil
 		End Sub
