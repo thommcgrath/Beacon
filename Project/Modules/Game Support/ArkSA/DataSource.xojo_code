@@ -787,7 +787,7 @@ Inherits Beacon.DataSource
 		Private Sub CleanupModPaths()
 		  Var Rows As RowSet
 		  Try
-		    Rows = Self.SQLSelect("SELECT object_id, path, category, content_pack_id FROM blueprints WHERE path LIKE '/Game/Mods/%/Content/%';")
+		    Rows = Self.SQLSelect("SELECT object_id, path, category, content_pack_id FROM blueprints WHERE path LIKE '/Game/Mods/%';")
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Finding blueprint paths that need updating")
 		    Return
@@ -805,20 +805,20 @@ Inherits Beacon.DataSource
 		  End Try
 		  
 		  Var Extractor As New Regex
-		  Extractor.SearchPattern = "^/Game/Mods/([^/]+)/Content/(.+)$"
+		  Extractor.SearchPattern = "^/Game/Mods/([^/]+)(/Content)?/(.+)$"
 		  
 		  While Not Rows.AfterLastRow
 		    Try
 		      Var Matches As RegexMatch = Extractor.Search(Rows.Column("path").StringValue)
 		      If (Matches Is Nil) = False Then
-		        Var Path As String = "/" + Matches.SubExpressionString(1) + "/" + Matches.SubExpressionString(2)
+		        Var Path As String = "/" + Matches.SubExpressionString(1) + "/" + Matches.SubExpressionString(3)
 		        Var OldObjectId As String = Rows.Column("object_id").StringValue
 		        Var TableName As String = Rows.Column("category").StringValue
 		        Var ContentPackId As String = Rows.Column("content_pack_id").StringValue
 		        Var NewObjectId As String = ArkSA.GenerateBlueprintId(ContentPackId, Path)
 		        
 		        Var Exists As RowSet = Self.SQLSelect("SELECT object_id FROM " + TableName + " WHERE object_id = ?1;", NewObjectId)
-		        If Exists.RowCount > 0 Then
+		        If Exists.RowCount > 0 And NewObjectID <> OldObjectId Then
 		          // New version already exists
 		          Self.SQLExecute("DELETE FROM " + TableName + " WHERE object_id = ?1;", OldObjectId)
 		        Else
