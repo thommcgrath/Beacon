@@ -1429,7 +1429,7 @@ Protected Module ArkSA
 	#tag Constant, Name = SteamServerId, Type = Double, Dynamic = False, Default = \"2430930", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
+	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"b2362c68-abcf-4dc2-93b1-5d39074e48b3", Scope = Protected
