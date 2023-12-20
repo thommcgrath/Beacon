@@ -2386,32 +2386,31 @@ End
 		    Self.ShowAlert("This object has no name", "You'll want to correct this, it will be hard to find this object again without a name.")
 		    Return False
 		  End If
-		  If Not Path.BeginsWith("/Game/") Then
-		    If Path.IndexOf("/") = -1 Then
-		      Var TempPath As String
-		      Select Case Self.TypeMenu.SelectedRowIndex
-		      Case Self.IndexEngram
-		        TempPath = ArkSA.Engram.CreateCustom("", "", Path).Path
-		      Case Self.IndexCreature
-		        TempPath = ArkSA.Creature.CreateCustom("", "", Path).Path
-		      Case Self.IndexSpawnPoint
-		        TempPath = ArkSA.SpawnPoint.CreateCustom("", "", Path).Path
-		      Case Self.IndexLootContainer
-		        TempPath = ArkSA.LootContainer.CreateCustom("", "", Path).Path
-		      End Select
-		      If Self.ShowConfirm("The entered path is a class string, not a blueprint path. Do you want to use the path """ + TempPath + """ instead?", "This is not recommended. Beacon uses the paths to properly track items that may have the same class. When possible, use the full correct path to the blueprint.", "Use Suggestion", "Cancel") Then
-		        Path = TempPath
-		      Else
-		        Return False
-		      End If
+		  If Path.Contains("/") = False Then
+		    Var TempPath As String
+		    Select Case Self.TypeMenu.SelectedRowIndex
+		    Case Self.IndexEngram
+		      TempPath = ArkSA.Engram.CreateCustom("", "", Path).Path
+		    Case Self.IndexCreature
+		      TempPath = ArkSA.Creature.CreateCustom("", "", Path).Path
+		    Case Self.IndexSpawnPoint
+		      TempPath = ArkSA.SpawnPoint.CreateCustom("", "", Path).Path
+		    Case Self.IndexLootContainer
+		      TempPath = ArkSA.LootContainer.CreateCustom("", "", Path).Path
+		    End Select
+		    If Self.ShowConfirm("The entered path is a class string, not a blueprint path. Do you want to use the path """ + TempPath + """ instead?", "This is not recommended. Beacon uses the paths to properly track items that may have the same class. When possible, use the full correct path to the blueprint.", "Use Suggestion", "Cancel") Then
+		      Path = TempPath
 		    Else
-		      Var Matches As RegExMatch = ArkSA.BlueprintPathRegex.Search(Path)
-		      If (Matches Is Nil) = False Then
-		        Path = ArkSA.BlueprintPath(Matches)
-		      Else
-		        Self.ShowAlert("The blueprint path is required", "Beacon requires the full blueprint path to the object in order to function correctly.")
-		        Return False
-		      End If
+		      Return False
+		    End If
+		  Else
+		    Var Matches As RegExMatch = ArkSA.BlueprintPathRegex.Search(Path)
+		    If (Matches Is Nil) = False Then
+		      Path = ArkSA.BlueprintPath(Matches)
+		    End If
+		    If Path.IsEmpty Then
+		      Self.ShowAlert("The blueprint path is required", "Beacon requires the full blueprint path to the object in order to function correctly.")
+		      Return False
 		    End If
 		  End If
 		  

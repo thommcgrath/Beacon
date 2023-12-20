@@ -634,11 +634,13 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub PerformMaintenance()
 		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled, last_update FROM content_packs WHERE content_pack_id = ?1;", ArkSA.UserContentPackId)
 		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Or Rows.Column("last_update").DoubleValue <> Beacon.FixedTimestamp Then
 		    Self.ReplaceUserBlueprints()
 		  End If
+		  
+		  Self.CleanupModPaths()
 		End Sub
 	#tag EndEvent
 
@@ -778,6 +780,66 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h21
 		Private Sub Cache(SpawnPoint As ArkSA.SpawnPoint)
 		  Self.mBlueprintCache.Value(SpawnPoint.SpawnPointId) = SpawnPoint
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CleanupModPaths()
+		  Var Rows As RowSet
+		  Try
+		    Rows = Self.SQLSelect("SELECT object_id, path, category, content_pack_id FROM blueprints WHERE path LIKE '/Game/Mods/%/Content/%';")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Finding blueprint paths that need updating")
+		    Return
+		  End Try
+		  
+		  If Rows.RowCount = 0 Then
+		    Return
+		  End If
+		  
+		  Try
+		    Self.BeginTransaction()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Starting blueprint update transaction")
+		    Return
+		  End Try
+		  
+		  Var Extractor As New Regex
+		  Extractor.SearchPattern = "^/Game/Mods/([^/]+)/Content/(.+)$"
+		  
+		  While Not Rows.AfterLastRow
+		    Try
+		      Var Matches As RegexMatch = Extractor.Search(Rows.Column("path").StringValue)
+		      If (Matches Is Nil) = False Then
+		        Var Path As String = "/" + Matches.SubExpressionString(1) + "/" + Matches.SubExpressionString(2)
+		        Var OldObjectId As String = Rows.Column("object_id").StringValue
+		        Var TableName As String = Rows.Column("category").StringValue
+		        Var ContentPackId As String = Rows.Column("content_pack_id").StringValue
+		        Var NewObjectId As String = ArkSA.GenerateBlueprintId(ContentPackId, Path)
+		        
+		        Var Exists As RowSet = Self.SQLSelect("SELECT object_id FROM " + TableName + " WHERE object_id = ?1;", NewObjectId)
+		        If Exists.RowCount > 0 Then
+		          // New version already exists
+		          Self.SQLExecute("DELETE FROM " + TableName + " WHERE object_id = ?1;", OldObjectId)
+		        Else
+		          // Update the record
+		          Self.SQLExecute("UPDATE " + TableName + " SET path = ?2, object_id = ?3 WHERE object_id = ?1;", OldObjectId, Path, NewObjectId)
+		        End If
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Updating blueprint path")
+		      Self.RollbackTransaction()
+		      Return
+		    End Try
+		    Rows.MoveToNextRow
+		  Wend
+		  
+		  Try
+		    Self.CommitTransaction()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Committing blueprint update transaction")
+		    Return
+		  End Try
 		End Sub
 	#tag EndMethod
 

@@ -34,7 +34,7 @@ Protected Class ModDiscoveryEngine
 		  End If
 		  
 		  Var Searcher As New Regex
-		  Searcher.SearchPattern = "^ShooterGame/Mods/([^/]+)/(.+)/(.+)\.uasset\t[\d\-TZ:\.]{24}$"
+		  Searcher.SearchPattern = "^ShooterGame/Mods/([^/]+)/Content/(.+)/(.+)\.uasset\t[\d\-TZ:\.]{24}$"
 		  
 		  Self.mModsByTag = New Dictionary
 		  Self.mTagsByMod = New Dictionary
@@ -177,7 +177,7 @@ Protected Class ModDiscoveryEngine
 		          Var ModTag As String = Matches.SubExpressionString(1)
 		          Var ClassString As String = Matches.SubExpressionString(3)
 		          Var NamespaceString As String = Matches.SubExpressionString(2) + "/" + ClassString
-		          Var Path As String = "/Game/Mods/" + ModTag + "/" + NamespaceString + "." + ClassString
+		          Var Path As String = "/" + ModTag + "/" + NamespaceString + "." + ClassString
 		          Candidates.Value(Path) = ClassString
 		        Catch LineErr As RuntimeException
 		        End Try
@@ -307,6 +307,7 @@ Protected Class ModDiscoveryEngine
 		    
 		    Blueprints.Add(Engram)
 		  Next
+		  
 		  For Each ClassString As String In Creatures
 		    Var Path As String = ClassPaths.Value(ClassString)
 		    Var Creature As New ArkSA.MutableCreature(Path, "")

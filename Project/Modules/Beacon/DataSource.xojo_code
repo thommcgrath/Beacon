@@ -770,6 +770,12 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub PerformMaintenance()
+		  RaiseEvent PerformMaintenance
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Prefix() As String
 		  Return Self.Identifier.Lowercase
 		End Function
@@ -991,6 +997,10 @@ Implements NotificationKit.Receiver
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PerformMaintenance()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

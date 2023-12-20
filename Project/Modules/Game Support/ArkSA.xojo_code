@@ -96,19 +96,31 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function BlueprintPath(Matches As RegExMatch) As String
+		  If Matches Is Nil Then
+		    Return ""
+		  End If
+		  
 		  Var Path As String
-		  If Matches.SubExpressionCount >= 4 And Matches.SubExpressionString(4).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(4)
-		  ElseIf Matches.SubExpressionCount >= 6 And Matches.SubExpressionString(6).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(6)
-		  ElseIf Matches.SubExpressionCount >= 8 And Matches.SubExpressionString(8).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(8)
-		  ElseIf Matches.SubExpressionCount >= 10 And Matches.SubExpressionString(10).IsEmpty = False Then
-		    Path = "/Game/Mods" + Matches.SubExpressionString(10)
-		  End If
-		  If Path.IsEmpty = False And Path.EndsWith("_C") Then
-		    Path = Path.Left(Path.Length - 2)
-		  End If
+		  Var Count As Integer = Matches.SubExpressionCount
+		  Try
+		    If Count >= 12 And Matches.SubExpressionString(11).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(11)
+		    ElseIf Count >= 11 And Matches.SubExpressionString(10).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(10)
+		    ElseIf Count >= 9 And Matches.SubExpressionString(8).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(8)
+		    ElseIf Count >= 7 And Matches.SubExpressionString(6).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(6)
+		    ElseIf Count >= 5 And Matches.SubExpressionString(4).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(4)
+		    Else
+		      Return ""
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Extracting blueprint path")
+		    Return ""
+		  End Try
+		  Path = ArkSA.CleanupBlueprintPath(Path)
 		  Return Path
 		End Function
 	#tag EndMethod
@@ -121,7 +133,7 @@ Protected Module ArkSA
 		    
 		    Regex = New Regex
 		    Regex.Options.CaseSensitive = False
-		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/Script/Engine\.Blueprint[" + QuotationCharacters + "]([^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
+		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/Script/Engine\.Blueprint[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/[^/]+/.+\..+))"
 		  End If
 		  Return Regex
 		End Function
@@ -243,10 +255,6 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ClassStringFromPath(Path As String) As String
-		  If Path.Length <= 6 Or Path.Left(6) <> "/Game/" Then
-		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
-		  End If
-		  
 		  Var Components() As String = Path.Split("/")
 		  Var Tail As String = Components(Components.LastIndex)
 		  Components = Tail.Split(".")
