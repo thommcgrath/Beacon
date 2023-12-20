@@ -289,7 +289,7 @@ Inherits ArkSA.ConfigGroup
 		    Var Members(2) As String
 		    Members(0) = "AnEntryName=""" + Set.Label + """"
 		    Members(1) = "EntryWeight=" + Set.RawWeight.PrettyText
-		    Members(2) = "NPCsToSpawnStrings=(" + CreatureClasses.Join(",") + ")"
+		    Members(2) = "NPCsToSpawn=(" + CreatureClasses.Join(",") + ")"
 		    
 		    If IncludeLevels Then
 		      Members.Add("NPCDifficultyLevelRanges=(" + LevelMembers.Join(",") + ")")
@@ -354,12 +354,12 @@ Inherits ArkSA.ConfigGroup
 		            App.Log("Warning: Could not find weight for replacing " + FromCreature.ClassString + " with " + ToCreature.ClassString)
 		            Continue
 		          End If
-		          ReplacementClasses.Add("""" + ToCreature.ClassString + """")
+		          ReplacementClasses.Add("""" + ToCreature.Path + "_C""")
 		          ReplacementWeights.Add(Weight.DoubleValue.PrettyText)
 		        Next
 		        
 		        If ReplacementClasses.Count > 0 Then
-		          Replacements.Add("(FromClass=""" + FromCreature.ClassString + """,ToClasses=(" + ReplacementClasses.Join(",") + "),Weights=(" + ReplacementWeights.Join(",") + "))")
+		          Replacements.Add("(FromClass=""" + FromCreature.Path + "_C"",ToClasses=(" + ReplacementClasses.Join(",") + "),Weights=(" + ReplacementWeights.Join(",") + "))")
 		        End If
 		      Next
 		      
@@ -391,15 +391,15 @@ Inherits ArkSA.ConfigGroup
 		      If Limit >= 1.0 Then
 		        Continue
 		      End If
-		      Var LimitClass As String = CreatureRef.ClassString
-		      If LimitClass.IsEmpty Then
+		      Var LimitPath As String = CreatureRef.Path
+		      If LimitPath.IsEmpty Then
 		        Var Creature As ArkSA.Blueprint = CreatureRef.Resolve()
 		        If Creature Is Nil Then
 		          Continue
 		        End If
-		        LimitClass = Creature.ClassString
+		        LimitPath = Creature.Path
 		      End If
-		      LimitConfigs.Add("(NPCClassString=""" + LimitClass + """,MaxPercentageOfDesiredNumToAllow=" + Limit.PrettyText + ")")
+		      LimitConfigs.Add("(NPCClass=""" + LimitPath + "_C"",MaxPercentageOfDesiredNumToAllow=" + Limit.PrettyText + ")")
 		    Next
 		    If LimitConfigs.Count > 0 Then
 		      Pieces.Add("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
@@ -528,7 +528,7 @@ Inherits ArkSA.ConfigGroup
 		            For I As Integer = 0 To Classes.LastIndex
 		              Var CreaturePath As String
 		              Var CreatureClass As String = Classes(I).StringValue
-		              If CreatureClass.BeginsWith("/") Then
+		              If CreatureClass.Contains("/") Then
 		                CreaturePath = ArkSA.CleanupBlueprintPath(CreatureClass)
 		                CreatureClass = ""
 		              End If
@@ -611,14 +611,26 @@ Inherits ArkSA.ConfigGroup
 		                  Continue
 		                End If
 		                
-		                Var FromClassValue As String = Replacement.Value("FromClass")
-		                Var FromCreature As ArkSA.Creature = ArkSA.ResolveCreature("", "", FromClassValue, ContentPacks, True)
+		                Var FromClass As String = Replacement.Value("FromClass")
+		                Var FromPath As String
+		                If FromClass.Contains("/") Then
+		                  FromPath = ArkSA.CleanupBlueprintPath(FromClass)
+		                  FromClass = ""
+		                End If
+		                Var FromCreature As ArkSA.Creature = ArkSA.ResolveCreature("", FromPath, FromClass, ContentPacks, True)
 		                
 		                Var ToWeights() As Variant = Replacement.Value("Weights")
 		                Var ToClassValues() As Variant = Replacement.Value("ToClasses")
 		                For I As Integer = 0 To ToClassValues.LastIndex
 		                  Var ToWeight As Double = If(I <= ToWeights.LastIndex, ToWeights(I), 1.0)
-		                  Var ToCreature As ArkSA.Creature = ArkSA.ResolveCreature("", "", ToClassValues(I), ContentPacks, True)
+		                  Var ToClass As String = ToClassValues(I)
+		                  Var ToPath As String
+		                  If ToClass.Contains("/") Then
+		                    ToPath = ArkSA.CleanupBlueprintPath(ToClass)
+		                    ToClass = ""
+		                  End If
+		                  
+		                  Var ToCreature As ArkSA.Creature = ArkSA.ResolveCreature("", ToPath, ToClass, ContentPacks, True)
 		                  
 		                  Set.CreatureReplacementWeight(FromCreature, ToCreature) = ToWeight
 		                Next
@@ -637,11 +649,25 @@ Inherits ArkSA.ConfigGroup
 		      If Dict.HasKey("NPCSpawnLimits") Then
 		        Var Limits() As Variant = Dict.Value("NPCSpawnLimits")
 		        For Each Limit As Dictionary In Limits
-		          If Not Limit.HasAllKeys("NPCClassString", "MaxPercentageOfDesiredNumToAllow") Then
+		          Var LimitClass As String
+		          If Limit.HasKey("NPCClass") Then
+		            LimitClass = Limit.Value("NPCClass")
+		          ElseIf Limit.HasKey("NPCClassString") Then
+		            LimitClass = Limit.Value("NPCClassString")
+		          Else
+		            Continue
+		          End If
+		          If Limit.HasKey("MaxPercentageOfDesiredNumToAllow") = False Then
 		            Continue
 		          End If
 		          
-		          Var Creature As ArkSA.Creature = ArkSA.ResolveCreature(Limit, "", "", "NPCClassString", ContentPacks, True)
+		          Var LimitPath As String
+		          If LimitClass.Contains("/") Then
+		            LimitPath = ArkSA.CleanupBlueprintPath(LimitClass)
+		            LimitClass = ""
+		          End If
+		          
+		          Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", LimitPath, LimitClass, ContentPacks, True)
 		          If (Creature Is Nil) = False Then
 		            Override.Limit(Creature) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
 		          End If
