@@ -794,6 +794,7 @@ Inherits ArkSA.ConfigGroup
 		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
 		    If Self.mOverrides(Idx).SpawnPointId = SpawnPointRef.BlueprintId And Self.mOverrides(Idx).Mode = Mode Then
 		      Self.mOverrides.RemoveAt(Idx)
+		      Self.Modified = True
 		      Return
 		    End If
 		  Next
@@ -809,6 +810,7 @@ Inherits ArkSA.ConfigGroup
 		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
 		    If Self.mOverrides(Idx).SpawnPointId = SpawnPoint.SpawnPointId And Self.mOverrides(Idx).Mode = Mode Then
 		      Self.mOverrides.RemoveAt(Idx)
+		      Self.Modified = True
 		      Return
 		    End If
 		  Next
@@ -824,6 +826,7 @@ Inherits ArkSA.ConfigGroup
 		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
 		    If Self.mOverrides(Idx).UniqueKey = Override.UniqueKey Then
 		      Self.mOverrides.RemoveAt(Idx)
+		      Self.Modified = True
 		      Return
 		    End If
 		  Next
