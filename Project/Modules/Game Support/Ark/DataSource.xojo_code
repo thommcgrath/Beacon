@@ -2709,6 +2709,7 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Var CountSuccess, CountErrors As Integer
+		  Var Now As Double = DateTime.Now.SecondsFrom1970
 		  
 		  Self.BeginTransaction()
 		  If (BlueprintsToDelete Is Nil) = False Then
@@ -2736,6 +2737,7 @@ Inherits Beacon.DataSource
 		        
 		        Self.BeginTransaction()
 		        TransactionStarted = True
+		        Self.SQLExecute("UPDATE content_packs SET last_update = ?2 WHERE content_pack_id = ?1;", Rows.Column("content_pack_id").StringValue, Now)
 		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", BlueprintId)
 		        Self.CommitTransaction()
 		        Self.Invalidate(BlueprintId)
@@ -2940,6 +2942,8 @@ Inherits Beacon.DataSource
 		            Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.BlueprintId, Tag)
 		          Next Tag
 		        End If
+		        
+		        Self.SQLExecute("UPDATE content_packs SET last_update = MAX(last_update, ?2) WHERE content_pack_id = ?1;", Blueprint.ContentPackId, Blueprint.LastUpdate)
 		        
 		        Self.CommitTransaction()
 		        TransactionStarted = False
