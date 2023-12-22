@@ -65,6 +65,9 @@ $showCommunityLegend = false;
 					$typeHtml = '<span class="tag grey">Community</span>';
 					$showCommunityLegend = true;
 					break;
+				case 3:
+					$typeHtml = '<span class="tag yellow">Beacon</span>';
+					break;
 				}
 
 				?><tr>
@@ -86,6 +89,10 @@ $showCommunityLegend = false;
 		<tr>
 			<td class="w-0 p-1 nowrap text-center"><span class="tag blue">Mod Author</span></td>
 			<td class="w-100 p-1">Data is maintained by the mod author using Beacon's mod tools.</td>
+		</tr>
+		<tr>
+			<td class="w-0 p-1 nowrap text-center"><span class="tag yellow">Beacon</span></td>
+			<td class="w-100 p-1">Data is maintained by Beacon's author or other volunteers using Beacon's mod tools.</td>
 		</tr>
 		<?php if ($showCommunityLegend) { ?><tr>
 			<td class="w-0 p-1 nowrap text-center"><span class="tag grey">Community</span></td>
