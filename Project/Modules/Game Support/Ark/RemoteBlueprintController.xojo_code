@@ -154,10 +154,15 @@ Inherits Ark.BlueprintController
 
 	#tag Method, Flags = &h21
 		Private Sub PublishDelete(Task As Ark.BlueprintControllerPublishTask)
+		  Var Ids() As String = Task.DeleteIds
+		  If Ids.Count = 0 Then
+		    Task.Errored = False
+		    Return
+		  End If
+		  
 		  Var PathComponent As String = Self.PathComponent(Task)
 		  Var IdProperty As String = Self.IdProperty(Task)
 		  Var Objects() As Dictionary
-		  Var Ids() As String = Task.DeleteIds
 		  For Each Id As String In Ids
 		    Objects.Add(New Dictionary(IdProperty: Id))
 		  Next
@@ -175,8 +180,13 @@ Inherits Ark.BlueprintController
 
 	#tag Method, Flags = &h21
 		Private Sub PublishSave(Task As Ark.BlueprintControllerPublishTask)
-		  Var PathComponent As String = Self.PathComponent(Task)
 		  Var Blueprints() As Ark.Blueprint = Task.Blueprints
+		  If Blueprints.Count = 0 Then
+		    Task.Errored = False
+		    Return
+		  End If
+		  
+		  Var PathComponent As String = Self.PathComponent(Task)
 		  Var Objects() As Dictionary
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Objects.Add(Ark.PackBlueprint(Blueprint))
