@@ -239,7 +239,7 @@ Protected Class ModDiscoveryEngine
 		  Pack.Marketplace = Beacon.MarketplaceCurseForge
 		  Pack.MarketplaceId = ModInfo.Value("id")
 		  
-		  Var EngramEntries(), PrimalItems(), Creatures() As String
+		  Var EngramEntries(), PrimalItems(), Creatures(), SupplyCrates(), DinoInventories() As String
 		  Var ClassPaths As New Dictionary // Yes, this will break if a mod uses the same class in more than one namespace. This is a crappy implementation anyway, so I don't care.
 		  For Each Entry As DictionaryEntry In Candidates
 		    Var Path As String = Entry.Key
@@ -250,6 +250,10 @@ Protected Class ModDiscoveryEngine
 		      PrimalItems.Add(ClassString)
 		    ElseIf ClassString.Contains("Character_BP") Or ClassString.Contains("BP_Character") Then
 		      Creatures.Add(ClassString)
+		    ElseIf ClassString.BeginsWith("SupplyCrate") Then
+		      SupplyCrates.Add(ClassString)
+		    ElseIf ClassString.BeginsWith("DinoDropInventory") Or ClassString.BeginsWith("DinoInventory") Then
+		      DinoInventories.Add(ClassString)
 		    Else
 		      Continue
 		    End If
@@ -316,6 +320,31 @@ Protected Class ModDiscoveryEngine
 		    Creature.RegenerateBlueprintId()
 		    Creature.Label = ArkSA.LabelFromClassString(ClassString + "_C")
 		    Blueprints.Add(Creature)
+		  Next
+		  
+		  For Each ClassString As String In SupplyCrates
+		    Var Path As String = ClassPaths.Value(ClassString)
+		    Var SupplyCrate As New ArkSA.MutableLootContainer(Path, "")
+		    SupplyCrate.ContentPackId = ContentPackId
+		    SupplyCrate.ContentPackName = ModName
+		    SupplyCrate.RegenerateBlueprintId()
+		    SupplyCrate.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    SupplyCrate.IconId = "d5bb71e5-fba5-51f3-b120-f1abadc1fa6e"
+		    Blueprints.Add(SupplyCrate)
+		  Next
+		  
+		  For Each ClassString As String In DinoInventories
+		    Var Path As String = ClassPaths.Value(ClassString)
+		    Var DinoLoot As New ArkSA.MutableLootContainer(Path, "")
+		    DinoLoot.ContentPackId = ContentPackId
+		    DinoLoot.ContentPackName = ModName
+		    DinoLoot.RegenerateBlueprintId()
+		    DinoLoot.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    DinoLoot.IconId = "b7548942-53be-5046-892a-74816e43a938"
+		    DinoLoot.SortValue = 200
+		    DinoLoot.Tags = Array("dino")
+		    DinoLoot.Experimental = True
+		    Blueprints.Add(DinoLoot)
 		  Next
 		  
 		  RaiseEvent ContentPackDiscovered(Pack.ImmutableVersion, Blueprints)
