@@ -174,7 +174,6 @@ Inherits Ark.BlueprintController
 		    Task.Errored = True
 		    Task.ErrorMessage = Response.Message
 		  End If
-		  
 		End Sub
 	#tag EndMethod
 

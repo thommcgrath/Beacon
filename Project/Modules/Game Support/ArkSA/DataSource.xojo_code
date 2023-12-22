@@ -600,12 +600,11 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ImportTruncate()
-		  // Icons and content packs must be deleted last
-		  Var TableNames() As String = Array("color_sets", "colors", "creatures", "engrams", "events", "game_variables", "ini_options", "loot_containers", "maps", "spawn_points", "loot_icons")
-		  For Each TableName As String In TableNames
-		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(TableName) + ";")
-		  Next TableName
-		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'content_packs' ORDER BY name;")
+		  While Not Rows.AfterLastRow
+		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(Rows.Column("name").StringValue) + ";")
+		    Rows.MoveToNextRow
+		  Wend
 		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id != $1;", ArkSA.UserContentPackId)
 		End Sub
 	#tag EndEvent
