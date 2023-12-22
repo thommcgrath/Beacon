@@ -656,7 +656,7 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "Entry String:"
+         Text            =   "Unlock String:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -2613,7 +2613,7 @@ End
 		  If HasUnlockDetails Then
 		    If EntryString.IsEmpty = False Then
 		      If EntryString.EndsWith("_C") = False Then
-		        Self.ShowAlert("Invalid Entry String", "Engram entry strings usually start with EngramEntry and always end with _C.")
+		        Self.ShowAlert("Invalid unlock string", "Engram unlock strings usually start with EngramEntry and always end with _C.")
 		        Return False
 		      End If
 		      
@@ -2626,7 +2626,7 @@ End
 		    Var RequireValidPoints As Boolean
 		    If RequiredLevelString.IsEmpty = False Then 
 		      If IsNumeric(RequiredLevelString) = False And UnlocksByTek = False Then
-		        Self.ShowAlert("Invalid Required Level Value", "Required player level must be numeric or Tek.")
+		        Self.ShowAlert("Invalid required level value", "Required player level must be numeric or Tek.")
 		        Return False
 		      End If
 		      
@@ -2646,7 +2646,7 @@ End
 		      ElseIf IsNumeric(RequiredPointsString) Then
 		        Engram.RequiredUnlockPoints = Round(CDbl(RequiredPointsString))
 		      Else
-		        Self.ShowAlert("Invalid Points Value", "Required engram points must be numeric.")
+		        Self.ShowAlert("Invalid points value", "Required engram points must be numeric.")
 		        Return False
 		      End If
 		    Else
@@ -2657,7 +2657,7 @@ End
 		      End If
 		    End If
 		  ElseIf RequiredLevelString.IsEmpty = False Or RequiredPointsString.IsEmpty = False Then
-		    Self.ShowAlert("Entry string is required to set level and point requirements.", "If you want to set level and point requirements for this engram, please provide the engram's entry string so Beacon can control it in the Engram Control editor.")
+		    Self.ShowAlert("Unlock string is required to set level and point requirements.", "If you want to set level and point requirements for this engram, please provide the engram's unlock string so Beacon can control it in the Engram Control editor.")
 		    Return False
 		  Else
 		    Engram.EntryString = ""
@@ -2668,7 +2668,7 @@ End
 		  Var StackSizeString As String = Self.EngramStackSizeField.Text.Trim
 		  If StackSizeString.IsEmpty = False Then
 		    If IsNumeric(StackSizeString) = False Then
-		      Self.ShowAlert("Invalid Stack Size", "The stack size value should be numeric.")
+		      Self.ShowAlert("Invalid stack size", "The stack size value should be numeric.")
 		      Return False
 		    End If
 		    

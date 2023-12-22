@@ -57,7 +57,7 @@ Inherits ArkSA.ConfigGroup
 		  Var Whitelisting As Boolean = Self.OnlyAllowSpecifiedEngrams
 		  Var Engrams() As ArkSA.Engram = Self.Engrams
 		  For Each Engram As ArkSA.Engram In Engrams
-		    // Get the entry string from the engram if available, or use the backup if not available.
+		    // Get the unlock string from the engram if available, or use the backup if not available.
 		    If (Engram Is Nil) Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
 		      // Don't include items for disabled mods
 		      Continue
@@ -789,7 +789,7 @@ Inherits ArkSA.ConfigGroup
 
 	#tag Note, Name = Configs
 		OverrideEngramEntries - Target engrams by index. This is not used by Beacon and will be ignored.
-		OverrideNamedEngramEntries - Targets engrams by "entry string" such as EngramEntry_Popsicle. Can change the level requirement, remove prerequisites, change point cost, or enable/disable entirely.
+		OverrideNamedEngramEntries - Targets engrams by "unlock string" such as EngramEntry_Popsicle. Can change the level requirement, remove prerequisites, change point cost, or enable/disable entirely.
 		bOnlyAllowSpecifiedEngrams - When true, engrams are hidden by default. Use OverrideNamedEngramEntries to whitelist. When false, OverrideNamedEngramEntries can be used to blacklist engrams.
 		OverridePlayerLevelEngramPoints - Needs one per player level. Each defines the number of unlock points earned for that level.
 		bAutoUnlockAllEngrams - Unlocks all engrams that are possible to earn at the player's level. Causes server lag when leveling.
