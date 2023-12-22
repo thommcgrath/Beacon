@@ -278,6 +278,14 @@ Protected Module ArkSA
 		  // make this mistake and the resulting class ends up being Namespace_C.Class_C_C.
 		  
 		  Var Components() As String = Path.Split("/")
+		  If Components.LastIndex >= 2 And Components(1) = "Game" And Components(2) = "Mods" Then
+		    Components.RemoveAt(2)
+		    Components.RemoveAt(1)
+		  End If
+		  If Components.LastIndex >= 2 And Components(2) = "Content" Then
+		    Components.RemoveAt(2)
+		  End If
+		  
 		  Var LastComponent As String = Components(Components.LastIndex)
 		  Components.RemoveAt(Components.LastIndex)
 		  Var Pos As Integer = LastComponent.IndexOf(".")
@@ -570,6 +578,18 @@ Protected Module ArkSA
 	#tag Method, Flags = &h0
 		Function Matches(Extends Blueprint As ArkSA.Blueprint, Filter As String) As Boolean
 		  Return Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Label.IndexOf(Filter) > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ModTagFromPath(Path As String) As String
+		  If Path.BeginsWith("/Game/Mods/") Then
+		    Return Path.NthField("/", 4)
+		  ElseIf Path.BeginsWith("/Game/") Then
+		    Return ""
+		  ElseIf Path.BeginsWith("/") Then
+		    Return Path.NthField("/", 2)
+		  End If
 		End Function
 	#tag EndMethod
 

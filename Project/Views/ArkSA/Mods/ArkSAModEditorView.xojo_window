@@ -631,16 +631,16 @@ End
 		Private Sub mController_BlueprintsChanged(Sender As ArkSA.BlueprintController, BlueprintsSaved() As ArkSA.Blueprint, BlueprintsDeleted() As ArkSA.Blueprint)
 		  #Pragma Unused Sender
 		  
-		  For Each Blueprint As ArkSA.Blueprint In BlueprintsSaved
-		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
-		    Self.mBlueprints(Mode).Value(Blueprint.BlueprintId) = Blueprint
-		  Next
-		  
 		  For Each Blueprint As ArkSA.Blueprint In BlueprintsDeleted
 		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
 		    If Self.mBlueprints(Mode).HasKey(Blueprint.BlueprintId) Then
 		      Self.mBlueprints(Mode).Remove(Blueprint.BlueprintId)
 		    End If
+		  Next
+		  
+		  For Each Blueprint As ArkSA.Blueprint In BlueprintsSaved
+		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
+		    Self.mBlueprints(Mode).Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
 		  Self.UpdateList(BlueprintsSaved, True)
@@ -1095,7 +1095,7 @@ End
 		            Var ChosenBlueprints() As ArkSA.Blueprint
 		            Var FoundBlueprints() As ArkSA.Blueprint = Self.mImporter.Blueprints
 		            For Each Tag As String In ChosenTags
-		              Var Prefix As String = "/Game/Mods/" + Tag + "/"
+		              Var Prefix As String = "/" + Tag + "/"
 		              For Each Blueprint As ArkSA.Blueprint In FoundBlueprints
 		                If Blueprint.Path.BeginsWith(Prefix) = False Then
 		                  Continue

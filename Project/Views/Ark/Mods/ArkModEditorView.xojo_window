@@ -629,16 +629,16 @@ End
 		Private Sub mController_BlueprintsChanged(Sender As Ark.BlueprintController, BlueprintsSaved() As Ark.Blueprint, BlueprintsDeleted() As Ark.Blueprint)
 		  #Pragma Unused Sender
 		  
-		  For Each Blueprint As Ark.Blueprint In BlueprintsSaved
-		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
-		    Self.mBlueprints(Mode).Value(Blueprint.BlueprintId) = Blueprint
-		  Next
-		  
 		  For Each Blueprint As Ark.Blueprint In BlueprintsDeleted
 		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
 		    If Self.mBlueprints(Mode).HasKey(Blueprint.BlueprintId) Then
 		      Self.mBlueprints(Mode).Remove(Blueprint.BlueprintId)
 		    End If
+		  Next
+		  
+		  For Each Blueprint As Ark.Blueprint In BlueprintsSaved
+		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
+		    Self.mBlueprints(Mode).Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
 		  Self.UpdateList(BlueprintsSaved, True)

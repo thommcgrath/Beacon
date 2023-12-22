@@ -418,6 +418,12 @@ Protected Class BlueprintImporter
 		      End If
 		      
 		      Var Path As String = Columns(PathColumnIdx)
+		      Var ModTag As String = ArkSA.ModTagFromPath(Path)
+		      If ModTag.IsEmpty Then
+		        Continue
+		      End If
+		      Importer.mMods.Value(ModTag) = ModTag
+		      
 		      Var Label As String = Columns(LabelColumnIdx)
 		      Var Availability As UInt64
 		      Var Tags() As String
@@ -459,11 +465,6 @@ Protected Class BlueprintImporter
 		        Return Nil
 		      End If
 		      Importer.mBlueprints.Add(Blueprint.Clone)
-		      
-		      If Path.BeginsWith("/Game/Mods/") Then
-		        Var ModTag As String = Path.NthField("/", 4)
-		        Importer.mMods.Value(ModTag) = ModTag
-		      End If
 		    Next
 		    
 		    Return Importer
@@ -472,12 +473,7 @@ Protected Class BlueprintImporter
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		  
-		  Const QuotationCharacters = "'‘’""“”"
-		  
-		  Var Regex As New Regex
-		  Regex.Options.CaseSensitive = False
-		  Regex.SearchPattern = "(giveitem|spawndino)\s+(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
-		  
+		  Var Regex As Regex = ArkSA.BlueprintPathRegex
 		  Var Importer As New ArkSA.BlueprintImporter
 		  Var Match As RegexMatch = Regex.Search(Contents)
 		  Var Paths As New Dictionary
@@ -485,23 +481,13 @@ Protected Class BlueprintImporter
 		    If (Progress Is Nil) = False And Progress.CancelPressed Then
 		      Return Nil
 		    End If
-		    If Match = Nil Then
+		    If Match Is Nil Then
 		      Continue
 		    End If
 		    
 		    Var Command As String = Match.SubExpressionString(1)
-		    Var Path As String
-		    If Match.SubExpressionCount >= 4 And Match.SubExpressionString(4) <> "" Then
-		      Path = Match.SubExpressionString(4)
-		    ElseIf Match.SubExpressionCount >= 6 And Match.SubExpressionString(6) <> "" Then
-		      Path = Match.SubExpressionString(6)
-		    ElseIf Match.SubExpressionCount >= 8 And Match.SubExpressionString(8) <> "" Then
-		      Path = Match.SubExpressionString(8)
-		    End If
+		    Var Path As String = ArkSA.BlueprintPath(Match)
 		    If Path.IsEmpty = False And Command.IsEmpty = False Then
-		      If Path.EndsWith("_C") Then
-		        Path = Path.Left(Path.Length - 2)
-		      End If
 		      Paths.Value(Path) = Command
 		    End If
 		    
@@ -524,6 +510,12 @@ Protected Class BlueprintImporter
 		    
 		    Var Command As String = Paths.Value(Key)
 		    Var Path As String = Key
+		    Var ModTag As String = ArkSA.ModTagFromPath(Path)
+		    If ModTag.IsEmpty Then
+		      Continue
+		    End If
+		    Importer.mMods.Value(ModTag) = ModTag
+		    
 		    Var Blueprint As ArkSA.Blueprint
 		    Var BlueprintId As String = Beacon.UUID.v4
 		    Select Case Command
@@ -541,11 +533,6 @@ Protected Class BlueprintImporter
 		      Return Nil
 		    End If
 		    Importer.mBlueprints.Add(Blueprint)
-		    
-		    If Path.BeginsWith("/Game/Mods/") Then
-		      Var ModTag As String = Path.NthField("/", 4)
-		      Importer.mMods.Value(ModTag) = ModTag
-		    End If
 		  Next
 		  
 		  Return Importer
