@@ -692,9 +692,9 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub SizeColumnToFit(Extends List As DesktopListbox, ColumnIndex As Integer, MinWidth As Integer = 0)
 		  Var TestPic As New Picture(10, 10)
-		  Var MaxWidth As Integer = Max(Ceiling(TestPic.Graphics.TextWidth(List.HeaderAt(ColumnIndex)) + 30), MinWidth)
+		  Var MaxWidth As Integer = Max(Ceiling(TestPic.Graphics.TextWidth(List.HeaderAt(ColumnIndex)) + 35), MinWidth)
 		  For Row As Integer = 0 To List.LastRowIndex
-		    MaxWidth = Max(MaxWidth, Ceiling(TestPic.Graphics.TextWidth(List.CellTextAt(Row, ColumnIndex)) + 30))
+		    MaxWidth = Max(MaxWidth, Ceiling(TestPic.Graphics.TextWidth(List.CellTextAt(Row, ColumnIndex)) + 35))
 		  Next
 		  List.ColumnAttributesAt(ColumnIndex).WidthExpression = MaxWidth.ToString(Locale.Raw, "0")
 		End Sub

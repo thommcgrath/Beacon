@@ -27,7 +27,6 @@ Begin ModEditorView ArkModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -38,7 +37,6 @@ Begin ModEditorView ArkModEditorView
       ThreadState     =   0
    End
    Begin Ark.ModDiscoveryEngine DiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -65,7 +63,7 @@ Begin ModEditorView ArkModEditorView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   900
       Begin OmniBarSeparator FilterSeparator
@@ -275,7 +273,7 @@ Begin ModEditorView ArkModEditorView
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   2
+         ColumnCount     =   3
          ColumnWidths    =   "*,*"
          DefaultRowHeight=   -1
          DefaultSortColumn=   0
@@ -295,7 +293,7 @@ Begin ModEditorView ArkModEditorView
          Height          =   360
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "Name	Class String"
+         InitialValue    =   "Name	Class String	Unlock String"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -815,7 +813,8 @@ End
 		  Var EngramsButton As OmniBarItem = Self.TabsToolbar.Item("EngramsButton")
 		  Var CreaturesButton As OmniBarItem = Self.TabsToolbar.Item("CreaturesButton")
 		  Var LootDropsButton As OmniBarItem = Self.TabsToolbar.Item("LootDropsButton")
-		  Var SpawnPointsButton As OmniBarItem = Self.TabsToolbar.Item("SpawnPointsButton") 
+		  Var SpawnPointsButton As OmniBarItem = Self.TabsToolbar.Item("SpawnPointsButton")
+		  Self.BlueprintList.ColumnCount = If(Mode = ArkSA.BlueprintController.ModeEngrams, 3, 2)
 		  
 		  If (EngramsButton Is Nil) = False Then
 		    EngramsButton.Toggled = (Mode = Ark.BlueprintController.ModeEngrams)
@@ -908,8 +907,20 @@ End
 		    List.RowTagAt(RowIdx) = Blueprint
 		    List.CellTextAt(RowIdx, 0) = Blueprint.Label
 		    List.CellTextAt(RowIdx, 1) = Blueprint.ClassString
+		    If Self.mMode = Ark.BlueprintController.ModeEngrams Then
+		      If Blueprint IsA Ark.Engram Then
+		        List.CellTextAt(RowIdx, 2) = Ark.Engram(Blueprint).EntryString
+		      Else
+		        List.CellTextAt(RowIdx, 2) = ""
+		      End If
+		    End If
 		    List.RowSelectedAt(RowIdx) = SelectedBlueprintIds.IndexOf(BlueprintId) > -1
 		  Next
+		  
+		  Self.BlueprintList.SizeColumnToFit(1)
+		  If Self.mMode = ArkSA.BlueprintController.ModeEngrams Then
+		    Self.BlueprintList.SizeColumnToFit(2)
+		  End If
 		  
 		  List.Sort
 		  List.ScrollPosition = ScrollPosition
