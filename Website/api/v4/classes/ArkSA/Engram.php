@@ -104,6 +104,22 @@ class Engram extends MutableBlueprint {
 		}
 		return $json;
 	}
+
+	protected function SaveChildObjects(BeaconDatabase $database): void {
+		parent::SaveChildObjects($database);
+
+		$validIngredients = [];
+		foreach ($this->recipe as $ingredient) {
+			$ingredientId = $ingredient['engramId'];
+			$quantity = $ingredient['quantity'];
+			$exact = $ingredient['exact'];
+
+			$validIngredients[] = $ingredientId;
+			$database->Query('INSERT INTO arksa.crafting_costs (engram_id, ingredient_id, quantity, exact) VALUES ($1, $2, $3, $4) ON CONFLICT (engram_id, ingredient_id) DO UPDATE SET quantity = $3, exact = $4 WHERE crafting_costs.quantity IS DISTINCT FROM $3 OR crafting_costs.exact IS DISTINCT FROM $4;', $this->objectId, $ingredientId, $quantity, $exact);
+		}
+
+		$database->Query('DELETE FROM arksa.crafting_costs WHERE engram_id = $1 AND NOT (ingredient_id = ANY($2));', $this->objectId, '{' . implode(',', $validIngredients) . '}');
+	}
 }
 
 ?>
