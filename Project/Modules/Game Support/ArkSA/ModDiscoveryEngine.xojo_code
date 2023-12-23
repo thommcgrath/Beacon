@@ -329,7 +329,9 @@ Protected Class ModDiscoveryEngine
 		    SupplyCrate.ContentPackName = ModName
 		    SupplyCrate.RegenerateBlueprintId()
 		    SupplyCrate.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    SupplyCrate.UIColor = &cFFFFFF00
 		    SupplyCrate.IconId = "d5bb71e5-fba5-51f3-b120-f1abadc1fa6e"
+		    SupplyCrate.SortValue = 199
 		    Blueprints.Add(SupplyCrate)
 		  Next
 		  
@@ -340,6 +342,7 @@ Protected Class ModDiscoveryEngine
 		    DinoLoot.ContentPackName = ModName
 		    DinoLoot.RegenerateBlueprintId()
 		    DinoLoot.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    DinoLoot.UIColor = &cFFFFFF00
 		    DinoLoot.IconId = "b7548942-53be-5046-892a-74816e43a938"
 		    DinoLoot.SortValue = 200
 		    DinoLoot.Tags = Array("dino")

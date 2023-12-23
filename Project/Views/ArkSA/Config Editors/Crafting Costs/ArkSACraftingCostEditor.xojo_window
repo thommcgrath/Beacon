@@ -270,9 +270,6 @@ End
 	#tag Constant, Name = ColumnResource, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.craftingingredient", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"495", Scope = Public
 	#tag EndConstant
 
@@ -299,7 +296,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.HasClipboardData(Self.kClipboardType)
+		  Return Board.HasClipboardData(ArkSA.CraftingCostIngredient.ClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -337,11 +334,7 @@ End
 		    End If
 		    
 		    Var Ingredient As ArkSA.CraftingCostIngredient = Me.RowTagAt(Idx)
-		    Var Dict As New Dictionary
-		    Dict.Value("blueprintId") = Ingredient.Reference.BlueprintId
-		    Dict.Value("quantity") = Ingredient.Quantity
-		    Dict.Value("exact") = Ingredient.RequireExact
-		    Dicts.Add(Dict)
+		    Dicts.Add(Ingredient.SaveData)
 		  Next
 		  
 		  If Dicts.Count = 0 Then
@@ -349,37 +342,35 @@ End
 		    Return
 		  End If
 		  
-		  Board.AddClipboardData(Self.kClipboardType, Dicts)
+		  Board.AddClipboardData(ArkSA.CraftingCostIngredient.ClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
-		  If Contents.IsNull = False Then
-		    Try
-		      Var Modified As Boolean
-		      Var Dicts() As Variant = Contents
-		      Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		      For Each Dict As Dictionary In Dicts
-		        Var Engram As ArkSA.Engram = DataSource.GetEngram(Dict.Value("blueprintId"))
-		        If Engram Is Nil Then
-		          Continue
-		        End If
-		        Var Quantity As Integer = Dict.Value("quantity")
-		        Var Exact As Boolean = Dict.Value("exact")
-		        
-		        Self.mTarget.Add(Engram, Quantity, Exact)
-		        Modified = True
-		      Next
-		      If Modified Then
-		        Self.UpdateList()
-		        Self.Modified = True
-		      End If
-		    Catch Err As RuntimeException
-		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
-		    End Try
+		  Var Contents As Variant = Board.GetClipboardData(ArkSA.CraftingCostIngredient.ClipboardType)
+		  If Contents.IsNull Then
 		    Return
 		  End If
+		  
+		  Try
+		    Var Modified As Boolean
+		    Var Dicts() As Variant = Contents
+		    For Each Dict As Dictionary In Dicts
+		      Var Ingredient As ArkSA.CraftingCostIngredient = ArkSA.CraftingCostIngredient.FromDictionary(Dict, Nil)
+		      If Ingredient Is Nil Then
+		        Continue
+		      End If
+		      
+		      Self.mTarget.Add(Ingredient)
+		      Modified = True
+		    Next
+		    If Modified Then
+		      Self.UpdateList()
+		      Self.Modified = True
+		    End If
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		  End Try
 		End Sub
 	#tag EndEvent
 	#tag Event

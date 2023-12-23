@@ -2248,9 +2248,7 @@ End
 		  
 		  Var Ingredients() As Ark.CraftingCostIngredient = Engram.Recipe
 		  For Each Ingredient As Ark.CraftingCostIngredient In Ingredients
-		    Self.EngramCraftingCostList.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Current, "#,##0"))
-		    Self.EngramCraftingCostList.CellCheckBoxValueAt(Self.EngramCraftingCostList.LastAddedRowIndex, 2) = Ingredient.RequireExact
-		    Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
+		    Self.PutIngredientInList(Ingredient)
 		  Next
 		  Self.EngramCraftingCostList.SortingColumn = 0
 		  Self.EngramCraftingCostList.Sort
@@ -2361,6 +2359,21 @@ End
 		  Win.Close
 		  Return EditedBlueprint
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PutIngredientInList(Ingredient As Ark.CraftingCostIngredient, RowIdx As Integer = -1)
+		  Var List As BeaconListbox = Self.EngramCraftingCostList
+		  If RowIdx = -1 Then
+		    List.AddRow("")
+		    RowIdx = List.LastAddedRowIndex
+		  End If
+		  
+		  List.CellTextAt(RowIdx, 0) = Ingredient.Engram.Label
+		  List.CellTextAt(RowIdx, 1) = Ingredient.Quantity.ToString(Locale.Current, "#,##0")
+		  List.CellCheckBoxValueAt(RowIdx, 2) = Ingredient.RequireExact
+		  List.RowTagAt(RowIdx) = Ingredient
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -3133,6 +3146,66 @@ End
 		  Case 2
 		    Me.RowTagAt(Row) = New Ark.CraftingCostIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Ark.CraftingCostIngredient.ClipboardType)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  Var Contents As Variant = Board.GetClipboardData(Ark.CraftingCostIngredient.ClipboardType)
+		  If Contents.IsNull Then
+		    Return
+		  End If
+		  
+		  Try
+		    Var Dicts() As Variant = Contents
+		    For Each Dict As Dictionary In Dicts
+		      Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, Nil)
+		      If Ingredient Is Nil Then
+		        Continue
+		      End If
+		      For Idx As Integer = 0 To Me.LastRowIndex
+		        If Ark.CraftingCostIngredient(Me.RowTagAt(Idx)).Engram.ObjectId = Ingredient.Engram.ObjectId Then
+		          Self.PutIngredientInList(Ingredient, Idx)
+		          Self.Modified = True
+		          Continue For Dict
+		        End If
+		      Next
+		      
+		      Self.PutIngredientInList(Ingredient)
+		      Self.Modified = True
+		    Next
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		  End Try
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var Dicts() As Dictionary
+		  For Idx As Integer = 0 To Me.RowCount - 1
+		    If Not Me.RowSelectedAt(Idx) Then
+		      Continue
+		    End If
+		    
+		    Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Idx)
+		    Dicts.Add(Ingredient.SaveData)
+		  Next
+		  
+		  If Dicts.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Ark.CraftingCostIngredient.ClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

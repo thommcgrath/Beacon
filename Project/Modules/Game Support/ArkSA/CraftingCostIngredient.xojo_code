@@ -207,6 +207,10 @@ Protected Class CraftingCostIngredient
 	#tag EndProperty
 
 
+	#tag Constant, Name = ClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.craftingingredient", Scope = Public
+	#tag EndConstant
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Name"
