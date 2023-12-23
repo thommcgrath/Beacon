@@ -634,9 +634,9 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As DesktopWindow, Sources() As ArkSA.LootItemSetEntry = Nil, Prefilter As String = "") As ArkSA.LootItemSetEntry()
-		  Var TemplatePacksDict As Dictionary = Preferences.PresetsEnabledMods
+		  Var TemplatePacksDict As JSONItem = Preferences.PresetsEnabledMods
 		  If TemplatePacksDict Is Nil Then
-		    TemplatePacksDict = New Dictionary
+		    TemplatePacksDict = New JSONItem
 		  End If
 		  Var PackList As New Beacon.StringList
 		  Var ContentPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks
@@ -672,9 +672,10 @@ End
 		  Var DefaultEntry As ArkSA.LootItemSetEntry
 		  If Win.mOriginalEntry Is Nil Then
 		    Try
-		      Var Defaults As Dictionary = Preferences.ArkSALootItemSetEntryDefaults
+		      Var Defaults As JSONItem = Preferences.ArkSALootItemSetEntryDefaults
 		      If (Defaults Is Nil) = False Then
-		        DefaultEntry = ArkSA.LootItemSetEntry.FromSaveData(Defaults)
+		        Var DefaultsDict As Dictionary = Beacon.ParseJSON(Defaults.ToString)
+		        DefaultEntry = ArkSA.LootItemSetEntry.FromSaveData(DefaultsDict, ArkSA.LootItemSetEntry.OptionLoadEmpty)
 		      End If
 		    Catch Err As RuntimeException
 		    End Try

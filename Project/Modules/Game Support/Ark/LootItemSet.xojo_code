@@ -130,9 +130,13 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    App.Log(Err, CurrentMethodName, "Casting ItemEntries to array")
 		  End Try
 		  
+		  Var Options As Integer
+		  If NewUUID Then
+		    Options = Options Or Ark.LootItemSetEntry.OptionNewId
+		  End If
 		  For Idx As Integer = 0 To Children.LastIndex
 		    Try
-		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), NewUUID)
+		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), Options)
 		      If (Entry Is Nil) = False Then
 		        Set.Add(Entry)
 		      End If

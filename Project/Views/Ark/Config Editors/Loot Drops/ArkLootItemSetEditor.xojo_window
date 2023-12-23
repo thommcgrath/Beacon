@@ -597,7 +597,7 @@ End
 		    Try
 		      Var Dicts() As Variant = Contents
 		      For Each Dict As Dictionary In Dicts
-		        Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict, True)
+		        Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict, Ark.LootItemSetEntry.OptionNewId)
 		        If (Entry Is Nil) = False Then
 		          Self.LootItemSet.Add(Entry)
 		          Modified = True

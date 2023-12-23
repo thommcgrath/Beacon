@@ -22,6 +22,20 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ArkSARecentBlueprints(Category As String) As String()
+		  Init
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ArkSARecentBlueprints(Category As String, Assigns Paths() As String)
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub EncryptPrivateKey()
 		  mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(mDevicePublicKey), 0)
@@ -53,43 +67,45 @@ Protected Module Preferences
 		  mManager.ClearValue("Last Used Config")
 		  
 		  // Cleanup project states
-		  Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
-		  Var Timestamps() As Double
-		  Var Map As New Dictionary
-		  For Each Entry As DictionaryEntry In Dict
-		    Try
-		      Var ProjectId As String = Entry.Key.StringValue
-		      Var State As Dictionary = Entry.Value
-		      Var Timestamp as Double = State.Value("Timestamp").DoubleValue
-		      
-		      Timestamps.Add(Timestamp)
-		      Map.Value(Timestamp) = ProjectId
-		    Catch Err As RuntimeException
-		    End Try
-		  Next Entry
-		  
-		  Var Changed As Boolean
-		  Timestamps.Sort
-		  Var Cutoff As DateTime = DateTime.Now - New DateInterval(0, 6)
-		  Var CutoffSeconds As Double = Cutoff.SecondsFrom1970
-		  For Idx As Integer = Timestamps.LastIndex DownTo Timestamps.FirstIndex
-		    If Timestamps(Idx) < CutoffSeconds Then
-		      Timestamps.RemoveAt(Idx)
+		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
+		  If (States Is Nil) = False Then
+		    Var Timestamps() As Double
+		    Var Map As New Dictionary
+		    Var StateProjectIds() As String = States.Keys
+		    For Each ProjectId As String In StateProjectIds
+		      Try
+		        Var State As JSONItem = States.Child(ProjectId)
+		        Var Timestamp As Double = State.Value("Timestamp").DoubleValue
+		        
+		        Timestamps.Add(Timestamp)
+		        Map.Value(Timestamp) = ProjectId
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    
+		    Var Changed As Boolean
+		    Timestamps.Sort
+		    Var Cutoff As DateTime = DateTime.Now - New DateInterval(0, 6)
+		    Var CutoffSeconds As Double = Cutoff.SecondsFrom1970
+		    For Idx As Integer = Timestamps.LastIndex DownTo Timestamps.FirstIndex
+		      If Timestamps(Idx) < CutoffSeconds Then
+		        Timestamps.RemoveAt(Idx)
+		        Changed = True
+		      End If
+		    Next Idx
+		    While Timestamps.Count > 20
+		      Timestamps.RemoveAt(Timestamps.LastIndex)
 		      Changed = True
+		    Wend
+		    
+		    If Changed Then
+		      Var Replacement As New JSONItem
+		      For Each Timestamp As Double In Timestamps
+		        Var ProjectId As String = Map.Value(Timestamp)
+		        Replacement.Child(ProjectId) = States.Child(ProjectId)
+		      Next Timestamp
+		      mManager.JSONValue("Project State") = Replacement
 		    End If
-		  Next Idx
-		  While Timestamps.Count > 20
-		    Timestamps.RemoveAt(Timestamps.LastIndex)
-		    Changed = True
-		  Wend
-		  
-		  If Changed Then
-		    Var Replacement As New Dictionary
-		    For Each Timestamp As Double In Timestamps
-		      Var ProjectId As String = Map.Value(Timestamp)
-		      Replacement.Value(ProjectId) = Dict.Value(ProjectId)
-		    Next Timestamp
-		    mManager.DictionaryValue("Project State") = Replacement
 		  End If
 		  
 		  If mManager.StringValue("Device Private Key").IsEmpty = False Then
@@ -221,32 +237,37 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ProjectState(ProjectUUID As String, Key As String, Assigns Value As Variant)
-		  Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
-		  Var State As Dictionary
-		  If Dict.HasKey(ProjectUUID) Then
-		    State = Dict.Value(ProjectUUID)
+		Protected Sub ProjectState(ProjectId As String, Key As String, Assigns Value As Variant)
+		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
+		  If States Is Nil Then
+		    States = New JSONItem
+		  End If
+		  Var State As JSONItem
+		  If States.HasKey(ProjectId) Then
+		    State = States.Child(ProjectId)
 		  Else
-		    State = New Dictionary
+		    State = New JSONItem
 		  End If
 		  
 		  State.Value("Timestamp") = DateTime.Now.SecondsFrom1970
 		  State.Value(Key) = Value
-		  Dict.Value(ProjectUUID) = State
-		  mManager.DictionaryValue("Project State") = Dict
+		  States.Child(ProjectId) = State
+		  mManager.JSONValue("Project State") = States
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ProjectState(ProjectUUID As String, Key As String, Default As Variant) As Variant
-		  Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
-		  Var State As Dictionary
-		  If Dict.HasKey(ProjectUUID) Then
-		    State = Dict.Value(ProjectUUID)
-		  Else
-		    State = New Dictionary
+		Protected Function ProjectState(ProjectId As String, Key As String, Default As Variant) As Variant
+		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
+		  If States Is Nil Then
+		    Return Default
 		  End If
 		  
+		  If States.HasKey(ProjectId) = False Then
+		    Return Default
+		  End If
+		  
+		  Var State As JSONItem = States.Child(ProjectId)
 		  If State.HasKey(Key) Then
 		    Return State.Value(Key)
 		  Else
@@ -259,56 +280,33 @@ Protected Module Preferences
 		Protected Function RecentDocuments() As Beacon.ProjectURL()
 		  Init
 		  
-		  // When used with a freshly parsed file, the return type will be Auto()
-		  // Once the array is updated, the local copy will return Text()
-		  
-		  Var Temp As Variant = mManager.VariantValue("Documents")
+		  Var Urls As JSONItem = mManager.JSONValue("Documents")
 		  Var Values() As Beacon.ProjectURL
-		  If (Temp Is Nil) = False Then
-		    If Temp.IsArray Then
-		      Select Case Temp.ArrayElementType
-		      Case Variant.TypeString
-		        Try
-		          Var StringValues() As String = Temp
-		          For Each StringValue As String In StringValues
-		            Values.Add(New Beacon.ProjectUrl(StringValue))
-		          Next
-		        Catch Err As RuntimeException
-		        End Try
-		      Case Variant.TypeObject
-		        Try
-		          Var Members() As Variant = Temp
-		          For Each Member As Variant In Members
-		            If Member.Type = Variant.TypeString Then
-		              Values.Add(New Beacon.ProjectUrl(Member.StringValue))
-		            ElseIf Member.Type = Variant.TypeObject And Member.ObjectValue IsA Dictionary Then
-		              Values.Add(New Beacon.ProjectUrl(Dictionary(Member.ObjectValue)))
-		            End If
-		          Next
-		        Catch Err As RuntimeException
-		        End Try
-		      End Select
-		    Else
-		      Try
-		        Values.Add(New Beacon.ProjectUrl(Temp.StringValue))
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
+		  If Urls Is Nil Then
+		    Return Values
 		  End If
+		  
+		  Var Bound As Integer = Urls.LastRowIndex
+		  For Idx As Integer = 0 To Bound
+		    Try
+		      Values.Add(New Beacon.ProjectURL(Urls.ChildAt(Idx)))
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
 		  Return Values
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.ProjectURL)
-		  Var Urls() As Variant
-		  Urls.ResizeTo(Values.LastIndex)
-		  For Idx As Integer = 0 To Values.LastIndex
-		    URLs(Idx) = Values(Idx).DictionaryValue
+		  Var Urls As New JSONItem
+		  For Each Value As Beacon.ProjectURL In Values
+		    Urls.Add(Value.JSONValue)
 		  Next
 		  
 		  Init
-		  mManager.VariantValue("Documents") = URLs
+		  mManager.JSONValue("Documents") = Urls
 		  NotificationKit.Post(Notification_RecentsChanged, Values)
 		End Sub
 	#tag EndMethod
@@ -398,32 +396,104 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.DictionaryValue("Ark Loot Item Set Entry Defaults", Nil)
+			  
+			  If mManager.HasKey("Last Preset Map Filter") Then
+			    Var IntegerValue As Integer = mManager.IntegerValue("Last Preset Map Filter")
+			    mManager.StringValue("Ark Last Template Map Filter") = IntegerValue.ToString(Locale.Raw)
+			    mManager.ClearValue("Last Preset Map Filter")
+			  End If
+			  
+			  Var StringValue As String = mManager.StringValue("Ark Last Template Map Filter")
+			  If StringValue.IsEmpty Then
+			    Return Ark.Maps.UniversalMask
+			  End If
+			  
+			  Try
+			    Return UInt64.FromString(StringValue, Locale.Raw)
+			  Catch Err As RuntimeException
+			    Return Ark.Maps.UniversalMask
+			  End Try
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  Init
-			  mManager.DictionaryValue("Ark Loot Item Set Entry Defaults") = Value
+			  
+			  Var StringValue As String
+			  Try
+			    StringValue = Value.ToString(Locale.Raw)
+			  Catch Err As RuntimeException
+			  End Try
+			  
+			  mManager.StringValue("Ark Last Template Map Filter") = StringValue
 			End Set
 		#tag EndSetter
-		Protected ArkLootItemSetEntryDefaults As Dictionary
+		Protected ArkLastTemplateMapFilter As UInt64
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.DictionaryValue("ArkSA Loot Item Set Entry Defaults", Nil)
+			  Return mManager.JSONValue("Ark Loot Item Set Entry Defaults", Nil)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  Init
-			  mManager.DictionaryValue("ArkSA Loot Item Set Entry Defaults") = Value
+			  mManager.JSONValue("Ark Loot Item Set Entry Defaults") = Value
 			End Set
 		#tag EndSetter
-		Protected ArkSALootItemSetEntryDefaults As Dictionary
+		Protected ArkLootItemSetEntryDefaults As JSONItem
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  
+			  Var StringValue As String = mManager.StringValue("ArkSA Last Template Map Filter")
+			  If StringValue.IsEmpty Then
+			    Return ArkSA.Maps.UniversalMask
+			  End If
+			  
+			  Try
+			    Return UInt64.FromString(StringValue, Locale.Raw)
+			  Catch Err As RuntimeException
+			    Return ArkSA.Maps.UniversalMask
+			  End Try
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  
+			  Var StringValue As String
+			  Try
+			    StringValue = Value.ToString(Locale.Raw)
+			  Catch Err As RuntimeException
+			  End Try
+			  
+			  mManager.StringValue("ArkSA Last Template Map Filter") = StringValue
+			End Set
+		#tag EndSetter
+		Protected ArkSALastTemplateMapFilter As UInt64
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.JSONValue("ArkSA Loot Item Set Entry Defaults", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.JSONValue("ArkSA Loot Item Set Entry Defaults") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSALootItemSetEntryDefaults As JSONItem
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
@@ -456,34 +526,6 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected ArkSASpawnPointEditorSetsSplitterPosition As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Var Default As String
-			  #if TargetWindows
-			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK"
-			  #elseif TargetLinux
-			    Default = SpecialFolder.UserHome + "/.steam/steam/steamapps/common/ARK"
-			  #elseif TargetMacOS
-			    // This is pointless, but whatever
-			    Default = SpecialFolder.ApplicationData.NativePath + "/Steam/SteamApps/common/ARK"
-			  #endif
-			  Return mManager.StringValue("ArkSA Steam Path", Default)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If ArkSteamPath = Value Then
-			    Return
-			  End If
-			  
-			  mManager.StringValue("ArkSA Steam Path") = Value
-			End Set
-		#tag EndSetter
-		Protected ArkSASteamPath As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
@@ -824,22 +866,6 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.VariantValue("Last Preset Map Filter", Ark.Maps.UniversalMask)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.VariantValue("Last Preset Map Filter") = Value
-			End Set
-		#tag EndSetter
-		Protected LastPresetMapFilter As UInt64
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
 			  Return mManager.StringValue("Last Stop Message", "Server is now stopping for a few minutes for changes.")
 			End Get
 		#tag EndGetter
@@ -1057,16 +1083,16 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.DictionaryValue("Presets Enabled Mods", Nil)
+			  Return mManager.JSONValue("Presets Enabled Mods", Nil)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  Init
-			  mManager.DictionaryValue("Presets Enabled Mods") = Value
+			  mManager.JSONValue("Presets Enabled Mods") = Value
 			End Set
 		#tag EndSetter
-		Protected PresetsEnabledMods As Dictionary
+		Protected PresetsEnabledMods As JSONItem
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -1096,20 +1122,20 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.DictionaryValue("Saved Passwords", New Dictionary)
+			  Return mManager.JSONValue("Saved Passwords", New JSONItem)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  If Value Is Nil Then
-			    Value = New Dictionary
+			    Value = New JSONItem
 			  End If
 			  
 			  Init
-			  mManager.DictionaryValue("Saved Passwords") = Value
+			  mManager.JSONValue("Saved Passwords") = Value
 			End Set
 		#tag EndSetter
-		Protected SavedPasswords As Dictionary
+		Protected SavedPasswords As JSONItem
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
