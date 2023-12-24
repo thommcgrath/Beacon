@@ -1195,6 +1195,42 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetBlueprintsByPath(Path As String, ContentPacks As Beacon.StringList, UseCache As Boolean = True) As ArkSA.Blueprint()
+		  Var SQL As String = "SELECT object_id, category FROM blueprints WHERE path = ?1"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
+		    SQL = SQL + " AND content_pack_id IN ('" + ContentPacks.Join("','") + "')"
+		  End If
+		  
+		  Var Blueprints() As ArkSA.Blueprint
+		  Var Rows As RowSet = Self.SQLSelect(SQL, Path)
+		  If Rows.RowCount = 0 Then
+		    Return Blueprints
+		  End If
+		  
+		  While Not Rows.AfterLastRow
+		    Var BlueprintId As String = Rows.Column("object_id").StringValue
+		    Var Blueprint As ArkSA.Blueprint
+		    Select Case Rows.Column("category").StringValue
+		    Case ArkSA.CategoryCreatures
+		      Blueprint = Self.GetCreature(BlueprintId, UseCache)
+		    Case ArkSA.CategoryEngrams
+		      Blueprint = Self.GetEngram(BlueprintId, UseCache)
+		    Case ArkSA.CategoryLootContainers
+		      Blueprint = Self.GetLootContainer(BlueprintId, UseCache)
+		    Case ArkSA.CategorySpawnPoints
+		      Blueprint = Self.GetSpawnPoint(BlueprintId, UseCache)
+		    End Select
+		    If (Blueprint Is Nil) = False Then
+		      Blueprints.Add(Blueprint)
+		    End If
+		    Rows.MoveToNextRow
+		  Wend
+		  
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
 		  Var Value As Variant = Self.GetVariable(Key, Default)
 		  Return Value.BooleanValue

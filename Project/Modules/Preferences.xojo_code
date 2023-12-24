@@ -23,16 +23,132 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ArkSARecentBlueprints(Category As String) As String()
+		Protected Function ArkRecentBlueprints(Category As String, Subgroup As String) As String()
 		  Init
+		  Category = Category.Lowercase
+		  Subgroup = Subgroup.Lowercase
 		  
+		  Var Paths() As String
+		  Var Categories As JSONItem = mManager.JSONValue("Ark Recent Blueprints")
+		  If Categories Is Nil Then
+		    Return Paths
+		  End If
 		  
+		  If Categories.HasKey(Category) = False Then
+		    Return Paths
+		  End If
+		  
+		  Var Subgroups As JSONItem = Categories.Child(Category)
+		  If Subgroups.HasKey(Subgroup) = False Then
+		    Return Paths
+		  End If
+		  
+		  Var List As JSONItem = Subgroups.Child(Subgroup)
+		  Var Bound As Integer = List.LastRowIndex
+		  For Idx As Integer = 0 To Bound
+		    Try
+		      Paths.Add(List.ValueAt(Idx))
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Return Paths
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ArkSARecentBlueprints(Category As String, Assigns Paths() As String)
+		Protected Sub ArkRecentBlueprints(Category As String, Subgroup As String, Assigns Paths() As String)
+		  Init
+		  Category = Category.Lowercase
+		  Subgroup = Subgroup.Lowercase
 		  
+		  Var Categories As JSONItem = mManager.JSONValue("Ark Recent Blueprints")
+		  If Categories Is Nil Then
+		    Categories = New JSONItem
+		  End If
+		  
+		  Var Subgroups As JSONItem
+		  If Categories.HasKey(Category) Then
+		    Subgroups = Categories.Child(Category)
+		  Else
+		    Subgroups = New JSONItem
+		  End If
+		  
+		  Var List As New JSONItem
+		  If (Paths Is Nil) = False Then
+		    For Each Path As String In Paths
+		      List.Add(Path)
+		    Next
+		  End If
+		  
+		  Subgroups.Child(Subgroup) = List
+		  Categories.Child(Category) = Subgroups
+		  mManager.JSONValue("Ark Recent Blueprints") = Categories
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ArkSARecentBlueprints(Category As String, Subgroup As String) As String()
+		  Init
+		  Category = Category.Lowercase
+		  Subgroup = Subgroup.Lowercase
+		  
+		  Var Paths() As String
+		  Var Categories As JSONItem = mManager.JSONValue("ArkSA Recent Blueprints")
+		  If Categories Is Nil Then
+		    Return Paths
+		  End If
+		  
+		  If Categories.HasKey(Category) = False Then
+		    Return Paths
+		  End If
+		  
+		  Var Subgroups As JSONItem = Categories.Child(Category)
+		  If Subgroups.HasKey(Subgroup) = False Then
+		    Return Paths
+		  End If
+		  
+		  Var List As JSONItem = Subgroups.Child(Subgroup)
+		  Var Bound As Integer = List.LastRowIndex
+		  For Idx As Integer = 0 To Bound
+		    Try
+		      Paths.Add(List.ValueAt(Idx))
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Return Paths
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ArkSARecentBlueprints(Category As String, Subgroup As String, Assigns Paths() As String)
+		  Init
+		  Category = Category.Lowercase
+		  Subgroup = Subgroup.Lowercase
+		  
+		  Var Categories As JSONItem = mManager.JSONValue("ArkSA Recent Blueprints")
+		  If Categories Is Nil Then
+		    Categories = New JSONItem
+		  End If
+		  
+		  Var Subgroups As JSONItem
+		  If Categories.HasKey(Category) Then
+		    Subgroups = Categories.Child(Category)
+		  Else
+		    Subgroups = New JSONItem
+		  End If
+		  
+		  Var List As New JSONItem
+		  If (Paths Is Nil) = False Then
+		    For Each Path As String In Paths
+		      List.Add(Path)
+		    Next
+		  End If
+		  
+		  Subgroups.Child(Subgroup) = List
+		  Categories.Child(Category) = Subgroups
+		  mManager.JSONValue("ArkSA Recent Blueprints") = Categories
 		End Sub
 	#tag EndMethod
 
