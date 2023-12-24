@@ -5,7 +5,8 @@ use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchPa
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
 class LootDrop extends MutableBlueprint {
-	protected array $multipliers;
+	protected float $multiplierMin;
+	protected float $multiplierMax;
 	protected string $uiColor;
 	protected string $iconId;
 	protected int $sortOrder;
@@ -21,7 +22,8 @@ class LootDrop extends MutableBlueprint {
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
 
-		$this->multipliers = is_null($row->Field('multipliers')) === false ? json_decode($row->Field('multipliers'), true) : ['min' => 1.0, 'max' => 1.0];
+		$this->multiplierMin = filter_var($row->Field('multiplier_min'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 1.0;
+		$this->multiplierMax = filter_var($row->Field('multiplier_max'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 1.0;
 		$this->uiColor = $row->Field('uicolor');
 		$this->iconId = $row->Field('icon');
 		$this->sortOrder = filter_var($row->Field('modern_sort'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 999;
@@ -78,7 +80,8 @@ class LootDrop extends MutableBlueprint {
 		$schema = parent::BuildDatabaseSchema();
 		$schema->SetTable('loot_sources');
 		$schema->AddColumns([
-			New DatabaseObjectProperty('multipliers', ['columnName' => 'multipliers', 'accessor' => 'json_build_object(\'min\', %%TABLE%%.multiplier_min, \'max\', %%TABLE%%.multiplier_max)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			New DatabaseObjectProperty('multiplierMin', ['columnName' => 'multiplier_min', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			New DatabaseObjectProperty('multiplierMax', ['columnName' => 'multiplier_max', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			New DatabaseObjectProperty('uiColor', ['columnName' => 'uicolor', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			New DatabaseObjectProperty('iconId', ['columnName' => 'icon', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			New DatabaseObjectProperty('sortOrder', ['columnName' => 'modern_sort', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
@@ -119,7 +122,10 @@ class LootDrop extends MutableBlueprint {
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		unset($json['lootDropGroup']);
-		$json['multipliers'] = $this->multipliers;
+		$json['multipliers'] = [
+			'min' => $this->multiplierMin,
+			'max' => $this->multiplierMax
+		];
 		$json['uiColor'] = $this->uiColor;
 		$json['iconId'] = $this->iconId;
 		$json['sortOrder'] = $this->sortOrder;
@@ -139,19 +145,19 @@ class LootDrop extends MutableBlueprint {
 	}
 
 	public function MultiplierMin(): float {
-		return $this->multipliers['min'];
+		return $this->multiplierMin;
 	}
 
 	public function SetMultiplierMin(float $multiplier): void {
-		$this->multipliers['min'] = $multiplier;
+		$this->multiplierMin = $multiplier;
 	}
 
 	public function MultiplierMax(): float {
-		return $this->multipliers['max'];
+		return $this->multiplierMax;
 	}
 
 	public function SetMultiplierMax(float $multiplier): void {
-		$this->multipliers['max'] = $multiplier;
+		$this->multiplierMax = $multiplier;
 	}
 
 	public function UIColor(): string {
@@ -204,10 +210,17 @@ class LootDrop extends MutableBlueprint {
 		return 'cheat summon ' . $this->classString;
 	}
 
+	public function Edit(array $properties, bool $restoreDefaults = false): void {
+		if (array_key_exists('multipliers', $properties)) {
+			$properties['multiplierMin'] = $properties['multipliers']['min'];
+			$properties['multiplierMax'] = $properties['multipliers']['max'];
+		}
+		parent::Edit($properties, $restoreDefaults);
+	}
+
 	protected function SaveChildObjects(BeaconDatabase $database): void {
 		parent::SaveChildObjects($database);
 		$this->SaveItemSets($database);
-		$database->Query('UPDATE ark.loot_sources SET multiplier_min = $2, multiplier_max = $3 WHERE object_id = $1 AND (multiplier_min IS DISTINCT FROM $2 OR multiplier_min IS DISTINCT FROM $3);', $this->objectId, $this->multipliers['min'], $this->multipliers['max']);
 	}
 
 	protected function SaveItemSets(BeaconDatabase $database): void {
