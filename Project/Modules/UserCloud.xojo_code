@@ -468,6 +468,7 @@ Protected Module UserCloud
 		    End If
 		  End If
 		  
+		  Index.ExecuteSQL("PRAGMA foreign_keys = ON;")
 		  mIndex = Index
 		  Return True
 		End Function
@@ -480,7 +481,6 @@ Protected Module UserCloud
 		    Index.ExecuteSQL("CREATE TABLE actions (user_id TEXT NOT NULL, remote_path TEXT NOT NULL, action TEXT NOT NULL);")
 		    Index.ExecuteSQL("CREATE UNIQUE INDEX usercloud_user_id_remote_path_idx ON usercloud(user_id, remote_path);")
 		    Index.ExecuteSQL("CREATE UNIQUE INDEX actions_user_id_remote_path_idx ON actions(user_id, remote_path);")
-		    Index.ExecuteSQL("PRAGMA foreign_keys = ON;")
 		    Index.ExecuteSQL("PRAGMA journal_mode = WAL;")
 		    Index.UserVersion = 2
 		    Return True
