@@ -58,19 +58,8 @@ Protected Module DataUpdater
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ImportFile(File As FolderItem)
-		  Try
-		    Var Contents As String = File.Read
-		    ImportString(Contents)
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading local file for import")
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ImportString(Content As String)
-		  mPendingImports.Add(Content)
+		Protected Sub Import(Data As DataUpdater.PendingDataImport)
+		  mPendingImports.Add(Data)
 		  
 		  If mPendingImports.Count > 0 Then
 		    If mImportThread Is Nil Then
@@ -84,6 +73,28 @@ Protected Module DataUpdater
 		      mImportThread.Start
 		    End If
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Import(File As FolderItem, Flags As Integer = 0)
+		  Try
+		    Var Data As New DataUpdater.PendingDataImport(File, Flags)
+		    Import(Data)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading local file for import")
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Import(Content As String, Flags As Integer = 0)
+		  Try
+		    Var Data As New DataUpdater.PendingDataImport(Content, Flags)
+		    Import(Data)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading content string for import")
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -167,7 +178,7 @@ Protected Module DataUpdater
 		    Return
 		  End If
 		  
-		  ImportString(Contents)
+		  Import(Contents)
 		  DownloadNextURL()
 		End Sub
 	#tag EndMethod
@@ -203,7 +214,8 @@ Protected Module DataUpdater
 		  Var SourcesToOptimize As New Dictionary
 		  
 		  While mPendingImports.Count > 0
-		    Var Content As String = mPendingImports(mPendingImports.FirstIndex)
+		    Var ImportData As DataUpdater.PendingDataImport = mPendingImports(mPendingImports.FirstIndex)
+		    Var Content As String = ImportData.Content
 		    mPendingImports.RemoveAt(mPendingImports.FirstIndex)
 		    
 		    Var Archive As Beacon.Archive
@@ -238,6 +250,9 @@ Protected Module DataUpdater
 		      App.Log(Err, CurrentMethodName, "Loading values from manifest")
 		      Continue
 		    End Try
+		    If ImportData.SupressExport Then
+		      IsUserData = False
+		    End If
 		    
 		    Var Payloads() As Dictionary
 		    For Each Filename As Variant In FileList
@@ -326,7 +341,7 @@ Protected Module DataUpdater
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPendingImports() As String
+		Private mPendingImports() As DataUpdater.PendingDataImport
 	#tag EndProperty
 
 

@@ -115,7 +115,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  If Beacon.BuildExport(UserPacks, Writer.LocalFile, False) = False Then
+		  If Beacon.BuildExport(UserPacks, Writer.LocalFile, True) = False Then
 		    Return
 		  End If
 		  

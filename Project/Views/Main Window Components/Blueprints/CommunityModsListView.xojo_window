@@ -316,7 +316,7 @@ End
 		    Return
 		  End If
 		  
-		  DataUpdater.ImportString(Response.Content)
+		  DataUpdater.Import(Response.Content)
 		End Sub
 	#tag EndMethod
 

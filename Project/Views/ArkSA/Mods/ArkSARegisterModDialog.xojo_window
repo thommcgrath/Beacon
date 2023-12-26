@@ -822,6 +822,7 @@ Begin BeaconDialog ArkSARegisterModDialog
       End
    End
    Begin BeaconAPI.Socket ConfirmSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -829,6 +830,7 @@ Begin BeaconDialog ArkSARegisterModDialog
    End
    Begin Thread RegisterModThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -937,7 +939,7 @@ End
 		    Return
 		  End If
 		  
-		  DataUpdater.ImportString(Response.Content)
+		  DataUpdater.Import(Response.Content)
 		  Self.mModId = ""
 		  Self.Hide
 		End Sub

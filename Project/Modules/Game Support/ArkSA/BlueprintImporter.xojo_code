@@ -209,15 +209,13 @@ Protected Class BlueprintImporter
 		                Progress.SubDetail = "Found blueprint " + Blueprint.Label + "…"
 		              End If
 		              
-		              If Blueprint.Path.BeginsWith("/Game/Mods/") Then
-		                Var Tag As String = Blueprint.Path.NthField("/", 4)
-		                If Importer.mMods.HasKey(Tag) = False Then
-		                  Var ContentPackName As String = Tag
-		                  If Blueprint.ContentPackName.IsEmpty = False Then
-		                    ContentPackName = Blueprint.ContentPackName + " (" + Tag + ")"
-		                  End If
-		                  Importer.mMods.Value(Tag) = ContentPackName
+		              Var Tag As String = ArkSA.ModTagFromPath(Blueprint.Path)
+		              If Tag.IsEmpty = False And Importer.mMods.HasKey(Tag) = False Then
+		                Var ContentPackName As String = Tag
+		                If Blueprint.ContentPackName.IsEmpty = False Then
+		                  ContentPackName = Blueprint.ContentPackName + " (" + Tag + ")"
 		                End If
+		                Importer.mMods.Value(Tag) = ContentPackName
 		              End If
 		            End If
 		            
@@ -313,20 +311,22 @@ Protected Class BlueprintImporter
 		        Continue
 		      End If
 		      
-		      Importer.mBlueprints.Add(Blueprint)
-		      
 		      Var Path As String = Blueprint.Path
-		      If Path.BeginsWith("/Game/Mods/") Then
-		        Var ModTag As String = Path.NthField("/", 4)
-		        Var ModName As String = ModTag
-		        If Blueprint.ContentPackName.IsEmpty = False Then
-		          ModName = Blueprint.ContentPackName
-		        End If
-		        If ModName <> ModTag Then
-		          ModName = ModName + " (" + ModTag + ")"
-		        End If
-		        Importer.mMods.Value(ModTag) = ModName
+		      Var ModTag As String = ArkSA.ModTagFromPath(Path)
+		      If ModTag.IsEmpty Then
+		        Continue
 		      End If
+		      
+		      Var ModName As String = ModTag
+		      If Blueprint.ContentPackName.IsEmpty = False Then
+		        ModName = Blueprint.ContentPackName
+		      End If
+		      If ModName <> ModTag Then
+		        ModName = ModName + " (" + ModTag + ")"
+		      End If
+		      Importer.mMods.Value(ModTag) = ModName
+		      
+		      Importer.mBlueprints.Add(Blueprint)
 		    Catch Err As RuntimeException
 		    End Try
 		    
