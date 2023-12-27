@@ -211,6 +211,10 @@ Protected Module DataUpdater
 		    Sources.Add(DefinedSource.WriteableInstance)
 		  Next
 		  
+		  For Each Source As Beacon.DataSource In Sources
+		    Source.ImportChainBegin()
+		  Next
+		  
 		  Var SourcesToOptimize As New Dictionary
 		  
 		  While mPendingImports.Count > 0
@@ -308,6 +312,10 @@ Protected Module DataUpdater
 		      Next
 		    End If
 		  Wend
+		  
+		  For Each Source As Beacon.DataSource In Sources
+		    Source.ImportChainFinished()
+		  Next
 		  
 		  NotificationKit.Post(Notification_ImportStopped, Nil)
 		  mForceImport = False
