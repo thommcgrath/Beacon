@@ -881,6 +881,7 @@ Class=ModDiscoveryEngine;Modules/Game Support/ArkSA/ModDiscoveryEngine.xojo_code
 DesktopWindow=ArkSAModEditorView;Views/ArkSA/Mods/ArkSAModEditorView.xojo_window;&h0000000051DF9FFF;&h000000004B8DE7FF;false
 DesktopWindow=DebugWindow;Views/Support Ticket/DebugWindow.xojo_window;&h000000006E2A3FFF;&h000000003584DFFF;false
 Class=PendingDataImport;Modules/DataUpdater/PendingDataImport.xojo_code;&h000000000CB60FFF;&h000000006233C7FF;false
+Class=SettingChange;Modules/Hosting Providers/Nitrado/SettingChange.xojo_code;&h0000000017DD3FFF;&h0000000072E03FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=0

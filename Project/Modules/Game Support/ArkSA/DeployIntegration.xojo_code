@@ -116,6 +116,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Run the backup if requested
+		  Var NitradoChanges As Dictionary
 		  If Self.BackupEnabled Then
 		    Var OldFiles As New Dictionary
 		    OldFiles.Value(ArkSA.ConfigFileGame) = GameIniOriginal
@@ -124,6 +125,37 @@ Inherits Beacon.DeployIntegration
 		    Var NewFiles As New Dictionary
 		    NewFiles.Value(ArkSA.ConfigFileGame) = GameIniRewritten
 		    NewFiles.Value(ArkSA.ConfigFileGameUserSettings) = GameUserSettingsIniRewritten
+		    
+		    Select Case Self.Provider
+		    Case IsA Nitrado.HostingProvider
+		      Var GameServer As JSONItem = InitialStatus.UserData
+		      Var Settings As JSONItem = GameServer.Child("settings")
+		      Settings.Compact = False
+		      OldFiles.Value("Config.json") = Settings.ToString
+		      
+		      NitradoChanges = Self.NitradoPrepareChanges(Organizer)
+		      Var NewSettings As New JSONItem(Settings.ToString)
+		      For Each Entry As DictionaryEntry In NitradoChanges
+		        Try
+		          Var Setting As ArkSA.ConfigOption = Entry.Key
+		          Var NewValue As String = Entry.Value
+		          
+		          Var Changes() As Nitrado.SettingChange = Nitrado.HostingProvider.PrepareSettingChanges(GameServer, Setting, NewValue)
+		          For Each Change As Nitrado.SettingChange In Changes
+		            Try
+		              Var Parent As JSONItem = NewSettings.Child(Change.Category)
+		              Parent.Value(Change.Key) = Change.Value
+		            Catch ChangeErr As RuntimeException
+		              App.Log(ChangeErr, CurrentMethodName, "Updating config json")
+		            End Try
+		          Next
+		        Catch EntryErr As RuntimeException
+		          App.Log(EntryErr, CurrentMethodName, "Processing Nitrado changes")
+		        End Try
+		      Next
+		      NewSettings.Compact = False
+		      NewFiles.Value("Config.json") = NewSettings.ToString
+		    End Select
 		    
 		    Self.RunBackup(OldFiles, NewFiles)
 		    
@@ -151,125 +183,38 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Make command line changes
-		  If Self.Provider.SupportsGameSettings Then
+		  Select Case Self.Provider
+		  Case IsA Nitrado.HostingProvider
 		    Self.Log("Updating other settings…")
-		    Call Self.ApplySettings(Organizer, False)
+		    If NitradoChanges Is Nil Then
+		      Call Self.NitradoApplySettings(Organizer)
+		    Else
+		      Call Self.NitradoApplySettings(NitradoChanges)
+		    End If
 		    If Self.Finished Then
 		      Return
 		    End If
-		  End If
+		  End Select
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h1
-		Protected Function ApplySettings(Organizer As ArkSA.ConfigOrganizer, Full As Boolean) As Boolean
-		  #Pragma Unused Full
-		  
-		  Select Case Self.Provider
-		  Case IsA Nitrado.HostingProvider
-		    Return Self.NitradoApplySettings(Organizer)
-		  Else
-		    Return True
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function NitradoApplySettings(Organizer As ArkSA.ConfigOrganizer) As Boolean
-		  #Pragma Unused
-		  
 		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
 		    Return False
 		  End If
 		  
-		  Var Project As ArkSA.Project = Self.Project
-		  Var Profile As ArkSA.ServerProfile = Self.Profile
-		  Var Keys() As ArkSA.ConfigOption = Organizer.DistinctKeys
-		  Var NewValues As New Dictionary
-		  Var Style As ArkSA.ConfigOption.NitradoDeployStyles = ArkSA.ConfigOption.NitradoDeployStyles.Expert
-		  
-		  For Each ConfigOption As ArkSA.ConfigOption In Keys
-		    If ConfigOption.HasNitradoEquivalent = False Then
-		      Continue
-		    End If
-		    
-		    Var SendToNitrado As Boolean = ConfigOption.NitradoDeployStyle = ArkSA.ConfigOption.NitradoDeployStyles.Both Or ConfigOption.NitradoDeployStyle = Style
-		    If SendToNitrado = False Then
-		      Continue
-		    End If
-		    
-		    Var Values() As ArkSA.ConfigValue = Organizer.FilteredValues(ConfigOption)
-		    
-		    Select Case ConfigOption.NitradoFormat
-		    Case ArkSA.ConfigOption.NitradoFormats.Line
-		      Var Lines() As String
-		      For Each Value As ArkSA.ConfigValue In Values
-		        Lines.Add(Value.Command)
-		      Next
-		      NewValues.Value(ConfigOption) = Lines
-		    Case ArkSA.ConfigOption.NitradoFormats.Value
-		      If Values.Count >= 1 Then
-		        Var Value As String = Values(Values.LastIndex).Value
-		        
-		        If ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Then
-		          Value = Value.Lowercase
-		          
-		          Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigOption.Constraint("nitrado.boolean.reversed"))
-		          If (Reversed Is Nil) = False And Reversed.BooleanValue Then
-		            Value = If(Value = "true", "false", "true")
-		          End If
-		        End If
-		        
-		        NewValues.Value(ConfigOption) = Value
-		      Else
-		        // This doesn't make sense
-		        Break
-		      End If
-		    End Select
-		  Next
-		  
-		  Var Changes As New Dictionary
-		  For Each Entry As DictionaryEntry In NewValues
-		    Var ConfigOption As ArkSA.ConfigOption = Entry.Key
-		    Var CurrentValue As Variant = Self.Provider.GameSetting(Project, Profile, ConfigOption)
-		    Var FinishedValue As String
-		    If Entry.Value.Type = Variant.TypeString Then
-		      // Value comparison
-		      If ConfigOption.ValuesEqual(Entry.Value, CurrentValue) Then
-		        Continue
-		      End If
-		      FinishedValue = Entry.Value.StringValue
-		    ElseIf Entry.Value.IsArray And Entry.Value.ArrayElementType = Variant.TypeString Then
-		      // Line comparison, but if there is only one line, go back to value comparison
-		      Var NewLines() As String = Entry.Value
-		      FinishedValue = NewLines.Join(EndOfLine) // Prepare the finished value before sorting, even if we nay not use it
-		      
-		      Var CurrentLines() As String = CurrentValue.StringValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
-		      
-		      If NewLines.Count = 1 And CurrentLines.Count = 1 And (ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeNumeric Or ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Or ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean) Then
-		        Var NewValue As String = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
-		        CurrentValue = CurrentLines(0).Middle(CurrentLines(0).IndexOf("=") + 1)
-		        If ConfigOption.ValuesEqual(NewValue, CurrentValue) Then
-		          Continue
-		        End If
-		        FinishedValue = NewLines(0)
-		      Else
-		        NewLines.Sort
-		        CurrentLines.Sort
-		        Var NewHash As String = EncodeHex(Crypto.SHA1(NewLines.Join(EndOfLine.UNIX).Lowercase))
-		        Var CurrentHash As String = EncodeHex(Crypto.SHA1(CurrentLines.Join(EndOfLine.UNIX).Lowercase))
-		        If NewHash = CurrentHash Then
-		          // No change
-		          Continue
-		        End If
-		      End If
-		    Else
-		      Continue
-		    End If
-		    
-		    Changes.Value(ConfigOption) = FinishedValue
-		  Next
+		  Var Changes As Dictionary = Self.NitradoPrepareChanges(Organizer)
+		  Return Self.NitradoApplySettings(Changes)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NitradoApplySettings(Changes As Dictionary) As Boolean
+		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
+		    Return False
+		  End If
 		  
 		  // Deploy changes
 		  For Each Entry As DictionaryEntry In Changes
@@ -367,6 +312,100 @@ Inherits Beacon.DeployIntegration
 		    Self.Wait(Diff * 1000)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NitradoPrepareChanges(Organizer As ArkSA.ConfigOrganizer) As Dictionary
+		  Var Project As ArkSA.Project = Self.Project
+		  Var Profile As ArkSA.ServerProfile = Self.Profile
+		  Var Keys() As ArkSA.ConfigOption = Organizer.DistinctKeys
+		  Var NewValues As New Dictionary
+		  Var Style As ArkSA.ConfigOption.NitradoDeployStyles = ArkSA.ConfigOption.NitradoDeployStyles.Expert
+		  
+		  For Each ConfigOption As ArkSA.ConfigOption In Keys
+		    If ConfigOption.HasNitradoEquivalent = False Then
+		      Continue
+		    End If
+		    
+		    Var SendToNitrado As Boolean = ConfigOption.NitradoDeployStyle = ArkSA.ConfigOption.NitradoDeployStyles.Both Or ConfigOption.NitradoDeployStyle = Style
+		    If SendToNitrado = False Then
+		      Continue
+		    End If
+		    
+		    Var Values() As ArkSA.ConfigValue = Organizer.FilteredValues(ConfigOption)
+		    
+		    Select Case ConfigOption.NitradoFormat
+		    Case ArkSA.ConfigOption.NitradoFormats.Line
+		      Var Lines() As String
+		      For Each Value As ArkSA.ConfigValue In Values
+		        Lines.Add(Value.Command)
+		      Next
+		      NewValues.Value(ConfigOption) = Lines
+		    Case ArkSA.ConfigOption.NitradoFormats.Value
+		      If Values.Count >= 1 Then
+		        Var Value As String = Values(Values.LastIndex).Value
+		        
+		        If ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Then
+		          Value = Value.Lowercase
+		          
+		          Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigOption.Constraint("nitrado.boolean.reversed"))
+		          If (Reversed Is Nil) = False And Reversed.BooleanValue Then
+		            Value = If(Value = "true", "false", "true")
+		          End If
+		        End If
+		        
+		        NewValues.Value(ConfigOption) = Value
+		      Else
+		        // This doesn't make sense
+		        Break
+		      End If
+		    End Select
+		  Next
+		  
+		  Var Changes As New Dictionary
+		  For Each Entry As DictionaryEntry In NewValues
+		    Var ConfigOption As ArkSA.ConfigOption = Entry.Key
+		    Var CurrentValue As Variant = Self.Provider.GameSetting(Project, Profile, ConfigOption)
+		    Var FinishedValue As String
+		    If Entry.Value.Type = Variant.TypeString Then
+		      // Value comparison
+		      If ConfigOption.ValuesEqual(Entry.Value, CurrentValue) Then
+		        Continue
+		      End If
+		      FinishedValue = Entry.Value.StringValue
+		    ElseIf Entry.Value.IsArray And Entry.Value.ArrayElementType = Variant.TypeString Then
+		      // Line comparison, but if there is only one line, go back to value comparison
+		      Var NewLines() As String = Entry.Value
+		      FinishedValue = NewLines.Join(EndOfLine) // Prepare the finished value before sorting, even if we nay not use it
+		      
+		      Var CurrentLines() As String = CurrentValue.StringValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
+		      
+		      If NewLines.Count = 1 And CurrentLines.Count = 1 And (ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeNumeric Or ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Or ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean) Then
+		        Var NewValue As String = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
+		        CurrentValue = CurrentLines(0).Middle(CurrentLines(0).IndexOf("=") + 1)
+		        If ConfigOption.ValuesEqual(NewValue, CurrentValue) Then
+		          Continue
+		        End If
+		        FinishedValue = NewLines(0)
+		      Else
+		        NewLines.Sort
+		        CurrentLines.Sort
+		        Var NewHash As String = EncodeHex(Crypto.SHA1(NewLines.Join(EndOfLine.UNIX).Lowercase))
+		        Var CurrentHash As String = EncodeHex(Crypto.SHA1(CurrentLines.Join(EndOfLine.UNIX).Lowercase))
+		        If NewHash = CurrentHash Then
+		          // No change
+		          Continue
+		        End If
+		      End If
+		    Else
+		      Continue
+		    End If
+		    
+		    Changes.Value(ConfigOption) = FinishedValue
+		  Next
+		  
+		  Return Changes
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
