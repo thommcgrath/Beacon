@@ -436,7 +436,7 @@ End
 		Sub Run()
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  For Each Pack As Beacon.ContentPack In Self.mContentPacks
-		    DataSource.SaveContentPack(Pack, True)
+		    Call DataSource.SaveContentPack(Pack, True)
 		  Next
 		  Var Delete() As Ark.Blueprint
 		  Call DataSource.SaveBlueprints(Self.mBlueprints, Delete, Nil, True)

@@ -918,16 +918,17 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean)
+		Function SaveContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean) As Boolean
 		  If Pack Is Nil Or Pack.GameId <> Self.Identifier Then
-		    Return
+		    Return False
 		  End If
 		  
 		  Var Saved As Boolean = RaiseEvent SaveContentPack(Pack)
 		  If Saved And DoCloudExport Then
 		    Self.ExportCloudFiles()
 		  End If
-		End Sub
+		  Return Saved
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1

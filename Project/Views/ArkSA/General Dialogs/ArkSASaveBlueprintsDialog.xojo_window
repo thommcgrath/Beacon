@@ -237,6 +237,7 @@ Begin BeaconDialog ArkSASaveBlueprintsDialog
    End
    Begin Thread SaveThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -435,7 +436,7 @@ End
 		Sub Run()
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
 		  For Each Pack As Beacon.ContentPack In Self.mContentPacks
-		    DataSource.SaveContentPack(Pack, True)
+		    Call DataSource.SaveContentPack(Pack, True)
 		  Next
 		  Var Delete() As ArkSA.Blueprint
 		  Call DataSource.SaveBlueprints(Self.mBlueprints, Delete, Nil, True)

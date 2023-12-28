@@ -206,7 +206,7 @@ Inherits Beacon.DataSource
 		      Pack.MarketplaceId = Dict.Lookup("marketplaceId", "").StringValue
 		      Pack.IsLocal = Pack.MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
 		      Pack.LastUpdate = Dict.Value("lastUpdate").DoubleValue
-		      Self.SaveContentPack(Pack, False)
+		      Call Self.SaveContentPack(Pack, False)
 		    Next
 		  End If
 		  
@@ -605,7 +605,7 @@ Inherits Beacon.DataSource
 		      
 		      ContentPacks = Importer.ContentPacks
 		      For Each ContentPack As Beacon.ContentPack In ContentPacks
-		        Self.SaveContentPack(ContentPack, False)
+		        Call Self.SaveContentPack(ContentPack, False)
 		        If PacksToRemove.HasKey(ContentPack.ContentPackId) Then
 		          PacksToRemove.Remove(ContentPack.ContentPackId)
 		        End If
@@ -819,6 +819,7 @@ Inherits Beacon.DataSource
 		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", Pack.ContentPackId, Pack.Marketplace, Pack.MarketplaceId)
 		  End If
 		  
+		  Var DidSave As Boolean
 		  Var NewContentPackId As String = Pack.ContentPackId
 		  Var ShouldInsert As Boolean = True
 		  If Rows.RowCount > 0 Then
@@ -830,6 +831,7 @@ Inherits Beacon.DataSource
 		        // We can just update the row
 		        If Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
 		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
+		          DidSave = True
 		        End If
 		        ShouldInsert = False
 		      Else
@@ -856,9 +858,10 @@ Inherits Beacon.DataSource
 		  
 		  If ShouldInsert Then
 		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
+		    DidSave = True
 		  End If
 		  
-		  Return True
+		  Return DidSave
 		End Function
 	#tag EndEvent
 
