@@ -822,7 +822,6 @@ Begin BeaconDialog ArkSARegisterModDialog
       End
    End
    Begin BeaconAPI.Socket ConfirmSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -830,7 +829,6 @@ Begin BeaconDialog ArkSARegisterModDialog
    End
    Begin Thread RegisterModThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1044,15 +1042,18 @@ End
 		    Var ModName As String = ModInfo.Value("name")
 		    Var CurseForgeId As Integer = ModInfo.Value("id").IntegerValue
 		    Var CurseForgeSlug As String = ModInfo.Value("slug").StringValue
-		    Var ModId As String = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, CurseForgeId.ToString(Locale.Raw, "0"))
-		    Var ContentPack As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPackWithId(ModId)
+		    Var ContentPack As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPack(Beacon.MarketplaceCurseForge, CurseForgeId.ToString(Locale.Raw, "0"))
 		    If (ContentPack Is Nil) = False Then
-		      Self.ShowAlert("You have already added this mod.", "It is not possible to add the same mod more than once.")
+		      If ContentPack.IsLocal Then
+		        Self.ShowAlert("You have already added this mod.", "It is not possible to add the same mod more than once.")
+		      Else
+		        Self.ShowAlert("Beacon already supports this mod.", "You can turn on the mod using the ""Mods"" button in your project's toolbar.")
+		      End If
 		      Self.Pages.SelectedPanelIndex = Self.PageIntro
 		      Return
 		    End If
 		    
-		    Self.mModId = ModId
+		    Self.mModId = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, CurseForgeId.ToString(Locale.Raw, "0"))
 		    Self.mModName = ModName
 		    Self.mCurseForgeId = CurseForgeId
 		    Self.mCurseForgeSlug = CurseForgeSlug
