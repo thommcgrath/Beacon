@@ -215,7 +215,7 @@ Implements Beacon.Countable,ArkSA.Weighted
 		    Set.LevelOffsetBeforeMultiplier = SaveData.Value(OffsetBeforeMultiplierKey)
 		  End If
 		  
-		  Var ColorSetKey As Variant = SaveData.FirstKey("colorSet", "color_set", "Color Set Class")
+		  Var ColorSetKey As Variant = SaveData.FirstKey("colorSetClass", "color_set", "Color Set Class") // I'm not confident color_set was ever used
 		  If ColorSetKey.IsNull = False Then
 		    Set.ColorSetClass = SaveData.Value(ColorSetKey)
 		  End If
