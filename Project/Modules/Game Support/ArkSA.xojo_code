@@ -581,6 +581,28 @@ Protected Module ArkSA
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MatchesTags(Extends Blueprint As ArkSA.Blueprint, RequiredTags() As String, ExcludedTags() As String) As Boolean
+		  If (RequiredTags Is Nil) = False Then
+		    For Each Tag As String In RequiredTags
+		      If Blueprint.IsTagged(Tag) = False Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  If (ExcludedTags Is Nil) = False Then
+		    For Each Tag As String In ExcludedTags
+		      If Blueprint.IsTagged(Tag) = True Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function ModTagFromPath(Path As String) As String
 		  If Path.BeginsWith("/Game/Mods/") Then

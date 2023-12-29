@@ -436,9 +436,22 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddBlueprintsToList(Blueprints() As Ark.Blueprint, Blacklist() As String, AddToBlacklist As Boolean)
+		Private Sub AddBlueprintsToList(Blueprints() As Ark.Blueprint, Blacklist() As String, AddToBlacklist As Boolean, CheckTags As Boolean)
+		  Var RequiredTags(), ExcludedTags() As String
+		  If CheckTags Then
+		    Try
+		      RequiredTags = Self.Picker.RequiredTags()
+		      ExcludedTags = Self.Picker.ExcludedTags()
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    If Blacklist.IndexOf(Blueprint.BlueprintId) > -1 Then
+		      Continue
+		    End If
+		    
+		    If CheckTags = True And Blueprint.MatchesTags(RequiredTags, ExcludedTags) = False Then
 		      Continue
 		    End If
 		    
@@ -725,11 +738,11 @@ End
 		  Var RecentPaths() As String = Preferences.ArkRecentBlueprints(Self.mCategory, Self.mSubgroup)
 		  For Each Path As String In RecentPaths
 		    Var BlueprintsAtPath() As Ark.Blueprint = DataSource.GetBlueprintsByPath(Path, Self.mMods)
-		    Self.AddBlueprintsToList(BlueprintsAtPath, Blacklist, True)
+		    Self.AddBlueprintsToList(BlueprintsAtPath, Blacklist, True, True)
 		  Next
 		  
 		  Var Blueprints() As Ark.Blueprint = DataSource.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
-		  Self.AddBlueprintsToList(Blueprints, Blacklist, False)
+		  Self.AddBlueprintsToList(Blueprints, Blacklist, False, True)
 		  Self.List.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
