@@ -18,17 +18,18 @@ Protected Module PasswordStorage
 		      // Not found
 		    End Try
 		  #else
-		    Var SavedPasswords As Dictionary = Preferences.SavedPasswords
+		    Var SavedPasswords As JSONItem = Preferences.SavedPasswords
 		    
 		    Var UserId As String
 		    If Beacon.UUID.Validate(EmailOrUserId) Then
 		      UserId = EmailOrUserId
 		    Else
-		      For Each Entry As DictionaryEntry In SavedPasswords
+		      Var Keys() As String = SavedPasswords.Keys
+		      For Each Key As String In Keys
 		        Try
-		          Var Dict As Dictionary = Entry.Value
-		          If Dict.Lookup("email", "") = EmailOrUserId Then
-		            UserId = Entry.Key
+		          Var Child As JSONItem = SavedPasswords.Child(Key)
+		          If Child.Lookup("email", "") = EmailOrUserId Then
+		            UserId = Key
 		            Exit
 		          End If
 		        Catch Err As RuntimeException
@@ -68,19 +69,20 @@ Protected Module PasswordStorage
 		      Return ""
 		    End Try
 		  #else
-		    Var PasswordData As Dictionary
-		    Var SavedPasswords As Dictionary = Preferences.SavedPasswords
+		    Var PasswordData As JSONItem
+		    Var SavedPasswords As JSONItem = Preferences.SavedPasswords
 		    Var UserId As String
 		    If SavedPasswords.HasKey(EmailOrUserId) Then
 		      PasswordData = SavedPasswords.Value(EmailOrUserId)
 		      UserId = EmailOrUserId
 		    Else
-		      For Each Entry As DictionaryEntry In SavedPasswords
+		      Var Keys() As String = SavedPasswords.Keys
+		      For Each Key As String In Keys
 		        Try
-		          Var Dict As Dictionary = Entry.Value
-		          If Dict.Lookup("email", "") = EmailOrUserId Then
-		            UserId = Entry.Key
-		            PasswordData = Dict
+		          Var Child As JSONItem = SavedPasswords.Child(Key)
+		          If Child.Lookup("email", "") = EmailOrUserId Then
+		            UserId = Key
+		            PasswordData = Child
 		            Exit
 		          End If
 		        Catch Err As RuntimeException
@@ -121,12 +123,12 @@ Protected Module PasswordStorage
 		      Return False
 		    End Try
 		  #else
-		    Var PasswordData As New Dictionary
+		    Var PasswordData As New JSONItem
 		    PasswordData.Value("email") = Email
 		    PasswordData.Value("password") = BeaconEncryption.SlowEncrypt(Email.Lowercase + " " + UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, Password)
 		    
-		    Var SavedPasswords As Dictionary = Preferences.SavedPasswords
-		    SavedPasswords.Value(UserId) = PasswordData
+		    Var SavedPasswords As JSONItem = Preferences.SavedPasswords
+		    SavedPasswords.Child(UserId) = PasswordData
 		    Preferences.SavedPasswords = SavedPasswords
 		    
 		    Return True

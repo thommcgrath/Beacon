@@ -974,6 +974,7 @@ End
 		      End Try
 		    Next
 		  Next
+		  Self.mModUUIDsToDelete.ResizeTo(-1)
 		End Sub
 	#tag EndEvent
 	#tag Event
