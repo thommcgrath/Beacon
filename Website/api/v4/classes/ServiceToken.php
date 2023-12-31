@@ -557,7 +557,7 @@ class ServiceToken implements JsonSerializable {
 			$response = json_decode($response, true);
 			$providerSpecific['user'] = $response['data']['token']['user'];
 			$accessTokenExpiration = $response['data']['token']['expires_at'];
-			$refreshTokenExpiration = $accessTokenExpiration + 5184000; // This is a guess, 60 days
+			$refreshTokenExpiration = $accessTokenExpiration + 2592000; // This is a guess, 30 days
 			return true;
 		}
 
