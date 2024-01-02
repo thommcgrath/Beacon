@@ -709,7 +709,7 @@ End
 		  End If
 		  InsertData.Value("delta_version") = DeltaVersion
 		  InsertData.Value("published") = "'" + DateTime.Now.SQLDateTime + "'"
-		  InsertData.Value("supported_games") = "'{Ark,ArkSA}"
+		  InsertData.Value("supported_games") = "'{Ark,ArkSA}'"
 		  Statements.Add(Self.DictionaryToInsertSQL("updates", InsertData))
 		  
 		  For Each DownloadObj As Download In Self.mDownloads
