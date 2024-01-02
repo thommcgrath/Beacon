@@ -470,6 +470,14 @@ Begin DesktopWindow EditorWindow
       Visible         =   True
       Width           =   80
    End
+   Begin Thread HashThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   1
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -555,8 +563,6 @@ End
 		Private Sub Begin()
 		  Var HumanVersion As String = Self.VersionField.Text.Trim
 		  
-		  Var RSAKey As String = App.PrivateKey
-		  
 		  Var Queue As New Dictionary
 		  Var Downloads() As Download
 		  For RowIdx As Integer = 0 To Self.FileList.LastRowIndex
@@ -573,32 +579,9 @@ End
 		      Arch = Arch Or Download.ArchIntel64
 		    End If
 		    
-		    Var Stream As TextInputStream = TextInputStream.Open(File)
-		    Var Contents As MemoryBlock = Stream.ReadAll
-		    Stream.Close
-		    
-		    Var RSASignature As String = Self.SignRSA(RSAKey, Contents)
-		    If RSASignature.IsEmpty Then
-		      MessageBox("No RSA signature for " + File.NativePath + " generated")
-		      Return
-		    End If
-		    Var DSASignature As String = Self.SignDSA(File)
-		    If DSASignature.IsEmpty Then
-		      MessageBox("No DSA signature for " + File.NativePath + " generated")
-		      Return
-		    End If
-		    Var EdDSASignature As String = Self.SignEdDSA(File)
-		    If EdDSASignature.IsEmpty Then
-		      MessageBox("No EdDSA signature for " + File.NativePath + " generated")
-		      Return
-		    End If
-		    
 		    Var Path As String = Download.SuggestedPath(Arch, Platform)
 		    Var URL As String = "https://releases.usebeacon.app/" + If(DebugBuild, "Debug/", "") + HumanVersion + "/" + Path
-		    Var DownloadObj As New Download(Contents, URL, Arch, Platform)
-		    DownloadObj.AddSignature(New DownloadSignature(RSASignature, DownloadSignature.SignatureRSA))
-		    DownloadObj.AddSignature(New DownloadSignature(DSASignature, DownloadSignature.SignatureDSA))
-		    DownloadObj.AddSignature(New DownloadSignature(EdDSASignature, DownloadSignature.SignatureEdDSA))
+		    Var DownloadObj As New Download(File, URL, Arch, Platform)
 		    Queue.Value(DownloadObj.UUID) = DownloadObj
 		    Downloads.Add(DownloadObj)
 		  Next RowIdx
@@ -608,10 +591,11 @@ End
 		  Self.mDisplayVersion = HumanVersion
 		  
 		  Self.mProgress = New ProgressSheet
+		  Self.mProgress.Caption = "Hashing files…"
 		  Self.mProgress.Show(Self)
 		  
 		  Self.CheckEnabled()
-		  Self.NextQueueItem()
+		  Self.HashThread.Start
 		End Sub
 	#tag EndMethod
 
@@ -759,6 +743,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub NextQueueItem()
+		  Break
+		  
 		  If Self.mUploadQueue.KeyCount = 0 Then
 		    Self.Finish()
 		    Return
@@ -773,7 +759,8 @@ End
 		  Var Path As String = DownloadObj.Path + "/" + DownloadObj.Filename
 		  Var UploadURL As String = "https://" + Host + "/beacon-releases/" + DownloadObj.Path + "/" + DownloadObj.Filename
 		  
-		  Self.mProgress.Caption = "Uploading " + Path
+		  Self.mProgress.Progress = 0
+		  Self.mProgress.Caption = "Uploading " + Path + "…"
 		  
 		  Self.UploadSocket.ClearRequestHeaders()
 		  Self.UploadSocket.SetRequestContent("Checksum", DownloadObj.Checksum)
@@ -782,43 +769,6 @@ End
 		  Self.UploadSocket.Send("PUT", UploadURL)
 		  System.DebugLog("Uploading to " + UploadURL)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function SignDSA(File As FolderItem) As String
-		  Var Sh As New Shell
-		  Sh.Execute(App.SignTool(True).ShellPath + " " + File.ShellPath + " " + App.ApplicationSupport.Child("dsa_priv.pem").ShellPath)
-		  Return Sh.Result.Trim
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function SignEdDSA(File As FolderItem) As String
-		  Var Sh As New Shell
-		  Sh.Execute(App.SignTool(False).ShellPath + " -f " + App.ApplicationSupport.Child("ed25519").ShellPath + " " + File.ShellPath)
-		  
-		  Var Result As String = Sh.Result.Trim
-		  Var StartPos As Integer = Result.IndexOf("sparkle:edSignature=""")
-		  If StartPos = -1 Then
-		    // There is a problem
-		    Return ""
-		  End If
-		  
-		  StartPos = StartPos + 21
-		  Var EndPos As Integer = Result.IndexOf(StartPos, """")
-		  If EndPos = -1 Then
-		    // What?
-		    EndPos = Result.Length
-		  End If
-		  
-		  Return Result.Middle(StartPos, EndPos - StartPos)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function SignRSA(Key As String, Content As MemoryBlock) As String
-		  Return EncodeHex(Crypto.RSASign(Content, Key)).Lowercase
-		End Function
 	#tag EndMethod
 
 
@@ -927,7 +877,7 @@ End
 		Sub Paint(g As Graphics, areas() As Rect)
 		  #Pragma Unused Areas
 		  
-		  G.DrawingColor = &cCCCCCC
+		  G.DrawingColor = If(Color.IsDarkMode, &c333333, &cCCCCCC)
 		  G.FillRectangle(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent
@@ -1044,6 +994,44 @@ End
 		  End If
 		  
 		  Self.AddFile(File)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HashThread
+	#tag Event
+		Sub Run()
+		  Me.AddUserInterfaceUpdate(New Dictionary("Progress": 0))
+		  
+		  For Idx As Integer = 0 To Self.mDownloads.LastIndex
+		    Var File As Download = Self.mDownloads(Idx)
+		    If File.Loaded = False And File.LoadFromDisk() = False Then
+		      Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True))
+		      Return
+		    End If
+		    
+		    Me.AddUserInterfaceUpdate(New Dictionary("Progress": (Idx + 1) / Self.mDownloads.Count))
+		  Next
+		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    If Update.Lookup("Finished", False).BooleanValue = True Then
+		      If Update.Lookup("Error", False).BooleanValue = True Then
+		        Self.Error("Could not hash all files.")
+		        Return
+		      End If
+		      
+		      Self.NextQueueItem()
+		      Return
+		    End If
+		    
+		    If Update.HasKey("Progress") Then
+		      Self.mProgress.Progress = Update.Value("Progress").DoubleValue
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
