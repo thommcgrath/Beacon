@@ -240,7 +240,7 @@ Protected Class PreferencesManager
 		Function PointValue(Key As String, Default As Point = Nil) As Point
 		  Var JSON As JSONItem = Self.JSONValue(Key)
 		  If JSON Is Nil Then
-		    Return Nil
+		    Return Default
 		  End If
 		  
 		  Return New Point(JSON.Value("Left").DoubleValue, JSON.Value("Top").DoubleValue)
@@ -260,7 +260,7 @@ Protected Class PreferencesManager
 		Function RectValue(Key As String, Default As Rect = Nil) As Rect
 		  Var JSON As JSONItem = Self.JSONValue(Key)
 		  If JSON Is Nil Then
-		    Return Nil
+		    Return Default
 		  End If
 		  
 		  Return New Rect(JSON.Value("Left").DoubleValue, JSON.Value("Top").DoubleValue, JSON.Value("Width").DoubleValue, JSON.Value("Height").DoubleValue)
@@ -293,7 +293,7 @@ Protected Class PreferencesManager
 		Function SizeValue(Key As String, Default As Size = Nil) As Size
 		  Var JSON As JSONItem = Self.JSONValue(Key)
 		  If JSON Is Nil Then
-		    Return Nil
+		    Return Default
 		  End If
 		  
 		  Return New Size(JSON.Value("Width").DoubleValue, JSON.Value("Height").DoubleValue)
