@@ -601,9 +601,14 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		foreach ($members as $member) {
 			$database->Query('INSERT INTO public.project_members (project_id, user_id, role, encrypted_password, fingerprint) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (project_id, user_id) DO UPDATE SET role = EXCLUDED.role, encrypted_password = EXCLUDED.encrypted_password, fingerprint = EXCLUDED.fingerprint;', $projectId, $member['userId'], $member['role'], $member['encryptedPassword'], $member['fingerprint']);
 		}
+		$project = static::FetchForUser($projectId, $user);
+		if (is_null($project)) {
+			$database->Rollback();
+			throw new Exception('New project was not found after saving');
+		}
 		$database->Commit();
 
-		return static::Fetch($projectId);
+		return $project;
 	}
 
 	public function Versions(): array {

@@ -53,6 +53,12 @@ Implements Iterable
 		  Self.mCleanupTimer.RunMode = Timer.RunModes.Multiple
 		  Self.mCleanupTimer.Period = 5000
 		  AddHandler mCleanupTimer.Action, WeakAddressOf mCleanupTimer_Action
+		  
+		  // Perform maintenance while pool is being setup
+		  Var MaintenanceInstance As Beacon.DataSource = RaiseEvent NewInstance(True)
+		  If (MaintenanceInstance Is Nil) = False Then
+		    MaintenanceInstance.PerformMaintenance()
+		  End If
 		End Sub
 	#tag EndMethod
 

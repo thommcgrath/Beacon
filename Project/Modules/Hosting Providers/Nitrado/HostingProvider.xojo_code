@@ -179,11 +179,6 @@ Implements Beacon.HostingProvider
 		    Return
 		  End If
 		  
-		  Var Paths() As String = Setting.NitradoPaths
-		  If Paths.Count = 0 Then
-		    Return
-		  End If
-		  
 		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
 		    Call Self.GetServerStatus(Project, Profile)
 		  End If
@@ -192,27 +187,14 @@ Implements Beacon.HostingProvider
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Project, Profile, ServiceId, Token)
-		  For Each Path As String In Paths
-		    Var Found As Boolean
-		    Var OldValue As Variant = Self.ValueByDotNotation(GameServer, Path, Found)
-		    If Found = False Or Setting.ValuesEqual(OldValue, Value) Then
-		      Continue
-		    End If
-		    
-		    Var Parts() As String = Path.Split(".")
-		    Var Key As String = Parts(Parts.LastIndex)
-		    Parts.RemoveAt(Parts.LastIndex)
-		    Var Category As String = String.FromArray(Parts, ".")
-		    
+		  
+		  Var Changes() As Nitrado.SettingChange = Self.PrepareSettingChanges(GameServer, Setting, Value)
+		  For Each Change As Nitrado.SettingChange In Changes
 		    Var FormData As New Dictionary
-		    FormData.Value("category") = Category
-		    FormData.Value("key") = Key
-		    If Setting.IsBoolean Then
-		      FormData.Value("value") = If(Value.IsTruthy, "true", "false") // Nitrado **must** have these in lowercase
-		    Else
-		      FormData.Value("value") = Value
-		    End If
-		    Self.mLogger.Log("Updating " + Key + "…")
+		    FormData.Value("category") = Change.Category
+		    FormData.Value("key") = Change.Key
+		    FormData.Value("value") = Change.Value
+		    Self.mLogger.Log("Updating " + Change.Key + "…")
 		    
 		    Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceId.ToString(Locale.Raw, "0") + "/gameservers/settings", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData)))
 		    If Not Response.Success Then
@@ -444,6 +426,40 @@ Implements Beacon.HostingProvider
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function PrepareSettingChanges(Root As JSONItem, Setting As Beacon.GameSetting, NewValue As Variant) As Nitrado.SettingChange()
+		  Var Changes() As Nitrado.SettingChange
+		  Var Paths() As String = Setting.NitradoPaths
+		  If Paths.Count = 0 Then
+		    Return Changes
+		  End If
+		  
+		  For Each Path As String In Paths
+		    Try
+		      Var Found As Boolean
+		      Var OldValue As Variant = ValueByDotNotation(Root, Path, Found)
+		      If Found = False Or Setting.ValuesEqual(OldValue, NewValue) Then
+		        Continue
+		      End If
+		      
+		      Var Parts() As String = Path.Split(".")
+		      Var Key As String = Parts(Parts.LastIndex)
+		      Parts.RemoveAt(Parts.LastIndex)
+		      Var Category As String = String.FromArray(Parts, ".")
+		      
+		      If Setting.IsBoolean Then
+		        NewValue = If(NewValue.IsTruthy, "true", "false") // Nitrado **must** have these in lowercase
+		      End If
+		      
+		      Changes.Add(New Nitrado.SettingChange(Category, Key, NewValue))
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Processing change for path")
+		    End Try
+		  Next
+		  Return Changes
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function RunRequest(Request As Nitrado.APIRequest) As Nitrado.APIResponse
 		  Var Headers As Dictionary = Request.Headers
@@ -672,8 +688,8 @@ Implements Beacon.HostingProvider
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function ValueByDotNotation(Root As JSONItem, Path As String, ByRef Found As Boolean) As Variant
+	#tag Method, Flags = &h0
+		Shared Function ValueByDotNotation(Root As JSONItem, Path As String, ByRef Found As Boolean) As Variant
 		  // Paths in the database assume the settings key is root, but there are
 		  // values above settings that we need. We can't practically change the paths
 		  // in the database, so we'll use / to indicate that we want to start with

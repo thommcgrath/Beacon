@@ -185,7 +185,7 @@ Begin BeaconDialog ArkSAEngramControlEngramOverrideWizard
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Entry String:"
+      Text            =   "Unlock String:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -869,7 +869,7 @@ End
 		  Var Engrams() As ArkSA.Engram
 		  If Self.mEngrams.LastIndex = -1 Then
 		    If Not Self.EntryStringField.Text.EndsWith("_C") Then
-		      Self.ShowAlert("The entered Entry String is not correct.", "Ark Entry Strings usually begin with EngramEntry and always end with _C.")
+		      Self.ShowAlert("The entered unlock string is not correct.", "Ark unlock strings usually begin with EngramEntry and always end with _C.")
 		      Return
 		    End If
 		    

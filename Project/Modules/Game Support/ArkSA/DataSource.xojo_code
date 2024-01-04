@@ -115,7 +115,8 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  If Beacon.BuildExport(UserPacks, Writer.LocalFile, False) = False Then
+		  If Beacon.BuildExport(UserPacks, Writer.LocalFile, True) = False Then
+		    Call UserCloud.Delete(Filename)
 		    Return
 		  End If
 		  
@@ -132,6 +133,13 @@ Inherits Beacon.DataSource
 	#tag Event
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
+		  
+		  Var InitialChanges As Integer
+		  Try
+		    InitialChanges = Self.TotalChanges()
+		  Catch Err As RuntimeException
+		    InitialChanges = -1
+		  End Try
 		  
 		  Var EngramsChanged As Boolean
 		  If ChangeDict.HasKey("deletions") Then
@@ -161,7 +169,7 @@ Inherits Beacon.DataSource
 		    For Each IconID As String In DeleteIcons
 		      Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id = ?1;", IconID)
 		    Next
-		    If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False, IsUserData) Then
+		    If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False, False) Then
 		      EngramsChanged = True
 		    End If
 		    BlueprintsToDelete.ResizeTo(-1)
@@ -175,32 +183,14 @@ Inherits Beacon.DataSource
 		        Continue
 		      End If
 		      
-		      Var ContentPackId As String = Dict.Value("contentPackId")
-		      Var Name As String = Dict.Value("name")
-		      Var ConsoleSafe As Boolean = Dict.Value("isConsoleSafe")
-		      Var DefaultEnabled As Boolean = Dict.Value("isDefaultEnabled")
-		      Var Marketplace As String = Dict.Lookup("marketplace", "")
-		      Var MarketplaceId As String = Dict.Lookup("marketplaceId", "")
-		      Var IsLocal As Boolean = MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
-		      Var GameId As String = Dict.Value("gameId")
-		      Var LastUpdate As Double = Dict.Value("lastUpdate")
-		      
-		      Var Rows As RowSet
-		      If MarketplaceId.IsEmpty Then
-		        Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
-		      Else
-		        Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", ContentPackId, Marketplace, MarketplaceId)
-		      End If
-		      If Rows.RowCount > 1 Then
-		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id IS DISTINCT FROM ?1 AND marketplace = ?2 AND marketplace_id = ?3;", ContentPackId, Marketplace, MarketplaceId)
-		      End If
-		      If Rows.RowCount > 0 Then
-		        If LastUpdate > Rows.Column("last_update").DoubleValue Then
-		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, LastUpdate, GameId)
-		        End If
-		      Else
-		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, LastUpdate, GameId)
-		      End If
+		      Var Pack As New Beacon.MutableContentPack(ArkSA.Identifier, Dict.Value("name").StringValue, Dict.Value("contentPackId").StringValue)
+		      Pack.IsConsoleSafe = Dict.Value("isConsoleSafe").BooleanValue
+		      Pack.IsDefaultEnabled = Dict.Value("isDefaultEnabled").BooleanValue
+		      Pack.Marketplace = Dict.Lookup("marketplace", "").StringValue
+		      Pack.MarketplaceId = Dict.Lookup("marketplaceId", "").StringValue
+		      Pack.IsLocal = Pack.MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
+		      Pack.LastUpdate = Dict.Value("lastUpdate").DoubleValue
+		      Call Self.SaveContentPack(Pack, False)
 		    Next
 		  End If
 		  
@@ -244,7 +234,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Engram)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, IsUserData) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, False) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -262,7 +252,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Creature)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, IsUserData) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, False) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -280,7 +270,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Container)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, IsUserData) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, False) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -320,7 +310,7 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, IsUserData) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, False) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -504,6 +494,17 @@ Inherits Beacon.DataSource
 		    Next Dict
 		  End If
 		  
+		  Var TotalChanges As Integer
+		  Try
+		    TotalChanges = Self.TotalChanges()
+		  Catch Err As RuntimeException
+		    TotalChanges = -2
+		  End Try
+		  
+		  If IsUserData And TotalChanges <> InitialChanges Then
+		    Self.ExportCloudFiles()
+		  End If
+		  
 		  StatusData.Value("Engrams Changed") = EngramsChanged
 		  
 		  Return True
@@ -559,6 +560,9 @@ Inherits Beacon.DataSource
 		    For Each ContentPack As Beacon.ContentPack In ContentPacks
 		      PacksToRemove.Value(ContentPack.ContentPackId) = ContentPack
 		    Next
+		    If PacksToRemove.HasKey(ArkSA.UserContentPackId) Then
+		      PacksToRemove.Remove(ArkSA.UserContentPackId)
+		    End If
 		    
 		    Try
 		      Var Importer As ArkSA.BlueprintImporter = ArkSA.BlueprintImporter.ImportAsBinary(EngramsContent)
@@ -568,14 +572,7 @@ Inherits Beacon.DataSource
 		        Return
 		      End If
 		      
-		      ContentPacks = Importer.ContentPacks
-		      For Each ContentPack As Beacon.ContentPack In ContentPacks
-		        Self.SaveContentPack(ContentPack, False)
-		        If PacksToRemove.HasKey(ContentPack.ContentPackId) Then
-		          PacksToRemove.Remove(ContentPack.ContentPackId)
-		        End If
-		      Next
-		      
+		      // Import blueprints first so that SaveContentPack can migrate them if necessary
 		      Var Blueprints() As ArkSA.Blueprint = Importer.Blueprints
 		      Var BlueprintsToDelete() As String
 		      If Self.SaveBlueprints(Blueprints, BlueprintsToDelete, Nil, True, False) = False Then
@@ -583,6 +580,14 @@ Inherits Beacon.DataSource
 		        Self.RollbackTransaction()
 		        Return
 		      End If
+		      
+		      ContentPacks = Importer.ContentPacks
+		      For Each ContentPack As Beacon.ContentPack In ContentPacks
+		        Call Self.SaveContentPack(ContentPack, False)
+		        If  PacksToRemove.HasKey(ContentPack.ContentPackId) Then
+		          PacksToRemove.Remove(ContentPack.ContentPackId)
+		        End If
+		      Next
 		      
 		      For Each Entry As DictionaryEntry In PacksToRemove
 		        Call Self.DeleteContentPack(Entry.Key.StringValue, False)
@@ -593,6 +598,9 @@ Inherits Beacon.DataSource
 		      Return
 		    End Try
 		    
+		    Self.RunContentPackMigrations()
+		    Self.CleanForeignKeyViolations()
+		    
 		    Self.CommitTransaction()
 		  End Select
 		End Sub
@@ -600,12 +608,11 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ImportTruncate()
-		  // Icons and content packs must be deleted last
-		  Var TableNames() As String = Array("color_sets", "colors", "creatures", "engrams", "events", "game_variables", "ini_options", "loot_containers", "maps", "spawn_points", "loot_icons")
-		  For Each TableName As String In TableNames
-		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(TableName) + ";")
-		  Next TableName
-		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'content_packs' ORDER BY name;")
+		  While Not Rows.AfterLastRow
+		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(Rows.Column("name").StringValue) + ";")
+		    Rows.MoveToNextRow
+		  Wend
 		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id != $1;", ArkSA.UserContentPackId)
 		End Sub
 	#tag EndEvent
@@ -628,17 +635,58 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub MigrateContentPackData(FromContentPackId As String, ToContentPackId As String)
+		  // This will need to change when ArkSA.MutableConfigOption is introduced
+		  
+		  Var SimpleTableNames() As String = Array("maps", "loot_container_selectors", "ini_options")
+		  Var BlueprintTableNames() As String = Array("engrams", "creatures", "loot_containers", "spawn_points")
+		  
+		  For Each TableName As String In SimpleTableNames
+		    Self.SQLExecute("UPDATE " + TableName + " SET content_pack_id = ?2 WHERE content_pack_id = ?1;", FromContentPackId, ToContentPackId)
+		  Next
+		  
+		  For Each TableName As String In BlueprintTableNames
+		    Var Rows As RowSet = Self.SQLSelect("SELECT object_id, path FROM " + TableName + " WHERE content_pack_id = ?1;", FromContentPackId)
+		    While Not Rows.AfterLastRow
+		      Var OldBlueprintId As String = Rows.Column("object_id").StringValue
+		      Var NewBlueprintId As String = ArkSA.GenerateBlueprintId(ToContentPackId, Rows.Column("path").StringValue)
+		      If OldBlueprintId <> NewBlueprintId Then
+		        Var Conflict As RowSet = Self.SQLSelect("SELECT object_id FROM " + TableName + " WHERE object_id = ?1;", NewBlueprintId)
+		        If Conflict.RowCount = 1 Then
+		          // Already exists, delete
+		          Self.SQLExecute("DELETE FROM " + TableName + " WHERE object_id = ?1;", OldBlueprintId)
+		        Else
+		          Self.SQLExecute("UPDATE " + TableName + " SET object_id = ?2, content_pack_id = ?3 WHERE object_id = ?1;", OldBlueprintId, NewBlueprintId, ToContentPackId)
+		        End If
+		      Else
+		        Self.SQLExecute("UPDATE " + TableName + " SET content_pack_id = ?2 WHERE object_id = ?1;", OldBlueprintId, ToContentPackId)
+		      End If
+		      Rows.MoveToNextRow
+		    Wend
+		  Next
+		  
+		  // Do not invalidate mBlueprints. It isn't necessary because it uses timestamps.
+		  Self.mConfigOptionCache.RemoveAll
+		  Self.mContainerLabelCacheDict.RemoveAll
+		  Self.mIconCache.RemoveAll
+		  Self.mSpawnLabelCacheDict.RemoveAll
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ObtainLock()
 		  mLock.Enter
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub PerformMaintenance()
 		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled, last_update FROM content_packs WHERE content_pack_id = ?1;", ArkSA.UserContentPackId)
 		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Or Rows.Column("last_update").DoubleValue <> Beacon.FixedTimestamp Then
 		    Self.ReplaceUserBlueprints()
 		  End If
+		  
+		  Self.CleanupModPaths()
 		End Sub
 	#tag EndEvent
 
@@ -646,6 +694,61 @@ Inherits Beacon.DataSource
 		Sub ReleaseLock()
 		  mLock.Leave
 		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function SaveContentPack(Pack As Beacon.ContentPack) As Boolean
+		  Var Rows As RowSet
+		  If Pack.MarketplaceId.IsEmpty Then
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
+		  Else
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", Pack.ContentPackId, Pack.Marketplace, Pack.MarketplaceId)
+		  End If
+		  
+		  Var DidSave as Boolean
+		  Var NewContentPackId As String = Pack.ContentPackId
+		  Var ShouldInsert As Boolean = True
+		  If Rows.RowCount > 0 Then
+		    // The new content pack could be an official replacing a custom, or even just changing the id.
+		    While Not Rows.AfterLastRow
+		      Var OldContentPackId As String = Rows.Column("content_pack_id").StringValue
+		      Var OldIsLocal As Boolean = Rows.Column("is_local").BooleanValue
+		      If OldContentPackId = NewContentPackId Then
+		        // We can just update the row
+		        If Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
+		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
+		          DidSave = True
+		        End If
+		        ShouldInsert = False
+		      Else
+		        Var ShouldDelete As Boolean = True
+		        If Pack.IsLocal And OldIsLocal Then
+		          Self.ScheduleContentPackMigration(OldContentPackId, NewContentPackId)
+		        ElseIf OldIsLocal Then // New is official, old is local
+		          Self.ScheduleContentPackMigration(OldContentPackId, ArkSA.UserContentPackId)
+		        ElseIf Pack.IsLocal Then // Old is official, new is local
+		          Self.ScheduleContentPackMigration(NewContentPackId, ArkSA.UserContentPackId)
+		          ShouldInsert = False
+		          ShouldDelete = False
+		        Else // Both the old and new pack are official
+		          Self.DeleteDataForContentPack(OldContentPackId)
+		        End If
+		        
+		        If ShouldDelete Then
+		          Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", OldContentPackId)
+		        End If
+		      End If
+		      Rows.MoveToNextRow
+		    Wend
+		  End If
+		  
+		  If ShouldInsert Then
+		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
+		    DidSave = True
+		  End If
+		  
+		  Return DidSave
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -778,6 +881,66 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h21
 		Private Sub Cache(SpawnPoint As ArkSA.SpawnPoint)
 		  Self.mBlueprintCache.Value(SpawnPoint.SpawnPointId) = SpawnPoint
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CleanupModPaths()
+		  Var Rows As RowSet
+		  Try
+		    Rows = Self.SQLSelect("SELECT object_id, path, category, content_pack_id FROM blueprints WHERE path LIKE '/Game/Mods/%';")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Finding blueprint paths that need updating")
+		    Return
+		  End Try
+		  
+		  If Rows.RowCount = 0 Then
+		    Return
+		  End If
+		  
+		  Try
+		    Self.BeginTransaction()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Starting blueprint update transaction")
+		    Return
+		  End Try
+		  
+		  Var Extractor As New Regex
+		  Extractor.SearchPattern = "^/Game/Mods/([^/]+)(/Content)?/(.+)$"
+		  
+		  While Not Rows.AfterLastRow
+		    Try
+		      Var Matches As RegexMatch = Extractor.Search(Rows.Column("path").StringValue)
+		      If (Matches Is Nil) = False Then
+		        Var Path As String = "/" + Matches.SubExpressionString(1) + "/" + Matches.SubExpressionString(3)
+		        Var OldObjectId As String = Rows.Column("object_id").StringValue
+		        Var TableName As String = Rows.Column("category").StringValue
+		        Var ContentPackId As String = Rows.Column("content_pack_id").StringValue
+		        Var NewObjectId As String = ArkSA.GenerateBlueprintId(ContentPackId, Path)
+		        
+		        Var Exists As RowSet = Self.SQLSelect("SELECT object_id FROM " + TableName + " WHERE object_id = ?1;", NewObjectId)
+		        If Exists.RowCount > 0 And NewObjectID <> OldObjectId Then
+		          // New version already exists
+		          Self.SQLExecute("DELETE FROM " + TableName + " WHERE object_id = ?1;", OldObjectId)
+		        Else
+		          // Update the record
+		          Self.SQLExecute("UPDATE " + TableName + " SET path = ?2, object_id = ?3 WHERE object_id = ?1;", OldObjectId, Path, NewObjectId)
+		        End If
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Updating blueprint path")
+		      Self.RollbackTransaction()
+		      Return
+		    End Try
+		    Rows.MoveToNextRow
+		  Wend
+		  
+		  Try
+		    Self.CommitTransaction()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Committing blueprint update transaction")
+		    Return
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -1128,6 +1291,42 @@ Inherits Beacon.DataSource
 		  Catch Err As RuntimeException
 		    
 		  End Try
+		  
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByPath(Path As String, ContentPacks As Beacon.StringList, UseCache As Boolean = True) As ArkSA.Blueprint()
+		  Var SQL As String = "SELECT object_id, category FROM blueprints WHERE path = ?1"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
+		    SQL = SQL + " AND content_pack_id IN ('" + ContentPacks.Join("','") + "')"
+		  End If
+		  
+		  Var Blueprints() As ArkSA.Blueprint
+		  Var Rows As RowSet = Self.SQLSelect(SQL, Path)
+		  If Rows.RowCount = 0 Then
+		    Return Blueprints
+		  End If
+		  
+		  While Not Rows.AfterLastRow
+		    Var BlueprintId As String = Rows.Column("object_id").StringValue
+		    Var Blueprint As ArkSA.Blueprint
+		    Select Case Rows.Column("category").StringValue
+		    Case ArkSA.CategoryCreatures
+		      Blueprint = Self.GetCreature(BlueprintId, UseCache)
+		    Case ArkSA.CategoryEngrams
+		      Blueprint = Self.GetEngram(BlueprintId, UseCache)
+		    Case ArkSA.CategoryLootContainers
+		      Blueprint = Self.GetLootContainer(BlueprintId, UseCache)
+		    Case ArkSA.CategorySpawnPoints
+		      Blueprint = Self.GetSpawnPoint(BlueprintId, UseCache)
+		    End Select
+		    If (Blueprint Is Nil) = False Then
+		      Blueprints.Add(Blueprint)
+		    End If
+		    Rows.MoveToNextRow
+		  Wend
 		  
 		  Return Blueprints
 		End Function
@@ -2593,6 +2792,7 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Var CountSuccess, CountErrors As Integer
+		  Var Now As Double = DateTime.Now.SecondsFrom1970
 		  
 		  Self.BeginTransaction()
 		  If (BlueprintsToDelete Is Nil) = False Then
@@ -2620,6 +2820,7 @@ Inherits Beacon.DataSource
 		        
 		        Self.BeginTransaction()
 		        TransactionStarted = True
+		        Self.SQLExecute("UPDATE content_packs SET last_update = ?2 WHERE content_pack_id = ?1;", Rows.Column("content_pack_id").StringValue, Now)
 		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", BlueprintId)
 		        Self.CommitTransaction()
 		        Self.Invalidate(BlueprintId)
@@ -2825,6 +3026,8 @@ Inherits Beacon.DataSource
 		          Next Tag
 		        End If
 		        
+		        Self.SQLExecute("UPDATE content_packs SET last_update = MAX(last_update, ?2) WHERE content_pack_id = ?1;", Blueprint.ContentPackId, Blueprint.LastUpdate)
+		        
 		        Self.CommitTransaction()
 		        TransactionStarted = False
 		        
@@ -2864,35 +3067,6 @@ Inherits Beacon.DataSource
 		    Return False
 		  End If
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SaveContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean)
-		  If Pack Is Nil Or Pack.GameId <> Self.Identifier Then
-		    Return
-		  End If
-		  
-		  Var Rows As RowSet
-		  If Pack.MarketplaceId.IsEmpty Then
-		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
-		  Else
-		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", Pack.ContentPackId, Pack.Marketplace, Pack.MarketplaceId)
-		  End If
-		  If Rows.RowCount > 1 Then
-		    Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id IS DISTINCT FROM ?1 AND marketplace = ?2 AND marketplace_id = ?3;", Pack.ContentPackId, Pack.Marketplace, Pack.MarketplaceId)
-		  End If
-		  If Rows.RowCount > 0 Then
-		    If Rows.Column("last_update").DoubleValue < Pack.LastUpdate Then
-		      Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
-		    End If
-		  Else
-		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
-		  End If
-		  
-		  If DoCloudExport Then
-		    Self.ExportCloudFiles()
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

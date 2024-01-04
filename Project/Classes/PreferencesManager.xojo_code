@@ -3,7 +3,8 @@ Protected Class PreferencesManager
 	#tag Method, Flags = &h0
 		Sub BeginTransaction()
 		  If Self.mTransactionLevel = 0 Then
-		    Self.mSavedValues = Self.mValues.Clone
+		    Self.mSavedValues = New JSONItem(Self.mValues.ToString)
+		    Self.mSavedValues.Compact = False
 		  End If
 		  
 		  Self.mTransactionLevel = Self.mTransactionLevel + 1
@@ -141,40 +142,18 @@ Protected Class PreferencesManager
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Contents As String)
-		  If Contents <> "" Then
+		  If Contents.IsEmpty = False Then
 		    Try
-		      Self.mValues = Beacon.ParseJSON(Contents)
+		      Self.mValues = New JSONItem(Contents)
 		    Catch Err As RuntimeException
-		      Self.mValues = New Dictionary
+		      Self.mValues = New JSONItem
 		    End Try
 		    Self.mValues.Value("Existing User") = True
 		  Else
-		    Self.mValues = New Dictionary
+		    Self.mValues = New JSONItem
 		    Self.mValues.Value("Existing User") = False
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DictionaryValue(Key As String, Default As Dictionary = Nil) As Dictionary
-		  If Not Self.mValues.HasKey(Key) Then
-		    Return Default
-		  End If
-		  
-		  Var Value As Variant = Self.mValues.Value(Key)
-		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
-		    Return Default
-		  End If
-		  
-		  Return Dictionary(Value.ObjectValue).Clone
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub DictionaryValue(Key As String, Assigns Value As Dictionary)
-		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = Value.Clone
-		  Self.Commit()
+		  Self.mValues.Compact = False
 		End Sub
 	#tag EndMethod
 
@@ -202,6 +181,12 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasKey(Key As String) As Boolean
+		  Return Self.mValues.HasKey(Key)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IntegerValue(Key As String, Default As Integer = 0) As Integer
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
@@ -225,60 +210,71 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PointValue(Key As String, Default As Point = Nil) As Point
+		Function JSONValue(Key As String, Default As JSONItem = Nil) As JSONItem
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
 		  Var Value As Variant = Self.mValues.Value(Key)
-		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
+		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA JSONItem) = False Then
 		    Return Default
 		  End If
 		  
-		  Var Dict As Dictionary = Value
-		  Return New Point(Dict.Value("Left"), Dict.Value("Top"))
+		  Return New JSONItem(JSONItem(Value.ObjectValue).ToString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PointValue(Key As String, Assigns Value As Point)
-		  Var Dict As New Dictionary
-		  Dict.Value("Left") = Value.X
-		  Dict.Value("Top") = Value.Y
-		  
+		Sub JSONValue(Key As String, Assigns Value As JSONItem)
 		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = Dict
+		  If (Value Is Nil) = False Then
+		    Self.mValues.Child(Key) = New JSONItem(Value.ToString)
+		  Else
+		    Self.mValues.Child(Key) = Nil
+		  End If
 		  Self.Commit()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function PointValue(Key As String, Default As Point = Nil) As Point
+		  Var JSON As JSONItem = Self.JSONValue(Key)
+		  If JSON Is Nil Then
+		    Return Default
+		  End If
+		  
+		  Return New Point(JSON.Value("Left").DoubleValue, JSON.Value("Top").DoubleValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PointValue(Key As String, Assigns Value As Point)
+		  Var JSON As New JSONItem
+		  JSON.Value("Left") = Value.X
+		  JSON.Value("Top") = Value.Y
+		  Self.JSONValue(Key) = JSON
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RectValue(Key As String, Default As Rect = Nil) As Rect
-		  If Not Self.mValues.HasKey(Key) Then
+		  Var JSON As JSONItem = Self.JSONValue(Key)
+		  If JSON Is Nil Then
 		    Return Default
 		  End If
 		  
-		  Var Value As Variant = Self.mValues.Value(Key)
-		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
-		    Return Default
-		  End If
-		  
-		  Var Dict As Dictionary = Value
-		  Return New Rect(Dict.Value("Left"), Dict.Value("Top"), Dict.Value("Width"), Dict.Value("Height"))
+		  Return New Rect(JSON.Value("Left").DoubleValue, JSON.Value("Top").DoubleValue, JSON.Value("Width").DoubleValue, JSON.Value("Height").DoubleValue)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RectValue(Key As String, Assigns Value As Rect)
-		  Var Dict As New Dictionary
-		  Dict.Value("Left") = Value.Left
-		  Dict.Value("Top") = Value.Top
-		  Dict.Value("Width") = Value.Width
-		  Dict.Value("Height") = Value.Height
-		  
-		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = Dict
-		  Self.Commit()
+		  Var JSON As New JSONItem
+		  JSON.Value("Left") = Value.Left
+		  JSON.Value("Top") = Value.Top
+		  JSON.Value("Width") = Value.Width
+		  JSON.Value("Height") = Value.Height
+		  Self.JSONValue(Key) = JSON
 		End Sub
 	#tag EndMethod
 
@@ -295,29 +291,21 @@ Protected Class PreferencesManager
 
 	#tag Method, Flags = &h0
 		Function SizeValue(Key As String, Default As Size = Nil) As Size
-		  If Not Self.mValues.HasKey(Key) Then
+		  Var JSON As JSONItem = Self.JSONValue(Key)
+		  If JSON Is Nil Then
 		    Return Default
 		  End If
 		  
-		  Var Value As Variant = Self.mValues.Value(Key)
-		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
-		    Return Default
-		  End If
-		  
-		  Var Dict As Dictionary = Value
-		  Return New Size(Dict.Value("Width"), Dict.Value("Height"))
+		  Return New Size(JSON.Value("Width").DoubleValue, JSON.Value("Height").DoubleValue)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SizeValue(Key As String, Assigns Value As Size)
-		  Var Dict As New Dictionary
-		  Dict.Value("Width") = Value.Width
-		  Dict.Value("Height") = Value.Height
-		  
-		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = Dict
-		  Self.Commit()
+		  Var JSON As New JSONItem
+		  JSON.Value("Width") = Value.Width
+		  JSON.Value("Height") = Value.Height
+		  Self.JSONValue(Key) = JSON
 		End Sub
 	#tag EndMethod
 
@@ -344,28 +332,10 @@ Protected Class PreferencesManager
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function VariantValue(Key As String, Default As Variant = Nil) As Variant
-		  If Not Self.mValues.HasKey(Key) Then
-		    Return Default
-		  End If
-		  
-		  Return Self.mValues.Value(Key)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub VariantValue(Key As String, Assigns Value As Variant)
-		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = Value
-		  Self.Commit()
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub Write()
 		  Try
-		    Call Self.mFile.Write(Beacon.GenerateJSON(Self.mValues, True))
+		    Call Self.mFile.Write(Self.mValues.ToString())
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
@@ -377,7 +347,7 @@ Protected Class PreferencesManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSavedValues As Dictionary
+		Private mSavedValues As JSONItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -385,7 +355,7 @@ Protected Class PreferencesManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mValues As Dictionary
+		Protected mValues As JSONItem
 	#tag EndProperty
 
 

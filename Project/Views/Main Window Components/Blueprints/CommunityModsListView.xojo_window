@@ -316,7 +316,7 @@ End
 		    Return
 		  End If
 		  
-		  DataUpdater.ImportString(Response.Content)
+		  DataUpdater.Import(Response.Content)
 		End Sub
 	#tag EndMethod
 
@@ -532,9 +532,7 @@ End
 #tag Events FilterField
 	#tag Event
 		Sub TextChanged()
-		  Self.List.ScrollPosition = 0
-		  Self.List.RemoveAllRows
-		  
+		  Self.List.ReloadAllPages()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

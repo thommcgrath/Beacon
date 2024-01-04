@@ -96,19 +96,31 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function BlueprintPath(Matches As RegExMatch) As String
+		  If Matches Is Nil Then
+		    Return ""
+		  End If
+		  
 		  Var Path As String
-		  If Matches.SubExpressionCount >= 4 And Matches.SubExpressionString(4).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(4)
-		  ElseIf Matches.SubExpressionCount >= 6 And Matches.SubExpressionString(6).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(6)
-		  ElseIf Matches.SubExpressionCount >= 8 And Matches.SubExpressionString(8).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(8)
-		  ElseIf Matches.SubExpressionCount >= 10 And Matches.SubExpressionString(10).IsEmpty = False Then
-		    Path = "/Game/Mods" + Matches.SubExpressionString(10)
-		  End If
-		  If Path.IsEmpty = False And Path.EndsWith("_C") Then
-		    Path = Path.Left(Path.Length - 2)
-		  End If
+		  Var Count As Integer = Matches.SubExpressionCount
+		  Try
+		    If Count >= 12 And Matches.SubExpressionString(11).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(11)
+		    ElseIf Count >= 11 And Matches.SubExpressionString(10).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(10)
+		    ElseIf Count >= 9 And Matches.SubExpressionString(8).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(8)
+		    ElseIf Count >= 7 And Matches.SubExpressionString(6).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(6)
+		    ElseIf Count >= 5 And Matches.SubExpressionString(4).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(4)
+		    Else
+		      Return ""
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Extracting blueprint path")
+		    Return ""
+		  End Try
+		  Path = ArkSA.CleanupBlueprintPath(Path)
 		  Return Path
 		End Function
 	#tag EndMethod
@@ -121,7 +133,7 @@ Protected Module ArkSA
 		    
 		    Regex = New Regex
 		    Regex.Options.CaseSensitive = False
-		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/Script/Engine\.Blueprint[" + QuotationCharacters + "]([^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
+		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/Script/Engine\.Blueprint[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/[^/]+/.+\..+))"
 		  End If
 		  Return Regex
 		End Function
@@ -243,10 +255,6 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ClassStringFromPath(Path As String) As String
-		  If Path.Length <= 6 Or Path.Left(6) <> "/Game/" Then
-		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
-		  End If
-		  
 		  Var Components() As String = Path.Split("/")
 		  Var Tail As String = Components(Components.LastIndex)
 		  Components = Tail.Split(".")
@@ -270,6 +278,14 @@ Protected Module ArkSA
 		  // make this mistake and the resulting class ends up being Namespace_C.Class_C_C.
 		  
 		  Var Components() As String = Path.Split("/")
+		  If Components.LastIndex >= 2 And Components(1) = "Game" And Components(2) = "Mods" Then
+		    Components.RemoveAt(2)
+		    Components.RemoveAt(1)
+		  End If
+		  If Components.LastIndex >= 2 And Components(2) = "Content" Then
+		    Components.RemoveAt(2)
+		  End If
+		  
 		  Var LastComponent As String = Components(Components.LastIndex)
 		  Components.RemoveAt(Components.LastIndex)
 		  Var Pos As Integer = LastComponent.IndexOf(".")
@@ -562,6 +578,40 @@ Protected Module ArkSA
 	#tag Method, Flags = &h0
 		Function Matches(Extends Blueprint As ArkSA.Blueprint, Filter As String) As Boolean
 		  Return Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Label.IndexOf(Filter) > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesTags(Extends Blueprint As ArkSA.Blueprint, RequiredTags() As String, ExcludedTags() As String) As Boolean
+		  If (RequiredTags Is Nil) = False Then
+		    For Each Tag As String In RequiredTags
+		      If Blueprint.IsTagged(Tag) = False Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  If (ExcludedTags Is Nil) = False Then
+		    For Each Tag As String In ExcludedTags
+		      If Blueprint.IsTagged(Tag) = True Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ModTagFromPath(Path As String) As String
+		  If Path.BeginsWith("/Game/Mods/") Then
+		    Return Path.NthField("/", 4)
+		  ElseIf Path.BeginsWith("/Game/") Then
+		    Return ""
+		  ElseIf Path.BeginsWith("/") Then
+		    Return Path.NthField("/", 2)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1421,7 +1471,7 @@ Protected Module ArkSA
 	#tag Constant, Name = SteamServerId, Type = Double, Dynamic = False, Default = \"2430930", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
+	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"b2362c68-abcf-4dc2-93b1-5d39074e48b3", Scope = Protected
