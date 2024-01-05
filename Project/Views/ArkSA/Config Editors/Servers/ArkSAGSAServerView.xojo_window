@@ -37,7 +37,7 @@ Begin ArkSAServerViewContainer ArkSAGSAServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -47,7 +47,7 @@ Begin ArkSAServerViewContainer ArkSAGSAServerView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin BeaconTextArea AdminNotesField
@@ -84,7 +84,7 @@ Begin ArkSAServerViewContainer ArkSAGSAServerView
          ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
          TextAlignment   =   0
@@ -123,6 +123,35 @@ Begin ArkSAServerViewContainer ArkSAGSAServerView
          ShowsMapMenu    =   True
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
+      Begin ArkSAServerPlayerListsView ListsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   41
@@ -175,6 +204,7 @@ End
 		  
 		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
 		  Self.SettingsView.RefreshUI()
+		  Self.ListsView.RefreshUI()
 		End Sub
 	#tag EndEvent
 
@@ -215,10 +245,28 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
+#tag Events ListsView
+	#tag Event
+		Function GetProject() As ArkSA.Project
+		  Return Self.Project
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Profile = Self.Profile
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Modified = Me.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
+		  Me.Append(OmniBarItem.CreateTab("PageLists", "Player Lists"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
 		  Me.Item("PageGeneral").Toggled = True
 		End Sub
@@ -230,8 +278,10 @@ End
 		  Select Case Item.Name
 		  Case "PageGeneral"
 		    Self.Pages.SelectedPanelIndex = 0
-		  Case "PageNotes"
+		  Case "PageLists"
 		    Self.Pages.SelectedPanelIndex = 1
+		  Case "PageNotes"
+		    Self.Pages.SelectedPanelIndex = 2
 		  End Select
 		End Sub
 	#tag EndEvent

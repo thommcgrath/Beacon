@@ -32,6 +32,18 @@ Inherits Beacon.ServerProfile
 		    Self.mGameIniPath = Dict.Lookup("gameIniPath", "").StringValue
 		    Self.mGameUserSettingsIniPath = Dict.Lookup("gameUserSettingsIniPath", "").StringValue
 		    Self.mLogsPath = Dict.Lookup("logsPath", "").StringValue
+		    
+		    If Dict.HasKey("adminListUrl") Then
+		      Self.mAdminListUrl = Dict.Value("adminListUrl").StringValue
+		    End If
+		    
+		    If Dict.HasKey("banListUrl") Then
+		      Self.mBanListUrl = Dict.Value("banListUrl").StringValue
+		    End If
+		    
+		    If Dict.HasKey("joinListUrl") Then
+		      Self.mJoinListUrl = Dict.Value("joinListUrl").StringValue
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -66,9 +78,46 @@ Inherits Beacon.ServerProfile
 		  If Self.mLogsPath.IsEmpty = False Then
 		    Dict.Value("logsPath") = Self.mLogsPath
 		  End If
+		  
+		  If (Self.mAdminListUrl Is Nil) = False Then
+		    Dict.Value("adminListUrl") = Self.mAdminListUrl.StringValue
+		  End If
+		  If (Self.mBanListUrl Is Nil) = False Then
+		    Dict.Value("banListUrl") = Self.mBanListUrl.StringValue
+		  End If
+		  If (Self.mJoinListUrl Is Nil) = False Then
+		    Dict.Value("joinListUrl") = Self.mJoinListUrl.StringValue
+		  End If
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function AdminListUrl() As NullableString
+		  Return Self.mAdminListUrl
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AdminListUrl(Assigns List As ArkSA.PlayerList)
+		  Var ListId As NullableString
+		  If (List Is Nil) = False Then
+		    ListId = List.PlayerListId
+		  End If
+		  Self.AdminListUrl = ListId
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AdminListUrl(Assigns Value As NullableString)
+		  If Self.mAdminListUrl = Value Then
+		    Return
+		  End If
+		  
+		  Self.mAdminListUrl = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function AdminPassword() As NullableString
@@ -82,6 +131,33 @@ Inherits Beacon.ServerProfile
 		    Self.mAdminPassword = Value
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BanListUrl() As NullableString
+		  Return Self.mBanListUrl
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BanListUrl(Assigns List As ArkSA.PlayerList)
+		  Var ListId As NullableString
+		  If (List Is Nil) = False Then
+		    ListId = List.PlayerListId
+		  End If
+		  Self.BanListUrl = ListId
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BanListUrl(Assigns Value As NullableString)
+		  If Self.mBanListUrl = Value Then
+		    Return
+		  End If
+		  
+		  Self.mBanListUrl = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -201,6 +277,33 @@ Inherits Beacon.ServerProfile
 		Function IsConsole() As Boolean
 		  Return False
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function JoinListUrl() As NullableString
+		  Return Self.mJoinListUrl
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub JoinListUrl(Assigns List As ArkSA.PlayerList)
+		  Var ListId As NullableString
+		  If (List Is Nil) = False Then
+		    ListId = List.PlayerListId
+		  End If
+		  Self.JoinListUrl = ListId
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub JoinListUrl(Assigns Value As NullableString)
+		  If Self.mJoinListUrl = Value Then
+		    Return
+		  End If
+		  
+		  Self.mJoinListUrl = Value
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -333,7 +436,15 @@ Inherits Beacon.ServerProfile
 
 
 	#tag Property, Flags = &h21
+		Private mAdminListUrl As NullableString
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mAdminPassword As NullableString
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBanListUrl As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -346,6 +457,10 @@ Inherits Beacon.ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniPath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mJoinListUrl As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

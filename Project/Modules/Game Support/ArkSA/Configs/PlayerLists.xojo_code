@@ -2,6 +2,16 @@
 Protected Class PlayerLists
 Inherits ArkSA.ConfigGroup
 	#tag Event
+		Sub CopyFrom(Other As ArkSA.ConfigGroup)
+		  Var Source As ArkSA.Configs.PlayerLists = ArkSA.Configs.PlayerLists(Other)
+		  Var SourceLists() As ArkSA.PlayerList = Source.Lists
+		  For Each List As ArkSA.PlayerList In SourceLists
+		    Self.Add(List, True)
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
@@ -41,7 +51,7 @@ Inherits ArkSA.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Sub Add(List As ArkSA.PlayerList)
+		Sub Add(List As ArkSA.PlayerList, ReplaceNameMatch As Boolean = False)
 		  If List Is Nil Then
 		    Return
 		  End If
@@ -60,11 +70,16 @@ Inherits ArkSA.ConfigGroup
 		  End If
 		  
 		  // Make sure the name does not conflict with another item
-		  For Idx As Integer = 0 To Self.mLists.LastIndex
+		  For Idx As Integer = Self.mLists.LastIndex DownTo 0
 		    If Self.mLists(Idx).Name = List.Name And Idx <> ListIdx Then
-		      Var Err As New UnsupportedOperationException
-		      Err.Message = "Name already in use"
-		      Raise Err
+		      If ReplaceNameMatch Then
+		        Self.mLists.RemoveAt(Idx)
+		        ListIdx = -1
+		      Else
+		        Var Err As New UnsupportedOperationException
+		        Err.Message = "Name already in use"
+		        Raise Err
+		      End
 		    End If
 		  Next
 		  
@@ -153,6 +168,12 @@ Inherits ArkSA.ConfigGroup
 	#tag Method, Flags = &h0
 		Function SupportsConfigSets() As Boolean
 		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return True
 		End Function
 	#tag EndMethod
 

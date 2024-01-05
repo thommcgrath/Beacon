@@ -892,6 +892,7 @@ DesktopWindow=ArkSAPlayerListPropertiesDialog;Views/ArkSA/Config Editors/Player 
 DesktopWindow=ArkSAPlayerPropertiesDialog;Views/ArkSA/Config Editors/Player Lists/ArkSAPlayerPropertiesDialog.xojo_window;&h000000007DCEBFFF;&h0000000056301FFF;false
 Class=PendingDataImport;Modules/DataUpdater/PendingDataImport.xojo_code;&h000000000CB60FFF;&h000000006233C7FF;false
 Class=SettingChange;Modules/Hosting Providers/Nitrado/SettingChange.xojo_code;&h0000000017DD3FFF;&h0000000072E03FFF;false
+DesktopWindow=ArkSAServerPlayerListsView;Views/ArkSA/Config Editors/Servers/ArkSAServerPlayerListsView.xojo_window;&h000000002F168FFF;&h00000000526477FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=0

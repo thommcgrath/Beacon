@@ -25,7 +25,7 @@ Begin ArkSAServerViewContainer ArkSAMultiServerView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin OmniBar ConfigToolbar
+   Begin OmniBar ControlToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -59,37 +59,90 @@ Begin ArkSAServerViewContainer ArkSAMultiServerView
       Visible         =   True
       Width           =   600
    End
-   Begin ArkSACommonServerSettingsView SettingsView
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
-      Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
-      Composited      =   False
       Enabled         =   True
-      HasBackgroundColor=   False
       Height          =   559
       Index           =   -2147483648
-      InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Modified        =   False
+      PanelCount      =   2
+      Panels          =   ""
       Scope           =   2
-      SettingUp       =   False
-      ShowsMapMenu    =   True
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Tooltip         =   ""
       Top             =   41
-      Transparent     =   True
+      Transparent     =   False
+      Value           =   1
       Visible         =   True
       Width           =   600
+      Begin ArkSACommonServerSettingsView SettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Modified        =   False
+         Scope           =   2
+         SettingUp       =   False
+         ShowsMapMenu    =   True
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
+      Begin ArkSAServerPlayerListsView ListsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
    End
 End
 #tag EndDesktopWindow
@@ -100,6 +153,7 @@ End
 		  #Pragma Unused UserData
 		  
 		  Self.SettingsView.RefreshUI()
+		  Self.ListsView.RefreshUI()
 		End Sub
 	#tag EndEvent
 
@@ -126,10 +180,33 @@ End
 
 #tag EndWindowCode
 
-#tag Events ConfigToolbar
+#tag Events ControlToolbar
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", "Multiple Servers"))
+		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
+		  Me.Append(OmniBarItem.CreateTab("PageLists", "Player Lists"))
+		  Me.Item("PageGeneral").Toggled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "PageGeneral"
+		    Self.Pages.SelectedPanelIndex = 0
+		  Case "PageLists"
+		    Self.Pages.SelectedPanelIndex = 1
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Pages
+	#tag Event
+		Sub PanelChanged()
+		  For Idx As Integer = 0 To Self.ControlToolbar.LastIndex
+		    Self.ControlToolbar.Item(Idx).Toggled = Me.SelectedPanelIndex = Idx
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -147,6 +224,23 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Profiles = Self.mProfiles
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ListsView
+	#tag Event
+		Function GetProject() As ArkSA.Project
+		  Return Self.Project
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Profiles = Self.mProfiles
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Modified = Me.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
