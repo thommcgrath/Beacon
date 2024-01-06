@@ -184,7 +184,7 @@ Protected Module Preferences
 		  
 		  // Cleanup project states
 		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
-		  If (States Is Nil) = False Then
+		  If (States Is Nil) = False And States.IsArray = False Then
 		    Var Timestamps() As Double
 		    Var Map As New Dictionary
 		    Var StateProjectIds() As String = States.Keys
@@ -355,7 +355,7 @@ Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Sub ProjectState(ProjectId As String, Key As String, Assigns Value As Variant)
 		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
-		  If States Is Nil Then
+		  If States Is Nil Or States.IsArray Then
 		    States = New JSONItem
 		  End If
 		  Var State As JSONItem
@@ -375,7 +375,7 @@ Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Function ProjectState(ProjectId As String, Key As String, Default As Variant) As Variant
 		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
-		  If States Is Nil Then
+		  If States Is Nil Or States.IsArray Then
 		    Return Default
 		  End If
 		  
