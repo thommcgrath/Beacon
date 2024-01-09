@@ -140,6 +140,11 @@ BeaconErrors::StartWatching();
 		'object-src' => [
 			"'none'"
 		],
+		'connect-src' => [
+			"'self'",
+			"https://*.usebeacon.app",
+			"https://api.nitrado.net",
+		],
 		'base-uri' => [
 			"'self'"
 		],
