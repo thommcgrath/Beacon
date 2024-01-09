@@ -271,7 +271,7 @@ class ServiceToken implements JsonSerializable {
 		// Refreshes tokens that are near their refresh token expiration
 
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.refresh_token_expiration IS NOT NULL AND service_tokens.refresh_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
+		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.refresh_token_expiration IS NOT NULL AND service_tokens.refresh_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL AND service_tokens.refresh_token_expiration > CURRENT_TIMESTAMP AND service_tokens.needs_replacing = FALSE;', self::ExpirationBuffer . ' seconds');
 
 		while (!$results->EOF()) {
 			$token = null;
@@ -287,13 +287,6 @@ class ServiceToken implements JsonSerializable {
 				}
 			}
 			$results->MoveNext();
-		}
-
-		$rows = $database->Query('SELECT EXISTS (SELECT FROM public.service_tokens WHERE refresh_token_expiration <= CURRENT_TIMESTAMP);');
-		if ($rows->Field('exists')) {
-			$database->BeginTransaction();
-			$database->Query('DELETE FROM public.service_tokens WHERE refresh_token_expiration <= CURRENT_TIMESTAMP;');
-			$database->Commit();
 		}
 	}
 
