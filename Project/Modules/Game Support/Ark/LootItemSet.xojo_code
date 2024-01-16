@@ -106,13 +106,11 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("label") Then
-		      Set.Label = Dict.Value("label")
-		    ElseIf Dict.HasKey("Label") Then
-		      Set.Label = Dict.Value("Label")
-		    ElseIf Dict.HasKey("SetName") Then
-		      Set.Label = Dict.Value("SetName")
+		    Var Label As String = Dict.FirstValue("label", "Label", "SetName", Set.Label).StringValue.Trim
+		    If Label.IsEmpty Then
+		      Label = Set.Label
 		    End If
+		    Set.Label = Label
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading Label value")
 		  End Try

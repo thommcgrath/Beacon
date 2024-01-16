@@ -640,11 +640,16 @@ End
 		    Return
 		  End If
 		  
-		  If Self.ItemSet.Label.Compare(Me.Text, ComparisonOptions.CaseSensitive) = 0 Then
+		  Var Value As String = Me.Text.Trim
+		  If Value.IsEmpty Then
+		    Value = "Untitled Item Set"
+		  End If
+		  
+		  If Self.ItemSet.Label.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
 		    Return
 		  End If
 		  
-		  Self.ItemSet.Label = Me.Text
+		  Self.ItemSet.Label = Value
 		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
