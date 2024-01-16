@@ -160,6 +160,14 @@ Inherits DesktopWindow
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub UpdateControlPositions()
+		  If Self.mOpened Then
+		    RaiseEvent UpdateControlPositions()
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub UpdateWindowMenu()
 		  If Self.mWindowMenuItem <> Nil Then

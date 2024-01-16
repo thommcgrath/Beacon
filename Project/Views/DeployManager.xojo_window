@@ -80,7 +80,7 @@ Begin BeaconAutopositionWindow DeployManager
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   300
+      Width           =   299
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -95,7 +95,7 @@ Begin BeaconAutopositionWindow DeployManager
       Height          =   550
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   300
+      Left            =   299
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -120,7 +120,7 @@ Begin BeaconAutopositionWindow DeployManager
       Height          =   550
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   301
+      Left            =   300
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -138,7 +138,7 @@ Begin BeaconAutopositionWindow DeployManager
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   499
+      Width           =   500
       Begin DesktopLabel OptionsMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
@@ -150,11 +150,11 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   321
+         Left            =   320
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   True
+         LockRight       =   False
          LockTop         =   True
          Multiline       =   False
          Scope           =   2
@@ -172,68 +172,6 @@ Begin BeaconAutopositionWindow DeployManager
          Visible         =   True
          Width           =   459
       End
-      Begin DesktopCheckBox CreateBackupCheckbox
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Back up Game.ini and GameUserSettings.ini before making changes"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   321
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   233
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         VisualState     =   0
-         Width           =   459
-      End
-      Begin DesktopCheckBox ReviewChangesCheckbox
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Allow me to review changes before updating server"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   321
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   265
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         VisualState     =   0
-         Width           =   459
-      End
       Begin UITweaks.ResizedPushButton OptionsActionButton
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -248,7 +186,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   700
+         Left            =   699
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -260,42 +198,11 @@ Begin BeaconAutopositionWindow DeployManager
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   361
+         Top             =   393
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
-      End
-      Begin DesktopCheckBox RunAdvisorCheckbox
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Run advisor on content before updating server"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   321
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   297
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   False
-         VisualState     =   0
-         Width           =   459
       End
       Begin DesktopLabel LogsMessageLabel
          AllowAutoDeactivate=   True
@@ -308,7 +215,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   321
+         Left            =   320
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -328,7 +235,7 @@ Begin BeaconAutopositionWindow DeployManager
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   459
+         Width           =   460
       End
       Begin DesktopTextArea LogsArea
          AllowAutoDeactivate=   True
@@ -351,7 +258,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   321
+         Left            =   320
          LineHeight      =   0.0
          LineSpacing     =   1.0
          LockBottom      =   True
@@ -376,7 +283,7 @@ Begin BeaconAutopositionWindow DeployManager
          UnicodeMode     =   0
          ValidationMask  =   ""
          Visible         =   True
-         Width           =   459
+         Width           =   460
       End
       Begin UITweaks.ResizedPushButton ReviewActionButton
          AllowAutoDeactivate=   True
@@ -454,7 +361,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   321
+         Left            =   320
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -471,7 +378,7 @@ Begin BeaconAutopositionWindow DeployManager
          Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   255
+         Width           =   256
       End
       Begin CodeEditor ReviewArea
          AutoDeactivate  =   True
@@ -481,7 +388,7 @@ Begin BeaconAutopositionWindow DeployManager
          HorizontalScrollPosition=   0
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   301
+         Left            =   300
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -497,7 +404,7 @@ Begin BeaconAutopositionWindow DeployManager
          Top             =   73
          VerticalScrollPosition=   0
          Visible         =   True
-         Width           =   499
+         Width           =   500
       End
       Begin Shelf ReviewSwitcher
          AllowAutoDeactivate=   True
@@ -512,7 +419,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          IsVertical      =   False
-         Left            =   301
+         Left            =   300
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -530,7 +437,7 @@ Begin BeaconAutopositionWindow DeployManager
          Top             =   0
          Transparent     =   False
          Visible         =   True
-         Width           =   499
+         Width           =   500
       End
       Begin FadedSeparator ReviewBottomSeparator
          AllowAutoDeactivate=   True
@@ -543,7 +450,7 @@ Begin BeaconAutopositionWindow DeployManager
          Height          =   1
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   301
+         Left            =   300
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -560,7 +467,7 @@ Begin BeaconAutopositionWindow DeployManager
          Top             =   489
          Transparent     =   True
          Visible         =   True
-         Width           =   499
+         Width           =   500
       End
       Begin FadedSeparator ReviewTopSeparator
          AllowAutoDeactivate=   True
@@ -573,7 +480,7 @@ Begin BeaconAutopositionWindow DeployManager
          Height          =   1
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   301
+         Left            =   300
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -590,7 +497,7 @@ Begin BeaconAutopositionWindow DeployManager
          Top             =   72
          Transparent     =   True
          Visible         =   True
-         Width           =   499
+         Width           =   500
       End
       Begin LogoFillCanvas NoSelectionCanvas
          AllowAutoDeactivate=   True
@@ -604,7 +511,7 @@ Begin BeaconAutopositionWindow DeployManager
          Height          =   550
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   301
+         Left            =   300
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -621,38 +528,7 @@ Begin BeaconAutopositionWindow DeployManager
          Top             =   0
          Transparent     =   True
          Visible         =   True
-         Width           =   499
-      End
-      Begin DesktopCheckBox NukeConfigCheckbox
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Erase server Game.ini and GameUserSettings.ini files"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   321
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   329
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         VisualState     =   0
-         Width           =   459
+         Width           =   500
       End
       Begin ReactionButton CopyTriggerButton
          AllowAutoDeactivate=   True
@@ -668,7 +544,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   321
+         Left            =   320
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -685,6 +561,321 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Visible         =   True
          Width           =   113
+      End
+      Begin UITweaks.ResizedPopupMenu PlanMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   520
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   8
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "#TooltipDeployPlan"
+         Top             =   361
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   259
+      End
+      Begin UITweaks.ResizedLabel PlanLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   320
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   9
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "#CaptionDeployPlan"
+         TextAlignment   =   3
+         TextColor       =   &c000000
+         Tooltip         =   "#TooltipDeployPlan"
+         Top             =   361
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   188
+      End
+      Begin DesktopLabel CreateBackupLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   320
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   10
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "#CaptionBackupConfigFiles"
+         TextAlignment   =   3
+         TextColor       =   &c000000
+         Tooltip         =   "#TooltipBackupConfigFiles"
+         Top             =   233
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   188
+      End
+      Begin DesktopLabel ReviewChangesLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   320
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   11
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "#CaptionReviewChanges"
+         TextAlignment   =   3
+         TextColor       =   &c000000
+         Tooltip         =   "#TooltipReviewChanges"
+         Top             =   265
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   188
+      End
+      Begin DesktopLabel RunAdvisorLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   320
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   12
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "#CaptionRunAdvisor"
+         TextAlignment   =   3
+         TextColor       =   &c000000
+         Tooltip         =   "#TooltipRunAdvisor"
+         Top             =   297
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   188
+      End
+      Begin DesktopLabel NukeConfigLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   320
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   13
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "#CaptionEraseConfigFiles"
+         TextAlignment   =   3
+         TextColor       =   &c000000
+         Tooltip         =   "#TooltipEraseConfigFiles"
+         Top             =   329
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   188
+      End
+      Begin SwitchControl CreateBackupSwitch
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   520
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   14
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "#TooltipBackupConfigFiles"
+         Top             =   233
+         Transparent     =   True
+         Visible         =   True
+         Width           =   40
+      End
+      Begin SwitchControl ReviewChangesSwitch
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   520
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   15
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "#TooltipReviewChanges"
+         Top             =   265
+         Transparent     =   True
+         Visible         =   True
+         Width           =   40
+      End
+      Begin SwitchControl RunAdvisorSwitch
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   520
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   16
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "#TooltipRunAdvisor"
+         Top             =   297
+         Transparent     =   True
+         Visible         =   True
+         Width           =   40
+      End
+      Begin SwitchControl NukeConfigSwitch
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   520
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   17
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "#TooltipEraseConfigFiles"
+         Top             =   329
+         Transparent     =   True
+         Visible         =   True
+         Width           =   40
       End
    End
    Begin Timer DeployWatcher
@@ -730,15 +921,32 @@ End
 		Sub Opening()
 		  Self.Title = "Deploy: " + Self.Project.Title
 		  
-		  Self.CreateBackupCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionBackup, UInt64)
-		  Self.ReviewChangesCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionReview, UInt64)
-		  Self.RunAdvisorCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionAdvise, UInt64)
+		  Var OptionLabels() As DesktopLabel = Array(Self.CreateBackupLabel, Self.ReviewChangesLabel, Self.NukeConfigLabel, DesktopLabel(Self.PlanLabel))
+		  #if Self.AdvisorEnabled
+		    OptionLabels.Add(Self.RunAdvisorLabel)
+		  #else
+		    Self.RunAdvisorLabel.Visible = False
+		    Self.RunAdvisorSwitch.Visible = False
+		  #endif
+		  BeaconUI.SizeToFit(OptionLabels)
+		  Var OptionControlsLeft As Integer = Self.CreateBackupLabel.Right + 12
+		  Self.CreateBackupSwitch.Left = OptionControlsLeft
+		  Self.ReviewChangesSwitch.Left = OptionControlsLeft
+		  Self.NukeConfigSwitch.Left = OptionControlsLeft
+		  Self.PlanMenu.Left = OptionControlsLeft
+		  Self.RunAdvisorSwitch.Left = OptionControlsLeft
+		  
+		  Self.CreateBackupSwitch.Value(False) = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionBackup, UInt64)
+		  Self.ReviewChangesSwitch.Value(False) = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionReview, UInt64)
+		  Self.RunAdvisorSwitch.Value(False) = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  
 		  Self.ServerList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
 		  Self.ServerList.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		  Self.ServerList.UpdateList()
 		  
 		  Self.CheckOptionsActionEnabled
+		  
+		  Self.UpdateDeployPlans(Self.Settings.Plan)
 		  
 		  If (Self.Settings.Options And CType(Beacon.DeploySettings.OptionRunImmediately, UInt64)) = CType(Beacon.DeploySettings.OptionRunImmediately, UInt64) Then
 		    Self.Begin()
@@ -748,35 +956,44 @@ End
 
 	#tag Event
 		Sub UpdateControlPositions()
-		  Const MaxOptionsWidth = 460
+		  Const MinOptionsWidth = 460
+		  Const MaxOptionsWidth = 560
+		  Var OptionsWidth As Integer = Max(Min(Self.Pages.Width - 40, MaxOptionsWidth), MinOptionsWidth)
 		  
-		  Var OptionCheckboxes() As DesktopCheckBox = Array(Self.CreateBackupCheckbox, Self.NukeConfigCheckbox, Self.ReviewChangesCheckbox, Self.RunAdvisorCheckbox)
-		  For Idx As Integer = OptionCheckboxes.LastIndex DownTo OptionCheckboxes.FirstIndex
-		    If OptionCheckboxes(Idx).Visible = False Then
-		      OptionCheckboxes.RemoveAt(Idx)
-		    End If
-		  Next Idx
+		  Var Groups() As ControlGroup
+		  If Self.CreateBackupLabel.Visible Then
+		    Groups.Add(New ControlGroup(Self.CreateBackupLabel, Self.CreateBackupSwitch))
+		  End If
+		  If Self.NukeConfigLabel.Visible Then
+		    Groups.Add(New ControlGroup(Self.NukeConfigLabel, Self.NukeConfigSwitch))
+		  End If
+		  If Self.ReviewChangesLabel.Visible Then
+		    Groups.Add(New ControlGroup(Self.ReviewChangesLabel, Self.ReviewChangesSwitch))
+		  End If
+		  If Self.RunAdvisorLabel.Visible Then
+		    Groups.Add(New ControlGroup(Self.RunAdvisorLabel, Self.RunAdvisorSwitch))
+		  End If
+		  If Self.PlanLabel.Visible Then
+		    Groups.Add(New ControlGroup(Self.PlanLabel, Self.PlanMenu))
+		  End If
 		  
-		  Var AvailableWidth As Integer = Self.Pages.Width - 20
-		  Var OptionsWidth As Integer = Min(AvailableWidth, MaxOptionsWidth)
-		  Var OptionsLeft As Integer = Self.Pages.Left + Round((AvailableWidth - OptionsWidth) / 2)
-		  Var Position As Integer = Self.OptionsMessageLabel.Top + Self.OptionsMessageLabel.Height + 12
-		  Self.OptionsMessageLabel.Left = OptionsLeft
+		  Var NextTop As Integer = Self.OptionsMessageLabel.Bottom + 12
+		  For Each Group As ControlGroup In Groups
+		    Group.Top = NextTop
+		    NextTop = Group.Bottom + 12
+		  Next
+		  Self.OptionsActionButton.Top = NextTop
+		  
 		  Self.OptionsMessageLabel.Width = OptionsWidth
-		  For Idx As Integer = OptionCheckboxes.FirstIndex To OptionCheckboxes.LastIndex
-		    OptionCheckboxes(Idx).Left = OptionsLeft
-		    OptionCheckboxes(Idx).Width = OptionsWidth
-		    OptionCheckboxes(Idx).Top = Position
-		    Position = Position + OptionCheckboxes(Idx).Height + 12
-		  Next Idx
-		  Self.OptionsActionButton.Top = Position
-		  Self.OptionsActionButton.Left = (OptionsLeft + OptionsWidth) - Self.OptionsActionButton.Width
+		  Self.OptionsActionButton.Left = Self.OptionsMessageLabel.Right - Self.OptionsActionButton.Width
+		  Self.PlanMenu.Width = OptionsWidth - (Self.PlanLabel.Width + 12)
 		  
-		  Var Group As New ControlGroup(Self.OptionsMessageLabel, Self.OptionsActionButton)
-		  For Idx As Integer = OptionCheckboxes.FirstIndex To OptionCheckboxes.LastIndex
-		    Group.Append(OptionCheckboxes(Idx))
-		  Next Idx
-		  Group.Top = Self.Pages.Top + Round((Self.Pages.Height - Group.Height) / 2)
+		  Var MasterGroup As New ControlGroup(Self.OptionsMessageLabel, Self.OptionsActionButton)
+		  For Each Group As ControlGroup In Groups
+		    MasterGroup.Append(Group)
+		  Next
+		  MasterGroup.Left = Self.Pages.Left + Round((Self.Pages.Width - MasterGroup.Width) / 2)
+		  MasterGroup.Top = Self.Pages.Top + Round((Self.Pages.Height - MasterGroup.Height) / 2)
 		End Sub
 	#tag EndEvent
 
@@ -886,22 +1103,11 @@ End
 		  End If
 		  
 		  // Start the engines!
-		  Var Options As UInt64
-		  If Self.CreateBackupCheckbox.Value Then
-		    Options = Options Or CType(Beacon.DeployIntegration.OptionBackup, UInt64)
-		  End If
-		  If Self.ReviewChangesCheckbox.Value Then
-		    Options = Options Or CType(Beacon.DeployIntegration.OptionReview, UInt64)
-		  End If
-		  If Self.RunAdvisorCheckbox.Value Then
-		    Options = Options Or CType(Beacon.DeployIntegration.OptionAnalyze, UInt64)
-		  End If
-		  If Self.NukeConfigCheckbox.Value Then
-		    Options = Options Or CType(Beacon.DeployIntegration.OptionNuke, UInt64)
-		  End If
+		  Var Settings As Beacon.DeploySettings = Self.CreateSettings
+		  Settings.StopMessage = StopMessage
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.DeployIntegration = Entry.Key
-		    Engine.Begin(Self.DeployLabel, App.IdentityManager.CurrentIdentity, StopMessage, Options)
+		    Engine.Begin(Self.DeployLabel, App.IdentityManager.CurrentIdentity, Settings)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -928,6 +1134,28 @@ End
 		  Self.Settings = Settings
 		  Super.Constructor
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CreateSettings() As Beacon.DeploySettings
+		  Var Settings As New Beacon.DeploySettings
+		  If Self.CreateBackupSwitch.Value Then
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
+		  End If
+		  If Self.NukeConfigSwitch.Value Then
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionErase, UInt64)
+		  End If
+		  If Self.ReviewChangesSwitch.Value Then
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionReview, UInt64)
+		  End If
+		  If Self.RunAdvisorSwitch.Value Then
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionAdvise, UInt64)
+		  End If
+		  If Self.PlanMenu.SelectedRowIndex > -1 Then
+		    Settings.Plan = Self.PlanMenu.SelectedRowTag
+		  End If
+		  Return Settings
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1042,6 +1270,76 @@ End
 		  Var Engine As Beacon.DeployIntegration = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
 		  Return Engine
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateDeployPlans()
+		  Var SelectedPlan As Beacon.DeployPlan
+		  If Self.PlanMenu.SelectedRowIndex > -1 Then
+		    SelectedPlan = Self.PlanMenu.SelectedRowTag
+		  Else
+		    SelectedPlan = Preferences.DeployPlan
+		  End If
+		  Self.UpdateDeployPlans(SelectedPlan)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateDeployPlans(SelectedPlan As Beacon.DeployPlan)
+		  Var PlanCounts As New Dictionary
+		  Var RequiredPlanCount As Integer
+		  
+		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
+		    If Self.ServerList.CellCheckBoxValueAt(Idx, 0) = False Then
+		      Continue
+		    End If
+		    RequiredPlanCount = RequiredPlanCount + 1
+		    
+		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(Idx)
+		    Var Plans() As Beacon.DeployPlan = Profile.SupportedDeployPlans
+		    For Each Plan As Beacon.DeployPlan In Plans
+		      PlanCounts.Value(Plan) = PlanCounts.Lookup(Plan, 0) + 1
+		    Next
+		  Next
+		  
+		  Var CommonPlans() As Beacon.DeployPlan
+		  For Each Entry As DictionaryEntry In PlanCounts
+		    Var Plan As Beacon.DeployPlan = Entry.Key
+		    Var Count As Integer = Entry.Value
+		    If Count <> RequiredPlanCount Then
+		      Continue
+		    End If
+		    CommonPlans.Add(Plan)
+		  Next
+		  
+		  Self.PlanMenu.RemoveAllRows
+		  
+		  For Each Plan As Beacon.DeployPlan In CommonPlans
+		    Var Caption As String
+		    Select Case Plan
+		    Case Beacon.DeployPlan.StopUploadStart
+		      Caption = "Stop server, update config files, then start server."
+		    Case Beacon.DeployPlan.UploadRestart
+		      Caption = "Update config files, then restart the server."
+		    Case Beacon.DeployPlan.UploadOnly
+		      Caption = "Update config files. The server will not be restarted."
+		    End Select
+		    
+		    Self.PlanMenu.AddRow(Caption)
+		    Self.PlanMenu.RowTagAt(Self.PlanMenu.LastAddedRowIndex) = Plan
+		    If SelectedPlan = Plan Then
+		      Self.PlanMenu.SelectedRowIndex = Self.PlanMenu.LastAddedRowIndex
+		    End If
+		  Next
+		  
+		  Self.PlanMenu.Enabled = CommonPlans.Count > 1
+		  Self.PlanLabel.Enabled = Self.PlanMenu.Enabled
+		  If Self.PlanMenu.RowCount = 1 Then
+		    Self.PlanMenu.SelectedRowIndex = 0
+		  End If
+		  
+		  Self.UpdateControlPositions()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1165,6 +1463,24 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = AdvisorEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CaptionBackupConfigFiles, Type = String, Dynamic = True, Default = \"Back up config files:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CaptionDeployPlan, Type = String, Dynamic = True, Default = \"Update strategy:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CaptionEraseConfigFiles, Type = String, Dynamic = True, Default = \"Erase server config files:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CaptionReviewChanges, Type = String, Dynamic = True, Default = \"Allow me to review changes:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CaptionRunAdvisor, Type = String, Dynamic = True, Default = \"Run advisor:", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageLog, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
@@ -1178,6 +1494,21 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageWaitingAuth, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipBackupConfigFiles, Type = String, Dynamic = True, Default = \"Beacon will keep a copy of your config files from before it makes any changes\x2C as well as after it makes changes. This not only provides a recovery mechanism\x2C but can also help Beacon support diagnose deploy issues.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipDeployPlan, Type = String, Dynamic = True, Default = \"Controls how Beacon will update the server\x2C such as when the server should be started or stopped.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipEraseConfigFiles, Type = String, Dynamic = True, Default = \"Before making its normal changes\x2C Beacon will erase the config files. This can be a useful debugging technique to help clear out content mistakes such as syntax errors\x2C but should not normally be used. Because of the damage potential\x2C config backups must be turned on.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipReviewChanges, Type = String, Dynamic = True, Default = \"Before any changes are made to a server\x2C the new config files will be presented for review and approval. This will require approval for every server\x2C so is not recommended when deploying to more than a few servers.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipRunAdvisor, Type = String, Dynamic = True, Default = \"Beacon\'s deploy advisor will look for common mistakes and recommend changes before continuing with the deploy.", Scope = Private
 	#tag EndConstant
 
 
@@ -1194,6 +1525,7 @@ End
 		  Profile.Enabled = Me.CellCheckBoxValueAt(Row, Column)
 		  
 		  Self.CheckOptionsActionEnabled
+		  Self.UpdateDeployPlans
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1235,40 +1567,10 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events CreateBackupCheckbox
-	#tag Event
-		Sub ValueChanged()
-		  If Self.Opened Then
-		    Preferences.DeployCreateBackup = Me.Value
-		  End If
-		  If Me.Value = False Then
-		    Self.NukeConfigCheckbox.Value = False
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ReviewChangesCheckbox
-	#tag Event
-		Sub ValueChanged()
-		  If Self.Opened Then
-		    Preferences.DeployReviewChanges = Me.Value
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events OptionsActionButton
 	#tag Event
 		Sub Pressed()
 		  Self.Begin()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events RunAdvisorCheckbox
-	#tag Event
-		Sub ValueChanged()
-		  If Self.Opened Then
-		    Preferences.DeployRunAdvisor = Me.Value
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1352,32 +1654,11 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events NukeConfigCheckbox
-	#tag Event
-		Sub ValueChanged()
-		  If Me.Value Then
-		    Self.CreateBackupCheckbox.Value = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events CopyTriggerButton
 	#tag Event
 		Sub Pressed()
-		  Var Settings As New Beacon.DeploySettings
-		  Settings.Options = Beacon.DeploySettings.OptionRunImmediately
-		  If Self.CreateBackupCheckbox.Value Then
-		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
-		  End If
-		  If Self.NukeConfigCheckbox.Value Then
-		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionErase, UInt64)
-		  End If
-		  If Self.ReviewChangesCheckbox.Value Then
-		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionReview, UInt64)
-		  End If
-		  If Self.RunAdvisorCheckbox.Value Then
-		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionAdvise, UInt64)
-		  End If
+		  Var Settings As Beacon.DeploySettings = Self.CreateSettings
+		  Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionRunImmediately
 		  
 		  Var UseStopMessage As Boolean
 		  For I As Integer = 0 To Self.ServerList.LastRowIndex
@@ -1409,6 +1690,54 @@ End
 		  Board.Text = TriggerURL
 		  
 		  Me.Caption = "Copied!"
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PlanMenu
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  If Self.Opened And (Item Is Nil) = False Then
+		    Preferences.DeployPlan = Item.Tag
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreateBackupSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.Opened Then
+		    Preferences.DeployCreateBackup = Me.Value
+		  End If
+		  If Me.Value = False Then
+		    Self.NukeConfigSwitch.Value = False
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReviewChangesSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.Opened Then
+		    Preferences.DeployReviewChanges = Me.Value
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RunAdvisorSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.Opened Then
+		    Preferences.DeployRunAdvisor = Me.Value
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NukeConfigSwitch
+	#tag Event
+		Sub Pressed()
+		  If Me.Value Then
+		    Self.CreateBackupSwitch.Value = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

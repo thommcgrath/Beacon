@@ -348,6 +348,7 @@ Protected Module Preferences
 		  If Preferences.DeployRunAdvisor Then
 		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  End If
+		  Settings.Plan = Preferences.DeployPlan
 		  Return Settings
 		End Function
 	#tag EndMethod
@@ -859,6 +860,30 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected DeployCreateBackup As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  
+			  If mManager.HasKey("Deploy: Plan") Then
+			    Try
+			      Return CType(mManager.IntegerValue("Deploy: Plan"), Beacon.DeployPlan)
+			    Catch Err As RuntimeException
+			    End Try
+			  End If
+			  
+			  Return Beacon.DeployPlan.StopUploadStart
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Deploy: Plan") = CType(Value, Integer)
+			End Set
+		#tag EndSetter
+		Protected DeployPlan As Beacon.DeployPlan
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
