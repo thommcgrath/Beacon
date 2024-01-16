@@ -23,7 +23,13 @@ Inherits Beacon.Integration
 		  
 		  // And start the server if it was already running
 		  If (InitialServerState = Beacon.ServerStatus.States.Running Or InitialServerState = Beacon.ServerStatus.States.Starting) Then
-		    Self.StartServer()
+		    Select Case Self.Plan
+		    Case Beacon.DeployPlan.StopUploadStart
+		      Self.StartServer()
+		    Case Beacon.DeployPlan.UploadRestart
+		      Self.StopServer()
+		      Self.StartServer()
+		    End Select
 		  End If
 		  
 		  If Self.Finished Then
@@ -42,22 +48,29 @@ Inherits Beacon.Integration
 
 	#tag Method, Flags = &h0
 		Function AnalyzeEnabled() As Boolean
-		  Return Self.OptionEnabled(Self.OptionAnalyze)
+		  Return Self.OptionEnabled(Beacon.DeploySettings.OptionAdvise)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BackupEnabled() As Boolean
-		  Return Self.OptionEnabled(Self.OptionBackup)
+		  Return Self.OptionEnabled(Beacon.DeploySettings.OptionBackup)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As String, Identity As Beacon.Identity, StopMessage As String, Options As UInt64)
+		Sub Begin(Label As String, Identity As Beacon.Identity, Settings As Beacon.DeploySettings)
+		  Self.Begin(Label, Identity, Settings.StopMessage, Settings.Options, Settings.Plan)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Begin(Label As String, Identity As Beacon.Identity, StopMessage As String, Options As UInt64, Plan As Beacon.DeployPlan)
 		  Self.mLabel = Label
 		  Self.mIdentity = Identity
 		  Self.mStopMessage = StopMessage
-		  Self.mOptions = Options And CType(Self.OptionAnalyze Or Self.OptionBackup Or Self.OptionNuke Or Self.OptionReview, UInt64)
+		  Self.mOptions = Options
+		  Self.mPlan = Plan
 		  Super.Begin()
 		End Sub
 	#tag EndMethod
@@ -107,7 +120,7 @@ Inherits Beacon.Integration
 		Function NukeEnabled() As Boolean
 		  // Backup must be enabled for nuke to be enabled
 		  
-		  Return Self.OptionEnabled(Self.OptionNuke Or Self.OptionBackup)
+		  Return Self.OptionEnabled(Beacon.DeploySettings.OptionErase Or Beacon.DeploySettings.OptionBackup)
 		End Function
 	#tag EndMethod
 
@@ -120,6 +133,12 @@ Inherits Beacon.Integration
 	#tag Method, Flags = &h0
 		Function Options() As UInt64
 		  Return Self.mOptions
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Plan() As Beacon.DeployPlan
+		  Return Self.mPlan
 		End Function
 	#tag EndMethod
 
@@ -152,7 +171,7 @@ Inherits Beacon.Integration
 
 	#tag Method, Flags = &h0
 		Function ReviewEnabled() As Boolean
-		  Return Self.OptionEnabled(Self.OptionReview)
+		  Return Self.OptionEnabled(Beacon.DeploySettings.OptionReview)
 		End Function
 	#tag EndMethod
 
@@ -321,25 +340,16 @@ Inherits Beacon.Integration
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPlan As Beacon.DeployPlan
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mStatus As Beacon.ServerStatus
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mStopMessage As String
 	#tag EndProperty
-
-
-	#tag Constant, Name = OptionAnalyze, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = OptionBackup, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = OptionNuke, Type = Double, Dynamic = False, Default = \"8", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = OptionReview, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior

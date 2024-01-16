@@ -2,6 +2,19 @@
 Protected Class ControlGroup
 Implements Iterable
 	#tag Method, Flags = &h0
+		Sub Append(Group As ControlGroup)
+		  For Each Member As DesktopUIControl In Group
+		    If Member Is Nil Then
+		      Continue
+		    End If
+		    
+		    Self.mMembers.Add(New WeakRef(Member))
+		  Next
+		  Self.UpdateBounds()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Append(Ctl As DesktopUIControl)
 		  If Self.IndexOf(Ctl) = -1 Then
 		    Self.mMembers.Add(New WeakRef(Ctl))
@@ -82,8 +95,10 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Offset(X As Integer, Y As Integer)
+		  Var Original As Rect = Self.mBounds.Clone
+		  
 		  For Each Ref As WeakRef In Self.mMembers
-		    If Ref.Value = Nil Then
+		    If Ref.Value Is Nil Then
 		      Continue
 		    End If
 		    
@@ -125,7 +140,7 @@ Implements Iterable
 		  Var First As Boolean = True
 		  For I As Integer = 0 To Self.mMembers.LastIndex
 		    Var Ctl As DesktopUIControl = DesktopUIControl(Self.mMembers(I).Value)
-		    If Ctl = Nil Then
+		    If Ctl Is Nil Then
 		      Continue
 		    End If
 		    
@@ -237,8 +252,10 @@ Implements Iterable
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Self.mVisible = Value
+			  
 			  For Each Ref As WeakRef In Self.mMembers
-			    If Ref.Value = Nil Then
+			    If Ref.Value Is Nil Then
 			      Continue
 			    End If
 			    

@@ -5,6 +5,10 @@ Protected Class DeploySettings
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		Plan As Beacon.DeployPlan
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		Servers() As Beacon.ServerProfile
 	#tag EndProperty
 

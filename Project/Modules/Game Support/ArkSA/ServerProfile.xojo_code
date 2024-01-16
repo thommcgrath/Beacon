@@ -322,6 +322,17 @@ Inherits Beacon.ServerProfile
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportedDeployPlans() As Beacon.DeployPlan()
+		  Var Config As Beacon.HostConfig = Self.HostConfig
+		  If (Config Is Nil) = False And Config IsA Nitrado.HostConfig Then
+		    Return Array(Beacon.DeployPlan.StopUploadStart, Beacon.DeployPlan.UploadRestart, Beacon.DeployPlan.UploadOnly)
+		  Else
+		    Return Array(Beacon.DeployPlan.UploadOnly)
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Attributes( Deprecated ) Event ReadFromDictionary(Dict As Dictionary)

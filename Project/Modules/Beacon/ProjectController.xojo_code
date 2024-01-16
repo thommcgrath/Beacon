@@ -61,6 +61,7 @@ Protected Class ProjectController
 		  Action.Value("Options") = Settings.Options.ToString(Locale.Raw, "0")
 		  Action.Value("Servers") = String.FromArray(Servers, ",")
 		  Action.Value("StopMessage") = Settings.StopMessage
+		  Action.Value("Plan") = CType(Settings.Plan, Integer).ToString(Locale.Raw, "0")
 		  
 		  Return "beacon://run/" + SaveInfo + "?" + Action.ToQueryString
 		End Function

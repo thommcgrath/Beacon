@@ -270,6 +270,7 @@ Begin DocumentEditorView ArkSADocumentEditorView
    End
    Begin Thread GFIComputeThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -355,9 +356,19 @@ End
 		Sub RunScriptAction(Action As Beacon.ScriptAction)
 		  Select Case Action.Action
 		  Case "Deploy"
+		    Var Plan As Beacon.DeployPlan = Beacon.DeployPlan.StopUploadStart
+		    Try
+		      Var PlanString As String = Action.Value("Plan")
+		      If PlanString.IsEmpty = False Then
+		        Plan = CType(Integer.FromString(PlanString, Locale.Raw), Beacon.DeployPlan)
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		    
 		    Var Settings As New Beacon.DeploySettings
 		    Settings.Options = UInt64.FromString(Action.Value("Options"), Locale.Raw)
 		    Settings.StopMessage = Action.Value("StopMessage")
+		    Settings.Plan = Plan
 		    Var ProfileIds() As String = Action.Value("Servers").Split(",")
 		    For Each ProfileId As String In ProfileIds
 		      Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(ProfileId)
