@@ -390,7 +390,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin URLConnection OAuthStartSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -399,7 +398,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin URLConnection OAuthRedeemSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -408,7 +406,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin Thread RefreshAndCloseThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -667,7 +664,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowAPIError(HTTPStatus As Integer)
+		Private Sub ShowAPIError(HTTPStatus As Integer, Content As String)
 		  Var Explanation As String
 		  Select Case HTTPStatus
 		  Case 500
@@ -677,9 +674,18 @@ End
 		  Case 429
 		    Explanation = "You have sent too many requests to the server. Wait a minute and try again."
 		  Else
-		    Explanation = "The server returned an HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " status."
+		    Try
+		      Var Parsed As New JSONItem(Content)
+		      Var Message As String = Parsed.Value("message").StringValue.Trim
+		      If Message.EndsWith(".") = False Then
+		        Message = Message + "."
+		      End If
+		      
+		      Explanation = "The server said """ + Message + """"
+		    Catch Err As RuntimeException
+		      Explanation = "The server returned an HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " status. Beacon log files may have more information."
+		    End Try
 		  End Select
-		  Explanation = Explanation + " You should contact support using help@usebeacon.app with this information."
 		  
 		  If Self.ShowConfirm("Beacon could not complete the request", Explanation, "System Status", "Cancel") Then
 		    System.GotoURL("https://status.usebeacon.app/")
@@ -996,7 +1002,8 @@ End
 		  Else
 		    // Something else
 		    App.Log("OAuthStartSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
-		    Self.ShowAPIError(HTTPStatus)
+		    Self.ShowAPIError(HTTPStatus, Content)
+		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1009,6 +1016,7 @@ End
 		  
 		  App.Log(e, CurrentMethodName, "Trying to start an OAuth request")
 		  Self.ShowConnectionError(e)
+		  Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1019,7 +1027,7 @@ End
 		    Self.SaveOAuthResponse(Content)
 		  Else
 		    App.Log("OAuthRedeemSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
-		    Self.ShowAPIError(HTTPStatus)
+		    Self.ShowAPIError(HTTPStatus, Content)
 		    
 		    If Self.mLoginOnly Then
 		      Self.Close
