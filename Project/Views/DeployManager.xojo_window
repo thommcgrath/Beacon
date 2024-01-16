@@ -1011,6 +1011,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Begin()
+		  If Self.PlanMenu.RowCount = 0 Then
+		    Self.ShowAlert("No common update strategy is available.", "The chosen servers do not share any common update strategy. Try choosing servers from the same hosting provider.")
+		  ElseIf Self.PlanMenu.SelectedRowIndex = -1 Then
+		    Self.ShowAlert("An update strategy must be chosen.", "Beacon uses the update strategy to determine when to start or stop servers.")
+		  End If
+		  
 		  Var NowGMT As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		  Var Now As DateTime = DateTime.Now
 		  Self.DeployLabel = NowGMT.Year.ToString(Locale.Raw, "0000") + "-" + NowGMT.Month.ToString(Locale.Raw, "00") + "-" + NowGMT.Day.ToString(Locale.Raw, "00") + " " + NowGMT.Hour.ToString(Locale.Raw, "00") + ":" + NowGMT.Minute.ToString(Locale.Raw, "00") + ":" + NowGMT.Second.ToString(Locale.Raw, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short).ReplaceAll(&u202f, " ") + " " + Now.Timezone.Abbreviation + ")"
