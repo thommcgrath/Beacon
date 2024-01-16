@@ -22,10 +22,6 @@ function handleRequest(array $context): Response {
 		$deviceId = $_GET['device_id'] ?? '';
 		$application = null;
 
-		// Force this request to always use the writable connection to avoid data sync delays
-		$database = BeaconCommon::Database();
-		$database->SetWritable(true);
-
 		if (empty($clientId) || empty($scopes)) {
 			return Response::NewJsonError('Missing parameters', null, 400);
 		}
