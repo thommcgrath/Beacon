@@ -63,7 +63,7 @@ Begin BeaconContainer ArkSALootEntryPropertiesEditor
       VisualState     =   0
       Width           =   58
    End
-   Begin DesktopCheckBox EditMaxQualityCheck
+   Begin DesktopCheckBox EditQualityChecks
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
@@ -72,7 +72,7 @@ Begin BeaconContainer ArkSALootEntryPropertiesEditor
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   -2147483648
+      Index           =   1
       InitialParent   =   ""
       Italic          =   False
       Left            =   430
@@ -94,7 +94,7 @@ Begin BeaconContainer ArkSALootEntryPropertiesEditor
       VisualState     =   0
       Width           =   58
    End
-   Begin DesktopCheckBox EditMinQualityCheck
+   Begin DesktopCheckBox EditQualityChecks
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
@@ -103,7 +103,7 @@ Begin BeaconContainer ArkSALootEntryPropertiesEditor
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   -2147483648
+      Index           =   0
       InitialParent   =   ""
       Italic          =   False
       Left            =   430
@@ -936,6 +936,150 @@ Begin BeaconContainer ArkSALootEntryPropertiesEditor
       VisualState     =   0
       Width           =   58
    End
+   Begin RangeField QualityFields
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   0
+      Italic          =   False
+      Left            =   -141
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   27
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   "#TooltipQuality"
+      Top             =   -193
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin RangeField QualityFields
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   1
+      Italic          =   False
+      Left            =   -141
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   28
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   "#TooltipQuality"
+      Top             =   -159
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton QualityResetButtons
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Reset"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   0
+      Italic          =   False
+      Left            =   -49
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   29
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -193
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton QualityResetButtons
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Reset"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   1
+      Italic          =   False
+      Left            =   -49
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   30
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -159
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndDesktopWindow
 
@@ -963,15 +1107,25 @@ End
 		    MinQuantity = Temp
 		  End If
 		  
-		  Var MinQualityValue As Double = MinQualityMenu.Tag
-		  Var MaxQualityValue As Double = MaxQualityMenu.Tag
+		  Var MinQualityValue As Double = If(QualityMenus(0).Visible, QualityMenus(0).Tag.DoubleValue, QualityFields(0).DoubleValue)
+		  Var MaxQualityValue As Double = If(QualityMenus(1).Visible, QualityMenus(1).Tag.DoubleValue, QualityFields(1).DoubleValue)
 		  If MinQualityValue > MaxQualityValue Then
 		    Var Temp As Double = MaxQualityValue
 		    MaxQualityValue = MinQualityValue
 		    MinQualityValue = Temp
 		  End If
-		  Var MinQuality As ArkSA.Quality = ArkSA.Qualities.ForBaseValue(MinQualityValue)
-		  Var MaxQuality As ArkSA.Quality = ArkSA.Qualities.ForBaseValue(MaxQualityValue)
+		  Var MinQuality As ArkSA.Quality
+		  If QualityMenus(0).Visible Then
+		    MinQuality = ArkSA.Qualities.ForBaseValue(MinQualityValue)
+		  Else
+		    MinQuality = New ArkSA.Quality(MinQualityValue)
+		  End If
+		  Var MaxQuality As ArkSA.Quality
+		  If QualityMenus(1).Visible Then
+		    MaxQuality = ArkSA.Qualities.ForBaseValue(MaxQualityValue)
+		  Else
+		    MaxQuality = New ArkSA.Quality(MaxQualityValue)
+		  End If
 		  
 		  Var BlueprintChance As Double = ChanceSlider.Value / 100
 		  Var Weight As Double = WeightField.DoubleValue
@@ -997,10 +1151,10 @@ End
 		    If EditStatClampMultiplierCheck.Value Then
 		      Entries(Idx).StatClampMultiplier = StatClampMultiplier
 		    End If
-		    If Self.EditMaxQualityCheck.Value Then
+		    If Self.EditQualityChecks(1).Value Then
 		      Entries(Idx).MaxQuality = MaxQuality
 		    End If
-		    If Self.EditMinQualityCheck.Value Then
+		    If Self.EditQualityChecks(0).Value Then
 		      Entries(Idx).MinQuality = MinQuality
 		    End If
 		  Next Idx
@@ -1050,7 +1204,8 @@ End
 		  Filtered = Nil
 		  
 		  Var MinQuantities(), MaxQuantities() As Integer
-		  Var MinQualities(), MaxQualities() As Double
+		  Var MinQualityValues(), MaxQualityValues() As Double
+		  Var MinQualities(), MaxQualities() As ArkSA.Quality
 		  Var TotalWeight, TotalChance, TotalStatClamMultiplier As Double
 		  Var CanBeBlueprint, PreventGrinding As Boolean
 		  For Each Entry As ArkSA.LootItemSetEntry In Entries
@@ -1059,16 +1214,18 @@ End
 		    TotalWeight = TotalWeight + Entry.RawWeight
 		    TotalChance = TotalChance + Entry.ChanceToBeBlueprint
 		    TotalStatClamMultiplier = TotalStatClamMultiplier + Entry.StatClampMultiplier
-		    MinQualities.Add(Entry.MinQuality.BaseValue)
-		    MaxQualities.Add(Entry.MaxQuality.BaseValue)
+		    MinQualities.Add(Entry.MinQuality)
+		    MaxQualities.Add(Entry.MaxQuality)
+		    MinQualityValues.Add(Entry.MinQuality.BaseValue)
+		    MaxQualityValues.Add(Entry.MaxQuality.BaseValue)
 		    CanBeBlueprint = CanBeBlueprint Or Entry.CanBeBlueprint
 		    PreventGrinding = PreventGrinding Or Entry.PreventGrinding
 		  Next
 		  
 		  MinQuantities.Sort
 		  MaxQuantities.Sort
-		  MinQualities.Sort
-		  MaxQualities.Sort
+		  MinQualityValues.SortWith(MinQualities)
+		  MaxQualityValues.SortWith(MaxQualities)
 		  
 		  Self.mIgnoreChanges = True
 		  MinQuantityField.Text = MinQuantities(0).ToString(Locale.Current, "0")
@@ -1086,8 +1243,30 @@ End
 		    ChanceField.Enabled = False
 		    EditChanceCheck.Enabled = False
 		  End If
-		  MinQualityMenu.SelectByTag(MinQualities(0))
-		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.LastIndex))
+		  
+		  Var SelectedQualities(1) As ArkSA.Quality
+		  SelectedQualities(0) = MinQualities(0)
+		  SelectedQualities(1) = MaxQualities(MaxQualities.LastIndex)
+		  
+		  For Idx As Integer = 0 To 1
+		    QualityMenus(Idx).SelectedRowIndex = -1
+		    If SelectedQualities(Idx).IsCustom = False Then
+		      Try
+		        QualityMenus(Idx).SelectByTag(SelectedQualities(Idx).BaseValue)
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    If QualityMenus(Idx).SelectedRowIndex = -1 Then
+		      QualityMenus(Idx).Visible = False
+		      QualityFields(Idx).Visible = True
+		      QualityResetButtons(Idx).Visible = True
+		    Else
+		      QualityFields(Idx).Visible = False
+		      QualityResetButtons(Idx).Visible = False
+		    End If
+		    QualityFields(Idx).DoubleValue = SelectedQualities(Idx).BaseValue
+		  Next
+		  
 		  WeightSlider.Value = TotalWeight / Entries.Count
 		  WeightField.DoubleValue = TotalWeight / Entries.Count
 		  PreventGrindingCheck.Value = PreventGrinding
@@ -1096,9 +1275,9 @@ End
 		  
 		  If Entries.Count > 1 Then
 		    EditChanceCheck.Visible = True
-		    EditMaxQualityCheck.Visible = True
+		    EditQualityChecks(1).Visible = True
 		    EditMaxQuantityCheck.Visible = True
-		    EditMinQualityCheck.Visible = True
+		    EditQualityChecks(0).Visible = True
 		    EditMinQuantityCheck.Visible = True
 		    EditWeightCheck.Visible = True
 		    EditStatClampMultiplierCheck.Visible = True
@@ -1107,22 +1286,29 @@ End
 		  
 		  EditChanceCheck.Value = Not EditChanceCheck.Visible
 		  EditWeightCheck.Value = Not EditWeightCheck.Visible
-		  EditMaxQualityCheck.Value = Not EditMaxQualityCheck.Visible
+		  EditQualityChecks(1).Value = Not EditQualityChecks(1).Visible
 		  EditMaxQuantityCheck.Value = Not EditMaxQuantityCheck.Visible
-		  EditMinQualityCheck.Value = Not EditMinQualityCheck.Visible
-		  EditMinQuantityCheck.Value = Not EditMaxQualityCheck.Visible
+		  EditQualityChecks(0).Value = Not EditQualityChecks(0).Visible
+		  EditMinQuantityCheck.Value = Not EditMinQuantityCheck.Visible
 		  EditStatClampMultiplierCheck.Value = Not EditStatClampMultiplierCheck.Visible
 		  EditPreventGrindingCheck.Value = Not EditPreventGrindingCheck.Visible
 		  
 		  Var RightEdge As Integer
-		  If EditMinQualityCheck.Visible Or EditMaxQualityCheck.Visible Or EditChanceCheck.Visible Or EditWeightCheck.Visible Then
-		    RightEdge = Min(EditMinQualityCheck.Left, EditMaxQualityCheck.Left, EditChanceCheck.Left, EditWeightCheck.Left) - 12
+		  If EditQualityChecks(0).Visible Or EditQualityChecks(1).Visible Or EditChanceCheck.Visible Or EditWeightCheck.Visible Then
+		    RightEdge = Min(EditQualityChecks(0).Left, EditQualityChecks(1).Left, EditChanceCheck.Left, EditWeightCheck.Left) - 12
 		  Else
 		    RightEdge = Self.Width - 20
 		  End If
 		  
-		  MinQualityMenu.Width = (RightEdge - MinQualityMenu.Left)
-		  MaxQualityMenu.Width = (RightEdge - MaxQualityMenu.Left)
+		  For Idx As Integer = 0 To 1
+		    QualityMenus(Idx).Width = RightEdge - QualityMenus(Idx).Left
+		    QualityFields(Idx).Left = QualityMenus(Idx).Left
+		    QualityFields(Idx).Width = QualityMenus(Idx).Width - (QualityResetButtons(Idx).Width + 12)
+		    QualityResetButtons(Idx).Left = QualityFields(Idx).Right + 12
+		    QualityFields(Idx).Top = QualityMenus(Idx).Top + ((QualityMenus(Idx).Height - QualityFields(Idx).Height) / 2)
+		    QualityResetButtons(Idx).Top = QualityMenus(Idx).Top + ((QualityMenus(Idx).Height - QualityResetButtons(Idx).Height) / 2)
+		  Next
+		  
 		  ChancePercentLabel.Left = RightEdge - (ChancePercentLabel.Width + 3)
 		  ChanceField.Left = ChancePercentLabel.Left - (ChanceField.Width + 12)
 		  ChanceSlider.Width = ChanceField.Left - (12 + ChanceSlider.Left)
@@ -1149,10 +1335,16 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = CaptionCustomQuality, Type = String, Dynamic = True, Default = \"Custom Quality", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = HelpTagPreventGrinding, Type = String, Dynamic = False, Default = \"If checked\x2C the items cannot be fed to the industrial grinder.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = HelpTagStatClampMultiplier, Type = String, Dynamic = False, Default = \"If item stat limiting is used on the server\x2C this setting will allow the items to generate above or below the item stat limit. For example\x2C if damage is limited to 1000 in the Item Stat Limits editor\x2C a multiplier of 0.5 would limit to 500 and a multiplier of 2.0 would limit to 2000.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipQuality, Type = String, Dynamic = True, Default = \"This quality value ranges from 0 to 100 and will not be adjusted according to the supply crate quality multiplier.", Scope = Private
 	#tag EndConstant
 
 
@@ -1202,15 +1394,30 @@ End
 		Sub SelectionChanged(index as Integer, item As DesktopMenuItem)
 		  #Pragma Unused Item
 		  
-		  If Not Self.mIgnoreChanges Then
-		    Select Case Index
-		    Case 0 // Min
-		      EditMinQualityCheck.Value = True
-		    Case 1 // Max
-		      EditMaxQualityCheck.Value = True
-		    End Select
-		    RaiseEvent Changed
+		  If Self.mIgnoreChanges Then
+		    Return
 		  End If
+		  
+		  Var TargetCheckbox As DesktopCheckBox = EditQualityChecks(Index)
+		  Var TargetField As DesktopTextField = QualityFields(Index)
+		  Var TargetButton As DesktopButton = QualityResetButtons(Index)
+		  
+		  TargetCheckbox.Value = True
+		  If Me.SelectedRowText = Self.CaptionCustomQuality Then
+		    If (TargetField Is Nil) = False And (TargetButton Is Nil) = False Then
+		      Me.Visible = False
+		      TargetField.Visible = True
+		      TargetButton.Visible = True
+		    End If
+		  Else
+		    If (TargetField Is Nil) = False Then
+		      Self.mIgnoreChanges = True
+		      RangeField(TargetField).DoubleValue = Me.Tag.DoubleValue
+		      Self.mIgnoreChanges = False
+		    End If
+		  End If
+		  
+		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1221,6 +1428,10 @@ End
 		  For Each Quality As ArkSA.Quality In Qualities
 		    Me.AddRow(Quality.Label + " (Quality " + Quality.BaseValue.PrettyText + ")", Quality.BaseValue)
 		  Next
+		  #if TargetMacOS
+		    Me.AddRow(DesktopMenuItem.TextSeparator)
+		  #endif
+		  Me.AddRow(Self.CaptionCustomQuality)
 		  
 		  Me.SelectedRowIndex = 0
 		End Sub
@@ -1312,6 +1523,56 @@ End
 		    EditPreventGrindingCheck.Value = True
 		    RaiseEvent Changed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events QualityFields
+	#tag Event
+		Sub GetRange(index as Integer, ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 100
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ValueChanged(index as Integer)
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditQualityChecks(Index).Value = True
+		  
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events QualityResetButtons
+	#tag Event
+		Sub Pressed(index as Integer)
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  Var TargetCheckbox As DesktopCheckBox = EditQualityChecks(Index)
+		  Var TargetField As DesktopTextField = QualityFields(Index)
+		  Var TargetMenu As DesktopPopupMenu = QualityMenus(Index)
+		  
+		  TargetCheckbox.Value = True
+		  If (TargetField Is Nil) = False And (TargetMenu Is Nil) = False Then
+		    Var Value As Double = RangeField(TargetField).DoubleValue
+		    Var NearestQuality As ArkSA.Quality = ArkSA.Qualities.ForValue(Value, 1.0, 1.0)
+		    
+		    Try
+		      TargetMenu.SelectByTag(NearestQuality.BaseValue)
+		    Catch Err As RuntimeException
+		      TargetMenu.SelectedRowIndex = 0
+		    End Try
+		    
+		    Me.Visible = False
+		    TargetField.Visible = False
+		    TargetMenu.Visible = True
+		  End If
+		  
+		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
 #tag EndEvents

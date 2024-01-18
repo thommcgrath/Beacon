@@ -7,10 +7,38 @@ Protected Class Quality
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(BaseValue As Double)
+		  Self.mKey = Self.KeyCustomQuality
+		  Self.mBaseValue = BaseValue
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(BaseValue As Double, Key As String)
 		  Self.mKey = Key
 		  Self.mBaseValue = BaseValue
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(SaveData As Variant) As ArkSA.Quality
+		  If SaveData.IsNull Then
+		    Return Nil
+		  End If
+		  
+		  Select Case SaveData.Type
+		  Case Variant.TypeString
+		    Return ArkSA.Qualities.ForKey(SaveData.StringValue)
+		  Case Variant.TypeDouble
+		    Return New ArkSA.Quality(SaveData.DoubleValue)
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsCustom() As Boolean
+		  Return Self.mKey = Self.KeyCustomQuality
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -56,20 +84,30 @@ Protected Class Quality
 		    Return 1
 		  End If
 		  
-		  If Self.BaseValue > Other.Basevalue Then
-		    Return 1
-		  ElseIf Self.BaseValue < Other.BaseValue Then
-		    Return -1
+		  Var MyStringValue As String = Self.mBaseValue.PrettyText + ":" + Self.mKey.Lowercase
+		  Var OtherStringValue As String = Other.mBaseValue.PrettyText + ":" + Other.mKey.Lowercase
+		  Return MyStringValue.Compare(OtherStringValue, ComparisonOptions.CaseInsensitive)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData() As Variant
+		  If Self.IsCustom Then
+		    Return Self.mBaseValue
 		  Else
-		    Return 0
+		    Return Self.mKey
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Value(CrateQualityMultiplier as Double, BaseArbitraryQuality as Double) As Double
-		  Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Return Self.mBaseValue / (BaseArbitraryQuality * CrateArbitraryQuality)
+		  If Self.mKey = Self.KeyCustomQuality Then
+		    Return Self.mBaseValue
+		  Else
+		    Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
+		    Return Self.mBaseValue / (BaseArbitraryQuality * CrateArbitraryQuality)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -82,6 +120,9 @@ Protected Class Quality
 		Private mKey As String
 	#tag EndProperty
 
+
+	#tag Constant, Name = KeyCustomQuality, Type = String, Dynamic = False, Default = \"Custom", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = QualityTier00, Type = String, Dynamic = False, Default = \"No Quality", Scope = Public
 	#tag EndConstant

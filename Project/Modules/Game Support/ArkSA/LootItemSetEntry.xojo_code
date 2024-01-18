@@ -132,24 +132,20 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("minQuality") Then
-		      Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("minQuality"))
-		    ElseIf Dict.HasKey("min_quality") Then
-		      Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("min_quality"))
-		    ElseIf Dict.HasKey("MinQuality") Then
-		      Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("MinQuality"))
+		    Var MinQualityValue As Variant = Dict.FirstValue("minQuality", "min_quality", "MinQuality", Nil)
+		    Var MinQuality As ArkSA.Quality = ArkSA.Quality.FromSaveData(MinQualityValue)
+		    If (MinQuality Is Nil) = False Then
+		      Entry.MinQuality = MinQuality
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading MinQuality value")
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("maxQuality") Then
-		      Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("maxQuality"))
-		    ElseIf Dict.HasKey("max_quality") Then
-		      Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("max_quality"))
-		    ElseIf Dict.HasKey("MaxQuality") Then
-		      Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("MaxQuality"))
+		    Var MaxQualityValue As Variant = Dict.FirstValue("maxQuality", "min_quality", "MaxQuality", Nil)
+		    Var MaxQuality As ArkSA.Quality = ArkSA.Quality.FromSaveData(MaxQualityValue)
+		    If (MaxQuality Is Nil) = False Then
+		      Entry.MaxQuality = MaxQuality
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading MaxQuality value")
@@ -316,10 +312,18 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  Var BaseArbitraryQuality As Double = ArkSA.Configs.Difficulty.BaseArbitraryQuality(Difficulty)
 		  
 		  If Dict.HasKey("MinQuality") Then
-		    Entry.MinQuality = ArkSA.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, BaseArbitraryQuality)
+		    If Dict.HasKey("xBeaconUseCustomMinQuality") And Dict.Value("xBeaconUseCustomMinQuality").BooleanValue = True Then
+		      Entry.MinQuality = New ArkSA.Quality(Dict.Value("MinQuality").DoubleValue)
+		    Else
+		      Entry.MinQuality = ArkSA.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, BaseArbitraryQuality)
+		    End If
 		  End If
 		  If Dict.HasKey("MaxQuality") Then
-		    Entry.MaxQuality = ArkSA.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, BaseArbitraryQuality)
+		    If Dict.HasKey("xBeaconUseCustomMaxQuality") And Dict.Value("xBeaconUseCustomMaxQuality").BooleanValue = True Then
+		      Entry.MaxQuality = New ArkSA.Quality(Dict.Value("MaxQuality").DoubleValue)
+		    Else
+		      Entry.MaxQuality = ArkSA.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, BaseArbitraryQuality)
+		    End If
 		  End If
 		  If Dict.HasKey("MinQuantity") Then
 		    Entry.MinQuantity = Dict.Value("MinQuantity")
@@ -707,8 +711,8 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  End If
 		  Keys.Value("minQuantity") = Self.MinQuantity
 		  Keys.Value("maxQuantity") = Self.MaxQuantity
-		  Keys.Value("minQuality") = Self.MinQuality.Key
-		  Keys.Value("maxQuality") = Self.MaxQuality.Key
+		  Keys.Value("minQuality") = Self.MinQuality.SaveData
+		  Keys.Value("maxQuality") = Self.MaxQuality.SaveData
 		  Keys.Value("blueprintChance") = Self.ChanceToBeBlueprint
 		  If ForPreferences = False Then
 		    Keys.Value("weight") = Self.RawWeight
@@ -850,6 +854,12 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  Values.Add("MaxQuality=" + MaxQuality.PrettyText)
 		  If Self.SingleItemQuantity Then
 		    Values.Add("bApplyQuantityToSingleItem=True")
+		  End If
+		  If Self.mMinQuality.IsCustom Then
+		    Values.Add("xBeaconUseCustomMinQuality=True")
+		  End If
+		  If Self.mMaxQuality.IsCustom Then
+		    Values.Add("xBeaconUseCustomMaxQuality=True")
 		  End If
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
