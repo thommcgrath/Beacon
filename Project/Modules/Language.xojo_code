@@ -127,7 +127,7 @@ Protected Module Language
 		  Select Case GameId
 		  Case Ark.Identifier, ArkSA.Identifier
 		    Return "an"
-		  Case SDTD.Identifier
+		  Case SDTD.Identifier, Palworld.Identifier
 		    Return "a"
 		  End Select
 		End Function
@@ -142,6 +142,8 @@ Protected Module Language
 		    Return SDTD.FullName
 		  Case ArkSA.Identifier
 		    Return ArkSA.FullName
+		  Case Palworld.Identifier
+		    Return Palworld.Identifier
 		  Else
 		    Return GameId
 		  End Select

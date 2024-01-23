@@ -1061,6 +1061,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    #if ArkSA.Enabled
 		      Self.mDataSources.Add(ArkSA.DataSource.Pool.Get(False))
 		    #endif
+		    #if Palworld.Enabled
+		      Self.mDataSources.Add(Palworld.DataSource.Pool.Get(False))
+		    #endif
 		  Catch Err As RuntimeException
 		    // Something is still wrong
 		    BeaconUI.ShowAlert("Beacon cannot start due to a problem with a local database.", "Beacon is unable to create or repair a local database. The database error was: `" + Err.Message + "`.")

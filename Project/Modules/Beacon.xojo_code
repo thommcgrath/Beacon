@@ -669,6 +669,9 @@ Protected Module Beacon
 		    #if ArkSA.Enabled
 		      GameList.Add(New Beacon.Game(ArkSA.Identifier, ArkSA.FullName, ArkSA.OmniFlag, Beacon.Game.FeatureTemplates Or Beacon.Game.FeatureMods))
 		    #endif
+		    #if Palworld.Enabled
+		      GameList.Add(New Beacon.Game(Palworld.Identifier, Palworld.FullName, Beacon.OmniLicense.MinimalGamesFlag, 0))
+		    #endif
 		    
 		    Var Names() As String
 		    Names.ResizeTo(GameList.LastIndex)

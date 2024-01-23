@@ -649,6 +649,9 @@ End
 		      If License.IsFlagged(SDTD.OmniFlag)Then
 		        GameNames.Add(Language.GameName(SDTD.Identifier))
 		      End If
+		      If License.IsFlagged(Beacon.OmniLicense.MinimalGamesFlag) Then
+		        GameNames.Add("Minimal Games")
+		      End If
 		      If License.IsFlagged(Beacon.OmniLicense.CuratorFlag) Then
 		        GameNames.Add("Curator Access")
 		      End If

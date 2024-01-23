@@ -1,48 +1,28 @@
 #tag DesktopWindow
-Begin ArkDiscoveryView ArkFilesDiscoveryView
-   AllowAutoDeactivate=   "True"
-   AllowFocus      =   "False"
-   AllowFocusRing  =   "False"
-   AllowTabs       =   "True"
+Begin PalworldDiscoveryView PalworldFilesDiscoveryView
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composite       =   False
-   Composited      =   "False"
-   DefaultLocation =   2
-   DoubleBuffer    =   "False"
-   Enabled         =   "True"
-   EraseBackground =   "True"
-   FullScreen      =   False
+   Composited      =   False
+   Enabled         =   True
    HasBackgroundColor=   False
-   HasCloseButton  =   True
-   HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
-   Height          =   208
-   ImplicitInstance=   True
-   Index           =   "-2147483648"
+   Height          =   142
+   Index           =   -2147483648
    InitialParent   =   ""
-   Left            =   "0"
-   LockBottom      =   "True"
-   LockLeft        =   "True"
-   LockRight       =   "True"
-   LockTop         =   "True"
-   MacProcID       =   0
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
-   MenuBar         =   0
-   MenuBarVisible  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   Resizeable      =   True
-   TabIndex        =   "0"
-   TabPanelIndex   =   "0"
-   TabStop         =   "True"
-   Title           =   "Untitled"
+   Left            =   0
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
+   TabIndex        =   0
+   TabPanelIndex   =   0
+   TabStop         =   True
    Tooltip         =   ""
-   Top             =   "0"
-   Transparent     =   "True"
-   Type            =   0
+   Top             =   0
+   Transparent     =   True
    Visible         =   True
    Width           =   600
    Begin UITweaks.ResizedPushButton ActionButton
@@ -71,7 +51,7 @@ Begin ArkDiscoveryView ArkFilesDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   168
+      Top             =   102
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -103,41 +83,11 @@ Begin ArkDiscoveryView ArkFilesDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   168
+      Top             =   102
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
-   End
-   Begin UITweaks.ResizedPopupMenu MapMenu
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   171
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      SelectedRowIndex=   0
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   128
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   214
    End
    Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
@@ -161,7 +111,7 @@ Begin ArkDiscoveryView ArkFilesDiscoveryView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Choose your Ark: Survival Evolved game files"
+      Text            =   "Choose your Palworld game files"
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
@@ -171,7 +121,7 @@ Begin ArkDiscoveryView ArkFilesDiscoveryView
       Visible         =   True
       Width           =   560
    End
-   Begin UITweaks.ResizedTextField GameIniPathField
+   Begin UITweaks.ResizedTextField SettingsIniPathField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
@@ -212,48 +162,7 @@ Begin ArkDiscoveryView ArkFilesDiscoveryView
       Visible         =   True
       Width           =   297
    End
-   Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   171
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextAlignment   =   0
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   94
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Visible         =   True
-      Width           =   297
-   End
-   Begin UITweaks.ResizedLabel GameIniLabel
+   Begin UITweaks.ResizedLabel SettingsIniLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -275,7 +184,7 @@ Begin ArkDiscoveryView ArkFilesDiscoveryView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Game.ini"
+      Text            =   "PalWorldSettings.ini"
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
@@ -285,71 +194,7 @@ Begin ArkDiscoveryView ArkFilesDiscoveryView
       Visible         =   True
       Width           =   139
    End
-   Begin UITweaks.ResizedLabel GameUserSettingsIniLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "GameUserSettings.ini"
-      TextAlignment   =   3
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   94
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   139
-   End
-   Begin UITweaks.ResizedLabel MapLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Map:"
-      TextAlignment   =   3
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   128
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   139
-   End
-   Begin UITweaks.ResizedPushButton GameIniChooseButton
+   Begin UITweaks.ResizedPushButton SettingsIniChooseButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -380,67 +225,25 @@ Begin ArkDiscoveryView ArkFilesDiscoveryView
       Visible         =   True
       Width           =   100
    End
-   Begin UITweaks.ResizedPushButton GameUserSettingsIniChooseButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Choose…"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   480
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   94
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   100
-   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.GameIniLabel.Text = Ark.ConfigFileGame + ":"
-		  Self.GameUserSettingsIniLabel.Text = Ark.ConfigFileGameUserSettings + ":"
-		  BeaconUI.SizeToFit(Self.GameIniLabel, Self.GameUserSettingsIniLabel, Self.MapLabel)
+		  Self.SettingsIniLabel.Text = Palworld.ConfigFileSettings + ":"
+		  BeaconUI.SizeToFit(Self.SettingsIniLabel)
 		  
-		  Var FieldsLeft As Integer = Self.GameIniLabel.Right + 12
-		  Var FieldsWidth As Integer = Self.Width - (Self.GameIniLabel.Width + Self.GameIniChooseButton.Width + 64)
+		  Var FieldsLeft As Integer = Self.SettingsIniLabel.Right + 12
+		  Var FieldsWidth As Integer = Self.Width - (Self.SettingsIniLabel.Width + Self.SettingsIniChooseButton.Width + 64)
 		  
-		  Var GameIniGroup As New ControlGroup(Self.GameIniLabel, Self.GameIniPathField, Self.GameIniChooseButton)
-		  GameIniGroup.Top = Self.MessageLabel.Bottom + 20
-		  Self.GameIniPathField.Left = FieldsLeft
-		  Self.GameIniPathField.Width = FieldsWidth
-		  Self.GameIniChooseButton.Left = Self.GameIniPathField.Right + 12
+		  Var SettingsIniGroup As New ControlGroup(Self.SettingsIniLabel, Self.SettingsIniPathField, Self.SettingsIniChooseButton)
+		  SettingsIniGroup.Top = Self.MessageLabel.Bottom + 20
+		  Self.SettingsIniPathField.Left = FieldsLeft
+		  Self.SettingsIniPathField.Width = FieldsWidth
+		  Self.SettingsIniChooseButton.Left = Self.SettingsIniPathField.Right + 12
 		  
-		  Var GameUserSettingsIniGroup As New ControlGroup(Self.GameUserSettingsIniLabel, Self.GameUserSettingsIniPathField, Self.GameUserSettingsIniChooseButton)
-		  GameUserSettingsIniGroup.Top = GameIniGroup.Bottom + 12
-		  Self.GameUserSettingsIniPathField.Left = FieldsLeft
-		  Self.GameUserSettingsIniPathField.Width = FieldsWidth
-		  Self.GameUserSettingsIniChooseButton.Left = Self.GameUserSettingsIniPathField.Right + 12
-		  
-		  Var MapGroup As New ControlGroup(Self.MapLabel, Self.MapMenu)
-		  MapGroup.Top = GameUserSettingsIniGroup.Bottom + 12
-		  Self.MapMenu.Left = FieldsLeft
-		  
-		  Self.ActionButton.Top = MapGroup.Bottom + 20
+		  Self.ActionButton.Top = SettingsIniGroup.Bottom + 20
 		  Self.CancelButton.Top = Self.ActionButton.Top
 		  
 		  Self.DesiredHeight = Self.ActionButton.Bottom + 20
@@ -476,16 +279,12 @@ End
 		  End If
 		  
 		  Select Case ForceType
-		  Case ConfigFileType.GameIni
-		    Self.mGameIniFile = File
-		    Self.GameIniPathField.Text = File.NativePath
-		    Self.GameIniPathField.Tooltip = File.NativePath
-		  Case ConfigFileType.GameUserSettingsIni
-		    Self.mGameUserSettingsIniFile = File
-		    Self.GameUserSettingsIniPathField.Text = File.NativePath
-		    Self.GameUserSettingsIniPathField.Tooltip = File.NativePath
+		  Case ConfigFileType.SettingsIni
+		    Self.mSettingsIniFile = File
+		    Self.SettingsIniPathField.Text = File.NativePath
+		    Self.SettingsIniPathField.Tooltip = File.NativePath
 		  End Select
-		  Self.ActionButton.Enabled = (Self.mGameIniFile Is Nil) = False Or (Self.mGameUserSettingsIniFile Is Nil) = False
+		  Self.ActionButton.Enabled = (Self.mSettingsIniFile Is Nil) = False
 		End Sub
 	#tag EndMethod
 
@@ -498,20 +297,15 @@ End
 		    Return ConfigFileType.Other
 		  End Try
 		  
-		  Content = Content.GuessEncoding("/script/")
-		  Var GameIniPos As Integer = Content.IndexOf(Ark.HeaderShooterGame)
-		  Var SettingsIniPos As Integer = Content.IndexOf(Ark.HeaderServerSettings)
+		  Content = Content.GuessEncoding("/Script/")
+		  Var SettingsIniPos As Integer = Content.IndexOf(Palworld.HeaderPalworldSettings)
 		  
-		  If GameIniPos > -1 And SettingsIniPos = -1 Then
-		    Return ConfigFileType.GameIni
-		  ElseIf SettingsIniPos > -1 And GameIniPos = -1 Then
-		    Return ConfigFileType.GameUserSettingsIni
+		  If SettingsIniPos > -1 Then
+		    Return ConfigFileType.SettingsIni
 		  Else
 		    Select Case File.Name
-		    Case Ark.ConfigFileGame
-		      Return ConfigFileType.GameIni
-		    Case Ark.ConfigFileGameUserSettings
-		      Return ConfigFileType.GameUserSettingsIni
+		    Case Palworld.ConfigFileSettings
+		      Return ConfigFileType.SettingsIni
 		    Else
 		      Return ConfigFileType.Other
 		    End Select
@@ -538,7 +332,7 @@ End
 		    Var Contents As String = Stream.ReadAll()
 		    Stream.Close
 		    
-		    Contents = Contents.GuessEncoding("/script/")
+		    Contents = Contents.GuessEncoding("/Script/")
 		    
 		    Return Contents
 		  Catch Err As IOException
@@ -565,22 +359,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowFileChooser(DesiredType As ConfigFileType, SearchForSibling As Boolean)
+		Private Sub ShowFileChooser(DesiredType As ConfigFileType)
 		  Var Filename As String
 		  Select Case DesiredType
-		  Case ConfigFileType.GameIni
-		    Filename = Ark.ConfigFileGame
-		  Case ConfigFileType.GameUserSettingsIni
-		    Filename = Ark.ConfigFileGameUserSettings
+		  Case ConfigFileType.SettingsIni
+		    Filename = Palworld.ConfigFileSettings
 		  Else
 		    Return
 		  End Select
 		  
 		  Var Dialog As New OpenFileDialog
-		  If (Self.mGameUserSettingsIniFile Is Nil) = False Then
-		    Dialog.InitialFolder = Self.mGameUserSettingsIniFile.Parent
-		  ElseIf (Self.mGameIniFile Is Nil) = False Then
-		    Dialog.InitialFolder = Self.mGameIniFile.Parent
+		  If (Self.mSettingsIniFile Is Nil) = False Then
+		    Dialog.InitialFolder = Self.mSettingsIniFile.Parent
 		  End If
 		  Dialog.SuggestedFileName = Filename
 		  Dialog.Filter = BeaconFileTypes.IniFile
@@ -599,40 +389,6 @@ End
 		  End If
 		  
 		  Self.AddFile(File, DesiredType)
-		  
-		  If SearchForSibling = False Then
-		    Return
-		  End If
-		  
-		  Var Parent As FolderItem = File.Parent
-		  Select Case DesiredType
-		  Case ConfigFileType.GameIni
-		    Var Sibling As FolderItem = Parent.Child(Ark.ConfigFileGameUserSettings)
-		    If (Sibling Is Nil) = False And Sibling.Exists Then
-		      Try
-		        Call Sibling.Read()
-		        Self.AddFile(Sibling, ConfigFileType.GameUserSettingsIni)
-		        Return
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
-		    If Self.ShowConfirm("Select your " + Ark.ConfigFileGameUserSettings + " file too?", "Your " + Ark.ConfigFileGame + " file is set. Do you want to choose your " + Ark.ConfigFileGameUserSettings + " file now?", "Choose", "Not Now") Then
-		      Self.ShowFileChooser(ConfigFileType.GameUserSettingsIni, False)
-		    End If
-		  Case ConfigFileType.GameUserSettingsIni
-		    Var Sibling As FolderItem = Parent.Child(Ark.ConfigFileGame)
-		    If (Sibling Is Nil) = False And Sibling.Exists Then
-		      Try
-		        Call Sibling.Read()
-		        Self.AddFile(Sibling, ConfigFileType.GameIni)
-		        Return
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
-		    If Self.ShowConfirm("Select your " + Ark.ConfigFileGame + " file too?", "Your " + Ark.ConfigFileGameUserSettings + " file is set. Do you want to choose your " + Ark.ConfigFileGame + " file now?", "Choose", "Not Now") Then
-		      Self.ShowFileChooser(ConfigFileType.GameIni, False)
-		    End If
-		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -643,11 +399,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mGameIniFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniFile As FolderItem
+		Private mSettingsIniFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -655,17 +407,16 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = GameIniIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = GameUserSettingsIniIndex, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = GameUserSettingsIniIndex, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = SettingsIniIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 
 	#tag Enum, Name = ConfigFileType, Flags = &h21
 		Other
-		  GameIni
-		GameUserSettingsIni
+		SettingsIni
 	#tag EndEnum
 
 
@@ -674,16 +425,11 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Profile As New Ark.ServerProfile(Local.Identifier, Language.DefaultServerName(Ark.Identifier))
-		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
-		  If (Self.mGameUserSettingsIniFile Is Nil) = False Then
-		    Profile.GameUserSettingsIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameUserSettingsIniFile)
-		    Profile.SecondaryName = Self.mGameUserSettingsIniFile.NativePath
-		  End If
-		  If (Self.mGameIniFile Is Nil) = False Then
-		    Profile.GameIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mGameIniFile)
+		  Var Profile As New Palworld.ServerProfile(Local.Identifier, Language.DefaultServerName(Palworld.Identifier))
+		  If (Self.mSettingsIniFile Is Nil) = False Then
+		    Profile.SettingsIniPath = BookmarkedFolderItem.CreateSaveInfo(Self.mSettingsIniFile)
 		    If Profile.SecondaryName.IsEmpty Then
-		      Profile.SecondaryName = Self.mGameIniFile.NativePath
+		      Profile.SecondaryName = Self.mSettingsIniFile.PartialPath
 		    End If
 		  End If
 		  Self.ShouldFinish(Profile)
@@ -697,28 +443,10 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MapMenu
-	#tag Event
-		Sub Opening()
-		  Var Maps() As Ark.Map = Ark.Maps.All
-		  For Each Map As Ark.Map In Maps
-		    Me.AddRow(Map.Name, Map.Mask)
-		  Next
-		  Me.SelectedRowIndex = 0
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GameIniChooseButton
+#tag Events SettingsIniChooseButton
 	#tag Event
 		Sub Pressed()
-		  Self.ShowFileChooser(ConfigFileType.GameIni, Self.mGameUserSettingsIniFile Is Nil)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GameUserSettingsIniChooseButton
-	#tag Event
-		Sub Pressed()
-		  Self.ShowFileChooser(ConfigFileType.GameUserSettingsIni, Self.mGameIniFile Is Nil)
+		  Self.ShowFileChooser(ConfigFileType.SettingsIni)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
