@@ -43,8 +43,6 @@ Implements Beacon.GameSetting
 		  Self.mNitradoDeployStyle = Source.mNitradoDeployStyle
 		  Self.mUIGroup = Source.mUIGroup
 		  Self.mContentPackId = Source.mContentPackId
-		  Self.mGSAPlaceholder = Source.mGSAPlaceholder
-		  Self.mUWPChanges = Source.mUWPChanges
 		End Sub
 	#tag EndMethod
 
@@ -57,7 +55,7 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Key As String, ValueType As Palworld.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Palworld.ConfigOption.NitradoFormats, NitradoDeployStyle As Palworld.ConfigOption.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
+		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Key As String, ValueType As Palworld.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Palworld.ConfigOption.NitradoFormats, NitradoDeployStyle As Palworld.ConfigOption.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mConfigOptionId = ConfigOptionId
@@ -71,8 +69,6 @@ Implements Beacon.GameSetting
 		  Self.mContentPackId = ContentPackId
 		  Self.mCustomSort = CustomSort
 		  Self.mConstraints = Constraints
-		  Self.mGSAPlaceholder = GSAPlaceholder
-		  Self.mUWPChanges = UWPChanges
 		  
 		  If (NitradoPath Is Nil) = False Then
 		    Self.mNitradoPaths = NitradoPath.Split(";")
@@ -109,12 +105,6 @@ Implements Beacon.GameSetting
 	#tag Method, Flags = &h0
 		Function File() As String
 		  Return Self.mFile
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GSAPlaceholder() As NullableString
-		  Return Self.mGSAPlaceholder
 		End Function
 	#tag EndMethod
 
@@ -244,42 +234,6 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UWPVersion() As Palworld.ConfigOption
-		  If Self.mUWPChanges Is Nil Or Self.mUWPChanges.KeyCount = 0 Then
-		    Return Self
-		  End If
-		  
-		  Var Copy As New Palworld.ConfigOption(Self)
-		  Copy.mConfigOptionId = Beacon.UUID.v4
-		  
-		  Var Changed As Boolean
-		  For Each Entry As DictionaryEntry In Self.mUWPChanges
-		    Try
-		      Select Case Entry.Key
-		      Case "file"
-		        Copy.mFile = Entry.Value
-		        Changed = True
-		      Case "header"
-		        Copy.mHeader = Entry.Value
-		        Changed = True
-		      Case "key"
-		        Copy.mKey = Entry.Value
-		        Changed = True
-		      End Select
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Making UWP version")
-		    End Try
-		  Next Entry
-		  
-		  If Not Changed Then
-		    Return Self
-		  End If
-		  
-		  Return Copy
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ValuesEqual(FirstValue As Variant, SecondValue As Variant) As Boolean
 		  Select Case Self.mValueType
 		  Case ValueTypes.TypeNumeric
@@ -341,10 +295,6 @@ Implements Beacon.GameSetting
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGSAPlaceholder As NullableString
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mHeader As String
 	#tag EndProperty
 
@@ -378,10 +328,6 @@ Implements Beacon.GameSetting
 
 	#tag Property, Flags = &h21
 		Private mUIGroup As NullableString
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUWPChanges As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

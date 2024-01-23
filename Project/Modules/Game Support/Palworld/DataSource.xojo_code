@@ -5,7 +5,7 @@ Inherits Beacon.DataSource
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT, gsa_placeholder TEXT COLLATE NOCASE, uwp_changes TEXT);")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
 		End Sub
 	#tag EndEvent
 
@@ -48,6 +48,159 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
+		  Var BuildNumber As Integer = App.BuildNumber
+		  
+		  Var InitialChanges As Integer
+		  Try
+		    InitialChanges = Self.TotalChanges()
+		  Catch Err As RuntimeException
+		    InitialChanges = -1
+		  End Try
+		  
+		  Var EngramsChanged As Boolean
+		  If ChangeDict.HasKey("deletions") Then
+		    Var Deletions() As Variant = ChangeDict.Value("deletions")
+		    For Each Deletion As Dictionary In Deletions
+		      Var ObjectId As String = Deletion.Value("objectId").StringValue
+		      Select Case Deletion.Value("group")
+		      Case "ini_options"
+		        Self.SQLExecute("DELETE FROM ini_options WHERE object_id = ?1;", ObjectId)
+		      End Select
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("contentPacks") Then
+		    Var ContentPacks() As Variant = ChangeDict.Value("contentPacks")
+		    For Each Dict As Dictionary In ContentPacks
+		      Var MinVersion As Double = Dict.Value("minVersion")
+		      If MinVersion > BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Var Pack As New Beacon.MutableContentPack(Palworld.Identifier, Dict.Value("name").StringValue, Dict.Value("contentPackId").StringValue)
+		      Pack.IsConsoleSafe = Dict.Value("isConsoleSafe").BooleanValue
+		      Pack.IsDefaultEnabled = Dict.Value("isDefaultEnabled").BooleanValue
+		      Pack.Marketplace = Dict.Lookup("marketplace", "").StringValue
+		      Pack.MarketplaceId = Dict.Lookup("marketplaceId", "").StringValue
+		      Pack.IsLocal = Pack.MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
+		      Pack.LastUpdate = Dict.Value("lastUpdate").DoubleValue
+		      Call Self.SaveContentPack(Pack, False)
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("configOptions") Then
+		    Self.mConfigOptionCache = New Dictionary
+		    
+		    Var Options() As Variant = ChangeDict.Value("configOptions")
+		    For Each Dict As Dictionary In Options
+		      If Dict.Value("minVersion") > BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Var ConfigOptionId As String = Dict.Value("configOptionId")
+		      Var ContentPackId As String = Dict.Value("contentPackId")
+		      Var File As String = Dict.Value("file")
+		      Var Header As String = Dict.Value("header")
+		      Var Key As String = Dict.Value("key")
+		      Var TagString, TagStringForSearching As String
+		      Try
+		        Var Tags() As String
+		        Var Temp() As Variant = Dict.Value("tags")
+		        For Each Tag As String In Temp
+		          Tags.Add(Tag)
+		        Next
+		        TagString = Tags.Join(",")
+		        Tags.AddAt(0, "object")
+		        TagStringForSearching = Tags.Join(",")
+		      Catch Err As RuntimeException
+		        
+		      End Try
+		      
+		      Var Values(18) As Variant
+		      Values(0) = ConfigOptionId
+		      Values(1) = Dict.Value("label")
+		      Values(2) = ContentPackId
+		      Values(3) = Dict.Value("nativeEditorVersion")
+		      Values(4) = File
+		      Values(5) = Header
+		      Values(6) = Key
+		      Values(7) = Dict.Value("valueType")
+		      Values(8) = Dict.Value("maxAllowed")
+		      Values(9) = Dict.Value("description")
+		      Values(10) = Dict.Value("defaultValue")
+		      Values(11) = Dict.Value("alternateLabel")
+		      If Dict.HasKey("nitradoEquivalent") And IsNull(Dict.Value("nitradoEquivalent")) = False Then
+		        Var NitradoEq As Dictionary = Dict.Value("nitradoEquivalent")
+		        Values(12) = NitradoEq.Value("path")
+		        Values(13) = NitradoEq.Value("format")
+		        Values(14) = NitradoEq.Value("deployStyle")
+		      Else
+		        Values(12) = Nil
+		        Values(13) = Nil
+		        Values(14) = Nil
+		      End If
+		      Values(15) = TagString
+		      If Dict.HasKey("uiGroup") Then
+		        Values(16) = Dict.Value("uiGroup")
+		      End If
+		      If Dict.HasKey("customSort") Then
+		        Values(17) = Dict.Value("customSort")
+		      End If
+		      If Dict.HasKey("constraints") And IsNull(Dict.Value("constraints")) = False Then
+		        Try
+		          Values(18) = Beacon.GenerateJSON(Dict.Value("constraints"), False)
+		        Catch JSONErr As RuntimeException
+		        End Try
+		      End If
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ConfigOptionId, File, Header, Key)
+		      If Results.RowCount > 1 Then
+		        Self.SQLExecute("DELETE FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ConfigOptionId, File, Header, Key)
+		      End If
+		      If Results.RowCount = 1 Then
+		        // Update
+		        Var OriginalConfigOptionId As String = Results.Column("object_id").StringValue
+		        Values.Add(OriginalConfigOptionId)
+		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19 WHERE object_id = ?22;", Values)
+		      Else
+		        // Insert
+		        Self.SQLExecute("INSERT INTO ini_options (object_id, label, content_pack_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group, custom_sort, constraints) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19);", Values)
+		      End If
+		    Next Dict
+		  End If
+		  
+		  If ChangeDict.HasKey("gameVariables") Then
+		    Var GameVariables() As Variant = ChangeDict.Value("gameVariables")
+		    For Each Dict As Dictionary In GameVariables
+		      Var Key As String = Dict.Value("key")
+		      Var Value As String = Dict.Value("value")
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT key FROM game_variables WHERE key = ?1;", Key)
+		      If Results.RowCount = 1 Then
+		        Self.SQLExecute("UPDATE game_variables SET value = ?2 WHERE key = ?1;", Key, Value)
+		      Else
+		        Self.SQLExecute("INSERT INTO game_variables (key, value) VALUES (?1, ?2);", Key, Value)
+		      End If
+		    Next
+		  End If
+		  
+		  Var TotalChanges As Integer
+		  Try
+		    TotalChanges = Self.TotalChanges()
+		  Catch Err As RuntimeException
+		    TotalChanges = -2
+		  End Try
+		  
+		  If IsUserData And TotalChanges <> InitialChanges Then
+		    Self.ExportCloudFiles()
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ObtainLock()
 		  mLock.Enter
 		End Sub
@@ -57,6 +210,61 @@ Inherits Beacon.DataSource
 		Sub ReleaseLock()
 		  mLock.Leave
 		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function SaveContentPack(Pack As Beacon.ContentPack) As Boolean
+		  Var Rows As RowSet
+		  If Pack.MarketplaceId.IsEmpty Then
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
+		  Else
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", Pack.ContentPackId, Pack.Marketplace, Pack.MarketplaceId)
+		  End If
+		  
+		  Var DidSave as Boolean
+		  Var NewContentPackId As String = Pack.ContentPackId
+		  Var ShouldInsert As Boolean = True
+		  If Rows.RowCount > 0 Then
+		    // The new content pack could be an official replacing a custom, or even just changing the id.
+		    While Not Rows.AfterLastRow
+		      Var OldContentPackId As String = Rows.Column("content_pack_id").StringValue
+		      Var OldIsLocal As Boolean = Rows.Column("is_local").BooleanValue
+		      If OldContentPackId = NewContentPackId Then
+		        // We can just update the row
+		        If Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
+		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
+		          DidSave = True
+		        End If
+		        ShouldInsert = False
+		      Else
+		        Var ShouldDelete As Boolean = True
+		        If Pack.IsLocal And OldIsLocal Then
+		          Self.ScheduleContentPackMigration(OldContentPackId, NewContentPackId)
+		        ElseIf OldIsLocal Then // New is official, old is local
+		          Self.ScheduleContentPackMigration(OldContentPackId, Palworld.UserContentPackId)
+		        ElseIf Pack.IsLocal Then // Old is official, new is local
+		          Self.ScheduleContentPackMigration(NewContentPackId, Palworld.UserContentPackId)
+		          ShouldInsert = False
+		          ShouldDelete = False
+		        Else // Both the old and new pack are official
+		          Self.DeleteDataForContentPack(OldContentPackId)
+		        End If
+		        
+		        If ShouldDelete Then
+		          Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", OldContentPackId)
+		        End If
+		      End If
+		      Rows.MoveToNextRow
+		    Wend
+		  End If
+		  
+		  If ShouldInsert Then
+		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
+		    DidSave = True
+		  End If
+		  
+		  Return DidSave
+		End Function
 	#tag EndEvent
 
 
@@ -309,7 +517,6 @@ Inherits Beacon.DataSource
 		      Var UIGroup As NullableString = NullableString.FromVariant(Results.Column("ui_group").Value)
 		      Var CustomSort As NullableString = NullableString.FromVariant(Results.Column("custom_sort").Value)
 		      Var ContentPackId As String = Results.Column("content_pack_id").StringValue
-		      Var GSAPlaceholder As NullableString = NullableString.FromVariant(Results.Column("gsa_placeholder").Value)
 		      
 		      Var Constraints As Dictionary
 		      If IsNull(Results.Column("constraints").Value) = False Then
@@ -322,18 +529,7 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		      
-		      Var UWPChanges As Dictionary
-		      If IsNull(Results.Column("uwp_changes").Value) = False Then
-		        Try
-		          Var Parsed As Variant = Beacon.ParseJSON(Results.Column("uwp_changes").StringValue)
-		          If IsNull(Parsed) = False And Parsed IsA Dictionary Then
-		            UWPChanges = Parsed
-		          End If
-		        Catch JSONErr As RuntimeException
-		        End Try
-		      End If
-		      
-		      Var Key As New Palworld.ConfigOption(ConfigOptionId, Label, ConfigFile, ConfigHeader, ConfigOption, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId, GSAPlaceholder, UWPChanges)
+		      Var Key As New Palworld.ConfigOption(ConfigOptionId, Label, ConfigFile, ConfigHeader, ConfigOption, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId)
 		      Self.mConfigOptionCache.Value(ConfigOptionId) = Key
 		      Keys.Add(Key)
 		      Results.MoveToNextRow
@@ -366,7 +562,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConfigOptionSelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C gsa_placeholder\x2C content_pack_id\x2C uwp_changes FROM ini_options", Scope = Private
+	#tag Constant, Name = ConfigOptionSelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C content_pack_id FROM ini_options", Scope = Private
 	#tag EndConstant
 
 

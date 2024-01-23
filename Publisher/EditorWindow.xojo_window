@@ -471,12 +471,15 @@ Begin DesktopWindow EditorWindow
       Width           =   80
    End
    Begin Thread HashThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   1
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
 End
 #tag EndDesktopWindow
@@ -709,7 +712,16 @@ End
 		  End If
 		  InsertData.Value("delta_version") = DeltaVersion
 		  InsertData.Value("published") = "'" + DateTime.Now.SQLDateTime + "'"
-		  InsertData.Value("supported_games") = "'{Ark,ArkSA}'"
+		  
+		  Var SupportedGames() As String = Array("Ark")
+		  If Self.mBuildNumber >= 20000000 Then
+		    SupportedGames.Add("ArkSA")
+		  End If
+		  If Self.mBuildNumber >= 20100000 Then
+		    SupportedGames.Add("Palworld")
+		  End If
+		  InsertData.Value("supported_games") = "'{" + String.FromArray(SupportedGames, ",") + "}'"
+		  
 		  Statements.Add(Self.DictionaryToInsertSQL("updates", InsertData))
 		  
 		  For Each DownloadObj As Download In Self.mDownloads

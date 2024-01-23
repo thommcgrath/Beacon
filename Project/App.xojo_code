@@ -35,6 +35,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Ark.DataSource.Pool.CloseAll
 		  SDTD.DataSource.Pool.CloseAll
 		  Beacon.CommonData.Pool.CloseAll
+		  ArkSA.DataSource.Pool.CloseAll
+		  Palworld.DataSource.Pool.CloseAll
 		  
 		  UpdatesKit.Cleanup
 		  

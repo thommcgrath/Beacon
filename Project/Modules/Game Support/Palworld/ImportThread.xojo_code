@@ -93,7 +93,7 @@ Inherits Beacon.Thread
 		  Var Configs() As Palworld.ConfigGroup
 		  For Each ConfigName As String In ConfigNames
 		    If ConfigName = Palworld.Configs.NameCustomConfig Then
-		      // Difficulty and custom content are special
+		      // Custom content is special
 		      Continue For ConfigName
 		    End If
 		    
@@ -258,7 +258,6 @@ Inherits Beacon.Thread
 		  Var CharactersProcessed As Integer
 		  Var CharactersTotal As Integer = Content.Length
 		  Var CurrentHeader As String
-		  Var MessageOfTheDayMode As Boolean = False
 		  Var ParsedData As New Dictionary
 		  Var Lines() As String = Content.Split(LineEnding)
 		  CharactersTotal = CharactersTotal + ((Lines.LastIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
@@ -275,39 +274,6 @@ Inherits Beacon.Thread
 		    
 		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
 		      CurrentHeader = Line.Middle(1, Line.Length - 2)
-		      MessageOfTheDayMode = (CurrentHeader = "MessageOfTheDay")
-		    End If
-		    
-		    If MessageOfTheDayMode Then
-		      Try
-		        If Line.BeginsWith("Duration=") Then
-		          Var Duration As Integer = Integer.FromString(Line.Middle(9))
-		          ParsedData.Value("Duration") = Duration
-		          ParsedData.Value("MessageOfTheDay.Duration") = Duration
-		        ElseIf Line.BeginsWith("MessageSetterID=") Then
-		          Var SetterId As String = Line.Middle(16)
-		          ParsedData.Value("MessageSetterID") = SetterId
-		          ParsedData.Value("MessageOfTheDay.MessageSetterID") = SetterId
-		        Else
-		          Var Message As String
-		          If Line.BeginsWith("Message=") Then
-		            Line = Line.Middle(8)
-		          Else
-		            Message = ParsedData.Lookup("MessageOfTheDay.Message", "")
-		          End If
-		          If Message.IsEmpty Then
-		            Message = Line
-		          Else
-		            Message = Message + LineEnding + Line
-		          End If
-		          ParsedData.Value("Message") = Message
-		          ParsedData.Value("MessageOfTheDay.Message") = Message
-		        End If
-		      Catch Err As RuntimeException
-		      End Try
-		      
-		      AddCharactersParsed(CharacterCount, CharactersTotal, Progress, CharactersProcessed)
-		      Continue
 		    End If
 		    
 		    If Line.IsEmpty Or Line.BeginsWith(";") Then
