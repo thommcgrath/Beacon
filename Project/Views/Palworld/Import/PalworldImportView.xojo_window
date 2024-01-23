@@ -1214,7 +1214,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CompatibleGameIds() As String()
-		  Return Array(Ark.Identifier, Palworld.Identifier)
+		  Return Array(Palworld.Identifier)
 		End Function
 	#tag EndEvent
 #tag EndEvents

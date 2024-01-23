@@ -101,6 +101,12 @@ Protected Module Palworld
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"Palworld", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = SteamAppId, Type = Double, Dynamic = False, Default = \"1623730", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = SteamServerId, Type = Double, Dynamic = False, Default = \"2394010", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"2325c10e-c30a-4dd9-883c-df2bb3afb95c", Scope = Protected
 	#tag EndConstant
 

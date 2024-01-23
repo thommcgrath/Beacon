@@ -1358,7 +1358,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GameName() As String
-		  Return Language.GameName(Palworld.Identifier)
+		  Return "Minimal Games"
 		End Function
 	#tag EndEvent
 #tag EndEvents

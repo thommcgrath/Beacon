@@ -22,31 +22,33 @@ Inherits Beacon.DiscoverIntegration
 		    End Try
 		  End Select
 		  
-		  Var LogsPath As String = Profile.LogsPath
-		  If LogsPath.IsEmpty = False Then
-		    Var PathSeparator As String = If(LogsPath.Contains("/"), "/", "\")
-		    Var LogFilePath As String = LogsPath + PathSeparator + "ShooterGame.log"
-		    Var DownloadSuccess As Boolean
-		    Var LogContents As String = Self.GetFile(LogFilePath, "ShooterGame.log", Beacon.Integration.DownloadFailureMode.ErrorsAllowed, Profile, False, DownloadSuccess)
-		    If DownloadSuccess Then
-		      Var Lines() As String = LogContents.GuessEncoding("Primal Game Data Took").Split(EndOfLine)
-		      Var FoundName As Boolean
-		      For Each Line As String In Lines
-		        Line = Line.Middle(30).Trim
-		        
-		        If Line.BeginsWith("Server: """) And Line.EndsWith(""" has successfully started!") Then
-		          // Found the server name
-		          Var ServerName As String = Line.Middle(9, Line.Length - 36)
-		          Profile.Name = ServerName
-		          FoundName = True
-		        End If
-		        
-		        If FoundName Then
-		          Exit For Line
-		        End If
-		      Next
+		  #if false
+		    Var LogsPath As String = Profile.LogsPath
+		    If LogsPath.IsEmpty = False Then
+		      Var PathSeparator As String = If(LogsPath.Contains("/"), "/", "\")
+		      Var LogFilePath As String = LogsPath + PathSeparator + "ShooterGame.log"
+		      Var DownloadSuccess As Boolean
+		      Var LogContents As String = Self.GetFile(LogFilePath, "ShooterGame.log", Beacon.Integration.DownloadFailureMode.ErrorsAllowed, Profile, False, DownloadSuccess)
+		      If DownloadSuccess Then
+		        Var Lines() As String = LogContents.GuessEncoding("Primal Game Data Took").Split(EndOfLine)
+		        Var FoundName As Boolean
+		        For Each Line As String In Lines
+		          Line = Line.Middle(30).Trim
+		          
+		          If Line.BeginsWith("Server: """) And Line.EndsWith(""" has successfully started!") Then
+		            // Found the server name
+		            Var ServerName As String = Line.Middle(9, Line.Length - 36)
+		            Profile.Name = ServerName
+		            FoundName = True
+		          End If
+		          
+		          If FoundName Then
+		            Exit For Line
+		          End If
+		        Next
+		      End If
 		    End If
-		  End If
+		  #endif
 		  
 		  Var SettingsIniPath As String = Profile.SettingsIniPath
 		  If SettingsIniPath.IsEmpty = False Then

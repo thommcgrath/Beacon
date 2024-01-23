@@ -428,6 +428,8 @@ Implements ObservationKit.Observable
 		    Return New SDTD.Project()
 		  Case ArkSA.Identifier
 		    Return New ArkSA.Project()
+		  Case Palworld.Identifier
+		    Return New Palworld.Project()
 		  End Select
 		End Function
 	#tag EndMethod

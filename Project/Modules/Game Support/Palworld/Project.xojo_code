@@ -161,6 +161,18 @@ Inherits Beacon.Project
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function DataSource(AllowWriting As Boolean) As Beacon.DataSource
+		  Return Palworld.DataSource.Pool.Get(AllowWriting)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameId() As String
+		  Return Palworld.Identifier
+		End Function
+	#tag EndMethod
+
 
 	#tag ViewBehavior
 		#tag ViewProperty

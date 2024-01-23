@@ -165,7 +165,7 @@ Protected Module Language
 		    Return "Loot Drops"
 		  Case Ark.Configs.NameLevelsAndXP, ArkSA.Configs.NameLevelsAndXP
 		    Return "Levels and XP"
-		  Case Ark.Configs.NameCustomConfig, SDTD.Configs.NameCustomConfig, ArkSA.Configs.NameCustomConfig
+		  Case Ark.Configs.NameCustomConfig, SDTD.Configs.NameCustomConfig, ArkSA.Configs.NameCustomConfig, Palworld.Configs.NameCustomConfig
 		    Return "Custom Config"
 		  Case Ark.Configs.NameCraftingCosts, ArkSA.Configs.NameCraftingCosts
 		    Return "Crafting Costs"
@@ -189,13 +189,13 @@ Protected Module Language
 		    Return "Engram Control"
 		  Case Ark.Configs.NameDecayAndSpoil, ArkSA.Configs.NameDecayAndSpoil
 		    Return "Decay and Spoil"
-		  Case Ark.Configs.NameGeneralSettings, SDTD.Configs.NameGeneralSettings, ArkSA.Configs.NameGeneralSettings
+		  Case Ark.Configs.NameGeneralSettings, SDTD.Configs.NameGeneralSettings, ArkSA.Configs.NameGeneralSettings, Palworld.Configs.NameGeneralSettings
 		    Return "General Settings"
-		  Case Ark.Configs.NameServers, SDTD.Configs.NameServers, ArkSA.Configs.NameServers
+		  Case Ark.Configs.NameServers, SDTD.Configs.NameServers, ArkSA.Configs.NameServers, Palworld.Configs.NameServers
 		    Return "Servers"
-		  Case Ark.Configs.NameAccounts, SDTD.Configs.NameAccounts, ArkSA.Configs.NameAccounts
+		  Case Ark.Configs.NameAccounts, SDTD.Configs.NameAccounts, ArkSA.Configs.NameAccounts, Palworld.Configs.NameAccounts
 		    Return "Accounts"
-		  Case Ark.Configs.NameProjectSettings, SDTD.Configs.NameProjectSettings, ArkSA.Configs.NameProjectSettings
+		  Case Ark.Configs.NameProjectSettings, SDTD.Configs.NameProjectSettings, ArkSA.Configs.NameProjectSettings, Palworld.Configs.NameProjectSettings
 		    Return "Project Settings"
 		  End Select
 		End Function
