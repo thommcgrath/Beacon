@@ -26,7 +26,7 @@ Protected Class ConfigValue
 		  If Keys.Count >= 1 Then
 		    ConfigOption = Keys(0)
 		  Else
-		    ConfigOption = New Palworld.ConfigOption(File, Header, Self.mSimplifiedKey)
+		    ConfigOption = New Palworld.ConfigOption(File, Header, Nil, Self.mSimplifiedKey)
 		  End If
 		  
 		  Self.mKeyDetails = ConfigOption
@@ -43,7 +43,7 @@ Protected Class ConfigValue
 		  If Keys.Count >= 1 Then
 		    ConfigOption = Keys(0)
 		  Else
-		    ConfigOption = New Palworld.ConfigOption(File, Header, Self.mSimplifiedKey)
+		    ConfigOption = New Palworld.ConfigOption(File, Header, Nil, Self.mSimplifiedKey)
 		  End If
 		  
 		  Self.mKeyDetails = ConfigOption
@@ -120,7 +120,7 @@ Protected Class ConfigValue
 		#tag Getter
 			Get
 			  If Self.mHash.IsEmpty Then
-			    Var Raw As String = Self.mKeyDetails.File.Lowercase + ":" + Self.mKeyDetails.Header.Lowercase + ":" + Self.mSortKey.Lowercase
+			    Var Raw As String = Self.mKeyDetails.File.Lowercase + ":" + Self.mKeyDetails.Header.Lowercase + If(Self.mKeyDetails.Struct Is Nil, "", ":" + Self.mKeyDetails.Struct.StringValue.Lowercase) + ":" + Self.mSortKey.Lowercase
 			    #if DebugBuild
 			      Self.mHash = Raw
 			    #else
@@ -167,6 +167,10 @@ Protected Class ConfigValue
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mStruct As NullableString
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mValue As String
 	#tag EndProperty
 
@@ -199,6 +203,15 @@ Protected Class ConfigValue
 			End Get
 		#tag EndGetter
 		SortKey As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mKeyDetails.Struct
+			End Get
+		#tag EndGetter
+		Struct As NullableString
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

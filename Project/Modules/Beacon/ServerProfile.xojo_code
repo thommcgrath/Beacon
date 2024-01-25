@@ -276,6 +276,8 @@ Protected Class ServerProfile
 		    Return New SDTD.ServerProfile(Dict, Project, Version)
 		  Case ArkSA.Identifier
 		    Return New ArkSA.ServerProfile(Dict, Project, Version)
+		  Case Palworld.Identifier
+		    Return New Palworld.ServerProfile(Dict, Project, Version)
 		  End Select
 		End Function
 	#tag EndMethod

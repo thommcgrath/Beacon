@@ -24,7 +24,7 @@ Protected Class ConfigOrganizer
 		      // Key does not exist yet
 		      Siblings.Add(Value)
 		      Self.mValues.Value(Value.Hash) = Siblings
-		      Self.mIndex.ExecuteSQL("INSERT INTO keymap (hash, file, header, simplekey, sortkey) VALUES (?1, ?2, ?3, ?4, ?5);", Value.Hash, Value.File, Value.Header, Value.SimplifiedKey, Value.SortKey)
+		      Self.mIndex.ExecuteSQL("INSERT INTO keymap (hash, file, header, struct, simplekey, sortkey) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Value.Hash, Value.File, Value.Header, NullableString.ToVariant(Value.Struct), Value.SimplifiedKey, Value.SortKey)
 		      Continue
 		    End If
 		    
@@ -58,10 +58,13 @@ Protected Class ConfigOrganizer
 		  
 		  Content = Content.ReplaceLineEndings(EndOfLine.UNIX)
 		  
+		  Var DataSource As Palworld.DataSource = Palworld.DataSource.Pool.Get(False)
 		  Var Lines() As String = Content.Split(EndOfLine.UNIX)
 		  Var Header As String = DefaultHeader
 		  Var Values() As Palworld.ConfigValue
 		  Var KeyCounts As New Dictionary
+		  Var Structs() As String = DataSource.GetConfigStructs(File, Header)
+		  
 		  For LineIdx As Integer = 0 To Lines.LastIndex
 		    Var Line As String = Lines(LineIdx).Trim
 		    If Line.IsEmpty Then
@@ -70,21 +73,43 @@ Protected Class ConfigOrganizer
 		    
 		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
 		      Header = Line.Middle(1, Line.Length - 2)
+		      Structs = DataSource.GetConfigStructs(File, Header)
 		      Continue
 		    End If
 		    
-		    Var Pos As Integer = Line.IndexOf("=")
-		    If Pos = -1 Then
-		      // This line has no equal sign, skip it
+		    Var Parsed As Variant = Palworld.ImportThread.ParseLine(Line + EndOfLine.UNIX)
+		    If Parsed.IsNull Or Parsed.Type <> Variant.TypeObject Or (Parsed.ObjectValue IsA Beacon.KeyValuePair) = False Then
 		      Continue
 		    End If
 		    
-		    Var AttributedKey As String = Line.Left(Pos)
+		    Var Result As Beacon.KeyValuePair = Parsed
+		    Var AttributedKey As String = Result.Key
 		    Var KeyIndex As Integer = KeyCounts.Lookup(AttributedKey, 0).IntegerValue
 		    KeyCounts.Value(AttributedKey) = KeyIndex + 1
-		    Var Config As New Palworld.ConfigValue(File, Header, Line, KeyIndex)
 		    
-		    Values.Add(Config)
+		    If Structs.IndexOf(AttributedKey) > -1 And Result.Value.Type = Variant.TypeObject ANd Result.Value.ObjectValue IsA Dictionary Then
+		      Var Struct As String = AttributedKey
+		      Var StructData As Dictionary = Result.Value
+		      For Each Entry As DictionaryEntry In StructData
+		        Var Key As String = Entry.Key
+		        Var Command As String
+		        Select Case Entry.Value.Type
+		        Case Variant.TypeBoolean
+		          Command = Key + "=" + If(Entry.Value.BooleanValue, "True", "False")
+		        Case Variant.TypeDouble, Variant.TypeSingle, Variant.TypeInt32, Variant.TypeInt64, Variant.TypeCurrency
+		          Command = Key + "=" + Entry.Value.DoubleValue.PrettyText
+		        Else
+		          Command = Key + "=""" + Entry.Value.StringValue + """"
+		        End Select
+		        
+		        Var Value As String = Entry.Value
+		        
+		        Values.Add(New Palworld.ConfigValue(New Palworld.ConfigOption(File, Header, Struct, Key), Command, 0))
+		      Next
+		      Continue
+		    End If
+		    
+		    Values.Add(New Palworld.ConfigValue(File, Header, Line, KeyIndex))
 		  Next
 		  Tracker.Log("Took %elapsed% to parse " + Content.Length.ToString + " characters of content.")
 		  Self.Add(Values)
@@ -138,8 +163,21 @@ Protected Class ConfigOrganizer
 		    Var Lines() As String
 		    Lines.Add("[" + Header + "]")
 		    
-		    // This is special cased so that launch options get sorted with the rest of ServerSettings
-		    Var Values() As Palworld.ConfigValue = Self.FilteredValues(ForFile, Header)
+		    Var Structs() As String = Self.Structs(ForFile, Header)
+		    For Each Struct As String In Structs
+		      // This is special cased so that launch options get sorted with the rest of ServerSettings
+		      Var Values() As Palworld.ConfigValue = Self.FilteredValues(ForFile, Header, Struct)
+		      Var Members() As String
+		      Values.Sort
+		      For Each Value As Palworld.ConfigValue In Values
+		        Members.Add(Value.Command)
+		      Next
+		      If Members.Count > 0 Then
+		        Lines.Add(Struct + "=(" + String.FromArray(Members, ",") + ")")
+		      End If
+		    Next
+		    
+		    Var Values() As Palworld.ConfigValue = Self.FilteredValues(ForFile, Header, Nil)
 		    Values.Sort
 		    For Each Value As Palworld.ConfigValue In Values
 		      Lines.Add(Value.Command)
@@ -176,7 +214,7 @@ Protected Class ConfigOrganizer
 		  Self.mManagedKeys = New Dictionary
 		  Self.mIndex = New SQLiteDatabase
 		  Self.mIndex.Connect
-		  Self.mIndex.ExecuteSQL("CREATE TABLE keymap (hash TEXT NOT NULL PRIMARY KEY COLLATE NOCASE, file TEXT NOT NULL COLLATE NOCASE, header TEXT NOT NULL COLLATE NOCASE, simplekey TEXT NOT NULL COLLATE NOCASE, sortkey TEXT NOT NULL COLLATE NOCASE);")
+		  Self.mIndex.ExecuteSQL("CREATE TABLE keymap (hash TEXT NOT NULL PRIMARY KEY COLLATE NOCASE, file TEXT NOT NULL COLLATE NOCASE, header TEXT NOT NULL COLLATE NOCASE, struct TEXT COLLATE NOCASE, simplekey TEXT NOT NULL COLLATE NOCASE, sortkey TEXT NOT NULL COLLATE NOCASE);")
 		End Sub
 	#tag EndMethod
 
@@ -202,7 +240,7 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function DistinctKeys() As Palworld.ConfigOption()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap ORDER BY sortkey;")
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, struct, simplekey FROM keymap ORDER BY sortkey;")
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
@@ -213,10 +251,11 @@ Protected Class ConfigOrganizer
 		  While Rows.AfterLastRow = False
 		    Var File As String = Rows.Column("file").StringValue
 		    Var Header As String = Rows.Column("header").StringValue
+		    Var Struct As NullableString = NullableString.FromVariant(Rows.Column("struct").Value)
 		    Var SimpleKey As String = Rows.Column("simplekey").StringValue
 		    Var Key As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOption(File, Header, SimpleKey)
 		    If Key Is Nil Then
-		      Key = New Palworld.ConfigOption(File, Header, SimpleKey)
+		      Key = New Palworld.ConfigOption(File, Header, Struct, SimpleKey)
 		    End If
 		    Results.Add(Key)
 		    Rows.MoveToNextRow
@@ -227,14 +266,21 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function DistinctKeys(ForFile As String) As Palworld.ConfigOption()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap WHERE file = ?1;", ForFile)
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, struct, simplekey FROM keymap WHERE file = ?1;", ForFile)
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DistinctKeys(ForFile As String, ForHeader As String) As Palworld.ConfigOption()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap WHERE file = ?1 AND header = ?2;", ForFile, ForHeader)
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, struct, simplekey FROM keymap WHERE file = ?1 AND header = ?2;", ForFile, ForHeader)
+		  Return Self.DistinctKeys(Rows)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DistinctKeys(ForFile As String, ForHeader As String, ForStruct As String) As Palworld.ConfigOption()
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, struct, simplekey FROM keymap WHERE file = ?1 AND header = ?2 AND struct = ?3;", ForFile, ForHeader, ForStruct)
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
@@ -248,7 +294,7 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function FilteredValues(Key As Palworld.ConfigOption) As Palworld.ConfigValue()
-		  Return Self.FilteredValues(Key.File, Key.Header, Key.SimplifiedKey)
+		  Return Self.FilteredValues(Key.File, Key.Header, Key.Struct, Key.SimplifiedKey)
 		End Function
 	#tag EndMethod
 
@@ -282,8 +328,25 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FilteredValues(ForFile As String, ForHeader As String, ForSimpleKey As String) As Palworld.ConfigValue()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND simplekey = ?3;", ForFile, ForHeader, ForSimpleKey)
+		Function FilteredValues(ForFile As String, ForHeader As String, ForStruct As NullableString) As Palworld.ConfigValue()
+		  Var Rows As RowSet
+		  If ForStruct Is Nil Then
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct IS NULL ORDER BY sortkey;", ForFile, ForHeader)
+		  Else
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct = ?3 ORDER BY sortkey;", ForFile, ForHeader, ForStruct.StringValue)
+		  End If
+		  Return Self.FilteredValues(Rows)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FilteredValues(ForFile As String, ForHeader As String, ForStruct As NullableString, ForSimpleKey As String) As Palworld.ConfigValue()
+		  Var Rows As RowSet
+		  If ForStruct Is Nil Then
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct IS NULL AND simplekey = ?3;", ForFile, ForHeader, ForSimpleKey)
+		  Else
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct = ?3 AND simplekey = ?4;", ForFile, ForHeader, ForStruct.StringValue, ForSimpleKey)
+		  End If
 		  Return Self.FilteredValues(Rows)
 		End Function
 	#tag EndMethod
@@ -291,6 +354,13 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
 		Function HasHeader(InFile As String, Header As String) As Boolean
 		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT COUNT(hash) AS numkeys FROM keymap WHERE file = ?1 AND header = ?2;", InFile, Header)
+		  Return Rows.Column("numkeys").IntegerValue > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasStruct(InFile As String, Header As String, Struct As String) As Boolean
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT COUNT(hash) AS numkeys FROM keymap WHERE file = ?1 AND header = ?2 AND struct = ?3;", InFile, Header, Struct)
 		  Return Rows.Column("numkeys").IntegerValue > 0
 		End Function
 	#tag EndMethod
@@ -329,6 +399,78 @@ Protected Class ConfigOrganizer
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Sub ParseLine(Line As String, ByRef Key As String, ByRef Value As Variant)
+		  Line = Line.ReplaceAll("\""", "2488dddbde7c")
+		  
+		  Var EqualsPos As Integer = Line.IndexOf("=")
+		  If EqualsPos = -1 Then
+		    Key = ""
+		    Value = Nil
+		    Return
+		  End If
+		  
+		  Var StartPos As Integer = EqualsPos + 1
+		  Var ParsedValue As Variant = ParseValue(Line, StartPos)
+		  
+		  Key = Line.Left(EqualsPos)
+		  Value = ParsedValue
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ParseStruct(File As String, Header As String, Line As String) As Palworld.ConfigValue()
+		  Var Values() As Palworld.ConfigValue
+		  #if false
+		    Var EqualsPos As Integer = Line.IndexOf("=")
+		    Var OpenPos As Integer = Line.IndexOf("(")
+		    If EqualsPos = -1 Or OpenPos = -1 Or OpenPos <> EqualsPos + 1 Then
+		      Return Values
+		    End If
+		    
+		    Var StartPos As Integer = OpenPos + 1
+		    Do
+		      Var KeyEqualsPos As Integer = Line.IndexOf(StartPos, "=")
+		      Var ValueStartPos As Integer = KeyEqualsPos + 1
+		      Var ValueEndPos As Integer
+		      If Line.Middle(ValueStartPos, 1) = """" Then
+		        ValueStartPos = ValueStartPos + 1
+		        ValueEndPos = Line.IndexOf(ValueStartPos, """")
+		      ElseIf Line.Middle(ValueStartPos, 1) = "(" Then
+		        ValueStartPos = ValueStartPos + 1
+		        ValueEndPos
+		      Else
+		        ValueEndPos = Min(Line.IndexOf(ValueStartPos, ","), Line.IndexOf(ValueStartPos, ")"))
+		      End If
+		    Loop Until
+		  #endif
+		  Return Values
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ParseValue(Line As String, ByRef StartPos As Integer) As Variant
+		  If Line.Middle(StartPos, 1) = """" Then
+		    // Quoted string
+		    StartPos = StartPos + 1
+		    Var EndPos As Integer = Line.IndexOf(StartPos, """")
+		    If EndPos = -1 Then
+		      EndPos = Line.Length
+		    End If
+		    
+		    Var Value As String = Line.Middle(StartPos, EndPos - StartPos).ReplaceAll("2488dddbde7c", """")
+		    StartPos = EndPos
+		    Return Value
+		  End If
+		  
+		  If Line.Middle(StartPos, 1) = "(" Then
+		    // Struct or array
+		    StartPos = StartPos + 1
+		    
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Remove(Keys() As Palworld.ConfigOption)
 		  Self.mIndex.BeginTransaction
@@ -336,7 +478,12 @@ Protected Class ConfigOrganizer
 		    If Key Is Nil Then
 		      Continue
 		    End If
-		    Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND simplekey = ?3;", Key.File, Key.Header, Key.Key)
+		    Var Rows As RowSet
+		    If Key.Struct Is Nil Then
+		      Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct IS NULL AND simplekey = ?3;", Key.File, Key.Header, Key.Key)
+		    Else
+		      Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct = ?3 AND simplekey = ?4;", Key.File, Key.Header, Key.Struct.StringValue, Key.Key)
+		    End If
 		    While Rows.AfterLastRow = False
 		      Var Hash As String = Rows.Column("hash").StringValue
 		      Self.mValues.Remove(Hash)
@@ -405,10 +552,39 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(ForFile As String, Header As String, Key As String)
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND simplekey = ?3;", ForFile, Header, Key)
+		Sub Remove(ForFile As String, Header As String, Struct As NullableString)
+		  Var Rows As RowSet
+		  If Struct Is Nil Then
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct IS NULL;", ForFile, Header)
+		  Else
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct = ?3;", ForFile, Header, Struct.StringValue)
+		  End If
 		  Self.Remove(Rows)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Remove(ForFile As String, Header As String, Struct As NullableString, Key As String)
+		  Var Rows As RowSet
+		  If Struct Is Nil Then
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct IS NULL AND simplekey = ?3;", ForFile, Header, Key)
+		  Else
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND struct = ?3 AND simplekey = ?4;", ForFile, Header, Struct.StringValue, Key)
+		  End If
+		  Self.Remove(Rows)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Structs(ForFile As String, ForHeader As String) As String()
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT struct FROM keymap WHERE file = ?1 AND header = ?2 AND struct IS NOT NULL ORDER BY struct", ForFile, ForHeader)
+		  Var Results() As String
+		  While Rows.AfterLastRow = False
+		    Results.Add(Rows.Column("struct").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Results
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -426,7 +426,7 @@ Begin BeaconDialog PalworldExportWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   192
+      Top             =   126
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -458,7 +458,7 @@ Begin BeaconDialog PalworldExportWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   244
+      Top             =   178
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -491,7 +491,7 @@ Begin BeaconDialog PalworldExportWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   218
+      Top             =   152
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -530,7 +530,9 @@ Begin BeaconDialog PalworldExportWindow
    End
    Begin Palworld.Rewriter SharedRewriter
       DebugIdentifier =   ""
+      FinishedSettingsIniContent=   ""
       Index           =   -2147483648
+      InitialSettingsIniContent=   ""
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
@@ -865,12 +867,11 @@ End
 		  Var Profile As Palworld.ServerProfile
 		  If Self.ProfileMenu.SelectedRowIndex > -1 Then
 		    Profile = Palworld.ServerProfile(Self.ProfileMenu.RowTagAt(Self.ProfileMenu.SelectedRowIndex)).Clone // We need to work on a copy
-		    
-		    If Self.ConfigSetsOverrideCheck.Value Then
-		      Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
-		    End If
 		  Else
-		    Return
+		    Profile = New Palworld.ServerProfile(Local.Identifier, Self.mProject.Title)
+		  End If
+		  If Self.ConfigSetsOverrideCheck.Value Then
+		    Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		  End If
 		  Self.mCurrentProfile = Profile
 		  

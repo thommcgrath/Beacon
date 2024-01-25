@@ -47,8 +47,10 @@ Inherits Beacon.Thread
 		Private Shared Sub AddCharactersParsed(CharacterCount As Integer, TotalCharacters As Integer, Progress As Beacon.ProgressDisplayer, ByRef CharactersProcessed As Integer)
 		  CharactersProcessed = CharactersProcessed + CharacterCount
 		  Var Percent As Double = CharactersProcessed / TotalCharacters
-		  Progress.Progress = Percent
-		  Progress.Detail = "Parsing files (" + Percent.ToString(Locale.Current, "0%") + ")…"
+		  If (Progress Is Nil) = False Then
+		    Progress.Progress = Percent
+		    Progress.Detail = "Parsing files (" + Percent.ToString(Locale.Current, "0%") + ")…"
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -168,7 +170,7 @@ Inherits Beacon.Thread
 		  Var Value As Variant
 		  Var Characters() As String = Content.Split("")
 		  For Each Char As String In Characters
-		    If Progress.CancelPressed Then
+		    If (Progress Is Nil) = False And Progress.CancelPressed Then
 		      Return Nil
 		    End If
 		    
@@ -200,6 +202,13 @@ Inherits Beacon.Thread
 		    Name = "Untitled Importer"
 		  End If
 		  Return Name
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ParseLine(Content As String) As Variant
+		  Var TotalCharacters, CharactersProcessed As Integer
+		  Return Import(Content, TotalCharacters, Nil, CharactersProcessed)
 		End Function
 	#tag EndMethod
 

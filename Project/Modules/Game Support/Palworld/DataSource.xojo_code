@@ -5,7 +5,7 @@ Inherits Beacon.DataSource
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, struct TEXT COLLATE NOCASE, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
 		End Sub
 	#tag EndEvent
 
@@ -58,7 +58,6 @@ Inherits Beacon.DataSource
 		    InitialChanges = -1
 		  End Try
 		  
-		  Var EngramsChanged As Boolean
 		  If ChangeDict.HasKey("deletions") Then
 		    Var Deletions() As Variant = ChangeDict.Value("deletions")
 		    For Each Deletion As Dictionary In Deletions
@@ -102,6 +101,7 @@ Inherits Beacon.DataSource
 		      Var ContentPackId As String = Dict.Value("contentPackId")
 		      Var File As String = Dict.Value("file")
 		      Var Header As String = Dict.Value("header")
+		      Var Struct As Variant = Dict.Value("struct")
 		      Var Key As String = Dict.Value("key")
 		      Var TagString, TagStringForSearching As String
 		      Try
@@ -117,7 +117,7 @@ Inherits Beacon.DataSource
 		        
 		      End Try
 		      
-		      Var Values(18) As Variant
+		      Var Values(19) As Variant
 		      Values(0) = ConfigOptionId
 		      Values(1) = Dict.Value("label")
 		      Values(2) = ContentPackId
@@ -153,19 +153,20 @@ Inherits Beacon.DataSource
 		        Catch JSONErr As RuntimeException
 		        End Try
 		      End If
+		      Values(19) = Struct
 		      
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ConfigOptionId, File, Header, Key)
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND struct = ?4 AND key = ?5);", ConfigOptionId, File, Header, Struct, Key)
 		      If Results.RowCount > 1 Then
-		        Self.SQLExecute("DELETE FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ConfigOptionId, File, Header, Key)
+		        Self.SQLExecute("DELETE FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND struct = ?4 AND key = ?5);", ConfigOptionId, File, Header, Struct, Key)
 		      End If
 		      If Results.RowCount = 1 Then
 		        // Update
 		        Var OriginalConfigOptionId As String = Results.Column("object_id").StringValue
 		        Values.Add(OriginalConfigOptionId)
-		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19 WHERE object_id = ?22;", Values)
+		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19, struct = ?20 WHERE object_id = ?22;", Values)
 		      Else
 		        // Insert
-		        Self.SQLExecute("INSERT INTO ini_options (object_id, label, content_pack_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group, custom_sort, constraints) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19);", Values)
+		        Self.SQLExecute("INSERT INTO ini_options (object_id, label, content_pack_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group, custom_sort, constraints, struct) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20);", Values)
 		      End If
 		    Next Dict
 		  End If
@@ -372,6 +373,39 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetConfigStructs(ForFile As String, ForHeader As String) As String()
+		  Var Clauses() As String = Array("struct IS NOT NULL")
+		  Var Values As New Dictionary
+		  Var Idx As Integer = 1
+		  
+		  If ForFile.IsEmpty = False Then
+		    Values.Value(Idx) = ForFile
+		    Clauses.Add("file = ?" + Idx.ToString)
+		    Idx = Idx + 1
+		  End If
+		  If ForHeader.IsEmpty = False Then
+		    Values.Value(Idx) = ForHeader
+		    Clauses.Add("header = ?" + Idx.ToString)
+		    Idx = Idx + 1
+		  End If
+		  
+		  Var SQL As String = "SELECT DISTINCT struct FROM ini_options"
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
+		  End If
+		  SQL = SQL + " ORDER BY struct;"
+		  
+		  Var Structs() As String
+		  Var Rows As RowSet = Self.SQLSelect(SQL, Values)
+		  While Not Rows.AfterLastRow
+		    Structs.Add(Rows.Column("struct").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Structs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetContentPack(Marketplace As String, MarketplaceId As String) As Beacon.ContentPack
 		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 ORDER BY is_local DESC LIMIT 1;", Marketplace, MarketplaceId)
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
@@ -473,7 +507,8 @@ Inherits Beacon.DataSource
 		      Var Label As String = Results.Column("label").StringValue
 		      Var ConfigFile As String = Results.Column("file").StringValue
 		      Var ConfigHeader As String = Results.Column("header").StringValue
-		      Var ConfigOption As String = Results.Column("key").StringValue
+		      Var ConfigStruct As NullableString = NullableString.FromVariant(Results.Column("struct").Value)
+		      Var ConfigKey As String = Results.Column("key").StringValue
 		      Var ValueType As Palworld.ConfigOption.ValueTypes
 		      Select Case Results.Column("value_type").StringValue
 		      Case "Numeric"
@@ -529,7 +564,7 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		      
-		      Var Key As New Palworld.ConfigOption(ConfigOptionId, Label, ConfigFile, ConfigHeader, ConfigOption, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId)
+		      Var Key As New Palworld.ConfigOption(ConfigOptionId, Label, ConfigFile, ConfigHeader, ConfigStruct, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId)
 		      Self.mConfigOptionCache.Value(ConfigOptionId) = Key
 		      Keys.Add(Key)
 		      Results.MoveToNextRow
@@ -562,7 +597,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConfigOptionSelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C content_pack_id FROM ini_options", Scope = Private
+	#tag Constant, Name = ConfigOptionSelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C struct\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C content_pack_id FROM ini_options", Scope = Private
 	#tag EndConstant
 
 

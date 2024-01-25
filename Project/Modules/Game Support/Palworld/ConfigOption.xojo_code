@@ -33,6 +33,7 @@ Implements Beacon.GameSetting
 		  Self.mLabel = Source.mLabel
 		  Self.mFile = Source.mFile
 		  Self.mHeader = Source.mHeader
+		  Self.mStruct = Source.mStruct
 		  Self.mKey = Source.mKey
 		  Self.mValueType = Source.mValueType
 		  Self.mMaxAllowed = Source.mMaxAllowed
@@ -47,16 +48,17 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(File As String, Header As String, Key As String)
+		Sub Constructor(File As String, Header As String, Struct As NullableString, Key As String)
 		  Self.mFile = File
 		  Self.mHeader = Header
+		  Self.mStruct = Struct
 		  Self.mKey = Key
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Key As String, ValueType As Palworld.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Palworld.ConfigOption.NitradoFormats, NitradoDeployStyle As Palworld.ConfigOption.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String)
-		  Self.Constructor(File, Header, Key)
+		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Struct As NullableString, Key As String, ValueType As Palworld.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Palworld.ConfigOption.NitradoFormats, NitradoDeployStyle As Palworld.ConfigOption.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String)
+		  Self.Constructor(File, Header, Struct, Key)
 		  
 		  Self.mConfigOptionId = ConfigOptionId
 		  Self.mLabel = Label
@@ -228,6 +230,12 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Struct() As NullableString
+		  Return Self.mStruct
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UIGroup() As NullableString
 		  Return Self.mUIGroup
 		End Function
@@ -324,6 +332,10 @@ Implements Beacon.GameSetting
 
 	#tag Property, Flags = &h21
 		Private mNitradoPaths() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStruct As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
