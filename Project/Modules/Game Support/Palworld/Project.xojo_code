@@ -1,6 +1,75 @@
 #tag Class
 Protected Class Project
 Inherits Beacon.Project
+	#tag Event
+		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused PlainData
+		  #Pragma Unused EncryptedData
+		  
+		  Var ConfigSets() As Beacon.ConfigSet = Self.ConfigSets
+		  Var Editors() As String
+		  For Each ConfigSet As Beacon.ConfigSet In ConfigSets
+		    Var SetDict As Dictionary = Self.ConfigSetData(ConfigSet)
+		    For Each Entry As DictionaryEntry In SetDict
+		      Var ConfigName As String = Entry.Key.StringValue
+		      If Editors.IndexOf(ConfigName) = -1 Then
+		        Editors.Add(ConfigName)
+		      End If
+		    Next Entry
+		  Next ConfigSet
+		  Editors.Sort
+		  ManifestData.Value("editors") = Editors
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
+		  Var SetDict As New Dictionary
+		  For Each Entry As DictionaryEntry In PlainData
+		    Try
+		      Var InternalName As String = Entry.Key
+		      Var GroupData As Dictionary = Entry.Value
+		      Var EncryptedGroupData As Dictionary
+		      If EncryptedData.HasKey(InternalName) Then
+		        Try
+		          EncryptedGroupData = EncryptedData.Value(InternalName)
+		        Catch EncGroupDataErr As RuntimeException
+		        End Try
+		      End If
+		      
+		      Var Instance As Palworld.ConfigGroup = Palworld.Configs.CreateInstance(InternalName, GroupData, EncryptedGroupData)
+		      If (Instance Is Nil) = False Then
+		        SetDict.Value(InternalName) = Instance
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.ProjectId + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
+		    End Try
+		  Next
+		  Return SetDict
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub SaveConfigSet(SetDict As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		  For Each Entry As DictionaryEntry In SetDict
+		    Var Group As Palworld.ConfigGroup = Entry.Value
+		    
+		    Var GroupData As Dictionary = Group.SaveData()
+		    If GroupData Is Nil Then
+		      Continue
+		    End If
+		    
+		    If GroupData.HasAllKeys("Plain", "Encrypted") Then
+		      PlainData.Value(Group.InternalName) = GroupData.Value("Plain")
+		      EncryptedData.Value(Group.InternalName) = GroupData.Value("Encrypted")
+		    Else
+		      PlainData.Value(Group.InternalName) = GroupData
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Function CombinedConfig(GroupName As String, Sets() As Beacon.ConfigSet) As Palworld.ConfigGroup
 		  If Sets Is Nil Then

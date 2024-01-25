@@ -545,6 +545,8 @@ Implements ObservationKit.Observable
 		    Project = New SDTD.Project
 		  Case ArkSA.Identifier
 		    Project = New ArkSA.Project
+		  Case Palworld.Identifier
+		    Project = New Palworld.Project
 		  Else
 		    Var Err As New Beacon.ProjectLoadException
 		    Err.Message = "Unknown game " + GameId + "."
