@@ -11,4 +11,5 @@ echo $breadcrumbs->Render();
 <ul>
 	<li><a href="/Games/ArkSA">Ark: Survival Ascended</a></li>
 	<li><a href="/Games/Ark">Ark: Survival Evolved</a></li>
+	<li>Palworld (Nothing to browse)</li>
 </ul>

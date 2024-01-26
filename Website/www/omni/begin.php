@@ -161,6 +161,7 @@ while (!$results->EOF()) {
 
 $includeArk = isset($products['Ark']['Base']);
 $includeArkSA = isset($products['ArkSA']['Base']);
+$includeMinimalGames = isset($products['BeaconMinimal']['Base']);
 
 $lines = [];
 foreach ($bundles as $bundle) {
@@ -168,6 +169,7 @@ foreach ($bundles as $bundle) {
 
 	$wantsArk = $includeArk ? $bundle->getQuantity($products['Ark']['Base']['ProductId']) > 0 : false;
 	$wantsArkSAYears = $includeArkSA ? $bundle->getQuantity($products['ArkSA']['Base']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Upgrade']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Renewal']['ProductId']) : 0;
+	$wantsMinimalGamesYears = $includeMinimalGames ? $bundle->getQuantity($products['BeaconMinimal']['Base']['ProductId']) + $bundle->getQuantity($products['BeaconMinimal']['Renewal']['ProductId']) : 0;
 
 	if ($bundle->isGift()) {
 		if ($wantsArk) {
@@ -184,9 +186,17 @@ foreach ($bundles as $bundle) {
 				$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + ($wantsArkSAYears - 1);
 			}
 		}
+
+		if ($wantsMinimalGamesYears > 0) {
+			$lines[$products['BeaconMinimal']['Base']['PriceId']] = ($lines[$products['BeaconMinimal']['Base']['PriceId']] ?? 0) + 1;
+			if ($wantsMinimalGamesYears > 1) {
+				$lines[$products['BeaconMinimal']['Renewal']['PriceId']] = ($lines[$products['BeaconMinimal']['Renewal']['PriceId']] ?? 0) + ($wantsMinimalGamesYears - 1);
+			}
+		}
 	} else {
 		$ownsArk = $includeArk && findLicense($licenses, $products['Ark']['Base']['ProductId']) !== null;
 		$ownsArkSA = $includeArkSA && findLicense($licenses, $products['ArkSA']['Base']['ProductId']) !== null;
+		$ownsMinimalGames = $includeMinimalGames && findLicense($licenses, $products['BeaconMinimal']['Base']['ProductId']) !== null;
 
 		if ($wantsArk && !$ownsArk) {
 			$lines[$products['Ark']['Base']['PriceId']] = ($lines[$products['Ark']['Base']['PriceId']] ?? 0) + 1;
@@ -203,6 +213,17 @@ foreach ($bundles as $bundle) {
 				}
 				if ($wantsArkSAYears > 1) {
 					$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + ($wantsArkSAYears - 1);
+				}
+			}
+		}
+
+		if ($wantsMinimalGamesYears > 0) {
+			if ($ownsMinimalGames) {
+				$lines[$products['BeaconMinimal']['Renewal']['PriceId']] = ($lines[$products['BeaconMinimal']['Renewal']['PriceId']] ?? 0) + $wantsMinimalGamesYears;
+			} else {
+				$lines[$products['BeaconMinimal']['Base']['PriceId']] = ($lines[$products['BeaconMinimal']['Base']['PriceId']] ?? 0) + 1;
+				if ($wantsMinimalGamesYears > 1) {
+					$lines[$products['BeaconMinimal']['Renewal']['PriceId']] = ($lines[$products['BeaconMinimal']['Renewal']['PriceId']] ?? 0) + ($wantsMinimalGamesYears - 1);
 				}
 			}
 		}
