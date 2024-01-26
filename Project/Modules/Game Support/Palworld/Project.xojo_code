@@ -208,6 +208,15 @@ Inherits Beacon.Project
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
 		    Next
 		    
+		    Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerName", Profile.Name)
+		    Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerDescription", Profile.ServerDescription)
+		    If (Profile.AdminPassword Is Nil) = False Then
+		      Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "AdminPassword", Profile.AdminPassword.StringValue)
+		    End If
+		    If (Profile.ServerPassword Is Nil) = False Then
+		      Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerPassword", Profile.ServerPassword.StringValue)
+		    End If
+		    
 		    Return Organizer
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Generating a config organizer")

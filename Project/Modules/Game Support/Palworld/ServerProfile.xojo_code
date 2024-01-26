@@ -6,11 +6,11 @@ Inherits Beacon.ServerProfile
 		  Select Case Version
 		  Case 2
 		    If Dict.HasKey("adminPassword") Then
-		      Self.mAdminPassword = Dict.Value("adminPassword").StringValue
+		      Self.mAdminPassword = NullableString.FromVariant(Dict.Value("adminPassword"))
 		    End If
 		    
 		    If Dict.HasKey("serverPassword") Then
-		      Self.mServerPassword = Dict.Value("serverPassword").StringValue
+		      Self.mServerPassword = NullableString.FromVariant(Dict.Value("serverPassword"))
 		    End If
 		    
 		    If Dict.HasKey("serverDescription") Then
@@ -26,8 +26,8 @@ Inherits Beacon.ServerProfile
 
 	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
-		  Dict.Value("adminPassword") = Self.mAdminPassword
-		  Dict.Value("serverPassword") = Self.mServerPassword
+		  Dict.Value("adminPassword") = NullableString.ToVariant(Self.mAdminPassword)
+		  Dict.Value("serverPassword") = NullableString.ToVariant(Self.mServerPassword)
 		  Dict.Value("serverDescription") = Self.mServerDescription
 		  
 		  If Self.mBasePath.IsEmpty = False Then
@@ -44,17 +44,19 @@ Inherits Beacon.ServerProfile
 
 
 	#tag Method, Flags = &h0
-		Function AdminPassword() As String
+		Function AdminPassword() As NullableString
 		  Return Self.mAdminPassword
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AdminPassword(Assigns Value As String)
-		  If Self.mAdminPassword.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-		    Self.mAdminPassword = Value
-		    Self.Modified = True
+		Sub AdminPassword(Assigns Value As NullableString)
+		  If NullableString.Compare(Self.mAdminPassword, Value, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
 		  End If
+		  
+		  Self.mAdminPassword = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -182,17 +184,19 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ServerPassword() As String
+		Function ServerPassword() As NullableString
 		  Return Self.mServerPassword
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ServerPassword(Assigns Value As String)
-		  If Self.mServerPassword.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-		    Self.mServerPassword = Value
-		    Self.Modified = True
+		Sub ServerPassword(Assigns Value As NullableString)
+		  If NullableString.Compare(Self.mServerPassword, Value, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
 		  End If
+		  
+		  Self.mServerPassword = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -232,7 +236,7 @@ Inherits Beacon.ServerProfile
 
 
 	#tag Property, Flags = &h21
-		Private mAdminPassword As String
+		Private mAdminPassword As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -248,7 +252,7 @@ Inherits Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerPassword As String
+		Private mServerPassword As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

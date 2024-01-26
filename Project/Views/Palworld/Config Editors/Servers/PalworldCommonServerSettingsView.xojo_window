@@ -204,7 +204,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Enabled         =   True
+      Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
@@ -214,7 +214,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   168
+      Left            =   220
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -236,7 +236,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   412
+      Width           =   360
    End
    Begin UITweaks.ResizedTextField ServerPasswordField
       AllowAutoDeactivate=   True
@@ -245,7 +245,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Enabled         =   True
+      Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
@@ -255,7 +255,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   168
+      Left            =   220
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -277,7 +277,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   412
+      Width           =   360
    End
    Begin UITweaks.ResizedLabel AdminPasswordLabel
       AllowAutoDeactivate=   True
@@ -561,6 +561,60 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Visible         =   True
       Width           =   136
    End
+   Begin SwitchControl AdminPasswordSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   231
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin SwitchControl ServerPasswordSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   265
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
 End
 #tag EndDesktopWindow
 
@@ -624,9 +678,23 @@ End
 		  Self.ServerNameField.Text = Profile.Name
 		  Self.ServerNicknameField.Text = Profile.Nickname
 		  Self.DescriptionField.Text = Profile.ServerDescription
-		  Self.AdminPasswordField.Text = Profile.AdminPassword
-		  Self.ServerPasswordField.Text = Profile.ServerPassword
 		  Self.ColorChooser.SelectedColor = Profile.ProfileColor
+		  
+		  If Profile.AdminPassword Is Nil Then
+		    Self.AdminPasswordSwitch.Value(False) = False
+		    Self.AdminPasswordField.Text = ""
+		  Else
+		    Self.AdminPasswordSwitch.Value(False) = True
+		    Self.AdminPasswordField.Text = Profile.AdminPassword.StringValue
+		  End If
+		  
+		  If Profile.ServerPassword Is Nil Then
+		    Self.ServerPasswordSwitch.Value(False) = False
+		    Self.ServerPasswordField.Text = ""
+		  Else
+		    Self.ServerPasswordSwitch.Value(False) = True
+		    Self.ServerPasswordField.Text = Profile.ServerPassword.StringValue
+		  End If
 		  
 		  Self.UpdateConfigSetUI()
 		  Self.Resize(True)
@@ -722,7 +790,7 @@ End
 #tag Events AdminPasswordField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Then
+		  If Self.SettingUp Or Self.AdminPasswordSwitch.Value = False Then
 		    Return
 		  End If
 		  
@@ -736,7 +804,7 @@ End
 #tag Events ServerPasswordField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Then
+		  If Self.SettingUp Or Self.ServerPasswordSwitch.Value = False Then
 		    Return
 		  End If
 		  
@@ -784,6 +852,46 @@ End
 		  
 		  For Each Profile As Palworld.ServerProfile In Self.mProfiles
 		    Profile.ServerDescription = Me.Text
+		  Next
+		  Self.Modified = Self.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AdminPasswordSwitch
+	#tag Event
+		Sub Pressed()
+		  Self.AdminPasswordField.Enabled = Me.Value
+		  
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Palworld.ServerProfile In Self.mProfiles
+		    If Me.Value Then
+		      Profile.AdminPassword = Self.AdminPasswordField.Text
+		    Else
+		      Profile.AdminPassword = Nil
+		    End If
+		  Next
+		  Self.Modified = Self.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServerPasswordSwitch
+	#tag Event
+		Sub Pressed()
+		  Self.ServerPasswordField.Enabled = Me.Value
+		  
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Palworld.ServerProfile In Self.mProfiles
+		    If Me.Value Then
+		      Profile.ServerPassword = Self.ServerPasswordField.Text
+		    Else
+		      Profile.ServerPassword = Nil
+		    End If
 		  Next
 		  Self.Modified = Self.Modified
 		End Sub

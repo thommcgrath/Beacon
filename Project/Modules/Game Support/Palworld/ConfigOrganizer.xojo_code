@@ -53,6 +53,23 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Add(File As String, Header As String, Struct As NullableString, Key As String, Value As Variant, UniqueOnly As Boolean = False)
+		  Var Option As New Palworld.ConfigOption(File, Header, Struct, Key)
+		  Var StringValue As String
+		  Select Case Value.Type
+		  Case Variant.TypeBoolean
+		    StringValue = If(Value.BooleanValue, "True", "False")
+		  Case Variant.TypeInt32, Variant.TypeInt64, Variant.TypeDouble, Variant.TypeSingle, Variant.TypeCurrency
+		    StringValue = Value.DoubleValue.PrettyText
+		  Else
+		    StringValue = """" + Value.StringValue.ReplaceAll("""", "\""") + """"
+		  End Select
+		  
+		  Self.Add(New Palworld.ConfigValue(Option, Key + "=" + StringValue), UniqueOnly)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Add(File As String, DefaultHeader As String, Content As String)
 		  Var Tracker As New TimingTracker
 		  

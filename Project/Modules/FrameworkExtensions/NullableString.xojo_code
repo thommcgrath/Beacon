@@ -19,6 +19,22 @@ Class NullableString
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function Compare(FirstValue As NullableString, SecondValue As NullableString, Options As ComparisonOptions) As Integer
+		  If FirstValue Is Nil And SecondValue Is Nil Then
+		    Return 0
+		  End If
+		  
+		  If FirstValue Is Nil Then
+		    Return -1
+		  ElseIf SecondValue Is Nil Then
+		    Return 1
+		  End If
+		  
+		  Return FirstValue.StringValue.Compare(SecondValue.StringValue, Options)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Compare(Other As String, Compare As ComparisonOptions = ComparisonOptions.CaseInsensitive, Locale As Locale = Nil) As Integer
 		  Return Self.mValue.Compare(Other, Compare, Locale)
 		End Function
