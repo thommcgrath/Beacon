@@ -521,6 +521,9 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$projectOwnerId = $user->UserId();
 		if (is_null($project) === false && $project->Role() !== 'Owner') {
 			$ownerProject = static::Fetch($projectId);
+			if (is_null($ownerProject)) {
+				throw new Exception('Could not find project owner.', 400);
+			}
 			$projectOwnerId = $ownerProject->UserId();
 		}
 
