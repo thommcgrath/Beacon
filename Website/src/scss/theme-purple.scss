@@ -9,3 +9,11 @@
 #header_logo, .white-on-dark, .accented-foreground {
 	filter: brightness(0) invert(1);
 }
+
+.dark-only {
+	display: unset;
+}
+
+.light-only {
+	display: none;
+}
