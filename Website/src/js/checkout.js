@@ -2,6 +2,7 @@
 
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
+import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
 import { getCurrencyFormatter, formatPrices, formatDate, epochToDate, randomUUID } from "./common.js";
 
 const StatusOwns = 'owns'; // User has a license for the item
@@ -20,6 +21,19 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	const Products = checkoutProperties.products;
 	const ProductIds = checkoutProperties.productIds;
 	const formatCurrency = getCurrencyFormatter(checkoutProperties.currencyCode);
+
+	BeaconPagePanel.init();
+	const gamesPanel = BeaconPagePanel.pagePanels['panel-games'];
+	if (gamesPanel) {
+		gamesPanel.element.addEventListener('panelSwitched', () => {
+			if (gamesPanel.currentPageTitle) {
+				document.title = `Beacon Omni for ${gamesPanel.currentPageTitle}`;
+			} else {
+				document.title = 'Beacon Omni';
+			}
+			history.pushState({}, '', `/omni#${gamesPanel.currentPageName}`);
+		});
+	}
 
 	class BeaconCartItem {
 		#id = null;
@@ -480,12 +494,23 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	const arkOnlyMode = Object.keys(ProductIds).length === 1;
 
 	const goToCart = () => {
+		document.title = 'Buy Beacon Omni';
 		history.pushState({}, '', '/omni#checkout');
 		dispatchEvent(new PopStateEvent('popstate', {}));
 	};
 
 	const goToLanding = () => {
-		history.pushState({}, '', '/omni');
+		if (gamesPanel) {
+			if (gamesPanel.currentPageTitle) {
+				document.title = `Beacon Omni for ${gamesPanel.currentPageTitle}`;
+			} else {
+				document.title = 'Beacon Omni';
+			}
+			history.pushState({}, '', `/omni#${gamesPanel.currentPageName}`);
+		} else {
+			document.title = 'Beacon Omni';
+			history.pushState({}, '', '/omni');
+		}
 		dispatchEvent(new PopStateEvent('popstate', {}));
 	};
 
@@ -1329,6 +1354,15 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	cartView.init(wizard);
 
 	const setViewMode = (animated = true) => {
+		const pageName = window.location.hash.substring(1);
+		if (gamesPanel && gamesPanel.hasPage(pageName)) {
+			if (storeViewManager.currentView !== 'page-landing') {
+				storeViewManager.back(animated);
+			}
+			gamesPanel.switchPage(pageName);
+			return;
+		}
+
 		window.scrollTo(window.scrollX, 0);
 		if (window.location.hash === '#checkout') {
 			storeViewManager.switchView('page-cart', animated);
