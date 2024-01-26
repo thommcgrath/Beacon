@@ -2797,6 +2797,14 @@ body.no-navigation {
 	}
 }
 
+.license-name {
+	color: $text-accent-color;
+}
+
+.game-name {
+	color: $text-blue;
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;
