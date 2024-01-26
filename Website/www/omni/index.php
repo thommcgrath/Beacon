@@ -40,7 +40,8 @@ while (!$results->EOF()) {
 
 $ark2Enabled = isset($product_details['Ark2']);
 $arkSAEnabled = isset($product_details['ArkSA']);
-$arkOnlyMode = ($ark2Enabled || $arkSAEnabled) === false;
+$minimalGamesEnabled = isset($product_details['BeaconMinimal']);
+$arkOnlyMode = false;
 
 $payment_methods = [
 	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
@@ -370,6 +371,26 @@ if ($arkOnlyMode === false) {
 						<span id="checkout-wizard-ark-price" class="formatted-price" beacon-price="<?php echo $product_details['Ark']['Base']['Price']; ?>"></span>
 					</div>
 				</div>
+				<?php if ($minimalGamesEnabled) { ?><div id="checkout-wizard-list-beaconminimal">
+					<div class="checkout-wizard-checkbox-cell">
+						<label class="checkbox"><input type="checkbox" value="beaconminimal" id="checkout-wizard-beaconminimal-check"><span></span></label>
+					</div>
+					<div class="checkout-wizard-description-cell">
+						<div><label for="checkout-wizard-beaconminimal-check">Minimal Games</label></div>
+						<div class="checkout-wizard-status">
+							<span id="checkout-wizard-status-beaconminimal">For games with few options, such as Palworld. Includes one year of app updates. Additional years cost <span class="formatted-price" beacon-price="<?php echo $product_details['BeaconMinimal']['Renewal']['Price']; ?>"></span> each.</span>
+						</div>
+						<div id="checkout-wizard-beaconminimal-duration-group" class="input-group input-group-sm">
+							<span class="input-group-text">Update Years</span>
+							<input class="text-field no-stepper" type="number" value="1" id="checkout-wizard-beaconminimal-duration-field" min="1" max="10">
+							<button id="checkout-wizard-beaconminimal-yeardown-button">-</button>
+							<button id="checkout-wizard-beaconminimal-yearup-button">+</button>
+						</div>
+					</div>
+					<div class="checkout-wizard-price-cell">
+						<span id="checkout-wizard-beaconminimal-price" class="formatted-price" beacon-price="<?php echo $product_details['BeaconMinimal']['Base']['Price']; ?>"></span><br>
+					</div>
+				</div><?php } ?>
 			</div>
 			<p class="smaller text-lighter">These are one time payments. Beacon Omni is not subscription software. <a href="/omni/updates" target="beacon" rel="noopener noreferrer">Learn More</a></p>
 		</div>

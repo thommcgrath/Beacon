@@ -91,6 +91,9 @@ function BuildLinks(array $update): array {
 		case 'SDTD':
 			$games[] = '7 Days to Die';
 			break;
+		case 'Palworld':
+			$games[] = 'Palworld';
+			break;
 		}
 	}
 	sort($games);

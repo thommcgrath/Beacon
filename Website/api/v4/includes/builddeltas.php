@@ -4,6 +4,7 @@ use BeaconAPI\v4\{ContentPack, Core, Template, TemplateSelector};
 use BeaconAPI\v4\Ark;
 use BeaconAPI\v4\SDTD;
 use BeaconAPI\v4\ArkSA;
+use BeaconAPI\v4\Palworld;
 
 $root = "/v{$version}";
 if (BeaconCommon::InProduction() == false) {
@@ -41,6 +42,9 @@ foreach ($packs as $pack) {
 	case 'ArkSA':
 		BuildArkSAContentPackFile($completeArchive, null, $pack);
 		break;
+	case 'Palworld':
+		BuildPalworldContentPackFile($completeArchive, null, $pack);
+		break;
 	}
 }
 
@@ -72,6 +76,9 @@ if ($buildDeltas) {
 			break;
 		case 'ArkSA':
 			BuildArKSAContentPackFile($deltaArchive, $since, $pack);
+			break;
+		case 'Palworld':
+			BuildPalworldContentPackFile($deltaArchive, $since, $pack);
 			break;
 		}
 
@@ -127,6 +134,17 @@ function BuildArkSAContentPackFile(Archiver $archive, ?DateTime $since, ContentP
 		'class' => 'ArkSA/ContentPack',
 		'since' => $since,
 		'ArkSA' => [
+			'contentPack' => $contentPack
+		]
+	]);
+}
+
+function BuildPalworldContentPackFile(Archiver $archive, ?DateTime $since, ContentPack $contentPack): void {
+	BuildFile([
+		'archive' => $archive,
+		'class' => 'Palworld/ContentPack',
+		'since' => $since,
+		'Palworld' => [
 			'contentPack' => $contentPack
 		]
 	]);
@@ -217,6 +235,12 @@ function BuildFile(array $settings): void {
 			'gameVariables' => ArkSA\GameVariable::Search($filters, true)
 		];
 
+		$payloads[] = [
+			'gameId' => 'Palworld',
+			'contentPacks' => ContentPack::Search([...$filters, 'gameId' => 'Palworld'], true),
+			'gameVariables' => Palworld\GameVariable::Search($filters, true)
+		];
+
 		$localName = 'Main.json';
 		break;
 	case 'Ark/Mod':
@@ -260,6 +284,17 @@ function BuildFile(array $settings): void {
 			'lootDropIcons' => ArkSA\LootDropIcon::Search($filters, true),
 			'maps' => ArkSA\Map::Search($filters, true),
 			'spawnPoints' => ArkSA\SpawnPoint::Search($filters, true)
+		];
+
+		$localName = "{$pack->ContentPackId()}.json";
+		break;
+	case 'Palworld/ContentPack':
+		$pack = $settings['Palworld']['contentPack'];
+		$filters['contentPackId'] = $pack->ContentPackId();
+
+		$payloads[] = [
+			'gameId' => 'Palworld',
+			'configOptions' => Palworld\ConfigOption::Search($filters, true)
 		];
 
 		$localName = "{$pack->ContentPackId()}.json";

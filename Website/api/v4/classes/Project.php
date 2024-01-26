@@ -86,6 +86,9 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		case 'ArkSA':
 			return new ArkSA\Project($rows);
 			break;
+		case 'Palworld':
+			return new Palworld\Project($rows);
+			break;
 		default:
 			throw new Exception('Unknown game ' . $gameId);
 		}
@@ -589,6 +592,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 
 			break;
 		case '7DaysToDie':
+		case 'Palworld':
 			break;
 		default:
 			throw new Exception('Unknown game ' . $gameId . '.', 400);

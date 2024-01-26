@@ -30,6 +30,10 @@ case 'arksa':
 case 'curator':
 	$product = BeaconShop::GetProductByTag('USD', 'Curator', 'Base');
 	break;
+case 'minimal':
+case 'palworld':
+	$product = BeaconShop::GetProductByTag('USD', 'BeaconMinimal', 'Base');
+	break;
 default:
 	PostReply('Unknown game_id value.');
 	return;
