@@ -224,7 +224,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -265,7 +265,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -332,7 +332,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Password:"
@@ -567,6 +567,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -577,9 +578,10 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   15
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -594,6 +596,7 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -604,9 +607,10 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   16
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
