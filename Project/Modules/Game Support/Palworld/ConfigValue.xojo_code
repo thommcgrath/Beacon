@@ -17,16 +17,16 @@ Protected Class ConfigValue
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(File As String, Header As String, Command As String, Index As Integer = 0)
+		Sub Constructor(File As String, Header As String, Struct As NullableString, Command As String, Index As Integer = 0)
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = Self.mSimplifiedKey + ":" + Index.ToString("00000")
 		  
-		  Var Keys() As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOptions(File, Header, Self.mSimplifiedKey, False)
+		  Var Keys() As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOptions(File, Header, Struct, Self.mSimplifiedKey, False)
 		  Var ConfigOption As Palworld.ConfigOption
 		  If Keys.Count >= 1 Then
 		    ConfigOption = Keys(0)
 		  Else
-		    ConfigOption = New Palworld.ConfigOption(File, Header, Nil, Self.mSimplifiedKey)
+		    ConfigOption = New Palworld.ConfigOption(File, Header, Struct, Self.mSimplifiedKey)
 		  End If
 		  
 		  Self.mKeyDetails = ConfigOption
@@ -34,16 +34,16 @@ Protected Class ConfigValue
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(File As String, Header As String, Command As String, SortKey As String)
+		Sub Constructor(File As String, Header As String, Struct As NullableString, Command As String, SortKey As String)
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = SortKey
 		  
-		  Var Keys() As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOptions(File, Header, Self.mSimplifiedKey, False)
+		  Var Keys() As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOptions(File, Header, Struct, Self.mSimplifiedKey, False)
 		  Var ConfigOption As Palworld.ConfigOption
 		  If Keys.Count >= 1 Then
 		    ConfigOption = Keys(0)
 		  Else
-		    ConfigOption = New Palworld.ConfigOption(File, Header, Nil, Self.mSimplifiedKey)
+		    ConfigOption = New Palworld.ConfigOption(File, Header, Struct, Self.mSimplifiedKey)
 		  End If
 		  
 		  Self.mKeyDetails = ConfigOption

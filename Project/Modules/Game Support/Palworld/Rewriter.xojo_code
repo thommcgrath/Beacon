@@ -246,16 +246,16 @@ Inherits Global.Thread
 		        SourceString = "Smart Save"
 		      End Select
 		      
-		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "Build=" + App.BuildNumber.ToString(Locale.Raw, "0")))
-		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "LastUpdated=" + DateTime.Now.SQLDateTimeWithOffset))
-		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "ProjectUUID=" + ProjectUUID))
+		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "Build=" + App.BuildNumber.ToString(Locale.Raw, "0")))
+		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "LastUpdated=" + DateTime.Now.SQLDateTimeWithOffset))
+		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "ProjectUUID=" + ProjectUUID))
 		      If LegacyTrustKey.IsEmpty = False Then
-		        FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "Trust=" + LegacyTrustKey))
+		        FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "Trust=" + LegacyTrustKey))
 		      End If
-		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "Source=" + SourceString))
-		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "InitialSize=" + InitialContent.Bytes.ToString(Locale.Raw, "0")))
-		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "InitialHash=" + EncodeHex(Crypto.SHA2_256(InitialContent)).Lowercase))
-		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "WasTrusted=" + If(Trusted, "True", "False")))
+		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "Source=" + SourceString))
+		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "InitialSize=" + InitialContent.Bytes.ToString(Locale.Raw, "0")))
+		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "InitialHash=" + EncodeHex(Crypto.SHA2_256(InitialContent)).Lowercase))
+		      FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "WasTrusted=" + If(Trusted, "True", "False")))
 		      Var ManagedHeaders() As String = Organizer.Headers(File)
 		      For HeaderIdx As Integer = 0 To ManagedHeaders.LastIndex
 		        Var Header As String = ManagedHeaders(HeaderIdx)
@@ -264,13 +264,13 @@ Inherits Global.Thread
 		        End If
 		        
 		        Var Keys() As String = FinalOrganizer.Keys(File, Header)
-		        FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", "ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))", "ManagedKeys:" + Header))
+		        FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, "ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))", "ManagedKeys:" + Header))
 		      Next
 		      
 		      Var BeaconKeys() As String = Organizer.BeaconKeys
 		      For Each BeaconKey As String In BeaconKeys
 		        Var BeaconKeyValue As String = Organizer.BeaconKey(BeaconKey)
-		        FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", BeaconKey + "=" + BeaconKeyValue))
+		        FinalOrganizer.Add(New Palworld.ConfigValue(File, "Beacon", Nil, BeaconKey + "=" + BeaconKeyValue))
 		      Next BeaconKey
 		    End If
 		    

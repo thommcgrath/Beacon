@@ -163,7 +163,7 @@ Inherits Beacon.DataSource
 		        // Update
 		        Var OriginalConfigOptionId As String = Results.Column("object_id").StringValue
 		        Values.Add(OriginalConfigOptionId)
-		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19, struct = ?20 WHERE object_id = ?22;", Values)
+		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19, struct = ?20 WHERE object_id = ?21;", Values)
 		      Else
 		        // Insert
 		        Self.SQLExecute("INSERT INTO ini_options (object_id, label, content_pack_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group, custom_sort, constraints, struct) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20);", Values)
@@ -317,8 +317,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigOption(File As String, Header As String, Key As String) As Palworld.ConfigOption
-		  Var Results() As Palworld.ConfigOption = Self.GetConfigOptions(File, Header, Key, False)
+		Function GetConfigOption(File As String, Header As String, Struct As NullableString, Key As String) As Palworld.ConfigOption
+		  Var Results() As Palworld.ConfigOption = Self.GetConfigOptions(File, Header, Key, Struct, False)
 		  If Results.Count = 1 Then
 		    Return Results(0)
 		  End If
@@ -326,7 +326,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigOptions(File As String, Header As String, Key As String, SortHuman As Boolean) As Palworld.ConfigOption()
+		Function GetConfigOptions(File As String, Header As String, Struct As NullableString, Key As String, SortHuman As Boolean) As Palworld.ConfigOption()
 		  Var Clauses() As String
 		  Var Values As New Dictionary
 		  Var Idx As Integer = 1
@@ -339,6 +339,13 @@ Inherits Beacon.DataSource
 		  If Header.IsEmpty = False Then
 		    Values.Value(Idx) = Header
 		    Clauses.Add("header = ?" + Idx.ToString)
+		    Idx = Idx + 1
+		  End If
+		  If Struct Is Nil Then
+		    Clauses.Add("struct IS NULL")
+		  ElseIf Struct.IsEmpty = False Then
+		    Values.Value(Idx) = Struct.StringValue
+		    Clauses.Add("struct = ?" + Idx.ToString)
 		    Idx = Idx + 1
 		  End If
 		  If Key.IsEmpty = False Then

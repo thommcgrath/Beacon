@@ -191,7 +191,7 @@ Inherits Palworld.ConfigGroup
 		  Next Pack
 		  
 		  Var Config As New Palworld.Configs.OtherSettings
-		  Var AllKeys() As Palworld.ConfigOption = DataSource.GetConfigOptions("", "", "", False)
+		  Var AllKeys() As Palworld.ConfigOption = DataSource.GetConfigOptions("", "", "", "", False)
 		  For Each Key As Palworld.ConfigOption In AllKeys
 		    If KeySupported(Key, ContentPacks) = False Or Key.AutoImported = False Then
 		      Continue

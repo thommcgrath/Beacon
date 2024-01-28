@@ -193,7 +193,7 @@ End
 		  
 		  Self.mFilter = Value
 		  
-		  Var AllKeys() As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOptions("", "", "", True)
+		  Var AllKeys() As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOptions("", "", "", "", True)
 		  If Self.mDependencies Is Nil Then
 		    Self.mDependencies = New Dictionary
 		    For Each Key As Palworld.ConfigOption In AllKeys

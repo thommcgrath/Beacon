@@ -409,7 +409,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Configs() As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOptions(CurrentFile, CurrentHeader, "", False)
+		  Var Configs() As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOptions(CurrentFile, CurrentHeader, "", "", False)
 		  Self.mAutocompleteWords.ResizeTo(Configs.LastIndex)
 		  For Idx As Integer = Configs.FirstIndex To Configs.LastIndex
 		    Self.mAutocompleteWords(Idx) = Configs(Idx).Key
@@ -618,7 +618,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Key As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOption(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
+		  Var Key As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOption(Self.CurrentFile, Self.CurrentHeader, "", Line.Left(EqualsPosition))
 		  If Key Is Nil Or Key.Description.IsEmpty Then
 		    Me.CallTipCancel
 		    Return

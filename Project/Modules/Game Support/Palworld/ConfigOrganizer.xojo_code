@@ -65,7 +65,7 @@ Protected Class ConfigOrganizer
 		    StringValue = """" + Value.StringValue.ReplaceAll("""", "\""") + """"
 		  End Select
 		  
-		  Self.Add(New Palworld.ConfigValue(Option, Key + "=" + StringValue), UniqueOnly)
+		  Self.Add(New Palworld.ConfigValue(File, Header, Struct, Key + "=" + StringValue), UniqueOnly)
 		End Sub
 	#tag EndMethod
 
@@ -121,12 +121,12 @@ Protected Class ConfigOrganizer
 		        
 		        Var Value As String = Entry.Value
 		        
-		        Values.Add(New Palworld.ConfigValue(New Palworld.ConfigOption(File, Header, Struct, Key), Command, 0))
+		        Values.Add(New Palworld.ConfigValue(File, Header, Struct, Command))
 		      Next
 		      Continue
 		    End If
 		    
-		    Values.Add(New Palworld.ConfigValue(File, Header, Line, KeyIndex))
+		    Values.Add(New Palworld.ConfigValue(File, Header, Nil, Line, KeyIndex))
 		  Next
 		  Tracker.Log("Took %elapsed% to parse " + Content.Length.ToString + " characters of content.")
 		  Self.Add(Values)
@@ -182,7 +182,6 @@ Protected Class ConfigOrganizer
 		    
 		    Var Structs() As String = Self.Structs(ForFile, Header)
 		    For Each Struct As String In Structs
-		      // This is special cased so that launch options get sorted with the rest of ServerSettings
 		      Var Values() As Palworld.ConfigValue = Self.FilteredValues(ForFile, Header, Struct)
 		      Var Members() As String
 		      Values.Sort
@@ -270,7 +269,7 @@ Protected Class ConfigOrganizer
 		    Var Header As String = Rows.Column("header").StringValue
 		    Var Struct As NullableString = NullableString.FromVariant(Rows.Column("struct").Value)
 		    Var SimpleKey As String = Rows.Column("simplekey").StringValue
-		    Var Key As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOption(File, Header, SimpleKey)
+		    Var Key As Palworld.ConfigOption = Palworld.DataSource.Pool.Get(False).GetConfigOption(File, Header, Struct, SimpleKey)
 		    If Key Is Nil Then
 		      Key = New Palworld.ConfigOption(File, Header, Struct, SimpleKey)
 		    End If
