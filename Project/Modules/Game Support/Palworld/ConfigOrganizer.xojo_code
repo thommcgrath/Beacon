@@ -54,7 +54,6 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Sub Add(File As String, Header As String, Struct As NullableString, Key As String, Value As Variant, UniqueOnly As Boolean = False)
-		  Var Option As New Palworld.ConfigOption(File, Header, Struct, Key)
 		  Var StringValue As String
 		  Select Case Value.Type
 		  Case Variant.TypeBoolean

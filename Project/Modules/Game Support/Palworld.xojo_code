@@ -2,7 +2,7 @@
 Protected Module Palworld
 	#tag Method, Flags = &h1
 		Protected Function OmniPurchased(Identity As Beacon.Identity) As Boolean
-		  Return (Identity Is Nil) = False And Identity.IsOmniFlagged(Beacon.OmniLicense.MinimalGamesFlag)
+		  Return (Identity Is Nil) = False And Identity.IsOmniFlagged(Palworld.OmniFlag)
 		End Function
 	#tag EndMethod
 
@@ -99,6 +99,9 @@ Protected Module Palworld
 	#tag EndConstant
 
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"Palworld", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"16", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = SteamAppId, Type = Double, Dynamic = False, Default = \"1623730", Scope = Protected

@@ -525,7 +525,7 @@ End
 		  End If
 		  
 		  Var ProjectId As String = Self.Project.ProjectId
-		  Var OtherEditors() As DocumentEditorView = Self.EditorsForGameId(Palworld.Identifier, Ark.Identifier)
+		  Var OtherEditors() As DocumentEditorView = Self.EditorsForGameId(Palworld.Identifier)
 		  Var OtherProjects() As Beacon.Project
 		  For Each Editor As DocumentEditorView In OtherEditors
 		    Var OtherProject As Beacon.Project = Editor.Project
@@ -586,14 +586,27 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ContinueWithoutExcludedConfigs() As Boolean
-		  If App.IdentityManager.CurrentIdentity.IsOmniFlagged(Beacon.OmniLicense.MinimalGamesFlag) = False Then
-		    Var Message As String = Language.ReplacePlaceholders(Self.OmniWarningMinimalMessage, Language.GameName(Palworld.Identifier))
-		    Var Explanation As String = Self.OmniWarningMinimalExplanation
-		    Self.ShowAlert(Message, Explanation)
-		    Return False
+		  Var ExcludedConfigs() As Palworld.ConfigGroup = Self.Project.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
+		  If ExcludedConfigs.LastIndex = -1 Then
+		    Return True
 		  End If
 		  
-		  Return True
+		  Var HumanNames() As String
+		  For Each Config As Palworld.ConfigGroup In ExcludedConfigs
+		    HumanNames.Add("""" + Language.LabelForConfig(Config) + """")
+		  Next
+		  HumanNames.Sort
+		  
+		  Var Message, Explanation As String
+		  If HumanNames.Count = 1 Then
+		    Message = Self.OmniWarningSingularMessage
+		    Explanation = Language.ReplacePlaceholders(Self.OmniWarningSingularExplanation, HumanNames(0), Language.GameName(Palworld.Identifier))
+		  Else
+		    Message = Self.OmniWarningPluralMessage
+		    Explanation = Language.ReplacePlaceholders(Self.OmniWarningPluralExplanation, HumanNames.EnglishOxfordList(), Language.GameName(Palworld.Identifier))
+		  End If
+		  
+		  Return Self.ShowConfirm(Message, Explanation, "Continue", "Cancel")
 		End Function
 	#tag EndMethod
 
@@ -939,7 +952,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RestoreEditor(ConfigName As String)
 		  Var Label As String = Language.LabelForConfig(ConfigName)
-		  If Self.ShowConfirm("Are you sure you want to restore """ + Label + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
+		  If Self.ShowConfirm("Are you sure you want to restore """ + Label + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Palworld's default values. You cannot undo this action.", "Restore", "Cancel") Then
 		    Var IsSelected As Boolean = Self.CurrentConfigName = ConfigName
 		    
 		    If IsSelected Then
@@ -1358,7 +1371,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GameName() As String
-		  Return "Minimal Games"
+		  Return Language.GameName(Palworld.Identifier)
 		End Function
 	#tag EndEvent
 #tag EndEvents

@@ -718,12 +718,6 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = OmniWarningMinimalExplanation, Type = String, Dynamic = True, Default = \"A \'Beacon Omni for Minimal Games\' license covers games which do not have the complexity to warrant their own license. As such\x2C there is no free version of Beacon for these games.", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = OmniWarningMinimalMessage, Type = String, Dynamic = True, Default = \"Beacon\'s support for \?1 requires a \'Beacon Omni for Minimal Games\' license.", Scope = Protected
-	#tag EndConstant
-
 	#tag Constant, Name = OmniWarningPluralExplanation, Type = String, Dynamic = True, Default = \"The \?1 editors require a \'Beacon Omni for \?2\' license\x2C which you have not purchased. Beacon will not generate their content for your config files. Do you still want to continue\?", Scope = Protected
 	#tag EndConstant
 

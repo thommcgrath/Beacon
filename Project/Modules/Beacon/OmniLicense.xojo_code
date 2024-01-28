@@ -154,9 +154,6 @@ Protected Class OmniLicense
 	#tag Constant, Name = CuratorFlag, Type = Double, Dynamic = False, Default = \"8", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = MinimalGamesFlag, Type = Double, Dynamic = False, Default = \"16", Scope = Public
-	#tag EndConstant
-
 
 	#tag ViewBehavior
 		#tag ViewProperty

@@ -251,6 +251,18 @@ Inherits Beacon.Project
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UsesOmniFeaturesWithoutOmni(Identity As Beacon.Identity) As Palworld.ConfigGroup()
+		  Var ExcludedConfigs() As Palworld.ConfigGroup
+		  For Each Config As Palworld.ConfigGroup In Self.ImplementedConfigs()
+		    If Palworld.Configs.ConfigUnlocked(Config, Identity) = False Then
+		      ExcludedConfigs.Add(Config)
+		    End If
+		  Next
+		  Return ExcludedConfigs
+		End Function
+	#tag EndMethod
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
