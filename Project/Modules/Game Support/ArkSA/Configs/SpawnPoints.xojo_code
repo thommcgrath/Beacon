@@ -131,6 +131,14 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  For Each Override As ArkSA.SpawnPointOverride In Self.mOverrides
+		    Override.Validate(Location, Issues, Project)
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

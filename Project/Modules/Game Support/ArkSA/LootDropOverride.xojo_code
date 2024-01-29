@@ -598,7 +598,7 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		  Location = Location + Beacon.Issue.Separator + Self.mDropRef.ClassString
 		  
 		  If Self.mSets.Count = 0 Then
-		    Issues.Add(New Beacon.Issue(Location, "'" + Self.Label + "' should contain at least one item set."))
+		    Issues.Add(New Beacon.Issue(Location, "Loot drop '" + Self.Label + "' should contain at least one item set."))
 		  End If
 		  
 		  For Each Set As ArkSA.LootItemSet In Self.mSets

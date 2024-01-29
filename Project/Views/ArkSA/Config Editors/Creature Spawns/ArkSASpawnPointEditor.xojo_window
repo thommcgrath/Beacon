@@ -449,6 +449,29 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function GoToChild(SpawnSetId As String) As Boolean
+		  For Idx As Integer = 0 To Self.SetsList.LastRowIndex
+		    Var Organizer As ArkSA.SpawnSetOrganizer = Self.SetsList.RowTagAt(Idx)
+		    If Organizer Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var SpawnSet As ArkSA.SpawnPointSet = Organizer.Template
+		    If SpawnSet Is Nil Or SpawnSet.SetId <> SpawnSetId Then
+		      Continue
+		    End If
+		    
+		    Self.SetsList.SelectedRowIndex = Idx
+		    Self.SetsList.EnsureSelectionIsVisible()
+		    Return True
+		  Next Idx
+		  
+		  Self.SetsList.SelectedRowIndex = -1
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function LimitsListHeight() As Integer
 		  Return Self.Height - Self.LimitsToolbar.Top

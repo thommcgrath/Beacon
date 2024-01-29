@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointSet
-Implements Beacon.Countable,ArkSA.Weighted
+Implements Beacon.Countable,ArkSA.Weighted, Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function Clone() As ArkSA.SpawnPointSet
 		  Var Clone As New ArkSA.SpawnPointSet(Self)
@@ -577,6 +577,18 @@ Implements Beacon.Countable,ArkSA.Weighted
 		Function SpreadRadius() As NullableDouble
 		  Return Self.mSpreadRadius
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  // Part of the Beacon.Validateable interface.
+		  
+		  Location = Location + Beacon.Issue.Separator + Self.mSetId
+		  
+		  If Self.mEntries.Count = 0 Then
+		    Issues.Add(New Beacon.Issue(Location, "Spawn set '" + Self.Label + "' should contain at least one creature to be spawned."))
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
