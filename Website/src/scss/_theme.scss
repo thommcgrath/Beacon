@@ -2080,6 +2080,10 @@ ul.no-markings, ol.no-markings {
 	text-align: center;
 	padding: 16px;
 
+	&+& {
+		margin-top: 1rem;
+	}
+
 	&.notice-warning {
 		border-color: color.mix($text-red, $background-color, 35%);
 		color: $text-red;
@@ -2461,12 +2465,14 @@ input.no-stepper {
 /* !Store */
 
 #checkout-wizard-list {
-	& > div {
+	& > .checkout-wizard-list-game {
 		display: flex;
 		align-items: center;
 
-		&+div {
+		&.separated {
 			margin-top: 20px;
+			padding-top: 20px;
+			border-top: 1px solid $separator-color;
 		}
 
 		.checkout-wizard-checkbox-cell {
@@ -2720,6 +2726,24 @@ input.no-stepper {
 
 .shake {
 	animation: shake-keyframes 0.4s linear 1;
+}
+
+.omni-game-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 1.5rem;
+
+	.omni-game-header-title {
+		font-weight: 600;
+		font-size: 1.5rem;
+		margin-right: 1.5rem;
+		flex: 1 1 auto;
+	}
+
+	.omni-game-header-button {
+		flex: 0 0 auto;
+		align-self: flex-start;
+	}
 }
 
 @keyframes shake-keyframes {
