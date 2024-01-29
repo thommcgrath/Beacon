@@ -1,12 +1,12 @@
-<h1>The free version of Beacon supports most <span class="game-name">Ark: Survival Evolved</span> features, with a '<span class="license-name">Beacon Omni for Ark: Survival Evolved</span>' license required to unlock all features.</h1>
+<?php OutputGameHeader('The free version of Beacon supports most <span class="game-name">Ark: Survival Evolved</span> features, with a \'<span class="license-name">Beacon Omni for Ark: Survival Evolved</span>\' license available to unlock all features.', 'Ark'); ?>
 <p>Beacon does a lot for free. Loot drops, server control, file sharing, and more. But when it's time to get into more advanced configuration like crafting costs and player experience, then it's time to upgrade to Beacon Omni.</p>
 <p>All users of Beacon can use all features, however Omni-only config types will not be included in generated Game.ini and GameUserSettings.ini files.</p>
-<table class="generic">
+<table class="generic omni-feature-table">
 	<thead>
 		<tr>
 			<th>Feature</th>
-			<th class="text-center bullet-column">Beacon</th>
-			<th class="text-center bullet-column">Omni</th>
+			<th class="text-center bullet-column">Beacon Free</th>
+			<th class="text-center bullet-column">Beacon Omni</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -50,13 +50,11 @@
 			<td class="text-center bullet-column">&check;</td>
 			<td class="text-center bullet-column">&check;</td>
 		</tr>
-		<?php if ($stable_version >= 10502300) { ?>
 		<tr>
-			<td>General Settings<?php if ($stable_version < 10503300) { ?><span class="tag blue mini left-space">New in Beacon 1.5.2</span><?php } ?><br><span class="smaller text-lighter">Beacon has support for nearly every setting available to Ark servers.</span></td>
+			<td>General Settings<br><span class="smaller text-lighter">Beacon has support for nearly every setting available to Ark servers.</span></td>
 			<td class="text-center bullet-column">&check;</td>
 			<td class="text-center bullet-column">&check;</td>
 		</tr>
-		<?php } ?>
 		<tr>
 			<td>Item Stat Limits<br><span class="smaller text-lighter">Globally limit item stats to precise admin-defined amounts, just like official servers.</span></td>
 			<td class="text-center bullet-column">&check;</td>
