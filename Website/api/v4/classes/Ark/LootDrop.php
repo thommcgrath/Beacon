@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Ark;
-use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
 class LootDrop extends MutableBlueprint {
@@ -210,11 +210,29 @@ class LootDrop extends MutableBlueprint {
 		return 'cheat summon ' . $this->classString;
 	}
 
-	public function Edit(array $properties, bool $restoreDefaults = false): void {
+	protected static function FixProperties(array $properties): array {
 		if (array_key_exists('multipliers', $properties)) {
 			$properties['multiplierMin'] = $properties['multipliers']['min'];
 			$properties['multiplierMax'] = $properties['multipliers']['max'];
 		}
+		if (array_key_exists('icon', $properties) === true && array_key_exists('iconId', $properties) === false) {
+			$properties['iconId'] = $properties['icon'];
+			unset($properties['icon']);
+		}
+		if (array_key_exists('sort', $properties) === true && array_key_exists('sortOrder', $properties) === false) {
+			$properties['sortOrder'] = $properties['sort'];
+			unset($properties['sort']);
+		}
+		return $properties;
+	}
+
+	public static function Create(array $properties): DatabaseObject {
+		$properties = static::FixProperties($properties);
+		return parent::Create($properties);
+	}
+
+	public function Edit(array $properties, bool $restoreDefaults = false): void {
+		$properties = static::FixProperties($properties);
 		parent::Edit($properties, $restoreDefaults);
 	}
 
