@@ -2,7 +2,7 @@
 Protected Class LootDrops
 Inherits ArkSA.ConfigGroup
 Implements Iterable
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.LootDrops = ArkSA.Configs.LootDrops(Other)
@@ -229,8 +229,14 @@ Implements Iterable
 		  
 		  Var GeneratedSets() As String
 		  For Each Set As ArkSA.LootItemSet In Override
-		    GeneratedSets.Add(Set.StringValue(LootDrop.Multipliers, False, DifficultyValue))
+		    Var ItemSetString As String = Set.StringValue(LootDrop.Multipliers, False, DifficultyValue)
+		    If ItemSetString.IsEmpty = False Then
+		      GeneratedSets.Add(ItemSetString)
+		    End If
 		  Next
+		  If GeneratedSets.Count = 0 Then
+		    Return Nil
+		  End If
 		  Keys.Add("ItemSets=(" + GeneratedSets.Join(",") + ")")
 		  
 		  Return New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, ConfigOverrideSupplyCrateItems + "=(" + Keys.Join(",") + ")", ConfigOverrideSupplyCrateItems + ":" + LootDrop.ClassString)

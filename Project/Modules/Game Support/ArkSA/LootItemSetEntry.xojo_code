@@ -436,7 +436,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		Shared Function Join(Entries() As ArkSA.LootItemSetEntry, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
 		  Var Values() As String
 		  For Each Entry As ArkSA.LootItemSetEntry In Entries
-		    Values.Add(Entry.StringValue(Multipliers, UseBlueprints, Difficulty))
+		    Var EntryConfig As String = Entry.StringValue(Multipliers, UseBlueprints, Difficulty)
+		    If EntryConfig.IsEmpty = False Then
+		      Values.Add(EntryConfig)
+		    End If
 		  Next
 		  Return Values.Join(Separator)
 		End Function
@@ -815,6 +818,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
+		  If Self.mOptions.Count = 0 Then
+		    Return ""
+		  End If
+		  
 		  Var Paths(), Weights(), Classes() As String
 		  Paths.ResizeTo(Self.mOptions.LastIndex)
 		  Weights.ResizeTo(Self.mOptions.LastIndex)
@@ -885,8 +892,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
 		  
+		  Location = Location + Beacon.Issue.Separator + Self.EntryId
+		  
 		  For Each Option As ArkSA.LootItemSetEntryOption In Self.mOptions
-		    Option.Validate(Location + Beacon.Issue.Separator + Self.EntryId, Issues, Project)
+		    Option.Validate(Location, Issues, Project)
 		  Next Option
 		End Sub
 	#tag EndMethod
