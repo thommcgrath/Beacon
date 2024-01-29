@@ -6,9 +6,23 @@ if ($palworld['earlyAccess']) {
 	echo '<div class="notice-block notice-caution">Palworld is currently Early Access. This game is very new and its future is uncertain. It could grow to support hundreds of config options, die from legal issues, or somewhere in between. Features and pricing subject to change. <strong class="text-red"><a href="/policies/refund" class="text-red">Beacon\'s refund policy</a> remains in effect for Palworld</strong>.</div>';
 }
 
-$palworldStableBuild = ($palworld['majorVersion'] * 10000000) + ($palworld['minorVersion'] * 100000) + 300;
+$palworldBuild = ($palworld['majorVersion'] * 10000000) + ($palworld['minorVersion'] * 100000);
+$palworldStableBuild = $palworldBuild + 300;
 if ($stableVersion < $palworldStableBuild) {
-	echo '<div class="notice-block notice-info">Beacon\'s Palworld support requires Beacon version ' . $palworld['majorVersion'] . '.' . $palworld['minorVersion'] . ', which can be downloaded from <a href="/download#preview">the Preview Release section of the downloads page</a>.</div>';
+	$buildRows = $database->Query('SELECT stage FROM public.updates WHERE build_number >= $1 ORDER BY build_number DESC LIMIT 1;', $palworldBuild);
+	if ($buildRows->RecordCount() === 1) {
+		switch ($buildRows->Field('stage')) {
+		case 1:
+			$previewLabel = 'Alpha Preview';
+			break;
+		case 2:
+			$previewLabel = 'Beta Preview';
+			break;
+		}
+		echo '<div class="notice-block notice-info">Beacon\'s Palworld support requires Beacon version ' . $palworld['majorVersion'] . '.' . $palworld['minorVersion'] . ', which can be downloaded from <a href="/download#preview">the ' . $previewLabel . ' section of the downloads page</a>.</div>';
+	} else {
+		echo '<div class="notice-block notice-info">Beacon\'s Palworld support requires Beacon version ' . $palworld['majorVersion'] . '.' . $palworld['minorVersion'] . ', which is not ready yet. Sit tight, a new version is coming soon.</div>';
+	}
 }
 
 ?>
