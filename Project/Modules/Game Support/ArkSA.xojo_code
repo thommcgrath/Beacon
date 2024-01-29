@@ -421,6 +421,103 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ExportToCSV(Blueprints() As ArkSA.Blueprint) As String
+		  If Blueprints.Count = 0 Then
+		    Return ""
+		  End If
+		  
+		  // See if all the blueprints are the same category
+		  Var Category As String = Blueprints(0).Category
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    If Blueprint.Category <> Category Then
+		      Category = ""
+		      Exit
+		    End If
+		  Next
+		  
+		  Var Headers() As String = Array("Name", "Class", "Path", "Mod")
+		  Select Case Category
+		  Case ArkSA.CategoryCreatures
+		    Headers.Add("Mature Time")
+		    Headers.Add("Incubation Time")
+		    Headers.Add("Minimum Cooldown")
+		    Headers.Add("Maximum Cooldown")
+		  Case ArkSA.CategoryEngrams
+		    Headers.Add("Unlock String")
+		    Headers.Add("Required Level")
+		    Headers.Add("Required Points")
+		  Case ArkSA.CategoryLootContainers
+		    
+		  Case ArkSA.CategorySpawnPoints
+		    
+		  End Select
+		  
+		  Var Lines(0) As String
+		  Lines(0) = """" + String.FromArray(Headers, """,""") + """"
+		  
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    Var Columns(3) As String
+		    Columns(0) = Blueprint.Label.ReplaceAll("""", """""")
+		    Columns(1) = Blueprint.ClassString.ReplaceAll("""", """""")
+		    Columns(2) = Blueprint.Path.ReplaceAll("""", """""")
+		    Columns(3) = Blueprint.ContentPackName.ReplaceAll("""", """""")
+		    
+		    Select Case Category
+		    Case ArkSA.CategoryCreatures
+		      Var Creature As ArkSA.Creature = ArkSA.Creature(Blueprint)
+		      If Creature.MatureTime > 0 Then
+		        Columns.Add(Creature.MatureTime.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.IncubationTime > 0 Then
+		        Columns.Add(Creature.IncubationTime.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.MinMatingInterval > 0 Then
+		        Columns.Add(Creature.MinMatingInterval.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.MaxMatingInterval > 0 Then
+		        Columns.Add(Creature.MaxMatingInterval.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		    Case ArkSA.CategoryEngrams
+		      Var Engram As ArkSA.Engram = ArkSA.Engram(Blueprint)
+		      Columns.Add(Engram.EntryString.ReplaceAll("""", """"""))
+		      If Engram.RequiredPlayerLevel Is Nil Then
+		        Columns.Add("")
+		      Else
+		        Columns.Add(Engram.RequiredPlayerLevel.IntegerValue.ToString(Locale.Raw, "0"))
+		      End If
+		      If Engram.RequiredUnlockPoints Is Nil Then
+		        Columns.Add("")
+		      Else
+		        Columns.Add(Engram.RequiredUnlockPoints.IntegerValue.ToString(Locale.Raw, "0"))
+		      End If
+		    Case ArkSA.CategoryLootContainers
+		      
+		    Case ArkSA.CategorySpawnPoints
+		      
+		    End Select
+		    
+		    Lines.Add("""" + String.FromArray(Columns, """,""") + """")
+		  Next
+		  
+		  Return String.FromArray(Lines, EndOfLine)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExportToCSV(Extends Blueprints() As ArkSA.Blueprint) As String
+		  Return ExportToCSV(Blueprints)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ExtractPath(Source As String) As String
 		  Var Matches As RegExMatch = BlueprintPathRegex.Search(Source)
 		  Return ArkSA.BlueprintPath(Matches)

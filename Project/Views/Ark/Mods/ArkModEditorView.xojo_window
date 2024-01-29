@@ -524,9 +524,21 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Export()
+		  Var ModeLabel As String
+		  Select Case Self.mMode
+		  Case Ark.BlueprintController.ModeEngrams
+		    ModeLabel = "Engrams"
+		  Case Ark.BlueprintController.ModeCreatures
+		    ModeLabel = "Creatures"
+		  Case Ark.BlueprintController.ModeLootDrops
+		    ModeLabel = "Loot Drops"
+		  Case Ark.BlueprintController.ModeSpawnPoints
+		    ModeLabel = "Spawn Points"
+		  End Select
+		  
 		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPackName) + Beacon.FileExtensionDelta
-		  Dialog.Filter = BeaconFileTypes.BeaconData
+		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPackName) + " " + ModeLabel + Beacon.FileExtensionDelta
+		  Dialog.Filter = BeaconFileTypes.BeaconData + BeaconFileTypes.CSVFile
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File Is Nil Then
@@ -549,8 +561,22 @@ End
 		    Return
 		  End If
 		  
-		  If Ark.BuildExport(Blueprints, File, True) = False Then
-		    Self.ShowAlert("Export failed", "The selected " + If(SelectAll = False And Self.BlueprintList.SelectedRowCount = 1, "blueprint was", "blueprints were") + " not exported. Beacon's log files may have more information.")
+		  If File.Name.EndsWith(Beacon.FileExtensionDelta) Then
+		    If Ark.BuildExport(Blueprints, File, True) = False Then
+		      Self.ShowAlert("Export failed", "The selected " + If(SelectAll = False And Self.BlueprintList.SelectedRowCount = 1, "blueprint was", "blueprints were") + " not exported. Beacon's log files may have more information.")
+		    End If
+		  ElseIf File.Name.EndsWith(Beacon.FileExtensionCSV) Then
+		    Var CSVContent As String = Ark.ExportToCSV(Blueprints)
+		    If CSVContent.IsEmpty Then
+		      Return
+		    End If
+		    
+		    Try
+		      File.Write(CSVContent)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Writing CSV to disk")
+		      Self.ShowAlert("Export failed", "Writing the file to disk failed: " + Err.Message)
+		    End Try
 		  End If
 		End Sub
 	#tag EndMethod
