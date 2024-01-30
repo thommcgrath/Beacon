@@ -103,6 +103,7 @@ BeaconTemplate::SetCanonicalPath('/browse/' . urlencode($project->ProjectId()), 
 		case 'Ark.CustomConfig':
 		case 'ArkSA.CustomConfig':
 		case 'SDTD.CustomConfig':
+		case 'Palworld.CustomConfig':
 		case 'CustomContent':
 			$editorNames[] = 'Custom Config';
 			break;
@@ -139,6 +140,7 @@ BeaconTemplate::SetCanonicalPath('/browse/' . urlencode($project->ProjectId()), 
 		case 'Ark.GeneralSettings':
 		case 'ArkSA.GeneralSettings':
 		case 'SDTD.GeneralSettings':
+		Case 'Palworld.GeneralSettings':
 		case 'LootScale':
 		case 'OtherSettings':
 			$editorNames[] = 'General Settings';

@@ -397,6 +397,8 @@ Implements Beacon.HostingProvider
 		      Profile = New SDTD.ServerProfile(Self.Identifier, ProfileId, Name, Nickname, SecondaryName)
 		    Case ArkSA.Identifier
 		      Profile = New ArkSA.ServerProfile(Self.Identifier, ProfileId, Name, Nickname, SecondaryName)
+		    Case Palworld.Identifier
+		      Profile = New Palworld.ServerProfile(Self.Identifier, ProfileId, Name, Nickname, SecondaryName)
 		    End Select
 		    
 		    Var ProfileConfig As New Nitrado.HostConfig
@@ -516,6 +518,8 @@ Implements Beacon.HostingProvider
 		    Return SDTD.Identifier
 		  Case "arksa"
 		    Return ArkSA.Identifier
+		  Case "palworld"
+		    Return Palworld.Identifier
 		  End Select
 		End Function
 	#tag EndMethod
@@ -529,7 +533,7 @@ Implements Beacon.HostingProvider
 		    Return Beacon.PlatformPlayStation
 		  Case "arkswitch", "arkswitchjp"
 		    Return Beacon.PlatformSwitch
-		  Case "arkse", "arksotf", "arkseosg", "7daystodie", "sevendaysexperimental", "sevendtd"
+		  Case "arkse", "arksotf", "arkseosg", "7daystodie", "sevendaysexperimental", "sevendtd", "palworld"
 		    Return Beacon.PlatformPC
 		  Case "arkmobile"
 		    Return Beacon.PlatformUnsupported

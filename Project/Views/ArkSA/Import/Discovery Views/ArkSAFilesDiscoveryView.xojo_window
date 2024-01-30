@@ -16,7 +16,7 @@ Begin ArkSADiscoveryView ArkSAFilesDiscoveryView
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   200
+   Height          =   208
    ImplicitInstance=   True
    Index           =   "-2147483648"
    InitialParent   =   ""
@@ -69,7 +69,7 @@ Begin ArkSADiscoveryView ArkSAFilesDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   160
+      Top             =   168
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -101,7 +101,7 @@ Begin ArkSADiscoveryView ArkSAFilesDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   160
+      Top             =   168
       Transparent     =   False
       Underline       =   False
       Visible         =   True

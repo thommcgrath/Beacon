@@ -428,6 +428,8 @@ Implements ObservationKit.Observable
 		    Return New SDTD.Project()
 		  Case ArkSA.Identifier
 		    Return New ArkSA.Project()
+		  Case Palworld.Identifier
+		    Return New Palworld.Project()
 		  End Select
 		End Function
 	#tag EndMethod
@@ -543,6 +545,8 @@ Implements ObservationKit.Observable
 		    Project = New SDTD.Project
 		  Case ArkSA.Identifier
 		    Project = New ArkSA.Project
+		  Case Palworld.Identifier
+		    Project = New Palworld.Project
 		  Else
 		    Var Err As New Beacon.ProjectLoadException
 		    Err.Message = "Unknown game " + GameId + "."
@@ -1023,6 +1027,21 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasConfigGroup(InternalName As String) As Boolean
+		  Return Self.HasConfigGroup(InternalName, Self.ActiveConfigSet)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasConfigGroup(InternalName As String, Set As Beacon.ConfigSet) As Boolean
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		  If (SetDict Is Nil) = False Then
+		    Return SetDict.HasKey(InternalName)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasConfigSet(Set As Beacon.ConfigSet) As Boolean
 		  Return Self.IndexOf(Set) > -1
 		End Function
@@ -1453,6 +1472,42 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h1
 		Protected Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SavedDataVersion As Integer, SavedWithVersion As Integer)
 		  RaiseEvent ReadSaveData(PlainData, EncryptedData, SavedDataVersion, SavedWithVersion)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigGroup(Group As Beacon.ConfigGroup)
+		  If Group Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RemoveConfigGroup(Group.InternalName, Self.ActiveConfigSet)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigGroup(Group As Beacon.ConfigGroup, Set As Beacon.ConfigSet)
+		  If Group Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RemoveConfigGroup(Group.InternalName, Set)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigGroup(InternalName As String)
+		  Self.RemoveConfigGroup(InternalName, Self.ActiveConfigSet)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigGroup(InternalName As String, Set As Beacon.ConfigSet)
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		  If (SetDict Is Nil) = False And SetDict.HasKey(InternalName) Then
+		    SetDict.Remove(InternalName)
+		    Self.ConfigSetData(Set) = SetDict
+		  End If
 		End Sub
 	#tag EndMethod
 

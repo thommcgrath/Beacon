@@ -6,49 +6,67 @@ BeaconCommon::StartSession();
 
 $database = BeaconCommon::Database();
 
-$stable_version = BeaconCommon::NewestVersionForStage(3);
+$stableVersion = BeaconCommon::NewestVersionForStage(3);
 $currency = BeaconShop::GetCurrency();
-$supported_currencies = BeaconShop::GetCurrencyOptions();
+$supportedCurrencies = BeaconShop::GetCurrencyOptions();
 BeaconTemplate::SetTitle('Buy Beacon Omni');
 BeaconTemplate::SetCanonicalPath('/omni', str_starts_with($_SERVER['REQUEST_URI'], '/omni/license/') === false);
 
-$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, products.product_name, product_prices.price, EXTRACT(epoch FROM products.updates_length) AS plan_length_seconds FROM public.products INNER JOIN public.product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1 AND products.active = TRUE;', $currency);
-$product_details = [];
-$product_ids = [];
+$gameRows = $database->Query('SELECT game_id, game_name, early_access, beacon_major_version, beacon_minor_version FROM public.games WHERE public = TRUE ORDER BY game_name;');
+$gamesList = [];
+$gameInfo = [];
+while (!$gameRows->EOF()) {
+	$game = [
+		'gameId' => $gameRows->Field('game_id'),
+		'name' => $gameRows->Field('game_name'),
+		'earlyAccess' => $gameRows->Field('early_access'),
+		'majorVersion' => $gameRows->Field('beacon_major_version'),
+		'minorVersion' => $gameRows->Field('beacon_minor_version')
+	];
+	$gamesList[] = $game;
+	$gameInfo[$game['gameId']] = $game;
+	$gameRows->MoveNext();
+}
+
+$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, products.product_name, product_prices.price, EXTRACT(epoch FROM products.updates_length) AS plan_length_seconds, products.updates_length::TEXT AS plan_length FROM public.products INNER JOIN public.product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1 AND products.active = TRUE AND products.hidden = FALSE;', $currency);
+$productDetails = [];
+$productIds = [];
 while (!$results->EOF()) {
-	$product_id = $results->Field('product_id');
-	$product_name = $results->Field('product_name');
-	$product_price = $results->Field('price');
-	$game_id = $results->Field('game_id');
+	$productId = $results->Field('product_id');
+	$productName = $results->Field('product_name');
+	$productPrice = $results->Field('price');
+	$gameId = $results->Field('game_id');
 	$tag = $results->Field('tag');
-	$plan_length_seconds = $results->Field('plan_length_seconds');
+	$planLengthSeconds = $results->Field('plan_length_seconds');
+	$planLength = $results->Field('plan_length');
 
 	$product = [
-		'ProductId' => $product_id,
-		'Name' => $product_name,
-		'Price' => floatval($product_price),
-		'GameId' => $game_id,
+		'ProductId' => $productId,
+		'Name' => $productName,
+		'Price' => floatval($productPrice),
+		'GameId' => $gameId,
 		'Tag' => $tag,
-		'PlanLengthSeconds' => $plan_length_seconds
+		'PlanLengthSeconds' => $planLengthSeconds,
+		'PlanLength' => $planLength,
 	];
 
-	$product_details[$game_id][$tag] = $product;
-	$product_ids[$product_id] = $product;
+	$productDetails[$gameId][$tag] = $product;
+	$productIds[$productId] = $product;
 
 	$results->MoveNext();
 }
 
-$ark2Enabled = isset($product_details['Ark2']);
-$arkSAEnabled = isset($product_details['ArkSA']);
-$arkOnlyMode = ($ark2Enabled || $arkSAEnabled) === false;
+$ark2Enabled = isset($productDetails['Ark2']);
+$arkSAEnabled = isset($productDetails['ArkSA']);
+$palworldEnabled = isset($productDetails['Palworld']);
 
-$payment_methods = [
+$paymentMethods = [
 	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
 	'USD' => ['cashapp'],
 	'EUR' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
 	'PLN' => ['p24']
 ];
-$payment_labels = [
+$paymentLabels = [
 	'apple' => 'Apple Pay',
 	'google' => 'Google Pay',
 	'mastercard' => 'Mastercard',
@@ -65,15 +83,15 @@ $payment_labels = [
 	'cashapp' => 'Cash App Pay'
 ];
 
-$supported_payment_methods = $payment_methods['Universal'];
-if (array_key_exists($currency, $payment_methods)) {
-	$supported_payment_methods = array_merge($supported_payment_methods, $payment_methods[$currency]);
+$supportedPaymentMethods = $paymentMethods['Universal'];
+if (array_key_exists($currency, $paymentMethods)) {
+	$supportedPaymentMethods = array_merge($supportedPaymentMethods, $paymentMethods[$currency]);
 }
-$payment_method_info = [];
-foreach ($supported_payment_methods as $payment_method) {
-	$payment_method_info[] = [
+$paymentMethodInfo = [];
+foreach ($supportedPaymentMethods as $payment_method) {
+	$paymentMethodInfo[] = [
 		'key' => $payment_method,
-		'label' => $payment_labels[$payment_method],
+		'label' => $paymentLabels[$payment_method],
 		'iconUrl' => BeaconCommon::AssetURI('paymethod_' . $payment_method . '.svg')
 	];
 }
@@ -115,10 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	event.checkoutProperties = <?php echo json_encode([
 		'currencyCode' => $currency,
 		'currencies' => $_SESSION['store_currency_options'],
-		'paymentMethods' => $payment_method_info,
-		'products' => $product_details,
-		'productIds' => $product_ids,
+		'paymentMethods' => $paymentMethodInfo,
+		'products' => $productDetails,
+		'productIds' => $productIds,
 		'forceEmail' => $forceEmail,
+		'games' => $gamesList,
 	]); ?>;
 	document.dispatchEvent(event);
 });
@@ -131,122 +150,41 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 ?>
 <div id="storefront">
 	<div id="page-landing">
-		<h1>Do more with Beacon Omni</h1>
-		<p>Beacon does a lot for free. Loot drops, server control, file sharing, and more. But when it's time to get into more advanced configuration like crafting costs and player experience, then it's time to upgrade to Beacon Omni.</p>
-		<p>All users of Beacon can use all features, however Omni-only config types will not be included in generated Game.ini and GameUserSettings.ini files.</p>
-		<div class="text-center"><button id="buy-button" class="default">Buy Omni</button><br><span class="smaller">Already purchased? See <a href="/account/#omni">your account control panel</a> for more details.</span></div>
-		<div class="comment-block">
-			<div class="icon"><img src="<?php echo BeaconCommon::AssetURI('stripe-climate-badge.svg'); ?>" width="32" alt=""></div>
-			<div class="comment">2% of your purchase will be contributed to the removal of carbon dioxide from the atmosphere.</div>
+		<div class="omni-hero">
+			<div class="light-only"><img src="<?php echo BeaconCommon::AssetURI('beacon-omni-logotype.svg'); ?>"></div>
+			<div class="dark-only"><img src="<?php echo BeaconCommon::AssetURI('beacon-omni-logotype-dark.svg'); ?>"></div>
 		</div>
-		<table class="generic">
-			<thead>
-				<tr>
-					<th>Feature</th>
-					<th class="text-center bullet-column">Beacon</th>
-					<th class="text-center bullet-column">Omni</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Nitrado Server Control<br><span class="smaller text-lighter">Nitrado server owners can allow Beacon to directly control their server, including proper restart timing, config editing, and server settings changes.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>GameServerApp.com Support<br><span class="smaller text-lighter">Import and update GameServerApp.com config templates with only a few clicks.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>FTP Upload and Download<br><span class="smaller text-lighter">Beacon can use FTP edit your Game.ini and GameUserSettings.ini files right on the server.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Download Community Beacon Files<br><span class="smaller text-lighter">Download Beacon files created by other users to make getting started with custom loot easier.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Create Community Beacon Files<br><span class="smaller text-lighter">Share your creation with the world to serve as a starting point for others.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Breeding Multipliers<br><span class="smaller text-lighter">Adjust any of the breeding-related multipliers with realtime display of their effects on Ark's creatures and their imprint times.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Day and Night Cycle<br><span class="smaller text-lighter">Change the length of Ark's days and nights using minutes instead of multipliers.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Decay and Spoil<br><span class="smaller text-lighter">Change and preview item decay, decomposition, and spoil times.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<?php if ($stable_version >= 10502300) { ?>
-				<tr>
-					<td>General Settings<?php if ($stable_version < 10503300) { ?><span class="tag blue mini left-space">New in Beacon 1.5.2</span><?php } ?><br><span class="smaller text-lighter">Beacon has support for nearly every setting available to Ark servers.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<?php } ?>
-				<tr>
-					<td>Item Stat Limits<br><span class="smaller text-lighter">Globally limit item stats to precise admin-defined amounts, just like official servers.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Loot Drops<br><span class="smaller text-lighter">Beacon's original purpose, editing loot drops, is what it does best.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Stat Multipliers<br><span class="smaller text-lighter">Change the stats of players, wild creatures, and tamed creatures.</span></td>
-					<td class="text-center bullet-column">&check;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Crafting Costs<br><span class="smaller text-lighter">Change the cost of any craftable item in Ark.</span></td>
-					<td class="text-center bullet-column">&nbsp;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Creature Adjustments<br><span class="smaller text-lighter">Adjust creature-specific damage and vulnerability multipliers, replace creatures with others, or disable specific creatures entirely.</span></td>
-					<td class="text-center bullet-column">&nbsp;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Creature Spawns<br><span class="smaller text-lighter">Add, remove, or change the creatures available on any map. Want to add lots of Featherlights to The Island, or put one really high level Pteranodon on Aberration? It's possible.</span></td>
-					<td class="text-center bullet-column">&nbsp;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Engram Control<br><span class="smaller text-lighter">Change when engrams are unlockable, if they auto-unlock, and the number of engram points awarded each level. Beacon's powerful wizard allows users to instantly build full engram designs, such as auto-unlocking everything except tek items at spawn.</span></td>
-					<td class="text-center bullet-column">&nbsp;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Harvest Rates<br><span class="smaller text-lighter">Change the harvest multiplier for any harvestable item in the game. Tip: this is a great way to improve server performance.</span></td>
-					<td class="text-center bullet-column">&nbsp;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Levels and XP<br><span class="smaller text-lighter">Control max level and the experience curve for both players and tamed dinos.</span></td>
-					<td class="text-center bullet-column">&nbsp;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-				<tr>
-					<td>Stack Sizes<br><span class="smaller text-lighter">Ark finally allows admins to customize stack sizes, so Beacon Omni has an editor ready to go.</span></td>
-					<td class="text-center bullet-column">&nbsp;</td>
-					<td class="text-center bullet-column">&check;</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="text-center"><button id="buy-button" class="default">Buy Omni</button><br><span class="smaller">Already purchased? See <a href="/account/#omni">your account control panel</a> for more details.</span></div>
+		<div id="panel-games" class="page-panel">
+			<div class="page-panel-nav">
+				<ul>
+					<?php
+					$firstGame = true;
+					foreach ($gamesList as $game) {
+						$gameId = $game['gameId'];
+						$gameName = $game['name'];
+						if ($game['earlyAccess']) {
+							$gameName .= ' (Early Access)';
+						}
+						echo '<li' . ($firstGame ? ' class="page-panel-active"' : '') . '><a href="#' . htmlentities(urlencode($gameId)) . '" page="' . htmlentities($gameId) . '">' . htmlentities($gameName) . '</a></li>';
+						$firstGame = false;
+					}
+					?>
+				</ul>
+			</div>
+			<div class="page-panel-pages">
+				<?php
+				$firstGame = true;
+				foreach ($gamesList as $game) {
+					$gameId = $game['gameId'];
+					echo '<div class="page-panel-page' . ($firstGame ? ' page-panel-visible' : '') . '" page="' . htmlentities($gameId) . '">';
+					include('modules/' . strtolower($gameId) . '.php');
+					echo '</div>';
+					$firstGame = false;
+				}
+				?>
+			</div>
+		</div>
 	</div>
 	<div id="page-cart" class="hidden invisible">
 		<div id="storefront-cart-header" class="storefront-cart-section">
@@ -254,29 +192,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 			<div id="storefront-cart-header-email-field">&nbsp;</div>
 			<div><button id="storefront-cart-header-email-button" class="hidden">Change Email</button></div>
 		</div>
-		<div id="storefront-cart" class="storefront-cart-section"><?php if ($arkOnlyMode) { ?>
-			<table class="generic no-row-colors">
-				<tr>
-					<td><?php echo htmlentities($product_details['Ark']['Base']['Name']); ?><br><span class="smaller text-lighter">Purchase a copy of <?php echo htmlentities($product_details['Ark']['Base']['Name']); ?> for your account. All software updates are included for life.</span></td>
-					<td class="text-center storefront-quantity-column">
-						<p class="formatted-price mb-2 mt-0 larger" beacon-price="<?php echo $product_details['Ark']['Base']['Price']; ?>"></p>
-						<div id="storefront-ark-owned" class="hidden mb-2 mt-0">Owned</div>
-						<div class="mt-2 mb-0"><label class="checkbox hidden"><input type="checkbox" value="ark" id="storefront-ark-check"><span></span></label></div>
-					</td>
-				</tr>
-				<tr>
-					<td><?php echo htmlentities($product_details['Ark']['Base']['Name']); ?> (Giftable)<br><span class="smaller text-lighter">Same option as above, except you will be sent a gift code that can be given away however you'd like.</span></td>
-					<td class="text-center storefront-quantity-column">
-						<p class="formatted-price mb-2 mt-0 larger" beacon-price="<?php echo $product_details['Ark']['Base']['Price']; ?>"></p>
-						<div id="storefront-ark-gift-group" class="input-group mt-2 mb-0">
-							<button id="storefront-ark-gift-decrease">-</button>
-							<input class="text-field text-center no-stepper" type="number" value="0" id="storefront-ark-gift-field" min="0" max="5">
-							<button id="storefront-ark-gift-increase">+</button>
-						</div>
-					</td>
-				</tr>
-			</table>
-		<?php } ?></div>
+		<div id="storefront-cart" class="storefront-cart-section"></div>
 		<div id="storefront-cart-footer" class="storefront-cart-section">
 			<div class="storefront-cart-totals">
 				<div class="storefront-cart-total-row">
@@ -314,7 +230,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 			<div class="storefront-cart-paymethods">
 				<?php
 
-				foreach ($payment_method_info as $payMethod) {
+				foreach ($paymentMethodInfo as $payMethod) {
 					echo '<div><img src="' . $payMethod['iconUrl'] . '" title="' . $payMethod['label'] . '" alt="' . $payMethod['label'] . '"></div>';
 				}
 
@@ -323,18 +239,20 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 			<div class="storefront-cart-notice">
 				<a href="/policies/refund">Beacon Refund Policy</a>
 			</div>
+			<div class="comment-block">
+				<div class="icon"><img src="<?php echo BeaconCommon::AssetURI('stripe-climate-badge.svg'); ?>" width="32" alt=""></div>
+				<div class="comment">2% of your purchase will be contributed to the removal of carbon dioxide from the atmosphere.</div>
+			</div>
 		</div>
 	</div>
 </div>
-<?php
-if ($arkOnlyMode === false) {
-	BeaconTemplate::StartModal('checkout-wizard'); ?>
+<?php BeaconTemplate::StartModal('checkout-wizard'); ?>
 	<div class="modal-content">
 		<div class="title-bar">Select Your Games</div>
 		<div class="content">
 			<p>For which games would you like to purchase Beacon Omni?</p>
 			<div id="checkout-wizard-list">
-				<?php if ($arkSAEnabled) { ?><div id="checkout-wizard-list-arksa">
+				<?php if ($arkSAEnabled) { ?><div id="checkout-wizard-list-arksa" class="checkout-wizard-list-game" beacon-game-id="ArkSA">
 					<div class="checkout-wizard-checkbox-cell">
 						<label class="checkbox"><input type="checkbox" value="arksa" id="checkout-wizard-arksa-check"><span></span></label>
 					</div>
@@ -342,7 +260,7 @@ if ($arkOnlyMode === false) {
 						<div><label for="checkout-wizard-arksa-check">Ark: Survival Ascended</label></div>
 						<div class="checkout-wizard-promo" id="checkout-wizard-promo-arksa">50% off when bundled with Ark: Survival Evolved</div>
 						<div class="checkout-wizard-status">
-							<span id="checkout-wizard-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price" beacon-price="<?php echo $product_details['ArkSA']['Renewal']['Price']; ?>"></span> each.</span>
+							<span id="checkout-wizard-status-arksa">Includes 1 year of app updates. Additional years cost <span class="formatted-price" beacon-price="<?php echo $productDetails['ArkSA']['Renewal']['Price']; ?>"></span> each.</span>
 						</div>
 						<div id="checkout-wizard-arksa-duration-group" class="input-group input-group-sm">
 							<span class="input-group-text">Update Years</span>
@@ -352,11 +270,11 @@ if ($arkOnlyMode === false) {
 						</div>
 					</div>
 					<div class="checkout-wizard-price-cell">
-						<span id="checkout-wizard-arksa-full-price" class="formatted-price" beacon-price="<?php echo $product_details['ArkSA']['Base']['Price']; ?>"></span><br>
-						<span id="checkout-wizard-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount" beacon-price="<?php echo $product_details['ArkSA']['Upgrade']['Price']; ?>"></span>
+						<span id="checkout-wizard-arksa-full-price" class="formatted-price" beacon-price="<?php echo $productDetails['ArkSA']['Base']['Price']; ?>"></span><br>
+						<span id="checkout-wizard-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount" beacon-price="<?php echo $productDetails['ArkSA']['Upgrade']['Price']; ?>"></span>
 					</div>
 				</div><?php } ?>
-				<div id="checkout-wizard-list-ark">
+				<div id="checkout-wizard-list-ark" class="checkout-wizard-list-game separated" beacon-game-id="Ark">
 					<div class="checkout-wizard-checkbox-cell">
 						<label class="checkbox"><input type="checkbox" value="ark" id="checkout-wizard-ark-check"><span></span></label>
 					</div>
@@ -367,9 +285,50 @@ if ($arkOnlyMode === false) {
 						</div>
 					</div>
 					<div class="checkout-wizard-price-cell">
-						<span id="checkout-wizard-ark-price" class="formatted-price" beacon-price="<?php echo $product_details['Ark']['Base']['Price']; ?>"></span>
+						<span id="checkout-wizard-ark-price" class="formatted-price" beacon-price="<?php echo $productDetails['Ark']['Base']['Price']; ?>"></span>
 					</div>
 				</div>
+<?php
+				foreach ($gamesList as $game) {
+					$gameId = $game['gameId'];
+					$gameName = $game['name'];
+					if ($gameId === 'Ark' || $gameId === 'ArkSA') {
+						continue;
+					}
+
+					$gameIdLower = strtolower($gameId);
+					$gameIdLowerHtml = htmlentities($gameIdLower);
+					$baseProduct = $productDetails[$gameId]['Base'];
+					$isLifetime = is_null($baseProduct['PlanLength']);
+
+					echo "\t\t\t\t"  . '<div id="checkout-wizard-list-' . $gameIdLowerHtml . '" class="checkout-wizard-list-game separated" beacon-game-id="' . htmlentities($gameId) . '">' . "\n";
+					echo "\t\t\t\t\t" . '<div class="checkout-wizard-checkbox-cell"><label class="checkbox"><input type="checkbox" value="' . $gameIdLowerHtml . '" id="checkout-wizard-' . $gameIdLowerHtml . '-check"><span></span></label></div>' . "\n";
+					echo "\t\t\t\t\t" . '<div class="checkout-wizard-description-cell">' . "\n";
+					echo "\t\t\t\t\t\t" . '<div><label for="checkout-wizard-' . $gameIdLowerHtml . '-check">' . htmlentities($gameName) . '</label></div>' . "\n";
+					echo "\t\t\t\t\t\t" . '<div class="checkout-wizard-status">' . "\n";
+					echo "\t\t\t\t\t\t\t" . '<span id="checkout-wizard-status-' . $gameIdLowerHtml . '">';
+					if ($isLifetime) {
+						echo 'Includes lifetime updates.';
+					} else {
+						echo 'Includes ' . htmlentities($baseProduct['PlanLength']) . ' of app updates. Additional years cost <span class="formatted-price" beacon-price="' . htmlentities($productDetails[$gameId]['Renewal']['Price']) . '"></span> each.';
+					}
+					echo '</span>' . "\n";
+					echo "\t\t\t\t\t\t" . '</div>' . "\n"; // checkout-wizard-status
+					if ($isLifetime === false) {
+						echo "\t\t\t\t\t\t" . '<div id="checkout-wizard-' . $gameIdLowerHtml . '-duration-group" class="input-group input-group-sm">' . "\n";
+						echo "\t\t\t\t\t\t\t" . '<span class="input-group-text">Update Years</span>' . "\n";
+						echo "\t\t\t\t\t\t\t" . '<input class="text-field no-stepper" type="number" value="1" id="checkout-wizard-' . $gameIdLowerHtml . '-duration-field" min="1" max="10">' . "\n";
+						echo "\t\t\t\t\t\t\t" . '<button id="checkout-wizard-' . $gameIdLowerHtml . '-yeardown-button">-</button>' . "\n";
+						echo "\t\t\t\t\t\t\t" . '<button id="checkout-wizard-' . $gameIdLowerHtml . '-yearup-button">+</button>' . "\n";
+						echo "\t\t\t\t\t\t" . '</div>' . "\n";
+					}
+					echo "\t\t\t\t\t" . '</div>' . "\n"; // checkout-wizard-description-cell
+					echo "\t\t\t\t\t" . '<div class="checkout-wizard-price-cell">' . "\n";
+					echo "\t\t\t\t\t\t" . '<span id="checkout-wizard-' . $gameIdLowerHtml . '-price" class="formatted-price" beacon-price="' . htmlentities($baseProduct['Price']) . '"></span><br>' . "\n";
+					echo "\t\t\t\t\t" . '</div>' . "\n"; // checkout-wizard-price-cell
+					echo "\t\t\t\t" . '</div>' . "\n"; // checkout-wizard-list-game
+				}
+				?>
 			</div>
 			<p class="smaller text-lighter">These are one time payments. Beacon Omni is not subscription software. <a href="/omni/updates" target="beacon" rel="noopener noreferrer">Learn More</a></p>
 		</div>
@@ -385,8 +344,7 @@ if ($arkOnlyMode === false) {
 		</div>
 	</div>
 <?php
-	BeaconTemplate::FinishModal();
-}
+BeaconTemplate::FinishModal();
 BeaconTemplate::StartModal('checkout-email');
 ?>
 	<div class="modal-content">
@@ -411,4 +369,10 @@ BeaconTemplate::StartModal('checkout-email');
 			</div>
 		</div>
 	</div>
-<?php BeaconTemplate::FinishModal(); ?>
+<?php BeaconTemplate::FinishModal();
+
+function OutputGameHeader(string $titleHtml, string $gameId): void {
+	echo '<div class="omni-game-header"><div class="omni-game-header-title">' . $titleHtml . '</div><div class="omni-game-header-button"><button id="checkout-buy-' . strtolower($gameId) . '-button" class="blue">Buy Now</button></div></div>' . "\n";
+}
+
+?>

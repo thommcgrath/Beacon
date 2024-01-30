@@ -53,6 +53,8 @@ Implements Beacon.HostingProvider
 		    Return SDTD.SteamAppId
 		  Case ArkSA.Identifier
 		    Return ArkSA.SteamServerId
+		  Case Palworld.Identifier
+		    Return Palworld.SteamServerId
 		  End Select
 		End Function
 	#tag EndMethod
@@ -181,6 +183,9 @@ Implements Beacon.HostingProvider
 		      ArkSA.ServerProfile(Profile).GameUserSettingsIniPath = ArkSA.ConfigFileGameUserSettings
 		    Case SDTD.Identifier
 		      Profile = New SDTD.ServerProfile(Self.Identifier, ProfileId, TemplateName, "", TemplateId.ToString(Locale.Raw, "0"))
+		    Case Palworld.Identifier
+		      Profile = New Palworld.ServerProfile(Self.Identifier, ProfileId, TemplateName, "", TemplateId.ToString(Locale.Raw, "0"))
+		      Palworld.ServerProfile(Profile).SettingsIniPath = Palworld.ConfigFileSettings
 		    End Select
 		    Profile.Platform = Beacon.PlatformPC
 		    Profile.HostConfig = ProfileConfig

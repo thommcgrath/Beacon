@@ -1040,8 +1040,24 @@ abstract class BeaconCommon {
 			return 'ArkSA';
 		case 'sdtd':
 			return '7DaysToDie';
+		case 'palworld':
+			return 'Palworld';
 		}
 		return '';
+	}
+
+	public static function GameIdToName(string $gameId): string {
+		switch (strtolower(trim($gameId))) {
+		case 'ark':
+			return 'Ark: Survival Evolved';
+		case 'arksa':
+			return 'Ark: Survival Ascended';
+		case 'sdtd':
+			return '7 Days To Die';
+		case 'palworld':
+			return 'Palworld (Early Access)';
+		}
+		return $gameId;
 	}
 }
 
