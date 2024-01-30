@@ -16,14 +16,14 @@ Inherits Beacon.DiscoverIntegration
 		  Case IsA Nitrado.HostingProvider
 		    Self.Log("Checking server status…")
 		    Try
-		      Profile.BasePath = Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "/game_specific.path"))
+		      Profile.BasePath = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "/game_specific.path"))
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not find server base path: " + Err.Message)
 		      Return Nil
 		    End Try
 		    
 		    Try
-		      Var MapIdentifier As String = Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "config.map"))
+		      Var MapIdentifier As String = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "config.map"))
 		      Profile.Mask = Ark.Maps.MaskForIdentifier(MapIdentifier.LastField(","))
 		      GetMapFromLogs = False
 		    Catch Err As RuntimeException
@@ -33,7 +33,7 @@ Inherits Beacon.DiscoverIntegration
 		    
 		    Var ExpertMode As Boolean
 		    Try
-		      ExpertMode = Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode"))
+		      ExpertMode = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode"))
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not determine if the server is in expert mode: " + Err.Message)
 		      Return Nil
@@ -41,7 +41,7 @@ Inherits Beacon.DiscoverIntegration
 		    
 		    GatherGameSettings = False
 		    DownloadIniFiles = ExpertMode
-		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "start-param"))).ToString) // Weird way to convert JSONItem to Dictionary
+		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "start-param"))).ToString) // Weird way to convert JSONItem to Dictionary
 		    
 		    If ExpertMode = False Then
 		      Var GuidedOrganizer As New Ark.ConfigOrganizer
@@ -53,7 +53,7 @@ Inherits Beacon.DiscoverIntegration
 		        
 		        Var Value As Variant
 		        Try
-		          Value = Provider.GameSetting(Project, Profile, Setting)
+		          Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Setting)
 		        Catch Err As RuntimeException
 		          Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
 		          Return Nil
@@ -141,13 +141,14 @@ Inherits Beacon.DiscoverIntegration
 		    End If
 		  End If
 		  
-		  If GatherGameSettings And Provider.SupportsGameSettings Then
+		  Select Case Provider
+		  Case IsA Nitrado.HostingProvider
 		    Var CommandLineOptions As New Dictionary
 		    Var Settings() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
 		    For Each Setting As Ark.ConfigOption In Settings
 		      Var Value As Variant
 		      Try
-		        Value = Provider.GameSetting(Project, Profile, Setting)
+		        Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Setting)
 		        If Value.IsNull = False Then
 		          CommandLineOptions.Value(Setting.Key) = Value
 		        End If
@@ -157,7 +158,22 @@ Inherits Beacon.DiscoverIntegration
 		      End Try
 		    Next
 		    Data.CommandLineOptions = CommandLineOptions
-		  End If
+		  Case IsA GameServerApp.HostingProvider
+		    Var ChainDownloaded As Boolean
+		    Var Chain As String = Self.GetFile("chain", "Launch Options: Chain", Beacon.Integration.DownloadFailureMode.MissingAllowed, False, ChainDownloaded)
+		    
+		    Var TailDownloaded As Boolean
+		    Var Tail As String = Self.GetFile("end", "Launch Options: End", Beacon.Integration.DownloadFailureMode.MissingAllowed, False, TailDownloaded)
+		    
+		    Var Launch As String = "TheIsland?listen" + Chain + " " + Tail
+		    Var CommandLine As Dictionary = Ark.ParseCommandLine(Launch, False)
+		    If CommandLine.HasKey("?Map") Then
+		      CommandLine.Remove("?Map")
+		    ElseIf CommandLine.HasKey("Map") Then
+		      CommandLine.Remove("Map")
+		    End If
+		    Data.CommandLineOptions = CommandLine
+		  End Select
 		  
 		  Self.mImportProgress = New Beacon.DummyProgressDisplayer
 		  Var NewProject As Ark.Project = Ark.ImportThread.RunSynchronous(Data, Self.mDestinationProject, Self.mImportProgress)

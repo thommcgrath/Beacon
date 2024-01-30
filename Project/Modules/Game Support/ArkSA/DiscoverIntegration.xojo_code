@@ -15,14 +15,14 @@ Inherits Beacon.DiscoverIntegration
 		  Case IsA Nitrado.HostingProvider
 		    Self.Log("Checking server status…")
 		    Try
-		      Profile.BasePath = Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "/game_specific.path"))
+		      Profile.BasePath = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "/game_specific.path"))
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not find server base path: " + Err.Message)
 		      Return Nil
 		    End Try
 		    
 		    Try
-		      Var MapIdentifier As String = Provider.GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "config.map"))
+		      Var MapIdentifier As String = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "config.map"))
 		      Profile.Mask = ArkSA.Maps.MaskForIdentifier(MapIdentifier.LastField(","))
 		      GetMapFromLogs = False
 		    Catch Err As RuntimeException
@@ -89,13 +89,14 @@ Inherits Beacon.DiscoverIntegration
 		    End If
 		  End If
 		  
-		  If Provider.SupportsGameSettings Then
+		  Select Case Provider
+		  Case IsA Nitrado.HostingProvider
 		    Var CommandLineOptions As New Dictionary
 		    Var Settings() As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
 		    For Each Setting As ArkSA.ConfigOption In Settings
 		      Var Value As Variant
 		      Try
-		        Value = Provider.GameSetting(Project, Profile, Setting)
+		        Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Setting)
 		        If Value.IsNull = False Then
 		          CommandLineOptions.Value(Setting.Key) = Value
 		        End If
@@ -105,7 +106,22 @@ Inherits Beacon.DiscoverIntegration
 		      End Try
 		    Next
 		    Data.CommandLineOptions = CommandLineOptions
-		  End If
+		  Case IsA GameServerApp.HostingProvider
+		    Var ChainDownloaded As Boolean
+		    Var Chain As String = Self.GetFile("chain", "Launch Options: Chain", Beacon.Integration.DownloadFailureMode.MissingAllowed, False, ChainDownloaded)
+		    
+		    Var TailDownloaded As Boolean
+		    Var Tail As String = Self.GetFile("end", "Launch Options: End", Beacon.Integration.DownloadFailureMode.MissingAllowed, False, TailDownloaded)
+		    
+		    Var Launch As String = "TheIsland?listen" + Chain + " " + Tail
+		    Var CommandLine As Dictionary = ArkSA.ParseCommandLine(Launch, False)
+		    If CommandLine.HasKey("?Map") Then
+		      CommandLine.Remove("?Map")
+		    ElseIf CommandLine.HasKey("Map") Then
+		      CommandLine.Remove("Map")
+		    End If
+		    Data.CommandLineOptions = CommandLine
+		  End Select
 		  
 		  Self.mImportProgress = New Beacon.DummyProgressDisplayer
 		  Var NewProject As ArkSA.Project = ArkSA.ImportThread.RunSynchronous(Data, Self.mDestinationProject, Self.mImportProgress)

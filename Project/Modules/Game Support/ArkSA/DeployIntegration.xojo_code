@@ -196,10 +196,83 @@ Inherits Beacon.DeployIntegration
 		    If Self.Finished Then
 		      Return
 		    End If
+		  Case IsA GameServerApp.HostingProvider
+		    Call Self.GameServerAppApplySettings(Organizer)
 		  End Select
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h1
+		Protected Function GameServerAppApplySettings(Organizer As ArkSA.ConfigOrganizer) As Boolean
+		  If (Self.Provider IsA GameServerApp.HostingProvider) = False Then
+		    Return False
+		  End If
+		  
+		  Var ChainDownloaded As Boolean
+		  Var Chain As String = Self.GetFile("chain", "Launch Options: Chain", Beacon.Integration.DownloadFailureMode.MissingAllowed, False, ChainDownloaded)
+		  
+		  Var TailDownloaded As Boolean
+		  Var Tail As String = Self.GetFile("end", "Launch Options: End", Beacon.Integration.DownloadFailureMode.MissingAllowed, False, TailDownloaded)
+		  
+		  Var Launch As String = "TheIsland?listen" + Chain + " " + Tail
+		  Var CommandLine As Dictionary = ArkSA.ParseCommandLine(Launch, True)
+		  If CommandLine.HasKey("?Map") Then
+		    CommandLine.Remove("?Map")
+		  ElseIf CommandLine.HasKey("Map") Then
+		    CommandLine.Remove("Map")
+		  End If
+		  
+		  // Options are key value pairs, flags are just keys
+		  Var Options() As ArkSA.ConfigValue = Organizer.FilteredValues("CommandLineOption")
+		  Var Flags() As ArkSA.ConfigValue = Organizer.FilteredValues("CommandLineFlag")
+		  
+		  For Each Option As ArkSA.ConfigValue In Options
+		    Var Key As String = Option.Header + Option.AttributedKey
+		    CommandLine.Value(Key) = Option.Command
+		  Next
+		  For Each Flag As ArkSA.ConfigValue In Flags
+		    Var Key As String = Flag.Header + Flag.AttributedKey
+		    If Flag.Details.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Then
+		      If Flag.Value = "True" Then
+		        CommandLine.Value(Key) = Flag.AttributedKey
+		      ElseIf CommandLine.HasKey(Key) Then
+		        CommandLine.Remove(Key)
+		      End If
+		    End If
+		  Next
+		  
+		  Var ChainElements(), TailElements() As String
+		  For Each Entry As DictionaryEntry In CommandLine
+		    Var Key As String = Entry.Key
+		    Var Command As String = Entry.Value
+		    If Key.BeginsWith("-") Then
+		      If Command.BeginsWith("-") = False Then
+		        Command = "-" + Command
+		      End If
+		      TailElements.Add(Command)
+		    ElseIf Key.BeginsWith("?") Then
+		      If Command.BeginsWith("?") = False Then
+		        Command = "?" + Command
+		      End If
+		      ChainElements.Add(Command)
+		    End If
+		  Next
+		  
+		  Var NewChain As String = ChainElements.Join("")
+		  Var NewTail As String = TailElements.Join(" ")
+		  
+		  If Not Self.PutFile(NewChain, "chain", "Launch Options: Chain") Then
+		    Return False
+		  End If
+		  
+		  If Not Self.PutFile(NewTail, "end", "Launch Options: End") Then
+		    Return False
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function NitradoApplySettings(Organizer As ArkSA.ConfigOrganizer) As Boolean
@@ -208,6 +281,9 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  Var Changes As Dictionary = Self.NitradoPrepareChanges(Organizer)
+		  If Changes Is Nil Then
+		    Return False
+		  End If
 		  Return Self.NitradoApplySettings(Changes)
 		End Function
 	#tag EndMethod
@@ -224,7 +300,7 @@ Inherits Beacon.DeployIntegration
 		    Var NewValue As String = Entry.Value
 		    
 		    Try
-		      Self.Provider.GameSetting(Project, Profile, Setting) = NewValue
+		      Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, Setting) = NewValue
 		    Catch Err As RuntimeException
 		      Self.SetError(Err)
 		      Return False
@@ -318,6 +394,10 @@ Inherits Beacon.DeployIntegration
 
 	#tag Method, Flags = &h1
 		Protected Function NitradoPrepareChanges(Organizer As ArkSA.ConfigOrganizer) As Dictionary
+		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
+		    Return Nil
+		  End If
+		  
 		  Var Project As ArkSA.Project = Self.Project
 		  Var Profile As ArkSA.ServerProfile = Self.Profile
 		  Var Keys() As ArkSA.ConfigOption = Organizer.DistinctKeys
@@ -367,7 +447,7 @@ Inherits Beacon.DeployIntegration
 		  Var Changes As New Dictionary
 		  For Each Entry As DictionaryEntry In NewValues
 		    Var ConfigOption As ArkSA.ConfigOption = Entry.Key
-		    Var CurrentValue As Variant = Self.Provider.GameSetting(Project, Profile, ConfigOption)
+		    Var CurrentValue As Variant = Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, ConfigOption)
 		    Var FinishedValue As String
 		    If Entry.Value.Type = Variant.TypeString Then
 		      // Value comparison

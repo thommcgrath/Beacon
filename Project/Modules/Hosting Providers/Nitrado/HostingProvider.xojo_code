@@ -613,12 +613,6 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SupportsGameSettings() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SupportsRestarting() As Boolean
 		  Return True
 		End Function
