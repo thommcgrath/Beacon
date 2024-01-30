@@ -20,8 +20,8 @@ Inherits Beacon.DeployIntegration
 		    
 		    Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
 		    Profile.BasePath = GamePath
-		    Profile.SettingsIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/PalWorldSettings.ini"
-		    Profile.LogsPath = GamePath + "/ShooterGame/Saved/Logs"
+		    Profile.SettingsIniPath = GamePath + "/Pal/Saved/Config/WindowsServer/PalWorldSettings.ini"
+		    Profile.LogsPath = GamePath + "/Pal/Saved/Logs"
 		  End Select
 		  
 		  SettingsIniPath = Profile.SettingsIniPath
@@ -224,44 +224,7 @@ Inherits Beacon.DeployIntegration
 		    End If
 		  End Try
 		  
-		  Var LogPath As String = Self.Profile.BasePath + "/ShooterGame/Saved/Logs/ShooterGame.log"
-		  Var LogContentSuccess As Boolean
-		  Var LogContent As String = Self.GetFile(LogPath, "ShooterGame.log", Beacon.Integration.DownloadFailureMode.ErrorsAllowed, False, LogContentSuccess)
-		  Var ServerStopTime As DateTime
-		  
-		  If LogContentSuccess Then
-		    Try
-		      Var EOL As String = Encodings.ASCII.Chr(10)
-		      Var Lines() As String = LogContent.ReplaceLineEndings(EOL).Split(EOL)
-		      Var TimestampFound As Boolean
-		      For I As Integer = Lines.LastIndex DownTo 0
-		        Var Line As String = Lines(I)
-		        If Line.IndexOf("Log file closed") = -1 Then
-		          Continue
-		        End If
-		        
-		        Var Year As Integer = Integer.FromString(Line.Middle(1, 4), Locale.Raw)
-		        Var Month As Integer = Integer.FromString(Line.Middle(6, 2), Locale.Raw)
-		        Var Day As Integer = Integer.FromString(Line.Middle(9, 2), Locale.Raw)
-		        Var Hour As Integer = Integer.FromString(Line.Middle(12, 2), Locale.Raw)
-		        Var Minute As Integer = Integer.FromString(Line.Middle(15, 2), Locale.Raw)
-		        Var Second As Integer = Integer.FromString(Line.Middle(18, 2), Locale.Raw)
-		        Var Nanosecond As Integer = (Integer.FromString(Line.Middle(21, 3), Locale.Raw) / 1000) * 1000000000
-		        
-		        ServerStopTime = New DateTime(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
-		        TimestampFound = True
-		        Exit For I
-		      Next
-		      
-		      If Not TimestampFound Then
-		        ServerStopTime = Now
-		      End If
-		    Catch Err As RuntimeException
-		      ServerStopTime = Now
-		    End Try
-		  Else
-		    ServerStopTime = Now
-		  End If
+		  Var ServerStopTime As DateTime = Now
 		  
 		  // Now we can compute how long to wait.
 		  Var WaitSeconds As Integer = Palworld.DataSource.Pool.Get(False).GetVariable("Nitrado Wait Seconds")

@@ -62,8 +62,14 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  Var Project As New Palworld.Project
-		  If ParsedData.HasKey("SessionName") Then
-		    Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
+		  Var OptionSettings As Dictionary
+		  Try
+		    OptionSettings = ParsedData.Value("OptionSettings")
+		  Catch Err As RuntimeException
+		    OptionSettings = New Dictionary
+		  End Try
+		  If OptionSettings.HasKey("ServerName") Then
+		    Var SessionNames() As Variant = OptionSettings.AutoArrayValue("ServerName")
 		    For Each SessionName As Variant In SessionNames
 		      Try
 		        Var SessionTitle As String = SessionName.StringValue
@@ -88,14 +94,23 @@ Inherits Beacon.Thread
 		  
 		  If (Profile Is Nil) = False Then
 		    Profile.Name = Project.Title
+		    Profile.ServerDescription = OptionSettings.StringValue("ServerDescription", "")
+		    Profile.AdminPassword = OptionSettings.StringValue("AdminPassword", "")
+		    Profile.ServerPassword = OptionSettings.StringValue("ServerPassword", "")
 		    Project.AddServerProfile(Profile)
 		  End If
 		  
 		  Var ConfigNames() As String = Palworld.Configs.AllNames()
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  Var Configs() As Palworld.ConfigGroup
 		  For Each ConfigName As String In ConfigNames
 		    If ConfigName = Palworld.Configs.NameCustomConfig Then
 		      // Custom content is special
+		      Continue For ConfigName
+		    End If
+		    
+		    If Palworld.Configs.ShouldImport(ConfigName, Identity) = False Then
+		      // Do not import code for groups that the user has not purchased
 		      Continue For ConfigName
 		    End If
 		    
@@ -105,7 +120,7 @@ Inherits Beacon.Thread
 		      Group = Palworld.Configs.CreateInstance(ConfigName, ParsedData, Project)
 		    Catch Err As RuntimeException
 		    End Try
-		    If Group <> Nil Then
+		    If (Group Is Nil) = False Then
 		      Project.AddConfigGroup(Group)
 		      Configs.Add(Group)
 		    End If

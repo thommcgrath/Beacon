@@ -167,7 +167,7 @@ Begin DocumentEditorView PalworldDocumentEditorView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   627
       Begin OmniNoticeBar OmniNoticeBanner
@@ -1366,7 +1366,7 @@ End
 #tag Events OmniNoticeBanner
 	#tag Event
 		Sub Pressed()
-		  System.GotoURL(Beacon.WebURL("/omni"))
+		  System.GotoURL(Beacon.WebURL("/omni#Palworld"))
 		End Sub
 	#tag EndEvent
 	#tag Event

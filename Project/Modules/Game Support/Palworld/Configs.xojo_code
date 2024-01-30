@@ -61,6 +61,10 @@ Protected Module Configs
 
 	#tag Method, Flags = &h1
 		Protected Function ConfigUnlocked(InternalName As String, Identity As Beacon.Identity) As Boolean
+		  #if DebugBuild
+		    Return True
+		  #endif
+		  
 		  If mConfigOmniCache Is Nil Then
 		    mConfigOmniCache = New Dictionary
 		  End If
@@ -197,6 +201,20 @@ Protected Module Configs
 		  End If
 		  
 		  Return NewGroup
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ShouldImport(InternalName As String, Identity As Beacon.Identity) As Boolean
+		  If ConfigUnlocked(InternalName, Identity) Then
+		    Return True
+		  End If
+		  
+		  // Import these, even if locked.
+		  Select Case InternalName
+		  Case Palworld.Configs.NameGeneralSettings
+		    Return True
+		  End Select
 		End Function
 	#tag EndMethod
 

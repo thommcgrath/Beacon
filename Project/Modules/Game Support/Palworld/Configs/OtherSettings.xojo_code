@@ -117,7 +117,7 @@ Inherits Palworld.ConfigGroup
 		      Case Palworld.ConfigOption.ValueTypes.TypeNumeric
 		        StringValue = Value.DoubleValue.PrettyText
 		      Case Palworld.ConfigOption.ValueTypes.TypeText
-		        StringValue = Value.StringValue
+		        StringValue = """" + Value.StringValue + """"
 		      Else
 		        Continue
 		      End Select
@@ -204,7 +204,9 @@ Inherits Palworld.ConfigGroup
 		    End If
 		    
 		    Var TargetDict As Dictionary
-		    If ParsedData.HasKey(LookupKey) Then
+		    If (Key.Struct Is Nil) = False And ParsedData.HasKey(Key.Struct.StringValue) Then
+		      TargetDict = ParsedData.Value(Key.Struct.StringValue)
+		    ElseIf ParsedData.HasKey(LookupKey) Then
 		      TargetDict = ParsedData
 		    Else
 		      Continue
@@ -256,6 +258,12 @@ Inherits Palworld.ConfigGroup
 		    Return False
 		  End If
 		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RequiresOmni() As Boolean
 		  Return True
 		End Function
 	#tag EndMethod
