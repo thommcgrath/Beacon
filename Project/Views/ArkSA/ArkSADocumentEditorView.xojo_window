@@ -1325,7 +1325,7 @@ End
 #tag Events OmniNoticeBanner
 	#tag Event
 		Sub Pressed()
-		  System.GotoURL(Beacon.WebURL("/omni"))
+		  System.GotoURL(Beacon.WebURL("/omni#ArkSA"))
 		End Sub
 	#tag EndEvent
 	#tag Event
