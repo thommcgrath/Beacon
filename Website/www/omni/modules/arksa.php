@@ -41,6 +41,11 @@
 			<td class="text-center bullet-column">&check;</td>
 		</tr>
 		<tr>
+			<td>Custom Config<br><span class="smaller text-lighter">Add settings to your ini files that Beacon doesn't support, such as mod configs.</span></td>
+			<td class="text-center bullet-column">&check;</td>
+			<td class="text-center bullet-column">&check;</td>
+		</tr>
+		<tr>
 			<td>Day and Night Cycle<br><span class="smaller text-lighter">Change the length of Ark's days and nights using minutes instead of multipliers.</span></td>
 			<td class="text-center bullet-column">&check;</td>
 			<td class="text-center bullet-column">&check;</td>

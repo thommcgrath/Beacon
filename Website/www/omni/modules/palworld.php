@@ -62,6 +62,11 @@ if ($stableVersion < $palworldStableBuild) {
 			<td class="text-center bullet-column">&check;</td>
 		</tr>
 		<tr>
+			<td>Custom Config<br><span class="smaller text-lighter">Add settings to your ini file that Beacon doesn't support.</span></td>
+			<td class="text-center bullet-column">&check;</td>
+			<td class="text-center bullet-column">&check;</td>
+		</tr>
+		<tr>
 			<td>General Settings<br><span class="smaller text-lighter">Beacon has support for nearly every setting available to Palworld servers.</span></td>
 			<td class="text-center bullet-column">&nbsp;</td>
 			<td class="text-center bullet-column">&check;</td>
