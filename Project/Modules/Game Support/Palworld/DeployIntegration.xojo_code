@@ -133,8 +133,8 @@ Inherits Beacon.DeployIntegration
 		    Self.StopServer()
 		  End If
 		  
-		  // Let the implementor do any final work
-		  If Self.Provider IsA Nitrado.HostingProvider Then
+		  // Wait if necessary
+		  If InitialStatus.State <> Beacon.ServerStatus.States.Stopped And Self.Provider IsA Nitrado.HostingProvider Then
 		    Self.NitradoCooldownWait()
 		  End If
 		  
