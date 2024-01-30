@@ -349,7 +349,7 @@ Implements Beacon.GameSetting
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mFile + "." + Self.mHeader + "." + Self.mKey
+			  Return Self.mFile + "." + Self.mHeader + "." + If(Self.mStruct Is Nil, "", Self.mStruct.StringValue + ".") + Self.mKey
 			End Get
 		#tag EndGetter
 		Signature As String

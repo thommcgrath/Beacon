@@ -208,13 +208,13 @@ Inherits Beacon.Project
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
 		    Next
 		    
-		    Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerName", Profile.Name)
-		    Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerDescription", Profile.ServerDescription)
+		    Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerName", Profile.Name, Palworld.ConfigOrganizer.OptionValueIsManaged)
+		    Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerDescription", Profile.ServerDescription, Palworld.ConfigOrganizer.OptionValueIsManaged)
 		    If (Profile.AdminPassword Is Nil) = False Then
-		      Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "AdminPassword", Profile.AdminPassword.StringValue)
+		      Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "AdminPassword", Profile.AdminPassword.StringValue, Palworld.ConfigOrganizer.OptionValueIsManaged)
 		    End If
 		    If (Profile.ServerPassword Is Nil) = False Then
-		      Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerPassword", Profile.ServerPassword.StringValue)
+		      Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerPassword", Profile.ServerPassword.StringValue, Palworld.ConfigOrganizer.OptionValueIsManaged)
 		    End If
 		    
 		    Return Organizer

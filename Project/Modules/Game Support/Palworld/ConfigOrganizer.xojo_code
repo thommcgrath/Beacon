@@ -1,8 +1,11 @@
 #tag Class
 Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
-		Sub Add(Values() As Palworld.ConfigValue, UniqueOnly As Boolean = False)
+		Sub Add(Values() As Palworld.ConfigValue, Options As Integer = 0)
 		  // This code is a little verbose, but it's easier to follow the logic this way.
+		  
+		  Var UniqueOnly As Boolean = (Options And Self.OptionAddOnlyUnique) > 0
+		  Var IsManaged As Boolean = (Options And Self.OptionValueIsManaged) > 0
 		  
 		  Self.mIndex.BeginTransaction
 		  
@@ -25,6 +28,9 @@ Protected Class ConfigOrganizer
 		      Siblings.Add(Value)
 		      Self.mValues.Value(Value.Hash) = Siblings
 		      Self.mIndex.ExecuteSQL("INSERT INTO keymap (hash, file, header, struct, simplekey, sortkey) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Value.Hash, Value.File, Value.Header, NullableString.ToVariant(Value.Struct), Value.SimplifiedKey, Value.SortKey)
+		      If IsManaged Then
+		        Self.AddManagedKeys(Value.Details)
+		      End If
 		      Continue
 		    End If
 		    
@@ -45,15 +51,15 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Add(Value As Palworld.ConfigValue, UniqueOnly As Boolean = False)
+		Sub Add(Value As Palworld.ConfigValue, Options As Integer = 0)
 		  Var Values(0) As Palworld.ConfigValue
 		  Values(0) = Value
-		  Self.Add(Values, UniqueOnly)
+		  Self.Add(Values, Options)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Add(File As String, Header As String, Struct As NullableString, Key As String, Value As Variant, UniqueOnly As Boolean = False)
+		Sub Add(File As String, Header As String, Struct As NullableString, Key As String, Value As Variant, Options As Integer = 0)
 		  Var StringValue As String
 		  Select Case Value.Type
 		  Case Variant.TypeBoolean
@@ -64,7 +70,7 @@ Protected Class ConfigOrganizer
 		    StringValue = """" + Value.StringValue.ReplaceAll("""", "\""") + """"
 		  End Select
 		  
-		  Self.Add(New Palworld.ConfigValue(File, Header, Struct, Key + "=" + StringValue), UniqueOnly)
+		  Self.Add(New Palworld.ConfigValue(File, Header, Struct, Key + "=" + StringValue), Options)
 		End Sub
 	#tag EndMethod
 
@@ -141,6 +147,12 @@ Protected Class ConfigOrganizer
 		    
 		    Self.mManagedKeys.Value(Keys(Idx).Signature) = Keys(Idx)
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddManagedKeys(ParamArray Keys() As Palworld.ConfigOption)
+		  Self.AddManagedKeys(Keys)
 		End Sub
 	#tag EndMethod
 
@@ -645,6 +657,13 @@ Protected Class ConfigOrganizer
 	#tag Property, Flags = &h21
 		Private mValues As Dictionary
 	#tag EndProperty
+
+
+	#tag Constant, Name = OptionAddOnlyUnique, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionValueIsManaged, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
