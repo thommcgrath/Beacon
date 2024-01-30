@@ -93,9 +93,11 @@ Protected Class BlueprintImporter
 
 	#tag Method, Flags = &h0
 		Shared Function ImportAsBinary(Contents As String, Progress As ProgressWindow = Nil) As ArkSA.BlueprintImporter
+		  Var ManifestString As String
 		  Var Archive As Beacon.Archive
 		  Try
 		    Archive = Beacon.Archive.Open(Contents)
+		    ManifestString = Archive.GetFile("Manifest.json")
 		  Catch Err As RuntimeException
 		  End Try
 		  If Archive Is Nil Then
@@ -105,8 +107,6 @@ Protected Class BlueprintImporter
 		  
 		  // Return the importer no matter what, because this is an archive file
 		  Var Importer As New ArkSA.BlueprintImporter
-		  
-		  Var ManifestString As String = Archive.GetFile("Manifest.json")
 		  If ManifestString.IsEmpty Then
 		    Return Importer
 		  End If
