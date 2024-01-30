@@ -5,7 +5,6 @@ use BeaconCommon, BeaconRecordSet, Exception, DateTime, JsonSerializable;
 
 class License extends DatabaseObject implements JsonSerializable {
 	protected string $licenseId;
-	protected string $userId;
 	protected string $emailId;
 	protected string $purchaseId;
 	protected string $productId;
@@ -17,7 +16,6 @@ class License extends DatabaseObject implements JsonSerializable {
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->licenseId = $row->Field('license_id');
-		$this->userId = $row->Field('user_id');
 		$this->emailId = $row->Field('email_id');
 		$this->purchaseId = $row->Field('purchase_id');
 		$this->productId = $row->Field('product_id');
@@ -31,8 +29,7 @@ class License extends DatabaseObject implements JsonSerializable {
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('public', 'licenses', [
 			new DatabaseObjectProperty('licenseId', ['primaryKey' => true, 'columnName' => 'license_id']),
-			new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'accessor' => 'users.user_id']),
-			new DatabaseObjectProperty('emailId', ['columnName' => 'email_id', 'accessor' => 'users.email_id']),
+			new DatabaseObjectProperty('emailId', ['columnName' => 'email_id', 'accessor' => 'purchases.purchaser_email']),
 			new DatabaseObjectProperty('purchaseId', ['columnName' => 'purchase_id']),
 			new DatabaseObjectProperty('productId', ['columnName' => 'product_id']),
 			new DatabaseObjectProperty('productName', ['columnName' => 'product_name', 'accessor' => 'products.product_name']),
@@ -42,24 +39,19 @@ class License extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('firstUsed', ['columnName' => 'first_used', 'accessor' => "DATE_TRUNC('second', purchases.first_used)"]),
 		], [
 			"INNER JOIN public.products ON (licenses.product_id = products.product_id)",
-			"INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id)",
-			"INNER JOIN public.users ON (purchases.purchaser_email = users.email_id)"
+			"INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id)"
 		]);
 	}
 
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->AddFromFilter($schema, $filters, 'purchaseId');
-		$parameters->AddFromFilter($schema, $filters, 'userId');
+		$parameters->AddFromFilter($schema, $filters, 'emailId');
 		$parameters->orderBy = $schema->Accessor('expiration') . ' DESC';
 	}
 
 	public function LicenseId(): string {
 		return $this->licenseId;
-	}
-
-	public function UserId(): string {
-		return $this->userId;
 	}
 
 	public function EmailId(): string {

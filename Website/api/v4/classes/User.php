@@ -559,7 +559,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			return;
 		}
 
-		$this->licenses = License::Search(['userId' => $this->userId], true);
+		$this->licenses = License::Search(['emailId' => $this->emailId], true);
 		$this->licensesLoaded = true;
 	}
 
