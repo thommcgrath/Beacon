@@ -188,8 +188,9 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			}
 		}
 
-		$namespaces = ['Ark' => 'Ark', 'SDTD' => '7DaysToDie', 'ArkSA' => 'ArkSA'];
+		$namespaces = ['Ark' => 'Ark', 'SDTD' => '7DaysToDie', 'ArkSA' => 'ArkSA', 'Palworld' => 'Palworld'];
 		$namespaceClauses = [];
+		$unfilteredGameIds = [];
 		foreach ($namespaces as $namespace => $identifier) {
 			$namespacedParameters = new DatabaseSearchParameters();
 			$namespacedParameters->placeholder = $parameters->placeholder;
@@ -199,7 +200,13 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				$namespaceClauses[] = "(game_id = '{$identifier}' AND " . implode(' AND ', $namespacedParameters->clauses) . ')';
 				$parameters->values = array_merge($parameters->values, $namespacedParameters->values);
 				$parameters->placeholder = $namespacedParameters->placeholder;
+			} else {
+				$unfilteredGameIds[] = $identifier;
 			}
+		}
+		if (count($unfilteredGameIds) > 0) {
+			$namespaceClauses[] = 'game_id = ANY($' . $parameters->placeholder++ . ')';
+			$parameters->values[] = '{' . implode(',', $unfilteredGameIds) . '}';
 		}
 		if (count($namespaceClauses) > 0) {
 			$parameters->clauses[] = '(' . implode(' OR ', $namespaceClauses) . ')';
