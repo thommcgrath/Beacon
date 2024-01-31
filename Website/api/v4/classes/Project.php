@@ -12,6 +12,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 
 	protected string $projectId;
 	protected string $gameId;
+	protected string $gameName;
 	protected array $gameSpecific;
 	protected string $userId;
 	protected string $role;
@@ -32,6 +33,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	protected function __construct(BeaconRecordSet $row) {
 		$this->projectId = $row->Field('project_id');
 		$this->gameId = $row->Field('game_id');
+		$this->gameName = $row->Field('game_name');
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
 		$this->userId = $row->Field('user_id');
 		$this->role = $row->Field('role');
@@ -53,6 +55,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$schema = new DatabaseSchema('public', 'projects', [
 			new DatabaseObjectProperty('projectId', ['primaryKey' => true, 'columnName' => 'project_id']),
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
+			new DatabaseObjectProperty('gameName', ['columnName' => 'game_name', 'accessor' => 'games.game_name']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'accessor' => 'project_members.user_id']),
 			new DatabaseObjectProperty('role', ['accessor' => 'project_members.role']),
 			new DatabaseObjectProperty('permissions', ['accessor' => 'public.project_role_permissions(project_members.role)']),
@@ -69,7 +72,8 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('storagePath', ['columnName' => 'storage_path']),
 			new DatabaseObjectProperty('deleted'),
 		], [
-			'INNER JOIN public.project_members ON (project_members.project_id = projects.project_id)'
+			'INNER JOIN public.project_members ON (project_members.project_id = projects.project_id)',
+			'INNER JOIN public.games ON (projects.game_id = games.game_id)',
 		]);
 		return $schema;
 	}
@@ -197,7 +201,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$namespacedProject = "\\BeaconAPI\\v4\\{$namespace}\\Project";
 			$namespacedProject::ExtendSearchParameters($namespacedParameters, $filters, true);
 			if (count($namespacedParameters->clauses) > 0) {
-				$namespaceClauses[] = "(game_id = '{$identifier}' AND " . implode(' AND ', $namespacedParameters->clauses) . ')';
+				$namespaceClauses[] = "(projects.game_id = '{$identifier}' AND " . implode(' AND ', $namespacedParameters->clauses) . ')';
 				$parameters->values = array_merge($parameters->values, $namespacedParameters->values);
 				$parameters->placeholder = $namespacedParameters->placeholder;
 			} else {
@@ -205,7 +209,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			}
 		}
 		if (count($unfilteredGameIds) > 0) {
-			$namespaceClauses[] = 'game_id = ANY($' . $parameters->placeholder++ . ')';
+			$namespaceClauses[] = 'projects.game_id = ANY($' . $parameters->placeholder++ . ')';
 			$parameters->values[] = '{' . implode(',', $unfilteredGameIds) . '}';
 		}
 		if (count($namespaceClauses) > 0) {
@@ -244,6 +248,10 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 
 	public function GameId(): string {
 		return $this->gameId;
+	}
+
+	public function GameName(): string {
+		return $this->gameName;
 	}
 
 	public function GameURLComponent(): string {
