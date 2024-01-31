@@ -633,7 +633,6 @@ Inherits Beacon.Project
 		  Messages.Add("What happens when an Ark spins out of control?")
 		  
 		  Var Rand As Random = System.Random
-		  Rand.RandomizeSeed
 		  Var Index As Integer = Rand.InRange(0, Messages.LastIndex)
 		  
 		  Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Messages(Index)))

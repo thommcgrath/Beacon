@@ -227,15 +227,51 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function CreateTrollConfigOrganizer(Profile As Palworld.ServerProfile) As Palworld.ConfigOrganizer
-		  Var Values As New Palworld.ConfigOrganizer
+		  Var Values As New Dictionary
+		  If (Profile Is Nil) = False Then
+		    Values.Value("ServerName") = Profile.Name
+		    Values.Value("ServerDescription") = Profile.ServerDescription
+		    If (Profile.AdminPassword Is Nil) = False Then
+		      Values.Value("AdminPassword") = Profile.AdminPassword.StringValue
+		    End If
+		    If (Profile.ServerPassword Is Nil) = False Then
+		      Values.Value("ServerPassword") = Profile.ServerPassword.StringValue
+		    End If
+		  End If
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Needs troll organizer"
-		  #else
-		    #Pragma Error "Needs troll organizer"
-		  #endif
+		  Var Index As Integer = System.Random.InRange(0, 5)
 		  
-		  Return Values
+		  Select Case Index
+		  Case 0
+		    Values.Value("bEnableAimAssistPad") = False
+		    Values.Value("bEnableAimAssistKeyboard") = False
+		  Case 1
+		    Values.Value("bEnableFriendlyFire") = True
+		    Values.Value("bEnablePlayerToPlayerDamage") = True
+		    Values.Value("PalDamageRateDefense") = 0.0001
+		    Values.Value("PlayerDamageRateDefense") = 0.0001
+		  Case 2
+		    Values.Value("PalStaminaDecreaseRate") = 1000
+		    Values.Value("PlayerStaminaDecreaseRate") = 1000
+		  Case 3
+		    Values.Value("WorkSpeedRate") = 0.0001
+		  Case 4
+		    Values.Value("ExpRate") = 0.0001
+		  Case 5
+		    Values.Value("PlayerAutoHpRegeneRateInSleep") = 0.0001
+		    Values.Value("PlayerAutoHPRegeneRate") = 0.0001
+		    Values.Value("PalAutoHpRegeneRateInSleep") = 0.0001
+		    Values.Value("PalAutoHPRegeneRate") = 0.0001
+		  Case 6
+		    Values.Value("PalSpawnNumRate") = 0.01
+		  End Select
+		  
+		  Var Organizer As New Palworld.ConfigOrganizer
+		  For Each Entry As DictionaryEntry In Values
+		    Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", Entry.Key.StringValue, Entry.Value, Palworld.ConfigOrganizer.OptionValueIsManaged)
+		  Next
+		  
+		  Return Organizer
 		End Function
 	#tag EndMethod
 

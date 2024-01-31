@@ -96,29 +96,7 @@ Inherits Beacon.DeployIntegration
 		      Var Settings As JSONItem = GameServer.Child("settings")
 		      Settings.Compact = False
 		      OldFiles.Value("Config.json") = Settings.ToString
-		      
-		      NitradoChanges = Self.NitradoPrepareChanges(Organizer)
-		      Var NewSettings As New JSONItem(Settings.ToString)
-		      For Each Entry As DictionaryEntry In NitradoChanges
-		        Try
-		          Var Setting As Palworld.ConfigOption = Entry.Key
-		          Var NewValue As String = Entry.Value
-		          
-		          Var Changes() As Nitrado.SettingChange = Nitrado.HostingProvider.PrepareSettingChanges(GameServer, Setting, NewValue)
-		          For Each Change As Nitrado.SettingChange In Changes
-		            Try
-		              Var Parent As JSONItem = NewSettings.Child(Change.Category)
-		              Parent.Value(Change.Key) = Change.Value
-		            Catch ChangeErr As RuntimeException
-		              App.Log(ChangeErr, CurrentMethodName, "Updating config json")
-		            End Try
-		          Next
-		        Catch EntryErr As RuntimeException
-		          App.Log(EntryErr, CurrentMethodName, "Processing Nitrado changes")
-		        End Try
-		      Next
-		      NewSettings.Compact = False
-		      NewFiles.Value("Config.json") = NewSettings.ToString
+		      NewFiles.Value("Config.json") = Settings.ToString
 		    End Select
 		    
 		    Self.RunBackup(OldFiles, NewFiles)
@@ -143,60 +121,9 @@ Inherits Beacon.DeployIntegration
 		    Self.Finish()
 		    Return
 		  End If
-		  
-		  // Make command line changes
-		  Select Case Self.Provider
-		  Case IsA Nitrado.HostingProvider
-		    Self.Log("Updating other settings…")
-		    If NitradoChanges Is Nil Then
-		      Call Self.NitradoApplySettings(Organizer)
-		    Else
-		      Call Self.NitradoApplySettings(NitradoChanges)
-		    End If
-		    If Self.Finished Then
-		      Return
-		    End If
-		  End Select
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h1
-		Protected Function NitradoApplySettings(Changes As Dictionary) As Boolean
-		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
-		    Return False
-		  End If
-		  
-		  // Deploy changes
-		  For Each Entry As DictionaryEntry In Changes
-		    Var Setting As Palworld.ConfigOption = Entry.Key
-		    Var NewValue As String = Entry.Value
-		    
-		    Try
-		      Self.Provider.GameSetting(Project, Profile, Setting) = NewValue
-		    Catch Err As RuntimeException
-		      Self.SetError(Err)
-		      Return False
-		    End Try
-		    
-		    // So we don't go nuts
-		    Self.Thread.Sleep(100)
-		  Next
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function NitradoApplySettings(Organizer As Palworld.ConfigOrganizer) As Boolean
-		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
-		    Return False
-		  End If
-		  
-		  Var Changes As Dictionary = Self.NitradoPrepareChanges(Organizer)
-		  Return Self.NitradoApplySettings(Changes)
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub NitradoCooldownWait()
@@ -237,100 +164,6 @@ Inherits Beacon.DeployIntegration
 		    Self.Wait(Diff * 1000)
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function NitradoPrepareChanges(Organizer As Palworld.ConfigOrganizer) As Dictionary
-		  Var Project As Palworld.Project = Self.Project
-		  Var Profile As Palworld.ServerProfile = Self.Profile
-		  Var Keys() As Palworld.ConfigOption = Organizer.DistinctKeys
-		  Var NewValues As New Dictionary
-		  Var Style As Palworld.ConfigOption.NitradoDeployStyles = Palworld.ConfigOption.NitradoDeployStyles.Expert
-		  
-		  For Each ConfigOption As Palworld.ConfigOption In Keys
-		    If ConfigOption.HasNitradoEquivalent = False Then
-		      Continue
-		    End If
-		    
-		    Var SendToNitrado As Boolean = ConfigOption.NitradoDeployStyle = Palworld.ConfigOption.NitradoDeployStyles.Both Or ConfigOption.NitradoDeployStyle = Style
-		    If SendToNitrado = False Then
-		      Continue
-		    End If
-		    
-		    Var Values() As Palworld.ConfigValue = Organizer.FilteredValues(ConfigOption)
-		    
-		    Select Case ConfigOption.NitradoFormat
-		    Case Palworld.ConfigOption.NitradoFormats.Line
-		      Var Lines() As String
-		      For Each Value As Palworld.ConfigValue In Values
-		        Lines.Add(Value.Command)
-		      Next
-		      NewValues.Value(ConfigOption) = Lines
-		    Case Palworld.ConfigOption.NitradoFormats.Value
-		      If Values.Count >= 1 Then
-		        Var Value As String = Values(Values.LastIndex).Value
-		        
-		        If ConfigOption.ValueType = Palworld.ConfigOption.ValueTypes.TypeBoolean Then
-		          Value = Value.Lowercase
-		          
-		          Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigOption.Constraint("nitrado.boolean.reversed"))
-		          If (Reversed Is Nil) = False And Reversed.BooleanValue Then
-		            Value = If(Value = "true", "false", "true")
-		          End If
-		        End If
-		        
-		        NewValues.Value(ConfigOption) = Value
-		      Else
-		        // This doesn't make sense
-		        Break
-		      End If
-		    End Select
-		  Next
-		  
-		  Var Changes As New Dictionary
-		  For Each Entry As DictionaryEntry In NewValues
-		    Var ConfigOption As Palworld.ConfigOption = Entry.Key
-		    Var CurrentValue As Variant = Self.Provider.GameSetting(Project, Profile, ConfigOption)
-		    Var FinishedValue As String
-		    If Entry.Value.Type = Variant.TypeString Then
-		      // Value comparison
-		      If ConfigOption.ValuesEqual(Entry.Value, CurrentValue) Then
-		        Continue
-		      End If
-		      FinishedValue = Entry.Value.StringValue
-		    ElseIf Entry.Value.IsArray And Entry.Value.ArrayElementType = Variant.TypeString Then
-		      // Line comparison, but if there is only one line, go back to value comparison
-		      Var NewLines() As String = Entry.Value
-		      FinishedValue = NewLines.Join(EndOfLine) // Prepare the finished value before sorting, even if we nay not use it
-		      
-		      Var CurrentLines() As String = CurrentValue.StringValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
-		      
-		      If NewLines.Count = 1 And CurrentLines.Count = 1 And (ConfigOption.ValueType = Palworld.ConfigOption.ValueTypes.TypeNumeric Or ConfigOption.ValueType = Palworld.ConfigOption.ValueTypes.TypeBoolean Or ConfigOption.ValueType = Palworld.ConfigOption.ValueTypes.TypeBoolean) Then
-		        Var NewValue As String = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
-		        CurrentValue = CurrentLines(0).Middle(CurrentLines(0).IndexOf("=") + 1)
-		        If ConfigOption.ValuesEqual(NewValue, CurrentValue) Then
-		          Continue
-		        End If
-		        FinishedValue = NewLines(0)
-		      Else
-		        NewLines.Sort
-		        CurrentLines.Sort
-		        Var NewHash As String = EncodeHex(Crypto.SHA1(NewLines.Join(EndOfLine.UNIX).Lowercase))
-		        Var CurrentHash As String = EncodeHex(Crypto.SHA1(CurrentLines.Join(EndOfLine.UNIX).Lowercase))
-		        If NewHash = CurrentHash Then
-		          // No change
-		          Continue
-		        End If
-		      End If
-		    Else
-		      Continue
-		    End If
-		    
-		    Changes.Value(ConfigOption) = FinishedValue
-		  Next
-		  
-		  Return Changes
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
