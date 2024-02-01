@@ -71,11 +71,6 @@ foreach ($results as $result) {
 			'name' => $result['mod_name']
 		]
 	];
-	if (isset($name_map[$result['title']])) {
-		$name_map[$result['title']] = $name_map[$result['title']] + 1;
-	} else {
-		$name_map[$result['title']] = 1;
-	}
 	if (isset($result['game_id'])) {
 		$item['game'] = [
 			'id' => $result['game_id'],
@@ -86,13 +81,6 @@ foreach ($results as $result) {
 	$items[] = $item;
 }
 $result_count = $search->TotalResultCount();
-
-for ($idx = 0; $idx < count($items); $idx++) {
-	$title = $items[$idx]['title'];
-	if ($name_map[$title] > 1 && is_null($items[$idx]['mod']['name']) == false) {
-		$items[$idx]['title'] = $title . ' (' . $items[$idx]['mod']['name'] . ')';
-	}
-}
 
 if ($request_content_type === 'application/json') {
 	header('Content-Type: application/json');
