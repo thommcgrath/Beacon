@@ -7,7 +7,8 @@ while (ob_get_level() > 0) {
 	ob_end_clean();
 }
 
-$format = 'Y-m-d H:i:sO';
+define('SQL_DATE_FORMAT', 'Y-m-d H:i:sO');
+$query = "SELECT SUM(total_paid_usd - tax_usd) AS total_usd, COUNT(purchase_id) AS num_sales FROM purchases WHERE purchase_date >= $1 AND purchase_date < $2 AND refunded = FALSE AND total_paid > 0;";
 $database = BeaconCommon::Database();
 $timezone = new DateTimeZone('America/New_York');
 $today = new DateTime('now', $timezone);
@@ -25,59 +26,82 @@ $firstOfMonth->modify('first day of');
 $lastOfMonth = clone $firstOfMonth;
 $lastOfMonth->modify('last day of');
 $lastOfMonth->modify('tomorrow');
-$daysElapsed = $yesterday->format('j');
-$numberOfDays = $firstOfMonth->format('t');
+$daysInMonth = $today->format('t');
+$monthName = $today->format('M');
 
-$dailyRows = $database->Query("SELECT SUM(total_paid_usd - tax_usd) AS total_usd, COUNT(purchase_id) AS num_sales FROM purchases WHERE purchase_date >= $1 AND purchase_date < $2 AND refunded = FALSE AND total_paid > 0;", $yesterday->format($format), $today->format($format));
-$monthlyRows = $database->Query("SELECT SUM(total_paid_usd - tax_usd) AS total_usd, COUNT(purchase_id) AS num_sales FROM purchases WHERE purchase_date >= $1 AND purchase_date < $2 AND refunded = FALSE AND total_paid > 0;", $firstOfMonth->format($format), $lastOfMonth->format($format));
+$rollingDays = 28;
+$rollingStart = clone $today;
+$rollingStart->sub(new DateInterval('P' . $rollingDays . 'D'));
+$rollingEnd = clone $today;
+$rollingRows = $database->Query("SELECT COALESCE(SUM(purchases.total_paid_usd - purchases.tax_usd), 0) AS total_usd FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0;", $rollingStart->format(SQL_DATE_FORMAT), $rollingEnd->format(SQL_DATE_FORMAT));
+$rollingTotal = $rollingRows->Field('total_usd');
+$rollingAverage = $rollingTotal / $rollingDays;
+$projection = $rollingAverage * $daysInMonth;
 
-$yesterdayTotal = $dailyRows->Field('total_usd');
-$yesterdayTransactions = $dailyRows->Field('num_sales');
-$monthTotal = $monthlyRows->Field('total_usd');
-$monthTransactions = $monthlyRows->Field('num_sales');
-$dailyAverage = $monthTotal / $daysElapsed;
-$projection = $dailyAverage * $numberOfDays;
+$gameRows = $database->Query("SELECT game_id FROM public.games WHERE public = TRUE ORDER BY game_id;");
+
+$fields = [];
+$dailyTotal = RunReport("Day's", null, $yesterday, $today, $fields);
+$monthTotal = RunReport('MTD', null, $firstOfMonth, $lastOfMonth, $fields);
+while (!$gameRows->EOF()) {
+	$gameId = $gameRows->Field('game_id');
+	RunReport("Day's {$gameId}", $gameId, $yesterday, $today, $fields, $dailyTotal);
+	RunReport("MTD {$gameId}", $gameId, $firstOfMonth, $lastOfMonth, $fields, $monthTotal);
+	$gameRows->MoveNext();
+}
+$fields[] = [
+	'title' => "Daily Average",
+	'value' => '$' . number_format($rollingAverage, 2),
+	'short' => true
+];
+$fields[] = [
+	'title' => "{$monthName} Projection",
+	'value' => '$' . number_format($projection, 2),
+	'short' => true
+];
 
 $arr = [
 	'attachments' => [
 		[
 			'title' => 'Daily Sales Report',
 			'text' => "Sales report for {$yesterday->format('Y-m-d')}",
-			'fields' => [
-				[
-					'title' => "Yesterday's Sales",
-					'value' => '$' . number_format($yesterdayTotal, 2),
-					'short' => true
-				],
-				[
-					'title' => "Yesterday's Transactions",
-					'value' => number_format($yesterdayTransactions),
-					'short' => true
-				],
-				[
-					'title' => "MTD Sales",
-					'value' => '$' . number_format($monthTotal, 2),
-					'short' => true
-				],
-				[
-					'title' => "MTD Transactions",
-					'value' => number_format($monthTransactions),
-					'short' => true
-				],
-				[
-					'title' => "Daily Average",
-					'value' => '$' . number_format($dailyAverage, 2),
-					'short' => true
-				],
-				[
-					'title' => "Projection",
-					'value' => '$' . number_format($projection, 2),
-					'short' => true
-				],
-			],
+			'fields' => $fields,
 		],
 	],
 ];
 BeaconCommon::PostSlackRaw(json_encode($arr));
+
+function RunReport(string $label, ?string $gameId, DateTime $periodStart, DateTime $periodEnd, array &$fields, ?float $periodTotal = null): float {
+	$database = BeaconCommon::Database();
+	if (is_null($gameId)) {
+		$rows = $database->Query("SELECT COALESCE(SUM(purchases.total_paid_usd - purchases.tax_usd), 0) AS total_usd, COUNT(purchases.purchase_id) AS num_sales FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0;", $periodStart->format(SQL_DATE_FORMAT), $periodEnd->format(SQL_DATE_FORMAT));
+	} else {
+		$rows = $database->Query("SELECT COALESCE(SUM(p.total_paid_usd - p.tax_usd), 0) AS total_usd, COUNT(p.purchase_id) AS num_sales FROM public.purchases AS p WHERE p.purchase_id IN (SELECT DISTINCT purchase_items.purchase_id FROM public.purchase_items WHERE purchase_items.purchase_id IN (SELECT purchase_id FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0) AND purchase_items.product_id IN (SELECT product_id FROM public.products WHERE products.game_id = $3));", $periodStart->format(SQL_DATE_FORMAT), $periodEnd->format(SQL_DATE_FORMAT), $gameId);
+	}
+
+	$total = $rows->Field('total_usd');
+	$salesFormatted = '$' . number_format($total, 2);
+	if (is_null($gameId) === false) {
+		if ($periodTotal > 0) {
+			$percentage = $total / $periodTotal;
+		} else {
+			$percentage = 0;
+		}
+		$salesFormatted .= ' (' . number_format($percentage * 100, 1) . '%)';
+	}
+
+	$fields[] = [
+		'title' => "{$label} Sales",
+		'value' => $salesFormatted,
+		'short' => true,
+	];
+	$fields[] = [
+		'title' => "{$label} Txns",
+		'value' => number_format($rows->Field('num_sales')),
+		'short' => true,
+	];
+
+	return $total;
+}
 
 ?>
