@@ -38,7 +38,7 @@ foreach ($results as $result) {
 			$summary = trim(substr($summary, 0, $pos)) . '…';
 		}
 	}
-	
+
 	$type = $result['type'];
 	if ($type == 'Object') {
 		switch ($result['subtype']) {
@@ -58,7 +58,7 @@ foreach ($results as $result) {
 	} elseif ($type == 'Document') {
 		$type = 'Project';
 	}
-	
+
 	$item = [
 		'id' => $result['objectID'],
 		'title' => $result['title'],
@@ -76,7 +76,13 @@ foreach ($results as $result) {
 	} else {
 		$name_map[$result['title']] = 1;
 	}
-	
+	if (isset($result['game_id'])) {
+		$item['game'] = [
+			'id' => $result['game_id'],
+			'name' => $result['game_name'],
+		];
+	}
+
 	$items[] = $item;
 }
 $result_count = $search->TotalResultCount();
@@ -112,7 +118,7 @@ if (count($items) == 0) {
 
 echo '<div class="results">';
 foreach ($items as $item) {
-	echo '<div class="result"><a href="' . $item['url'] . '">' . htmlentities($item['title']) . '</a><span class="result_type">' . htmlentities($item['type']) . '</span>';
+	echo '<div class="result"><a href="' . $item['url'] . '">' . htmlentities($item['title']) . '</a><span class="result_type">' . (isset($item['game']) ? htmlentities($item['game']['name']) . ' ' : '') . htmlentities($item['type']) . (isset($item['mod']['name']) ? htmlentities(' from ' . $item['mod']['name']) : '') . '</span>';
 	if ($item['summary'] !== '') {
 		echo '<br><span class="summary">' . nl2br(htmlentities($item['summary'])) . '</span>';
 	}

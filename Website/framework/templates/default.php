@@ -102,9 +102,8 @@ $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 				<div><input id="explore_search_field" type="search" placeholder="Search" incremental></div>
 				<ul id="explore_links">
 					<li><a href="/videos/welcome_to_beacon">Video: Welcome to Beacon</a></li>
+					<li><a href="/Games">Supported Games</a></li>
 					<li><a href="/browse/">Browse Community Projects</a></li>
-					<li><a href="/Games/Ark/Cheats">Admin Spawn Codes</a></li>
-					<li><a href="/Games/Ark/Mods">Supported Mods</a></li>
 					<li><a href="/account/">Beacon Account</a></li>
 					<li><a href="/blog/">Development Blog</a></li>
 				</ul>

@@ -5,10 +5,10 @@ class BeaconSearch {
 	private $results = [];
 	private $total_result_count = 0;
 	private $raw_response = null;
-	
+
 	public function SaveObject(string $object_id, bool $autocommit = true) {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.preview, search_contents.meta_content, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, content_packs.content_pack_id, content_packs.name AS content_pack_name FROM search_contents LEFT JOIN public.content_packs ON (search_contents.mod_id = content_packs.content_pack_id) WHERE (content_packs.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_contents.id = $1;', $object_id);
+		$rows = $database->Query('SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.preview, search_contents.meta_content, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, search_contents.game_id, games.game_name, content_packs.content_pack_id, content_packs.name AS content_pack_name FROM search_contents LEFT JOIN public.content_packs ON (search_contents.mod_id = content_packs.content_pack_id) LEFT JOIN public.games ON (search_contents.game_id = games.game_id) WHERE (content_packs.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_contents.id = $1;', $object_id);
 		if ($rows->RecordCount() === 0) {
 			return false;
 		}
@@ -17,7 +17,7 @@ class BeaconSearch {
 			return $this->Commit();
 		}
 	}
-	
+
 	public function DeleteObject(string $object_id, bool $autocommit = true): bool {
 		$this->requests[] = [
 			'action' => 'deleteObject',
@@ -31,7 +31,7 @@ class BeaconSearch {
 			return true;
 		}
 	}
-	
+
 	private function SaveObjectRows(BeaconRecordSet $rows): void {
 		while ($rows->EOF() === false) {
 			$this->requests[] = [
@@ -48,26 +48,28 @@ class BeaconSearch {
 					'min_version' => intval($rows->Field('min_version')),
 					'max_version' => intval($rows->Field('max_version')),
 					'mod_id' => $rows->Field('content_pack_id'),
-					'mod_name' => $rows->Field('content_pack_name')
+					'mod_name' => $rows->Field('content_pack_name'),
+					'game_id' => $rows->Field('game_id'),
+					'game_name' => $rows->Field('game_name'),
 				]
 			];
 			$rows->MoveNext();
 		}
 	}
-	
+
 	public function Rollback(): void {
 		$this->requests = [];
 	}
-	
+
 	public function Commit(): bool {
 		if (count($this->requests) === 0) {
 			return true;
 		}
-		
+
 		$app_id = BeaconCommon::GetGlobal('Algolia Application ID');
 		$index = BeaconCommon::GetGlobal('Algolia Index Name');
 		$api_key = BeaconCommon::GetGlobal('Algolia API Key');
-		
+
 		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '/batch';
 		$handle = curl_init($url);
 		curl_setopt($handle, CURLOPT_HTTPHEADER, [
@@ -81,22 +83,22 @@ class BeaconSearch {
 		$this->raw_response = curl_exec($handle);
 		$status = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 		curl_close($handle);
-		
+
 		if ($status === 200) {
 			$this->Rollback(); // Don't panic
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public function Search(string $query, int|null $client_version, int $result_count, string|null $type = null): array {
 		$app_id = BeaconCommon::GetGlobal('Algolia Application ID');
 		$index = BeaconCommon::GetGlobal('Algolia Index Name');
 		$api_key = BeaconCommon::GetGlobal('Algolia API Key');
-		
+
 		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode(mb_strtolower($query)) . '&hitsPerPage=100';
-		
+
 		$filters = [];
 		if (empty($client_version) === false) {
 			$filters[] = 'min_version <= ' . $client_version;
@@ -108,7 +110,7 @@ class BeaconSearch {
 		if (count($filters) > 0) {
 			$url .= '&filters=' . urlencode(implode(' AND ', $filters));
 		}
-		
+
 		$cache_key = md5($url);
 		$this->raw_response = BeaconCache::Get($cache_key);
 		if (is_null($this->raw_response)) {
@@ -126,25 +128,25 @@ class BeaconSearch {
 			}
 			BeaconCache::Set($cache_key, $this->raw_response);
 		}
-		
+
 		$response = json_decode($this->raw_response, true);
 		$this->results = array_slice($response['hits'], 0, $result_count);
 		$this->total_result_count = $response['nbHits'];
 		return $this->results;
 	}
-	
+
 	public function Results(): array {
 		return $this->results;
 	}
-	
+
 	public function TotalResultCount(): int {
 		return $this->total_result_count;
 	}
-	
+
 	public function RawResponse(): ?string {
 		return $this->raw_response;
 	}
-	
+
 	public function Sync(): bool {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -153,8 +155,8 @@ class BeaconSearch {
 			$this->DeleteObject($rows->Field('object_id'), false);
 			$rows->MoveNext();
 		}
-		
-		$sql = 'SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.preview, search_contents.meta_content, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, content_packs.content_pack_id, content_packs.name AS content_pack_name FROM search_sync INNER JOIN search_contents ON (search_sync.object_id = search_contents.id) LEFT JOIN public.content_packs ON (search_contents.mod_id = content_packs.content_pack_id) WHERE (content_packs.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_sync.action = $1';
+
+		$sql = 'SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.preview, search_contents.meta_content, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, search_contents.game_id, games.game_name, content_packs.content_pack_id, content_packs.name AS content_pack_name FROM search_sync INNER JOIN search_contents ON (search_sync.object_id = search_contents.id) LEFT JOIN public.content_packs ON (search_contents.mod_id = content_packs.content_pack_id) LEFT JOIN public.games ON (search_contents.game_id = games.game_id) WHERE (content_packs.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_sync.action = $1';
 		if (BeaconCommon::InProduction() === false) {
 			$sql .= ' LIMIT 100';
 		}
@@ -162,12 +164,12 @@ class BeaconSearch {
 		$rows = $database->Query($sql, 'Save');
 		$this->SaveObjectRows($rows);
 		$database->Query('DELETE FROM search_sync;');
-		
+
 		if (count($this->requests) === 0) {
 			$database->Rollback();
 			return true;
 		}
-		
+
 		if ($this->Commit() === true) {
 			$database->Commit();
 			return true;
