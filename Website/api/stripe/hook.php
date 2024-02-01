@@ -60,7 +60,9 @@ case 'checkout.session.completed':
 	if (is_null($intent)) {
 		http_response_code(400);
 		echo 'Could not get payment intent ' . $intentId;
+		exit;
 	}
+	$purchase_date = $obj['created'];
 
 	$charges = [];
 	if (isset($intent['charges']['data']) && is_array($intent['charges']['data'])) {
@@ -78,6 +80,7 @@ case 'checkout.session.completed':
 	$currencyCode = 'USD';
 	$conversionRate = 1.0;
 	if (is_null($paidCharge) === false) {
+		$purchase_date = $paidCharge['created'];
 		if (strtoupper($paidCharge['currency']) !== 'USD') {
 			$transactions = $api->GetBalanceTransactionsForSource($paidCharge['id']);
 			if (is_null($transactions) === false && isset($transactions['data']) && is_array($transactions['data'])) {
@@ -168,7 +171,6 @@ case 'checkout.session.completed':
 	$metadata = $obj['metadata'];
 	$bundles = json_decode(gzdecode(BeaconCommon::Base64UrlDecode($metadata['Beacon Cart'])), true);
 
-	$purchase_date = $obj['created'];
 	$purchase_subtotal = $obj['amount_subtotal'] / $currencyMultiplier;
 	$purchase_total = $obj['amount_total'] / $currencyMultiplier;
 	$purchase_discount = $obj['total_details']['amount_discount'] / $currencyMultiplier;
