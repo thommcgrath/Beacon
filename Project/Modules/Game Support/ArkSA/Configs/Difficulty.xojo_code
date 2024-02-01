@@ -102,6 +102,12 @@ Inherits ArkSA.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function PerfectLevel(Level As Integer) As Integer
+		  Return Level + Floor(Level * 0.5 * 0.999)
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
