@@ -46,6 +46,7 @@ foreach ($results as $result) {
 			$type = 'Engram';
 			break;
 		case 'loot_sources':
+		case 'loot_drops':
 			$type = 'Loot Drop';
 			break;
 		case 'spawn_points':
