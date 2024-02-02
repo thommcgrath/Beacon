@@ -33,6 +33,9 @@ case 'ark2':
 case 'arksa':
 	$productId = BeaconShop::GetProductByTag('USD', 'ArkSA', 'Base');
 	break;
+case 'palworld':
+	$productId = BeaconShop::GetProductByTag('USD', 'Palworld', 'Base');
+	break;
 default:
 	PostReply('Unknown game_id value.');
 	return;

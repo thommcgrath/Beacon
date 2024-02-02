@@ -98,8 +98,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, NewEntryId As Boolean = False) As ArkSA.LootItemSetEntry
+		Shared Function FromSaveData(Dict As Dictionary, Options As Integer = 0) As ArkSA.LootItemSetEntry
 		  Var Entry As New ArkSA.MutableLootItemSetEntry
+		  Var NewEntryId As Boolean = (Options And OptionNewId) = OptionNewId
+		  Var LoadEmpty As Boolean = (Options And OptionLoadEmpty) = OptionLoadEmpty
 		  
 		  If NewEntryId Then
 		    Entry.EntryId = Beacon.UUID.v4
@@ -209,8 +211,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		      App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
 		  Next
-		  If Entry.Count = 0 Then
-		    // Nothing loaded
+		  If Entry.Count = 0 And LoadEmpty = False Then
 		    Return Nil
 		  End If
 		  
@@ -435,7 +436,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		Shared Function Join(Entries() As ArkSA.LootItemSetEntry, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
 		  Var Values() As String
 		  For Each Entry As ArkSA.LootItemSetEntry In Entries
-		    Values.Add(Entry.StringValue(Multipliers, UseBlueprints, Difficulty))
+		    Var EntryConfig As String = Entry.StringValue(Multipliers, UseBlueprints, Difficulty)
+		    If EntryConfig.IsEmpty = False Then
+		      Values.Add(EntryConfig)
+		    End If
 		  Next
 		  Return Values.Join(Separator)
 		End Function
@@ -814,6 +818,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
+		  If Self.mOptions.Count = 0 Then
+		    Return ""
+		  End If
+		  
 		  Var Paths(), Weights(), Classes() As String
 		  Paths.ResizeTo(Self.mOptions.LastIndex)
 		  Weights.ResizeTo(Self.mOptions.LastIndex)
@@ -884,8 +892,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
 		  
+		  Location = Location + Beacon.Issue.Separator + Self.EntryId
+		  
 		  For Each Option As ArkSA.LootItemSetEntryOption In Self.mOptions
-		    Option.Validate(Location + Beacon.Issue.Separator + Self.EntryId, Issues, Project)
+		    Option.Validate(Location, Issues, Project)
 		  Next Option
 		End Sub
 	#tag EndMethod
@@ -950,6 +960,13 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag Property, Flags = &h1
 		Protected mWeight As Double
 	#tag EndProperty
+
+
+	#tag Constant, Name = OptionLoadEmpty, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionNewId, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

@@ -53,6 +53,12 @@ if ($forceBuild) {
 }
 
 $database = BeaconCommon::Database();
+$gameRows = $database->Query('SELECT game_id, game_name FROM public.games WHERE public = TRUE;');
+$gameNames = [];
+while (!$gameRows->EOF()) {
+	$gameNames[$gameRows->Field('game_id')] = $gameRows->Field('game_name');
+	$gameRows->MoveNext();
+}
 $download_links = [
 	'current' => BuildLinks($stable)
 ];
@@ -75,22 +81,16 @@ document.addEventListener('DOMContentLoaded', () => {
 BeaconTemplate::FinishScript();
 
 function BuildLinks(array $update): array {
+	global $gameNames;
+
 	$build = $update['build_number'];
 	$delta_version = $update['delta_version'];
 	$stage = $update['stage'];
 
 	$games = [];
 	foreach ($update['supported_games'] as $gameId) {
-		switch ($gameId) {
-		case 'Ark':
-			$games[] = 'Ark: Survival Evolved';
-			break;
-		case 'ArkSA':
-			$games[] = 'Ark: Survival Ascended';
-			break;
-		case 'SDTD':
-			$games[] = '7 Days to Die';
-			break;
+		if (isset($gameNames[$gameId])) {
+			$games[] = $gameNames[$gameId];
 		}
 	}
 	sort($games);

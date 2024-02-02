@@ -32,9 +32,8 @@ Private Class APIResponse
 		    Var Err As New Nitrado.APIException
 		    Err.ErrorNumber = Response.mHTTPStatus
 		    Select Case Response.mHTTPStatus
-		      
 		    Case 401
-		      Err.Message = "Authorization failed."
+		      Err.Message = "The connection between your Beacon and Nitrado accounts is no longer valid and must be replaced. Use the 'Show Account Info' option from the user menu in the top right corner of Beacon to access your account."
 		    Case 429
 		      Err.Message = "Rate limit has been exceeded."
 		    Case 503

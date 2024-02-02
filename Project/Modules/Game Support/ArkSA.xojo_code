@@ -96,19 +96,31 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function BlueprintPath(Matches As RegExMatch) As String
+		  If Matches Is Nil Then
+		    Return ""
+		  End If
+		  
 		  Var Path As String
-		  If Matches.SubExpressionCount >= 4 And Matches.SubExpressionString(4).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(4)
-		  ElseIf Matches.SubExpressionCount >= 6 And Matches.SubExpressionString(6).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(6)
-		  ElseIf Matches.SubExpressionCount >= 8 And Matches.SubExpressionString(8).IsEmpty = False Then
-		    Path = Matches.SubExpressionString(8)
-		  ElseIf Matches.SubExpressionCount >= 10 And Matches.SubExpressionString(10).IsEmpty = False Then
-		    Path = "/Game/Mods" + Matches.SubExpressionString(10)
-		  End If
-		  If Path.IsEmpty = False And Path.EndsWith("_C") Then
-		    Path = Path.Left(Path.Length - 2)
-		  End If
+		  Var Count As Integer = Matches.SubExpressionCount
+		  Try
+		    If Count >= 12 And Matches.SubExpressionString(11).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(11)
+		    ElseIf Count >= 11 And Matches.SubExpressionString(10).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(10)
+		    ElseIf Count >= 9 And Matches.SubExpressionString(8).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(8)
+		    ElseIf Count >= 7 And Matches.SubExpressionString(6).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(6)
+		    ElseIf Count >= 5 And Matches.SubExpressionString(4).IsEmpty = False Then
+		      Path = Matches.SubExpressionString(4)
+		    Else
+		      Return ""
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Extracting blueprint path")
+		    Return ""
+		  End Try
+		  Path = ArkSA.CleanupBlueprintPath(Path)
 		  Return Path
 		End Function
 	#tag EndMethod
@@ -121,7 +133,7 @@ Protected Module ArkSA
 		    
 		    Regex = New Regex
 		    Regex.Options.CaseSensitive = False
-		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/Script/Engine\.Blueprint[" + QuotationCharacters + "]([^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
+		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/Script/Engine\.Blueprint[" + QuotationCharacters + "](/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])|(/[^/]+/.+\..+))"
 		  End If
 		  Return Regex
 		End Function
@@ -243,10 +255,6 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ClassStringFromPath(Path As String) As String
-		  If Path.Length <= 6 Or Path.Left(6) <> "/Game/" Then
-		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
-		  End If
-		  
 		  Var Components() As String = Path.Split("/")
 		  Var Tail As String = Components(Components.LastIndex)
 		  Components = Tail.Split(".")
@@ -260,6 +268,45 @@ Protected Module ArkSA
 		  End If
 		  
 		  Return SecondPart + "_C"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function CleanupBlueprintPath(Path As String) As String
+		  // Rather than just looking at wether or not the path ends in _C and remove it,
+		  // this looks at the namespace to see if it also ends in _C. Some mod authors
+		  // make this mistake and the resulting class ends up being Namespace_C.Class_C_C.
+		  
+		  Var Components() As String = Path.Split("/")
+		  If Components.LastIndex >= 2 And Components(1) = "Game" And Components(2) = "Mods" Then
+		    Components.RemoveAt(2)
+		    Components.RemoveAt(1)
+		  End If
+		  If Components.LastIndex >= 2 And Components(2) = "Content" Then
+		    Components.RemoveAt(2)
+		  End If
+		  
+		  Var LastComponent As String = Components(Components.LastIndex)
+		  Components.RemoveAt(Components.LastIndex)
+		  Var Pos As Integer = LastComponent.IndexOf(".")
+		  Var NamespaceString As String = LastComponent.Left(Pos)
+		  Var ClassString As String = LastComponent.Middle(Pos + 1)
+		  
+		  If NamespaceString.EndsWith("_C") Then
+		    // Class should have one _C
+		    If ClassString.EndsWith("_C_C") Then
+		      ClassString = ClassString.Left(ClassString.Length - 2)
+		    End If
+		  Else
+		    // Class should have no _C
+		    If ClassString.EndsWith("_C_C") Then
+		      ClassString = ClassString.Left(ClassString.Length - 4)
+		    ElseIf ClassString.EndsWith("_C") Then
+		      ClassString = ClassString.Left(ClassString.Length - 2)
+		    End If
+		  End If
+		  
+		  Return String.FromArray(Components, "/") + "/" + NamespaceString + "." + ClassString
 		End Function
 	#tag EndMethod
 
@@ -370,6 +417,103 @@ Protected Module ArkSA
 		  Exception Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Copying blueprint data from dictionary")
 		    Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ExportToCSV(Blueprints() As ArkSA.Blueprint) As String
+		  If Blueprints.Count = 0 Then
+		    Return ""
+		  End If
+		  
+		  // See if all the blueprints are the same category
+		  Var Category As String = Blueprints(0).Category
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    If Blueprint.Category <> Category Then
+		      Category = ""
+		      Exit
+		    End If
+		  Next
+		  
+		  Var Headers() As String = Array("Name", "Class", "Path", "Mod")
+		  Select Case Category
+		  Case ArkSA.CategoryCreatures
+		    Headers.Add("Mature Time")
+		    Headers.Add("Incubation Time")
+		    Headers.Add("Minimum Cooldown")
+		    Headers.Add("Maximum Cooldown")
+		  Case ArkSA.CategoryEngrams
+		    Headers.Add("Unlock String")
+		    Headers.Add("Required Level")
+		    Headers.Add("Required Points")
+		  Case ArkSA.CategoryLootContainers
+		    
+		  Case ArkSA.CategorySpawnPoints
+		    
+		  End Select
+		  
+		  Var Lines(0) As String
+		  Lines(0) = """" + String.FromArray(Headers, """,""") + """"
+		  
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    Var Columns(3) As String
+		    Columns(0) = Blueprint.Label.ReplaceAll("""", """""")
+		    Columns(1) = Blueprint.ClassString.ReplaceAll("""", """""")
+		    Columns(2) = Blueprint.Path.ReplaceAll("""", """""")
+		    Columns(3) = Blueprint.ContentPackName.ReplaceAll("""", """""")
+		    
+		    Select Case Category
+		    Case ArkSA.CategoryCreatures
+		      Var Creature As ArkSA.Creature = ArkSA.Creature(Blueprint)
+		      If Creature.MatureTime > 0 Then
+		        Columns.Add(Creature.MatureTime.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.IncubationTime > 0 Then
+		        Columns.Add(Creature.IncubationTime.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.MinMatingInterval > 0 Then
+		        Columns.Add(Creature.MinMatingInterval.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.MaxMatingInterval > 0 Then
+		        Columns.Add(Creature.MaxMatingInterval.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		    Case ArkSA.CategoryEngrams
+		      Var Engram As ArkSA.Engram = ArkSA.Engram(Blueprint)
+		      Columns.Add(Engram.EntryString.ReplaceAll("""", """"""))
+		      If Engram.RequiredPlayerLevel Is Nil Then
+		        Columns.Add("")
+		      Else
+		        Columns.Add(Engram.RequiredPlayerLevel.IntegerValue.ToString(Locale.Raw, "0"))
+		      End If
+		      If Engram.RequiredUnlockPoints Is Nil Then
+		        Columns.Add("")
+		      Else
+		        Columns.Add(Engram.RequiredUnlockPoints.IntegerValue.ToString(Locale.Raw, "0"))
+		      End If
+		    Case ArkSA.CategoryLootContainers
+		      
+		    Case ArkSA.CategorySpawnPoints
+		      
+		    End Select
+		    
+		    Lines.Add("""" + String.FromArray(Columns, """,""") + """")
+		  Next
+		  
+		  Return String.FromArray(Lines, EndOfLine)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExportToCSV(Extends Blueprints() As ArkSA.Blueprint) As String
+		  Return ExportToCSV(Blueprints)
 		End Function
 	#tag EndMethod
 
@@ -534,6 +678,40 @@ Protected Module ArkSA
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MatchesTags(Extends Blueprint As ArkSA.Blueprint, RequiredTags() As String, ExcludedTags() As String) As Boolean
+		  If (RequiredTags Is Nil) = False Then
+		    For Each Tag As String In RequiredTags
+		      If Blueprint.IsTagged(Tag) = False Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  If (ExcludedTags Is Nil) = False Then
+		    For Each Tag As String In ExcludedTags
+		      If Blueprint.IsTagged(Tag) = True Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ModTagFromPath(Path As String) As String
+		  If Path.BeginsWith("/Game/Mods/") Then
+		    Return Path.NthField("/", 4)
+		  ElseIf Path.BeginsWith("/Game/") Then
+		    Return ""
+		  ElseIf Path.BeginsWith("/") Then
+		    Return Path.NthField("/", 2)
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function NormalizeBlueprintPath(Path As String, FolderName As String) As String
 		  Path = Path.Trim
@@ -622,78 +800,6 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ParseCommandLine(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
-		  // This shouldn't take long, but still, probably best to only use this on a thread
-		  
-		  Var InQuotes As Boolean
-		  Var Characters() As String = CommandLine.Split("")
-		  Var Buffer, Params() As String
-		  For Each Char As String In Characters
-		    If Char = """" Then
-		      If InQuotes Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		        InQuotes = False
-		      Else
-		        InQuotes = True
-		      End If
-		    ElseIf Char = " " Then
-		      If InQuotes = False And Buffer.Length > 0 Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		      End If
-		    ElseIf Char = "-" And Buffer.Length = 0 Then
-		      Continue
-		    Else
-		      Buffer = Buffer + Char
-		    End If
-		  Next
-		  If Buffer.Length > 0 Then
-		    Params.Add(Buffer)
-		    Buffer = ""
-		  End If
-		  
-		  Var StartupParams() As String = Params.Shift.Split("?")
-		  Var Map As String = StartupParams.Shift
-		  Call StartupParams.Shift // The listen statement
-		  If PreserveSyntax Then
-		    For Idx As Integer = 0 To Params.LastIndex
-		      Params(Idx) = "-" + Params(Idx)
-		    Next
-		    For Idx As Integer = 0 To StartupParams.LastIndex
-		      StartupParams(Idx) = "?" + StartupParams(Idx)
-		    Next
-		  End If
-		  StartupParams.Merge(Params)
-		  
-		  Var CommandLineOptions As New Dictionary
-		  For Each Parameter As String In StartupParams
-		    Var KeyPos As Integer = Parameter.IndexOf("=")
-		    Var Key As String
-		    Var Value As Variant
-		    If KeyPos = -1 Then
-		      Key = Parameter
-		      Value = True
-		    Else
-		      Key = Parameter.Left(KeyPos)
-		      Value = Parameter.Middle(KeyPos + 1)
-		    End If
-		    If PreserveSyntax Then
-		      Value = Parameter
-		    End If
-		    CommandLineOptions.Value(Key) = Value
-		  Next
-		  
-		  If PreserveSyntax Then
-		    CommandLineOptions.Value("?Map") = Map
-		  Else
-		    CommandLineOptions.Value("Map") = Map
-		  End If
-		  Return CommandLineOptions
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ParseCommandLine1(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
 		  // This shouldn't take long, but still, probably best to only use this on a thread
 		  
 		  Var InQuotes As Boolean
@@ -1390,7 +1496,7 @@ Protected Module ArkSA
 	#tag Constant, Name = SteamServerId, Type = Double, Dynamic = False, Default = \"2430930", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
+	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"b2362c68-abcf-4dc2-93b1-5d39074e48b3", Scope = Protected

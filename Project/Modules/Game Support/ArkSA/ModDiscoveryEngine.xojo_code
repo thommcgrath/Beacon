@@ -34,7 +34,7 @@ Protected Class ModDiscoveryEngine
 		  End If
 		  
 		  Var Searcher As New Regex
-		  Searcher.SearchPattern = "^ShooterGame/Mods/([^/]+)/(.+)/(.+)\.uasset\t[\d\-TZ:\.]{24}$"
+		  Searcher.SearchPattern = "^ShooterGame/Mods/([^/]+)/Content(.*)/([^/]+)\.uasset\t[\d\-TZ:\.]{24}$"
 		  
 		  Self.mModsByTag = New Dictionary
 		  Self.mTagsByMod = New Dictionary
@@ -177,7 +177,7 @@ Protected Class ModDiscoveryEngine
 		          Var ModTag As String = Matches.SubExpressionString(1)
 		          Var ClassString As String = Matches.SubExpressionString(3)
 		          Var NamespaceString As String = Matches.SubExpressionString(2) + "/" + ClassString
-		          Var Path As String = "/Game/Mods/" + ModTag + "/" + NamespaceString + "." + ClassString
+		          Var Path As String = "/" + ModTag + NamespaceString + "." + ClassString
 		          Candidates.Value(Path) = ClassString
 		        Catch LineErr As RuntimeException
 		        End Try
@@ -239,7 +239,7 @@ Protected Class ModDiscoveryEngine
 		  Pack.Marketplace = Beacon.MarketplaceCurseForge
 		  Pack.MarketplaceId = ModInfo.Value("id")
 		  
-		  Var EngramEntries(), PrimalItems(), Creatures() As String
+		  Var EngramEntries(), PrimalItems(), Creatures(), SupplyCrates(), DinoInventories() As String
 		  Var ClassPaths As New Dictionary // Yes, this will break if a mod uses the same class in more than one namespace. This is a crappy implementation anyway, so I don't care.
 		  For Each Entry As DictionaryEntry In Candidates
 		    Var Path As String = Entry.Key
@@ -250,6 +250,10 @@ Protected Class ModDiscoveryEngine
 		      PrimalItems.Add(ClassString)
 		    ElseIf ClassString.Contains("Character_BP") Or ClassString.Contains("BP_Character") Then
 		      Creatures.Add(ClassString)
+		    ElseIf ClassString.BeginsWith("SupplyCrate") Then
+		      SupplyCrates.Add(ClassString)
+		    ElseIf ClassString.BeginsWith("DinoDropInventory") Or ClassString.BeginsWith("DinoInventory") Then
+		      DinoInventories.Add(ClassString)
 		    Else
 		      Continue
 		    End If
@@ -297,6 +301,7 @@ Protected Class ModDiscoveryEngine
 		    Engram.ContentPackName = ModName
 		    Engram.RegenerateBlueprintId()
 		    Engram.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    Engram.Tags = Array("blueprintable")
 		    
 		    If Unlocks.HasKey(ClassString) Then
 		      Engram.EntryString = Unlocks.Value(ClassString).StringValue
@@ -306,6 +311,7 @@ Protected Class ModDiscoveryEngine
 		    
 		    Blueprints.Add(Engram)
 		  Next
+		  
 		  For Each ClassString As String In Creatures
 		    Var Path As String = ClassPaths.Value(ClassString)
 		    Var Creature As New ArkSA.MutableCreature(Path, "")
@@ -314,6 +320,34 @@ Protected Class ModDiscoveryEngine
 		    Creature.RegenerateBlueprintId()
 		    Creature.Label = ArkSA.LabelFromClassString(ClassString + "_C")
 		    Blueprints.Add(Creature)
+		  Next
+		  
+		  For Each ClassString As String In SupplyCrates
+		    Var Path As String = ClassPaths.Value(ClassString)
+		    Var SupplyCrate As New ArkSA.MutableLootContainer(Path, "")
+		    SupplyCrate.ContentPackId = ContentPackId
+		    SupplyCrate.ContentPackName = ModName
+		    SupplyCrate.RegenerateBlueprintId()
+		    SupplyCrate.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    SupplyCrate.UIColor = &cFFFFFF00
+		    SupplyCrate.IconId = "d5bb71e5-fba5-51f3-b120-f1abadc1fa6e"
+		    SupplyCrate.SortValue = 199
+		    Blueprints.Add(SupplyCrate)
+		  Next
+		  
+		  For Each ClassString As String In DinoInventories
+		    Var Path As String = ClassPaths.Value(ClassString)
+		    Var DinoLoot As New ArkSA.MutableLootContainer(Path, "")
+		    DinoLoot.ContentPackId = ContentPackId
+		    DinoLoot.ContentPackName = ModName
+		    DinoLoot.RegenerateBlueprintId()
+		    DinoLoot.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    DinoLoot.UIColor = &cFFFFFF00
+		    DinoLoot.IconId = "b7548942-53be-5046-892a-74816e43a938"
+		    DinoLoot.SortValue = 200
+		    DinoLoot.Tags = Array("dino")
+		    DinoLoot.Experimental = True
+		    Blueprints.Add(DinoLoot)
 		  Next
 		  
 		  RaiseEvent ContentPackDiscovered(Pack.ImmutableVersion, Blueprints)

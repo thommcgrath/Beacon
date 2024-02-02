@@ -1803,6 +1803,13 @@ Protected Module Beacon
 	#tag EndConstant
 
 
+	#tag Enum, Name = DeployPlan, Type = Integer, Flags = &h1
+		StopUploadStart
+		  UploadRestart
+		UploadOnly
+	#tag EndEnum
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Index"

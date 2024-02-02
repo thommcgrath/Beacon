@@ -23,11 +23,10 @@ Protected Class Download
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Contents As MemoryBlock, URL As String, Arch As Integer, Platform As String)
+		Sub Constructor(File As FolderItem, URL As String, Arch As Integer, Platform As String)
 		  Select Case Platform
 		  Case Self.PlatformLinux, Self.PlatformMac, Self.PlatformWindows
-		    Self.mContents = Contents
-		    Self.mChecksum = EncodeHex(Crypto.SHA2_256(Contents)).Lowercase
+		    Self.mFile = File
 		    
 		    Self.mPlatform = Platform
 		    Self.mArch = Arch And (Self.ArchARM64 Or Self.ArchIntel32 Or Self.ArchIntel64)
@@ -62,6 +61,51 @@ Protected Class Download
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Loaded() As Boolean
+		  Return (Self.mContents Is Nil) = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LoadFromDisk() As Boolean
+		  Const ChunkSize = 256000
+		  Var Stream As BinaryStream = BinaryStream.Open(Self.mFile, False)
+		  Var Contents As New MemoryBlock(CType(Stream.Length, Integer))
+		  Var Offset As Integer = 0
+		  While Stream.EndOfFile = False
+		    Var ReadBytes As Integer = Min(ChunkSize, CType(Stream.Length, Integer) - Offset)
+		    Contents.StringValue(Offset, ReadBytes) = Stream.Read(ReadBytes, Nil)
+		    Offset = Offset + ReadBytes
+		    Thread.Current.Sleep(1)
+		  Wend
+		  Stream.Close
+		  
+		  Self.mContents = Contents
+		  Self.mChecksum = EncodeHex(Crypto.SHA2_256(Contents)).Lowercase
+		  
+		  Var RSAKey As String = App.PrivateKey
+		  Var RSASignature As String = Self.SignRSA(RSAKey, Contents)
+		  If RSASignature.IsEmpty Then
+		    Return False
+		  End If
+		  Var DSASignature As String = Self.SignDSA(Self.mFile)
+		  If DSASignature.IsEmpty Then
+		    Return False
+		  End If
+		  Var EdDSASignature As String = Self.SignEdDSA(Self.mFile)
+		  If EdDSASignature.IsEmpty Then
+		    Return False
+		  End If
+		  
+		  Self.AddSignature(New DownloadSignature(RSASignature, DownloadSignature.SignatureRSA))
+		  Self.AddSignature(New DownloadSignature(DSASignature, DownloadSignature.SignatureDSA))
+		  Self.AddSignature(New DownloadSignature(EdDSASignature, DownloadSignature.SignatureEdDSA))
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Path() As String
 		  Return Self.mPath
 		End Function
@@ -92,6 +136,43 @@ Protected Class Download
 		    Arr.Add(Entry.Value)
 		  Next Entry
 		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignDSA(File As FolderItem) As String
+		  Var Sh As New Shell
+		  Sh.Execute(App.SignTool(True).ShellPath + " " + File.ShellPath + " " + App.ApplicationSupport.Child("dsa_priv.pem").ShellPath)
+		  Return Sh.Result.Trim
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignEdDSA(File As FolderItem) As String
+		  Var Sh As New Shell
+		  Sh.Execute(App.SignTool(False).ShellPath + " -f " + App.ApplicationSupport.Child("ed25519").ShellPath + " " + File.ShellPath)
+		  
+		  Var Result As String = Sh.Result.Trim
+		  Var StartPos As Integer = Result.IndexOf("sparkle:edSignature=""")
+		  If StartPos = -1 Then
+		    // There is a problem
+		    Return ""
+		  End If
+		  
+		  StartPos = StartPos + 21
+		  Var EndPos As Integer = Result.IndexOf(StartPos, """")
+		  If EndPos = -1 Then
+		    // What?
+		    EndPos = Result.Length
+		  End If
+		  
+		  Return Result.Middle(StartPos, EndPos - StartPos)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignRSA(Key As String, Content As MemoryBlock) As String
+		  Return EncodeHex(Crypto.RSASign(Content, Key)).Lowercase
 		End Function
 	#tag EndMethod
 
@@ -143,6 +224,10 @@ Protected Class Download
 
 	#tag Property, Flags = &h21
 		Private mContents As MemoryBlock
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

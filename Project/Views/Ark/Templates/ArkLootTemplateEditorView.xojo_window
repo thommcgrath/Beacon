@@ -1133,7 +1133,7 @@ End
 		  Self.mUpdating = True
 		  Self.Modified = False
 		  
-		  Var Mask As UInt64 = Preferences.LastPresetMapFilter
+		  Var Mask As UInt64 = Preferences.ArkLastTemplateMapFilter
 		  Var AllMaps() As Ark.Map = Ark.Maps.All
 		  For Idx As Integer = 0 To AllMaps.LastIndex
 		    Self.MapSelector.Segment(Idx).Selected = (Mask And AllMaps(Idx).Mask) = AllMaps(Idx).Mask
@@ -1715,7 +1715,7 @@ End
 		  Self.mUpdating = True
 		  
 		  Var Maps() As Ark.Map = Self.FilteredMaps
-		  Preferences.LastPresetMapFilter = Maps.Mask
+		  Preferences.ArkLastTemplateMapFilter = Maps.Mask
 		  
 		  For I As Integer = ContentsList.RowCount - 1 DownTo 0
 		    Var Entry As Ark.LootTemplateEntry = ContentsList.RowTagAt(I)

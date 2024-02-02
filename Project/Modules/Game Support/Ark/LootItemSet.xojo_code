@@ -106,13 +106,11 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("label") Then
-		      Set.Label = Dict.Value("label")
-		    ElseIf Dict.HasKey("Label") Then
-		      Set.Label = Dict.Value("Label")
-		    ElseIf Dict.HasKey("SetName") Then
-		      Set.Label = Dict.Value("SetName")
+		    Var Label As String = Dict.FirstValue("label", "Label", "SetName", Set.Label).StringValue.Trim
+		    If Label.IsEmpty Then
+		      Label = Set.Label
 		    End If
+		    Set.Label = Label
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading Label value")
 		  End Try
@@ -130,9 +128,13 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    App.Log(Err, CurrentMethodName, "Casting ItemEntries to array")
 		  End Try
 		  
+		  Var Options As Integer
+		  If NewUUID Then
+		    Options = Options Or Ark.LootItemSetEntry.OptionNewId
+		  End If
 		  For Idx As Integer = 0 To Children.LastIndex
 		    Try
-		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), NewUUID)
+		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), Options)
 		      If (Entry Is Nil) = False Then
 		        Set.Add(Entry)
 		      End If

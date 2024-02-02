@@ -204,10 +204,10 @@ abstract class BeaconShop {
 			$price = static::GetProductById('USD', $productId)['Price'];
 			$lineTotal = $price * $quantity;
 			$subtotal += $lineTotal;
-			$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', $purchaseId, $productId, 'USD', $quantity, $price, $lineTotal, $lineTotal, 0, 0);
+			$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total, conversion_rate, unit_price_usd, subtotal_usd, discount_usd, tax_usd, line_total_usd) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $5, $6, $7, $8, $9);', $purchaseId, $productId, 'USD', $quantity, $price, $lineTotal, $lineTotal, 0, 0, 1.0);
 		}
 
-		$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, tax_locality, total_paid, merchant_reference, currency, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);', $purchaseId, $emailId, $subtotal, $subtotal, 0, 'US CT', 0, $purchaseId, 'USD', $notes);
+		$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, tax_locality, total_paid, merchant_reference, currency, notes, conversion_rate, subtotal_usd, discount_usd, tax_usd, total_paid_usd) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $3, $4, $5, $7);', $purchaseId, $emailId, $subtotal, $subtotal, 0, 'US CT', 0, $purchaseId, 'USD', $notes, 1.0);
 
 		if ($process === true) {
 			self::IssuePurchases($purchaseId, $bundles);
@@ -263,7 +263,7 @@ abstract class BeaconShop {
 		}
 
 		// Include all products, so that prices can be ready before products are activated
-		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products ORDER BY product_name;');
+		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products WHERE retail_price > 0 ORDER BY product_name;');
 		while (!$products->EOF()) {
 			$productId = $products->Field('product_id');
 			$productName = $products->Field('product_name');

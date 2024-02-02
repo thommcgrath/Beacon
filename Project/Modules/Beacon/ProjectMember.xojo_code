@@ -106,8 +106,12 @@ Protected Class ProjectMember
 		    Return
 		  End If
 		  
-		  Self.mFingerprint = FingerprintHash
-		  Self.mEncryptedPassword = EncodeBase64MBS(Crypto.RSAEncrypt(Password, Self.mPublicKey))
+		  Try
+		    Self.mEncryptedPassword = EncodeBase64MBS(Crypto.RSAEncrypt(Password, Self.mPublicKey))
+		    Self.mFingerprint = FingerprintHash
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Encrypting project password for member")
+		  End Try
 		End Sub
 	#tag EndMethod
 

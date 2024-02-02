@@ -449,6 +449,20 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ShowIssue(Issue As Beacon.Issue)
+		  Var LocationParts() As String = Issue.Location.Split(Beacon.Issue.Separator)
+		  // ConfigSet is 0, ConfigName is 1
+		  Var PointClass As String = LocationParts(2)
+		  Var SpawnSetId As String
+		  If LocationParts.LastIndex > 2 Then
+		    SpawnSetId = LocationParts(3)
+		  End If
+		  
+		  Call Self.GoToChild(PointClass, SpawnSetId)
+		End Sub
+	#tag EndEvent
+
 
 	#tag MenuHandler
 		Function ConvertCreatureReplacementsToSpawnPointAdditions() As Boolean Handles ConvertCreatureReplacementsToSpawnPointAdditions.Action
@@ -473,6 +487,29 @@ End
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As ArkSA.Configs.SpawnPoints
 		  Return ArkSA.Configs.SpawnPoints(Super.Config(ForWriting))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GoToChild(PointClass As String, SpawnSetId As String = "") As Boolean
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    Var Container As ArkSA.SpawnPointOverride = Self.List.RowTagAt(Idx)
+		    If Container Is Nil Or Container.SpawnPointReference.ClassString <> PointClass Then
+		      Continue
+		    End If
+		    
+		    Self.List.SelectedRowIndex = Idx
+		    Self.List.EnsureSelectionIsVisible()
+		    
+		    If SpawnSetId.IsEmpty = False Then
+		      Return Self.Editor.GoToChild(SpawnSetId)
+		    Else
+		      Return True
+		    End If
+		  Next Idx
+		  
+		  Self.List.SelectedRowIndex = -1
+		  Return False
 		End Function
 	#tag EndMethod
 

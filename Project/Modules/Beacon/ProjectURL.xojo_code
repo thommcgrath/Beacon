@@ -30,6 +30,19 @@ Protected Class ProjectURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(SaveData As JSONItem)
+		  Self.mGameId = SaveData.Value("GameId")
+		  Self.mName = SaveData.Value("Name")
+		  Self.mPath = SaveData.Value("Path")
+		  Self.mProjectId = SaveData.Value("ProjectId")
+		  Self.mSaveInfo = SaveData.Value("SaveInfo")
+		  Self.mType = SaveData.Value("Type")
+		  
+		  Self.CleanupPath()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Url As String)
 		  If Url.BeginsWith("{") And Url.EndsWith("}") Then
 		    // Newer Json style
@@ -193,6 +206,19 @@ Protected Class ProjectURL
 		    Return Self.mPath
 		  End If
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function JSONValue() As JSONItem
+		  Var Dict As New JSONItem
+		  Dict.Value("GameId") = Self.mGameId
+		  Dict.Value("Name") = Self.mName
+		  Dict.Value("Path") = Self.mPath
+		  Dict.Value("ProjectId") = Self.mProjectId
+		  Dict.Value("SaveInfo") = Self.mSaveInfo
+		  Dict.Value("Type") = Self.mType
+		  Return Dict
 		End Function
 	#tag EndMethod
 

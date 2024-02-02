@@ -5,10 +5,10 @@ use BeaconAPI\v4\{Response, Core, License};
 function handleRequest(array $context): Response {
 	$licenseId = $context['pathParameters']['licenseId'];
 	$license = License::Fetch($licenseId);
-	if ($license->UserId() !== Core::UserId()) {
+	if ($license->EmailId() !== Core::User()->EmailId()) {
 		return Response::NewJsonError('License not found', null, 404);
 	}
-	
+
 	if (is_null($license->FirstUsed())) {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -16,7 +16,7 @@ function handleRequest(array $context): Response {
 		$database->Commit();
 		$license = License::Fetch($licenseId);
 	}
-	
+
 	return Response::NewJson($license, 200);
 }
 

@@ -32,6 +32,11 @@ if ($cart === false) {
 }
 
 $email = strtolower(trim($cart['email']));
+if (BeaconEmail::IsEmailValid($email) === false) {
+	http_response_code(400);
+	echo json_encode(['error' => true, 'message' => 'Email is not valid.'], JSON_PRETTY_PRINT);
+	exit;
+}
 $refundAgreed = filter_var($cart['refundPolicyAgreed'], FILTER_VALIDATE_BOOLEAN);
 $bundles = $cart['items'];
 $currency = BeaconShop::GetCurrency();
@@ -91,10 +96,13 @@ $payment = [
 $user = null;
 $licenses = [];
 try {
+	$rows = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
+	$emailId = $rows->Field('email_id');
+	$licenses = License::Search(['emailId' => $emailId], true);
+
 	$user = User::Fetch($email);
 	if (is_null($user) === false) {
 		$payment['metadata']['Beacon User UUID'] = $user->UserID();
-		$licenses = $user->Licenses();
 	}
 } catch (Exception $err) {
 }
@@ -162,6 +170,13 @@ while (!$results->EOF()) {
 $includeArk = isset($products['Ark']['Base']);
 $includeArkSA = isset($products['ArkSA']['Base']);
 
+$gameIds = [];
+$gameRows = $database->Query('SELECT game_id FROM public.games WHERE public = TRUE AND game_id NOT IN (\'Ark\', \'ArkSA\') ORDER BY game_id;');
+while (!$gameRows->EOF()) {
+	$gameIds[] = $gameRows->Field('game_id');
+	$gameRows->MoveNext();
+}
+
 $lines = [];
 foreach ($bundles as $bundle) {
 	$bundle = new CartBundle($bundle);
@@ -184,6 +199,31 @@ foreach ($bundles as $bundle) {
 				$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + ($wantsArkSAYears - 1);
 			}
 		}
+
+		foreach ($gameIds as $gameId) {
+			if (isset($products[$gameId]['Base']) === false) {
+				continue;
+			}
+
+			$renewable = isset($products[$gameId]['Renewal']);
+			$baseProduct = $products[$gameId]['Base'];
+
+			if ($renewable) {
+				$renewalProduct = $products[$gameId]['Renewal'];
+				$years = $bundle->getQuantity($baseProduct['ProductId']) + $bundle->getQuantity($renewalProduct['ProductId']);
+				if ($years < 1) {
+					continue;
+				}
+				$lines[$baseProduct['PriceId']] = ($lines[$baseProduct['PriceId']] ?? 0) + 1;
+				if ($years > 1) {
+					$lines[$renewalProduct['PriceId']] = ($lines[$renewalProduct['PriceId']] ?? 0) + ($years - 1);
+				}
+			} else {
+				if ($bundle->getQuantity($baseProduct['ProductId']) > 0) {
+					$lines[$baseProduct['PriceId']] = 1;
+				}
+			}
+		}
 	} else {
 		$ownsArk = $includeArk && findLicense($licenses, $products['Ark']['Base']['ProductId']) !== null;
 		$ownsArkSA = $includeArkSA && findLicense($licenses, $products['ArkSA']['Base']['ProductId']) !== null;
@@ -203,6 +243,36 @@ foreach ($bundles as $bundle) {
 				}
 				if ($wantsArkSAYears > 1) {
 					$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + ($wantsArkSAYears - 1);
+				}
+			}
+		}
+
+		foreach ($gameIds as $gameId) {
+			if (isset($products[$gameId]['Base']) === false) {
+				continue;
+			}
+
+			$renewable = isset($products[$gameId]['Renewal']);
+			$baseProduct = $products[$gameId]['Base'];
+
+			if ($renewable) {
+				$renewalProduct = $products[$gameId]['Renewal'];
+				$years = $bundle->getQuantity($baseProduct['ProductId']) + $bundle->getQuantity($renewalProduct['ProductId']);
+				if ($years < 1) {
+					continue;
+				}
+				$isOwned = findLicense($licenses, $baseProduct['ProductId']) !== null;
+				if ($isOwned) {
+					$lines[$renewalProduct['PriceId']] = ($lines[$renewalProduct['PriceId']] ?? 0) + $years;
+				} else {
+					$lines[$baseProduct['PriceId']] = ($lines[$baseProduct['PriceId']] ?? 0) + 1;
+					if ($years > 1) {
+						$lines[$renewalProduct['PriceId']] = ($lines[$renewalProduct['PriceId']] ?? 0) + ($years - 1);
+					}
+				}
+			} else {
+				if ($bundle->getQuantity($baseProduct['ProductId']) > 0 && findLicense($licenses, $baseProduct['ProductId']) === null) {
+					$lines[$baseProduct['PriceId']] = 1;
 				}
 			}
 		}

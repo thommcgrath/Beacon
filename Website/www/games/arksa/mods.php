@@ -5,7 +5,7 @@ BeaconTemplate::SetTitle('Ark: Survival Ascended Supported Mods');
 BeaconTemplate::SetCanonicalPath('/Games/ArkSA/Mods');
 
 $database = BeaconCommon::Database();
-$rows = $database->Query('SELECT content_pack_id, marketplace, marketplace_id, name, type FROM public.content_packs_combined WHERE game_id = $1 ORDER BY name;', 'ArkSA');
+$rows = $database->Query('SELECT content_pack_id, marketplace, marketplace_id, name, type, slug FROM public.content_packs_combined WHERE game_id = $1 ORDER BY name;', 'ArkSA');
 
 $breadcrumbs = new BeaconBreadcrumbs();
 $breadcrumbs->AddComponent('/Games', 'Games');
@@ -20,13 +20,14 @@ $showCommunityLegend = false;
 	<thead>
 		<th class="w-100">Mod Name</th>
 		<th class="w-0 nowrap not-mini">Data Source</th>
-		<th class="w-0 nowrap">Steam Id</th>
+		<th class="w-0 nowrap">Mod Id</th>
 	</thead>
 	<tbody>
 		<?php
 			while (!$rows->EOF()) {
 				$marketplace = $rows->Field('marketplace');
 				$marketplaceId = $rows->Field('marketplace_id');
+				$marketplaceSlug = $rows->Field('slug');
 				$contentPackId = $rows->Field('content_pack_id');
 				$name = $rows->Field('name');
 				$type = $rows->Field('type');
@@ -40,6 +41,15 @@ $showCommunityLegend = false;
 				case 'Steam Workshop':
 					$marketplaceUrl = 'https://steamcommunity.com/sharedfiles/filedetails/?id=' . urlencode($marketplaceId);
 					break;
+				case 'CurseForge':
+					if (is_null($marketplaceSlug) === false) {
+						$marketplaceUrl = 'https://www.curseforge.com/ark-survival-ascended/mods/' . $marketplaceSlug;
+					}
+					break;
+				}
+				$marketplaceLink = htmlentities($marketplaceId);
+				if (empty($marketplaceUrl) === false) {
+					$marketplaceLink = '<a href="' . htmlentities($marketplaceUrl) . '">' . $marketplaceLink . '</a>';
 				}
 
 				$typeHtml = '';
@@ -55,12 +65,15 @@ $showCommunityLegend = false;
 					$typeHtml = '<span class="tag grey">Community</span>';
 					$showCommunityLegend = true;
 					break;
+				case 3:
+					$typeHtml = '<span class="tag yellow">Beacon</span>';
+					break;
 				}
 
 				?><tr>
 			<td><?php echo $nameHtml; ?><span class="mini-only"><br><?php echo $typeHtml; ?></span></td>
 			<td class="text-center w-0 nowrap not-mini"><?php echo $typeHtml; ?></td>
-			<td class="text-right nowrap"><a href="<?php echo htmlentities($marketplaceUrl); ?>" target="_blank"><?php echo htmlentities($marketplaceId); ?></a></td>
+			<td class="text-right nowrap"><?php echo $marketplaceLink; ?></td>
 		</tr><?php
 			$rows->MoveNext();
 		} ?>
@@ -76,6 +89,10 @@ $showCommunityLegend = false;
 		<tr>
 			<td class="w-0 p-1 nowrap text-center"><span class="tag blue">Mod Author</span></td>
 			<td class="w-100 p-1">Data is maintained by the mod author using Beacon's mod tools.</td>
+		</tr>
+		<tr>
+			<td class="w-0 p-1 nowrap text-center"><span class="tag yellow">Beacon</span></td>
+			<td class="w-100 p-1">Data is maintained by Beacon's author or other volunteers using Beacon's mod tools.</td>
 		</tr>
 		<?php if ($showCommunityLegend) { ?><tr>
 			<td class="w-0 p-1 nowrap text-center"><span class="tag grey">Community</span></td>

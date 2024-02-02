@@ -271,10 +271,11 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ImportTruncate()
-		  Var TableNames() As String = Array("official_templates", "official_template_selectors", "custom_templates", "custom_template_selectors")
-		  For Each TableName As String In TableNames
-		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(TableName) + ";")
-		  Next TableName
+		  Var Rows As RowSet = Self.SQLSelect("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name;")
+		  While Not Rows.AfterLastRow
+		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(Rows.Column("name").StringValue) + ";")
+		    Rows.MoveToNextRow
+		  Wend
 		End Sub
 	#tag EndEvent
 

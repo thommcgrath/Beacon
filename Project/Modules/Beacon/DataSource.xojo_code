@@ -47,6 +47,53 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub CleanForeignKeyViolations()
+		  Var Tables As New Dictionary
+		  Try
+		    Var TableRows As RowSet = Self.SQLSelect("SELECT sqlite_master.name, info.name AS primary_key FROM sqlite_master INNER JOIN pragma_table_info(sqlite_master.name) AS info ON (info.pk = 1) WHERE sqlite_master.type = 'table' AND sqlite_master.name NOT LIKE 'sqlite_%';")
+		    While Not TableRows.AfterLastRow
+		      Tables.Value(TableRows.Column("name").StringValue) = TableRows.Column("primary_key").StringValue
+		      TableRows.MoveToNextRow
+		    Wend
+		  Catch Err As RuntimeException
+		    App.Log("Failed to clean foreign key violations because database schema is not ready.")
+		    Return
+		  End Try
+		  
+		  For Each Entry As DictionaryEntry In Tables
+		    Var TableName As String = Entry.Key
+		    Var PrimaryKeyName As String = Entry.Value
+		    
+		    Var ViolationRows As RowSet = Self.SQLSelect("SELECT violations.rowid, constraints.""from"" AS source_column, constraints.""table"" AS target_table, constraints.""to"" AS target_column FROM pragma_foreign_key_check(?1) AS violations INNER JOIN pragma_foreign_key_list(?1) AS constraints ON (violations.fkid = constraints.id);", TableName)
+		    While Not ViolationRows.AfterLastRow
+		      Var RowId As Integer = ViolationRows.Column("rowid").IntegerValue
+		      Var SourceColumnName As String = ViolationRows.Column("source_column").StringValue
+		      Var TargetTableName As String = ViolationRows.Column("target_table").StringValue
+		      Var TargetColumnName As String = ViolationRows.Column("target_column").StringValue
+		      Var Rows As RowSet = Self.SQLSelect("SELECT " + Self.EscapeIdentifier(PrimaryKeyName) + ", " + Self.EscapeIdentifier(SourceColumnName) + " FROM " + Self.EscapeIdentifier(TableName) + " WHERE rowid = ?1;", RowId)
+		      While Not Rows.AfterLastRow
+		        Try
+		          Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(TableName) + " WHERE rowid = ?1;", RowId)
+		        Catch Err As RuntimeException
+		        End Try
+		        
+		        Try
+		          Var PrimaryKey As String = Rows.Column(PrimaryKeyName).StringValue
+		          Var ViolatedValue As String = Rows.Column(SourceColumnName).StringValue
+		          App.Log("Removed row from " + TableName + "(" + PrimaryKeyName + "=" + PrimaryKey + "): " + TargetTableName + "." + TargetColumnName + " has no member " + ViolatedValue + ".")
+		        Catch Err As RuntimeException
+		        End Try
+		        
+		        Rows.MoveToNextRow
+		      Wend
+		      
+		      ViolationRows.MoveToNextRow
+		    Wend
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Close()
 		  RaiseEvent Close()
@@ -375,32 +422,6 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  If Value Then
-		    Var Rows As RowSet
-		    Try
-		      Rows = Self.SQLSelect("PRAGMA foreign_key_check;")
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Getting list of broken foreign keys")
-		    End Try
-		    If (Rows Is Nil) = False Then
-		      While Rows.AfterLastRow = False
-		        Var TransactionStarted As Boolean
-		        Try
-		          Var TableName As String = Rows.Column("table").StringValue
-		          Var RowID As Integer = Rows.Column("rowid").IntegerValue
-		          Self.BeginTransaction
-		          TransactionStarted = True
-		          Self.SQLExecute("DELETE FROM """ + TableName.ReplaceAll("""", """""") + """ WHERE rowid = ?1;", RowID)
-		          Self.CommitTransaction
-		          TransactionStarted = False
-		        Catch Err As RuntimeException
-		          App.Log(Err, CurrentMethodName, "Deleting broken foreign key row")
-		          If TransactionStarted Then
-		            Self.RollbackTransaction
-		          End If
-		        End Try
-		        Rows.MoveToNextRow
-		      Wend
-		    End If
 		    Try
 		      Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		    Catch Err As RuntimeException
@@ -565,6 +586,33 @@ Implements NotificationKit.Receiver
 		  End If
 		  Self.BuildIndexes()
 		  
+		  Self.RunContentPackMigrations()
+		  Self.CleanForeignKeyViolations()
+		  
+		  Var Rows As RowSet = Self.SQLSelect("PRAGMA foreign_key_check;")
+		  If Rows.RowCount > 0 Then
+		    While Not Rows.AfterLastRow
+		      Var RowId As Integer = Rows.Column("rowid").IntegerValue
+		      Var TableName As String = Rows.Column("table").StringValue
+		      Var TargetTableName As String = Rows.Column("parent").StringValue
+		      
+		      If TargetTableName = "content_packs" And (TableName = "loot_containers" Or TableName = "engrams" Or TableName = "creatures" Or TableName = "spawn_points") Then
+		        Var Row As RowSet = Self.SQLSelect("SELECT path, content_pack_id FROM " + TableName + " WHERE rowid = ?1;", RowId)
+		        System.DebugLog("Object " + Row.Column("path").StringValue + " of " + TableName + " references non-existent content_pack_id " + Row.Column("content_pack_id").StringValue + ".")
+		      Else
+		        System.DebugLog("Row " + RowId.ToString(Locale.Raw, "0") + " of table " + TableName + " is missing a reference to " + TargetTableName + ".")
+		      End If
+		      
+		      Rows.MoveToNextRow
+		    Wend
+		    
+		    While Self.TransactionDepth > OriginalDepth
+		      Self.RollbackTransaction
+		    Wend
+		    Self.mImporting = False
+		    Return False
+		  End If
+		  
 		  Try
 		    Self.CommitTransaction()
 		  Catch Err As RuntimeException
@@ -593,6 +641,28 @@ Implements NotificationKit.Receiver
 		    Return False
 		  End Try
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportChainBegin()
+		  Self.mContentPackMigration = New Dictionary
+		  Try
+		    RaiseEvent ImportStarting
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Starting import")
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportChainFinished()
+		  Try
+		    RaiseEvent ImportFinishing
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Finishing import")
+		  End Try
+		  Self.mContentPackMigration = Nil
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -770,6 +840,14 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub PerformMaintenance()
+		  RaiseEvent PerformMaintenance
+		  
+		  Self.CleanForeignKeyViolations()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Prefix() As String
 		  Return Self.Identifier.Lowercase
 		End Function
@@ -814,6 +892,53 @@ Implements NotificationKit.Receiver
 		    Self.ReleaseLock()
 		    Raise Err
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub RunContentPackMigrations()
+		  If Self.mContentPackMigration Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Keys() As Variant = Self.mContentPackMigration.Keys
+		  For Each Key As Variant In Keys
+		    Var FromContentPackId As String = Key
+		    Var ToContentPackId As String = Self.mContentPackMigration.Value(Key)
+		    
+		    Try
+		      App.Log("Migrating content pack data from " + FromContentPackId + " to " + ToContentPackId + "…")
+		      RaiseEvent MigrateContentPackData(FromContentPackId, ToContentPackId)
+		      App.Log("Migration complete")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Migrating content pack data")
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean) As Boolean
+		  If Pack Is Nil Or Pack.GameId <> Self.Identifier Then
+		    Return False
+		  End If
+		  
+		  Var Saved As Boolean = RaiseEvent SaveContentPack(Pack)
+		  If Saved And DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
+		  Return Saved
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ScheduleContentPackMigration(FromContentPackId As String, ToContentPackId As String)
+		  If Self.mContentPackMigration Is Nil Then
+		    Return
+		  End If
+		  
+		  App.Log("Scheduled content pack " + FromContentPackId + " to be migrated to " + ToContentPackId + ".")
+		  Self.mContentPackMigration.Value(FromContentPackId) = ToContentPackId
 		End Sub
 	#tag EndMethod
 
@@ -978,11 +1103,23 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ImportFinishing()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ImportStarting()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ImportTruncate()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event IndexesBuilt()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MigrateContentPackData(FromContentPackId As String, ToContentPackId As String)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -994,7 +1131,15 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event PerformMaintenance()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ReleaseLock()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event SaveContentPack(Pack As Beacon.ContentPack) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -1012,6 +1157,10 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private Shared mConnectionCounts As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPackMigration As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1048,6 +1197,9 @@ Implements NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = FlagUseWeakRef, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ForeignKeyReportSQL, Type = String, Dynamic = False, Default = \"SELECT violations.\"table\" AS source_table\x2C violations.rowid AS source_row_id\x2C constraints.\"from\" AS source_column\x2C constraints.\"table\" AS target_table\x2C constraints.\"to\" AS target_column FROM pragma_foreign_key_check AS violations INNER JOIN pragma_foreign_key_list(violations.\"table\") AS constraints ON (violations.fkid \x3D constraints.id);", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_ImportCloudFilesFinished, Type = String, Dynamic = False, Default = \"DataSource:ImportCloudFiles:Finished", Scope = Public

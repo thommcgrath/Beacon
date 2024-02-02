@@ -98,8 +98,10 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, NewEntryId As Boolean = False) As Ark.LootItemSetEntry
+		Shared Function FromSaveData(Dict As Dictionary, Options As Integer = 0) As Ark.LootItemSetEntry
 		  Var Entry As New Ark.MutableLootItemSetEntry
+		  Var NewEntryId As Boolean = (Options And OptionNewId) = OptionNewId
+		  Var LoadEmpty As Boolean = (Options And OptionLoadEmpty) = OptionLoadEmpty
 		  
 		  If NewEntryId Then
 		    Entry.EntryId = Beacon.UUID.v4
@@ -209,7 +211,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		      App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
 		  Next
-		  If Entry.Count = 0 Then
+		  If Entry.Count = 0 And LoadEmpty = False Then
 		    Return Nil
 		  End If
 		  
@@ -949,6 +951,13 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag Property, Flags = &h1
 		Protected mWeight As Double
 	#tag EndProperty
+
+
+	#tag Constant, Name = OptionLoadEmpty, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionNewId, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

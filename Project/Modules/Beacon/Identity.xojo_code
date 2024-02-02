@@ -59,6 +59,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsCurator() As Boolean
+		  Return Self.IsOmniFlagged(Beacon.OmniLicense.CuratorFlag)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsExpired() As Boolean
 		  If Self.mExpiration Is Nil Then
 		    Return False

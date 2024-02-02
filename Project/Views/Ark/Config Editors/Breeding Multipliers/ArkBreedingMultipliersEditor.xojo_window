@@ -2211,7 +2211,7 @@ End
 		    Var SteamIds As New Beacon.StringList
 		    For Each ContentPackId As String In ContentPackIds
 		      Var ContentPack As Beacon.ContentPack = DataSource.GetContentPackWithId(ContentPackId)
-		      If ContentPack.IsLocal = False And ContentPack.Type = Beacon.ContentPack.Types.ThirdParty Then
+		      If (ContentPack Is Nil) = False And ContentPack.IsLocal = False And ContentPack.Type = Beacon.ContentPack.Types.ThirdParty Then
 		        SteamIds.Append(ContentPack.ContentPackId)
 		      End If
 		    Next
@@ -2219,7 +2219,7 @@ End
 		      Components.Append("m=" + EncodeURLComponent(SteamIds.Join(",")))
 		    End If
 		    
-		    Var Url As String = Beacon.WebURL("/tools/breeding")
+		    Var Url As String = Beacon.WebURL("/Games/Ark/Breeding")
 		    If Components.Count > 0 Then
 		      Url = Url + "?" + Components.Join("&")
 		    End If

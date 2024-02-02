@@ -595,8 +595,14 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
 		  
+		  Location = Location + Beacon.Issue.Separator + Self.mDropRef.ClassString
+		  
+		  If Self.mSets.Count = 0 Then
+		    Issues.Add(New Beacon.Issue(Location, "Loot drop '" + Self.Label + "' should contain at least one item set."))
+		  End If
+		  
 		  For Each Set As ArkSA.LootItemSet In Self.mSets
-		    Set.Validate(Location + Beacon.Issue.Separator + Self.mDropRef.ClassString, Issues, Project)
+		    Set.Validate(Location, Issues, Project)
 		  Next
 		End Sub
 	#tag EndMethod

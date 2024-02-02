@@ -374,6 +374,103 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ExportToCSV(Blueprints() As Ark.Blueprint) As String
+		  If Blueprints.Count = 0 Then
+		    Return ""
+		  End If
+		  
+		  // See if all the blueprints are the same category
+		  Var Category As String = Blueprints(0).Category
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blueprint.Category <> Category Then
+		      Category = ""
+		      Exit
+		    End If
+		  Next
+		  
+		  Var Headers() As String = Array("Name", "Class", "Path", "Mod")
+		  Select Case Category
+		  Case Ark.CategoryCreatures
+		    Headers.Add("Mature Time")
+		    Headers.Add("Incubation Time")
+		    Headers.Add("Minimum Cooldown")
+		    Headers.Add("Maximum Cooldown")
+		  Case Ark.CategoryEngrams
+		    Headers.Add("Unlock String")
+		    Headers.Add("Required Level")
+		    Headers.Add("Required Points")
+		  Case Ark.CategoryLootContainers
+		    
+		  Case Ark.CategorySpawnPoints
+		    
+		  End Select
+		  
+		  Var Lines(0) As String
+		  Lines(0) = """" + String.FromArray(Headers, """,""") + """"
+		  
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var Columns(3) As String
+		    Columns(0) = Blueprint.Label.ReplaceAll("""", """""")
+		    Columns(1) = Blueprint.ClassString.ReplaceAll("""", """""")
+		    Columns(2) = Blueprint.Path.ReplaceAll("""", """""")
+		    Columns(3) = Blueprint.ContentPackName.ReplaceAll("""", """""")
+		    
+		    Select Case Category
+		    Case Ark.CategoryCreatures
+		      Var Creature As Ark.Creature = Ark.Creature(Blueprint)
+		      If Creature.MatureTime > 0 Then
+		        Columns.Add(Creature.MatureTime.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.IncubationTime > 0 Then
+		        Columns.Add(Creature.IncubationTime.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.MinMatingInterval > 0 Then
+		        Columns.Add(Creature.MinMatingInterval.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		      If Creature.MaxMatingInterval > 0 Then
+		        Columns.Add(Creature.MaxMatingInterval.PrettyText)
+		      Else
+		        Columns.Add("")
+		      End If
+		    Case Ark.CategoryEngrams
+		      Var Engram As Ark.Engram = Ark.Engram(Blueprint)
+		      Columns.Add(Engram.EntryString.ReplaceAll("""", """"""))
+		      If Engram.RequiredPlayerLevel Is Nil Then
+		        Columns.Add("")
+		      Else
+		        Columns.Add(Engram.RequiredPlayerLevel.IntegerValue.ToString(Locale.Raw, "0"))
+		      End If
+		      If Engram.RequiredUnlockPoints Is Nil Then
+		        Columns.Add("")
+		      Else
+		        Columns.Add(Engram.RequiredUnlockPoints.IntegerValue.ToString(Locale.Raw, "0"))
+		      End If
+		    Case Ark.CategoryLootContainers
+		      
+		    Case Ark.CategorySpawnPoints
+		      
+		    End Select
+		    
+		    Lines.Add("""" + String.FromArray(Columns, """,""") + """")
+		  Next
+		  
+		  Return String.FromArray(Lines, EndOfLine)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExportToCSV(Extends Blueprints() As Ark.Blueprint) As String
+		  Return ExportToCSV(Blueprints)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ExtractPath(Source As String) As String
 		  Var Matches As RegExMatch = BlueprintPathRegex.Search(Source)
 		  Return Ark.BlueprintPath(Matches)
@@ -534,6 +631,28 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MatchesTags(Extends Blueprint As Ark.Blueprint, RequiredTags() As String, ExcludedTags() As String) As Boolean
+		  If (RequiredTags Is Nil) = False Then
+		    For Each Tag As String In RequiredTags
+		      If Blueprint.IsTagged(Tag) = False Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  If (ExcludedTags Is Nil) = False Then
+		    For Each Tag As String In ExcludedTags
+		      If Blueprint.IsTagged(Tag) = True Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function NormalizeBlueprintPath(Path As String, FolderName As String) As String
 		  Path = Path.Trim
@@ -622,78 +741,6 @@ Protected Module Ark
 
 	#tag Method, Flags = &h1
 		Protected Function ParseCommandLine(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
-		  // This shouldn't take long, but still, probably best to only use this on a thread
-		  
-		  Var InQuotes As Boolean
-		  Var Characters() As String = CommandLine.Split("")
-		  Var Buffer, Params() As String
-		  For Each Char As String In Characters
-		    If Char = """" Then
-		      If InQuotes Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		        InQuotes = False
-		      Else
-		        InQuotes = True
-		      End If
-		    ElseIf Char = " " Then
-		      If InQuotes = False And Buffer.Length > 0 Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		      End If
-		    ElseIf Char = "-" And Buffer.Length = 0 Then
-		      Continue
-		    Else
-		      Buffer = Buffer + Char
-		    End If
-		  Next
-		  If Buffer.Length > 0 Then
-		    Params.Add(Buffer)
-		    Buffer = ""
-		  End If
-		  
-		  Var StartupParams() As String = Params.Shift.Split("?")
-		  Var Map As String = StartupParams.Shift
-		  Call StartupParams.Shift // The listen statement
-		  If PreserveSyntax Then
-		    For Idx As Integer = 0 To Params.LastIndex
-		      Params(Idx) = "-" + Params(Idx)
-		    Next
-		    For Idx As Integer = 0 To StartupParams.LastIndex
-		      StartupParams(Idx) = "?" + StartupParams(Idx)
-		    Next
-		  End If
-		  StartupParams.Merge(Params)
-		  
-		  Var CommandLineOptions As New Dictionary
-		  For Each Parameter As String In StartupParams
-		    Var KeyPos As Integer = Parameter.IndexOf("=")
-		    Var Key As String
-		    Var Value As Variant
-		    If KeyPos = -1 Then
-		      Key = Parameter
-		      Value = True
-		    Else
-		      Key = Parameter.Left(KeyPos)
-		      Value = Parameter.Middle(KeyPos + 1)
-		    End If
-		    If PreserveSyntax Then
-		      Value = Parameter
-		    End If
-		    CommandLineOptions.Value(Key) = Value
-		  Next
-		  
-		  If PreserveSyntax Then
-		    CommandLineOptions.Value("?Map") = Map
-		  Else
-		    CommandLineOptions.Value("Map") = Map
-		  End If
-		  Return CommandLineOptions
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ParseCommandLine1(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
 		  // This shouldn't take long, but still, probably best to only use this on a thread
 		  
 		  Var InQuotes As Boolean

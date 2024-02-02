@@ -95,6 +95,11 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			$parameters->values[] = $filters['contentPackId'];
 		}
 
+		if (isset($filters['search']) && empty($filters['search']) === false) {
+			$searchValue = '%' . str_replace(['%', '_'], ['\\%', '\\_'], trim($filters['search'])) . '%';
+			$parameters->clauses[] = $schema->Accessor('name') . ' LIKE $' . $parameters->AddValue($searchValue);
+		}
+
 		$parameters->allowAll = true;
 		$parameters->orderBy = $schema->Accessor('name');
 	}
@@ -218,37 +223,45 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function AttemptConfirmation(): bool {
-		$confirmed = false;
-		switch ($this->marketplace) {
-		case 'Steam Workshop':
-			$workshop_item = BeaconWorkshopItem::Load($this->marketplaceId);
-			if (is_null($workshop_item)) {
-				return false;
-			}
-			$confirmed = $workshop_item->ContainsString($this->confirmationCode);
-			break;
-		case 'CurseForge':
-			$http = curl_init();
-			curl_setopt($http, CURLOPT_HTTPHEADER, [
-				'x-api-key: ' . BeaconCommon::GetGlobal('CurseForge API Key'),
-			]);
-			curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($http, CURLOPT_URL, "https://api.curseforge.com/v1/mods/{$this->marketplaceId}/description");
-			$body = curl_exec($http);
-			$status = curl_getinfo($http, CURLINFO_HTTP_CODE);
-			curl_close($http);
-
-			if ($status !== 200) {
-				return false;
-			}
-
-			$parsed = json_decode($body, true);
-			$html = $parsed['data'];
-			$confirmed = str_contains($html, $this->confirmationCode);
-			break;
+		if ($this->isConfirmed) {
+			return true;
 		}
 
-		if ($confirmed || BeaconCommon::InDevelopment()) {
+		$user = User::Fetch($this->userId);
+		$confirmed = $user->IsCurator();
+
+		if ($confirmed === false) {
+			switch ($this->marketplace) {
+			case 'Steam Workshop':
+				$workshop_item = BeaconWorkshopItem::Load($this->marketplaceId);
+				if (is_null($workshop_item)) {
+					return false;
+				}
+				$confirmed = $workshop_item->ContainsString($this->confirmationCode);
+				break;
+			case 'CurseForge':
+				$http = curl_init();
+				curl_setopt($http, CURLOPT_HTTPHEADER, [
+					'x-api-key: ' . BeaconCommon::GetGlobal('CurseForge API Key'),
+				]);
+				curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($http, CURLOPT_URL, "https://api.curseforge.com/v1/mods/{$this->marketplaceId}/description");
+				$body = curl_exec($http);
+				$status = curl_getinfo($http, CURLINFO_HTTP_CODE);
+				curl_close($http);
+
+				if ($status !== 200) {
+					return false;
+				}
+
+				$parsed = json_decode($body, true);
+				$html = $parsed['data'];
+				$confirmed = str_contains($html, $this->confirmationCode);
+				break;
+			}
+		}
+
+		if ($confirmed) {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
 			$database->Query('UPDATE public.content_packs SET confirmed = TRUE WHERE content_pack_id = $1;', $this->contentPackId);

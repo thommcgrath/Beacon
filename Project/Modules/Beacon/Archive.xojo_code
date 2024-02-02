@@ -253,9 +253,11 @@ Protected Class Archive
 		Shared Function Open(File As FolderItem, Password As String = "") As Beacon.Archive
 		  Var Reader As ArchiveReaderMBS = CreateReader(Password)
 		  If Not Reader.OpenFile(File) Then
+		    #Pragma BreakOnExceptions Off
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Unable to open archive: " + Reader.ErrorString
 		    Raise Err
+		    #Pragma BreakOnExceptions Default
 		  End If
 		  Return New Beacon.Archive(Reader)
 		End Function
@@ -265,9 +267,11 @@ Protected Class Archive
 		Shared Function Open(Source As MemoryBlock, Password As String = "") As Beacon.Archive
 		  Var Reader As ArchiveReaderMBS = CreateReader(Password)
 		  If Not Reader.OpenData(Source) Then
+		    #Pragma BreakOnExceptions Off
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Unable to open archive: " + Reader.ErrorString
 		    Raise Err
+		    #Pragma BreakOnExceptions Default
 		  End If
 		  Return New Beacon.Archive(Reader)
 		End Function

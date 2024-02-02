@@ -640,14 +640,17 @@ End
 		    Var IdentityLicenses() As Beacon.OmniLicense = Identity.Licenses
 		    For Each License As Beacon.OmniLicense In IdentityLicenses
 		      Var GameNames() As String
-		      If (License.Flags And Ark.OmniFlag) > 0 Then
+		      If License.IsFlagged(Ark.OmniFlag) Then
 		        GameNames.Add(Language.GameName(Ark.Identifier))
 		      End If
-		      If (License.Flags And ArkSA.OmniFlag) > 0 Then
+		      If License.IsFlagged(ArkSA.OmniFlag) Then
 		        GameNames.Add(Language.GameName(ArkSA.Identifier))
 		      End If
-		      If (License.Flags And SDTD.OmniFlag) > 0 Then
+		      If License.IsFlagged(SDTD.OmniFlag)Then
 		        GameNames.Add(Language.GameName(SDTD.Identifier))
+		      End If
+		      If License.IsFlagged(Beacon.OmniLicense.CuratorFlag) Then
+		        GameNames.Add("Curator Access")
 		      End If
 		      
 		      Var LicenseText As String = Language.EnglishOxfordList(GameNames)

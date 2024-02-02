@@ -75,7 +75,7 @@ Begin ModEditorView ArkSAModEditorView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   900
       Begin BeaconListbox BlueprintList
@@ -88,7 +88,7 @@ Begin ModEditorView ArkSAModEditorView
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   2
+         ColumnCount     =   3
          ColumnWidths    =   "*,*"
          DefaultRowHeight=   -1
          DefaultSortColumn=   0
@@ -108,7 +108,7 @@ Begin ModEditorView ArkSAModEditorView
          Height          =   360
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "Name	Class String"
+         InitialValue    =   "Name	Class String	Unlock String"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -528,9 +528,21 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Export()
+		  Var ModeLabel As String
+		  Select Case Self.mMode
+		  Case ArkSA.BlueprintController.ModeEngrams
+		    ModeLabel = "Engrams"
+		  Case ArkSA.BlueprintController.ModeCreatures
+		    ModeLabel = "Creatures"
+		  Case ArkSA.BlueprintController.ModeLootDrops
+		    ModeLabel = "Loot Drops"
+		  Case ArkSA.BlueprintController.ModeSpawnPoints
+		    ModeLabel = "Spawn Points"
+		  End Select
+		  
 		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPackName) + Beacon.FileExtensionDelta
-		  Dialog.Filter = BeaconFileTypes.BeaconData
+		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPackName) + " " + ModeLabel + Beacon.FileExtensionDelta
+		  Dialog.Filter = BeaconFileTypes.BeaconData + BeaconFileTypes.CSVFile
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File Is Nil Then
@@ -553,8 +565,22 @@ End
 		    Return
 		  End If
 		  
-		  If ArkSA.BuildExport(Blueprints, File, True) = False Then
-		    Self.ShowAlert("Export failed", "The selected " + If(SelectAll = False And Self.BlueprintList.SelectedRowCount = 1, "blueprint was", "blueprints were") + " not exported. Beacon's log files may have more information.")
+		  If File.Name.EndsWith(Beacon.FileExtensionDelta) Then
+		    If ArkSA.BuildExport(Blueprints, File, True) = False Then
+		      Self.ShowAlert("Export failed", "The selected " + If(SelectAll = False And Self.BlueprintList.SelectedRowCount = 1, "blueprint was", "blueprints were") + " not exported. Beacon's log files may have more information.")
+		    End If
+		  ElseIf File.Name.EndsWith(Beacon.FileExtensionCSV) Then
+		    Var CSVContent As String = ArkSA.ExportToCSV(Blueprints)
+		    If CSVContent.IsEmpty Then
+		      Return
+		    End If
+		    
+		    Try
+		      File.Write(CSVContent)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Writing CSV to disk")
+		      Self.ShowAlert("Export failed", "Writing the file to disk failed: " + Err.Message)
+		    End Try
 		  End If
 		End Sub
 	#tag EndMethod
@@ -631,16 +657,16 @@ End
 		Private Sub mController_BlueprintsChanged(Sender As ArkSA.BlueprintController, BlueprintsSaved() As ArkSA.Blueprint, BlueprintsDeleted() As ArkSA.Blueprint)
 		  #Pragma Unused Sender
 		  
-		  For Each Blueprint As ArkSA.Blueprint In BlueprintsSaved
-		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
-		    Self.mBlueprints(Mode).Value(Blueprint.BlueprintId) = Blueprint
-		  Next
-		  
 		  For Each Blueprint As ArkSA.Blueprint In BlueprintsDeleted
 		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
 		    If Self.mBlueprints(Mode).HasKey(Blueprint.BlueprintId) Then
 		      Self.mBlueprints(Mode).Remove(Blueprint.BlueprintId)
 		    End If
+		  Next
+		  
+		  For Each Blueprint As ArkSA.Blueprint In BlueprintsSaved
+		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
+		    Self.mBlueprints(Mode).Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
 		  Self.UpdateList(BlueprintsSaved, True)
@@ -817,6 +843,7 @@ End
 		  Var CreaturesButton As OmniBarItem = Self.TabsToolbar.Item("CreaturesButton")
 		  Var LootDropsButton As OmniBarItem = Self.TabsToolbar.Item("LootDropsButton")
 		  Var SpawnPointsButton As OmniBarItem = Self.TabsToolbar.Item("SpawnPointsButton") 
+		  Self.BlueprintList.ColumnCount = If(Mode = ArkSA.BlueprintController.ModeEngrams, 3, 2)
 		  
 		  If (EngramsButton Is Nil) = False Then
 		    EngramsButton.Toggled = (Mode = ArkSA.BlueprintController.ModeEngrams)
@@ -909,8 +936,20 @@ End
 		    List.RowTagAt(RowIdx) = Blueprint
 		    List.CellTextAt(RowIdx, 0) = Blueprint.Label
 		    List.CellTextAt(RowIdx, 1) = Blueprint.ClassString
+		    If Self.mMode = ArkSA.BlueprintController.ModeEngrams Then
+		      If Blueprint IsA ArkSA.Engram Then
+		        List.CellTextAt(RowIdx, 2) = ArkSA.Engram(Blueprint).EntryString
+		      Else
+		        List.CellTextAt(RowIdx, 2) = ""
+		      End If
+		    End If
 		    List.RowSelectedAt(RowIdx) = SelectedBlueprintIds.IndexOf(BlueprintId) > -1
 		  Next
+		  
+		  Self.BlueprintList.SizeColumnToFit(1)
+		  If Self.mMode = ArkSA.BlueprintController.ModeEngrams Then
+		    Self.BlueprintList.SizeColumnToFit(2)
+		  End If
 		  
 		  List.Sort
 		  List.ScrollPosition = ScrollPosition
@@ -1095,7 +1134,7 @@ End
 		            Var ChosenBlueprints() As ArkSA.Blueprint
 		            Var FoundBlueprints() As ArkSA.Blueprint = Self.mImporter.Blueprints
 		            For Each Tag As String In ChosenTags
-		              Var Prefix As String = "/Game/Mods/" + Tag + "/"
+		              Var Prefix As String = "/" + Tag + "/"
 		              For Each Blueprint As ArkSA.Blueprint In FoundBlueprints
 		                If Blueprint.Path.BeginsWith(Prefix) = False Then
 		                  Continue

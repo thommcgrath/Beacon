@@ -1040,6 +1040,8 @@ abstract class BeaconCommon {
 			return 'ArkSA';
 		case 'sdtd':
 			return '7DaysToDie';
+		case 'palworld':
+			return 'Palworld';
 		}
 		return '';
 	}

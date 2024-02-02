@@ -61,6 +61,7 @@ Protected Class ProjectController
 		  Action.Value("Options") = Settings.Options.ToString(Locale.Raw, "0")
 		  Action.Value("Servers") = String.FromArray(Servers, ",")
 		  Action.Value("StopMessage") = Settings.StopMessage
+		  Action.Value("Plan") = CType(Settings.Plan, Integer).ToString(Locale.Raw, "0")
 		  
 		  Return "beacon://run/" + SaveInfo + "?" + Action.ToQueryString
 		End Function
@@ -523,6 +524,8 @@ Protected Class ProjectController
 		  Var Saved As Boolean
 		  Var Message As String
 		  Try
+		    Self.UpdateProjectMembers()
+		    
 		    Var AdditionalProperties As New Dictionary
 		    If (Self.mOriginalUrl Is Nil) = False Then
 		      AdditionalProperties.Value("OriginalUrl") = EncodeBase64MBS(Beacon.Compress(Self.mOriginalUrl.StringValue))
@@ -634,36 +637,33 @@ Protected Class ProjectController
 		      Return
 		    End If
 		    
-		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request("/projects/" + EncodeURLComponent(Project.ProjectId) + "/members", "GET"))
-		    If Response.Success Then
-		      // Could be 404 error because the project is new, which is ok
-		      Var CurrentMembers() As Beacon.ProjectMember = Project.GetMembers
-		      Var RemoveMembers As New Dictionary
-		      For Each Member As Beacon.ProjectMember In CurrentMembers
-		        RemoveMembers.Value(Member.UserId) = True
-		      Next
-		      
-		      Var MemberList() As Variant = Response.JSON
-		      For Each MemberInfo As Variant In MemberList
-		        Var MemberDict As Dictionary = MemberInfo
-		        Var UserId As String = MemberDict.Value("userId")
-		        Var Member As Beacon.ProjectMember = New Beacon.ProjectMember(UserId, MemberDict)
+		    Select Case Self.mProjectURL.Type
+		    Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared
+		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request("/projects/" + EncodeURLComponent(Project.ProjectId) + "/members", "GET"))
+		      If Response.Success Then
+		        // Could be 404 error because the project is new, which is ok
+		        Var Members() As Beacon.ProjectMember
+		        Var MemberList() As Variant = Response.JSON
+		        For Each MemberInfo As Variant In MemberList
+		          Var MemberDict As Dictionary = MemberInfo
+		          Var UserId As String = MemberDict.Value("userId")
+		          Members.Add(New Beacon.ProjectMember(UserId, MemberDict))
+		        Next
 		        
-		        // Returns true only if changes are needed and they were made
-		        If Project.AddMember(Member) Then
-		          App.Log("Encrypted project password for user `" + UserId + "` needs to be updated…")
-		        End If
-		        
-		        If RemoveMembers.HasKey(Member.UserId) Then
-		          RemoveMembers.Remove(Member.UserId)
-		        End If
-		      Next
-		      
-		      For Each Entry As DictionaryEntry In RemoveMembers
-		        Call Project.RemoveMember(Entry.Key.StringValue)
-		      Next
-		    End If
+		        Self.UpdateProjectMembers(Members)
+		      End If
+		    Case Beacon.ProjectURL.TypeLocal, Beacon.ProjectURL.TypeTransient
+		      Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		      If (Identity Is Nil) = False Then
+		        Var Member As New Beacon.ProjectMember(Identity, Beacon.ProjectMember.RoleOwner)
+		        Member.SetPassword(Project.Password)
+		        Var Members(0) As Beacon.ProjectMember
+		        Members(0) = Member
+		        Self.UpdateProjectMembers(Members)
+		      End If
+		    End Select
 		  Catch MemberListError As RuntimeException
+		    App.Log(MemberListError, CurrentMethodName, "Updating project members")
 		  End Try
 		  
 		  Self.mMemberUpdateLock.Leave
@@ -671,6 +671,32 @@ Protected Class ProjectController
 		  If CurrentThread IsA Beacon.Thread Then
 		    Beacon.Thread(CurrentThread).Release
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateProjectMembers(Members() As Beacon.ProjectMember)
+		  Var Project As Beacon.Project = Self.Project
+		  Var CurrentMembers() As Beacon.ProjectMember = Project.GetMembers
+		  Var RemoveMembers As New Dictionary
+		  For Each Member As Beacon.ProjectMember In CurrentMembers
+		    RemoveMembers.Value(Member.UserId) = True
+		  Next
+		  
+		  For Each Member As Beacon.ProjectMember In Members
+		    // Returns true only if changes are needed and they were made
+		    If Project.AddMember(Member) Then
+		      App.Log("Encrypted project password for user `" + Member.UserId + "` was updated…")
+		    End If
+		    
+		    If RemoveMembers.HasKey(Member.UserId) Then
+		      RemoveMembers.Remove(Member.UserId)
+		    End If
+		  Next
+		  
+		  For Each Entry As DictionaryEntry In RemoveMembers
+		    Call Project.RemoveMember(Entry.Key.StringValue)
+		  Next
 		End Sub
 	#tag EndMethod
 

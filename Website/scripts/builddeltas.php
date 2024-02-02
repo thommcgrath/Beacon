@@ -50,7 +50,12 @@ define('MIN_VERSION', 99999999);
 
 $database->BeginTransaction();
 $rows = $database->Query('UPDATE public.content_packs SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM ark.objects WHERE objects.mod_id = content_packs.content_pack_id) > 0 RETURNING content_pack_id;');
-if ($rows->RecordCount() > 0) {
+$numChanges = $rows->RecordCount();
+$rows = $database->Query('UPDATE public.content_packs SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM arksa.objects WHERE objects.content_pack_id = content_packs.content_pack_id) > 0 RETURNING content_pack_id;');
+$numChanges += $rows->RecordCount();
+$rows = $database->Query('UPDATE public.content_packs SET min_version = 20000000 WHERE game_id = \'ArkSA\' AND min_version < 20000000;');
+$numChanges += $rows->RecordCount();
+if ($numChanges > 0) {
 	$database->Commit();
 } else {
 	$database->Rollback();

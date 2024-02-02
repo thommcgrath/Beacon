@@ -75,13 +75,6 @@ Protected Class BlueprintImporter
 		    Return Importer
 		  End If
 		  
-		  Importer = ImportAsDataDumper(Contents, Progress)
-		  If (Progress Is Nil) = False And Progress.CancelPressed Then
-		    Return Nil
-		  ElseIf (Importer Is Nil) = False Then
-		    Return Importer
-		  End If
-		  
 		  Importer = ImportAsJson(Contents, Progress)
 		  If (Progress Is Nil) = False And Progress.CancelPressed Then
 		    Return Nil
@@ -100,9 +93,11 @@ Protected Class BlueprintImporter
 
 	#tag Method, Flags = &h0
 		Shared Function ImportAsBinary(Contents As String, Progress As ProgressWindow = Nil) As ArkSA.BlueprintImporter
+		  Var ManifestString As String
 		  Var Archive As Beacon.Archive
 		  Try
 		    Archive = Beacon.Archive.Open(Contents)
+		    ManifestString = Archive.GetFile("Manifest.json")
 		  Catch Err As RuntimeException
 		  End Try
 		  If Archive Is Nil Then
@@ -112,8 +107,6 @@ Protected Class BlueprintImporter
 		  
 		  // Return the importer no matter what, because this is an archive file
 		  Var Importer As New ArkSA.BlueprintImporter
-		  
-		  Var ManifestString As String = Archive.GetFile("Manifest.json")
 		  If ManifestString.IsEmpty Then
 		    Return Importer
 		  End If
@@ -216,15 +209,13 @@ Protected Class BlueprintImporter
 		                Progress.SubDetail = "Found blueprint " + Blueprint.Label + "…"
 		              End If
 		              
-		              If Blueprint.Path.BeginsWith("/Game/Mods/") Then
-		                Var Tag As String = Blueprint.Path.NthField("/", 4)
-		                If Importer.mMods.HasKey(Tag) = False Then
-		                  Var ContentPackName As String = Tag
-		                  If Blueprint.ContentPackName.IsEmpty = False Then
-		                    ContentPackName = Blueprint.ContentPackName + " (" + Tag + ")"
-		                  End If
-		                  Importer.mMods.Value(Tag) = ContentPackName
+		              Var Tag As String = ArkSA.ModTagFromPath(Blueprint.Path)
+		              If Tag.IsEmpty = False And Importer.mMods.HasKey(Tag) = False Then
+		                Var ContentPackName As String = Tag
+		                If Blueprint.ContentPackName.IsEmpty = False Then
+		                  ContentPackName = Blueprint.ContentPackName + " (" + Tag + ")"
 		                End If
+		                Importer.mMods.Value(Tag) = ContentPackName
 		              End If
 		            End If
 		            
@@ -242,215 +233,6 @@ Protected Class BlueprintImporter
 		    If (Progress Is Nil) = False Then
 		      Progress.Progress = FilesProcessed / NumFiles
 		    End If
-		  Next
-		  
-		  Return Importer
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function ImportAsDataDumper(Contents As String, Progress As ProgressWindow = Nil) As ArkSA.BlueprintImporter
-		  If Contents.IndexOf("########## Start ") = -1 And Contents.IndexOf(" Data ##########") = -1 Then
-		    Return Nil
-		  End If
-		  
-		  Contents = Contents.ReplaceLineEndings(EndOfLine)
-		  
-		  // Cleanup an inconsistency
-		  Contents = Contents.ReplaceAll("{END_DINO}", "{END_CREATURE}")
-		  
-		  Var OffsetMax As Integer = Contents.Length
-		  Var Importer As New ArkSA.BlueprintImporter
-		  Var ItemDicts(), CreatureDicts(), SpawnDicts(), LootDicts(), DropDicts() As Dictionary
-		  Var EngramsByClass As New Dictionary
-		  Var Now As Double = DateTime.Now.SecondsFrom1970
-		  
-		  If (Progress Is Nil) = False Then
-		    Progress.Detail = "Parsing log output…"
-		  End If
-		  Var Offset As Integer
-		  While Offset > -1
-		    If (Progress Is Nil) = False And Progress.CancelPressed Then
-		      Return Nil
-		    End If
-		    
-		    If (Progress Is Nil) = False Then
-		      Progress.Progress = Offset / OffsetMax
-		    End If
-		    Offset = Contents.IndexOf(Offset, "Dump-")
-		    If Offset = -1 Then
-		      Continue
-		    End If
-		    Offset = Offset + 5
-		    
-		    Var LineStartPos As Integer = Contents.IndexOf(Offset, "{")
-		    If LineStartPos = -1 Then
-		      Continue
-		    End If
-		    Var Type As String = Contents.Middle(Offset, LineStartPos - Offset)
-		    
-		    Var LineEndSequence As String = "{END_" + Type.Uppercase + "}"
-		    Var LineEndPos As Integer = Contents.IndexOf(LineStartPos, LineEndSequence)
-		    Var Line As String = Contents.Middle(LineStartPos, LineEndPos - LineStartPos)
-		    Offset = Max(LineEndPos + LineEndSequence.Length, LineStartPos)
-		    
-		    Var Values As Dictionary = ParseDataDumperLine(Line)
-		    If Values.HasKey("PATH") = False Then
-		      Continue
-		    End If
-		    
-		    Var Path As String = Values.Value("PATH")
-		    If Path.BeginsWith("/Game/Mods/") = False Then
-		      Continue
-		    End If
-		    Var ModTag As String = Path.NthField("/", 4)
-		    Importer.mMods.Value(ModTag) = ModTag
-		    
-		    Select Case Type
-		    Case "Engram"
-		      Var BlueprintClass As String = Values.Value("BLUEPRINT")
-		      EngramsByClass.Value(BlueprintClass) = Values
-		    Case "Item"
-		      ItemDicts.Add(Values)
-		    Case "Creature"
-		      CreatureDicts.Add(Values)
-		    Case "MapSpawner"
-		      SpawnDicts.Add(Values)
-		    Case "SupplyCrate"
-		      LootDicts.Add(Values)
-		    Case "Inventory"
-		      DropDicts.Add(Values)
-		    End Select
-		  Wend
-		  
-		  If (Progress Is Nil) = False Then
-		    Progress.Progress = Nil
-		    Progress.Detail = "Assembling engrams…"
-		  End If
-		  For Each ItemDict As Dictionary In ItemDicts
-		    Try
-		      Var ItemClass As String = ItemDict.Value("CLASS")
-		      Var EngramDict As Dictionary = EngramsByClass.Lookup(ItemClass, Nil)
-		      Var Path As String = ItemDict.Value("PATH")
-		      If Path.EndsWith("_C") Then
-		        Path = Path.Left(Path.Length - 2)
-		      End If
-		      
-		      Var BlueprintId As String = Beacon.UUID.v4
-		      Var Engram As New ArkSA.MutableEngram(Path, BlueprintId)
-		      Engram.Label = ItemDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
-		      Engram.AddTag("blueprintable")
-		      Engram.LastUpdate = Now
-		      Select Case ItemDict.Value("ITEM_TYPE").StringValue
-		      Case "Resource"
-		        Engram.AddTag("resource")
-		      End Select
-		      
-		      If (EngramDict Is Nil) = False Then
-		        Var UnlockString As String = EngramDict.Value("CLASS")
-		        Engram.EntryString = UnlockString
-		        Var IsTek As Boolean = EngramDict.Value("FORCE_IS_TEK_ENGRAM").BooleanValue Or EngramDict.Value("ENGRAM_GROUP").StringValue = "ARK_TEK"
-		        If IsTek Then
-		          Engram.AddTag("tek")
-		        End If
-		        Var ManualUnlock As Boolean = EngramDict.Value("CAN_BE_MANUAL").BooleanValue
-		        If ManualUnlock Then
-		          Var RequiredLevel As Integer = EngramDict.Value("REQ_LEVEL")
-		          Var RequiredPoints As Integer = EngramDict.Value("REQ_POINTS")
-		          Engram.RequiredPlayerLevel = RequiredLevel
-		          Engram.RequiredUnlockPoints = RequiredPoints
-		        End If
-		      End If
-		      
-		      Importer.mBlueprints.Add(Engram.ImmutableVersion)
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Parsing engram data")
-		    End Try
-		  Next ItemDict
-		  
-		  If (Progress Is Nil) = False Then
-		    Progress.Detail = "Assembling creatures…"
-		  End If
-		  For Each CreatureDict As Dictionary In CreatureDicts
-		    Try
-		      Var Path As String = CreatureDict.Value("PATH")
-		      If Path.EndsWith("_C") Then
-		        Path = Path.Left(Path.Length - 2)
-		      End If
-		      
-		      Var BlueprintId As String = Beacon.UUID.v4
-		      Var Creature As New ArkSA.MutableCreature(Path, BlueprintId)
-		      Creature.Label = CreatureDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
-		      Creature.LastUpdate = Now
-		      Importer.mBlueprints.Add(Creature.ImmutableVersion)
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Parsing creature data")
-		    End Try
-		  Next CreatureDict
-		  
-		  If (Progress Is Nil) = False Then
-		    Progress.Detail = "Assembling spawn points…"
-		  End If
-		  For Each SpawnDict As Dictionary In SpawnDicts
-		    Try
-		      Var Path As String = SpawnDict.Value("PATH")
-		      If Path.EndsWith("_C") Then
-		        Path = Path.Left(Path.Length - 2)
-		      End If
-		      
-		      Var BlueprintId As String = Beacon.UUID.v4
-		      Var Point As New ArkSA.MutableSpawnPoint(Path, BlueprintId)
-		      Point.Label = SpawnDict.Value("CLASS")
-		      Point.LastUpdate = Now
-		      Importer.mBlueprints.Add(Point.ImmutableVersion)
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Parsing spawn point data")
-		    End Try
-		  Next
-		  
-		  If (Progress Is Nil) = False Then
-		    Progress.Detail = "Assembling loot drops…"
-		  End If
-		  For Each LootDict As Dictionary In LootDicts
-		    Try
-		      Var Path As String = LootDict.Value("PATH")
-		      If Path.EndsWith("_C") Then
-		        Path = Path.Left(Path.Length - 2)
-		      End If
-		      
-		      Var BlueprintId As String = Beacon.UUID.v4
-		      Var Container As New ArkSA.MutableLootContainer(Path, BlueprintId)
-		      Container.Label = LootDict.Value("CLASS")
-		      Container.IconID = "84d76c41-4386-467d-83e7-841dcaa4007d"
-		      Container.LastUpdate = Now
-		      Importer.mBlueprints.Add(Container.ImmutableVersion)
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Parsing supply crate data")
-		    End Try
-		  Next
-		  
-		  // This does not work because DataDumper does not have a path for inventories.
-		  // But it'll remain in case that changes.
-		  If (Progress Is Nil) = False Then
-		    Progress.Detail = "Assembling dino inventories…"
-		  End If
-		  For Each DropDict As Dictionary In DropDicts
-		    Try
-		      Var Path As String = DropDict.Value("PATH")
-		      If Path.EndsWith("_C") Then
-		        Path = Path.Left(Path.Length - 2)
-		      End If
-		      
-		      Var BlueprintId As String = Beacon.UUID.v4
-		      Var Container As New ArkSA.MutableLootContainer(Path, BlueprintId)
-		      Container.Label = DropDict.Value("CLASS")
-		      Container.IconID = "41dde824-5675-4515-b222-e860a44619d9"
-		      Container.Experimental = True
-		      Container.LastUpdate = Now
-		      Importer.mBlueprints.Add(Container.ImmutableVersion)
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Parsing dino inventory data")
-		    End Try
 		  Next
 		  
 		  Return Importer
@@ -529,20 +311,22 @@ Protected Class BlueprintImporter
 		        Continue
 		      End If
 		      
-		      Importer.mBlueprints.Add(Blueprint)
-		      
 		      Var Path As String = Blueprint.Path
-		      If Path.BeginsWith("/Game/Mods/") Then
-		        Var ModTag As String = Path.NthField("/", 4)
-		        Var ModName As String = ModTag
-		        If Blueprint.ContentPackName.IsEmpty = False Then
-		          ModName = Blueprint.ContentPackName
-		        End If
-		        If ModName <> ModTag Then
-		          ModName = ModName + " (" + ModTag + ")"
-		        End If
-		        Importer.mMods.Value(ModTag) = ModName
+		      Var ModTag As String = ArkSA.ModTagFromPath(Path)
+		      If ModTag.IsEmpty Then
+		        Continue
 		      End If
+		      
+		      Var ModName As String = ModTag
+		      If Blueprint.ContentPackName.IsEmpty = False Then
+		        ModName = Blueprint.ContentPackName
+		      End If
+		      If ModName <> ModTag Then
+		        ModName = ModName + " (" + ModTag + ")"
+		      End If
+		      Importer.mMods.Value(ModTag) = ModName
+		      
+		      Importer.mBlueprints.Add(Blueprint)
 		    Catch Err As RuntimeException
 		    End Try
 		    
@@ -634,6 +418,12 @@ Protected Class BlueprintImporter
 		      End If
 		      
 		      Var Path As String = Columns(PathColumnIdx)
+		      Var ModTag As String = ArkSA.ModTagFromPath(Path)
+		      If ModTag.IsEmpty Then
+		        Continue
+		      End If
+		      Importer.mMods.Value(ModTag) = ModTag
+		      
 		      Var Label As String = Columns(LabelColumnIdx)
 		      Var Availability As UInt64
 		      Var Tags() As String
@@ -675,11 +465,6 @@ Protected Class BlueprintImporter
 		        Return Nil
 		      End If
 		      Importer.mBlueprints.Add(Blueprint.Clone)
-		      
-		      If Path.BeginsWith("/Game/Mods/") Then
-		        Var ModTag As String = Path.NthField("/", 4)
-		        Importer.mMods.Value(ModTag) = ModTag
-		      End If
 		    Next
 		    
 		    Return Importer
@@ -688,12 +473,7 @@ Protected Class BlueprintImporter
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		  
-		  Const QuotationCharacters = "'‘’""“”"
-		  
-		  Var Regex As New Regex
-		  Regex.Options.CaseSensitive = False
-		  Regex.SearchPattern = "(giveitem|spawndino)\s+(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
-		  
+		  Var Regex As Regex = ArkSA.BlueprintPathRegex
 		  Var Importer As New ArkSA.BlueprintImporter
 		  Var Match As RegexMatch = Regex.Search(Contents)
 		  Var Paths As New Dictionary
@@ -701,23 +481,13 @@ Protected Class BlueprintImporter
 		    If (Progress Is Nil) = False And Progress.CancelPressed Then
 		      Return Nil
 		    End If
-		    If Match = Nil Then
+		    If Match Is Nil Then
 		      Continue
 		    End If
 		    
 		    Var Command As String = Match.SubExpressionString(1)
-		    Var Path As String
-		    If Match.SubExpressionCount >= 4 And Match.SubExpressionString(4) <> "" Then
-		      Path = Match.SubExpressionString(4)
-		    ElseIf Match.SubExpressionCount >= 6 And Match.SubExpressionString(6) <> "" Then
-		      Path = Match.SubExpressionString(6)
-		    ElseIf Match.SubExpressionCount >= 8 And Match.SubExpressionString(8) <> "" Then
-		      Path = Match.SubExpressionString(8)
-		    End If
+		    Var Path As String = ArkSA.BlueprintPath(Match)
 		    If Path.IsEmpty = False And Command.IsEmpty = False Then
-		      If Path.EndsWith("_C") Then
-		        Path = Path.Left(Path.Length - 2)
-		      End If
 		      Paths.Value(Path) = Command
 		    End If
 		    
@@ -740,6 +510,12 @@ Protected Class BlueprintImporter
 		    
 		    Var Command As String = Paths.Value(Key)
 		    Var Path As String = Key
+		    Var ModTag As String = ArkSA.ModTagFromPath(Path)
+		    If ModTag.IsEmpty Then
+		      Continue
+		    End If
+		    Importer.mMods.Value(ModTag) = ModTag
+		    
 		    Var Blueprint As ArkSA.Blueprint
 		    Var BlueprintId As String = Beacon.UUID.v4
 		    Select Case Command
@@ -757,11 +533,6 @@ Protected Class BlueprintImporter
 		      Return Nil
 		    End If
 		    Importer.mBlueprints.Add(Blueprint)
-		    
-		    If Path.BeginsWith("/Game/Mods/") Then
-		      Var ModTag As String = Path.NthField("/", 4)
-		      Importer.mMods.Value(ModTag) = ModTag
-		    End If
 		  Next
 		  
 		  Return Importer

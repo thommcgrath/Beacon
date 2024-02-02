@@ -9,13 +9,13 @@ abstract class DatabaseObject {
 	const kPermissionUpdate = 4;
 	const kPermissionDelete = 8;
 	const kPermissionAll = self::kPermissionCreate | self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
-	
+
 	protected static $schema = [];
-	
+
 	abstract protected function __construct(BeaconRecordSet $row);
 	abstract public static function BuildDatabaseSchema(): DatabaseSchema;
 	abstract protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void;
-		
+
 	public static function DatabaseSchema(): DatabaseSchema {
 		$calledClass = get_called_class();
 		if (array_key_exists($calledClass, static::$schema) === false) {
@@ -23,12 +23,12 @@ abstract class DatabaseObject {
 		}
 		return static::$schema[$calledClass];
 	}
-	
+
 	// Seems odd, but allows subclasses to implement as a factory
 	protected static function NewInstance(BeaconRecordSet $rows): DatabaseObject {
 		return new static($rows);
 	}
-	
+
 	protected static function FromRows(BeaconRecordSet $rows): array {
 		$objects = [];
 		while (!$rows->EOF()) {
@@ -37,14 +37,14 @@ abstract class DatabaseObject {
 		}
 		return $objects;
 	}
-	
+
 	public static function Exists(string $uuid): bool {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM ' . $schema->Schema() . '.' . $schema->Table() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ');', $uuid);
 		return $rows->Field('exists');
 	}
-	
+
 	public static function Fetch(string $uuid): ?static {
 		try {
 			$schema = static::DatabaseSchema();
@@ -58,34 +58,34 @@ abstract class DatabaseObject {
 			return null;
 		}
 	}
-	
+
 	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
 		return self::kPermissionRead;
 	}
-	
+
 	public function GetPermissionsForUser(User $user): int {
 		return self::kPermissionRead;
 	}
-	
+
 	public static function GenerateObjectId(array $properties): string {
 		return BeaconUUID::v4();
 	}
-	
+
 	public function PrimaryKeyProperty(): string {
 		return static::DatabaseSchema()->PrimaryColumn()->PropertyName();
 	}
-	
+
 	public function PrimaryKey(): string {
 		$primaryKey = static::DatabaseSchema()->PrimaryColumn()->PropertyName();
 		return $this->$primaryKey;
 	}
-	
+
 	// Deprecated
 	public function UUID(): string {
 		$primaryKeyName = static::DatabaseSchema()->PrimaryColumn()->PropertyName();
 		return $this->$primaryKeyName;
 	}
-	
+
 	public static function Search(array $filters = [], bool $legacyMode = false): array {
 		$schema = static::DatabaseSchema();
 		$params = new DatabaseSearchParameters();
@@ -101,7 +101,7 @@ abstract class DatabaseObject {
 				$params->pageNum = $page;
 			}
 		}
-		
+
 		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
 		if (isset($filters[$primaryKeyProperty])) {
 			if (is_array($filters[$primaryKeyProperty])) {
@@ -112,7 +112,7 @@ abstract class DatabaseObject {
 				$params->values[] = $filters[$primaryKeyProperty];
 			}
 		}
-		
+
 		$minVersionProperty = $schema->Property('minVersion');
 		if (is_null($minVersionProperty) === false) {
 			$minVersion = false;
@@ -124,36 +124,36 @@ abstract class DatabaseObject {
 				$params->values[] = $filters['minVersion'];
 			}
 		}
-		
+
 		static::BuildSearchParameters($params, $filters, false);
-			
+
 		foreach ($filters as $key => $value) {
 			if (str_contains($key, '|') === false) {
 				continue;
 			}
-			
+
 			$subkeys = explode('|', $key);
 			$subfilters = [];
 			foreach ($subkeys as $subkey) {
 				$subfilters[$subkey] = $value;
 			}
-			
+
 			$subparams = new DatabaseSearchParameters();
 			$subparams->placeholder = $params->placeholder;
-			
+
 			static::BuildSearchParameters($subparams, $subfilters, true);
-			
+
 			if (count($subparams->clauses) > 0) {
 				$params->clauses[] = '(' . implode(' OR ', $subparams->clauses) . ')';
 				$params->values = array_merge($params->values, $subparams->values);
 			}
-			
+
 			$params->placeholder = $subparams->placeholder;
-		}			
-			
+		}
+
 		$params->pageNum = max($params->pageNum, 1);
 		$params->pageSize = min($params->pageSize, 250);
-		
+
 		if ($legacyMode) {
 			$emptyReturn = [];
 		} else {
@@ -165,16 +165,16 @@ abstract class DatabaseObject {
 				'results' => []
 			];
 		}
-		
+
 		if (count($params->clauses) === 0 && $params->allowAll !== true) {
 			return $emptyReturn;
 		}
-		
+
 		$totalRowCount = 0;
 		$primaryKey = $schema->PrimarySelector();
 		$from = $schema->FromClause();
 		$database = BeaconCommon::Database();
-			
+
 		if ($legacyMode === false) {
 			$sql = "SELECT COUNT({$primaryKey}) AS num_results FROM {$from}";
 			if (count($params->clauses) > 0) {
@@ -185,12 +185,12 @@ abstract class DatabaseObject {
 			//print_r($params->values);
 			$totalRows = $database->Query($sql, $params->values);
 			$totalRowCount = intval($totalRows->Field('num_results'));
-			
+
 			if ($totalRowCount === 0) {
 				return $emptyReturn;
 			}
 		}
-		
+
 		$sql = "SELECT " . $schema->SelectColumns() . " FROM {$from}";
 		if (count($params->clauses) > 0) {
 			$sql .= ' WHERE ' . implode(' AND ', $params->clauses);
@@ -203,12 +203,12 @@ abstract class DatabaseObject {
 			$params->values[] = ($params->pageNum - 1) * $params->pageSize;
 			$params->values[] = $params->pageSize;
 		}
-		
+
 		//echo "{$sql}\n";
 		//print_r($params->values);
 		$rows = $database->Query($sql, $params->values);
 		$members = static::FromRows($rows);
-		
+
 		if ($legacyMode) {
 			return $members;
 		} else {
@@ -221,20 +221,20 @@ abstract class DatabaseObject {
 			];
 		}
 	}
-	
+
 	public function HasProperty(string $propertyName): bool {
 		$schema = static::DatabaseSchema();
 		$property = $schema->Property($propertyName);
 		return is_null($property) === false;
 	}
-	
+
 	public function GetPropertyValue(string $propertyName): mixed {
 		$schema = static::DatabaseSchema();
 		$property = $schema->Property($propertyName);
 		if (is_null($property)) {
 			return null;
 		}
-		
+
 		$propertyName = $property->PropertyName();
 		return $this->$propertyName;
 	}

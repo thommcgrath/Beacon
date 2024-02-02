@@ -13,7 +13,7 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 	protected int $minVersion;
 	protected string $storagePath;
 	protected bool $deleted;
-	
+
 	protected function __construct(BeaconRecordSet $row) {
 		$this->contentPackId = $row->Field('content_pack_id');
 		$this->gameId = $row->Field('game_id');
@@ -25,7 +25,7 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 		$this->storagePath = $row->Field('storage_path');
 		$this->deleted = $row->Field('deleted');
 	}
-	
+
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('public', 'content_pack_discovery_results', [
 			new DatabaseObjectProperty('contentPackId', ['primaryKey' => true, 'columnName' => 'content_pack_id']),
@@ -39,7 +39,7 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 			new DatabaseObjectProperty('deleted')
 		]);
 	}
-	
+
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Table() . '.name';
@@ -48,8 +48,13 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 		$parameters->AddFromFilter($schema, $filters, 'marketplaceId');
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		$parameters->allowAll = true;
+
+		if (isset($filters['search']) && empty($filters['search']) === false) {
+			$searchValue = '%' . str_replace(['%', '_'], ['\\%', '\\_'], trim($filters['search'])) . '%';
+			$parameters->clauses[] = $schema->Accessor('name') . ' LIKE $' . $parameters->AddValue($searchValue);
+		}
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		return [
 			'contentPackId' => $this->contentPackId,
@@ -61,18 +66,18 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 			'minVersion' => $this->minVersion
 		];
 	}
-	
+
 	public static function Save(array $contentPackInfo, string $gameId): ?static {
 		if (BeaconCommon::HasAllKeys($contentPackInfo, 'contentPackId', 'marketplace', 'marketplaceId', 'name', 'minVersion', 'lastUpdate') === false) {
 			return null;
 		}
-		
+
 		$gameId = BeaconCommon::StandardizeGameId($gameId);
 		$contentPackId = strtolower($contentPackInfo['contentPackId']);
 		$marketplace = $contentPackInfo['marketplace'];
 		$marketplaceId = $contentPackInfo['marketplaceId'];
 		$lastUpdate = $contentPackInfo['lastUpdate'];
-		
+
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT game_id, marketplace, marketplace_id, EXTRACT(EPOCH FROM last_update) AS last_update FROM public.content_pack_discovery_results WHERE content_pack_id = $1;', $contentPackId);
 		if ($rows->RecordCount() === 0) {
@@ -82,53 +87,53 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 			$database->Commit();
 			return static::Fetch($contentPackId);
 		}
-		
-		if ($rows->Field('game_id') !== $gameId || $rows->Field('marketplace') !== $marketplace || $rows->Field('marketplace_id') !== $marketplaceId || $rows->Field('lastUpdate') > $lastUpdate) {
+
+		if ($rows->Field('game_id') !== $gameId || $rows->Field('marketplace') !== $marketplace || $rows->Field('marketplace_id') !== $marketplaceId || $rows->Field('last_update') > $lastUpdate) {
 			return null;
 		}
-		
+
 		$database->BeginTransaction();
-		$database->Query('UPDATE public.content_pack_discovery_results SET name = $2, last_update = $3, min_version = $4 WHERE content_pack_id = $1;', $contentPackId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion']);
+		$database->Query('UPDATE public.content_pack_discovery_results SET name = $2, last_update = TO_TIMESTAMP($3), min_version = $4 WHERE content_pack_id = $1;', $contentPackId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion']);
 		$database->Commit();
 		return static::Fetch($contentPackId);
 	}
-	
+
 	public function ContentPackId(): string {
 		return $this->contentPackId;
 	}
-	
+
 	public function GameId(): string {
 		return $this->gameId;
 	}
-	
+
 	public function Marketplace(): string {
 		return $this->marketplace;
 	}
-	
+
 	public function MarketplaceId(): string {
 		return $this->marketplaceId;
 	}
-	
+
 	public function Name(): string {
 		return $this->name;
 	}
-	
+
 	public function LastUpdate(): int {
 		return $this->last_update;
 	}
-	
+
 	public function MinVersion(): int {
 		return $this->min_version;
 	}
-	
+
 	public function StoragePath(): string {
 		return $this->storagePath;
 	}
-	
+
 	public function Deleted(): bool {
-		return $this->deleted;	
+		return $this->deleted;
 	}
-	
+
 	public function Delete(): void {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();

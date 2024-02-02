@@ -333,7 +333,7 @@ Protected Module BeaconUI
 		  #if TargetWindows
 		    Return Round(MaxWidth * 1.05) + 20
 		  #else
-		    Return MaxWidth + 20
+		    Return MaxWidth + 22
 		  #endif
 		End Function
 	#tag EndMethod
@@ -692,9 +692,11 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub SizeColumnToFit(Extends List As DesktopListbox, ColumnIndex As Integer, MinWidth As Integer = 0)
 		  Var TestPic As New Picture(10, 10)
-		  Var MaxWidth As Integer = Max(Ceiling(TestPic.Graphics.TextWidth(List.HeaderAt(ColumnIndex)) + 30), MinWidth)
+		  TestPic.Graphics.FontSize = 0
+		  TestPic.Graphics.FontName = "System"
+		  Var MaxWidth As Integer = Max(Ceiling(TestPic.Graphics.TextWidth(List.HeaderAt(ColumnIndex))) + 30, MinWidth)
 		  For Row As Integer = 0 To List.LastRowIndex
-		    MaxWidth = Max(MaxWidth, Ceiling(TestPic.Graphics.TextWidth(List.CellTextAt(Row, ColumnIndex)) + 30))
+		    MaxWidth = Max(MaxWidth, Ceiling(TestPic.Graphics.TextWidth(List.CellTextAt(Row, ColumnIndex))) + 30)
 		  Next
 		  List.ColumnAttributesAt(ColumnIndex).WidthExpression = MaxWidth.ToString(Locale.Raw, "0")
 		End Sub

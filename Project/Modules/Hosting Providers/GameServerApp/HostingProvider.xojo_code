@@ -57,27 +57,6 @@ Implements Beacon.HostingProvider
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  #Pragma Unused Project
-		  #Pragma Unused Profile
-		  #Pragma Unused Setting
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  #Pragma Unused Project
-		  #Pragma Unused Profile
-		  #Pragma Unused Setting
-		  #Pragma Unused Value
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Shared Sub GetCredentials(Project As Beacon.Project, Profile As Beacon.ServerProfile, ByRef TemplateId As Integer, ByRef Token As BeaconAPI.ProviderToken)
 		  Var Config As Beacon.HostConfig = Profile.HostConfig
@@ -283,14 +262,6 @@ Implements Beacon.HostingProvider
 
 	#tag Method, Flags = &h0
 		Function SupportsCheckpoints() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsGameSettings() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Return False

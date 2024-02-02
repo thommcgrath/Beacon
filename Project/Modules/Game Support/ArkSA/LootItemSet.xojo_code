@@ -106,13 +106,11 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("label") Then
-		      Set.Label = Dict.Value("label")
-		    ElseIf Dict.HasKey("Label") Then
-		      Set.Label = Dict.Value("Label")
-		    ElseIf Dict.HasKey("SetName") Then
-		      Set.Label = Dict.Value("SetName")
+		    Var Label As String = Dict.FirstValue("label", "Label", "SetName", Set.Label).StringValue.Trim
+		    If Label.IsEmpty Then
+		      Label = Set.Label
 		    End If
+		    Set.Label = Label
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading Label value")
 		  End Try
@@ -130,9 +128,13 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		    App.Log(Err, CurrentMethodName, "Casting ItemEntries to array")
 		  End Try
 		  
+		  Var Options As Integer
+		  If NewUUID Then
+		    Options = Options Or ArkSA.LootItemSetEntry.OptionNewId
+		  End If
 		  For Idx As Integer = 0 To Children.LastIndex
 		    Try
-		      Var Entry As ArkSA.LootItemSetEntry = ArkSA.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), NewUUID)
+		      Var Entry As ArkSA.LootItemSetEntry = ArkSA.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), Options)
 		      If (Entry Is Nil) = False Then
 		        Set.Add(Entry)
 		      End If
@@ -454,9 +456,11 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		Shared Function Join(Sets() As ArkSA.LootItemSet, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
 		  Var Values() As String
 		  For Each Set As ArkSA.LootItemSet In Sets
-		    Values.Add(Set.StringValue(Multipliers, UseBlueprints, Difficulty))
+		    Var SetConfig As String = Set.StringValue(Multipliers, UseBlueprints, Difficulty)
+		    If SetConfig.IsEmpty = False Then
+		      Values.Add(SetConfig)
+		    End If
 		  Next
-		  
 		  Return Values.Join(Separator)
 		End Function
 	#tag EndMethod
@@ -708,6 +712,11 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
+		  Var ItemEntries As String = ArkSA.LootItemSetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, Difficulty)
+		  If ItemEntries.IsEmpty Then
+		    Return ""
+		  End If
+		  
 		  Var Values() As String
 		  Values.Add("SetName=""" + Self.Label + """")
 		  Values.Add("MinNumItems=" + Self.MinNumItems.ToString)
@@ -715,7 +724,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  Values.Add("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
 		  Values.Add("SetWeight=" + Self.mSetWeight.PrettyText)
 		  Values.Add("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "True", "False"))
-		  Values.Add("ItemEntries=(" + ArkSA.LootItemSetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, Difficulty) + ")")
+		  Values.Add("ItemEntries=(" + ItemEntries + ")")
 		  Return "(" + Values.Join(",") + ")"
 		End Function
 	#tag EndMethod
@@ -746,8 +755,14 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
 		  
+		  Location = Location + Beacon.Issue.Separator + Self.UUID
+		  
+		  If Self.mEntries.Count = 0 Then
+		    Issues.Add(New Beacon.Issue(Location, "Item set '" + Self.Label + "' should contain at least one item set entry."))
+		  End If
+		  
 		  For Each Entry As ArkSA.LootItemSetEntry In Self.mEntries
-		    Entry.Validate(Location + Beacon.Issue.Separator + Self.UUID, Issues, Project)
+		    Entry.Validate(Location, Issues, Project)
 		  Next Entry
 		End Sub
 	#tag EndMethod

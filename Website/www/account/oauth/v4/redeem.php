@@ -35,7 +35,14 @@ if ($state !== $expectedState) {
 	exit;
 }
 
-$token = ServiceToken::Complete($session->UserId(), $provider, $_GET['code']);
-BeaconCommon::Redirect('/account/#services');
+try {
+	$token = ServiceToken::Complete($session->UserId(), $provider, $_GET['code']);
+	BeaconCommon::Redirect('/account/#services');
+} catch (Exception $err) {
+	http_response_code(400);
+	echo '<h1>Error</h1>';
+	echo '<p>There was an error completing the authorization. This can happen if the provider is offline, but is not the only reason. <a href="https://status.usebeacon.app/" target="_blank">Beacon\'s status page</a> may have more information.</p>';
+	exit;
+}
 
 ?>

@@ -54,14 +54,14 @@ Begin ArkConfigEditor ArkDifficultyEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   61
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -88,14 +88,14 @@ Begin ArkConfigEditor ArkDifficultyEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Maximum Creature Level:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   61
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -120,15 +120,15 @@ Begin ArkConfigEditor ArkDifficultyEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   95
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   311
+      Width           =   403
       Begin UITweaks.ResizedTextField DifficultyOffsetField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
@@ -161,10 +161,10 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   0
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   199
+         Top             =   231
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -198,7 +198,7 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   199
+         Top             =   231
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -236,10 +236,10 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   0
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   131
+         Top             =   163
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -273,7 +273,7 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   131
+         Top             =   163
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -311,10 +311,10 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   0
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   233
+         Top             =   265
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -348,7 +348,7 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   233
+         Top             =   265
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -386,10 +386,10 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   0
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   165
+         Top             =   197
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -423,7 +423,7 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   165
+         Top             =   197
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -461,10 +461,10 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   0
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   267
+         Top             =   299
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -499,14 +499,14 @@ Begin ArkConfigEditor ArkDifficultyEditor
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   0
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   301
+         Top             =   333
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -540,7 +540,7 @@ Begin ArkConfigEditor ArkDifficultyEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   267
+         Top             =   299
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -566,14 +566,14 @@ Begin ArkConfigEditor ArkDifficultyEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   10
+         TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Max Wyvern Level:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   301
+         Top             =   333
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -607,14 +607,14 @@ Begin ArkConfigEditor ArkDifficultyEditor
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   0
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   335
+         Top             =   367
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -641,18 +641,144 @@ Begin ArkConfigEditor ArkDifficultyEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   12
+         TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Max Crystal Wyvern Level:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   335
+         Top             =   367
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   179
+      End
+      Begin UITweaks.ResizedTextField PerfectTekLevelField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   323
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   10
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   299
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField PerfectWyvernLevelField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   323
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   13
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   333
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField PerfectCrystalWyvernLevelField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   323
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   16
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   367
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
       End
    End
    Begin OmniBar ConfigToolbar
@@ -689,12 +815,140 @@ Begin ArkConfigEditor ArkDifficultyEditor
       Visible         =   True
       Width           =   884
    End
+   Begin UITweaks.ResizedTextField PerfectDinoLevelField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   323
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   93
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin DesktopLabel WildLabel
+      AllowAutoDeactivate=   True
+      Bold            =   True
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   231
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Wild"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   61
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin DesktopLabel PerfectLabel
+      AllowAutoDeactivate=   True
+      Bold            =   True
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   323
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Perfect Tame"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   61
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
 		Sub SetupUI()
+		  Var ColumnWidth As Integer = Max(BeaconUI.IdealWidth(Self.WildLabel, Self.PerfectLabel), 80)
+		  Var SecondColumnLeft As Integer = Self.WildLabel.Left + ColumnWidth + 12
+		  
+		  Self.WildLabel.Width = ColumnWidth
+		  Self.LootScaleField.Width = ColumnWidth
+		  Self.DifficultyValueField.Width = ColumnWidth
+		  Self.DifficultyOffsetField.Width = ColumnWidth
+		  Self.OverrideOfficialDifficultyField.Width = ColumnWidth
+		  Self.MaxTekLevelField.Width = ColumnWidth
+		  Self.MaxWyvernLevelField.Width = ColumnWidth
+		  Self.MaxCrystalWyvernLevelField.Width = ColumnWidth
+		  
+		  Self.PerfectLabel.Left = SecondColumnLeft
+		  Self.PerfectLabel.Width = ColumnWidth
+		  Self.PerfectDinoLevelField.Left = SecondColumnLeft
+		  Self.PerfectDinoLevelField.Width = ColumnWidth
+		  Self.PerfectTekLevelField.Left = SecondColumnLeft
+		  Self.PerfectTekLevelField.Width = ColumnWidth
+		  Self.PerfectWyvernLevelField.Left = SecondColumnLeft
+		  Self.PerfectWyvernLevelField.Width = ColumnWidth
+		  Self.PerfectCrystalWyvernLevelField.Left = SecondColumnLeft
+		  Self.PerfectCrystalWyvernLevelField.Width = ColumnWidth
+		  
 		  Var Difficulty As Ark.Configs.Difficulty = Self.Config(False)
 		  Self.MaxDinoLevelField.Text = Difficulty.MaxDinoLevel.ToString(Locale.Current, "#,##0")
 		  Self.FillReferenceFields(Difficulty)
@@ -719,6 +973,11 @@ End
 		  Self.MaxTekLevelField.Text = Difficulty.MaxTekLevel.ToString(Locale.Current, "#,##0")
 		  Self.MaxWyvernLevelField.Text = Difficulty.MaxWyvernLevel.ToString(Locale.Current, "#,##0")
 		  Self.MaxCrystalWyvernLevelField.Text = Difficulty.MaxCrystalWyvernLevel.ToString(Locale.Current, "#,##0")
+		  
+		  Self.PerfectDinoLevelField.Text = Difficulty.PerfectLevel(Difficulty.MaxDinoLevel).ToString(Locale.Current, "#,##0")
+		  Self.PerfectCrystalWyvernLevelField.Text = Difficulty.PerfectLevel(Difficulty.MaxCrystalWyvernLevel).ToString(Locale.Current, "#,##0")
+		  Self.PerfectTekLevelField.Text = Difficulty.PerfectLevel(Difficulty.MaxTekLevel).ToString(Locale.Current, "#,##0")
+		  Self.PerfectWyvernLevelField.Text = Difficulty.PerfectLevel(Difficulty.MaxWyvernLevel).ToString(Locale.Current, "#,##0")
 		End Sub
 	#tag EndMethod
 
@@ -760,6 +1019,8 @@ End
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
+#tag EndEvents
+#tag Events PerfectDinoLevelField
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

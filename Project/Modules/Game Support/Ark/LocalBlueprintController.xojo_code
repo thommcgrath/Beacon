@@ -143,11 +143,17 @@ Inherits Ark.BlueprintController
 	#tag Method, Flags = &h21
 		Private Sub PublishThread_Run(Sender As Beacon.Thread)
 		  Var Task As Ark.BlueprintControllerPublishTask = Sender.UserData
-		  If Task.DeleteMode Then
-		    Self.PublishDelete(Task)
-		  Else
-		    Self.PublishSave(Task)
-		  End If
+		  Try
+		    If Task.DeleteMode Then
+		      Self.PublishDelete(Task)
+		    Else
+		      Self.PublishSave(Task)
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Publishing blueprint changes")
+		    Task.Errored = True
+		    Task.ErrorMessage = Err.Message
+		  End Try
 		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		End Sub
 	#tag EndMethod

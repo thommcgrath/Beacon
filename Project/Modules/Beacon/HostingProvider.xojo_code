@@ -19,18 +19,6 @@ Protected Interface HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting) As Variant
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Setting As Beacon.GameSetting, Assigns Value As Variant)
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  
 		End Function
@@ -86,12 +74,6 @@ Protected Interface HostingProvider
 
 	#tag Method, Flags = &h0
 		Function SupportsCheckpoints() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsGameSettings() As Boolean
 		  
 		End Function
 	#tag EndMethod

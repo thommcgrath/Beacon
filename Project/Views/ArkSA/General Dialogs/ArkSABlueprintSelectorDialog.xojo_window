@@ -436,6 +436,36 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub AddBlueprintsToList(Blueprints() As ArkSA.Blueprint, Blacklist() As String, AddToBlacklist As Boolean, CheckTags As Boolean)
+		  Var RequiredTags(), ExcludedTags() As String
+		  If CheckTags Then
+		    Try
+		      RequiredTags = Self.Picker.RequiredTags()
+		      ExcludedTags = Self.Picker.ExcludedTags()
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    If Blacklist.IndexOf(Blueprint.BlueprintId) > -1 Then
+		      Continue
+		    End If
+		    
+		    If CheckTags = True And Blueprint.MatchesTags(RequiredTags, ExcludedTags) = False Then
+		      Continue
+		    End If
+		    
+		    Self.List.AddRow(Blueprint.Label, Blueprint.ContentPackName)
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Blueprint
+		    
+		    If AddToBlacklist Then
+		      Blacklist.Add(Blueprint.BlueprintId)
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As ArkSA.Blueprint, Mods As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
 		  Var References() As ArkSA.BlueprintReference
 		  For Each Blueprint As ArkSA.Blueprint In Exclude
@@ -695,17 +725,24 @@ End
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As String = Self.Picker.Spec
 		  
-		  Var Blueprints() As ArkSA.Blueprint = ArkSA.DataSource.Pool.Get(False).GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
-		  Var ScrollPosition As Integer = Self.List.ScrollPosition
-		  Self.List.RemoveAllRows
-		  For Each Blueprint As ArkSA.Blueprint In Blueprints
-		    If Self.mExcluded.IndexOf(Blueprint.BlueprintId) > -1 Then
-		      Continue
-		    End If
-		    
-		    Self.List.AddRow(Blueprint.Label, Blueprint.ContentPackName)
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Blueprint
+		  Var Blacklist() As String
+		  Blacklist.ResizeTo(Self.mExcluded.LastIndex)
+		  For Idx As Integer = 0 To Blacklist.LastIndex
+		    Blacklist(Idx) = Self.mExcluded(Idx)
 		  Next
+		  
+		  Self.List.RemoveAllRows
+		  Var ScrollPosition As Integer = Self.List.ScrollPosition
+		  
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var RecentPaths() As String = Preferences.ArkSARecentBlueprints(Self.mCategory, Self.mSubgroup)
+		  For Each Path As String In RecentPaths
+		    Var BlueprintsAtPath() As ArkSA.Blueprint = DataSource.GetBlueprintsByPath(Path, Self.mMods)
+		    Self.AddBlueprintsToList(BlueprintsAtPath, Blacklist, True, True)
+		  Next
+		  
+		  Var Blueprints() As ArkSA.Blueprint = DataSource.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
+		  Self.AddBlueprintsToList(Blueprints, Blacklist, False, False)
 		  Self.List.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
@@ -774,6 +811,25 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
+		  // Get the new recents list
+		  Var SelectedPaths() As String
+		  For Idx As Integer = 0 To Self.SelectedList.LastRowIndex
+		    Var Blueprint As ArkSA.Blueprint = Self.SelectedList.RowTagAt(Idx)
+		    SelectedPaths.Add(Blueprint.Path)
+		  Next
+		  
+		  // Add the previous unique recents to the list
+		  Var RecentPaths() As String = Preferences.ArkSARecentBlueprints(Self.mCategory, Self.mSubgroup)
+		  For Each Path As String In RecentPaths
+		    If SelectedPaths.IndexOf(Path) = -1 Then
+		      SelectedPaths.Add(Path)
+		    End If
+		  Next
+		  
+		  // And truncate down
+		  SelectedPaths.ResizeTo(Min(5, SelectedPaths.LastIndex))
+		  
+		  Preferences.ArkSARecentBlueprints(Self.mCategory, Self.mSubgroup) = SelectedPaths
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub

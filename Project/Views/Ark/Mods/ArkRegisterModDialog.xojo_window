@@ -1019,7 +1019,7 @@ End
 		    Return
 		  End If
 		  
-		  DataUpdater.ImportString(Response.Content)
+		  DataUpdater.Import(Response.Content)
 		  Self.mModId = ""
 		  Self.Hide
 		End Sub

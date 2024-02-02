@@ -175,25 +175,84 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Make command line changes
-		  If Self.Provider.SupportsGameSettings Then
-		    Self.Log("Updating other settings…")
-		    Call Self.ApplySettings(Organizer, False)
-		    If Self.Finished Then
-		      Return
-		    End If
-		  End If
+		  Select Case Self.Provider
+		  Case IsA Nitrado.HostingProvider
+		    Call Self.NitradoApplySettings(Organizer, False)
+		  Case IsA GameServerApp.HostingProvider
+		    Call Self.GameServerAppApplySettings(Organizer)
+		  End Select
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h1
-		Protected Function ApplySettings(Organizer As Ark.ConfigOrganizer, Full As Boolean) As Boolean
-		  Select Case Self.Provider
-		  Case IsA Nitrado.HostingProvider
-		    Return Self.NitradoApplySettings(Organizer, Full)
-		  Else
-		    Return True
-		  End Select
+		Protected Function GameServerAppApplySettings(Organizer As Ark.ConfigOrganizer) As Boolean
+		  If (Self.Provider IsA GameServerApp.HostingProvider) = False Then
+		    Return False
+		  End If
+		  
+		  Var ChainDownloaded As Boolean
+		  Var Chain As String = Self.GetFile("chain", "Launch Options: Chain", Beacon.Integration.DownloadFailureMode.MissingAllowed, False, ChainDownloaded)
+		  
+		  Var TailDownloaded As Boolean
+		  Var Tail As String = Self.GetFile("end", "Launch Options: End", Beacon.Integration.DownloadFailureMode.MissingAllowed, False, TailDownloaded)
+		  
+		  Var Launch As String = "TheIsland?listen" + Chain + " " + Tail
+		  Var CommandLine As Dictionary = Ark.ParseCommandLine(Launch, True)
+		  If CommandLine.HasKey("?Map") Then
+		    CommandLine.Remove("?Map")
+		  ElseIf CommandLine.HasKey("Map") Then
+		    CommandLine.Remove("Map")
+		  End If
+		  
+		  // Options are key value pairs, flags are just keys
+		  Var Options() As Ark.ConfigValue = Organizer.FilteredValues("CommandLineOption")
+		  Var Flags() As Ark.ConfigValue = Organizer.FilteredValues("CommandLineFlag")
+		  
+		  For Each Option As Ark.ConfigValue In Options
+		    Var Key As String = Option.Header + Option.AttributedKey
+		    CommandLine.Value(Key) = Option.Command
+		  Next
+		  For Each Flag As Ark.ConfigValue In Flags
+		    Var Key As String = Flag.Header + Flag.AttributedKey
+		    If Flag.Details.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
+		      If Flag.Value = "True" Then
+		        CommandLine.Value(Key) = Flag.AttributedKey
+		      ElseIf CommandLine.HasKey(Key) Then
+		        CommandLine.Remove(Key)
+		      End If
+		    End If
+		  Next
+		  
+		  Var ChainElements(), TailElements() As String
+		  For Each Entry As DictionaryEntry In CommandLine
+		    Var Key As String = Entry.Key
+		    Var Command As String = Entry.Value
+		    If Key.BeginsWith("-") Then
+		      If Command.BeginsWith("-") = False Then
+		        Command = "-" + Command
+		      End If
+		      TailElements.Add(Command)
+		    ElseIf Key.BeginsWith("?") Then
+		      If Command.BeginsWith("?") = False Then
+		        Command = "?" + Command
+		      End If
+		      ChainElements.Add(Command)
+		    End If
+		  Next
+		  
+		  Var NewChain As String = ChainElements.Join("")
+		  Var NewTail As String = TailElements.Join(" ")
+		  
+		  If Not Self.PutFile(NewChain, "chain", "Launch Options: Chain") Then
+		    Return False
+		  End If
+		  
+		  If Not Self.PutFile(NewTail, "end", "Launch Options: End") Then
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -202,6 +261,8 @@ Inherits Beacon.DeployIntegration
 		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
 		    Return False
 		  End If
+		  
+		  Self.Log("Updating other settings…")
 		  
 		  Var Project As Ark.Project = Self.Project
 		  Var Profile As Ark.ServerProfile = Self.Profile
@@ -267,7 +328,7 @@ Inherits Beacon.DeployIntegration
 		  Var Changes As New Dictionary
 		  For Each Entry As DictionaryEntry In NewValues
 		    Var ConfigOption As Ark.ConfigOption = Entry.Key
-		    Var CurrentValue As Variant = Self.Provider.GameSetting(Project, Profile, ConfigOption)
+		    Var CurrentValue As Variant = Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, ConfigOption)
 		    Var FinishedValue As String
 		    If Entry.Value.Type = Variant.TypeString Then
 		      // Value comparison
@@ -385,7 +446,7 @@ Inherits Beacon.DeployIntegration
 		    Var NewValue As String = Entry.Value
 		    
 		    Try
-		      Self.Provider.GameSetting(Project, Profile, Setting) = NewValue
+		      Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, Setting) = NewValue
 		    Catch Err As RuntimeException
 		      Self.SetError(Err)
 		      Return False
@@ -491,6 +552,10 @@ Inherits Beacon.DeployIntegration
 
 	#tag Method, Flags = &h21
 		Private Sub SwitchToExpertMode(OffendingKey As String, ContentLength As Integer)
+		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
+		    Return
+		  End If
+		  
 		  Var UserData As New Dictionary
 		  UserData.Value("OffendingKey") = OffendingKey
 		  UserData.Value("ContentLength") = ContentLength
@@ -547,7 +612,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  Try
-		    Self.Provider.GameSetting(Self.Project, Self.Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode")) = True
+		    Nitrado.HostingProvider(Self.Provider).GameSetting(Self.Project, Self.Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode")) = True
 		  Catch Err As RuntimeException
 		    Self.SetError("Could not enable expert mode: " + Err.Message)
 		    Return

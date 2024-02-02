@@ -2,6 +2,7 @@
 
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
+import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
 import { getCurrencyFormatter, formatPrices, formatDate, epochToDate, randomUUID } from "./common.js";
 
 const StatusOwns = 'owns'; // User has a license for the item
@@ -20,6 +21,21 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	const Products = checkoutProperties.products;
 	const ProductIds = checkoutProperties.productIds;
 	const formatCurrency = getCurrencyFormatter(checkoutProperties.currencyCode);
+	const GamesList = checkoutProperties.games;
+	const OtherGamesList = GamesList.filter(item => item.gameId !== 'Ark' && item.gameId !== 'ArkSA');
+
+	BeaconPagePanel.init();
+	const gamesPanel = BeaconPagePanel.pagePanels['panel-games'];
+	if (gamesPanel) {
+		gamesPanel.element.addEventListener('panelSwitched', () => {
+			if (gamesPanel.currentPageTitle) {
+				document.title = `Beacon Omni for ${gamesPanel.currentPageTitle}`;
+			} else {
+				document.title = 'Beacon Omni';
+			}
+			history.pushState({}, '', `/omni#${gamesPanel.currentPageName}`);
+		});
+	}
 
 	class BeaconCartItem {
 		#id = null;
@@ -112,10 +128,37 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 		}
 
 		get arkSAYears() {
-			return Math.min(this.getQuantity(Products?.ArkSA?.Base?.ProductId) + this.getQuantity(Products?.ArkSA?.Upgrade?.ProductId) + this.getQuantity(Products?.ArkSA?.Renewal?.ProductId), 10);
+			return Math.min(this.getQuantity(Products?.ArkSA?.Base?.ProductId) + this.getQuantity(Products?.ArkSA?.Upgrade?.ProductId) + this.getQuantity(Products?.ArkSA?.Renewal?.ProductId), MaxRenewalCount);
 		}
 
-		build(targetCart, isGift, withArk, arkSAYears) {
+		hasGame(gameId) {
+			if (gameId === 'ArkSA') {
+				return this.hasArkSA;
+			}
+
+			return this.getQuantity(Products?.[gameId]?.Base?.ProductId) > 0 || this.getQuantity(Products?.[gameId]?.Renewal?.ProductId) > 0;
+		}
+
+		yearsForGame(gameId) {
+			if (gameId === 'ArkSA') {
+				return this.arkSAYears;
+			}
+
+			return Math.min(this.getQuantity(Products?.[gameId]?.Base?.ProductId) + this.getQuantity(Products?.[gameId]?.Renewal?.ProductId), MaxRenewalCount);
+		}
+
+		yearsForOtherGames() {
+			const otherGameYears = {};
+			for (const game of OtherGamesList) {
+				const years = this.yearsForGame(game.gameId);
+				if (years > 0) {
+					otherGameYears[game.gameId] = this.yearsForGame(game.gameId);
+				}
+			}
+			return otherGameYears;
+		}
+
+		build(targetCart, isGift, withArk, arkSAYears, otherGameYears) {
 			this.reset();
 			this.isGift = isGift;
 
@@ -150,11 +193,29 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 					}
 				}
 			}
+
+			if (otherGameYears) {
+				for (const game of OtherGamesList) {
+					const years = Math.min((otherGameYears[game.gameId] ?? 0), MaxRenewalCount);
+					if (years === 0) {
+						continue;
+					}
+
+					if (isGift === false && targetCart.findLicense(Products[game.gameId].Base.ProductId) !== null) {
+						this.setQuantity(Products[game.gameId].Renewal.ProductId, years);
+					} else {
+						this.setQuantity(Products[game.gameId].Base.ProductId, 1);
+						if (years > 1) {
+							this.setQuantity(Products[game.gameId].Renewal.ProductId, years - 1);
+						}
+					}
+				}
+			}
 		}
 
 		rebuild(targetCart) {
 			const oldFingerprint = this.fingerprint;
-			this.build(targetCart, this.isGift, this.hasArk, this.arkSAYears);
+			this.build(targetCart, this.isGift, this.hasArk, this.arkSAYears, this.yearsForOtherGames());
 			return this.fingerprint !== oldFingerprint;
 		}
 
@@ -169,7 +230,12 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 
 			const includeArk = this.hasArk || otherLineItem.hasArk;
 			const arkSAYears = this.arkSAYears + otherLineItem.arkSAYears;
-			this.build(cart, this.isGift, includeArk, arkSAYears);
+			const otherGameYears = this.yearsForOtherGames();
+			const additionalGameYears = otherLineItem.yearsForOtherGames();
+			for (const [gameId, years] of Object.entries(additionalGameYears)) {
+				otherGameYears[gameId] = (otherGameYears[gameId] ?? 0) + years;
+			}
+			this.build(cart, this.isGift, includeArk, arkSAYears, otherGameYears);
 		}
 
 		get total() {
@@ -444,15 +510,25 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 
 	const buyButton = document.getElementById('buy-button');
 	const landingButton = document.getElementById('cart-back-button');
-	const arkOnlyMode = Object.keys(ProductIds).length === 1;
 
 	const goToCart = () => {
+		document.title = 'Buy Beacon Omni';
 		history.pushState({}, '', '/omni#checkout');
 		dispatchEvent(new PopStateEvent('popstate', {}));
 	};
 
 	const goToLanding = () => {
-		history.pushState({}, '', '/omni');
+		if (gamesPanel) {
+			if (gamesPanel.currentPageTitle) {
+				document.title = `Beacon Omni for ${gamesPanel.currentPageTitle}`;
+			} else {
+				document.title = 'Beacon Omni';
+			}
+			history.pushState({}, '', `/omni#${gamesPanel.currentPageName}`);
+		} else {
+			document.title = 'Beacon Omni';
+			history.pushState({}, '', '/omni');
+		}
 		dispatchEvent(new PopStateEvent('popstate', {}));
 	};
 
@@ -531,29 +607,41 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	const wizard = {
 		cartView: null,
 		editCartItem: null,
-		cancelButton: document.getElementById('checkout-wizard-cancel'),
 		actionButton: document.getElementById('checkout-wizard-action'),
-		giftCheck: document.getElementById('checkout-wizard-gift-check'),
-		arkSACheck: document.getElementById('checkout-wizard-arksa-check'),
 		arkCheck: document.getElementById('checkout-wizard-ark-check'),
-		arkPriceField: document.getElementById('checkout-wizard-ark-price'),
-		arkSAPriceField: document.getElementById('checkout-wizard-arksa-full-price'),
-		arkSAUpgradePriceField: document.getElementById('checkout-wizard-arksa-discount-price'),
-		arkSAStatusField: document.getElementById('checkout-wizard-status-arksa'),
-		arkStatusField: document.getElementById('checkout-wizard-status-ark'),
-		arkSADurationGroup: document.getElementById('checkout-wizard-arksa-duration-group'),
-		arkSADurationField: document.getElementById('checkout-wizard-arksa-duration-field'),
-		arkSADurationUpButton: document.getElementById('checkout-wizard-arksa-yearup-button'),
-		arkSADurationDownButton: document.getElementById('checkout-wizard-arksa-yeardown-button'),
-		arkSAPromoField: document.getElementById('checkout-wizard-promo-arksa'),
 		arkOnlyCheck: document.getElementById('storefront-ark-check'),
+		arkOnlyGiftDownButton: document.getElementById('storefront-ark-gift-decrease'),
 		arkOnlyGiftField: document.getElementById('storefront-ark-gift-field'),
-		arkOnlyOwnedField: document.getElementById('storefront-ark-owned'),
 		arkOnlyGiftQuantityGroup: document.getElementById('storefront-ark-gift-group'),
 		arkOnlyGiftUpButton: document.getElementById('storefront-ark-gift-increase'),
-		arkOnlyGiftDownButton: document.getElementById('storefront-ark-gift-decrease'),
+		arkOnlyOwnedField: document.getElementById('storefront-ark-owned'),
+		arkPriceField: document.getElementById('checkout-wizard-ark-price'),
+		arkSACheck: document.getElementById('checkout-wizard-arksa-check'),
+		arkSADurationDownButton: document.getElementById('checkout-wizard-arksa-yeardown-button'),
+		arkSADurationField: document.getElementById('checkout-wizard-arksa-duration-field'),
+		arkSADurationGroup: document.getElementById('checkout-wizard-arksa-duration-group'),
+		arkSADurationUpButton: document.getElementById('checkout-wizard-arksa-yearup-button'),
+		arkSAPriceField: document.getElementById('checkout-wizard-arksa-full-price'),
+		arkSAPromoField: document.getElementById('checkout-wizard-promo-arksa'),
+		arkSAStatusField: document.getElementById('checkout-wizard-status-arksa'),
+		arkSAUpgradePriceField: document.getElementById('checkout-wizard-arksa-discount-price'),
+		arkStatusField: document.getElementById('checkout-wizard-status-ark'),
+		giftCheck: document.getElementById('checkout-wizard-gift-check'),
+		cancelButton: document.getElementById('checkout-wizard-cancel'),
 		init: function(cartView) {
 			this.cartView = cartView;
+
+			for (const game of OtherGamesList) {
+				const gameId = game.gameId;
+				const lowerGameId = gameId.toLowerCase();
+				this[`${lowerGameId}Check`] = document.getElementById(`checkout-wizard-${lowerGameId}-check`);
+				this[`${lowerGameId}DurationDownButton`] = document.getElementById(`checkout-wizard-${lowerGameId}-yeardown-button`);
+				this[`${lowerGameId}DurationField`] = document.getElementById(`checkout-wizard-${lowerGameId}-duration-field`);
+				this[`${lowerGameId}DurationGroup`] = document.getElementById(`checkout-wizard-${lowerGameId}-duration-group`);
+				this[`${lowerGameId}DurationUpButton`] = document.getElementById(`checkout-wizard-${lowerGameId}-yearup-button`);
+				this[`${lowerGameId}PriceField`] = document.getElementById(`checkout-wizard-${lowerGameId}-price`);
+				this[`${lowerGameId}StatusField`] = document.getElementById(`checkout-wizard-status-${lowerGameId}`);
+			}
 
 			if (this.cancelButton) {
 				this.cancelButton.addEventListener('click', (ev) => {
@@ -569,8 +657,18 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 					const isGift = this.giftCheck.checked;
 					const includeArk = this.arkCheck && this.arkCheck.disabled === false && this.arkCheck.checked;
 					const includeArkSA = this.arkSACheck && this.arkSACheck.disabled === false && this.arkSACheck.checked;
+					let includeOtherGames = false;
+					const otherGameYears = {};
+					for (const game of OtherGamesList) {
+						const gameId = game.gameId;
+						const lowerGameId = gameId.toLowerCase();
+						if (this[`${lowerGameId}Check`] && this[`${lowerGameId}Check`].disabled === false && this[`${lowerGameId}Check`].checked) {
+							includeOtherGames = true;
+							otherGameYears[gameId] = parseInt(this[`${lowerGameId}DurationField`].value) || 1;
+						}
+					}
 
-					if ((includeArk || includeArkSA) === false) {
+					if ((includeArk || includeArkSA || includeOtherGames) === false) {
 						return;
 					}
 
@@ -584,7 +682,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 						lineItem.isGift = isGift;
 					}
 
-					lineItem.build(cart, isGift, includeArk, arkSAYears);
+					lineItem.build(cart, isGift, includeArk, arkSAYears, otherGameYears);
 
 					if (Boolean(this.editCartItem) === false) {
 						const personalCartItem = cart.personalCartItem;
@@ -650,6 +748,52 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 					ev.preventDefault();
 					nudgeArkSADuration(-1);
 				});
+			}
+
+			for (const game of OtherGamesList) {
+				const lowerGameId = game.gameId.toLowerCase();
+				const checkbox = this[`${lowerGameId}Check`];
+				const durationField = this[`${lowerGameId}DurationField`];
+				const durationUpButton = this[`${lowerGameId}DurationUpButton`];
+				const durationDownButton = this[`${lowerGameId}DurationDownButton`];
+				const durationGroup = this[`${lowerGameId}DurationGroup`];
+
+				if (checkbox && durationField && durationUpButton && durationDownButton && durationGroup) {
+					checkbox.addEventListener('change', () => {
+						this.update();
+					});
+
+					durationField.addEventListener('input', () => {
+						this.update();
+					});
+
+					const nudgeGamesDuration = (amount) => {
+						const originalValue = parseInt(durationField.value);
+						let newValue = originalValue + amount;
+						if (newValue > MaxRenewalCount || newValue < 1) {
+							durationGroup.classList.add('shake');
+							setTimeout(() => {
+								durationGroup.classList.remove('shake');
+							}, 400);
+							newValue = Math.max(Math.min(newValue, MaxRenewalCount), 1);
+						}
+						if (originalValue !== newValue) {
+							durationField.value = newValue;
+							checkbox.checked = true;
+							this.update();
+						}
+					};
+
+					durationUpButton.addEventListener('click', (ev) => {
+						ev.preventDefault();
+						nudgeGamesDuration(1);
+					});
+
+					durationDownButton.addEventListener('click', (ev) => {
+						ev.preventDefault();
+						nudgeGamesDuration(-1);
+					});
+				}
 			}
 
 			if (this.arkOnlyCheck) {
@@ -734,11 +878,41 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 				});
 			}
 		},
-		present: function(editCartItem = null) {
+		filter: function(gameIds) {
+			const cells = document.querySelectorAll('.checkout-wizard-list-game');
+			let firstCell = true;
+			for (const cell of cells) {
+				const cellGameId = cell.getAttribute('beacon-game-id');
+				const visible = gameIds.length === 0 || gameIds.includes(cellGameId) || ((cellGameId === 'Ark' || cellGameId === 'ArkSA') && (gameIds.includes('Ark') || gameIds.includes('ArkSA')));
+				if (visible) {
+					cell.classList.remove('hidden');
+					if (firstCell) {
+						firstCell = false;
+						cell.classList.remove('separated');
+					} else {
+						cell.classList.add('separated');
+					}
+				} else {
+					cell.classList.add('hidden');
+				}
+			}
+		},
+		present: function(editCartItem = null, filterGameIds = [], activateGameId = null) {
+			this.filter(filterGameIds);
+			if (filterGameIds.length > 0 && filterGameIds.includes(activateGameId) === false) {
+				activateGameId = null;
+			}
+
 			this.editCartItem = editCartItem;
 			this.arkCheck.disabled = false; // update() will disable them
 			if (this.arkSACheck) {
 				this.arkSACheck.disabled = false;
+			}
+			for (const game of OtherGamesList) {
+				const lowerGameId = game.gameId.toLowerCase();
+				if (this[`${lowerGameId}Check`]) {
+					this[`${lowerGameId}Check`].disabled = false;
+				}
 			}
 
 			if (editCartItem) {
@@ -748,12 +922,26 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 				if (this.arkSACheck) {
 					this.arkSACheck.checked = editCartItem.hasArkSA;
 				}
+				for (const game of OtherGamesList) {
+					const gameId = game.gameId;
+					const lowerGameId = gameId.toLowerCase();
+					if (this[`${lowerGameId}Check`]) {
+						this[`${lowerGameId}Check`].checked = editCartItem.hasGame(gameId);
+					}
+				}
 			} else {
 				this.giftCheck.checked = false;
 				this.giftCheck.disabled = false;
-				this.arkCheck.checked = false;
+				this.arkCheck.checked = (activateGameId === 'Ark');
 				if (this.arkSACheck) {
-					this.arkSACheck.checked = false;
+					this.arkSACheck.checked = (activateGameId === 'ArkSA');
+				}
+				for (const game of OtherGamesList) {
+					const gameId = game.gameId;
+					const lowerGameId = gameId.toLowerCase();
+					if (this[`${lowerGameId}Check`]) {
+						this[`${lowerGameId}Check`].checked = (activateGameId === gameId);
+					}
 				}
 			}
 
@@ -762,6 +950,17 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 					this.arkSADurationField.value = editCartItem.arkSAYears;
 				} else {
 					this.arkSADurationField.value = '1';
+				}
+			}
+
+			for (const game of OtherGamesList) {
+				const gameId = game.gameId;
+				const lowerGameId = gameId.toLowerCase();
+				const durationField = this[`${lowerGameId}DurationField`];
+				if (editCartItem) {
+					durationField.value = editCartItem.yearsForGame(gameId);
+				} else {
+					durationField.value = '1';
 				}
 			}
 
@@ -775,6 +974,9 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 				Ark: StatusNone,
 				ArkSA: StatusNone,
 			};
+			for (const game of OtherGamesList) {
+				gameStatus[game.gameId] = StatusNone;
+			}
 
 			const personalCartItem = cart.personalCartItem;
 			const isEditing = Boolean(this.editCartItem);
@@ -782,6 +984,10 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 			if (isGift) {
 				gameStatus.Ark = this.arkCheck && this.arkCheck.disabled === false && this.arkCheck.checked ? StatusBuying : StatusNone;
 				gameStatus.ArkSA = this.arkSACheck && this.arkSACheck.disabled === false && this.arkSACheck.checked ? StatusBuying : StatusNone;
+				for (const game of OtherGamesList) {
+					const lowerGameId = game.gameId.toLowerCase();
+					gameStatus[gameId] = (this[`${lowerGameId}Check`] && this[`${lowerGameId}Check`].disabled === false && this[`${lowerGameId}Check`].checked) ? StatusBuying : StatusNone;
+				}
 			} else {
 				if (cart.arkLicense) {
 					gameStatus.Ark = StatusOwns;
@@ -801,6 +1007,21 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 					gameStatus.ArkSA = StatusBuying;
 				} else {
 					gameStatus.ArkSA = StatusNone;
+				}
+
+				for (const game of OtherGamesList) {
+					const gameId = game.gameId;
+					const lowerGameId = gameId.toLowerCase();
+					const license = cart.findLicense(Products[gameId]?.Base?.ProductId);
+					if (license) {
+						gameStatus[gameId] = StatusOwns;
+					} else if (personalCartItem && (isEditing === false || personalCartItem.id !== this.editCartItem.id) && personalCartItem.hasGame(gameId)) {
+						gameStatus[gameId] = StatusInCart;
+					} else if (this[`${lowerGameId}Check`] && this[`${lowerGameId}Check`].disabled === false && this[`${lowerGameId}Check`].checked) {
+						gameStatus[gameId] = StatusBuying;
+					} else {
+						gameStatus[gameId] = StatusNone;
+					}
 				}
 			}
 
@@ -862,12 +1083,12 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 					arkSAEffectivePrice = Products.ArkSA.Upgrade.Price + (Products.ArkSA.Renewal.Price * arkSAAdditionalYears);
 
 					const discountLanguage = gameStatus.Ark === StatusOwns ? 'because you own' : 'when bundled with';
-					this.arkSAStatusField.innerText = `Includes first year of app updates. Additional years cost ${formatCurrency(Products.ArkSA.Renewal.Price)} each.`;
+					this.arkSAStatusField.innerText = `Includes 1 year of app updates. Additional years cost ${formatCurrency(Products.ArkSA.Renewal.Price)} each.`;
 					this.arkSAPromoField.innerText = `${discount}% off first year ${discountLanguage} ${Products.Ark.Base.Name}`;
 					this.arkSAPromoField.classList.remove('hidden');
 				} else {
 					// Show normal
-					this.arkSAStatusField.innerText = `Includes first year of app updates. Additional years cost ${formatCurrency(Products.ArkSA.Renewal.Price)} each.`;
+					this.arkSAStatusField.innerText = `Includes 1 year of app updates. Additional years cost ${formatCurrency(Products.ArkSA.Renewal.Price)} each.`;
 					this.arkSAPromoField.innerText = `${discount}% off first year when bundled with ${Products.Ark.Base.Name}`;
 					this.arkSAPromoField.classList.remove('hidden');
 
@@ -896,6 +1117,76 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 			} else {
 				this.arkStatusField.innerText = 'Includes lifetime app updates.';
 				this.arkCheck.disabled = false;
+			}
+
+			for (const game of OtherGamesList) {
+				const gameId = game.gameId;
+				const lowerGameId = gameId.toLowerCase();
+				const checkbox = this[`${lowerGameId}Check`];
+				const durationField = this[`${lowerGameId}DurationField`];
+				const statusField = this[`${lowerGameId}StatusField`];
+				const priceField = this[`${lowerGameId}PriceField`];
+
+				if (!checkbox) {
+					continue;
+				}
+
+				let basePrice = Products[gameId]?.Base?.Price;
+				const isLifetime = Products[gameId]?.Base?.PlanLengthSeconds === null;
+
+				const desiredYears = Math.min(Math.max(parseInt(durationField.value) || 1, 1), MaxRenewalCount);
+				if (parseInt(durationField.value) !== desiredYears && document.activeElement !== durationField) {
+					durationField.value = desiredYears;
+				}
+				const additionalYears = Math.max(desiredYears - 1, 0);
+
+				if (isLifetime) {
+					if (gameStatus[gameId] === StatusOwns) {
+						statusField.innerHTML = `You already own ${Products[gameId]?.Base?.Name}.`;
+						checkbox.disabled = true;
+						checkbox.checked = false;
+					} else if (gameStatus[gameId] === StatusInCart) {
+						statusField.innerText = `${Products[gameId]?.Base?.Name} is already in your cart.`;
+						checkbox.disabled = true;
+						checkbox.checked = false;
+					} else {
+						statusField.innerText = 'Includes lifetime app updates.';
+						checkbox.disabled = false;
+					}
+				} else {
+					if (gameStatus[gameId] === StatusOwns) {
+						// Show as renewal
+						const license = cart.findLicense(Products[gameId]?.Base?.ProductId);
+						const now = Math.floor(Date.now() / 1000);
+						const currentExpiration = license.expiresEpoch;
+						const currentExpirationDisplay = formatDate(epochToDate(currentExpiration), false);
+						const startEpoch = (now > currentExpiration) ? ((Math.floor(now / 86400) * 86400) + 86400) : currentExpiration;
+						const newExpiration = startEpoch + (Products[gameId]?.Renewal?.PlanLengthSeconds * desiredYears);
+						const newExpirationDisplay = formatDate(epochToDate(newExpiration), false);
+
+						let statusHtml;
+						if (now > currentExpiration) {
+							statusHtml = `Renew your update plan<br>Expired on <span class="text-red">${currentExpirationDisplay}</span><br>New expiration: <span class="text-green">${newExpirationDisplay}</span>`;
+						} else {
+							statusHtml = `Extend your update plan<br>Expires on <span class="text-green">${currentExpirationDisplay}</span><br>New expiration: <span class="text-green">${newExpirationDisplay}</span>`;
+						}
+						statusField.innerHTML = statusHtml;
+					} else if (gameStatus[gameId] === StatusInCart) {
+						// Show as renewal
+						basePrice = Products[gameId]?.Renewal?.Price * desiredYears;
+						statusField.innerText = `Additional renewal years for ${Products[gameId]?.Base?.Name} in your cart.`;
+					} else {
+						// Show normal
+						statusField.innerText = `Includes ${Products[gameId]?.Renewal?.PlanLength} of app updates. Additional years cost ${formatCurrency(Products[gameId]?.Renewal?.Price)} each.`;
+						basePrice = Products[gameId]?.Base?.Price + (Products[gameId]?.Renewal?.Price * additionalYears);
+					}
+				}
+
+				priceField.innerText = formatCurrency(basePrice);
+
+				if (checkbox.disabled === false && checkbox.checked === true) {
+					total = total + basePrice;
+				}
 			}
 
 			const addToCart = (this.editCartItem) ? 'Edit' : 'Add to Cart';
@@ -1001,32 +1292,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 			this.update();
 		},
 		update: function() {
-			if (arkOnlyMode) {
-				this.emailField.innerText = cart.email;
-				this.changeEmailButton.disabled = Boolean(checkoutProperties.forceEmail);
-				this.changeEmailButton.innerText = cart.email ? 'Change Email' : 'Set Email';
-				this.changeEmailButton.classList.remove('hidden');
-				this.addMoreButton.classList.add('hidden');
-
-				if (cart.arkLicense) {
-					this.wizard.arkOnlyOwnedField.classList.remove('hidden');
-					this.wizard.arkOnlyCheck.parentElement.classList.add('hidden');
-				} else {
-					this.wizard.arkOnlyOwnedField.classList.add('hidden');
-					this.wizard.arkOnlyCheck.parentElement.classList.remove('hidden');
-				}
-
-				const personalCartItem = cart.personalCartItem;
-				this.wizard.arkOnlyCheck.checked = personalCartItem && personalCartItem.hasArk;
-
-				if (document.activeElement !== this.wizard.arkOnlyGiftField) {
-					const giftItems = cart.items.filter((cartItem) => {
-						return cartItem.isGift === true && cartItem.hasArk;
-					});
-
-					this.wizard.arkOnlyGiftField.value = giftItems.length;
-				}
-			} else if (cart.count > 0) {
+			if (cart.count > 0) {
 				this.emailField.innerText = cart.email;
 				this.changeEmailButton.disabled = Boolean(checkoutProperties.forceEmail);
 				this.changeEmailButton.innerText = cart.email ? 'Change Email' : 'Set Email';
@@ -1176,8 +1442,15 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	cartView.init(wizard);
 
 	const setViewMode = (animated = true) => {
+		const pageName = window.location.hash.substring(1);
+		if (gamesPanel && gamesPanel.hasPage(pageName)) {
+			storeViewManager.switchView('page-landing', animated);
+			gamesPanel.switchPage(pageName);
+			return;
+		}
+
 		window.scrollTo(window.scrollX, 0);
-		if (window.location.hash === '#checkout') {
+		if (pageName === 'checkout') {
 			storeViewManager.switchView('page-cart', animated);
 		} else {
 			storeViewManager.back(animated);
@@ -1187,7 +1460,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	buyButton.addEventListener('click', (ev) => {
 		ev.preventDefault();
 
-		if (arkOnlyMode || cart.count > 0) {
+		if (cart.count > 0) {
 			goToCart();
 			return;
 		}
@@ -1196,6 +1469,28 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 			wizard.present();
 		});
 	});
+
+	for (const game of GamesList) {
+		const gameId = game.gameId;
+		const gameBuyButton = document.getElementById(`checkout-buy-${gameId.toLowerCase()}-button`);
+		if (!gameBuyButton) {
+			continue;
+		}
+
+		gameBuyButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+
+			const wizardFunction = () => {
+				wizard.present(null, [gameId], gameId);
+			};
+
+			if (cart.count > 0) {
+				wizardFunction();
+			} else {
+				emailDialog.present(true, wizardFunction);
+			}
+		});
+	}
 
 	landingButton.addEventListener('click', () => {
 		goToLanding();

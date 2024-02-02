@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCloudStorage, BeaconCommon, BeaconEmail, BeaconEncryption, BeaconRecordSet, BeaconShop, Exception, JsonSerializable;
+use BeaconCloudStorage, BeaconCommon, BeaconDatabase, BeaconEmail, BeaconEncryption, BeaconRecordSet, BeaconShop, Exception, JsonSerializable;
 
 class User extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -286,6 +286,16 @@ class User extends DatabaseObject implements JsonSerializable {
 		return $this->enabled;
 	}
 
+	public function IsCurator(): bool {
+		$this->LoadLicenses();
+		foreach ($this->licenses as $license) {
+			if (($license->ProductFlags() & 8) === 8) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function CanSignIn(): bool {
 		// Use the methods here so subclasses can override correctly.
 		return $this->IsEnabled() === true && $this->RequiresPasswordChange() === false;
@@ -504,8 +514,8 @@ class User extends DatabaseObject implements JsonSerializable {
 		return static::MutableDatabaseObjectHasPendingChanges() || count($this->backupCodesAdded) > 0 || count($this->backupCodesRemoved) > 0;
 	}
 
-	protected function SaveChildObjects(): void {
-		static::MutableDatabaseObjectSaveChildObjects();
+	protected function SaveChildObjects(BeaconDatabase $database): void {
+		static::MutableDatabaseObjectSaveChildObjects($database);
 
 		foreach ($this->backupCodesRemoved as $code) {
 			$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
@@ -549,7 +559,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			return;
 		}
 
-		$this->licenses = License::Search(['userId' => $this->userId], true);
+		$this->licenses = License::Search(['emailId' => $this->emailId], true);
 		$this->licensesLoaded = true;
 	}
 

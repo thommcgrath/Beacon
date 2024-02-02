@@ -11,6 +11,10 @@ use BeaconAPI\v4\Project;
 use BeaconAPI\v4\{Ark, ArkSA};
 
 $projectId = $_REQUEST['projectId'];
+if (BeaconUUID::Validate($projectId) === false) {
+	return;
+}
+
 $project = Project::Fetch($projectId);
 if (is_null($project) || $project->IsPublic() === false) {
 	http_response_code(404);

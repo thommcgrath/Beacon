@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointOverride
-Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
+Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate, Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  If Self.mPointRef.IsResolved = False Then
@@ -414,6 +414,22 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 		  End If
 		  Return ClassString.Lowercase + ":" + Self.mMode.ToString(Locale.Raw, "0")
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  // Part of the Beacon.Validateable interface.
+		  
+		  Location = Location + Beacon.Issue.Separator + Self.mPointRef.ClassString
+		  
+		  If Self.mSets.Count = 0 Then
+		    Issues.Add(New Beacon.Issue(Location, "Spawn point '" + Self.Label + "' should contain at least one spawn set."))
+		  End If
+		  
+		  For Each Set As ArkSA.SpawnPointSet In Self.mSets
+		    Set.Validate(Location, Issues, Project)
+		  Next
+		End Sub
 	#tag EndMethod
 
 

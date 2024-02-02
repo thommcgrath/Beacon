@@ -1585,14 +1585,7 @@ div.select {
 
 				.result_type {
 					font-size: 9pt;
-					margin-left: 12px;
-					float: right;
-					border-width: 1px;
-					border-style: solid;
-					padding: 2px 4px;
-					border-radius: 4px;
 					color: rgba($foreground-color, 0.4);
-					border-color: rgba($foreground-color, 0.2);
 				}
 
 				&:hover {
@@ -2080,6 +2073,10 @@ ul.no-markings, ol.no-markings {
 	text-align: center;
 	padding: 16px;
 
+	&+& {
+		margin-top: 1rem;
+	}
+
 	&.notice-warning {
 		border-color: color.mix($text-red, $background-color, 35%);
 		color: $text-red;
@@ -2461,12 +2458,14 @@ input.no-stepper {
 /* !Store */
 
 #checkout-wizard-list {
-	& > div {
+	& > .checkout-wizard-list-game {
 		display: flex;
 		align-items: center;
 
-		&+div {
+		&.separated {
 			margin-top: 20px;
+			padding-top: 20px;
+			border-top: 1px solid $separator-color;
 		}
 
 		.checkout-wizard-checkbox-cell {
@@ -2722,6 +2721,24 @@ input.no-stepper {
 	animation: shake-keyframes 0.4s linear 1;
 }
 
+.omni-game-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 1.5rem;
+
+	.omni-game-header-title {
+		font-weight: 600;
+		font-size: 1.5rem;
+		margin-right: 1.5rem;
+		flex: 1 1 auto;
+	}
+
+	.omni-game-header-button {
+		flex: 0 0 auto;
+		align-self: flex-start;
+	}
+}
+
 @keyframes shake-keyframes {
 	0% {
 		transform: translate(10px);
@@ -2795,6 +2812,14 @@ body.no-navigation {
 		background-size: 16px 16px;
 		width: 8px;
 	}
+}
+
+.license-name {
+	color: $text-accent-color;
+}
+
+.game-name {
+	color: $text-blue;
 }
 
 @media (min-width: $breakpoint_desktop) {

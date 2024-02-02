@@ -393,7 +393,7 @@ End
 		      If Me.RowTagAt(Idx).ObjectValue IsA Ark.Blueprint And Ark.Blueprint(Me.RowTagAt(Idx)).ContentPackId = Pack.ContentPackId Then
 		        Me.CellCheckBoxValueAt(Idx, Column) = Checked
 		      End If
-		      SomethingSelected = SomethingSelected Or Me.CellCheckBoxValueAt(Row, Column)
+		      SomethingSelected = SomethingSelected Or Me.CellCheckBoxValueAt(Idx, Column)
 		    Next
 		  Case IsA Ark.Blueprint
 		    Var Blueprint As Ark.Blueprint = RowTag
@@ -436,7 +436,7 @@ End
 		Sub Run()
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  For Each Pack As Beacon.ContentPack In Self.mContentPacks
-		    DataSource.SaveContentPack(Pack, True)
+		    Call DataSource.SaveContentPack(Pack, True)
 		  Next
 		  Var Delete() As Ark.Blueprint
 		  Call DataSource.SaveBlueprints(Self.mBlueprints, Delete, Nil, True)

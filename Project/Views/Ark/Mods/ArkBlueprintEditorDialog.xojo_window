@@ -656,7 +656,7 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "Entry String:"
+         Text            =   "Unlock String:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -2248,9 +2248,7 @@ End
 		  
 		  Var Ingredients() As Ark.CraftingCostIngredient = Engram.Recipe
 		  For Each Ingredient As Ark.CraftingCostIngredient In Ingredients
-		    Self.EngramCraftingCostList.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Current, "#,##0"))
-		    Self.EngramCraftingCostList.CellCheckBoxValueAt(Self.EngramCraftingCostList.LastAddedRowIndex, 2) = Ingredient.RequireExact
-		    Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
+		    Self.PutIngredientInList(Ingredient)
 		  Next
 		  Self.EngramCraftingCostList.SortingColumn = 0
 		  Self.EngramCraftingCostList.Sort
@@ -2361,6 +2359,21 @@ End
 		  Win.Close
 		  Return EditedBlueprint
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PutIngredientInList(Ingredient As Ark.CraftingCostIngredient, RowIdx As Integer = -1)
+		  Var List As BeaconListbox = Self.EngramCraftingCostList
+		  If RowIdx = -1 Then
+		    List.AddRow("")
+		    RowIdx = List.LastAddedRowIndex
+		  End If
+		  
+		  List.CellTextAt(RowIdx, 0) = Ingredient.Engram.Label
+		  List.CellTextAt(RowIdx, 1) = Ingredient.Quantity.ToString(Locale.Current, "#,##0")
+		  List.CellCheckBoxValueAt(RowIdx, 2) = Ingredient.RequireExact
+		  List.RowTagAt(RowIdx) = Ingredient
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -2613,7 +2626,7 @@ End
 		  If HasUnlockDetails Then
 		    If EntryString.IsEmpty = False Then
 		      If EntryString.EndsWith("_C") = False Then
-		        Self.ShowAlert("Invalid Entry String", "Engram entry strings usually start with EngramEntry and always end with _C.")
+		        Self.ShowAlert("Invalid unlock string", "Engram unlock strings usually start with EngramEntry and always end with _C.")
 		        Return False
 		      End If
 		      
@@ -2626,7 +2639,7 @@ End
 		    Var RequireValidPoints As Boolean
 		    If RequiredLevelString.IsEmpty = False Then 
 		      If IsNumeric(RequiredLevelString) = False And UnlocksByTek = False Then
-		        Self.ShowAlert("Invalid Required Level Value", "Required player level must be numeric or Tek.")
+		        Self.ShowAlert("Invalid required level value", "Required player level must be numeric or Tek.")
 		        Return False
 		      End If
 		      
@@ -2646,7 +2659,7 @@ End
 		      ElseIf IsNumeric(RequiredPointsString) Then
 		        Engram.RequiredUnlockPoints = Round(CDbl(RequiredPointsString))
 		      Else
-		        Self.ShowAlert("Invalid Points Value", "Required engram points must be numeric.")
+		        Self.ShowAlert("Invalid points value", "Required engram points must be numeric.")
 		        Return False
 		      End If
 		    Else
@@ -2657,7 +2670,7 @@ End
 		      End If
 		    End If
 		  ElseIf RequiredLevelString.IsEmpty = False Or RequiredPointsString.IsEmpty = False Then
-		    Self.ShowAlert("Entry string is required to set level and point requirements.", "If you want to set level and point requirements for this engram, please provide the engram's entry string so Beacon can control it in the Engram Control editor.")
+		    Self.ShowAlert("Unlock string is required to set level and point requirements.", "If you want to set level and point requirements for this engram, please provide the engram's unlock string so Beacon can control it in the Engram Control editor.")
 		    Return False
 		  Else
 		    Engram.EntryString = ""
@@ -2668,7 +2681,7 @@ End
 		  Var StackSizeString As String = Self.EngramStackSizeField.Text.Trim
 		  If StackSizeString.IsEmpty = False Then
 		    If IsNumeric(StackSizeString) = False Then
-		      Self.ShowAlert("Invalid Stack Size", "The stack size value should be numeric.")
+		      Self.ShowAlert("Invalid stack size", "The stack size value should be numeric.")
 		      Return False
 		    End If
 		    
@@ -3133,6 +3146,66 @@ End
 		  Case 2
 		    Me.RowTagAt(Row) = New Ark.CraftingCostIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Ark.CraftingCostIngredient.ClipboardType)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  Var Contents As Variant = Board.GetClipboardData(Ark.CraftingCostIngredient.ClipboardType)
+		  If Contents.IsNull Then
+		    Return
+		  End If
+		  
+		  Try
+		    Var Dicts() As Variant = Contents
+		    For Each Dict As Dictionary In Dicts
+		      Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, Nil)
+		      If Ingredient Is Nil Then
+		        Continue
+		      End If
+		      For Idx As Integer = 0 To Me.LastRowIndex
+		        If Ark.CraftingCostIngredient(Me.RowTagAt(Idx)).Engram.ObjectId = Ingredient.Engram.ObjectId Then
+		          Self.PutIngredientInList(Ingredient, Idx)
+		          Self.Modified = True
+		          Continue For Dict
+		        End If
+		      Next
+		      
+		      Self.PutIngredientInList(Ingredient)
+		      Self.Modified = True
+		    Next
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		  End Try
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var Dicts() As Dictionary
+		  For Idx As Integer = 0 To Me.RowCount - 1
+		    If Not Me.RowSelectedAt(Idx) Then
+		      Continue
+		    End If
+		    
+		    Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Idx)
+		    Dicts.Add(Ingredient.SaveData)
+		  Next
+		  
+		  If Dicts.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Ark.CraftingCostIngredient.ClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

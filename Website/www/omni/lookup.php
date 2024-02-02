@@ -8,7 +8,7 @@ http_response_code(500);
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
-use BeaconAPI\v4\User;
+use BeaconAPI\v4\{License, User};
 
 $email = isset($_GET['email']) ? $_GET['email'] : '';
 $response = [
@@ -44,7 +44,11 @@ function lookupEmail($email, &$response) {
 			$response['purchases'] = $user->Licenses();
 			return;
 		} else {
-			$response['debug'] = 'null user';
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
+			$emailId = $rows->Field('email_id');
+			$licenses = License::Search(['emailId' => $emailId], true);
+			$response['purchases'] = $licenses;
 		}
 	} catch (Exception $e) {
 		$response['debug'] = 'exception';
