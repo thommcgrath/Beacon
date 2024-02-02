@@ -23,9 +23,7 @@ if ($isFirstOfMonth) {
 	$firstOfMonth = clone $today;
 }
 $firstOfMonth->modify('first day of');
-$lastOfMonth = clone $firstOfMonth;
-$lastOfMonth->modify('last day of');
-$lastOfMonth->modify('tomorrow');
+$lastOfMonth = clone $today;
 $daysInMonth = $today->format('t');
 $monthName = $today->format('M');
 
