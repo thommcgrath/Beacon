@@ -40,6 +40,12 @@ Protected Class RCONSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Host() As String
+		  Return Self.mHost
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsAuthenticated() As Boolean
 		  Return Self.mAuthenticated
 		End Function
@@ -161,6 +167,12 @@ Protected Class RCONSocket
 		  RaiseEvent Disconnected
 		  Self.mAuthenticated = False
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Port() As Integer
+		  Return Self.mPort
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

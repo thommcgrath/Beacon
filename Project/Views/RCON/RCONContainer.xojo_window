@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconContainer RCONContainer
+Begin BeaconSubview RCONContainer
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -51,7 +51,7 @@ Begin BeaconContainer RCONContainer
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   718
       Begin DesktopTextArea OutputArea
@@ -499,6 +499,7 @@ End
 	#tag Event
 		Sub Opening()
 		  BeaconUI.SizeToFit(Self.HostLabel, Self.PortLabel, Self.PasswordLabel)
+		  Self.UpdateTitle()
 		End Sub
 	#tag EndEvent
 
@@ -546,6 +547,29 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Select Case Self.Pages.SelectedPanelIndex
+		  Case Self.PageDetails
+		    If Self.HostField.Text.IsEmpty Then
+		      Self.HostField.SetFocus
+		    ElseIf Self.PortField.Text.IsEmpty Then
+		      Self.PortField.SetFocus
+		    ElseIf Self.PasswordField.Text.IsEmpty Then
+		      Self.PasswordField.SetFocus
+		    Else
+		      Self.ConnectButton.SetFocus
+		    End If
+		  Case Self.PageConnecting
+		    Self.ConnectingCancelButton.SetFocus
+		  Case Self.PageCommands
+		    Self.CommandField.SetFocus
+		  End Select
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub Connect()
@@ -579,6 +603,32 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.ViewId = Beacon.UUID.v4
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Host() As String
+		  Return Self.Sock.Host
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsConnected() As Boolean
+		  Return Self.Sock.IsConnected
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Port() As Integer
+		  Return Self.Sock.Port
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Setup(Profile As Beacon.ServerProfile, Connect As Boolean)
 		  
 		End Sub
@@ -592,6 +642,30 @@ End
 		  If Connect Then
 		    Self.Connect()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateTitle()
+		  Var Host As String = Self.HostField.Text.Trim
+		  If Host.IsEmpty Then
+		    Self.ViewTitle = "New Connection"
+		    Return
+		  End If
+		  
+		  Var Port As Integer
+		  #Pragma BreakOnExceptions Off
+		  Try
+		    Port = Integer.FromString(Self.PortField.Text.Trim, Locale.Current)
+		  Catch Err As RuntimeException
+		  End Try
+		  #Pragma BreakOnExceptions Default
+		  If Port < 1 Or Port > 65535 Then
+		    Self.ViewTitle = Host
+		    Return
+		  End If
+		  
+		  Self.ViewTitle = Host + ":" + Port.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndMethod
 
@@ -669,6 +743,20 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events HostField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateTitle()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PortField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateTitle()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ConnectingCancelButton
 	#tag Event
 		Sub Pressed()
@@ -678,6 +766,54 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Modified"
 		Visible=false
