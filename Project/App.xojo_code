@@ -92,6 +92,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    For Idx As Integer = 0 To Bound
 		      GameMenu.MenuAt(Idx).Enabled = True
 		    Next
+		    
+		    WindowNewRCONWindow.Enabled = True
 		  End If
 		  
 		  If Preferences.OnlineEnabled Then
@@ -449,6 +451,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Self.mMainWindow.Documents(False).NewProject("")
 		  End If
 		  Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function WindowNewRCONWindow() As Boolean Handles WindowNewRCONWindow.Action
+		  Var Win As New RCONWindow
+		  Win.Show
+		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 

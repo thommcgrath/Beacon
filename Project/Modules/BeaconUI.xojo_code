@@ -429,6 +429,12 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ProportionallyPosition(Margin As Integer, ContainerSize As Integer, ContentSize As Integer, Factor As Double = 2.0) As Integer
+		  Return Margin + Round(((ContainerSize - Margin) - (ContentSize + Margin)) / Factor)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub RemoveAllRows(Extends Menu As DesktopMenuItem)
 		  For I As Integer = Menu.LastRowIndex DownTo 0

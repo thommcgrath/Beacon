@@ -17,149 +17,48 @@ Begin BeaconWindow RCONWindow
    MaximumWidth    =   32000
    MenuBar         =   ""
    MenuBarVisible  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
+   MinimumHeight   =   162
+   MinimumWidth    =   300
    Resizeable      =   True
    Title           =   "RCON"
    Type            =   0
    Visible         =   True
    Width           =   600
-   Begin Beacon.RCONSocket Connector
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin DesktopTextField CommandField
+   Begin RCONContainer RCONContainer1
       AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
       BackgroundColor =   &cFFFFFF
-      Bold            =   False
+      Composited      =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   ""
+      HasBackgroundColor=   False
+      Height          =   400
       Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextAlignment   =   0
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   358
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Visible         =   True
-      Width           =   560
-   End
-   Begin DesktopTextArea OutputArea
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   True
-      AllowStyledText =   True
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
-      Height          =   326
-      HideSelection   =   True
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LineHeight      =   0.0
-      LineSpacing     =   1.0
+      InitialParent   =   ""
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Multiline       =   True
-      ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   ""
-      TextAlignment   =   0
-      TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      UnicodeMode     =   1
-      ValidationMask  =   ""
+      Top             =   0
+      Transparent     =   True
       Visible         =   True
-      Width           =   560
+      Width           =   600
    End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h0
-		Sub Constructor(Host As String, Port As Integer, Password As String)
-		  Super.Constructor
-		  
-		  Self.Connector.Connect(Host, Port, Password)
-		End Sub
-	#tag EndMethod
-
-
 #tag EndWindowCode
 
-#tag Events Connector
-	#tag Event
-		Sub ReplyReceived(Message As Beacon.RCONMessage, Response As String)
-		  #Pragma Unused Message
-		  
-		  Self.OutputArea.Text = Self.OutputArea.Text + EndOfLine + "<- " + Response.Trim
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CommandField
-	#tag Event
-		Function KeyDown(key As String) As Boolean
-		  If Key = Chr(10) Or Key = Chr(13) Then
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub KeyUp(key As String)
-		  If Key = Chr(10) Or Key = Chr(13) Then
-		    Self.OutputArea.Text = Self.OutputArea.Text + EndOfLine + "-> " + Me.Text
-		    Self.Connector.Send(Me.Text)
-		    Me.Text = ""
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Interfaces"

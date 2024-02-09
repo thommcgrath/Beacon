@@ -391,6 +391,22 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin DesktopMenuItem UntitledSeparator1
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "-"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin DesktopMenuItem WindowNewRCONWindow
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "New RCON Window"
+         AutoEnabled = False
+         AutoEnable = False
+         Visible = True
+      End
       Begin DesktopMenuItem UntitledSeparator3
          SpecialMenu = 0
          Index = -2147483648

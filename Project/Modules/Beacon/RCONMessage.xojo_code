@@ -24,6 +24,7 @@ Protected Class RCONMessage
 		  Self.mType = Type
 		  Self.mId = Id
 		  Self.mBody = Body
+		  Self.mDetectorId = System.Random.InRange(0, 2147483647)
 		End Sub
 	#tag EndMethod
 
@@ -36,7 +37,36 @@ Protected Class RCONMessage
 		  Self.mType = Type
 		  Self.mBody = Body.ConvertEncoding(Encodings.ASCII)
 		  Self.mId = System.Random.InRange(0, 2147483647)
+		  Self.mDetectorId = System.Random.InRange(0, 2147483647)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Consume(Response As Beacon.RCONMessage) As Boolean
+		  If Self.Matches(Response) = False Then
+		    Return False
+		  End If
+		  
+		  If Response.mId = Self.mDetectorId Then
+		    Self.mResponseReceived = True
+		  Else
+		    Self.mResponse = Self.mResponse + Response.Body
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Detector() As Beacon.RCONMessage
+		  Return New Beacon.RCONMessage(Self.TypeResponseValue, Self.mDetectorId, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DetectorId() As Integer
+		  Return Self.mDetectorId
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -73,8 +103,47 @@ Protected Class RCONMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Matches(Other As Beacon.RCONMessage) As Boolean
+		  Return (Other Is Nil) = False And Other.mType = Self.TypeResponseValue And (Other.mId = Self.mId Or Other.mId = Self.mDetectorId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Response() As String
+		  Return Self.mResponse
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ResponseReceived() As Boolean
+		  Return Self.mResponseReceived
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Type() As Int32
 		  Return Self.mType
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function WaitForResponse(Timeout As Integer = 10000) As Boolean
+		  If Self.mResponseReceived Then
+		    Return True
+		  End If
+		  
+		  Var Thread As Global.Thread = Global.Thread.Current
+		  If Thread Is Nil Then
+		    Var Err As UnsupportedOperationException
+		    Err.Message = "Do not call WaitForResponse on the main thread."
+		    Raise Err
+		  End If
+		  
+		  Var StartTime As Integer = System.Ticks
+		  While Self.mResponseReceived = False And (System.Ticks - StartTime) < Timeout
+		    Thread.Sleep(10)
+		  Wend
+		  Return Self.mResponseReceived
 		End Function
 	#tag EndMethod
 
@@ -84,7 +153,19 @@ Protected Class RCONMessage
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDetectorId As Int32
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mId As Int32
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mResponse As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mResponseReceived As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
