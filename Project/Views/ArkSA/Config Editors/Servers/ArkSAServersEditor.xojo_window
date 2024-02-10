@@ -217,7 +217,6 @@ Begin ArkSAConfigEditor ArkSAServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -624,6 +623,27 @@ End
 		  DeployItem.Tag = DeployProfiles
 		  Base.AddMenu(DeployItem)
 		  
+		  Var RCONItem As DesktopMenuItem
+		  If Me.SelectedRowCount > 1 Then
+		    RCONItem = New DesktopMenuItem("Open RCON for These Servers…")
+		  Else
+		    RCONItem = New DesktopMenuItem("Open RCON for This Server…")
+		  End If
+		  Var RCONConfigs() As Beacon.RCONConfig
+		  For Idx As Integer = 0 To Me.LastRowIndex
+		    If Me.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    Var Profile As Beacon.ServerProfile = Me.RowTagAt(Idx)
+		    Var Config As Beacon.RCONConfig = Profile.RCONConfig
+		    If (Config Is Nil) = False Then
+		      RCONConfigs.Add(Config)
+		    End If
+		  Next
+		  RCONItem.Enabled = RCONConfigs.Count > 0
+		  RCONItem.Tag = RCONConfigs
+		  Base.AddMenu(RCONItem)
+		  
 		  Var BackupsItem As New DesktopMenuItem("Show Config Backups")
 		  Base.AddMenu(BackupsItem)
 		  
@@ -686,6 +706,11 @@ End
 		        File.Parent.Open
 		      End If
 		    Next Idx
+		  Case "Open RCON for These Servers…", "Open RCON for This Server…"
+		    Var RCONConfigs() As Beacon.RCONConfig = HitItem.Tag
+		    For Each Config As Beacon.RCONConfig In RCONConfigs
+		      RCONWindow.PresentConfig(Config)
+		    Next
 		  End Select
 		  
 		  Return True
@@ -813,6 +838,7 @@ End
 		    For Each Profile As Beacon.ServerProfile In Profiles
 		      If ProfileMap.HasKey(Profile.ProfileId) Then
 		        Beacon.ServerProfile(ProfileMap.Value(Profile.ProfileId).ObjectValue).SecondaryName = Profile.SecondaryName
+		        Beacon.ServerProfile(ProfileMap.Value(Profile.ProfileId).ObjectValue).RCONConfig = Profile.RCONConfig
 		      End If
 		    Next
 		  Next

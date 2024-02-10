@@ -880,6 +880,14 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ToggleOnly(ItemName As String)
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
+		    Self.mItems(Idx).Toggled = (Self.mItems(Idx).Name = ItemName)
+		  Next
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean

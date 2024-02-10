@@ -571,6 +571,12 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function Config() As Beacon.RCONConfig
+		  Return Self.Sock.Config
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Connect()
 		  Var Port As Integer
@@ -629,8 +635,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Setup(Profile As Beacon.ServerProfile, Connect As Boolean)
+		Sub Setup(Config As Beacon.RCONConfig, Connect As Boolean)
+		  If Config Is Nil Then
+		    Return
+		  End If
 		  
+		  Self.Setup(Config.Host, Config.Port, Config.Password, Connect)
 		End Sub
 	#tag EndMethod
 

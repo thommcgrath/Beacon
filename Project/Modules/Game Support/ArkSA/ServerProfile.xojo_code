@@ -78,10 +78,22 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Sub AdminPassword(Assigns Value As NullableString)
-		  If Self.mAdminPassword <> Value Then
-		    Self.mAdminPassword = Value
-		    Self.Modified = True
+		  If Self.mAdminPassword = Value Then
+		    Return
 		  End If
+		  
+		  Self.mAdminPassword = Value
+		  
+		  Var Config As Beacon.RCONConfig = Self.RCONConfig
+		  If (Config Is Nil) = False Then
+		    Var Password As String
+		    If (Self.mAdminPassword Is Nil) = False Then
+		      Password = Self.mAdminPassword
+		    End If
+		    Self.RCONConfig = New Beacon.RCONConfig(Config.Host, Config.Port, Password)
+		  End If
+		  
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -289,6 +301,22 @@ Inherits Beacon.ServerProfile
 		Sub Platform(Assigns Value As Integer)
 		  #Pragma Unused Value
 		  Super.Platform = Beacon.PlatformUniversal
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RCONConfig(Assigns Details As Beacon.RCONConfig)
+		  If Details Is Nil Then
+		    Super.RCONConfig = Nil
+		    Return
+		  End If
+		  
+		  Var Password As String
+		  If (Self.mAdminPassword Is Nil) = False Then
+		    Password = Self.mAdminPassword
+		  End If
+		  
+		  Super.RCONConfig = New Beacon.RCONConfig(Details.Host, Details.Port, Password)
 		End Sub
 	#tag EndMethod
 

@@ -97,6 +97,10 @@ Protected Class ServerProfile
 		    If Dict.HasKey("hostConfig") Then
 		      Self.mHostConfig = Beacon.HostConfig.FromSaveData(Dictionary(Dict.Value("hostConfig").ObjectValue))
 		    End If
+		    
+		    If Dict.HasKey("rcon") Then
+		      Self.mRCONConfig = Beacon.RCONConfig.FromSaveData(Dict.Value("rcon"))
+		    End If
 		  Case 1
 		    If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
 		      Var Err As New KeyNotFoundException
@@ -479,6 +483,23 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RCONConfig() As Beacon.RCONConfig
+		  Return Self.mRCONConfig
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RCONConfig(Assigns Details As Beacon.RCONConfig)
+		  If Self.mRCONConfig = Details Then
+		    Return
+		  End If
+		  
+		  Self.mRCONConfig = Details
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var SaveData As New Dictionary
 		  SaveData.Value("version") = Self.Version
@@ -499,6 +520,10 @@ Protected Class ServerProfile
 		  
 		  If (Self.mHostConfig Is Nil) = False Then
 		    SaveData.Value("hostConfig") = Self.mHostConfig.SaveData
+		  End If
+		  
+		  If (Self.mRCONConfig Is Nil) = False Then
+		    SaveData.Value("rcon") = Self.mRCONConfig.SaveData
 		  End If
 		  
 		  Var Dict As New Dictionary
@@ -600,6 +625,10 @@ Protected Class ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mProviderId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRCONConfig As Beacon.RCONConfig
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -32,7 +32,7 @@ Begin BeaconWindow RCONWindow
       AllowTabs       =   False
       Backdrop        =   0
       Enabled         =   True
-      Height          =   38
+      Height          =   41
       Index           =   -2147483648
       Left            =   0
       LeftPadding     =   10
@@ -57,7 +57,7 @@ Begin BeaconWindow RCONWindow
    Begin DesktopPagePanel Panel
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   362
+      Height          =   359
       Index           =   -2147483648
       Left            =   0
       LockBottom      =   True
@@ -72,7 +72,7 @@ Begin BeaconWindow RCONWindow
       TabPanelIndex   =   0
       TabStop         =   False
       Tooltip         =   ""
-      Top             =   38
+      Top             =   41
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -85,7 +85,9 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.Panel.RemovePanelAt(0)
-		  Call Self.NewTab()
+		  If Self.mOpenDefaultTab Then
+		    Call Self.NewTab()
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -117,17 +119,37 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
+		  Self.Constructor(True)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(WithDefaultTab As Boolean)
 		  Self.mContainers = New Dictionary
+		  Self.mOpenDefaultTab = WithDefaultTab
 		  Super.Constructor
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContainerForConnection(Host As String, Port As Integer) As RCONContainer
+		Function ContainerForConnection(Config As Beacon.RCONConfig, BringToFront As Boolean = False) As RCONContainer
+		  If Config Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.ContainerForConnection(Config.Host, Config.Port, BringToFront)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContainerForConnection(Host As String, Port As Integer, BringToFront As Boolean = False) As RCONContainer
 		  For Each Entry As DictionaryEntry In Self.mContainers
 		    Var Container As RCONContainer = Entry.Value
 		    If Container.IsConnected And Container.Host = Host And Container.Port = Port Then
+		      If BringToFront Then
+		        Self.CurrentView = Container
+		      End If
 		      Return Container
 		    End If
 		  Next
@@ -197,14 +219,52 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function WindowForConnection(Host As String, Port As Integer) As RCONWindow
+		Shared Sub PresentConfig(Config As Beacon.RCONConfig)
+		  Var Win As RCONWindow = RCONWindow.WindowForConnection(Config, True)
+		  If (Win Is Nil) = False Then
+		    // Because it returned a window, it found a window that has this config
+		    Return
+		  End If
+		  
+		  For Each Window As DesktopWindow In App.Windows
+		    If Window IsA RCONWindow Then
+		      Win = RCONWindow(Window)
+		      Exit
+		    End If
+		  Next
+		  
+		  If Win Is Nil Then
+		    Win = New RCONWindow(False)
+		  End If
+		  
+		  Var Container As RCONContainer = Win.NewTab
+		  Container.Setup(Config, True)
+		  Win.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function WindowForConnection(Config As Beacon.RCONConfig, BringToFront As Boolean = False) As RCONWindow
+		  If Config Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return RCONWindow.WindowForConnection(Config.Host, Config.Port, BringToFront)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function WindowForConnection(Host As String, Port As Integer, BringToFront As Boolean = False) As RCONWindow
 		  For Each Win As DesktopWindow In App.Windows
 		    If (Win IsA RCONWindow) = False Then
 		      Continue
 		    End If
 		    
-		    Var Container As RCONContainer = RCONWindow(Win).ContainerForConnection(Host, Port)
+		    Var Container As RCONContainer = RCONWindow(Win).ContainerForConnection(Host, Port, BringToFront)
 		    If (Container Is Nil) = False Then
+		      If BringToFront Then
+		        Win.Show
+		      End If
 		      Return RCONWindow(Win)
 		    End If
 		  Next
@@ -218,6 +278,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCurrentView As RCONContainer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOpenDefaultTab As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

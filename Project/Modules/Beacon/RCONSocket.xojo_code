@@ -1,6 +1,12 @@
 #tag Class
 Protected Class RCONSocket
 	#tag Method, Flags = &h0
+		Function Config() As Beacon.RCONConfig
+		  Return New Beacon.RCONConfig(Self.mHost, Self.mPort, Self.mPassword)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Connect(Host As String, Port As Integer, Password As String)
 		  If Self.mSocket.IsConnected Then
 		    Return

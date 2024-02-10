@@ -47,7 +47,7 @@ Begin ArkSAServerViewContainer ArkSANitradoServerView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin FadedSeparator FadedSeparator1
@@ -439,6 +439,12 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = PageGeneral, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageNotes, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = StatusBackupCreation, Type = String, Dynamic = False, Default = \"backup_creation", Scope = Private
 	#tag EndConstant
 
@@ -543,13 +549,11 @@ End
 		  
 		  Select Case Item.Name
 		  Case "PageGeneral"
-		    Self.Pages.SelectedPanelIndex = 0
-		    Item.Toggled = True
-		    Me.Item("PageNotes").Toggled = False
+		    Self.Pages.SelectedPanelIndex = Self.PageGeneral
+		    Me.ToggleOnly(Item.Name)
 		  Case "PageNotes"
-		    Self.Pages.SelectedPanelIndex = 1
-		    Item.Toggled = True
-		    Me.Item("PageGeneral").Toggled = False
+		    Self.Pages.SelectedPanelIndex = Self.PageNotes
+		    Me.ToggleOnly(Item.Name)
 		  Case "PowerButton"
 		    If ToggleThread.ThreadState <> Thread.ThreadStates.NotRunning Then
 		      Self.ShowAlert("An action is already running", "Wait a moment for the current action to complete.")
