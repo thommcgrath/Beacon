@@ -17,7 +17,7 @@ Begin BeaconWindow RCONWindow
    MaximumWidth    =   32000
    MenuBar         =   ""
    MenuBarVisible  =   False
-   MinimumHeight   =   200
+   MinimumHeight   =   234
    MinimumWidth    =   300
    Resizeable      =   True
    Title           =   "RCON"

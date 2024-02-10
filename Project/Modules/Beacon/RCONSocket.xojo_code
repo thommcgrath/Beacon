@@ -2,7 +2,7 @@
 Protected Class RCONSocket
 	#tag Method, Flags = &h0
 		Function Config() As Beacon.RCONConfig
-		  Return New Beacon.RCONConfig(Self.mHost, Self.mPort, Self.mPassword)
+		  Return New Beacon.RCONConfig("", Self.mHost, Self.mPort, Self.mPassword)
 		End Function
 	#tag EndMethod
 

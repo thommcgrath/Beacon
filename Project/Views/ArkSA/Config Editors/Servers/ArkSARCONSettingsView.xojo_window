@@ -280,7 +280,7 @@ End
 		    If (Profile.AdminPassword Is Nil) = False Then
 		      Password = Profile.AdminPassword
 		    End If
-		    Profile.RCONConfig = New Beacon.RCONConfig(Host, Port, Password)
+		    Profile.RCONConfig = New Beacon.RCONConfig(Profile.Name, Host, Port, Password)
 		  Next
 		  Self.Modified = Self.Modified
 		End Sub

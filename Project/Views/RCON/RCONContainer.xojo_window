@@ -166,11 +166,11 @@ Begin BeaconSubview RCONContainer
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   8
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   122
+         Top             =   156
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -246,14 +246,14 @@ Begin BeaconSubview RCONContainer
          Password        =   True
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c000000
          Tooltip         =   ""
-         Top             =   88
+         Top             =   122
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -288,14 +288,14 @@ Begin BeaconSubview RCONContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c000000
          Tooltip         =   ""
-         Top             =   54
+         Top             =   88
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -325,7 +325,7 @@ Begin BeaconSubview RCONContainer
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Host:"
+         Text            =   "Address:"
          TextAlignment   =   3
          TextColor       =   &c000000
          Tooltip         =   ""
@@ -355,14 +355,14 @@ Begin BeaconSubview RCONContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   2
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Port:"
          TextAlignment   =   3
          TextColor       =   &c000000
          Tooltip         =   ""
-         Top             =   54
+         Top             =   88
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -388,14 +388,14 @@ Begin BeaconSubview RCONContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Password:"
          TextAlignment   =   3
          TextColor       =   &c000000
          Tooltip         =   ""
-         Top             =   88
+         Top             =   122
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -417,7 +417,7 @@ Begin BeaconSubview RCONContainer
          LockTop         =   True
          MaximumValue    =   100
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   2
          Tooltip         =   ""
          Top             =   52
@@ -448,7 +448,7 @@ Begin BeaconSubview RCONContainer
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -478,7 +478,7 @@ Begin BeaconSubview RCONContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   2
+         TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Connecting"
@@ -491,6 +491,81 @@ Begin BeaconSubview RCONContainer
          Visible         =   True
          Width           =   400
       End
+      Begin UITweaks.ResizedLabel NameLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Name:"
+         TextAlignment   =   3
+         TextColor       =   &c000000
+         Tooltip         =   ""
+         Top             =   54
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   100
+      End
+      Begin UITweaks.ResizedTextField NameField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   "Optional"
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c000000
+         Tooltip         =   ""
+         Top             =   54
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   308
+      End
    End
 End
 #tag EndDesktopWindow
@@ -498,7 +573,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  BeaconUI.SizeToFit(Self.HostLabel, Self.PortLabel, Self.PasswordLabel)
+		  BeaconUI.SizeToFit(Self.NameLabel, Self.HostLabel, Self.PortLabel, Self.PasswordLabel)
 		  Self.UpdateTitle()
 		End Sub
 	#tag EndEvent
@@ -518,8 +593,14 @@ End
 		  Self.HostField.Top = Self.HostLabel.Top
 		  Self.HostField.Width = ContentWidth - (Self.HostLabel.Width + 12)
 		  
+		  Self.NameLabel.Left = ContentLeft
+		  Self.NameLabel.Top = Self.HostLabel.Bottom + 12
+		  Self.NameField.Left = Self.NameLabel.Right + 12
+		  Self.NameField.Top = Self.NameLabel.Top
+		  Self.NameField.Width = ContentWidth - (Self.NameLabel.Width + 12)
+		  
 		  Self.PortLabel.Left = ContentLeft
-		  Self.PortLabel.Top = Self.HostLabel.Bottom + 12
+		  Self.PortLabel.Top = Self.NameLabel.Bottom + 12
 		  Self.PortField.Left = Self.PortLabel.Right + 12
 		  Self.PortField.Top = Self.PortLabel.Top
 		  
@@ -555,6 +636,8 @@ End
 		  Case Self.PageDetails
 		    If Self.HostField.Text.IsEmpty Then
 		      Self.HostField.SetFocus
+		    ElseIf Self.NameField.Text.IsEmpty Then
+		      Self.NameField.SetFocus
 		    ElseIf Self.PortField.Text.IsEmpty Then
 		      Self.PortField.SetFocus
 		    ElseIf Self.PasswordField.Text.IsEmpty Then
@@ -573,28 +656,32 @@ End
 
 	#tag Method, Flags = &h0
 		Function Config() As Beacon.RCONConfig
-		  Return Self.Sock.Config
+		  Var Port As Integer
+		  Try
+		    #Pragma BreakOnExceptions Off
+		    Port = Integer.FromString(Self.PortField.Text.Trim, Locale.Current)
+		    #Pragma BreakOnExceptions Default
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Var Host As String = Self.HostField.Text.Trim
+		  Var Name As String = Self.NameField.Text.Trim
+		  Var Password As String = Self.PasswordField.Text
+		  
+		  Return New Beacon.RCONConfig(Name, Host, Port, Password)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Connect()
-		  Var Port As Integer
-		  Try
-		    Port = Integer.FromString(Self.PortField.Text.Trim, Locale.Current)
-		  Catch Err As RuntimeException
-		    Self.ShowAlert("Invalid port", "The port should be only numbers.")
-		    Return
-		  End Try
-		  
-		  If Port < 1 Or Port > 65535 Then
+		  Var Config As Beacon.RCONConfig = Self.Config
+		  If Config.Port < 1 Or Config.Port > 65535 Then
 		    Self.ShowAlert("Invalid port", "The port should be a number greater than 0 and less than 65536.")
 		    Return
 		  End If
 		  
-		  Var Host As String = Self.HostField.Text.Trim
-		  If Host.IsEmpty Then
-		    Self.ShowAlert("Invalid host", "The host should be an ip address or domain name, and definitely not empty.")
+		  If Config.Host.IsEmpty Then
+		    Self.ShowAlert("Invalid address", "The address should be an ip address or domain name, and definitely not empty.")
 		    Return
 		  End If
 		  
@@ -602,8 +689,8 @@ End
 		    Self.Sock.Disconnect
 		  End If
 		  
-		  Self.ConnectingStatusLabel.Text = "Connecting to " + Host + "…"
-		  Self.Sock.Connect(Host, Port, Self.PasswordField.Text)
+		  Self.ConnectingStatusLabel.Text = "Connecting to " + Config.Host + "…"
+		  Self.Sock.Connect(Config.Host, Config.Port, Config.Password)
 		  Self.Pages.SelectedPanelIndex = Self.PageConnecting
 		End Sub
 	#tag EndMethod
@@ -640,12 +727,13 @@ End
 		    Return
 		  End If
 		  
-		  Self.Setup(Config.Host, Config.Port, Config.Password, Connect)
+		  Self.Setup(Config.Name, Config.Host, Config.Port, Config.Password, Connect)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Setup(Host As String, Port As Integer, Password As String, Connect As Boolean)
+		Sub Setup(Name As String, Host As String, Port As Integer, Password As String, Connect As Boolean)
+		  Self.NameField.Text = Name
 		  Self.HostField.Text = Host
 		  Self.PortField.Text = Port.ToString(Locale.Current, "0")
 		  Self.PasswordField.Text = Password
@@ -657,25 +745,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateTitle()
-		  Var Host As String = Self.HostField.Text.Trim
-		  If Host.IsEmpty Then
-		    Self.ViewTitle = "New Connection"
-		    Return
-		  End If
-		  
-		  Var Port As Integer
-		  #Pragma BreakOnExceptions Off
-		  Try
-		    Port = Integer.FromString(Self.PortField.Text.Trim, Locale.Current)
-		  Catch Err As RuntimeException
-		  End Try
-		  #Pragma BreakOnExceptions Default
-		  If Port < 1 Or Port > 65535 Then
-		    Self.ViewTitle = Host
-		    Return
-		  End If
-		  
-		  Self.ViewTitle = Host + ":" + Port.ToString(Locale.Current, "0")
+		  Self.ViewTitle = Self.Config.DisplayName
 		End Sub
 	#tag EndMethod
 
@@ -772,6 +842,13 @@ End
 		Sub Pressed()
 		  Self.Sock.Disconnect
 		  Self.Pages.SelectedPanelIndex = Self.PageDetails
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NameField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateTitle()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

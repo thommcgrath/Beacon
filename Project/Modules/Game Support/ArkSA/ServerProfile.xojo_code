@@ -90,7 +90,7 @@ Inherits Beacon.ServerProfile
 		    If (Self.mAdminPassword Is Nil) = False Then
 		      Password = Self.mAdminPassword
 		    End If
-		    Self.RCONConfig = New Beacon.RCONConfig(Config.Host, Config.Port, Password)
+		    Self.RCONConfig = New Beacon.RCONConfig(Config.Name, Config.Host, Config.Port, Password)
 		  End If
 		  
 		  Self.Modified = True
@@ -316,7 +316,7 @@ Inherits Beacon.ServerProfile
 		    Password = Self.mAdminPassword
 		  End If
 		  
-		  Super.RCONConfig = New Beacon.RCONConfig(Details.Host, Details.Port, Password)
+		  Super.RCONConfig = New Beacon.RCONConfig(Details.Name, Details.Host, Details.Port, Password)
 		End Sub
 	#tag EndMethod
 
