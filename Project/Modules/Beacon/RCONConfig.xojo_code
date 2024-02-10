@@ -69,8 +69,8 @@ Protected Class RCONConfig
 		    Return 1
 		  End If
 		  
-		  Var MyConnectionString As String = Self.mName.Lowercase + ":" + Self.mHost.Lowercase + ":" + Self.mPort.ToString(Locale.Raw, "0") + ":" + Self.mPassword
-		  Var OtherConnectionString As String = Other.mName.Lowercase + ":" + Other.mHost.LowerCase + ":" + Other.mPort.ToString(Locale.Raw, "0") + ":" + Other.mPassword
+		  Var MyConnectionString As String = Self.Signature
+		  Var OtherConnectionString As String = Other.Signature
 		  Return MyConnectionString.Compare(OtherConnectionString, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
@@ -95,6 +95,12 @@ Protected Class RCONConfig
 		  Dict.Value("port") = Self.mPort
 		  Dict.Value("pass") = Self.mPassword
 		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Signature() As String
+		  Return Self.mName.Lowercase + ":" + Self.mHost.Lowercase + ":" + Self.mPort.ToString(Locale.Raw, "0") + ":" + Self.mPassword
 		End Function
 	#tag EndMethod
 

@@ -166,7 +166,7 @@ Begin BeaconSubview RCONContainer
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
@@ -566,6 +566,46 @@ Begin BeaconSubview RCONContainer
          Visible         =   True
          Width           =   308
       End
+      Begin UITweaks.ResizedPushButton SaveBookmarkButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Save As Bookmark"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   8
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   156
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   136
+      End
+   End
+   Begin Beacon.Thread SaveBookmarkThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
    End
 End
 #tag EndDesktopWindow
@@ -575,6 +615,7 @@ End
 		Sub Opening()
 		  BeaconUI.SizeToFit(Self.NameLabel, Self.HostLabel, Self.PortLabel, Self.PasswordLabel)
 		  Self.UpdateTitle()
+		  Self.SaveBookmarkThread.DebugIdentifier = "RCONContainer.SaveBookmarkThread"
 		End Sub
 	#tag EndEvent
 
@@ -612,6 +653,9 @@ End
 		  
 		  Self.ConnectButton.Top = Self.PasswordLabel.Bottom + 12
 		  Self.ConnectButton.Left = ContentLeft + (ContentWidth - Self.ConnectButton.Width)
+		  
+		  Self.SaveBookmarkButton.Top = Self.ConnectButton.Top
+		  Self.SaveBookmarkButton.Left = Self.ConnectButton.Left - (Self.SaveBookmarkButton.Width + 12)
 		  
 		  Var ConnectingHeight As Integer = Self.ConnectingCancelButton.Bottom - Self.ConnectingStatusLabel.Top
 		  Var ConnectingTop As Integer = Round((Self.Height - ConnectingHeight) / 2.5)
@@ -705,7 +749,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function Host() As String
-		  Return Self.Sock.Host
+		  Return Self.Config.Host
 		End Function
 	#tag EndMethod
 
@@ -716,8 +760,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsUsed() As Boolean
+		  Var Config As Beacon.RCONConfig = Self.Config
+		  Return (Config.Host.IsEmpty And Config.Name.IsEmpty And Config.Password.IsEmpty And Config.Port = 0) = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Port() As Integer
-		  Return Self.Sock.Port
+		  Return Self.Config.Port
 		End Function
 	#tag EndMethod
 
@@ -745,7 +796,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateTitle()
-		  Self.ViewTitle = Self.Config.DisplayName
+		  Var Config As Beacon.RCONConfig = Self.Config
+		  Self.ViewTitle = Config.DisplayName
+		  If Beacon.CommonData.Pool.Get(False).IsBookmarked(Config) Then
+		    Self.SaveBookmarkButton.Caption = "Update Bookmark"
+		  Else
+		    Self.SaveBookmarkButton.Caption = "Save As Bookmark"
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -849,6 +906,34 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.UpdateTitle()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SaveBookmarkButton
+	#tag Event
+		Sub Pressed()
+		  Self.SaveBookmarkThread.UserData = Self.Config
+		  Self.SaveBookmarkThread.Start
+		  Me.Enabled = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SaveBookmarkThread
+	#tag Event
+		Sub Run()
+		  Var Config As Beacon.RCONConfig = Me.UserData
+		  Beacon.CommonData.Pool.Get(True).SaveBookmark(Config)
+		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    If Update.Lookup("Finished", False).BooleanValue = True Then
+		      Self.SaveBookmarkButton.Enabled = True
+		      Self.UpdateTitle()
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

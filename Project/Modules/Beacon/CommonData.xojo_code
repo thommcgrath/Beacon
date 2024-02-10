@@ -1,7 +1,7 @@
 #tag Class
 Protected Class CommonData
 Inherits Beacon.DataSource
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE news (uuid TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT NOT NULL, detail TEXT, url TEXT, min_version INTEGER, max_version INTEGER, moment TEXT NOT NULL, min_os_version TEXT);")
@@ -9,6 +9,7 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE custom_templates (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, user_id TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_template_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_template_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, user_id TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE rcon_bookmarks (host TEXT COLLATE NOCASE NOT NULL, port INTEGER NOT NULL, nickname TEXT COLLATE NOCASE NOT NULL, password TEXT NOT NULL, PRIMARY KEY (host, port));")
 		End Sub
 	#tag EndEvent
 
@@ -89,7 +90,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 101
+		  Return 102
 		End Function
 	#tag EndEvent
 
@@ -316,6 +317,19 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DeleteBookmark(Config As Beacon.RCONConfig)
+		  Self.BeginTransaction()
+		  If Config.Name.IsEmpty = False Then
+		    Self.SQLExecute("DELETE FROM rcon_bookmarks WHERE (host = ?1 AND port = ?2) OR nickname = ?3;", Config.Host, Config.Port, Config.Name)
+		  Else
+		    Self.SQLExecute("DELETE FROM rcon_bookmarks WHERE host = ?1 AND port = ?2;", Config.Host, Config.Port)
+		  End If
+		  Self.CommitTransaction()
+		  NotificationKit.Post(Self.Notification_RCONBookmarksUpdated, Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub DeleteTemplate(Template As Beacon.Template, DoCloudExport As Boolean)
 		  If Template Is Nil Then
 		    Return
@@ -432,6 +446,18 @@ Inherits Beacon.DataSource
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Items
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetRCONBookmarks() As Beacon.RCONConfig()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM rcon_bookmarks ORDER BY nickname, host, port;")
+		  Var Configs() As Beacon.RCONConfig
+		  While Not Rows.AfterLastRow
+		    Configs.Add(New Beacon.RCONConfig(Rows.Column("nickname").StringValue, Rows.Column("host").StringValue, Rows.Column("port").IntegerValue, Rows.Column("password").StringValue))
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Configs
 		End Function
 	#tag EndMethod
 
@@ -608,6 +634,18 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsBookmarked(Config As Beacon.RCONConfig) As Boolean
+		  Var Rows As RowSet
+		  If Config.Name.IsEmpty = False Then
+		    Rows = Self.SQLSelect("SELECT * FROM rcon_bookmarks WHERE (host = ?1 AND port = ?2) OR nickname = ?3;", Config.Host, Config.Port, Config.Name)
+		  Else
+		    Rows = Self.SQLSelect("SELECT * FROM rcon_bookmarks WHERE host = ?1 AND port = ?2;", Config.Host, Config.Port)
+		  End If
+		  Return Rows.RowCount > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsTemplateCustom(Template As Beacon.Template) As Boolean
 		  If Template Is Nil Then
 		    Return False
@@ -664,6 +702,32 @@ Inherits Beacon.DataSource
 		  End If
 		  Return mPool
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SaveBookmark(Config As Beacon.RCONConfig)
+		  Self.BeginTransaction()
+		  Var Rows As RowSet
+		  If Config.Name.IsEmpty = False Then
+		    Rows = Self.SQLSelect("SELECT * FROM rcon_bookmarks WHERE (host = ?1 AND port = ?2) OR nickname = ?3;", Config.Host, Config.Port, Config.Name)
+		  Else
+		    Rows = Self.SQLSelect("SELECT * FROM rcon_bookmarks WHERE host = ?1 AND port = ?2;", Config.Host, Config.Port)
+		  End If
+		  If Rows.RowCount > 1 Then
+		    Self.SQLExecute("DELETE FROM rcon_bookmarks WHERE nickname = ?1;", Config.Name)
+		    Self.SQLExecute("UPDATE rcon_bookmarks SET nickname = ?3, password = ?4 WHERE host = ?1 AND port = ?2;", Config.Host, Config.Port, Config.Name, Config.Password)
+		  ElseIf Rows.RowCount = 1 Then
+		    If Config.Name.IsEmpty = False Then
+		      Self.SQLExecute("UPDATE rcon_bookmarks SET host = ?1, port = ?2, nickname = ?3, password = ?4 WHERE (host = ?1 AND port = ?2) OR nickname = ?3;", Config.Host, Config.Port, Config.Name, Config.Password)
+		    Else
+		      Self.SQLExecute("UPDATE rcon_bookmarks SET host = ?1, port = ?2, nickname = ?3, password = ?4 WHERE host = ?1 AND port = ?2;", Config.Host, Config.Port, Config.Name, Config.Password)
+		    End If
+		  Else
+		    Self.SQLExecute("INSERT INTO rcon_bookmarks (host, port, nickname, password) VALUES (?1, ?2, ?3, ?4);", Config.Host, Config.Port, Config.Name, Config.Password)
+		  End If
+		  Self.CommitTransaction()
+		  NotificationKit.Post(Self.Notification_RCONBookmarksUpdated, Nil)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -882,6 +946,9 @@ Inherits Beacon.DataSource
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_NewsUpdated, Type = String, Dynamic = False, Default = \"News Updated", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_RCONBookmarksUpdated, Type = String, Dynamic = False, Default = \"RCON Bookmarks Updated", Scope = Public
 	#tag EndConstant
 
 

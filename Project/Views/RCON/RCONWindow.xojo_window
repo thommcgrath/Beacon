@@ -18,13 +18,94 @@ Begin BeaconWindow RCONWindow
    MenuBar         =   ""
    MenuBarVisible  =   False
    MinimumHeight   =   234
-   MinimumWidth    =   300
+   MinimumWidth    =   550
    Resizeable      =   True
    Title           =   "RCON"
    Type            =   0
    Visible         =   True
-   Width           =   600
+   Width           =   800
    Begin OmniBar TabsBar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      Left            =   201
+      LeftPadding     =   10
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   10
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   599
+   End
+   Begin DesktopPagePanel Panel
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   359
+      Index           =   -2147483648
+      Left            =   201
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   1
+      Panels          =   ""
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   False
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   False
+      Value           =   0
+      Visible         =   True
+      Width           =   599
+   End
+   Begin FadedSeparator SidebarSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   400
+      Index           =   -2147483648
+      Left            =   200
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin OmniBar SidebarSwitcher
       Alignment       =   0
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -45,16 +126,16 @@ Begin BeaconWindow RCONWindow
       Scope           =   2
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   1
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   600
+      Width           =   200
    End
-   Begin DesktopPagePanel Panel
+   Begin DesktopPagePanel Sidebar
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   359
@@ -63,12 +144,12 @@ Begin BeaconWindow RCONWindow
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
-      PanelCount      =   1
+      PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   False
       Tooltip         =   ""
@@ -76,7 +157,65 @@ Begin BeaconWindow RCONWindow
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   600
+      Width           =   200
+      Begin RCONBookmarksSidebar Bookmarks
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   359
+         Index           =   -2147483648
+         InitialParent   =   "Sidebar"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   200
+      End
+      Begin RCONCommandsSidebar Commands
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   359
+         Index           =   -2147483648
+         InitialParent   =   "Sidebar"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   200
+      End
    End
 End
 #tag EndDesktopWindow
@@ -146,7 +285,7 @@ End
 		Function ContainerForConnection(Host As String, Port As Integer, BringToFront As Boolean = False) As RCONContainer
 		  For Each Entry As DictionaryEntry In Self.mContainers
 		    Var Container As RCONContainer = Entry.Value
-		    If Container.IsConnected And Container.Host = Host And Container.Port = Port Then
+		    If Container.Host = Host And Container.Port = Port Then
 		      If BringToFront Then
 		        Self.CurrentView = Container
 		      End If
@@ -210,9 +349,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NewTab() As RCONContainer
-		  Var Container As New RCONContainer
-		  Self.Attach(Container)
+		Function NewTab(AllowReuse As Boolean = True) As RCONContainer
+		  Var Container As RCONContainer
+		  If AllowReuse Then
+		    For Each Entry As DictionaryEntry In Self.mContainers
+		      Var Tab As RCONContainer = Entry.Value
+		      If Tab.IsUsed = False Then
+		        Container = Tab
+		        Exit
+		      End If
+		    Next
+		  End If
+		  If Container Is Nil Then
+		    Container = New RCONContainer
+		    Self.Attach(Container)
+		  End If
 		  Self.CurrentView = Container
 		  Return Container
 		End Function
@@ -289,6 +440,13 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = PageBookmarks, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageCommands, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events TabsBar
@@ -308,7 +466,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "NewTabButton"
-		    Call Self.NewTab()
+		    Call Self.NewTab(False)
 		  Else
 		    Self.CurrentViewId = Item.Name
 		  End Select
@@ -351,6 +509,42 @@ End
 		    Self.Panel.SelectedPanelIndex = Self.mCurrentView.PanelIndex - Self.mPanelDiff
 		  Else
 		    Self.CurrentViewId = NewViewId
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SidebarSwitcher
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateButton("BookmarksButton", "Bookmarks", IconToolbarBookmark, "Show saved RCON bookmarks."))
+		  Me.Append(OmniBarItem.CreateButton("CommandsButton", "Commands", IconToolbarCommand, "Show game commands."))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.ToggleOnly("BookmarksButton")
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "BookmarksButton"
+		    Self.Sidebar.SelectedPanelIndex = Self.PageBookmarks
+		    Me.ToggleOnly(Item.Name)
+		  Case "CommandsButton"
+		    Self.Sidebar.SelectedPanelIndex = Self.PageCommands
+		    Me.ToggleOnly(Item.Name)
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Bookmarks
+	#tag Event
+		Sub LoadBookmark(Config As Beacon.RCONConfig)
+		  Var Win As RCONWindow = RCONWindow.WindowForConnection(Config, True)
+		  If Win Is Nil Then
+		    Var Container As RCONContainer = Self.NewTab
+		    Container.Setup(Config, False)
 		  End If
 		End Sub
 	#tag EndEvent
