@@ -10,6 +10,7 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE official_template_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_template_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, user_id TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE rcon_bookmarks (host TEXT COLLATE NOCASE NOT NULL, port INTEGER NOT NULL, nickname TEXT COLLATE NOCASE NOT NULL, password TEXT NOT NULL, PRIMARY KEY (host, port));")
+		  Self.SQLExecute("CREATE TABLE rcon_commands (command_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, name TEXT COLLATE NOCASE NOT NULL, description TEXT COLLATE NOCASE NOT NULL, parameters TEXT NOT NULL);")
 		End Sub
 	#tag EndEvent
 
@@ -35,6 +36,9 @@ Inherits Beacon.DataSource
 		  Indexes.Add(New Beacon.DataIndex("custom_templates", True, "user_id", "object_id"))
 		  Indexes.Add(New Beacon.DataIndex("custom_template_selectors", False, "user_id"))
 		  Indexes.Add(New Beacon.DataIndex("custom_template_selectors", True, "user_id", "object_id"))
+		  Indexes.Add(New Beacon.DataIndex("rcon_bookmarks", True, "nickname"))
+		  Indexes.Add(New Beacon.DataIndex("rcon_commands", False, "game_id"))
+		  Indexes.Add(New Beacon.DataIndex("rcon_commands", True, "game_id", "name"))
 		  Return Indexes
 		End Function
 	#tag EndEvent
@@ -188,6 +192,29 @@ Inherits Beacon.DataSource
 		        App.Log(Err, CurrentMethodName, "Importing template selector")
 		      End Try
 		    Next Value
+		  End If
+		  
+		  If ChangeDict.HasKey("rconCommands") Then
+		    Var Commands() As Variant = ChangeDict.Value("rconCommands")
+		    For Each Value As Variant In Commands
+		      Try
+		        Var Dict As Dictionary = Value
+		        Var CommandId As String = Dict.Value("commandId")
+		        Var GameId As String = Dict.Value("gameId")
+		        Var Name As String = Dict.Value("name")
+		        Var Description As String = Dict.Value("description")
+		        Var Parameters As String = Beacon.GenerateJSON(Dict.Value("parameters"), False)
+		        
+		        Var Rows As RowSet = Self.SQLSelect("SELECT EXISTS(SELECT 1 FROM rcon_commands WHERE command_id = ?1) AS command_exists;", CommandId)
+		        If Rows.Column("command_exists").BooleanValue Then
+		          Self.SQLExecute("UPDATE rcon_commands SET game_id = ?2, name = ?3, description = ?4, parameters = ?5 WHERE command_id = ?1 AND (game_id IS DISTINCT FROM ?2 OR name IS DISTINCT FROM ?3 OR description IS DISTINCT FROM ?4 OR parameters IS DISTINCT FROM ?5);", CommandId, GameId, Name, Description, Parameters)
+		        Else
+		          Self.SQLExecute("INSERT INTO rcon_commands (command_id, game_id, name, description, parameters) VALUES (?1, ?2, ?3, ?4, ?5);", CommandId, GameId, Name, Description, Parameters)
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Importing RCON command")
+		      End Try
+		    Next
 		  End If
 		  
 		  Return True
@@ -523,6 +550,34 @@ Inherits Beacon.DataSource
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Configs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetRCONCommands(GameId As String, Filter As String = "") As Beacon.RCONCommand()
+		  Var Commands() As Beacon.RCONCommand
+		  
+		  Var SQL As String = "SELECT * FROM rcon_commands WHERE game_id = ?1"
+		  Var Values(0) As Variant
+		  Values(0) = GameId
+		  
+		  If Filter.IsEmpty = False Then
+		    SQL = SQL + " AND name LIKE ?2 ESCAPE '\'"
+		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL + ";", Values)
+		  While Not Rows.AfterLastRow
+		    Var CommandId As String = Rows.Column("command_id").StringValue
+		    Var Name As String = Rows.Column("name").StringValue
+		    Var Description As String = Rows.Column("description").StringValue
+		    Var ParameterString As String = Rows.Column("parameters").StringValue
+		    Commands.Add(New Beacon.RCONCommand(CommandId, Name, ParameterString, Description))
+		    
+		    Rows.MoveToNextRow
+		  Wend
+		  
+		  Return Commands
 		End Function
 	#tag EndMethod
 

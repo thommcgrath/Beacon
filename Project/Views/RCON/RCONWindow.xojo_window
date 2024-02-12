@@ -155,7 +155,7 @@ Begin BeaconWindow RCONWindow
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   200
       Begin RCONBookmarksSidebar Bookmarks
@@ -546,6 +546,23 @@ End
 		    Var Container As RCONContainer = Self.NewTab
 		    Container.Setup(Config, False)
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Commands
+	#tag Event
+		Sub InsertCommand(Command As Beacon.RCONCommand)
+		  If Self.mCurrentView Is Nil Then
+		    Self.ShowAlert("No RCON tab", "To insert this command, please open a new tab and connect to a server.")
+		    Return
+		  End If
+		  
+		  If Self.mCurrentView.IsConnected = False Then
+		    Self.ShowAlert("RCON is not connected", "The RCON server is not connected. Please connect to a server to insert this command.")
+		    Return
+		  End If
+		  
+		  Self.mCurrentView.InsertCommand(Command)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

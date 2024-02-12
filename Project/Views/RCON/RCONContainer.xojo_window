@@ -754,6 +754,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub InsertCommand(Command As Beacon.RCONCommand)
+		  Self.CommandField.Text = Command.Name
+		  Self.CommandField.SetFocus()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsConnected() As Boolean
 		  Return Self.Sock.IsConnected
 		End Function

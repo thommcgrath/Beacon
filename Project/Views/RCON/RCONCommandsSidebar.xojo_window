@@ -25,7 +25,7 @@ Begin BeaconContainer RCONCommandsSidebar
    Transparent     =   True
    Visible         =   True
    Width           =   200
-   Begin DesktopPopupMenu GamePicker
+   Begin UITweaks.ResizedPopupMenu GamePicker
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -36,7 +36,7 @@ Begin BeaconContainer RCONCommandsSidebar
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   10
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -48,18 +48,228 @@ Begin BeaconContainer RCONCommandsSidebar
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   10
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   160
+      Width           =   180
+   End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      AllowTabStop    =   True
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   10
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   42
+      Transparent     =   False
+      Visible         =   True
+      Width           =   180
+   End
+   Begin FadedSeparator TopSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   76
+      Transparent     =   True
+      Visible         =   True
+      Width           =   200
+   End
+   Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowInfiniteScroll=   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
+      Bold            =   False
+      ColumnCount     =   1
+      ColumnWidths    =   ""
+      DefaultRowHeight=   -1
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      DropIndicatorVisible=   False
+      EditCaption     =   "Insert"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   223
+      Index           =   -2147483648
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PageSize        =   100
+      PreferencesKey  =   ""
+      RequiresSelection=   False
+      RowSelectionType=   0
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   77
+      TotalPages      =   -1
+      Transparent     =   True
+      TypeaheadColumn =   0
+      Underline       =   False
+      Visible         =   True
+      Width           =   200
+      _ScrollWidth    =   -1
    End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  Const EdgePadding = 10
+		  Const Spacing = 12
+		  
+		  Self.GamePicker.Top = EdgePadding
+		  Self.GamePicker.Left = EdgePadding
+		  Self.GamePicker.Width = Self.Width - (EdgePadding * 2)
+		  
+		  Self.FilterField.Top = Self.GamePicker.Bottom + Spacing
+		  Self.FilterField.Left = Self.GamePicker.Left
+		  Self.FilterField.Width = Self.GamePicker.Width
+		  
+		  Self.TopSeparator.Top = Self.FilterField.Bottom + EdgePadding
+		  
+		  Self.List.Top = Self.TopSeparator.Bottom
+		  Self.List.Height = Self.Height - Self.List.Top
+		  
+		  Var Games() As Beacon.Game = Beacon.Games
+		  For Each Game As Beacon.Game In Games
+		    Self.GamePicker.AddRow(Game.Name)
+		    Self.GamePicker.RowTagAt(Self.GamePicker.LastAddedRowIndex) = Game.Identifier
+		  Next
+		  Self.GamePicker.SelectedRowIndex = 0
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Reload()
+		  Var GameId As String = Self.GamePicker.SelectedRowTag
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  Var DataSource As Beacon.CommonData = Beacon.CommonData.Pool.Get(False)
+		  Var Commands() As Beacon.RCONCommand = DataSource.GetRCONCommands(GameId, Filter)
+		  
+		  Var SelectedCommands() As String
+		  For RowIdx As Integer = 0 To Self.List.LastRowIndex
+		    If Self.List.RowSelectedAt(RowIdx) = False Then
+		      Continue
+		    End If
+		    
+		    Var Command As Beacon.RCONCommand = Self.List.RowTagAt(RowIdx)
+		    If (Command Is Nil) = False Then
+		      SelectedCommands.Add(Command.CommandId)
+		    End If
+		  Next
+		  
+		  Self.List.SelectionChangeBlocked = True
+		  Self.List.RowCount = Commands.Count
+		  For RowIdx As Integer = 0 To Self.List.LastRowIndex
+		    Var Command As Beacon.RCONCommand = Commands(RowIdx)
+		    Self.List.CellTextAt(RowIdx) = Command.Label
+		    Self.List.RowTagAt(RowIdx) = Command
+		    Self.List.RowSelectedAt(RowIdx) = SelectedCommands.IndexOf(Command.CommandId) > -1
+		  Next
+		  Self.List.SelectionChangeBlocked = False
+		  Self.List.EnsureSelectionIsVisible
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event InsertCommand(Command As Beacon.RCONCommand)
+	#tag EndHook
+
+
 #tag EndWindowCode
 
+#tag Events GamePicker
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  Self.Reload()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.Reload()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub PerformEdit()
+		  If Me.SelectedRowCount <> 1 Then
+		    Return
+		  End If
+		  
+		  Var Command As Beacon.RCONCommand = Me.RowTagAt(Me.SelectedRowIndex)
+		  RaiseEvent InsertCommand(Command)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Modified"
