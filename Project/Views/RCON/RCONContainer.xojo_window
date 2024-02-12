@@ -922,7 +922,7 @@ End
 	#tag Event
 		Sub Run()
 		  Var Config As Beacon.RCONConfig = Me.UserData
-		  Beacon.CommonData.Pool.Get(True).SaveBookmark(Config)
+		  Call Beacon.CommonData.Pool.Get(True).SaveBookmark(Config)
 		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		End Sub
 	#tag EndEvent

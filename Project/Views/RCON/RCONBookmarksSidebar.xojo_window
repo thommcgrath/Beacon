@@ -79,13 +79,21 @@ Begin BeaconContainer RCONBookmarksSidebar Implements NotificationKit.Receiver
       Width           =   200
       _ScrollWidth    =   -1
    End
+   Begin Beacon.Thread DeleteBookmarkThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Closing()
-		  NotificationKit.Ignore(Self, Beacon.CommonData.Notification_RCONBookmarksUpdated)
+		  NotificationKit.Ignore(Self, Beacon.CommonData.Notification_RCONBookmarksUpdated, Beacon.DataSource.Notification_ImportCloudFilesFinished)
 		  
 		  RaiseEvent Closing()
 		End Sub
@@ -94,8 +102,8 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.Reload()
-		  
-		  NotificationKit.Watch(Self, Beacon.CommonData.Notification_RCONBookmarksUpdated)
+		  Self.DeleteBookmarkThread.DebugIdentifier = "RCONBookmarksSidebar.DeleteBookmarkThread"
+		  NotificationKit.Watch(Self, Beacon.CommonData.Notification_RCONBookmarksUpdated, Beacon.DataSource.Notification_ImportCloudFilesFinished)
 		  
 		  RaiseEvent Opening()
 		End Sub
@@ -107,7 +115,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case Beacon.CommonData.Notification_RCONBookmarksUpdated
+		  Case Beacon.CommonData.Notification_RCONBookmarksUpdated, Beacon.DataSource.Notification_ImportCloudFilesFinished
 		    Self.Reload()
 		  End Select
 		End Sub
@@ -164,7 +172,25 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
+		  If Me.SelectedRowCount = 0 Or Self.DeleteBookmarkThread.ThreadState <> Thread.ThreadStates.NotRunning Then
+		    Return
+		  End If
 		  
+		  Var Configs() As Beacon.RCONConfig
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Me.RowSelectedAt(I) = False Then
+		      Continue
+		    End If
+		    
+		    Configs.Add(Me.RowTagAt(I))
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Configs, "bookmark", "bookmarks") = False Then
+		    Return
+		  End If
+		  
+		  Self.DeleteBookmarkThread.UserData = Configs
+		  Self.DeleteBookmarkThread.Start
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -180,6 +206,15 @@ End
 		  
 		  Var Config As Beacon.RCONConfig = Me.RowTagAt(Me.SelectedRowIndex)
 		  RaiseEvent LoadBookmark(Config)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DeleteBookmarkThread
+	#tag Event
+		Sub Run()
+		  Var Configs() As Beacon.RCONConfig = Me.UserData
+		  Var DataSource As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
+		  DataSource.DeleteBookmarks(Configs)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -79,6 +79,19 @@ Inherits Beacon.DataSource
 		    Call UserCloud.Delete(Files(Idx))
 		  Next Idx
 		  
+		  Var Configs() As Beacon.RCONConfig = Self.GetRCONBookmarks()
+		  Var ConfigDicts() As Dictionary
+		  For Each Config As Beacon.RCONConfig In Configs
+		    ConfigDicts.Add(Config.SaveData)
+		  Next
+		  Var Bookmarks As New Dictionary
+		  Bookmarks.Value("rcon") = ConfigDicts
+		  Try
+		    Call UserCloud.Write("/Bookmarks.json", Beacon.GenerateJSON(Bookmarks, True))
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Writing Bookmarks.json")
+		  End Try
+		  
 		  // Cleanup old stuff
 		  Call UserCloud.Delete("/Modifiers.json")
 		  Var Presets() As String = UserCloud.List("/Presets/")
@@ -266,6 +279,39 @@ Inherits Beacon.DataSource
 		    Self.DeleteTemplateSelector(SelectorUUID, False)
 		  Next SelectorUUID
 		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT rowid FROM rcon_bookmarks;")
+		  Var RemoveRCONMap As New Dictionary
+		  While Not Rows.AfterLastRow
+		    RemoveRCONMap.Value(Rows.Column("rowid").IntegerValue) = True
+		    Rows.MoveToNextRow
+		  Wend
+		  Var BookmarksContent As MemoryBlock = UserCloud.Read("/Bookmarks.json")
+		  If (BookmarksContent Is Nil) = False Then
+		    Try
+		      Var StringValue As String = BookmarksContent
+		      Var Parsed As Dictionary = Beacon.ParseJSON(StringValue.DefineEncoding(Encodings.UTF8))
+		      
+		      If Parsed.HasKey("rcon") Then
+		        Var RCONDicts() As Variant = Parsed.Value("rcon")
+		        For Each Dict As Dictionary In RCONDicts
+		          Var Config As Beacon.RCONConfig = Beacon.RCONConfig.FromSaveData(Dict)
+		          If (Config Is Nil) = False Then
+		            Var RowId As Integer = Self.SaveBookmark(Config)
+		            If RemoveRCONMap.HasKey(RowId) Then
+		              RemoveRCONMap.Remove(RowId)
+		            End If
+		          End If
+		        Next
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Importing cloud bookmarks")
+		    End Try
+		    For Each Entry As DictionaryEntry In RemoveRCONMap
+		      Var RowId As Integer = Entry.Key
+		      Self.SQLExecute("DELETE FROM rcon_bookmarks WHERE rowid = ?1;", RowId)
+		    Next
+		  End If
+		  
 		  Self.CommitTransaction()
 		End Sub
 	#tag EndEvent
@@ -325,7 +371,26 @@ Inherits Beacon.DataSource
 		    Self.SQLExecute("DELETE FROM rcon_bookmarks WHERE host = ?1 AND port = ?2;", Config.Host, Config.Port)
 		  End If
 		  Self.CommitTransaction()
-		  NotificationKit.Post(Self.Notification_RCONBookmarksUpdated, Nil)
+		  
+		  If Self.InTransaction = False Then
+		    NotificationKit.Post(Self.Notification_RCONBookmarksUpdated, Nil)
+		    Self.ExportCloudFiles()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteBookmarks(Configs() As Beacon.RCONConfig)
+		  Self.BeginTransaction()
+		  For Each Config As Beacon.RCONConfig In Configs
+		    Self.DeleteBookmark(Config)
+		  Next
+		  Self.CommitTransaction()
+		  
+		  If Self.InTransaction = False Then
+		    NotificationKit.Post(Self.Notification_RCONBookmarksUpdated, Nil)
+		    Self.ExportCloudFiles()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -705,9 +770,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveBookmark(Config As Beacon.RCONConfig)
+		Function SaveBookmark(Config As Beacon.RCONConfig) As Integer
 		  Self.BeginTransaction()
 		  Var Rows As RowSet
+		  Var Added As RowSet
 		  If Config.Name.IsEmpty = False Then
 		    Rows = Self.SQLSelect("SELECT * FROM rcon_bookmarks WHERE (host = ?1 AND port = ?2) OR nickname = ?3;", Config.Host, Config.Port, Config.Name)
 		  Else
@@ -715,19 +781,30 @@ Inherits Beacon.DataSource
 		  End If
 		  If Rows.RowCount > 1 Then
 		    Self.SQLExecute("DELETE FROM rcon_bookmarks WHERE nickname = ?1;", Config.Name)
-		    Self.SQLExecute("UPDATE rcon_bookmarks SET nickname = ?3, password = ?4 WHERE host = ?1 AND port = ?2;", Config.Host, Config.Port, Config.Name, Config.Password)
+		    Added = Self.SQLSelect("UPDATE rcon_bookmarks SET nickname = ?3, password = ?4 WHERE host = ?1 AND port = ?2 RETURNING rowid;", Config.Host, Config.Port, Config.Name, Config.Password)
 		  ElseIf Rows.RowCount = 1 Then
 		    If Config.Name.IsEmpty = False Then
-		      Self.SQLExecute("UPDATE rcon_bookmarks SET host = ?1, port = ?2, nickname = ?3, password = ?4 WHERE (host = ?1 AND port = ?2) OR nickname = ?3;", Config.Host, Config.Port, Config.Name, Config.Password)
+		      Added = Self.SQLSelect("UPDATE rcon_bookmarks SET host = ?1, port = ?2, nickname = ?3, password = ?4 WHERE (host = ?1 AND port = ?2) OR nickname = ?3 RETURNING rowid;", Config.Host, Config.Port, Config.Name, Config.Password)
 		    Else
-		      Self.SQLExecute("UPDATE rcon_bookmarks SET host = ?1, port = ?2, nickname = ?3, password = ?4 WHERE host = ?1 AND port = ?2;", Config.Host, Config.Port, Config.Name, Config.Password)
+		      Added = Self.SQLSelect("UPDATE rcon_bookmarks SET host = ?1, port = ?2, nickname = ?3, password = ?4 WHERE host = ?1 AND port = ?2 RETURNING rowid;", Config.Host, Config.Port, Config.Name, Config.Password)
 		    End If
 		  Else
-		    Self.SQLExecute("INSERT INTO rcon_bookmarks (host, port, nickname, password) VALUES (?1, ?2, ?3, ?4);", Config.Host, Config.Port, Config.Name, Config.Password)
+		    Added = Self.SQLSelect("INSERT INTO rcon_bookmarks (host, port, nickname, password) VALUES (?1, ?2, ?3, ?4) RETURNING rowid;", Config.Host, Config.Port, Config.Name, Config.Password)
+		  End If
+		  If Added.RowCount <> 1 Then
+		    Self.RollbackTransaction()
+		    Return 0
 		  End If
 		  Self.CommitTransaction()
-		  NotificationKit.Post(Self.Notification_RCONBookmarksUpdated, Nil)
-		End Sub
+		  
+		  If Self.InTransaction = False Then
+		    NotificationKit.Post(Self.Notification_RCONBookmarksUpdated, Nil)
+		    Self.ExportCloudFiles()
+		  End If
+		  
+		  Return Added.Column("rowid").IntegerValue
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

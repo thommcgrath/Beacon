@@ -1,5 +1,6 @@
 #tag Class
 Protected Class RCONConfig
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.RCONConfig)
 		  Self.Constructor(Source.Name, Source.Host, Source.Port, Source.Password)
@@ -43,7 +44,7 @@ Protected Class RCONConfig
 		    Var Name As String = Dict.Value("name")
 		    Var Host As String = Dict.Value("host")
 		    Var Port As Integer = Dict.Value("port")
-		    Var Password As String = Dict.Value("password")
+		    Var Password As String = Dict.Value("pass")
 		    Return New Beacon.RCONConfig(Name, Host, Port, Password)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Loading RCON connection info")
@@ -54,6 +55,14 @@ Protected Class RCONConfig
 	#tag Method, Flags = &h0
 		Function Host() As String
 		  Return Self.mHost
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label() As String
+		  // Part of the Beacon.NamedItem interface.
+		  
+		  Return Self.DisplayName()
 		End Function
 	#tag EndMethod
 
