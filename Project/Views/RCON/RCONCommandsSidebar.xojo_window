@@ -25,146 +25,202 @@ Begin BeaconContainer RCONCommandsSidebar
    Transparent     =   True
    Visible         =   True
    Width           =   200
-   Begin UITweaks.ResizedPopupMenu GamePicker
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
-      Bold            =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
+      Height          =   300
       Index           =   -2147483648
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   10
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      SelectedRowIndex=   0
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   10
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   180
-   End
-   Begin DelayedSearchField FilterField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowRecentItems=   False
-      AllowTabStop    =   True
-      ClearMenuItemValue=   "Clear"
-      DelayPeriod     =   250
-      Enabled         =   True
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   10
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      MaximumRecentItems=   -1
-      RecentItemsValue=   "Recent Searches"
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      Text            =   ""
-      Tooltip         =   ""
-      Top             =   42
-      Transparent     =   False
-      Visible         =   True
-      Width           =   180
-   End
-   Begin FadedSeparator TopSeparator
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Enabled         =   True
-      Height          =   1
-      Index           =   -2147483648
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   76
-      Transparent     =   True
-      Visible         =   True
-      Width           =   200
-   End
-   Begin BeaconListbox List
-      AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   False
-      AllowInfiniteScroll=   False
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
-      Bold            =   False
-      ColumnCount     =   1
-      ColumnWidths    =   ""
-      DefaultRowHeight=   -1
-      DefaultSortColumn=   0
-      DefaultSortDirection=   0
-      DropIndicatorVisible=   False
-      EditCaption     =   "Insert"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      GridLineStyle   =   0
-      HasBorder       =   False
-      HasHeader       =   False
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
-      HeadingIndex    =   -1
-      Height          =   223
-      Index           =   -2147483648
-      InitialValue    =   ""
-      Italic          =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PageSize        =   100
-      PreferencesKey  =   ""
-      RequiresSelection=   False
-      RowSelectionType=   0
+      PanelCount      =   2
+      Panels          =   ""
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Tooltip         =   ""
-      Top             =   77
-      TotalPages      =   -1
-      Transparent     =   True
-      TypeaheadColumn =   0
-      Underline       =   False
+      Top             =   0
+      Transparent     =   False
+      Value           =   0
       Visible         =   True
       Width           =   200
-      _ScrollWidth    =   -1
+      Begin BeaconListbox List
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   False
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   1
+         ColumnWidths    =   ""
+         DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Insert"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   False
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   223
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PageSize        =   100
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   77
+         TotalPages      =   -1
+         Transparent     =   True
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         Width           =   200
+         _ScrollWidth    =   -1
+      End
+      Begin FadedSeparator TopSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   76
+         Transparent     =   True
+         Visible         =   True
+         Width           =   200
+      End
+      Begin DelayedSearchField FilterField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowRecentItems=   False
+         AllowTabStop    =   True
+         ClearMenuItemValue=   "Clear"
+         DelayPeriod     =   250
+         Enabled         =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   10
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumRecentItems=   -1
+         RecentItemsValue=   "Recent Searches"
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         Text            =   ""
+         Tooltip         =   ""
+         Top             =   42
+         Transparent     =   False
+         Visible         =   True
+         Width           =   180
+      End
+      Begin UITweaks.ResizedPopupMenu GamePicker
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   10
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   10
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   180
+      End
+      Begin RCONCommandBuilder Builder
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   300
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   200
+      End
    End
 End
 #tag EndDesktopWindow
@@ -172,28 +228,34 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Const EdgePadding = 10
-		  Const Spacing = 12
-		  
-		  Self.GamePicker.Top = EdgePadding
-		  Self.GamePicker.Left = EdgePadding
-		  Self.GamePicker.Width = Self.Width - (EdgePadding * 2)
-		  
-		  Self.FilterField.Top = Self.GamePicker.Bottom + Spacing
-		  Self.FilterField.Left = Self.GamePicker.Left
-		  Self.FilterField.Width = Self.GamePicker.Width
-		  
-		  Self.TopSeparator.Top = Self.FilterField.Bottom + EdgePadding
-		  
-		  Self.List.Top = Self.TopSeparator.Bottom
-		  Self.List.Height = Self.Height - Self.List.Top
-		  
 		  Var Games() As Beacon.Game = Beacon.Games
 		  For Each Game As Beacon.Game In Games
 		    Self.GamePicker.AddRow(Game.Name)
 		    Self.GamePicker.RowTagAt(Self.GamePicker.LastAddedRowIndex) = Game.Identifier
 		  Next
 		  Self.GamePicker.SelectedRowIndex = 0
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Const Margin = RCONWindow.SidebarMargin
+		  Const Spacing = RCONWindow.SidebarSpacing
+		  
+		  Self.GamePicker.Top = Margin
+		  Self.GamePicker.Left = Margin
+		  Self.GamePicker.Width = Self.Width - (Margin * 2)
+		  
+		  Self.FilterField.Top = Self.GamePicker.Bottom + Spacing
+		  Self.FilterField.Left = Self.GamePicker.Left
+		  Self.FilterField.Width = Self.GamePicker.Width
+		  
+		  Self.TopSeparator.Top = Self.FilterField.Bottom + Margin
+		  
+		  Self.List.Top = Self.TopSeparator.Bottom
+		  Self.List.Height = Self.Height - Self.List.Top
 		End Sub
 	#tag EndEvent
 
@@ -232,18 +294,51 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event InsertCommand(Command As Beacon.RCONCommand)
+		Event InsertCommand(Command As String) As Boolean
 	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event RequestResize(Width As Integer, Height As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event RestoreDimensions()
+	#tag EndHook
+
+
+	#tag Constant, Name = PageBuilder, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageList, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events GamePicker
+#tag Events List
 	#tag Event
-		Sub SelectionChanged(item As DesktopMenuItem)
-		  #Pragma Unused Item
-		  Self.Reload()
+		Sub PerformEdit()
+		  If Me.SelectedRowCount <> 1 Then
+		    Return
+		  End If
+		  
+		  Var Command As Beacon.RCONCommand = Me.RowTagAt(Me.SelectedRowIndex)
+		  If Command.ParameterCount = 0 Then
+		    Call RaiseEvent InsertCommand(Command.Name)
+		  Else
+		    Self.Builder.Setup(Command)
+		    Var MinBounds As Xojo.Size = Self.Builder.MinimumBounds
+		    If Self.Width < MinBounds.Width Or Self.Height < MinBounds.Height Then
+		      RaiseEvent RequestResize(MinBounds.Width, MinBounds.Height)
+		    End If
+		    Self.Pages.SelectedPanelIndex = Self.PageBuilder
+		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events FilterField
@@ -253,20 +348,24 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events List
+#tag Events GamePicker
 	#tag Event
-		Sub PerformEdit()
-		  If Me.SelectedRowCount <> 1 Then
-		    Return
-		  End If
-		  
-		  Var Command As Beacon.RCONCommand = Me.RowTagAt(Me.SelectedRowIndex)
-		  RaiseEvent InsertCommand(Command)
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  Self.Reload()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Builder
+	#tag Event
+		Sub Finished()
+		  Self.Pages.SelectedPanelIndex = Self.PageList
+		  RaiseEvent RestoreDimensions()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1
+		Function InsertCommand(Command As String) As Boolean
+		  Return RaiseEvent InsertCommand(Command)
 		End Function
 	#tag EndEvent
 #tag EndEvents

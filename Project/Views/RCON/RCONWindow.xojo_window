@@ -394,6 +394,24 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SetSidebarWidth(Width As Integer)
+		  Var MinWidth As Integer = Width + Self.SidebarSeparator.Width + Self.TabMinWidth
+		  If Self.Width < MinWidth Then
+		    Self.Width = MinWidth
+		  End If
+		  Self.MinimumWidth = MinWidth
+		  
+		  Self.Sidebar.Width = Width
+		  Self.SidebarSeparator.Left = Width
+		  Self.SidebarSwitcher.Width = Width
+		  Self.Panel.Left = Self.SidebarSeparator.Right
+		  Self.Panel.Width = Self.Width - Self.Panel.Left
+		  Self.TabsBar.Left = Self.Panel.Left
+		  Self.TabsBar.Width = Self.Panel.Width
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function WindowForConnection(Config As Beacon.RCONConfig, BringToFront As Boolean = False) As RCONWindow
 		  If Config Is Nil Then
@@ -444,6 +462,18 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageCommands, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SidebarMargin, Type = Double, Dynamic = False, Default = \"10", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SidebarSpacing, Type = Double, Dynamic = False, Default = \"6", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TabMinHeight, Type = Double, Dynamic = False, Default = \"193", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TabMinWidth, Type = Double, Dynamic = False, Default = \"350", Scope = Private
 	#tag EndConstant
 
 
@@ -551,18 +581,36 @@ End
 #tag EndEvents
 #tag Events Commands
 	#tag Event
-		Sub InsertCommand(Command As Beacon.RCONCommand)
+		Function InsertCommand(Command As String) As Boolean
 		  If Self.mCurrentView Is Nil Then
 		    Self.ShowAlert("No RCON tab", "To insert this command, please open a new tab and connect to a server.")
-		    Return
+		    Return False
 		  End If
 		  
 		  If Self.mCurrentView.IsConnected = False Then
 		    Self.ShowAlert("RCON is not connected", "The RCON server is not connected. Please connect to a server to insert this command.")
-		    Return
+		    Return False
 		  End If
 		  
 		  Self.mCurrentView.InsertCommand(Command)
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub RequestResize(Width As Integer, Height As Integer)
+		  Var MinHeight As Integer = Max(Height, Self.TabMinHeight) + Self.SidebarSwitcher.Top + Self.SidebarSwitcher.Height
+		  If Self.Height < MinHeight Then
+		    Self.Height = MinHeight
+		  End If
+		  Self.MinimumHeight = MinHeight
+		  
+		  Self.SetSidebarWidth(Max(Width, 200))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RestoreDimensions()
+		  Self.SetSidebarWidth(200)
+		  Self.MinimumHeight = Self.TabMinHeight + Self.TabsBar.Top + Self.TabsBar.Height
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -48,8 +48,8 @@ Inherits DesktopContainer
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub Resize(Force As Boolean = False)
+	#tag Method, Flags = &h0
+		Sub Resize(Force As Boolean = False)
 		  If Not Self.mFinishedOpening Then
 		    Return
 		  End If

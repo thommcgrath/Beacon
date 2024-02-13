@@ -754,8 +754,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub InsertCommand(Command As Beacon.RCONCommand)
-		  Self.CommandField.Text = Command.Name
+		Sub InsertCommand(Command As String)
+		  Self.CommandField.Text = Command
 		  Self.CommandField.SetFocus()
 		End Sub
 	#tag EndMethod
