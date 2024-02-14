@@ -882,6 +882,7 @@ DesktopWindow=ArkSAModEditorView;Views/ArkSA/Mods/ArkSAModEditorView.xojo_window
 DesktopWindow=DebugWindow;Views/Support Ticket/DebugWindow.xojo_window;&h000000006E2A3FFF;&h000000003584DFFF;false
 Class=PendingDataImport;Modules/DataUpdater/PendingDataImport.xojo_code;&h000000000CB60FFF;&h000000006233C7FF;false
 Class=SettingChange;Modules/Hosting Providers/Nitrado/SettingChange.xojo_code;&h0000000017DD3FFF;&h0000000072E03FFF;false
+DesktopWindow=WebContentViewer;Custom Controls/WebContentViewer.xojo_window;&h00000000789CEFFF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=0

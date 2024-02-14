@@ -306,28 +306,6 @@ Begin DesktopWindow UserWelcomeWindow
          _mName          =   ""
          _mPanelIndex    =   0
       End
-      Begin DesktopHTMLViewer LoginView
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   360
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Left            =   216
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Renderer        =   0
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Visible         =   True
-         Width           =   424
-      End
       Begin DesktopLabel InitializingMessage
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -360,6 +338,35 @@ Begin DesktopWindow UserWelcomeWindow
          Underline       =   False
          Visible         =   True
          Width           =   384
+      End
+      Begin WebContentViewer LoginView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   360
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   216
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   424
       End
    End
    Begin DesktopCanvas SidebarCanvas
@@ -884,16 +891,7 @@ End
 #tag EndEvents
 #tag Events LoginView
 	#tag Event
-		Sub DocumentComplete(url as String)
-		  #Pragma Unused url
-		  
-		  If Self.PagePanel1.SelectedPanelIndex <> Self.PageLogin Then
-		    Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CancelLoad(URL as String) As Boolean
+		Function CancelLoad(URL As String) As Boolean
 		  If Url.BeginsWith(Self.RedirectUri) Then
 		    Var Query As String = Url.Middle(Url.IndexOf("?") + 1)
 		    Var Params As New Dictionary
@@ -928,18 +926,16 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function NewWindow(url as String) As DesktopHTMLViewer
-		  System.GotoURL(URL)
-		  Return Nil
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.UserAgent = App.UserAgent
+		Sub DocumentComplete(URL As String)
+		  #Pragma Unused url
+		  
+		  If Self.PagePanel1.SelectedPanelIndex <> Self.PageLogin Then
+		    Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(error As RuntimeException)
+		Sub Error(Error As RuntimeException)
 		  Self.ShowConnectionError(Error)
 		  
 		  If Self.mLoginOnly Then
@@ -949,6 +945,12 @@ End
 		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function NewWindow(URL As String) As WebContentViewer
+		  System.GotoURL(URL)
+		  Return Nil
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events SidebarCanvas

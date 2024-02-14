@@ -24,10 +24,25 @@ Begin DesktopWindow WhatsNewWindow
    Type            =   0
    Visible         =   False
    Width           =   660
-   Begin DesktopHTMLViewer Viewer
-      AutoDeactivate  =   True
+   Begin URLConnection PreflightSocket
+      AllowCertificateValidation=   False
+      HTTPStatusCode  =   0
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin WebContentViewer Viewer
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      Composited      =   False
       Enabled         =   True
-      Height          =   414
+      HasBackgroundColor=   False
+      Height          =   413
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -36,24 +51,15 @@ Begin DesktopWindow WhatsNewWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Renderer        =   1
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
-      Visible         =   True
+      Transparent     =   True
+      Visible         =   False
       Width           =   660
-   End
-   Begin URLConnection PreflightSocket
-      AllowCertificateValidation=   False
-      Enabled         =   True
-      HTTPStatusCode  =   0
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
    End
 End
 #tag EndDesktopWindow
@@ -197,35 +203,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Viewer
-	#tag Event
-		Sub DocumentComplete(url as String)
-		  #Pragma Unused URL
-		  
-		  Self.Visible = True
-		  Self.Show
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Error(error As RuntimeException)
-		  App.Log("Unable to load welcome content: " + Error.ErrorNumber.ToString("0") + ", " + Error.Message)
-		  
-		  Self.Close
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CancelLoad(URL as String) As Boolean
-		  If Self.ShouldCancel(URL) Then
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub TitleChanged(newTitle as String)
-		  Self.SetTitle(NewTitle)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events PreflightSocket
 	#tag Event
 		Sub Error(e As RuntimeException)
@@ -243,6 +220,36 @@ End
 		  Else
 		    Self.Close
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Viewer
+	#tag Event
+		Function CancelLoad(URL As String) As Boolean
+		  If Self.ShouldCancel(URL) Then
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DocumentComplete(URL As String)
+		  #Pragma Unused URL
+		  
+		  Self.Visible = True
+		  Me.Visible = True
+		  Self.Show
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(Error As RuntimeException)
+		  App.Log("Unable to load welcome content: " + Error.ErrorNumber.ToString("0") + ", " + Error.Message)
+		  
+		  Self.Close
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TitleChanged(NewTitle As String)
+		  Self.SetTitle(NewTitle)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
