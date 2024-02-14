@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{ContentPack, Core, Template, TemplateSelector};
+use BeaconAPI\v4\{ContentPack, Core, RCONCommand, Template, TemplateSelector};
 use BeaconAPI\v4\Ark;
 use BeaconAPI\v4\SDTD;
 use BeaconAPI\v4\ArkSA;
@@ -218,7 +218,8 @@ function BuildFile(array $settings): void {
 		$payloads[] = [
 			'gameId' => 'Common',
 			'templates' => Template::Search($filters, true),
-			'templateSelectors' => TemplateSelector::Search($filters, true)
+			'templateSelectors' => TemplateSelector::Search($filters, true),
+			'rconCommands' => RCONCommand::Search($filters, true),
 		];
 
 		$payloads[] = [
