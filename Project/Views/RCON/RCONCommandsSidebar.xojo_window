@@ -261,6 +261,17 @@ End
 
 
 	#tag Method, Flags = &h0
+		Function MinimumBounds() As Xojo.Size
+		  Select Case Self.Pages.SelectedPanelIndex
+		  Case Self.PageList
+		    Return New Xojo.Size(200, 200)
+		  Case Self.PageBuilder
+		    Return Self.Builder.MinimumBounds
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Reload()
 		  Var GameId As String = Self.GamePicker.SelectedRowTag
 		  Var Filter As String = Self.FilterField.Text.Trim
@@ -298,6 +309,10 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event PageChanged()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event RequestResize(Width As Integer, Height As Integer)
 	#tag EndHook
 
@@ -315,6 +330,13 @@ End
 
 #tag EndWindowCode
 
+#tag Events Pages
+	#tag Event
+		Sub PanelChanged()
+		  RaiseEvent PageChanged
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub PerformEdit()

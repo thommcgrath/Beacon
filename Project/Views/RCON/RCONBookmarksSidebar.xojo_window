@@ -111,6 +111,12 @@ End
 
 
 	#tag Method, Flags = &h0
+		Function MinimumBounds() As Xojo.Size
+		  Return New Xojo.Size(200, 200)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  

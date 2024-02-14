@@ -227,6 +227,7 @@ End
 		  If Self.mOpenDefaultTab Then
 		    Call Self.NewTab()
 		  End If
+		  Self.mDesiredSidebarWidth = 200
 		End Sub
 	#tag EndEvent
 
@@ -348,6 +349,15 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function MinimumSidebarSize() As Xojo.Size
+		  Var MinCommandSize As Xojo.Size = Self.Commands.MinimumBounds
+		  Var MinBookmarksSize As Xojo.Size = Self.Bookmarks.MinimumBounds
+		  Return New Xojo.Size(Max(200, MinCommandSize.Width, MinBookmarksSize.Width), Max(Self.TabMinHeight, MinCommandSize.Height, MinBookmarksSize.Height))
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function NewTab(AllowReuse As Boolean = True) As RCONContainer
 		  Var Container As RCONContainer
@@ -396,12 +406,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetSidebarWidth(Width As Integer)
-		  Var MinWidth As Integer = Width + Self.SidebarSeparator.Width + Self.TabMinWidth
-		  If Self.Width < MinWidth Then
-		    Self.Width = MinWidth
-		  End If
-		  Self.MinimumWidth = MinWidth
-		  
 		  Self.Sidebar.Width = Width
 		  Self.SidebarSeparator.Left = Width
 		  Self.SidebarSwitcher.Width = Width
@@ -409,6 +413,29 @@ End
 		  Self.Panel.Width = Self.Width - Self.Panel.Left
 		  Self.TabsBar.Left = Self.Panel.Left
 		  Self.TabsBar.Width = Self.Panel.Width
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateMinimumDimensions()
+		  Self.UpdateMinimumDimensions(Self.MinimumSidebarSize)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateMinimumDimensions(MinSidebarSize As Xojo.Size)
+		  Var MinHeight As Integer = MinSidebarSize.Height + Self.SidebarSwitcher.Top + Self.SidebarSwitcher.Height
+		  Var MinWidth As Integer = MinSidebarSize.Width + Self.SidebarSeparator.Width + Self.TabMinWidth
+		  
+		  If Self.Width < MinWidth Then
+		    Self.Width = MinWidth
+		  End If
+		  Self.MinimumWidth = MinWidth
+		  
+		  If Self.Height < MinHeight Then
+		    Self.Height = MinHeight
+		  End If
+		  Self.MinimumHeight = MinHeight
 		End Sub
 	#tag EndMethod
 
@@ -447,6 +474,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCurrentView As RCONContainer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDesiredSidebarWidth As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -550,6 +581,7 @@ End
 		  Me.Append(OmniBarItem.CreateButton("BookmarksButton", "Bookmarks", IconToolbarBookmark, "Show saved RCON bookmarks."))
 		  Me.Append(OmniBarItem.CreateButton("CommandsButton", "Commands", IconToolbarCommand, "Show game commands."))
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
 		  Me.ToggleOnly("BookmarksButton")
 		End Sub
 	#tag EndEvent
@@ -565,6 +597,18 @@ End
 		    Self.Sidebar.SelectedPanelIndex = Self.PageCommands
 		    Me.ToggleOnly(Item.Name)
 		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Var MinSize As Xojo.Size = Self.MinimumSidebarSize()
+		  Var NewWidth As Integer = Max(Min(Me.Width + DeltaX, Self.Width - (Self.SidebarSeparator.Width + Self.TabMinWidth)), MinSize.Width)
+		  Self.SetSidebarWidth(NewWidth)
+		  Self.mDesiredSidebarWidth = NewWidth
+		  Self.UpdateMinimumDimensions(MinSize)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -604,13 +648,18 @@ End
 		  End If
 		  Self.MinimumHeight = MinHeight
 		  
-		  Self.SetSidebarWidth(Max(Width, 200))
+		  Self.SetSidebarWidth(Max(Width, 200, Self.mDesiredSidebarWidth))
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub RestoreDimensions()
-		  Self.SetSidebarWidth(200)
-		  Self.MinimumHeight = Self.TabMinHeight + Self.TabsBar.Top + Self.TabsBar.Height
+		  Self.SetSidebarWidth(Self.mDesiredSidebarWidth)
+		  Self.UpdateMinimumDimensions()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PageChanged()
+		  Self.UpdateMinimumDimensions()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
