@@ -178,17 +178,22 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		}
 
 		if (isset($filters['search']) && empty($filters['search']) === false) {
-			$search = new BeaconSearch();
-			$results = $search->Search($filters['search'], null, 100, 'Document');
-			if (count($results) > 0) {
-				$ids = [];
-				foreach ($results as $result) {
-					$ids[] = $result['objectID'];
+			if (array_key_exists('communityStatus', $filters)) {
+				$search = new BeaconSearch();
+				$results = $search->Search($filters['search'], null, 100, 'Document');
+				if (count($results) > 0) {
+					$ids = [];
+					foreach ($results as $result) {
+						$ids[] = $result['objectID'];
+					}
+					$parameters->clauses[] = $schema->Comparison('projectId', '=', 'ANY($' . $parameters->placeholder++ . ')');
+					$parameters->values[] = '{' . implode(',', $ids) . '}';
+				} else {
+					$parameters->clauses[] = $schema->Comparison('projectId', '=', "'00000000-0000-0000-0000-000000000000'");
 				}
-				$parameters->clauses[] = $schema->Comparison('projectId', '=', 'ANY($' . $parameters->placeholder++ . ')');
-				$parameters->values[] = '{' . implode(',', $ids) . '}';
 			} else {
-				$parameters->clauses[] = $schema->Comparison('projectId', '=', "'00000000-0000-0000-0000-000000000000'");
+				$parameters->clauses[] = $schema->Comparison('name', 'LIKE', '$' . $parameters->placeholder++);
+				$parameters->values[] = '%' . str_replace(['%', '_'], ['\\%', '\\_'], $filters['search']) . '%';
 			}
 		}
 
