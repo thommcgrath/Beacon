@@ -36,6 +36,9 @@ Protected Class ModDiscoveryEngine
 		  Var Searcher As New Regex
 		  Searcher.SearchPattern = "^ShooterGame/Mods/([^/]+)/Content(.*)/([^/]+)\.uasset\t[\d\-TZ:\.]{24}$"
 		  
+		  Var FilenameSearcher As New Regex
+		  FilenameSearcher.SearchPattern = "^(.+)-([a-z+]+) (\d+)\.zip$"
+		  
 		  Self.mModsByTag = New Dictionary
 		  Self.mTagsByMod = New Dictionary
 		  For Each ModId As String In Self.mModIds
@@ -77,6 +80,44 @@ Protected Class ModDiscoveryEngine
 		      Next
 		      If LatestFile Is Nil Then
 		        App.Log("Could not find main file for mod " + ModId + " in list of files.")
+		        Continue For ModId
+		      End If
+		      
+		      // Need to find the version of the main file
+		      Var FilenameInfo As RegexMatch = FilenameSearcher.Search(LatestFile.Value("fileName").StringValue)
+		      If FilenameInfo Is Nil Then
+		        App.Log("Could not parse the filename for mod " + ModId + " in list of files.")
+		        Continue For ModId
+		      End If
+		      Var FilenameBase As String = FilenameInfo.SubExpressionString(1)
+		      Var FilenameVersion As String = FilenameInfo.SubExpressionString(3)
+		      Var TargetFilename As String = FilenameBase + "-windowsserver " + FilenameVersion + ".zip"
+		      
+		      // Get the full list of files
+		      Var FileListSocket As New SimpleHTTP.SynchronousHTTPSocket
+		      FileListSocket.RequestHeader("User-Agent") = App.UserAgent
+		      FileListSocket.RequestHeader("x-api-key") = Beacon.CurseForgeApiKey
+		      FileListSocket.Send("GET", "https://api.curseforge.com/v1/mods/" + ModId + "/files")
+		      If FileListSocket.LastHTTPStatus <> 200 Then
+		        App.Log("Could not list files for mod " + ModId + ": HTTP #" + FileListSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		        Continue For ModId
+		      End If
+		      ResponseJson = New JSONItem(FileListSocket.LastContent)
+		      Var FileList As JSONItem = ResponseJson.Value("data")
+		      
+		      // Now look through the file list again for the target file
+		      LatestFile = Nil
+		      For Idx As Integer = 0 To FileList.Count - 1
+		        Var File As JSONItem = FileList.ChildAt(Idx)
+		        If File.Value("fileName") <> TargetFilename Then
+		          Continue For Idx
+		        End If
+		        
+		        LatestFile = File
+		        Exit For Idx
+		      Next
+		      If LatestFile Is Nil Then
+		        App.Log("Could not find file '" + TargetFilename + "' for mod " + ModId + " in the list of files.")
 		        Continue For ModId
 		      End If
 		      
