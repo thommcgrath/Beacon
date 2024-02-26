@@ -43,7 +43,7 @@ $dailyTotal = RunReport("Day's", null, $yesterday, $today, $fields);
 $monthTotal = RunReport('MTD', null, $firstOfMonth, $lastOfMonth, $fields);
 while (!$gameRows->EOF()) {
 	$gameId = $gameRows->Field('game_id');
-	RunReport("Day's {$gameId}", $gameId, $yesterday, $today, $fields, $dailyTotal);
+	RunReport("Daily {$gameId}", $gameId, $yesterday, $today, $fields, $dailyTotal);
 	RunReport("MTD {$gameId}", $gameId, $firstOfMonth, $lastOfMonth, $fields, $monthTotal);
 	$gameRows->MoveNext();
 }
@@ -67,17 +67,22 @@ $arr = [
 		],
 	],
 ];
-BeaconCommon::PostSlackRaw(json_encode($arr));
+if (BeaconCommon::InProduction()) {
+	BeaconCommon::PostSlackRaw(json_encode($arr));
+} else {
+	echo json_encode($arr, JSON_PRETTY_PRINT);
+}
 
 function RunReport(string $label, ?string $gameId, DateTime $periodStart, DateTime $periodEnd, array &$fields, ?float $periodTotal = null): float {
 	$database = BeaconCommon::Database();
 	if (is_null($gameId)) {
 		$rows = $database->Query("SELECT COALESCE(SUM(purchases.total_paid_usd - purchases.tax_usd), 0) AS total_usd, COUNT(purchases.purchase_id) AS num_sales FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0;", $periodStart->format(SQL_DATE_FORMAT), $periodEnd->format(SQL_DATE_FORMAT));
 	} else {
-		$rows = $database->Query("SELECT COALESCE(SUM(p.total_paid_usd - p.tax_usd), 0) AS total_usd, COUNT(p.purchase_id) AS num_sales FROM public.purchases AS p WHERE p.purchase_id IN (SELECT DISTINCT purchase_items.purchase_id FROM public.purchase_items WHERE purchase_items.purchase_id IN (SELECT purchase_id FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0) AND purchase_items.product_id IN (SELECT product_id FROM public.products WHERE products.game_id = $3));", $periodStart->format(SQL_DATE_FORMAT), $periodEnd->format(SQL_DATE_FORMAT), $gameId);
+		$rows = $database->Query("SELECT COALESCE(SUM(purchase_items.line_total_usd - purchase_items.tax_usd), 0) AS total_usd, COUNT(purchase_items.line_id) AS num_sales FROM public.purchase_items INNER JOIN public.purchases ON (purchase_items.purchase_id = purchases.purchase_id) WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0 AND purchase_items.product_id IN (SELECT products.product_id FROM public.products WHERE game_id = $3);", $periodStart->format(SQL_DATE_FORMAT), $periodEnd->format(SQL_DATE_FORMAT), $gameId);
 	}
 
 	$total = $rows->Field('total_usd');
+	$numSales = number_format($rows->Field('num_sales'));
 	$salesFormatted = '$' . number_format($total, 2);
 	if (is_null($gameId) === false) {
 		if ($periodTotal > 0) {
@@ -89,13 +94,8 @@ function RunReport(string $label, ?string $gameId, DateTime $periodStart, DateTi
 	}
 
 	$fields[] = [
-		'title' => "{$label} Sales",
+		'title' => "{$numSales} {$label} Sales",
 		'value' => $salesFormatted,
-		'short' => true,
-	];
-	$fields[] = [
-		'title' => "{$label} Txns",
-		'value' => number_format($rows->Field('num_sales')),
 		'short' => true,
 	];
 
