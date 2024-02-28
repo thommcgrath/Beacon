@@ -284,6 +284,11 @@ foreach ($lines as $priceId => $quantity) {
 		'quantity' => $quantity
 	];
 }
+if (count($payment['line_items']) === 0) {
+	http_response_code(400);
+	echo json_encode(['error' => true, 'message' => 'The cart does not contain any products that are valid for email ' . $email . '.'], JSON_PRETTY_PRINT);
+	exit;
+}
 
 $encoded_cart = BeaconCommon::Base64UrlEncode(gzencode(json_encode($bundles)));
 if (strlen($encoded_cart) > 500) {
