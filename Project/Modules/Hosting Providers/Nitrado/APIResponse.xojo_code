@@ -33,7 +33,7 @@ Private Class APIResponse
 		    Err.ErrorNumber = Response.mHTTPStatus
 		    Select Case Response.mHTTPStatus
 		    Case 401
-		      Err.Message = "The connection between your Beacon and Nitrado accounts is no longer valid and must be replaced. Use the 'Show Account Info' option from the user menu in the top right corner of Beacon to access your account."
+		      Err.Message = "The connection between your Beacon and Nitrado accounts is no longer valid and must be replaced. Use the 'Account Control Panel' option from the user menu in the top right corner of Beacon to access your account, then choose the 'Connections' section."
 		    Case 429
 		      Err.Message = "Rate limit has been exceeded."
 		    Case 503
