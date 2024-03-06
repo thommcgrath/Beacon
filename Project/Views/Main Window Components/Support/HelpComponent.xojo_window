@@ -27,28 +27,6 @@ Begin BeaconSubview HelpComponent
    Transparent     =   True
    Visible         =   True
    Width           =   738
-   Begin DesktopHTMLViewer HelpViewer
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   353
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Renderer        =   1
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   41
-      Visible         =   True
-      Width           =   738
-   End
    Begin OmniBar BrowserButtonToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -146,6 +124,35 @@ Begin BeaconSubview HelpComponent
       Visible         =   True
       Width           =   298
    End
+   Begin WebContentViewer HelpViewer
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   353
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   True
+      Visible         =   True
+      Width           =   738
+   End
 End
 #tag EndDesktopWindow
 
@@ -211,9 +218,49 @@ End
 
 #tag EndWindowCode
 
+#tag Events BrowserButtonToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateButton("BackButton", "Back", IconToolbarBack, "", False))
+		  Me.Append(OmniBarItem.CreateButton("ForwardButton", "Forward", IconToolbarForward, "", False))
+		  Me.Append(OmniBarItem.CreateButton("HomeButton", "Home", IconToolbarHome, "", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "BackButton"
+		    Self.HelpViewer.GoBack
+		  Case "ForwardButton"
+		    Self.HelpViewer.GoForward
+		  Case "HomeButton"
+		    Self.LoadURL(Beacon.HelpURL)
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events HelpViewer
 	#tag Event
-		Sub DocumentComplete(url as String)
+		Function CancelLoad(URL As String) As Boolean
+		  If Self.ShouldCancel(URL) Then
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DocumentBegin(URL As String)
+		  #Pragma Unused URL
+		  
+		  If (Self.LinkedOmniBarItem Is Nil) = False Then
+		    Self.LinkedOmniBarItem.HasProgressIndicator = True
+		    Self.LinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DocumentComplete(URL As String)
 		  #Pragma Unused URL
 		  
 		  If (Self.LinkedOmniBarItem Is Nil) = False Then
@@ -240,7 +287,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DocumentProgressChanged(URL as String, percentageComplete as Integer)
+		Sub DocumentProgressChanged(URL As String, PercentageComplete As Integer)
 		  #Pragma Unused URL
 		  
 		  If (Self.LinkedOmniBarItem Is Nil) = False Then
@@ -249,39 +296,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DocumentBegin(url as String)
-		  #Pragma Unused URL
-		  
-		  If (Self.LinkedOmniBarItem Is Nil) = False Then
-		    Self.LinkedOmniBarItem.HasProgressIndicator = True
-		    Self.LinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CancelLoad(URL as String) As Boolean
-		  If Self.ShouldCancel(URL) Then
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.UserAgent = App.UserAgent
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function NewWindow(url as String) As DesktopHTMLViewer
-		  System.GotoURL(URL)
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub TitleChanged(newTitle as String)
-		  Self.BrowserTitleLabel.Text = NewTitle
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function JavaScriptRequest(method As String, parameters() as Variant) As String
+		Function JavaScriptRequest(Method As String, Parameters() As Variant) As String
 		  Select Case Method
 		  Case "openInBrowser"
 		    Try
@@ -292,27 +307,19 @@ End
 		  End Select
 		End Function
 	#tag EndEvent
-#tag EndEvents
-#tag Events BrowserButtonToolbar
+	#tag Event
+		Function NewWindow(URL As String) As WebContentViewer
+		  System.GotoURL(URL)
+		End Function
+	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("BackButton", "Back", IconToolbarBack, "", False))
-		  Me.Append(OmniBarItem.CreateButton("ForwardButton", "Forward", IconToolbarForward, "", False))
-		  Me.Append(OmniBarItem.CreateButton("HomeButton", "Home", IconToolbarHome, "", False))
+		  Me.UserAgent = App.UserAgent
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
-		  
-		  Select Case Item.Name
-		  Case "BackButton"
-		    Self.HelpViewer.GoBack
-		  Case "ForwardButton"
-		    Self.HelpViewer.GoForward
-		  Case "HomeButton"
-		    Self.LoadURL(Beacon.HelpURL)
-		  End Select
+		Sub TitleChanged(NewTitle As String)
+		  Self.BrowserTitleLabel.Text = NewTitle
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -169,6 +169,7 @@ while (!$results->EOF()) {
 
 $includeArk = isset($products['Ark']['Base']);
 $includeArkSA = isset($products['ArkSA']['Base']);
+$includeMinimalGames = isset($products['BeaconMinimal']['Base']);
 
 $gameIds = [];
 $gameRows = $database->Query('SELECT game_id FROM public.games WHERE public = TRUE AND game_id NOT IN (\'Ark\', \'ArkSA\') ORDER BY game_id;');
@@ -183,6 +184,7 @@ foreach ($bundles as $bundle) {
 
 	$wantsArk = $includeArk ? $bundle->getQuantity($products['Ark']['Base']['ProductId']) > 0 : false;
 	$wantsArkSAYears = $includeArkSA ? $bundle->getQuantity($products['ArkSA']['Base']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Upgrade']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Renewal']['ProductId']) : 0;
+	$wantsMinimalGamesYears = $includeMinimalGames ? $bundle->getQuantity($products['BeaconMinimal']['Base']['ProductId']) + $bundle->getQuantity($products['BeaconMinimal']['Renewal']['ProductId']) : 0;
 
 	if ($bundle->isGift()) {
 		if ($wantsArk) {
@@ -227,6 +229,7 @@ foreach ($bundles as $bundle) {
 	} else {
 		$ownsArk = $includeArk && findLicense($licenses, $products['Ark']['Base']['ProductId']) !== null;
 		$ownsArkSA = $includeArkSA && findLicense($licenses, $products['ArkSA']['Base']['ProductId']) !== null;
+		$ownsMinimalGames = $includeMinimalGames && findLicense($licenses, $products['BeaconMinimal']['Base']['ProductId']) !== null;
 
 		if ($wantsArk && !$ownsArk) {
 			$lines[$products['Ark']['Base']['PriceId']] = ($lines[$products['Ark']['Base']['PriceId']] ?? 0) + 1;

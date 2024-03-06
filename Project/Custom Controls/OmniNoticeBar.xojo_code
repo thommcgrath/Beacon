@@ -79,7 +79,7 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 
-	#tag Constant, Name = WarningText, Type = String, Dynamic = False, Default = \"This editor requires Beacon Omni for \?1. Click this banner to learn more.", Scope = Private
+	#tag Constant, Name = WarningText, Type = String, Dynamic = True, Default = \"This editor requires a \'Beacon Omni for \?1\' license. Click this banner to learn more.", Scope = Private
 	#tag EndConstant
 
 

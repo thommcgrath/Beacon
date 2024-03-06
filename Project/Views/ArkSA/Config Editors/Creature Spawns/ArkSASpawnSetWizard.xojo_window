@@ -737,7 +737,6 @@ End
 		    // We'll create five entries to create a proper spread
 		    
 		    Var Randomizer As Random = System.Random
-		    Randomizer.RandomizeSeed
 		    Radius = Radius / 2
 		    Var OffsetRadius As Double = Radius / 2 // For 1/4 of the original
 		    

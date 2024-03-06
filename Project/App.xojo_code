@@ -35,6 +35,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Ark.DataSource.Pool.CloseAll
 		  SDTD.DataSource.Pool.CloseAll
 		  Beacon.CommonData.Pool.CloseAll
+		  ArkSA.DataSource.Pool.CloseAll
+		  Palworld.DataSource.Pool.CloseAll
 		  
 		  UpdatesKit.Cleanup
 		  
@@ -1060,6 +1062,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    #endif
 		    #if ArkSA.Enabled
 		      Self.mDataSources.Add(ArkSA.DataSource.Pool.Get(False))
+		    #endif
+		    #if Palworld.Enabled
+		      Self.mDataSources.Add(Palworld.DataSource.Pool.Get(False))
 		    #endif
 		  Catch Err As RuntimeException
 		    // Something is still wrong

@@ -136,7 +136,7 @@ Begin BeaconAutopositionWindow DeployManager
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   500
       Begin DesktopLabel OptionsMessageLabel
@@ -1048,6 +1048,8 @@ End
 		      #endif
 		    Case IsA ArkSA.ServerProfile
 		      Engine = New ArkSA.DeployIntegration(Project, Profile)
+		    Case IsA Palworld.ServerProfile
+		      Engine = New Palworld.DeployIntegration(Project, Profile)
 		    End Select
 		    If Engine Is Nil Then
 		      Self.ShowAlert("The developer messed up.", "There is no DeployIntegration defined for server profile " + Profile.Name + ".")
@@ -1425,7 +1427,11 @@ End
 		  Var State As New TextAreaState
 		  State.ApplyTo(Self.ReviewArea)
 		  Self.ReviewSwitcher.SelectedIndex = 1
-		  Self.ReviewArea.Text = UserData.Lookup(Ark.ConfigFileGameUserSettings, "").StringValue
+		  Try
+		    Self.ReviewArea.Text = UserData.Lookup(Self.ReviewSwitcher.SelectedItem.Caption, "").StringValue
+		  Catch Err As RuntimeException
+		    Self.ReviewArea.Text = ""
+		  End Try
 		  Self.UpdatingReviewContent = False
 		End Sub
 	#tag EndMethod
@@ -1627,10 +1633,27 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconFileIniFilled, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
-		  Me.Add(IconFileIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
+		  Select Case Self.Project.GameId
+		  Case Ark.Identifier
+		    Me.Add(IconFileIniFilled, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
+		    Me.Add(IconFileIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
+		  Case ArkSA.Identifier
+		    Me.Add(IconFileIniFilled, ArkSA.ConfigFileGameUserSettings, ArkSA.ConfigFileGameUserSettings)
+		    Me.Add(IconFileIni, ArkSA.ConfigFileGame, ArkSA.ConfigFileGame)
+		  Case Palworld.Identifier
+		    Me.Add(IconFileIniFilled, Palworld.ConfigFileSettings, Palworld.ConfigFileSettings)
+		  End Select
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1
+		  
+		  Select Case Me.Count
+		  Case 3
+		    Self.ReviewConfirmationCheck.Caption = "The config file is correct"
+		  Case 4
+		    Self.ReviewConfirmationCheck.Caption = "Both config files are correct"
+		  Else
+		    Self.ReviewConfirmationCheck.Caption = "All config files are correct"
+		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1650,12 +1673,12 @@ End
 		  
 		  Self.UpdatingReviewContent = True
 		  Var UserData As Dictionary = Controller.UserData
-		  Select Case Me.SelectedIndex
-		  Case 1
-		    Self.ReviewArea.Text = UserData.Lookup(Ark.ConfigFileGameUserSettings, "").StringValue
-		  Case 2
-		    Self.ReviewArea.Text = UserData.Lookup(Ark.ConfigFileGame, "").StringValue
-		  End Select
+		  Try
+		    Var Filename As String = Me.SelectedItem.Caption
+		    Self.ReviewArea.Text = UserData.Lookup(Filename, "").StringValue
+		  Catch Err As RuntimeException
+		    Self.ReviewArea.Text = ""
+		  End Try
 		  Self.UpdatingReviewContent = False
 		End Sub
 	#tag EndEvent

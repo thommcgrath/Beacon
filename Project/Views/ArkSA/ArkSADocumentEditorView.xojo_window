@@ -49,7 +49,7 @@ Begin DocumentEditorView ArkSADocumentEditorView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   627
       Begin OmniNoticeBar OmniNoticeBanner
@@ -270,7 +270,6 @@ Begin DocumentEditorView ArkSADocumentEditorView
    End
    Begin Thread GFIComputeThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
