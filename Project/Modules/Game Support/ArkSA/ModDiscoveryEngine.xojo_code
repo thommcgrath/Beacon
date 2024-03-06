@@ -281,7 +281,7 @@ Protected Class ModDiscoveryEngine
 		  Pack.Marketplace = Beacon.MarketplaceCurseForge
 		  Pack.MarketplaceId = ModInfo.Value("id")
 		  
-		  Var EngramEntries(), PrimalItems(), Creatures(), SupplyCrates(), DinoInventories() As String
+		  Var EngramEntries(), PrimalItems(), Creatures(), SupplyCrates(), DinoInventories(), SpawnPoints() As String
 		  Var ClassPaths As New Dictionary // Yes, this will break if a mod uses the same class in more than one namespace. This is a crappy implementation anyway, so I don't care.
 		  For Each Entry As DictionaryEntry In Candidates
 		    Var Path As String = Entry.Key
@@ -296,6 +296,8 @@ Protected Class ModDiscoveryEngine
 		      SupplyCrates.Add(ClassString)
 		    ElseIf ClassString.BeginsWith("DinoDropInventory") Or ClassString.BeginsWith("DinoInventory") Then
 		      DinoInventories.Add(ClassString)
+		    ElseIf ClassString.BeginsWith("DinoSpawnEntries") Then
+		      SpawnPoints.Add(ClassString)
 		    Else
 		      Continue
 		    End If
@@ -390,6 +392,16 @@ Protected Class ModDiscoveryEngine
 		    DinoLoot.Tags = Array("dino")
 		    DinoLoot.Experimental = True
 		    Blueprints.Add(DinoLoot)
+		  Next
+		  
+		  For Each ClassString As String In SpawnPoints
+		    Var Path As String = ClassPaths.Value(ClassString)
+		    Var Point As New ArkSA.MutableSpawnPoint(Path, "")
+		    Point.ContentPackId = ContentPackId
+		    Point.ContentPackName = ModName
+		    Point.RegenerateBlueprintId()
+		    Point.Label = ArkSA.LabelFromClassString(ClassString + "_C")
+		    Blueprints.Add(Point)
 		  Next
 		  
 		  RaiseEvent ContentPackDiscovered(Pack.ImmutableVersion, Blueprints)

@@ -1824,7 +1824,7 @@ End
 		    Var Explanation As String
 		    If NumSuccess > 0 And NumErrored = 0 Then
 		      // Full success
-		      Explanation = "Your server" + If(NumSuccess > 1, "s have", " has") + " been updated. " + If(NumSuccess > 1, "Any servers that were running when the deploy started will now be starting up.", "If the server was running when the deploy started, it will now be starting up.")
+		      Explanation = "Your server" + If(NumSuccess > 1, "s have", " has") + " been updated. " + If(NumSuccess > 1, "If a restart option was selected, any servers that were running when the deploy started will now be starting up.", "If the server was running when the deploy started and a restart option was selected, it will now be starting up.")
 		      If Preferences.PlaySoundAfterDeploy Then
 		        SoundDeploySuccess.Play
 		      End If
