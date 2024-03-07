@@ -30,6 +30,18 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
+		Shared Function Available() As Boolean
+		  #if TargetMacOS
+		    Return True
+		  #elseif TargetWindows
+		    Return DesktopWebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False
+		  #else
+		    Return False
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CanGoBack() As Boolean
 		  #if TargetWindows
 		    Return DesktopWebView2ControlMBS(Self.mViewer).CanGoBack
@@ -246,6 +258,13 @@ End
 
 	#tag Method, Flags = &h0
 		Sub LoadURL(URL As String)
+		  If Self.Available = False Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Web content is not supported on this platform."
+		    RaiseEvent Error(Err)
+		    Return
+		  End If
+		  
 		  #if TargetWindows
 		    DesktopWebView2ControlMBS(Self.mViewer).LoadURL(URL)
 		  #else

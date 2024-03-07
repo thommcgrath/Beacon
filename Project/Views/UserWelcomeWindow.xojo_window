@@ -756,6 +756,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub StartOAuth(WithIdentity As Beacon.Identity = Nil)
+		  If Not WebContentViewer.Available Then
+		    Var Message As String = "Web content is not supported on this device."
+		    #if TargetWindows
+		      If Self.ShowConfirm(Message, "Please download and install the Microsoft Edge WebView2 Runtime.", "Download", "Cancel") Then
+		        System.GotoURL("https://go.microsoft.com/fwlink/p/?LinkId=2124703")
+		      End If
+		    #else
+		      Self.ShowAlert(Message, "I'm as confused as you are, this shouldn't be possible.")
+		    #endif
+		    Return
+		  End If
+		  
 		  Self.mOAuthState = Beacon.UUID.v4
 		  Self.InitializingMessage.Text = "Starting authentication…"
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageInitializing
@@ -927,7 +939,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DocumentComplete(URL As String)
-		  #Pragma Unused url
+		  #Pragma Unused URL
 		  
 		  If Self.PagePanel1.SelectedPanelIndex <> Self.PageLogin Then
 		    Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
@@ -996,6 +1008,7 @@ End
 		      LoginUrl = Me.ResponseHeader("Location")
 		    End If
 		    
+		    Self.InitializingMessage.Text = "Loading login form…"
 		    Self.LoginView.LoadURL(LoginURL)
 		    Self.Expand()
 		  ElseIf HTTPStatus = 201 Then
