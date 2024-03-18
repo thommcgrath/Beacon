@@ -204,6 +204,12 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NitradoMatchesDeployStyle(ExpertMode As Boolean) As Boolean
+		  Return Self.mNitradoDeployStyle = NitradoDeployStyles.Both Or (ExpertMode = True And Self.mNitradoDeployStyle = NitradoDeployStyles.Expert) Or (ExpertMode = False And Self.mNitradoDeployStyle = NitradoDeployStyles.Guided)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function NitradoPaths() As String()
 		  Var Clone() As String
 		  Clone.ResizeTo(Self.mNitradoPaths.LastIndex)

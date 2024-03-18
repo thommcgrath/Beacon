@@ -143,9 +143,21 @@ Inherits Beacon.DiscoverIntegration
 		  
 		  Select Case Provider
 		  Case IsA Nitrado.HostingProvider
+		    Var ExpertMode As Boolean
+		    Try
+		      ExpertMode = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode"))
+		    Catch Err As RuntimeException
+		      Self.SetError("Could not determine if the server is in expert mode: " + Err.Message)
+		      Return Nil
+		    End Try
+		    
 		    Var CommandLineOptions As New Dictionary
 		    Var Settings() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
 		    For Each Setting As Ark.ConfigOption In Settings
+		      If Setting.NitradoMatchesDeployStyle(ExpertMode) = False Then
+		        Continue
+		      End If
+		      
 		      Var Value As Variant
 		      Try
 		        Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Setting)
