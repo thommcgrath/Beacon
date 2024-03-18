@@ -38,7 +38,7 @@ Private Class APIResponse
 		      Err.Message = "Rate limit has been exceeded."
 		    Case 503
 		      Err.Message = "Nitrado is offline for maintenance."
-		    Case 504
+		    Case 502, 504
 		      Err.Message = "Nitrado appears to be having an unplanned outage."
 		    Case 500
 		      Var TempMessage As String
