@@ -91,7 +91,7 @@ Inherits Ark.ConfigGroup
 		  
 		  For StatIndex As Integer = Self.MutagenBred.FirstIndex To Self.MutagenBred.LastIndex
 		    If Self.MutagenBred(StatIndex) <> Self.DefaultMutagenLevelCount(True, StatIndex) Then
-		      Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoostBred[" + StatIndex.ToString(Locale.Raw, "0") + "]=" + Self.MutagenBred(StatIndex).ToString(Locale.Raw, "0"), StatIndex))
+		      Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoost_Bred[" + StatIndex.ToString(Locale.Raw, "0") + "]=" + Self.MutagenBred(StatIndex).ToString(Locale.Raw, "0"), StatIndex))
 		    End If
 		  Next StatIndex
 		  
@@ -109,7 +109,7 @@ Inherits Ark.ConfigGroup
 		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoTamed_Affinity"))
 		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_DinoWild"))
 		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoost"))
-		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoostBred"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MutagenLevelBoost_Bred"))
 		  Return Keys
 		End Function
 	#tag EndEvent
@@ -210,7 +210,7 @@ Inherits Ark.ConfigGroup
 		    Var TamedAffinityKey As String = "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
 		    Var WildPerLevelKey As String = "PerLevelStatsMultiplier_DinoWild[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
 		    Var MutagenTamedKey As String = "MutagenLevelBoost[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
-		    Var MutagenBredKey As String = "MutagenLevelBoostBred[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
+		    Var MutagenBredKey As String = "MutagenLevelBoost_Bred[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
 		    
 		    If ParsedData.HasAnyKey(PlayerBaseKey, PlayerPerLevelKey, TamedPerLevelKey, TamedAddKey, TamedAffinityKey, WildPerLevelKey, MutagenTamedKey, MutagenBredKey) = False Then
 		      Continue
