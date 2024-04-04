@@ -605,7 +605,7 @@ Begin ArkSAConfigEditor ArkSADifficultyEditor
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   15
+         TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
@@ -639,7 +639,7 @@ Begin ArkSAConfigEditor ArkSADifficultyEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   14
+         TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Max Crystal Wyvern Level:"
@@ -688,90 +688,6 @@ Begin ArkSAConfigEditor ArkSADifficultyEditor
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   299
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField PerfectWyvernLevelField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ReferenceValuesGroup"
-         Italic          =   False
-         Left            =   323
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   True
-         Scope           =   2
-         TabIndex        =   13
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   333
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField PerfectCrystalWyvernLevelField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ReferenceValuesGroup"
-         Italic          =   False
-         Left            =   323
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   True
-         Scope           =   2
-         TabIndex        =   16
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   367
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -942,10 +858,6 @@ End
 		  Self.PerfectDinoLevelField.Width = ColumnWidth
 		  Self.PerfectTekLevelField.Left = SecondColumnLeft
 		  Self.PerfectTekLevelField.Width = ColumnWidth
-		  Self.PerfectWyvernLevelField.Left = SecondColumnLeft
-		  Self.PerfectWyvernLevelField.Width = ColumnWidth
-		  Self.PerfectCrystalWyvernLevelField.Left = SecondColumnLeft
-		  Self.PerfectCrystalWyvernLevelField.Width = ColumnWidth
 		  
 		  Var Difficulty As ArkSA.Configs.Difficulty = Self.Config(False)
 		  Self.MaxDinoLevelField.Text = Difficulty.MaxDinoLevel.ToString(Locale.Current, "#,##0")
@@ -973,9 +885,7 @@ End
 		  Self.MaxCrystalWyvernLevelField.Text = Difficulty.MaxCrystalWyvernLevel.ToString(Locale.Current, "#,##0")
 		  
 		  Self.PerfectDinoLevelField.Text = Difficulty.PerfectLevel(Difficulty.MaxDinoLevel).ToString(Locale.Current, "#,##0")
-		  Self.PerfectCrystalWyvernLevelField.Text = Difficulty.PerfectLevel(Difficulty.MaxCrystalWyvernLevel).ToString(Locale.Current, "#,##0")
 		  Self.PerfectTekLevelField.Text = Difficulty.PerfectLevel(Difficulty.MaxTekLevel).ToString(Locale.Current, "#,##0")
-		  Self.PerfectWyvernLevelField.Text = Difficulty.PerfectLevel(Difficulty.MaxWyvernLevel).ToString(Locale.Current, "#,##0")
 		End Sub
 	#tag EndMethod
 
@@ -1017,8 +927,6 @@ End
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events PerfectDinoLevelField
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
