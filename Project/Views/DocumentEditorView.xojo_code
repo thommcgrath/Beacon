@@ -119,7 +119,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h1
 		Protected Sub Autosave()
-		  If Self.Project.Modified = False Or Self.Project.ReadOnly Then
+		  If Self.Modified = False Or Self.Project.ReadOnly Then
 		    Return
 		  End If
 		  
