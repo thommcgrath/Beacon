@@ -2105,6 +2105,38 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
       Visible         =   True
       Width           =   540
    End
+   Begin DesktopLabel BlueprintIdLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Blueprint Id"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   460
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      Width           =   316
+   End
 End
 #tag EndDesktopWindow
 
@@ -2140,6 +2172,10 @@ End
 		    Case IsA ArkSA.LootContainer
 		      Self.LoadBlueprint(ArkSA.LootContainer(Self.mOriginalBlueprint))
 		    End Select
+		    
+		    Self.BlueprintIdLabel.Text = Self.mOriginalBlueprint.BlueprintId
+		    Self.BlueprintIdLabel.TextColor = SystemColors.SecondaryLabelColor
+		    Self.BlueprintIdLabel.Visible = True
 		  Else
 		    Self.TypeMenu.SelectedRowIndex = -1
 		    Self.TypeMenu.Enabled = True
