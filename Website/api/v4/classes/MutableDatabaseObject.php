@@ -67,7 +67,7 @@ trait MutableDatabaseObject {
 			$database->Query("INSERT INTO " . $schema->WriteableTable() . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ");", $values);
 			$obj = static::Fetch($primaryKey);
 			if (is_null($obj)) {
-				throw new Exception("No object inserted into database.");
+				throw new Exception("{$primaryKey} was inserted into database, but could not be fetched. This is an internal error and will need to be fixed by the developer.");
 			}
 			$obj->Edit($properties); // Gets virtual data into the new object so the next method can function
 			$obj->SaveChildObjects($database);
