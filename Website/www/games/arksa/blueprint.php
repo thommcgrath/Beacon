@@ -119,7 +119,8 @@ foreach ($objects as $object) {
 	}
 
 	$properties = [
-		'Mod' => '[' . $obj->ContentPackName() . '](/Games/ArkSA/Mods/' . urlencode($obj->ContentPackMarketplaceId()) . '/' . urlencode($objectGroup) . ')'
+		'Mod' => '[' . $obj->ContentPackName() . '](/Games/ArkSA/Mods/' . urlencode($obj->ContentPackMarketplaceId()) . '/' . urlencode($objectGroup) . ')',
+		'Beacon UUID' => $obj->ObjectId(),
 	];
 	$tags = $obj->Tags();
 	if (count($tags) > 0) {
