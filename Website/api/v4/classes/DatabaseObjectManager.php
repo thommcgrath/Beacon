@@ -305,7 +305,12 @@ class DatabaseObjectManager {
 				return Response::NewJsonError($err->getMessage(), $member, 500);
 			}
 		}
-		$database->Commit();
+		try {
+			$database->Commit();
+		} catch (Exception $err) {
+			$database->Rollback();
+			return Response::NewJsonError('After saving the new objects, one or more required objects are still missing. The changes have been reverted.', null, 500);
+		}
 
 		return Response::NewJson([
 			'created' => $newObjects,
