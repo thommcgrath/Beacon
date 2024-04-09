@@ -64,17 +64,14 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function TheIsland() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("TheIsland")
+		Protected Function ScorchedEarth() As ArkSA.Map
+		  Return ArkSA.DataSource.Pool.Get(False).GetMap("ScorchedEarth")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function UniversalMask() As UInt64
-		  If mUniversalMask = CType(0, UInt64) Then
-		    mUniversalMask = All.Mask
-		  End If
-		  Return mUniversalMask
+		Protected Function TheIsland() As ArkSA.Map
+		  Return ArkSA.DataSource.Pool.Get(False).GetMap("TheIsland")
 		End Function
 	#tag EndMethod
 
@@ -86,6 +83,10 @@ Protected Module Maps
 	#tag Property, Flags = &h21
 		Private mUniversalMask As UInt64
 	#tag EndProperty
+
+
+	#tag Constant, Name = UniversalMask, Type = Double, Dynamic = False, Default = \"2147483647", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior
