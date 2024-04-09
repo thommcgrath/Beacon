@@ -403,7 +403,12 @@ class DatabaseObjectManager {
 				return Response::NewJsonError('Internal server error', $member, 500);
 			}
 		}
-		$database->Commit();
+		try {
+			$database->Commit();
+		} catch (Exception $err) {
+			$database->Rollback();
+			return Response::NewJsonError('One or more of the deleted objects is needed by another object. The changes have been reverted.', null, 500);
+		}
 
 		return Response::NewNoContent();
 	}
