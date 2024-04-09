@@ -3151,6 +3151,7 @@ End
 		  For Row As Integer = Me.LastRowIndex DownTo 0
 		    If Me.RowSelectedAt(Row) Then
 		      Me.RemoveRowAt(Row)
+		      Self.Modified = True
 		    End If
 		  Next
 		End Sub
