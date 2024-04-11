@@ -114,10 +114,10 @@ End
 		    End If
 		  Next
 		  
-		  Var OfficialLeft As Integer = Boxes(0).Left
-		  Var OfficialNextTop As Integer = Boxes(0).Top
-		  Var OtherLeft As Integer = Boxes(0).Left + Boxes(0).Width + 12
-		  Var OtherNextTop As Integer = Boxes(0).Top
+		  Var OfficialLeft As Integer = Self.EdgeSpacing
+		  Var OfficialNextTop As Integer = Self.EdgeSpacing
+		  Var OtherLeft As Integer = OfficialLeft + 140 + Self.CellSpacing
+		  Var OtherNextTop As Integer = Self.EdgeSpacing
 		  
 		  Boxes(0).Close
 		  
@@ -128,7 +128,7 @@ End
 		    Box.Caption = Names.Value(Map.MapId)
 		    Box.Top = OfficialNextTop
 		    Box.Left = OfficialLeft
-		    OfficialNextTop = OfficialNextTop + Box.Height + 12
+		    OfficialNextTop = OfficialNextTop + Self.RowHeight + Self.CellSpacing
 		    Self.mBoxes.Add(Box)
 		    LeftBoxes.Add(Box)
 		  Next
@@ -138,7 +138,7 @@ End
 		    Box.Caption = Names.Value(Map.MapId)
 		    Box.Top = OtherNextTop
 		    Box.Left = OtherLeft
-		    OtherNextTop = OtherNextTop + Box.Height + 12
+		    OtherNextTop = OtherNextTop + Self.RowHeight + Self.CellSpacing
 		    Self.mBoxes.Add(Box)
 		    RightBoxes.Add(Box)
 		  Next
@@ -146,10 +146,10 @@ End
 		  BeaconUI.SizeToFit(Self.mBoxes)
 		  Var LeftGroup As New ControlGroup(LeftBoxes)
 		  Var RightGroup As New ControlGroup(RightBoxes)
-		  RightGroup.Left = LeftGroup.Right + 12
+		  RightGroup.Left = LeftGroup.Right + Self.CellSpacing
 		  
-		  Self.mDesiredHeight = Max(LeftGroup.Height, RightGroup.Height) + 12
-		  Self.mDesiredWidth = If(LeftGroup.Width > 0 And RightGroup.Width > 0, LeftGroup.Width + 12 + RightGroup.Width, Max(LeftGroup.Width, RightGroup.Width)) + 12
+		  Self.mDesiredHeight = Max(LeftGroup.Height, RightGroup.Height) + (Self.EdgeSpacing * 2)
+		  Self.mDesiredWidth = If(LeftGroup.Width > 0 And RightGroup.Width > 0, LeftGroup.Width + Self.CellSpacing + RightGroup.Width, Max(LeftGroup.Width, RightGroup.Width)) + (Self.EdgeSpacing * 2)
 		  
 		  Self.Height = Self.mDesiredHeight
 		  Self.Width = Self.mDesiredWidth
@@ -292,6 +292,16 @@ End
 	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean = True
 	#tag EndProperty
+
+
+	#tag Constant, Name = CellSpacing, Type = Double, Dynamic = False, Default = \"12", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = EdgeSpacing, Type = Double, Dynamic = False, Default = \"6", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = RowHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Public
+	#tag EndConstant
 
 
 #tag EndWindowCode

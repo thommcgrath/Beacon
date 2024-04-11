@@ -61,10 +61,10 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          DesiredWidth    =   0
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   243
+         Height          =   167
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   146
+         Left            =   152
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -75,10 +75,10 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   186
+         Top             =   256
          Transparent     =   True
          Visible         =   True
-         Width           =   380
+         Width           =   368
       End
       Begin UITweaks.ResizedTextField TagsField
          AllowAutoDeactivate=   True
@@ -1976,6 +1976,66 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          Visible         =   True
          Width           =   80
       End
+      Begin DesktopRadioButton AllMapsRadio
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "All Maps"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   152
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   10
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   192
+         Transparent     =   False
+         Underline       =   False
+         Value           =   True
+         Visible         =   True
+         Width           =   368
+      End
+      Begin DesktopRadioButton SpecificMapsRadio
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Specific Maps"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   152
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   11
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   224
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   368
+      End
    End
    Begin OmniBar PageSelector
       Alignment       =   1
@@ -2161,6 +2221,11 @@ End
 		    Self.NameField.Text = Self.mOriginalBlueprint.Label
 		    Self.TagsField.Text = Self.mOriginalBlueprint.Tags.Join(", ")
 		    Self.MapSelector.SetWithMaps(Ark.Maps.ForMask(Self.mOriginalBlueprint.Availability))
+		    If Self.mOriginalBlueprint.Availability = Ark.Maps.UniversalMask Then
+		      Self.AllMapsRadio.Value = True
+		    Else
+		      Self.SpecificMapsRadio.Value = True
+		    End If
 		    
 		    Select Case Self.mOriginalBlueprint
 		    Case IsA Ark.Engram
@@ -2182,7 +2247,8 @@ End
 		    Self.PathField.Text = ""
 		    Self.NameField.Text = ""
 		    Self.TagsField.Text = ""
-		    Self.MapSelector.SetWithMaps(Nil)
+		    Self.MapSelector.SetWithMaps(Ark.Maps.All)
+		    Self.AllMapsRadio.Value = True
 		  End If
 		  
 		  Self.MinimumHeight = Self.AbsoluteMinimumHeight
@@ -2197,7 +2263,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function AbsoluteMinimumHeight() As Integer
-		  Return Self.MapSelector.Top + Self.MapSelector.DesiredHeight + 20 + Self.BottomSeparator.Height + 20 + Self.ActionButton.Height + 20
+		  Var MapBottom As Integer = (Self.MapSelector.Top + Self.MapSelector.DesiredHeight) - (MapSelectionGrid.EdgeSpacing * 2)
+		  Return MapBottom + 20 + Self.BottomSeparator.Height + 20 + Self.ActionButton.Height + 20
 		End Function
 	#tag EndMethod
 
@@ -2472,7 +2539,12 @@ End
 		    End If
 		  Next
 		  
-		  Var Availability As UInt64 = Ark.Maps.MaskForMaps(Self.MapSelector.CheckedMaps)
+		  Var Availability As UInt64
+		  If Self.AllMapsRadio.Value Then
+		    Availability = Ark.Maps.UniversalMask
+		  Else
+		    Availability = Ark.Maps.MaskForMaps(Self.MapSelector.CheckedMaps)
+		  End If
 		  If Availability = CType(0, UInt64) Then
 		    Self.ShowAlert("Object is not available to any maps", "This object should be usable on at least one map.")
 		    Return False
@@ -2890,6 +2962,12 @@ End
 		Function GetMaps() As Beacon.Map()
 		  Return Ark.Maps.All
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Left = Me.Left - Me.EdgeSpacing
+		  Me.Top = Me.Top - Me.EdgeSpacing
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events TagsField
@@ -3482,6 +3560,26 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.LootSortField.DoubleValue = Self.SuggestLootSortValue(Self.NameField.Text.Trim)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AllMapsRadio
+	#tag Event
+		Sub ValueChanged()
+		  If Me.Value Then
+		    Self.MapSelector.Enabled = False
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SpecificMapsRadio
+	#tag Event
+		Sub ValueChanged()
+		  If Me.Value Then
+		    Self.MapSelector.Enabled = True
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

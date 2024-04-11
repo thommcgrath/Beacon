@@ -10,7 +10,7 @@ Begin BeaconDialog ArkBlueprintMultiEditor
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   400
+   Height          =   476
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -112,7 +112,7 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Tags:"
@@ -145,7 +145,7 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       Multiline       =   True
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Selected tags will be added to all, crossed out tags will be removed from all."
@@ -173,7 +173,7 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       Height          =   188
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   146
+      Left            =   152
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -184,10 +184,10 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   158
+      Top             =   228
       Transparent     =   True
       Visible         =   True
-      Width           =   380
+      Width           =   468
    End
    Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
@@ -209,7 +209,7 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Edit Blueprints"
@@ -236,7 +236,7 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   546
+      Left            =   540
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -248,7 +248,7 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   360
+      Top             =   436
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -268,7 +268,7 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   454
+      Left            =   448
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -276,15 +276,73 @@ Begin BeaconDialog ArkBlueprintMultiEditor
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   360
+      Top             =   436
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
+   End
+   Begin DesktopRadioButton AllMapsRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "All Maps"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   152
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   164
+      Transparent     =   False
+      Underline       =   False
+      Value           =   True
+      Visible         =   True
+      Width           =   468
+   End
+   Begin DesktopRadioButton SpecificMapsRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Specific Maps"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   152
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   196
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   468
    End
 End
 #tag EndDesktopWindow
@@ -298,7 +356,7 @@ End
 		  Var Mask As UInt64
 		  Var Tags As New Dictionary
 		  For Each Blueprint As Ark.Blueprint In Self.mBlueprints
-		    Mask = Mask Or Blueprint.Availability
+		    Mask = Mask And Blueprint.Availability
 		    
 		    Var BlueprintTags() As String = Blueprint.Tags
 		    For Each Tag As String In BlueprintTags
@@ -308,6 +366,14 @@ End
 		  
 		  Var BlueprintCount As Integer = Self.mBlueprints.LastIndex + 1
 		  Self.MapSelector.SetWithMaps(Ark.Maps.ForMask(Mask))
+		  
+		  If Mask = Ark.Maps.UniversalMask Then
+		    Self.AllMapsRadio.Value = True
+		  Else
+		    Self.SpecificMapsRadio.Value = True
+		  End If
+		  
+		  Self.AdjustDimensions()
 		  
 		  Var CommonTags() As String
 		  For I As Integer = 0 To Tags.KeyCount - 1
@@ -334,6 +400,21 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub AdjustDimensions()
+		  Var PickerBottom As Integer = Self.Picker.Top + Self.Picker.Height
+		  Self.MapLabel.Top = PickerBottom + 12
+		  Self.AllMapsRadio.Top = Self.MapLabel.Top
+		  Self.SpecificMapsRadio.Top = Self.AllMapsRadio.Bottom + 12
+		  Self.MapSelector.Top = (Self.SpecificMapsRadio.Bottom + 12) - MapSelectionGrid.EdgeSpacing
+		  
+		  Var MapBottom As Integer = (Self.MapSelector.Top + Self.MapSelector.DesiredHeight) - (MapSelectionGrid.EdgeSpacing * 2)
+		  Self.MinimumHeight = MapBottom + 20 + Self.ActionButton.Height + 20
+		  
+		  Self.Height = Max(Self.Height, Self.MinimumHeight)
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Blueprints() As Ark.Blueprint)
@@ -388,8 +469,15 @@ End
 		  Var AddTags() As String = Self.Picker.RequiredTags
 		  Var RemoveTags() As String = Self.Picker.ExcludedTags
 		  
-		  Var AddMask As UInt64 = Ark.Maps.MaskForMaps(Self.MapSelector.CheckedMaps)
-		  Var ClearMask As UInt64 = Ark.Maps.MaskForMaps(Self.MapSelector.UncheckedMaps)
+		  Var AddMask, ClearMask As UInt64
+		  If Self.AllMapsRadio.Value Then
+		    AddMask = Ark.Maps.UniversalMask
+		    ClearMask = 0
+		  Else
+		    AddMask = Ark.Maps.MaskForMaps(Self.MapSelector.CheckedMaps)
+		    ClearMask = Ark.Maps.MaskForMaps(Self.MapSelector.UncheckedMaps)
+		  End If
+		  
 		  Var LastUpdate As Double = DateTime.Now.SecondsFrom1970
 		  
 		  For Idx As Integer = 0 To Self.mBlueprints.LastIndex
@@ -437,10 +525,7 @@ End
 		  Delta = NewHeight - Me.Height
 		  Me.Height = NewHeight
 		  
-		  Self.MinimumHeight = Me.Top + Me.Height + 6 + Self.MapSelector.DesiredHeight + 14 + Self.ActionButton.Height + 20
-		  Self.Height = Max(Self.Height, Self.MinimumHeight)
-		  Self.MapLabel.Top = Me.Top + Me.Height + 12
-		  Self.MapSelector.Top = Self.MapLabel.Top - 6
+		  Self.AdjustDimensions
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -454,6 +539,12 @@ End
 		Function GetMaps() As Beacon.Map()
 		  Return Ark.Maps.All
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Left = Me.Left - Me.EdgeSpacing
+		  Me.Top = Me.Top - Me.EdgeSpacing
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
@@ -471,6 +562,26 @@ End
 		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AllMapsRadio
+	#tag Event
+		Sub ValueChanged()
+		  If Me.Value Then
+		    Self.MapSelector.Enabled = False
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SpecificMapsRadio
+	#tag Event
+		Sub ValueChanged()
+		  If Me.Value Then
+		    Self.MapSelector.Enabled = True
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
