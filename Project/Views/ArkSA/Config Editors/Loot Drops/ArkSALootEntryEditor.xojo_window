@@ -988,6 +988,12 @@ End
 		  Self.EngramList.Top = Self.EngramList.Top + Delta
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub RestoreDefaults()
+		  Preferences.RestoreTags(ArkSA.CategoryEngrams, "Looting")
+		  Me.Spec = Preferences.SelectedTag(ArkSA.CategoryEngrams, "Looting")
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ModsButton
 	#tag Event

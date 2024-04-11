@@ -910,6 +910,12 @@ End
 		  Self.RemoveFromSelectionsButton.Top = Self.AddToSelectionsButton.Top + Self.AddToSelectionsButton.Height + 12
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub RestoreDefaults()
+		  Preferences.RestoreTags(Self.mCategory, Self.mSubgroup)
+		  Me.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events FilterField
 	#tag Event

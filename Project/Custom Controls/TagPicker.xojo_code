@@ -518,8 +518,13 @@ Inherits ControlCanvas
 		    OffsetY = MouseY
 		  End If
 		  
-		  Var RestoreItem As New DesktopMenuItem("Restore Hidden Tags", "restore:")
-		  Base.AddMenu(RestoreItem)
+		  If IsEventImplemented("RestoreDefaults") Then
+		    Var RestoreDefaultsItem As New DesktopMenuItem("Revert to Default Tags", "defaults:")
+		    Base.AddMenu(RestoreDefaultsItem)
+		  End If
+		  
+		  Var UnhideTagsItem As New DesktopMenuItem("Restore Hidden Tags", "unhide:")
+		  Base.AddMenu(UnhideTagsItem)
 		  
 		  Var Position As Point = Self.GlobalPosition
 		  Var Choice As DesktopMenuItem = Base.PopUp(Position.X + OffsetX, Position.Y + OffsetY)
@@ -553,6 +558,8 @@ Inherits ControlCanvas
 		    Self.mHiddenTags = Preferences.HiddenTags
 		    Self.AutoResize()
 		    Self.Refresh
+		  Case "defaults"
+		    RaiseEvent RestoreDefaults
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -625,6 +632,10 @@ Inherits ControlCanvas
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event RestoreDefaults()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
