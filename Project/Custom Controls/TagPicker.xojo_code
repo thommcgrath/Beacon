@@ -549,8 +549,8 @@ Inherits ControlCanvas
 		    Self.AutoResize()
 		    Self.Refresh
 		  Case "restore"
-		    Self.mHiddenTags.ResizeTo(-1)
-		    Preferences.HiddenTags = Self.mHiddenTags
+		    Preferences.RestoreHiddenTags
+		    Self.mHiddenTags = Preferences.HiddenTags
 		    Self.AutoResize()
 		    Self.Refresh
 		  End Select

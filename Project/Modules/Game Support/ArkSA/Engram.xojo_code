@@ -220,7 +220,7 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h0
 		Function IsDefaultUnlocked() As Boolean
-		  Return (Self.mRequiredPlayerLevel Is Nil) = False And Self.mRequiredPlayerLevel.IntegerValue < 1
+		  Return Self.mTags.IndexOf("default_unlocked") > -1
 		End Function
 	#tag EndMethod
 

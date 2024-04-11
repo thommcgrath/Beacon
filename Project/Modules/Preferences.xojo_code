@@ -162,7 +162,7 @@ Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Function HiddenTags() As String()
 		  Init
-		  Return mManager.StringValue("Hidden Tags", "").Split(",")
+		  Return mManager.StringValue("Hidden Tags", DefaultHiddenTags).Split(",")
 		End Function
 	#tag EndMethod
 
@@ -436,6 +436,13 @@ Protected Module Preferences
 		  
 		  mConnectionLockCount = mConnectionLockCount
 		  mConnectionLock.Release
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub RestoreHiddenTags()
+		  Init
+		  mManager.ClearValue("Hidden Tags")
 		End Sub
 	#tag EndMethod
 
@@ -1444,6 +1451,9 @@ Protected Module Preferences
 		Protected UpdateChannel As Integer
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = DefaultHiddenTags, Type = String, Dynamic = False, Default = \"no_fibercraft\x2Cdefault_unlocked", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = Notification_OnlineStateChanged, Type = String, Dynamic = False, Default = \"Online State Changed", Scope = Protected
 	#tag EndConstant
