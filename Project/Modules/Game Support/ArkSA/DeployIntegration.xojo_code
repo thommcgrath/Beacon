@@ -167,11 +167,11 @@ Inherits Beacon.DeployIntegration
 		  // Stop the server
 		  If Self.Plan = Beacon.DeployPlan.StopUploadStart Then
 		    Self.StopServer()
-		  End If
-		  
-		  // Let the implementor do any final work
-		  If Self.Provider IsA Nitrado.HostingProvider Then
-		    Self.NitradoCooldownWait()
+		    
+		    // Let the implementor do any final work
+		    If Self.Provider IsA Nitrado.HostingProvider Then
+		      Self.NitradoCooldownWait()
+		    End If
 		  End If
 		  
 		  // Put the new files on the server
