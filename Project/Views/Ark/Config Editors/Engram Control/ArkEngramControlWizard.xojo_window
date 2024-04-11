@@ -228,7 +228,6 @@ Begin BeaconDialog ArkEngramControlWizard
    End
    Begin Thread WorkThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3
@@ -292,7 +291,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project) As Boolean
-		  If Parent = Nil Then
+		  If Parent Is Nil Then
 		    Return False
 		  End If
 		  
@@ -443,8 +442,13 @@ End
 		        Return
 		      End If
 		      
+		      If Engram.IsDefaultUnlocked Then
+		        Self.Increment()
+		        Continue
+		      End If
+		      
 		      Config.AutoUnlockEngram(Engram) = True
-		      Config.RequiredPlayerLevel(Engram) = 0
+		      Config.RequiredPlayerLevel(Engram) = 1
 		      Config.Hidden(Engram) = False
 		      Self.Increment()
 		    Next
@@ -456,12 +460,12 @@ End
 		        Return
 		      End If
 		      
-		      If Engram.IsTagged("tek") Then
+		      If Engram.IsDefaultUnlocked Or Engram.IsTagged("tek") Then
 		        Self.Increment()
 		        Continue
 		      End If
 		      Config.AutoUnlockEngram(Engram) = True
-		      Config.RequiredPlayerLevel(Engram) = 0
+		      Config.RequiredPlayerLevel(Engram) = 1
 		      Config.Hidden(Engram) = False
 		      Self.Increment()
 		    Next
@@ -471,6 +475,11 @@ End
 		      If Self.mProgress.CancelPressed Then
 		        Self.Cancel
 		        Return
+		      End If
+		      
+		      If Engram.IsDefaultUnlocked Then
+		        Self.Increment()
+		        Continue
 		      End If
 		      
 		      Config.AutoUnlockEngram(Engram) = True
@@ -485,7 +494,7 @@ End
 		        Return
 		      End If
 		      
-		      If Engram.IsTagged("tek") Then
+		      If Engram.IsDefaultUnlocked Or Engram.IsTagged("tek") Then
 		        Self.Increment()
 		        Continue
 		      End If
@@ -502,7 +511,7 @@ End
 		        Return
 		      End If
 		      
-		      If Engram.ValidForMask(Mask) Then
+		      If Engram.IsDefaultUnlocked Or Engram.ValidForMask(Mask) Then
 		        Self.Increment()
 		        Continue
 		      End If
@@ -530,6 +539,11 @@ End
 		      If Self.mProgress.CancelPressed Then
 		        Self.Cancel
 		        Return
+		      End If
+		      
+		      If Engram.IsDefaultUnlocked Then
+		        Self.Increment()
+		        Continue
 		      End If
 		      
 		      Var Level As NullableDouble = Config.RequiredPlayerLevel(Engram)
@@ -583,6 +597,11 @@ End
 		      If Self.mProgress.CancelPressed Then
 		        Self.Cancel
 		        Return
+		      End If
+		      
+		      If Engram.IsDefaultUnlocked Then
+		        Self.Increment()
+		        Continue
 		      End If
 		      
 		      If IsNull(Config.Hidden(Engram)) Then

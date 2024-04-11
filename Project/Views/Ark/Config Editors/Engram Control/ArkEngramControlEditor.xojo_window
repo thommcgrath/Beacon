@@ -541,7 +541,9 @@ End
 		    Var Behaviors() As String
 		    
 		    Var IsEnabled As Boolean = Not Config.EffectivelyHidden(Engram)
-		    If Not IsEnabled Then
+		    If Engram.IsDefaultUnlocked Then
+		      Behaviors.Add("Unlocked by default")
+		    ElseIf Not IsEnabled Then
 		      Var Hidden As NullableBoolean = Config.Hidden(Engram)
 		      If IsNull(Hidden) Then
 		        Behaviors.Add("Disabled by default")
@@ -574,7 +576,7 @@ End
 		        End If
 		      Else
 		        If ((Engram.RequiredPlayerLevel Is Nil) = False Or Ark.DataSource.Pool.Get(False).BlueprintIsCustom(Engram)) And IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
-		          Behaviors.Add("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
+		          Behaviors.Add("Unlockable at " + If(RequiredLevel.IntegerValue > 1, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
 		        Else
 		          Behaviors.Add("Auto unlocks by special event")
 		        End If

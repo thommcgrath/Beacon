@@ -1,6 +1,5 @@
 #tag Class
 Protected Class Engram
-Implements Ark.Blueprint, Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the Ark.Blueprint interface.
@@ -215,6 +214,12 @@ Implements Ark.Blueprint, Beacon.DisambiguationCandidate
 		  // Part of the Ark.Blueprint interface.
 		  
 		  Return Self
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsDefaultUnlocked() As Boolean
+		  Return (Self.mRequiredPlayerLevel Is Nil) = False And Self.mRequiredPlayerLevel.IntegerValue < 1
 		End Function
 	#tag EndMethod
 

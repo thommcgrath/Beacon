@@ -57,8 +57,8 @@ Inherits Ark.ConfigGroup
 		  Var Engrams() As Ark.Engram = Self.Engrams
 		  For Each Engram As Ark.Engram In Engrams
 		    // Get the unlock string from the engram if available, or use the backup if not available.
-		    If (Engram Is Nil) Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
-		      // Don't include items for disabled mods
+		    If (Engram Is Nil) Or Engram.IsDefaultUnlocked Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
+		      // Don't include default items or items from disabled mods
 		      Continue
 		    End If
 		    

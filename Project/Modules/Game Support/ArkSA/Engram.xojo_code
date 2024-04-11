@@ -219,6 +219,12 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsDefaultUnlocked() As Boolean
+		  Return (Self.mRequiredPlayerLevel Is Nil) = False And Self.mRequiredPlayerLevel.IntegerValue < 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsTagged(Tag As String) As Boolean
 		  // Part of the ArkSA.Blueprint interface.
 		  

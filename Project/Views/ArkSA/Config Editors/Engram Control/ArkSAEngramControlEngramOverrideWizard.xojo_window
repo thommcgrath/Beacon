@@ -769,7 +769,22 @@ End
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As DesktopWindow, Project As ArkSA.Project, Engrams() As ArkSA.Engram) As ArkSA.Engram()
 		  Var Edited() As ArkSA.Engram
-		  If Parent = Nil Then
+		  If Parent Is Nil Then
+		    Return Edited
+		  End If
+		  
+		  Var OriginallySingle As Boolean = (Engrams.Count = 1)
+		  For Idx As Integer = Engrams.LastIndex DownTo 0
+		    If Engrams(Idx).IsDefaultUnlocked Then
+		      Engrams.RemoveAt(Idx)
+		    End If
+		  Next
+		  If Engrams.Count = 0 Then
+		    If OriginallySingle Then
+		      Parent.ShowAlert("This engram is unlocked by default", "All players have this engram unlocked automatically. Because of this, it cannot be changed.")
+		    Else
+		      Parent.ShowAlert("These engrams are unlocked by default", "All players have these engrams unlocked automatically. Because of this, they cannot be changed.")
+		    End If
 		    Return Edited
 		  End If
 		  
