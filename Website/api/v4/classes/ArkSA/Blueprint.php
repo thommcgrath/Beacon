@@ -25,7 +25,7 @@ class Blueprint extends GenericObject {
 		$schema = parent::BuildDatabaseSchema();
 		$schema->SetTable('blueprints');
 		$schema->AddColumns([
-			'availability',
+			new DatabaseObjectProperty('availability', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			'path',
 			new DatabaseObjectProperty('classString', ['columnName' => 'class_string', 'editable' => DatabaseObjectProperty::kEditableNever])
 		]);
