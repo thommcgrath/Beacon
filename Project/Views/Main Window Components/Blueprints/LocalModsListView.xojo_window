@@ -35,8 +35,8 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   3
-      ColumnWidths    =   "*,200,200"
+      ColumnCount     =   4
+      ColumnWidths    =   "*,200,100,200"
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   1
@@ -55,7 +55,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Height          =   328
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Name	Game	Last Update"
+      InitialValue    =   "Name	Game	Mod ID	Last Updated"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -295,8 +295,13 @@ End
 		      Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
 		      Var ModInfo As New BeaconAPI.ContentPack(Pack)
 		      
-		      Self.ModsList.AddRow(Pack.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium))
+		      Self.ModsList.AddRow("")
 		      Var Idx As Integer = Self.ModsList.LastAddedRowIndex
+		      
+		      Self.ModsList.CellTextAt(Idx, Self.ColumnName) = Pack.Name
+		      Self.ModsList.CellTextAt(Idx, Self.ColumnGameId) = GameName
+		      Self.ModsList.CellTextAt(Idx, Self.ColumnModId) = Pack.MarketplaceId
+		      Self.ModsList.CellTextAt(Idx, Self.ColumnUpdate) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		      Self.ModsList.RowTagAt(Idx) = ModInfo
 		      Self.ModsList.RowSelectedAt(Idx) = SelectedModIds.IndexOf(Pack.ContentPackId) > -1
 		      
@@ -312,6 +317,10 @@ End
 		  Self.ModsList.Sort
 		  Self.ModsList.ScrollPosition = ScrollPosition
 		  Self.ModsList.EnsureSelectionIsVisible
+		  
+		  Self.ModsList.SizeColumnToFit(Self.ColumnGameId, 100)
+		  Self.ModsList.SizeColumnToFit(Self.ColumnModId, 100)
+		  Self.ModsList.SizeColumnToFit(Self.ColumnUpdate, 100)
 		End Sub
 	#tag EndEvent
 
@@ -811,6 +820,19 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ColumnGameId, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnModId, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnUpdate, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events ModsList
@@ -878,6 +900,11 @@ End
 		  End If
 		  
 		  Self.UpdateUI()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnModId) = DesktopListBox.Alignments.Right
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -100,8 +100,8 @@ Begin ModsListView RemoteModsListView
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   4
-      ColumnWidths    =   "*,200,200,125"
+      ColumnCount     =   5
+      ColumnWidths    =   "*,200,100,200,125"
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -119,7 +119,7 @@ Begin ModsListView RemoteModsListView
       HeadingIndex    =   -1
       Height          =   328
       Index           =   -2147483648
-      InitialValue    =   "Name	Game	Last Updated	Status"
+      InitialValue    =   "Name	Game	Mod ID	Last Updated	Status"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -290,6 +290,11 @@ End
 		  If Self.StatusLabel.Text <> Status Then
 		    Self.StatusLabel.Text = Status
 		  End If
+		  
+		  Self.List.SizeColumnToFit(Self.ColumnGameId, 100)
+		  Self.List.SizeColumnToFit(Self.ColumnModId, 100)
+		  Self.List.SizeColumnToFit(Self.ColumnStatus, 100)
+		  Self.List.SizeColumnToFit(Self.ColumnUpdated, 100)
 		End Sub
 	#tag EndEvent
 
@@ -375,10 +380,11 @@ End
 		      Var Status As String = If(ModInfo.Confirmed, "Confirmed", "Waiting Confirmation")
 		      
 		      Self.List.RowTagAt(RowIdx) = ModInfo
-		      Self.List.CellTextAt(RowIdx, 0) = ModInfo.Name
-		      Self.List.CellTextAt(RowIdx, 1) = GameName
-		      Self.List.CellTextAt(RowIdx, 2) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		      Self.List.CellTextAt(RowIdx, 3) = Status
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = ModInfo.Name
+		      Self.List.CellTextAt(RowIdx, Self.ColumnGameId) = GameName
+		      Self.List.CellTextAt(RowIdx, Self.ColumnModId) = ModInfo.MarketplaceId
+		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = Status
 		      Self.List.RowSelectedAt(RowIdx) = Self.mSelectedModIds.IndexOf(ModInfo.ContentPackId) > -1
 		    Next
 		    Self.List.SelectionChangeBlocked(False) = False
@@ -478,6 +484,22 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ColumnGameId, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnModId, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnStatus, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events FilterField
@@ -574,6 +596,11 @@ End
 		    Request.Tag = ModIds(Idx)
 		    BeaconAPI.Send(Request)
 		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnModId) = DesktopListBox.Alignments.Right
 		End Sub
 	#tag EndEvent
 #tag EndEvents

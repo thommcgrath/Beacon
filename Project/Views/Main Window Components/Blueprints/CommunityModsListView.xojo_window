@@ -24,7 +24,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   600
+   Width           =   854
    Begin OmniBar ModsToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -56,7 +56,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   330
+      Width           =   584
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -68,7 +68,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
-      Left            =   330
+      Left            =   584
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -100,7 +100,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       Hint            =   "Filter Mods"
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   340
+      Left            =   594
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -150,7 +150,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       Top             =   369
       Transparent     =   True
       Visible         =   True
-      Width           =   600
+      Width           =   854
    End
    Begin DesktopLabel StatusLabel
       AllowAutoDeactivate=   True
@@ -182,7 +182,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   814
    End
    Begin BeaconListbox List
       AllowAutoDeactivate=   True
@@ -194,8 +194,8 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   4
-      ColumnWidths    =   "*,200,200,125"
+      ColumnCount     =   5
+      ColumnWidths    =   "*,200,100,200,125"
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -213,7 +213,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       HeadingIndex    =   -1
       Height          =   328
       Index           =   -2147483648
-      InitialValue    =   "Name	Game	Last Updated	Status"
+      InitialValue    =   "Name	Game	Mod ID	Last Updated	Status"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -237,7 +237,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   600
+      Width           =   854
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -297,6 +297,11 @@ End
 		  If Self.StatusLabel.Text <> Status Then
 		    Self.StatusLabel.Text = Status
 		  End If
+		  
+		  Self.List.SizeColumnToFit(Self.ColumnGameId, 100)
+		  Self.List.SizeColumnToFit(Self.ColumnModId, 100)
+		  Self.List.SizeColumnToFit(Self.ColumnStatus, 100)
+		  Self.List.SizeColumnToFit(Self.ColumnUpdated, 100)
 		End Sub
 	#tag EndEvent
 
@@ -367,10 +372,11 @@ End
 		      End If
 		      
 		      Self.List.RowTagAt(RowIdx) = ModInfo
-		      Self.List.CellTextAt(RowIdx, 0) = ModInfo.Name
-		      Self.List.CellTextAt(RowIdx, 1) = GameName
-		      Self.List.CellTextAt(RowIdx, 2) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		      Self.List.CellTextAt(RowIdx, 3) = Status
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = ModInfo.Name
+		      Self.List.CellTextAt(RowIdx, Self.ColumnGameId) = GameName
+		      Self.List.CellTextAt(RowIdx, Self.ColumnModId) = ModInfo.MarketplaceId
+		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = Status
 		      Self.List.RowSelectedAt(RowIdx) = Self.mSelectedModIds.IndexOf(ModInfo.ContentPackId) > -1
 		    Next
 		  End If
@@ -509,6 +515,22 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ColumnGameId, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnModId, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnStatus, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events ModsToolbar
@@ -596,6 +618,11 @@ End
 		  End If
 		  
 		  Self.UpdateUI()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnModId) = DesktopListBox.Alignments.Right
 		End Sub
 	#tag EndEvent
 #tag EndEvents
