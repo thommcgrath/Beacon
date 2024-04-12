@@ -25,6 +25,7 @@ Protected Module DataUpdater
 		  
 		  mForceImport = Refresh
 		  mCheckingOnline = True
+		  mLastCheckTime = DateTime.Now.SecondsFrom1970
 		  NotificationKit.Post(Notification_OnlineCheckBegin, Nil)
 		  App.Log("Check for data updates from " + CheckURL)
 		  
@@ -34,6 +35,13 @@ Protected Module DataUpdater
 		  AddHandler Sock.ContentReceived, AddressOf mCheckSocket_ContentReceived
 		  AddHandler Sock.Error, AddressOf mCheckSocket_Error
 		  Sock.Send("GET", CheckURL)
+		  
+		  If mAutocheckTimer Is Nil Then
+		    mAutocheckTimer = New Timer
+		    mAutocheckTimer.RunMode = Timer.RunModes.Multiple
+		    mAutocheckTimer.Period = 60000 // 1 minute
+		    AddHandler mAutocheckTimer.Action, AddressOf mAutocheckTimer_Action
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -108,6 +116,15 @@ Protected Module DataUpdater
 		Protected Function IsImporting() As Boolean
 		  Return (mImportThread Is Nil) = False And mImportThread.ThreadState <> Thread.ThreadStates.NotRunning
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mAutocheckTimer_Action(Sender As Timer)
+		  Var Now As Double = DateTime.Now.SecondsFrom1970
+		  If Now - mLastCheckTime > 21600 Then
+		    CheckNow(False)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -329,6 +346,10 @@ Protected Module DataUpdater
 
 
 	#tag Property, Flags = &h21
+		Private mAutocheckTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCheckingOnline As Boolean
 	#tag EndProperty
 
@@ -346,6 +367,10 @@ Protected Module DataUpdater
 
 	#tag Property, Flags = &h21
 		Private mImportThread As Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastCheckTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
