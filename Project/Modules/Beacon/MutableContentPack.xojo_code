@@ -68,6 +68,12 @@ Inherits Beacon.ContentPack
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Required(Assigns Value As Boolean)
+		  Self.mRequired = Value
+		End Sub
+	#tag EndMethod
+
 
 End Class
 #tag EndClass

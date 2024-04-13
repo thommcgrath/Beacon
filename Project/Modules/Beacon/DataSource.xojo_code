@@ -478,7 +478,7 @@ Implements NotificationKit.Receiver
 		    Clauses.Add("is_local = 1")
 		  End Select
 		  
-		  Var SQL As String = "SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update FROM content_packs"
+		  Var SQL As String = "SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, required FROM content_packs"
 		  If Clauses.Count > 0 Then
 		    SQL = SQL + " WHERE " + String.FromArray(Clauses, " AND ")
 		  End If
@@ -501,7 +501,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetContentPackWithId(ContentPackId As String) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
+		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, required FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
 		  If Packs.Count = 1 Then
 		    Return Packs(0)

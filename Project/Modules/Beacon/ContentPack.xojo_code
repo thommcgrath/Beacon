@@ -17,6 +17,7 @@ Protected Class ContentPack
 		  Self.mMarketplace = Source.mMarketplace
 		  Self.mMarketplaceId = Source.mMarketplaceId
 		  Self.mName = Source.mName
+		  Self.mRequired = Source.mRequired
 		End Sub
 	#tag EndMethod
 
@@ -33,6 +34,7 @@ Protected Class ContentPack
 		  Self.mIsLocal = True
 		  Self.mLastUpdate = DateTime.Now.SecondsFrom1970
 		  Self.mName = Name
+		  Self.mRequired = False
 		End Sub
 	#tag EndMethod
 
@@ -57,6 +59,7 @@ Protected Class ContentPack
 		      Pack.mMarketplaceId = Row.Column("marketplace_id").StringValue
 		    End If
 		    Pack.mLastUpdate = Row.Column("last_update").DoubleValue
+		    Pack.mRequired = Row.Column("required").BooleanValue
 		    Return Pack
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Building Beacon.ContentPack from DatabaseRow")
@@ -99,6 +102,9 @@ Protected Class ContentPack
 		    If SaveData.HasKey("marketplace") And SaveData.HasKey("marketplaceId") Then
 		      Pack.mMarketplace = SaveData.Value("marketplace")
 		      Pack.mMarketplaceId = SaveData.Value("marketplaceId")
+		    End If
+		    If SaveData.HasKey("required") Then
+		      Pack.mRequired = SaveData.Value("required")
 		    End If
 		    Return Pack
 		  Catch Err As RuntimeException
@@ -202,6 +208,12 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Required() As Boolean
+		  Return Self.mRequired
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var SaveData As New Dictionary
 		  SaveData.Value("contentPackId") = Self.mContentPackId
@@ -266,6 +278,10 @@ Protected Class ContentPack
 
 	#tag Property, Flags = &h1
 		Protected mName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequired As Boolean
 	#tag EndProperty
 
 

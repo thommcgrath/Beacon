@@ -296,7 +296,8 @@ End
 		    Check.Width = CheckboxWidth
 		    Check.Left = NextLeft
 		    Check.Top = NextTop
-		    Check.Value = Self.ModEnabled(Packs(Idx).ContentPackId)
+		    Check.Value = Packs(Idx).Required Or Self.ModEnabled(Packs(Idx).ContentPackId)
+		    Check.Enabled = (Packs(Idx).Required = False)
 		    Self.mMap(Idx) = Packs(Idx).ContentPackId
 		    
 		    If (Idx + 1) Mod ColumnCount = 0 Then
