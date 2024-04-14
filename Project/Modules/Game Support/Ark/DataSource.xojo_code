@@ -160,35 +160,54 @@ Inherits Beacon.DataSource
 		  Var EngramsChanged As Boolean
 		  If ChangeDict.HasKey("deletions") Then
 		    Var Deletions() As Variant = ChangeDict.Value("deletions")
-		    // When deleting, loot_icons must be done after loot_sources
-		    Var DeleteIcons() As String
-		    Var BlueprintsToDelete() As String
+		    Var DeleteOrder() As String = Array(Ark.CategoryLootContainers, Ark.CategorySpawnPoints, Ark.CategoryCreatures, Ark.CategoryEngrams, "loot_icons", "maps", "colors", "events", "ini_options", "mods")
+		    Var DeleteGroups As New Dictionary
 		    For Each Deletion As Dictionary In Deletions
 		      Var ObjectId As String = Deletion.Value("objectId").StringValue
-		      Select Case Deletion.Value("group")
-		      Case Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers, "loot_sources", "spawnPoints", "lootDrops", "loot_drops"
-		        BlueprintsToDelete.Add(ObjectId)
-		      Case "loot_icons"
-		        DeleteIcons.Add(ObjectID)
-		      Case "mods"
-		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectId)
-		      Case "maps"
-		        Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectId)
-		      Case "colors"
-		        Self.SQLExecute("DELETE FROM colors WHERE color_uuid = ?1;", ObjectId)
-		      Case "events"
-		        Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectId)
-		      Case "ini_options"
-		        Self.SQLExecute("DELETE FROM ini_options WHERE object_id = ?1;", ObjectId)
+		      Var Group As String = Deletion.Value("group").StringValue
+		      Select Case Group
+		      Case "loot_sources", "lootDrops", "loot_drops"
+		        Group = Ark.CategoryLootContainers
+		      Case "spawnPoints"
+		        Group = Ark.CategorySpawnPoints
 		      End Select
+		      
+		      Var Siblings() As String
+		      If DeleteGroups.HasKey(Group) Then
+		        Siblings = DeleteGroups.Value(Group)
+		      End If
+		      Siblings.Add(ObjectId)
+		      DeleteGroups.Value(Group) = Siblings
 		    Next Deletion
-		    For Each IconID As String In DeleteIcons
-		      Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id = ?1;", IconID)
+		    
+		    For Each Group As String In DeleteOrder
+		      If DeleteGroups.HasKey(Group) = False Then
+		        Continue
+		      End If
+		      Var ObjectIds() As String = DeleteGroups.Value(Group)
+		      If ObjectIds.Count = 0 Then
+		        Continue
+		      End If
+		      
+		      Select Case Group
+		      Case Ark.CategoryLootContainers, Ark.CategorySpawnPoints, Ark.CategoryCreatures, Ark.CategoryEngrams
+		        If Self.SaveBlueprints(Nil, ObjectIds, Nil, False, False) Then
+		          EngramsChanged = True
+		        End If
+		      Case "loot_icons"
+		        Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id IN ('" + String.FromArray(ObjectIds, "','") + "');")
+		      Case "mods"
+		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id IN ('" + String.FromArray(ObjectIds, "','") + "');")
+		      Case "maps"
+		        Self.SQLExecute("DELETE FROM maps WHERE object_id IN ('" + String.FromArray(ObjectIds, "','") + "');")
+		      Case "colors"
+		        Self.SQLExecute("DELETE FROM colors WHERE color_uuid IN ('" + String.FromArray(ObjectIds, "','") + "');")
+		      Case "events"
+		        Self.SQLExecute("DELETE FROM events WHERE event_id IN ('" + String.FromArray(ObjectIds, "','") + "');")
+		      Case "ini_options"
+		        Self.SQLExecute("DELETE FROM ini_options WHERE object_id IN ('" + String.FromArray(ObjectIds, "','") + "');")
+		      End Select
 		    Next
-		    If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False, False) Then
-		      EngramsChanged = True
-		    End If
-		    BlueprintsToDelete.ResizeTo(-1)
 		  End If
 		  
 		  If ChangeDict.HasKey("contentPacks") Then
