@@ -24,6 +24,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 	protected bool $isIncludedInDeltas;
 	protected array $gameSpecific;
 	protected ?string $slug;
+	protected bool $required;
 
 	protected function __construct(BeaconRecordSet $row) {
 		$this->contentPackId = $row->Field('content_pack_id');
@@ -42,6 +43,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$this->isIncludedInDeltas = filter_var($row->Field('include_in_deltas'), FILTER_VALIDATE_BOOL);
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
 		$this->slug = $row->Field('slug');
+		$this->required = $row->Field('required');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -61,7 +63,8 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official', 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas', 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific', 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('slug', ['editable' => DatabaseObjectProperty::kEditableAtCreation])
+			new DatabaseObjectProperty('slug', ['editable' => DatabaseObjectProperty::kEditableAtCreation]),
+			new DatabaseObjectProperty('required', ['editable' => DatabaseObjectProperty::kEditableNever]),
 		]);
 	}
 
@@ -222,6 +225,10 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		return $this->slug;
 	}
 
+	public function Required(): bool {
+		return $this->required;
+	}
+
 	public function AttemptConfirmation(): bool {
 		if ($this->isConfirmed) {
 			return true;
@@ -291,7 +298,8 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			'minVersion' => $this->minVersion,
 			'lastUpdate' => $this->lastUpdate,
 			'gameSpecific' => $this->gameSpecific,
-			'slug' => $this->slug
+			'slug' => $this->slug,
+			'required' => $this->required,
 		];
 	}
 }
