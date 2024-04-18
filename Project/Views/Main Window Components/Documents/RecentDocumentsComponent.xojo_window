@@ -54,7 +54,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   311
+      Height          =   280
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   " 	Name	Game	Path"
@@ -149,6 +149,38 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       Visible         =   True
       Width           =   788
    End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   343
+      Transparent     =   True
+      Visible         =   True
+      Width           =   788
+   End
 End
 #tag EndDesktopWindow
 
@@ -162,6 +194,7 @@ End
 	#tag Event
 		Sub Opening()
 		  NotificationKit.Watch(Self, Preferences.Notification_RecentsChanged)
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
@@ -236,10 +269,27 @@ End
 		    Next
 		  End If
 		  Self.List.SizeColumnToFit(Self.ColumnGame)
-		  
+		  Self.UpdateStatusbar
 		  
 		End Sub
 	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatusbar()
+		  Var Status As String
+		  If Self.List.SelectedRowCount > 0 Then
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.List.RowCount, "project", "projects") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.List.RowCount, "project", "projects")
+		  End If
+		  Self.Status.CenterCaption = Status
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Opening()
+	#tag EndHook
 
 
 	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -356,6 +406,11 @@ End
 		    Return True
 		  End Select
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Self.UpdateStatusbar
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events FilterBar

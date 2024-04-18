@@ -166,69 +166,6 @@ Begin ModEditorView ArkModEditorView
          Visible         =   True
          Width           =   180
       End
-      Begin FadedSeparator StatusSeparator
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         ContentHeight   =   0
-         Enabled         =   True
-         Height          =   1
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         ScrollActive    =   False
-         ScrollingEnabled=   False
-         ScrollSpeed     =   20
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   401
-         Transparent     =   True
-         Visible         =   True
-         Width           =   900
-      End
-      Begin DesktopLabel StatusLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "SmallSystem"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Loading Blueprints"
-         TextAlignment   =   2
-         TextColor       =   &c000000
-         Tooltip         =   ""
-         Top             =   407
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   860
-      End
       Begin OmniBar ButtonsToolbar
          Alignment       =   0
          AllowAutoDeactivate=   True
@@ -385,6 +322,38 @@ Begin ModEditorView ArkModEditorView
          _mName          =   ""
          _mPanelIndex    =   0
       End
+      Begin StatusContainer Status
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         CenterCaption   =   ""
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   31
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LeftCaption     =   ""
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         RightCaption    =   ""
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   401
+         Transparent     =   True
+         Visible         =   True
+         Width           =   900
+      End
    End
 End
 #tag EndDesktopWindow
@@ -394,7 +363,7 @@ End
 		Sub Opening()
 		  Self.ViewTitle = Self.mController.ContentPackName
 		  Self.SwitchMode(Ark.BlueprintController.ModeEngrams)
-		  
+		  Self.Status.RightCaption = Self.mController.ContentPackId
 		End Sub
 	#tag EndEvent
 
@@ -979,18 +948,15 @@ End
 		  End Select
 		  Self.FilterField.Hint = "Filter " + NounPlural.Titlecase
 		  
-		  Var Status As String
 		  Var TotalResults As Integer = Self.mLoadTotals(Self.mMode)
 		  If TotalResults = -1 Then
 		    TotalResults = Self.BlueprintList.RowCount
 		  ElseIf TotalResults = -2 Then
-		    Status = "Loading " + NounPlural + "…"
-		    If Self.StatusLabel.Text <> Status Then
-		      Self.StatusLabel.Text = Status
-		    End If
+		    Self.Status.CenterCaption = "Loading " + NounPlural + "…"
 		    Return
 		  End If
 		  
+		  Var Status As String
 		  If Self.BlueprintList.SelectedRowCount > 0 Then
 		    Status = Self.BlueprintList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(TotalResults, NounSingle, NounPlural) + " selected"
 		  Else
@@ -1002,9 +968,7 @@ End
 		    Status = Status + " (" + Self.BlueprintList.RowCount.ToString(Locale.Current, "#,##0") + " loaded)"
 		  End If
 		  
-		  If Self.StatusLabel.Text <> Status Then
-		    Self.StatusLabel.Text = Status
-		  End If
+		  Self.Status.CenterCaption = Status
 		  
 		  Var PublishEnabled As Boolean = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
 		  If (Self.ButtonsToolbar.Item("Publish") Is Nil) = False Then

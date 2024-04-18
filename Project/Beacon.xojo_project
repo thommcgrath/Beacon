@@ -937,6 +937,7 @@ Class=DiscoverIntegration;Modules/Game Support/Palworld/DiscoverIntegration.xojo
 Class=DeployIntegration;Modules/Game Support/Palworld/DeployIntegration.xojo_code;&h0000000061E107FF;&h000000005F9A17FF;false
 Class=Rewriter;Modules/Game Support/Palworld/Rewriter.xojo_code;&h0000000012B3BFFF;&h000000005F9A17FF;false
 DesktopWindow=WebContentViewer;Custom Controls/WebContentViewer.xojo_window;&h00000000789CEFFF;&h0000000030DCFFFF;false
+DesktopWindow=StatusContainer;Custom Controls/StatusContainer.xojo_window;&h000000002FF8DFFF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=1

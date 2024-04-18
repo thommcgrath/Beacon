@@ -150,65 +150,35 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin DesktopLabel StatusbarLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   True
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Untitled"
-      TextAlignment   =   2
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   495
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   736
-   End
-   Begin FadedSeparator StatusbarSeparator
+   Begin StatusContainer Status
       AllowAutoDeactivate=   True
       AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       Backdrop        =   0
-      ContentHeight   =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
       Enabled         =   True
-      Height          =   1
+      HasBackgroundColor=   False
+      Height          =   31
       Index           =   -2147483648
+      InitialParent   =   ""
       Left            =   0
+      LeftCaption     =   ""
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   False
+      RightCaption    =   ""
       Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -326,9 +296,7 @@ End
 		  Else
 		    Status = Language.NounWithQuantity(Self.List.RowCount, "project", "projects")
 		  End If
-		  If Self.StatusbarLabel.Text <> Status Then
-		    Self.StatusbarLabel.Text = Status
-		  End If
+		  Self.Status.CenterCaption = Status
 		End Sub
 	#tag EndMethod
 

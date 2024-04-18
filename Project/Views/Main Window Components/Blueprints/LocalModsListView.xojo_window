@@ -128,68 +128,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       ThreadID        =   0
       ThreadState     =   0
    End
-   Begin DesktopLabel StatusLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Loading Mods"
-      TextAlignment   =   2
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   375
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
-   End
-   Begin FadedSeparator StatusSeparator
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   1
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   369
-      Transparent     =   True
-      Visible         =   True
-      Width           =   600
-   End
    Begin DelayedSearchField FilterField
       Active          =   False
       AllowAutoDeactivate=   True
@@ -267,6 +205,38 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   "Loading Mods"
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   369
+      Transparent     =   True
+      Visible         =   True
+      Width           =   600
+   End
 End
 #tag EndDesktopWindow
 
@@ -339,9 +309,7 @@ End
 		  Else
 		    Status = Language.NounWithQuantity(Self.TotalResults, "mod", "mods")
 		  End If
-		  If Self.StatusLabel.Text <> Status Then
-		    Self.StatusLabel.Text = Status
-		  End If
+		  Self.Status.CenterCaption = Status
 		End Sub
 	#tag EndEvent
 
