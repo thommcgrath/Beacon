@@ -57,7 +57,7 @@ Inherits Beacon.Project
 		  
 		  Var PackedBlueprints() As Dictionary
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var Packed As Dictionary = Blueprint.Pack
+		    Var Packed As Dictionary = Blueprint.Pack(False)
 		    If (Packed Is Nil) = False Then
 		      PackedBlueprints.Add(Packed)
 		    End If
@@ -478,7 +478,7 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      Var SourceOverride As New Ark.MutableSpawnPointOverride(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend)
+		      Var SourceOverride As New Ark.MutableSpawnPointOverride(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend, False)
 		      SourceOverride.LoadDefaults()
 		      
 		      Var Limit As Double = SourceOverride.Limit(ReplacedCreature)
@@ -517,7 +517,7 @@ Inherits Beacon.Project
 		        If Override Is Nil Then
 		          Override = SpawnConfig.OverrideForSpawnPoint(SourceSpawnPoint, Ark.SpawnPointOverride.ModeOverride)
 		          If Override Is Nil Then
-		            Override = New Ark.MutableSpawnPointOverride(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend)
+		            Override = New Ark.MutableSpawnPointOverride(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend, False)
 		          End If
 		        End If
 		        

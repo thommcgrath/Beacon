@@ -556,11 +556,11 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Pack() As Dictionary
+		Function Pack(ForAPI As Boolean) As Dictionary
 		  Var Entries() As Dictionary
 		  Entries.ResizeTo(Self.mEntries.LastIndex)
 		  For Idx As Integer = Self.mEntries.FirstIndex To Self.mEntries.LastIndex
-		    Entries(Idx) = Self.mEntries(Idx).Pack
+		    Entries(Idx) = Self.mEntries(Idx).Pack(ForAPI)
 		  Next Idx
 		  
 		  Var Dict As New Dictionary

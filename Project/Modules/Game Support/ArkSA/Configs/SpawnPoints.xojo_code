@@ -179,13 +179,13 @@ Inherits ArkSA.ConfigGroup
 		  
 		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
 		    If Self.mOverrides(Idx).SpawnPointId = SpawnPoint.SpawnPointId And Self.mOverrides(Idx).Mode = Mode Then
-		      Self.mOverrides(Idx) = New ArkSA.SpawnPointOverride(SpawnPoint, Mode)
+		      Self.mOverrides(Idx) = New ArkSA.SpawnPointOverride(SpawnPoint, Mode, False)
 		      Self.Modified = True
 		      Return
 		    End If
 		  Next
 		  
-		  Self.mOverrides.Add(New ArkSA.SpawnPointOverride(SpawnPoint, Mode))
+		  Self.mOverrides.Add(New ArkSA.SpawnPointOverride(SpawnPoint, Mode, False))
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -478,7 +478,7 @@ Inherits ArkSA.ConfigGroup
 		      Var ClassString As String = Dict.Value("NPCSpawnEntriesContainerClassString")
 		      Var SpawnPointRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindSpawnPoint, "", "", ClassString, "", "", "")
 		      Var SpawnPoint As ArkSA.SpawnPoint = ArkSA.SpawnPoint(SpawnPointRef.Resolve(ContentPacks))
-		      Var Override As New ArkSA.MutableSpawnPointOverride(SpawnPoint, Mode)
+		      Var Override As New ArkSA.MutableSpawnPointOverride(SpawnPoint, Mode, False)
 		      
 		      // make changes
 		      If Dict.HasKey("NPCSpawnEntries") Then

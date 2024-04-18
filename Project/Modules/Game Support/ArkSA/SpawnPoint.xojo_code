@@ -303,11 +303,12 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary)
+		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
 		  Var Sets() As Dictionary
 		  For Each Set As ArkSA.SpawnPointSet In Self.mSets
-		    Sets.Add(Set.SaveData)
+		    Sets.Add(Set.SaveData(ForAPI))
 		  Next
+		  Dict.Value("sets") = Sets
 		  
 		  Var Limits() As Dictionary
 		  Var References() As ArkSA.BlueprintReference = Self.mLimits.References
@@ -317,10 +318,12 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		    End If
 		    
 		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
-		    Limits.Add(New Dictionary("creature": Reference.SaveData, "maxPercentage": Limit))
+		    If ForAPI Then
+		      Limits.Add(New Dictionary("creatureId": Reference.BlueprintId, "maxPercentage": Limit))
+		    Else
+		      Limits.Add(New Dictionary("creature": Reference.SaveData, "maxPercentage": Limit))
+		    End If
 		  Next
-		  
-		  Dict.Value("sets") = Sets
 		  Dict.Value("limits") = Limits
 		End Sub
 	#tag EndMethod
@@ -343,8 +346,8 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		Function SetsString(Pretty As Boolean = False) As String
 		  Var Objects() As Variant
 		  For Each Set As ArkSA.SpawnPointSet In Self.mSets
-		    If Set <> Nil Then
-		      Objects.Add(Set.SaveData)
+		    If (Set Is Nil) = False Then
+		      Objects.Add(Set.SaveData(False))
 		    End If
 		  Next
 		  Try

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Creature
-Implements Ark.Blueprint, Beacon.DisambiguationCandidate
+Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function AllStatValues() As Ark.CreatureStatValue()
 		  Var Values() As Ark.CreatureStatValue
@@ -267,7 +267,9 @@ Implements Ark.Blueprint, Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary)
+		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		  #Pragma Unused ForAPI
+		  
 		  If Self.mIncubationTime > 0 Then
 		    Dict.Value("incubation_time") = Self.mIncubationTime
 		  Else

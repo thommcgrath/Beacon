@@ -189,9 +189,10 @@ Inherits ArkSA.BlueprintController
 		  Var PathComponent As String = Self.PathComponent(Task)
 		  Var Objects() As Dictionary
 		  For Each Blueprint As ArkSA.Blueprint In Blueprints
-		    Objects.Add(ArkSA.PackBlueprint(Blueprint))
+		    Objects.Add(ArkSA.PackBlueprint(Blueprint, True))
 		  Next
 		  
+		  Break
 		  Var Request As New BeaconAPI.Request("arksa/" + PathComponent, "POST", Beacon.GenerateJSON(Objects, False), "application/json")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  
@@ -199,7 +200,6 @@ Inherits ArkSA.BlueprintController
 		    Task.Errored = True
 		    Task.ErrorMessage = Response.Message
 		  End If
-		  
 		End Sub
 	#tag EndMethod
 

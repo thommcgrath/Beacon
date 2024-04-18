@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointSet
-Implements Beacon.Countable,ArkSA.Weighted, Beacon.Validateable
+Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function Clone() As ArkSA.SpawnPointSet
 		  Var Clone As New ArkSA.SpawnPointSet(Self)
@@ -318,10 +318,16 @@ Implements Beacon.Countable,ArkSA.Weighted, Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.mCachedHash = "" Then
-		    Var Raw As String = Beacon.GenerateJSON(Self.SaveData, False)
+		    Var Raw As String = Beacon.GenerateJSON(Self.SaveData(False), False)
 		    Self.mCachedHash = EncodeHex(Crypto.MD5(Raw))
 		  End If
 		  Return Self.mCachedHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableClone() As ArkSA.SpawnPointSet
+		  Return New ArkSA.SpawnPointSet(Self)
 		End Function
 	#tag EndMethod
 
@@ -526,15 +532,17 @@ Implements Beacon.Countable,ArkSA.Weighted, Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData(ForAPI As Boolean) As Dictionary
 		  Var Entries() As Variant
 		  For Each Entry As ArkSA.SpawnPointSetEntry In Self.mEntries
-		    Entries.Add(Entry.SaveData)
+		    Entries.Add(Entry.SaveData(ForAPI))
 		  Next
 		  
 		  Var SaveData As New Dictionary
 		  SaveData.Value("spawnPointSetId") = Self.mSetId
-		  SaveData.Value("type") = "SpawnPointSet"
+		  If ForAPI = False Then
+		    SaveData.Value("type") = "SpawnPointSet"
+		  End If
 		  SaveData.Value("label") = Self.Label
 		  SaveData.Value("weight") = Self.RawWeight
 		  SaveData.Value("entries") = Entries
@@ -561,7 +569,34 @@ Implements Beacon.Countable,ArkSA.Weighted, Beacon.Validateable
 		    SaveData.Value("minDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
 		  End If
 		  If Self.mReplacements.Count > 0 Then
-		    SaveData.Value("replacements") = Self.mReplacements.SaveData
+		    If ForAPI Then
+		      Var Replacements() As Dictionary
+		      Var TargetCreatureRefs() As ArkSA.BlueprintReference = Self.ReplacedCreatureRefs
+		      For Each TargetCreatureRef As ArkSA.BlueprintReference In TargetCreatureRefs
+		        Var Choices() As Dictionary
+		        Var ReplacementCreatureRefs() As ArkSA.BlueprintReference = Self.ReplacementCreatures(TargetCreatureRef)
+		        For Each ReplacementCreatureRef As ArkSA.BlueprintReference In ReplacementCreatureRefs
+		          Var Weight As NullableDouble = Self.CreatureReplacementWeight(TargetCreatureRef, ReplacementCreatureRef)
+		          If Weight Is Nil Then
+		            Continue
+		          End If
+		          
+		          Var Choice As New Dictionary
+		          Choice.Value("creatureId") = ReplacementCreatureRef.BlueprintId
+		          Choice.Value("weight") = Weight.DoubleValue
+		          Choices.Add(Choice)
+		        Next
+		        
+		        Var Replacement As New Dictionary
+		        Replacement.Value("creatureId") = TargetCreatureRef.BlueprintId
+		        Replacement.Value("choices") = Choices
+		        Replacements.Add(Replacement)
+		      Next
+		      
+		      SaveData.Value("replacements") = Replacements
+		    Else
+		      SaveData.Value("replacements") = Self.mReplacements.SaveData
+		    End If
 		  End If
 		  Return SaveData
 		End Function

@@ -125,10 +125,14 @@ Implements Beacon.Validateable,Ark.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Pack() As Dictionary
+		Function Pack(ForAPI As Boolean) As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("lootItemSetEntryOptionId") = Self.mUUID
-		  Dict.Value("engram") = Self.mEngramRef.SaveData
+		  If ForAPI Then
+		    Dict.Value("engramId") = Self.mEngramRef.BlueprintId
+		  Else
+		    Dict.Value("engram") = Self.mEngramRef.SaveData
+		  End If
 		  Dict.Value("weight") = Self.mWeight
 		  Return Dict
 		End Function

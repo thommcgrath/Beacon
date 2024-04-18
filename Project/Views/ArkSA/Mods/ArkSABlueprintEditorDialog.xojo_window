@@ -2375,22 +2375,16 @@ End
 		  Self.LootNotesArea.Text = Container.Notes
 		  Self.LootSortField.DoubleValue = Container.SortValue
 		  
-		  Var Mutable As ArkSA.MutableLootContainer = Container.MutableVersion
-		  ArkSA.DataSource.Pool.Get(False).LoadDefaults(Mutable)
-		  
 		  Var Overrides(0) As ArkSA.LootDropOverride
-		  Overrides(0) = New ArkSA.LootDropOverride(Mutable, False)
+		  Overrides(0) = New ArkSA.LootDropOverride(Container, True)
 		  Self.DropEditor.Overrides = Overrides
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub LoadBlueprint(Point As ArkSA.SpawnPoint)
-		  Var Mutable As New ArkSA.MutableSpawnPointOverride(Point.MutableVersion, ArkSA.MutableSpawnPointOverride.ModeOverride)
-		  Mutable.LoadDefaults()
-		  
 		  Var Overrides(0) As ArkSA.SpawnPointOverride
-		  Overrides(0) = Mutable
+		  Overrides(0) = New ArkSA.SpawnPointOverride(Point, ArkSA.SpawnPointOverride.ModeOverride, True)
 		  Self.SpawnPointEditor1.Overrides = Overrides
 		End Sub
 	#tag EndMethod
@@ -2818,9 +2812,7 @@ End
 		    Return False
 		  End If
 		  
-		  Var Source As ArkSA.LootContainer = Overrides(0).LootDrop(Self.SampleProject.ContentPacks)
-		  Container.Unpack(Source.Pack)
-		  
+		  Container.CopyFrom(Overrides(0))
 		  Container.Multipliers = New Beacon.Range(Self.LootMinMultiplierField.DoubleValue, Self.LootMaxMultiplierField.DoubleValue)
 		  Container.Experimental = Self.LootExperimentalCheckbox.Value
 		  Container.IconID = Self.LootIconMenu.SelectedRowTag
@@ -3281,7 +3273,7 @@ End
 		    End If
 		    
 		    Var Ingredient As ArkSA.CraftingCostIngredient = Me.RowTagAt(Idx)
-		    Dicts.Add(Ingredient.SaveData)
+		    Dicts.Add(Ingredient.SaveData(False))
 		  Next
 		  
 		  If Dicts.Count = 0 Then
@@ -3411,7 +3403,7 @@ End
 	#tag Event
 		Sub Opening()
 		  Var Overrides(0) As ArkSA.SpawnPointOverride
-		  Overrides(0) = New ArkSA.SpawnPointOverride(New ArkSA.MutableSpawnPoint(ArkSA.UnknownBlueprintPath("SpawnPoints", "BlueprintEditor_C"), "8cdcd17e-b246-4973-a694-98e0dee33e25"), ArkSA.SpawnPointOverride.ModeOverride)
+		  Overrides(0) = New ArkSA.SpawnPointOverride(New ArkSA.MutableSpawnPoint(ArkSA.UnknownBlueprintPath("SpawnPoints", "BlueprintEditor_C"), "8cdcd17e-b246-4973-a694-98e0dee33e25"), ArkSA.SpawnPointOverride.ModeOverride, False)
 		  Me.Overrides = Overrides
 		End Sub
 	#tag EndEvent

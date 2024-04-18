@@ -443,13 +443,13 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary)
+		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
 		  // Part of the ArkSA.Blueprint interface.
 		  
 		  Var Sets() As Dictionary
 		  Sets.ResizeTo(Self.mItemSets.LastIndex)
 		  For Idx As Integer = Self.mItemSets.FirstIndex To Self.mItemSets.LastIndex
-		    Sets(Idx) = Self.mItemSets(Idx).Pack
+		    Sets(Idx) = Self.mItemSets(Idx).Pack(ForAPI)
 		  Next Idx
 		  
 		  Dict.Value("multipliers") = New Dictionary("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)

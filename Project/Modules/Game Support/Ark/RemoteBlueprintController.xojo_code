@@ -188,9 +188,10 @@ Inherits Ark.BlueprintController
 		  Var PathComponent As String = Self.PathComponent(Task)
 		  Var Objects() As Dictionary
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Objects.Add(Ark.PackBlueprint(Blueprint))
+		    Objects.Add(Ark.PackBlueprint(Blueprint, True))
 		  Next
 		  
+		  Break
 		  Var Request As New BeaconAPI.Request("ark/" + PathComponent, "POST", Beacon.GenerateJSON(Objects, False), "application/json")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  

@@ -933,7 +933,7 @@ End
 		    End If
 		    
 		    Var Organizer As Ark.SpawnSetOrganizer = Me.RowTagAt(I)
-		    Items.Add(Organizer.Template.SaveData)
+		    Items.Add(Organizer.Template.SaveData(False))
 		  Next
 		  
 		  If Items.Count = 0 Then

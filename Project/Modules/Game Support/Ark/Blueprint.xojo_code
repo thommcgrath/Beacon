@@ -80,7 +80,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary)
+		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
 		  
 		End Sub
 	#tag EndMethod

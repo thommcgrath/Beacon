@@ -146,16 +146,6 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Pack() As Dictionary
-		  Var Dict As New Dictionary
-		  Dict.Value("engramId") = Self.mEngramRef.BlueprintId
-		  Dict.Value("quantity") = Self.mQuantity
-		  Dict.Value("exact") = Self.mRequireExact
-		  Return Dict
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Quantity() As Double
 		  Return Self.mQuantity
 		End Function
@@ -174,9 +164,13 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData(ForAPI As Boolean) As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("engram") = Self.mEngramRef.SaveData
+		  If ForAPI Then
+		    Dict.Value("engramId") = Self.mEngramRef.BlueprintId
+		  Else
+		    Dict.Value("engram") = Self.mEngramRef.SaveData
+		  End If
 		  Dict.Value("quantity") = Self.mQuantity
 		  Dict.Value("exact") = Self.mRequireExact
 		  Return Dict
@@ -187,7 +181,7 @@ Protected Class CraftingCostIngredient
 		Shared Function ToJSON(Ingredients() As ArkSA.CraftingCostIngredient, Pretty As Boolean = False) As String
 		  Var Dicts() As Dictionary
 		  For Each Ingredient As ArkSA.CraftingCostIngredient In Ingredients
-		    Dicts.Add(Ingredient.Pack)
+		    Dicts.Add(Ingredient.SaveData(False))
 		  Next
 		  Return Beacon.GenerateJSON(Dicts, Pretty)
 		End Function

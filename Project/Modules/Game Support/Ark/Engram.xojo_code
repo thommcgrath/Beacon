@@ -317,7 +317,7 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary)
+		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
 		  // Part of the Ark.Blueprint interface.
 		  
 		  If Self.HasUnlockDetails Then
@@ -352,7 +352,7 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 		  Else
 		    Var Ingredients() As Dictionary
 		    For Each Ingredient As Ark.CraftingCostIngredient In Self.mIngredients
-		      Ingredients.Add(Ingredient.Pack)
+		      Ingredients.Add(Ingredient.SaveData(ForAPI))
 		    Next
 		    Dict.Value("recipe") = Ingredients
 		  End If

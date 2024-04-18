@@ -334,7 +334,7 @@ End
 		    End If
 		    
 		    Var Ingredient As ArkSA.CraftingCostIngredient = Me.RowTagAt(Idx)
-		    Dicts.Add(Ingredient.SaveData)
+		    Dicts.Add(Ingredient.SaveData(False))
 		  Next
 		  
 		  If Dicts.Count = 0 Then

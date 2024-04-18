@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointOverride
-Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate, Beacon.Validateable
+Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  If Self.mPointRef.IsResolved = False Then
@@ -20,9 +20,21 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate, Bea
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Point As ArkSA.SpawnPoint, Mode As Integer)
+		Sub Constructor(Point As ArkSA.SpawnPoint, Mode As Integer, IncludeContents As Boolean)
 		  Self.Constructor(New ArkSA.BlueprintReference(Point), Mode)
 		  Self.mAvailability = Point.Availability
+		  
+		  If IncludeContents = False Then
+		    Return
+		  End If
+		  
+		  Var SetBound As Integer = Point.Count - 1
+		  For Idx As Integer = 0 To SetBound
+		    Var Set As ArkSA.SpawnPointSet = Point.Set(Idx)
+		    Self.mSets.Add(Set.ImmutableClone)
+		  Next
+		  
+		  Self.mLimits = ArkSA.BlueprintAttributeManager.FromSaveData(Point.LimitsString)
 		End Sub
 	#tag EndMethod
 
@@ -366,7 +378,7 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate, Bea
 		  If Self.mSets.Count > 0 Then
 		    Var SetArray() As Dictionary
 		    For Each Set As ArkSA.SpawnPointSet In Self.mSets
-		      SetArray.Add(Set.SaveData)
+		      SetArray.Add(Set.SaveData(False))
 		    Next
 		    Dict.Value("sets") = SetArray
 		  End If

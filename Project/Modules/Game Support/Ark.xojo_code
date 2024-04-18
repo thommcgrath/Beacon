@@ -48,7 +48,7 @@ Protected Module Ark
 		  
 		  Var Engrams(), Creatures(), SpawnPoints(), LootDrops() As Dictionary
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var Packed As Dictionary = Blueprint.Pack
+		    Var Packed As Dictionary = Blueprint.Pack(False)
 		    If Packed Is Nil Then
 		      Continue
 		    End If
@@ -269,7 +269,7 @@ Protected Module Ark
 		    Return False
 		  End If
 		  
-		  Var Packed As Dictionary = Source.Pack
+		  Var Packed As Dictionary = Source.Pack(False)
 		  Return Destination.CopyFrom(Packed)
 		End Function
 	#tag EndMethod
@@ -486,9 +486,9 @@ Protected Module Ark
 	#tag Method, Flags = &h0
 		Function Hash(Extends Blueprint As Ark.Blueprint) As String
 		  #if DebugBuild
-		    Return Beacon.GenerateJSON(Ark.PackBlueprint(Blueprint), True)
+		    Return Beacon.GenerateJSON(Ark.PackBlueprint(Blueprint, False), True)
 		  #else
-		    Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Ark.PackBlueprint(Blueprint), False))).Lowercase
+		    Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Ark.PackBlueprint(Blueprint, False), False))).Lowercase
 		  #endif
 		End Function
 	#tag EndMethod
@@ -694,13 +694,13 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Pack(Extends Blueprint As Ark.Blueprint) As Dictionary
-		  Return PackBlueprint(Blueprint)
+		Function Pack(Extends Blueprint As Ark.Blueprint, ForAPI As Boolean) As Dictionary
+		  Return PackBlueprint(Blueprint, ForAPI)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PackBlueprint(Blueprint As Ark.Blueprint) As Dictionary
+		Protected Function PackBlueprint(Blueprint As Ark.Blueprint, ForAPI As Boolean) As Dictionary
 		  Var Dict As New Dictionary
 		  Var IdProperty As String
 		  
@@ -733,7 +733,7 @@ Protected Module Ark
 		  Dict.Value("contentPackName") = Blueprint.ContentPackName
 		  
 		  // Let the blueprint add whatever additional data it needs
-		  Blueprint.Pack(Dict)
+		  Blueprint.Pack(Dict, ForAPI)
 		  
 		  Return Dict
 		End Function

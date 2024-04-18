@@ -156,6 +156,26 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CopyFrom(Override As Ark.LootDropOverride)
+		  Self.mMinItemSets = Override.MinItemSets
+		  Self.mMaxItemSets = Override.MaxItemSets
+		  Self.mAppendMode = Override.AddToDefaults
+		  Self.mPreventDuplicates = Override.PreventDuplicates
+		  Self.mItemSets.ResizeTo(-1)
+		  
+		  Var SetBound As Integer = Override.Count - 1
+		  For Idx As Integer = 0 To SetBound
+		    Var Set As Ark.LootItemSet = Override.SetAt(Idx)
+		    If (Set Is Nil) = False Then
+		      Self.mItemSets.Add(Set.ImmutableVersion)
+		    End If
+		  Next
+		  
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Experimental(Assigns Value As Boolean)
 		  If Self.mExperimental = Value Then
 		    Return

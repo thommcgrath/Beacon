@@ -318,10 +318,16 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.mCachedHash = "" Then
-		    Var Raw As String = Beacon.GenerateJSON(Self.SaveData, False)
+		    Var Raw As String = Beacon.GenerateJSON(Self.SaveData(False), False)
 		    Self.mCachedHash = EncodeHex(Crypto.MD5(Raw))
 		  End If
 		  Return Self.mCachedHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableClone() As Ark.SpawnPointSet
+		  Return New Ark.SpawnPointSet(Self)
 		End Function
 	#tag EndMethod
 
@@ -526,15 +532,17 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData(ForAPI As Boolean) As Dictionary
 		  Var Entries() As Variant
 		  For Each Entry As Ark.SpawnPointSetEntry In Self.mEntries
-		    Entries.Add(Entry.SaveData)
+		    Entries.Add(Entry.SaveData(ForAPI))
 		  Next
 		  
 		  Var SaveData As New Dictionary
 		  SaveData.Value("spawnPointSetId") = Self.mSetId
-		  SaveData.Value("type") = "SpawnPointSet"
+		  If ForAPI = False Then
+		    SaveData.Value("type") = "SpawnPointSet"
+		  End If
 		  SaveData.Value("label") = Self.Label
 		  SaveData.Value("weight") = Self.RawWeight
 		  SaveData.Value("entries") = Entries
@@ -561,7 +569,34 @@ Implements Beacon.Countable,Ark.Weighted
 		    SaveData.Value("minDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
 		  End If
 		  If Self.mReplacements.Count > 0 Then
-		    SaveData.Value("replacements") = Self.mReplacements.SaveData
+		    If ForAPI Then
+		      Var Replacements() As Dictionary
+		      Var TargetCreatureRefs() As Ark.BlueprintReference = Self.ReplacedCreatureRefs
+		      For Each TargetCreatureRef As Ark.BlueprintReference In TargetCreatureRefs
+		        Var Choices() As Dictionary
+		        Var ReplacementCreatureRefs() As Ark.BlueprintReference = Self.ReplacementCreatures(TargetCreatureRef)
+		        For Each ReplacementCreatureRef As Ark.BlueprintReference In ReplacementCreatureRefs
+		          Var Weight As NullableDouble = Self.CreatureReplacementWeight(TargetCreatureRef, ReplacementCreatureRef)
+		          If Weight Is Nil Then
+		            Continue
+		          End If
+		          
+		          Var Choice As New Dictionary
+		          Choice.Value("creatureId") = ReplacementCreatureRef.BlueprintId
+		          Choice.Value("weight") = Weight.DoubleValue
+		          Choices.Add(Choice)
+		        Next
+		        
+		        Var Replacement As New Dictionary
+		        Replacement.Value("creatureId") = TargetCreatureRef.BlueprintId
+		        Replacement.Value("choices") = Choices
+		        Replacements.Add(Replacement)
+		      Next
+		      
+		      SaveData.Value("replacements") = Replacements
+		    Else
+		      SaveData.Value("replacements") = Self.mReplacements.SaveData
+		    End If
 		  End If
 		  Return SaveData
 		End Function

@@ -643,7 +643,7 @@ End
 		    End If
 		    
 		    Var SpawnPoint As ArkSA.SpawnPoint = Self.List.RowTagAt(I)
-		    Var MutableOverride As New ArkSA.MutableSpawnPointOverride(SpawnPoint, Mode)
+		    Var MutableOverride As New ArkSA.MutableSpawnPointOverride(SpawnPoint, Mode, False)
 		    
 		    If LoadDefaults Then
 		      ArkSA.DataSource.Pool.Get(False).LoadDefaults(MutableOverride)

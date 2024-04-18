@@ -479,11 +479,15 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData(ForAPI As Boolean) As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("spawnPointSetEntryId") = Self.mEntryId
-		  Dict.Value("creature") = Self.mCreatureRef.SaveData
-		  Dict.Value("type") = "SpawnPointSetEntry"
+		  If ForAPI Then
+		    Dict.Value("creatureId") = Self.mCreatureRef.BlueprintId
+		  Else
+		    Dict.Value("creature") = Self.mCreatureRef.SaveData
+		    Dict.Value("type") = "SpawnPointSetEntry"
+		  End If
 		  If Self.mChance <> Nil Then
 		    Dict.Value("weight") = Self.mChance.DoubleValue
 		  End If

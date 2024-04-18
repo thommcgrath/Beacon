@@ -1810,7 +1810,7 @@ End
 		  Var Items() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.RowSelectedAt(I) Then
-		      Items.Add(ArkSA.SpawnPointSetEntry(Me.RowTagAt(I)).SaveData)
+		      Items.Add(ArkSA.SpawnPointSetEntry(Me.RowTagAt(I)).SaveData(False))
 		    End If
 		  Next
 		  
