@@ -59,7 +59,7 @@ Begin BeaconContainer ArkLootItemSetEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   343
+      Height          =   333
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Description	Quantity	Quality	Figures"
@@ -119,38 +119,6 @@ Begin BeaconContainer ArkLootItemSetEditor
       Visible         =   True
       Width           =   560
    End
-   Begin StatusBar StatusBar1
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   407
-      Transparent     =   True
-      Visible         =   True
-      Width           =   560
-   End
    Begin OmniBar EditorToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -181,6 +149,38 @@ Begin BeaconContainer ArkLootItemSetEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin StatusContainer StatusBar1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   397
       Transparent     =   True
       Visible         =   True
       Width           =   560
@@ -490,14 +490,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalCount As Integer = Self.EntryList.RowCount
-		  Var SelectedCount As Integer = Self.EntryList.SelectedRowCount
-		  
-		  Var Caption As String = TotalCount.ToString(Locale.Current, "#,##0") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
-		  If SelectedCount > 0 Then
-		    Caption = SelectedCount.ToString(Locale.Current, "#,##0") + " of " + Caption + " Selected"
-		  End If
-		  Self.StatusBar1.Caption = Caption
+		  Self.StatusBar1.CenterCaption = Self.EntryList.StatusMessage("Item Set Entry", "Item Set Entries")
 		End Sub
 	#tag EndMethod
 

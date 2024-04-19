@@ -259,13 +259,7 @@ End
 
 	#tag Event
 		Sub UpdateUI()
-		  Var Status As String
-		  If Self.List.SelectedRowCount > 0 Then
-		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.TotalResults, "mod", "mods") + " selected"
-		  Else
-		    Status = Language.NounWithQuantity(Self.TotalResults, "mod", "mods")
-		  End If
-		  Self.Status.CenterCaption = Status
+		  Self.Status.CenterCaption = Self.List.StatusMessage("Mod", "Mods")
 		  
 		  Self.List.SizeColumnToFit(Self.ColumnGameId, 100)
 		  Self.List.SizeColumnToFit(Self.ColumnModId, 100)

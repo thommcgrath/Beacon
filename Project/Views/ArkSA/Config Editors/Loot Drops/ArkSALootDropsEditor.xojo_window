@@ -786,14 +786,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalCount As Integer = Self.List.RowCount
-		  Var SelectedCount As Integer = Self.List.SelectedRowCount
-		  
-		  Var Caption As String = TotalCount.ToString(Locale.Current, "#,##0") + " " + If(TotalCount = 1, "Loot Drop", "Loot Drops")
-		  If SelectedCount > 0 Then
-		    Caption = SelectedCount.ToString(Locale.Current, "#,##0") + " of " + Caption + " Selected"
-		  End If
-		  Self.Status.CenterCaption = Caption
+		  Self.Status.CenterCaption = Self.List.StatusMessage("Loot Drop", "Loot Drops")
 		End Sub
 	#tag EndMethod
 

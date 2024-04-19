@@ -414,13 +414,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatusbar()
-		  Var Status As String
-		  If Self.List.SelectedRowCount > 0 Then
-		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.List.RowCount, "project", "projects") + " selected"
-		  Else
-		    Status = Language.NounWithQuantity(Self.List.RowCount, "project", "projects")
-		  End If
-		  Self.Status.CenterCaption = Status
+		  Self.Status.CenterCaption = Self.List.StatusMessage("Project", "Projects")
 		End Sub
 	#tag EndMethod
 

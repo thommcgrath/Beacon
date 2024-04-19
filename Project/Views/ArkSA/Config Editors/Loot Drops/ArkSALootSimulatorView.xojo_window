@@ -230,7 +230,7 @@ End
 		    Self.List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		  
-		  Self.Status.CenterCaption = Self.List.RowCount.ToString(Locale.Current, "#,##0") + " item" + If(Self.List.RowCount = 1, "", "s")
+		  Self.UpdateStatus
 		  Self.Refresh
 		End Sub
 	#tag EndMethod
@@ -239,6 +239,12 @@ End
 		Sub Simulate(Override As ArkSA.LootDropOverride)
 		  Self.mTarget = Override
 		  Self.Simulate()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Self.Status.CenterCaption = Self.List.StatusMessage("Item", "Items")
 		End Sub
 	#tag EndMethod
 
@@ -267,6 +273,13 @@ End
 
 #tag EndWindowCode
 
+#tag Events List
+	#tag Event
+		Sub SelectionChanged()
+		  Self.UpdateStatus
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events SimulatorToolbar
 	#tag Event
 		Sub Opening()

@@ -418,15 +418,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalItems As Integer = Self.List.RowCount
-		  Var SelectedItems As Integer = Self.List.SelectedRowCount
-		  Var Noun As String = If(TotalItems = 1, "Adjustment", "Adjustments")
-		  
-		  If SelectedItems > 0 Then
-		    Self.Status.CenterCaption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
-		  Else
-		    Self.Status.CenterCaption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
-		  End If
+		  Self.Status.CenterCaption = Self.List.StatusMessage("Adjustment", "Adjustments")
 		End Sub
 	#tag EndMethod
 

@@ -82,7 +82,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   333
+      Height          =   323
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -135,7 +135,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   451
       Begin ArkLootDropEditor Editor
@@ -177,7 +177,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
          Caption         =   "No Selection"
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   415
+         Height          =   405
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -199,70 +199,38 @@ Begin ArkConfigEditor ArkLootDropsEditor
          Visible         =   True
          Width           =   451
       End
-      Begin StatusBar NoSelectionStatusBar
+      Begin StatusContainer NoSelectionStatusBar
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         Borders         =   1
-         Caption         =   ""
-         ContentHeight   =   0
+         BackgroundColor =   &cFFFFFF
+         CenterCaption   =   ""
+         Composited      =   False
          Enabled         =   True
-         Height          =   21
+         HasBackgroundColor=   False
+         Height          =   31
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
+         LeftCaption     =   ""
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   False
+         RightCaption    =   ""
          Scope           =   2
-         ScrollActive    =   False
-         ScrollingEnabled=   False
-         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   415
+         Top             =   405
          Transparent     =   True
          Visible         =   True
          Width           =   451
       End
-   End
-   Begin StatusBar StatusBar1
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   415
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
@@ -360,6 +328,38 @@ Begin ArkConfigEditor ArkLootDropsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   81
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin StatusContainer StatusBar1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   405
       Transparent     =   True
       Visible         =   True
       Width           =   250
@@ -786,14 +786,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalCount As Integer = Self.List.RowCount
-		  Var SelectedCount As Integer = Self.List.SelectedRowCount
-		  
-		  Var Caption As String = TotalCount.ToString(Locale.Current, "#,##0") + " " + If(TotalCount = 1, "Loot Drop", "Loot Drops")
-		  If SelectedCount > 0 Then
-		    Caption = SelectedCount.ToString(Locale.Current, "#,##0") + " of " + Caption + " Selected"
-		  End If
-		  Self.StatusBar1.Caption = Caption
+		  Self.StatusBar1.CenterCaption = Self.List.StatusMessage("Loot Drop", "Loot Drops")
 		End Sub
 	#tag EndMethod
 

@@ -959,18 +959,11 @@ End
 		    Return
 		  End If
 		  
-		  Var Status As String
-		  If Self.BlueprintList.SelectedRowCount > 0 Then
-		    Status = Self.BlueprintList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(TotalResults, NounSingle, NounPlural) + " selected"
-		  Else
-		    Status = Language.NounWithQuantity(TotalResults, NounSingle, NounPlural)
-		  End If
-		  
+		  Var Status As String = Self.BlueprintList.StatusMessage(NounSingle, NounPlural)
 		  If Self.BlueprintList.RowCount < TotalResults Then
 		    // Partial results
 		    Status = Status + " (" + Self.BlueprintList.RowCount.ToString(Locale.Current, "#,##0") + " loaded)"
 		  End If
-		  
 		  Self.Status.CenterCaption = Status
 		  
 		  Var PublishEnabled As Boolean = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges

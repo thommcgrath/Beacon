@@ -85,7 +85,7 @@ Begin BeaconSubview AccountsEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   1
-      Height          =   459
+      Height          =   428
       Index           =   -2147483648
       InitialValue    =   "Name	Provider	Status	Beacon Account"
       Italic          =   False
@@ -123,6 +123,38 @@ Begin BeaconSubview AccountsEditor
       RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
+   End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   0
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   469
+      Transparent     =   True
+      Visible         =   True
+      Width           =   780
    End
 End
 #tag EndDesktopWindow
@@ -349,6 +381,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Self.Status.CenterCaption = Self.List.StatusMessage("Account", "Accounts")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub UpdateUI()
 		  Var Selected() As String
@@ -411,6 +449,7 @@ End
 		  End If
 		  
 		  Self.List.Sort
+		  Self.UpdateStatus
 		  
 		  Self.Progress = If(IsRefreshing, BeaconSubview.ProgressIndeterminate, BeaconSubview.ProgressNone)
 		End Sub
@@ -530,6 +569,11 @@ End
 		  Next
 		  
 		  Self.UpdateUI
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Self.UpdateStatus
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -402,11 +402,11 @@ Begin BeaconContainer ArkSASpawnPointEditor
       Height          =   1
       Index           =   -2147483648
       Left            =   0
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
       ScrollingEnabled=   False
       ScrollSpeed     =   20
@@ -733,11 +733,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateLimitsStatus()
-		  If Self.LimitsList.SelectedRowCount > 0 Then
-		    Self.LimitsStatus.CenterCaption = Self.LimitsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits") + " Selected"
-		  Else
-		    Self.LimitsStatus.CenterCaption = Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits")
-		  End If
+		  Self.LimitsStatus.CenterCaption = Self.LimitsList.StatusMessage("Limit", "Limits")
 		  
 		  Var EditButton As OmniBarItem = Self.LimitsToolbar.Item("EditButton")
 		  If (EditButton Is Nil) = False Then
@@ -805,11 +801,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSetsStatus()
-		  If Self.SetsList.SelectedRowCount > 0 Then
-		    Self.SetsStatus.CenterCaption = Self.SetsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets") + " Selected"
-		  Else
-		    Self.SetsStatus.CenterCaption = Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets")
-		  End If
+		  Self.SetsStatus.CenterCaption = Self.SetsList.StatusMessage("Spawn Set", "Spawn Sets")
 		End Sub
 	#tag EndMethod
 

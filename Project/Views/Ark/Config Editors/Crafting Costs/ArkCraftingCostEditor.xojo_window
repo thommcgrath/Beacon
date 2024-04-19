@@ -59,7 +59,7 @@ Begin BeaconContainer ArkCraftingCostEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   238
+      Height          =   228
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Resource	Quantity	Prevent Substitutions"
@@ -89,38 +89,6 @@ Begin BeaconContainer ArkCraftingCostEditor
       Width           =   350
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin StatusBar Status
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   279
-      Transparent     =   True
-      Visible         =   True
-      Width           =   350
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
@@ -152,6 +120,38 @@ Begin BeaconContainer ArkCraftingCostEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   350
+   End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   269
       Transparent     =   True
       Visible         =   True
       Width           =   350
@@ -210,16 +210,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalItems As Integer = Self.List.RowCount
-		  Var SelectedItems As Integer = Self.List.SelectedRowCount
-		  
-		  Var Noun As String = If(TotalItems = 1, "Resource", "Resources")
-		  
-		  If SelectedItems > 0 Then
-		    Self.Status.Caption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
-		  Else
-		    Self.Status.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
-		  End If
+		  Self.Status.CenterCaption = Self.List.StatusMessage("Ingredient", "Ingredients")
 		End Sub
 	#tag EndMethod
 

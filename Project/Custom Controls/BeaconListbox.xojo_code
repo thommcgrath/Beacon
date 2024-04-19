@@ -911,6 +911,19 @@ Inherits DesktopListBox
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function StatusMessage(SingularNoun As String, PluralNoun As String) As String
+		  Var TotalItems As Integer = Self.RowCount
+		  Var SelectedItems As Integer = Self.SelectedRowCount
+		  Var Noun As String = If(TotalItems = 1, SingularNoun, PluralNoun)
+		  If SelectedItems > 0 Then
+		    Return SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
+		  Else
+		    Return TotalItems.ToString(Locale.Raw, "0") + " " + Noun
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event BulkColumnChangeFinished(Column As Integer)

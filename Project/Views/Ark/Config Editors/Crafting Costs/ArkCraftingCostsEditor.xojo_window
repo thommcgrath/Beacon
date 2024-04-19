@@ -27,38 +27,6 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    Transparent     =   True
    Visible         =   True
    Width           =   650
-   Begin StatusBar ListStatusBar
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   375
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin BeaconListbox List
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
@@ -86,7 +54,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   293
+      Height          =   283
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -169,7 +137,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   399
       Begin ArkCraftingCostEditor Editor
@@ -211,7 +179,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
          Caption         =   "No Selection"
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   396
+         Height          =   365
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -264,10 +232,41 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
          Visible         =   True
          Width           =   399
       End
+      Begin StatusContainer FillStatus
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         CenterCaption   =   ""
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   31
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LeftCaption     =   ""
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         RightCaption    =   ""
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   365
+         Transparent     =   True
+         Visible         =   True
+         Width           =   399
+      End
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -376,6 +375,38 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       _mInitialParent =   ""
       _mName          =   ""
       _mPanelIndex    =   0
+   End
+   Begin StatusContainer ListStatusBar
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   365
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
    End
 End
 #tag EndDesktopWindow
@@ -632,16 +663,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalItems As Integer = Self.List.RowCount
-		  Var SelectedItems As Integer = Self.List.SelectedRowCount
-		  
-		  Var Noun As String = If(TotalItems = 1, "Engram", "Engrams")
-		  
-		  If SelectedItems > 0 Then
-		    Self.ListStatusBar.Caption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
-		  Else
-		    Self.ListStatusBar.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
-		  End If
+		  Self.ListStatusBar.CenterCaption = Self.List.StatusMessage("Recipe", "Recipes")
 		End Sub
 	#tag EndMethod
 

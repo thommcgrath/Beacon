@@ -27,38 +27,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
    Transparent     =   True
    Visible         =   True
    Width           =   982
-   Begin StatusBar EngramListStatus
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   651
-      Transparent     =   True
-      Visible         =   True
-      Width           =   681
-   End
    Begin FadedSeparator PointsListSeparator
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -89,38 +57,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Visible         =   True
       Width           =   1
    End
-   Begin StatusBar PointsListStatus
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   682
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   651
-      Transparent     =   True
-      Visible         =   True
-      Width           =   300
-   End
    Begin BeaconListbox EngramList
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
@@ -148,7 +84,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   610
+      Height          =   600
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Engram	Behaviors	Mod"
@@ -206,7 +142,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   610
+      Height          =   600
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Player Level	Points"
@@ -370,6 +306,70 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Transparent     =   True
       Visible         =   True
       Width           =   220
+   End
+   Begin StatusContainer EngramListStatus
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   641
+      Transparent     =   True
+      Visible         =   True
+      Width           =   681
+   End
+   Begin StatusContainer PointsListStatus
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   681
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   641
+      Transparent     =   True
+      Visible         =   True
+      Width           =   300
    End
 End
 #tag EndDesktopWindow
@@ -642,21 +642,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEngramsListStatus()
-		  If Self.EngramList.SelectedRowCount = 0 Then
-		    Self.EngramListStatus.Caption = Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides")
-		  Else
-		    Self.EngramListStatus.Caption = Self.EngramList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides") + " Selected"
-		  End If
+		  Self.EngramListStatus.CenterCaption = Self.EngramList.StatusMessage("Engram Override", "Engram Overrides")
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdatePointsListStatus()
-		  If Self.PointsList.SelectedRowCount = 0 Then
-		    Self.PointsListStatus.Caption = Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels")
-		  Else
-		    Self.PointsListStatus.Caption = Self.PointsList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels") + " Selected"
-		  End If
+		  Self.PointsListStatus.CenterCaption = Self.PointsList.StatusMessage("Level", "Levels")
 		End Sub
 	#tag EndMethod
 

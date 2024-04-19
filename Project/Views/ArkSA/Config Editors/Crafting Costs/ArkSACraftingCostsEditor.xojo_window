@@ -135,7 +135,7 @@ Begin ArkSAConfigEditor ArkSACraftingCostsEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   399
       Begin ArkSACraftingCostEditor Editor
@@ -661,16 +661,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalItems As Integer = Self.List.RowCount
-		  Var SelectedItems As Integer = Self.List.SelectedRowCount
-		  
-		  Var Noun As String = If(TotalItems = 1, "Engram", "Engrams")
-		  
-		  If SelectedItems > 0 Then
-		    Self.ListStatus.CenterCaption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
-		  Else
-		    Self.ListStatus.CenterCaption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
-		  End If
+		  Self.ListStatus.CenterCaption = Self.List.StatusMessage("Recipe", "Recipes")
 		End Sub
 	#tag EndMethod
 

@@ -52,7 +52,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   445
+      Height          =   435
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -82,38 +82,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin StatusBar ListStatus
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   527
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
    End
    Begin FadedSeparator MainSeparator
       AllowAutoDeactivate=   True
@@ -167,7 +135,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   729
       Begin ArkSpawnPointEditor Editor
@@ -209,7 +177,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
          Caption         =   "No Selection"
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   527
+         Height          =   517
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   251
@@ -231,34 +199,34 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
          Visible         =   True
          Width           =   729
       End
-      Begin StatusBar NoSelectionStatusBar
+      Begin StatusContainer NoSelectionStatus
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         Borders         =   1
-         Caption         =   ""
-         ContentHeight   =   0
+         BackgroundColor =   &cFFFFFF
+         CenterCaption   =   ""
+         Composited      =   False
          Enabled         =   True
-         Height          =   21
+         HasBackgroundColor=   False
+         Height          =   31
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   251
+         LeftCaption     =   ""
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   False
+         RightCaption    =   ""
          Scope           =   2
-         ScrollActive    =   False
-         ScrollingEnabled=   False
-         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   527
+         Top             =   517
          Transparent     =   True
          Visible         =   True
          Width           =   729
@@ -360,6 +328,38 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   81
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin StatusContainer ListStatus
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   517
       Transparent     =   True
       Visible         =   True
       Width           =   250
@@ -600,11 +600,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  If Self.List.SelectedRowCount > 0 Then
-		    Self.ListStatus.Caption = Self.List.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.List.RowCount, "Spawn Point", "Spawn Points") + " Selected"
-		  Else
-		    Self.ListStatus.Caption = Language.NounWithQuantity(Self.List.RowCount, "Spawn Point", "Spawn Points")
-		  End If
+		  Self.ListStatus.CenterCaption = Self.List.StatusMessage("Spawn Point", "Spawn Points")
 		End Sub
 	#tag EndMethod
 

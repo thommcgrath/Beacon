@@ -640,21 +640,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEngramsListStatus()
-		  If Self.EngramList.SelectedRowCount = 0 Then
-		    Self.EngramListStatus.CenterCaption = Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides")
-		  Else
-		    Self.EngramListStatus.CenterCaption = Self.EngramList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides") + " Selected"
-		  End If
+		  Self.EngramListStatus.CenterCaption = Self.EngramList.StatusMessage("Engram Override", "Engram Overrides")
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdatePointsListStatus()
-		  If Self.PointsList.SelectedRowCount = 0 Then
-		    Self.PointsListStatus.CenterCaption = Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels")
-		  Else
-		    Self.PointsListStatus.CenterCaption = Self.PointsList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels") + " Selected"
-		  End If
+		  Self.PointsListStatus.CenterCaption = Self.PointsList.StatusMessage("Level", "Levels")
 		End Sub
 	#tag EndMethod
 

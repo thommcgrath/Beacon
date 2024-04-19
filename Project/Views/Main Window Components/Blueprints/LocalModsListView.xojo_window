@@ -303,13 +303,7 @@ End
 
 	#tag Event
 		Sub UpdateUI()
-		  Var Status As String
-		  If Self.ModsList.SelectedRowCount > 0 Then
-		    Status = Self.ModsList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.TotalResults, "mod", "mods") + " selected"
-		  Else
-		    Status = Language.NounWithQuantity(Self.TotalResults, "mod", "mods")
-		  End If
-		  Self.Status.CenterCaption = Status
+		  Self.Status.CenterCaption = Self.ModsList.StatusMessage("Mod", "Mods")
 		End Sub
 	#tag EndEvent
 

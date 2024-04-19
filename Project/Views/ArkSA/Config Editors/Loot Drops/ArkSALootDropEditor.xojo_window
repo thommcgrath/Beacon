@@ -770,14 +770,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Caption As String
-		  If Self.SetList.SelectedRowCount > 0 Then
-		    Caption = Self.SetList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Self.SetList.RowCount.ToString(Locale.Current, "#,##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
-		  Else
-		    Caption = Self.SetList.RowCount.ToString(Locale.Current, "#,##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets")
-		  End If
-		  
-		  Self.Status.CenterCaption = Caption
+		  Self.Status.CenterCaption = Self.SetList.StatusMessage("Item Set", "Item Sets")
 		End Sub
 	#tag EndMethod
 

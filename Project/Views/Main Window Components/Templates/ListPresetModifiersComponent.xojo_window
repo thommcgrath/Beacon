@@ -119,59 +119,30 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin DesktopLabel StatusLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Loading template selectors"
-      TextAlignment   =   2
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   275
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   260
-   End
-   Begin FadedSeparator StatusSeparator
+   Begin StatusContainer Status
       AllowAutoDeactivate=   True
       AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       Backdrop        =   0
-      ContentHeight   =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
       Enabled         =   True
-      Height          =   1
+      HasBackgroundColor=   False
+      Height          =   31
       Index           =   -2147483648
+      InitialParent   =   ""
       Left            =   0
+      LeftCaption     =   ""
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   False
+      RightCaption    =   ""
       Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -339,15 +310,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var Status As String
-		  If Self.List.SelectedRowCount > 0 Then
-		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.List.RowCount, "template selector", "template selectors") + " selected"
-		  Else
-		    Status = Language.NounWithQuantity(Self.List.RowCount, "template selector", "template selectors")
-		  End If
-		  If Self.StatusLabel.Text <> Status Then
-		    Self.StatusLabel.Text = Status
-		  End If
+		  Self.Status.CenterCaption = Self.List.StatusMessage("Template Selector", "Template Selectors")
 		End Sub
 	#tag EndMethod
 

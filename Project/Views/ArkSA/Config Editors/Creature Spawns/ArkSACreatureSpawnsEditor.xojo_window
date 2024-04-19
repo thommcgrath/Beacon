@@ -637,11 +637,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  If Self.List.SelectedRowCount > 0 Then
-		    Self.ListStatus.CenterCaption = Self.List.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.List.RowCount, "Spawn Point", "Spawn Points") + " Selected"
-		  Else
-		    Self.ListStatus.CenterCaption = Language.NounWithQuantity(Self.List.RowCount, "Spawn Point", "Spawn Points")
-		  End If
+		  Self.ListStatus.CenterCaption = Self.List.StatusMessage("Spawn Point", "Spawn Points")
 		End Sub
 	#tag EndMethod
 

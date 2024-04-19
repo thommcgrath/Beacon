@@ -59,7 +59,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   123
+      Height          =   113
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -112,7 +112,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   347
       Begin ArkLootItemSetEditor Editor
@@ -154,7 +154,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
          Caption         =   "No Selection"
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   443
+         Height          =   433
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -176,34 +176,34 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
          Visible         =   True
          Width           =   347
       End
-      Begin StatusBar NoSelectionStatusBar
+      Begin StatusContainer NoSelectionStatusBar
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         Borders         =   1
-         Caption         =   ""
-         ContentHeight   =   0
+         BackgroundColor =   &cFFFFFF
+         CenterCaption   =   ""
+         Composited      =   False
          Enabled         =   True
-         Height          =   21
+         HasBackgroundColor=   False
+         Height          =   31
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
+         LeftCaption     =   ""
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   False
+         RightCaption    =   ""
          Scope           =   2
-         ScrollActive    =   False
-         ScrollingEnabled=   False
-         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   443
+         Top             =   433
          Transparent     =   True
          Visible         =   True
          Width           =   347
@@ -298,38 +298,6 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       Visible         =   True
       Width           =   250
    End
-   Begin StatusBar StatusBar1
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   260
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -360,6 +328,38 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin StatusContainer StatusBar1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   250
       Transparent     =   True
       Visible         =   True
       Width           =   250
@@ -770,14 +770,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Caption As String
-		  If Self.SetList.SelectedRowCount > 0 Then
-		    Caption = Self.SetList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Self.SetList.RowCount.ToString(Locale.Current, "#,##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
-		  Else
-		    Caption = Self.SetList.RowCount.ToString(Locale.Current, "#,##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets")
-		  End If
-		  
-		  Self.StatusBar1.Caption = Caption
+		  Self.StatusBar1.CenterCaption = Self.SetList.StatusMessage("Item Set", "Item Sets")
 		End Sub
 	#tag EndMethod
 

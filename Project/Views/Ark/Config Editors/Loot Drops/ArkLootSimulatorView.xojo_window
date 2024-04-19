@@ -59,7 +59,7 @@ Begin BeaconContainer ArkLootSimulatorView
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   137
+      Height          =   127
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -120,38 +120,6 @@ Begin BeaconContainer ArkLootSimulatorView
       Visible         =   True
       Width           =   250
    End
-   Begin StatusBar StatusBar1
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   179
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin OmniBar SimulatorToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -182,6 +150,38 @@ Begin BeaconContainer ArkLootSimulatorView
       TabStop         =   True
       Tooltip         =   ""
       Top             =   1
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin StatusContainer StatusBar1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   169
       Transparent     =   True
       Visible         =   True
       Width           =   250
@@ -230,7 +230,7 @@ End
 		    Self.List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		  
-		  Self.StatusBar1.Caption = Self.List.RowCount.ToString(Locale.Current, "#,##0") + " item" + If(Self.List.RowCount = 1, "", "s")
+		  Self.UpdateStatus
 		  Self.Refresh
 		End Sub
 	#tag EndMethod
@@ -239,6 +239,12 @@ End
 		Sub Simulate(Override As Ark.LootDropOverride)
 		  Self.mTarget = Override
 		  Self.Simulate()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Self.StatusBar1.CenterCaption = Self.List.StatusMessage("Item", "Items")
 		End Sub
 	#tag EndMethod
 
@@ -267,6 +273,13 @@ End
 
 #tag EndWindowCode
 
+#tag Events List
+	#tag Event
+		Sub SelectionChanged()
+		  Self.UpdateStatus
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events SimulatorToolbar
 	#tag Event
 		Sub Opening()
