@@ -407,13 +407,11 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				authenticator.verificationCode = userCode;
 				if (userCode !== totp(authenticator.metadata.secret)) {
 					addAuthenticatorCodeField.classList.add('invalid');
-					console.log(JSON.stringify(authenticator));
 
 					const label = document.querySelector(`label[for="${addAuthenticatorCodeField.id}"]`);
 					if (label) {
 						label.classList.add('invalid');
-						//label.innerText = 'Incorrect Code';
-						label.innerText = totp(authenticator.metadata.secret);
+						label.innerText = 'Incorrect Code';
 					}
 
 					setTimeout(() => {
