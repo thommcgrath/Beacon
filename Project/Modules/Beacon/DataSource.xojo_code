@@ -466,7 +466,7 @@ Implements NotificationKit.Receiver
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  If Filter.IsEmpty = False Then
-		    Clauses.Add("name LIKE :filter ESCAPE '\'")
+		    Clauses.Add("(name LIKE :filter ESCAPE '\' OR marketplace_id LIKE :filter ESCAPE '/')")
 		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
 		  End If
 		  Select Case Type
