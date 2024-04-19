@@ -1,57 +1,65 @@
 <?php
 
-BeaconAPI::Authorize();
-	
+use BeaconAPI\v4\{Authenticator, Core, Response};
+
 function handleRequest(array $context): Response {
-	$user = BeaconAPI::User();
-	$user_id = $user->UserID();
-	$object_data = BeaconAPI::JSONPayload();
-	if (BeaconCommon::HasAllKeys($object_data, 'type', 'nickname', 'metadata') === false) {
-		BeaconAPI::ReplyError('Must include type, nickname, and metadata properties.', $object_data, 400);
+	$user = Core::User();
+	$userId = $user->UserId();
+	$objectData = Core::BodyAsJson();
+	if (BeaconCommon::HasAllKeys($objectData, 'type', 'nickname', 'metadata', 'verificationCode') === false) {
+		return Response::NewJsonError('Must include type, nickname, metadata, verificationCode properties.', $objectData, 400);
 	}
-	
-	$transaction_started = false;
+
+	$transactionStarted = false;
 	try {
-		$authenticator_id = $object_data['authenticator_id'] ?? BeaconCommon::GenerateUUID();
-		$type = $object_data['type'];
-		$nickname = $object_data['nickname'];
-		$metadata = $object_data['metadata'];
-		
+		$authenticatorId = $objectData['authenticatorId'] ?? BeaconCommon::GenerateUUID();
+		$type = $objectData['type'];
+		$nickname = $objectData['nickname'];
+		$metadata = $objectData['metadata'];
+
 		switch ($type) {
 		case Authenticator::TYPE_TOTP:
 			if (isset($metadata['secret']) === false || empty($metadata['secret'])) {
 				BeaconAPI::ReplyError('For TOTP authenticators, metadata must include the secret.', $metadata, 400);
 			}
-			
+
 			if (isset($metadata['setup']) === false ||  empty($metadata['setup'])) {
-				$setup_id = $user->Username() . '#' . $user->Suffix() . ' (' . $authenticator_id . ')';
-				$setup = 'otpauth://totp/' . urlencode('Beacon:' . $setup_id);
+				$setupId = $user->Username() . '#' . $user->Suffix() . ' (' . $authenticatorId . ')';
+				$setup = 'otpauth://totp/' . urlencode('Beacon:' . $setupId);
 				$setup .= '?secret=' . urlencode($metadata['secret']);
 				$setup .= '&issuer=Beacon';
 				$metadata['setup'] = $setup;
 			}
-			
+
 			break;
 		default:
-			BeaconAPI::ReplyError('Unknown authenticator type.', $object_data, 400);
+			return Response::NewJsonError('Unknown authenticator type.', $objectData, 400);
 			break;
 		}
-		
+
+		$objectData['userId'] = $userId;
+		$objectData['metadata'] = json_encode($objectData['metadata']);
+		$objectData['dateAdded'] = time();
+
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$transaction_started = true;
-		$authenticator = Authenticator::Create($authenticator_id, $user_id, $type, $nickname, $metadata);
+		$transactionStarted = true;
+		$authenticator = Authenticator::Create($objectData);
+		if ($authenticator->TestCode($objectData['verificationCode']) === false) {
+			$database->Rollback();
+			return Response::NewJsonError('Incorrect verification code.', $objectData, 400);
+		}
 		$user->Create2FABackupCodes(true);
 		$database->Commit();
-		$transaction_started = false;
-		
-		BeaconAPI::ReplySuccess($authenticator);
+		$transactionStarted = false;
+
+		return Response::NewJson($authenticator, 201);
 	} catch (Exception $err) {
-		if ($transaction_started) {
+		if ($transactionStarted) {
 			$database->Rollback();
-			$transaction_started = false;
+			$transactionStarted = false;
 		}
-		BeaconAPI::ReplyError($err->getMessage(), $object_data, 400);
+		return Response::NewJsonError($err->getMessage(), $objectData, 400);
 	}
 }
 

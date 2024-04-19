@@ -1,15 +1,15 @@
 <?php
 
-BeaconAPI::Authorize();
-	
+use BeaconAPI\v4\{Authenticator, Core, Response};
+
 function handleRequest(array $context): Response {
-	$user_id = BeaconAPI::UserID();
-	$authenticator_id = $context['pathParameters']['authenticator_id'];
-	$authenticator = Authenticator::GetByAuthenticatorID($authenticator_id);
-	if ($authenticator && $authenticator->UserID() === $user_id) {
-		BeaconAPI::ReplySuccess($authenticator);
+	$userId = Core::UserId();
+	$authenticatorId = $context['pathParameters']['authenticatorId'];
+	$authenticator = Authenticator::Fetch($authenticatorId);
+	if ($authenticator && $authenticator->UserId() === $userId) {
+		return Response::NewJson($authenticator, 200);
 	} else {
-		BeaconAPI::ReplyError('Authenticator not found', null, 404);
+		return Response::NewJsonError('Authenticator not found', null, 404);
 	}
 }
 

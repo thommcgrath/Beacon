@@ -1,22 +1,21 @@
 <?php
 
-BeaconAPI::Authorize();
-	
+use BeaconAPI\v4\{Authenticator, Core, Response};
+
 function handleRequest(array $context): Response {
-	$user_id = BeaconAPI::UserID();
-	$authenticator_id = $context['pathParameters']['authenticator_id'];
-	$authenticator = Authenticator::GetByAuthenticatorID($authenticator_id);
-	if ($authenticator && $authenticator->UserID() === $user_id) {
-		$object_data = BeaconAPI::JSONPayload();
-		
-		if (isset($object_data['nickname'])) {
-			$authenticator->SetNickname($object_data['nickname']);
-		}
-		
-		$authenticator->Save();
-		BeaconAPI::ReplySuccess($authenticator);
-	} else {
-		BeaconAPI::ReplyError('Authenticator not found', null, 404);
+	$userId = Core::UserId();
+	$authenticatorId = $context['pathParameters']['authenticatorId'];
+	$authenticator = Authenticator::Fetch($authenticatorId);
+	if (is_null($authenticator) || $authenticator->UserId() !== $userId) {
+		return Response::NewJsonError('Application not found', null, 404);
+	}
+
+	$obj = Core::BodyAsJson();
+	try {
+		$authenticator->Edit($obj);
+		return Response::NewJson($authenticator, 200);
+	} catch (Exception $err) {
+		return Response::NewJsonError($err->getMessage(), $obj, 400);
 	}
 }
 

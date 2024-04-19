@@ -1,16 +1,13 @@
 <?php
 
-BeaconAPI::Authorize();
-	
+use BeaconAPI\v4\{Authenticator, Core, Response};
+
 function handleRequest(array $context): Response {
-	$user_id = BeaconAPI::UserID();
-	$type = null;
-	if (isset($_GET['type']) && empty($_GET['type']) === false) {
-		$type = $_GET['type'];
-	}
-	
-	$authenticators = Authenticator::GetForUserID($user_id, $type);
-	BeaconAPI::ReplySuccess($authenticators);
+	$filters = $_GET;
+	$filters['userId'] = Core::UserId();
+
+	$authenticators = Authenticator::Search($filters);
+	return Response::NewJson($authenticators, 200);
 }
 
 ?>

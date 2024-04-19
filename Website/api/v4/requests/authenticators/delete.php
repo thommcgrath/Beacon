@@ -1,13 +1,13 @@
 <?php
 
-BeaconAPI::Authorize();
-	
+use BeaconAPI\v4\{Authenticator, Core, Response};
+
 function handleRequest(array $context): Response {
-	$user = BeaconAPI::User();
-	$user_id = $user->UserID();
-	$authenticator_id = $context['pathParameters']['authenticator_id'];
-	$authenticator = Authenticator::GetByAuthenticatorID($authenticator_id);
-	if ($authenticator && $authenticator->UserID() === $user_id) {
+	$user = Core::User();
+	$userId = $user->UserId();
+	$authenticatorId = $context['pathParameters']['authenticatorId'];
+	$authenticator = Authenticator::Fetch($authenticatorId);
+	if ($authenticator && $authenticator->UserId() === $userId) {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$authenticator->Delete();
@@ -15,9 +15,9 @@ function handleRequest(array $context): Response {
 			$user->Clear2FABackupCodes(true);
 		}
 		$database->Commit();
-		BeaconAPI::ReplySuccess('Authenticator was deleted.');
+		return Response::NewJson('Authenticator was deleted.', 200);
 	} else {
-		BeaconAPI::ReplyError('Authenticator not found', null, 404);
+		return Response::NewJsonError('Authenticator not found', null, 404);
 	}
 }
 
