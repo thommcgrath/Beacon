@@ -190,7 +190,6 @@ Class=BeaconToolbarItemIterator;Custom Controls/Beacon Toolbar/BeaconToolbarItem
 Class=ColorProfile;Modules/BeaconUI/ColorProfile.xojo_code;&h0000000022CD67FF;&h0000000012A7B7FF;false
 Class=ProfileTask;Modules/BeaconUI/ProfileTask.xojo_code;&h0000000063A1CFFF;&h0000000012A7B7FF;false
 Interface=ProfileAnimator;Modules/BeaconUI/ProfileAnimator.xojo_code;&h0000000012A457FF;&h0000000012A7B7FF;false
-Class=StatusBar;Custom Controls/StatusBar.xojo_code;&h000000002FE4FFFF;&h0000000030DCFFFF;false
 Class=ServerProfile;Modules/Beacon/ServerProfile.xojo_code;&h0000000077D2F7FF;&h0000000055ADDFFF;false
 Module=SimpleHTTP;Modules/SimpleHTTP.xojo_code;&h0000000003F8BFFF;&h000000001444B7FF;false
 Class=SimpleHTTPSocket;Modules/SimpleHTTP/SimpleHTTPSocket.xojo_code;&h000000001E84C7FF;&h0000000003F8BFFF;false
