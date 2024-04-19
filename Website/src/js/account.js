@@ -4,7 +4,6 @@ import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
 import { formatDates, randomUUID } from "./common.js";
-import totp from "totp-generator";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	let knownVulnerablePassword = '';
@@ -402,16 +401,26 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			});
 
 			addAuthenticatorActionButton.addEventListener('click', () => {
-				const userCode = addAuthenticatorCodeField.value.trim();
 				authenticator.nickname = addAuthenticatorNicknameField.value.trim();
-				authenticator.verificationCode = userCode;
-				if (userCode !== totp(authenticator.metadata.secret)) {
+				authenticator.verificationCode = addAuthenticatorCodeField.value.trim();
+
+				BeaconWebRequest.post(`https://${apiDomain}/v4/authenticators`, authenticator, { Authorization: `Bearer ${sessionId}` }).then(() => {
+					window.location.reload(true);
+				}).catch((error) => {
+					const errorMessage = (() => {
+						try {
+							return JSON.parse(error.body).message;
+						} catch (e) {
+							return 'Incorrect verification code';
+						}
+					})();
+
 					addAuthenticatorCodeField.classList.add('invalid');
 
 					const label = document.querySelector(`label[for="${addAuthenticatorCodeField.id}"]`);
 					if (label) {
 						label.classList.add('invalid');
-						label.innerText = 'Incorrect Code';
+						label.innerText = errorMessage;
 					}
 
 					setTimeout(() => {
@@ -424,14 +433,6 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 							addAuthenticatorCodeField.classList.remove('invalid');
 						}
 					}, 3000);
-
-					return;
-				}
-
-				BeaconWebRequest.post(`https://${apiDomain}/v4/authenticators`, authenticator, { Authorization: `Bearer ${sessionId}` }).then(() => {
-					window.location.reload(true);
-				}).catch((error) => {
-					console.log(JSON.stringify(error));
 				});
 			});
 		} catch (e) {
