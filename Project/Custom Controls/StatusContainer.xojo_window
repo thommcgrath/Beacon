@@ -62,7 +62,7 @@ Begin DesktopContainer StatusContainer Implements NotificationKit.Receiver
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   160
+      Left            =   84
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -82,7 +82,7 @@ Begin DesktopContainer StatusContainer Implements NotificationKit.Receiver
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   252
    End
    Begin DesktopLabel RightLabel
       AllowAutoDeactivate=   True
@@ -94,7 +94,7 @@ Begin DesktopContainer StatusContainer Implements NotificationKit.Receiver
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   308
+      Left            =   348
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -114,7 +114,7 @@ Begin DesktopContainer StatusContainer Implements NotificationKit.Receiver
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   60
    End
    Begin DesktopLabel LeftLabel
       AllowAutoDeactivate=   True
@@ -146,7 +146,7 @@ Begin DesktopContainer StatusContainer Implements NotificationKit.Receiver
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   60
    End
 End
 #tag EndDesktopWindow
@@ -204,6 +204,42 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateLabelSizing()
+		  Var ResizeCenter As Boolean
+		  
+		  If (Self.mNeededUpdates And Self.NeedsLeftUpdate) > 0 Then
+		    Self.LeftLabel.Text = Self.mLeftCaption
+		    Self.LeftLabel.SizeToFit
+		    ResizeCenter = True
+		  End If
+		  
+		  If (Self.mNeededUpdates And Self.NeedsRightUpdate) > 0 Then
+		    Self.RightLabel.Text = Self.mRightCaption
+		    Self.RightLabel.SizeToFit
+		    Self.RightLabel.Left = Self.Width - (Self.RightLabel.Width + 12)
+		    ResizeCenter = True
+		  End If
+		  
+		  If (Self.mNeededUpdates And Self.NeedsCenterUpdate) > 0 Then
+		    Self.CenterLabel.Text = Self.mCenterCaption
+		  End If
+		  
+		  If ResizeCenter Then
+		    Var Padding As Integer = Max(Self.LeftLabel.Width, Self.RightLabel.Width)
+		    If Padding > 0 Then
+		      Padding = Padding + 24
+		    Else
+		      Padding = 12
+		    End If
+		    Self.CenterLabel.Width = Self.Width - (Padding * 2)
+		    Self.CenterLabel.Left = (Self.Width - Self.CenterLabel.Width) / 2
+		  End If
+		  
+		  Self.mNeededUpdates = 0
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateLeftLabel()
 		  Self.LeftLabel.Text = Self.mLeftCaption
 		  Self.LeftLabel.SizeToFit
@@ -241,11 +277,16 @@ End
 			  End If
 			  
 			  Self.mCenterCaption = Value
+			  Self.mNeededUpdates = Self.mNeededUpdates Or Self.NeedsCenterUpdate
+			  
+			  If Self.mCallbackId.IsEmpty = False Then
+			    CallLater.Cancel(Self.mCallbackId)
+			  End If
 			  
 			  If Thread.Current Is Nil Then
-			    Self.UpdateCenterLabel()
+			    Self.UpdateLabelSizing()
 			  Else
-			    Call CallLater.Schedule(1, AddressOf UpdateCenterLabel)
+			    Self.mCallbackId = CallLater.Schedule(1, AddressOf UpdateLabelSizing)
 			  End If
 			End Set
 		#tag EndSetter
@@ -265,11 +306,16 @@ End
 			  End If
 			  
 			  Self.mLeftCaption = Value
+			  Self.mNeededUpdates = Self.mNeededUpdates Or Self.NeedsLeftUpdate
+			  
+			  If Self.mCallbackId.IsEmpty = False Then
+			    CallLater.Cancel(Self.mCallbackId)
+			  End If
 			  
 			  If Thread.Current Is Nil Then
-			    Self.UpdateLeftLabel()
+			    Self.UpdateLabelSizing()
 			  Else
-			    Call CallLater.Schedule(1, AddressOf UpdateLeftLabel)
+			    Self.mCallbackId = CallLater.Schedule(1, AddressOf UpdateLabelSizing)
 			  End If
 			End Set
 		#tag EndSetter
@@ -277,11 +323,19 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
+		Private mCallbackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCenterCaption As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mLeftCaption As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNeededUpdates As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -301,16 +355,31 @@ End
 			  End If
 			  
 			  Self.mRightCaption = Value
+			  Self.mNeededUpdates = Self.mNeededUpdates Or Self.NeedsRightUpdate
+			  
+			  If Self.mCallbackId.IsEmpty = False Then
+			    CallLater.Cancel(Self.mCallbackId)
+			  End If
 			  
 			  If Thread.Current Is Nil Then
-			    Self.UpdateRightLabel()
+			    Self.UpdateLabelSizing()
 			  Else
-			    Call CallLater.Schedule(1, AddressOf UpdateRightLabel)
+			    Self.mCallbackId = CallLater.Schedule(1, AddressOf UpdateLabelSizing)
 			  End If
 			End Set
 		#tag EndSetter
 		RightCaption As String
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = NeedsCenterUpdate, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NeedsLeftUpdate, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NeedsRightUpdate, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode

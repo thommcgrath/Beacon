@@ -75,7 +75,7 @@ Begin ModEditorView ArkSAModEditorView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   900
       Begin BeaconListbox BlueprintList
@@ -270,7 +270,7 @@ Begin ModEditorView ArkSAModEditorView
          Visible         =   True
          Width           =   360
       End
-      Begin DesktopProgressBar DiscoveryStatusBar
+      Begin DesktopProgressBar DiscoveryStatusIndicator
          Active          =   False
          AllowAutoDeactivate=   True
          AllowTabStop    =   True
@@ -389,7 +389,7 @@ End
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
-		  Var Group As New ControlGroup(Self.DiscoveryStatusLabel, Self.DiscoveryStatusBar)
+		  Var Group As New ControlGroup(Self.DiscoveryStatusLabel, Self.DiscoveryStatusIndicator)
 		  Group.Top = (Self.Height - Group.Height) / 2.5
 		  Group.Left = (Self.Width - Group.Width) / 2
 		End Sub

@@ -52,7 +52,7 @@ Begin ArkSAConfigEditor ArkSADinoAdjustmentsEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   484
+      Height          =   454
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Creature	Wild Damage	Wild Resistance	Tamed Damage	Tamed Resistance"
@@ -182,6 +182,38 @@ Begin ArkSAConfigEditor ArkSADinoAdjustmentsEditor
       Transparent     =   True
       Visible         =   True
       Width           =   269
+   End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   495
+      Transparent     =   True
+      Visible         =   True
+      Width           =   730
    End
 End
 #tag EndDesktopWindow
@@ -380,6 +412,21 @@ End
 		  
 		  Self.List.Sort()
 		  Self.List.EnsureSelectionIsVisible
+		  Self.UpdateStatus
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Var TotalItems As Integer = Self.List.RowCount
+		  Var SelectedItems As Integer = Self.List.SelectedRowCount
+		  Var Noun As String = If(TotalItems = 1, "Adjustment", "Adjustments")
+		  
+		  If SelectedItems > 0 Then
+		    Self.Status.CenterCaption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
+		  Else
+		    Self.Status.CenterCaption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -518,6 +565,7 @@ End
 		  If (DuplicateButton Is Nil) = False Then
 		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
 		  End If
+		  Self.UpdateStatus
 		End Sub
 	#tag EndEvent
 	#tag Event

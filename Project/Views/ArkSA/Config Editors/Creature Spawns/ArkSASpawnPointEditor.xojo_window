@@ -79,7 +79,7 @@ Begin BeaconContainer ArkSASpawnPointEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   705
       Begin ArkSASpawnPointSetEditor SetEditor
@@ -121,7 +121,7 @@ Begin BeaconContainer ArkSASpawnPointEditor
          Caption         =   "No Selection"
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   643
+         Height          =   664
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   201
@@ -143,102 +143,6 @@ Begin BeaconContainer ArkSASpawnPointEditor
          Visible         =   True
          Width           =   705
       End
-      Begin StatusBar NoSelectionStatusBar
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         Borders         =   1
-         Caption         =   ""
-         ContentHeight   =   0
-         Enabled         =   True
-         Height          =   21
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   201
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         ScrollActive    =   False
-         ScrollingEnabled=   False
-         ScrollSpeed     =   20
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   643
-         Transparent     =   True
-         Visible         =   True
-         Width           =   705
-      End
-   End
-   Begin StatusBar SetsStatusBar
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   3
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   349
-      Transparent     =   True
-      Visible         =   True
-      Width           =   200
-   End
-   Begin StatusBar LimitsStatusBar
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   643
-      Transparent     =   True
-      Visible         =   True
-      Width           =   200
    End
    Begin BeaconListbox SetsList
       AllowAutoDeactivate=   True
@@ -267,7 +171,7 @@ Begin BeaconContainer ArkSASpawnPointEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   308
+      Height          =   298
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -325,7 +229,7 @@ Begin BeaconContainer ArkSASpawnPointEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   231
+      Height          =   221
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -424,6 +328,97 @@ Begin BeaconContainer ArkSASpawnPointEditor
       Visible         =   True
       Width           =   200
    End
+   Begin StatusContainer LimitsStatus
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   633
+      Transparent     =   True
+      Visible         =   True
+      Width           =   200
+   End
+   Begin StatusContainer SetsStatus
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   339
+      Transparent     =   True
+      Visible         =   True
+      Width           =   200
+   End
+   Begin FadedSeparator SetsSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   370
+      Transparent     =   True
+      Visible         =   True
+      Width           =   200
+   End
 End
 #tag EndDesktopWindow
 
@@ -491,10 +486,11 @@ End
 		  
 		  Self.LimitsToolbar.Top = Top
 		  Self.LimitsList.Top = Self.LimitsToolbar.Top + Self.LimitsToolbar.Height
-		  Self.LimitsList.Height = Self.LimitsStatusBar.Top - Self.LimitsList.Top
+		  Self.LimitsList.Height = Self.LimitsStatus.Top - Self.LimitsList.Top
 		  
-		  Self.SetsStatusBar.Top = Top - Self.SetsStatusBar.Height
-		  Self.SetsList.Height = Self.SetsStatusBar.Top - Self.SetsList.Top
+		  Self.SetsSeparator.Top = Top - Self.SetsSeparator.Height
+		  Self.SetsStatus.Top = Self.SetsSeparator.Top - Self.SetsStatus.Height
+		  Self.SetsList.Height = Self.SetsStatus.Top - Self.SetsList.Top
 		End Sub
 	#tag EndMethod
 
@@ -617,11 +613,12 @@ End
 		  
 		  Self.SetsList.Width = ListWidth
 		  Self.SetsToolbar.Width = ListWidth
-		  Self.SetsStatusBar.Width = ListWidth
+		  Self.SetsStatus.Width = ListWidth
 		  Self.ColumnSeparator.Left = ListWidth
 		  Self.LimitsList.Width = ListWidth
 		  Self.LimitsToolbar.Width = ListWidth
-		  Self.LimitsStatusBar.Width = ListWidth
+		  Self.LimitsStatus.Width = ListWidth
+		  Self.SetsSeparator.Width = ListWidth
 		  Self.Pages.Left = Self.ColumnSeparator.Left + Self.ColumnSeparator.Width
 		  Self.Pages.Width = EditorWidth
 		End Sub
@@ -737,9 +734,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateLimitsStatus()
 		  If Self.LimitsList.SelectedRowCount > 0 Then
-		    Self.LimitsStatusBar.Caption = Self.LimitsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits") + " Selected"
+		    Self.LimitsStatus.CenterCaption = Self.LimitsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits") + " Selected"
 		  Else
-		    Self.LimitsStatusBar.Caption = Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits")
+		    Self.LimitsStatus.CenterCaption = Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits")
 		  End If
 		  
 		  Var EditButton As OmniBarItem = Self.LimitsToolbar.Item("EditButton")
@@ -809,9 +806,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateSetsStatus()
 		  If Self.SetsList.SelectedRowCount > 0 Then
-		    Self.SetsStatusBar.Caption = Self.SetsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets") + " Selected"
+		    Self.SetsStatus.CenterCaption = Self.SetsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets") + " Selected"
 		  Else
-		    Self.SetsStatusBar.Caption = Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets")
+		    Self.SetsStatus.CenterCaption = Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets")
 		  End If
 		End Sub
 	#tag EndMethod

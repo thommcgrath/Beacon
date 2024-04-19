@@ -82,7 +82,7 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   333
+      Height          =   323
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -135,7 +135,7 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   451
       Begin ArkSALootDropEditor Editor
@@ -177,7 +177,7 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
          Caption         =   "No Selection"
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   415
+         Height          =   405
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -199,70 +199,38 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
          Visible         =   True
          Width           =   451
       End
-      Begin StatusBar NoSelectionStatusBar
+      Begin StatusContainer NoSelectionStatus
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         Borders         =   1
-         Caption         =   ""
-         ContentHeight   =   0
+         BackgroundColor =   &cFFFFFF
+         CenterCaption   =   ""
+         Composited      =   False
          Enabled         =   True
-         Height          =   21
+         HasBackgroundColor=   False
+         Height          =   31
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
+         LeftCaption     =   ""
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   False
+         RightCaption    =   ""
          Scope           =   2
-         ScrollActive    =   False
-         ScrollingEnabled=   False
-         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   415
+         Top             =   405
          Transparent     =   True
          Visible         =   True
          Width           =   451
       End
-   End
-   Begin StatusBar StatusBar1
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   415
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
@@ -360,6 +328,38 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   81
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   405
       Transparent     =   True
       Visible         =   True
       Width           =   250
@@ -652,7 +652,7 @@ End
 		  Self.ConfigToolbar.Width = ListWidth
 		  Self.FadedSeparator1.Left = ListWidth
 		  Self.List.Width = ListWidth
-		  Self.StatusBar1.Width = ListWidth
+		  Self.Status.Width = ListWidth
 		  Self.FilterSeparator.Width = ListWidth
 		  Self.FilterField.Width = ListWidth - (Self.FilterField.Left * 2)
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
@@ -793,7 +793,7 @@ End
 		  If SelectedCount > 0 Then
 		    Caption = SelectedCount.ToString(Locale.Current, "#,##0") + " of " + Caption + " Selected"
 		  End If
-		  Self.StatusBar1.Caption = Caption
+		  Self.Status.CenterCaption = Caption
 		End Sub
 	#tag EndMethod
 

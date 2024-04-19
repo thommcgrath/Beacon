@@ -53,7 +53,7 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   418
+      Height          =   387
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -217,7 +217,6 @@ Begin ArkSAConfigEditor ArkSAServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -226,6 +225,38 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+   End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   469
+      Transparent     =   True
+      Visible         =   True
+      Width           =   299
    End
 End
 #tag EndDesktopWindow
@@ -420,6 +451,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Var TotalItems As Integer = Self.ServerList.RowCount
+		  Var SelectedItems As Integer = Self.ServerList.SelectedRowCount
+		  Var Noun As String = If(TotalItems = 1, "Server", "Servers")
+		  
+		  If SelectedItems > 0 Then
+		    Self.Status.CenterCaption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
+		  Else
+		    Self.Status.CenterCaption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub View_ContentsChanged(Sender As ArkSAServerViewContainer)
 		  Self.Modified = Sender.Modified
 		  Self.ServerList.UpdateList()
@@ -493,6 +538,8 @@ End
 #tag Events ServerList
 	#tag Event
 		Sub SelectionChanged()
+		  Self.UpdateStatus
+		  
 		  Select Case Me.SelectedRowCount
 		  Case 0
 		    Self.CurrentProfileID = ""
@@ -585,6 +632,7 @@ End
 		  Next
 		  
 		  Self.UpdateRefreshButton()
+		  Self.UpdateStatus
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -695,6 +743,11 @@ End
 		Function GetProject() As Beacon.Project
 		  Return Self.Project
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ListUpdated()
+		  Self.UpdateStatus
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar

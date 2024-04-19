@@ -120,6 +120,7 @@ Inherits BeaconListbox
 
 	#tag Method, Flags = &h0
 		Sub UpdateList(SelectProfiles() As Beacon.ServerProfile, WithChangeEvent As Boolean)
+		  
 		  If RaiseEvent BlockUpdate Then
 		    Return
 		  End If
@@ -189,6 +190,7 @@ Inherits BeaconListbox
 		  Next
 		  Self.Sort
 		  Self.SelectionChangeBlocked(WithChangeEvent) = False
+		  RaiseEvent ListUpdated
 		End Sub
 	#tag EndMethod
 
@@ -217,6 +219,10 @@ Inherits BeaconListbox
 
 	#tag Hook, Flags = &h0
 		Event GetProject() As Beacon.Project
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ListUpdated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

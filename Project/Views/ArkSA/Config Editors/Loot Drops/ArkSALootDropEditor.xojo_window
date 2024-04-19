@@ -59,7 +59,7 @@ Begin BeaconContainer ArkSALootDropEditor Implements AnimationKit.ValueAnimator
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   123
+      Height          =   113
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -112,7 +112,7 @@ Begin BeaconContainer ArkSALootDropEditor Implements AnimationKit.ValueAnimator
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   347
       Begin ArkSALootItemSetEditor Editor
@@ -154,7 +154,7 @@ Begin BeaconContainer ArkSALootDropEditor Implements AnimationKit.ValueAnimator
          Caption         =   "No Selection"
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   443
+         Height          =   433
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -176,34 +176,34 @@ Begin BeaconContainer ArkSALootDropEditor Implements AnimationKit.ValueAnimator
          Visible         =   True
          Width           =   347
       End
-      Begin StatusBar NoSelectionStatusBar
+      Begin StatusContainer StatusContainer1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         Borders         =   1
-         Caption         =   ""
-         ContentHeight   =   0
+         BackgroundColor =   &cFFFFFF
+         CenterCaption   =   ""
+         Composited      =   False
          Enabled         =   True
-         Height          =   21
+         HasBackgroundColor=   False
+         Height          =   31
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
+         LeftCaption     =   ""
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   False
+         RightCaption    =   ""
          Scope           =   2
-         ScrollActive    =   False
-         ScrollingEnabled=   False
-         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   443
+         Top             =   433
          Transparent     =   True
          Visible         =   True
          Width           =   347
@@ -298,38 +298,6 @@ Begin BeaconContainer ArkSALootDropEditor Implements AnimationKit.ValueAnimator
       Visible         =   True
       Width           =   250
    End
-   Begin StatusBar StatusBar1
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      Borders         =   1
-      Caption         =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   21
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   260
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -360,6 +328,38 @@ Begin BeaconContainer ArkSALootDropEditor Implements AnimationKit.ValueAnimator
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   250
       Transparent     =   True
       Visible         =   True
       Width           =   250
@@ -683,7 +683,7 @@ End
 		  Self.SetList.Width = ListWidth
 		  Self.Simulator.Width = ListWidth
 		  Self.SettingsContainer.Width = ListWidth
-		  Self.StatusBar1.Width = ListWidth
+		  Self.Status.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
 		End Sub
@@ -711,8 +711,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SimulatorPosition(Assigns Value As Integer)
 		  Self.Simulator.Top = Value
-		  Self.StatusBar1.Top = Value - Self.StatusBar1.Height
-		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
+		  Self.Status.Top = Value - Self.Status.Height
+		  Self.SetList.Height = Self.Status.Top - Self.SetList.Top
 		End Sub
 	#tag EndMethod
 
@@ -777,7 +777,7 @@ End
 		    Caption = Self.SetList.RowCount.ToString(Locale.Current, "#,##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets")
 		  End If
 		  
-		  Self.StatusBar1.Caption = Caption
+		  Self.Status.CenterCaption = Caption
 		End Sub
 	#tag EndMethod
 
@@ -1247,7 +1247,7 @@ End
 		  End If
 		  
 		  Self.SetList.Top = ListTop
-		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
+		  Self.SetList.Height = Self.Status.Top - Self.SetList.Top
 		End Sub
 	#tag EndEvent
 	#tag Event
