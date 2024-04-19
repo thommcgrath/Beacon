@@ -13,8 +13,6 @@ class User extends DatabaseObject implements JsonSerializable {
 	}
 
 	protected $backupCodes = null;
-	protected $backupCodesAdded = [];
-	protected $backupCodesRemoved = [];
 	protected $banned = false;
 	protected $cloudKey = null;
 	protected $deleteCloudFiles = false;
@@ -34,8 +32,6 @@ class User extends DatabaseObject implements JsonSerializable {
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->backupCodes = null;
-		$this->backupCodesAdded = [];
-		$this->backupCodesRemoved = [];
 		$this->banned = filter_var($row->Field('banned'), FILTER_VALIDATE_BOOL);
 		$this->cloudKey = $row->Field('usercloud_key');
 		$this->deleteCloudFiles = false;
@@ -334,10 +330,8 @@ class User extends DatabaseObject implements JsonSerializable {
 			if ($verifyOnly === false) {
 				$database->BeginTransaction();
 				$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
-				$backupCodesRemoved[] = $code;
 				$newCode = BeaconCommon::GenerateRandomKey(6);
 				$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->userId, $newCode);
-				$backupCodesAdded[] = $newCode;
 				$database->Commit();
 				if (is_null($this->backupCodes) === false) {
 					$this->backupCodes = null;
@@ -351,24 +345,23 @@ class User extends DatabaseObject implements JsonSerializable {
 	}
 
 	// Returns true when there are changes that need to be committed
-	public function Create2FABackupCodes(bool $commit = false): bool {
+	public function Create2FABackupCodes(): bool {
 		// Cache the current codes
 		$this->Get2FABackupCodes();
 
-		$changed = false;
-		while (count($this->backupCodes) < 10) {
-			$code = BeaconCommon::GenerateRandomKey(6);
-			$this->backupCodes[] = $code;
-			$this->backupCodesAdded[] = $code;
-			$changed = true;
-		}
-
-		if ($changed && $commit) {
-			$this->Commit();
+		if (count($this->backupCodes) >= 10) {
 			return false;
 		}
 
-		return $changed;
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		while (count($this->backupCodes) < 10) {
+			$code = BeaconCommon::GenerateRandomKey(6);
+			$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->userId, $code);
+			$this->backupCodes[] = $code;
+		}
+		$database->Commit();
+		return true;
 	}
 
 	public function Get2FABackupCodes(): array {
@@ -384,16 +377,19 @@ class User extends DatabaseObject implements JsonSerializable {
 		return $this->backupCodes;
 	}
 
-	public function Clear2FABackupCodes(bool $commit = false): void {
+	public function Clear2FABackupCodes(): void {
 		$codes = $this->Get2FABackupCodes();
-		foreach ($codes as $code) {
-			$this->backupCodesRemoved[] = $code;
-		}
-		$this->backupCodes = [];
 
-		if ($commit) {
-			$this->Commit();
+		if (count($codes) === 0) {
+			return;
 		}
+
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1;', $this->userId);
+		$database->Commit();
+
+		$this->backupCodes = [];
 	}
 
 	/* !Cloud Files */
@@ -509,29 +505,6 @@ class User extends DatabaseObject implements JsonSerializable {
 	}
 
 	/* !Everything Else */
-
-	protected function HasPendingChanges(): bool {
-		return static::MutableDatabaseObjectHasPendingChanges() || count($this->backupCodesAdded) > 0 || count($this->backupCodesRemoved) > 0;
-	}
-
-	protected function SaveChildObjects(BeaconDatabase $database): void {
-		static::MutableDatabaseObjectSaveChildObjects($database);
-
-		foreach ($this->backupCodesRemoved as $code) {
-			$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
-		}
-
-		foreach ($this->backupCodesAdded as $code) {
-			$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->userId, $code);
-		}
-	}
-
-	protected function CleanupChildObjects(): void {
-		static::MutableDatabaseObjectCleanupChildObjects();
-
-		$this->backupCodesAdded = [];
-		$this->backupCodesRemoved = [];
-	}
 
 	public function CheckSignature(string $data, string $signature): bool {
 		return BeaconEncryption::RSAVerify($this->publicKey, $data, $signature);

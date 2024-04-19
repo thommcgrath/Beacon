@@ -49,7 +49,7 @@ function handleRequest(array $context): Response {
 			$database->Rollback();
 			return Response::NewJsonError('Incorrect verification code.', $objectData, 400);
 		}
-		$user->Create2FABackupCodes(true);
+		$user->Create2FABackupCodes();
 		$database->Commit();
 		$transactionStarted = false;
 

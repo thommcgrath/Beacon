@@ -18,8 +18,11 @@ header('Expires: 0');
 http_response_code(500);
 
 $user = $session->User();
-$user->Clear2FABackupCodes(false);
-$user->Create2FABackupCodes(true);
+$database = BeaconCommon::Database();
+$database->BeginTransaction();
+$user->Clear2FABackupCodes();
+$user->Create2FABackupCodes();
+$database->Commit();
 $codes = $user->Get2FABackupCodes();
 
 http_response_code(200);
