@@ -774,9 +774,14 @@ End
 		  End If
 		  
 		  If Engrams.Count > 0 Then
+		    Var DisabledByDefault As Boolean
+		    Var Config As ArkSA.Configs.EngramControl = ArkSA.Configs.EngramControl(Project.ConfigGroup(ArkSA.Configs.NameEngramControl, False))
+		    If (Config Is Nil) = False Then
+		      DisabledByDefault = Config.OnlyAllowSpecifiedEngrams
+		    End If
 		    Var OriginallySingle As Boolean = (Engrams.Count = 1)
 		    For Idx As Integer = Engrams.LastIndex DownTo 0
-		      If Engrams(Idx).IsDefaultUnlocked Then
+		      If Engrams(Idx).IsDefaultUnlocked And DisabledByDefault = False Then
 		        Engrams.RemoveAt(Idx)
 		      End If
 		    Next

@@ -540,7 +540,11 @@ End
 		    
 		    Var IsEnabled As Boolean = Not Config.EffectivelyHidden(Engram)
 		    If Engram.IsDefaultUnlocked Then
-		      Behaviors.Add("Unlocked by default")
+		      If Config.OnlyAllowSpecifiedEngrams And IsEnabled = False Then
+		        Behaviors.Add("Disabled by default")
+		      Else
+		        Behaviors.Add("Unlocked by default")
+		      End If
 		    ElseIf Not IsEnabled Then
 		      Var Hidden As NullableBoolean = Config.Hidden(Engram)
 		      If IsNull(Hidden) Then

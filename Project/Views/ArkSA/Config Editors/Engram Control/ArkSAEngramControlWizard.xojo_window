@@ -429,6 +429,7 @@ End
 		    Config = New ArkSA.Configs.EngramControl
 		    AddWhenFinished = True
 		  End If
+		  Var DisabledByDefault As Boolean = Config.OnlyAllowSpecifiedEngrams
 		  
 		  Var Engrams() As ArkSA.Engram = Beacon.Merge(Config.Engrams, ArkSA.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, ""))
 		  Self.mEngramCount = Engrams.Count
@@ -443,6 +444,9 @@ End
 		      End If
 		      
 		      If Engram.IsDefaultUnlocked Then
+		        If DisabledByDefault Then
+		          Config.Hidden(Engram) = False
+		        End If
 		        Self.Increment()
 		        Continue
 		      End If
@@ -460,7 +464,11 @@ End
 		        Return
 		      End If
 		      
-		      If Engram.IsDefaultUnlocked Or Engram.IsTagged("tek") Then
+		      If Engram.IsDefaultUnlocked Then
+		        If DisabledByDefault Then
+		          Config.Hidden(Engram) = False
+		        End If
+		      ElseIf Engram.IsTagged("tek") Then
 		        Self.Increment()
 		        Continue
 		      End If
@@ -478,6 +486,9 @@ End
 		      End If
 		      
 		      If Engram.IsDefaultUnlocked Then
+		        If DisabledByDefault Then
+		          Config.Hidden(Engram) = False
+		        End If
 		        Self.Increment()
 		        Continue
 		      End If
@@ -494,7 +505,11 @@ End
 		        Return
 		      End If
 		      
-		      If Engram.IsDefaultUnlocked Or Engram.IsTagged("tek") Then
+		      If Engram.IsDefaultUnlocked Then
+		        If DisabledByDefault Then
+		          Config.Hidden(Engram) = False
+		        End If
+		      ElseIf Engram.IsTagged("tek") Then
 		        Self.Increment()
 		        Continue
 		      End If
@@ -511,7 +526,7 @@ End
 		        Return
 		      End If
 		      
-		      If Engram.IsDefaultUnlocked OR Engram.ValidForMask(Mask) Then
+		      If Engram.IsDefaultUnlocked Or Engram.ValidForMask(Mask) Then
 		        Self.Increment()
 		        Continue
 		      End If
@@ -600,6 +615,9 @@ End
 		      End If
 		      
 		      If Engram.IsDefaultUnlocked Then
+		        If DisabledByDefault Then
+		          Config.Hidden(Engram) = False
+		        End If
 		        Self.Increment()
 		        Continue
 		      End If

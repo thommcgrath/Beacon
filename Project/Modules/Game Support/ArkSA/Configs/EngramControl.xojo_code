@@ -58,7 +58,7 @@ Inherits ArkSA.ConfigGroup
 		  Var Engrams() As ArkSA.Engram = Self.Engrams
 		  For Each Engram As ArkSA.Engram In Engrams
 		    // Get the unlock string from the engram if available, or use the backup if not available.
-		    If (Engram Is Nil) Or Engram.IsDefaultUnlocked Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
+		    If (Engram Is Nil) Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
 		      // Don't include default items or items from disabled mods
 		      Continue
 		    End If
@@ -73,9 +73,10 @@ Inherits ArkSA.ConfigGroup
 		      Continue
 		    End If
 		    
+		    Var DefaultUnlocked As Boolean = Engram.IsDefaultUnlocked
 		    Var EffectivelyHidden As Boolean = Self.EffectivelyHidden(Engram)
 		    Var ExplicitAutoUnlocked As Boolean
-		    If EffectivelyHidden = False Then
+		    If EffectivelyHidden = False And DefaultUnlocked = False Then
 		      If Self.mAutoUnlockAllEngrams = False And Self.mOverrides.HasAttribute(Engram, Self.KeyAutoUnlockLevel) And Self.mOverrides.Value(Engram, Self.KeyAutoUnlockLevel).BooleanValue = True Then
 		        Var Level As Integer
 		        If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) And Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IsNull = False Then
@@ -107,11 +108,21 @@ Inherits ArkSA.ConfigGroup
 		      Var EffectivePoints As NullableDouble = Coalesce(Self.RequiredPoints(Engram), OfficialPoints)
 		      Var RemovePrereq As Boolean = If(Self.RemovePrerequisites(Engram) Is Nil, False, Self.RemovePrerequisites(Engram).BooleanValue)
 		      
-		      If (EffectiveLevel Is Nil) = False And (EffectivePoints Is Nil) = False And (Whitelisting = True Or EffectiveLevel <> OfficialLevel Or EffectivePoints <> OfficialPoints Or RemovePrereq = True) Then
-		        Arguments.Add("EngramLevelRequirement=" + EffectiveLevel.IntegerValue.ToString)
-		        Arguments.Add("EngramPointsCost=" + EffectivePoints.IntegerValue.ToString)
-		        If RemovePrereq = True Then
-		          Arguments.Add("RemoveEngramPreReq=" + If(RemovePrereq, "True", "False"))
+		      If DefaultUnlocked Then
+		        // 2024-04-20: Default items get unlocked at 1 anyway. Using another value visually changes the unlock page, but it's pointless.
+		        If Whitelisting Then
+		          Arguments.Add("EngramLevelRequirement=1")
+		          Arguments.Add("EngramPointsCost=0")
+		        Else
+		          Continue
+		        End If
+		      Else
+		        If (EffectiveLevel Is Nil) = False And (EffectivePoints Is Nil) = False And (Whitelisting = True Or EffectiveLevel <> OfficialLevel Or EffectivePoints <> OfficialPoints Or RemovePrereq = True) Then
+		          Arguments.Add("EngramLevelRequirement=" + EffectiveLevel.IntegerValue.ToString)
+		          Arguments.Add("EngramPointsCost=" + EffectivePoints.IntegerValue.ToString)
+		          If RemovePrereq = True Then
+		            Arguments.Add("RemoveEngramPreReq=" + If(RemovePrereq, "True", "False"))
+		          End If
 		        End If
 		      End If
 		    End If
