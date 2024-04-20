@@ -458,7 +458,7 @@ Inherits Beacon.DeployIntegration
 		    ElseIf Entry.Value.IsArray And Entry.Value.ArrayElementType = Variant.TypeString Then
 		      // Line comparison, but if there is only one line, go back to value comparison
 		      Var NewLines() As String = Entry.Value
-		      FinishedValue = NewLines.Join(EndOfLine) // Prepare the finished value before sorting, even if we nay not use it
+		      FinishedValue = NewLines.Join(EndOfLine.UNIX) // Prepare the finished value before sorting, even if we nay not use it
 		      
 		      Var CurrentLines() As String = CurrentValue.StringValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
 		      
