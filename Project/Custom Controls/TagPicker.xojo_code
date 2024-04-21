@@ -553,7 +553,7 @@ Inherits ControlCanvas
 		    Preferences.HiddenTags = Self.mHiddenTags
 		    Self.AutoResize()
 		    Self.Refresh
-		  Case "restore"
+		  Case "unhide"
 		    Preferences.RestoreHiddenTags
 		    Self.mHiddenTags = Preferences.HiddenTags
 		    Self.AutoResize()
