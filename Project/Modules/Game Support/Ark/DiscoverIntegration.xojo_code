@@ -16,14 +16,14 @@ Inherits Beacon.DiscoverIntegration
 		  Case IsA Nitrado.HostingProvider
 		    Self.Log("Checking server status…")
 		    Try
-		      Profile.BasePath = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "/game_specific.path"))
+		      Profile.BasePath = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "/game_specific.path")
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not find server base path: " + Err.Message)
 		      Return Nil
 		    End Try
 		    
 		    Try
-		      Var MapIdentifier As String = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "config.map"))
+		      Var MapIdentifier As String = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "config.map")
 		      Profile.Mask = Ark.Maps.MaskForIdentifier(MapIdentifier.LastField(","))
 		      GetMapFromLogs = False
 		    Catch Err As RuntimeException
@@ -33,7 +33,7 @@ Inherits Beacon.DiscoverIntegration
 		    
 		    Var ExpertMode As Boolean
 		    Try
-		      ExpertMode = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode"))
+		      ExpertMode = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "general.expertMode")
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not determine if the server is in expert mode: " + Err.Message)
 		      Return Nil
@@ -41,7 +41,7 @@ Inherits Beacon.DiscoverIntegration
 		    
 		    GatherGameSettings = False
 		    DownloadIniFiles = ExpertMode
-		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "start-param"))).ToString) // Weird way to convert JSONItem to Dictionary
+		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "start-param")).ToString) // Weird way to convert JSONItem to Dictionary
 		    
 		    If ExpertMode = False Then
 		      Var GuidedOrganizer As New Ark.ConfigOrganizer
@@ -53,7 +53,8 @@ Inherits Beacon.DiscoverIntegration
 		        
 		        Var Value As Variant
 		        Try
-		          Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Setting)
+		          Var Paths() As String = Setting.NitradoPaths
+		          Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Paths(0))
 		        Catch Err As RuntimeException
 		          Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
 		          Return Nil
@@ -145,7 +146,7 @@ Inherits Beacon.DiscoverIntegration
 		  Case IsA Nitrado.HostingProvider
 		    Var ExpertMode As Boolean
 		    Try
-		      ExpertMode = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode"))
+		      ExpertMode = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "general.expertMode")
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not determine if the server is in expert mode: " + Err.Message)
 		      Return Nil
@@ -160,7 +161,8 @@ Inherits Beacon.DiscoverIntegration
 		      
 		      Var Value As Variant
 		      Try
-		        Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Setting)
+		        Var Paths() As String = Setting.NitradoPaths
+		        Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Paths(0))
 		        If Value.IsNull = False Then
 		          CommandLineOptions.Value(Setting.Key) = Value
 		        End If

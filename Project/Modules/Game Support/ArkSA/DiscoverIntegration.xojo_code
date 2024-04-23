@@ -15,14 +15,14 @@ Inherits Beacon.DiscoverIntegration
 		  Case IsA Nitrado.HostingProvider
 		    Self.Log("Checking server status…")
 		    Try
-		      Profile.BasePath = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "/game_specific.path"))
+		      Profile.BasePath = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "/game_specific.path")
 		    Catch Err As RuntimeException
 		      Self.SetError("Could not find server base path: " + Err.Message)
 		      Return Nil
 		    End Try
 		    
 		    Try
-		      Var MapIdentifier As String = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeString, "config.map"))
+		      Var MapIdentifier As String = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "config.map")
 		      Profile.Mask = ArkSA.Maps.MaskForIdentifier(MapIdentifier.LastField(","))
 		      GetMapFromLogs = False
 		    Catch Err As RuntimeException
@@ -94,9 +94,14 @@ Inherits Beacon.DiscoverIntegration
 		    Var CommandLineOptions As New Dictionary
 		    Var Settings() As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False)
 		    For Each Setting As ArkSA.ConfigOption In Settings
+		      If Setting.HasNitradoEquivalent = False Then
+		        Continue
+		      End If
+		      
 		      Var Value As Variant
 		      Try
-		        Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Setting)
+		        Var Paths() As String = Setting.NitradoPaths
+		        Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Paths(0))
 		        If Value.IsNull = False Then
 		          CommandLineOptions.Value(Setting.Key) = Value
 		        End If

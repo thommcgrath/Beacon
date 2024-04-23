@@ -214,6 +214,12 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function CaseSensitiveSort(LeftValue As String, RightValue As String) As Integer
+		  Return LeftValue.Compare(RightValue, ComparisonOptions.CaseSensitive)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub CleanupConfigBackups()
 		  Var BackupsRoot As FolderItem = App.BackupsFolder
 		  If BackupsRoot = Nil Or BackupsRoot.Exists = False Then

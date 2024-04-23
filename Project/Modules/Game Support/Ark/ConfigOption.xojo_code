@@ -221,6 +221,42 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NitradoValuesEqual(FirstValue As String, SecondValue As String) As Boolean
+		  If Self.mNitradoFormat = Ark.ConfigOption.NitradoFormats.Line Then
+		    Var FirstLines() As String = FirstValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
+		    FirstLines.Sort(AddressOf Beacon.CaseSensitiveSort)
+		    
+		    Var SecondLines() As String = SecondValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
+		    SecondLines.Sort(AddressOf Beacon.CaseSensitiveSort)
+		    
+		    If FirstLines.Count <> SecondLines.Count Then
+		      Return False
+		    End If
+		    
+		    For Idx As Integer = 0 To FirstLines.LastIndex
+		      Var FirstLineEqPos As Integer = FirstLines(Idx).IndexOf("=")
+		      Var FirstLineKey As String = FirstLines(Idx).Left(FirstLineEqPos)
+		      Var SecondLineEqPos As Integer = SecondLines(Idx).IndexOf("=")
+		      Var SecondLineKey As String = SecondLines(Idx).Left(SecondLineEqPos)
+		      If FirstLineKey <> SecondLineKey Then // Case insensitive comparison is ok here since keys are not case sensitive
+		        Return False
+		      End If
+		      
+		      Var FirstLineValue As String = FirstLines(Idx).Middle(FirstLineEqPos + 1)
+		      Var SecondLineValue As String = SecondLines(Idx).Middle(SecondLineEqPos + 1)
+		      If Self.ValuesEqual(FirstLineValue, SecondLineValue) = False Then
+		        Return False
+		      End If
+		    Next
+		    
+		    Return True
+		  End If
+		  
+		  Return Self.ValuesEqual(FirstValue, SecondValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Attributes( Deprecated = "ConfigOptionId" )  Function ObjectId() As String
 		  Return Self.mConfigOptionId
 		End Function

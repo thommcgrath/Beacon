@@ -115,8 +115,15 @@ Inherits Beacon.DeployIntegration
 		    End If
 		  End If
 		  
-		  // Run the backup if requested
 		  Var NitradoChanges As Dictionary
+		  Var NitradoSettings As JSONItem
+		  If Self.Provider IsA Nitrado.HostingProvider Then
+		    Var GameServer As JSONItem = InitialStatus.UserData
+		    NitradoSettings = GameServer.Child("settings")
+		    NitradoChanges = Self.NitradoPrepareChanges(NitradoSettings, Organizer)
+		  End If
+		  
+		  // Run the backup if requested
 		  If Self.BackupEnabled Then
 		    Var OldFiles As New Dictionary
 		    OldFiles.Value(ArkSA.ConfigFileGame) = GameIniOriginal
@@ -128,30 +135,22 @@ Inherits Beacon.DeployIntegration
 		    
 		    Select Case Self.Provider
 		    Case IsA Nitrado.HostingProvider
-		      Var GameServer As JSONItem = InitialStatus.UserData
-		      Var Settings As JSONItem = GameServer.Child("settings")
-		      Settings.Compact = False
-		      OldFiles.Value("Config.json") = Settings.ToString
+		      NitradoSettings.Compact = False
+		      OldFiles.Value("Config.json") = NitradoSettings.ToString
 		      
-		      NitradoChanges = Self.NitradoPrepareChanges(Organizer)
-		      Var NewSettings As New JSONItem(Settings.ToString)
+		      Var NewSettings As New JSONItem(OldFiles.Value("Config.json").StringValue)
 		      For Each Entry As DictionaryEntry In NitradoChanges
-		        Try
-		          Var Setting As ArkSA.ConfigOption = Entry.Key
-		          Var NewValue As String = Entry.Value
-		          
-		          Var Changes() As Nitrado.SettingChange = Nitrado.HostingProvider.PrepareSettingChanges(GameServer, Setting, NewValue)
-		          For Each Change As Nitrado.SettingChange In Changes
-		            Try
-		              Var Parent As JSONItem = NewSettings.Child(Change.Category)
-		              Parent.Value(Change.Key) = Change.Value
-		            Catch ChangeErr As RuntimeException
-		              App.Log(ChangeErr, CurrentMethodName, "Updating config json")
-		            End Try
-		          Next
-		        Catch EntryErr As RuntimeException
-		          App.Log(EntryErr, CurrentMethodName, "Processing Nitrado changes")
-		        End Try
+		        Var Path As String = Entry.Key
+		        Var Category As String = Path.NthField(".", 1)
+		        If NewSettings.HasKey(Category) = False Then
+		          Continue
+		        End If
+		        Var Parent As JSONItem = NewSettings.Child(Category)
+		        Var Key As String = Path.NthField(".", 2)
+		        If Parent.HasKey(Key) = False Then
+		          Continue
+		        End If
+		        Parent.Value(Key) = Entry.Value.StringValue
 		      Next
 		      NewSettings.Compact = False
 		      NewFiles.Value("Config.json") = NewSettings.ToString
@@ -187,12 +186,7 @@ Inherits Beacon.DeployIntegration
 		  // Make command line changes
 		  Select Case Self.Provider
 		  Case IsA Nitrado.HostingProvider
-		    Self.Log("Updating other settings…")
-		    If NitradoChanges Is Nil Then
-		      Call Self.NitradoApplySettings(Organizer)
-		    Else
-		      Call Self.NitradoApplySettings(NitradoChanges)
-		    End If
+		    Call Self.NitradoApplySettings(NitradoChanges)
 		    If Self.Finished Then
 		      Return
 		    End If
@@ -275,32 +269,26 @@ Inherits Beacon.DeployIntegration
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function NitradoApplySettings(Organizer As ArkSA.ConfigOrganizer) As Boolean
-		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
-		    Return False
-		  End If
-		  
-		  Var Changes As Dictionary = Self.NitradoPrepareChanges(Organizer)
-		  If Changes Is Nil Then
-		    Return False
-		  End If
-		  Return Self.NitradoApplySettings(Changes)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function NitradoApplySettings(Changes As Dictionary) As Boolean
-		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
+		  // Keys are paths.
+		  // Values are strings. Nitrado always uses strings, even for numbers and booleans.
+		  
+		  If (Self.Provider IsA Nitrado.HostingProvider) = False Or Changes Is Nil Or Changes.KeyCount = 0 Then
 		    Return False
 		  End If
 		  
-		  // Deploy changes
+		  Var Project As ArkSA.Project = Self.Project
+		  Var Profile As ArkSA.ServerProfile = Self.Profile
+		  
+		  Self.Log("Updating Nitrado control panel…")
+		  
 		  For Each Entry As DictionaryEntry In Changes
-		    Var Setting As ArkSA.ConfigOption = Entry.Key
+		    Var Path As String = Entry.Key
 		    Var NewValue As String = Entry.Value
 		    
 		    Try
-		      Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, Setting) = NewValue
+		      Self.Log("Setting " + Path + "…")
+		      Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, Path) = NewValue
 		    Catch Err As RuntimeException
 		      Self.SetError(Err)
 		      Return False
@@ -392,37 +380,34 @@ Inherits Beacon.DeployIntegration
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function NitradoPrepareChanges(Organizer As ArkSA.ConfigOrganizer) As Dictionary
-		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
-		    Return Nil
-		  End If
+	#tag Method, Flags = &h21
+		Private Shared Function NitradoPrepareChanges(Settings As JSONItem, Organizer As ArkSA.ConfigOrganizer) As Dictionary
+		  // Returns a dictionary with paths for keys and strings for values.
+		  // Paths which are not changed should be skipped.
 		  
-		  Var Project As ArkSA.Project = Self.Project
-		  Var Profile As ArkSA.ServerProfile = Self.Profile
 		  Var Keys() As ArkSA.ConfigOption = Organizer.DistinctKeys
 		  Var NewValues As New Dictionary
-		  Var Style As ArkSA.ConfigOption.NitradoDeployStyles = ArkSA.ConfigOption.NitradoDeployStyles.Expert
+		  Var SettingsForPaths As New Dictionary
 		  
 		  For Each ConfigOption As ArkSA.ConfigOption In Keys
 		    If ConfigOption.HasNitradoEquivalent = False Then
 		      Continue
 		    End If
 		    
-		    Var SendToNitrado As Boolean = ConfigOption.NitradoDeployStyle = ArkSA.ConfigOption.NitradoDeployStyles.Both Or ConfigOption.NitradoDeployStyle = Style
-		    If SendToNitrado = False Then
-		      Continue
-		    End If
-		    
 		    Var Values() As ArkSA.ConfigValue = Organizer.FilteredValues(ConfigOption)
+		    Var NewValue As String
 		    
 		    Select Case ConfigOption.NitradoFormat
 		    Case ArkSA.ConfigOption.NitradoFormats.Line
 		      Var Lines() As String
 		      For Each Value As ArkSA.ConfigValue In Values
-		        Lines.Add(Value.Command)
+		        If ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Then
+		          Lines.Add(Value.AttributedKey + "=" + If(Value.Value = "True", "true", "false"))
+		        Else
+		          Lines.Add(Value.Command)
+		        End If
 		      Next
-		      NewValues.Value(ConfigOption) = Lines
+		      NewValue = String.FromArray(Lines, EndOfLine.UNIX)
 		    Case ArkSA.ConfigOption.NitradoFormats.Value
 		      If Values.Count >= 1 Then
 		        Var Value As String = Values(Values.LastIndex).Value
@@ -436,54 +421,54 @@ Inherits Beacon.DeployIntegration
 		          End If
 		        End If
 		        
-		        NewValues.Value(ConfigOption) = Value
+		        NewValue = Value
 		      Else
 		        // This doesn't make sense
 		        Break
 		      End If
 		    End Select
+		    
+		    Var Paths() As String = ConfigOption.NitradoPaths
+		    For Each Path As String In Paths
+		      If NewValues.HasKey(Path) Then
+		        NewValue = NewValues.Value(Path) + EndOfLine.UNIX + NewValue
+		      End If
+		      NewValues.Value(Path) = NewValue
+		      
+		      If SettingsForPaths.HasKey(Path) = False Then
+		        SettingsForPaths.Value(Path) = ConfigOption
+		      End If
+		    Next
 		  Next
 		  
 		  Var Changes As New Dictionary
 		  For Each Entry As DictionaryEntry In NewValues
-		    Var ConfigOption As ArkSA.ConfigOption = Entry.Key
-		    Var CurrentValue As Variant = Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, ConfigOption)
-		    Var FinishedValue As String
-		    If Entry.Value.Type = Variant.TypeString Then
-		      // Value comparison
-		      If ConfigOption.ValuesEqual(Entry.Value, CurrentValue) Then
-		        Continue
-		      End If
-		      FinishedValue = Entry.Value.StringValue
-		    ElseIf Entry.Value.IsArray And Entry.Value.ArrayElementType = Variant.TypeString Then
-		      // Line comparison, but if there is only one line, go back to value comparison
-		      Var NewLines() As String = Entry.Value
-		      FinishedValue = NewLines.Join(EndOfLine.UNIX) // Prepare the finished value before sorting, even if we nay not use it
-		      
-		      Var CurrentLines() As String = CurrentValue.StringValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
-		      
-		      If NewLines.Count = 1 And CurrentLines.Count = 1 And (ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeNumeric Or ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Or ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean) Then
-		        Var NewValue As String = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
-		        CurrentValue = CurrentLines(0).Middle(CurrentLines(0).IndexOf("=") + 1)
-		        If ConfigOption.ValuesEqual(NewValue, CurrentValue) Then
-		          Continue
-		        End If
-		        FinishedValue = NewLines(0)
-		      Else
-		        NewLines.Sort
-		        CurrentLines.Sort
-		        Var NewHash As String = EncodeHex(Crypto.SHA1(NewLines.Join(EndOfLine.UNIX).Lowercase))
-		        Var CurrentHash As String = EncodeHex(Crypto.SHA1(CurrentLines.Join(EndOfLine.UNIX).Lowercase))
-		        If NewHash = CurrentHash Then
-		          // No change
-		          Continue
-		        End If
-		      End If
-		    Else
+		    Var Path As String = Entry.Key
+		    Var NewValue As String = Entry.Value
+		    Var ConfigOption As ArkSA.ConfigOption = SettingsForPaths.Value(Path)
+		    
+		    Var Category As String = Path.NthField(".", 1)
+		    Var Key As String = Path.NthField(".", 2)
+		    If Settings.HasKey(Category) = False Then
 		      Continue
 		    End If
 		    
-		    Changes.Value(ConfigOption) = FinishedValue
+		    Var Parent As JSONItem = Settings.Child(Category)
+		    If Parent.HasKey(Key) = False Then
+		      Continue
+		    End If
+		    
+		    Var CurValue As String = Parent.Value(Key)
+		    
+		    If ConfigOption.NitradoValuesEqual(NewValue, CurValue) Then
+		      Continue
+		    End If
+		    
+		    Changes.Value(Path) = NewValue
+		    
+		    #if DebugBuild
+		      System.DebugLog("Updating " + Path + " from `" + CurValue + "` to `" + NewValue + "`")
+		    #endif
 		  Next
 		  
 		  Return Changes
