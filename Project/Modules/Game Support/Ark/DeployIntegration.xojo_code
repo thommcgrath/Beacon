@@ -257,26 +257,25 @@ Inherits Beacon.DeployIntegration
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function NitradoApplySettings(Organizer As Ark.ConfigOrganizer, Full As Boolean) As Boolean
+		Protected Function NitradoApplySettings(Organizer As Ark.ConfigOrganizer, Guided As Boolean) As Boolean
 		  If (Self.Provider IsA Nitrado.HostingProvider) = False Then
 		    Return False
 		  End If
-		  
-		  Self.Log("Updating other settings…")
 		  
 		  Var Project As Ark.Project = Self.Project
 		  Var Profile As Ark.ServerProfile = Self.Profile
 		  Var Keys() As Ark.ConfigOption = Organizer.DistinctKeys
 		  Var NewValues As New Dictionary
+		  Var SettingsForPaths As New Dictionary
 		  Var ExtraGameIniOrganizer As New Ark.ConfigOrganizer
-		  Var Style As Ark.ConfigOption.NitradoDeployStyles = If(Full, Ark.ConfigOption.NitradoDeployStyles.Guided, Ark.ConfigOption.NitradoDeployStyles.Expert)
+		  Var Style As Ark.ConfigOption.NitradoDeployStyles = If(Guided, Ark.ConfigOption.NitradoDeployStyles.Guided, Ark.ConfigOption.NitradoDeployStyles.Expert)
 		  
 		  // First we need to determine if guided mode *can* be supported.
 		  // Nitrado values are limited to 65,535 characters and not all GameUserSettings.ini
 		  // configs are supported in guided mode.
 		  
 		  For Each ConfigOption As Ark.ConfigOption In Keys
-		    If Full And ConfigOption.File = Ark.ConfigFileGameUserSettings And ConfigOption.HasNitradoEquivalent = False Then
+		    If Guided And ConfigOption.File = Ark.ConfigFileGameUserSettings And ConfigOption.HasNitradoEquivalent = False Then
 		      // Expert mode required because this config cannot be supported.
 		      App.Log("Cannot use guided deploy because the key " + ConfigOption.SimplifiedKey + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
 		      Self.SwitchToExpertMode(ConfigOption.Key, 0)
@@ -284,7 +283,7 @@ Inherits Beacon.DeployIntegration
 		    End If
 		    
 		    If ConfigOption.HasNitradoEquivalent = False Then
-		      If Full And ConfigOption.File = Ark.ConfigFileGame Then
+		      If Guided And ConfigOption.File = Ark.ConfigFileGame Then
 		        ExtraGameIniOrganizer.Add(Organizer.FilteredValues(ConfigOption))
 		      End If
 		      Continue
@@ -296,14 +295,19 @@ Inherits Beacon.DeployIntegration
 		    End If
 		    
 		    Var Values() As Ark.ConfigValue = Organizer.FilteredValues(ConfigOption)
+		    Var NewValue As String
 		    
 		    Select Case ConfigOption.NitradoFormat
 		    Case Ark.ConfigOption.NitradoFormats.Line
 		      Var Lines() As String
 		      For Each Value As Ark.ConfigValue In Values
-		        Lines.Add(Value.Command)
+		        If ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
+		          Lines.Add(Value.AttributedKey + "=" + If(Value.Value = "True", "true", "false"))
+		        Else
+		          Lines.Add(Value.Command)
+		        End If
 		      Next
-		      NewValues.Value(ConfigOption) = Lines
+		      NewValue = String.FromArray(Lines, EndOfLine.UNIX)
 		    Case Ark.ConfigOption.NitradoFormats.Value
 		      If Values.Count >= 1 Then
 		        Var Value As String = Values(Values.LastIndex).Value
@@ -317,63 +321,39 @@ Inherits Beacon.DeployIntegration
 		          End If
 		        End If
 		        
-		        NewValues.Value(ConfigOption) = Value
+		        NewValue = Value
 		      Else
 		        // This doesn't make sense
 		        Break
 		      End If
 		    End Select
+		    
+		    Var Paths() As String = ConfigOption.NitradoPaths
+		    For Each Path As String In Paths
+		      If NewValues.HasKey(Path) Then
+		        NewValue = NewValues.Value(Path) + EndOfLine.UNIX + NewValue
+		      End If
+		      NewValues.Value(Path) = NewValue
+		      
+		      If SettingsForPaths.HasKey(Path) = False Then
+		        SettingsForPaths.Value(Path) = ConfigOption
+		      End If
+		    Next
 		  Next
 		  
-		  Var Changes As New Dictionary
-		  For Each Entry As DictionaryEntry In NewValues
-		    Var ConfigOption As Ark.ConfigOption = Entry.Key
-		    Var CurrentValue As Variant = Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, ConfigOption)
-		    Var FinishedValue As String
-		    If Entry.Value.Type = Variant.TypeString Then
-		      // Value comparison
-		      If ConfigOption.ValuesEqual(Entry.Value, CurrentValue) Then
-		        Continue
+		  If Guided Then
+		    // Make sure each path is less than 65535 characters
+		    For Each Entry As DictionaryEntry In NewValues
+		      Var Path As String = Entry.Key
+		      Var Setting As Ark.ConfigOption = SettingsForPaths.Value(Path)
+		      Var NewValue As String = Entry.Value
+		      If NewValue.Length > 65535 Then
+		        App.Log("Cannot use guided deploy because the key " + Setting.SimplifiedKey + " needs " + NewValue.Length.ToString(Locale.Current, "#,##0") + " characters, and Nitrado has a limit of 65,535 characters.")
+		        Self.SwitchToExpertMode(Setting.Key, NewValue.Length)
+		        Return False
 		      End If
-		      FinishedValue = Entry.Value.StringValue
-		    ElseIf Entry.Value.IsArray And Entry.Value.ArrayElementType = Variant.TypeString Then
-		      // Line comparison, but if there is only one line, go back to value comparison
-		      Var NewLines() As String = Entry.Value
-		      FinishedValue = NewLines.Join(EndOfLine.UNIX) // Prepare the finished value before sorting, even if we nay not use it
-		      
-		      Var CurrentLines() As String = CurrentValue.StringValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
-		      
-		      If NewLines.Count = 1 And CurrentLines.Count = 1 And (ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeNumeric Or ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Or ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean) Then
-		        Var NewValue As String = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
-		        CurrentValue = CurrentLines(0).Middle(CurrentLines(0).IndexOf("=") + 1)
-		        If ConfigOption.ValuesEqual(NewValue, CurrentValue) Then
-		          Continue
-		        End If
-		        FinishedValue = NewLines(0)
-		      Else
-		        NewLines.Sort
-		        CurrentLines.Sort
-		        Var NewHash As String = EncodeHex(Crypto.SHA1(NewLines.Join(EndOfLine.UNIX).Lowercase))
-		        Var CurrentHash As String = EncodeHex(Crypto.SHA1(CurrentLines.Join(EndOfLine.UNIX).Lowercase))
-		        If NewHash = CurrentHash Then
-		          // No change
-		          Continue
-		        End If
-		      End If
-		    Else
-		      Continue
-		    End If
+		    Next
 		    
-		    If Full And FinishedValue.Length > 65535 Then
-		      App.Log("Cannot use guided deploy because the key " + ConfigOption.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, "#,##0") + " characters, and Nitrado has a limit of 65,535 characters.")
-		      Self.SwitchToExpertMode(ConfigOption.Key, FinishedValue.Length)
-		      Return False
-		    End If
-		    
-		    Changes.Value(ConfigOption) = FinishedValue
-		  Next
-		  
-		  If Full Then
 		    Var UserSettingsIniPath As String = Self.Profile.BasePath + "/user-settings.ini"
 		    
 		    // Generate a new user-settings.ini file
@@ -405,19 +385,16 @@ Inherits Beacon.DeployIntegration
 		      OldFiles.Value("user-settings.ini") = ExtraGameIni
 		      
 		      Var NewSettings As New JSONItem(OldSettings.ToString)
-		      For Each Entry As DictionaryEntry In Changes
-		        Var ConfigOption As Ark.ConfigOption = Entry.Key
+		      For Each Entry As DictionaryEntry In NewValues
+		        Var Path As String = Entry.Key
 		        Var NewValue As String = Entry.Value
-		        Var Paths() As String = ConfigOption.NitradoPaths
 		        
-		        For Each Path As String In Paths
-		          Var CategoryLength As Integer = Path.IndexOf(".")
-		          Var Category As String = Path.Left(CategoryLength)
-		          Var Key As String = Path.Middle(CategoryLength + 1)
-		          
-		          Var CategoryDict As JSONItem = NewSettings.Child(Category)
-		          CategoryDict.Value(Key) = NewValue
-		        Next
+		        Var CategoryLength As Integer = Path.IndexOf(".")
+		        Var Category As String = Path.Left(CategoryLength)
+		        Var Key As String = Path.Middle(CategoryLength + 1)
+		        
+		        Var CategoryDict As JSONItem = NewSettings.Child(Category)
+		        CategoryDict.Value(Key) = NewValue
 		      Next
 		      
 		      Var NewFiles As New Dictionary
@@ -441,12 +418,35 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Deploy changes
-		  For Each Entry As DictionaryEntry In Changes
-		    Var Setting As Ark.ConfigOption = Entry.Key
+		  Var HasAnnounced As Boolean
+		  For Each Entry As DictionaryEntry In NewValues
+		    Var Path As String = Entry.Key
 		    Var NewValue As String = Entry.Value
+		    Var ConfigOption As Ark.ConfigOption = SettingsForPaths.Value(Path)
+		    Var CurValue As Variant = Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, Path)
+		    
+		    If CurValue.IsNull = False Then
+		      If ConfigOption.NitradoValuesEqual(NewValue, CurValue.StringValue) Then
+		        Continue
+		      End If
+		      
+		      #if DebugBuild
+		        System.DebugLog("Updating " + Path + " from `" + CurValue.StringValue + "` to `" + NewValue + "`")
+		      #endif
+		    Else
+		      #if DebugBuild
+		        System.DebugLog("Updating " + Path + " from no value to `" + NewValue + "`")
+		      #endif
+		    End If
+		    
+		    If HasAnnounced = False Then
+		      Self.Log("Updating Nitrado control panel…")
+		      HasAnnounced = True
+		    End If
 		    
 		    Try
-		      Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, Setting) = NewValue
+		      Self.Log("Setting " + Path + "…")
+		      Nitrado.HostingProvider(Self.Provider).GameSetting(Project, Profile, Path) = NewValue
 		    Catch Err As RuntimeException
 		      Self.SetError(Err)
 		      Return False
@@ -612,7 +612,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  Try
-		    Nitrado.HostingProvider(Self.Provider).GameSetting(Self.Project, Self.Profile, New Beacon.GenericGameSetting(Beacon.GenericGameSetting.TypeBoolean, "general.expertMode")) = True
+		    Nitrado.HostingProvider(Self.Provider).GameSetting(Self.Project, Self.Profile, "general.expertMode") = True
 		  Catch Err As RuntimeException
 		    Self.SetError("Could not enable expert mode: " + Err.Message)
 		    Return
