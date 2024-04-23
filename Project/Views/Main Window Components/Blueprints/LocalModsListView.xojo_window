@@ -714,6 +714,13 @@ End
 		    BeaconAPI.Send(Request)
 		  Next
 		  
+		  If Self.mRemainingUploads <= 0 Then
+		    Self.mUploadProgress.Close
+		    Self.mUploadProgress = Nil
+		    Self.ShowAlert("Nothing to upload", "The mod(s) could not be exported. Usually this happens whent he mod is empty.")
+		    Return
+		  End If
+		  
 		  Self.mUploadProgress.Detail = Language.NounWithQuantity(Self.mRemainingUploads, "mod", "mods") + " remaining"
 		  Self.mUploadProgress.Show(Self)
 		End Sub
@@ -928,7 +935,7 @@ End
 		    
 		    Var ExportFileItem As New DesktopMenuItem("Export To File")
 		    Var ExportCommunityItem As New DesktopMenuItem("Export To Community")
-		    ExportCommunityItem.Enabled = Self.ModsList.SelectedRowCount = 0
+		    ExportCommunityItem.Enabled = Self.ModsList.SelectedRowCount <> 0
 		    
 		    Var ExportMenu As New DesktopMenuItem
 		    ExportMenu.AddMenu(ExportFileItem)
