@@ -58,7 +58,7 @@ Inherits Ark.ConfigGroup
 		  For Each Engram As Ark.Engram In Engrams
 		    // Get the unlock string from the engram if available, or use the backup if not available.
 		    If (Engram Is Nil) Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
-		      // Don't include default items or items from disabled mods
+		      // Don't include items from disabled mods
 		      Continue
 		    End If
 		    
@@ -207,6 +207,45 @@ Inherits Ark.ConfigGroup
 		      Next
 		    Next
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  Var Map As New Dictionary
+		  Var Engrams() As Ark.Engram = Self.Engrams
+		  For Each Engram As Ark.Engram In Engrams
+		    // Get the unlock string from the engram if available, or use the backup if not available.
+		    If (Engram Is Nil) Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
+		      Continue
+		    End If
+		    
+		    Var UnlockString As String
+		    If Engram.HasUnlockDetails Then
+		      UnlockString = Engram.EntryString
+		    ElseIf Self.mOverrides.HasAttribute(Engram, Self.KeyEntryString) Then
+		      UnlockString = Self.mOverrides.Value(Engram, Self.KeyEntryString)
+		    End If
+		    
+		    Var Siblings() As Ark.Engram
+		    If Map.HasKey(UnlockString) Then
+		      Siblings = Map.Value(UnlockString)
+		    Else
+		      Map.Value(UnlockString) = Siblings
+		    End If
+		    Siblings.Add(Engram)
+		  Next
+		  
+		  For Each Entry As DictionaryEntry In Map
+		    Var UnlockString As String = Entry.Key
+		    Var Siblings() As Ark.Engram = Entry.Value
+		    If Siblings.Count <= 1 Then
+		      Continue
+		    End If
+		    
+		    // Conflict
+		    Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + UnlockString, "Engrams " + Language.EnglishOxfordList(Siblings) + " will conflict because they share the same unlock string of " + UnlockString + "."))
+		  Next
 		End Sub
 	#tag EndEvent
 

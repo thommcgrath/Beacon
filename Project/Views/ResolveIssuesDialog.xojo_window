@@ -119,7 +119,7 @@ Begin BeaconDialog ResolveIssuesDialog
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   280
+      Height          =   248
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -182,6 +182,38 @@ Begin BeaconDialog ResolveIssuesDialog
       Visible         =   True
       Width           =   105
    End
+   Begin DesktopLabel DetailLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   True
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   320
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+   End
 End
 #tag EndDesktopWindow
 
@@ -189,6 +221,7 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.UpdateUI()
+		  Self.UpdateDetailLabel()
 		End Sub
 	#tag EndEvent
 
@@ -197,6 +230,23 @@ End
 		Sub Constructor(Issues As Beacon.ProjectValidationResults)
 		  Self.mIssues = Issues
 		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateDetailLabel()
+		  If Self.IssuesList.SelectedRowCount <> 1 Then
+		    Self.DetailLabel.Visible = False
+		    Self.IssuesList.Height = Self.ActionButton.Top - (20 + Self.IssuesList.Top)
+		    Return
+		  End If
+		  
+		  Self.DetailLabel.Visible = True
+		  Self.DetailLabel.Text = Self.IssuesList.CellTextAt(Self.IssuesList.SelectedRowIndex, 0)
+		  Self.DetailLabel.Height = Self.DetailLabel.IdealHeight
+		  Self.DetailLabel.Top = Self.ActionButton.Top - (20 + Self.DetailLabel.Height)
+		  
+		  Self.IssuesList.Height = Self.DetailLabel.Top - (12 + Self.IssuesList.Top)
 		End Sub
 	#tag EndMethod
 
@@ -235,6 +285,7 @@ End
 	#tag Event
 		Sub SelectionChanged()
 		  Self.GoToButton.Enabled = Me.SelectedRowIndex > -1
+		  Self.UpdateDetailLabel()
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -68,6 +68,15 @@ Inherits UITweaks.ResizedSearchField
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub SetNow(Value As String)
+		  Self.Text = Value
+		  Self.mTimer_Action(Self.mTimer)
+		  Self.mTimer.RunMode = Timer.RunModes.Off
+		  Self.mTimer.Reset
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub TriggerAfter(Delay As Integer)
 		  Self.mTimer.Reset

@@ -436,10 +436,42 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ShowIssue(Issue As Beacon.Issue)
+		  Var Location As String = Issue.Location
+		  Var Parts() As String = Location.Split(Beacon.Issue.Separator)
+		  Var UnlockString As String = Parts(Parts.LastIndex)
+		  Self.EngramFilterField.SetNow(UnlockString)
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As ArkSA.Configs.EngramControl
 		  Return ArkSA.Configs.EngramControl(Super.Config(ForWriting))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function EngramMatchesFilter(Config As ArkSA.Configs.EngramControl, Engram As ArkSA.Engram, Filter As String) As Boolean
+		  If Engram Is Nil Then
+		    Return False
+		  End If
+		  
+		  If Engram.Label.Contains(Filter) Or Engram.Path.Contains(Filter) Or Engram.ClassString.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  If (Engram.AlternateLabel Is Nil) = False And Engram.AlternateLabel.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  Var UnlockString As String = Config.EntryString(Engram)
+		  If UnlockString.IsEmpty = False And UnlockString.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -503,7 +535,7 @@ End
 		  If Filter.IsEmpty = False Then
 		    Var Filtered() As ArkSA.Engram
 		    For Idx As Integer = Engrams.FirstIndex To Engrams.LastIndex
-		      If Engrams(Idx).Label.IndexOf(Filter) > -1 Or Engrams(Idx).ClassString.IndexOf(Filter) > -1 Or Engrams(Idx).Path.IndexOf(Filter) > -1 Or ((Engrams(Idx).AlternateLabel Is Nil) = False And Engrams(Idx).AlternateLabel.IndexOf(Filter) > -1) Then
+		      If Self.EngramMatchesFilter(Config, Engrams(Idx), Filter) Then
 		        Filtered.Add(Engrams(Idx))
 		      End If
 		    Next Idx

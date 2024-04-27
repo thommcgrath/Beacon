@@ -41,6 +41,12 @@ Class NullableString
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Contains(Needle As String, Options As ComparisonOptions = ComparisonOptions.CaseInsensitive, Locale As Locale = Nil) As Boolean
+		  Return Self.mValue.Contains(Needle, Options, Locale)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ConvertEncoding(NewEncoding As TextEncoding) As String
 		  Return Self.mValue.ConvertEncoding(NewEncoding)
 		End Function
