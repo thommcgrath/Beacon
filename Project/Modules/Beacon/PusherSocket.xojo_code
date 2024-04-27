@@ -192,30 +192,40 @@ Protected Class PusherSocket
 		      End If
 		      
 		      Var EventName As String = Json.Value("event")
-		      Var Payload As String = Json.Value("data")
+		      Var Data As JsonItem
+		      If Json.HasKey("data") Then
+		        Var Payload As Variant = Json.Value("data")
+		        Select Case Payload.Type
+		        Case Variant.TypeString
+		          Data = New JsonItem(Payload.StringValue)
+		        Case Variant.TypeObject
+		          Data = JsonItem(Payload.ObjectValue)
+		        End Select
+		      End If
+		      
 		      Select Case EventName
 		      Case "pusher:connection_established"
-		        Var ConnectionInfo As New JSONItem(Payload)
-		        Self.mSocketId = ConnectionInfo.Value("socket_id")
-		        ActivityTimeout = ConnectionInfo.Lookup("activity_timeout", ActivityTimeout)
+		        Self.mSocketId = Data.Value("socket_id")
+		        ActivityTimeout = Data.Lookup("activity_timeout", ActivityTimeout)
 		        #if DebugBuild
 		          System.DebugLog("Connected, socket is " + Self.mSocketId)
 		        #endif
 		      Case "pusher:error"
-		        Var ErrorInfo As New JSONItem(Payload)
-		        Var ErrorCode As Integer = ErrorInfo.Value("code")
-		        Var ErrorMessage As String = ErrorInfo.Value("message")
+		        Var ErrorCode As Integer = Data.Value("code")
+		        Var ErrorMessage As String = Data.Value("message")
 		        App.Log("Pusher error #" + ErrorCode.ToString(Locale.Raw, "0") + ": " + ErrorMessage)
 		        ShouldReconnect = True
-		        Sender.Sleep(500)
-		        Exit While
 		      Else
 		        If Json.HasKey("channel") Then
 		          Var ChannelName As String = Json.Value("channel")
 		          Var EventDict As New Dictionary
 		          EventDict.Value("Event") = EventName
 		          EventDict.Value("Channel") = ChannelName
-		          EventDict.Value("Payload") = Payload
+		          If (Data Is Nil) = False Then
+		            EventDict.Value("Payload") = Data.ToString
+		          Else
+		            EventDict.Value("Payload") = Nil
+		          End If
 		          Sender.AddUserInterfaceUpdate(EventDict)
 		        End If
 		      End Select
@@ -226,9 +236,14 @@ Protected Class PusherSocket
 		      Else
 		        App.Log("No message from pusher")
 		      End If
+		      ShouldReconnect = True
 		    End Try
 		    
 		    Sender.Sleep(500)
+		    
+		    If ShouldReconnect Then
+		      Exit While
+		    End If
 		  Wend
 		  Self.State = Beacon.PusherSocket.States.Disconnected
 		  
