@@ -216,7 +216,7 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Tokens() As BeaconAPI.ProviderToken)
-		  Self.mTokens = Tokens
+		  Self.mTokens = Tokens.Sort(BeaconAPI.ProviderToken.DetailNormal)
 		  Super.Constructor
 		  
 		End Sub

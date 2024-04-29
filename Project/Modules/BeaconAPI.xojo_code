@@ -199,6 +199,19 @@ Protected Module BeaconAPI
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Sort(Extends Tokens() As BeaconAPI.ProviderToken, Detail As Integer) As BeaconAPI.ProviderToken()
+		  Var Sorted() As BeaconAPI.ProviderToken
+		  Var Labels() As String
+		  For Each Token As BeaconAPI.ProviderToken In Tokens
+		    Sorted.Add(Token)
+		    Labels.Add(Token.Label(Detail))
+		  Next
+		  Labels.SortWith(Sorted)
+		  Return Sorted
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function URL(Path As String = "/", Versioned As Boolean = True, Scheme As String = "https") As String
 		  #if DebugBuild And App.ForceLiveData = False

@@ -736,7 +736,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.mTokens = Tokens
+		  Self.mTokens = Tokens.Sort(BeaconAPI.ProviderToken.DetailNormal)
 		  Self.mFetchingTokens = False
 		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True, "Finished": True))
 		End Sub
