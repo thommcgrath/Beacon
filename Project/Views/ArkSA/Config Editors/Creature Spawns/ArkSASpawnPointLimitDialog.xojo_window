@@ -484,7 +484,7 @@ End
 		Sub Open()
 		  If Self.mLimit <> Nil Then
 		    Var Limit As Double = Self.mLimit * 100
-		    Me.Text = Limit.PrettyText + "%"
+		    Me.Text = Limit.PrettyText(True) + "%"
 		  End If
 		End Sub
 	#tag EndEvent
