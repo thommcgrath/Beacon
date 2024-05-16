@@ -391,7 +391,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    End
    Begin Thread ProcessorThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -659,7 +658,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
-      InitialValue    =   "All recipes\nSelected recipes\nTagged recipes"
+      InitialValue    =   "All recipes\nSelected recipes\nTagged recipes\nEdited recipes"
       Italic          =   False
       Left            =   193
       LockBottom      =   False
@@ -1120,6 +1119,9 @@ End
 	#tag Constant, Name = TargetModeAll, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = TargetModeEdited, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = TargetModeSelected, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
@@ -1227,6 +1229,14 @@ End
 		    Self.mTargetRecipeTags = Self.TargetRecipeTagPicker.Spec
 		  Case Self.TargetModeSelected
 		    Self.mTargetRecipeTags = ""
+		  Case Self.TargetModeEdited
+		    Self.mTargetRecipes.ResizeTo(-1)
+		    Self.mTargetRecipeTags = ""
+		    
+		    Var Config As Ark.ConfigGroup = Self.mProject.ConfigGroup(Ark.Configs.NameCraftingCosts)
+		    If Config IsA Ark.Configs.CraftingCosts Then
+		      Self.mTargetRecipes = Ark.Configs.CraftingCosts(Config).Engrams
+		    End If
 		  End Select
 		  Select Case Self.TargetIngredientMenu.SelectedRowIndex
 		  Case Self.TargetModeAll
