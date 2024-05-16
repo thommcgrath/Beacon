@@ -50,7 +50,7 @@ ChangesAssociations=yes
   #define x86 1
   #define arm64 1
 #endif
-SignTool=TheZAZ /d $qBeacon$q /du $qhttps://usebeacon.app$q $f
+SignTool=Yubi $qBeacon$q $qhttps://usebeacon.app$q
 SignToolRunMinimized=true
 SignedUninstaller=yes
 WizardStyle=modern
