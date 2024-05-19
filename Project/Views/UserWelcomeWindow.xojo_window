@@ -923,6 +923,10 @@ End
 		      Return True
 		    End If
 		    
+		    Self.InitializingMessage.Text = "Finishing login…"
+		    Self.PagePanel1.SelectedPanelIndex = Self.PageInitializing
+		    Self.Collapse()
+		    
 		    Self.RedeemOAuth(Code)
 		    
 		    Return True
