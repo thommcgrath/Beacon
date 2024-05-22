@@ -225,7 +225,7 @@ Inherits Beacon.DataSource
 		      Pack.MarketplaceId = Dict.Lookup("marketplaceId", "").StringValue
 		      Pack.IsLocal = Pack.MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
 		      Pack.LastUpdate = Dict.Value("lastUpdate").DoubleValue
-		      Pack.Required = Dict.Value("required").BooleanValue
+		      Pack.Required = Dict.Lookup("required", False).BooleanValue
 		      Call Self.SaveContentPack(Pack, False)
 		    Next
 		  End If
@@ -832,46 +832,34 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function SaveContentPack(Pack As Beacon.ContentPack) As Boolean
+		  // If the pack is local, work only with local packs. If the pack is official, work only with official packs.
+		  // No conversion should ever happen between local and official.
+		  
 		  Var Rows As RowSet
 		  If Pack.MarketplaceId.IsEmpty Then
-		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
 		  Else
-		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", Pack.ContentPackId, Pack.Marketplace, Pack.MarketplaceId)
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 AND is_local = ?3;", Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal)
 		  End If
 		  
-		  Var DidSave As Boolean
+		  Var DidSave as Boolean
 		  Var NewContentPackId As String = Pack.ContentPackId
 		  Var ShouldInsert As Boolean = True
 		  If Rows.RowCount > 0 Then
-		    // The new content pack could be an official replacing a custom, or even just changing the id.
 		    While Not Rows.AfterLastRow
 		      Var OldContentPackId As String = Rows.Column("content_pack_id").StringValue
-		      Var OldIsLocal As Boolean = Rows.Column("is_local").BooleanValue
 		      If OldContentPackId = NewContentPackId Then
-		        // We can just update the row
 		        If Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
 		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9, required = ?10 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId, Pack.Required)
 		          DidSave = True
 		        End If
 		        ShouldInsert = False
-		      Else
-		        Var ShouldDelete As Boolean = True
-		        If Pack.IsLocal And OldIsLocal Then
-		          Self.ScheduleContentPackMigration(OldContentPackId, NewContentPackId)
-		        ElseIf OldIsLocal Then // New is official, old is local
-		          Self.ScheduleContentPackMigration(OldContentPackId, Ark.UserContentPackId)
-		        ElseIf Pack.IsLocal Then // Old is official, new is local
-		          Self.ScheduleContentPackMigration(NewContentPackId, Ark.UserContentPackId)
-		          ShouldInsert = False
-		          ShouldDelete = False
-		        Else // Both the old and new pack are official
-		          Self.DeleteDataForContentPack(OldContentPackId)
-		        End If
-		        
-		        If ShouldDelete Then
-		          Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", OldContentPackId)
-		        End If
+		        Rows.MoveToNextRow
+		        Continue
 		      End If
+		      
+		      Self.ScheduleContentPackMigration(OldContentPackId, NewContentPackId)
+		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", OldContentPackId)
 		      Rows.MoveToNextRow
 		    Wend
 		  End If
@@ -1154,7 +1142,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function CreateLocalContentPack(PackName As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
-		  Return Self.CreateLocalContentPack(PackName, Ark.Identifier, Beacon.MarketplaceSteamWorkshop, MarketplaceId, DoCloudExport)
+		  Return Self.CreateLocalContentPack(PackName, Beacon.MarketplaceSteamWorkshop, MarketplaceId, DoCloudExport)
 		End Function
 	#tag EndMethod
 

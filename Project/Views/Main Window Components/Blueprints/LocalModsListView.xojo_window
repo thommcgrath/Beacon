@@ -550,7 +550,6 @@ End
 		      Explanation = "The mod " + OfficialModNames(0) + " is already built into Beacon and does not need to be discovered."
 		      SkipCaption = "Skip It"
 		    End If
-		    Explanation = Explanation + " The discovered blueprints will be added to " + ArkSA.UserContentPackName + " instead."
 		    
 		    Var ShouldSkip As Boolean
 		    Var Choice As BeaconUI.ConfirmResponses

@@ -227,6 +227,7 @@ Protected Class ContentPack
 		  SaveData.Value("isDefaultEnabled") = Self.mIsDefaultEnabled
 		  SaveData.Value("minVersion") = 20000000
 		  SaveData.Value("lastUpdate") = Self.mLastUpdate
+		  SaveData.Value("required") = Self.mRequired
 		  Return SaveData
 		End Function
 	#tag EndMethod
