@@ -1161,6 +1161,25 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub MigrateModContent(Pool As Beacon.DataSourcePool)
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		  Var Migrator As New Beacon.BlueprintMigrator(Self.ContentPacks, Pool)
+		  For Each Set As Beacon.ConfigSet In Sets
+		    Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		    If SetDict Is Nil Then
+		      Continue
+		    End If
+		    For Each Entry As DictionaryEntry In SetDict
+		      Var Group As Beacon.ConfigGroup = Entry.Value
+		      If Group IsA Beacon.BlueprintConsumer Then
+		        Call Beacon.BlueprintConsumer(Group).MigrateBlueprints(Migrator)
+		      End If
+		    Next
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.ReadOnly Then
 		    Return False

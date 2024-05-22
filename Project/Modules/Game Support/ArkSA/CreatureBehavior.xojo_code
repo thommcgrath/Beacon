@@ -1,5 +1,6 @@
 #tag Class
 Protected Class CreatureBehavior
+Implements Beacon.BlueprintConsumer
 	#tag Method, Flags = &h0
 		Function Clone(NewTarget As ArkSA.Creature) As ArkSA.CreatureBehavior
 		  Var Result As New ArkSA.CreatureBehavior(Self)
@@ -108,6 +109,28 @@ Protected Class CreatureBehavior
 		  Behavior.mProhibitTransfer = Dict.Lookup("Prohibit Transfer", False)
 		  
 		  Return Behavior
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Changed As Boolean
+		  Var NewTargetRef As ArkSA.BlueprintReference = ArkSA.FindMigratedBlueprint(Migrator, Self.mTargetCreature)
+		  If (NewTargetRef Is Nil) = False And NewTargetRef.IsCreature Then
+		    Self.mTargetCreature = NewTargetRef
+		    Self.Modified = True
+		    Changed = True
+		  End If
+		  
+		  Var NewReplacementRef As ArkSA.BlueprintReference = ArkSA.FindMigratedBlueprint(Migrator, Self.mReplacementCreature)
+		  If (NewReplacementRef Is Nil) = False And NewReplacementRef.IsCreature Then
+		    Self.mReplacementCreature = NewReplacementRef
+		    Self.Modified = True
+		    Changed = True
+		  End If
+		  Return Changed
 		End Function
 	#tag EndMethod
 

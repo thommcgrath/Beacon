@@ -1,7 +1,8 @@
 #tag Class
 Protected Class DinoAdjustments
 Inherits ArkSA.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+Implements Beacon.BlueprintConsumer
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.DinoAdjustments = ArkSA.Configs.DinoAdjustments(Other)
@@ -351,6 +352,26 @@ Inherits ArkSA.ConfigGroup
 	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return ArkSA.Configs.NameCreatureAdjustments
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Keys() As Variant = Self.mBehaviors.Keys
+		  Var Changed As Boolean
+		  For Each Key As Variant In Keys
+		    Var Behavior As ArkSA.CreatureBehavior = Self.mBehaviors.Value(Key)
+		    If Behavior.MigrateBlueprints(Migrator) = False Then
+		      Continue
+		    End If
+		    
+		    Self.mBehaviors.Remove(Key)
+		    Self.Add(Behavior)
+		    Changed = True
+		  Next
+		  Return Changed
 		End Function
 	#tag EndMethod
 

@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MutableSpawnPointSet
 Inherits ArkSA.SpawnPointSet
+Implements Beacon.BlueprintConsumer
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Append(Entry As ArkSA.SpawnPointSetEntry)
@@ -175,6 +176,27 @@ Inherits ArkSA.SpawnPointSet
 		  Self.mOffsetBeforeMultiplier = Value
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Changed As Boolean
+		  For Idx As Integer = 0 To Self.mEntries.LastIndex
+		    Var Mutable As ArkSA.MutableSpawnPointSetEntry = Self.mEntries(Idx).MutableVersion
+		    If Mutable.MigrateBlueprints(Migrator) Then
+		      Self.mEntries(Idx) = Mutable.ImmutableVersion
+		      Self.Modified = True
+		      Changed = True
+		    End If
+		  Next
+		  
+		  If Self.mReplacements.MigrateBlueprints(Migrator) Then
+		    Changed = True
+		  End If
+		  Return Changed
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

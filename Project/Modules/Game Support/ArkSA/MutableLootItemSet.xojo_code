@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MutableLootItemSet
 Inherits ArkSA.LootItemSet
-Implements ArkSA.Prunable
+Implements ArkSA.Prunable, Beacon.BlueprintConsumer
 	#tag Method, Flags = &h0
 		Sub Add(Entry As ArkSA.LootItemSetEntry)
 		  Self.mEntries.Add(Entry.ImmutableVersion)
@@ -121,6 +121,23 @@ Implements ArkSA.Prunable
 		  Self.mMaxNumItems = Value
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Changed As Boolean = True
+		  For Idx As Integer = 0 To Self.mEntries.LastIndex
+		    Var Mutable As ArkSA.MutableLootItemSetEntry = Self.mEntries(Idx).MutableVersion
+		    If Mutable.MigrateBlueprints(Migrator) Then
+		      Self.mEntries(Idx) = Mutable.ImmutableVersion
+		      Self.Modified = True
+		      Changed = True
+		    End If
+		  Next
+		  Return Changed
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

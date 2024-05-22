@@ -1,5 +1,6 @@
 #tag Class
 Protected Class BlueprintAttributeManager
+Implements Beacon.BlueprintConsumer
 	#tag Method, Flags = &h0
 		Function AttributesForBlueprint(Blueprint As ArkSA.Blueprint) As String()
 		  Return Self.AttributesForBlueprint(Blueprint.BlueprintId)
@@ -237,6 +238,36 @@ Protected Class BlueprintAttributeManager
 		  End If
 		  
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var BlueprintIds() As String = Self.BlueprintIds
+		  Var Changed As Boolean
+		  For Each BlueprintId As String In BlueprintIds
+		    Var Reference As ArkSA.BlueprintReference = Self.Reference(BlueprintId)
+		    Var CounterpartRef As ArkSA.BlueprintReference = ArkSA.FindMigratedBlueprint(Migrator, Reference)
+		    If CounterpartRef Is Nil Or Reference.Kind <> CounterpartRef.Kind Then
+		      Continue
+		    End If
+		    
+		    If Self.mAttributes.HasKey(BlueprintId) Then
+		      Var Dict As Dictionary = Self.mAttributes.Value(BlueprintId)
+		      For Each Entry As DictionaryEntry In Dict
+		        If Entry.Value.Type = Variant.TypeObject And Entry.Value.ObjectValue IsA Beacon.BlueprintConsumer And Beacon.BlueprintConsumer(Entry.Value.ObjectValue).MigrateBlueprints(Migrator) Then
+		          Changed = True
+		        End If
+		      Next
+		      Self.mAttributes.Remove(BlueprintId)
+		      Self.mAttributes.Value(CounterpartRef.BlueprintId) = Dict
+		    End If
+		    Self.mReferences.Remove(BlueprintId)
+		    Self.mReferences.Value(CounterpartRef.BlueprintId) = CounterpartRef
+		    Changed = True
+		  Next
 		End Function
 	#tag EndMethod
 

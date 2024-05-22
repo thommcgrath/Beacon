@@ -1,7 +1,8 @@
 #tag Class
 Protected Class MutableLootDropOverride
 Inherits ArkSA.LootDropOverride
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+Implements Beacon.BlueprintConsumer
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Add(Set As ArkSA.LootItemSet)
 		  // Making it public
@@ -72,6 +73,32 @@ Inherits ArkSA.LootDropOverride
 		  Self.mMaxItemSets = Value
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Changed As Boolean
+		  Var NewDropRef As ArkSA.BlueprintReference = ArkSA.FindMigratedBlueprint(Migrator, Self.mDropRef)
+		  If (NewDropRef Is Nil) = False And NewDropRef.IsLootContainer Then
+		    Self.mDropRef = NewDropRef
+		    Self.Modified = True
+		    Changed = True
+		  End If
+		  
+		  // Tell item sets to migrate
+		  For Idx As Integer = 0 To Self.mSets.LastIndex
+		    Var Mutable As ArkSA.MutableLootItemSet = Self.mSets(Idx).MutableVersion
+		    If Mutable.MigrateBlueprints(Migrator) Then
+		      Self.mSets(Idx) = Mutable.ImmutableVersion
+		      Self.Modified = True
+		      Changed = True
+		    End If
+		  Next
+		  
+		  Return Changed
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -183,5 +210,47 @@ Inherits ArkSA.LootDropOverride
 	#tag EndMethod
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

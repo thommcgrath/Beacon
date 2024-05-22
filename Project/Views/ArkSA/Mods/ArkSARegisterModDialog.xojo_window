@@ -1042,26 +1042,31 @@ End
 		    Var ModName As String = ModInfo.Value("name")
 		    Var CurseForgeId As Integer = ModInfo.Value("id").IntegerValue
 		    Var CurseForgeSlug As String = ModInfo.Value("slug").StringValue
-		    Var ContentPack As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPack(Beacon.MarketplaceCurseForge, CurseForgeId.ToString(Locale.Raw, "0"))
-		    If (ContentPack Is Nil) = False Then
-		      Var ShouldAbort As Boolean = True
+		    Var ContentPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks(Beacon.MarketplaceCurseForge, CurseForgeId.ToString(Locale.Raw, "0"))
+		    Var ShouldAbort As Boolean
+		    If ContentPacks.Count = 2 Then
+		      ShouldAbort = True
+		      Self.ShowAlert("Beacon already supports this mod.", "This mod already exists in Beacon's official data and in your own local data. There is no reason to add it again.")
+		    ElseIf ContentPacks.Count = 1 Then
 		      If Self.mMode = Self.ModeLocal Then
-		        If ContentPack.IsLocal Then
+		        If ContentPacks(0).IsLocal Then
+		          ShouldAbort = True
 		          Self.ShowAlert("You have already added this mod.", "It is not possible to add the same mod more than once.")
 		        Else
 		          Var AddAnyway As Boolean = Self.ShowConfirm("Beacon already supports this mod.", "You can turn on the mod using the ""Mods"" button in your project's toolbar. Do you still want to add the mod?", "Add Anyway", "Cancel")
-		          If AddAnyway Then
-		            ShouldAbort = False
+		          If AddAnyway = False Then
+		            ShouldAbort = True
 		          End If
 		        End If
 		      Else
+		        ShouldAbort = True
 		        Self.ShowAlert("Beacon already supports this mod.", "You can turn on the mod using the ""Mods"" button in your project's toolbar.")
 		      End If
-		      
-		      If ShouldAbort Then
-		        Self.Pages.SelectedPanelIndex = Self.PageIntro
-		        Return
-		      End If
+		    End If
+		    
+		    If ShouldAbort Then
+		      Self.Pages.SelectedPanelIndex = Self.PageIntro
+		      Return
 		    End If
 		    
 		    Self.mModId = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, CurseForgeId.ToString(Locale.Raw, "0"))

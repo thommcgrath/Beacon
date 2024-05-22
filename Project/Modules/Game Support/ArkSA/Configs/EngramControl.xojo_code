@@ -1,7 +1,8 @@
 #tag Class
 Protected Class EngramControl
 Inherits ArkSA.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+Implements Beacon.BlueprintConsumer
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.EngramControl = ArkSA.Configs.EngramControl(Other)
@@ -681,6 +682,14 @@ Inherits ArkSA.ConfigGroup
 		  Self.mPointsPerLevel.ResizeTo(LastRowIndex)
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Return Self.mOverrides.MigrateBlueprints(Migrator)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

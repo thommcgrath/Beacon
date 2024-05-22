@@ -1,6 +1,7 @@
 #tag Class
 Protected Class SpawnPoints
 Inherits ArkSA.ConfigGroup
+Implements Beacon.BlueprintConsumer
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
@@ -746,6 +747,24 @@ Inherits ArkSA.ConfigGroup
 		    Overrides.Add(Override.ImmutableVersion)
 		  Next
 		  Return New Beacon.GenericIterator(Overrides)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Changed As Boolean
+		  For Idx As Integer = 0 To Self.mOverrides.LastIndex
+		    Var Mutable As ArkSA.MutableSpawnPointOverride = Self.mOverrides(Idx).MutableVersion
+		    Var Migrated As Boolean = Mutable.MigrateBlueprints(Migrator)
+		    If Migrated Then
+		      Self.mOverrides(Idx) = Mutable.ImmutableVersion
+		      Self.Modified = True
+		      Changed = True
+		    End If
+		  Next
+		  Return Changed
 		End Function
 	#tag EndMethod
 

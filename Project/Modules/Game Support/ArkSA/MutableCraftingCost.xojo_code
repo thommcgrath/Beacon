@@ -1,7 +1,8 @@
 #tag Class
 Protected Class MutableCraftingCost
 Inherits ArkSA.CraftingCost
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+Implements Beacon.BlueprintConsumer
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Add(Ingredient As ArkSA.CraftingCostIngredient)
 		  If Ingredient Is Nil Then
@@ -54,6 +55,35 @@ Inherits ArkSA.CraftingCost
 		  Self.mIngredients(AtIndex) = Ingredient
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  // Migrate the target recipe
+		  Var Changed As Boolean
+		  Var NewTargetRef As ArkSA.BlueprintReference = ArkSA.FindMigratedBlueprint(Migrator, Self.mEngramRef)
+		  If (NewTargetRef Is Nil) = False And NewTargetRef.IsEngram Then
+		    Self.mEngramRef = NewTargetRef
+		    Self.Modified = True
+		    Changed = True
+		  End If
+		  
+		  // Migrate the ingredients
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
+		    Var NewIngredientRef As ArkSA.BlueprintReference = ArkSA.FindMigratedBlueprint(Migrator, Self.mIngredients(Idx).Reference)
+		    If NewIngredientRef Is Nil Or NewIngredientRef.IsEngram = False Then
+		      Continue
+		    End If
+		    
+		    Self.mIngredients(Idx) = New ArkSA.CraftingCostIngredient(NewIngredientRef, Self.mIngredients(Idx).Quantity, Self.mIngredients(Idx).RequireExact)
+		    Self.Modified = True
+		    Changed = True
+		  Next
+		  
+		  Return Changed
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

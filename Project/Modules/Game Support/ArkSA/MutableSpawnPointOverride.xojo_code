@@ -1,8 +1,8 @@
 #tag Class
 Protected Class MutableSpawnPointOverride
 Inherits ArkSA.SpawnPointOverride
-Implements ArkSA.Prunable
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+Implements ArkSA.Prunable, Beacon.BlueprintConsumer
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Add(Set As ArkSA.SpawnPointSet)
 		  Var Idx As Integer = Self.IndexOf(Set)
@@ -92,6 +92,34 @@ Implements ArkSA.Prunable
 		  Exception Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Loading spawn set defaults")
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Changed As Boolean
+		  Var NewDropRef As ArkSA.BlueprintReference = ArkSA.FindMigratedBlueprint(Migrator, Self.mPointRef)
+		  If (NewDropRef Is Nil) = False And NewDropRef.IsSpawnPoint Then
+		    Self.mPointRef = NewDropRef
+		    Self.Modified = True
+		    Changed = True
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mSets.LastIndex
+		    Var Mutable As ArkSA.MutableSpawnPointSet = Self.mSets(Idx).MutableVersion
+		    If Mutable.MigrateBlueprints(Migrator) Then
+		      Self.mSets(Idx) = Mutable.ImmutableVersion
+		      Self.Modified = True
+		      Changed = True
+		    End If
+		  Next
+		  
+		  If Self.mLimits.MigrateBlueprints(Migrator) Then
+		    Changed = True
+		  End If
+		  Return Changed
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -197,5 +225,47 @@ Implements ArkSA.Prunable
 	#tag EndMethod
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

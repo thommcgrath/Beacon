@@ -523,8 +523,8 @@ End
 		  Var OfficialModNames() As String
 		  Var OfficialModIds() As String
 		  For Each ModId As String In ModIds
-		    Var Pack As Beacon.ContentPack = DataSource.GetContentPack(Beacon.MarketplaceCurseForge, ModId)
-		    If (Pack Is Nil) = False And Pack.IsLocal = False Then
+		    Var Pack As Beacon.ContentPack = DataSource.GetContentPack(Beacon.MarketplaceCurseForge, ModId, Beacon.ContentPack.Types.Official)
+		    If (Pack Is Nil) = False Then
 		      OfficialModNames.Add(Pack.Name + " (" + ModId + ")")
 		      OfficialModIds.Add(ModID)
 		    End If

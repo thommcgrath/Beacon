@@ -525,6 +525,34 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function FindMigratedBlueprint(Migrator As Beacon.BlueprintMigrator, OriginalBlueprint As ArkSA.Blueprint) As ArkSA.Blueprint
+		  Return ArkSA.FindMigratedBlueprint(Migrator, New ArkSA.BlueprintReference(OriginalBlueprint)).Resolve()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function FindMigratedBlueprint(Migrator As Beacon.BlueprintMigrator, OriginalBlueprint As ArkSA.BlueprintReference) As ArkSA.BlueprintReference
+		  // Returning Nil means no change
+		  
+		  If OriginalBlueprint Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var NewPack As Beacon.ContentPack = Migrator.CounterpartContentPack(OriginalBlueprint.ContentPackId)
+		  If NewPack Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Siblings() As ArkSA.Blueprint = ArkSA.DataSource.Pool.Get(False).GetBlueprintsByPath(OriginalBlueprint.Path, New Beacon.StringList(NewPack.ContentPackId))
+		  If Siblings.Count = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Return New ArkSA.BlueprintReference(Siblings(0))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function GenerateBlueprintId(ContentPackId As String, Path As String) As String
 		  Return Beacon.UUID.v5(ContentPackId.Lowercase + ":" + Path.Lowercase)
 		End Function

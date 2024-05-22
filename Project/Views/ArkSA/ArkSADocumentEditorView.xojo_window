@@ -916,6 +916,7 @@ End
 		      Self.Project.ContentPackEnabled(Pack.ContentPackId) = Editor.ModEnabled(Pack.ContentPackId)
 		    Next
 		    
+		    Self.Project.MigrateModContent(ArkSA.DataSource.Pool)
 		    Self.Modified = Self.Project.Modified
 		  End If
 		  

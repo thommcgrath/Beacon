@@ -1,7 +1,8 @@
 #tag Class
 Protected Class CraftingCosts
 Inherits ArkSA.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+Implements Beacon.BlueprintConsumer
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.CraftingCosts = ArkSA.Configs.CraftingCosts(Other)
@@ -216,6 +217,24 @@ Inherits ArkSA.ConfigGroup
 	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return ArkSA.Configs.NameCraftingCosts
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Engrams() As ArkSA.Engram = Self.Engrams
+		  Var Changed As Boolean
+		  For Each Engram As ArkSA.Engram In Engrams
+		    Var Mutable As ArkSA.MutableCraftingCost = Self.Cost(Engram).MutableVersion
+		    If Mutable.MigrateBlueprints(Migrator) Then
+		      Self.Remove(Engram)
+		      Self.Add(Mutable)
+		      Changed = True
+		    End If
+		  Next
+		  Return Changed
 		End Function
 	#tag EndMethod
 

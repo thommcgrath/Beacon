@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MutableLootItemSetEntry
 Inherits ArkSA.LootItemSetEntry
-Implements ArkSA.Prunable
+Implements ArkSA.Prunable, Beacon.BlueprintConsumer
 	#tag Method, Flags = &h0
 		Sub Add(Option As ArkSA.LootItemSetEntryOption)
 		  Self.mOptions.Add(Option)
@@ -65,6 +65,25 @@ Implements ArkSA.Prunable
 		  Self.mMaxQuantity = Value
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MigrateBlueprints(Migrator As Beacon.BlueprintMigrator) As Boolean
+		  // Part of the Beacon.BlueprintConsumer interface.
+		  
+		  Var Changed As Boolean
+		  For Idx As Integer = 0 To Self.mOptions.LastIndex
+		    Var NewEngramRef As ArkSA.BlueprintReference = ArkSA.FindMigratedBlueprint(Migrator, Self.mOptions(Idx).Reference)
+		    If NewEngramRef Is Nil Or NewEngramRef.IsEngram = False Then
+		      Continue
+		    End If
+		    
+		    Self.mOptions(Idx) = New ArkSA.LootItemSetEntryOption(NewEngramRef, Self.mOptions(Idx).RawWeight, Self.mOptions(Idx).UUID)
+		    Self.Modified = True
+		    Changed = True
+		  Next
+		  Return Changed
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

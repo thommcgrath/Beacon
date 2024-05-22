@@ -403,6 +403,30 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function FindContentPackCounterpart(ContentPack As Beacon.ContentPack) As Beacon.ContentPack
+		  If ContentPack Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.FindContentPackCounterpart(ContentPack.ContentPackId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FindContentPackCounterpart(ContentPackId As String) As Beacon.ContentPack
+		  Var Rows As RowSet = Self.SQLSelect("SELECT marketplace, marketplace_id, is_local FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
+		  If Rows.RowCount = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Var Marketplace As String = Rows.Column("marketplace").StringValue
+		  Var MarketplaceId As String = Rows.Column("marketplace_id").StringValue
+		  Var CounterpartType As Beacon.ContentPack.Types = If(Rows.Column("is_local").BooleanValue, Beacon.ContentPack.Types.Official, Beacon.ContentPack.Types.Custom)
+		  Return Self.GetContentPack(Marketplace, MarketplaceId, CounterpartType)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function ForeignKeys() As Boolean
 		  Try
@@ -435,6 +459,16 @@ Implements NotificationKit.Receiver
 		    End Try
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPack(Marketplace As String, MarketplaceId As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 AND is_local = ?3;", Marketplace, MarketplaceId, Type = Beacon.ContentPack.Types.Custom)
+		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
+		  If Packs.Count = 1 Then
+		    Return Packs(0)
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -478,7 +512,7 @@ Implements NotificationKit.Receiver
 		    Clauses.Add("is_local = 1")
 		  End Select
 		  
-		  Var SQL As String = "SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, required FROM content_packs"
+		  Var SQL As String = "SELECT " + Self.ContentPackColumns + " FROM content_packs"
 		  If Clauses.Count > 0 Then
 		    SQL = SQL + " WHERE " + String.FromArray(Clauses, " AND ")
 		  End If
@@ -496,6 +530,13 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function GetContentPacks(Filter As String, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
 		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), Offset, Limit)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Marketplace As String, MarketplaceId As String) As Beacon.ContentPack()
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 ORDER BY is_local;", Marketplace, MarketplaceId)
+		  Return Beacon.ContentPack.FromDatabase(Results)
 		End Function
 	#tag EndMethod
 
@@ -1185,6 +1226,9 @@ Implements NotificationKit.Receiver
 
 
 	#tag Constant, Name = CommonFlagsWriteable, Type = Double, Dynamic = False, Default = \"14", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ContentPackColumns, Type = String, Dynamic = False, Default = \"content_pack_id\x2C game_id\x2C name\x2C console_safe\x2C default_enabled\x2C marketplace\x2C marketplace_id\x2C is_local\x2C last_update\x2C required", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FlagAllowWriting, Type = Double, Dynamic = False, Default = \"8", Scope = Public
