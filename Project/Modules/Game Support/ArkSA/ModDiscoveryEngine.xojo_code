@@ -274,6 +274,69 @@ Protected Class ModDiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Sub NormalizeWords(Words() As String)
+		  If mNormalization Is Nil Then
+		    mNormalization = New Dictionary
+		    mNormalization.Value("karkino") = "crab"
+		    mNormalization.Value("ravager") = "cavewolf"
+		    mNormalization.Value(Array("cave", "wolf")) = "cavewolf"
+		    mNormalization.Value("dunkle") = "dunkleosteus"
+		    mNormalization.Value("galli") = "gallimimus"
+		    mNormalization.Value("plesi") = "plesio"
+		    mNormalization.Value("plesia") = "plesio"
+		    mNormalization.Value("procop") = "procoptodon"
+		    mNormalization.Value("therizino") = "therizinosaurus"
+		    mNormalization.Value("titano") = "titan"
+		    mNormalization.Value("trope") = "tropeognathus"
+		    mNormalization.Value("rollrat") = "molerat"
+		    mNormalization.Value(Array("roll", "rat")) = "molerat"
+		    mNormalization.Value(Array("mole", "rat")) = "molerat"
+		    mNormalization.Value(Array("shadow", "drake")) = Array("rock", "drake")
+		    mNormalization.Value("shadowdrake") = Array("rock", "drake")
+		    mNormalization.Value("rockdrake") = Array("rock", "drake")
+		  End If
+		  
+		  For Each Entry As DictionaryEntry In mNormalization
+		    Var InitialIdx As Integer
+		    
+		    If Entry.Key.IsArray Then
+		      Var MatchWords() As String = Entry.Key
+		      InitialIdx = Words.IndexOf(MatchWords(0))
+		      If InitialIdx = -1 Or InitialIdx + MatchWords.Count > Words.LastIndex Then
+		        Continue
+		      End If
+		      For MatchIdx As Integer = 1 To MatchWords.LastIndex
+		        If Words(InitialIdx + MatchIdx) <> MatchWords(MatchIdx) Then
+		          Continue For Entry
+		        End If
+		      Next
+		      For Iter As Integer = 1 To MatchWords.Count
+		        Words.RemoveAt(InitialIdx)
+		      Next
+		    Else
+		      InitialIdx = Words.IndexOf(Entry.Key.StringValue)
+		      If InitialIdx = -1 Then
+		        Continue
+		      End If
+		      Words.RemoveAt(InitialIdx)
+		    End If
+		    
+		    Var ReplaceWords() As String
+		    If Entry.Value.IsArray Then
+		      ReplaceWords = Entry.Value
+		    Else
+		      ReplaceWords = Array(Entry.Value.StringValue)
+		    End If
+		    For Idx As Integer = 0 To ReplaceWords.LastIndex
+		      Words.AddAt(InitialIdx + Idx, ReplaceWords(Idx))
+		    Next
+		  Next
+		  
+		  Words.Sort
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ProcessCandidates(Candidates As Dictionary, ModInfo As JSONItem)
 		  Var ModName As String = ModInfo.Value("name")
 		  Var ContentPackId As String = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, ModInfo.Value("id"))
@@ -337,6 +400,9 @@ Protected Class ModDiscoveryEngine
 		  Map.ExecuteSQL("CREATE INDEX map_engram_class_idx ON map(engram_class);")
 		  
 		  Var PotentialPrefixes() As String = Array("PrimalItemArmor_", "PrimalItemConsumable_", "PrimalItemResource_", "PrimalItemAmmo_", "PrimalItemCostume_", "PrimalItemDye_", "PrimalItemSkin_", "PrimalItemStructure_", "PrimalItem_Weapon", "PrimalItemWeapon_", "PrimalItem_", "PrimalItem") // Make sure PrimalItem_ and PrimalItem are last
+		  Var Aliases As New Dictionary
+		  Aliases.Value("cavewolf") = "ravager"
+		  Aliases.Value("crab") = "karkino"
 		  For Each ItemClass As String In PrimalItems
 		    Var Offset As Integer
 		    For Each Prefix As String In PotentialPrefixes
@@ -346,12 +412,12 @@ Protected Class ModDiscoveryEngine
 		      End If
 		    Next
 		    Var PerfectEngramWords() As String = ArkSA.ClassStringToWords(ItemClass.Middle(Offset))
-		    PerfectEngramWords.Sort
+		    Self.NormalizeWords(PerfectEngramWords)
 		    Var PerfectEngramPhrase As String = String.FromArray(PerfectEngramWords, " ")
 		    
 		    For Each EngramClass As String In EngramEntries
 		      Var EngramWords() As String = ArkSA.ClassStringToWords(EngramClass.Middle(11))
-		      EngramWords.Sort
+		      Self.NormalizeWords(EngramWords)
 		      Var EngramPhrase As String = String.FromArray(EngramWords, " ")
 		      
 		      Var Distance As Double = LevenshteinDistanceMBS(PerfectEngramPhrase, EngramPhrase)
@@ -548,6 +614,10 @@ Protected Class ModDiscoveryEngine
 
 	#tag Property, Flags = &h21
 		Private mModsByTag As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mNormalization As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
