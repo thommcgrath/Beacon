@@ -232,7 +232,7 @@ Implements NotificationKit.Receiver
 		    
 		    Self.BeginTransaction()
 		    Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
-		    Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, type INTEGER NOT NULL, last_update INTEGER NOT NULL, required BOOLEAN NOT NULL DEFAULT FALSE, is_local BOOLEAN GENERATED ALWAYS AS (type = " + Beacon.ContentPack.TypeLocal.ToString(Locale.Raw, "0") + ") STORED, is_official BOOLEAN GENERATED ALWAYS AS (type = " + Beacon.ContentPack.TypeOfficial.ToString(Locale.Raw, "0") + ") STORED);")
+		    Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, type INTEGER NOT NULL CHECK (type & (type - 1) = 0), last_update INTEGER NOT NULL, required BOOLEAN NOT NULL DEFAULT FALSE, is_local BOOLEAN GENERATED ALWAYS AS (type = " + Beacon.ContentPack.TypeLocal.ToString(Locale.Raw, "0") + ") STORED, is_official BOOLEAN GENERATED ALWAYS AS (type = " + Beacon.ContentPack.TypeOfficial.ToString(Locale.Raw, "0") + ") STORED);")
 		    RaiseEvent BuildSchema
 		    Self.mDatabase.UserVersion = SchemaVersion
 		    Self.BuildIndexes
