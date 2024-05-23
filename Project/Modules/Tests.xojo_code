@@ -48,6 +48,7 @@ Protected Module Tests
 		    TestXmlParsing()
 		    TestSaveInfo()
 		    TestDelegateDetection()
+		    TestHumanReadable()
 		    App.Log("Tests complete")
 		  #endif
 		End Sub
@@ -325,6 +326,24 @@ Protected Module Tests
 		  Call Assert(Sanitized = "Capture the Flag 2.0 by Reptar's Raptors", "Did not sanitize filename `" + Servername + "` correctly. Expected `Capture the Flag 2.0 by Reptar's Raptors`, got `" + Sanitized + "`.")
 		  Call Assert(SanitizedAndShort = "Capture th…s Raptors", "Did not sanitize filename `" + Servername + "` to 20 characters correctly. Expected `Capture th…s Raptors`, got `" + SanitizedAndShort + "`.")
 		  Call Assert(SanitizedAndVeryShort = "Captu…ptors", "Did not sanitize filename `" + Servername + "` to 11 characters correctly. Expected `Captu…ptors`, got `" + SanitizedAndVeryShort + "`.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestHumanReadable()
+		  Var Conversions As New Dictionary
+		  Conversions.Value("PrimalItemResource_AmargaSpike_ASA_C") = "Amarga Spike ASA"
+		  Conversions.Value("PrimalItemResource_ASA_AmargaSpike_C") = "ASA Amarga Spike"
+		  Conversions.Value("PrimalItemResource_ASAAmargaSpike_C") = "ASA Amarga Spike"
+		  Conversions.Value("PrimalItemResource_AmargaASASpike_C") = "Amarga ASA Spike"
+		  Conversions.Value("PrimalItemResource_ASA_amargaSpike_C") = "ASA Amarga Spike"
+		  
+		  For Each Entry As DictionaryEntry In Conversions
+		    Var ClassString As String = Entry.Key
+		    Var DesiredLabel As String = Entry.Value
+		    Var ComputedLabel As String = ArkSA.LabelFromClassString(ClassString)
+		    Call Assert(DesiredLabel.Compare(ComputedLabel, ComparisonOptions.CaseSensitive) = 0, "Label from class string is incorrect. Expected `" + DesiredLabel + "` from `" + ClassString + "`, but got `" + ComputedLabel + "`.")
+		  Next
 		End Sub
 	#tag EndMethod
 

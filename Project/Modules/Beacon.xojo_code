@@ -1023,15 +1023,31 @@ Protected Module Beacon
 		Protected Function MakeHumanReadable(Source As String) As String
 		  Var Chars() As String
 		  Var SourceChars() As String = Source.Split("")
+		  Var LastCapital As Boolean
+		  Var NewWord As Boolean = True
 		  For Each Char As String In SourceChars
 		    Var Codepoint As Integer = Char.Asc
-		    If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
+		    If (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
+		      If LastCapital Then
+		        Chars.AddAt(Chars.LastIndex, " ")
+		      End If
+		      If NewWord Then
+		        Char = Char.Uppercase
+		      End If
 		      Chars.Add(Char)
+		      LastCapital = False
+		      NewWord = False
 		    ElseIf CodePoint >= 65 And Codepoint <= 90 Then
-		      Chars.Add(" ")
+		      If LastCapital = False Then
+		        Chars.Add(" ")
+		      End If
 		      Chars.Add(Char)
-		    ElseIf CodePoint = 95 Then
+		      LastCapital = True
+		      NewWord = False
+		    ElseIf CodePoint = 95 Or Codepoint = 32 Then // Underscore and space
 		      Chars.Add(" ")
+		      LastCapital = False
+		      NewWord = True
 		    End If
 		  Next
 		  Source = Chars.Join("")
