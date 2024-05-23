@@ -11,17 +11,6 @@ Protected Class ModDiscoveryEngine
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ModIds() As String()
-		  Var ModIds() As String
-		  ModIds.ResizeTo(Self.mModIds.LastIndex)
-		  For Idx As Integer = 0 To Self.mModIds.LastIndex
-		    ModIds(Idx) = Self.mModIds(Idx)
-		  Next
-		  Return ModIds
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub mThread_Run(Sender As Beacon.Thread)
 		  Sender.YieldToNext
@@ -41,7 +30,8 @@ Protected Class ModDiscoveryEngine
 		  
 		  Self.mModsByTag = New Dictionary
 		  Self.mTagsByMod = New Dictionary
-		  For Each ModId As String In Self.mModIds
+		  Var ModIds() As String = Self.mSettings.ModIds
+		  For Each ModId As String In ModIds
 		    If Self.mCancelled Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		      Return
@@ -294,6 +284,7 @@ Protected Class ModDiscoveryEngine
 		    mNormalization.Value(Array("shadow", "drake")) = Array("rock", "drake")
 		    mNormalization.Value("shadowdrake") = Array("rock", "drake")
 		    mNormalization.Value("rockdrake") = Array("rock", "drake")
+		    mNormalization.Value("milkglider") = Array("milk", "glider")
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In mNormalization
@@ -344,12 +335,16 @@ Protected Class ModDiscoveryEngine
 		  Pack.Marketplace = Beacon.MarketplaceCurseForge
 		  Pack.MarketplaceId = ModInfo.Value("id")
 		  
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		  Var OfficialPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.TypeOfficial)
-		  Var OfficialPackIds As New Beacon.StringList
-		  For Each OfficialPack As Beacon.ContentPack In OfficialPacks
-		    OfficialPackIds.Append(OfficialPack.ContentPackId)
-		  Next
+		  Var DataSource As ArkSA.DataSource
+		  Var OfficialPackIds As Beacon.StringList
+		  If Self.mSettings.IgnoreBuiltInClasses Then
+		    DataSource = ArkSA.DataSource.Pool.Get(False)
+		    Var OfficialPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.TypeOfficial)
+		    OfficialPackIds = New Beacon.StringList
+		    For Each OfficialPack As Beacon.ContentPack In OfficialPacks
+		      OfficialPackIds.Append(OfficialPack.ContentPackId)
+		    Next
+		  End If
 		  
 		  Var EngramEntries(), PrimalItems(), Creatures(), SupplyCrates(), DinoInventories(), SpawnPoints() As String
 		  Var ClassPaths As New Dictionary // Yes, this will break if a mod uses the same class in more than one namespace. This is a crappy implementation anyway, so I don't care.
@@ -358,34 +353,57 @@ Protected Class ModDiscoveryEngine
 		    Var ClassString As String = Entry.Value
 		    
 		    If ClassString.BeginsWith("EngramEntry") Then
-		      // Do not include official unlock strings
-		      Var OfficialMatches() As ArkSA.Engram = DataSource.GetEngramsByEntryString(ClassString + "_C", OfficialPackIds)
-		      If OfficialMatches.Count = 0 Then
+		      If Self.mSettings.IgnoreBuiltInClasses Then
+		        Var OfficialMatches() As ArkSA.Engram = DataSource.GetEngramsByEntryString(ClassString + "_C", OfficialPackIds)
+		        If OfficialMatches.Count = 0 Then
+		          EngramEntries.Add(ClassString)
+		        End If
+		      Else
 		        EngramEntries.Add(ClassString)
 		      End If
 		    ElseIf ClassString.BeginsWith("PrimalItem") Then
-		      Var OfficialMatches() As ArkSA.Engram = DataSource.GetEngramsByClass(ClassString + "_C", OfficialPackIds)
-		      If OfficialMatches.Count = 0 Then
+		      If Self.mSettings.IgnoreBuiltInClasses Then
+		        Var OfficialMatches() As ArkSA.Engram = DataSource.GetEngramsByClass(ClassString + "_C", OfficialPackIds)
+		        If OfficialMatches.Count = 0 Then
+		          PrimalItems.Add(ClassString)
+		        End If
+		      Else
 		        PrimalItems.Add(ClassString)
 		      End If
 		    ElseIf ClassString.Contains("Character_BP") Or ClassString.Contains("BP_Character") Then
-		      Var OfficialMatches() As ArkSA.Creature = DataSource.GetCreaturesByClass(ClassString + "_C", OfficialPackIds)
-		      If OfficialMatches.Count = 0 Then
+		      If Self.mSettings.IgnoreBuiltInClasses Then
+		        Var OfficialMatches() As ArkSA.Creature = DataSource.GetCreaturesByClass(ClassString + "_C", OfficialPackIds)
+		        If OfficialMatches.Count = 0 Then
+		          Creatures.Add(ClassString)
+		        End If
+		      Else
 		        Creatures.Add(ClassString)
 		      End If
 		    ElseIf ClassString.BeginsWith("SupplyCrate") Then
-		      Var OfficialMatches() As ArkSA.LootContainer = DataSource.GetLootContainersByClass(ClassString + "_C", OfficialPackIds)
-		      If OfficialMatches.Count = 0 Then
+		      If Self.mSettings.IgnoreBuiltInClasses Then
+		        Var OfficialMatches() As ArkSA.LootContainer = DataSource.GetLootContainersByClass(ClassString + "_C", OfficialPackIds)
+		        If OfficialMatches.Count = 0 Then
+		          SupplyCrates.Add(ClassString)
+		        End If
+		      Else
 		        SupplyCrates.Add(ClassString)
 		      End If
 		    ElseIf ClassString.BeginsWith("DinoDropInventory") Or ClassString.BeginsWith("DinoInventory") Then
-		      Var OfficialMatches() As ArkSA.LootContainer = DataSource.GetLootContainersByClass(ClassString + "_C", OfficialPackIds)
-		      If OfficialMatches.Count = 0 Then
+		      If Self.mSettings.IgnoreBuiltInClasses Then
+		        Var OfficialMatches() As ArkSA.LootContainer = DataSource.GetLootContainersByClass(ClassString + "_C", OfficialPackIds)
+		        If OfficialMatches.Count = 0 Then
+		          DinoInventories.Add(ClassString)
+		        End If
+		      Else
 		        DinoInventories.Add(ClassString)
 		      End If
 		    ElseIf ClassString.BeginsWith("DinoSpawnEntries") Then
-		      Var OfficialMatches() As ArkSA.SpawnPoint = DataSource.GetSpawnPointsByClass(ClassString + "_C", OfficialPackIds)
-		      If OfficialMatches.Count = 0 Then
+		      If Self.mSettings.IgnoreBuiltInClasses Then
+		        Var OfficialMatches() As ArkSA.SpawnPoint = DataSource.GetSpawnPointsByClass(ClassString + "_C", OfficialPackIds)
+		        If OfficialMatches.Count = 0 Then
+		          SpawnPoints.Add(ClassString)
+		        End If
+		      Else
 		        SpawnPoints.Add(ClassString)
 		      End If
 		    Else
@@ -425,7 +443,7 @@ Protected Class ModDiscoveryEngine
 		    Next
 		  Next
 		  
-		  Map.ExecuteSQL("DELETE FROM map WHERE distance >= 1.0;")
+		  Map.ExecuteSQL("DELETE FROM map WHERE distance > ?1;", Self.mSettings.Threshold)
 		  
 		  Var Unlocks As New Dictionary
 		  Do
@@ -518,7 +536,13 @@ Protected Class ModDiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Start(ModIds() As String)
+		Function Settings() As ArkSA.ModDiscoverySettings
+		  Return Self.mSettings
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Start(Settings As ArkSA.ModDiscoverySettings)
 		  If (Self.mActiveInstance Is Nil) = False Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Mod discovery is already running"
@@ -526,10 +550,7 @@ Protected Class ModDiscoveryEngine
 		  End If
 		  
 		  Self.mActiveInstance = Self
-		  Self.mModIds.ResizeTo(ModIds.LastIndex)
-		  For Idx As Integer = 0 To Self.mModIds.LastIndex
-		    Self.mModIds(Idx) = ModIds(Idx)
-		  Next
+		  Self.mSettings = Settings
 		  Self.mStatusMessage = "Initializing…"
 		  Self.mSuccess = False
 		  Self.mCancelled = False
@@ -609,15 +630,15 @@ Protected Class ModDiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModIds() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mModsByTag As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Shared mNormalization As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSettings As ArkSA.ModDiscoverySettings
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

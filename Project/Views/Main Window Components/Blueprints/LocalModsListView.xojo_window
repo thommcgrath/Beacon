@@ -575,7 +575,7 @@ End
 		  
 		  Try
 		    Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
-		    Self.ArkSADiscoveryEngine.Start(ModIds)
+		    Self.ArkSADiscoveryEngine.Start(Settings)
 		  Catch Err As RuntimeException
 		    Self.ShowAlert("Beacon could not start mod discovery", Err.Message)
 		  End Try

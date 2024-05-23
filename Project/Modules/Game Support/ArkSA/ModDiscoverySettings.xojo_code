@@ -1,15 +1,23 @@
 #tag Class
 Protected Class ModDiscoverySettings
 	#tag Method, Flags = &h0
-		Sub Constructor(ModIds() As String, DeleteBlueprints As Boolean)
+		Sub Constructor(ModIds() As String, DeleteBlueprints As Boolean, IgnoreBuiltInClasses As Boolean, Threshold As Double)
 		  Self.mModIds = ModIds
 		  Self.mDeleteBlueprints = DeleteBlueprints
+		  Self.mIgnoreBuiltInClasses = IgnoreBuiltInClasses
+		  Self.mThreshold = Threshold
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DeleteBlueprints() As Boolean
 		  Return Self.mDeleteBlueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IgnoreBuiltInClasses() As Boolean
+		  Return Self.mIgnoreBuiltInClasses
 		End Function
 	#tag EndMethod
 
@@ -24,13 +32,27 @@ Protected Class ModDiscoverySettings
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Threshold() As Double
+		  Return Self.mThreshold
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDeleteBlueprints As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mIgnoreBuiltInClasses As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModIds() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThreshold As Double
 	#tag EndProperty
 
 

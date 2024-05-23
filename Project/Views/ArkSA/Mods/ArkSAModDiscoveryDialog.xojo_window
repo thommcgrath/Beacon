@@ -10,7 +10,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   266
+   Height          =   356
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   266
@@ -50,7 +50,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   226
+      Top             =   316
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -82,7 +82,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   226
+      Top             =   316
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -122,7 +122,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
-      Tooltip         =   ""
+      Tooltip         =   "#DesiredModIdsTooltip"
       Top             =   152
       Transparent     =   False
       Underline       =   False
@@ -153,10 +153,10 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Desired Mod IDs:"
+      Text            =   "#DesiredModIdsCaption"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   ""
+      Tooltip         =   "#DesiredModIdsTooltip"
       Top             =   151
       Transparent     =   False
       Underline       =   False
@@ -232,7 +232,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
    Begin DesktopCheckBox AllowDeleteCheck
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Delete blueprints that are not found by discovery"
+      Caption         =   "#DeleteContentCaption"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -250,7 +250,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#DeleteContentTooltip"
       Top             =   185
       Transparent     =   False
       Underline       =   False
@@ -291,6 +291,140 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       Visible         =   True
       Width           =   200
    End
+   Begin DesktopCheckBox IgnoreBuiltInClassesCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "#IgnoreBuiltInClassesCaption"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   147
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "#IgnoreBuiltInClassesTooltip"
+      Top             =   217
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      VisualState     =   0
+      Width           =   433
+   End
+   Begin RangeField ThresholdField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   147
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   "#ThresholdTooltip"
+      Top             =   249
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel ThresholdLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "#ThresholdCaption"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   "#ThresholdTooltip"
+      Top             =   249
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   115
+   End
+   Begin UITweaks.ResizedLabel ThresholdSuffixLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   239
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "%"
+      TextAlignment   =   1
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   249
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   115
+   End
 End
 #tag EndDesktopWindow
 
@@ -299,13 +433,20 @@ End
 		Sub Opening()
 		  Self.BetaLabel.TextColor = SystemColors.SystemRedColor
 		  
-		  BeaconUI.SizeToFit(Self.ModsLabel)
+		  BeaconUI.SizeToFit(Self.ModsLabel, Self.ThresholdLabel)
 		  Self.ExplanationLabel.Height = Self.ExplanationLabel.IdealHeight
 		  
 		  Self.ModsField.Top = Self.ExplanationLabel.Bottom + 12
 		  Self.ModsLabel.Top = Self.ModsField.Top
+		  Self.ModsLabel.Height = Self.ModsField.Height
 		  Self.AllowDeleteCheck.Top = Self.ModsField.Bottom + 12
-		  Self.ActionButton.Top = Self.AllowDeleteCheck.Bottom + 20
+		  Self.IgnoreBuiltInClassesCheck.Top = Self.AllowDeleteCheck.Bottom + 12
+		  Self.ThresholdField.Top = Self.IgnoreBuiltInClassesCheck.Bottom + 12
+		  Self.ThresholdLabel.Top = Self.ThresholdField.Top
+		  Self.ThresholdLabel.Height = Self.ThresholdField.Height
+		  Self.ThresholdSuffixLabel.Top = Self.ThresholdField.Top
+		  Self.ThresholdSuffixLabel.Height = Self.ThresholdField.Height
+		  Self.ActionButton.Top = Self.ThresholdField.Bottom + 20
 		  Self.CancelButton.Top = Self.ActionButton.Top
 		  
 		  Var IdealHeight As Integer = Self.ActionButton.Bottom + 20
@@ -315,13 +456,19 @@ End
 		  
 		  Self.ModsField.Left = Self.ModsLabel.Left + Self.ModsLabel.Width + 12
 		  Self.ModsField.Width = Self.Width - (20 + Self.ModsField.Left)
+		  Self.ThresholdField.Left = Self.ModsField.Left
+		  Self.ThresholdSuffixLabel.Left = Self.ThresholdField.Right + 6
 		  Self.AllowDeleteCheck.Left = Self.ModsField.Left
 		  Self.AllowDeleteCheck.Width = Self.ModsField.Width
+		  Self.IgnoreBuiltInClassesCheck.Left = Self.ModsField.Left
+		  Self.IgnoreBuiltInClassesCheck.Width = Self.ModsField.Width
 		  
 		  If Self.mForcedModsString.IsEmpty = False Then
 		    Self.ModsField.Text = Self.mForcedModsString
 		    Self.ModsField.ReadOnly = True
 		  End If
+		  
+		  Self.ThresholdField.DoubleValue = 50
 		  
 		  Self.SwapButtons()
 		End Sub
@@ -365,6 +512,24 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = DeleteContentCaption, Type = String, Dynamic = True, Default = \"Delete Blueprints That Are Not Found by Discovery", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = DeleteContentTooltip, Type = String, Dynamic = True, Default = \"If checked\x2C discovery will remove classes that have previously been discovered but are not found on this run.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = DesiredModIdsCaption, Type = String, Dynamic = True, Default = \"Desired Mod Numbers:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = DesiredModIdsTooltip, Type = String, Dynamic = True, Default = \"One or more mod numbers\x2C separated by commas. Mod numbers can be found on the mod\'s CurseForge page called \"Project ID\".", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IgnoreBuiltInClassesCaption, Type = String, Dynamic = True, Default = \"Ignore Official Classes", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IgnoreBuiltInClassesTooltip, Type = String, Dynamic = True, Default = \"If checked\x2C discovered classes that match official classes will be skipped.", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageFinished, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
@@ -372,6 +537,12 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageWorking, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ThresholdCaption, Type = String, Dynamic = True, Default = \"Confidence Threshold:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ThresholdTooltip, Type = String, Dynamic = True, Default = \"When matching unlock strings to engrams\x2C discovery assigns a 0 to 100 confidence score to every combination. A lower threshold will discard fewer matches. This can help discover more unlock strings\x2C but may reduce the quality of matches.", Scope = Private
 	#tag EndConstant
 
 
@@ -393,7 +564,8 @@ End
 		    Return
 		  End If
 		  
-		  Self.mSettings = New ArkSA.ModDiscoverySettings(ModsString.Split(","), Self.AllowDeleteCheck.Value)
+		  Var Threshold As Double = (100 - Self.ThresholdField.DoubleValue) / 100
+		  Self.mSettings = New ArkSA.ModDiscoverySettings(ModsString.Split(","), Self.AllowDeleteCheck.Value, Self.IgnoreBuiltInClassesCheck.Value, Threshold)
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -403,6 +575,14 @@ End
 		Sub Pressed()
 		  Self.mSettings = Nil
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ThresholdField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 100
 		End Sub
 	#tag EndEvent
 #tag EndEvents

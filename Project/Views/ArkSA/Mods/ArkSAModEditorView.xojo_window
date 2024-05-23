@@ -45,6 +45,7 @@ Begin ModEditorView ArkSAModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -368,6 +369,7 @@ Begin ModEditorView ArkSAModEditorView
       End
    End
    Begin ArkSA.ModDiscoveryEngine DiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -800,9 +802,8 @@ End
 		    End If
 		  Next
 		  
-		  Var ModIds() As String = Settings.ModIds
 		  Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
-		  Self.DiscoveryEngine.Start(ModIds)
+		  Self.DiscoveryEngine.Start(Settings)
 		End Sub
 	#tag EndMethod
 
