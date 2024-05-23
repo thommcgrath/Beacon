@@ -281,23 +281,50 @@ Protected Class ModDiscoveryEngine
 		  Pack.Marketplace = Beacon.MarketplaceCurseForge
 		  Pack.MarketplaceId = ModInfo.Value("id")
 		  
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var OfficialPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.Types.Official)
+		  Var OfficialPackIds As New Beacon.StringList
+		  For Each OfficialPack As Beacon.ContentPack In OfficialPacks
+		    OfficialPackIds.Append(OfficialPack.ContentPackId)
+		  Next
+		  
 		  Var EngramEntries(), PrimalItems(), Creatures(), SupplyCrates(), DinoInventories(), SpawnPoints() As String
 		  Var ClassPaths As New Dictionary // Yes, this will break if a mod uses the same class in more than one namespace. This is a crappy implementation anyway, so I don't care.
 		  For Each Entry As DictionaryEntry In Candidates
 		    Var Path As String = Entry.Key
 		    Var ClassString As String = Entry.Value
+		    
 		    If ClassString.BeginsWith("EngramEntry") Then
-		      EngramEntries.Add(ClassString)
+		      // Do not include official unlock strings
+		      Var OfficialMatches() As ArkSA.Engram = DataSource.GetEngramsByEntryString(ClassString + "_C", OfficialPackIds)
+		      If OfficialMatches.Count = 0 Then
+		        EngramEntries.Add(ClassString)
+		      End If
 		    ElseIf ClassString.BeginsWith("PrimalItem") Then
-		      PrimalItems.Add(ClassString)
+		      Var OfficialMatches() As ArkSA.Engram = DataSource.GetEngramsByClass(ClassString + "_C", OfficialPackIds)
+		      If OfficialMatches.Count = 0 Then
+		        PrimalItems.Add(ClassString)
+		      End If
 		    ElseIf ClassString.Contains("Character_BP") Or ClassString.Contains("BP_Character") Then
-		      Creatures.Add(ClassString)
+		      Var OfficialMatches() As ArkSA.Creature = DataSource.GetCreaturesByClass(ClassString + "_C", OfficialPackIds)
+		      If OfficialMatches.Count = 0 Then
+		        Creatures.Add(ClassString)
+		      End If
 		    ElseIf ClassString.BeginsWith("SupplyCrate") Then
-		      SupplyCrates.Add(ClassString)
+		      Var OfficialMatches() As ArkSA.LootContainer = DataSource.GetLootContainersByClass(ClassString + "_C", OfficialPackIds)
+		      If OfficialMatches.Count = 0 Then
+		        SupplyCrates.Add(ClassString)
+		      End If
 		    ElseIf ClassString.BeginsWith("DinoDropInventory") Or ClassString.BeginsWith("DinoInventory") Then
-		      DinoInventories.Add(ClassString)
+		      Var OfficialMatches() As ArkSA.LootContainer = DataSource.GetLootContainersByClass(ClassString + "_C", OfficialPackIds)
+		      If OfficialMatches.Count = 0 Then
+		        DinoInventories.Add(ClassString)
+		      End If
 		    ElseIf ClassString.BeginsWith("DinoSpawnEntries") Then
-		      SpawnPoints.Add(ClassString)
+		      Var OfficialMatches() As ArkSA.SpawnPoint = DataSource.GetSpawnPointsByClass(ClassString + "_C", OfficialPackIds)
+		      If OfficialMatches.Count = 0 Then
+		        SpawnPoints.Add(ClassString)
+		      End If
 		    Else
 		      Continue
 		    End If
@@ -306,31 +333,47 @@ Protected Class ModDiscoveryEngine
 		  
 		  Var Map As New SQLiteDatabase
 		  Map.Connect
-		  Map.ExecuteSQL("CREATE TABLE map (item_class TEXT COLLATE NOCASE NOT NULL, engram_class TEXT COLATE NOCASE NOT NULL, difference REAL NOT NULL);")
+		  Map.ExecuteSQL("CREATE TABLE map (item_class TEXT COLLATE NOCASE NOT NULL, engram_class TEXT COLATE NOCASE NOT NULL, distance REAL NOT NULL);")
 		  Map.ExecuteSQL("CREATE INDEX map_engram_class_idx ON map(engram_class);")
 		  
+		  Var PotentialPrefixes() As String = Array("PrimalItemArmor_", "PrimalItemConsumable_", "PrimalItemResource_", "PrimalItemAmmo_", "PrimalItemCostume_", "PrimalItemDye_", "PrimalItemSkin_", "PrimalItemStructure_", "PrimalItem_Weapon", "PrimalItemWeapon_", "PrimalItem_", "PrimalItem") // Make sure PrimalItem_ and PrimalItem are last
 		  For Each ItemClass As String In PrimalItems
-		    Var PerfectEngramEntry As String = "EngramEntry" + ItemClass.Middle(10)
+		    Var Offset As Integer
+		    For Each Prefix As String In PotentialPrefixes
+		      If ItemClass.BeginsWith(Prefix) Then
+		        Offset = Prefix.Length
+		        Exit For Prefix
+		      End If
+		    Next
+		    Var PerfectEngramWords() As String = ArkSA.ClassStringToWords(ItemClass.Middle(Offset))
+		    PerfectEngramWords.Sort
+		    Var PerfectEngramPhrase As String = String.FromArray(PerfectEngramWords, " ")
 		    
 		    For Each EngramClass As String In EngramEntries
-		      Var Distance As Double = LevenshteinDistanceMBS(PerfectEngramEntry, EngramClass)
-		      Map.ExecuteSQL("INSERT INTO map (item_class, engram_class, difference) VALUES (?1, ?2, ?3);", ItemClass, EngramClass, Distance)
+		      Var EngramWords() As String = ArkSA.ClassStringToWords(EngramClass.Middle(11))
+		      EngramWords.Sort
+		      Var EngramPhrase As String = String.FromArray(EngramWords, " ")
+		      
+		      Var Distance As Double = LevenshteinDistanceMBS(PerfectEngramPhrase, EngramPhrase)
+		      Map.ExecuteSQL("INSERT INTO map (item_class, engram_class, distance) VALUES (?1, ?2, ?3);", ItemClass, EngramClass, Distance)
 		    Next
 		  Next
 		  
+		  Map.ExecuteSQL("DELETE FROM map WHERE distance >= 1.0;")
+		  
 		  Var Unlocks As New Dictionary
 		  Do
-		    Var Rows As RowSet = Map.SelectSQL("SELECT item_class, difference, engram_class FROM map ORDER BY difference LIMIT 1;")
+		    Var Rows As RowSet = Map.SelectSQL("SELECT item_class, distance, engram_class FROM map ORDER BY distance LIMIT 1;")
 		    If Rows.RowCount = 0 Then
 		      Exit
 		    End If
 		    
 		    Var ItemClass As String = Rows.Column("item_class").StringValue
-		    Var Difference As Double = Rows.Column("difference").DoubleValue
+		    Var Distance As Double = Rows.Column("distance").DoubleValue
 		    Var EngramClass As String = Rows.Column("engram_class").StringValue
 		    
 		    #if DebugBuild
-		      System.DebugLog("Matched " + EngramClass + " to " + ItemClass + " with score " + Difference.ToString(Locale.Raw, "0.0000"))
+		      System.DebugLog("Matched " + EngramClass + " to " + ItemClass + " with score " + Distance.ToString(Locale.Raw, "0.0000"))
 		    #endif
 		    
 		    Unlocks.Value(ItemClass) = EngramClass + "_C"

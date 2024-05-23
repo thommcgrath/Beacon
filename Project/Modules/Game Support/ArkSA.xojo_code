@@ -272,6 +272,50 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ClassStringToWords(ClassString As String) As String()
+		  Static AcronymsPattern As Regex
+		  If AcronymsPattern Is Nil Then
+		    AcronymsPattern = New Regex
+		    AcronymsPattern.SearchPattern = "[A-Z]{2,}"
+		    AcronymsPattern.Options.CaseSensitive = True
+		  End If
+		  
+		  Static CapitalsPattern As Regex
+		  If CapitalsPattern Is Nil Then
+		    CapitalsPattern = New Regex
+		    CapitalsPattern.SearchPattern = "[A-Z]"
+		    CapitalsPattern.Options.CaseSensitive = True
+		  End If
+		  
+		  If ClassString.EndsWith("_C") Then
+		    ClassString = ClassString.Left(ClassString.Length - 2)
+		  End If
+		  
+		  Var Patterns() As Regex = Array(AcronymsPattern, CapitalsPattern)
+		  For Each Pattern As Regex In Patterns
+		    Do
+		      Var Matches As RegexMatch = Pattern.Search(ClassString)
+		      If Matches Is Nil Then
+		        Exit Do
+		      End If
+		      
+		      Var BytePosition As Integer = Matches.SubExpressionStartB(0)
+		      ClassString = ClassString.LeftBytes(BytePosition) + "_" + Matches.SubExpressionString(0).Lowercase + ClassString.MiddleBytes(BytePosition + Matches.SubExpressionString(0).Bytes)
+		    Loop
+		  Next
+		  
+		  Do Until ClassString.IndexOf("__") = -1
+		    ClassString = ClassString.ReplaceAll("__", "_")
+		  Loop
+		  
+		  ClassString = ClassString.ReplaceAll("_", " ")
+		  ClassString = ClassString.Trim
+		  
+		  Return ClassString.Split(" ")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CleanupBlueprintPath(Path As String) As String
 		  // Rather than just looking at wether or not the path ends in _C and remove it,
 		  // this looks at the namespace to see if it also ends in _C. Some mod authors
