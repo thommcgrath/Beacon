@@ -78,7 +78,7 @@ Implements Beacon.BlueprintConsumer
 		    Var EffectivelyHidden As Boolean = Self.EffectivelyHidden(Engram)
 		    Var ExplicitAutoUnlocked As Boolean
 		    If EffectivelyHidden = False And DefaultUnlocked = False Then
-		      If Self.mAutoUnlockAllEngrams = False And Self.mOverrides.HasAttribute(Engram, Self.KeyAutoUnlockLevel) And Self.mOverrides.Value(Engram, Self.KeyAutoUnlockLevel).BooleanValue = True Then
+		      If Self.mAutoUnlockAllEngrams = False And Self.mOverrides.HasAttribute(Engram, Self.KeyAutoUnlockLevel) And Self.mOverrides.Value(Engram, Self.KeyAutoUnlockLevel).BooleanValue = True And UnlockEntries.IndexOf(EntryString) = -1 Then
 		        Var Level As Integer
 		        If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) And Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IsNull = False Then
 		          Level = Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IntegerValue
@@ -128,7 +128,7 @@ Implements Beacon.BlueprintConsumer
 		      End If
 		    End If
 		    
-		    If Arguments.Count > 0 Then
+		    If Arguments.Count > 0 And OverrideEntries.IndexOf(EntryString) = -1 Then
 		      Arguments.AddAt(0, "EngramClassName=""" + EntryString + """")
 		      OverrideEntries.Add(EntryString)
 		      OverrideConfigs.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "OverrideNamedEngramEntries=(" + Arguments.Join(",") + ")", "OverrideNamedEngramEntries:" + EntryString))
@@ -240,26 +240,42 @@ Implements Beacon.BlueprintConsumer
 		      UnlockString = Engram.EntryString
 		    ElseIf Self.mOverrides.HasAttribute(Engram, Self.KeyEntryString) Then
 		      UnlockString = Self.mOverrides.Value(Engram, Self.KeyEntryString)
+		    Else
+		      Continue
 		    End If
 		    
-		    Var Siblings() As ArkSA.Engram
+		    Var Signature As String = Self.SignatureForEngram(Engram)
+		    Var Signatures As Dictionary
 		    If Map.HasKey(UnlockString) Then
-		      Siblings = Map.Value(UnlockString)
+		      Signatures = Map.Value(UnlockString)
 		    Else
-		      Map.Value(UnlockString) = Siblings
+		      Signatures = New Dictionary
+		      Map.Value(UnlockString) = Signatures
+		    End If
+		    
+		    Signatures.Value(Signature) = True
+		    
+		    Var Siblings() As ArkSA.Engram
+		    If Signatures.HasKey(":siblings") Then
+		      Siblings = Signatures.Value(":siblings")
+		    Else
+		      Signatures.Value(":siblings") = Siblings
 		    End If
 		    Siblings.Add(Engram)
 		  Next
 		  
 		  For Each Entry As DictionaryEntry In Map
 		    Var UnlockString As String = Entry.Key
-		    Var Siblings() As ArkSA.Engram = Entry.Value
-		    If Siblings.Count <= 1 Then
+		    Var Signatures As Dictionary = Entry.Value
+		    If Signatures.KeyCount <= 2 Then
+		      // :siblings and 1 signature, no cause for alarm
 		      Continue
 		    End If
 		    
+		    Var Siblings() As ArkSA.Engram = Signatures.Value(":siblings")
+		    
 		    // Conflict
-		    Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + UnlockString, "Engrams " + Language.EnglishOxfordList(Siblings) + " will conflict because they share the same unlock string of " + UnlockString + "."))
+		    Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + UnlockString, Language.ReplacePlaceholders(Self.LanguageEngramsConflict, Language.EnglishOxfordList(Siblings), UnlockString)))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -839,6 +855,44 @@ Implements Beacon.BlueprintConsumer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SignatureForEngram(Engram As ArkSA.Engram) As String
+		  Var AutoUnlocks As Variant = Self.mOverrides.Value(Engram, Self.KeyAutoUnlockLevel)
+		  If AutoUnlocks.IsNull Then
+		    AutoUnlocks = Self.mAutoUnlockAllEngrams
+		  End If
+		  
+		  Var Hidden As Variant = Self.mOverrides.Value(Engram, Self.KeyHidden)
+		  If Hidden.IsNull Then
+		    Hidden = Self.mOnlyAllowSpecifiedEngrams
+		  End If
+		  
+		  Var PlayerLevel As Variant = Self.mOverrides.Value(Engram, Self.KeyPlayerLevel)
+		  If PlayerLevel.IsNull And Engram.HasUnlockDetails And (Engram.RequiredPlayerLevel Is Nil) = False Then
+		    PlayerLevel = Engram.RequiredPlayerLevel.IntegerValue
+		  End If
+		  
+		  Var RequiredPoints As Variant = Self.mOverrides.Value(Engram, Self.KeyUnlockPoints)
+		  If RequiredPoints.IsNull And Engram.HasUnlockDetails And (Engram.RequiredUnlockPoints Is Nil) = False Then
+		    RequiredPoints = Engram.RequiredUnlockPoints.IntegerValue
+		  End If
+		  
+		  Var RemovePrerequisites As Variant = Self.mOverrides.Value(Engram, Self.KeyRemovePrerequisites)
+		  If RemovePrerequisites.IsNull Then
+		    RemovePrerequisites = False
+		  End If
+		  
+		  Var Parts As New Dictionary
+		  Parts.Value(Self.KeyAutoUnlockLevel) = AutoUnlocks
+		  Parts.Value(Self.KeyHidden) = Hidden
+		  Parts.Value(Self.KeyPlayerLevel) = PlayerLevel
+		  Parts.Value(Self.KeyUnlockPoints) = RequiredPoints
+		  Parts.Value(Self.KeyRemovePrerequisites) = RemovePrerequisites
+		  
+		  Return Beacon.GenerateJson(Parts, False)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SupportsMerging() As Boolean
 		  Return True
@@ -924,6 +978,9 @@ Implements Beacon.BlueprintConsumer
 	#tag EndConstant
 
 	#tag Constant, Name = KeyUnlockPoints, Type = String, Dynamic = False, Default = \"Unlock Points", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = LanguageEngramsConflict, Type = String, Dynamic = True, Default = \"Engrams \?1 will conflict because they share the same unlock string of \?2. To fix\x2C go to Engram Control and make sure only one of these engrams has changes or are identical.", Scope = Private
 	#tag EndConstant
 
 
