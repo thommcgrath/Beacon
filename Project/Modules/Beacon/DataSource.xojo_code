@@ -30,13 +30,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h1
 		Protected Sub BuildIndexes()
-		  If Self.mIndexes.Count = 0 Then
-		    Var Indexes() As Beacon.DataIndex = RaiseEvent DefineIndexes
-		    If Indexes Is Nil Then
-		      Return
-		    End If
-		    Self.mIndexes = Indexes
-		  End If
+		  Self.DefineIndexes()
 		  
 		  Self.BeginTransaction()
 		  For Idx As Integer = 0 To Self.mIndexes.LastIndex
@@ -238,6 +232,7 @@ Implements NotificationKit.Receiver
 		    
 		    Self.BeginTransaction()
 		    Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
+		    Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, type INTEGER NOT NULL, last_update INTEGER NOT NULL, required BOOLEAN NOT NULL DEFAULT FALSE, is_local BOOLEAN GENERATED ALWAYS AS (type = " + Beacon.ContentPack.TypeLocal.ToString(Locale.Raw, "0") + ") STORED, is_official BOOLEAN GENERATED ALWAYS AS (type = " + Beacon.ContentPack.TypeOfficial.ToString(Locale.Raw, "0") + ") STORED);")
 		    RaiseEvent BuildSchema
 		    Self.mDatabase.UserVersion = SchemaVersion
 		    Self.BuildIndexes
@@ -255,21 +250,16 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CountContentPacks(Filter As String, Type As Beacon.ContentPack.Types) As Integer
+		Function CountContentPacks(Filter As String, Types As Integer = Beacon.ContentPack.TypeAny) As Integer
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  If Filter.IsEmpty = False Then
 		    Clauses.Add("name LIKE :filter ESCAPE '\'")
 		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
 		  End If
-		  Select Case Type
-		  Case Beacon.ContentPack.Types.Official
-		    Clauses.Add("is_local = 0 AND console_safe = 1")
-		  Case Beacon.ContentPack.Types.ThirdParty
-		    Clauses.Add("is_local = 0 AND console_safe = 0")
-		  Case Beacon.ContentPack.Types.Custom
-		    Clauses.Add("is_local = 1")
-		  End Select
+		  
+		  Clauses.Add("type & :types > 0")
+		  Values.Add(Types)
 		  
 		  Var SQL As String = "SELECT COUNT(content_pack_id) FROM content_packs"
 		  If Clauses.Count > 0 Then
@@ -299,7 +289,7 @@ Implements NotificationKit.Receiver
 		    ContentPackId = Beacon.ContentPack.GenerateLocalContentPackId(Marketplace, MarketplaceId)
 		  End If
 		  Self.BeginTransaction()
-		  Var Rows As RowSet = Self.SQLSelect("INSERT OR IGNORE INTO content_packs (content_pack_id, game_id, marketplace, marketplace_id, name, console_safe, default_enabled, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9) RETURNING *;", ContentPackId, Self.Identifier, Marketplace, MarketplaceId, PackName, False, False, True, DateTime.Now.SecondsFrom1970)
+		  Var Rows As RowSet = Self.SQLSelect("INSERT OR IGNORE INTO content_packs (content_pack_id, game_id, marketplace, marketplace_id, name, console_safe, default_enabled, type, last_update, required) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10) RETURNING *;", ContentPackId, Self.Identifier, Marketplace, MarketplaceId, PackName, False, False, Beacon.ContentPack.TypeLocal, DateTime.Now.SecondsFrom1970, False)
 		  If Rows.RowCount <> 1 Then
 		    Self.RollbackTransaction()
 		    Return Nil
@@ -311,6 +301,24 @@ Implements NotificationKit.Receiver
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Rows)
 		  Return Packs(0)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DefineIndexes()
+		  If Self.mIndexes.Count > 0 Then
+		    Return
+		  End If
+		  
+		  Self.mIndexes.Add(New Beacon.DataIndex("content_packs", True, "marketplace", "marketplace_id", "WHERE type != " + Beacon.ContentPack.TypeLocal.ToString(Locale.Raw, "0")))
+		  Self.mIndexes.Add(New Beacon.DataIndex("content_packs", True, "marketplace", "marketplace_id", "WHERE type = " + Beacon.ContentPack.TypeLocal.ToString(Locale.Raw, "0") + " AND (marketplace != '' OR marketplace_id != '')"))
+		  
+		  Var Indexes() As Beacon.DataIndex = RaiseEvent DefineIndexes
+		  If (Indexes Is Nil) = False Then
+		    For Each Index As Beacon.DataIndex In Indexes
+		      Self.mIndexes.Add(Index)
+		    Next
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -339,13 +347,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h1
 		Protected Sub DropIndexes()
-		  If Self.mIndexes.Count = 0 Then
-		    Var Indexes() As Beacon.DataIndex = RaiseEvent DefineIndexes
-		    If Indexes Is Nil Then
-		      Return
-		    End If
-		    Self.mIndexes = Indexes
-		  End If
+		  Self.DefineIndexes()
 		  
 		  Self.BeginTransaction()
 		  For Idx As Integer = 0 To Self.mIndexes.LastIndex
@@ -415,14 +417,20 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function FindContentPackCounterpart(ContentPackId As String) As Beacon.ContentPack
-		  Var Rows As RowSet = Self.SQLSelect("SELECT marketplace, marketplace_id, is_local FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT marketplace, marketplace_id, type FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
 		  If Rows.RowCount = 0 Then
 		    Return Nil
 		  End If
 		  
 		  Var Marketplace As String = Rows.Column("marketplace").StringValue
 		  Var MarketplaceId As String = Rows.Column("marketplace_id").StringValue
-		  Var CounterpartType As Beacon.ContentPack.Types = If(Rows.Column("is_local").BooleanValue, Beacon.ContentPack.Types.Official, Beacon.ContentPack.Types.Custom)
+		  Var CounterpartType As Integer
+		  Select Case Rows.Column("type").IntegerValue
+		  Case Beacon.ContentPack.TypeOfficial, Beacon.ContentPack.TypeThirdParty
+		    CounterpartType = Beacon.ContentPack.TypeLocal
+		  Else
+		    CounterpartType = Beacon.ContentPack.TypeOfficial Or Beacon.ContentPack.TypeThirdParty
+		  End Select
 		  Return Self.GetContentPack(Marketplace, MarketplaceId, CounterpartType)
 		End Function
 	#tag EndMethod
@@ -462,8 +470,8 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPack(Marketplace As String, MarketplaceId As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 AND is_local = ?3;", Marketplace, MarketplaceId, Type = Beacon.ContentPack.Types.Custom)
+		Function GetContentPack(Marketplace As String, MarketplaceId As String, Types As Integer) As Beacon.ContentPack
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 AND type & ?3 > 0 ORDER BY type;", Marketplace, MarketplaceId, Types)
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
 		  If Packs.Count = 1 Then
 		    Return Packs(0)
@@ -472,45 +480,45 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPacks(Type As Beacon.ContentPack.Types) As Beacon.ContentPack()
+		Function GetContentPacks(Type As Integer) As Beacon.ContentPack()
 		  Return Self.GetContentPacks("", Type, 0, 0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPacks(Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		Function GetContentPacks(Type As Integer, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
 		  Return Self.GetContentPacks("", Type, Offset, Limit)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetContentPacks(Filter As String = "") As Beacon.ContentPack()
-		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), 0, 0)
+		  Return Self.GetContentPacks(Filter, Beacon.ContentPack.TypeAny, 0, 0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack()
+		Function GetContentPacks(Filter As String, Type As Integer) As Beacon.ContentPack()
 		  Return Self.GetContentPacks(Filter, Type, 0, 0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		Function GetContentPacks(Filter As String, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  Return Self.GetContentPacks(Filter, Beacon.ContentPack.TypeAny, Offset, Limit)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Types As Integer, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  If Filter.IsEmpty = False Then
 		    Clauses.Add("(name LIKE :filter ESCAPE '\' OR marketplace_id LIKE :filter ESCAPE '/')")
 		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
 		  End If
-		  Select Case Type
-		  Case Beacon.ContentPack.Types.Official
-		    Clauses.Add("is_local = 0 AND console_safe = 1")
-		  Case Beacon.ContentPack.Types.ThirdParty
-		    Clauses.Add("is_local = 0 AND console_safe = 0")
-		  Case Beacon.ContentPack.Types.Custom
-		    Clauses.Add("is_local = 1")
-		  End Select
+		  Clauses.Add("type & :types > 0")
+		  Values.Add(Types)
 		  
 		  Var SQL As String = "SELECT " + Self.ContentPackColumns + " FROM content_packs"
 		  If Clauses.Count > 0 Then
@@ -528,21 +536,15 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPacks(Filter As String, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
-		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), Offset, Limit)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetContentPacks(Marketplace As String, MarketplaceId As String) As Beacon.ContentPack()
-		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 ORDER BY is_local;", Marketplace, MarketplaceId)
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 ORDER BY type", Marketplace, MarketplaceId)
 		  Return Beacon.ContentPack.FromDatabase(Results)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetContentPackWithId(ContentPackId As String) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, required FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
 		  If Packs.Count = 1 Then
 		    Return Packs(0)
@@ -964,11 +966,47 @@ Implements NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  Var Saved As Boolean = RaiseEvent SaveContentPack(Pack)
-		  If Saved And DoCloudExport Then
+		  // If the pack is local, work only with local packs. If the pack is official, work only with official packs.
+		  // No conversion should ever happen between local and official.
+		  
+		  Var Rows As RowSet
+		  If Pack.MarketplaceId.IsEmpty Then
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
+		  Else
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 AND type = ?3;", Pack.Marketplace, Pack.MarketplaceId, Pack.Type)
+		  End If
+		  
+		  Var DidSave as Boolean
+		  Var NewContentPackId As String = Pack.ContentPackId
+		  Var ShouldInsert As Boolean = True
+		  If Rows.RowCount > 0 Then
+		    While Not Rows.AfterLastRow
+		      Var OldContentPackId As String = Rows.Column("content_pack_id").StringValue
+		      If OldContentPackId = NewContentPackId Then
+		        If Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
+		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, type = ?7, last_update = ?8, game_id = ?9, required = ?10 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.Type, Pack.LastUpdate, Pack.GameId, Pack.Required)
+		          DidSave = True
+		        End If
+		        ShouldInsert = False
+		        Rows.MoveToNextRow
+		        Continue
+		      End If
+		      
+		      Self.ScheduleContentPackMigration(OldContentPackId, NewContentPackId)
+		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", OldContentPackId)
+		      Rows.MoveToNextRow
+		    Wend
+		  End If
+		  
+		  If ShouldInsert Then
+		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, type, last_update, game_id, required) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.Type, Pack.LastUpdate, Pack.GameId, Pack.Required)
+		    DidSave = True
+		  End If
+		  
+		  If DidSave And DoCloudExport Then
 		    Self.ExportCloudFiles()
 		  End If
-		  Return Saved
+		  Return DidSave
 		End Function
 	#tag EndMethod
 
@@ -1180,10 +1218,6 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event SaveContentPack(Pack As Beacon.ContentPack) As Boolean
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event TestPerformance()
 	#tag EndHook
 
@@ -1228,7 +1262,7 @@ Implements NotificationKit.Receiver
 	#tag Constant, Name = CommonFlagsWriteable, Type = Double, Dynamic = False, Default = \"14", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ContentPackColumns, Type = String, Dynamic = False, Default = \"content_pack_id\x2C game_id\x2C name\x2C console_safe\x2C default_enabled\x2C marketplace\x2C marketplace_id\x2C is_local\x2C last_update\x2C required", Scope = Protected
+	#tag Constant, Name = ContentPackColumns, Type = String, Dynamic = False, Default = \"content_pack_id\x2C game_id\x2C name\x2C console_safe\x2C default_enabled\x2C marketplace\x2C marketplace_id\x2C type\x2C last_update\x2C required", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FlagAllowWriting, Type = Double, Dynamic = False, Default = \"8", Scope = Public

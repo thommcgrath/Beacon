@@ -1854,7 +1854,7 @@ Implements ObservationKit.Observable
 		  Next
 		  
 		  Var DataSource As Beacon.DataSource = Self.DataSource(False)
-		  Var LocalPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.Types.Custom)
+		  Var LocalPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.TypeLocal)
 		  For Each LocalPack As Beacon.ContentPack In LocalPacks
 		    If Self.ContentPackEnabled(LocalPack) = False Then
 		      Continue

@@ -282,7 +282,7 @@ Protected Class ModDiscoveryEngine
 		  Pack.MarketplaceId = ModInfo.Value("id")
 		  
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		  Var OfficialPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.Types.Official)
+		  Var OfficialPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.TypeOfficial)
 		  Var OfficialPackIds As New Beacon.StringList
 		  For Each OfficialPack As Beacon.ContentPack In OfficialPacks
 		    OfficialPackIds.Append(OfficialPack.ContentPackId)

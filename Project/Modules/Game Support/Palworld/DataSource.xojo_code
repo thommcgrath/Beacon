@@ -3,7 +3,6 @@ Protected Class DataSource
 Inherits Beacon.DataSource
 	#tag Event
 		Sub BuildSchema()
-		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL, required BOOLEAN NOT NULL DEFAULT FALSE);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, struct TEXT COLLATE NOCASE, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
 		End Sub
@@ -12,8 +11,6 @@ Inherits Beacon.DataSource
 	#tag Event
 		Function DefineIndexes() As Beacon.DataIndex()
 		  Var Indexes() As Beacon.DataIndex
-		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "marketplace", "marketplace_id", "WHERE is_local = 0"))
-		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "marketplace", "marketplace_id", "WHERE is_local = 1 AND (marketplace != '' OR marketplace_id != '')"))
 		  Indexes.Add(New Beacon.DataIndex("ini_options", True, "file", "header", "key"))
 		  Return Indexes
 		End Function
@@ -28,7 +25,7 @@ Inherits Beacon.DataSource
 		  
 		  Self.BeginTransaction()
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND is_local = 1;", ContentPackId)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND type = ?2;", ContentPackId, Beacon.ContentPack.TypeLocal)
 		  If Rows.RowCount = 0 Then
 		    Self.RollbackTransaction()
 		    Return False
@@ -43,7 +40,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 101
+		  Return 102
 		End Function
 	#tag EndEvent
 
@@ -77,14 +74,7 @@ Inherits Beacon.DataSource
 		        Continue
 		      End If
 		      
-		      Var Pack As New Beacon.MutableContentPack(Palworld.Identifier, Dict.Value("name").StringValue, Dict.Value("contentPackId").StringValue)
-		      Pack.IsConsoleSafe = Dict.Value("isConsoleSafe").BooleanValue
-		      Pack.IsDefaultEnabled = Dict.Value("isDefaultEnabled").BooleanValue
-		      Pack.Marketplace = Dict.Lookup("marketplace", "").StringValue
-		      Pack.MarketplaceId = Dict.Lookup("marketplaceId", "").StringValue
-		      Pack.IsLocal = Pack.MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
-		      Pack.LastUpdate = Dict.Value("lastUpdate").DoubleValue
-		      Pack.Required = Dict.Value("required").BooleanValue
+		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dict)
 		      Call Self.SaveContentPack(Pack, False)
 		    Next
 		  End If
@@ -212,61 +202,6 @@ Inherits Beacon.DataSource
 		Sub ReleaseLock()
 		  mLock.Leave
 		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Function SaveContentPack(Pack As Beacon.ContentPack) As Boolean
-		  Var Rows As RowSet
-		  If Pack.MarketplaceId.IsEmpty Then
-		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
-		  Else
-		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update, is_local FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", Pack.ContentPackId, Pack.Marketplace, Pack.MarketplaceId)
-		  End If
-		  
-		  Var DidSave as Boolean
-		  Var NewContentPackId As String = Pack.ContentPackId
-		  Var ShouldInsert As Boolean = True
-		  If Rows.RowCount > 0 Then
-		    // The new content pack could be an official replacing a custom, or even just changing the id.
-		    While Not Rows.AfterLastRow
-		      Var OldContentPackId As String = Rows.Column("content_pack_id").StringValue
-		      Var OldIsLocal As Boolean = Rows.Column("is_local").BooleanValue
-		      If OldContentPackId = NewContentPackId Then
-		        // We can just update the row
-		        If Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
-		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
-		          DidSave = True
-		        End If
-		        ShouldInsert = False
-		      Else
-		        Var ShouldDelete As Boolean = True
-		        If Pack.IsLocal And OldIsLocal Then
-		          Self.ScheduleContentPackMigration(OldContentPackId, NewContentPackId)
-		        ElseIf OldIsLocal Then // New is official, old is local
-		          Self.ScheduleContentPackMigration(OldContentPackId, Palworld.UserContentPackId)
-		        ElseIf Pack.IsLocal Then // Old is official, new is local
-		          Self.ScheduleContentPackMigration(NewContentPackId, Palworld.UserContentPackId)
-		          ShouldInsert = False
-		          ShouldDelete = False
-		        Else // Both the old and new pack are official
-		          Self.DeleteDataForContentPack(OldContentPackId)
-		        End If
-		        
-		        If ShouldDelete Then
-		          Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", OldContentPackId)
-		        End If
-		      End If
-		      Rows.MoveToNextRow
-		    Wend
-		  End If
-		  
-		  If ShouldInsert Then
-		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
-		    DidSave = True
-		  End If
-		  
-		  Return DidSave
-		End Function
 	#tag EndEvent
 
 
@@ -414,26 +349,6 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPack(Marketplace As String, MarketplaceId As String) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, required FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 ORDER BY is_local DESC LIMIT 1;", Marketplace, MarketplaceId)
-		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
-		  If Packs.Count = 1 Then
-		    Return Packs(0)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetContentPack(Marketplace As String, MarketplaceId As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, required FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 AND is_local = ?3 ORDER BY is_local DESC LIMIT 1;", Marketplace, MarketplaceId, Type = Beacon.ContentPack.Types.Custom)
-		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
-		  If Packs.Count = 1 Then
-		    Return Packs(0)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
 		  Var Value As Variant = Self.GetVariable(Key, Default)
 		  Return Value.DoubleValue
@@ -494,9 +409,8 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local, last_update, marketplace, marketplace_id, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, '', '', ?7);", Palworld.UserContentPackId, Palworld.UserContentPackName, True, True, True, Beacon.FixedTimestamp, Palworld.Identifier)
-		  Self.CommitTransaction()
+		  Var Pack As Beacon.ContentPack = Beacon.ContentPack.CreateUserContentPack(Self.Identifier, Palworld.UserContentPackName, Palworld.UserContentPackId)
+		  Call Self.SaveContentPack(Pack, False)
 		End Sub
 	#tag EndMethod
 

@@ -2211,7 +2211,7 @@ End
 		    Var SteamIds As New Beacon.StringList
 		    For Each ContentPackId As String In ContentPackIds
 		      Var ContentPack As Beacon.ContentPack = DataSource.GetContentPackWithId(ContentPackId)
-		      If (ContentPack Is Nil) = False And ContentPack.IsLocal = False And ContentPack.Type = Beacon.ContentPack.Types.ThirdParty Then
+		      If (ContentPack Is Nil) = False And ContentPack.IsLocal = False And ContentPack.IsThirdParty Then
 		        SteamIds.Append(ContentPack.ContentPackId)
 		      End If
 		    Next

@@ -119,6 +119,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -194,12 +195,14 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine ArkDiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine ArkSADiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -254,12 +257,10 @@ End
 		  Var Filter As String = Self.FilterField.Text.Trim
 		  
 		  Var DataSources() As Beacon.DataSource = App.DataSources
-		  // DataSources(0) = Ark.DataSource.Pool.Get(False)
-		  // DataSources(1) = ArkSA.DataSource.Pool.Get(False)
 		  
 		  Self.ModsList.RemoveAllRows
 		  For Each DataSource As Beacon.DataSource In DataSources
-		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks(Filter, Beacon.ContentPack.Types.Custom)
+		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks(Filter, Beacon.ContentPack.TypeLocal)
 		    For Each Pack As Beacon.ContentPack In Packs
 		      Var GameName As String = Language.GameName(Pack.GameId)
 		      Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
@@ -523,7 +524,7 @@ End
 		  Var OfficialModNames() As String
 		  Var OfficialModIds() As String
 		  For Each ModId As String In ModIds
-		    Var Pack As Beacon.ContentPack = DataSource.GetContentPack(Beacon.MarketplaceCurseForge, ModId, Beacon.ContentPack.Types.Official)
+		    Var Pack As Beacon.ContentPack = DataSource.GetContentPack(Beacon.MarketplaceCurseForge, ModId, Beacon.ContentPack.TypeThirdParty Or Beacon.ContentPack.TypeOfficial)
 		    If (Pack Is Nil) = False Then
 		      OfficialModNames.Add(Pack.Name + " (" + ModId + ")")
 		      OfficialModIds.Add(ModID)
@@ -1063,7 +1064,7 @@ End
 		      End If
 		    End If
 		    
-		    Var Pack As Beacon.ContentPack = Database.GetContentPackWithSteamId(WorkshopId, Beacon.ContentPack.Types.Custom)
+		    Var Pack As Beacon.ContentPack = Database.GetContentPackWithSteamId(WorkshopId, Beacon.ContentPack.TypeLocal)
 		    If Pack Is Nil Then
 		      If PackName.IsEmpty Then
 		        Var Tag As String = Me.GetTagForModId(WorkshopId)

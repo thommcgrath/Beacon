@@ -4,7 +4,6 @@ Inherits Beacon.DataSource
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
-		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', file TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, native_editor_version INTEGER, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT, min_game_version INTEGER, max_game_version INTEGER);")
 		End Sub
 	#tag EndEvent
@@ -12,7 +11,6 @@ Inherits Beacon.DataSource
 	#tag Event
 		Function DefineIndexes() As Beacon.DataIndex()
 		  Var Indexes() As Beacon.DataIndex
-		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "is_local", "marketplace_id"))
 		  Indexes.Add(New Beacon.DataIndex("config_options", True, "file", "key"))
 		  Indexes.Add(New Beacon.DataIndex("config_options", False, "min_game_version"))
 		  Indexes.Add(New Beacon.DataIndex("config_options", False, "max_game_version"))
@@ -65,8 +63,16 @@ Inherits Beacon.DataSource
 		      Var DefaultEnabled As Boolean = Dict.Value("isDefaultEnabled")
 		      Var Marketplace As String = Dict.Lookup("marketplace", "")
 		      Var MarketplaceId As String = Dict.Lookup("marketplaceId", "")
-		      Var IsLocal As Boolean = MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
 		      Var GameId As String = Dict.Value("gameId")
+		      Var Type As Integer
+		      If MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False Then
+		        Type = Beacon.ContentPack.TypeLocal
+		      ElseIf Dict.Lookup("isOfficial", False).BooleanValue Then
+		        Type = Beacon.ContentPack.TypeOfficial
+		      Else
+		        Type = Beacon.ContentPack.TypeThirdParty
+		      End If
+		      Var Required As Boolean = Dict.Lookup("required", False).BooleanValue
 		      
 		      Var Rows As RowSet
 		      If MarketplaceId.IsEmpty Then
@@ -78,9 +84,9 @@ Inherits Beacon.DataSource
 		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id IS DISTINCT FROM ?1 AND marketplace = ?2 AND marketplace_id = ?3;", ContentPackId, Marketplace, MarketplaceId)
 		      End If
 		      If Rows.RowCount > 0 Then
-		        Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, Now, GameId)
+		        Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, type = ?7, last_update = ?8, game_id = ?9, required = ?10 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, Type, Now, GameId, Required)
 		      Else
-		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, Now, GameId)
+		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, type, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, Type, Now, GameId, Required)
 		      End If
 		    Next
 		  End If

@@ -10,9 +10,9 @@ Protected Class ContentPack
 		Sub Constructor(Source As Beacon.ContentPack)
 		  Self.mContentPackId = Source.mContentPackId
 		  Self.mGameId = Source.mGameId
+		  Self.mType = Source.mType
 		  Self.mIsConsoleSafe = Source.mIsConsoleSafe
 		  Self.mIsDefaultEnabled = Source.mIsDefaultEnabled
-		  Self.mIsLocal = Source.mIsLocal
 		  Self.mLastUpdate = Source.mLastUpdate
 		  Self.mMarketplace = Source.mMarketplace
 		  Self.mMarketplaceId = Source.mMarketplaceId
@@ -31,7 +31,7 @@ Protected Class ContentPack
 		  Self.mContentPackId = ContentPackId
 		  Self.mIsConsoleSafe = False
 		  Self.mIsDefaultEnabled = False
-		  Self.mIsLocal = True
+		  Self.mType = Self.TypeLocal
 		  Self.mLastUpdate = DateTime.Now.SecondsFrom1970
 		  Self.mName = Name
 		  Self.mRequired = False
@@ -45,14 +45,26 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateUserContentPack(GameId As String, Name As String, ContentPackId As String) As Beacon.ContentPack
+		  Var Pack As New Beacon.ContentPack(GameId, Name, ContentPackId)
+		  Pack.mIsConsoleSafe = True
+		  Pack.mLastUpdate = Beacon.FixedTimestamp
+		  Pack.mIsDefaultEnabled = True
+		  Pack.mType = Beacon.ContentPack.TypeLocal
+		  Pack.mRequired = False
+		  Return Pack
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromDatabase(Row As DatabaseRow) As Beacon.ContentPack
 		  Try
 		    Var Pack As New Beacon.ContentPack
 		    Pack.mContentPackId = Row.Column("content_pack_id").StringValue
 		    Pack.mGameId = Row.Column("game_id").StringValue
+		    Pack.mType = Row.Column("type").IntegerValue
 		    Pack.mIsConsoleSafe = Row.Column("console_safe").BooleanValue
 		    Pack.mIsDefaultEnabled = Row.Column("default_enabled").BooleanValue
-		    Pack.mIsLocal = Row.Column("is_local").BooleanValue
 		    Pack.mName = Row.Column("name").StringValue
 		    If Row.Column("marketplace").Value.IsNull = False And Row.Column("marketplace_id").Value.IsNull = False Then
 		      Pack.mMarketplace = Row.Column("marketplace").StringValue
@@ -94,9 +106,19 @@ Protected Class ContentPack
 		    Var Pack As New Beacon.ContentPack
 		    Pack.mContentPackId = SaveData.Value("contentPackId")
 		    Pack.mGameId = SaveData.Value("gameId")
+		    If SaveData.HasKey("type") Then
+		      Pack.mType = SaveData.Value("type")
+		    ElseIf SaveData.HasKey("isOfficial") Then
+		      If SaveData.Value("isOfficial").BooleanValue Then
+		        Pack.mType = Beacon.ContentPack.TypeOfficial
+		      Else
+		        Pack.mType = Beacon.ContentPack.TypeThirdParty
+		      End If
+		    Else
+		      Pack.mType = Beacon.ContentPack.TypeLocal
+		    End If
 		    Pack.mIsConsoleSafe = SaveData.Value("isConsoleSafe")
 		    Pack.mIsDefaultEnabled = SaveData.Value("isDefaultEnabled")
-		    Pack.mIsLocal = True
 		    Pack.mName = SaveData.Value("name")
 		    Pack.mLastUpdate = SaveData.Value("lastUpdate")
 		    If SaveData.HasKey("marketplace") And SaveData.HasKey("marketplaceId") Then
@@ -151,7 +173,19 @@ Protected Class ContentPack
 
 	#tag Method, Flags = &h0
 		Function IsLocal() As Boolean
-		  Return Self.mIsLocal
+		  Return Self.mType = Self.TypeLocal
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsOfficial() As Boolean
+		  Return Self.mType = Self.TypeOfficial
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsThirdParty() As Boolean
+		  Return Self.mType = Self.TypeThirdParty
 		End Function
 	#tag EndMethod
 
@@ -223,6 +257,7 @@ Protected Class ContentPack
 		    SaveData.Value("marketplaceId") = Self.mMarketplaceId
 		  End If
 		  SaveData.Value("name") = Self.mName
+		  SaveData.Value("type") = Self.mType
 		  SaveData.Value("isConsoleSafe") = Self.mIsConsoleSafe
 		  SaveData.Value("isDefaultEnabled") = Self.mIsDefaultEnabled
 		  SaveData.Value("minVersion") = 20000000
@@ -233,14 +268,8 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Type() As Beacon.ContentPack.Types
-		  If Self.mIsLocal Then
-		    Return Beacon.ContentPack.Types.Custom
-		  ElseIf Self.mIsConsoleSafe Then
-		    Return Beacon.ContentPack.Types.Official
-		  Else
-		    Return Beacon.ContentPack.Types.ThirdParty
-		  End If
+		Function Type() As Integer
+		  Return Self.mType
 		End Function
 	#tag EndMethod
 
@@ -259,10 +288,6 @@ Protected Class ContentPack
 
 	#tag Property, Flags = &h1
 		Protected mIsDefaultEnabled As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mIsLocal As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -285,12 +310,22 @@ Protected Class ContentPack
 		Protected mRequired As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mType As Integer
+	#tag EndProperty
 
-	#tag Enum, Name = Types, Type = Integer, Flags = &h0
-		Official
-		  ThirdParty
-		Custom
-	#tag EndEnum
+
+	#tag Constant, Name = TypeAny, Type = Double, Dynamic = False, Default = \"7", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeLocal, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeOfficial, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeThirdParty, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

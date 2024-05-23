@@ -251,16 +251,16 @@ End
 		  Self.GetPadding(PaddingLeft, PaddingTop, PaddingRight, PaddingBottom)
 		  Var HeaderHeight As Integer = PaddingTop + Max(Self.ViewSelector.Height, Self.FilterField.Height) + InnerSpacing
 		  
-		  Var RequiredType As Beacon.ContentPack.Types
+		  Var RequiredType As Integer
 		  For Idx As Integer = 0 To Self.ViewSelector.LastIndex
 		    If Self.ViewSelector.Segment(Idx).Selected Then
 		      Select Case Idx
 		      Case PageUniversal
-		        RequiredType = Beacon.ContentPack.Types.Official
+		        RequiredType = Beacon.ContentPack.TypeOfficial
 		      Case PageSteam
-		        RequiredType = Beacon.ContentPack.Types.ThirdParty
+		        RequiredType = Beacon.ContentPack.TypeThirdParty
 		      Case PageLocal
-		        RequiredType = Beacon.ContentPack.Types.Custom
+		        RequiredType = Beacon.ContentPack.TypeLocal
 		      End Select
 		      Exit For Idx
 		    End If

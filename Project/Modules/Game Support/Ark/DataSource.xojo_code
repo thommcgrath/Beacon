@@ -4,7 +4,6 @@ Inherits Beacon.DataSource
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
-		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL, required BOOLEAN NOT NULL DEFAULT FALSE);")
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL, label TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, last_update INTEGER NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', min_item_sets INTEGER NOT NULL DEFAULT 1, max_item_sets INTEGER NOT NULL DEFAULT 1, prevent_duplicates BOOLEAN NOT NULL DEFAULT 1, contents TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
@@ -58,8 +57,6 @@ Inherits Beacon.DataSource
 		    Indexes.Add(New Beacon.DataIndex("tags_" + Category, False, "tag"))
 		  Next
 		  
-		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "marketplace", "marketplace_id", "WHERE is_local = 0"))
-		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "marketplace", "marketplace_id", "WHERE is_local = 1 AND (marketplace != '' OR marketplace_id != '')"))
 		  Indexes.Add(New Beacon.DataIndex("maps", False, "content_pack_id"))
 		  Indexes.Add(New Beacon.DataIndex("loot_containers", False, "sort_order"))
 		  
@@ -88,7 +85,7 @@ Inherits Beacon.DataSource
 		  
 		  Self.BeginTransaction()
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND is_local = 1;", ContentPackId)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND type = ?2;", ContentPackId, Beacon.ContentPack.TypeLocal)
 		  If Rows.RowCount = 0 Then
 		    Self.RollbackTransaction()
 		    Return False
@@ -120,7 +117,7 @@ Inherits Beacon.DataSource
 		  #endif
 		  
 		  Const Filename = "/Ark/Blueprints" + Beacon.FileExtensionDelta
-		  Var UserPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.Types.Custom)
+		  Var UserPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.TypeLocal)
 		  If UserPacks.Count = 0 Then
 		    Call UserCloud.Delete(Filename)
 		    Return
@@ -142,7 +139,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 203
+		  Return 204
 		End Function
 	#tag EndEvent
 
@@ -218,14 +215,7 @@ Inherits Beacon.DataSource
 		        Continue
 		      End If
 		      
-		      Var Pack As New Beacon.MutableContentPack(Ark.Identifier, Dict.Value("name").StringValue, Dict.Value("contentPackId").StringValue)
-		      Pack.IsConsoleSafe = Dict.Value("isConsoleSafe").BooleanValue
-		      Pack.IsDefaultEnabled = Dict.Value("isDefaultEnabled").BooleanValue
-		      Pack.Marketplace = Dict.Lookup("marketplace", "").StringValue
-		      Pack.MarketplaceId = Dict.Lookup("marketplaceId", "").StringValue
-		      Pack.IsLocal = Pack.MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
-		      Pack.LastUpdate = Dict.Value("lastUpdate").DoubleValue
-		      Pack.Required = Dict.Lookup("required", False).BooleanValue
+		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dict)
 		      Call Self.SaveContentPack(Pack, False)
 		    Next
 		  End If
@@ -597,7 +587,7 @@ Inherits Beacon.DataSource
 		  Select Case Mode
 		  Case ModeBinary
 		    Self.BeginTransaction()
-		    Var ContentPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.Types.Custom)
+		    Var ContentPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.TypeLocal)
 		    Var PacksToRemove As New Dictionary
 		    For Each ContentPack As Beacon.ContentPack In ContentPacks
 		      PacksToRemove.Value(ContentPack.ContentPackId) = ContentPack
@@ -654,7 +644,7 @@ Inherits Beacon.DataSource
 		    End Try
 		    
 		    Self.BeginTransaction()
-		    Var Packs() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.Types.Custom)
+		    Var Packs() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.TypeLocal)
 		    Var KeepPacks As New Beacon.StringList
 		    Var RemovePacks As New Beacon.StringList
 		    For Idx As Integer = Packs.FirstIndex To Packs.LastIndex
@@ -685,7 +675,7 @@ Inherits Beacon.DataSource
 		              MarketplaceId = Dict.Value("workshop_id").StringValue
 		            End If
 		            
-		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, is_local, game_id, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Marketplace, MarketplaceId, True, False, True, Self.Identifier, Now.SecondsFrom1970)
+		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, type, game_id, last_update, required) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Marketplace, MarketplaceId, True, False, Beacon.ContentPack.TypeLocal, Self.Identifier, Now.SecondsFrom1970, False, False)
 		          End If
 		        End If
 		      Catch Err As RuntimeException
@@ -817,8 +807,8 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub Open()
-		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled, last_update FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackId)
-		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Or Rows.Column("last_update").DoubleValue <> Beacon.FixedTimestamp Then
+		  Var Rows As RowSet = Self.SQLSelect("SELECT type, console_safe, default_enabled, last_update FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackId)
+		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("type").IntegerValue <> Beacon.ContentPack.TypeLocal Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Or Rows.Column("last_update").DoubleValue <> Beacon.FixedTimestamp Then
 		    Self.ReplaceUserBlueprints()
 		  End If
 		End Sub
@@ -828,49 +818,6 @@ Inherits Beacon.DataSource
 		Sub ReleaseLock()
 		  mLock.Leave
 		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Function SaveContentPack(Pack As Beacon.ContentPack) As Boolean
-		  // If the pack is local, work only with local packs. If the pack is official, work only with official packs.
-		  // No conversion should ever happen between local and official.
-		  
-		  Var Rows As RowSet
-		  If Pack.MarketplaceId.IsEmpty Then
-		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
-		  Else
-		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE marketplace = ?1 AND marketplace_id = ?2 AND is_local = ?3;", Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal)
-		  End If
-		  
-		  Var DidSave as Boolean
-		  Var NewContentPackId As String = Pack.ContentPackId
-		  Var ShouldInsert As Boolean = True
-		  If Rows.RowCount > 0 Then
-		    While Not Rows.AfterLastRow
-		      Var OldContentPackId As String = Rows.Column("content_pack_id").StringValue
-		      If OldContentPackId = NewContentPackId Then
-		        If Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
-		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9, required = ?10 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId, Pack.Required)
-		          DidSave = True
-		        End If
-		        ShouldInsert = False
-		        Rows.MoveToNextRow
-		        Continue
-		      End If
-		      
-		      Self.ScheduleContentPackMigration(OldContentPackId, NewContentPackId)
-		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", OldContentPackId)
-		      Rows.MoveToNextRow
-		    Wend
-		  End If
-		  
-		  If ShouldInsert Then
-		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id, required) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId, Pack.Required)
-		    DidSave = True
-		  End If
-		  
-		  Return DidSave
-		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -905,8 +852,8 @@ Inherits Beacon.DataSource
 		    Return False
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local FROM content_packs WHERE content_pack_id = ?1;", Item.ContentPackId)
-		  Return Rows.RowCount = 1 And Rows.Column("is_local").BooleanValue
+		  Var Rows As RowSet = Self.SQLSelect("SELECT type FROM content_packs WHERE content_pack_id = ?1;", Item.ContentPackId)
+		  Return Rows.RowCount = 1 And Rows.Column("type").IntegerValue = Beacon.ContentPack.TypeLocal
 		End Function
 	#tag EndMethod
 
@@ -1519,7 +1466,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetContentPackWithSteamId(SteamId As String) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, required FROM content_packs WHERE marketplace_id = ?1 ORDER BY is_local DESC LIMIT 1;", SteamId)
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace_id = ?1 ORDER BY type DESC LIMIT 1;", SteamId)
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
 		  If Packs.Count = 1 Then
 		    Return Packs(0)
@@ -1528,8 +1475,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPackWithSteamId(SteamId As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, required FROM content_packs WHERE marketplace_id = ?1 AND is_local = ?2 ORDER BY is_local DESC LIMIT 1;", SteamId, Type = Beacon.ContentPack.Types.Custom)
+		Function GetContentPackWithSteamId(SteamId As String, Type As Integer) As Beacon.ContentPack
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace_id = ?1 AND type = ?2 0 ORDER BY type DESC LIMIT 1;", SteamId, Type)
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
 		  If Packs.Count = 1 Then
 		    Return Packs(0)
@@ -2509,9 +2456,8 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local, last_update, marketplace, marketplace_id, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, '', '', ?7);", Ark.UserContentPackId, Ark.UserContentPackName, True, True, True, Beacon.FixedTimestamp, Ark.Identifier)
-		  Self.CommitTransaction()
+		  Var Pack As Beacon.ContentPack = Beacon.ContentPack.CreateUserContentPack(Self.Identifier, Ark.UserContentPackName, Ark.UserContentPackId)
+		  Call Self.SaveContentPack(Pack, False)
 		End Sub
 	#tag EndMethod
 
@@ -2872,7 +2818,7 @@ Inherits Beacon.DataSource
 		      Try
 		        Var Rows As RowSet
 		        If LocalModsOnly Then
-		          Rows = Self.SQLSelect("SELECT content_pack_id FROM blueprints WHERE object_id = ?1 AND content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1);", BlueprintId)
+		          Rows = Self.SQLSelect("SELECT content_pack_id FROM blueprints WHERE object_id = ?1 AND content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE type = ?2);", BlueprintId, Beacon.ContentPack.TypeLocal)
 		        Else
 		          Rows = Self.SQLSelect("SELECT content_pack_id FROM blueprints WHERE object_id = ?1;", BlueprintId)
 		        End If
@@ -2909,7 +2855,7 @@ Inherits Beacon.DataSource
 		        Var UpdateBlueprintId, CurrentTagString As String
 		        Var Results As RowSet
 		        If LocalModsOnly Then
-		          Results = Self.SQLSelect("SELECT object_id, last_update, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1 OR (content_pack_id = ?2 AND path = ?3);", Blueprint.BlueprintId, Blueprint.ContentPackId, Blueprint.Path)
+		          Results = Self.SQLSelect("SELECT object_id, last_update, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE type = ?4) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1 OR (content_pack_id = ?2 AND path = ?3);", Blueprint.BlueprintId, Blueprint.ContentPackId, Blueprint.Path, Beacon.ContentPack.TypeLocal)
 		        Else
 		          Results = Self.SQLSelect("SELECT object_id, last_update, tags FROM blueprints WHERE object_id = ?1 OR (content_pack_id = ?2 AND path = ?3);", Blueprint.BlueprintId, Blueprint.ContentPackId, Blueprint.Path)
 		        End If
