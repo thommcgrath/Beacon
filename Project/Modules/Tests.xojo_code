@@ -331,18 +331,32 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestHumanReadable()
-		  Var Conversions As New Dictionary
-		  Conversions.Value("PrimalItemResource_AmargaSpike_ASA_C") = "Amarga Spike ASA"
-		  Conversions.Value("PrimalItemResource_ASA_AmargaSpike_C") = "ASA Amarga Spike"
-		  Conversions.Value("PrimalItemResource_ASAAmargaSpike_C") = "ASA Amarga Spike"
-		  Conversions.Value("PrimalItemResource_AmargaASASpike_C") = "Amarga ASA Spike"
-		  Conversions.Value("PrimalItemResource_ASA_amargaSpike_C") = "ASA Amarga Spike"
+		  Var LabelConversions As New Dictionary
+		  LabelConversions.Value("PrimalItemResource_AmargaSpike_ASA_C") = "Amarga Spike ASA"
+		  LabelConversions.Value("PrimalItemResource_ASA_AmargaSpike_C") = "ASA Amarga Spike"
+		  LabelConversions.Value("PrimalItemResource_ASAAmargaSpike_C") = "ASA Amarga Spike"
+		  LabelConversions.Value("PrimalItemResource_AmargaASASpike_C") = "Amarga ASA Spike"
+		  LabelConversions.Value("PrimalItemResource_ASA_amargaSpike_C") = "ASA Amarga Spike"
 		  
-		  For Each Entry As DictionaryEntry In Conversions
+		  For Each Entry As DictionaryEntry In LabelConversions
 		    Var ClassString As String = Entry.Key
 		    Var DesiredLabel As String = Entry.Value
 		    Var ComputedLabel As String = ArkSA.LabelFromClassString(ClassString)
 		    Call Assert(DesiredLabel.Compare(ComputedLabel, ComparisonOptions.CaseSensitive) = 0, "Label from class string is incorrect. Expected `" + DesiredLabel + "` from `" + ClassString + "`, but got `" + ComputedLabel + "`.")
+		  Next
+		  
+		  Var WordConversions As New Dictionary
+		  WordConversions.Value("PrimalItemResource_AmargaSpike_ASA_C") = "primal item resource amarga spike asa"
+		  WordConversions.Value("PrimalItemResource_ASA_AmargaSpike_C") = "primal item resource asa amarga spike"
+		  WordConversions.Value("PrimalItemResource_ASAAmargaSpike_C") = "primal item resource asa amarga spike"
+		  WordConversions.Value("PrimalItemResource_AmargaASASpike_C") = "primal item resource amarga asa spike"
+		  WordConversions.Value("PrimalItemResource_ASA_amargaSpike_C") = "primal item resource asa amarga spike"
+		  
+		  For Each Entry As DictionaryEntry In WordConversions
+		    Var ClassString As String = Entry.Key
+		    Var DesiredWords As String = Entry.Value.StringValue
+		    Var ComputedWords As String = String.FromArray(ArkSA.ClassStringToWords(ClassString), " ")
+		    Call Assert(DesiredWords.Compare(ComputedWords, ComparisonOptions.CaseSensitive) = 0, "Words from class string is incorrect. Expected `" + DesiredWords + "` from `" + ClassString + "`, but got `" + ComputedWords + "`.")
 		  Next
 		End Sub
 	#tag EndMethod

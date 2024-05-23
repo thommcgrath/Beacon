@@ -283,7 +283,7 @@ Protected Module ArkSA
 		  Static CapitalsPattern As Regex
 		  If CapitalsPattern Is Nil Then
 		    CapitalsPattern = New Regex
-		    CapitalsPattern.SearchPattern = "[A-Z]"
+		    CapitalsPattern.SearchPattern = "[A-Z][a-z]"
 		    CapitalsPattern.Options.CaseSensitive = True
 		  End If
 		  
@@ -291,7 +291,7 @@ Protected Module ArkSA
 		    ClassString = ClassString.Left(ClassString.Length - 2)
 		  End If
 		  
-		  Var Patterns() As Regex = Array(AcronymsPattern, CapitalsPattern)
+		  Var Patterns() As Regex = Array(CapitalsPattern, AcronymsPattern)
 		  For Each Pattern As Regex In Patterns
 		    Do
 		      Var Matches As RegexMatch = Pattern.Search(ClassString)
