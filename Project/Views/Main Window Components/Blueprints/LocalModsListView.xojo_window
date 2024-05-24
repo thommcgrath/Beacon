@@ -498,6 +498,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Function IsUserContentPack(Pack As Beacon.ContentPack) As Boolean
+		  If Pack Is Nil Then
+		    Return False
+		  End If
+		  
+		  Select Case Pack.ContentPackId
+		  Case Ark.UserContentPackId, ArkSA.UserContentPackId, Palworld.UserContentPackId, SDTD.UserContentPackId
+		    Return True
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mProgress_CancelPressed(Sender As ProgressWindow)
 		  #Pragma Unused Sender
 		  
@@ -979,10 +992,9 @@ End
 		        Continue
 		      End If
 		      
-		      Select Case Pack.ContentPackId
-		      Case Ark.UserContentPackId, ArkSA.UserContentPackId, Palworld.UserContentPackId, SDTD.UserContentPackId
+		      If Self.IsUserContentPack(Pack) Then
 		        Continue
-		      End Select
+		      End If
 		      
 		      Names.Add(Pack.Name)
 		      Packs.Add(Pack)
@@ -1039,12 +1051,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub SelectionChanged()
-		  Var EnableOpening, EnableEditing As Boolean
+		  Var EnableOpening, EnableEditing, EnableSettings As Boolean
 		  If Me.SelectedRowCount = 1 Then
 		    EnableOpening = True
 		    Var Pack As Beacon.ContentPack = Me.RowTagAt(Me.SelectedRowIndex)
 		    If Pack.IsLocal Or Me.CellTagAt(Me.SelectedRowIndex, Self.ColumnType) = ModsListView.ViewModes.Remote Then
 		      EnableEditing = True
+		      EnableSettings = (Self.IsUserContentPack(Pack) = False)
 		    End If
 		  End If
 		  
@@ -1058,7 +1071,7 @@ End
 		  End If
 		  
 		  If (Self.ModsToolbar.Item("EditMod") Is Nil) = False Then
-		    Self.ModsToolbar.Item("EditMod").Enabled = EnableEditing
+		    Self.ModsToolbar.Item("EditMod").Enabled = EnableSettings
 		  End If
 		  
 		  Self.UpdateUI()
@@ -1080,6 +1093,7 @@ End
 		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Export the selected mod or mods to be shared with other Beacon users.", False))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EditModBlueprints", "Edit Blueprints", IconToolbarEdit, "Edit the blueprints provided by the selected mod.", Self.ModsList.SelectedRowCount = 1))
+		  Me.Append(OmniBarItem.CreateButton("EditMod", "Mod Settings", IconToolbarSettings, "Change settings for the selected mod.", False))
 		  Me.Append(OmniBarItem.CreateSpace)
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateSpace)
@@ -1116,6 +1130,15 @@ End
 		    End Select
 		  Case "EditModBlueprints"
 		    Self.ModsList.DoEdit()
+		  Case "EditMod"
+		    Var Pack As Beacon.ContentPack = Self.ModsList.RowTagAt(Self.ModsList.SelectedRowIndex)
+		    If Self.CloseModView(Pack.ContentPackId) = False Then
+		      Self.ShowAlert("Mod content editor must be closed to edit settings.", "Save or discard your work, close the view, and try again.")
+		      Return
+		    End If
+		    If ModSettingsDialog.Present(Self, Pack) Then
+		      Self.RefreshMods()
+		    End If
 		  Case "DiscoverMods"
 		    Self.RunModDiscovery()
 		  Case "ImportButton"

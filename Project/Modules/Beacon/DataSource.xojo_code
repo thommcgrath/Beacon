@@ -358,6 +358,63 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EditContentPack(Pack As Beacon.ContentPack, NewName As String, NewMarketplace As String, NewMarketplaceId As String) As Boolean
+		  Var Changed As Boolean
+		  
+		  Self.BeginTransaction()
+		  
+		  If Pack.Name.Compare(NewName, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.SQLExecute("UPDATE content_packs SET name = ?2 WHERE content_pack_id = ?1;", Pack.ContentPackId, NewName)
+		    Changed = True
+		  End If
+		  
+		  Var OldContentPackId, NewContentPackId As String
+		  If (NewMarketplace.IsEmpty Or NewMarketplaceId.IsEmpty) And (Pack.Marketplace.IsEmpty = False Or Pack.MarketplaceId.IsEmpty = False) Then
+		    // Switch to random uuid
+		    OldContentPackId = Pack.ContentPackId
+		    NewContentPackId = Beacon.UUID.v4
+		  ElseIf Pack.MarketplaceId.Compare(NewMarketplaceId, ComparisonOptions.CaseSensitive) <> 0 Or Pack.Marketplace.Compare(NewMarketplace, ComparisonOptions.CaseSensitive) <> 0 Then
+		    OldContentPackId = Pack.ContentPackId
+		    NewContentPackId = Beacon.ContentPack.GenerateLocalContentPackId(NewMarketplace, NewMarketplaceId)
+		  End If
+		  
+		  If OldContentPackId <> NewContentPackId Then
+		    Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1;", NewContentPackId)
+		    If Rows.RowCount <> 0 Then
+		      Self.RollbackTransaction()
+		      Return False
+		    End If
+		    
+		    // Need to migrate
+		    Var RunMigrations As Boolean
+		    If Self.mContentPackMigration Is Nil Then
+		      Self.mContentPackMigration = New Dictionary
+		      RunMigrations = True
+		    End If
+		    
+		    Self.SQLExecute("UPDATE content_packs SET content_pack_id = ?2, marketplace = ?3, marketplace_id = ?4 WHERE content_pack_id = ?1;", OldContentPackId, NewContentPackId, NewMarketplace, NewMarketplaceId)
+		    Self.ScheduleContentPackMigration(OldContentPackId, NewContentPackId)
+		    
+		    If RunMigrations Then
+		      Self.RunContentPackMigrations()
+		      Self.mContentPackMigration = Nil
+		    End If
+		    
+		    Changed = True
+		  End If
+		  
+		  If Changed Then
+		    Self.CommitTransaction()
+		    Self.ExportCloudFiles()
+		  Else
+		    Self.RollbackTransaction()
+		  End If
+		  
+		  Return Changed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function EscapeIdentifier(Identifier As String) As String
 		  Return """" + Identifier.ReplaceAll("""", """""") + """"
 		End Function
