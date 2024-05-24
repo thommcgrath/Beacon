@@ -479,6 +479,14 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin DesktopMenuItem HelpEmptyCaches
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Empty Caches"
+         AutoEnabled = False
+         AutoEnable = False
+         Visible = True
+      End
       Begin DesktopMenuItem HelpMigrateAccountsSeparator
          SpecialMenu = 0
          Index = -2147483648

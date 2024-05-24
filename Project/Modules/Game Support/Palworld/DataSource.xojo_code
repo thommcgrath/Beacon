@@ -39,6 +39,12 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub EmptyCaches()
+		  Self.mConfigOptionCache = New Dictionary
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function GetSchemaVersion() As Integer
 		  Return 102
 		End Function

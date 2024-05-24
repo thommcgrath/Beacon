@@ -99,6 +99,18 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub EmptyCaches()
+		  Self.mBlueprintCache = New Dictionary
+		  Self.mConfigOptionCache = New Dictionary
+		  Self.mContainerLabelCacheDict = New Dictionary
+		  Self.mContainerLabelCacheMask = 0
+		  Self.mIconCache = New Dictionary
+		  Self.mSpawnLabelCacheDict = New Dictionary
+		  Self.mSpawnLabelCacheMask = 0
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ExportCloudFiles()
 		  Const Filename = "/ArkSA/Blueprints" + Beacon.FileExtensionDelta
 		  Var UserPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.TypeLocal)

@@ -81,6 +81,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    FileNewPreset.Enabled = True
 		    FileOpen.Enabled = True
 		    FileImport.Enabled = True
+		    HelpEmptyCaches.Enabled = True
 		    
 		    Var DefaultGameId As String = Preferences.NewProjectGameId
 		    If DefaultGameId.IsEmpty Then
@@ -382,6 +383,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
 		  Self.StartTicket()
+		  Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpEmptyCaches() As Boolean Handles HelpEmptyCaches.Action
+		  Var Sources() As Beacon.DataSource = Self.DataSources
+		  For Each Source As Beacon.DataSource In Sources
+		    Source.EmptyCaches()
+		  Next
+		  BeaconUI.ShowAlert("Caches have been emptied. It is recommended to reload any open projects.", "Opening a project loads the caches with data that may not be stored in your local database. Reloading your projects after emptying caches will improve reliability.")
 		  Return True
 		End Function
 	#tag EndMenuHandler

@@ -415,6 +415,12 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub EmptyCaches()
+		  RaiseEvent EmptyCaches
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function EscapeIdentifier(Identifier As String) As String
 		  Return """" + Identifier.ReplaceAll("""", """""") + """"
 		End Function
@@ -1216,6 +1222,10 @@ Implements NotificationKit.Receiver
 
 	#tag Hook, Flags = &h0
 		Event DeleteContentPack(ContentPackId As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EmptyCaches()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
