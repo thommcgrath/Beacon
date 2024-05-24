@@ -45,7 +45,6 @@ Begin ModEditorView ArkSAModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -76,7 +75,7 @@ Begin ModEditorView ArkSAModEditorView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   900
       Begin BeaconListbox BlueprintList
@@ -369,7 +368,6 @@ Begin ModEditorView ArkSAModEditorView
       End
    End
    Begin ArkSA.ModDiscoveryEngine DiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -384,6 +382,11 @@ End
 		  Self.ViewTitle = Self.mController.ContentPackName
 		  Self.SwitchMode(ArkSA.BlueprintController.ModeEngrams)
 		  Self.Status.RightCaption = Self.mController.ContentPackId
+		  
+		  If Self.mReadOnly Then
+		    Self.Status.LeftCaption = "Read Only"
+		    Self.BlueprintList.EditCaption = "View"
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -472,7 +475,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Controller As ArkSA.BlueprintController)
+		Sub Constructor(Controller As ArkSA.BlueprintController, ReadOnly As Boolean)
 		  Self.mBlueprints.ResizeTo(ArkSA.BlueprintController.LastMode)
 		  Self.mHasRequestedBlueprints.ResizeTo(ArkSA.BlueprintController.LastMode)
 		  Self.mLoadTotals.ResizeTo(ArkSA.BlueprintController.LastMode)
@@ -488,6 +491,7 @@ End
 		  
 		  Self.mController = Controller
 		  Self.ViewID = Controller.ContentPackId
+		  Self.mReadOnly = ReadOnly
 		End Sub
 	#tag EndMethod
 
@@ -967,7 +971,7 @@ End
 		  End If
 		  Self.Status.CenterCaption = Status
 		  
-		  Var PublishEnabled As Boolean = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
+		  Var PublishEnabled As Boolean = Self.mReadOnly = False And (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
 		  If (Self.ButtonsToolbar.Item("Publish") Is Nil) = False Then
 		    Self.ButtonsToolbar.Item("Publish").Enabled = PublishEnabled
 		  End If
@@ -1041,6 +1045,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mReadOnly As Boolean
 	#tag EndProperty
 
 
@@ -1122,7 +1130,7 @@ End
 #tag Events BlueprintList
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1182,7 +1190,7 @@ End
 		      Return
 		    End If
 		    
-		    Blueprint = ArkSABlueprintEditorDialog.Present(Self, Blueprint)
+		    Blueprint = ArkSABlueprintEditorDialog.Present(Self, Blueprint, Self.mReadOnly)
 		    If Blueprint Is Nil Then
 		      Return
 		    End If
@@ -1201,7 +1209,7 @@ End
 		    Var BlueprintIds(0) As String
 		    BlueprintIds(0) = Blueprint.BlueprintId
 		    Self.UpdateList(BlueprintIds, True)
-		  ElseIf Me.SelectedRowCount > 1 Then
+		  ElseIf Me.SelectedRowCount > 1 And Self.mReadOnly = False Then
 		    Var Blueprints() As ArkSA.Blueprint
 		    Var Indexes As New Dictionary
 		    For Row As Integer = 0 To Me.LastRowIndex
@@ -1278,7 +1286,7 @@ End
 #tag Events ButtonsToolbar
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("AddBlueprint", "New Blueprint", IconToolbarAdd, "Create a new blueprint."))
+		  Me.Append(OmniBarItem.CreateButton("AddBlueprint", "New Blueprint", IconToolbarAdd, "Create a new blueprint.", Not Self.mReadOnly))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  If Self.mController.UseSaveTerminology Then
 		    Me.Append(OmniBarItem.CreateButton("Publish", "Save", IconToolbarSaveToDisk, "Save your changes.", False))
@@ -1287,7 +1295,7 @@ End
 		  End If
 		  Me.Append(OmniBarItem.CreateButton("Discard", "Revert", IconToolbarRevert, "Revert your changes.", False))
 		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("Import", "Import", IconToolbarImport, "Import blueprints from a file, url, or your " + Language.Clipboard.Lowercase + "."))
+		  Me.Append(OmniBarItem.CreateButton("Import", "Import", IconToolbarImport, "Import blueprints from a file, url, or your " + Language.Clipboard.Lowercase + ".", Not Self.mReadOnly))
 		  Me.Append(OmniBarItem.CreateButton("ExportFile", "Export", IconToolbarExport, "Export selected blueprints to a file on your computer."))
 		  
 		End Sub

@@ -529,8 +529,37 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mReadOnly As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean = True
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mReadOnly
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mReadOnly = Value Then
+			    Return
+			  End If
+			  
+			  Self.mReadOnly = Value
+			  
+			  Self.MaxItemSetsField.ReadOnly = Value
+			  Self.MinItemSetsField.ReadOnly = Value
+			  Self.AppendModeCheck.Enabled = Not Value
+			  Self.NoDuplicatesCheck.Enabled = Not Value
+			  Self.MaxItemSetsStepper.Enabled = Not Value
+			  Self.MinItemSetsStepper.Enabled = Not Value
+			End Set
+		#tag EndSetter
+		ReadOnly As Boolean
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = CollapsedHeight, Type = Double, Dynamic = False, Default = \"23", Scope = Private

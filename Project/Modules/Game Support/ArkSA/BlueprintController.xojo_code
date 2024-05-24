@@ -90,7 +90,7 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ContentPack As BeaconAPI.ContentPack)
+		Sub Constructor(ContentPack As Beacon.ContentPack)
 		  Self.mContentPackId = ContentPack.ContentPackId
 		  Self.mContentPackName = ContentPack.Name
 		  Self.mMarketplace = ContentPack.Marketplace

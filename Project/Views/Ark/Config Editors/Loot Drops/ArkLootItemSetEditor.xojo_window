@@ -517,12 +517,36 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mReadOnly As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRef As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mUsingCompactMode As Boolean
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mReadOnly
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mReadOnly = Value Then
+			    Return
+			  End If
+			  
+			  Self.mReadOnly = Value
+			  Self.EditorToolbar.Item("AddEntryButton").Enabled = Not Value
+			  Self.Settings.ReadOnly = Value
+			End Set
+		#tag EndSetter
+		ReadOnly As Boolean
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = ColumnFigures, Type = Double, Dynamic = False, Default = \"3", Scope = Private
@@ -554,7 +578,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.HasClipboardData(Self.kClipboardType)
+		  Return Self.mReadOnly = False And Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -609,7 +633,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowIndex > -1
+		  Return Me.SelectedRowIndex > -1 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -618,25 +642,27 @@ End
 		  #Pragma Unused Y
 		  
 		  Var CreateBlueprintItem As New DesktopMenuItem("Create Blueprint Entry", "createblueprintentry")
-		  CreateBlueprintItem.Enabled = Me.SelectedRowCount > 0
+		  CreateBlueprintItem.Enabled = Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		  Base.AddMenu(CreateBlueprintItem)
 		  
 		  Var SplitEngramsItem As New DesktopMenuItem("Split Engrams", "splitengrams")
 		  SplitEngramsItem.Enabled = False
-		  For I As Integer = 0 To Me.LastRowIndex
-		    If Not Me.RowSelectedAt(I) Then
-		      Continue
-		    End If
-		    Var Entry As Ark.LootItemSetEntry = Me.RowTagAt(I)
-		    If Entry.Count > 1 Then
-		      SplitEngramsItem.Enabled = True
-		      Exit
-		    End If
-		  Next
+		  If Self.mReadOnly = False Then
+		    For I As Integer = 0 To Me.LastRowIndex
+		      If Not Me.RowSelectedAt(I) Then
+		        Continue
+		      End If
+		      Var Entry As Ark.LootItemSetEntry = Me.RowTagAt(I)
+		      If Entry.Count > 1 Then
+		        SplitEngramsItem.Enabled = True
+		        Exit
+		      End If
+		    Next
+		  End If
 		  Base.AddMenu(SplitEngramsItem)
 		  
 		  Var MergeEngramsItem As New DesktopMenuItem("Merge Engrams", "mergeengrams")
-		  MergeEngramsItem.Enabled = Me.SelectedRowCount > 1
+		  MergeEngramsItem.Enabled = Me.SelectedRowCount > 1 And Self.mReadOnly = False
 		  Base.AddMenu(MergeEngramsItem)
 		  
 		  Return True
@@ -737,7 +763,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1068,6 +1094,14 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ReadOnly"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

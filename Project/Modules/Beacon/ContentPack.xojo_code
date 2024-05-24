@@ -1,5 +1,11 @@
 #tag Class
 Protected Class ContentPack
+	#tag Method, Flags = &h0
+		Function ConfirmationCode() As String
+		  Return Self.mConfirmationCode
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
 		  
@@ -18,6 +24,8 @@ Protected Class ContentPack
 		  Self.mMarketplaceId = Source.mMarketplaceId
 		  Self.mName = Source.mName
 		  Self.mRequired = Source.mRequired
+		  Self.mIsConfirmed = Source.mIsConfirmed
+		  Self.mConfirmationCode = Source.mConfirmationCode
 		End Sub
 	#tag EndMethod
 
@@ -35,6 +43,7 @@ Protected Class ContentPack
 		  Self.mLastUpdate = DateTime.Now.SecondsFrom1970
 		  Self.mName = Name
 		  Self.mRequired = False
+		  Self.mIsConfirmed = True
 		End Sub
 	#tag EndMethod
 
@@ -72,6 +81,7 @@ Protected Class ContentPack
 		    End If
 		    Pack.mLastUpdate = Row.Column("last_update").DoubleValue
 		    Pack.mRequired = Row.Column("required").BooleanValue
+		    Pack.mIsConfirmed = True
 		    Return Pack
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Building Beacon.ContentPack from DatabaseRow")
@@ -94,7 +104,14 @@ Protected Class ContentPack
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary) As Beacon.ContentPack
-		  If SaveData Is Nil Or SaveData.KeyCount = 0 Or SaveData.HasAllKeys("contentPackId", "gameId", "name", "isConsoleSafe", "isDefaultEnabled", "minVersion") = False Then
+		  Var Json As New JSONItem(SaveData)
+		  Return FromSaveData(Json)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(SaveData As JSONItem) As Beacon.ContentPack
+		  If SaveData Is Nil Or SaveData.HasAllKeys("contentPackId", "gameId", "name", "isConsoleSafe", "isDefaultEnabled", "minVersion") = False Then
 		    Return Nil
 		  End If
 		  
@@ -128,6 +145,14 @@ Protected Class ContentPack
 		    If SaveData.HasKey("required") Then
 		      Pack.mRequired = SaveData.Value("required")
 		    End If
+		    If SaveData.HasKey("isConfirmed") Then
+		      Pack.mIsConfirmed = SaveData.Value("isConfirmed")
+		    Else
+		      Pack.mIsConfirmed = True
+		    End If
+		    If SaveData.HasKey("confirmationCode") Then
+		      Pack.mConfirmationCode = SaveData.Value("confirmationCode")
+		    End If
 		    Return Pack
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Building Beacon.ContentPack from Dictionary")
@@ -156,6 +181,12 @@ Protected Class ContentPack
 	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Beacon.ContentPack
 		  Return Self
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsConfirmed() As Boolean
+		  Return Self.mIsConfirmed
 		End Function
 	#tag EndMethod
 
@@ -263,6 +294,8 @@ Protected Class ContentPack
 		  SaveData.Value("minVersion") = 20000000
 		  SaveData.Value("lastUpdate") = Self.mLastUpdate
 		  SaveData.Value("required") = Self.mRequired
+		  SaveData.Value("isConfirmed") = Self.mIsConfirmed
+		  SaveData.Value("confirmationCode") = Self.mConfirmationCode
 		  Return SaveData
 		End Function
 	#tag EndMethod
@@ -274,12 +307,20 @@ Protected Class ContentPack
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mConfirmationCode As String
+	#tag EndProperty
+
 	#tag Property, Flags = &h1
 		Protected mContentPackId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mGameId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsConfirmed As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

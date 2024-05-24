@@ -876,7 +876,7 @@ End
 		  Self.NameShowInstructionsCheck.Top = Self.NameActionButton.Top
 		  Self.HeightName = Self.NameActionButton.Bottom + 20
 		  
-		  If (Self.mModInfo Is Nil) = False Then
+		  If (Self.mPack Is Nil) = False Then
 		    Self.ShowConfirmation()
 		  Else
 		    Self.MinimumHeight = Self.HeightIntro
@@ -911,11 +911,12 @@ End
 		  #Pragma Unused Request
 		  
 		  If Response.Success Then
-		    Self.mModInfo.Constructor(Dictionary(Response.JSON))
+		    Var UpdatedPack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(New JSONItem(Response.Content))
+		    Self.mPack.Constructor(UpdatedPack)
 		    Self.ShowConfirmation()
-		    If Self.mModInfo.Confirmed Then
+		    If Self.mPack.IsConfirmed Then
 		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your CurseForge page.")
-		      Self.mModId = Self.mModInfo.ContentPackId
+		      Self.mModId = Self.mPack.ContentPackId
 		      Self.Hide
 		      Return
 		    Else
@@ -947,11 +948,11 @@ End
 		Private Sub APICallback_RegisterMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
-		  If Response.Success And Response.JSONParsed Then
+		  If Response.Success Then
 		    Try
-		      Var Mods() As Dictionary = Response.JSON.DictionaryArrayValue
-		      If Mods.Count = 1 Then
-		        Self.mModInfo = New BeaconAPI.ContentPack(Mods(0))
+		      Var Json As New JSONItem(Response.Content)
+		      If Json.IsArray And Json.Count = 1 Then
+		        Self.mPack = Beacon.ContentPack.FromSaveData(Json.ChildAt(0))
 		        Self.ShowConfirmation()
 		        Return
 		      End If
@@ -981,8 +982,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ModInfo As BeaconAPI.ContentPack, Mode As Integer)
-		  Self.mModInfo = ModInfo
+		Private Sub Constructor(Pack As Beacon.ContentPack, Mode As Integer)
+		  Self.mPack = Pack
 		  Self.mMode = Mode
 		  Super.Constructor
 		End Sub
@@ -1058,7 +1059,7 @@ End
 		            ShouldAbort = True
 		          End If
 		        End If
-		      Else
+		      ElseIf ContentPacks(0).IsLocal = False Then
 		        ShouldAbort = True
 		        Self.ShowAlert("Beacon already supports this mod.", "You can turn on the mod using the ""Mods"" button in your project's toolbar.")
 		      End If
@@ -1094,13 +1095,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ModInfo As BeaconAPI.ContentPack) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Pack As Beacon.ContentPack) As Boolean
 		  If (Parent Is Nil) = False Then
 		    Parent = Parent.TrueWindow
 		  End If
 		  
-		  Var Mode As Integer = If(ModInfo.IsLocal, ModeLocal, ModeRemote)
-		  Var Win As New ArkSARegisterModDialog(ModInfo, Mode)
+		  Var Mode As Integer = If(Pack.IsLocal, ModeLocal, ModeRemote)
+		  Var Win As New ArkSARegisterModDialog(Pack, Mode)
 		  Win.SwapButtons()
 		  Win.ShowModal(Parent)
 		  Var ModId As String = Win.mModId
@@ -1126,13 +1127,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowConfirmation()
-		  If Self.mModInfo Is Nil Then
+		  If Self.mPack Is Nil Then
 		    Self.Hide
 		    Return
 		  End If
 		  
-		  Self.ConfirmMessageLabel.Text = "Confirm Ownership of " + Self.mModInfo.Name
-		  Self.ConfirmCodeField.Text = Self.mModInfo.ConfirmationCode
+		  Self.ConfirmMessageLabel.Text = "Confirm Ownership of " + Self.mPack.Name
+		  Self.ConfirmCodeField.Text = Self.mPack.ConfirmationCode
 		  
 		  Self.Pages.SelectedPanelIndex = Self.PageConfirm
 		End Sub
@@ -1181,11 +1182,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModInfo As BeaconAPI.ContentPack
+		Private mModName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModName As String
+		Private mPack As Beacon.ContentPack
 	#tag EndProperty
 
 
@@ -1304,7 +1305,7 @@ End
 #tag Events ConfirmActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Request As New BeaconAPI.Request("/contentPacks/" + Self.mModInfo.ContentPackId + "/confirm", "GET", AddressOf APICallback_ConfirmMod)
+		  Var Request As New BeaconAPI.Request("/contentPacks/" + Self.mPack.ContentPackId + "/confirm", "GET", AddressOf APICallback_ConfirmMod)
 		  Self.ConfirmSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1421,12 +1422,12 @@ End
 	#tag Event
 		Sub Run()
 		  Var ModId As String
-		  Var ModInfo As BeaconAPI.ContentPack
+		  Var Pack As Beacon.ContentPack
 		  If Self.mMode = Self.ModeLocal Then
 		    Var Database As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
 		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mCurseForgeId.ToString(Locale.Raw, "0"), True)
 		    ModId = ContentPack.ContentPackId
-		    ModInfo = New BeaconAPI.ContentPack(ContentPack)
+		    Pack = ContentPack
 		  Else
 		    ModId = Beacon.UUID.v4
 		    Var PackData As New Dictionary
@@ -1467,7 +1468,7 @@ End
 		        For Idx As Integer = 0 To Bound
 		          Var Child As JsonItem = List.ChildAt(Idx)
 		          If Child.Lookup("contentPackId", "") = ModId Then
-		            ModInfo = New BeaconAPI.ContentPack(Child)
+		            Pack = Beacon.ContentPack.FromSaveData(Child)
 		            Exit For List
 		          End If
 		        Next
@@ -1477,7 +1478,7 @@ End
 		    End Try
 		  End If
 		  
-		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Success": True, "ModId": ModId, "ModInfo": ModInfo))
+		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Success": True, "ModId": ModId, "ContentPack": Pack))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1492,7 +1493,7 @@ End
 		        End If
 		        
 		        Self.mModId = Dict.Lookup("ModId", "")
-		        Self.mModInfo = Dict.Lookup("ModInfo", Nil)
+		        Self.mPack = Dict.Lookup("ContentPack", Nil)
 		        If Self.mMode = Self.ModeLocal Then
 		          Self.Hide
 		        Else

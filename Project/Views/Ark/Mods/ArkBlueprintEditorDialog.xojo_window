@@ -2256,6 +2256,26 @@ End
 		    Self.Height = Self.MinimumHeight
 		  End If
 		  
+		  For Each Ctrl As Object In Self.Controls
+		    If Ctrl IsA DesktopTextField Then
+		      DesktopTextField(Ctrl).ReadOnly = Self.mReadOnly
+		    ElseIf Ctrl IsA DesktopPopupMenu Then
+		      DesktopPopupMenu(Ctrl).Enabled = Not Self.mReadOnly
+		    ElseIf Ctrl IsA DesktopCheckBox Then
+		      DesktopCheckBox(Ctrl).Enabled = Not Self.mReadOnly
+		    ElseIf Ctrl IsA DesktopTextArea Then
+		      DesktopTextArea(Ctrl).ReadOnly = Self.mReadOnly
+		    End If
+		  Next
+		  Self.EngramAddIngredient.Enabled = Not Self.mReadOnly
+		  Self.CreatureAddStatButton.Enabled = Not Self.mReadOnly
+		  Self.AllMapsRadio.Enabled = Not Self.mReadOnly
+		  Self.SpecificMapsRadio.Enabled = Not Self.mReadOnly
+		  Self.MapSelector.Enabled = Self.SpecificMapsRadio.Enabled And Self.SpecificMapsRadio.Value
+		  Self.DropEditor.ReadOnly = Self.mReadOnly
+		  Self.SpawnPointEditor1.ReadOnly = Self.mReadOnly
+		  Self.LootSortSuggestButton.Enabled = Not Self.mReadOnly
+		  
 		  Self.Modified = False
 		End Sub
 	#tag EndEvent
@@ -2269,20 +2289,22 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Blueprint As Ark.Blueprint)
+		Private Sub Constructor(Blueprint As Ark.Blueprint, ReadOnly As Boolean)
 		  Self.mOriginalBlueprint = Blueprint.ImmutableVersion
 		  Self.mContentPackId = Blueprint.ContentPackId
 		  Self.mContentPackName = Blueprint.ContentPackName
+		  Self.mReadOnly = ReadOnly
 		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ContentPackId As String, ContentPackName As String)
+		Private Sub Constructor(ContentPackId As String, ContentPackName As String, ReadOnly As Boolean)
 		  Self.mOriginalBlueprint = Nil
 		  Self.mContentPackId = ContentPackId
 		  Self.mContentPackName = ContentPackName
+		  Self.mReadOnly = ReadOnly
 		  
 		  Super.Constructor
 		End Sub
@@ -2375,16 +2397,26 @@ End
 		  Self.LootNotesArea.Text = Container.Notes
 		  Self.LootSortField.DoubleValue = Container.SortValue
 		  
+		  Var Override As New Ark.MutableLootDropOverride(Container, True)
+		  If Override.Count = 0 Then
+		    Ark.DataSource.Pool.Get(False).LoadDefaults(Override)
+		  End If
+		  
 		  Var Overrides(0) As Ark.LootDropOverride
-		  Overrides(0) = New Ark.LootDropOverride(Container, True)
+		  Overrides(0) = Override.ImmutableVersion
 		  Self.DropEditor.Overrides = Overrides
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub LoadBlueprint(Point As Ark.SpawnPoint)
+		  Var Override As New Ark.MutableSpawnPointOverride(Point, Ark.SpawnPointOverride.ModeOverride, True)
+		  If Override.Count = 0 Then
+		    Ark.DataSource.Pool.Get(False).LoadDefaults(Override)
+		  End If
+		  
 		  Var Overrides(0) As Ark.SpawnPointOverride
-		  Overrides(0) = New Ark.SpawnPointOverride(Point, Ark.SpawnPointOverride.ModeOverride, True)
+		  Overrides(0) = Override.ImmutableVersion
 		  Self.SpawnPointEditor1.Overrides = Overrides
 		End Sub
 	#tag EndMethod
@@ -2402,7 +2434,7 @@ End
 		  End If
 		  
 		  Self.mModified = Value
-		  Self.ActionButton.Enabled = Value
+		  Self.ActionButton.Enabled = Value And Self.mReadOnly = False
 		End Sub
 	#tag EndMethod
 
@@ -2417,7 +2449,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Blueprint As Ark.Blueprint) As Ark.Blueprint
+		Shared Function Present(Parent As DesktopWindow, Blueprint As Ark.Blueprint, ReadOnly As Boolean = False) As Ark.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -2428,7 +2460,7 @@ End
 		    Raise Err
 		  End If
 		  
-		  Var Win As New ArkBlueprintEditorDialog(Blueprint)
+		  Var Win As New ArkBlueprintEditorDialog(Blueprint, ReadOnly)
 		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As Ark.Blueprint
@@ -2441,12 +2473,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ContentPackId As String, ContentPackName As String) As Ark.Blueprint
+		Shared Function Present(Parent As DesktopWindow, ContentPackId As String, ContentPackName As String, ReadOnly As Boolean = False) As Ark.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Var Win As New ArkBlueprintEditorDialog(ContentPackId, ContentPackName)
+		  Var Win As New ArkBlueprintEditorDialog(ContentPackId, ContentPackName, ReadOnly)
 		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As Ark.Blueprint
@@ -2468,7 +2500,11 @@ End
 		  
 		  List.CellTextAt(RowIdx, 0) = Ingredient.Engram.Label
 		  List.CellTextAt(RowIdx, 1) = Ingredient.Quantity.ToString(Locale.Current, "#,##0")
-		  List.CellCheckBoxValueAt(RowIdx, 2) = Ingredient.RequireExact
+		  If Self.mReadOnly Then
+		    List.CellTextAt(RowIdx, 2) = If(Ingredient.RequireExact, "Yes", "No")
+		  Else
+		    List.CellCheckBoxValueAt(RowIdx, 2) = Ingredient.RequireExact
+		  End If
 		  List.RowTagAt(RowIdx) = Ingredient
 		End Sub
 	#tag EndMethod
@@ -2485,6 +2521,11 @@ End
 
 	#tag Method, Flags = &h0
 		Function Save() As Boolean
+		  If Self.mReadOnly Then
+		    Self.ShowAlert("This mod cannot be edited", "You shouldn't be seeing this message anyway, but here we are.")
+		    Return False
+		  End If
+		  
 		  If Self.TypeMenu.SelectedRowIndex = -1 Then
 		    Self.ShowAlert("This objects has no type", "Please select what kind of object this is.")
 		    Return False
@@ -2879,6 +2920,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mReadOnly As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mResizeAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
@@ -3184,12 +3229,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1
+		  Return Me.SelectedRowCount = 1 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -3230,8 +3275,10 @@ End
 		Sub Opening()
 		  Me.ColumnAlignmentAt(1) = DesktopListbox.Alignments.Right
 		  Me.ColumnAlignmentAt(2) = DesktopListbox.Alignments.Center
-		  Me.ColumnTypeAt(1) = DesktopListbox.CellTypes.TextField
-		  Me.ColumnTypeAt(2) = DesktopListbox.CellTypes.CheckBox
+		  If Self.mReadOnly = False Then
+		    Me.ColumnTypeAt(1) = DesktopListbox.CellTypes.TextField
+		    Me.ColumnTypeAt(2) = DesktopListbox.CellTypes.CheckBox
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -3257,7 +3304,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Ark.CraftingCostIngredient.ClipboardType)
+		  Return Self.mReadOnly = False And Board.RawDataAvailable(Ark.CraftingCostIngredient.ClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -3353,12 +3400,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1
+		  Return Me.SelectedRowCount = 1 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event

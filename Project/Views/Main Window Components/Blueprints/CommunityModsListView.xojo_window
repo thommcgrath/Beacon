@@ -375,8 +375,7 @@ End
 		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(Self.mPendingDownloads(Idx))
 		      If (Pack Is Nil) = False Then
 		        If OpenEditors Then
-		          Var ModInfo As New BeaconAPI.ContentPack(Pack)
-		          Self.ShowMod(ModInfo)
+		          Self.ShowMod(Pack, ModsListView.ViewModes.Local)
 		        End If
 		        Self.mPendingDownloads.RemoveAt(Idx)
 		        Self.mDownloadCount = Self.mDownloadCount + 1

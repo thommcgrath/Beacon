@@ -35,6 +35,9 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 		  Next
 		  
 		  Self.mLimits = Ark.BlueprintAttributeManager.FromSaveData(Point.LimitsString)
+		  If Self.mLimits Is Nil Then
+		    Self.mLimits = New Ark.BlueprintAttributeManager
+		  End If
 		End Sub
 	#tag EndMethod
 

@@ -95,8 +95,6 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Offset(X As Integer, Y As Integer)
-		  Var Original As Rect = Self.mBounds.Clone
-		  
 		  For Each Ref As WeakRef In Self.mMembers
 		    If Ref.Value Is Nil Then
 		      Continue

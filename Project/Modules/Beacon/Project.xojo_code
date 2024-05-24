@@ -1834,7 +1834,7 @@ Implements ObservationKit.Observable
 		  Var PackSaveDicts As New Dictionary
 		  For Idx As Integer = PackSaveData.LastIndex DownTo 0
 		    If PackSaveData(Idx).Type = Variant.TypeObject And PackSaveData(Idx).ObjectValue IsA Dictionary Then
-		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(PackSaveData(Idx))
+		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dictionary(PackSaveData(Idx)))
 		      If Pack Is Nil Then
 		        PackSaveData.RemoveAt(Idx)
 		        Continue

@@ -104,8 +104,8 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShowMod(ModInfo As BeaconAPI.ContentPack)
-		  RaiseEvent ShowMod(ModInfo)
+		Protected Sub ShowMod(Pack As Beacon.ContentPack, Mode As ModsListView.ViewModes)
+		  RaiseEvent ShowMod(Pack, Mode)
 		End Sub
 	#tag EndMethod
 
@@ -189,7 +189,7 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShowMod(ModInfo As BeaconAPI.ContentPack)
+		Event ShowMod(Pack As Beacon.ContentPack, Mode As ModsListView.ViewModes)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -220,6 +220,13 @@ Inherits BeaconSubview
 	#tag Property, Flags = &h21
 		Private mUpdateTimer As Timer
 	#tag EndProperty
+
+
+	#tag Enum, Name = ViewModes, Type = Integer, Flags = &h0
+		Local
+		  LocalReadOnly
+		Remote
+	#tag EndEnum
 
 
 	#tag ViewBehavior

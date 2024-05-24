@@ -35,8 +35,8 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   4
-      ColumnWidths    =   "*,200,100,200"
+      ColumnCount     =   5
+      ColumnWidths    =   "*,100,200,100,200"
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   1
@@ -55,7 +55,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Height          =   328
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Name	Game	Mod ID	Last Updated"
+      InitialValue    =   "Name	Type	Game	Mod ID	Last Updated"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -119,7 +119,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -195,14 +194,12 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine ArkDiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine ArkSADiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -253,45 +250,16 @@ End
 
 	#tag Event
 		Sub RefreshMods(SelectedModIds() As String)
-		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
-		  Var Filter As String = Self.FilterField.Text.Trim
-		  
+		  Self.mPacksData.ExecuteSQL("UPDATE packs SET should_delete = TRUE;")
 		  Var DataSources() As Beacon.DataSource = App.DataSources
-		  
-		  Self.ModsList.RemoveAllRows
 		  For Each DataSource As Beacon.DataSource In DataSources
-		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks(Filter, Beacon.ContentPack.TypeLocal)
+		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks("", Beacon.ContentPack.TypeAny)
 		    For Each Pack As Beacon.ContentPack In Packs
-		      Var GameName As String = Language.GameName(Pack.GameId)
-		      Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
-		      Var ModInfo As New BeaconAPI.ContentPack(Pack)
-		      
-		      Self.ModsList.AddRow("")
-		      Var Idx As Integer = Self.ModsList.LastAddedRowIndex
-		      
-		      Self.ModsList.CellTextAt(Idx, Self.ColumnName) = Pack.Name
-		      Self.ModsList.CellTextAt(Idx, Self.ColumnGameId) = GameName
-		      Self.ModsList.CellTextAt(Idx, Self.ColumnModId) = Pack.MarketplaceId
-		      Self.ModsList.CellTextAt(Idx, Self.ColumnUpdate) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		      Self.ModsList.RowTagAt(Idx) = ModInfo
-		      Self.ModsList.RowSelectedAt(Idx) = SelectedModIds.IndexOf(Pack.ContentPackId) > -1
-		      
-		      If Self.mOpenModWhenRefreshed = Pack.ContentPackId Then
-		        Self.ShowMod(ModInfo)
-		        Self.mOpenModWhenRefreshed = ""
-		      End If
+		      Self.AddPackToData(Pack)
 		    Next
 		  Next
-		  Self.TotalPages = 1
-		  Self.TotalResults = Self.ModsList.RowCount
-		  
-		  Self.ModsList.Sort
-		  Self.ModsList.ScrollPosition = ScrollPosition
-		  Self.ModsList.EnsureSelectionIsVisible
-		  
-		  Self.ModsList.SizeColumnToFit(Self.ColumnGameId, 100)
-		  Self.ModsList.SizeColumnToFit(Self.ColumnModId, 100)
-		  Self.ModsList.SizeColumnToFit(Self.ColumnUpdate, 100)
+		  Self.FetchRemoteMods()
+		  Self.UpdateModsList()
 		End Sub
 	#tag EndEvent
 
@@ -308,6 +276,107 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub AddPackToData(Pack As Beacon.ContentPack)
+		  Var ViewMode As ModsListView.ViewModes
+		  Select Case Pack.Type
+		  Case Beacon.ContentPack.TypeLocal
+		    ViewMode = ModsListView.ViewModes.Local
+		  Case Beacon.ContentPack.TypeOfficial, Beacon.ContentPack.TypeThirdParty
+		    ViewMode = ModsListView.ViewModes.LocalReadOnly
+		  End Select
+		  Self.AddPackToData(Pack, ViewMode)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddPackToData(Pack As Beacon.ContentPack, OverrideViewMode As ModsListView.ViewModes)
+		  Self.mPacksData.ExecuteSQL("INSERT INTO packs (content_pack_id, name, marketplace_id, json, should_delete, view_mode) VALUES (?1, ?2, ?3, ?4, ?5, ?6) ON CONFLICT (content_pack_id) DO UPDATE SET name = ?2, marketplace_id = ?3, json = ?4, should_delete = ?5, view_mode = ?6;", Pack.ContentPackId, Pack.Name, Pack.MarketplaceId, Beacon.GenerateJson(Pack.SaveData, False), False, CType(OverrideViewMode, Integer))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_DeleteMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Self.ModsList Is Nil Then
+		    // This view already closed
+		    Return
+		  End If
+		  
+		  Self.FinishJob()
+		  Var Pack As Beacon.ContentPack = Request.Tag
+		  
+		  If Response.Success Then
+		    Self.mPacksData.ExecuteSQL("DELETE FROM packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
+		    Self.UpdateModsList()
+		    Return
+		  End If
+		  
+		  Var Explanation As String = Response.Message
+		  If Explanation.IsEmpty Then
+		    Select Case Response.HTTPStatus
+		    Case 401, 403
+		      Explanation = "You are not authorized to delete this mod."
+		    Case 429
+		      Explanation = "You have performed too many actions too quickly. Wait a minute and try again."
+		    Case 500
+		      Explanation = "Internal server error. Please report this to help@usebeacon.app."
+		    Case 503
+		      Explanation = "Gateway error. This could be a temporary issue. Try again in a minute."
+		    Else
+		      Explanation = "The server returned an HTTP " + Response.HTTPStatus.ToString(Locale.Raw, "0") + " status."
+		    End Select
+		  End If 
+		  
+		  Self.ShowAlert("Mod '" + Pack.Name + "' was not deleted", Explanation)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Self.ModsList Is Nil Then
+		    // This view already closed
+		    Return
+		  End If
+		  
+		  Self.FinishJob()
+		  Self.mFetchingRemote = False
+		  
+		  If Response.Success Then
+		    Var Results() As Variant
+		    Var Page, PageCount As Integer
+		    Try
+		      Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
+		      Page = Parsed.Value("page")
+		      PageCount = Parsed.Value("pages")
+		      Results = Parsed.Value("results")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing page of results.")
+		      Return
+		    End Try
+		    
+		    For Each Dict As Dictionary In Results
+		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dict)
+		      If Pack Is Nil Then
+		        Continue
+		      End If
+		      Self.AddPackToData(Pack, ModsListView.ViewModes.Remote)
+		    Next
+		    
+		    If Page < PageCount Then
+		      Self.FetchRemoteMods(Page + 1)
+		    End If
+		  End If
+		  
+		  If Self.mFetchingRemote = False Then
+		    Self.mPacksData.ExecuteSQL("DELETE FROM packs WHERE should_delete = TRUE;")
+		  End If
+		  
+		  Self.UpdateModsList
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UploadMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
@@ -354,6 +423,11 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.ViewID = "LocalModsListView"
+		  
+		  Self.mPacksData = New SQLiteDatabase
+		  Self.mPacksData.Connect
+		  Self.mPacksData.ExecuteSQL("CREATE TABLE packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT COLLATE NOCASE NOT NULL, json TEXT NOT NULL, should_delete BOOLEAN NOT NULL DEFAULT FALSE, view_mode INTEGER NOT NULL);")
+		  
 		  Super.Constructor()
 		End Sub
 	#tag EndMethod
@@ -369,19 +443,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var WorkshopMod As BeaconAPI.ContentPack = Self.ModsList.RowTagAt(Idx)
-		    If WorkshopMod Is Nil Then
-		      Continue
-		    End If
-		    
-		    Var Pack As Beacon.ContentPack
-		    Select Case WorkshopMod.GameId
-		    Case Ark.Identifier
-		      Pack = ArkDataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
-		    Case ArkSA.Identifier
-		      Pack = ArkSADataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
-		    End Select
-		    
+		    Var Pack As Beacon.ContentPack = Self.ModsList.RowTagAt(Idx)
 		    If Pack Is Nil Then
 		      Continue
 		    End If
@@ -409,6 +471,29 @@ End
 		  If Beacon.BuildExport(Packs, File, True) = False Then
 		    Self.ShowAlert("Export failed", "The selected " + If(Self.ModsList.SelectedRowCount = 1, "mod was", "mods were") + " not exported. Mods must have at least one blueprint to be exported.")
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub FetchRemoteMods(Page As Integer = 1)
+		  If Page = 1 And Self.mFetchingRemote = True Then
+		    Return
+		  End If
+		  
+		  Self.mFetchingRemote = True
+		  
+		  Var Params As New Dictionary
+		  Params.Value("page") = Page
+		  Params.Value("pageSize") = 100
+		  Params.Value("userId") = App.IdentityManager.CurrentUserId
+		  
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  If Filter.IsEmpty = False Then
+		    Params.Value("search") = Filter
+		  End If
+		  
+		  Var Request As New BeaconAPI.Request("contentPacks", "GET", Params, AddressOf APICallback_ListMods)
+		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
 
@@ -613,7 +698,7 @@ End
 		      Continue
 		    End If
 		    
-		    Ids.Add(BeaconAPI.ContentPack(Self.ModsList.RowTagAt(Idx)).ContentPackId)
+		    Ids.Add(Beacon.ContentPack(Self.ModsList.RowTagAt(Idx)).ContentPackId)
 		  Next
 		  Return Ids
 		End Function
@@ -625,7 +710,7 @@ End
 		  Var Bound As Integer = List.LastRowIndex
 		  List.SelectionChangeBlocked = True
 		  For Idx As Integer = 0 To Bound
-		    Var Pack As BeaconAPI.ContentPack = List.RowTagAt(Idx)
+		    Var Pack As Beacon.ContentPack = List.RowTagAt(Idx)
 		    List.RowSelectedAt(Idx) = ModIds.IndexOf(Pack.ContentPackId) > -1
 		  Next
 		  List.SelectionChangeBlocked = False
@@ -647,6 +732,65 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateModsList()
+		  Var Filter As String = "%" + Self.FilterField.Text.Trim.ReplaceAll("%", "\%").ReplaceAll("_", "\_") + "%"
+		  Var Rows As RowSet
+		  If Filter.IsEmpty Then
+		    Rows = Self.mPacksData.SelectSQL("SELECT json, view_mode FROM packs ORDER BY name;")
+		  Else
+		    Rows = Self.mPacksData.SelectSQL("SELECT json, view_mode FROM packs WHERE name LIKE ?1 ESCAPE '\' OR marketplace_id LIKE ?1 ESCAPE '\' ORDER BY name;", Filter)
+		  End If
+		  
+		  Var SelectedIds As New Dictionary
+		  For RowIdx As Integer = 0 To Self.ModsList.LastRowIndex
+		    If Self.ModsList.RowSelectedAt(RowIdx) = False Then
+		      Continue
+		    End If
+		    Var Pack As Beacon.ContentPack = Self.ModsList.RowTagAt(RowIdx)
+		    SelectedIds.Value(Pack.ContentPackId) = True
+		  Next
+		  
+		  Self.ModsList.SelectionChangeBlocked = True
+		  Self.ModsList.RowCount = Rows.RowCount
+		  Var RowIdx As Integer = 0
+		  While Not Rows.AfterLastRow
+		    Var PackData As Dictionary = Beacon.ParseJson(Rows.Column("json").StringValue)
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(PackData)
+		    Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
+		    Var ViewMode As ModsListView.ViewModes = CType(Rows.Column("view_mode").IntegerValue, ModsListView.ViewModes)
+		    
+		    Self.ModsList.CellTextAt(RowIdx, Self.ColumnName) = Pack.Name
+		    Self.ModsList.CellTextAt(RowIdx, Self.ColumnGameId) = Language.GameName(Pack.GameId)
+		    Self.ModsList.CellTextAt(RowIdx, Self.ColumnModId) = Pack.MarketplaceId
+		    Self.ModsList.CellTextAt(RowIdx, Self.ColumnUpdate) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		    Select Case Pack.Type
+		    Case Beacon.ContentPack.TypeLocal
+		      Self.ModsList.CellTextAt(RowIdx, Self.ColumnType) = Self.TypeCaptionLocal
+		    Case Beacon.ContentPack.TypeOfficial
+		      Self.ModsList.CellTextAt(RowIdx, Self.ColumnType) = Self.TypeCaptionOfficial
+		    Case Beacon.ContentPack.TypeThirdParty
+		      Self.ModsList.CellTextAt(RowIdx, Self.ColumnType) = Pack.Marketplace
+		    End Select
+		    Self.ModsList.CellTagAt(RowIdx, Self.ColumnType) = ViewMode
+		    Self.ModsList.RowTagAt(RowIdx) = Pack
+		    Self.ModsList.RowSelectedAt(RowIdx) = SelectedIds.HasKey(Pack.ContentPackId)
+		    
+		    RowIdx = RowIdx + 1
+		    Rows.MoveToNextRow
+		  Wend
+		  Self.ModsList.Sort
+		  Self.ModsList.SelectionChangeBlocked = False
+		  
+		  Self.ModsList.SizeColumnToFit(Self.ColumnGameId, 100)
+		  Self.ModsList.SizeColumnToFit(Self.ColumnModId, 100)
+		  Self.ModsList.SizeColumnToFit(Self.ColumnUpdate, 100)
+		  Self.ModsList.SizeColumnToFit(Self.ColumnType, 100)
+		  
+		  Self.UpdateUI
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UploadSelectedMods()
 		  If Self.mRemainingUploads > 0 Or (Self.mUploadProgress Is Nil) = False Then
 		    Self.ShowAlert("There is already an upload running", "Wait for the uploads to finish")
@@ -662,31 +806,19 @@ End
 		      Continue
 		    End If
 		    
-		    Var WorkshopMod As BeaconAPI.ContentPack = Self.ModsList.RowTagAt(Idx)
-		    If WorkshopMod Is Nil Then
-		      Continue
-		    End If
-		    
-		    If WorkshopMod.MarketplaceId.IsEmpty Then
-		      Self.ShowAlert("Cannot upload to community", "The mod '" + WorkshopMod.Name + "' does not have an official id and cannot be uploaded.")
-		      Return
-		    End If
-		    
-		    If Self.CloseModView(WorkshopMod.MarketplaceId) = False Then
-		      Self.ShowAlert("Close your mod editors to continue", "There is an editor open for mod '" + WorkshopMod.Name + "' that needs to be closed first.")
-		      Return
-		    End If
-		    
-		    Var Pack As Beacon.ContentPack
-		    Select Case WorkshopMod.GameId
-		    Case Ark.Identifier
-		      Pack = ArkDataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
-		    Case ArkSA.Identifier
-		      Pack = ArkSADataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
-		    End Select
-		    
+		    Var Pack As Beacon.ContentPack = Self.ModsList.RowTagAt(Idx)
 		    If Pack Is Nil Then
 		      Continue
+		    End If
+		    
+		    If Pack.MarketplaceId.IsEmpty Then
+		      Self.ShowAlert("Cannot upload to community", "The mod '" + Pack.Name + "' does not have an official id and cannot be uploaded.")
+		      Return
+		    End If
+		    
+		    If Self.CloseModView(Pack.ContentPackId) = False Then
+		      Self.ShowAlert("Close your mod editors to continue", "There is an editor open for mod '" + Pack.Name + "' that needs to be closed first.")
+		      Return
 		    End If
 		    
 		    Packs.Add(Pack)
@@ -745,6 +877,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mFetchingRemote As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModUUIDsToDelete() As String
 	#tag EndProperty
 
@@ -769,6 +905,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPacksData As SQLiteDatabase
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProgress As ProgressWindow
 	#tag EndProperty
 
@@ -789,16 +929,25 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnGameId, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = ColumnGameId, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnModId, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = ColumnModId, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnUpdate, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = ColumnType, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnUpdate, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TypeCaptionLocal, Type = String, Dynamic = True, Default = \"Custom", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TypeCaptionOfficial, Type = String, Dynamic = True, Default = \"Official", Scope = Private
 	#tag EndConstant
 
 
@@ -807,11 +956,7 @@ End
 #tag Events ModsList
 	#tag Event
 		Function CanDelete() As Boolean
-		  If Me.SelectedRowCount = 1 And BeaconAPI.ContentPack(Me.RowTagAt(Me.SelectedRowIndex)).ContentPackId = Ark.UserContentPackId Then
-		    Return False
-		  Else
-		    Return Me.SelectedRowCount > 0
-		  End If
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -821,16 +966,42 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var Mods() As BeaconAPI.ContentPack
+		  Var Packs() As Beacon.ContentPack
 		  If Warn Then
 		    Var Names() As String
-		    For Row As Integer = 0 To Me.LastRowIndex
-		      Var ModInfo As BeaconAPI.ContentPack = Me.RowTagAt(Row)
-		      If Me.RowSelectedAt(Row) And ModInfo.ContentPackId <> Ark.UserContentPackId Then
-		        Names.Add(ModInfo.Name)
-		        Mods.Add(ModInfo)
+		    For RowIdx As Integer = 0 To Me.LastRowIndex
+		      Var Pack As Beacon.ContentPack = Me.RowTagAt(RowIdx)
+		      If Me.RowSelectedAt(RowIdx) = False Then
+		        Continue
 		      End If
+		      
+		      If Me.CellTagAt(RowIdx, Self.ColumnType) = ModsListView.ViewModes.LocalReadOnly Then
+		        Continue
+		      End If
+		      
+		      Select Case Pack.ContentPackId
+		      Case Ark.UserContentPackId, ArkSA.UserContentPackId, Palworld.UserContentPackId, SDTD.UserContentPackId
+		        Continue
+		      End Select
+		      
+		      Names.Add(Pack.Name)
+		      Packs.Add(Pack)
 		    Next
+		    
+		    If Packs.Count = 0 Then
+		      If Me.SelectedRowCount > 1 Then
+		        Self.ShowAlert("None of the selected mods can be deleted.", "The selected mods are either required, such as the 'User Content' mods, or are official / third party mods that you do not have permission to delete.")
+		      Else
+		        Var Pack As Beacon.ContentPack = Me.RowTagAt(Me.SelectedRowIndex)
+		        Select Case Pack.Type
+		        Case Beacon.ContentPack.TypeOfficial, Beacon.ContentPack.TypeThirdParty
+		          Self.ShowAlert("The selected mod can not be deleted.", "You do not have permission to delete the mod '" + Pack.Name + "'.")
+		        Else
+		          Self.ShowAlert("The selected mod can not be deleted.", "The '" + Pack.Name + "' mod is required by Beacon and can not be deleted.")
+		        End Select
+		      End
+		      Return
+		    End If
 		    
 		    If Not Self.ShowDeleteConfirmation(Names, "mod", "mods") Then
 		      Return
@@ -838,13 +1009,20 @@ End
 		  End If
 		  
 		  // Make sure they do not have unsaved changes
-		  For Idx As Integer = Mods.LastIndex DownTo 0
-		    If Self.CloseModView(Mods(Idx).ContentPackId) = False Then
-		      Mods.RemoveAt(Idx)
+		  For Idx As Integer = Packs.LastIndex DownTo 0
+		    If Self.CloseModView(Packs(Idx).ContentPackId) = False Then
+		      Packs.RemoveAt(Idx)
 		      Continue
 		    End If
 		    
-		    Self.mModUUIDsToDelete.Add(Mods(Idx).ContentPackId)
+		    If Packs(Idx).Type = Beacon.ContentPack.TypeLocal Then
+		      Self.mModUUIDsToDelete.Add(Packs(Idx).ContentPackId)
+		    Else
+		      Self.StartJob
+		      Var Request As New BeaconAPI.Request("contentPacks/" + Packs(Idx).ContentPackId, "DELETE", WeakAddressOf APICallback_DeleteMod)
+		      Request.Tag = Packs(Idx)
+		      BeaconAPI.Send(Request)
+		    End If
 		  Next
 		  
 		  If Self.mModUUIDsToDelete.Count > 0 And Self.ModDeleterThread.ThreadState = Thread.ThreadStates.NotRunning Then
@@ -854,18 +1032,33 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
-		  Var ModInfo As BeaconAPI.ContentPack = Me.RowTagAt(Me.SelectedRowIndex)
-		  Self.ShowMod(ModInfo)
+		  Var Pack As Beacon.ContentPack = Me.RowTagAt(Me.SelectedRowIndex)
+		  Var Mode As ModsListView.ViewModes = Me.CellTagAt(Me.SelectedRowIndex, Self.ColumnType)
+		  Self.ShowMod(Pack, Mode)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub SelectionChanged()
+		  Var EnableOpening, EnableEditing As Boolean
+		  If Me.SelectedRowCount = 1 Then
+		    EnableOpening = True
+		    Var Pack As Beacon.ContentPack = Me.RowTagAt(Me.SelectedRowIndex)
+		    If Pack.IsLocal Or Me.CellTagAt(Me.SelectedRowIndex, Self.ColumnType) = ModsListView.ViewModes.Remote Then
+		      EnableEditing = True
+		    End If
+		  End If
+		  
 		  If (Self.ModsToolbar.Item("EditModBlueprints") Is Nil) = False Then
-		    Self.ModsToolbar.Item("EditModBlueprints").Enabled = Me.SelectedRowCount = 1
+		    Self.ModsToolbar.Item("EditModBlueprints").Enabled = EnableOpening
+		    Self.ModsToolbar.Item("EditModBlueprints").Caption = If(EnableEditing, "Edit Blueprints", "View Blueprints")
 		  End If
 		  
 		  If (Self.ModsToolbar.Item("ExportButton") Is Nil) = False Then
 		    Self.ModsToolbar.Item("ExportButton").Enabled = Me.SelectedRowCount > 0
+		  End If
+		  
+		  If (Self.ModsToolbar.Item("EditMod") Is Nil) = False Then
+		    Self.ModsToolbar.Item("EditMod").Enabled = EnableEditing
 		  End If
 		  
 		  Self.UpdateUI()
@@ -880,7 +1073,8 @@ End
 #tag Events ModsToolbar
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Add Mod", IconToolbarAdd, "Add a mod to Beacon."))
+		  Me.Append(OmniBarItem.CreateButton("AddLocalMod", "Add Mod", IconToolbarAdd, "Add a mod so you can use its content in Beacon."))
+		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Register Mod", IconToolbarAddOutline, "Register a mod you have created with Beacon."))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import mod info that was exported from Beacon."))
 		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Export the selected mod or mods to be shared with other Beacon users.", False))
@@ -897,7 +1091,7 @@ End
 		  #Pragma Unused ItemRect
 		  
 		  Select Case Item.Name
-		  Case "RegisterMod"
+		  Case "AddLocalMod", "RegisterMod"
 		    Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureMods, False)
 		    If GameId.IsEmpty Then
 		      Return
@@ -905,13 +1099,13 @@ End
 		    
 		    Select Case GameId
 		    Case Ark.Identifier
-		      Var ModId As String =  ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeLocal)
+		      Var ModId As String =  ArkRegisterModDialog.Present(Self, If(Item.Name = "AddLocalMod", ArkRegisterModDialog.ModeLocal, ArkRegisterModDialog.ModeRemote))
 		      If ModId.IsEmpty = False Then
 		        Self.RefreshMods(Array(ModId))
 		        Self.ModsList.SetFocus()
 		      End If
 		    Case ArkSA.Identifier
-		      Var ModId As String =  ArkSARegisterModDialog.Present(Self, ArkSARegisterModDialog.ModeLocal)
+		      Var ModId As String =  ArkSARegisterModDialog.Present(Self, If(Item.Name = "AddLocalMod", ArkSARegisterModDialog.ModeLocal, ArkSARegisterModDialog.ModeRemote))
 		      If ModId.IsEmpty = False Then
 		        Self.RefreshMods(Array(ModId))
 		        Self.ModsList.SetFocus()
@@ -980,14 +1174,9 @@ End
 		    
 		    Select Case Action
 		    Case "Mod Deleted"
-		      Var ModUUID As String = Dict.Value("Mod UUID")
-		      For Row As Integer = Self.ModsList.LastRowIndex DownTo 0
-		        If BeaconAPI.ContentPack(Self.ModsList.RowTagAt(Row)).ContentPackId = ModUUID Then
-		          Self.ModsList.RemoveRowAt(Row)
-		          Exit For Row
-		        End If
-		      Next
-		      Self.TotalResults = Self.ModsList.RowCount
+		      Var ContentPackId As String = Dict.Value("Mod UUID")
+		      Self.mPacksData.ExecuteSQL("DELETE FROM packs WHERE content_pack_id = ?1;", ContentPackId)
+		      Self.UpdateModsList()
 		    End Select
 		  Next
 		End Sub
@@ -996,7 +1185,7 @@ End
 #tag Events FilterField
 	#tag Event
 		Sub TextChanged()
-		  Self.RefreshMods()
+		  Self.UpdateModsList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

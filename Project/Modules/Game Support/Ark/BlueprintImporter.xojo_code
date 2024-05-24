@@ -506,7 +506,7 @@ Protected Class BlueprintImporter
 		      Return Nil
 		    End If
 		    
-		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(ContentPacks(Idx))
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dictionary(ContentPacks(Idx)))
 		    If (Pack Is Nil) = False Then
 		      Importer.mContentPacks.Add(Pack)
 		    End If

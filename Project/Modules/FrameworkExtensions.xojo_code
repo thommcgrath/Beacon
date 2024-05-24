@@ -414,9 +414,31 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasAllKeys(Extends Item As JSONItem, ParamArray Keys() As String) As Boolean
+		  For Each Key As String In Keys
+		    If Item.HasKey(Key) = False Then
+		      Return False
+		    End If
+		  Next
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasAnyKey(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Boolean
 		  For Each Key As Variant In Keys
 		    If Dict.HasKey(Key) = True Then
+		      Return True
+		    End If
+		  Next
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasAnyKey(Extends Item As JSONItem, ParamArray Keys() As String) As Boolean
+		  For Each Key As String In Keys
+		    If Item.HasKey(Key) = True Then
 		      Return True
 		    End If
 		  Next

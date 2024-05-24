@@ -398,6 +398,7 @@ Begin BeaconContainer ArkSASpawnPointEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -408,6 +409,7 @@ Begin BeaconContainer ArkSASpawnPointEditor
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   12
@@ -737,7 +739,7 @@ End
 		  
 		  Var EditButton As OmniBarItem = Self.LimitsToolbar.Item("EditButton")
 		  If (EditButton Is Nil) = False Then
-		    EditButton.Enabled = Self.LimitsList.SelectedRowCount > 0
+		    EditButton.Enabled = Self.LimitsList.CanEdit
 		  End If
 		End Sub
 	#tag EndMethod
@@ -826,6 +828,32 @@ End
 		Private mOverrides() As ArkSA.MutableSpawnPointOverride
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mReadOnly As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mReadOnly
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mReadOnly = Value Then
+			    Return
+			  End If
+			  
+			  Self.mReadOnly = Value
+			  Self.SetEditor.ReadOnly = Value
+			  Self.LimitsToolbar.Item("AddButton").Enabled = Not Value
+			  Self.SetsToolbar.Item("AddButton").Enabled = Not Value
+			  Self.SetsToolbar.Item("WizardButton").Enabled = Not Value
+			End Set
+		#tag EndSetter
+		ReadOnly As Boolean
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = kLimitsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.spawn.limit", Scope = Private
 	#tag EndConstant
@@ -895,7 +923,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -933,7 +961,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.HasClipboardData(Self.kSetsClipboardType)
+		  Return Self.mReadOnly = False And Board.HasClipboardData(Self.kSetsClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1000,20 +1028,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoublePressed()
-		  Var SelectedCreatures() As ArkSA.BlueprintReference
-		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
-		    If Self.LimitsList.RowSelectedAt(I) Then
-		      Var Ref As ArkSA.BlueprintReference = Self.LimitsList.RowTagAt(I)
-		      SelectedCreatures.Add(Ref)
-		    End If
-		  Next
-		  Self.PresentLimitsDialog(SelectedCreatures)
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1048,7 +1064,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.HasClipboardData(Self.kLimitsClipboardType)
+		  Return Self.mReadOnly = False And Board.HasClipboardData(Self.kLimitsClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1117,6 +1133,23 @@ End
 		  Catch Err As RuntimeException
 		    Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		  End Try
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Self.mReadOnly = False And Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  Var SelectedCreatures() As ArkSA.BlueprintReference
+		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
+		    If Self.LimitsList.RowSelectedAt(I) Then
+		      Var Ref As ArkSA.BlueprintReference = Self.LimitsList.RowTagAt(I)
+		      SelectedCreatures.Add(Ref)
+		    End If
+		  Next
+		  Self.PresentLimitsDialog(SelectedCreatures)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -43,7 +43,7 @@ Inherits ArkSA.BlueprintController
 		  Case Self.ModeEngrams
 		    Task.Blueprints = DataSource.GetEngrams("", Mods, "")
 		  Case Self.ModeLootDrops
-		    Task.Blueprints = DataSource.GetLootContainers("", Mods, "")
+		    Task.Blueprints = DataSource.GetLootContainers("", Mods, "", True)
 		  Case Self.ModeSpawnPoints
 		    Task.Blueprints = DataSource.GetSpawnPoints("", Mods, "")
 		  End Select

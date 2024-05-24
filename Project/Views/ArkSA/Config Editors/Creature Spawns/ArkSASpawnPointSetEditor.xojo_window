@@ -1697,12 +1697,48 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mReadOnly As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRef As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mReadOnly
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mReadOnly = Value Then
+			    Return
+			  End If
+			  
+			  Self.mReadOnly = Value
+			  
+			  For Each Ctrl As Object In Self.Controls
+			    If Ctrl IsA DesktopTextField Then
+			      DesktopTextField(Ctrl).ReadOnly = Value
+			    ElseIf Ctrl IsA DesktopTextArea Then
+			      DesktopTextArea(Ctrl).ReadOnly = Value
+			    ElseIf Ctrl IsA DesktopPopupMenu Then
+			      DesktopPopupMenu(Ctrl).Enabled = Not Value
+			    ElseIf Ctrl IsA DesktopCheckBox Then
+			      DesktopCheckBox(Ctrl).Enabled = Not Value
+			    ElseIf Ctrl IsA DesktopButton Then
+			      DesktopButton(Ctrl).Enabled = Not Value
+			    End If
+			  Next
+			End Set
+		#tag EndSetter
+		ReadOnly As Boolean
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = kEntryClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.spawn.entry", Scope = Private
@@ -1764,12 +1800,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.HasClipboardData(Self.kEntryClipboardType)
+		  Return Self.mReadOnly = False And Board.HasClipboardData(Self.kEntryClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1863,7 +1899,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1949,12 +1985,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.HasClipboardData(Self.kReplacementClipboardType)
+		  Return Self.mReadOnly = False And Board.HasClipboardData(Self.kReplacementClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -2086,7 +2122,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1
+		  Return Me.SelectedRowCount = 1 And Self.mReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
