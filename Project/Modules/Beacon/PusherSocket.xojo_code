@@ -156,6 +156,7 @@ Protected Class PusherSocket
 		      ElseIf SentPing = True And Now - LastExchangeTime > ActivityTimeout + PongWaitTime Then
 		        // Connection has failed
 		        App.Log("Pusher connection failed to respond to ping messages.")
+		        ShouldReconnect = True
 		        Exit While
 		      End If
 		      
