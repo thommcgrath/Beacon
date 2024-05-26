@@ -1024,7 +1024,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean) As Boolean
+		Function SaveContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean, Force As Boolean = False) As Boolean
 		  If Pack Is Nil Or Pack.GameId <> Self.Identifier Then
 		    Return False
 		  End If
@@ -1046,7 +1046,7 @@ Implements NotificationKit.Receiver
 		    While Not Rows.AfterLastRow
 		      Var OldContentPackId As String = Rows.Column("content_pack_id").StringValue
 		      If OldContentPackId = NewContentPackId Then
-		        If Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
+		        If Force Or Pack.LastUpdate > Rows.Column("last_update").DoubleValue Then
 		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, type = ?7, last_update = ?8, game_id = ?9, required = ?10 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.Type, Pack.LastUpdate, Pack.GameId, Pack.Required)
 		          DidSave = True
 		        End If

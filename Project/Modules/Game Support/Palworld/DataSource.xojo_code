@@ -416,7 +416,7 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Var Pack As Beacon.ContentPack = Beacon.ContentPack.CreateUserContentPack(Self.Identifier, Palworld.UserContentPackName, Palworld.UserContentPackId)
-		  Call Self.SaveContentPack(Pack, False)
+		  Call Self.SaveContentPack(Pack, False, True)
 		End Sub
 	#tag EndMethod
 
