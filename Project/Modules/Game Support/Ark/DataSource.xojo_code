@@ -820,7 +820,7 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub Open()
 		  Var Rows As RowSet = Self.SQLSelect("SELECT type, console_safe, default_enabled, last_update FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackId)
-		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("type").IntegerValue <> Beacon.ContentPack.TypeLocal Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Or Rows.Column("last_update").DoubleValue <> Beacon.FixedTimestamp Then
+		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("type").IntegerValue <> Beacon.ContentPack.TypeLocal Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Then
 		    Self.ReplaceUserBlueprints()
 		  End If
 		End Sub

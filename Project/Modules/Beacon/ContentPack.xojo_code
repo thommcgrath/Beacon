@@ -57,7 +57,7 @@ Protected Class ContentPack
 		Shared Function CreateUserContentPack(GameId As String, Name As String, ContentPackId As String) As Beacon.ContentPack
 		  Var Pack As New Beacon.ContentPack(GameId, Name, ContentPackId)
 		  Pack.mIsConsoleSafe = True
-		  Pack.mLastUpdate = Beacon.FixedTimestamp
+		  Pack.mLastUpdate = DateTime.Now.SecondsFrom1970
 		  Pack.mIsDefaultEnabled = True
 		  Pack.mType = Beacon.ContentPack.TypeLocal
 		  Pack.mRequired = False
