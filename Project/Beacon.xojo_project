@@ -20,6 +20,7 @@ Class=BeaconMultiview;Views/BeaconMultiview.xojo_code;&h000000000FBF7FFF;&h00000
 Class=BeaconContainer;Views/BeaconContainer.xojo_code;&h0000000046FEDFFF;&h0000000008A387FF;false
 Class=BeaconSubview;Views/BeaconSubview.xojo_code;&h000000005369F7FF;&h0000000008A387FF;false
 Class=BeaconPagedSubview;Views/BeaconPagedSubview.xojo_code;&h0000000020A5F7FF;&h0000000008A387FF;false
+DesktopWindow=BeaconSubviewWindow;Views/BeaconSubviewWindow.xojo_window;&h00000000327997FF;&h0000000008A387FF;false
 Folder=Icons;Icons;&h0000000007F977FF;&h0000000000000000;false
 Folder=Custom Controls;Custom Controls;&h0000000030DCFFFF;&h0000000000000000;false
 Class=BeaconListbox;Custom Controls/BeaconListbox.xojo_code;&h000000002536EFFF;&h0000000030DCFFFF;false
