@@ -63,7 +63,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official', 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas', 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific', 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('slug', ['editable' => DatabaseObjectProperty::kEditableAtCreation]),
+			new DatabaseObjectProperty('slug', ['editable' => DatabaseObjectProperty::kEditableAtCreation, 'required' => false]),
 			new DatabaseObjectProperty('required', ['editable' => DatabaseObjectProperty::kEditableNever]),
 		]);
 	}
