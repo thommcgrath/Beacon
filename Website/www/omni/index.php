@@ -63,7 +63,7 @@ $palworldEnabled = isset($productDetails['Palworld']);
 $paymentMethods = [
 	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
 	'USD' => ['cashapp'],
-	'EUR' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
+	'EUR' => ['bancontact', 'giropay', 'ideal', 'p24'],
 	'PLN' => ['p24']
 ];
 $paymentLabels = [
@@ -76,7 +76,6 @@ $paymentLabels = [
 	'dinersclub' => 'Diner\'s Club',
 	'jcb' => 'JCB',
 	'bancontact' => 'Bancontact',
-	'eps' => 'EPS',
 	'giropay' => 'giropay',
 	'ideal' => 'iDEAL',
 	'p24' => 'Przelewy24',
