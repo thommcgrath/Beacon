@@ -8,16 +8,16 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   410
+   Height          =   442
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   410
+   MaxHeight       =   442
    MaximizeButton  =   False
    MaxWidth        =   626
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   410
+   MinHeight       =   442
    MinimizeButton  =   False
    MinWidth        =   626
    Placement       =   1
@@ -831,7 +831,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   370
+      Top             =   402
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -863,7 +863,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   370
+      Top             =   402
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -996,6 +996,36 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       VisualState     =   0
       Width           =   454
    End
+   Begin DesktopCheckBox PreventBreedingCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Prevent Breeding"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   152
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "When checked, the creature cannot mate. Mating can be enabled, but mating won't actually happen."
+      Top             =   364
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   0
+      Width           =   454
+   End
 End
 #tag EndDesktopWindow
 
@@ -1064,6 +1094,7 @@ End
 		      End If
 		      Win.PreventTamingCheck.Value = Behavior.ProhibitTaming
 		      Win.PreventTransferCheck.Value = Behavior.ProhibitTransfer
+		      Win.PreventBreedingCheck.Value = Behavior.ProhibitBreeding
 		    End If
 		  End If
 		  Win.ShowModal(Parent)
@@ -1086,6 +1117,7 @@ End
 		  End If
 		  Behavior.ProhibitTaming = Win.PreventTamingCheck.Value
 		  Behavior.ProhibitTransfer = Win.PreventTransferCheck.Value
+		  Behavior.ProhibitBreeding = Win.PreventBreedingCheck.Value
 		  
 		  If IsNull(EditCreature) = False And TargetCreature <> EditCreature Then
 		    Config.RemoveBehavior(EditCreature)
@@ -1280,12 +1312,13 @@ End
 		    Var TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Text)
 		    Var TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Text)
 		    Var PreventTaming As Boolean = Self.PreventTamingCheck.Value
+		    Var PreventBreeding As Boolean = Self.PreventBreedingCheck.Value
 		    
 		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Then
 		      Self.ShowAlert("You have a multiplier that doesn't make sense", "It's ok to make the multipliers really small, but they must be at least zero.")
 		      Return
 		    End If
-		    If DamageMultiplier = 1.0 And ResistanceMultiplier = 1.0 And TamedDamageMultiplier = 1.0 And TamedResistanceMultiplier = 1.0 And PreventTaming = False And PreventTransfer = False Then
+		    If DamageMultiplier = 1.0 And ResistanceMultiplier = 1.0 And TamedDamageMultiplier = 1.0 And TamedResistanceMultiplier = 1.0 And PreventTaming = False And PreventTransfer = False And PreventBreeding = False Then
 		      Self.ShowAlert("You haven't changed any multipliers", "There's no reason to save a creature adjustment with no differences than official.")
 		      Return
 		    End If

@@ -61,6 +61,9 @@ Inherits Ark.ConfigGroup
 		    If Behavior.ProhibitTransfer Then
 		      Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventTransferForClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventTransferForClassNames:" + Behavior.TargetCreature.ClassString))
 		    End If
+		    If Behavior.ProhibitBreeding Then
+		      Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventBreedingForClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventBreedingForClassNames:" + Behavior.TargetCreature.ClassString))
+		    End If
 		  Next
 		  
 		  Return Values
@@ -292,6 +295,17 @@ Inherits Ark.ConfigGroup
 		      Var TargetClass As String = Entry
 		      Var Behavior As Ark.MutableCreatureBehavior = MutableBehavior(Config, Ark.ResolveCreature("", "", TargetClass, ContentPacks))
 		      Behavior.ProhibitTransfer = True
+		      Config.Add(Behavior)
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Var PreventBreedingDinos() As Variant = ParsedData.AutoArrayValue("PreventBreedingForClassNames")
+		  For Each Entry As Variant In PreventBreedingDinos
+		    Try
+		      Var TargetClass As String = Entry
+		      Var Behavior As Ark.MutableCreatureBehavior = MutableBehavior(Config, Ark.ResolveCreature("", "", TargetClass, ContentPacks))
+		      Behavior.ProhibitBreeding = True
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
 		    End Try

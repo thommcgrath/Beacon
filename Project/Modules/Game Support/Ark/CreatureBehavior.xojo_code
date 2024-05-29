@@ -20,6 +20,7 @@ Protected Class CreatureBehavior
 		  Self.mReplacementCreature = Nil
 		  Self.mProhibitTaming = False
 		  Self.mProhibitTransfer = False
+		  Self.mProhibitBreeding = False
 		  Self.mSpawnWeightMultiplier = 1.0
 		  Self.mSpawnLimitPercent = Nil
 		End Sub
@@ -43,6 +44,7 @@ Protected Class CreatureBehavior
 		  Self.mTamedResistanceMultiplier = Source.mTamedResistanceMultiplier
 		  Self.mProhibitTaming = Source.mProhibitTaming
 		  Self.mProhibitTransfer = Source.mProhibitTransfer
+		  Self.mProhibitBreeding = Source.mProhibitBreeding
 		  Self.mSpawnWeightMultiplier = Source.mSpawnWeightMultiplier
 		  Self.mSpawnLimitPercent = Source.mSpawnLimitPercent
 		End Sub
@@ -106,6 +108,7 @@ Protected Class CreatureBehavior
 		  End If
 		  Behavior.mProhibitTaming = Dict.Lookup("Prevent Taming", False)
 		  Behavior.mProhibitTransfer = Dict.Lookup("Prohibit Transfer", False)
+		  Behavior.mProhibitBreeding = Dict.Lookup("Prohibit Breeding", False)
 		  
 		  Return Behavior
 		End Function
@@ -126,6 +129,12 @@ Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
 		Attributes( Deprecated = "CreatureId" )  Function ObjectID() As String
 		  Return Self.mTargetCreature.BlueprintId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProhibitBreeding() As Boolean
+		  Return Self.mProhibitBreeding
 		End Function
 	#tag EndMethod
 
@@ -225,6 +234,9 @@ Protected Class CreatureBehavior
 		  If Self.mProhibitTransfer Then
 		    Dict.Value("Prohibit Transfer") = True
 		  End If
+		  If Self.mProhibitBreeding Then
+		    Dict.Value("Prohibit Breeding") = True
+		  End If
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -236,6 +248,10 @@ Protected Class CreatureBehavior
 
 	#tag Property, Flags = &h1
 		Protected mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mProhibitBreeding As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
