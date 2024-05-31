@@ -1350,8 +1350,8 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.mModId = Beacon.UUID.v4
-		  Self.mCurseForgeId = System.Random.InRange(1000000, 9999999)
-		  Self.mCurseForgeSlug = Beacon.GenerateRandomKey()
+		  Self.mCurseForgeId = 0
+		  Self.mCurseForgeSlug = ""
 		  Self.ShowNamePage("")
 		End Sub
 	#tag EndEvent
@@ -1425,7 +1425,11 @@ End
 		  Var Pack As Beacon.ContentPack
 		  If Self.mMode = Self.ModeLocal Then
 		    Var Database As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
-		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mCurseForgeId.ToString(Locale.Raw, "0"), True)
+		    Var MarketplaceId As String
+		    If Self.mCurseForgeId > 0 Then
+		      MarketplaceId = Self.mCurseForgeId.ToString(Locale.Raw, "0")
+		    End If
+		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, MarketplaceId, True)
 		    ModId = ContentPack.ContentPackId
 		    Pack = ContentPack
 		  Else

@@ -168,6 +168,10 @@ Protected Class ContentPack
 
 	#tag Method, Flags = &h0
 		Shared Function GenerateLocalContentPackId(Marketplace As String, MarketplaceId As String) As String
+		  If Marketplace.IsEmpty Or MarketplaceId.IsEmpty Then
+		    Return Beacon.UUID.v4
+		  End If
+		  
 		  Return Beacon.UUID.v5("Local " + Marketplace + ": " + MarketplaceId).StringValue
 		End Function
 	#tag EndMethod
