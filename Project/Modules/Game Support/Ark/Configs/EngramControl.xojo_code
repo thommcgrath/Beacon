@@ -860,11 +860,17 @@ Inherits Ark.ConfigGroup
 		  End If
 		  
 		  Var Parts As New Dictionary
-		  Parts.Value(Self.KeyAutoUnlockLevel) = AutoUnlocks
-		  Parts.Value(Self.KeyHidden) = Hidden
-		  Parts.Value(Self.KeyPlayerLevel) = PlayerLevel
-		  Parts.Value(Self.KeyUnlockPoints) = RequiredPoints
-		  Parts.Value(Self.KeyRemovePrerequisites) = RemovePrerequisites
+		  If Hidden <> Self.mOnlyAllowSpecifiedEngrams Then
+		    Parts.Value(Self.KeyHidden) = Hidden
+		  End If
+		  If Hidden = False Then
+		    Parts.Value(Self.KeyAutoUnlockLevel) = AutoUnlocks
+		    Parts.Value(Self.KeyPlayerLevel) = PlayerLevel
+		    If AutoUnlocks = False Then
+		      Parts.Value(Self.KeyUnlockPoints) = RequiredPoints
+		      Parts.Value(Self.KeyRemovePrerequisites) = RemovePrerequisites
+		    End If
+		  End If
 		  
 		  Return Beacon.GenerateJson(Parts, False)
 		End Function
