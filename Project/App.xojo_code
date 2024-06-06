@@ -1552,7 +1552,20 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #Pragma Unused EventName
 		  #Pragma Unused Payload
 		  
+		  If Self.mPusherUpdateBlueprintsKey.IsEmpty = False Then
+		    // There is already an action scheduled
+		    Return
+		  End If
+		  
+		  Var Delay As Integer = System.Random.InRange(0, 60)
+		  Self.mPusherUpdateBlueprintsKey = CallLater.Schedule(Delay * 1000, AddressOf Pusher_UpdateBlueprints_Actual)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Pusher_UpdateBlueprints_Actual()
 		  Self.SyncGamedata(True, False)
+		  Self.mPusherUpdateBlueprintsKey = ""
 		End Sub
 	#tag EndMethod
 
@@ -1796,6 +1809,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mPusher As Beacon.PusherSocket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPusherUpdateBlueprintsKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
