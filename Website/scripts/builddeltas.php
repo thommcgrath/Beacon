@@ -10,8 +10,8 @@ if (array_key_exists('delta_version', $options) === false) {
 	echo "Delta version should be an integer.\n";
 	exit;
 }
-$delta_version = filter_var($options['delta_version'], FILTER_VALIDATE_INT);
-switch ($delta_version) {
+$deltaVersion = filter_var($options['delta_version'], FILTER_VALIDATE_INT);
+switch ($deltaVersion) {
 case 7:
 	// Don't change $api_version, it affects how the Ark namespace behaves in v3 and lower.
 	break;
@@ -22,7 +22,7 @@ case 5:
 	$api_version = 2;
 	break;
 default:
-	echo "Delta version $delta_version is not known.\n";
+	echo "Delta version $deltaVersion is not known.\n";
 	exit;
 }
 
@@ -40,7 +40,7 @@ while (ob_get_level() > 0) {
 $apiRoot = dirname(__FILE__, 2) . '/api';
 
 $database = BeaconCommon::Database();
-$sem = sem_get(crc32($database->DatabaseName() . $delta_version), 1);
+$sem = sem_get(crc32($database->DatabaseName() . $deltaVersion), 1);
 if (sem_acquire($sem) === false) {
 	echo "Could not acquire semaphore\n";
 	exit;
@@ -73,7 +73,7 @@ if ($force == false && $lastDatabaseUpdate >= $cutoff) {
 	exit;
 }
 
-$required_versions = [$delta_version];
+$required_versions = [$deltaVersion];
 $results = $database->Query("SELECT file_id, version FROM update_files WHERE created = $1 AND type = 'Delta';", $lastDatabaseUpdate->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
@@ -172,6 +172,10 @@ foreach ($required_versions as $version) {
 	$database->Commit();
 
 	echo "Delta for version {$version} uploaded to {$deltaUrl}\n";
+}
+
+if ($deltaVersion >= 7) {
+	BeaconPusher::SharedInstance()->TriggerEvent('beacon-public', 'update-blueprints', '');
 }
 
 sem_release($sem);
