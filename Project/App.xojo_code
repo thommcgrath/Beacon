@@ -1199,6 +1199,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mPusher = New Beacon.PusherSocket
 		  If (Self.mIdentityManager Is Nil) = False And Self.mIdentityManager.CurrentUserId.IsEmpty = False Then
 		    Self.mPusher.Start()
+		    Self.SubscribeToPusherPublic()
 		  End If
 		  Self.NextLaunchQueueTask
 		End Sub
@@ -1424,6 +1425,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Var UserId As String = Self.mIdentityManager.CurrentUserId
 		      If UserId.IsEmpty = False Then
 		        Self.mPusher.Start()
+		        Self.SubscribeToPusherPublic()
 		        Var UserChannelName As String = Beacon.PusherSocket.UserChannelName(UserId)
 		        Self.mPusher.Listen(UserChannelName, "user-updated", AddressOf Pusher_UserUpdated)
 		        Self.mPusher.Listen(UserChannelName, "cloud-updated", AddressOf Pusher_CloudUpdated)
@@ -1545,6 +1547,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Pusher_UpdateBlueprints(ChannelName As String, EventName As String, Payload As String)
+		  #Pragma Unused ChannelName
+		  #Pragma Unused EventName
+		  #Pragma Unused Payload
+		  
+		  Self.SyncGamedata(True, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Pusher_UserUpdated(ChannelName As String, EventName As String, Payload As String)
 		  #Pragma Unused ChannelName
 		  #Pragma Unused EventName
@@ -1643,6 +1655,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Sub StartTicket()
 		  Var Win As New SupportTicketWindow
 		  Win.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SubscribeToPusherPublic()
+		  Self.mPusher.Subscribe("beacon-public")
+		  Self.mPusher.Listen("beacon-public", "update-blueprints", AddressOf Pusher_UpdateBlueprints)
 		End Sub
 	#tag EndMethod
 
