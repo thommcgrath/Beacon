@@ -941,6 +941,7 @@ Interface=BlueprintConsumer;Modules/Beacon/BlueprintConsumer.xojo_code;&h0000000
 Class=BlueprintMigrator;Modules/Beacon/BlueprintMigrator.xojo_code;&h00000000300977FF;&h0000000055ADDFFF;false
 MultiImage=IconToolbarAddOutline;Icons/IconToolbarAddOutline.xojo_image;&h00000000134317FF;&h0000000007F977FF;false
 DesktopWindow=ModSettingsDialog;Views/Main Window Components/Blueprints/ModSettingsDialog.xojo_window;&h000000000443A7FF;&h00000000472E07FF;false
+Interface=BlueprintProvider;Modules/Game Support/ArkSA/BlueprintProvider.xojo_code;&h000000004631FFFF;&h000000004504AFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=1

@@ -171,7 +171,7 @@ Implements Beacon.HostingProvider
 		  Case Variant.TypeNil
 		  Case Variant.TypeDouble
 		    StringValue = Value.DoubleValue.PrettyText(False)
-		  Case Variant.TypeInteger
+		  Case Variant.TypeInt32 Or Variant.TypeInt64
 		    StringValue = Value.IntegerValue.ToString(Locale.Raw, "0")
 		  Case Variant.TypeBoolean
 		    StringValue = If(Value.BooleanValue, "true", "false")

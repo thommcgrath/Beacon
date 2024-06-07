@@ -419,6 +419,20 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ContentPackIds(Extends ContentPacks() As Beacon.ContentPack) As String()
+		  Var Ids() As String
+		  Ids.ResizeTo(ContentPacks.LastIndex)
+		  For Idx As Integer = 0 To ContentPacks.LastIndex
+		    If ContentPacks(Idx) Is Nil Then
+		      Continue
+		    End If
+		    Ids(Idx) = ContentPacks(Idx).ContentPackId
+		  Next
+		  Return Ids
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function CurseForgeApiKey() As String
 		  Static ApiKey As String

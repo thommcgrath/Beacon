@@ -603,6 +603,30 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Blueprint()
+		  Var Categories() As String = ArkSA.Categories
+		  Var Blueprints() As ArkSA.Blueprint
+		  Var ExtraClauses() As String
+		  Var ExtraValues() As Variant
+		  For Each Category As String In Categories
+		    Var Results() As ArkSA.Blueprint = Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		    For Each Result As ArkSA.Blueprint In Results
+		      Blueprints.Add(Result)
+		    Next
+		  Next
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Blueprint()
+		  Var ExtraClauses() As String
+		  Var ExtraValues() As Variant
+		  Return Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Hash(Extends Blueprint As ArkSA.Blueprint) As String
 		  #if DebugBuild
 		    Return Beacon.GenerateJSON(ArkSA.PackBlueprint(Blueprint, False), True)
@@ -739,14 +763,54 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Matches(Extends Blueprint As ArkSA.Blueprint, Rx As PCRE2CodeMBS) As Boolean
-		  Return (Rx.Match(Blueprint.Path) Is Nil) = False Or (Rx.Match(Blueprint.ClassString) Is Nil) = False Or (Rx.Match(Blueprint.Label) Is Nil) = False
+		Function Matches(Extends Blueprint As ArkSA.Blueprint, Rx As PCRE2CodeMBS, Flags As Integer = ArkSA.FlagMatchAny) As Boolean
+		  If Rx Is Nil Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchPath) > 0 And (Rx.Match(Blueprint.Path) Is Nil) = False Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchLabel) > 0 And (Blueprint.AlternateLabel.IsEmpty = False And (Rx.Match(Blueprint.AlternateLabel) Is Nil) = False) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchClass) > 0 And (Rx.Match(Blueprint.ClassString) Is Nil) = False Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchUnlockString) > 0 And (Blueprint IsA ArkSA.Engram And ArkSA.Engram(Blueprint).EntryString.IsEmpty = False And (Rx.Match(ArkSA.Engram(Blueprint).EntryString) Is Nil) = False) Then
+		    Return True
+		  End If
+		  
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Matches(Extends Blueprint As ArkSA.Blueprint, Filter As String) As Boolean
-		  Return Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Label.IndexOf(Filter) > -1
+		Function Matches(Extends Blueprint As ArkSA.Blueprint, Filter As String, Flags As Integer = ArkSA.FlagMatchAny) As Boolean
+		  If Filter.IsEmpty Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchPath) > 0 And Blueprint.Path.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchLabel) > 0 And Blueprint.Label.Contains(Filter) Or (Blueprint.AlternateLabel.IsEmpty = False And Blueprint.AlternateLabel.Contains(Filter)) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchClass) > 0 And Blueprint.ClassString.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchUnlockString) > 0 And Blueprint IsA ArkSA.Engram And ArkSA.Engram(Blueprint).EntryString.IsEmpty = False And ArkSA.Engram(Blueprint).EntryString.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -769,6 +833,14 @@ Protected Module ArkSA
 		  End If
 		  
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesTags(Extends Blueprint As ArkSA.Blueprint, TagString As String) As Boolean
+		  Var RequiredTags(), ExcludedTags() As String
+		  TagPicker.ParseSpec(TagString, RequiredTags, ExcludedTags)
+		  Return Blueprint.MatchesTags(RequiredTags, ExcludedTags)
 		End Function
 	#tag EndMethod
 
@@ -1536,6 +1608,21 @@ Protected Module ArkSA
 	#tag EndConstant
 
 	#tag Constant, Name = Enabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchAny, Type = Double, Dynamic = False, Default = \"15", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchClass, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchLabel, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchPath, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchUnlockString, Type = Double, Dynamic = False, Default = \"8", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FullName, Type = String, Dynamic = False, Default = \"Ark: Survival Ascended", Scope = Protected

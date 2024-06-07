@@ -1,6 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
+Implements ArkSA.BlueprintProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
@@ -1098,30 +1099,6 @@ Inherits Beacon.DataSource
 		  Case ArkSA.CategorySpawnPoints
 		    Return Self.GetSpawnPoint(BlueprintId, UseCache)
 		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Blueprint()
-		  Var Categories() As String = ArkSA.Categories
-		  Var Blueprints() As ArkSA.Blueprint
-		  Var ExtraClauses() As String
-		  Var ExtraValues() As Variant
-		  For Each Category As String In Categories
-		    Var Results() As ArkSA.Blueprint = Self.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
-		    For Each Result As ArkSA.Blueprint In Results
-		      Blueprints.Add(Result)
-		    Next
-		  Next
-		  Return Blueprints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Blueprint()
-		  Var ExtraClauses() As String
-		  Var ExtraValues() As Variant
-		  Return Self.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
 		End Function
 	#tag EndMethod
 
