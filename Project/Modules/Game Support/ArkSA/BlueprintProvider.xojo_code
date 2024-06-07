@@ -1,6 +1,12 @@
 #tag Interface
 Protected Interface BlueprintProvider
 	#tag Method, Flags = &h0
+		Function AuthoritativeForContentPackIds() As String()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As ArkSA.Blueprint) As Boolean
 		  
 		End Function
@@ -14,6 +20,12 @@ Protected Interface BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByPath(Path As String, ContentPacks As Beacon.StringList, UseCache As Boolean = True) As ArkSA.Blueprint()
 		  
 		End Function
 	#tag EndMethod
@@ -128,6 +140,12 @@ Protected Interface BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPointsByPath(Path As String, ContentPacks As Beacon.StringList) As ArkSA.SpawnPoint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetTags(ContentPackIds As Beacon.StringList, Category As String = "") As String()
 		  
 		End Function
 	#tag EndMethod

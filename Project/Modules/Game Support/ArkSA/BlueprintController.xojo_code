@@ -35,6 +35,12 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AuthoritativeForContentPackIds() As String()
+		  Return Array(Self.mContentPackId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As ArkSA.Blueprint) As Boolean
 		  // Part of the ArkSA.BlueprintProvider interface.
 		  
@@ -282,15 +288,22 @@ Implements ArkSA.BlueprintProvider
 		  
 		  Var Results() As ArkSA.Blueprint
 		  Var Sources() As Dictionary = Array(Self.mChanges, Self.mOriginalBlueprints)
+		  Var CheckedIds As New Dictionary
+		  Var MatchCategory As Boolean = Category.IsEmpty = False
 		  For Each Source As Dictionary In Sources
 		    For Each Entry As DictionaryEntry In Source
 		      Var BlueprintId As String = Entry.Key
+		      If CheckedIds.HasKey(BlueprintId) Then
+		        Continue
+		      End If
+		      CheckedIds.Value(BlueprintId) = True
+		      
 		      If Entry.Value.Type = Variant.TypeString Then
 		        Continue
 		      End If
 		      
 		      Var Blueprint As ArkSA.Blueprint = Entry.Value
-		      If Blueprint.Category <> Category Then
+		      If MatchCategory And Blueprint.Category <> Category Then
 		        Continue
 		      End If
 		      
@@ -306,6 +319,15 @@ Implements ArkSA.BlueprintProvider
 		    Next
 		  Next
 		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByPath(Path As String, ContentPacks As Beacon.StringList, UseCache As Boolean = True) As ArkSA.Blueprint()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  #Pragma Unused UseCache
+		  Return Self.GetBlueprints("", "path:" + Path, ContentPacks, "")
 		End Function
 	#tag EndMethod
 
@@ -559,6 +581,59 @@ Implements ArkSA.BlueprintProvider
 		  For Idx As Integer = 0 To Results.LastIndex
 		    Results(Idx) = ArkSA.SpawnPoint(Blueprints(Idx))
 		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetTags(ContentPackIds As Beacon.StringList, Category As String = "") As String()
+		  // An in-memory is probably the fastest way to get unique tags
+		  
+		  Var ExtraClauses() As String
+		  Var ExtraValues() As Variant
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(Category, "", ContentPackIds, "", ExtraClauses, ExtraValues)
+		  
+		  #if DebugBuild
+		    Var StartTime As Double = System.Microseconds
+		  #endif
+		  
+		  #if false
+		    Var Mem As New SQLiteDatabase
+		    Mem.Connect
+		    Mem.ExecuteSQL("CREATE TABLE tags (tag TEXT COLLATE NOCASE);")
+		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		      Var Tags() As String = Blueprint.Tags
+		      For Each Tag As String In Tags
+		        Mem.ExecuteSQL("INSERT INTO tags (tag) VALUES (?1);", Tag)
+		      Next
+		    Next
+		    
+		    Var Rows As RowSet = Mem.SelectSQL("SELECT DISTINCT tag FROM tags ORDER BY tag;")
+		    Var Results() As String
+		    While Not Rows.AfterLastRow
+		      Results.Add(Rows.Column("tag").StringValue)
+		      Rows.MoveToNextRow
+		    Wend
+		  #endif
+		  
+		  Var Unique As New Dictionary
+		  Var Results() As String
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    Var Tags() As String = Blueprint.Tags
+		    For Each Tag As String In Tags
+		      If Unique.HasKey(Tag) = False Then
+		        Results.Add(Tag)
+		        Unique.Value(Tag) = True
+		      End If
+		    Next
+		  Next
+		  Results.Sort
+		  
+		  #if DebugBuild
+		    Var Duration As Double = (System.Microseconds - StartTime) * 0.001
+		    System.DebugLog("Tags gathered in " + Duration.ToString(Locale.Raw, "0.00") + "ms")
+		  #endif
+		  
 		  Return Results
 		End Function
 	#tag EndMethod

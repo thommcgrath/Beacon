@@ -45,6 +45,7 @@ Begin ModEditorView ArkSAModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -368,6 +369,7 @@ Begin ModEditorView ArkSAModEditorView
       End
    End
    Begin ArkSA.ModDiscoveryEngine DiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -1183,6 +1185,7 @@ End
 		    Return
 		  End If
 		  
+		  Var AdditionalProviders() As ArkSA.BlueprintProvider = Array(Self.mController)
 		  If Me.SelectedRowCount = 1 Then
 		    Var RowIdx As Integer = Me.SelectedRowIndex
 		    Var Blueprint As ArkSA.Blueprint = Me.RowTagAt(RowIdx)
@@ -1190,7 +1193,7 @@ End
 		      Return
 		    End If
 		    
-		    Blueprint = ArkSABlueprintEditorDialog.Present(Self, Blueprint, Self.mReadOnly)
+		    Blueprint = ArkSABlueprintEditorDialog.Present(Self, Blueprint, Self.mReadOnly, AdditionalProviders)
 		    If Blueprint Is Nil Then
 		      Return
 		    End If
@@ -1304,7 +1307,8 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Select Case Item.Name
 		  Case "AddBlueprint"
-		    Var Blueprint As ArkSA.Blueprint = ArkSABlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
+		    Var AdditionalProviders() As ArkSA.BlueprintProvider = Array(Self.mController)
+		    Var Blueprint As ArkSA.Blueprint = ArkSABlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName, False, AdditionalProviders)
 		    If (Blueprint Is Nil) = False Then
 		      Try
 		        Self.mController.SaveBlueprint(Blueprint)

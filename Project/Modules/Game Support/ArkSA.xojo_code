@@ -772,7 +772,7 @@ Protected Module ArkSA
 		    Return True
 		  End If
 		  
-		  If (Flags And FlagMatchLabel) > 0 And (Blueprint.AlternateLabel.IsEmpty = False And (Rx.Match(Blueprint.AlternateLabel) Is Nil) = False) Then
+		  If (Flags And FlagMatchLabel) > 0 And ((Rx.Match(Blueprint.Label) Is Nil) = False Or ((Blueprint.AlternateLabel Is Nil) = False And (Rx.Match(Blueprint.AlternateLabel) Is Nil) = False)) Then
 		    Return True
 		  End If
 		  
@@ -798,7 +798,7 @@ Protected Module ArkSA
 		    Return True
 		  End If
 		  
-		  If (Flags And FlagMatchLabel) > 0 And Blueprint.Label.Contains(Filter) Or (Blueprint.AlternateLabel.IsEmpty = False And Blueprint.AlternateLabel.Contains(Filter)) Then
+		  If (Flags And FlagMatchLabel) > 0 And (Blueprint.Label.Contains(Filter) Or ((Blueprint.AlternateLabel Is Nil) = False And Blueprint.AlternateLabel.Contains(Filter))) Then
 		    Return True
 		  End If
 		  

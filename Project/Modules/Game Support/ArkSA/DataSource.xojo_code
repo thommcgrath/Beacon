@@ -746,6 +746,18 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AuthoritativeForContentPackIds() As String()
+		  Var ContentPackIds() As String
+		  Var Rows As RowSet = Self.SQLSelect("SELECT DISTINCT content_pack_id FROM content_packs;")
+		  While Not Rows.AfterLastRow
+		    ContentPackIds.Add(Rows.Column("content_pack_id").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
+		  Return ContentPackIds
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As ArkSA.Blueprint) As Boolean
 		  If Item Is Nil Then
 		    Return False

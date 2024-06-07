@@ -412,7 +412,18 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.Picker.Tags = ArkSA.DataSource.Pool.Get(False).GetTags(Self.mMods, Self.mCategory)
+		  Var AllTags() As String
+		  For Each Provider As ArkSA.BlueprintProvider In Self.mProviders
+		    Var Tags() As String = Provider.GetTags(Self.mMods, Self.mCategory)
+		    For Each Tag As String In Tags
+		      If AllTags.IndexOf(Tag) = -1 Then
+		        AllTags.Add(Tag)
+		      End If
+		    Next
+		  Next
+		  AllTags.Sort
+		  
+		  Self.Picker.Tags = AllTags
 		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
 		  Self.UpdateFilter()
 		  Self.SwapButtons()
@@ -466,7 +477,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As ArkSA.Blueprint, Mods As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
+		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As ArkSA.Blueprint, Mods As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean, AdditionalProviders() As ArkSA.BlueprintProvider)
 		  Var References() As ArkSA.BlueprintReference
 		  For Each Blueprint As ArkSA.Blueprint In Exclude
 		    If Blueprint Is Nil Then
@@ -475,12 +486,12 @@ End
 		    
 		    References.Add(New ArkSA.BlueprintReference(Blueprint))
 		  Next
-		  Self.Constructor(Category, Subgroup, References, Mods, SelectMode, ShowLoadDefaults)
+		  Self.Constructor(Category, Subgroup, References, Mods, SelectMode, ShowLoadDefaults, AdditionalProviders)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As ArkSA.BlueprintReference, Mods As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
+		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As ArkSA.BlueprintReference, Mods As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean, AdditionalProviders() As ArkSA.BlueprintProvider)
 		  Self.mSettingUp = True
 		  For Each Reference As ArkSA.BlueprintReference In Exclude
 		    If Reference Is Nil Then
@@ -492,6 +503,15 @@ End
 		  Self.mMods = Mods
 		  Self.mCategory = Category
 		  Self.mSubgroup = Subgroup
+		  
+		  Self.mProviders.ResizeTo(0)
+		  Self.mProviders(0) = ArkSA.DataSource.Pool.Get(False)
+		  If (AdditionalProviders Is Nil) = False Then
+		    For Each Provider As ArkSA.BlueprintProvider In AdditionalProviders
+		      Self.mProviders.Add(Provider)
+		    Next
+		  End If
+		  
 		  Super.Constructor
 		  
 		  If SelectMode = ArkSABlueprintSelectorDialog.SelectModes.ExplicitMultipleWithExcluded Then
@@ -561,20 +581,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As ArkSA.Creature, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes) As ArkSA.Creature()
+		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As ArkSA.Creature, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.Creature()
 		  Var WithDefaults As Boolean
-		  Return Present(Parent, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		  Return Present(Parent, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults, AdditionalProviders)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As ArkSA.Creature, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As ArkSA.Creature()
+		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As ArkSA.Creature, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.Creature()
 		  Var ExcludeBlueprints() As ArkSA.Blueprint
 		  For Each Creature As ArkSA.Creature In Exclude
 		    ExcludeBlueprints.Add(Creature)
 		  Next
 		  
-		  Var Blueprints() As ArkSA.Blueprint = Present(Parent, ArkSA.CategoryCreatures, Subgroup, ExcludeBlueprints, ContentPacks, SelectMode, WithDefaults)
+		  Var Blueprints() As ArkSA.Blueprint = Present(Parent, ArkSA.CategoryCreatures, Subgroup, ExcludeBlueprints, ContentPacks, SelectMode, WithDefaults, AdditionalProviders)
 		  Var Creatures() As ArkSA.Creature
 		  For Each Blueprint As ArkSA.Blueprint In Blueprints
 		    If Blueprint IsA ArkSA.Creature Then
@@ -586,20 +606,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As ArkSA.Engram, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes) As ArkSA.Engram()
+		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As ArkSA.Engram, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.Engram()
 		  Var WithDefaults As Boolean
-		  Return Present(Parent, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		  Return Present(Parent, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults, AdditionalProviders)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As ArkSA.Engram, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As ArkSA.Engram()
+		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As ArkSA.Engram, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.Engram()
 		  Var ExcludeBlueprints() As ArkSA.Blueprint
 		  For Each Engram As ArkSA.Engram In Exclude
 		    ExcludeBlueprints.Add(Engram)
 		  Next
 		  
-		  Var Blueprints() As ArkSA.Blueprint = Present(Parent, ArkSA.CategoryEngrams, Subgroup, ExcludeBlueprints, ContentPacks, SelectMode, WithDefaults)
+		  Var Blueprints() As ArkSA.Blueprint = Present(Parent, ArkSA.CategoryEngrams, Subgroup, ExcludeBlueprints, ContentPacks, SelectMode, WithDefaults, AdditionalProviders)
 		  Var Engrams() As ArkSA.Engram
 		  For Each Blueprint As ArkSA.Blueprint In Blueprints
 		    If Blueprint IsA ArkSA.Engram Then
@@ -611,14 +631,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As ArkSA.Blueprint, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes) As ArkSA.Blueprint()
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As ArkSA.Blueprint, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.Blueprint()
 		  Var WithDefaults As Boolean
-		  Return Present(Parent, Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		  Return Present(Parent, Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults, AdditionalProviders)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As ArkSA.Blueprint, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As ArkSA.Blueprint()
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As ArkSA.Blueprint, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.Blueprint()
 		  Var Blueprints() As ArkSA.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints
@@ -628,7 +648,7 @@ End
 		    ContentPacks = New Beacon.StringList
 		  End If
 		  
-		  Var Win As New ArkSABlueprintSelectorDialog(Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		  Var Win As New ArkSABlueprintSelectorDialog(Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults, AdditionalProviders)
 		  Win.ShowModal(Parent)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -646,14 +666,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As ArkSA.BlueprintReference, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes) As ArkSA.BlueprintReference()
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As ArkSA.BlueprintReference, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.BlueprintReference()
 		  Var WithDefaults As Boolean
-		  Return Present(Parent, Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		  Return Present(Parent, Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults, AdditionalProviders)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As ArkSA.BlueprintReference, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As ArkSA.BlueprintReference()
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As ArkSA.BlueprintReference, ContentPacks As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.BlueprintReference()
 		  Var Blueprints() As ArkSA.BlueprintReference
 		  If Parent Is Nil Then
 		    Return Blueprints
@@ -663,7 +683,7 @@ End
 		    ContentPacks = New Beacon.StringList
 		  End If
 		  
-		  Var Win As New ArkSABlueprintSelectorDialog(Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
+		  Var Win As New ArkSABlueprintSelectorDialog(Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults, AdditionalProviders)
 		  Win.ShowModal(Parent)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -734,16 +754,19 @@ End
 		  Self.List.RemoveAllRows
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  Var RecentPaths() As String = Preferences.ArkSARecentBlueprints(Self.mCategory, Self.mSubgroup)
-		  For Each Path As String In RecentPaths
-		    Var BlueprintsAtPath() As ArkSA.Blueprint = DataSource.GetBlueprintsByPath(Path, Self.mMods)
-		    Self.AddBlueprintsToList(BlueprintsAtPath, Blacklist, True, True)
+		  For Each Provider As ArkSA.BlueprintProvider In Self.mProviders
+		    For Each Path As String In RecentPaths
+		      Var BlueprintsAtPath() As ArkSA.Blueprint = Provider.GetBlueprintsByPath(Path, Self.mMods)
+		      Self.AddBlueprintsToList(BlueprintsAtPath, Blacklist, True, True)
+		    Next
 		  Next
 		  
-		  Var Blueprints() As ArkSA.Blueprint = DataSource.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
-		  Self.AddBlueprintsToList(Blueprints, Blacklist, False, False)
-		  Self.List.ScrollPosition = ScrollPosition
+		  For Each Provider As ArkSA.BlueprintProvider In Self.mProviders
+		    Var Blueprints() As ArkSA.Blueprint = Provider.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
+		    Self.AddBlueprintsToList(Blueprints, Blacklist, False, False)
+		    Self.List.ScrollPosition = ScrollPosition
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -762,6 +785,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mMods As Beacon.StringList
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProviders() As ArkSA.BlueprintProvider
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
