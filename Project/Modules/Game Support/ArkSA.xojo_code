@@ -622,14 +622,8 @@ Protected Module ArkSA
 		  
 		  If Names.Count = 0 Then
 		    Return "No Maps"
-		  ElseIf Names.Count = 1 Then
-		    Return Names(0)
-		  ElseIf Names.Count = 2 Then
-		    Return Names(0) + " & " + Names(1)
 		  Else
-		    Var Tail As String = Names(Names.LastIndex)
-		    Names.RemoveAt(Names.LastIndex)
-		    Return Names.Join(", ") + ", & " + Tail
+		    Return Language.EnglishOxfordList(Names)
 		  End If
 		End Function
 	#tag EndMethod
