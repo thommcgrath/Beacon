@@ -179,7 +179,7 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		  
 		  Var SpreadKey As Variant = SaveData.FirstKey("spreadRadius", "Spread Radius", "spread_radius", "SpreadRadius")
 		  If SpreadKey.IsNull = False Then
-		    Set.SpreadRadius = NullableDouble.FromVariant(SpreadKey)
+		    Set.SpreadRadius = NullableDouble.FromVariant(SaveData.Value(SpreadKey))
 		  End If
 		  
 		  Var SpawnOffsetKey As Variant = SaveData.FirstKey("spawnOffset", "Spawn Offset", "spawn_offset", "GroupOffset")
@@ -202,7 +202,7 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		  
 		  Var MinDistanceFromStructuresMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromStructuresMultiplier", "Min Distance From Structures Multiplier", "min_distance_from_structures_multiplier", "MinDistanceFromStructuresMultiplier")
 		  If MinDistanceFromStructuresMultiplierKey.IsNull = False Then
-		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromStructuresMultiplierKey))
+		    Set.MinDistanceFromStructuresMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromStructuresMultiplierKey))
 		  End If
 		  
 		  Var MinDistanceFromTamedDinosMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromTamedDinosMultiplier", "Min Distance From Tamed Dinos Multiplier", "min_distance_from_tamed_dinos_multiplier", "MinDistanceFromTamedDinosMultiplier")
