@@ -71,6 +71,7 @@ case 'EUR':
 	$payment_methods[] = 'giropay';
 	$payment_methods[] = 'bancontact';
 	$payment_methods[] = 'p24';
+	$payment_methods[] = 'eps';
 	break;
 case 'PLN':
 	$payment_methods[] = 'p24';
