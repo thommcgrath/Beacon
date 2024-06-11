@@ -507,7 +507,7 @@ Begin BeaconDialog ArkSAAddLootDropDialog
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   True
+         LockRight       =   False
          LockTop         =   False
          Scope           =   2
          TabIndex        =   4
@@ -520,7 +520,7 @@ Begin BeaconDialog ArkSAAddLootDropDialog
          Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   326
+         Width           =   510
       End
       Begin DelayedSearchField FilterField
          Active          =   False
@@ -721,7 +721,7 @@ Begin BeaconDialog ArkSAAddLootDropDialog
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   True
+         LockRight       =   False
          LockTop         =   False
          Scope           =   2
          TabIndex        =   3
@@ -734,7 +734,7 @@ Begin BeaconDialog ArkSAAddLootDropDialog
          Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   326
+         Width           =   510
       End
    End
 End
@@ -746,11 +746,14 @@ End
 		  If Self.mShowAsDuplicate Then
 		    Self.SelectionMessageLabel.Text = "Duplicate Loot Drop"
 		    Self.LoadDefaultsCheckbox.Visible = False
+		  Else
+		    Self.LoadDefaultsCheckbox.SizeToFit
 		  End If
 		  
 		  Var HasExperimentalSources As Boolean = ArkSA.DataSource.Pool.Get(False).HasExperimentalLootContainers(Self.mContentPacks)
 		  If HasExperimentalSources Then
 		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
+		    Self.SelectionExperimentalCheck.SizeToFit
 		  Else
 		    Self.SelectionExperimentalCheck.Visible = False
 		  End If
@@ -770,6 +773,18 @@ End
 		  End If
 		  
 		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  Self.ResizeUI()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.ResizeUI()
 		End Sub
 	#tag EndEvent
 
@@ -914,15 +929,25 @@ End
 		Private Sub ResizeUI()
 		  Var CheckboxBottom As Integer = Self.Height - 20
 		  Var ListBottom As Integer = Self.Height - 60
+		  Var FirstRowRightEdge As Integer = Self.SelectionCancelButton.Left - 12
+		  Var IsFirst As Boolean = True
 		  If Self.SelectionExperimentalCheck.Visible Then
+		    If IsFirst And Self.SelectionExperimentalCheck.Right > FirstRowRightEdge Then
+		      CheckboxBottom = Self.SelectionCancelButton.Top - 12
+		    End If
 		    Self.SelectionExperimentalCheck.Top = CheckboxBottom - Self.SelectionExperimentalCheck.Height
 		    CheckboxBottom = Self.SelectionExperimentalCheck.Top - 12
 		    ListBottom = Min(ListBottom, Self.SelectionExperimentalCheck.Top - 20)
+		    IsFirst = False
 		  End If
 		  If Self.LoadDefaultsCheckbox.Visible Then
+		    If IsFirst And Self.LoadDefaultsCheckbox.Right > FirstRowRightEdge Then
+		      CheckboxBottom = Self.SelectionCancelButton.Top - 12
+		    End If
 		    Self.LoadDefaultsCheckbox.Top = CheckboxBottom - Self.LoadDefaultsCheckbox.Height
 		    CheckboxBottom = Self.LoadDefaultsCheckbox.Top - 12
 		    ListBottom = Min(ListBottom, Self.LoadDefaultsCheckbox.Top - 20)
+		    IsFirst = False
 		  End If
 		  
 		  Self.SourceList.Top = 60
