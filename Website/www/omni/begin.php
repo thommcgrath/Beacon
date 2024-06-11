@@ -76,10 +76,6 @@ case 'EUR':
 case 'PLN':
 	$payment_methods[] = 'p24';
 	break;
-case 'USD':
-	$payment_methods[] = 'cashapp';
-	$payment_methods[] = 'amazon_pay';
-	break;
 }
 
 $payment = [

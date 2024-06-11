@@ -62,7 +62,6 @@ $palworldEnabled = isset($productDetails['Palworld']);
 
 $paymentMethods = [
 	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
-	'USD' => ['cashapp', 'amazon_pay'],
 	'EUR' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
 	'PLN' => ['p24'],
 ];
@@ -80,8 +79,6 @@ $paymentLabels = [
 	'giropay' => 'giropay',
 	'ideal' => 'iDEAL',
 	'p24' => 'Przelewy24',
-	'cashapp' => 'Cash App Pay',
-	'amazon_pay' => 'Amazon Pay',
 ];
 
 $supportedPaymentMethods = $paymentMethods['Universal'];
