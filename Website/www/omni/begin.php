@@ -102,6 +102,11 @@ try {
 
 	$user = User::Fetch($email);
 	if (is_null($user) === false) {
+		if ($user->IsBanned()) {
+			http_response_code(400);
+			echo json_encode(['error' => true, 'message' => 'An ichthyornis stole my shotgun!'], JSON_PRETTY_PRINT);
+			exit;
+		}
 		$payment['metadata']['Beacon User UUID'] = $user->UserID();
 	}
 } catch (Exception $err) {
