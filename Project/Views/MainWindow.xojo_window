@@ -876,18 +876,27 @@ End
 		      Base.AddMenu(New DesktopMenuItem("Refresh Purchases", "beacon://action/refreshuser?silent=false"))
 		      Base.AddMenu(New DesktopMenuItem("Account Control Panel", "beacon://action/showaccount"))
 		      Base.AddMenu(New DesktopMenuItem("Show Account Info…", "beacon://action/showidentity"))
+		      Base.AddMenu(New DesktopMenuItem("Copy Username", "copyusername"))
 		      Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		      Base.AddMenu(New DesktopMenuItem("Change Account…", "beacon://action/signout"))
 		    End If
 		  End If
 		  
 		  Var Choice As DesktopMenuItem = Base.PopUp(X, Y)
-		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Then
+		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Or Choice.Tag.StringValue.IsEmpty Then
 		    Return
 		  End If
 		  
-		  If Choice.Tag.StringValue.IsEmpty = False Then
-		    Call App.HandleURL(Choice.Tag.StringValue)
+		  Var ChoiceString As String = Choice.Tag.StringValue
+		  If ChoiceString.BeginsWith("beacon://") Then
+		    Call App.HandleURL(ChoiceString)
+		  Else
+		    Select Case ChoiceString
+		    Case "copyusername"
+		      Var Board As New Clipboard
+		      Board.Text = App.IdentityManager.CurrentIdentity.Username(True)
+		      MessageBox("Your username has been copied")
+		    End Select
 		  End If
 		End Sub
 	#tag EndMethod
