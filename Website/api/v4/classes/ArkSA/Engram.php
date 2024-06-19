@@ -12,6 +12,7 @@ class Engram extends MutableBlueprint {
 	protected ?int $stackSize;
 	protected ?int $itemId;
 	protected ?string $gfi;
+	protected ?array $stats;
 
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
@@ -22,6 +23,7 @@ class Engram extends MutableBlueprint {
 		$this->stackSize = filter_var($row->Field('stack_size'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->itemId = filter_var($row->Field('item_id'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->gfi = $row->Field('gfi');
+		$this->stats = is_null($row->Field('stats')) ? null : json_decode($row->Field('stats'), true);
 
 		$recipe = is_null($row->Field('recipe')) ? null : json_decode($row->Field('recipe'), true);
 		if (is_null($recipe)) {
@@ -52,6 +54,7 @@ class Engram extends MutableBlueprint {
 		$schema->AddColumn(new DatabaseObjectProperty('stackSize', ['columnName' => 'stack_size', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
 		$schema->AddColumn(new DatabaseObjectProperty('itemId', ['columnName' => 'item_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
 		$schema->AddColumn(new DatabaseObjectProperty('gfi', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
+		$schema->AddColumn(new DatabaseObjectProperty('stats', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(template))) FROM (SELECT stat_index AS "statIndex", randomizer_range_override AS "randomizerRangeOverride", randomizer_range_multiplier AS "randomizerRangeMultiplier", state_modifier_scale AS "stateModifierScale", rating_value_multiplier AS "rating_value_multiplier", initial_value_constant AS "initialValueConstant" FROM arksa.engram_stats WHERE engram_stats.engram_id = engrams.object_id ORDER BY stat_index) AS template)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
 		return $schema;
 	}
 
@@ -102,6 +105,7 @@ class Engram extends MutableBlueprint {
 		} else {
 			$json['recipe'] = $this->recipe;
 		}
+		$json['stats'] = $this->stats;
 		return $json;
 	}
 
