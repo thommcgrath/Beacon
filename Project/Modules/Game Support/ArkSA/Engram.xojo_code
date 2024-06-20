@@ -2,6 +2,25 @@
 Protected Class Engram
 Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
+		Function AllStats(UsedOnly As Boolean = False) As ArkSA.EngramStat()
+		  Var Values() As ArkSA.EngramStat
+		  If UsedOnly Then
+		    For Idx As Integer = 0 To Self.mStats.LastIndex
+		      If (Self.mStats(Idx) Is Nil ) = False Then
+		        Values.Add(Self.mStats(Idx))
+		      End If
+		    Next
+		  Else
+		    Values.ResizeTo(ArkSA.EngramStat.LastIndex)
+		    For Idx As Integer = 0 To Self.mStats.LastIndex
+		      Values(Idx) = Self.mStats(Idx)
+		    Next
+		  End If
+		  Return Values
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the ArkSA.Blueprint interface.
 		  
@@ -55,7 +74,7 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  
+		  Self.mStats.ResizeTo(ArkSA.EngramStat.LastIndex)
 		End Sub
 	#tag EndMethod
 
@@ -89,6 +108,11 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		  Self.mIngredients.ResizeTo(Source.mIngredients.LastIndex)
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
+		  Next
+		  
+		  Self.mStats.ResizeTo(ArkSA.EngramStat.LastIndex)
+		  For Idx As Integer = ArkSA.EngramStat.FirstIndex To ArkSA.EngramStat.LastIndex
+		    Self.mStats(Idx) = Source.mStats(Idx)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -356,6 +380,15 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		    Next
 		    Dict.Value("recipe") = Ingredients
 		  End If
+		  
+		  Var Stats() As Dictionary
+		  For Each Stat As ArkSA.EngramStat In Self.mStats
+		    If Stat Is Nil Then
+		      Continue
+		    End If
+		    Stats.Add(Stat.SaveData)
+		  Next
+		  Dict.Value("stats") = Stats
 		End Sub
 	#tag EndMethod
 
@@ -398,6 +431,16 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 	#tag Method, Flags = &h0
 		Function StackSize() As NullableDouble
 		  Return Self.mStackSize
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Stat(StatIndex As Integer) As ArkSA.EngramStat
+		  If StatIndex > Self.mStats.LastIndex Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.mStats(StatIndex)
 		End Function
 	#tag EndMethod
 
@@ -485,6 +528,10 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 
 	#tag Property, Flags = &h1
 		Protected mStackSize As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mStats() As ArkSA.EngramStat
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

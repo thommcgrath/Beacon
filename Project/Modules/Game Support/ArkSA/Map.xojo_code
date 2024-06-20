@@ -2,13 +2,21 @@
 Protected Class Map
 Implements Beacon.Map
 	#tag Method, Flags = &h0
-		Sub Constructor(MapId As String, HumanName As String, Identifier As String, Mask As UInt64, DifficultyScale As Double, Official As Boolean, ContentPackId As String, Sort As Integer)
+		Sub Constructor(MapId As String, HumanName As String, Identifier As String, Mask As UInt64, DifficultyScale As Double, Type As String, ContentPackId As String, Sort As Integer)
+		  Select Case Type
+		  Case Beacon.MapTypeCanon, Beacon.MapTypeNonCanon, Beacon.MapTypeThirdParty
+		  Else
+		    Var Err As New UnsupportedFormatException
+		    Err.Message = "Map type must be one of '" + Beacon.MapTypeCanon + "', '" + Beacon.MapTypeNonCanon + "', or '" + Beacon.MapTypeThirdParty + "'."
+		    Raise Err
+		  End Select
+		  
 		  Self.mMapId = MapId
 		  Self.mName = HumanName
 		  Self.mIdentifier = Identifier
 		  Self.mMask = Mask
 		  Self.mDifficultyScale = DifficultyScale
-		  Self.mOfficial = Official
+		  Self.mType = Type
 		  Self.mContentPackId = ContentPackId
 		  Self.mSort = Sort
 		End Sub
@@ -82,12 +90,6 @@ Implements Beacon.Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Official() As Boolean
-		  Return Self.mOfficial
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As ArkSA.Map) As Integer
 		  If Other Is Nil Then
 		    Return 1
@@ -123,6 +125,12 @@ Implements Beacon.Map
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Type() As String
+		  Return Self.mType
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mContentPackId As String
@@ -149,11 +157,11 @@ Implements Beacon.Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOfficial As Boolean
+		Private mSort As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSort As Integer
+		Private mType As String
 	#tag EndProperty
 
 

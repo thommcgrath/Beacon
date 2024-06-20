@@ -25,13 +25,13 @@ Protected Interface Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Official() As Boolean
+		Function Sort() As Integer
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Sort() As Integer
+		Function Type() As String
 		  
 		End Function
 	#tag EndMethod

@@ -90,13 +90,13 @@ End
 		    
 		    If Siblings.Count = 1 Then
 		      Var Map As Beacon.Map = Siblings(0)
-		      Var Sort As Integer = If(Map.Official, Map.Sort + 100, Map.Sort)
+		      Var Sort As Integer = Self.AdjustedSort(Map)
 		      SortValues.Add(Sort.ToString(Locale.Raw, "0000") + ":" + Map.Name + ":" + GameNames.Value(Map.GameId).StringValue)
 		      Maps.Add(Map)
 		      Names.Value(Map.MapId) = Map.Name
 		    Else
 		      For Each Map As Beacon.Map In Siblings
-		        Var Sort As Integer = If(Map.Official, Map.Sort + 100, Map.Sort)
+		        Var Sort As Integer = Self.AdjustedSort(Map)
 		        SortValues.Add(Sort.ToString(Locale.Raw, "0000") + ":" + Map.Name + ":" + GameNames.Value(Map.GameId).StringValue)
 		        Maps.Add(Map)
 		        Names.Value(Map.MapId) = Map.Name + " (" + GameNames.Value(Map.GameId).StringValue + ")"
@@ -105,51 +105,79 @@ End
 		  Next
 		  SortValues.SortWith(Maps)
 		  
-		  Var OfficialMaps(), OtherMaps() As Beacon.Map
+		  Var CanonMaps(), NonCanonMaps(), ThirdPartyMaps() As Beacon.Map
 		  For Each Map As Beacon.Map In Maps
-		    If Map.Official Then
-		      OfficialMaps.Add(Map)
-		    Else
-		      OtherMaps.Add(Map)
-		    End If
+		    Select Case Map.Type
+		    Case Beacon.MapTypeCanon
+		      CanonMaps.Add(Map)
+		    Case Beacon.MapTypeNonCanon
+		      NonCanonMaps.Add(Map)
+		    Case Beacon.MapTypeThirdParty
+		      ThirdPartyMaps.Add(Map)
+		    End Select
 		  Next
 		  
-		  Var OfficialLeft As Integer = Self.EdgeSpacing
-		  Var OfficialNextTop As Integer = Self.EdgeSpacing
-		  Var OtherLeft As Integer = OfficialLeft + 140 + Self.CellSpacing
-		  Var OtherNextTop As Integer = Self.EdgeSpacing
+		  Var CanonLeft As Integer = Self.EdgeSpacing
+		  Var CanonNextTop As Integer = Self.EdgeSpacing
+		  Var NonCanonLeft As Integer = CanonLeft + 140 + Self.CellSpacing
+		  Var NonCanonNextTop As Integer = Self.EdgeSpacing
+		  Var ThirdPartyLeft As Integer = NonCanonLeft + 140 + Self.CellSpacing
+		  Var ThirdPartyNextTop As Integer = Self.EdgeSpacing
 		  
 		  Boxes(0).Close
 		  
-		  Var LeftBoxes(), RightBoxes() As MapCheckBox
-		  For Each Map As Beacon.Map In OfficialMaps
+		  Var LeftBoxes(), MiddleBoxes(), RightBoxes() As MapCheckBox
+		  For Each Map As Beacon.Map In CanonMaps
 		    Var Box As New Boxes
 		    Box.Map = Map
 		    Box.Caption = Names.Value(Map.MapId)
-		    Box.Top = OfficialNextTop
-		    Box.Left = OfficialLeft
-		    OfficialNextTop = OfficialNextTop + Self.RowHeight + Self.CellSpacing
+		    Box.Top = CanonNextTop
+		    Box.Left = CanonLeft
+		    CanonNextTop = CanonNextTop + Self.RowHeight + Self.CellSpacing
 		    Self.mBoxes.Add(Box)
 		    LeftBoxes.Add(Box)
 		  Next
-		  For Each Map As Beacon.Map In OtherMaps
+		  For Each Map As Beacon.Map In NonCanonMaps
 		    Var Box As New Boxes
 		    Box.Map = Map
 		    Box.Caption = Names.Value(Map.MapId)
-		    Box.Top = OtherNextTop
-		    Box.Left = OtherLeft
-		    OtherNextTop = OtherNextTop + Self.RowHeight + Self.CellSpacing
+		    Box.Top = NonCanonNextTop
+		    Box.Left = NonCanonLeft
+		    NonCanonNextTop = NonCanonNextTop + Self.RowHeight + Self.CellSpacing
+		    Self.mBoxes.Add(Box)
+		    MiddleBoxes.Add(Box)
+		  Next
+		  For Each Map As Beacon.Map In ThirdPartyMaps
+		    Var Box As New Boxes
+		    Box.Map = Map
+		    Box.Caption = Names.Value(Map.MapId)
+		    Box.Top = ThirdPartyNextTop
+		    Box.Left = ThirdPartyLeft
+		    ThirdPartyNextTop = ThirdPartyNextTop + Self.RowHeight + Self.CellSpacing
 		    Self.mBoxes.Add(Box)
 		    RightBoxes.Add(Box)
 		  Next
 		  
 		  BeaconUI.SizeToFit(Self.mBoxes)
 		  Var LeftGroup As New ControlGroup(LeftBoxes)
+		  Var MiddleGroup As New ControlGroup(MiddleBoxes)
 		  Var RightGroup As New ControlGroup(RightBoxes)
-		  RightGroup.Left = LeftGroup.Right + Self.CellSpacing
+		  MiddleGroup.Left = LeftGroup.Right + Self.CellSpacing
+		  RightGroup.Left = MiddleGroup.Right + Self.CellSpacing
 		  
-		  Self.mDesiredHeight = Max(LeftGroup.Height, RightGroup.Height) + (Self.EdgeSpacing * 2)
-		  Self.mDesiredWidth = If(LeftGroup.Width > 0 And RightGroup.Width > 0, LeftGroup.Width + Self.CellSpacing + RightGroup.Width, Max(LeftGroup.Width, RightGroup.Width)) + (Self.EdgeSpacing * 2)
+		  Var Widths() As Integer
+		  If LeftGroup.Width > 0 Then
+		    Widths.Add(LeftGroup.Width)
+		  End If
+		  If MiddleGroup.Width > 0 Then
+		    Widths.Add(MiddleGroup.Width)
+		  End If
+		  If RightGroup.Width > 0 Then
+		    Widths.Add(RightGroup.Width)
+		  End If
+		  
+		  Self.mDesiredHeight = Max(LeftGroup.Height, MiddleGroup.Height, RightGroup.Height) + (Self.EdgeSpacing * 2)
+		  Self.mDesiredWidth = Widths.Sum + ((Widths.Count - 1) * Self.CellSpacing)
 		  
 		  Self.Height = Self.mDesiredHeight
 		  Self.Width = Self.mDesiredWidth
@@ -159,6 +187,19 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function AdjustedSort(Map As Beacon.Map) As Integer
+		  Select Case Map.Type
+		  Case Beacon.MapTypeCanon
+		    Return Map.Sort
+		  Case Beacon.MapTypeNonCanon
+		    Return Map.Sort + 100
+		  Case Beacon.MapTypeThirdParty
+		    Return Map.Sort + 200
+		  End Select
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CheckedMaps() As Beacon.Map()

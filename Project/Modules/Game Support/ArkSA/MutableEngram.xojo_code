@@ -242,6 +242,19 @@ Implements ArkSA.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Stat(StatIndex As Integer, Assigns Stat As ArkSA.EngramStat)
+		  If (Stat Is Nil) = False Then
+		    StatIndex = Stat.StatIndex
+		  End If
+		  
+		  If StatIndex >= ArkSA.EngramStat.FirstIndex And StatIndex <= ArkSA.EngramStat.LastIndex Then
+		    Self.mStats(StatIndex) = Stat
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Tags(Assigns Tags() As String)
 		  // Part of the ArkSA.MutableBlueprint interface.
 		  
@@ -303,6 +316,17 @@ Implements ArkSA.MutableBlueprint
 		  Else
 		    Self.mIngredients.ResizeTo(-1)
 		    Self.mHasLoadedIngredients = False
+		  End If
+		  
+		  If Dict.HasKey("stats") And Dict.Value("stats").IsNull = False Then
+		    Var Stats() As Variant = Dict.Value("stats")
+		    Self.mStats.ResizeTo(ArkSA.EngramStat.LastIndex)
+		    For Each StatDict As Dictionary In Stats
+		      Var Stat As ArkSA.EngramStat = ArkSA.EngramStat.FromSaveData(StatDict)
+		      If (Stat Is Nil) = False Then
+		        Self.mStats(Stat.StatIndex) = Stat
+		      End If
+		    Next
 		  End If
 		End Sub
 	#tag EndMethod

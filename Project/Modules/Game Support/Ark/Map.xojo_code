@@ -82,12 +82,6 @@ Implements Beacon.Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Official() As Boolean
-		  Return Self.mOfficial
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Ark.Map) As Integer
 		  If Other Is Nil Then
 		    Return 1
@@ -120,6 +114,16 @@ Implements Beacon.Map
 		  // Part of the Beacon.Map interface.
 		  
 		  Return Self.mSort
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Type() As String
+		  If Self.mOfficial Then
+		    Return Beacon.MapTypeCanon
+		  Else
+		    Return Beacon.MapTypeNonCanon
+		  End If
 		End Function
 	#tag EndMethod
 

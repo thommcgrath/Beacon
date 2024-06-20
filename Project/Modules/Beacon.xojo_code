@@ -1769,6 +1769,15 @@ Protected Module Beacon
 	#tag Constant, Name = FTPModeSSH, Type = String, Dynamic = False, Default = \"sftp", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = MapTypeCanon, Type = String, Dynamic = False, Default = \"Official Canon", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = MapTypeNonCanon, Type = String, Dynamic = False, Default = \"Official Non-Canon", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = MapTypeThirdParty, Type = String, Dynamic = False, Default = \"Third Party", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = MarketplaceCurseForge, Type = String, Dynamic = False, Default = \"CurseForge", Scope = Protected
 	#tag EndConstant
 

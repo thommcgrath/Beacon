@@ -1,7 +1,7 @@
 #tag Class
 Protected Class StatLimits
 Inherits ArkSA.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.StatLimits = ArkSA.Configs.StatLimits(Other)
@@ -59,35 +59,35 @@ Inherits ArkSA.ConfigGroup
 		  #Pragma Unused EncryptedData
 		  
 		  If SaveData.HasKey("Armor") Then
-		    Self.mValues(Self.StatArmor) = SaveData.Value("Armor").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexArmor) = SaveData.Value("Armor").DoubleValue
 		  End If
 		  
 		  If SaveData.HasKey("Generic") Then
-		    Self.mValues(Self.StatGenericQuality) = SaveData.Value("Generic").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexGenericQuality) = SaveData.Value("Generic").DoubleValue
 		  End If
 		  
 		  If SaveData.HasKey("Hyper") Then
-		    Self.mValues(Self.StatHyperthermal) = SaveData.Value("Hyper").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexHyperthermal) = SaveData.Value("Hyper").DoubleValue
 		  End If
 		  
 		  If SaveData.HasKey("Hypo") Then
-		    Self.mValues(Self.StatHypothermal) = SaveData.Value("Hypo").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexHypothermal) = SaveData.Value("Hypo").DoubleValue
 		  End If
 		  
 		  If SaveData.HasKey("Durability") Then
-		    Self.mValues(Self.StatMaxDurability) = SaveData.Value("Durability").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexMaxDurability) = SaveData.Value("Durability").DoubleValue
 		  End If
 		  
 		  If SaveData.HasKey("Ammo") Then
-		    Self.mValues(Self.StatWeaponAmmo) = SaveData.Value("Ammo").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexWeaponAmmo) = SaveData.Value("Ammo").DoubleValue
 		  End If
 		  
 		  If SaveData.HasKey("Damage") Then
-		    Self.mValues(Self.StatWeaponDamage) = SaveData.Value("Damage").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexWeaponDamage) = SaveData.Value("Damage").DoubleValue
 		  End If
 		  
 		  If SaveData.HasKey("Weight") Then
-		    Self.mValues(Self.StatWeight) = SaveData.Value("Weight").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexWeight) = SaveData.Value("Weight").DoubleValue
 		  End If
 		End Sub
 	#tag EndEvent
@@ -96,46 +96,40 @@ Inherits ArkSA.ConfigGroup
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
-		  If (Self.mValues(Self.StatArmor) Is Nil) = False Then
-		    SaveData.Value("Armor") = Self.mValues(Self.StatArmor).DoubleValue
+		  If (Self.mValues(ArkSA.EngramStat.IndexArmor) Is Nil) = False Then
+		    SaveData.Value("Armor") = Self.mValues(ArkSA.EngramStat.IndexArmor).DoubleValue
 		  End If
 		  
-		  If (Self.mValues(Self.StatGenericQuality) Is Nil) = False Then
-		    SaveData.Value("Generic") = Self.mValues(Self.StatGenericQuality).DoubleValue
+		  If (Self.mValues(ArkSA.EngramStat.IndexGenericQuality) Is Nil) = False Then
+		    SaveData.Value("Generic") = Self.mValues(ArkSA.EngramStat.IndexGenericQuality).DoubleValue
 		  End If
 		  
-		  If (Self.mValues(Self.StatHyperthermal) Is Nil) = False Then
-		    SaveData.Value("Hyper") = Self.mValues(Self.StatHyperthermal).DoubleValue
+		  If (Self.mValues(ArkSA.EngramStat.IndexHyperthermal) Is Nil) = False Then
+		    SaveData.Value("Hyper") = Self.mValues(ArkSA.EngramStat.IndexHyperthermal).DoubleValue
 		  End If
 		  
-		  If (Self.mValues(Self.StatHypothermal) Is Nil) = False Then
-		    SaveData.Value("Hypo") = Self.mValues(Self.StatHypothermal).DoubleValue
+		  If (Self.mValues(ArkSA.EngramStat.IndexHypothermal) Is Nil) = False Then
+		    SaveData.Value("Hypo") = Self.mValues(ArkSA.EngramStat.IndexHypothermal).DoubleValue
 		  End If
 		  
-		  If (Self.mValues(Self.StatMaxDurability) Is Nil) = False Then
-		    SaveData.Value("Durability") = Self.mValues(Self.StatMaxDurability).DoubleValue
+		  If (Self.mValues(ArkSA.EngramStat.IndexMaxDurability) Is Nil) = False Then
+		    SaveData.Value("Durability") = Self.mValues(ArkSA.EngramStat.IndexMaxDurability).DoubleValue
 		  End If
 		  
-		  If (Self.mValues(Self.StatWeaponAmmo) Is Nil) = False Then
-		    SaveData.Value("Ammo") = Self.mValues(Self.StatWeaponAmmo).DoubleValue
+		  If (Self.mValues(ArkSA.EngramStat.IndexWeaponAmmo) Is Nil) = False Then
+		    SaveData.Value("Ammo") = Self.mValues(ArkSA.EngramStat.IndexWeaponAmmo).DoubleValue
 		  End If
 		  
-		  If (Self.mValues(Self.StatWeaponDamage) Is Nil) = False Then
-		    SaveData.Value("Damage") = Self.mValues(Self.StatWeaponDamage).DoubleValue
+		  If (Self.mValues(ArkSA.EngramStat.IndexWeaponDamage) Is Nil) = False Then
+		    SaveData.Value("Damage") = Self.mValues(ArkSA.EngramStat.IndexWeaponDamage).DoubleValue
 		  End If
 		  
-		  If (Self.mValues(Self.StatWeight) Is Nil) = False Then
-		    SaveData.Value("Weight") = Self.mValues(Self.StatWeight).DoubleValue
+		  If (Self.mValues(ArkSA.EngramStat.IndexWeight) Is Nil) = False Then
+		    SaveData.Value("Weight") = Self.mValues(ArkSA.EngramStat.IndexWeight).DoubleValue
 		  End If
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Shared Function ComputeEffectiveLimit(Value As Double, InitialValueConstant As Double, StateModifierScale As Double, RandomRangeMultiplier As Double) As Double
-		  Return InitialValueConstant + ((Value * StateModifierScale) * (RandomRangeMultiplier * InitialValueConstant))
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, ContentPacks As Beacon.StringList) As ArkSA.Configs.StatLimits
@@ -171,12 +165,6 @@ Inherits ArkSA.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function SolveForDesiredLimit(Limit As Double, InitialValueConstant As Double, StateModifierScale As Double, RandomRangeMultiplier As Double) As Double
-		  Return (Limit - InitialValueConstant) / (StateModifierScale * RandomRangeMultiplier * InitialValueConstant)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Value(Stat As Integer) As NullableDouble
 		  Return Self.mValues(Stat)
 		End Function
@@ -197,31 +185,6 @@ Inherits ArkSA.ConfigGroup
 	#tag Property, Flags = &h21
 		Private mValues(7) As NullableDouble
 	#tag EndProperty
-
-
-	#tag Constant, Name = StatArmor, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StatGenericQuality, Type = Double, Dynamic = False, Default = \"0", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StatHyperthermal, Type = Double, Dynamic = False, Default = \"7", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StatHypothermal, Type = Double, Dynamic = False, Default = \"5", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StatMaxDurability, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StatWeaponAmmo, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StatWeaponDamage, Type = Double, Dynamic = False, Default = \"3", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = StatWeight, Type = Double, Dynamic = False, Default = \"6", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior

@@ -628,7 +628,7 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   255
+      Height          =   257
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Item	Armor	Durability	Damage	Ammo	Hypo	Hyper	Generic	Weight"
@@ -648,7 +648,7 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   241
+      Top             =   239
       TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
@@ -659,18 +659,18 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin DesktopLabel CautionLabel
+   Begin UITweaks.ResizedLabel CautionLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   20
+      Height          =   22
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   True
-      Left            =   20
+      Left            =   307
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -683,14 +683,14 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "The items shown here are examples. Stat limits will permanently affect all items in the game."
-      TextAlignment   =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   209
+      Top             =   205
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   959
+      Width           =   672
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
@@ -726,6 +726,36 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       Visible         =   True
       Width           =   999
    End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      AllowTabStop    =   True
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   205
+      Transparent     =   False
+      Visible         =   True
+      Width           =   275
+   End
 End
 #tag EndDesktopWindow
 
@@ -739,7 +769,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Config As ArkSA.Configs.StatLimits = Self.Config(False)
-		  For Stat As Integer = ArkSA.Configs.StatLimits.StatGenericQuality To ArkSA.Configs.StatLimits.StatHyperthermal
+		  For Stat As Integer = ArkSA.EngramStat.FirstIndex To ArkSA.EngramStat.LastIndex
 		    Var Value As NullableDouble = Config.Value(Stat)
 		    If Value = Nil Then
 		      Self.StatCheckboxes(Stat).Value = False
@@ -747,7 +777,7 @@ End
 		    Else
 		      Self.StatCheckboxes(Stat).Value = True
 		      Var DoubleValue As Double = Value
-		      Self.StatFields(Stat).Text = DoubleValue.PrettyText
+		      Self.StatFields(Stat).Text = DoubleValue.PrettyText(0, True)
 		    End If
 		  Next
 		  
@@ -755,16 +785,6 @@ End
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Shared Function BuildStatDict(InitialValueConstant As Double, StateModifierScale As Double, RandomizerRangeMultiplier As Double) As Dictionary
-		  Var Dict As New Dictionary
-		  Dict.Value("IVC") = InitialValueConstant
-		  Dict.Value("SMS") = StateModifierScale
-		  Dict.Value("RRM") = RandomizerRangeMultiplier
-		  Return Dict
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Shared Function ColumnIsPercentage(Column As Integer) As Boolean
@@ -781,21 +801,21 @@ End
 		Private Shared Function ColumnToStat(Column As Integer) As Integer
 		  Select Case Column
 		  Case ColumnAmmo
-		    Return ArkSA.Configs.StatLimits.StatWeaponAmmo
+		    Return ArkSA.EngramStat.IndexWeaponAmmo
 		  Case ColumnArmor
-		    Return ArkSA.Configs.StatLimits.StatArmor
+		    Return ArkSA.EngramStat.IndexArmor
 		  Case ColumnDamage
-		    Return ArkSA.Configs.StatLimits.StatWeaponDamage
+		    Return ArkSA.EngramStat.IndexWeaponDamage
 		  Case ColumnDurability
-		    Return ArkSA.Configs.StatLimits.StatMaxDurability
+		    Return ArkSA.EngramStat.IndexMaxDurability
 		  Case ColumnGeneric
-		    Return ArkSA.Configs.StatLimits.StatGenericQuality
+		    Return ArkSA.EngramStat.IndexGenericQuality
 		  Case ColumnHyper
-		    Return ArkSA.Configs.StatLimits.StatHyperthermal
+		    Return ArkSA.EngramStat.IndexHyperthermal
 		  Case ColumnHypo
-		    Return ArkSA.Configs.StatLimits.StatHypothermal
+		    Return ArkSA.EngramStat.IndexHypothermal
 		  Case ColumnWeight
-		    Return ArkSA.Configs.StatLimits.StatWeight
+		    Return ArkSA.EngramStat.IndexWeight
 		  End Select
 		End Function
 	#tag EndMethod
@@ -815,21 +835,21 @@ End
 	#tag Method, Flags = &h21
 		Private Shared Function StatToColumn(Stat As Integer) As Integer
 		  Select Case Stat
-		  Case ArkSA.Configs.StatLimits.StatArmor
+		  Case ArkSA.EngramStat.IndexArmor
 		    Return ColumnArmor
-		  Case ArkSA.Configs.StatLimits.StatGenericQuality
+		  Case ArkSA.EngramStat.IndexGenericQuality
 		    Return ColumnGeneric
-		  Case ArkSA.Configs.StatLimits.StatHyperthermal
+		  Case ArkSA.EngramStat.IndexHyperthermal
 		    Return ColumnHyper
-		  Case ArkSA.Configs.StatLimits.StatHypothermal
+		  Case ArkSA.EngramStat.IndexHypothermal
 		    Return ColumnHypo
-		  Case ArkSA.Configs.StatLimits.StatMaxDurability
+		  Case ArkSA.EngramStat.IndexMaxDurability
 		    Return ColumnDurability
-		  Case ArkSA.Configs.StatLimits.StatWeaponAmmo
+		  Case ArkSA.EngramStat.IndexWeaponAmmo
 		    Return ColumnAmmo
-		  Case ArkSA.Configs.StatLimits.StatWeaponDamage
+		  Case ArkSA.EngramStat.IndexWeaponDamage
 		    Return ColumnDamage
-		  Case ArkSA.Configs.StatLimits.StatWeight
+		  Case ArkSA.EngramStat.IndexWeight
 		    Return ColumnWeight
 		  End Select
 		End Function
@@ -837,307 +857,108 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub UpdateList()
-		  If Self.mPreviewItemStats.LastIndex = -1 Then
-		    Var Dict As Dictionary
-		    Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  Var Engrams() As ArkSA.Engram
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  If Filter.IsEmpty = False Then
+		    Engrams = DataSource.GetEngrams(Filter, Self.Project.ContentPacks)
+		  Else
+		    Static EngramIds() As String
+		    If EngramIds.Count = 0 Then
+		      EngramIds.Add("3dd1df4a-180d-5c7c-8a73-0c3487b0a5bf") // Bow
+		      EngramIds.Add("f47bc00c-f2e1-5fb6-8847-9805f623a596") // Crossbow
+		      EngramIds.Add("8b59e9dc-cd7c-5f8b-91ed-913a29b2f797") // Compound Bow
+		      EngramIds.Add("24980d6d-802c-5466-8d51-6fc115ce673b") // Assault Rifle
+		      EngramIds.Add("554fbd13-daeb-59e5-bf33-853c7c965f2d") // Longneck Rifle
+		      EngramIds.Add("ab9bc82b-3a88-53b6-ab95-d5a6788e0b16") // Fabricated Sniper Rifle
+		      EngramIds.Add("e2bb9163-f48b-5550-8316-d7dca8633b36") // Simple Pistol
+		      EngramIds.Add("82748d15-a3bd-50f9-9a31-7492b8515e11") // Fabricated Pistol
+		      EngramIds.Add("ee8fd357-7a4f-550e-a0b3-d782bebb2a33") // Shotgun
+		      EngramIds.Add("7456cdc2-c5fe-5eec-be53-1686f21b0f2b") // Pump Shotgun
+		      EngramIds.Add("7cddfb0b-9324-53c8-9e15-9ca09b51e235") // Tek Rifle
+		      EngramIds.Add("d35d97ff-1f4b-4925-9956-61a61ae607e8") // Railgun
+		      EngramIds.Add("ac748d72-01ff-48b5-a355-142145d5b13f") // Tek Bow
+		      EngramIds.Add("39b6d260-a7fb-418c-8112-f554a551238d") // Tek Pistol
+		      EngramIds.Add("7618efa9-7a1e-5ba9-b9a7-939bd980656a") // Cloth Shirt
+		      EngramIds.Add("684b5ba4-b656-4bcf-9f58-e8c506bc108c") // Desert Cloth Shirt
+		      EngramIds.Add("f21f8067-76c5-5ba1-87cd-96404af23c16") // Hide Shirt
+		      EngramIds.Add("ca1e2884-6c95-55d0-b9fb-677d3d39acd1") // Chitin Chestpiece
+		      EngramIds.Add("cb165ce1-846c-516f-9bdf-5f305ae77785") // Fur Chestpiece
+		      EngramIds.Add("754d03a8-b1bf-5731-b9d0-ab915d6930f2") // SCUBA Tank
+		      EngramIds.Add("293c9a0e-498c-4ed2-a66a-619672e441f7") // Hazard Shirt
+		      EngramIds.Add("21e2c27f-5326-5418-8e64-bbede6dcde86") // Flak Chestpiece
+		      EngramIds.Add("cf0705a1-180e-59a3-9bf0-560eb3d7b883") // Riot Chestpiece
+		      EngramIds.Add("18524e8a-ff2e-5d62-a3a9-f105eba01306") // Tek Chestpiece
+		      EngramIds.Add("9cd3913c-19a6-50cf-94f2-63a57f043f7e") // Raptor Saddle
+		      EngramIds.Add("d5cd431a-1a7b-5c30-95fb-dbbe0af4e671") // Pteranodon Saddle
+		      EngramIds.Add("c6ce03d5-97ed-5d90-a352-638788e7bfcd") // Rex Saddle
+		      EngramIds.Add("a97e3600-e611-5caa-b397-ad20c8089c18") // Tek Rex Saddle
+		      EngramIds.Add("d45d0691-a430-4443-98e3-bcc501067317") // Rock Drake Saddle
+		      EngramIds.Add("c52794f4-4329-4d15-8952-68631fd61060") // Tek Rock Drake Saddle
+		      EngramIds.Add("2b2d619b-fe82-59d6-9399-fec44c33f7a2") // Doedicurus Saddle
+		      EngramIds.Add("52ece996-649e-4fb7-abca-7cfbe72dae24") // Rock Golem Saddle
+		      EngramIds.Add("da2880ea-55bb-5e79-8ec9-1d9f76b310ff") // Tropeognathus Saddle
+		      EngramIds.Add("64665fe6-9ec2-55df-9810-3f5824268db2") // Metal Shield
+		      EngramIds.Add("b500d917-4dc2-5e69-b806-8b5180c3f18f") // Riot Shield
+		      EngramIds.Add("333501ed-86af-55c4-bbc6-3845fc31a31e") // Tek Shield
+		    End If
 		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("3dd1df4a-180d-5c7c-8a73-0c3487b0a5bf") // Bow
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("f47bc00c-f2e1-5fb6-8847-9805f623a596") // Crossbow
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(100.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("8b59e9dc-cd7c-5f8b-91ed-913a29b2f797") // Compound Bow
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(55.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("24980d6d-802c-5466-8d51-6fc115ce673b") // Assault Rifle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(40.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("554fbd13-daeb-59e5-bf33-853c7c965f2d") // Longneck Rifle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(70.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("ab9bc82b-3a88-53b6-ab95-d5a6788e0b16") // Fabricated Sniper Rifle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(70.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("e2bb9163-f48b-5550-8316-d7dca8633b36") // Simple Pistol
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(60.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("82748d15-a3bd-50f9-9a31-7492b8515e11") // Fabricated Pistol
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(210.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("ee8fd357-7a4f-550e-a0b3-d782bebb2a33") // Shotgun
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("7456cdc2-c5fe-5eec-be53-1686f21b0f2b") // Pump Shotgun
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("7cddfb0b-9324-53c8-9e15-9ca09b51e235") // Tek Rifle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    #if false
-		      Dict = New Dictionary
-		      Dict.Value("Engram") = DataSource.GetEngram("d35d97ff-1f4b-4925-9956-61a61ae607e8") // Railgun
-		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		      Self.mPreviewItemStats.Add(Dict)
-		      
-		      Dict = New Dictionary
-		      Dict.Value("Engram") = DataSource.GetEngram("ac748d72-01ff-48b5-a355-142145d5b13f") // Tek Bow
-		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(55.0, 0.001, 0.25)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		      Self.mPreviewItemStats.Add(Dict)
-		      
-		      Dict = New Dictionary
-		      Dict.Value("Engram") = DataSource.GetEngram("39b6d260-a7fb-418c-8112-f554a551238d") // Tek Pistol
-		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		      Self.mPreviewItemStats.Add(Dict)
-		    #endif
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("7618efa9-7a1e-5ba9-b9a7-939bd980656a") // Cloth Shirt
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(10.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(25.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    #if false
-		      Dict = New Dictionary
-		      Dict.Value("Engram") = DataSource.GetEngram("684b5ba4-b656-4bcf-9f58-e8c506bc108c") // Desert Cloth Shirt
-		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(40.0, 0.001, 0.2)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		      Self.mPreviewItemStats.Add(Dict)
-		    #endif
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("f21f8067-76c5-5ba1-87cd-96404af23c16") // Hide Shirt
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(20.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(20.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-5.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("ca1e2884-6c95-55d0-b9fb-677d3d39acd1") // Chitin Chestpiece
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(50.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-5.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("cb165ce1-846c-516f-9bdf-5f305ae77785") // Fur Chestpiece
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(40.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(65.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-30.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("754d03a8-b1bf-5731-b9d0-ab915d6930f2") // SCUBA Tank
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(0.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(40.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-5.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    #if false
-		      Dict = New Dictionary
-		      Dict.Value("Engram") = DataSource.GetEngram("293c9a0e-498c-4ed2-a66a-619672e441f7") // Hazard Shirt
-		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(65.0, 0.001, 0.2)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(85.5, 0.001, 0.25)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
-		      Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(60.0, 0.001, 0.2)
-		      Self.mPreviewItemStats.Add(Dict)
-		    #endif
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("21e2c27f-5326-5418-8e64-bbede6dcde86") // Flak Chestpiece
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(100.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-7.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("cf0705a1-180e-59a3-9bf0-560eb3d7b883") // Riot Chestpiece
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(115.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-10.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("18524e8a-ff2e-5d62-a3a9-f105eba01306") // Tek Chestpiece
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(180.0, 0.00075, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.00055, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-7.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("9cd3913c-19a6-50cf-94f2-63a57f043f7e") // Raptor Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("d5cd431a-1a7b-5c30-95fb-dbbe0af4e671") // Pteranodon Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("c6ce03d5-97ed-5d90-a352-638788e7bfcd") // Rex Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("a97e3600-e611-5caa-b397-ad20c8089c18") // Tek Rex Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    #if false
-		      Dict = New Dictionary
-		      Dict.Value("Engram") = DataSource.GetEngram("d45d0691-a430-4443-98e3-bcc501067317") // Rock Drake Saddle
-		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		      Self.mPreviewItemStats.Add(Dict)
-		      
-		      Dict = New Dictionary
-		      Dict.Value("Engram") = DataSource.GetEngram("c52794f4-4329-4d15-8952-68631fd61060") // Tek Rock Drake Saddle
-		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
-		      Self.mPreviewItemStats.Add(Dict)
-		    #endif
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("2b2d619b-fe82-59d6-9399-fec44c33f7a2") // Doedicurus Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    #if false
-		      Dict = New Dictionary
-		      Dict.Value("Engram") = DataSource.GetEngram("52ece996-649e-4fb7-abca-7cfbe72dae24") // Rock Golem Saddle
-		      Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
-		      Self.mPreviewItemStats.Add(Dict)
-		    #endif
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("da2880ea-55bb-5e79-8ec9-1d9f76b310ff") // Tropeognathus Saddle
-		    Dict.Value(ArkSA.Configs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.0, 0.2)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
-		    Dict.Value(ArkSA.Configs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.00136, 0.1)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("64665fe6-9ec2-55df-9810-3f5824268db2") // Metal Shield
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(1250.0, 0.001, 0.25)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("b500d917-4dc2-5e69-b806-8b5180c3f18f") // Riot Shield
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(2300.0, 0.001, 0.25)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    Dict = New Dictionary
-		    Dict.Value("Engram") = DataSource.GetEngram("333501ed-86af-55c4-bbc6-3845fc31a31e") // Tek Shield
-		    Dict.Value(ArkSA.Configs.StatLimits.StatMaxDurability) = Self.BuildStatDict(2300.0, 0.001, 0.25)
-		    Self.mPreviewItemStats.Add(Dict)
-		    
-		    For Idx As Integer = Self.mPreviewItemStats.LastIndex DownTo 0
-		      Dict = Self.mPreviewItemStats(Idx)
-		      Var Engram As ArkSA.Engram = Dict.Value("Engram")
-		      If (Engram Is Nil) = False Then
+		    For Each EngramId As String In EngramIds
+		      Var Engram As ArkSA.Engram = DataSource.GetEngram(EngramId)
+		      If Engram Is Nil Then
 		        Continue
 		      End If
-		      Self.mPreviewItemStats.RemoveAt(Idx)
+		      Engrams.Add(Engram)
+		    Next
+		  End If
+		  
+		  Var SelectedEngramIds() As String
+		  Var List As BeaconListbox = Self.PreviewList
+		  If List.SelectedRowCount = 1 Then
+		    SelectedEngramIds.Add(ArkSA.Engram(List.RowTagAt(List.SelectedRowIndex)).EngramId)
+		  ElseIf List.SelectedRowCount > 1 Then
+		    For RowIdx As Integer = 0 To List.LastRowIndex
+		      If List.RowSelectedAt(RowIdx) = False Then
+		        Continue
+		      End If
+		      SelectedEngramIds.Add(ArkSA.Engram(List.RowTagAt(RowIdx)).EngramId)
 		    Next
 		  End If
 		  
 		  Var Config As ArkSA.Configs.StatLimits = Self.Config(False)
-		  Self.PreviewList.RowCount = Self.mPreviewItemStats.LastIndex + 1
-		  For I As Integer = 0 To Self.mPreviewItemStats.LastIndex
-		    Var Dict As Dictionary = Self.mPreviewItemStats(I)
-		    Var Engram As ArkSA.Engram = Dict.Value("Engram")
+		  List.SelectionChangeBlocked = True
+		  List.RemoveAllRows()
+		  For Each Engram As ArkSA.Engram In Engrams
+		    Var Stats() As ArkSA.EngramStat = Engram.AllStats(True)
+		    If Stats.Count = 0 Then
+		      Continue
+		    End If
 		    
-		    Self.PreviewList.RowTagAt(I) = Dict
-		    Self.PreviewList.CellTextAt(I, Self.ColumnLabel) = Engram.Label
+		    List.AddRow(Engram.Label)
+		    Var RowIdx As Integer = List.LastAddedRowIndex
+		    List.RowTagAt(RowIdx) = Engram
+		    List.RowSelectedAt(RowIdx) = SelectedEngramIds.IndexOf(Engram.EngramId) > -1
 		    
-		    For Stat As Integer = ArkSA.Configs.StatLimits.StatGenericQuality To ArkSA.Configs.StatLimits.StatHyperthermal
-		      Var Column As Integer = Self.StatToColumn(Stat)
-		      Var Value As NullableDouble = Config.Value(Stat)
-		      
-		      If Dict.HasKey(Stat) = False Or Value = Nil Then
-		        Self.PreviewList.CellTextAt(I, Column) = ""
+		    For Each Stat As ArkSA.EngramStat In Stats
+		      Var Value As NullableDouble = Config.Value(Stat.StatIndex)
+		      If Value Is Nil Then
 		        Continue
 		      End If
 		      
-		      Var Stats As Dictionary = Dict.Value(Stat)
-		      Var InitialValueConstant As Double = Stats.Value("IVC")
-		      Var StateModifierScale As Double = Stats.Value("SMS")
-		      Var RandomizerRangeMultiplier As Double = Stats.Value("RRM")
-		      Var Limit As Double = ArkSA.Configs.StatLimits.ComputeEffectiveLimit(Value, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
-		      Var CellValue As String = Limit.PrettyText(2)
-		      If Self.ColumnIsPercentage(Column) Then
+		      Var ColumnIdx As Integer = Self.StatToColumn(Stat.StatIndex)
+		      Var Limit As Double = Stat.ComputeEffectiveLimit(Value.DoubleValue)
+		      Var CellValue As String = Limit.PrettyText(2, True)
+		      If Self.ColumnIsPercentage(ColumnIdx) Then
 		        CellValue = CellValue + "%"
 		      End If
 		      
-		      Self.PreviewList.CellTextAt(I, Column) = CellValue
+		      List.CellTextAt(RowIdx, ColumnIdx) = CellValue
 		    Next
 		  Next
+		  List.SelectionChangeBlocked = False
+		  List.EnsureSelectionIsVisible
 		End Sub
 	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private Shared mPreviewItemStats() As Dictionary
-	#tag EndProperty
 
 
 	#tag Constant, Name = ColumnAmmo, Type = Double, Dynamic = False, Default = \"4", Scope = Private
@@ -1214,7 +1035,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.Config(True).Value(Index) = CDbl(StringValue)
+		  Self.Config(True).Value(Index) = Double.FromString(StringValue, Locale.Current)
 		  Self.Modified = True
 		  Self.UpdateList
 		End Sub
@@ -1239,24 +1060,19 @@ End
 		    Return
 		  End If
 		  
-		  Var Stat As Integer = Self.ColumnToStat(Column)
-		  Var Dict As Dictionary = Me.RowTagAt(Row)
-		  If Not Dict.HasKey(Stat) Then
+		  Var Engram As ArkSA.Engram = Me.RowTagAt(Row)
+		  Var Stat As ArkSA.EngramStat = Engram.Stat(Self.ColumnToStat(Column))
+		  If Stat Is Nil Then
 		    Self.UpdateList()
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  
-		  Var Stats As Dictionary = Dict.Value(Stat)
-		  Var InitialValueConstant As Double = Stats.Value("IVC")
-		  Var StateModifierScale As Double = Stats.Value("SMS")
-		  Var RandomizerRangeMultiplier As Double = Stats.Value("RRM")
-		  
-		  Var Limit As Double = CDbl(CellValue)
-		  Var Value As Double = ArkSA.Configs.StatLimits.SolveForDesiredLimit(Limit, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
-		  Self.Config(True).Value(Stat) = Value
-		  Self.StatFields(Stat).Text = Value.PrettyText
+		  Var Limit As Double = Double.FromString(CellValue, Locale.Current)
+		  Var Value As Double = Stat.SolveForDesiredLimit(Limit)
+		  Self.Config(True).Value(Stat.StatIndex) = Value
+		  Self.StatFields(Stat.StatIndex).Text = Value.PrettyText(0, True)
 		  
 		  Self.SettingUp = False
 		  Self.Modified = True
@@ -1268,6 +1084,13 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

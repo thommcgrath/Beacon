@@ -248,7 +248,7 @@ Begin BeaconDialog ArkSAAddSpawnPointDialog
    Begin DesktopCheckBox LoadDefaultsCheck
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Load Simplified Default Spawns"
+      Caption         =   "Load Default Spawns"
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
