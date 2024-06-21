@@ -507,12 +507,12 @@ End
 		  
 		  Select Case Self.mDataSource.Identifier
 		  Case Ark.Identifier
-		    Me.Segment(0).Caption = "Universal"
-		    Me.Segment(1).Caption = "Steam Only"
+		    Me.Segment(0).Caption = "Official"
+		    Me.Segment(1).Caption = Beacon.MarketplaceSteamWorkshop
 		    Me.Segment(2).Caption = "Custom"
 		  Case ArkSA.Identifier
 		    Me.Segment(0).Caption = "Official"
-		    Me.Segment(1).Caption = "CurseForge"
+		    Me.Segment(1).Caption = Beacon.MarketplaceCurseForge
 		    Me.Segment(2).Caption = "Custom"
 		  End Select
 		End Sub
