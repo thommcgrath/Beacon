@@ -612,7 +612,7 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       AllowRowReordering=   False
       Bold            =   False
       ColumnCount     =   9
-      ColumnWidths    =   "*,75,75,75,0,75,75,0,0"
+      ColumnWidths    =   "*,75,75,75,75,75,75,75,75"
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
