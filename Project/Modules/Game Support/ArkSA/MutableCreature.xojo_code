@@ -253,6 +253,17 @@ Implements ArkSA.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NameTag(Assigns Value As NullableString)
+		  If Self.mNameTag = Value Then
+		    Return
+		  End If
+		  
+		  Self.mNameTag = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
 		  If Self.mPath = Value Then
 		    Return
@@ -346,6 +357,10 @@ Implements ArkSA.MutableBlueprint
 		  Else
 		    Self.mMinMatingInterval = 0
 		    Self.mMaxMatingInterval = 0
+		  End If
+		  
+		  If Dict.HasKey("dinoNameTag") Then
+		    Self.mNameTag = NullableString.FromVariant(Dict.Value("dinoNameTag"))
 		  End If
 		End Sub
 	#tag EndMethod

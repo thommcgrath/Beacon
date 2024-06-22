@@ -247,7 +247,7 @@ Implements ArkSA.MutableBlueprint
 		    StatIndex = Stat.StatIndex
 		  End If
 		  
-		  If StatIndex >= ArkSA.EngramStat.FirstIndex And StatIndex <= ArkSA.EngramStat.LastIndex Then
+		  If StatIndex >= ArkSA.EngramStat.FirstIndex And StatIndex <= ArkSA.EngramStat.LastIndex And Self.mStats(StatIndex) <> Stat Then
 		    Self.mStats(StatIndex) = Stat
 		    Self.Modified = True
 		  End If

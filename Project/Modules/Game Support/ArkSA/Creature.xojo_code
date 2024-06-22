@@ -247,6 +247,12 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NameTag() As NullableString
+		  Return Self.mNameTag
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Attributes( Deprecated = "CreatureId" )  Function ObjectID() As String
 		  Return Self.mCreatureId
 		End Function
@@ -320,6 +326,10 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		  Else
 		    Dict.Value("mating_interval_min") = Nil
 		    Dict.Value("mating_interval_max") = Nil
+		  End If
+		  
+		  If (Self.mNameTag Is Nil) = False Then
+		    Dict.Value("dinoNameTag") = Self.mNameTag.StringValue
 		  End If
 		End Sub
 	#tag EndMethod
@@ -465,6 +475,10 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mNameTag As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
