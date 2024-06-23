@@ -734,13 +734,13 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h0
 		Function Matches(Extends Blueprint As ArkSA.Blueprint, Rx As PCRE2CodeMBS) As Boolean
-		  Return (Rx.Match(Blueprint.Path) Is Nil) = False Or (Rx.Match(Blueprint.ClassString) Is Nil) = False Or (Rx.Match(Blueprint.Label) Is Nil) = False
+		  Return (Rx.Match(Blueprint.Path) Is Nil) = False Or (Rx.Match(Blueprint.ClassString) Is Nil) = False Or (Rx.Match(Blueprint.Label) Is Nil) = False Or (Rx.Match(Blueprint.BlueprintId) Is Nil) = False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Matches(Extends Blueprint As ArkSA.Blueprint, Filter As String) As Boolean
-		  Return Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Label.IndexOf(Filter) > -1
+		  Return Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Label.IndexOf(Filter) > -1 Or Blueprint.BlueprintId.IndexOf(Filter) > -1
 		End Function
 	#tag EndMethod
 
