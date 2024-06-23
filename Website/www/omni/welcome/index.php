@@ -14,7 +14,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkoutWelcome.js'));
 <div id="purchase_confirmed" class="welcome_content">
 	<p id="confirmed_text"></p>
 	<p class="text-center"><a href="" id="activate_button" class="button blue">Activate Omni</a>
-	<p class="text-lighter smaller text-center">If there is a mistake with your purchase, please do not purchase again. <a href="/help/contact">Open a support ticket</a> so the mistake can be corrected.</p>
+	<p class="text-lighter smaller text-center">If you made a mistake with your purchase, please do not purchase again. <a href="/help/contact">Open a support ticket</a> so the mistake can be corrected.</p>
 </div>
 <div id="purchase_unknown" class="welcome_content">
 	<p>Your purchase status cannot be retrieved. Maybe your browser is blocking cookies. Maybe you're visiting this page from a different browser than the one you purchased with. Or maybe something has simply gone wrong.</p>

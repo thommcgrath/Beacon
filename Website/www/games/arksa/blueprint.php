@@ -201,6 +201,10 @@ function PrepareCreatureTable(Creature $creature, array &$properties) {
 	}
 
 	$properties['Spawn Code'] = '`' . $creature->SpawnCode() . '`';
+
+	if (is_null($creature->DinoNameTag()) === false) {
+		$properties['Name Tag'] = $creature->DinoNameTag();
+	}
 }
 
 function PrepareEngramTable(Engram $engram, array &$properties) {

@@ -11,6 +11,7 @@ class Creature extends MutableBlueprint {
 	protected ?int $usedStats;
 	protected ?int $minMatingInterval;
 	protected ?int $maxMatingInterval;
+	protected ?string $dinoNameTag;
 
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
@@ -21,6 +22,7 @@ class Creature extends MutableBlueprint {
 		$this->minMatingInterval = filter_var($row->Field('mating_interval_min'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->maxMatingInterval = filter_var($row->Field('mating_interval_max'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->usedStats = filter_var($row->Field('used_stats'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+		$this->dinoNameTag = $row->Field('tag');
 	}
 
 	protected static function CustomVariablePrefix(): string {
@@ -36,7 +38,8 @@ class Creature extends MutableBlueprint {
 			new DatabaseObjectProperty('stats', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(template))) FROM (SELECT stat_index AS "statIndex", base_value AS "baseValue", per_level_wild_multiplier AS "perLevelWildMultiplier", per_level_tamed_multiplier AS "perLevelTamedMultiplier", add_multiplier AS "addMultiplier", affinity_multiplier AS "affinityMultiplier" FROM arksa.creature_stats WHERE creature_stats.creature_id = creatures.object_id ORDER BY stat_index) AS template)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('minMatingInterval', ['columnName' => 'mating_interval_min', 'accessor' => 'ROUND(EXTRACT(epoch FROM %%TABLE%%.%%COLUMN%%))', 'setter' => '%%PLACEHOLDER%%::INTERVAL', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('maxMatingInterval', ['columnName' => 'mating_interval_max', 'accessor' => 'ROUND(EXTRACT(epoch FROM %%TABLE%%.%%COLUMN%%))', 'setter' => '%%PLACEHOLDER%%::INTERVAL', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('usedStats', ['columnName' => 'used_stats', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways])
+			new DatabaseObjectProperty('usedStats', ['columnName' => 'used_stats', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('dinoNameTag', ['columnName' => 'tag', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 		]);
 		return $schema;
 	}
@@ -50,6 +53,7 @@ class Creature extends MutableBlueprint {
 		$json['usedStats'] = $this->usedStats;
 		$json['minMatingInterval'] = $this->minMatingInterval;
 		$json['maxMatingInterval'] = $this->maxMatingInterval;
+		$json['dinoNameTag'] = $this->dinoNameTag;
 		$json['relatedObjectIds'] = $this->RelatedObjectIDs();
 		return $json;
 	}
@@ -87,6 +91,10 @@ class Creature extends MutableBlueprint {
 
 	public function UsedStats(): ?int {
 		return $this->usedStats;
+	}
+
+	public function DinoNameTag(): ?string {
+		return $this->dinoNameTag;
 	}
 
 	protected function SaveChildObjects(BeaconDatabase $database): void {
