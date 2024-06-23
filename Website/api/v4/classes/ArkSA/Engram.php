@@ -123,8 +123,17 @@ class Engram extends MutableBlueprint {
 				$database->Query('INSERT INTO arksa.crafting_costs (engram_id, ingredient_id, quantity, exact) VALUES ($1, $2, $3, $4) ON CONFLICT (engram_id, ingredient_id) DO UPDATE SET quantity = $3, exact = $4 WHERE crafting_costs.quantity IS DISTINCT FROM $3 OR crafting_costs.exact IS DISTINCT FROM $4;', $this->objectId, $ingredientId, $quantity, $exact);
 			}
 		}
-
 		$database->Query('DELETE FROM arksa.crafting_costs WHERE engram_id = $1 AND NOT (ingredient_id = ANY($2));', $this->objectId, '{' . implode(',', $validIngredients) . '}');
+
+		$validStats = [];
+		if (is_null($this->stats) === false) {
+			foreach ($this->stats as $stat) {
+				$index = intval($stat['statIndex']);
+				$validStats[] = $index;
+				$database->Query('INSERT INTO arksa.engram_stats (engram_id, stat_index, randomizer_range_override, randomizer_range_multiplier, state_modifier_scale, rating_value_multiplier, initial_value_constant) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (engram_id, stat_index) DO UPDATE SET randomizer_range_override = $3, randomizer_range_multiplier = $4, state_modifier_scale = $5, rating_value_multiplier = $6, initial_value_constant = $7 WHERE engram_stats.randomizer_range_override IS DISTINCT FROM $3 OR engram_stats.randomizer_range_multiplier IS DISTINCT FROM $4 OR engram_stats.state_modifier_scale IS DISTINCT FROM $5 OR engram_stats.rating_value_multiplier IS DISTINCT FROM $7 OR engram_stats.initial_value_constant IS DISTINCT FROM $7;', $this->objectId, $index, $stat['randomizerRangeOverride'], $stat['randomizerRangeMultiplier'], $stat['stateModifierScale'], $stat['ratingValueMultiplier'], $stat['initialValueConstant']);
+			}
+		}
+		$database->Query('DELETE FROM arksa.engram_stats WHERE engram_id = $1 AND NOT (stat_index = ANY($2));', $this->objectId, '{' . implode(',', $validStats) . '}');
 	}
 }
 
