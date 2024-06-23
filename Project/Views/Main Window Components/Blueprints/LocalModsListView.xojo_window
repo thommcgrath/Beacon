@@ -103,7 +103,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RightPadding    =   -1
+      RightPadding    =   2
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False
@@ -292,7 +292,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddPackToData(Pack As Beacon.ContentPack, OverrideViewMode As ModsListView.ViewModes)
-		  Self.mPacksData.ExecuteSQL("INSERT INTO packs (content_pack_id, name, marketplace_id, json, should_delete, view_mode) VALUES (?1, ?2, ?3, ?4, ?5, ?6) ON CONFLICT (content_pack_id) DO UPDATE SET name = ?2, marketplace_id = ?3, json = ?4, should_delete = ?5, view_mode = ?6;", Pack.ContentPackId, Pack.Name, Pack.MarketplaceId, Beacon.GenerateJson(Pack.SaveData, False), False, CType(OverrideViewMode, Integer))
+		  Self.mPacksData.ExecuteSQL("INSERT INTO packs (content_pack_id, name, game_id, marketplace_id, json, should_delete, view_mode) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7) ON CONFLICT (content_pack_id) DO UPDATE SET name = ?2, game_id = ?3, marketplace_id = ?4, json = ?5, should_delete = ?6, view_mode = ?7;", Pack.ContentPackId, Pack.Name, Pack.GameId, Pack.MarketplaceId, Beacon.GenerateJson(Pack.SaveData, False), False, CType(OverrideViewMode, Integer))
 		End Sub
 	#tag EndMethod
 
@@ -426,7 +426,7 @@ End
 		  
 		  Self.mPacksData = New SQLiteDatabase
 		  Self.mPacksData.Connect
-		  Self.mPacksData.ExecuteSQL("CREATE TABLE packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT COLLATE NOCASE NOT NULL, json TEXT NOT NULL, should_delete BOOLEAN NOT NULL DEFAULT FALSE, view_mode INTEGER NOT NULL);")
+		  Self.mPacksData.ExecuteSQL("CREATE TABLE packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT COLLATE NOCASE NOT NULL, json TEXT NOT NULL, should_delete BOOLEAN NOT NULL DEFAULT FALSE, view_mode INTEGER NOT NULL);")
 		  
 		  Super.Constructor()
 		End Sub
@@ -494,6 +494,27 @@ End
 		  
 		  Var Request As New BeaconAPI.Request("contentPacks", "GET", Params, AddressOf APICallback_ListMods)
 		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub FilterPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Var Settings As ModFilterSettings = ModFilterView(Sender.Container).Settings
+		    Preferences.ModFilters = Settings
+		    Self.UpdateModsList()
+		  End If
+		  
+		  Var FilterModsButton As OmniBarItem = Self.ModsToolbar.Item("FilterMods")
+		  If (FilterModsButton Is Nil) = False Then
+		    Var IsFiltered As Boolean = Preferences.ModFilters.IsFiltered
+		    FilterModsButton.Toggled = False
+		    FilterModsButton.AlwaysUseActiveColor = IsFiltered
+		    FilterModsButton.ActiveColor = If(IsFiltered, OmniBarItem.ActiveColors.Blue, OmniBarItem.ActiveColors.Accent)
+		    FilterModsButton.Icon = If(IsFiltered, IconToolbarFilterActive, IconToolbarFilter)
+		  End If
+		  
+		  Self.mFilterPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -746,14 +767,44 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateModsList()
-		  Var Filter As String = "%" + Self.FilterField.Text.Trim.ReplaceAll("%", "\%").ReplaceAll("_", "\_") + "%"
-		  Var Rows As RowSet
-		  If Filter.IsEmpty Then
-		    Rows = Self.mPacksData.SelectSQL("SELECT json, view_mode FROM packs ORDER BY name;")
-		  Else
-		    Rows = Self.mPacksData.SelectSQL("SELECT json, view_mode FROM packs WHERE name LIKE ?1 ESCAPE '\' OR marketplace_id LIKE ?1 ESCAPE '\' ORDER BY name;", Filter)
+		  Var Filter As String = Self.FilterField.Text.Trim.ReplaceAll("%", "\%").ReplaceAll("_", "\_")
+		  Var FilterSettings As ModFilterSettings = Preferences.ModFilters
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  Var NextPlaceholder As Integer = 1
+		  
+		  If FilterSettings.IsFiltered Then
+		    If FilterSettings.Types > 0 Then
+		      Clauses.Add("view_mode & ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " > 0")
+		      Values.Add(FilterSettings.Types)
+		      NextPlaceholder = NextPlaceholder + 1
+		    End If
+		    
+		    Var GameIds() As String = FilterSettings.GameIds
+		    If GameIds.Count > 0 Then
+		      Var GameIdPlaceholders() As String
+		      For Each GameId As String In GameIds
+		        GameIdPlaceholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		        Values.Add(GameId)
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      Clauses.Add("game_id IN (" + String.FromArray(GameIdPlaceholders, ", ") + ")")
+		    End If
+		  End If
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("(name LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR marketplace_id LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\')")
+		    Values.Add("%" + Filter + "%")
+		    NextPlaceholder = NextPlaceholder + 1
 		  End If
 		  
+		  Var SQL As String = "SELECT json, view_mode FROM packs" + If(Clauses.Count > 0, " WHERE " + String.FromArray(Clauses, " AND "), "") + " ORDER BY name;"
+		  Var Rows As RowSet = Self.mPacksData.SelectSQL(SQL, Values)
+		  #if DebugBuild
+		    For Param As Integer = 1 To Values.Count
+		      SQL = SQL.Replace("?" + Param.ToString(Locale.Raw, "0"), "'" + Values(Param - 1).StringValue + "'")
+		    Next
+		    System.DebugLog(SQL)
+		  #endif
 		  Var SelectedIds As New Dictionary
 		  For RowIdx As Integer = 0 To Self.ModsList.LastRowIndex
 		    If Self.ModsList.RowSelectedAt(RowIdx) = False Then
@@ -891,6 +942,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mFetchingRemote As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFilterPopoverController As PopoverController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1098,12 +1153,18 @@ End
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateSpace)
 		  Me.Append(OmniBarItem.CreateButton("DiscoverMods", "Discover Mods", IconToolbarDiscover, "Launch a dedicated server to discover mod data."))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  
+		  Var FilterModsButton As OmniBarItem = OmniBarItem.CreateButton("FilterMods", "Filter Mods", IconToolbarFilter, "Decide which mods show in the list.")
+		  Var IsFiltered As Boolean = Preferences.ModFilters.IsFiltered
+		  FilterModsButton.AlwaysUseActiveColor = IsFiltered
+		  FilterModsButton.ActiveColor = If(IsFiltered, OmniBarItem.ActiveColors.Blue, OmniBarItem.ActiveColors.Accent)
+		  FilterModsButton.Icon = If(IsFiltered, IconToolbarFilterActive, IconToolbarFilter)
+		  Me.Append(FilterModsButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
-		  
 		  Select Case Item.Name
 		  Case "AddLocalMod", "RegisterMod"
 		    Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureMods, False)
@@ -1167,7 +1228,23 @@ End
 		      Case ExportCommunityItem
 		        Self.UploadSelectedMods()
 		      End Select
-		    End If 
+		    End If
+		  Case "FilterMods"
+		    If (Self.mFilterPopoverController Is Nil) = False And Self.mFilterPopoverController.Visible Then
+		      Self.mFilterPopoverController.Dismiss(False)
+		      Self.mFilterPopoverController = Nil
+		      Item.Toggled = False
+		      Return
+		    End If
+		    
+		    Var SettingsView As New ModFilterView(Preferences.ModFilters)
+		    Var Controller As New PopoverController("Mod Filters", SettingsView)
+		    Controller.Show(Me, ItemRect)
+		    
+		    Item.Toggled = True
+		    
+		    AddHandler Controller.Finished, WeakAddressOf FilterPopoverController_Finished
+		    Self.mFilterPopoverController = Controller
 		  End Select
 		End Sub
 	#tag EndEvent

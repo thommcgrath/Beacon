@@ -1118,6 +1118,25 @@ Protected Module Preferences
 		Private mManager As PreferencesManager
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Var Settings As JSONItem = mManager.JSONValue("Mod Filter Settings")
+			  Return ModFilterSettings.FromSaveData(Settings)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value Is Nil Then
+			    mManager.JSONValue("Mod Filter Settings") = Nil
+			  Else
+			    mManager.JSONValue("Mod Filter Settings") = Value.SaveData
+			  End If
+			End Set
+		#tag EndSetter
+		Protected ModFilters As ModFilterSettings
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mOnlineToken As String
 	#tag EndProperty

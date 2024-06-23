@@ -223,9 +223,9 @@ Inherits BeaconSubview
 
 
 	#tag Enum, Name = ViewModes, Type = Integer, Flags = &h0
-		Local
-		  LocalReadOnly
-		Remote
+		Local = 1
+		  LocalReadOnly = 2
+		Remote = 4
 	#tag EndEnum
 
 
