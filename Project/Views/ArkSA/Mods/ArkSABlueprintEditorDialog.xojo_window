@@ -46,7 +46,7 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -1311,7 +1311,7 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   0
-         Height          =   195
+         Height          =   161
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   "Stat	Base	Wild	Tamed	Add	Affinity"
@@ -1331,7 +1331,7 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   194
+         Top             =   228
          TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
@@ -1362,6 +1362,7 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
          LockRight       =   True
          LockTop         =   True
          Modified        =   False
+         ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   4
@@ -1701,6 +1702,7 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
          LockRight       =   True
          LockTop         =   True
          Modified        =   False
+         ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   6
@@ -2036,6 +2038,81 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
          Visible         =   True
          Width           =   368
       End
+      Begin UITweaks.ResizedTextField CreatureNameTagField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   164
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   12
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   194
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   212
+      End
+      Begin UITweaks.ResizedLabel CreatureNameTagLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   21
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   13
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Name Tag:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   194
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   131
+      End
    End
    Begin OmniBar PageSelector
       Alignment       =   1
@@ -2336,6 +2413,10 @@ End
 		  
 		  If Creature.MaxMatingInterval > 0 Then
 		    Self.CreatureIntervalMaxTimeField.Text = Beacon.SecondsToString(Creature.MaxMatingInterval)
+		  End If
+		  
+		  If (Creature.NameTag Is Nil) = False Then
+		    Self.CreatureNameTagField.Text = Creature.NameTag
 		  End If
 		  
 		  Var Stats() As ArkSA.Stat = ArkSA.Stats.All
@@ -2743,6 +2824,13 @@ End
 		  Else
 		    Creature.MinMatingInterval = 0
 		    Creature.MaxMatingInterval = 0
+		  End If
+		  
+		  Var NameTagString As String = Self.CreatureNameTagField.Text.Trim
+		  If NameTagString.IsEmpty = False Then
+		    Creature.NameTag = NameTagString
+		  Else
+		    Creature.NameTag = Nil
 		  End If
 		  
 		  Creature.ClearStats
@@ -3618,6 +3706,13 @@ End
 		    Self.MapSelector.Enabled = True
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureNameTagField
+	#tag Event
+		Sub TextChanged()
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

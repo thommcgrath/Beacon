@@ -83,6 +83,7 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		  Self.mPath = Source.mPath
 		  Self.mStats = Source.mStats.Clone
 		  Self.mStatsMask = Source.mStatsMask
+		  Self.mNameTag = Source.mNameTag
 		  Self.mLastUpdate = Source.mLastUpdate
 		  
 		  Self.mTags.ResizeTo(-1)
@@ -328,9 +329,7 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		    Dict.Value("mating_interval_max") = Nil
 		  End If
 		  
-		  If (Self.mNameTag Is Nil) = False Then
-		    Dict.Value("dinoNameTag") = Self.mNameTag.StringValue
-		  End If
+		  Dict.Value("dinoNameTag") = NullableString.ToVariant(Self.mNameTag)
 		End Sub
 	#tag EndMethod
 
