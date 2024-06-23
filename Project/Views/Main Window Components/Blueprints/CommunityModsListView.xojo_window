@@ -370,16 +370,23 @@ End
 		  Case DataUpdater.Notification_ImportStopped
 		    Var OpenEditors As Boolean = Self.mPendingDownloads.Count <= 4
 		    
-		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		    Var DataSources() As Beacon.DataSource = App.DataSources
 		    For Idx As Integer = Self.mPendingDownloads.LastIndex DownTo 0
-		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(Self.mPendingDownloads(Idx))
-		      If (Pack Is Nil) = False Then
+		      Var Pack As Beacon.ContentPack
+		      For Each DataSource As Beacon.DataSource In DataSources
+		        Pack = DataSource.GetContentPackWithId(Self.mPendingDownloads(Idx))
+		        If Pack Is Nil Then
+		          Continue For DataSource
+		        End If
+		        
 		        If OpenEditors Then
 		          Self.ShowMod(Pack, ModsListView.ViewModes.Local)
 		        End If
 		        Self.mPendingDownloads.RemoveAt(Idx)
 		        Self.mDownloadCount = Self.mDownloadCount + 1
-		      End If
+		        
+		        Exit For DataSource
+		      Next
 		    Next
 		    
 		    If Self.IsFrontmost Then
