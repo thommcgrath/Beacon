@@ -192,7 +192,6 @@ Inherits ArkSA.BlueprintController
 		    Objects.Add(ArkSA.PackBlueprint(Blueprint, True))
 		  Next
 		  
-		  Break
 		  Var Request As New BeaconAPI.Request("arksa/" + PathComponent, "POST", Beacon.GenerateJSON(Objects, False), "application/json")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  

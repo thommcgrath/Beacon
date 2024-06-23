@@ -2267,6 +2267,7 @@ End
 		      DesktopTextArea(Ctrl).ReadOnly = Self.mReadOnly
 		    End If
 		  Next
+		  Self.TypeMenu.Enabled = Self.mOriginalBlueprint Is Nil And Self.mReadOnly = False
 		  Self.EngramAddIngredient.Enabled = Not Self.mReadOnly
 		  Self.CreatureAddStatButton.Enabled = Not Self.mReadOnly
 		  Self.AllMapsRadio.Enabled = Not Self.mReadOnly

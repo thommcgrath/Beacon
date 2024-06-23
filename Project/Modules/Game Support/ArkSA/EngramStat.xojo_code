@@ -13,6 +13,17 @@ Protected Class EngramStat
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(StatIndex As Integer, RandomizerRangeOverride As Double, RandomizerRangeMultiplier As Double, StateModifierScale As Double, RatingValueMultiplier As Double, InitialValueConstant As Double)
+		  Self.mStatIndex = StatIndex
+		  Self.mRandomizerRangeOverride = RandomizerRangeOverride
+		  Self.mRandomizerRangeMultiplier = RandomizerRangeMultiplier
+		  Self.mStateModifierScale = StateModifierScale
+		  Self.mRatingValueMultiplier = RatingValueMultiplier
+		  Self.mInitialValueConstant = InitialValueConstant
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Source As Dictionary) As ArkSA.EngramStat
 		  Var Converted As New JSONItem(Source)
 		  Return FromSaveData(Converted)
@@ -35,6 +46,47 @@ Protected Class EngramStat
 	#tag Method, Flags = &h0
 		Function InitialValueConstant() As Double
 		  Return Self.mInitialValueConstant
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label() As String
+		  Return Self.LabelForIndex(Self.mStatIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function LabelForIndex(Index As Integer) As String
+		  Select Case Index
+		  Case ArksA.EngramStat.IndexArmor
+		    Return "Armor"
+		  Case ArkSA.EngramStat.IndexGenericQuality
+		    Return "Generic Quality"
+		  Case ArkSA.EngramStat.IndexHyperthermal
+		    Return "Hyperthermal"
+		  Case ArkSA.EngramStat.IndexHypothermal
+		    Return "Hypothermal"
+		  Case ArkSA.EngramStat.IndexMaxDurability
+		    Return "Durability"
+		  Case ArkSA.EngramStat.IndexWeaponAmmo
+		    Return "Ammo"
+		  Case ArkSA.EngramStat.IndexWeaponDamage
+		    Return "Damage"
+		  Case ArkSA.EngramStat.IndexWeight
+		    Return "Weight"
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Mask() As Integer
+		  Return Self.MaskForIndex(Self.mStatIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function MaskForIndex(Index As Integer) As Integer
+		  Return Bitwise.ShiftLeft(1, Index)
 		End Function
 	#tag EndMethod
 
@@ -112,6 +164,9 @@ Protected Class EngramStat
 		Private mStatIndex As Integer
 	#tag EndProperty
 
+
+	#tag Constant, Name = AllMask, Type = Double, Dynamic = False, Default = \"&b11111111", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = FirstIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant

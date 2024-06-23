@@ -36,7 +36,7 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   6
+      PanelCount      =   7
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -2113,6 +2113,160 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
          Visible         =   True
          Width           =   131
       End
+      Begin BeaconListbox EngramStatsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   6
+         ColumnWidths    =   "*,70,70,70,70,70"
+         DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   0
+         Height          =   333
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Stat	RRO	RRM	SMS	RTM	IVC"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PageSize        =   100
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   1
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   58
+         TotalPages      =   -1
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   500
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin UITweaks.ResizedPushButton EngramAddStatButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Define Stat"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   403
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   94
+      End
+      Begin UITweaks.ResizedPushButton EngramEditStatButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Edit"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   126
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   403
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton EngramDeleteStatButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Remove"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   218
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   403
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
    End
    Begin OmniBar PageSelector
       Alignment       =   1
@@ -2344,6 +2498,7 @@ End
 		      DesktopTextArea(Ctrl).ReadOnly = Self.mReadOnly
 		    End If
 		  Next
+		  Self.TypeMenu.Enabled = Self.mOriginalBlueprint Is Nil And Self.mReadOnly = False
 		  Self.EngramAddIngredient.Enabled = Not Self.mReadOnly
 		  Self.CreatureAddStatButton.Enabled = Not Self.mReadOnly
 		  Self.AllMapsRadio.Enabled = Not Self.mReadOnly
@@ -2352,6 +2507,7 @@ End
 		  Self.DropEditor.ReadOnly = Self.mReadOnly
 		  Self.SpawnPointEditor1.ReadOnly = Self.mReadOnly
 		  Self.LootSortSuggestButton.Enabled = Not Self.mReadOnly
+		  Self.EngramAddStatButton.Enabled = Not Self.mReadOnly
 		  
 		  Self.Modified = False
 		End Sub
@@ -2458,6 +2614,18 @@ End
 		  Next
 		  Self.EngramCraftingCostList.SortingColumn = 0
 		  Self.EngramCraftingCostList.Sort
+		  
+		  For StatIndex As Integer = ArkSA.EngramStat.FirstIndex To ArkSA.EngramStat.LastIndex
+		    Var Stat As ArkSA.EngramStat = Engram.Stat(StatIndex)
+		    If Stat Is Nil Then
+		      Continue
+		    End If
+		    
+		    Self.EngramStatsList.AddRow("")
+		    Var Row As Integer = Self.EngramStatsList.LastAddedRowIndex
+		    Self.ShowStatInRow(Row, Stat)
+		  Next
+		  Self.CreatureStatsList.Sort
 		End Sub
 	#tag EndMethod
 
@@ -2743,6 +2911,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ShowStatInRow(Row As Integer, Stat As ArkSA.EngramStat)
+		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnLabel) = Stat.Label
+		  Self.EngramStatsList.RowTagAt(Row) = Stat
+		  
+		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnRRO) = Stat.RandomizerRangeOverride.PrettyText(True)
+		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnRRM) = Stat.RandomizerRangeMultiplier.PrettyText(True)
+		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnSMS) = Stat.StateModifierScale.PrettyText(True)
+		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnRVM) = Stat.RatingValueMultiplier.PrettyText(True)
+		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnIVC) = Stat.InitialValueConstant.PrettyText(True)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function SuggestLootSortValue(Label As String) As Integer
 		  Var SortValue As Integer
 		  If Label.IndexOf("White") > -1 Then
@@ -2930,6 +3111,12 @@ End
 		    Engram.Recipe = Nil
 		  End If
 		  
+		  Engram.ClearStats
+		  For Row As Integer = 0 To Self.EngramStatsList.LastRowIndex
+		    Var Stat As ArkSA.EngramStat = Self.EngramStatsList.RowTagAt(Row)
+		    Engram.Stat(Stat.StatIndex) = Stat
+		  Next
+		  
 		  Return True
 		End Function
 	#tag EndMethod
@@ -3040,6 +3227,24 @@ End
 	#tag Constant, Name = CreatureWindowWidth, Type = Double, Dynamic = False, Default = \"540", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = EngramStatColumnIVC, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = EngramStatColumnLabel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = EngramStatColumnRRM, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = EngramStatColumnRRO, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = EngramStatColumnRVM, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = EngramStatColumnSMS, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = EngramWindowWidth, Type = Double, Dynamic = False, Default = \"540", Scope = Private
 	#tag EndConstant
 
@@ -3062,6 +3267,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageEngramSettings, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageEngramStats, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageLootContents, Type = Double, Dynamic = False, Default = \"5", Scope = Private
@@ -3128,6 +3336,7 @@ End
 		  Select Case Me.SelectedRowIndex
 		  Case Self.IndexEngram
 		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageEngram", "Advanced"))
+		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageEngramStats", "Stats"))
 		  Case Self.IndexCreature
 		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageCreature", "Advanced"))
 		  Case Self.IndexSpawnPoint
@@ -3281,7 +3490,7 @@ End
 		    UsedStats = UsedStats Or Values.Mask
 		  Next
 		  
-		  Var NewStat As ArkSA.CreatureStatValue = ArkSADefineStatDialog.Present(Self, UsedStats)
+		  Var NewStat As ArkSA.CreatureStatValue = ArkSADefineCreatureStatDialog.Present(Self, UsedStats)
 		  If NewStat Is Nil Then
 		    Return
 		  End If
@@ -3510,7 +3719,7 @@ End
 		    UsedStats = UsedStats Or ArkSA.CreatureStatValue(Self.CreatureStatsList.RowTagAt(Row)).Mask
 		  Next
 		  
-		  Var NewStat As ArkSA.CreatureStatValue = ArkSADefineStatDialog.Present(Self, UsedStats, Values)
+		  Var NewStat As ArkSA.CreatureStatValue = ArkSADefineCreatureStatDialog.Present(Self, UsedStats, Values)
 		  If NewStat Is Nil Then
 		    Return
 		  End If
@@ -3716,6 +3925,134 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events EngramStatsList
+	#tag Event
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.EngramStatColumnRRO) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.EngramStatColumnRRM) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.EngramStatColumnSMS) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.EngramStatColumnRVM) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.EngramStatColumnIVC) = DesktopListbox.Alignments.Right
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Var Values1 As ArkSA.EngramStat = Me.RowTagAt(Row1)
+		  Var Values2 As ArkSA.EngramStat = Me.RowTagAt(Row2)
+		  
+		  Select Case Column
+		  Case Self.EngramStatColumnLabel
+		    Result = CompareValues(Values1.StatIndex, Values2.StatIndex)
+		  Case Self.EngramStatColumnRRO
+		    Result = CompareValues(Values1.RandomizerRangeOverride, Values2.RandomizerRangeOverride)
+		  Case Self.EngramStatColumnRRM
+		    Result = CompareValues(Values1.RandomizerRangeMultiplier, Values2.RandomizerRangeMultiplier)
+		  Case Self.EngramStatColumnSMS
+		    Result = CompareValues(Values1.StateModifierScale, Values2.StateModifierScale)
+		  Case Self.EngramStatColumnRVM
+		    Result = CompareValues(Values1.RatingValueMultiplier, Values2.RatingValueMultiplier)
+		  Case Self.EngramStatColumnIVC
+		    Result = CompareValues(Values1.InitialValueConstant, Values2.InitialValueConstant)
+		  Else
+		    Return False
+		  End Select
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0 And Self.mReadOnly = False
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1 And Self.mReadOnly = False
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Self.EngramEditStatButton.Enabled = Me.CanEdit
+		  Self.EngramDeleteStatButton.Enabled = Me.CanDelete
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  Var Stat As ArkSA.EngramStat = Me.RowTagAt(Me.SelectedRowIndex)
+		  
+		  Var AlreadyUsedStats As Integer
+		  For Row As Integer = 0 To Self.EngramStatsList.LastRowIndex
+		    If Row = Me.SelectedRowIndex Then
+		      Continue
+		    End If
+		    
+		    AlreadyUsedStats = AlreadyUsedStats Or ArkSA.EngramStat(Self.EngramStatsList.RowTagAt(Row)).Mask
+		  Next
+		  
+		  Var NewStat As ArkSA.EngramStat = ArkSADefineEngramStatDialog.Present(Self, AlreadyUsedStats, Stat)
+		  If NewStat Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.ShowStatInRow(Me.SelectedRowIndex, NewStat)
+		  Self.EngramStatsList.Sort
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  #Pragma Unused Warn
+		  
+		  For Row As Integer = Me.LastRowIndex DownTo 0
+		    If Me.RowSelectedAt(Row) Then
+		      Me.RemoveRowAt(Row)
+		    End If
+		  Next
+		  
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramAddStatButton
+	#tag Event
+		Sub Pressed()
+		  Var AlreadyUsedStats As Integer
+		  For Row As Integer = 0 To Self.EngramStatsList.LastRowIndex
+		    Var Stat As ArkSA.EngramStat = Self.EngramStatsList.RowTagAt(Row)
+		    AlreadyUsedStats = AlreadyUsedStats Or Stat.Mask
+		  Next
+		  
+		  If AlreadyUsedStats = ArkSA.EngramStat.AllMask Then
+		    Self.ShowAlert("All stats have been defined", "There are no more stats to add, but you can edit the values for stats already added.")
+		    Return
+		  End If
+		  
+		  Var NewStat As ArkSA.EngramStat = ArkSADefineEngramStatDialog.Present(Self, AlreadyUsedStats)
+		  If NewStat Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.EngramStatsList.AddRow("")
+		  Self.ShowStatInRow(Self.EngramStatsList.LastAddedRowIndex, NewStat)
+		  Self.EngramStatsList.Sort
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramEditStatButton
+	#tag Event
+		Sub Pressed()
+		  Self.EngramStatsList.DoEdit
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramDeleteStatButton
+	#tag Event
+		Sub Pressed()
+		  Self.EngramStatsList.DoClear
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events PageSelector
 	#tag Event
 		Sub Opening()
@@ -3737,6 +4074,8 @@ End
 		    Self.Pages.SelectedPanelIndex = Self.PageCommonSettings
 		  Case "PageEngram"
 		    Self.Pages.SelectedPanelIndex = Self.PageEngramSettings
+		  Case "PageEngramStats"
+		    Self.Pages.SelectedPanelIndex = Self.PageEngramStats
 		  Case "PageCreature"
 		    Self.Pages.SelectedPanelIndex = Self.PageCreatureSettings
 		  Case "PageSpawnContents"

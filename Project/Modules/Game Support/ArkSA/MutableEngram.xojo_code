@@ -41,6 +41,17 @@ Implements ArkSA.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ClearStats()
+		  For Idx As Integer = ArkSA.EngramStat.FirstIndex To ArkSA.EngramStat.LastIndex
+		    If (Self.mStats(Idx) Is Nil) = False Then
+		      Self.mStats(Idx) = Nil
+		      Self.Modified = True
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone() As ArkSA.MutableEngram
 		  Return New ArkSA.MutableEngram(Self)
 		End Function

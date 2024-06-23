@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog ArkSADefineStatDialog
+Begin BeaconDialog ArkSADefineCreatureStatDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -569,7 +569,7 @@ End
 		    Return Nil
 		  End If
 		  
-		  Var Win As New ArkSADefineStatDialog(UsedStats, Values)
+		  Var Win As New ArkSADefineCreatureStatDialog(UsedStats, Values)
 		  Win.ShowModal(Parent)
 		  If Win.mCancelled Then
 		    Win.Close
