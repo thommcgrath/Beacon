@@ -78,7 +78,7 @@ if ($has_expanded_parameters) {
 	if ($current_timestamp < $min_timestamp || $current_timestamp > $max_timestamp) {
 		ReplyError('Ticket was submitted too quickly.', 400);
 	}
-	
+
 	$provided_hash = trim($_POST['hash']);
 	$psk = BeaconCommon::GetGlobal('Support Ticket Key');
 	$required_hash = hash('sha256', $timestamp . $psk);
@@ -154,6 +154,12 @@ if (isset($_POST['archive_key'])) {
 		'value' => $_POST['archive_key']
 	];
 }
+if (isset($_POST['last_sync'])) {
+	$custom_fields[] = [
+		'id' => '27870604574612',
+		'value' => $_POST['last_sync']
+	];
+}
 
 $diagnostics = [];
 
@@ -215,7 +221,7 @@ if ($has_expanded_parameters) {
 	curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/binary'));
 	$zendesk_body = curl_exec($curl);
 	unlink($_FILES['archive']['tmp_name']);
-	
+
 	$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 	if ($status == 201) {
 		$response = json_decode($zendesk_body, true);
@@ -238,7 +244,7 @@ if (count($users) === 0) {
 		'submit_time' => $time_submitting,
 		'stoplist_check' => 1
 	];
-	
+
 	$curl = curl_init('https://moderate.cleantalk.org/api2.0');
 	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($spam));
 	curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -271,7 +277,7 @@ $ticket = [
 	]
 ];
 if ($has_expanded_parameters) {
-	$ticket['ticket']['comment']['uploads'] = [$attachment_token];	
+	$ticket['ticket']['comment']['uploads'] = [$attachment_token];
 }
 $curl = curl_init('https://thezaz.zendesk.com/api/v2/tickets.json');
 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($ticket));
@@ -301,7 +307,7 @@ function GetLicensesForEmailID(?string $email_id, ?string $username = null) {
 	if (is_null($email_id)) {
 		return $licenses;
 	}
-	
+
 	$database = BeaconCommon::Database();
 	$results = $database->Query('SELECT product_name, expiration AT TIME ZONE \'UTC\' AS expiration FROM purchased_products WHERE purchaser_email = $1 ORDER BY product_name;', $email_id);
 	$now = new DateTime();
