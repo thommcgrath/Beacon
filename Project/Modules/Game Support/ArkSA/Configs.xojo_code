@@ -53,7 +53,7 @@ Protected Module Configs
 		    Tools.Add(New ArkSA.ProjectTool("Setup Guided Editors", "d29dc6f8-e834-4969-9cfe-b38e1c052156", NameCustomConfig))
 		    Tools.Add(New ArkSA.ProjectTool("Convert Global Harvest Rate to Individual Rates", "5265adcd-5c7e-437c-bce2-d10721afde43", NameHarvestRates))
 		    Tools.Add(New ArkSA.ProjectTool("Rebuild Item Sets from Templates", "08efc49c-f39f-4147-820d-201637c206b5", NameLootDrops))
-		    Tools.Add(New ArkSA.ProjectTool("Compute GFI Codes", "6bcf5785-b8e2-4889-91c8-545c34f30d8a"))
+		    //Tools.Add(New ArkSA.ProjectTool("Compute GFI Codes", "6bcf5785-b8e2-4889-91c8-545c34f30d8a"))
 		    Tools.Add(New ArkSA.ProjectTool("Remove Unknown Content", "56742123-8e17-4285-b196-fd79823b61f7"))
 		    
 		    Var Names() As String
