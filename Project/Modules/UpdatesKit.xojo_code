@@ -708,7 +708,10 @@ Protected Module UpdatesKit
 		    Params.Value("stage") = Preferences.UpdateChannel.ToString(Locale.Raw, "0")
 		  End If
 		  
-		  Var Arch As UpdatesKit.Architectures = MachineArchitecture()
+		  Var Arch As UpdatesKit.Architectures = Preferences.UpdateArch
+		  If Arch = UpdatesKit.Architectures.Unknown Then
+		    Arch = MachineArchitecture()
+		  End If
 		  Select Case Arch
 		  Case Architectures.arm
 		    Params.Value("arch") = "arm"

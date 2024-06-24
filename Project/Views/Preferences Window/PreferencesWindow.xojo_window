@@ -10,14 +10,14 @@ Begin BeaconWindow PreferencesWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   388
+   Height          =   420
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   388
+   MinimumHeight   =   420
    MinimumWidth    =   652
    Resizeable      =   False
    Title           =   "#WindowTitle"
@@ -258,7 +258,7 @@ Begin BeaconWindow PreferencesWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   108
+      Height          =   140
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -364,13 +364,76 @@ Begin BeaconWindow PreferencesWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   328
+         Top             =   360
          Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
          VisualState     =   1
          Width           =   198
+      End
+      Begin UITweaks.ResizedPopupMenu ArchMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "UpdatesGroup"
+         InitialValue    =   "Automatic\n64-bit\n32-bit\nARM"
+         Italic          =   False
+         Left            =   122
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   328
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   198
+      End
+      Begin UITweaks.ResizedLabel ArchLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "UpdatesGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Type:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   328
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   70
       End
    End
    Begin DesktopGroupBox AppearanceGroup
@@ -676,12 +739,22 @@ End
 		  If DarkModeSupported Then
 		    Labels.Add(Self.DarkModeLabel)
 		  End If
+		  #if TargetWindows
+		    Labels.Add(Self.ArchLabel)
+		  #else
+		    Self.ArchLabel.Visible = False
+		    Self.ArchMenu.Visible = False
+		    Self.AutoupdateCheckbox.Top = Self.AutoupdateCheckbox.Top - 32
+		    Self.UpdatesGroup.Height = Self.UpdatesGroup.Height - 32
+		  #endif
 		  BeaconUI.SizeToFit(Labels)
 		  
 		  Var LeftMenusLeft As Integer = Self.ChannelLabel.Right + 12
 		  Var LeftMenusWidth As Integer = Self.ChannelMenu.Right - LeftMenusLeft
 		  Self.ChannelMenu.Left = LeftMenusLeft
 		  Self.ChannelMenu.Width = LeftMenusWidth
+		  Self.ArchMenu.Left = LeftMenusLeft
+		  Self.ArchMenu.Width = LeftMenusWidth
 		  If DarkModeSupported Then
 		    Self.DarkModeMenu.Left = LeftMenusLeft
 		    Self.DarkModeMenu.Width = LeftMenusWidth
@@ -905,6 +978,33 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Value = Preferences.AutomaticallyDownloadsUpdates
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ArchMenu
+	#tag Event
+		Sub Opening()
+		  Me.RemoveAllRows
+		  
+		  Me.AddRow("Automatic", UpdatesKit.Architectures.Unknown)
+		  
+		  #if TargetWindows
+		    Me.AddRow("x86 64-bit", UpdatesKit.Architectures.x86_64)
+		    Me.AddRow("x86 32-bit", UpdatesKit.Architectures.x86)
+		    Me.AddRow("ARM 64-bit", UpdatesKit.Architectures.arm64)
+		    Me.SelectByTag(Preferences.UpdateArch)
+		  #endif
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Preferences.UpdateArch = Me.SelectedRowTag
 		End Sub
 	#tag EndEvent
 #tag EndEvents

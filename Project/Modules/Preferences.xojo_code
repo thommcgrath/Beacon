@@ -1470,6 +1470,23 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return CType(mManager.IntegerValue("Updates Architecture", CType(UpdatesKit.Architectures.Unknown, Integer)), UpdatesKit.Architectures)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Updates Architecture") = CType(Value, Integer)
+			  UpdatesKit.RefreshSettings()
+			End Set
+		#tag EndSetter
+		Protected UpdateArch As UpdatesKit.Architectures
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.IntegerValue("Updates Channel", 0)
 			End Get
 		#tag EndGetter
