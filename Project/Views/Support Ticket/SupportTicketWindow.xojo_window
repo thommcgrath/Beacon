@@ -183,7 +183,6 @@ Begin BeaconWindow SupportTicketWindow
    End
    Begin Thread SubmitThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -485,7 +484,7 @@ Begin BeaconWindow SupportTicketWindow
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   203
+         Width           =   200
       End
       Begin UITweaks.ResizedLabel NameLabel
          AllowAutoDeactivate=   True
@@ -640,20 +639,20 @@ Begin BeaconWindow SupportTicketWindow
       Begin UITweaks.ResizedPopupMenu DocumentMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         Enabled         =   True
+         Enabled         =   False
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Height          =   20
          Index           =   -2147483648
          InitialParent   =   "DetailsGroup"
-         InitialValue    =   ""
+         InitialValue    =   "Open a project to use this menu"
          Italic          =   False
          Left            =   168
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Scope           =   2
          SelectedRowIndex=   0
@@ -665,7 +664,7 @@ Begin BeaconWindow SupportTicketWindow
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   203
+         Width           =   261
       End
       Begin UITweaks.ResizedLabel DocumentLabel
          AllowAutoDeactivate=   True
@@ -843,32 +842,37 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RefreshDocumentMenu()
 		  Var SelectedDocumentID As String
-		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
+		  If Self.DocumentMenu.Enabled And Self.DocumentMenu.SelectedRowIndex > -1 Then
 		    SelectedDocumentID = Beacon.Project(Self.DocumentMenu.SelectedRowTag).ProjectId
 		  End If
 		  
 		  Self.DocumentMenu.RemoveAllRows
 		  
 		  Var Win As MainWindow = App.MainWindow
-		  If Win Is Nil Then
-		    Return
+		  If (Win Is Nil) = False Then
+		    Var Editors() As DocumentEditorView = App.MainWindow.DocumentEditors
+		    If (Editors Is Nil) = False Then
+		      For Each View As BeaconSubview In Editors
+		        Var Project As Beacon.Project = DocumentEditorView(View).Project
+		        If Project Is Nil Then
+		          Continue
+		        End If
+		        
+		        Self.DocumentMenu.AddRow(Project.Title, Project)
+		        If Project.ProjectId = SelectedDocumentID Then
+		          Self.DocumentMenu.SelectedRowIndex = Self.DocumentMenu.LastAddedRowIndex
+		        End If
+		      Next
+		    End If
 		  End If
 		  
-		  Var Editors() As DocumentEditorView = App.MainWindow.DocumentEditors
-		  If Editors Is Nil Then
-		    Return
+		  If Self.DocumentMenu.RowCount > 0 Then
+		    Self.DocumentMenu.Enabled = True
+		  Else
+		    Self.DocumentMenu.Enabled = False
+		    Self.DocumentMenu.AddRow("Open a project to use this menu")
+		    Self.DocumentMenu.SelectedRowIndex = 0
 		  End If
-		  For Each View As BeaconSubview In Editors
-		    Var Project As Beacon.Project = DocumentEditorView(View).Project
-		    If Project Is Nil Then
-		      Continue
-		    End If
-		    
-		    Self.DocumentMenu.AddRow(Project.Title, Project)
-		    If Project.ProjectId = SelectedDocumentID Then
-		      Self.DocumentMenu.SelectedRowIndex = Self.DocumentMenu.LastAddedRowIndex
-		    End If
-		  Next
 		End Sub
 	#tag EndMethod
 
@@ -985,7 +989,7 @@ End
 		  End If
 		  
 		  Var Document As Beacon.Project
-		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
+		  If Self.DocumentMenu.Enabled And Self.DocumentMenu.SelectedRowIndex > -1 Then
 		    Document = Self.DocumentMenu.RowTagAt(Self.DocumentMenu.SelectedRowIndex)
 		  ElseIf Not Self.ShowConfirm("Are you sure you do not wish to include a project?", "Including a Beacon project provides a ton of information and helps get you an answer faster. If you cannot find your project in the menu, open the project first. Are you sure you do not want to include a project?", "Do Not Include", "Cancel") Then
 		    Return
@@ -1130,6 +1134,8 @@ End
 		    Platform = "Other"
 		  End Select
 		  
+		  
+		  
 		  Var Parts() As String
 		  Parts.Add("Content-Disposition: form-data; name=""name""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketName)
 		  Parts.Add("Content-Disposition: form-data; name=""email""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketEmail)
@@ -1144,6 +1150,12 @@ End
 		  Parts.Add("Content-Disposition: form-data; name=""os""" + EndOfLine.Windows + EndOfLine.Windows + Beacon.OSVersionString)
 		  Parts.Add("Content-Disposition: form-data; name=""version""" + EndOfLine.Windows + EndOfLine.Windows + App.Version)
 		  Parts.Add("Content-Disposition: form-data; name=""build""" + EndOfLine.Windows + EndOfLine.Windows + App.BuildNumber.ToString)
+		  Var LastSync As DateTime = App.OldestSyncDateTime
+		  If IsNull(LastSync) Then
+		    Parts.Add("Content-Disposition: form-data; name=""last_sync""" + EndOfLine.Windows + EndOfLine.Windows + "Never")
+		  Else
+		    Parts.Add("Content-Disposition: form-data; name=""last_sync""" + EndOfLine.Windows + EndOfLine.Windows + LastSync.ToString(Locale.Raw, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC")
+		  End If
 		  
 		  Var PostBody As String = "--" + Boundary + EndOfLine.Windows + Parts.Join(EndOfLine.Windows + "--" + Boundary + EndOfLine.Windows) + EndOfLine.Windows + "--" + Boundary + "--"
 		  
