@@ -9,7 +9,7 @@ Begin DesktopContainer ModFilterView
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   268
+   Height          =   248
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -36,7 +36,7 @@ Begin DesktopContainer ModFilterView
       Height          =   140
       Index           =   -2147483648
       Italic          =   False
-      Left            =   20
+      Left            =   10
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -47,11 +47,11 @@ Begin DesktopContainer ModFilterView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   10
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   260
+      Width           =   280
       Begin DesktopCheckBox TypeLocalCheck
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -64,7 +64,7 @@ Begin DesktopContainer ModFilterView
          Index           =   -2147483648
          InitialParent   =   "TypesGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   30
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -75,12 +75,13 @@ Begin DesktopContainer ModFilterView
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   "#CheckboxTooltipLocal"
-         Top             =   56
+         Top             =   46
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   220
+         Width           =   240
       End
       Begin DesktopCheckBox TypeLocalReadOnlyCheck
          AllowAutoDeactivate=   True
@@ -94,7 +95,7 @@ Begin DesktopContainer ModFilterView
          Index           =   -2147483648
          InitialParent   =   "TypesGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   30
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -105,12 +106,13 @@ Begin DesktopContainer ModFilterView
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   "#CheckboxTooltipLocal"
-         Top             =   88
+         Top             =   78
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   220
+         Width           =   240
       End
       Begin DesktopCheckBox TypeRemoteCheck
          AllowAutoDeactivate=   True
@@ -124,7 +126,7 @@ Begin DesktopContainer ModFilterView
          Index           =   -2147483648
          InitialParent   =   "TypesGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   30
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -135,12 +137,13 @@ Begin DesktopContainer ModFilterView
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   "#CheckboxTooltipRemote"
-         Top             =   120
+         Top             =   110
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   220
+         Width           =   240
       End
    End
    Begin DesktopGroupBox GamesGroup
@@ -154,7 +157,7 @@ Begin DesktopContainer ModFilterView
       Height          =   76
       Index           =   -2147483648
       Italic          =   False
-      Left            =   20
+      Left            =   10
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -165,11 +168,11 @@ Begin DesktopContainer ModFilterView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   172
+      Top             =   162
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   260
+      Width           =   280
       Begin DesktopCheckBox GameCheckboxes
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -182,7 +185,7 @@ Begin DesktopContainer ModFilterView
          Index           =   0
          InitialParent   =   "GamesGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   30
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -193,12 +196,13 @@ Begin DesktopContainer ModFilterView
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   208
+         Top             =   198
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   220
+         Width           =   240
       End
    End
 End
@@ -218,14 +222,14 @@ End
 		    Check.Top = NextTop
 		    Check.Height = 20
 		    Check.Width = Self.Width - 80
-		    Check.Left = 40
+		    Check.Left = Self.GamesGroup.Left + 20
 		    Check.Enabled = True
 		    Check.Value = Self.mSettings.Enabled(Games(Idx))
 		    NextTop = Check.Bottom + 12
 		  Next
 		  
 		  Self.GamesGroup.Height = (Games.Count * 20) + ((Games.Count - 1) * 12) + 56
-		  Self.Height = 52 + Self.TypesGroup.Height + Self.GamesGroup.Height
+		  Self.Height = 32 + Self.TypesGroup.Height + Self.GamesGroup.Height
 		  
 		  Self.TypeLocalCheck.Value = Self.mSettings.Enabled(CType(ModsListView.ViewModes.Local, Integer))
 		  Self.TypeLocalReadOnlyCheck.Value = Self.mSettings.Enabled(CType(ModsListView.ViewModes.LocalReadOnly, Integer))
