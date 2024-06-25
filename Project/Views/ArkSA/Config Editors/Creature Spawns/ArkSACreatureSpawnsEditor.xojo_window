@@ -421,7 +421,7 @@ End
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateTab("PointsButton", "Spawn Points"))
-		  Me.Append(OmniBarItem.CreateTab("WeightsButton", "Spawn Weights"))
+		  Me.Append(OmniBarItem.CreateTab("WeightsButton", "Weight Multipliers"))
 		  
 		  Me.Item("PointsButton").Toggled = True
 		  
