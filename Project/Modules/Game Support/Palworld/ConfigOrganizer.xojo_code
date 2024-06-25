@@ -124,8 +124,6 @@ Protected Class ConfigOrganizer
 		          Command = Key + "=""" + Entry.Value.StringValue + """"
 		        End Select
 		        
-		        Var Value As String = Entry.Value
-		        
 		        Values.Add(New Palworld.ConfigValue(File, Header, Struct, Command))
 		      Next
 		      Continue

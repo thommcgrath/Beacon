@@ -1,13 +1,41 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h0
-		Sub AddClipboardData(Extends Board As Clipboard, Type As String, Data As Variant)
+		Sub AddClipboardData(Extends Board As Clipboard, Type As String, Dicts() As Dictionary)
 		  Var Wrapper As New Dictionary
 		  Wrapper.Value("type") = Type
-		  Wrapper.Value("data") = Data
+		  Wrapper.Value("data") = Dicts
 		  
 		  Board.Text = Beacon.GenerateJson(Wrapper, True)
-		  Board.RawData(Type) = Beacon.GenerateJson(Data, False)
+		  Board.RawData(Type) = Beacon.GenerateJson(Dicts, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddClipboardData(Extends Board As Clipboard, Type As String, Dict As Dictionary)
+		  Var Wrapper As New Dictionary
+		  Wrapper.Value("type") = Type
+		  Wrapper.Value("data") = Dict
+		  
+		  Board.Text = Beacon.GenerateJson(Wrapper, True)
+		  Board.RawData(Type) = Beacon.GenerateJson(Dict, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddClipboardData(Extends Board As Clipboard, Type As String, Data As JSONItem)
+		  Var Wrapper As New JSONItem
+		  Wrapper.Value("type") = Type
+		  Wrapper.Value("data") = Data
+		  Wrapper.Compact = False
+		  
+		  Var Compact As Boolean = Data.Compact
+		  Data.Compact = True
+		  
+		  Board.Text = Wrapper.ToString
+		  Board.RawData(Type) = Data.ToString
+		  
+		  Data.Compact = Compact
 		End Sub
 	#tag EndMethod
 
@@ -759,6 +787,38 @@ Protected Module Beacon
 		    End If
 		    
 		    Return Dict.Value("data")
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetClipboardDataAsJSON(Extends Board As Clipboard, Type As String) As JSONItem
+		  If Board.RawDataAvailable(Type) Then
+		    Try
+		      Return New JSONItem(Board.RawData(Type))
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  End If
+		  
+		  If Board.TextAvailable = False Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Var Parsed As New JSONItem(Board.Text)
+		    If Parsed.IsArray Then
+		      Return Nil
+		    End If
+		    
+		    If Parsed.Lookup("type", "").StringValue <> Type Or Parsed.HasKey("data") = False Then
+		      Return Nil
+		    End If
+		    
+		    Return Parsed.Child("data")
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try

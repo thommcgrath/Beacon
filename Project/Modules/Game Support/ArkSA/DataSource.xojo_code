@@ -1534,6 +1534,21 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetCreaturesWithNameTag(NameTag As String, ContentPacks As Beacon.StringList = Nil) As ArkSA.Creature()
+		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.name_tag = ?1"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
+		    SQL = SQL + " AND creatures.content_pack_id IN (" + ContentPacks.SQLValue + ")"
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, NameTag)
+		  Var Creatures() As ArkSA.Creature = Self.RowSetToCreature(Rows)
+		  Self.Cache(Creatures)
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
 		  Var Value As Variant = Self.GetVariable(Key, Default)
 		  Return Value.DoubleValue

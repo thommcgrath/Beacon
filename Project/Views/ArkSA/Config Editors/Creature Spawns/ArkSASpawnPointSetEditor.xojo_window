@@ -1328,11 +1328,11 @@ End
 		  
 		  Var MajorMargin As Integer = 20
 		  Var MinorMargin As Integer = 12
-		  If Self.Width < ScaleDownStartWidth Or Self.Height < 600 Then
+		  If Self.Width < ScaleDownStartWidth Or Self.Height < ScaleDownStartHeight Then
 		    Var WidthPercent As Double = 1.0 - ((ScaleDownStartWidth - Self.Width) / (ScaleDownStartWidth - Self.MinEditorWidth))
 		    Var HeightPercent As Double = 1.0 - ((ScaleDownStartHeight - Self.Height) / (ScaleDownStartHeight - Self.MinEditorHeight))
-		    MajorMargin = 10 + Round(10 * Min(WidthPercent, HeightPercent))
-		    MinorMargin = 10 + Round(2 * Min(WidthPercent, HeightPercent))
+		    MajorMargin = Max(10 + Round(10 * Min(WidthPercent, HeightPercent)), 5)
+		    MinorMargin = Max(10 + Round(2 * Min(WidthPercent, HeightPercent)), 5)
 		  End If
 		  
 		  Self.NameLabel.Left = MajorMargin
@@ -2687,6 +2687,14 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ReadOnly"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

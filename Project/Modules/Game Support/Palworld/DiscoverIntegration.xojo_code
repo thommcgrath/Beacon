@@ -6,7 +6,6 @@ Inherits Beacon.DiscoverIntegration
 		Function Run() As Beacon.Project
 		  Var Project As Beacon.Project = Self.Project
 		  Var Provider As Beacon.HostingProvider = Self.Provider
-		  Var GetMapFromLogs As Boolean = True
 		  
 		  Var Profile As Palworld.ServerProfile = Self.Profile
 		  Var Data As New Palworld.DiscoveredData

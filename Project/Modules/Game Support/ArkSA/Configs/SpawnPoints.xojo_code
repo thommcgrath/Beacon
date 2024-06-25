@@ -18,6 +18,10 @@ Implements Beacon.BlueprintConsumer
 		    
 		    Self.Add(Override)
 		  Next
+		  
+		  For Each Entry As DictionaryEntry In Source.mWeights
+		    Self.mWeights.Value(Entry.Key) = Entry.Value // They are immutable anyway, so it's ok not to clone
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -38,6 +42,23 @@ Implements Beacon.BlueprintConsumer
 		      Values.Add(Value)
 		    End If
 		  Next
+		  
+		  For Each Entry As DictionaryEntry In Self.mWeights
+		    Var DinoNameTag As String = Entry.Key
+		    Var Multiplier As ArkSA.DinoSpawnWeightMultiplier = Entry.Value
+		    
+		    Var Parts() As String
+		    Parts.Add("DinoNameTag=""" + DinoNameTag + """")
+		    Parts.Add("SpawnWeightMultiplier=" + Multiplier.Multiplier.PrettyText(False))
+		    
+		    If (Multiplier.Limit Is Nil) = False Then
+		      Var Limit As Double = Min(Multiplier.Limit.DoubleValue, 1.0)
+		      Parts.Add("OverrideSpawnLimitPercentage=True")
+		      Parts.Add("SpawnLimitPercentage=" + Limit.PrettyText(False))
+		    End If
+		    
+		    Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoSpawnWeightMultipliers=(" + String.FromArray(Parts, ",") + ")", "DinoSpawnWeightMultipliers:" + DinoNameTag))
+		  Next
 		  Return Values
 		End Function
 	#tag EndEvent
@@ -48,13 +69,14 @@ Implements Beacon.BlueprintConsumer
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "ConfigOverrideNPCSpawnEntriesContainer"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "ConfigAddNPCSpawnEntriesContainer"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "ConfigSubtractNPCSpawnEntriesContainer"))
+		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoSpawnWeightMultipliers"))
 		  Return Keys
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Function HasContent() As Boolean
-		  Return Self.mOverrides.Count > 0
+		  Return Self.mOverrides.Count > 0 Or Self.mWeights.KeyCount > 0
 		End Function
 	#tag EndEvent
 
@@ -128,6 +150,18 @@ Implements Beacon.BlueprintConsumer
 		    
 		    Self.mOverrides.Add(Override)
 		  Next
+		  
+		  If SaveData.HasKey("weights") Then
+		    Var WeightsDict As Dictionary = SaveData.Value("weights")
+		    For Each Entry As DictionaryEntry In WeightsDict
+		      Var DinoNameTag As String = Entry.Key
+		      Var WeightMultiplier As ArkSA.DinoSpawnWeightMultiplier = ArkSA.DinoSpawnWeightMultiplier.FromSaveData(Dictionary(Entry.Value))
+		      If WeightMultiplier Is Nil Then
+		        Continue
+		      End If
+		      Self.mWeights.Value(DinoNameTag) = WeightMultiplier
+		    Next
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -149,6 +183,12 @@ Implements Beacon.BlueprintConsumer
 		    Overrides(Idx) = Self.mOverrides(Idx).SaveData
 		  Next
 		  SaveData.Value("overrides") = Overrides
+		  
+		  Var WeightsDict As New Dictionary
+		  For Each Entry As DictionaryEntry In Self.mWeights
+		    WeightsDict.Value(Entry.Key) = ArkSA.DinoSpawnWeightMultiplier(Entry.Value).ToDictionary
+		  Next
+		  SaveData.Value("weights") = WeightsDict
 		End Sub
 	#tag EndEvent
 
@@ -420,8 +460,26 @@ Implements Beacon.BlueprintConsumer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mWeights = New Dictionary
+		  Super.Constructor()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  Return Self.mOverrides.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DinoNameTags() As String()
+		  Var Tags() As String
+		  For Each Entry As DictionaryEntry In Self.mWeights
+		    Tags.Add(Entry.Key)
+		  Next
+		  Return Tags
 		End Function
 	#tag EndMethod
 
@@ -435,7 +493,27 @@ Implements Beacon.BlueprintConsumer
 		  HandleConfig(SpawnPoints, ParsedData, "ConfigOverrideNPCSpawnEntriesContainer", ContentPacks)
 		  HandleConfig(SpawnPoints, ParsedData, "ConfigAddNPCSpawnEntriesContainer", ContentPacks)
 		  HandleConfig(SpawnPoints, ParsedData, "ConfigSubtractNPCSpawnEntriesContainer", ContentPacks)
-		  If SpawnPoints.Count > 0 Then
+		  
+		  If ParsedData.HasKey("DinoSpawnWeightMultipliers") Then
+		    Var Dicts() As Variant
+		    Try
+		      Dicts = ParsedData.Value("DinoSpawnWeightMultipliers")
+		    Catch Err As RuntimeException
+		      Dicts.Add(ParsedData.Value("DinoSpawnWeightMultipliers"))
+		    End Try
+		    
+		    For Each Dict As Dictionary In Dicts
+		      Var DinoNameTag As String = Dict.Value("DinoNameTag")
+		      Var Multiplier As Double = Dict.Lookup("SpawnWeightMultiplier", 1.0).DoubleValue
+		      Var Limit As NullableDouble
+		      If Dict.Lookup("OverrideSpawnLimitPercentage", False).BooleanValue = True Then
+		        Limit = NullableDouble.FromVariant(Dict.Lookup("SpawnLimitPercentage", Nil))
+		      End If
+		      SpawnPoints.WeightMultiplier(DinoNameTag) = New ArkSA.DinoSpawnWeightMultiplier(Multiplier, Limit)
+		    Next
+		  End If
+		  
+		  If SpawnPoints.HasContent Then
 		    Return SpawnPoints
 		  End If
 		End Function
@@ -733,6 +811,12 @@ Implements Beacon.BlueprintConsumer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasWeightMultiplier(DinoNameTag As String) As Boolean
+		  Return Self.mWeights.HasKey(DinoNameTag)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return ArkSA.Configs.NameCreatureSpawns
 		End Function
@@ -879,6 +963,36 @@ Implements Beacon.BlueprintConsumer
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WeightMultiplier(DinoNameTag As String) As ArkSA.DinoSpawnWeightMultiplier
+		  If Self.mWeights.HasKey(DinoNameTag) = False Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.mWeights.Value(DinoNameTag)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub WeightMultiplier(DinoNameTag As String, Assigns Value As ArkSA.DinoSpawnWeightMultiplier)
+		  If Value Is Nil Then
+		    If Self.mWeights.HasKey(DinoNameTag) Then
+		      Self.mWeights.Remove(DinoNameTag)
+		      Self.Modified = True
+		    End If
+		    Return
+		  End If
+		  
+		  Var CurrentMultiplier As ArkSA.DinoSpawnWeightMultiplier = Self.WeightMultiplier(DinoNameTag)
+		  If CurrentMultiplier = Value Then
+		    Return
+		  End If
+		  
+		  Self.mWeights.Value(DinoNameTag) = Value.ImmutableVersion
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
 
 	#tag Note, Name = ConfigAddNPCSpawnEntriesContainer
 		ConfigAddNPCSpawnEntriesContainer=(
@@ -1020,6 +1134,10 @@ Implements Beacon.BlueprintConsumer
 
 	#tag Property, Flags = &h21
 		Private mOverrides() As ArkSA.SpawnPointOverride
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWeights As Dictionary
 	#tag EndProperty
 
 

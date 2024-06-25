@@ -119,6 +119,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -194,12 +195,14 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine ArkDiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine ArkSADiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -250,6 +253,8 @@ End
 
 	#tag Event
 		Sub RefreshMods(SelectedModIds() As String)
+		  #Pragma Unused SelectedModIds
+		  
 		  Self.mPacksData.ExecuteSQL("UPDATE packs SET should_delete = TRUE;")
 		  Var DataSources() As Beacon.DataSource = App.DataSources
 		  For Each DataSource As Beacon.DataSource In DataSources
@@ -435,8 +440,6 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ExportSelectedMods()
 		  Var Packs() As Beacon.ContentPack
-		  Var ArkDataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  Var ArkSADataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
 		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
 		    If Self.ModsList.RowSelectedAt(Idx) = False Then
@@ -862,8 +865,6 @@ End
 		  End If
 		  
 		  Var Packs() As Beacon.ContentPack
-		  Var ArkDataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  Var ArkSADataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
 		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
 		    If Self.ModsList.RowSelectedAt(Idx) = False Then

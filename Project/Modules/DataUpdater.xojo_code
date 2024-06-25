@@ -120,6 +120,8 @@ Protected Module DataUpdater
 
 	#tag Method, Flags = &h21
 		Private Sub mAutocheckTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
 		  Var Now As Double = DateTime.Now.SecondsFrom1970
 		  If Now - mLastCheckTime > 21600 Then
 		    CheckNow(False)

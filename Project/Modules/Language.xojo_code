@@ -9,41 +9,58 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EnglishOxfordList(Items() As Beacon.NamedItem, Conjunction As String = "and") As String
+		Protected Function EnglishOxfordList(Items() As Beacon.NamedItem, Conjunction As String = "and", Limit As Integer = -1) As String
 		  Var Names() As String
 		  Names.ResizeTo(Items.LastIndex)
 		  For Idx As Integer = 0 To Names.LastIndex
 		    Names(Idx) = Items(Idx).Label
 		  Next
-		  Return EnglishOxfordList(Names, Conjunction)
+		  Return EnglishOxfordList(Names, Conjunction, Limit)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EnglishOxfordList(Extends Items() As Beacon.NamedItem, Conjunction As String = "and") As String
-		  Return EnglishOxfordList(Items, Conjunction)
+		Function EnglishOxfordList(Extends Items() As Beacon.NamedItem, Conjunction As String = "and", Limit As Integer = -1) As String
+		  Return EnglishOxfordList(Items, Conjunction, Limit)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EnglishOxfordList(Extends Items() As String, Conjunction As String = "and") As String
-		  Return EnglishOxfordList(Items, Conjunction)
+		Function EnglishOxfordList(Extends Items() As String, Conjunction As String = "and", Limit As Integer = -1) As String
+		  Return EnglishOxfordList(Items, Conjunction, Limit)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EnglishOxfordList(Items() As String, Conjunction As String = "and") As String
-		  If Items.LastIndex = -1 Then
+		Protected Function EnglishOxfordList(Items() As String, Conjunction As String = "and", Limit As Integer = -1) As String
+		  If Items.Count = 0 Then
 		    Return ""
-		  ElseIf Items.LastIndex = 0 Then
+		  ElseIf Items.Count = 1 Then
 		    Return Items(0)
-		  ElseIf Items.LastIndex = 1 Then
+		  ElseIf Items.Count = 2 Then
 		    Return Items(0) + " " + Conjunction + " " + Items(1)
+		  ElseIf Limit > 2 And Items.Count > Limit Then
+		    Var AllowedItems() As String
+		    AllowedItems.ResizeTo(Limit - 1)
+		    For Idx As Integer = 0 To AllowedItems.LastIndex
+		      AllowedItems(Idx) = Items(Idx)
+		    Next
+		    
+		    Var Remaining As Integer = Items.Count - Limit
+		    If Remaining = 1 Then
+		      AllowedItems.Add(Conjunction + " 1 other")
+		    Else
+		      AllowedItems.Add(Conjunction + " " + Remaining.ToString(Locale.Current, "0") + " others")
+		    End If
+		    
+		    Return String.FromArray(AllowedItems, ", ")
 		  Else
-		    Var LastItem As String = Items(Items.LastIndex)
-		    Items.RemoveAt(Items.LastIndex)
-		    Var List As String = Items.Join(", ") + ", " + Conjunction + " " + LastItem
-		    Items.Add(LastItem) // Gotta put it back
+		    Var List As String = Items(0)
+		    For Idx As Integer = 1 To Items.LastIndex - 1
+		      List = List + ", " + Items(Idx)
+		    Next
+		    List = List + ", " + Conjunction + " " + Items(Items.LastIndex)
+		    
 		    Return List
 		  End If
 		End Function

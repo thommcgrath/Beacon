@@ -16,7 +16,6 @@ Inherits Palworld.ConfigGroup
 		  Var ConsoleSafe As Boolean = Project.ConsoleSafe
 		  Var Configs() As Palworld.ConfigValue
 		  Var DataSource As Palworld.DataSource = Palworld.DataSource.Pool.Get(False)
-		  Var IsGameServerApp As Boolean = (Profile.ProviderId = GameServerApp.Identifier)
 		  For Each Entry As DictionaryEntry In Self.mSettings
 		    Try
 		      Var KeyUUID As String = Entry.Key

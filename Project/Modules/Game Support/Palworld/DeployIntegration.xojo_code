@@ -8,7 +8,7 @@ Inherits Beacon.DeployIntegration
 		  Var Project As Palworld.Project = Self.Project
 		  Var Profile As Palworld.ServerProfile = Self.Profile
 		  
-		  Var SettingsIniPath, GameUserSettingsIniPath As String
+		  Var SettingsIniPath As String
 		  
 		  Select Case Self.Provider
 		  Case IsA Nitrado.HostingProvider
@@ -82,7 +82,6 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Run the backup if requested
-		  Var NitradoChanges As Dictionary
 		  If Self.BackupEnabled Then
 		    Var OldFiles As New Dictionary
 		    OldFiles.Value(Palworld.ConfigFileSettings) = SettingsIniOriginal

@@ -891,7 +891,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Var Dicts() As Variant
+		  Var Dicts() As Dictionary
 		  Var Config As Ark.Configs.EngramControl = Self.Config(False)
 		  For I As Integer = 0 To Me.LastRowIndex
 		    If Not Me.RowSelectedAt(I) Then

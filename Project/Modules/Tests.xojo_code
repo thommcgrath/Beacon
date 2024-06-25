@@ -49,6 +49,7 @@ Protected Module Tests
 		    TestSaveInfo()
 		    TestDelegateDetection()
 		    TestHumanReadable()
+		    TestEnglishLists()
 		    App.Log("Tests complete")
 		  #endif
 		End Sub
@@ -303,6 +304,21 @@ Protected Module Tests
 		  If Failed Then
 		    System.Beep
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestEnglishLists()
+		  Var Words() As String = Array("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")
+		  Var Unlimited As String = Language.EnglishOxfordList(Words)
+		  Var FiveExplicit As String = Language.EnglishOxfordList(Words, "and", 5)
+		  Var SingleWord As String = Language.EnglishOxfordList(Array("One"))
+		  Var TwoWords As String = Language.EnglishOxfordList(Array("One", "Two"))
+		  
+		  Call Assert(Unlimited = "One, Two, Three, Four, Five, Six, Seven, Eight, Nine, and Ten", "Incorrect uncapped list string. Got `" + Unlimited + "`")
+		  Call Assert(FiveExplicit = "One, Two, Three, Four, Five, and 5 others", "Incorrect capped list string. Got `" + FiveExplicit + "`")
+		  Call Assert(SingleWord = "One", "Incorrect single item list string. Got `" + SingleWord + "`")
+		  Call Assert(TwoWords = "One and Two", "Incorrect two item list string. Got `" + SingleWord + "`")
 		End Sub
 	#tag EndMethod
 
