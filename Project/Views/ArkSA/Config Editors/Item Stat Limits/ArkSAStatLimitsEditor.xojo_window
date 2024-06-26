@@ -925,6 +925,8 @@ End
 		    Next
 		  End If
 		  
+		  Var ScrollPosition As Integer = List.ScrollPosition
+		  
 		  Var Config As ArkSA.Configs.StatLimits = Self.Config(False)
 		  List.SelectionChangeBlocked = True
 		  List.RemoveAllRows()
@@ -956,7 +958,7 @@ End
 		    Next
 		  Next
 		  List.SelectionChangeBlocked = False
-		  List.EnsureSelectionIsVisible
+		  List.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
 
