@@ -68,7 +68,6 @@ $payment_methods = ['card'];
 switch ($currency) {
 case 'EUR':
 	$payment_methods[] = 'ideal';
-	$payment_methods[] = 'giropay';
 	$payment_methods[] = 'bancontact';
 	$payment_methods[] = 'p24';
 	$payment_methods[] = 'eps';
