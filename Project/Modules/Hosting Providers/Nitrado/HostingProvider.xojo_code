@@ -481,7 +481,7 @@ Implements Beacon.HostingProvider
 		    Return SDTD.Identifier
 		  Case "arksa"
 		    Return ArkSA.Identifier
-		  Case "palworld"
+		  Case "palworld", "palworldxb"
 		    Return Palworld.Identifier
 		  End Select
 		End Function
@@ -490,7 +490,7 @@ Implements Beacon.HostingProvider
 	#tag Method, Flags = &h21
 		Private Shared Function ShortcodeToPlatform(Shortcode As String) As Integer
 		  Select Case Shortcode
-		  Case "arkxb", "arkxbosg"
+		  Case "arkxb", "arkxbosg", "palworldxb"
 		    Return Beacon.PlatformXbox
 		  Case "arkps", "arkpsosg"
 		    Return Beacon.PlatformPlayStation
