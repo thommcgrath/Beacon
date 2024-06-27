@@ -31,6 +31,12 @@ Protected Class PusherSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsSubscribed(Channel As String) As Boolean
+		  Return Self.mChannels.IndexOf(Channel) > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Listen(ChannelName As String, EventName As String, Callback As Beacon.PusherSocket.EventHandler)
 		  Var CallbackKey As String = ChannelName.Lowercase + "+" + EventName.Lowercase
 		  Var Callbacks() As EventHandler
@@ -249,6 +255,10 @@ Protected Class PusherSocket
 		  Self.State = Beacon.PusherSocket.States.Disconnected
 		  
 		  If ShouldReconnect Then
+		    // Resubscribe to channels
+		    For Each Channel As String In Self.mChannels
+		      Self.mPendingMessages.Add(New Dictionary("event": "pusher:subscribe", "data": New Dictionary("channel": Channel)))
+		    Next
 		    GoTo ReconnectPoint
 		  End If
 		  
@@ -357,13 +367,22 @@ Protected Class PusherSocket
 
 	#tag Method, Flags = &h0
 		Sub Subscribe(Channel As String)
+		  If Self.IsSubscribed(Channel) Then
+		    Return
+		  End If
+		  
 		  Self.mPendingMessages.Add(New Dictionary("event": "pusher:subscribe", "data": New Dictionary("channel": Channel)))
+		  Self.mChannels.Add(Channel)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Unsubscribe(Channel As String)
-		  Self.mPendingMessages.Add(New Dictionary("event": "pusher:unsubscribe", "data": New Dictionary("channel": Channel)))
+		  Var Idx As Integer = Self.mChannels.IndexOf(Channel)
+		  If Idx > -1 Then
+		    Self.mPendingMessages.Add(New Dictionary("event": "pusher:unsubscribe", "data": New Dictionary("channel": Channel)))
+		    Self.mChannels.RemoveAt(Idx)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -376,6 +395,10 @@ Protected Class PusherSocket
 
 	#tag Property, Flags = &h21
 		Private mCallbacks As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mChannels() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
