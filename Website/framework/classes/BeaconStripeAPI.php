@@ -9,10 +9,12 @@ class BeaconStripeAPI {
 		$this->stripeVersion = $stripeVersion;
 	}
 
-	protected function GetURL(string $url): ?array {
-		$json = BeaconCache::Get($url);
-		if (is_null($json) === false) {
-			return $json;
+	protected function GetURL(string $url, bool $noCache = true): ?array {
+		if ($noCache === false) {
+			$json = BeaconCache::Get($url);
+			if (is_null($json) === false) {
+				return $json;
+			}
 		}
 
 		$curl = curl_init($url);
@@ -34,7 +36,9 @@ class BeaconStripeAPI {
 			return null;
 		}
 
-		BeaconCache::Set($url, $json, 300);
+		if ($noCache === false) {
+			BeaconCache::Set($url, $json, 300);
+		}
 		return $json;
 	}
 
@@ -240,7 +244,7 @@ class BeaconStripeAPI {
 	}
 
 	public function GetCountrySpec(string $countryCode): ?array {
-		return $this->GetURL('https://api.stripe.com/v1/country_specs/' . $countryCode);
+		return $this->GetURL('https://api.stripe.com/v1/country_specs/' . $countryCode, false);
 	}
 
 	public function UpdatedProductPrice(string $priceId, int $amount): string|bool {
@@ -322,6 +326,40 @@ class BeaconStripeAPI {
 
 	public function EditProduct(string $product_code, array $changes): ?array {
 		return $this->PostURL('https://api.stripe.com/v1/products/' . $product_code, $changes);
+	}
+
+	public function GetValueLists(string|array|null $containing = null): ?array {
+		$lists = $this->GetURL('https://api.stripe.com/v1/radar/value_lists?limit=100');
+		if (is_null($lists)) {
+			return null;
+		}
+
+		if (is_null($containing)) {
+			return $lists;
+		} elseif (is_string($containing)) {
+			$containing = [$containing];
+		}
+		$containing = array_map('strtolower', $containing);
+		$filtered = [];
+		foreach ($lists['data'] as $list) {
+			$items = $list['list_items']['data'];
+			foreach ($items as $item) {
+				$value = strtolower($item['value']);
+				if (in_array($value, $containing)) {
+					$filtered[] = $list;
+					break;
+				}
+			}
+		}
+		return $filtered;
+	}
+
+	public function GetFailuresByCustomer(string $customerId): ?array {
+		$charges = $this->GetURL('https://api.stripe.com/v1/charges/search?query=' . urlencode("customer:'{$customerId}' AND status:'failed'"));
+		if (is_null($charges)) {
+			return null;
+		}
+		return $charges['data'];
 	}
 }
 

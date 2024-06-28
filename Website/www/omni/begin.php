@@ -53,42 +53,18 @@ if (count($bundles) === 0) {
 
 $database = BeaconCommon::Database();
 if (isset($_COOKIE['beacon_affiliate'])) {
-	$client_reference_id = $_COOKIE['beacon_affiliate'];
+	$clientReferenceId = $_COOKIE['beacon_affiliate'];
 
-	$rows = $database->Query('SELECT purchase_id, code FROM affiliate_tracking WHERE client_reference_id = $1;', $client_reference_id);
+	$rows = $database->Query('SELECT purchase_id, code FROM affiliate_tracking WHERE client_reference_id = $1;', $clientReferenceId);
 	if ($rows->RecordCount() === 1 && is_null($rows->Field('purchase_id')) === false) {
 		// need a new id
-		$client_reference_id = BeaconShop::TrackAffiliateClick($rows->Field('code'));
+		$clientReferenceId = BeaconShop::TrackAffiliateClick($rows->Field('code'));
 	}
 } else {
-	$client_reference_id = BeaconCommon::GenerateUUID();
+	$clientReferenceId = BeaconCommon::GenerateUUID();
 }
 
-$payment_methods = ['card'];
-switch ($currency) {
-case 'EUR':
-	$payment_methods[] = 'ideal';
-	$payment_methods[] = 'bancontact';
-	$payment_methods[] = 'p24';
-	$payment_methods[] = 'eps';
-	break;
-case 'PLN':
-	$payment_methods[] = 'p24';
-	break;
-}
-
-$payment = [
-	'client_reference_id' => $client_reference_id,
-	'customer_email' => $email,
-	'payment_method_types' => $payment_methods,
-	'mode' => 'payment',
-	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/'),
-	'cancel_url' => BeaconCommon::AbsoluteURL('/omni#checkout'),
-	'billing_address_collection' => 'required',
-	'automatic_tax' => ['enabled' => 'true'],
-	'line_items' => [],
-];
-
+$userIsSuspect = false;
 $user = null;
 $licenses = [];
 try {
@@ -100,7 +76,7 @@ try {
 	if (is_null($user) === false) {
 		if ($user->IsBanned()) {
 			http_response_code(400);
-			echo json_encode(['error' => true, 'message' => 'An ichthyornis stole my shotgun!'], JSON_PRETTY_PRINT);
+			echo json_encode(['error' => true, 'message' => 'Stripe was unable to start the checkout session.'], JSON_PRETTY_PRINT);
 			exit;
 		}
 		$payment['metadata']['Beacon User UUID'] = $user->UserID();
@@ -134,6 +110,30 @@ try {
 }
 
 $api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'));
+if ($userIsSuspect === false) {
+	$valueLists = $api->GetValueLists([$email, BeaconCommon::RemoteAddr(false)]);
+	$userIsSuspect = is_null($valueLists) || count($valueLists) > 0;
+}
+
+$paymentMethodRows = $database->Query('SELECT code FROM public.find_payment_methods($1, $2);', $currency, $userIsSuspect);
+$paymentMethods = [];
+while (!$paymentMethodRows->EOF()) {
+	$paymentMethods[] = $paymentMethodRows->Field('code');
+	$paymentMethodRows->MoveNext();
+}
+
+$payment = [
+	'client_reference_id' => $clientReferenceId,
+	'customer_email' => $email,
+	'payment_method_types' => $paymentMethods,
+	'mode' => 'payment',
+	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/'),
+	'cancel_url' => BeaconCommon::AbsoluteURL('/omni#checkout'),
+	'billing_address_collection' => 'required',
+	'automatic_tax' => ['enabled' => 'true'],
+	'line_items' => [],
+];
+
 try {
 	$customers = $api->GetCustomersByEmail($email);
 	if (is_null($customers) === false && is_array($customers) && array_key_exists('data', $customers) && count($customers['data']) >= 1) {
@@ -141,6 +141,11 @@ try {
 		$payment['customer'] = $customer['id'];
 		$payment['customer_update'] = ['address' => 'auto', 'name' => 'auto'];
 		unset($payment['customer_email']);
+
+		if ($userIsSuspect === false) {
+			$failures = $api->GetFailuresByCustomer($customer['id']);
+			$userIsSuspect = is_null($failures) || count($failures) >= 3;
+		}
 	}
 } catch (Exception $err) {
 }
@@ -333,7 +338,7 @@ if (is_null($session)) {
 http_response_code(200);
 echo json_encode([
 	'error' => false,
-	'client_reference_id' => $client_reference_id,
+	'client_reference_id' => $clientReferenceId,
 	'url' => $session['url']
 ], JSON_PRETTY_PRINT);
 

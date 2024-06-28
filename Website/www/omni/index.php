@@ -60,37 +60,50 @@ $ark2Enabled = isset($productDetails['Ark2']);
 $arkSAEnabled = isset($productDetails['ArkSA']);
 $palworldEnabled = isset($productDetails['Palworld']);
 
-$paymentMethods = [
-	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
-	'EUR' => ['bancontact', 'eps', 'ideal', 'p24'],
-	'PLN' => ['p24'],
-];
-$paymentLabels = [
-	'apple' => 'Apple Pay',
-	'google' => 'Google Pay',
-	'mastercard' => 'Mastercard',
-	'visa' => 'Visa',
-	'amex' => 'American Express',
-	'discover' => 'Discover',
-	'dinersclub' => 'Diner\'s Club',
-	'jcb' => 'JCB',
-	'bancontact' => 'Bancontact',
-	'eps' => 'EPS',
-	'ideal' => 'iDEAL',
-	'p24' => 'Przelewy24',
-];
-
-$supportedPaymentMethods = $paymentMethods['Universal'];
-if (array_key_exists($currency, $paymentMethods)) {
-	$supportedPaymentMethods = array_merge($supportedPaymentMethods, $paymentMethods[$currency]);
-}
+$paymentMethodRows = $database->Query('SELECT * FROM public.find_payment_methods($1, FALSE);', $currency);
 $paymentMethodInfo = [];
-foreach ($supportedPaymentMethods as $payment_method) {
-	$paymentMethodInfo[] = [
-		'key' => $payment_method,
-		'label' => $paymentLabels[$payment_method],
-		'iconUrl' => BeaconCommon::AssetURI('paymethod_' . $payment_method . '.svg')
-	];
+while (!$paymentMethodRows->EOF()) {
+	$code = $paymentMethodRows->Field('code');
+	if ($code === 'card') {
+		$paymentMethodInfo[] = [
+			'label' => 'Apple Pay',
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_apple.svg'),
+		];
+		$paymentMethodInfo[] = [
+			'label' => 'Google Pay',
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_google.svg'),
+		];
+		$paymentMethodInfo[] = [
+			'label' => 'Mastercard',
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_mastercard.svg'),
+		];
+		$paymentMethodInfo[] = [
+			'label' => 'visa',
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_visa.svg'),
+		];
+		$paymentMethodInfo[] = [
+			'label' => 'American Express',
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_amex.svg'),
+		];
+		$paymentMethodInfo[] = [
+			'label' => 'Discover',
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_discover.svg'),
+		];
+		$paymentMethodInfo[] = [
+			'label' => 'Diner\'s Club',
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_dinersclub.svg'),
+		];
+		$paymentMethodInfo[] = [
+			'label' => 'JCB',
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_jcb.svg'),
+		];
+	} else {
+		$paymentMethodInfo[] = [
+			'label' => $paymentMethodRows->Field('label'),
+			'iconUrl' => BeaconCommon::AssetURI('paymethod_' . $code . '.svg'),
+		];
+	}
+	$paymentMethodRows->MoveNext();
 }
 
 $forceEmail = null;
