@@ -312,11 +312,15 @@ Protected Module Tests
 		  Var Words() As String = Array("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")
 		  Var Unlimited As String = Language.EnglishOxfordList(Words)
 		  Var FiveExplicit As String = Language.EnglishOxfordList(Words, "and", 5)
+		  Var TenExplicit As String = Language.EnglishOxfordList(Words, "and", 10)
+		  Var NineExplicit As String = Language.EnglishOxfordList(Words, "and", 9)
 		  Var SingleWord As String = Language.EnglishOxfordList(Array("One"))
 		  Var TwoWords As String = Language.EnglishOxfordList(Array("One", "Two"))
 		  
 		  Call Assert(Unlimited = "One, Two, Three, Four, Five, Six, Seven, Eight, Nine, and Ten", "Incorrect uncapped list string. Got `" + Unlimited + "`")
-		  Call Assert(FiveExplicit = "One, Two, Three, Four, Five, and 5 others", "Incorrect capped list string. Got `" + FiveExplicit + "`")
+		  Call Assert(FiveExplicit = "One, Two, Three, Four, and 6 others", "Incorrect capped list string. Got `" + FiveExplicit + "`")
+		  Call Assert(TenExplicit = "One, Two, Three, Four, Five, Six, Seven, Eight, Nine, and Ten", "Incorrect capped list string. Got `" + TenExplicit + "`")
+		  Call Assert(NineExplicit = "One, Two, Three, Four, Five, Six, Seven, Eight, and 2 others", "Incorrect capped list string. Got `" + NineExplicit + "`")
 		  Call Assert(SingleWord = "One", "Incorrect single item list string. Got `" + SingleWord + "`")
 		  Call Assert(TwoWords = "One and Two", "Incorrect two item list string. Got `" + SingleWord + "`")
 		End Sub
