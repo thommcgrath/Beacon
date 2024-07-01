@@ -243,6 +243,16 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Matches(Filter As String) As Boolean
+		  If Filter.IsEmpty Then
+		    Return True
+		  End If
+		  
+		  Return Self.mName.Contains(Filter) Or Self.mMarketplaceId.Contains(Filter) Or Self.mContentPackId.Contains(Filter)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MutableCopy() As Beacon.MutableContentPack
 		  Return New Beacon.MutableContentPack(Self)
 		End Function
@@ -302,6 +312,17 @@ Protected Class ContentPack
 		  SaveData.Value("confirmationCode") = Self.mConfirmationCode
 		  Return SaveData
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Sort(Packs() As Beacon.ContentPack)
+		  Var PackNames() As String
+		  PackNames.ResizeTo(Packs.LastIndex)
+		  For Idx As Integer = 0 To Packs.LastIndex
+		    PackNames(Idx) = Packs(Idx).Name
+		  Next
+		  PackNames.SortWith(Packs)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
