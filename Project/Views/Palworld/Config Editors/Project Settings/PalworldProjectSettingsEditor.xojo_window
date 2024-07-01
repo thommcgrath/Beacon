@@ -115,7 +115,7 @@ Begin PalworldConfigEditor PalworldProjectSettingsEditor
       HasBorder       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   375
+      Height          =   343
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -240,7 +240,7 @@ Begin PalworldConfigEditor PalworldProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpCompressed"
-      Top             =   482
+      Top             =   450
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -271,7 +271,7 @@ Begin PalworldConfigEditor PalworldProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpCompressed"
-      Top             =   482
+      Top             =   450
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -302,7 +302,7 @@ Begin PalworldConfigEditor PalworldProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpLocalBackup"
-      Top             =   514
+      Top             =   482
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -332,10 +332,83 @@ Begin PalworldConfigEditor PalworldProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpLocalBackup"
-      Top             =   514
+      Top             =   482
       Transparent     =   True
       Visible         =   True
       Width           =   40
+   End
+   Begin DesktopTextField ProjectIdField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   221
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   514
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   387
+   End
+   Begin UITweaks.ResizedLabel ProjectIdLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Project UUID:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   514
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   189
    End
 End
 #tag EndDesktopWindow
@@ -347,8 +420,9 @@ End
 		  Self.DescriptionArea.Text = Self.Project.Description
 		  Self.CompressedSwitch.Value(False) = Self.Project.UseCompression
 		  Self.LocalBackupSwitch.Value(False) = Self.Project.KeepLocalBackup
+		  Self.ProjectIdField.Text = Self.Project.ProjectId
 		  
-		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.CompressedLabel, Self.LocalBackupLabel)
+		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.CompressedLabel, Self.LocalBackupLabel, Self.ProjectIdLabel)
 		  Var ControlLeft As Integer = Self.TitleLabel.Right + 12
 		  Self.TitleField.Left = ControlLeft
 		  Self.TitleField.Width = Self.Width - (ControlLeft + 20)
@@ -356,6 +430,8 @@ End
 		  Self.DescriptionArea.Width = Self.TitleField.Width
 		  Self.CompressedSwitch.Left = ControlLeft
 		  Self.LocalBackupSwitch.Left = ControlLeft
+		  Self.ProjectIdField.Left = ControlLeft
+		  Self.ProjectIdField.Width = Self.TitleField.Width
 		End Sub
 	#tag EndEvent
 

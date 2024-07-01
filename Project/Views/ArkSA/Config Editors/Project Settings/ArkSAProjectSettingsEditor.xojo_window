@@ -115,7 +115,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       HasBorder       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   311
+      Height          =   277
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -233,14 +233,14 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Windows Store Compatibility:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpUWPMode"
-      Top             =   418
+      Top             =   384
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -266,11 +266,11 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       LockTop         =   False
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   8
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpUWPMode"
-      Top             =   418
+      Top             =   384
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -296,14 +296,14 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Compress Project:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpCompressed"
-      Top             =   450
+      Top             =   416
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -329,14 +329,14 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Allow UCS-2 Files:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpAllowUCS"
-      Top             =   482
+      Top             =   448
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -363,11 +363,11 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   10
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpCompressed"
-      Top             =   450
+      Top             =   416
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -393,11 +393,11 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   12
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpAllowUCS"
-      Top             =   482
+      Top             =   448
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -421,14 +421,14 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Keep Local Project Backup:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpLocalBackup"
-      Top             =   514
+      Top             =   480
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -454,14 +454,87 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   14
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpLocalBackup"
-      Top             =   514
+      Top             =   480
       Transparent     =   True
       Visible         =   True
       Width           =   40
+   End
+   Begin DesktopTextField ProjectIdField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   221
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   512
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   387
+   End
+   Begin UITweaks.ResizedLabel ProjectIdLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Project UUID:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   512
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   189
    End
 End
 #tag EndDesktopWindow
@@ -475,8 +548,9 @@ End
 		  Self.AllowUCSSwitch.Value(False) = Self.Project.AllowUCS2
 		  Self.UWPModeMenu.SelectedRowIndex = CType(Self.Project.UWPMode, Integer)
 		  Self.LocalBackupSwitch.Value(False) = Self.Project.KeepLocalBackup
+		  Self.ProjectIdField.Text = Self.Project.ProjectId
 		  
-		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel, Self.LocalBackupLabel)
+		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel, Self.LocalBackupLabel, Self.ProjectIdLabel)
 		  Var ControlLeft As Integer = Self.TitleLabel.Right + 12
 		  Self.TitleField.Left = ControlLeft
 		  Self.TitleField.Width = Self.Width - (ControlLeft + 20)
@@ -486,6 +560,8 @@ End
 		  Self.CompressedSwitch.Left = ControlLeft
 		  Self.AllowUCSSwitch.Left = ControlLeft
 		  Self.LocalBackupSwitch.Left = ControlLeft
+		  Self.ProjectIdField.Left = ControlLeft
+		  Self.ProjectIdField.Width = Self.TitleField.Width
 		End Sub
 	#tag EndEvent
 
