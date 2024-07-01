@@ -373,6 +373,12 @@ Begin ModEditorView ArkSAModEditorView
       Scope           =   0
       TabPanelIndex   =   0
    End
+   Begin ArkSA.ModDiscoveryEngine2 DiscoveryEngine2
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -807,7 +813,11 @@ End
 		  Next
 		  
 		  Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
-		  Self.DiscoveryEngine.Start(Settings)
+		  If Settings.UseNewDiscovery Then
+		    Self.DiscoveryEngine2.Start(Settings)
+		  Else
+		    Self.DiscoveryEngine.Start(Settings)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1379,6 +1389,64 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryEngine
+	#tag Event
+		Sub Error(ErrorMessage As String)
+		  Self.ShowAlert("There was an error with mod discovery", ErrorMessage)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished()
+		  Self.Pages.SelectedPanelIndex = 0
+		  Self.Reload
+		  Self.UpdateUI
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		  Self.Pages.SelectedPanelIndex = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub StatusUpdated()
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
+		  #Pragma Unused ContentPack
+		  
+		  // Wait for the controller to be finished
+		  While Self.mController.IsBusy
+		    Thread.Current.Sleep(100)
+		  Wend
+		  
+		  
+		  If Self.mDiscoveryShouldDelete Then
+		    Var CurrentBlueprints() As ArkSA.Blueprint = Self.mController.AllBlueprints
+		    Var CurrentBlueprintMap As New Dictionary
+		    For Each Blueprint As ArkSA.Blueprint In CurrentBlueprints
+		      CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
+		    Next
+		    
+		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		      If CurrentBlueprintMap.HasKey(Blueprint.Path) Then
+		        CurrentBlueprintMap.Remove(Blueprint.Path)
+		      End If
+		    Next
+		    
+		    Var BlueprintsToDelete() As ArkSA.Blueprint
+		    For Each Entry As DictionaryEntry In CurrentBlueprintMap
+		      BlueprintsToDelete.Add(Entry.Value)
+		    Next
+		    Self.mController.DeleteBlueprints(BlueprintsToDelete)
+		  End If
+		  
+		  Self.mController.SaveBlueprints(Blueprints)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DiscoveryEngine2
 	#tag Event
 		Sub Error(ErrorMessage As String)
 		  Self.ShowAlert("There was an error with mod discovery", ErrorMessage)

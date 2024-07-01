@@ -1,69 +1,83 @@
 #tag Class
-Protected Class ModDiscoverySettings
+Protected Class ModInfo
 	#tag Method, Flags = &h0
-		Sub Constructor(ModIds() As String, DeleteBlueprints As Boolean, IgnoreBuiltInClasses As Boolean, Threshold As Double, UseNewDiscovery As Boolean)
-		  Self.mModIds = ModIds
-		  Self.mDeleteBlueprints = DeleteBlueprints
-		  Self.mIgnoreBuiltInClasses = IgnoreBuiltInClasses
-		  Self.mThreshold = Threshold
-		  Self.mUseNewDiscovery = UseNewDiscovery And ArkSA.ModDiscoveryEngine2.IsAvailable
+		Sub Constructor(Source As FolderItem)
+		  Var Parsed As New JSONItem(Source.Read(Encodings.UTF8))
+		  Self.Constructor(Parsed)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DeleteBlueprints() As Boolean
-		  Return Self.mDeleteBlueprints
+		Sub Constructor(Source As JSONItem)
+		  Self.mSource = Source
+		  Self.mGameId = Source.Value("gameId")
+		  Self.mLastUpdateString = Source.Value("dateReleased")
+		  Self.mModId = Source.Value("id")
+		  Self.mModName = Source.Value("name")
+		  Self.mSlug = Source.Value("slug")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameId() As Integer
+		  Return Self.mGameId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IgnoreBuiltInClasses() As Boolean
-		  Return Self.mIgnoreBuiltInClasses
+		Function LastUpdateString() As String
+		  Return Self.mLastUpdateString
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModIds() As String()
-		  Var ModIds() As String
-		  ModIds.ResizeTo(Self.mModIds.LastIndex)
-		  For Idx As Integer = 0 To ModIds.LastIndex
-		    ModIds(Idx) = Self.mModIds(Idx)
-		  Next
-		  Return ModIds
+		Function ModId() As Integer
+		  Return Self.mModId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Threshold() As Double
-		  Return Self.mThreshold
+		Function ModName() As String
+		  Return Self.mModName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UseNewDiscovery() As Boolean
-		  Return Self.mUseNewDiscovery
+		Function Slug() As String
+		  Return Self.mSlug
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToString(Pretty As Boolean) As String
+		  Self.mSource.Compact = Not Pretty
+		  Return Self.mSource.ToString
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mDeleteBlueprints As Boolean
+		Private mGameId As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIgnoreBuiltInClasses As Boolean
+		Private mLastUpdateString As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModIds() As String
+		Private mModId As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mThreshold As Double
+		Private mModName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUseNewDiscovery As Boolean
+		Private mSlug As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSource As JSONItem
 	#tag EndProperty
 
 
@@ -105,6 +119,14 @@ Protected Class ModDiscoverySettings
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mModId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

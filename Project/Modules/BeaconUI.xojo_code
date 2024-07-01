@@ -285,11 +285,7 @@ Protected Module BeaconUI
 		    
 		    MaxHeight = Max(MaxHeight, Ceiling(G.TextHeight(Targets(Idx).Text, Targets(Idx).Width)))
 		  Next Idx
-		  #if TargetMacOS
-		    Return Round(MaxHeight * 1.15)
-		  #else
-		    Return MaxHeight
-		  #endif
+		  Return Round(MaxHeight * 1.15)
 		End Function
 	#tag EndMethod
 

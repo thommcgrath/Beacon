@@ -465,6 +465,145 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function DownloadMod(ModInfo As CurseForge.ModInfo) As ArkSA.ModDownload
+		  // This should only be run in a thread
+		  
+		  If mModFilenameSearcher Is Nil Then
+		    mModFilenameSearcher = New RegEx
+		    mModFilenameSearcher.SearchPattern = "^(.+)-([a-z+]+) (\d+)\.zip$"
+		  End If
+		  
+		  Var ModId As String = ModInfo.ModId.ToString(Locale.Raw, "0")
+		  Try
+		    Var RawInfo As New JSONItem(ModInfo.ToString(False))
+		    
+		    Var LatestFiles As JSONItem = RawInfo.Value("latestFiles")
+		    If LatestFiles.IsArray = False Then
+		      App.Log("Mod " + ModId + " has no files.")
+		      Return Nil
+		    End If
+		    
+		    Var MainFileId As Integer = RawInfo.Value("mainFileId")
+		    Var LatestFile As JSONItem
+		    For Idx As Integer = 0 To LatestFiles.Count - 1
+		      Var File As JSONItem = LatestFiles.ChildAt(Idx)
+		      If File.Value("id") <> MainFileId Or File.Value("isAvailable").BooleanValue = False Then
+		        Continue For Idx
+		      End If
+		      
+		      LatestFile = File
+		      Exit For Idx
+		    Next
+		    If LatestFile Is Nil Then
+		      App.Log("Could not find main file for mod " + ModId + " in list of files.")
+		      Return Nil
+		    End If
+		    
+		    // Need to find the version of the main file
+		    Var FilenameInfo As RegexMatch = mModFilenameSearcher.Search(LatestFile.Value("fileName").StringValue)
+		    If FilenameInfo Is Nil Then
+		      App.Log("Could not parse the filename for mod " + ModId + " in list of files.")
+		      Return Nil
+		    End If
+		    Var FilenameBase As String = FilenameInfo.SubExpressionString(1)
+		    Var FilenameVersion As String = FilenameInfo.SubExpressionString(3)
+		    
+		    // Get the full list of files
+		    Var FileListSocket As New SimpleHTTP.SynchronousHTTPSocket
+		    FileListSocket.RequestHeader("User-Agent") = App.UserAgent
+		    FileListSocket.RequestHeader("x-api-key") = Beacon.CurseForgeApiKey
+		    FileListSocket.Send("GET", "https://api.curseforge.com/v1/mods/" + ModId + "/files")
+		    If FileListSocket.LastHTTPStatus <> 200 Then
+		      App.Log("Could not list files for mod " + ModId + ": HTTP #" + FileListSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		      Return Nil
+		    End If
+		    Var ResponseJson As New JSONItem(FileListSocket.LastContent)
+		    Var FileList As JSONItem = ResponseJson.Value("data")
+		    
+		    // Now look through the file list again for sibling files.
+		    Var Filesizes() As UInt64
+		    Var CandidateFiles() As JSONItem
+		    For Idx As Integer = 0 To FileList.Count - 1
+		      Var File As JSONItem = FileList.ChildAt(Idx)
+		      Var FileMatches As RegexMatch = mModFilenameSearcher.Search(File.Value("fileName").StringValue)
+		      If FileMatches Is Nil Or FileMatches.SubExpressionString(1) <> FilenameBase Or FileMatches.SubExpressionString(3) <> FilenameVersion Then
+		        Continue For Idx
+		      End If
+		      
+		      CandidateFiles.Add(File)
+		      Filesizes.Add(File.Value("fileLength").UInt64Value)
+		    Next
+		    Filesizes.SortWith(CandidateFiles)
+		    
+		    For Each CandidateFile As JSONItem In CandidateFiles
+		      Var FileHash As String
+		      Var Hashes As JSONItem = CandidateFile.Child("hashes")
+		      For Idx As Integer = 0 To Hashes.Count - 1
+		        Var Hash As JSONItem = Hashes.ChildAt(Idx)
+		        If Hash.Value("algo") = 1 Then
+		          FileHash = Hash.Value("value")
+		          Exit For Idx
+		        End If
+		      Next
+		      
+		      Var FileSize As Double = CandidateFile.Value("fileLength")
+		      Var FileName As String = CandidateFile.Value("fileName")
+		      
+		      Var DownloadUrl As String
+		      If CandidateFile.HasKey("downloadUrl") And CandidateFile.Value("downloadUrl").IsNull = False Then
+		        DownloadUrl = CandidateFile.Value("downloadUrl")
+		      Else
+		        // The url is predictable
+		        Var FileId As Integer = CandidateFile.Value("id")
+		        Var ParentFolderId As Integer = Floor(FileId / 1000)
+		        Var ChildFolderId As Integer = FileId - (ParentFolderId * 1000)
+		        DownloadUrl = "https://edge.forgecdn.net/files/" + ParentFolderId.ToString(Locale.Raw, "0") + "/" + ChildFolderId.ToString(Locale.Raw, "0") + "/" + EncodeURLComponent(FileName)
+		      End If
+		      
+		      // This isn't officially supported, so let's pretend we're a browser.
+		      Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
+		      DownloadSocket.RequestHeader("User-Agent") = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+		      DownloadSocket.Send("GET", DownloadUrl)
+		      If DownloadSocket.LastHTTPStatus <> 200 Then
+		        App.Log("Mod " + ModId + " was looked up, but the archive '" + FileName + "' could not be downloaded: HTTP #" + DownloadSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		        Continue For CandidateFile
+		      End If
+		      
+		      Var DownloadedBytes As Double
+		      If (DownloadSocket.LastContent Is Nil) = False Then
+		        DownloadedBytes = DownloadSocket.LastContent.Size
+		      End If
+		      If DownloadedBytes <> FileSize Then
+		        App.Log("Mod " + ModId + " downloaded " + Beacon.BytesToString(DownloadedBytes) + " of '" + FileName + "' but should have downloaded " + Beacon.BytesToString(FileSize) + ".")
+		        Continue For CandidateFile
+		      End If
+		      
+		      If FileHash.IsEmpty = False And (DownloadSocket.LastContent Is Nil) = False Then
+		        Var ComputedHash As String = EncodeHex(Crypto.SHA1(DownloadSocket.LastContent))
+		        If ComputedHash <> FileHash Then
+		          App.Log("Mod " + ModId + " downloaded '" + FileName + "' but checksum does not match. Expected " + FileHash.Lowercase + ", computed " + ComputedHash.Lowercase)
+		          Continue For CandidateFile
+		        End If
+		      End If
+		      
+		      Var Reader As New ArchiveReaderMBS
+		      Reader.SupportFilterAll
+		      Reader.SupportFormatAll
+		      If Not Reader.OpenData(DownloadSocket.LastContent) Then
+		        App.Log("Could not open archive '" + FileName + "' for mod " + ModId + ": " + Reader.ErrorString)
+		        Continue For CandidateFile
+		      End If
+		      
+		      Return New ArkSA.ModDownload(Reader, Filename)
+		    Next
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Trying to download mod " + ModId)
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ExportToCSV(Blueprints() As ArkSA.Blueprint) As String
 		  If Blueprints.Count = 0 Then
 		    Return ""
@@ -1509,6 +1648,11 @@ Protected Module ArkSA
 		  Return (Project Is Nil) = False And Project.ContentPackEnabled(Blueprint.ContentPackId)
 		End Function
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mModFilenameSearcher As RegEx
+	#tag EndProperty
 
 
 	#tag Constant, Name = CategoryCreatures, Type = String, Dynamic = False, Default = \"creatures", Scope = Protected

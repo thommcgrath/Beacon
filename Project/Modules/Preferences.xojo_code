@@ -588,6 +588,34 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Var Default As String
+			  #if TargetWindows
+			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK Survival Ascended Dedicated Server"
+			  #elseif TargetLinux
+			    Default = SpecialFolder.UserHome + "/.steam/steam/steamapps/common/ARK Survival Ascended Dedicated Server"
+			  #elseif TargetMacOS
+			    // This is pointless, but whatever
+			    Default = SpecialFolder.ApplicationData.NativePath + "/Steam/SteamApps/common/ARK Survival Ascended Dedicated Server"
+			  #endif
+			  Return mManager.StringValue("ArkSA Dedicated Server Path", Default)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If ArkSADedicatedPath = Value Then
+			    Return
+			  End If
+			  
+			  mManager.StringValue("ArkSA Dedicated Server Path") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSADedicatedPath As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  
 			  Var StringValue As String = mManager.StringValue("ArkSA Last Template Map Filter")
 			  If StringValue.IsEmpty Then

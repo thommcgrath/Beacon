@@ -25,9 +25,6 @@ Protected Class ModDiscoveryEngine
 		  Var Searcher As New Regex
 		  Searcher.SearchPattern = "^ShooterGame/Mods/([^/]+)/Content(.*)/([^/]+)\.uasset\t[\d\-TZ:\.]{24}$"
 		  
-		  Var FilenameSearcher As New Regex
-		  FilenameSearcher.SearchPattern = "^(.+)-([a-z+]+) (\d+)\.zip$"
-		  
 		  Self.mModsByTag = New Dictionary
 		  Self.mTagsByMod = New Dictionary
 		  Var ModIds() As String = Self.mSettings.ModIds
@@ -37,187 +34,63 @@ Protected Class ModDiscoveryEngine
 		      Return
 		    End If
 		    
-		    Self.StatusMessage = "Looking up mod " + ModId + "…"
+		    Var ModInfo As CurseForge.ModInfo = CurseForge.LookupMod(ModId)
+		    If ModInfo Is Nil Then
+		      Continue
+		    End If
+		    
+		    Self.StatusMessage = "Downloading mod " + ModInfo.ModName + "…"
+		    Var Download As ArkSA.ModDownload = ArkSA.DownloadMod(ModInfo)
+		    If Download Is Nil Then
+		      Continue
+		    End If
 		    
 		    Try
-		      Var LookupSocket As New SimpleHTTP.SynchronousHTTPSocket
-		      LookupSocket.RequestHeader("User-Agent") = App.UserAgent
-		      LookupSocket.RequestHeader("x-api-key") = Beacon.CurseForgeApiKey
-		      LookupSocket.Send("GET", "https://api.curseforge.com/v1/mods/" + ModId)
-		      If LookupSocket.LastHTTPStatus <> 200 Then
-		        App.Log("Could not find mod " + ModId + ": HTTP #" + LookupSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
-		        Continue For ModId
-		      End If
+		      Me.StatusMessage = "Locating manifest of " + Download.Filename + "…"
+		      Var ManifestContent As String
+		      Do
+		        Var Entry As ArchiveEntryMBS = Download.NextHeader
+		        If Entry Is Nil Then
+		          Exit
+		        End If
+		        
+		        If Entry.FileName <> "Manifest_UFSFiles_Win64.txt" Then
+		          Continue
+		        End If
+		        
+		        Var TargetSize As UInt64 = Entry.Size
+		        Var FileContents As New MemoryBlock(0)
+		        While FileContents.Size <> CType(TargetSize, Integer)
+		          FileContents = FileContents +  Download.ReadDataBlockMemory()
+		        Wend
+		        
+		        ManifestContent = FileContents
+		        Exit
+		      Loop
+		      Download.CloseArchive()
 		      
-		      Var ResponseJson As New JSONItem(LookupSocket.LastContent)
-		      Var ModInfo As JSONItem = ResponseJson.Value("data")
-		      Var LatestFiles As JSONItem = ModInfo.Value("latestFiles")
-		      If LatestFiles.IsArray = False Then
-		        App.Log("Mod " + ModId + " has no files.")
-		        Continue For ModId
-		      End If
-		      
-		      Var MainFileId As Integer = ModInfo.Value("mainFileId")
-		      Var LatestFile As JSONItem
-		      For Idx As Integer = 0 To LatestFiles.Count - 1
-		        Var File As JSONItem = LatestFiles.ChildAt(Idx)
-		        If File.Value("id") <> MainFileId Or File.Value("isAvailable").BooleanValue = False Then
-		          Continue For Idx
-		        End If
-		        
-		        LatestFile = File
-		        Exit For Idx
-		      Next
-		      If LatestFile Is Nil Then
-		        App.Log("Could not find main file for mod " + ModId + " in list of files.")
-		        Continue For ModId
-		      End If
-		      
-		      // Need to find the version of the main file
-		      Var FilenameInfo As RegexMatch = FilenameSearcher.Search(LatestFile.Value("fileName").StringValue)
-		      If FilenameInfo Is Nil Then
-		        App.Log("Could not parse the filename for mod " + ModId + " in list of files.")
-		        Continue For ModId
-		      End If
-		      Var FilenameBase As String = FilenameInfo.SubExpressionString(1)
-		      Var FilenameVersion As String = FilenameInfo.SubExpressionString(3)
-		      
-		      // Get the full list of files
-		      Var FileListSocket As New SimpleHTTP.SynchronousHTTPSocket
-		      FileListSocket.RequestHeader("User-Agent") = App.UserAgent
-		      FileListSocket.RequestHeader("x-api-key") = Beacon.CurseForgeApiKey
-		      FileListSocket.Send("GET", "https://api.curseforge.com/v1/mods/" + ModId + "/files")
-		      If FileListSocket.LastHTTPStatus <> 200 Then
-		        App.Log("Could not list files for mod " + ModId + ": HTTP #" + FileListSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
-		        Continue For ModId
-		      End If
-		      ResponseJson = New JSONItem(FileListSocket.LastContent)
-		      Var FileList As JSONItem = ResponseJson.Value("data")
-		      
-		      // Now look through the file list again for sibling files.
-		      Var Filesizes() As UInt64
-		      Var CandidateFiles() As JSONItem
-		      For Idx As Integer = 0 To FileList.Count - 1
-		        Var File As JSONItem = FileList.ChildAt(Idx)
-		        Var FileMatches As RegexMatch = FilenameSearcher.Search(File.Value("fileName").StringValue)
-		        If FileMatches Is Nil Or FileMatches.SubExpressionString(1) <> FilenameBase Or FileMatches.SubExpressionString(3) <> FilenameVersion Then
-		          Continue For Idx
-		        End If
-		        
-		        CandidateFiles.Add(File)
-		        Filesizes.Add(File.Value("fileLength").UInt64Value)
-		      Next
-		      Filesizes.SortWith(CandidateFiles)
-		      
-		      For Each CandidateFile As JSONItem In CandidateFiles
-		        Var FileHash As String
-		        Var Hashes As JSONItem = CandidateFile.Child("hashes")
-		        For Idx As Integer = 0 To Hashes.Count - 1
-		          Var Hash As JSONItem = Hashes.ChildAt(Idx)
-		          If Hash.Value("algo") = 1 Then
-		            FileHash = Hash.Value("value")
-		            Exit For Idx
-		          End If
-		        Next
-		        
-		        Var FileSize As Double = CandidateFile.Value("fileLength")
-		        Var FileName As String = CandidateFile.Value("fileName")
-		        
-		        Var DownloadUrl As String
-		        If CandidateFile.HasKey("downloadUrl") And CandidateFile.Value("downloadUrl").IsNull = False Then
-		          DownloadUrl = CandidateFile.Value("downloadUrl")
-		        Else
-		          // The url is predictable
-		          Var FileId As Integer = CandidateFile.Value("id")
-		          Var ParentFolderId As Integer = Floor(FileId / 1000)
-		          Var ChildFolderId As Integer = FileId - (ParentFolderId * 1000)
-		          DownloadUrl = "https://edge.forgecdn.net/files/" + ParentFolderId.ToString(Locale.Raw, "0") + "/" + ChildFolderId.ToString(Locale.Raw, "0") + "/" + EncodeURLComponent(FileName)
-		        End If
-		        
-		        // This isn't officially supported, so let's pretend we're a browser.
-		        Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		        DownloadSocket.RequestHeader("User-Agent") = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
-		        Me.StatusMessage = "Downloading " + FileName + ", " + Beacon.BytesToString(FileSize) + "…"
-		        DownloadSocket.Send("GET", DownloadUrl)
-		        If DownloadSocket.LastHTTPStatus <> 200 Then
-		          App.Log("Mod " + ModId + " was looked up, but the archive '" + FileName + "' could not be downloaded: HTTP #" + DownloadSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
-		          Continue For CandidateFile
-		        End If
-		        
-		        Var DownloadedBytes As Double
-		        If (DownloadSocket.LastContent Is Nil) = False Then
-		          DownloadedBytes = DownloadSocket.LastContent.Size
-		        End If
-		        If DownloadedBytes <> FileSize Then
-		          App.Log("Mod " + ModId + " downloaded " + Beacon.BytesToString(DownloadedBytes) + " of '" + FileName + "' but should have downloaded " + Beacon.BytesToString(FileSize) + ".")
-		          Continue For CandidateFile
-		        End If
-		        
-		        If FileHash.IsEmpty = False And (DownloadSocket.LastContent Is Nil) = False Then
-		          Var ComputedHash As String = EncodeHex(Crypto.SHA1(DownloadSocket.LastContent))
-		          If ComputedHash <> FileHash Then
-		            App.Log("Mod " + ModId + " downloaded '" + FileName + "' but checksum does not match. Expected " + FileHash.Lowercase + ", computed " + ComputedHash.Lowercase)
-		            Continue For CandidateFile
-		          End If
-		        End If
-		        
-		        Var Reader As New ArchiveReaderMBS
-		        Reader.SupportFilterAll
-		        Reader.SupportFormatAll
-		        If Not Reader.OpenData(DownloadSocket.LastContent) Then
-		          App.Log("Could not open archive '" + FileName + "' for mod " + ModId + ": " + Reader.ErrorString)
-		          Continue For CandidateFile
-		        End If
-		        
-		        Me.StatusMessage = "Locating manifest of " + FileName + "…"
-		        Var ManifestContent As String
-		        Do
-		          Var Entry As ArchiveEntryMBS = Reader.NextHeader
-		          If Entry Is Nil Then
-		            Exit
-		          End If
-		          
-		          If Entry.FileName <> "Manifest_UFSFiles_Win64.txt" Then
+		      Me.StatusMessage = "Scanning manifest of " + Download.Filename + "…"
+		      Var Lines() As String = ManifestContent.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
+		      Var Candidates As New Dictionary
+		      For Each Line As String In Lines
+		        Try
+		          Var Matches As RegExMatch = Searcher.Search(Line)
+		          If Matches Is Nil Then
 		            Continue
 		          End If
 		          
-		          Var TargetSize As UInt64 = Entry.Size
-		          Var Offset As Int64
-		          Var FileContents As New MemoryBlock(0)
-		          While FileContents.Size <> CType(TargetSize, Integer)
-		            FileContents = FileContents +  Reader.ReadDataBlockMemory(Offset)
-		          Wend
-		          
-		          ManifestContent = FileContents
-		          Exit
-		        Loop
-		        Reader.Close
-		        Reader = Nil
-		        
-		        Me.StatusMessage = "Scanning manifest of " + FileName + "…"
-		        Var Lines() As String = ManifestContent.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
-		        Var Candidates As New Dictionary
-		        For Each Line As String In Lines
-		          Try
-		            Var Matches As RegExMatch = Searcher.Search(Line)
-		            If Matches Is Nil Then
-		              Continue
-		            End If
-		            
-		            Var ModTag As String = Matches.SubExpressionString(1)
-		            Var ClassString As String = Matches.SubExpressionString(3)
-		            Var NamespaceString As String = Matches.SubExpressionString(2) + "/" + ClassString
-		            Var Path As String = "/" + ModTag + NamespaceString + "." + ClassString
-		            Candidates.Value(Path) = ClassString
-		          Catch LineErr As RuntimeException
-		          End Try
-		        Next
-		        
-		        Self.ProcessCandidates(Candidates, ModInfo)
-		        Continue For ModId
+		          Var ModTag As String = Matches.SubExpressionString(1)
+		          Var ClassString As String = Matches.SubExpressionString(3)
+		          Var NamespaceString As String = Matches.SubExpressionString(2) + "/" + ClassString
+		          Var Path As String = "/" + ModTag + NamespaceString + "." + ClassString
+		          Candidates.Value(Path) = ClassString
+		        Catch LineErr As RuntimeException
+		        End Try
 		      Next
+		      
+		      Self.ProcessCandidates(Candidates, ModInfo)
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Trying to download mod " + ModId)
+		      App.Log(Err, CurrentMethodName, "Trying to scan mod " + ModId)
 		    End Try
 		  Next
 		  
@@ -233,7 +106,7 @@ Protected Class ModDiscoveryEngine
 		  
 		  Exception TopLevelException As RuntimeException
 		    App.Log(TopLevelException, CurrentMethodName, "Running the discovery thread")
-		    Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Unhandled exception in discover thread.", "Exception": TopLevelException))
+		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Unhandled exception in discover thread.", "Exception": TopLevelException))
 		End Sub
 	#tag EndMethod
 
@@ -328,12 +201,13 @@ Protected Class ModDiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ProcessCandidates(Candidates As Dictionary, ModInfo As JSONItem)
-		  Var ModName As String = ModInfo.Value("name")
-		  Var ContentPackId As String = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, ModInfo.Value("id"))
+		Private Sub ProcessCandidates(Candidates As Dictionary, ModInfo As CurseForge.ModInfo)
+		  Var ModName As String = ModInfo.ModName
+		  Var ModId As String = ModInfo.ModId.ToString(Locale.Raw, "0")
+		  Var ContentPackId As String = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, ModId)
 		  Var Pack As New Beacon.MutableContentPack(ArkSA.Identifier, ModName, ContentPackId)
 		  Pack.Marketplace = Beacon.MarketplaceCurseForge
-		  Pack.MarketplaceId = ModInfo.Value("id")
+		  Pack.MarketplaceId = ModId
 		  
 		  Var DataSource As ArkSA.DataSource
 		  Var OfficialPackIds As Beacon.StringList
