@@ -14,6 +14,12 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub AddTagsToPath(Path As String, ParamArray AdditionalTags() As String)
+		  Self.AddTagsToPath(Path, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub AddTagsToPath(Path As String, AdditionalTags() As String)
 		  Var Tags() As String
 		  If Self.mTags.HasKey(Path) Then
@@ -27,12 +33,6 @@ Protected Class ModDiscoveryEngine2
 		      Tags.Add(Tag)
 		    End If
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub AddTagsToPath(Path As String, ParamArray AdditionalTags() As String)
-		  Self.AddTagsToPath(Path, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
@@ -51,6 +51,77 @@ Protected Class ModDiscoveryEngine2
 		    Self.mThread.Resume
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ComputeBreedingStats(Properties As JSONMBS, Creature As ArkSA.MutableCreature) As Boolean
+		  Try
+		    Var IncubationTime As Integer
+		    
+		    Var bUseBabyGestation As Boolean = Properties.Lookup("bUseBabyGestation", False).BooleanValue
+		    If bUseBabyGestation Then
+		      Var BabyGestationSpeed As Double = Properties.Lookup("BabyGestationSpeed", 0.000035).DoubleValue
+		      Var ExtraBabyGestationSpeedMultiplier As Double = Properties.Lookup("ExtraBabyGestationSpeedMultiplier", 1.0).DoubleValue
+		      If BabyGestationSpeed = 0 Or ExtraBabyGestationSpeedMultiplier = 0 Then
+		        Return False
+		      End If
+		      IncubationTime = Round(1 / BabyGestationSpeed / ExtraBabyGestationSpeedMultiplier)
+		    Else
+		      If Properties.HasChild("FertilizedEggItemsToSpawn") = False Or Properties.Child("FertilizedEggItemsToSpawn").Count = 0 Then
+		        Return False
+		      End If
+		      
+		      Var Egg As JSONMBS
+		      Var EggsList As JSONMBS = Properties.Child("FertilizedEggItemsToSpawn")
+		      If Properties.HasChild("FertilizedEggWeightsToSpawn") Then
+		        // Find the best egg
+		        Var EggWeights As JSONMBS = Properties.Child("FertilizedEggWeightsToSpawn")
+		        Var MaxWeight As Double
+		        Var BestIndex As Integer = -1
+		        For Idx As Integer = 0 To EggWeights.LastRowIndex
+		          If EggWeights.ValueAt(Idx).IsNull Or EggsList.LastRowIndex < Idx Then
+		            Continue
+		          End If
+		          If EggWeights.ValueAt(Idx) > MaxWeight Then
+		            BestIndex = Idx
+		            MaxWeight = EggWeights.ValueAt(Idx)
+		          End If
+		        Next
+		        If BestIndex > -1 THen
+		          Egg = EggsList.ChildAt(BestIndex)
+		        End If
+		      Else
+		        Egg = EggsList.ChildAt(0)
+		      End If
+		      If Egg Is Nil Or Egg.IsNull Then
+		        Return False
+		      End If
+		      
+		      Var EggPath As String = Self.NormalizePath(Egg.Value("ObjectPath"))
+		      Var EggProperties As JSONMBS = Self.PropertiesForPath(EggPath)
+		      Var EggLoseDurabilityPerSecond As Double = EggProperties.Lookup("EggLoseDurabilityPerSecond", 0.005556).DoubleValue
+		      Var ExtraEggLoseDurabilityPerSecondMultiplier As Double = EggProperties.Lookup("ExtraEggLoseDurabilityPerSecondMultiplier", 1.0).DoubleValue
+		      If EggLoseDurabilityPerSecond = 0 Or ExtraEggLoseDurabilityPerSecondMultiplier = 0 Then
+		        Return False
+		      End If
+		      IncubationTime = Round(100 / EggLoseDurabilityPerSecond / ExtraEggLoseDurabilityPerSecondMultiplier)
+		    End If
+		    Var BabyAgeSpeed As Double = Properties.Lookup("BabyAgeSpeed", 0.000003).DoubleValue
+		    Var ExtraBabyAgeSpeedMultiplier As Double = Properties.Lookup("ExtraBabyAgeSpeedMultiplier", 1.0).DoubleValue
+		    If BabyAgeSpeed = 0 Or ExtraBabyAgeSpeedMultiplier = 0 Then
+		      Return False
+		    End If
+		    
+		    Creature.IncubationTime = IncubationTime
+		    Creature.MatureTime = Round(1 / (BabyAgeSpeed * ExtraBabyAgeSpeedMultiplier))
+		    Creature.MinMatingInterval = Properties.Lookup("NewFemaleMinTimeBetweenMating", 68400).IntegerValue
+		    Creature.MaxMatingInterval = Properties.Lookup("NewFemaleMaxTimeBetweenMating", 172800).IntegerValue
+		    
+		    Return True
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -90,6 +161,8 @@ Protected Class ModDiscoveryEngine2
 		  Self.mPathsScanned = New Dictionary
 		  Self.mContentPacks = New Dictionary
 		  Self.mFoundBlueprints = New Dictionary
+		  Self.mInventoryNames = New Dictionary
+		  Self.mBossPaths = New Dictionary
 		  
 		  Var SteamRoot As FolderItem
 		  Try
@@ -382,6 +455,30 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		  End If
 		  
+		  If Self.mCreaturePaths.KeyCount > 0 Then
+		    Self.StatusMessage = "Building creatures…"
+		    For Each Entry As DictionaryEntry In Self.mCreaturePaths
+		      Var CreaturePath As String = Entry.Key
+		      Self.SyncCreature(CreaturePath)
+		    Next
+		  End If
+		  
+		  If Self.mLootPaths.KeyCount > 0 Then
+		    Self.StatusMessage = "Building loot drops…"
+		    For Each Entry As DictionaryEntry In Self.mLootPaths
+		      Var DropPath As String = Entry.Key
+		      Self.SyncLootDrop(DropPath)
+		    Next
+		  End If
+		  
+		  If Self.mSpawnPaths.KeyCount > 0 Then
+		    Self.StatusMessage = "Building spawn points…"
+		    For Each Entry As DictionaryEntry In Self.mSpawnPaths
+		      Var SpawnPath As String = Entry.Key
+		      Self.SyncSpawnContainer(SpawnPath)
+		    Next
+		  End If
+		  
 		  For Each Entry As DictionaryEntry In Self.mContentPacks
 		    Var ContentPackId As String = Entry.Key
 		    Var Pack As Beacon.ContentPack = Entry.Value
@@ -547,8 +644,125 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanCreature(Path As String, IsBoss As Boolean)
+		Private Sub ScanCreature(Path As String, IsBoss As Boolean, ParamArray AdditionalTags() As String)
+		  Self.ScanCreature(Path, IsBoss, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanCreature(Path As String, IsBoss As Boolean, AdditionalTags() As String)
+		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
+		  If Self.mPathsScanned.HasKey(Path) Then
+		    Return
+		  End If
+		  Self.mPathsScanned.Value(Path) = True
+		  
+		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
+		  If Properties Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mCreaturePaths.Value(Path) = True
+		  If IsBoss Then
+		    Self.mBossPaths.Value(Path) = True
+		  End If
+		  
+		  // If killing the creature grants items, those should be directly associated.
+		  Var GrantItemPaths As JSONMBS = Properties.Query("$.DeathGiveItemClasses[*].ObjectPath")
+		  For Idx As Integer = 0 To GrantItemPaths.LastRowIndex
+		    Var ItemPath As String = Self.NormalizePath(GrantItemPaths.ValueAt(Idx))
+		    Self.ScanItem(ItemPath, "reward")
+		  Next
+		  
+		  // If killing the creature unlocks items, scan them but don't associate them
+		  Var UnlockItemPaths As JSONMBS = Properties.Query("$.DeathGiveEngramClasses[*].ObjectPath")
+		  For Idx As Integer = 0 To UnlockItemPaths.LastRowIndex
+		    Var ItemPath As String = Self.NormalizePath(UnlockItemPaths.ValueAt(Idx))
+		    Self.ScanItem(ItemPath)
+		  Next
+		  
+		  // Make sure dino drop inventories are found.
+		  Var Label As String = Properties.Lookup("DescriptiveName", "").StringValue.ReplaceLineEndings(" ")
+		  If Label.IsEmpty Then
+		    Label = ArkSA.LabelFromClassString(Path.NthField(".", 2))
+		  End If
+		  Var Inventories As JSONMBS = Properties.Query("$.DeathInventoryTemplates.AssociatedObjects[*].ObjectPath")
+		  For Idx As Integer = 0 To Inventories.LastRowIndex
+		    Var InventoryPath As String = Self.NormalizePath(Inventories.ValueAt(Idx))
+		    Self.ScanLootDrop(InventoryPath, If(IsBoss, LootDropType.Boss, LootDropType.Dino))
+		    
+		    Var Names() As String
+		    If Self.mInventoryNames.HasKey(InventoryPath) Then
+		      Names = Self.mInventoryNames.Value(InventoryPath)
+		    Else
+		      Self.mInventoryNames.Value(InventoryPath) = Names
+		    End If
+		    If Names.IndexOf(Label) = -1 Then
+		      Names.Add(Label)
+		    End If
+		  Next
+		  
+		  // Anything that can be harvested from a dino that spawns on the map, should be available to the map.
+		  If Properties.HasKey("DeathHarvestingComponent") And Properties.Value("DeathHarvestingComponent").IsNull = False Then
+		    Var HarvestPath As String = Self.NormalizePath(Properties.Child("DeathHarvestingComponent").Value("ObjectPath"))
+		    Var HarvestProperties As JSONMBS = Self.PropertiesForPath(HarvestPath)
+		    If (HarvestProperties Is Nil) = False Then
+		      Var Resources As JSONMBS = HarvestProperties.Query("$.HarvestResourceEntries[*].ResourceItem.ObjectPath")
+		      For Idx As Integer = 0 To Resources.LastRowIndex
+		        Var ItemPath As String = Self.NormalizePath(Resources.ValueAt(Idx))
+		        Self.ScanItem(ItemPath, "harvestable", "resource")
+		      Next
+		    End If
+		  End If
+		  
+		  // Include things that can be found in the dino.
+		  If Properties.HasKey("TamedInventoryComponentTemplate") And Properties.Value("TamedInventoryComponentTemplate").IsNull = False Then
+		    Var TamedInventoryComponentPath As String = Self.NormalizePath(Properties.Child("TamedInventoryComponentTemplate").Value("ObjectPath"))
+		    Var TamedInventoryProperties As JSONMBS = Self.PropertiesForPath(TamedInventoryComponentPath)
+		    If (TamedInventoryProperties Is Nil) = False Then
+		      Var Resources As JSONMBS = TamedInventoryProperties.Query("$.DefaultInventoryItems[*].ObjectPath")
+		      For Idx As Integer = 0 To Resources.LastRowIndex
+		        Var ItemPath As String = Self.NormalizePath(Resources.ValueAt(Idx))
+		        Self.ScanItem(ItemPath)
+		      Next
+		    End If
+		  End If
+		  
+		  // Need eggs.
+		  Var Eggs As JSONMBS = Properties.Query("$.EggItemsToSpawn[*].ObjectPath")
+		  For Idx As Integer = 0 To Eggs.LastRowIndex
+		    Var ItemPath As String = Self.NormalizePath(Eggs.ValueAt(Idx))
+		    Self.ScanItem(ItemPath)
+		  Next
+		  
+		  // And fertilized eggs.
+		  Var FertilizedEggs As JSONMBS = Properties.Query("$.FertilizedEggItemsToSpawn[*].ObjectPath")
+		  For Idx As Integer = 0 To FertilizedEggs.LastRowIndex
+		    Var ItemPath As String = Self.NormalizePath(FertilizedEggs.ValueAt(Idx))
+		    Self.ScanItem(ItemPath)
+		  Next
+		  
+		  // Poops are generic and should not be directly associated with a creature. We grab the value here to make sure they are scanned.
+		  If Properties.HasKey("PoopItemClass") And Properties.Value("PoopItemClass").IsNull = False Then
+		    Var PoopPath As String = Self.NormalizePath(Properties.Child("PoopItemClass").Value("ObjectPath"))
+		    Self.ScanItem(PoopPath)
+		  End If
+		  
+		  // Alt poops are creature-specific, like achatina paste.
+		  If Properties.HasKey("PoopAltItemClass") And Properties.Value("PoopAltItemClass").IsNull = False Then
+		    Var PoopPath As String = Self.NormalizePath(Properties.Child("PoopAltItemClass").Value("ObjectPath"))
+		    Self.ScanItem(PoopPath)
+		  End If
+		  
+		  // Some creatures add their items this way.
+		  Var DefaultInventoryItems As JSONMBS = Properties.Query("$.DinoExtraDefaultInventoryItems[*].DefaultItemsToGive[*].ObjectPath")
+		  For Idx As Integer = 0 To DefaultInventoryItems.LastRowIndex
+		    Var ItemPath As String = Self.NormalizePath(DefaultInventoryItems.ValueAt(Idx))
+		    Self.ScanItem(ItemPath)
+		  Next
+		  
+		  Self.ScanForChildren(Properties)
 		End Sub
 	#tag EndMethod
 
@@ -559,22 +773,28 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ScanItem(Path As String, NoSync As Boolean, ParamArray AdditionalTags() As String)
+		  Self.ScanItem(Path, NoSync, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ScanItem(Path As String, NoSync As Boolean, AdditionalTags() As String)
+		  Self.AddTagsToPath(Path, AdditionalTags)
+		  
 		  If Self.mPathsScanned.HasKey(Path) Then
 		    Return
 		  End If
+		  Self.mPathsScanned.Value(Path) = True
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  If Properties Is Nil Then
 		    Return
 		  End If
 		  
-		  Self.AddTagsToPath(Path, AdditionalTags)
-		  
 		  If Properties.HasKey("DescriptiveNameBase") And NoSync = False Then
 		    Self.mItemPaths.Value(Path) = True
 		  End If
-		  Self.mPathsScanned.Value(Path) = True
 		  
 		  If Properties.HasChild("FuelItemsConsumedGiveItems") Then
 		    Var GeneratedItems As JSONMBS = Properties.Child("FuelItemsConsumedGiveItems")
@@ -644,8 +864,8 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanItem(Path As String, NoSync As Boolean, ParamArray AdditionalTags() As String)
-		  Self.ScanItem(Path, NoSync, AdditionalTags)
+		Private Sub ScanItem(Path As String, AdditionalTags() As String)
+		  Self.ScanItem(Path, False, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
@@ -656,14 +876,20 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanItem(Path As String, AdditionalTags() As String)
-		  Self.ScanItem(Path, False, AdditionalTags)
+		Private Sub ScanLevelScriptActor(Path As String)
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanLevelScriptActor(Path As String)
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, AdditionalTags() As String)
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
+		  Self.ScanLootDrop(Path, Type, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
@@ -716,12 +942,20 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Sub ScanPrimalGameData(Path As String)
 		  Var PrimalGameData As JSONMBS = Self.PropertiesForPath(Path)
+		  Var AssetContainers() As JSONMBS = Array(PrimalGameData)
+		  
 		  If PrimalGameData.HasKey("AdditionalModDataAsset") Then
 		    Var AdditionalModDataAssetPath As String = Self.NormalizePath(PrimalGameData.Child("AdditionalModDataAsset").Value("ObjectPath"))
 		    Var AdditionalModDataAsset As JSONMBS = Self.PropertiesForPath(AdditionalModDataAssetPath)
-		    
-		    Var ItemSkinPaths As JSONMBS = AdditionalModDataAsset.Query("$.ModCustomCosmeticEntries[*].ModSkinItem.AssetPathName")
-		    Var StructureSkinPaths As JSONMBS = AdditionalModDataAsset.Query("$.ModCustomCosmeticEntries[*].ModSkinStructure.AssetPathName")
+		    If (AdditionalModDataAsset Is Nil) = False Then
+		      AssetContainers.Add(AdditionalModDataAsset)
+		    End If
+		  End If
+		  
+		  For Each AssetContainer As JSONMBS In AssetContainers
+		    // Additional skins
+		    Var ItemSkinPaths As JSONMBS = AssetContainer.Query("$.ModCustomCosmeticEntries[*].ModSkinItem.AssetPathName")
+		    Var StructureSkinPaths As JSONMBS = AssetContainer.Query("$.ModCustomCosmeticEntries[*].ModSkinStructure.AssetPathName")
 		    Var SkinPaths() As JSONMBS = Array(ItemSkinPaths, StructureSkinPaths)
 		    For Each PathArray As JSONMBS In SkinPaths
 		      For Idx As Integer = 0 To PathArray.LastRowIndex
@@ -733,10 +967,9 @@ Protected Class ModDiscoveryEngine2
 		        Self.ScanItem(Self.NormalizePath(SkinPath), "skin")
 		      Next
 		    Next
-		  End If
-		  
-		  If PrimalGameData.HasKey("AdditionalEngramBlueprintClasses") Then
-		    Var AdditionalEngramPaths As JSONMBS = PrimalGameData.Query(".AdditionalEngramBlueprintClasses[*].ObjectPath")
+		    
+		    // Additional unlocks
+		    Var AdditionalEngramPaths As JSONMBS = AssetContainer.Query("$.AdditionalEngramBlueprintClasses[*].ObjectPath")
 		    For Idx As Integer = 0 To AdditionalEngramPaths.LastRowIndex
 		      Var UnlockPath As String = AdditionalEngramPaths.ValueAt(Idx)
 		      If UnlockPath.IsEmpty Then
@@ -745,7 +978,34 @@ Protected Class ModDiscoveryEngine2
 		      
 		      Self.ScanUnlock(Self.NormalizePath(UnlockPath))
 		    Next
-		  End If
+		    
+		    // Stuff added to crafting stations
+		    Var AdditionalStructureEngrams As JSONMBS = AssetContainer.Query("$.AdditionalStructureEngrams[*].ClassAdditions.AssetPathName")
+		    For Idx As Integer = 0 To AdditionalStructureEngrams.LastRowIndex
+		      Var ItemPath As String = AdditionalStructureEngrams.ValueAt(Idx)
+		      If ItemPath.IsEmpty Then
+		        Continue
+		      End If
+		      
+		      Self.ScanItem(Self.NormalizePath(ItemPath))
+		    Next
+		    
+		    // Creatures the mod injects
+		    Var InjectedCreaturePaths As JSONMBS = AssetContainer.Query("$.TheNPCSpawnEntriesContainerAdditions[*].AdditionalNPCSpawnEntries[*].NPCsToSpawn[*].AssetPathName")
+		    Var InjectedLimitPaths As JSONMBS = AssetContainer.Query("$.TheNPCSpawnEntriesContainerAdditions[*].AdditionalNPCSpawnLimits[*].NPCClass.AssetPathName")
+		    Var InjectedReplacementPaths As JSONMBS = AssetContainer.Query("$.GlobalNPCRandomSpawnClassWeights[*].ToClasses[*].AssetPathName")
+		    Var CreaturePaths() As JSONMBS = Array(InjectedCreaturePaths, InjectedLimitPaths, InjectedReplacementPaths)
+		    For Each PathList As JSONMBS In CreaturePaths
+		      For Idx As Integer = 0 To PathList.LastRowIndex
+		        Var CreaturePath As String = PathList.ValueAt(Idx)
+		        If CreaturePath.IsEmpty Then
+		          Continue
+		        End If
+		        
+		        Self.ScanCreature(Self.NormalizePath(CreaturePath), False)
+		      Next
+		    Next
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -829,6 +1089,117 @@ Protected Class ModDiscoveryEngine2
 		  Else
 		    Self.mThread.AddUserInterfaceUpdate(New Dictionary("Event": "StatusUpdated"))
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncCreature(Path As String)
+		  Var ContentPackId As String = Self.ContentPackIdForPath(Path)
+		  If ContentPackId = Self.OfficialContentPackId Then
+		    Return
+		  End If
+		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
+		  
+		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
+		  
+		  Var CreatureName As String = Properties.Lookup("DescriptiveName", "").StringValue.ReplaceLineEndings(" ")
+		  If CreatureName.IsEmpty Then
+		    CreatureName = ArkSA.LabelFromClassString(Path.NthField(".", 2))
+		  End If
+		  
+		  Var CreatureId As String = Self.CreateObjectId(Path, ContentPackId)
+		  Var Creature As New ArkSA.MutableCreature(Path, CreatureId)
+		  Creature.Availability = ArkSA.Maps.UniversalMask
+		  Creature.ContentPackId = ContentPackId
+		  Creature.ContentPackName = Pack.Name
+		  Creature.Label = CreatureName
+		  
+		  If Properties.HasKey("DinoNameTag") And Properties.Value("DinoNameTag").IsNull = False And Properties.Value("DinoNameTag").StringValue.IsEmpty = False Then
+		    Creature.NameTag = Properties.Value("DinoNameTag").StringValue
+		  ElseIf Properties.HasKey("CustomTag") And Properties.Value("CustomTag").IsNull = False And Properties.Value("CustomTag").StringValue.IsEmpty = False Then
+		    Creature.NameTag = Properties.Value("CustomTag").StringValue
+		  End If
+		  
+		  Var CanBeTamed As Boolean = Properties.Lookup("bCanBeTamed", True).BooleanValue
+		  Var CanHaveBaby As Boolean = Properties.Lookup("bCanHaveBaby", False).BooleanValue
+		  If (CanBeTamed And CanHaveBaby And Self.ComputeBreedingStats(Properties, Creature)) = False Then
+		    Creature.IncubationTime = 0
+		    Creature.MatureTime = 0
+		    Creature.MinMatingInterval = 0
+		    Creature.MaxMatingInterval = 0
+		  End If
+		  
+		  Var Results As JSONMBS = Properties.Query("$['X-Beacon-Children'][*][?(@.CraftingSpeedMultiplier)]")
+		  Static AdditionalBaseValue() As Integer = Array(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1)
+		  If Results.Count = 1 Then
+		    Var StatusComponent As JSONMBS = Results.Child(0)
+		    Var StatInfos(11) As JSONMBS
+		    StatInfos(0) = StatusComponent.Child("Health")
+		    StatInfos(1) = StatusComponent.Child("Stamina")
+		    StatInfos(2) = StatusComponent.Child("Torpidity")
+		    StatInfos(3) = StatusComponent.Child("Oxygen")
+		    StatInfos(4) = StatusComponent.Child("Food")
+		    StatInfos(5) = StatusComponent.Child("Water")
+		    StatInfos(6) = StatusComponent.Child("Temperature")
+		    StatInfos(7) = StatusComponent.Child("Weight")
+		    StatInfos(8) = StatusComponent.Child("MeleeDamageMultiplier")
+		    StatInfos(9) = StatusComponent.Child("SpeedMultiplier")
+		    StatInfos(10) = StatusComponent.Child("Fortitude")
+		    StatInfos(11) = StatusComponent.Child("CraftingSpeedMultiplier")
+		    
+		    Var UsedStats As Integer = 0
+		    Var UsesOxygenWild As Boolean = StatusComponent.Lookup("bCanSuffocate", True).BooleanValue
+		    Var UsesOxygenTamed As Boolean = UsesOxygenWild Or StatusComponent.Lookup("bCanSuffocateIfTamed", False).BooleanValue
+		    Var ForceOxygen As Boolean = StatusComponent.Lookup("bForceGainOxygen", False).BooleanValue
+		    Var DoesntUseOxygen As Boolean = Not (UsesOxygenTamed Or ForceOxygen)
+		    Var IsFlyer As Boolean = Properties.Lookup("bIsFlyerDino", False).BooleanValue
+		    
+		    For StatIndex As Integer = 0 To StatInfos.LastIndex
+		      Var StatInfo As JSONMBS = StatInfos(StatIndex)
+		      Var CanLevel As Boolean = StatIndex = 2 Or StatInfo.Value("CanLevelUpValue").BooleanValue
+		      Var DontUse As Boolean = StatInfo.Value("DontUseValue").BooleanValue
+		      If DontUse = False And Not (StatIndex = 3 And DoesntUseOxygen) Then
+		        UsedStats = UsedStats Or Bitwise.ShiftLeft(1, StatIndex)
+		      End If
+		      If DontUse And Not CanLevel Then
+		        Continue
+		      End If
+		      
+		      Var WildMultiplier As Integer = If(CanLevel, 1, 0)
+		      Var DomesticMultiplier As Integer = If(StatIndex = 9 And IsFlyer, 1, WildMultiplier)
+		      Var ExtraTamedHealthMultiplier As Double = 1.0
+		      If StatIndex = 0 Then
+		        ExtraTamedHealthMultiplier = StatusComponent.Lookup("ExtraTamedHealthMultiplier", 1.35)
+		      End If
+		      
+		      Var WildPerLevel As Double = StatInfo.Value("WildPerLevel")
+		      If StatIndex = 2 Then
+		        WildPerLevel = StatusComponent.Lookup("TheMaxTorporIncreasePerBaseLevel", 0.06)
+		      End If
+		      
+		      Var Stat As ArkSA.Stat = ArkSA.Stats.WithIndex(StatIndex)
+		      Var BaseValue As Double = StatInfo.Value("BaseValue") + AdditionalBaseValue(StatIndex)
+		      Var PerLevelWildMultiplier As Double = WildPerLevel * WildMultiplier
+		      Var PerLevelTamedMultiplier As Double = StatInfo.Value("TamedPerLevel").DoubleValue * ExtraTamedHealthMultiplier * DomesticMultiplier
+		      Var AddMultiplier As Double = StatInfo.Value("TamingReward")
+		      Var AffinityMultiplier As Double = StatInfo.Value("EffectivenessReward")
+		      Creature.AddStatValue(New ArkSA.CreatureStatValue(Stat, BaseValue, PerLevelWildMultiplier, PerLevelTamedMultiplier, AddMultiplier, AffinityMultiplier))
+		    Next
+		    Creature.StatsMask = UsedStats
+		  Else
+		    Creature.StatsMask = 0
+		  End If
+		  
+		  If Self.mBossPaths.HasKey(Path) Then
+		    Creature.AddTag("boss")
+		  End If
+		  
+		  If Self.mTags.HasKey(Path) Then
+		    Var Tags() As String = Self.mTags.Value(Path)
+		    Creature.AddTags(Tags)
+		  End If
+		  
+		  Self.AddBlueprint(Creature)
 		End Sub
 	#tag EndMethod
 
@@ -928,6 +1299,18 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SyncLootDrop(Path As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncSpawnContainer(Path As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function TagsForPath(Path As String) As String()
 		  Var Tags() As String
 		  If Self.mTags.HasKey(Path) Then
@@ -970,6 +1353,10 @@ Protected Class ModDiscoveryEngine2
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mBossPaths As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
 	#tag EndProperty
 
@@ -987,6 +1374,10 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Property, Flags = &h21
 		Private mFoundBlueprints As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mInventoryNames As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1040,6 +1431,13 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Constant, Name = OfficialContentPackId, Type = String, Dynamic = False, Default = \"b32a3d73-9406-56f2-bd8f-936ee0275249", Scope = Private
 	#tag EndConstant
+
+
+	#tag Enum, Name = LootDropType, Flags = &h21
+		Regular
+		  Dino
+		Boss
+	#tag EndEnum
 
 
 	#tag ViewBehavior
