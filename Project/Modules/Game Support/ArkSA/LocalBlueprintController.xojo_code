@@ -34,7 +34,7 @@ Inherits ArkSA.BlueprintController
 	#tag Method, Flags = &h21
 		Private Sub FetchThread_Run(Sender As Beacon.Thread)
 		  Var Task As ArkSA.BlueprintControllerFetchTask = Sender.UserData
-		  Var Mods As New Beacon.StringList(Self.ContentPackId)
+		  Var Mods As New Beacon.StringList(Self.ContentPack.ContentPackId)
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
 		  Select Case Task.Mode

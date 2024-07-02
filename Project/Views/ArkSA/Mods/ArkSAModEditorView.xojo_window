@@ -385,9 +385,9 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.ViewTitle = Self.mController.ContentPackName
+		  Self.ViewTitle = Self.mController.ContentPack.Name
 		  Self.SwitchMode(ArkSA.BlueprintController.ModeEngrams)
-		  Self.Status.RightCaption = Self.mController.ContentPackId
+		  Self.Status.RightCaption = Self.mController.ContentPack.ContentPackId
 		  
 		  If Self.mReadOnly Then
 		    Self.Status.LeftCaption = "Read Only"
@@ -496,14 +496,14 @@ End
 		  AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
 		  
 		  Self.mController = Controller
-		  Self.ViewID = Controller.ContentPackId
+		  Self.ViewID = Controller.ContentPack.ContentPackId
 		  Self.mReadOnly = ReadOnly
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ContentPackId() As String
-		  Return Self.mController.ContentPackId
+		  Return Self.mController.ContentPack.ContentPackId
 		End Function
 	#tag EndMethod
 
@@ -522,7 +522,7 @@ End
 		  End Select
 		  
 		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPackName) + " " + ModeLabel + Beacon.FileExtensionDelta
+		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPack.Name) + " " + ModeLabel + Beacon.FileExtensionDelta
 		  Dialog.Filter = BeaconFileTypes.BeaconData + BeaconFileTypes.CSVFile
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
@@ -799,7 +799,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Settings As ArkSA.ModDiscoverySettings = ArkSAModDiscoveryDialog.Present(Self.TrueWindow, Self.mController.MarketplaceId)
+		  Var Settings As ArkSA.ModDiscoverySettings = ArkSAModDiscoveryDialog.Present(Self.TrueWindow, Self.mController.ContentPack)
 		  If Settings Is Nil Then
 		    Return
 		  End If
@@ -1314,7 +1314,7 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Select Case Item.Name
 		  Case "AddBlueprint"
-		    Var Blueprint As ArkSA.Blueprint = ArkSABlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
+		    Var Blueprint As ArkSA.Blueprint = ArkSABlueprintEditorDialog.Present(Self, Self.mController.ContentPack.ContentPackId, Self.mController.ContentPack.Name)
 		    If (Blueprint Is Nil) = False Then
 		      Try
 		        Self.mController.SaveBlueprint(Blueprint)
@@ -1344,7 +1344,7 @@ End
 		    ImportMenu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
 		    DiscoverItem = New DesktopMenuItem("Run Mod Discovery")
-		    DiscoverItem.Enabled = Self.mController.Marketplace = Beacon.MarketplaceCurseForge And Self.mController.MarketplaceId.IsEmpty = False
+		    DiscoverItem.Enabled = Self.mController.ContentPack.Marketplace = Beacon.MarketplaceCurseForge And Self.mController.ContentPack.MarketplaceId.IsEmpty = False
 		    ImportMenu.AddMenu(DiscoverItem)
 		    
 		    Var Position As Point = Me.GlobalPosition

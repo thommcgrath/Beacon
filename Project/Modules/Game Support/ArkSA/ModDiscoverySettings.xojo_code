@@ -1,13 +1,19 @@
 #tag Class
 Protected Class ModDiscoverySettings
 	#tag Method, Flags = &h0
-		Sub Constructor(ModIds() As String, DeleteBlueprints As Boolean, IgnoreBuiltInClasses As Boolean, Threshold As Double, UseNewDiscovery As Boolean)
-		  Self.mModIds = ModIds
+		Sub Constructor(ContentPackIds As Dictionary, DeleteBlueprints As Boolean, IgnoreBuiltInClasses As Boolean, Threshold As Double, UseNewDiscovery As Boolean)
+		  Self.mContentPackIds = ContentPackIds.Clone
 		  Self.mDeleteBlueprints = DeleteBlueprints
 		  Self.mIgnoreBuiltInClasses = IgnoreBuiltInClasses
 		  Self.mThreshold = Threshold
 		  Self.mUseNewDiscovery = UseNewDiscovery And ArkSA.ModDiscoveryEngine2.IsAvailable
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackId(ModId As String) As String
+		  Return Self.mContentPackIds.Value(ModId)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -25,9 +31,8 @@ Protected Class ModDiscoverySettings
 	#tag Method, Flags = &h0
 		Function ModIds() As String()
 		  Var ModIds() As String
-		  ModIds.ResizeTo(Self.mModIds.LastIndex)
-		  For Idx As Integer = 0 To ModIds.LastIndex
-		    ModIds(Idx) = Self.mModIds(Idx)
+		  For Each Entry As DictionaryEntry In Self.mContentPackIds
+		    ModIds.Add(Entry.Key)
 		  Next
 		  Return ModIds
 		End Function
@@ -47,15 +52,15 @@ Protected Class ModDiscoverySettings
 
 
 	#tag Property, Flags = &h21
+		Private mContentPackIds As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDeleteBlueprints As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIgnoreBuiltInClasses As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mModIds() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

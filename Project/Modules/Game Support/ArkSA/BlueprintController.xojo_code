@@ -91,23 +91,14 @@ Protected Class BlueprintController
 
 	#tag Method, Flags = &h0
 		Sub Constructor(ContentPack As Beacon.ContentPack)
-		  Self.mContentPackId = ContentPack.ContentPackId
-		  Self.mContentPackName = ContentPack.Name
-		  Self.mMarketplace = ContentPack.Marketplace
-		  Self.mMarketplaceId = ContentPack.MarketplaceId
+		  Self.mContentPack = ContentPack
 		  Self.Constructor()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackId() As String
-		  Return Self.mContentPackId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ContentPackName() As String
-		  Return Self.mContentPackName
+		Function ContentPack() As Beacon.ContentPack
+		  Return Self.mContentPack
 		End Function
 	#tag EndMethod
 
@@ -308,18 +299,6 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Marketplace() As String
-		  Return Self.mMarketplace
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MarketplaceId() As String
-		  Return Self.mMarketplaceId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function OriginalBlueprint(BlueprintId As String) As ArkSA.Blueprint
 		  If Self.mOriginalBlueprints.HasKey(BlueprintId) Then
 		    Return Self.mOriginalBlueprints.Value(BlueprintId)
@@ -421,17 +400,18 @@ Protected Class BlueprintController
 		  End If
 		  
 		  Var BlueprintsSaved(), BlueprintsDeleted() As ArkSA.Blueprint
+		  Var ContentPack As Beacon.ContentPack = Self.ContentPack
 		  
 		  For Each Blueprint As ArkSA.Blueprint In Blueprints
 		    Var OriginalBlueprintId As String = Blueprint.BlueprintId
 		    Var BlueprintId As String = Blueprint.BlueprintId
 		    
-		    If Blueprint.ContentPackId <> Self.ContentPackId Then
+		    If Blueprint.ContentPackId <> ContentPack.ContentPackId Then
 		      // Need to adjust the mod info to match
 		      BlueprintsDeleted.Add(Blueprint)
 		      Var MutableVersion As ArkSA.MutableBlueprint = Blueprint.MutableVersion
-		      MutableVersion.ContentPackId = Self.ContentPackId
-		      MutableVersion.ContentPackName = Self.ContentPackName
+		      MutableVersion.ContentPackId = ContentPack.ContentPackId
+		      MutableVersion.ContentPackName = ContentPack.Name
 		      MutableVersion.RegenerateBlueprintId()
 		      BlueprintId = MutableVersion.BlueprintId
 		      Blueprint = MutableVersion.ImmutableVersion
@@ -517,19 +497,7 @@ Protected Class BlueprintController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContentPackId As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mContentPackName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMarketplace As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMarketplaceId As String
+		Private mContentPack As Beacon.ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

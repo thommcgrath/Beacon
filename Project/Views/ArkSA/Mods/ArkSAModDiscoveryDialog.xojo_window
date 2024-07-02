@@ -613,8 +613,13 @@ End
 		    End Try
 		  End If
 		  
-		  If Self.mForcedModsString.IsEmpty = False Then
-		    Self.ModsField.Text = Self.mForcedModsString
+		  If Self.mForcedContentPacks.Count > 0 Then
+		    Var ModIds() As String
+		    For Each Pack As Beacon.ContentPack In Self.mForcedContentPacks
+		      ModIds.Add(Pack.MarketplaceId)
+		    Next
+		    ModIds.Sort
+		    Self.ModsField.Text = String.FromArray(ModIds, ",")
 		    Self.ModsField.ReadOnly = True
 		  End If
 		  
@@ -626,17 +631,17 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ForcedModsString As String)
+		Private Sub Constructor(ForcedContentPacks() As Beacon.ContentPack)
 		  // Calling the overridden superclass constructor.
-		  Self.mForcedModsString = ForcedModsString
+		  Self.mForcedContentPacks = ForcedContentPacks
 		  Super.Constructor
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ForceModIds() As String) As ArkSA.ModDiscoverySettings
-		  Var Win As New ArkSAModDiscoveryDialog(String.FromArray(ForceModIds, ","))
+		Shared Function Present(Parent As DesktopWindow, ForceContentPacks() As Beacon.ContentPack) As ArkSA.ModDiscoverySettings
+		  Var Win As New ArkSAModDiscoveryDialog(ForceContentPacks)
 		  Win.ShowModal(Parent)
 		  
 		  Var Settings As ArkSA.ModDiscoverySettings = Win.mSettings
@@ -647,8 +652,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ParamArray ForceModIds() As String) As ArkSA.ModDiscoverySettings
-		  Return Present(Parent, ForceModIds)
+		Shared Function Present(Parent As DesktopWindow, ParamArray ForceContentPacks() As Beacon.ContentPack) As ArkSA.ModDiscoverySettings
+		  Return Present(Parent, ForceContentPacks)
 		End Function
 	#tag EndMethod
 
@@ -738,7 +743,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mForcedModsString As String
+		Private mForcedContentPacks() As Beacon.ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -809,17 +814,26 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var ModsString As String = Self.ModsField.Text.Trim
-		  
-		  Var Matcher As New Regex
-		  Matcher.SearchPattern = "[^\d,]+"
-		  Matcher.ReplacementPattern = ""
-		  Matcher.Options.ReplaceAllMatches = True
-		  ModsString = Matcher.Replace(ModsString)
-		  
-		  If ModsString.IsEmpty Then
-		    Self.ShowAlert("Don't forget to include some mods", "This process doesn't make much sense without mod ids does it?")
-		    Return
+		  Var ContentPackIds As New Dictionary
+		  If Self.mForcedContentPacks.Count > 0 Then
+		    For Each Pack As Beacon.ContentPack In Self.mForcedContentPacks
+		      ContentPackIds.Value(Pack.MarketplaceId) = Pack.ContentPackId
+		    Next
+		  Else
+		    Var Matcher As New Regex
+		    Matcher.SearchPattern = "[^\d,]+"
+		    Matcher.ReplacementPattern = ""
+		    Matcher.Options.ReplaceAllMatches = True
+		    
+		    Var ModIds() As String = Matcher.Replace(Self.ModsField.Text).Split(",")
+		    If ModIds.Count = 0 Then
+		      Self.ShowAlert("Don't forget to include some mods", "This process doesn't make much sense without mod ids does it?")
+		      Return
+		    End If
+		    
+		    For Each ModId As String In ModIds
+		      ContentPackIds.Value(ModId) = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.MarketplaceCurseForge, ModId)
+		    Next
 		  End If
 		  
 		  Var UseNewDiscovery As Boolean = Self.UseNewDiscoveryCheck.Visible And Self.UseNewDiscoveryCheck.Value
@@ -843,7 +857,7 @@ End
 		  End If
 		  
 		  Var Threshold As Double = (100 - Self.ThresholdField.DoubleValue) / 100
-		  Self.mSettings = New ArkSA.ModDiscoverySettings(ModsString.Split(","), Self.AllowDeleteCheck.Value, Self.IgnoreBuiltInClassesCheck.Value, Threshold, UseNewDiscovery)
+		  Self.mSettings = New ArkSA.ModDiscoverySettings(ContentPackIds, Self.AllowDeleteCheck.Value, Self.IgnoreBuiltInClassesCheck.Value, Threshold, UseNewDiscovery)
 		  Self.Hide
 		End Sub
 	#tag EndEvent

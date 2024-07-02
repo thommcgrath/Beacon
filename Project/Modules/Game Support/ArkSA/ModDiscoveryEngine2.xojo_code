@@ -56,17 +56,20 @@ Protected Class ModDiscoveryEngine2
 		  Var Sh As New Shell
 		  Var RequiredLinks() As String = Array("global.ucas", "global.utoc", "ShooterGame-WindowsServer.pak", "ShooterGame-WindowsServer.ucas", "ShooterGame-WindowsServer.utoc")
 		  For Each Filename As String In RequiredLinks
-		    Var DestinationFile As FolderItem = DiscoveryRoot.Child(Filename)
-		    Var SourceFile As FolderItem = PaksFolder.Child(Filename)
-		    If DestinationFile.Exists Then
-		      DestinationFile.Remove
-		    End If
-		    
-		    #if TargetWindows
-		      Sh.Execute("mklink /H """ + DestinationFile.NativePath + """ """ + SourceFile.NativePath + """")
-		    #elseif TargetLinux or TargetMacOS
-		      Sh.Execute("ln " + SourceFile.ShellPath + " " + DestinationFile.ShellPath)
-		    #endif
+		    Try
+		      Var DestinationFile As FolderItem = DiscoveryRoot.Child(Filename)
+		      Var SourceFile As FolderItem = PaksFolder.Child(Filename)
+		      If DestinationFile.Exists Then
+		        DestinationFile.Remove
+		      End If
+		      
+		      #if TargetWindows
+		        Sh.Execute("mklink /H """ + DestinationFile.NativePath + """ """ + SourceFile.NativePath + """")
+		      #elseif TargetLinux or TargetMacOS
+		        Sh.Execute("ln " + SourceFile.ShellPath + " " + DestinationFile.ShellPath)
+		      #endif
+		    Catch Err As RuntimeException
+		    End Try
 		  Next
 		  
 		  Var ManifestPattern As New RegEx
@@ -74,11 +77,13 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Var ModIds() As String = Self.mSettings.ModIds
 		  Var ModPackageNames As New Dictionary
+		  Var ModInfos As New Dictionary
 		  For Each ModId As String In ModIds
 		    Var ModInfo As CurseForge.ModInfo = CurseForge.LookupMod(ModId)
 		    If ModInfo Is Nil Then
 		      Continue
 		    End If
+		    ModInfos.Value(ModId) = ModInfo
 		    
 		    Var ModFolder As FolderItem = DiscoveryRoot.Child(ModId)
 		    If Not ModFolder.CheckIsFolder Then
@@ -229,6 +234,7 @@ Protected Class ModDiscoveryEngine2
 		  BlacklistLines.Add("Engine/")
 		  BlacklistLines.Add("ShooterGame/Content/")
 		  BlacklistLines.Add("ShooterGame/Plugins/")
+		  BlacklistLines.Add("ShooterGame/AssetRegistry\.bin")
 		  
 		  Var BlacklistFile As FolderItem = ExtractorRoot.Child("blacklist.txt")
 		  Var CurrentLines() As String
@@ -273,10 +279,33 @@ Protected Class ModDiscoveryEngine2
 		    Sender.Sleep(10)
 		  Wend
 		  
+		  For Each ModId As String In ModIds
+		    Var PackageName As String = ModPackageNames.Value(ModId)
+		    Var ModOutputFolder As FolderItem
+		    Try
+		      ModOutputFolder = OutputFolder.Child("ShooterGame").Child("Mods").Child(PackageName)
+		    Catch Err As RuntimeException
+		      App.Log("Could not find mod output for " + PackageName + " (" + ModId + ")")
+		      Continue
+		    End Try
+		    
+		    Try
+		      Var ModInfo As CurseForge.ModInfo = ModInfos.Value(ModId)
+		      Self.StatusMessage = "Planning blueprints for " + ModInfo.ModName + "…"
+		      Self.ScanMod(ModId, PackageName, ModOutputFolder)
+		    Catch Err As RuntimeException
+		      App.Log("Unhandled exception scanning mod " + PackageName + " (" + ModId + ")")
+		      Continue
+		    End Try
+		  Next
 		  
+		  Self.mSuccess = True
+		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished" : True))
 		  
-		  
-		  
+		  Exception TopLevelException As RuntimeException
+		    App.Log(TopLevelException, CurrentMethodName, "Running the discovery thread")
+		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Unhandled exception in discover thread.", "Exception": TopLevelException))
+		    
 		End Sub
 	#tag EndMethod
 
@@ -303,6 +332,13 @@ Protected Class ModDiscoveryEngine2
 		      RaiseEvent Finished()
 		    End If
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanMod(ModId As String, PackageName As String, Root As FolderItem)
+		  Var ContentPackId As String = Self.mSettings.ContentPackId(ModId)
+		  Break
 		End Sub
 	#tag EndMethod
 

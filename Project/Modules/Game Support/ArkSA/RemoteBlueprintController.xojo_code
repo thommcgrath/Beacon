@@ -48,7 +48,7 @@ Inherits ArkSA.BlueprintController
 		  Var PathComponent As String = Self.PathComponent(Task)
 		  
 		  Var Params As New Dictionary
-		  Params.Value("contentPackId") = Self.ContentPackId
+		  Params.Value("contentPackId") = Self.ContentPack.ContentPackId
 		  Params.Value("page") = Task.Page
 		  Params.Value("pageSize") = Task.PageSize
 		  
