@@ -150,9 +150,9 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Var RequiredHashes As New Dictionary
-		  RequiredHashes.Value("mod_data_extractor.exe") = "24304a3a2d413667e108791f00c3e697"
+		  RequiredHashes.Value("mod_data_extractor.exe") = "21b6a14c0e83161fffada4213e37c251"
 		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "cb4eec121a03a28426cd45051d770ea1"
-		  RequiredHashes.Value("mod_data_extractor.pdb") = "538844aaaf862c15cbdbf3ff442b0266"
+		  RequiredHashes.Value("mod_data_extractor.pdb") = "6987a6cf575525eb0f0ea3f3b7c9be71"
 		  Var ExtractorReady As Boolean = True
 		  For Each Entry As DictionaryEntry In RequiredHashes
 		    Var ExtractorFile As FolderItem = ExtractorRoot.Child(Entry.Key.StringValue)
@@ -178,7 +178,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		    DownloadSocket.Send("GET", "https://github.com/jordan-dalby/csharp-asa-mod-data-extractor/releases/download/v8/mod_data_extractor-win-x64.zip")
+		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v9.zip")
 		    If DownloadSocket.HTTPStatusCode <> 200 Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Failed to download extractor tool."))
 		      Return
