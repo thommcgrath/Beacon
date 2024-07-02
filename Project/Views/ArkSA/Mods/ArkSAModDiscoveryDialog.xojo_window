@@ -561,6 +561,37 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       Visible         =   True
       Width           =   80
    End
+   Begin UITweaks.ResizedPushButton InstallServerButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "#InstallServerCaption"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "#InstallServerTooltip"
+      Top             =   378
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   150
+   End
 End
 #tag EndDesktopWindow
 
@@ -633,6 +664,7 @@ End
 		  Self.SteamPathLabel.Visible = UseNewDiscovery
 		  Self.SteamPathField.Visible = UseNewDiscovery
 		  Self.SteamPathButton.Visible = UseNewDiscovery
+		  Self.InstallServerButton.Visible = UseNewDiscovery
 		  Self.ExplanationLabel.Text = If(UseNewDiscovery, Self.ExtractionExplanation, Self.ManifestExplanation)
 		  Self.BetaLabel.Visible = Not UseNewDiscovery
 		  
@@ -682,6 +714,7 @@ End
 		  End If
 		  Self.ActionButton.Top = StartY + 20
 		  Self.CancelButton.Top = Self.ActionButton.Top
+		  Self.InstallServerButton.Top = Self.ActionButton.Top
 		  
 		  Var IdealHeight As Integer = Self.ActionButton.Bottom + 20
 		  Self.MinimumHeight = IdealHeight
@@ -732,6 +765,12 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = IgnoreBuiltInClassesTooltip, Type = String, Dynamic = True, Default = \"If checked\x2C discovered classes that match official classes will be skipped.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = InstallServerCaption, Type = String, Dynamic = True, Default = \"Go to Steam Page", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = InstallServerTooltip, Type = String, Dynamic = True, Default = \"Will launch Steam\x2C if necessary\x2C and show the Ark: Survival Ascended Dedicated Server in your library.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ManifestExplanation, Type = String, Dynamic = True, Default = \"This feature will look at the manifest inside the mod archive to try to guess at contents. It will be wrong very frequently\x2C but may help you get started.", Scope = Private
@@ -850,6 +889,28 @@ End
 		  End If
 		  
 		  Self.SteamPathField.Text = SelectedFolder.NativePath
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events InstallServerButton
+	#tag Event
+		Sub Pressed()
+		  Var Url As String = "steam://nav/games/details/2430930"
+		  #if TargetWindows
+		    Var Sh As New Shell
+		    Sh.Execute("start """" """ + Url + """")
+		    If Sh.ExitCode = 0 Then
+		      Return
+		    End If
+		  #elseif TargetMacOS
+		    Var Sh As New Shell
+		    Sh.Execute("open '" + Url + "'")
+		    If Sh.ExitCode = 0 Then
+		      Return
+		    End If
+		  #endif
+		  
+		  System.GotoURL(Url)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
