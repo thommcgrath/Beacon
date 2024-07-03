@@ -381,9 +381,9 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Var RequiredHashes As New Dictionary
-		  RequiredHashes.Value("mod_data_extractor.exe") = "21b6a14c0e83161fffada4213e37c251"
+		  RequiredHashes.Value("mod_data_extractor.exe") = "9aa2226fd8b74f0b6c51f8499be88397"
 		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "cb4eec121a03a28426cd45051d770ea1"
-		  RequiredHashes.Value("mod_data_extractor.pdb") = "6987a6cf575525eb0f0ea3f3b7c9be71"
+		  RequiredHashes.Value("mod_data_extractor.pdb") = "8a10e03768b98a883b599047bdeafcf2"
 		  Var ExtractorReady As Boolean = True
 		  For Each Entry As DictionaryEntry In RequiredHashes
 		    Var ExtractorFile As FolderItem = ExtractorRoot.Child(Entry.Key.StringValue)
@@ -409,7 +409,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v9.zip")
+		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v10.zip")
 		    If DownloadSocket.HTTPStatusCode <> 200 Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Failed to download extractor tool."))
 		      Return
@@ -496,12 +496,12 @@ Protected Class ModDiscoveryEngine2
 		    OutputPath = OutputPath.Left(OutputPath.Length - 1)
 		  End If
 		  Var Targets() As String
-		  Targets.Add("LootItemSet")
-		  Targets.Add("Egg")
+		  Targets.Add("ShooterGame/Content/.*LootItemSet")
+		  Targets.Add("ShooterGame/Content/.*Egg")
 		  For Each Entry As DictionaryEntry In ModPackageNames
 		    Targets.Add("ShooterGame/Mods/" + Entry.Value.StringValue + "/")
 		  Next
-		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --input """ + InputPath + """ --output """ + OutputPath + """ --badfile """ + BlacklistFile.NativePath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """"
+		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --badfile """ + BlacklistFile.NativePath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """"
 		  Var ExtractorShell As New Shell
 		  ExtractorShell.ExecuteMode = Shell.ExecuteModes.Interactive
 		  ExtractorShell.TimeOut = -1
@@ -509,6 +509,18 @@ Protected Class ModDiscoveryEngine2
 		  While ExtractorShell.IsRunning
 		    Sender.Sleep(10)
 		  Wend
+		  
+		  Var LogsFolder As FolderItem = App.LogsFolder
+		  If (LogsFolder Is Nil) = False And LogsFolder.CheckIsFolder(True) Then
+		    Var DiscoveryLogsFolder As FolderItem = LogsFolder.Child("Mod Discovery")
+		    If DiscoveryLogsFolder.CheckIsFolder(True) Then
+		      Var Now As New DateTime(Self.mTimestamp)
+		      Var LogFileBackup As FolderItem = DiscoveryLogsFolder.Child(Beacon.SanitizeFilename(Now.SQLDateTimeWithOffset + ".log"))
+		      Var BackupStream As TextOutputStream = TextOutputStream.Create(LogFileBackup)
+		      BackupStream.Write(ExtractorShell.Result)
+		      BackupStream.Close
+		    End If
+		  End If
 		  
 		  Self.mRoot = OutputFolder
 		  For Each ModId As String In ModIds
