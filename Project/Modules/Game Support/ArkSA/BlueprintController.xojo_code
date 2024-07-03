@@ -186,11 +186,11 @@ Protected Class BlueprintController
 		    Clone(Idx) = Task.Blueprints(Idx)
 		  Next
 		  
-		  RaiseEvent BlueprintsLoaded(Task)
-		  
 		  For Each Blueprint As ArkSA.Blueprint In Task.Blueprints
 		    Self.mOriginalBlueprints.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
+		  
+		  RaiseEvent BlueprintsLoaded(Task)
 		  
 		  Self.CleanupTask(Task)
 		End Sub

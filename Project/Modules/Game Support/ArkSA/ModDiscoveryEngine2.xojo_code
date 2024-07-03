@@ -14,12 +14,6 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub AddTagsToPath(Path As String, ParamArray AdditionalTags() As String)
-		  Self.AddTagsToPath(Path, AdditionalTags)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub AddTagsToPath(Path As String, AdditionalTags() As String)
 		  Var Tags() As String
 		  If Self.mTags.HasKey(Path) Then
@@ -37,6 +31,12 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub AddTagsToPath(Path As String, ParamArray AdditionalTags() As String)
+		  Self.AddTagsToPath(Path, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub AddTagToPath(Path As String, Tag As String)
 		  Self.AddTagsToPath(Path, Tag)
 		End Sub
@@ -50,6 +50,24 @@ Protected Class ModDiscoveryEngine2
 		  If (Self.mThread Is Nil) = False And Self.mThread.ThreadState = Thread.ThreadStates.Paused Then
 		    Self.mThread.Resume
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ClearDictionaries()
+		  Self.mContentPackIdsByPackage = New Dictionary
+		  Self.mPropertiesCache = New Dictionary
+		  Self.mUnlockDetails = New Dictionary
+		  Self.mItemPaths = New Dictionary
+		  Self.mCreaturePaths = New Dictionary
+		  Self.mLootPaths = New Dictionary
+		  Self.mSpawnPaths = New Dictionary
+		  Self.mTags = New Dictionary
+		  Self.mPathsScanned = New Dictionary
+		  Self.mContentPacks = New Dictionary
+		  Self.mFoundBlueprints = New Dictionary
+		  Self.mInventoryNames = New Dictionary
+		  Self.mBossPaths = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -149,20 +167,7 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Sub mThread_Run(Sender As Beacon.Thread)
 		  Self.mSuccess = False
-		  
-		  Self.mContentPackIdsByPackage = New Dictionary
-		  Self.mPropertiesCache = New Dictionary
-		  Self.mUnlockDetails = New Dictionary
-		  Self.mItemPaths = New Dictionary
-		  Self.mCreaturePaths = New Dictionary
-		  Self.mLootPaths = New Dictionary
-		  Self.mSpawnPaths = New Dictionary
-		  Self.mTags = New Dictionary
-		  Self.mPathsScanned = New Dictionary
-		  Self.mContentPacks = New Dictionary
-		  Self.mFoundBlueprints = New Dictionary
-		  Self.mInventoryNames = New Dictionary
-		  Self.mBossPaths = New Dictionary
+		  Self.ClearDictionaries()
 		  
 		  Var SteamRoot As FolderItem
 		  Try
@@ -382,7 +387,6 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Var BlacklistLines() As String
 		  BlacklistLines.Add("Engine/")
-		  BlacklistLines.Add("ShooterGame/Content/")
 		  BlacklistLines.Add("ShooterGame/Plugins/")
 		  BlacklistLines.Add("ShooterGame/AssetRegistry\.bin")
 		  
@@ -421,6 +425,7 @@ Protected Class ModDiscoveryEngine2
 		    OutputPath = OutputPath.Left(OutputPath.Length - 1)
 		  End If
 		  Var Targets() As String
+		  Targets.Add("LootItemSet")
 		  For Each Entry As DictionaryEntry In ModPackageNames
 		    Targets.Add("ShooterGame/Mods/" + Entry.Value.StringValue + "/")
 		  Next
@@ -467,7 +472,8 @@ Protected Class ModDiscoveryEngine2
 		    Self.StatusMessage = "Building loot drops…"
 		    For Each Entry As DictionaryEntry In Self.mLootPaths
 		      Var DropPath As String = Entry.Key
-		      Self.SyncLootDrop(DropPath)
+		      Var Type As LootDropType = Entry.Value
+		      Self.SyncLootDrop(DropPath, Type)
 		    Next
 		  End If
 		  
@@ -489,10 +495,14 @@ Protected Class ModDiscoveryEngine2
 		    RaiseEvent ContentPackDiscovered(Pack, Blueprints)
 		  Next
 		  
+		  // So these things are not taking up memory they don't need to
+		  Self.ClearDictionaries()
+		  
 		  Self.mSuccess = True
 		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished" : True))
 		  
 		  Exception TopLevelException As RuntimeException
+		    Self.ClearDictionaries()
 		    App.Log(TopLevelException, CurrentMethodName, "Running the discovery thread")
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Unhandled exception in discover thread.", "Exception": TopLevelException))
 		    
@@ -644,12 +654,6 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanCreature(Path As String, IsBoss As Boolean, ParamArray AdditionalTags() As String)
-		  Self.ScanCreature(Path, IsBoss, AdditionalTags)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ScanCreature(Path As String, IsBoss As Boolean, AdditionalTags() As String)
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
@@ -683,9 +687,19 @@ Protected Class ModDiscoveryEngine2
 		  Next
 		  
 		  // Make sure dino drop inventories are found.
+		  Var ClassString As String = Path.NthField(".", 2)
 		  Var Label As String = Properties.Lookup("DescriptiveName", "").StringValue.ReplaceLineEndings(" ")
 		  If Label.IsEmpty Then
-		    Label = ArkSA.LabelFromClassString(Path.NthField(".", 2))
+		    Label = ArkSA.LabelFromClassString(ClassString)
+		  End If
+		  If IsBoss Then
+		    If ClassString.Contains("Easy") Or ClassString.Contains("Gamma") Then
+		      Label = Label + " Easy"
+		    ElseIf ClassString.Contains("Medium") Or ClassString.Contains("Beta") Then
+		      Label = Label + " Medium"
+		    ElseIf ClassString.Contains("Hard") Or ClassString.Contains("Alpha") Then
+		      Label = Label + " Hard"
+		    End If
 		  End If
 		  Var Inventories As JSONMBS = Properties.Query("$.DeathInventoryTemplates.AssociatedObjects[*].ObjectPath")
 		  For Idx As Integer = 0 To Inventories.LastRowIndex
@@ -767,14 +781,14 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanForChildren(Properties As JSONMBS)
-		  
+		Private Sub ScanCreature(Path As String, IsBoss As Boolean, ParamArray AdditionalTags() As String)
+		  Self.ScanCreature(Path, IsBoss, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanItem(Path As String, NoSync As Boolean, ParamArray AdditionalTags() As String)
-		  Self.ScanItem(Path, NoSync, AdditionalTags)
+		Private Sub ScanForChildren(Properties As JSONMBS)
+		  
 		End Sub
 	#tag EndMethod
 
@@ -864,13 +878,19 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanItem(Path As String, AdditionalTags() As String)
-		  Self.ScanItem(Path, False, AdditionalTags)
+		Private Sub ScanItem(Path As String, NoSync As Boolean, ParamArray AdditionalTags() As String)
+		  Self.ScanItem(Path, NoSync, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ScanItem(Path As String, ParamArray AdditionalTags() As String)
+		  Self.ScanItem(Path, False, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanItem(Path As String, AdditionalTags() As String)
 		  Self.ScanItem(Path, False, AdditionalTags)
 		End Sub
 	#tag EndMethod
@@ -883,7 +903,46 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Method, Flags = &h21
 		Private Sub ScanLootDrop(Path As String, Type As LootDropType, AdditionalTags() As String)
+		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
+		  If Self.mPathsScanned.HasKey(Path) Then
+		    Return
+		  End If
+		  Self.mPathsScanned.Value(Path) = True
+		  
+		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
+		  If Properties Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mLootPaths.Value(Path) = Type
+		  
+		  Var AdditionalItemPaths As JSONMBS = Properties.Query("$.AdditionalItemSets[*].ItemEntries[*].Items[*].ObjectPath")
+		  For Idx As Integer = 0 To AdditionalItemPaths.LastRowIndex
+		    Var ItemPath As String = Self.NormalizePath(AdditionalItemPaths.ValueAt(Idx))
+		    Self.ScanItem(ItemPath)
+		  Next
+		  
+		  Var ItemSets As JSONMBS = Properties.Child("ItemSets")
+		  For Idx As Integer = 0 To ItemSets.LastRowIndex
+		    Var ItemSet As JSONMBS = ItemSets.ChildAt(Idx)
+		    If ItemSet.HasKey("ItemSetOverride") And ItemSet.Value("ItemSetOverride").IsNull = False Then
+		      Var OverridePath As String = Self.NormalizePath(ItemSet.Child("ItemSetOverride").Value("ObjectPath").StringValue)
+		      Var OverrideProperties As JSONMBS = Self.PropertiesForPath(OverridePath)
+		      If OverrideProperties Is Nil Then
+		        Continue
+		      End If
+		      ItemSet = OverrideProperties.Child("ItemSet")
+		    End If
+		    
+		    Var ItemPaths As JSONMBS = ItemSet.Query("$.ItemEntries[*].Items[*].ObjectPath")
+		    For ItemPathIdx As Integer = 0 To ItemPaths.LastRowIndex
+		      Var ItemPath As String = Self.NormalizePath(ItemPaths.ValueAt(ItemPathIdx))
+		      Self.ScanItem(ItemPath)
+		    Next
+		  Next
+		  
+		  Self.ScanForChildren(Properties)
 		End Sub
 	#tag EndMethod
 
@@ -1299,8 +1358,256 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SyncLootDrop(Path As String)
+		Private Sub SyncLootDrop(Path As String, Type As LootDropType)
+		  Var ContentPackId As String = Self.ContentPackIdForPath(Path)
+		  If ContentPackId = Self.OfficialContentPackId Then
+		    Return
+		  End If
+		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
 		  
+		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
+		  
+		  Var DropId As String = Self.CreateObjectId(Path, ContentPackId)
+		  Var Drop As New ArkSA.MutableLootContainer(Path, DropId)
+		  Var ClassString As String = Path.NthField(".", 2)
+		  
+		  If Self.mInventoryNames.HasKey(Path) Then
+		    Var Names() As String = Self.mInventoryNames.Value(Path)
+		    Drop.Label = Language.EnglishOxfordList(Names, "and", 2)
+		  Else
+		    Var DescriptiveName As String = Properties.Lookup("DescriptiveName", "")
+		    Select Case DescriptiveName
+		    Case "", "Loot Crate", "Supply Crate", "Corpse", "Buried Treasure Cache", "Buried Treasure", "Artifact", "Boss Loot", "Boss Loot Gamma", "Boss Loot Beta", "Boss Loot Alpha"
+		      Drop.Label = ArkSA.LabelFromClassString(ClassString)
+		    Else
+		      // Allows mod authors to set good names... but they won't
+		      Break
+		      Drop.Label = DescriptiveName
+		    End Select
+		  End If
+		  
+		  Var MinQualityMultiplier As Double = Properties.Lookup("MinQualityMultiplier", 1.0)
+		  Var MaxQualityMultiplier As Double = Properties.Lookup("MaxQualityMultiplier", 1.0)
+		  Drop.Multipliers = New Beacon.Range(MinQualityMultiplier, MaxQualityMultiplier)
+		  
+		  Drop.MinItemSets = Properties.Lookup("MinItemSets", 1)
+		  Drop.MaxItemSets = Properties.Lookup("MaxItemSets", 1)
+		  Drop.PreventDuplicates = Properties.Lookup("bSetsRandomWithoutReplacement", False)
+		  Drop.ContentPackId = ContentPackId
+		  Drop.ContentPackName = Pack.Name
+		  Drop.UIColor = &cFFFFFF00
+		  
+		  Select Case Type
+		  Case LootDropType.Regular
+		    Var RequiredLevel As Integer = Properties.Lookup("RequiredLevelToAccess", 3).IntegerValue
+		    Var IsBonus As Boolean = ClassString.Contains("Double")
+		    If RequiredLevel >= 55 Then
+		      Drop.UIColor = &cFFBABA00
+		      Drop.AddTag("red")
+		      Drop.SortValue = 11
+		    ElseIf RequiredLevel >= 40 Then
+		      Drop.UIColor = &cFFF02A00
+		      Drop.AddTag("yellow")
+		      Drop.SortValue = 9
+		    ElseIf RequiredLevel >= 35 Then
+		      Drop.UIColor = &cE6BAFF00
+		      Drop.AddTag("purple")
+		      Drop.SortValue = 7
+		    ElseIf RequiredLevel >= 25 Then
+		      Drop.UIColor = &c88C8FF00
+		      Drop.AddTag("blue")
+		      Drop.SortValue = 5
+		    ElseIf RequiredLevel >= 10 Then
+		      Drop.UIColor = &c00FF0000
+		      Drop.AddTag("green")
+		      Drop.SortValue = 3
+		    Else
+		      Drop.AddTag("white")
+		      Drop.SortValue = 1
+		    End If
+		    If IsBonus Then
+		      Drop.SortValue = Drop.SortValue + 1
+		    End If
+		    
+		    If ClassString.Contains("Cave") Then
+		      Drop.IconID = If(IsBonus, "d66cd81d-a51d-574a-9b69-826f3e75a4b2", "fccfbd07-424c-5902-b5bb-9c6165fe828f")
+		      Drop.AddTag("crate")
+		    ElseIf ClassString.Contains("Artifact") Then
+		      Drop.IconID = If(IsBonus, "d66cd81d-a51d-574a-9b69-826f3e75a4b2", "fccfbd07-424c-5902-b5bb-9c6165fe828f")
+		      Drop.AddTag("crate")
+		      Drop.AddTag("artifact")
+		    ElseIf ClassString.Contains("Ocean") Then
+		      Drop.IconID = If(IsBonus, "d66cd81d-a51d-574a-9b69-826f3e75a4b2", "fccfbd07-424c-5902-b5bb-9c6165fe828f")
+		      Drop.AddTag("crate")
+		      Drop.AddTag("rare")
+		    Else
+		      Drop.AddTag("drop")
+		      Drop.IconID = If(IsBonus, "ca8cdf82-cbf8-5531-808a-fb91d413505d", "d5bb71e5-fba5-51f3-b120-f1abadc1fa6e")
+		    End If
+		  Case LootDropType.Boss
+		    Drop.IconID = "b7548942-53be-5046-892a-74816e43a938"
+		    Drop.SortValue = 150
+		    Drop.AddTag("boss")
+		    
+		    If ClassString.Contains("Easy") Or ClassString.Contains("Gamma") Then
+		      Drop.UIColor = &c00FF0000
+		      Drop.AddTag("easy")
+		    ElseIf ClassString.Contains("Medium") Or ClassString.Contains("Beta") Then
+		      Drop.UIColor = &cFFF02A00
+		      Drop.AddTag("medium")
+		      Drop.SortValue = Drop.SortValue + 1
+		    ElseIf ClassString.Contains("Hard") Or ClassString.Contains("Alpha") Then
+		      Drop.UIColor = &cFFBABA00
+		      Drop.AddTag("hard")
+		      Drop.SortValue = Drop.SortValue + 2
+		    End If
+		  Case LootDropType.Dino
+		    Drop.IconID = "b7548942-53be-5046-892a-74816e43a938"
+		    Drop.SortValue = 200
+		    Drop.Experimental = True
+		    Drop.AddTag("dino")
+		    
+		    If ClassString.Contains("Mega") Then
+		      Drop.UIColor = &cFFBABA00
+		    End If
+		  End Select
+		  
+		  Var ItemSetsList As JSONMBS = Properties.Child("ItemSets")
+		  Var ItemSets() As JSONMBS
+		  Var Labels() As String
+		  Var ItemSetsByLabel As New Dictionary
+		  For Idx As Integer = 0 To ItemSetsList.LastRowIndex
+		    Var ItemSet As JSONMBS = ItemSetsList.ChildAt(Idx)
+		    If ItemSet.HasKey("ItemSetOverride") And ItemSet.Value("ItemSetOverride").IsNull = False Then
+		      Var OverridePath As String = Self.NormalizePath(ItemSet.Child("ItemSetOverride").Value("ObjectPath").StringValue)
+		      Var OverrideProperties As JSONMBS = Self.PropertiesForPath(OverridePath)
+		      If OverrideProperties Is Nil Then
+		        COntinue
+		      End If
+		      Var OriginalItemSet As JSONMBS = ItemSet
+		      ItemSet = New JSONMBS(OverrideProperties.Child("ItemSet")) // Make sure to use a clone or you update the override item set
+		      
+		      Var Keys() As String  = OriginalItemSet.Keys
+		      For Each Key As String In Keys
+		        If ItemSet.HasKey(Key) = False Then
+		          ItemSet.Value(Key) = OriginalItemSet.Value(Key)
+		        End If
+		      Next
+		    End If
+		    
+		    ItemSets.Add(ItemSet)
+		    
+		    Var Label As String = ItemSet.Lookup("SetName", "").StringValue.Trim
+		    If Label.IsEmpty Then
+		      Label = "Unnamed Item Set"
+		    End If
+		    
+		    Var Siblings() As JSONMBS
+		    If ItemSetsByLabel.HasKey(Label) Then
+		      Siblings = ItemSetsByLabel.Value(Label)
+		    Else
+		      ItemSetsByLabel.Value(Label) = Siblings
+		    End If
+		    Siblings.Add(ItemSet)
+		    
+		    If Labels.IndexOf(Label) = -1 Then
+		      Labels.Add(Label)
+		    End If
+		  Next
+		  
+		  For Each Label As String In Labels
+		    Var Siblings() As JSONMBS = ItemSetsByLabel.Value(Label)
+		    If Siblings.Count <= 1 Then
+		      Continue
+		    End If
+		    
+		    For Idx As Integer = 0 To Siblings.LastIndex
+		      Var Suffix As Integer = Idx + 1
+		      Siblings(Idx).Value("SetName") = Label + " " + Suffix.ToString(Locale.Raw, "0")
+		    Next
+		  Next
+		  
+		  For Idx As Integer = 0 To ItemSets.LastIndex
+		    Var ItemSetId As String = Beacon.UUID.v5(DropId + ":" + Idx.ToString(Locale.Raw, "0"))
+		    Self.SyncLootItemSet(Drop, MinQualityMultiplier, MaxQualityMultiplier, ItemSetId, ItemSets(Idx))
+		  Next
+		  
+		  If Self.mTags.HasKey(Path) Then
+		    Var Tags() As String = Self.mTags.Value(Path)
+		    Drop.AddTags(Tags)
+		  End If
+		  
+		  Self.AddBlueprint(Drop)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncLootItemSet(Drop As ArkSA.MutableLootContainer, MinQualityMultiplier As Double, MaxQualityMultiplier As Double, ItemSetId As String, Source As JSONMBS)
+		  If Source.HasKey("ItemEntries") = False Or Source.Value("ItemEntries").IsNull Then
+		    Return
+		  End If
+		  
+		  Var ItemSet As New ArkSA.MutableLootItemSet
+		  ItemSet.UUID = ItemSetId
+		  ItemSet.Label = Source.Value("SetName").StringValue
+		  ItemSet.MinNumItems = Source.Value("MinNumItems").DoubleValue
+		  ItemSet.MaxNumItems = Source.Value("MaxNumItems").DoubleValue
+		  ItemSet.RawWeight = Min(Source.Value("SetWeight").DoubleValue * 500, 9999999999.999999)
+		  ItemSet.ItemsRandomWithoutReplacement = Source.Value("bItemsRandomWithoutReplacement").BooleanValue
+		  
+		  Var Entries As JSONMBS = Source.Child("ItemEntries")
+		  For Idx As Integer = 0 To Entries.LastRowIndex
+		    Var EntryId As String = Beacon.UUID.v5(ItemSetId + ":" + Idx.ToString(Locale.Raw, "0"))
+		    Self.SyncLootItemSetEntry(ItemSet, MinQualityMultiplier, MaxQualityMultiplier, EntryId, Entries.ChildAt(Idx))
+		  Next
+		  
+		  If ItemSet.Count > 0 Then
+		    Drop.Add(ItemSet)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncLootItemSetEntry(ItemSet As ArkSA.MutableLootItemSet, MinQualityMultiplier As Double, MaxQualityMultiplier As Double, EntryId As String, Source As JSONMBS)
+		  If Source.HasKey("Items") = False Or Source.Value("Items").IsNull Then
+		    Return
+		  End If
+		  
+		  Var Options As JSONMBS = Source.Child("Items")
+		  If Options.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Var BaseArbitraryQuality As Double = ArkSA.Configs.Difficulty.BaseArbitraryQuality(5.0)
+		  Var Entry As New ArkSA.MutableLootItemSetEntry
+		  Entry.EntryId = EntryId
+		  Entry.MinQuantity = Source.Value("MinQuantity")
+		  Entry.MaxQuantity = Source.Value("MaxQuantity")
+		  Entry.MinQuality = ArkSA.Qualities.ForValue(Source.Value("MinQuality").DoubleValue, MinQualityMultiplier, BaseArbitraryQuality)
+		  Entry.MaxQuality = ArkSA.Qualities.ForValue(Source.Value("MaxQuality").DoubleValue, MaxQualityMultiplier, BaseArbitraryQuality)
+		  Entry.ChanceToBeBlueprint = If(Source.Value("bForceBlueprint").BooleanValue, 1.0, Source.Value("ChanceToBeBlueprintOverride").DoubleValue)
+		  Entry.SingleItemQuantity = Source.Lookup("bApplyQuantityToSingleItem", False).BooleanValue
+		  Entry.PreventGrinding = Source.Lookup("bForcePreventGrinding", False).BooleanValue
+		  Entry.StatClampMultiplier = Source.Lookup("ItemStatClampsMultiplier", 1.0).DoubleValue
+		  
+		  Var Weights As JSONMBS = Source.Child("ItemsWeights")
+		  For Idx As Integer = 0 To Options.LastRowIndex
+		    Var OptionId As String = Beacon.UUID.v5(EntryId + ":" + Idx.ToString(Locale.Raw, "0"))
+		    Var WeightIdx As Integer = Min(Idx, Weights.LastRowIndex)
+		    Var Weight As Double = If(WeightIdx >= 0, Weights.ValueAt(WeightIdx).DoubleValue * 100, 50)
+		    Var EngramPath As String = Self.NormalizePath(Options.ChildAt(Idx).Value("ObjectPath"))
+		    If EngramPath.IsEmpty Then
+		      Continue
+		    End If
+		    Var EngramId As String = Self.CreateObjectId(EngramPath)
+		    
+		    Var Option As New ArkSA.LootItemSetEntryOption(New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, EngramId, EngramPath), Weight, OptionId)
+		    Entry.Add(Option)
+		  Next
+		  
+		  If Entry.Count > 0 Then
+		    ItemSet.Add(Entry)
+		  End If
 		End Sub
 	#tag EndMethod
 

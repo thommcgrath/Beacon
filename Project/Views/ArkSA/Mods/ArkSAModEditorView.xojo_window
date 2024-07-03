@@ -656,10 +656,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_BlueprintsLoaded(Sender As ArkSA.BlueprintController, Task As ArkSA.BlueprintControllerFetchTask)
+		  // The blueprints returned in this event may not be the latest versions. Recent edits
+		  // would get blown away, so use only the blueprint id to fetch the correct version
+		  // from the controller.
+		  
 		  Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Task.Mode)
 		  Var Blueprints() As ArkSA.Blueprint = Task.Blueprints
 		  For Idx As Integer = 0 To Blueprints.LastIndex
-		    CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Blueprints(Idx)
+		    CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Sender.Blueprint(Blueprints(Idx).BlueprintId)
 		  Next
 		  
 		  If Task.Page < Task.TotalPages Then
