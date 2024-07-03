@@ -78,6 +78,7 @@ Protected Class ModDiscoveryEngine2
 		  Self.mFoundBlueprints = New Dictionary
 		  Self.mInventoryNames = New Dictionary
 		  Self.mBossPaths = New Dictionary
+		  Self.mScriptedObjectPaths = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -273,9 +274,13 @@ Protected Class ModDiscoveryEngine2
 		  Var ModIds() As String = Self.mSettings.ModIds
 		  Var ModPackageNames As New Dictionary
 		  Var ModInfos As New Dictionary
+		  Var HadSomeSuccess As Boolean
 		  For Each ModId As String In ModIds
 		    Var ModInfo As CurseForge.ModInfo = CurseForge.LookupMod(ModId)
 		    If ModInfo Is Nil Then
+		      Continue
+		    ElseIf ModInfo.IsArkSA = False Then
+		      App.Log("Mod " + ModInfo.ModName + " (" + ModId + ") is not an Ark: Survival Ascended mod.")
 		      Continue
 		    End If
 		    ModInfos.Value(ModId) = ModInfo
@@ -329,6 +334,7 @@ Protected Class ModDiscoveryEngine2
 		    
 		    Var ManifestFile As FolderItem = ModFolder.Child("Manifest_UFSFiles_Win64.txt")
 		    Var ManifestStream As TextInputStream = TextInputStream.Open(ManifestFile)
+		    Var Found As Boolean
 		    Do Until ManifestStream.EndOfFile
 		      Var ManifestLine As String = ManifestStream.ReadLine(Encodings.UTF8)
 		      Var Matches As RegExMatch = ManifestPattern.Search(ManifestLine)
@@ -342,13 +348,30 @@ Protected Class ModDiscoveryEngine2
 		        Pack.Marketplace = Beacon.MarketplaceCurseForge
 		        Pack.MarketplaceId = ModId
 		        Self.mContentPacks.Value(ContentPackId) = Pack
+		        
+		        Found = True
 		        Exit
 		      End If
 		    Loop
 		    ManifestStream.Close
 		    
+		    If Not Found Then
+		      App.Log("Could not find package name for " + ModId)
+		      Continue
+		    End If
+		    
 		    InfoFile.Write(ModInfo.ToString(True))
+		    HadSomeSuccess = True
 		  Next
+		  
+		  If Not HadSomeSuccess Then
+		    If ModIds.Count = 1 Then
+		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "The requested mod could not be downloaded."))
+		    Else
+		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "None of the requested mods could be downloaded."))
+		    End If
+		    Return
+		  End If
 		  
 		  Var ExtractorRoot As FolderItem = App.ApplicationSupport.Child("ASA Extractor")
 		  If Not ExtractorRoot.CheckIsFolder Then
@@ -488,14 +511,13 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Self.mRoot = OutputFolder
 		  For Each ModId As String In ModIds
-		    Var PackageName As String = ModPackageNames.Value(ModId)
-		    
 		    Try
+		      Var PackageName As String = ModPackageNames.Value(ModId)
 		      Var ModInfo As CurseForge.ModInfo = ModInfos.Value(ModId)
 		      Self.StatusMessage = "Planning blueprints for " + ModInfo.ModName + "…"
 		      Self.ScanMod(ModId, PackageName)
 		    Catch Err As RuntimeException
-		      App.Log("Unhandled exception scanning mod " + PackageName + " (" + ModId + ")")
+		      App.Log(Err, CurrentMethodName, "Scanning mod " + ModId)
 		      Continue
 		    End Try
 		  Next
@@ -1148,6 +1170,36 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		  End If
 		  
+		  // ScanPrimalGameData will film mScriptedObjectPaths. We can compare those paths against
+		  // certain parents to take a good guess at what the script makes use of. The problem
+		  // with this is it cannot detect *how* something is used, so a boss won't be seen as a
+		  // boss since if it isn't linked through traditional means.
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalDinoCharacter'") Then
+		    Var DinoAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalDinoCharacter'")
+		    For Each Entry As DictionaryEntry In DinoAssets
+		      Var DinoPath As String = Entry.Key.StringValue
+		      If Self.mScriptedObjectPaths.HasKey(DinoPath) Then
+		        Self.ScanCreature(DinoPath, False)
+		      End If
+		    Next
+		  End If
+		  #if false
+		    // This probably isn't needed and may make results worse
+		    If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem'") Then
+		      Var ItemAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem'")
+		      For Each Entry As DictionaryEntry In ItemAssets
+		        Var ItemPath As String = Entry.Key.StringValue
+		        If Self.mScriptedObjectPaths.HasKey(ItemPath) Then
+		          Self.ScanItem(ItemPath)
+		        End If
+		      Next
+		    End If
+		  #endif
+		  
+		  
+		  
+		  
+		  
 		  
 		End Sub
 	#tag EndMethod
@@ -1232,6 +1284,25 @@ Protected Class ModDiscoveryEngine2
 		      Var ItemPath As String = Self.NormalizePath(RemappedItemPaths.ValueAt(Idx))
 		      Self.ScanItem(ItemPath)
 		    Next
+		    
+		    // These are essentially script objects that are unpredictable. So for each, we're going to grab every path
+		    // and see which ones are found in the asset registry.
+		    If AssetContainer.HasKey("ServerExtraWorldSingletonActorClasses") Then
+		      Var ActorPaths As JSONMBS = AssetContainer.Query("$.ServerExtraWorldSingletonActorClasses[*].ObjectPath")
+		      For Idx As Integer = 0 To ActorPaths.LastRowIndex
+		        Var ActorPath As String = Self.NormalizePath(ActorPaths.ValueAt(Idx))
+		        Var ActorProperties As JSONMBS = Self.PropertiesForPath(ActorPath)
+		        If ActorProperties Is Nil Then
+		          Continue
+		        End If
+		        
+		        Var AllObjectPaths As JSONMBS = ActorProperties.Query("$..ObjectPath")
+		        For PathIdx As Integer = 0 To AllObjectPaths.LastRowIndex
+		          Var ObjectPath As String = Self.NormalizePath(AllObjectPaths.ValueAt(PathIdx))
+		          Self.mScriptedObjectPaths.Value(ObjectPath) = True
+		        Next
+		      Next
+		    End If
 		  Next
 		End Sub
 	#tag EndMethod
@@ -2128,6 +2199,10 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Property, Flags = &h21
 		Private mRoot As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScriptedObjectPaths As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

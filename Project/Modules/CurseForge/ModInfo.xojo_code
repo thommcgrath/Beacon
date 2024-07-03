@@ -25,6 +25,12 @@ Protected Class ModInfo
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsArkSA() As Boolean
+		  Return Self.mGameId = 83374
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LastUpdateString() As String
 		  Return Self.mLastUpdateString
 		End Function
@@ -119,14 +125,6 @@ Protected Class ModInfo
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mModId"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
