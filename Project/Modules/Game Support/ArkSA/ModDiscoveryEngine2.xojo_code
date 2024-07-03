@@ -528,7 +528,7 @@ Protected Class ModDiscoveryEngine2
 		      Var PackageName As String = ModPackageNames.Value(ModId)
 		      Var ModInfo As CurseForge.ModInfo = ModInfos.Value(ModId)
 		      Self.StatusMessage = "Planning blueprints for " + ModInfo.ModName + "…"
-		      Self.ScanMod(ModId, PackageName)
+		      Self.ScanMod(PackageName)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Scanning mod " + ModId)
 		      Continue
@@ -1140,7 +1140,7 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanMod(ModId As String, PackageName As String)
+		Private Sub ScanMod(PackageName As String)
 		  Var RegistryFile As FolderItem = Self.mRoot.Child("ShooterGame").Child("Mods").Child(PackageName).Child("AssetRegistry.json")
 		  
 		  Var NativeParents As New Dictionary

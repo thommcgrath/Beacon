@@ -913,6 +913,10 @@ Protected Module ArkSA
 		    Return True
 		  End If
 		  
+		  If (Flags And FlagMatchBlueprintId) > 0 And (Rx.Match(Blueprint.BlueprintId) Is Nil) = False Then
+		    Return True
+		  End If
+		  
 		  If (Flags And FlagMatchUnlockString) > 0 And (Blueprint IsA ArkSA.Engram And ArkSA.Engram(Blueprint).EntryString.IsEmpty = False And (Rx.Match(ArkSA.Engram(Blueprint).EntryString) Is Nil) = False) Then
 		    Return True
 		  End If
@@ -936,6 +940,10 @@ Protected Module ArkSA
 		  End If
 		  
 		  If (Flags And FlagMatchClass) > 0 And Blueprint.ClassString.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchBlueprintId) > 0 And Blueprint.BlueprintId.Contains(Filter) Then
 		    Return True
 		  End If
 		  
@@ -1748,7 +1756,10 @@ Protected Module ArkSA
 	#tag Constant, Name = Enabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = FlagMatchAny, Type = Double, Dynamic = False, Default = \"15", Scope = Protected
+	#tag Constant, Name = FlagMatchAny, Type = Double, Dynamic = False, Default = \"31", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchBlueprintId, Type = Double, Dynamic = False, Default = \"16", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FlagMatchClass, Type = Double, Dynamic = False, Default = \"4", Scope = Protected

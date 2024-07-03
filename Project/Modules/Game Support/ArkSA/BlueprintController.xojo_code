@@ -36,7 +36,7 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function AuthoritativeForContentPackIds() As String()
-		  Return Array(Self.mContentPackId)
+		  Return Array(Self.mContentPack.ContentPackId)
 		End Function
 	#tag EndMethod
 
@@ -489,7 +489,10 @@ Implements ArkSA.BlueprintProvider
 		  Var Results() As ArkSA.LootContainer
 		  Results.ResizeTo(Blueprints.LastIndex)
 		  For Idx As Integer = 0 To Results.LastIndex
-		    Results(Idx) = ArkSA.LootContainer(Blueprints(Idx))
+		    Var Container As ArkSA.LootContainer = ArkSA.LootContainer(Blueprints(Idx))
+		    If IncludeExperimental = True Or Container.Experimental = False Then
+		      Results(Idx) = Container
+		    End If
 		  Next
 		  Return Results
 		End Function

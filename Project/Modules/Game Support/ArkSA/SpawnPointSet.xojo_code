@@ -618,6 +618,8 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
 		  
+		  #Pragma Unused Project
+		  
 		  Location = Location + Beacon.Issue.Separator + Self.mSetId
 		  
 		  If Self.mEntries.Count = 0 Then

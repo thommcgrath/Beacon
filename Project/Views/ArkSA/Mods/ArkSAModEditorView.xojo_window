@@ -376,6 +376,7 @@ Begin ModEditorView ArkSAModEditorView
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine2 DiscoveryEngine2
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -665,7 +666,7 @@ End
 		  Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Task.Mode)
 		  Var Blueprints() As ArkSA.Blueprint = Task.Blueprints
 		  For Idx As Integer = 0 To Blueprints.LastIndex
-		    Var Blueprint As ArkSA.Blueprint = Sender.Blueprint(Blueprints(Idx).BlueprintId)
+		    Var Blueprint As ArkSA.Blueprint = Sender.GetBlueprint(Blueprints(Idx).BlueprintId)
 		    If (Blueprint Is Nil) = False Then
 		      CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Blueprint
 		    ElseIf CurrentBlueprints.HasKey(Blueprints(Idx).BlueprintId) Then
