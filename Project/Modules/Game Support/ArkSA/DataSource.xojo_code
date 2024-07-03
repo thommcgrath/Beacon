@@ -1,6 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
+Implements ArkSA.BlueprintProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
@@ -745,6 +746,18 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AuthoritativeForContentPackIds() As String()
+		  Var ContentPackIds() As String
+		  Var Rows As RowSet = Self.SQLSelect("SELECT DISTINCT content_pack_id FROM content_packs;")
+		  While Not Rows.AfterLastRow
+		    ContentPackIds.Add(Rows.Column("content_pack_id").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
+		  Return ContentPackIds
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As ArkSA.Blueprint) As Boolean
 		  If Item Is Nil Then
 		    Return False
@@ -1098,30 +1111,6 @@ Inherits Beacon.DataSource
 		  Case ArkSA.CategorySpawnPoints
 		    Return Self.GetSpawnPoint(BlueprintId, UseCache)
 		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Blueprint()
-		  Var Categories() As String = ArkSA.Categories
-		  Var Blueprints() As ArkSA.Blueprint
-		  Var ExtraClauses() As String
-		  Var ExtraValues() As Variant
-		  For Each Category As String In Categories
-		    Var Results() As ArkSA.Blueprint = Self.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
-		    For Each Result As ArkSA.Blueprint In Results
-		      Blueprints.Add(Result)
-		    Next
-		  Next
-		  Return Blueprints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Blueprint()
-		  Var ExtraClauses() As String
-		  Var ExtraValues() As Variant
-		  Return Self.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
 		End Function
 	#tag EndMethod
 

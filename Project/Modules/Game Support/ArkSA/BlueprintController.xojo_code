@@ -1,5 +1,6 @@
 #tag Class
 Protected Class BlueprintController
+Implements ArkSA.BlueprintProvider
 	#tag Method, Flags = &h21
 		Private Sub AddTask(Task As ArkSA.BlueprintControllerTask)
 		  Self.mPendingTasks.Add(Task)
@@ -34,18 +35,17 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Blueprint(BlueprintId As String) As ArkSA.Blueprint
-		  If Self.mChanges.HasKey(BlueprintId) Then
-		    If Self.mChanges.Value(BlueprintId).Type = Variant.TypeString Then
-		      Return Nil
-		    End If
-		    
-		    Return Self.mChanges.Value(BlueprintId)
-		  End If
+		Function AuthoritativeForContentPackIds() As String()
+		  Return Array(Self.mContentPackId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BlueprintIsCustom(Item As ArkSA.Blueprint) As Boolean
+		  // Part of the ArkSA.BlueprintProvider interface.
 		  
-		  If Self.mOriginalBlueprints.HasKey(BlueprintId) Then
-		    Return Self.mOriginalBlueprints.Value(BlueprintId)
-		  End If
+		  #Pragma Unused Item
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -224,6 +224,409 @@ Protected Class BlueprintController
 		  End If
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprint(BlueprintId As String, UseCache As Boolean = True) As ArkSA.Blueprint
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  #Pragma Unused UseCache
+		  
+		  If Self.mChanges.HasKey(BlueprintId) Then
+		    If Self.mChanges.Value(BlueprintId).Type = Variant.TypeString Then
+		      Return Nil
+		    End If
+		    
+		    Return Self.mChanges.Value(BlueprintId)
+		  End If
+		  
+		  If Self.mOriginalBlueprints.HasKey(BlueprintId) Then
+		    Return Self.mOriginalBlueprints.Value(BlueprintId)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  #Pragma Unused ContentPacks
+		  
+		  #if DebugBuild
+		    If ExtraClauses.Count > 0 Or ExtraValues.Count > 0 Then
+		      Break
+		    End If
+		  #endif
+		  
+		  Var SearchFlags As Integer
+		  If SearchText.IsEmpty = False Then
+		    If SearchText.BeginsWith("path:") Then
+		      SearchFlags = ArkSA.FlagMatchPath
+		      SearchText = SearchText.Middle(5)
+		    ElseIf SearchText.BeginsWith("label:") Then
+		      SearchFlags = ArkSA.FlagMatchLabel
+		      SearchText = SearchText.Middle(6)
+		    ElseIf SearchText.BeginsWith("class:") Then
+		      SearchFlags = ArkSA.FlagMatchClass
+		      SearchText = SearchText.Middle(6)
+		    ElseIf SearchText.BeginsWith("unlock:") Then
+		      SearchFlags = ArkSA.FlagMatchUnlockString
+		      SearchText = SearchText.Middle(7)
+		    Else
+		      SearchFlags = ArkSA.FlagMatchAny
+		    End If
+		  End If
+		  
+		  Var Results() As ArkSA.Blueprint
+		  Var Sources() As Dictionary = Array(Self.mChanges, Self.mOriginalBlueprints)
+		  Var CheckedIds As New Dictionary
+		  Var MatchCategory As Boolean = Category.IsEmpty = False
+		  For Each Source As Dictionary In Sources
+		    For Each Entry As DictionaryEntry In Source
+		      Var BlueprintId As String = Entry.Key
+		      If CheckedIds.HasKey(BlueprintId) Then
+		        Continue
+		      End If
+		      CheckedIds.Value(BlueprintId) = True
+		      
+		      If Entry.Value.Type = Variant.TypeString Then
+		        Continue
+		      End If
+		      
+		      Var Blueprint As ArkSA.Blueprint = Entry.Value
+		      If MatchCategory And Blueprint.Category <> Category Then
+		        Continue
+		      End If
+		      
+		      If Blueprint.Matches(SearchText, SearchFlags) = False Then
+		        Continue
+		      End If
+		      
+		      If Blueprint.MatchesTags(Tags) = False Then
+		        Continue
+		      End If
+		      
+		      Results.Add(Blueprint)
+		    Next
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByPath(Path As String, ContentPacks As Beacon.StringList, UseCache As Boolean = True) As ArkSA.Blueprint()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  #Pragma Unused UseCache
+		  Return Self.GetBlueprints("", "path:" + Path, ContentPacks, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreature(CreatureId As String, UseCache As Boolean = True) As ArkSA.Creature
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprint As ArkSA.Blueprint = Self.GetBlueprint(CreatureId, UseCache)
+		  If (Blueprint Is Nil) = False And Blueprint IsA ArkSA.Creature Then
+		    Return ArkSA.Creature(Blueprint)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Creature()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryCreatures, SearchText, ContentPacks, Tags)
+		  Var Results() As ArkSA.Creature
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.Creature(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreaturesByClass(ClassString As String, ContentPacks As Beacon.StringList) As ArkSA.Creature()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryCreatures, "class:" + ClassString, ContentPacks, "")
+		  Var Results() As ArkSA.Creature
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.Creature(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreaturesByPath(Path As String, ContentPacks As Beacon.StringList) As ArkSA.Creature()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryCreatures, "path:" + Path, ContentPacks, "")
+		  Var Results() As ArkSA.Creature
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.Creature(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngram(EngramId As String, UseCache As Boolean = True) As ArkSA.Engram
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprint As ArkSA.Blueprint = Self.GetBlueprint(EngramId, UseCache)
+		  If (Blueprint Is Nil) = False And Blueprint IsA ArkSA.Engram Then
+		    Return ArkSA.Engram(Blueprint)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramByItemID(ItemId As Integer) As ArkSA.Engram
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryEngrams, "", Nil, "")
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    If Blueprint IsA ArkSA.Engram And (ArkSA.Engram(Blueprint).ItemID Is Nil) = False And ArkSA.Engram(Blueprint).ItemID.IntegerValue = ItemId Then
+		      Return ArkSA.Engram(Blueprint)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Engram()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryEngrams, SearchText, ContentPacks, Tags)
+		  Var Results() As ArkSA.Engram
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    If Blueprint IsA ArkSA.Engram And ArkSA.Engram(Blueprint).HasUnlockDetails Then
+		      Results.Add(ArkSA.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Engram()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryEngrams, SearchText, ContentPacks, Tags)
+		  Var Results() As ArkSA.Engram
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.Engram(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByClass(ClassString As String, ContentPacks As Beacon.StringList) As ArkSA.Engram()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryEngrams, "class:" + ClassString, ContentPacks, "")
+		  Var Results() As ArkSA.Engram
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.Engram(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByEntryString(EntryString As String, ContentPacks As Beacon.StringList) As ArkSA.Engram()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryEngrams, "unlock:" + EntryString, ContentPacks, "")
+		  Var Results() As ArkSA.Engram
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.Engram(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByPath(Path As String, ContentPacks As Beacon.StringList) As ArkSA.Engram()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryEngrams, "path:" + Path, ContentPacks, "")
+		  Var Results() As ArkSA.Engram
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.Engram(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainer(LootDropId As String, UseCache As Boolean = True) As ArkSA.LootContainer
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprint As ArkSA.Blueprint = Self.GetBlueprint(LootDropId, UseCache)
+		  If (Blueprint Is Nil) = False And Blueprint IsA ArkSA.LootContainer Then
+		    Return ArkSA.LootContainer(Blueprint)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryLootContainers, SearchText, ContentPacks, Tags)
+		  Var Results() As ArkSA.LootContainer
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.LootContainer(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainersByClass(ClassString As String, ContentPacks As Beacon.StringList) As ArkSA.LootContainer()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryLootContainers, "class:" + ClassString, ContentPacks, "")
+		  Var Results() As ArkSA.LootContainer
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.LootContainer(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainersByPath(Path As String, ContentPacks As Beacon.StringList) As ArkSA.LootContainer()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryLootContainers, "path:" + Path, ContentPacks, "")
+		  Var Results() As ArkSA.LootContainer
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.LootContainer(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPoint(SpawnPointId As String, UseCache As Boolean = True) As ArkSA.SpawnPoint
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprint As ArkSA.Blueprint = Self.GetBlueprint(SpawnPointId, UseCache)
+		  If (Blueprint Is Nil) = False And Blueprint IsA ArkSA.SpawnPoint Then
+		    Return ArkSA.SpawnPoint(Blueprint)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.SpawnPoint()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategorySpawnPoints, SearchText, ContentPacks, Tags)
+		  Var Results() As ArkSA.SpawnPoint
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.SpawnPoint(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByClass(ClassString As String, ContentPacks As Beacon.StringList) As ArkSA.SpawnPoint()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategorySpawnPoints, "class:" + ClassString, ContentPacks, "")
+		  Var Results() As ArkSA.SpawnPoint
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.SpawnPoint(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByPath(Path As String, ContentPacks As Beacon.StringList) As ArkSA.SpawnPoint()
+		  // Part of the ArkSA.BlueprintProvider interface.
+		  
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategorySpawnPoints, "path:" + Path, ContentPacks, "")
+		  Var Results() As ArkSA.SpawnPoint
+		  Results.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Results(Idx) = ArkSA.SpawnPoint(Blueprints(Idx))
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetTags(ContentPackIds As Beacon.StringList, Category As String = "") As String()
+		  // An in-memory is probably the fastest way to get unique tags
+		  
+		  Var ExtraClauses() As String
+		  Var ExtraValues() As Variant
+		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(Category, "", ContentPackIds, "", ExtraClauses, ExtraValues)
+		  
+		  #if DebugBuild
+		    Var StartTime As Double = System.Microseconds
+		  #endif
+		  
+		  #if false
+		    Var Mem As New SQLiteDatabase
+		    Mem.Connect
+		    Mem.ExecuteSQL("CREATE TABLE tags (tag TEXT COLLATE NOCASE);")
+		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		      Var Tags() As String = Blueprint.Tags
+		      For Each Tag As String In Tags
+		        Mem.ExecuteSQL("INSERT INTO tags (tag) VALUES (?1);", Tag)
+		      Next
+		    Next
+		    
+		    Var Rows As RowSet = Mem.SelectSQL("SELECT DISTINCT tag FROM tags ORDER BY tag;")
+		    Var Results() As String
+		    While Not Rows.AfterLastRow
+		      Results.Add(Rows.Column("tag").StringValue)
+		      Rows.MoveToNextRow
+		    Wend
+		  #endif
+		  
+		  Var Unique As New Dictionary
+		  Var Results() As String
+		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    Var Tags() As String = Blueprint.Tags
+		    For Each Tag As String In Tags
+		      If Unique.HasKey(Tag) = False Then
+		        Results.Add(Tag)
+		        Unique.Value(Tag) = True
+		      End If
+		    Next
+		  Next
+		  Results.Sort
+		  
+		  #if DebugBuild
+		    Var Duration As Double = (System.Microseconds - StartTime) * 0.001
+		    System.DebugLog("Tags gathered in " + Duration.ToString(Locale.Raw, "0.00") + "ms")
+		  #endif
+		  
+		  Return Results
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

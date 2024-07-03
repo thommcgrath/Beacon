@@ -2522,22 +2522,28 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Blueprint As ArkSA.Blueprint, ReadOnly As Boolean)
+		Private Sub Constructor(Blueprint As ArkSA.Blueprint, ReadOnly As Boolean, AdditionalProviders() As ArkSA.BlueprintProvider)
 		  Self.mOriginalBlueprint = Blueprint.ImmutableVersion
 		  Self.mContentPackId = Blueprint.ContentPackId
 		  Self.mContentPackName = Blueprint.ContentPackName
 		  Self.mReadOnly = ReadOnly
+		  If (AdditionalProviders Is Nil) = False Then
+		    Self.mAdditionalProviders = AdditionalProviders
+		  End If
 		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ContentPackId As String, ContentPackName As String, ReadOnly As Boolean)
+		Private Sub Constructor(ContentPackId As String, ContentPackName As String, ReadOnly As Boolean, AdditionalProviders() As ArkSA.BlueprintProvider)
 		  Self.mOriginalBlueprint = Nil
 		  Self.mContentPackId = ContentPackId
 		  Self.mContentPackName = ContentPackName
 		  Self.mReadOnly = ReadOnly
+		  If (AdditionalProviders Is Nil) = False Then
+		    Self.mAdditionalProviders = AdditionalProviders
+		  End If
 		  
 		  Super.Constructor
 		End Sub
@@ -2698,7 +2704,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Blueprint As ArkSA.Blueprint, ReadOnly As Boolean = False) As ArkSA.Blueprint
+		Shared Function Present(Parent As DesktopWindow, Blueprint As ArkSA.Blueprint, ReadOnly As Boolean = False, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -2709,7 +2715,7 @@ End
 		    Raise Err
 		  End If
 		  
-		  Var Win As New ArkSABlueprintEditorDialog(Blueprint, ReadOnly)
+		  Var Win As New ArkSABlueprintEditorDialog(Blueprint, ReadOnly, AdditionalProviders)
 		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As ArkSA.Blueprint
@@ -2722,12 +2728,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ContentPackId As String, ContentPackName As String, ReadOnly As Boolean = False) As ArkSA.Blueprint
+		Shared Function Present(Parent As DesktopWindow, ContentPackId As String, ContentPackName As String, ReadOnly As Boolean = False, AdditionalProviders() As ArkSA.BlueprintProvider = Nil) As ArkSA.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Var Win As New ArkSABlueprintEditorDialog(ContentPackId, ContentPackName, ReadOnly)
+		  Var Win As New ArkSABlueprintEditorDialog(ContentPackId, ContentPackName, ReadOnly, AdditionalProviders)
 		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As ArkSA.Blueprint
@@ -3170,6 +3176,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mAdditionalProviders() As ArkSA.BlueprintProvider
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
 	#tag EndProperty
 
@@ -3416,8 +3426,17 @@ End
 		    Engrams.Add(ArkSA.CraftingCostIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
 		  Next
 		  
-		  Var Mods As New Beacon.StringList
-		  Var NewEngrams() As ArkSA.Engram = ArkSABlueprintSelectorDialog.Present(Self, "Resources", Engrams, Mods, ArkSABlueprintSelectorDialog.SelectModes.ExplicitMultiple)
+		  Var Mods As Beacon.StringList
+		  If Self.mAdditionalProviders.Count = 0 Then
+		    Mods = ArkSA.DataSource.Pool.Get(False).AuthoritativeForContentPackIds
+		    For Each Provider As ArkSA.BlueprintProvider In Self.mAdditionalProviders
+		      Mods.Remove(Provider.AuthoritativeForContentPackIds)
+		    Next
+		  Else
+		    Mods = New Beacon.StringList
+		  End If
+		  
+		  Var NewEngrams() As ArkSA.Engram = ArkSABlueprintSelectorDialog.Present(Self, "Resources", Engrams, Mods, ArkSABlueprintSelectorDialog.SelectModes.ExplicitMultiple, Self.mAdditionalProviders)
 		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If

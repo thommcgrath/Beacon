@@ -956,6 +956,7 @@ Class=ModDiscoveryEngine2;Modules/Game Support/ArkSA/ModDiscoveryEngine2.xojo_co
 Class=ModDownload;Modules/Game Support/ArkSA/ModDownload.xojo_code;&h000000001C36CFFF;&h000000004504AFFF;false
 Module=CurseForge;Modules/CurseForge.xojo_code;&h0000000010F887FF;&h000000001444B7FF;false
 Class=ModInfo;Modules/CurseForge/ModInfo.xojo_code;&h000000005C426FFF;&h0000000010F887FF;false
+Interface=BlueprintProvider;Modules/Game Support/ArkSA/BlueprintProvider.xojo_code;&h000000004631FFFF;&h000000004504AFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=2

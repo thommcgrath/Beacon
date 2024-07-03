@@ -169,9 +169,25 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Remove(Items As Beacon.StringList)
+		  For Each Item As String In Items
+		    Self.Remove(Item)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mItems.RemoveAt(Index)
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Remove(Items() As String)
+		  For Each Item As String In Items
+		    Self.Remove(Item)
+		  Next
 		End Sub
 	#tag EndMethod
 
