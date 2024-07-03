@@ -1020,6 +1020,7 @@ End
 		    If Engrams <> Nil And Engrams.LastIndex > -1 Then
 		      Self.SetupEngramsList(Engrams)
 		      Self.EngramList.EnsureSelectionIsVisible()
+		      Self.Modified = Self.Project.Modified
 		    End If
 		  Case "EditButton"
 		    Self.EngramList.DoEdit()

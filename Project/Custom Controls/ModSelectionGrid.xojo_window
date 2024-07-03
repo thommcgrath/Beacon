@@ -251,46 +251,53 @@ End
 		  Self.GetPadding(PaddingLeft, PaddingTop, PaddingRight, PaddingBottom)
 		  Var HeaderHeight As Integer = PaddingTop + Max(Self.ViewSelector.Height, Self.FilterField.Height) + InnerSpacing
 		  
-		  Var RequiredType As Integer
+		  Var PacksArray() As Beacon.ContentPack
 		  For Idx As Integer = 0 To Self.ViewSelector.LastIndex
 		    If Self.ViewSelector.Segment(Idx).Selected Then
 		      Select Case Idx
 		      Case PageUniversal
-		        RequiredType = Beacon.ContentPack.TypeOfficial
+		        PacksArray = Self.mOfficialPacks
 		      Case PageSteam
-		        RequiredType = Beacon.ContentPack.TypeThirdParty
+		        PacksArray = Self.mThirdPartyPacks
 		      Case PageLocal
-		        RequiredType = Beacon.ContentPack.TypeLocal
+		        PacksArray = Self.mCustomPacks
 		      End Select
 		      Exit For Idx
 		    End If
-		  Next Idx
+		  Next
+		  
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  Var Packs() As Beacon.ContentPack
+		  For Each Pack As Beacon.ContentPack In PacksArray
+		    If Pack.Matches(Filter) Then
+		      Packs.Add(Pack)
+		    End If
+		  Next
 		  
 		  For Idx As Integer = Self.CheckboxesBound DownTo 0
 		    Self.ModCheckbox(Idx).Close
 		  Next
 		  
-		  If Self.mOffset = 0 Then
-		    Self.mResultCount = Self.mDataSource.CountContentPacks(Self.FilterField.Text.Trim, RequiredType)
-		  End If
+		  Var StartIndex As Integer = Max(Self.mOffset, 0)
+		  Var EndIndex As Integer = Min((StartIndex + Self.ResultsPerPage) - 1, Packs.LastIndex)
+		  Var PacksOnPage As Integer = (EndIndex - StartIndex) + 1
 		  
-		  Var Packs() As Beacon.ContentPack = Self.mDataSource.GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
 		  Var Measure As New Picture(20, 20)
 		  Var MeasuredWidth As Double
-		  Self.CheckboxesBound = Packs.LastIndex
-		  For Idx As Integer = Packs.FirstIndex To Packs.LastIndex
+		  Self.CheckboxesBound = PacksOnPage - 1
+		  For Idx As Integer = StartIndex To EndIndex
 		    MeasuredWidth = Max(MeasuredWidth, Measure.Graphics.TextWidth(Packs(Idx).Name))
 		  Next Idx
 		  
 		  Var CheckboxWidth As Integer = Min(Ceiling(MeasuredWidth + 40), MaxColumnWidth)
-		  Var ColumnCount As Integer = Min(Floor(MaxWidth / CheckboxWidth), Packs.Count)
-		  Var RowCount As Integer = Ceiling(Packs.Count / ColumnCount)
+		  Var ColumnCount As Integer = Min(Floor(MaxWidth / CheckboxWidth), PacksOnPage)
+		  Var RowCount As Integer = Ceiling(PacksOnPage / ColumnCount)
 		  
-		  Self.mMap.ResizeTo(Packs.LastIndex)
+		  Self.mMap.ResizeTo(EndIndex - StartIndex)
 		  
 		  Var NextLeft As Integer = PaddingLeft
 		  Var NextTop As Integer = HeaderHeight
-		  For Idx As Integer = Packs.FirstIndex To Packs.LastIndex
+		  For Idx As Integer = StartIndex To EndIndex
 		    Var Check As DesktopCheckBox = New ModCheckbox
 		    Check.Caption = Packs(Idx).Name
 		    Check.Width = CheckboxWidth
@@ -298,7 +305,7 @@ End
 		    Check.Top = NextTop
 		    Check.Value = Packs(Idx).Required Or Self.ModEnabled(Packs(Idx).ContentPackId)
 		    Check.Enabled = (Packs(Idx).Required = False)
-		    Self.mMap(Idx) = Packs(Idx).ContentPackId
+		    Self.mMap(Idx - StartIndex) = Packs(Idx).ContentPackId
 		    
 		    If (Idx + 1) Mod ColumnCount = 0 Then
 		      NextLeft = PaddingLeft
@@ -309,23 +316,23 @@ End
 		  Next Idx
 		  
 		  Var ViewHeight As Integer = HeaderHeight + (RowCount * 20) + ((RowCount - 1) * 12) + PaddingBottom
-		  If Self.mResultCount = 0 Then
+		  If Packs.Count = 0 Then
 		    Self.PrevPageButton.Visible = False
 		    Self.NextPageButton.Visible = False
 		    ViewHeight = HeaderHeight + Self.NoResultsLabel.Height + PaddingBottom
 		    Self.NoResultsLabel.Top = HeaderHeight
-		  ElseIf Self.mResultCount > Self.ResultsPerPage Then
+		  ElseIf Packs.Count > Self.ResultsPerPage Then
 		    ViewHeight = ViewHeight + Self.NextPageButton.Height + InnerSpacing
 		    Self.PrevPageButton.Visible = True
 		    Self.NextPageButton.Visible = True
 		    Self.PrevPageButton.Enabled = Self.mOffset > 0
-		    Self.NextPageButton.Enabled = Self.mOffset + Self.ResultsPerPage < Self.mResultCount
+		    Self.NextPageButton.Enabled = Self.mOffset + Self.ResultsPerPage < Packs.Count
 		  Else
 		    Self.PrevPageButton.Visible = False
 		    Self.NextPageButton.Visible = False
 		  End If
 		  
-		  Self.NoResultsLabel.Visible = (Self.mResultCount = 0)
+		  Self.NoResultsLabel.Visible = (Packs.Count = 0)
 		  
 		  Self.Width = Max(MinWidth, (ColumnCount * CheckboxWidth) + ((ColumnCount - 1) * 12) + PaddingLeft + PaddingRight)
 		  Self.Height = ViewHeight
@@ -354,7 +361,34 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(DataSource As Beacon.DataSource, EnabledMods As Beacon.StringList)
-		  Self.mDataSource = DataSource
+		  Var EmbeddedContentPacks() As Beacon.ContentPack
+		  Self.Constructor(DataSource, EnabledMods, EmbeddedContentPacks)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(DataSource As Beacon.DataSource, EnabledMods As Beacon.StringList, EmbeddedContentPacks() As Beacon.ContentPack)
+		  Self.mOfficialPacks = DataSource.GetContentPacks(Beacon.ContentPack.TypeOfficial)
+		  Self.mThirdPartyPacks = DataSource.GetContentPacks(Beacon.ContentPack.TypeThirdParty)
+		  
+		  Var CustomPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.TypeLocal)
+		  Var PackIds As New Dictionary
+		  For Each Pack As Beacon.ContentPack In CustomPacks
+		    PackIds.Value(Pack.ContentPackId) = True
+		  Next
+		  For Each Pack As Beacon.ContentPack In EmbeddedContentPacks
+		    If PackIds.HasKey(Pack.ContentPackId) = False Then
+		      CustomPacks.Add(Pack)
+		    End If
+		  Next
+		  Self.mCustomPacks = CustomPacks
+		  
+		  Beacon.ContentPack.Sort(Self.mOfficialPacks)
+		  Beacon.ContentPack.Sort(Self.mThirdPartyPacks)
+		  Beacon.ContentPack.Sort(Self.mCustomPacks)
+		  
+		  Self.mGameId = DataSource.Identifier
+		  
 		  Self.Constructor()
 		  Self.EnabledMods = EnabledMods
 		End Sub
@@ -362,8 +396,24 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As Beacon.Project)
-		  Self.Constructor(Project.DataSource(False), Project.ContentPacks)
+		  Self.Constructor(Project.DataSource(False), Project.ContentPacks, Project.EmbeddedContentPacks)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackIds() As String()
+		  Var Ids() As String
+		  For Each Pack As Beacon.ContentPack In Self.mOfficialPacks
+		    Ids.Add(Pack.ContentPackId)
+		  Next
+		  For Each Pack As Beacon.ContentPack In Self.mThirdPartyPacks
+		    Ids.Add(Pack.ContentPackId)
+		  Next
+		  For Each Pack As Beacon.ContentPack In Self.mCustomPacks
+		    Ids.Add(Pack.ContentPackId)
+		  Next
+		  Return Ids
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -421,7 +471,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDataSource As Beacon.DataSource
+		Private mCustomPacks() As Beacon.ContentPack
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -433,15 +487,19 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOfficialPacks() As Beacon.ContentPack
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOffset As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mResultCount As Integer
+		Private mSettingUp As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSettingUp As Boolean
+		Private mThirdPartyPacks() As Beacon.ContentPack
 	#tag EndProperty
 
 
@@ -486,7 +544,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.mOffset = Self.mOffset - Self.ResultsPerPage
-		  Self.BuildCheckboxes
+		  Self.BuildCheckboxes()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -505,7 +563,7 @@ End
 		Sub Opening()
 		  Me.Segment(0).Selected = True
 		  
-		  Select Case Self.mDataSource.Identifier
+		  Select Case Self.mGameId
 		  Case Ark.Identifier
 		    Me.Segment(0).Caption = "Official"
 		    Me.Segment(1).Caption = Beacon.MarketplaceSteamWorkshop

@@ -117,7 +117,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       HasBorder       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   279
+      Height          =   247
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -242,7 +242,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpUWPMode"
-      Top             =   418
+      Top             =   386
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -272,7 +272,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpUWPMode"
-      Top             =   418
+      Top             =   386
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -305,7 +305,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpConsoleMode"
-      Top             =   386
+      Top             =   354
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -338,7 +338,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpCompressed"
-      Top             =   450
+      Top             =   418
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -371,7 +371,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpAllowUCS"
-      Top             =   482
+      Top             =   450
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -402,7 +402,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpConsoleMode"
-      Top             =   386
+      Top             =   354
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -432,7 +432,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpCompressed"
-      Top             =   450
+      Top             =   418
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -462,7 +462,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpAllowUCS"
-      Top             =   482
+      Top             =   450
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -504,7 +504,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpLocalBackup"
-      Top             =   514
+      Top             =   482
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -534,10 +534,83 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpLocalBackup"
-      Top             =   514
+      Top             =   482
       Transparent     =   True
       Visible         =   True
       Width           =   40
+   End
+   Begin DesktopTextField ProjectIdField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   221
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   514
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   387
+   End
+   Begin UITweaks.ResizedLabel ProjectIdLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Project UUID:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   514
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   189
    End
 End
 #tag EndDesktopWindow
@@ -561,8 +634,9 @@ End
 		  Self.ConsoleModeSwitch.Value(False) = Self.Project.ConsoleSafe
 		  Self.UWPModeMenu.SelectedRowIndex = CType(Self.Project.UWPMode, Integer)
 		  Self.LocalBackupSwitch.Value(False) = Self.Project.KeepLocalBackup
+		  Self.ProjectIdField.Text = Self.Project.ProjectId
 		  
-		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.ConsoleModeLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel, Self.LocalBackupLabel)
+		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.ConsoleModeLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel, Self.LocalBackupLabel, Self.ProjectIdLabel)
 		  Var ControlLeft As Integer = Self.TitleLabel.Right + 12
 		  Self.TitleField.Left = ControlLeft
 		  Self.TitleField.Width = Self.Width - (ControlLeft + 20)
@@ -573,6 +647,8 @@ End
 		  Self.CompressedSwitch.Left = ControlLeft
 		  Self.AllowUCSSwitch.Left = ControlLeft
 		  Self.LocalBackupSwitch.Left = ControlLeft
+		  Self.ProjectIdField.Left = ControlLeft
+		  Self.ProjectIdField.Width = Self.TitleField.Width
 		End Sub
 	#tag EndEvent
 

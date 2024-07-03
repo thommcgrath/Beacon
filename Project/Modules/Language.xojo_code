@@ -39,19 +39,16 @@ Protected Module Language
 		    Return Items(0)
 		  ElseIf Items.Count = 2 Then
 		    Return Items(0) + " " + Conjunction + " " + Items(1)
-		  ElseIf Limit > 2 And Items.Count > Limit Then
+		  ElseIf Limit > 1 And Items.Count > Limit Then
 		    Var AllowedItems() As String
-		    AllowedItems.ResizeTo(Limit - 1)
+		    AllowedItems.ResizeTo(Limit - 2)
 		    For Idx As Integer = 0 To AllowedItems.LastIndex
 		      AllowedItems(Idx) = Items(Idx)
 		    Next
 		    
-		    Var Remaining As Integer = Items.Count - Limit
-		    If Remaining = 1 Then
-		      AllowedItems.Add(Conjunction + " 1 other")
-		    Else
-		      AllowedItems.Add(Conjunction + " " + Remaining.ToString(Locale.Current, "0") + " others")
-		    End If
+		    // Remaining will never be 1 because we are subtracting 1 from the limit to avoid "and 1 other" that could have just been the 1 other.
+		    Var Remaining As Integer = Items.Count - (Limit - 1)
+		    AllowedItems.Add(Conjunction + " " + Remaining.ToString(Locale.Current, "0") + " others")
 		    
 		    Return String.FromArray(AllowedItems, ", ")
 		  Else
