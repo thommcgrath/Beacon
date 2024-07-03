@@ -117,6 +117,9 @@ Protected Class ModDiscoveryEngine2
 		      
 		      Var EggPath As String = Self.NormalizePath(Egg.Value("ObjectPath"))
 		      Var EggProperties As JSONMBS = Self.PropertiesForPath(EggPath)
+		      If EggProperties Is Nil Then
+		        Return False
+		      End If
 		      Var EggLoseDurabilityPerSecond As Double = EggProperties.Lookup("EggLoseDurabilityPerSecond", 0.005556).DoubleValue
 		      Var ExtraEggLoseDurabilityPerSecondMultiplier As Double = EggProperties.Lookup("ExtraEggLoseDurabilityPerSecondMultiplier", 1.0).DoubleValue
 		      If EggLoseDurabilityPerSecond = 0 Or ExtraEggLoseDurabilityPerSecondMultiplier = 0 Then
@@ -460,6 +463,7 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  Var Targets() As String
 		  Targets.Add("LootItemSet")
+		  Targets.Add("Egg")
 		  For Each Entry As DictionaryEntry In ModPackageNames
 		    Targets.Add("ShooterGame/Mods/" + Entry.Value.StringValue + "/")
 		  Next
@@ -837,6 +841,10 @@ Protected Class ModDiscoveryEngine2
 		    Var BaseCraftingResourceRequirements As JSONMBS = Properties.Child("BaseCraftingResourceRequirements")
 		    For Idx As Integer = 0 To BaseCraftingResourceRequirements.LastRowIndex
 		      Var Requirement As JSONMBS = BaseCraftingResourceRequirements.ChildAt(Idx)
+		      If Requirement Is Nil Or Requirement.IsNull Or Requirement.HasChild("ResourceItemType") = False Or Requirement.Child("ResourceItemType").IsNull Then
+		        Continue
+		      End If
+		      
 		      Var IngredientPath As String = Self.NormalizePath(Requirement.Child("ResourceItemType").Value("ObjectPath"))
 		      Self.ScanItem(IngredientPath, "resource")
 		    Next
@@ -1495,6 +1503,10 @@ Protected Class ModDiscoveryEngine2
 		    If (BaseCraftingResourceRequirements Is Nil) = False And BaseCraftingResourceRequirements.IsNull = False And BaseCraftingResourceRequirements.IsArray = True Then
 		      For Idx As Integer = 0 To BaseCraftingResourceRequirements.LastRowIndex
 		        Var Requirement As JSONMBS = BaseCraftingResourceRequirements.ChildAt(Idx)
+		        If Requirement Is Nil Or Requirement.IsNull Or Requirement.HasChild("ResourceItemType") = False Or Requirement.Child("ResourceItemType").IsNull Then
+		          Continue
+		        End If
+		        
 		        Var Quantity As Integer = Requirement.Value("BaseResourceRequirement")
 		        Var RequireExact As Boolean = Requirement.Value("bCraftingRequireExactResourceType")
 		        Var IngredientPath As String = Self.NormalizePath(Requirement.Child("ResourceItemType").Value("ObjectPath"))
@@ -1797,6 +1809,11 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Var Weights As JSONMBS = Source.Child("ItemsWeights")
 		  For Idx As Integer = 0 To Options.LastRowIndex
+		    Var Option As JSONMBS = Options.ChildAt(Idx)
+		    If Option Is Nil Or Option.IsNull Then
+		      Continue
+		    End If
+		    
 		    Var OptionId As String = Beacon.UUID.v5(EntryId + ":" + Idx.ToString(Locale.Raw, "0"))
 		    Var WeightIdx As Integer = Min(Idx, Weights.LastRowIndex)
 		    Var Weight As Double = If(WeightIdx >= 0, Weights.ValueAt(WeightIdx).DoubleValue * 100, 50)
@@ -1806,8 +1823,7 @@ Protected Class ModDiscoveryEngine2
 		    End If
 		    Var EngramId As String = Self.CreateObjectId(EngramPath)
 		    
-		    Var Option As New ArkSA.LootItemSetEntryOption(New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, EngramId, EngramPath), Weight, OptionId)
-		    Entry.Add(Option)
+		    Entry.Add(New ArkSA.LootItemSetEntryOption(New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, EngramId, EngramPath), Weight, OptionId))
 		  Next
 		  
 		  If Entry.Count > 0 Then
