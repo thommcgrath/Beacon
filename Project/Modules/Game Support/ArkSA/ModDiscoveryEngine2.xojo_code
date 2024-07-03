@@ -215,6 +215,7 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Sub mThread_Run(Sender As Beacon.Thread)
 		  Self.mSuccess = False
+		  Self.mTimestamp = Round(DateTime.Now.SecondsFrom1970)
 		  Self.ClearDictionaries()
 		  
 		  Var SteamRoot As FolderItem
@@ -1544,6 +1545,7 @@ Protected Class ModDiscoveryEngine2
 		    Creature.AddTags(Tags)
 		  End If
 		  
+		  Creature.LastUpdate = Self.mTimestamp
 		  Self.AddBlueprint(Creature)
 		End Sub
 	#tag EndMethod
@@ -1643,6 +1645,7 @@ Protected Class ModDiscoveryEngine2
 		    Item.AddTags(Tags)
 		  End If
 		  
+		  Item.LastUpdate = Self.mTimestamp
 		  Self.AddBlueprint(Item)
 		End Sub
 	#tag EndMethod
@@ -1835,6 +1838,7 @@ Protected Class ModDiscoveryEngine2
 		    Drop.AddTags(Tags)
 		  End If
 		  
+		  Drop.LastUpdate = Self.mTimestamp
 		  Self.AddBlueprint(Drop)
 		End Sub
 	#tag EndMethod
@@ -2006,6 +2010,7 @@ Protected Class ModDiscoveryEngine2
 		    SpawnContainer.AddTags(Tags)
 		  End If
 		  
+		  SpawnContainer.LastUpdate = Self.mTimestamp
 		  Self.AddBlueprint(SpawnContainer)
 		End Sub
 	#tag EndMethod
@@ -2227,6 +2232,10 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Property, Flags = &h21
 		Private mThread As Beacon.Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTimestamp As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
