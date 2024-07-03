@@ -54,6 +54,16 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Function CleanupName(Name As String) As String
+		  Name = Name.ReplaceLineEndings(" ").Trim
+		  While Name.Contains("  ")
+		    Name = Name.ReplaceAll("  ", " ")
+		  Wend
+		  Return Name
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ClearDictionaries()
 		  Self.mContentPackIdsByPackage = New Dictionary
 		  Self.mPropertiesCache = New Dictionary
@@ -711,7 +721,7 @@ Protected Class ModDiscoveryEngine2
 		  
 		  // Make sure dino drop inventories are found.
 		  Var ClassString As String = Path.NthField(".", 2)
-		  Var Label As String = Properties.Lookup("DescriptiveName", "").StringValue.ReplaceLineEndings(" ")
+		  Var Label As String = Self.CleanupName(Properties.Lookup("DescriptiveName", "").StringValue)
 		  If Label.IsEmpty Then
 		    Label = ArkSA.LabelFromClassString(ClassString)
 		  End If
@@ -917,12 +927,6 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
-		  Self.ScanLootDrop(Path, Type, AdditionalTags)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ScanLootDrop(Path As String, Type As LootDropType, AdditionalTags() As String)
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
@@ -962,6 +966,12 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanItem(ItemPath)
 		    Next
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
+		  Self.ScanLootDrop(Path, Type, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
@@ -1357,7 +1367,7 @@ Protected Class ModDiscoveryEngine2
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  
 		  Var ClassString As String = Path.NthField(".", 2)
-		  Var CreatureName As String = Properties.Lookup("DescriptiveName", "").StringValue.ReplaceLineEndings(" ").Trim
+		  Var CreatureName As String = Self.CleanupName(Properties.Lookup("DescriptiveName", "").StringValue)
 		  If CreatureName.IsEmpty Then
 		    CreatureName = ArkSA.LabelFromClassString(ClassString)
 		  End If
@@ -1476,7 +1486,7 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  
-		  Var ItemName As String = Properties.Lookup("DescriptiveNameBase", "").StringValue.ReplaceLineEndings(" ").Trim
+		  Var ItemName As String = Self.CleanupName(Properties.Lookup("DescriptiveNameBase", "").StringValue)
 		  If ItemName.IsEmpty Then
 		    ItemName = ArkSA.LabelFromClassString(Path.NthField(".", 2))
 		  End If
