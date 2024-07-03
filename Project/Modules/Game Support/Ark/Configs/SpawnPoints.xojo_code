@@ -565,7 +565,7 @@ Inherits Ark.ConfigGroup
 		            End If
 		            
 		            If Entry.HasKey("GroupSpawnOffset") Then
-		              Var Offset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Entry.Value("GroupSpawnOffset"))
+		              Var Offset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Dictionary(Entry.Value("GroupSpawnOffset")))
 		              If Offset <> Nil Then
 		                Set.GroupOffset = Offset
 		              Else

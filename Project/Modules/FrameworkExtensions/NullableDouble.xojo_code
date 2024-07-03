@@ -7,32 +7,40 @@ Class NullableDouble
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDouble(Value As Double) As NullableDouble
+		Shared Function FromDouble(Value As Double, ZeroIsNull As Boolean = False) As NullableDouble
+		  If ZeroIsNull And Value = 0.0 Then
+		    Return Nil
+		  End If
+		  
 		  Return Value
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromInteger(Value As Integer) As NullableDouble
+		Shared Function FromInteger(Value As Integer, ZeroIsNull As Boolean = False) As NullableDouble
+		  If ZeroIsNull And Value = 0 Then
+		    Return Nil
+		  End If
+		  
 		  Return Value
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromVariant(Value As Variant) As NullableDouble
+		Shared Function FromVariant(Value As Variant, ZeroIsNull As Boolean = False) As NullableDouble
 		  If IsNull(Value) Then
 		    Return Nil
 		  End If
 		  
 		  Select Case Value.Type
 		  Case Variant.TypeDouble
-		    Return NullableDouble.FromDouble(Value.DoubleValue)
+		    Return NullableDouble.FromDouble(Value.DoubleValue, ZeroIsNull)
 		  Case Variant.TypeInt32
-		    Return NullableDouble.FromInteger(Value.Int32Value)
+		    Return NullableDouble.FromInteger(Value.Int32Value, ZeroIsNull)
 		  Case Variant.TypeInt64
-		    Return NullableDouble.FromInteger(Value.Int64Value)
+		    Return NullableDouble.FromInteger(Value.Int64Value, ZeroIsNull)
 		  Case Variant.TypeSingle
-		    Return NullableDouble.FromDouble(Value.SingleValue)
+		    Return NullableDouble.FromDouble(Value.SingleValue, ZeroIsNull)
 		  Else
 		    Return Nil
 		  End Select

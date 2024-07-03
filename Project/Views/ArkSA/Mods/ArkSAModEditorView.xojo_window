@@ -663,7 +663,12 @@ End
 		  Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Task.Mode)
 		  Var Blueprints() As ArkSA.Blueprint = Task.Blueprints
 		  For Idx As Integer = 0 To Blueprints.LastIndex
-		    CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Sender.Blueprint(Blueprints(Idx).BlueprintId)
+		    Var Blueprint As ArkSA.Blueprint = Sender.Blueprint(Blueprints(Idx).BlueprintId)
+		    If (Blueprint Is Nil) = False Then
+		      CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Blueprint
+		    ElseIf CurrentBlueprints.HasKey(Blueprints(Idx).BlueprintId) Then
+		      CurrentBlueprints.Remove(Blueprints(Idx).BlueprintId)
+		    End If
 		  Next
 		  
 		  If Task.Page < Task.TotalPages Then
@@ -1407,13 +1412,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Started()
-		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
 		  Self.Pages.SelectedPanelIndex = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub StatusUpdated()
-		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1425,17 +1430,16 @@ End
 		    Thread.Current.Sleep(100)
 		  Wend
 		  
-		  
 		  If Self.mDiscoveryShouldDelete Then
 		    Var CurrentBlueprints() As ArkSA.Blueprint = Self.mController.AllBlueprints
 		    Var CurrentBlueprintMap As New Dictionary
 		    For Each Blueprint As ArkSA.Blueprint In CurrentBlueprints
-		      CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
+		      CurrentBlueprintMap.Value(Blueprint.BlueprintId) = Blueprint
 		    Next
 		    
 		    For Each Blueprint As ArkSA.Blueprint In Blueprints
-		      If CurrentBlueprintMap.HasKey(Blueprint.Path) Then
-		        CurrentBlueprintMap.Remove(Blueprint.Path)
+		      If CurrentBlueprintMap.HasKey(Blueprint.BlueprintId) Then
+		        CurrentBlueprintMap.Remove(Blueprint.BlueprintId)
 		      End If
 		    Next
 		    
@@ -1465,13 +1469,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Started()
-		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
 		  Self.Pages.SelectedPanelIndex = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub StatusUpdated()
-		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1483,17 +1487,16 @@ End
 		    Thread.Current.Sleep(100)
 		  Wend
 		  
-		  
 		  If Self.mDiscoveryShouldDelete Then
 		    Var CurrentBlueprints() As ArkSA.Blueprint = Self.mController.AllBlueprints
 		    Var CurrentBlueprintMap As New Dictionary
 		    For Each Blueprint As ArkSA.Blueprint In CurrentBlueprints
-		      CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
+		      CurrentBlueprintMap.Value(Blueprint.BlueprintId) = Blueprint
 		    Next
 		    
 		    For Each Blueprint As ArkSA.Blueprint In Blueprints
-		      If CurrentBlueprintMap.HasKey(Blueprint.Path) Then
-		        CurrentBlueprintMap.Remove(Blueprint.Path)
+		      If CurrentBlueprintMap.HasKey(Blueprint.BlueprintId) Then
+		        CurrentBlueprintMap.Remove(Blueprint.BlueprintId)
 		      End If
 		    Next
 		    

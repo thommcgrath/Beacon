@@ -50,7 +50,11 @@ Protected Module Language
 		    Var Remaining As Integer = Items.Count - (Limit - 1)
 		    AllowedItems.Add(Conjunction + " " + Remaining.ToString(Locale.Current, "0") + " others")
 		    
-		    Return String.FromArray(AllowedItems, ", ")
+		    If AllowedItems.Count > 2 Then
+		      Return String.FromArray(AllowedItems, ", ")
+		    Else
+		      Return AllowedItems(0) + " " + AllowedItems(1)
+		    End If
 		  Else
 		    Var List As String = Items(0)
 		    For Idx As Integer = 1 To Items.LastIndex - 1

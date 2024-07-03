@@ -22,13 +22,33 @@ Protected Class Point3D
 		    Return Nil
 		  End If
 		  
-		  If Dict.HasAllKeys("x", "y", "z") Then
-		    Return New Beacon.Point3D(Dict.Value("x"), Dict.Value("y"), Dict.Value("z"))
-		  ElseIf Dict.HasAllKeys("X", "Y", "Z") Then
-		    Return New Beacon.Point3D(Dict.Value("X"), Dict.Value("Y"), Dict.Value("Z"))
+		  Return FromSaveData(New JSONItem(Dict))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(Source As JSONItem) As Beacon.Point3D
+		  If Source Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  If Source.HasAllKeys("x", "y", "z") Then
+		    Return New Beacon.Point3D(Source.Value("x"), Source.Value("y"), Source.Value("z"))
+		  ElseIf Source.HasAllKeys("X", "Y", "Z") Then
+		    Return New Beacon.Point3D(Source.Value("X"), Source.Value("Y"), Source.Value("Z"))
 		  Else
 		    Return Nil
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(Source As JSONMBS) As Beacon.Point3D
+		  If Source Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return FromSaveData(New JSONItem(Source.ToString))
 		End Function
 	#tag EndMethod
 

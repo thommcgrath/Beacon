@@ -184,7 +184,7 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		  
 		  Var SpawnOffsetKey As Variant = SaveData.FirstKey("spawnOffset", "Spawn Offset", "spawn_offset", "GroupOffset")
 		  If SpawnOffsetKey.IsNull = False Then
-		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(SaveData.Value(SpawnOffsetKey))
+		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Dictionary(SaveData.Value(SpawnOffsetKey)))
 		    If (SpawnOffset Is Nil) = False Then
 		      Set.GroupOffset = SpawnOffset
 		    End If

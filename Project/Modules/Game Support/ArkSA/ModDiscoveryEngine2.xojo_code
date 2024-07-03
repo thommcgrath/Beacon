@@ -14,6 +14,12 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub AddTagsToPath(Path As String, ParamArray AdditionalTags() As String)
+		  Self.AddTagsToPath(Path, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub AddTagsToPath(Path As String, AdditionalTags() As String)
 		  Var Tags() As String
 		  If Self.mTags.HasKey(Path) Then
@@ -27,12 +33,6 @@ Protected Class ModDiscoveryEngine2
 		      Tags.Add(Tag)
 		    End If
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub AddTagsToPath(Path As String, ParamArray AdditionalTags() As String)
-		  Self.AddTagsToPath(Path, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
@@ -155,6 +155,40 @@ Protected Class ModDiscoveryEngine2
 		    ContentPackId = Self.ContentPackIdForPath(Path)
 		  End If
 		  Return Beacon.UUID.v5(ContentPackId + ":" + Path.Lowercase)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FileForPath(Path As String) As FolderItem
+		  Var ClassString As String
+		  Return Self.FileForPath(Path, ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FileForPath(Path As String, ByRef ClassString As String) As FolderItem
+		  Var PathComponents() As String = Path.Split("/")
+		  PathComponents.RemoveAt(0) // empty string before leading slash
+		  
+		  Var File As FolderItem = Self.mRoot.Child("ShooterGame")
+		  If PathComponents(0) = "Game" Then
+		    File = File.Child("Content")
+		  Else
+		    File = File.Child("Mods").Child(PathComponents(0)).Child("Content")
+		  End If
+		  PathComponents.RemoveAt(0) // remove the package name
+		  ClassString = PathComponents(PathComponents.LastIndex).NthField(".", 1)
+		  PathComponents(PathComponents.LastIndex) = ClassString + ".json"
+		  
+		  For Each Component As String In PathComponents
+		    Var Child As FolderItem = File.Child(Component)
+		    If Child Is Nil Or Child.Exists = False Then
+		      Return Nil
+		    End If
+		    File = Child
+		  Next
+		  
+		  Return File
 		End Function
 	#tag EndMethod
 
@@ -573,27 +607,12 @@ Protected Class ModDiscoveryEngine2
 		    Return Self.mPropertiesCache.Value(Path)
 		  End If
 		  
-		  Var PathComponents() As String = Path.Split("/")
-		  PathComponents.RemoveAt(0) // empty string before leading slash
-		  
-		  Var File As FolderItem = Self.mRoot.Child("ShooterGame")
-		  If PathComponents(0) = "Game" Then
-		    File = File.Child("Content")
-		  Else
-		    File = File.Child("Mods").Child(PathComponents(0)).Child("Content")
+		  Var ClassString As String
+		  Var File As FolderItem = Self.FileForPath(Path, ClassString)
+		  If File Is Nil Then
+		    Self.mPropertiesCache.Value(Path) = Nil
+		    Return Nil
 		  End If
-		  PathComponents.RemoveAt(0) // remove the package name
-		  Var ClassString As String = PathComponents(PathComponents.LastIndex).NthField(".", 1)
-		  PathComponents(PathComponents.LastIndex) = ClassString + ".json"
-		  
-		  For Each Component As String In PathComponents
-		    Var Child As FolderItem = File.Child(Component)
-		    If Child Is Nil Or Child.Exists = False Then
-		      Return Nil
-		    End If
-		    File = Child
-		  Next
-		  
 		  Var Stream As TextInputStream = TextInputStream.Open(File)
 		  Var Parsed As New JSONMBS(Stream.ReadAll(Encodings.UTF8))
 		  Stream.Close
@@ -775,20 +794,12 @@ Protected Class ModDiscoveryEngine2
 		    Var ItemPath As String = Self.NormalizePath(DefaultInventoryItems.ValueAt(Idx))
 		    Self.ScanItem(ItemPath)
 		  Next
-		  
-		  Self.ScanForChildren(Properties)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ScanCreature(Path As String, IsBoss As Boolean, ParamArray AdditionalTags() As String)
 		  Self.ScanCreature(Path, IsBoss, AdditionalTags)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ScanForChildren(Properties As JSONMBS)
-		  
 		End Sub
 	#tag EndMethod
 
@@ -873,7 +884,9 @@ Protected Class ModDiscoveryEngine2
 		    Self.ScanItem(StructurePath, True)
 		  End If
 		  
-		  Self.ScanForChildren(Properties)
+		  If Properties.HasKey("DungeonArenaManagerClass") And Properties.Value("DungeonArenaManagerClass").IsNull = False Then
+		    Self.AddTagsToPath(Path, "tribute")
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -896,8 +909,8 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanLevelScriptActor(Path As String)
-		  
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
+		  Self.ScanLootDrop(Path, Type, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
@@ -941,14 +954,135 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanItem(ItemPath)
 		    Next
 		  Next
-		  
-		  Self.ScanForChildren(Properties)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
-		  Self.ScanLootDrop(Path, Type, AdditionalTags)
+		Private Sub ScanMap(Path As String, MapName As String)
+		  Var MapFile As FolderItem = Self.FileForPath(Path)
+		  
+		  Var MapFolder As FolderItem = MapFile.Parent.Child(MapName)
+		  If MapFolder.Exists And MapFolder.Child("_Generated_").Exists Then
+		    Var Generated As FolderItem = MapFolder.Child("_Generated_")
+		    For Each GridFile As FolderItem In Generated.Children
+		      Self.ScanMapGrid(GridFile)
+		    Next
+		  End If
+		  
+		  Var Stream As TextInputStream = TextInputStream.Open(MapFile)
+		  Var Parsed As New JSONMBS(Stream.ReadAll(Encodings.UTF8))
+		  Stream.Close
+		  
+		  Var DefaultInventoryPaths As JSONMBS = Parsed.Query("$[*].Properties.DefaultInventoryItems[*].ObjectPath")
+		  For Idx As Integer = 0 To DefaultInventoryPaths.LastRowIndex
+		    Var ItemPath As String = Self.NormalizePath(DefaultInventoryPaths.ValueAt(Idx))
+		    Self.ScanItem(ItemPath)
+		  Next
+		  
+		  Var BossClassDifficultyPaths As JSONMBS = Parsed.Query("$[*].Properties.BossClassDifficultyMap[*].ObjectPath")
+		  For Idx As Integer = 0 To BossClassDifficultyPaths.LastRowIndex
+		    Var BossPath As String = Self.NormalizePath(BossClassDifficultyPaths.ValueAt(Idx))
+		    Self.ScanCreature(BossPath, True)
+		  Next
+		  
+		  Var NPCRandomSpawnClassWeights As JSONMBS = Parsed.Query("$[*].Properties.NPCRandomSpawnClassWeights[*]")
+		  For Idx As Integer = 0 To NPCRandomSpawnClassWeights.LastRowIndex
+		    Var NPCRandomSpawnClassWeight As JSONMBS = NPCRandomSpawnClassWeights.ChildAt(Idx)
+		    Var ToClasses As JSONMBS = NPCRandomSpawnClassWeight.Child("ToClasses")
+		    Var Weights As JSONMBS = NPCRandomSpawnClassWeight.Child("Weights")
+		    For ReplacementIdx As Integer = 0 To ToClasses.LastRowIndex
+		      Var ToPath As String = Self.NormalizePath(ToClasses.ChildAt(ReplacementIdx).Value("AssetPathName"))
+		      If ToPath.IsEmpty Then
+		        Continue
+		      End If
+		      Var Weight As Double = Weights.ValueAt(ReplacementIdx)
+		      If Weight > 0 Then
+		        Self.ScanCreature(ToPath, False)
+		      End If
+		    Next
+		  Next
+		  
+		  Var NPCSpawnEntriesContainerObjects As JSONMBS = Parsed.Query("$[*].Properties.NPCSpawnEntriesContainerObject.AssetPathName")
+		  For Idx As Integer = 0 To NPCSpawnEntriesContainerObjects.LastRowIndex
+		    Var SpawnContainerPath As String = Self.NormalizePath(NPCSpawnEntriesContainerObjects.ValueAt(Idx))
+		    Self.ScanSpawnContainer(SpawnContainerPath)
+		  Next
+		  
+		  Var SupplyDropPaths As JSONMBS = Parsed.Query("$[*].Properties.LinkedSupplyCrateEntries[*].CrateTemplate.AssetPathName")
+		  For Idx As Integer = 0 To SupplyDropPaths.LastRowIndex
+		    Var SupplyDropPath As String = Self.NormalizePath(SupplyDropPaths.ValueAt(Idx))
+		    Self.ScanLootDrop(SupplyDropPath, LootDropType.Regular)
+		  Next
+		  
+		  Var MoreDropPaths As JSONMBS = Parsed.Query("$[*].Properties.LinkedSpawnPointEntries[*].OverrideSupplyCrateEntries[*].CrateTemplate.AssetPathName")
+		  For Idx As Integer = 0 To MoreDropPaths.LastRowIndex
+		    Var SupplyDropPath As String = Self.NormalizePath(MoreDropPaths.ValueAt(Idx))
+		    Self.ScanLootDrop(SupplyDropPath, LootDropType.Regular)
+		  Next
+		  
+		  Var DesiredPrefix As String = "/Game/" + MapName + "."
+		  Var ActorPaths As JSONMBS = Parsed.Query("$[*].Actors[*].ObjectPath")
+		  For Idx As Integer = 0 To ActorPaths.LastRowIndex
+		    Var ActorPath As String = ActorPaths.ValueAt(Idx)
+		    If ActorPath.BeginsWith(DesiredPrefix) = False Then
+		      Continue
+		    End If
+		    
+		    Var Offset As Integer = Integer.FromString(ActorPath.LastField("."), Locale.Raw)
+		    Var Member As JSONMBS = Parsed.ChildAt(Offset)
+		    Var BlueprintCreatedComponents As JSONMBS = Member.Query("$.Properties.BlueprintCreatedComponents[*].ObjectPath")
+		    For ComponentIdx As Integer = 0 To BlueprintCreatedComponents.LastRowIndex
+		      Var ComponentPath As String = BlueprintCreatedComponents.ValueAt(ComponentIdx)
+		      If ComponentPath.BeginsWith(DesiredPrefix) = False Then
+		        Continue
+		      End If
+		      
+		      Var ComponentOffset As Integer = Integer.FromString(ComponentPath.LastField("."), Locale.Raw)
+		      Var Component As JSONMBS = Parsed.ChildAt(ComponentOffset)
+		      Var DefaultInventoryItems As JSONMBS = Component.Query("$.Properties.DefaultInventoryItems[*].ObjectPath")
+		      For ItemIdx As Integer = 0 To DefaultInventoryItems.LastRowIndex
+		        Var ItemPath As String = Self.NormalizePath(DefaultInventoryItems.ValueAt(ItemIdx))
+		        Self.ScanItem(ItemPath)
+		      Next
+		    Next
+		  Next
+		  
+		  Var WorldSettingsList As JSONMBS = Parsed.Query("$[?(@.Type == ""PrimalWorldSettings"")].Properties")
+		  If WorldSettingsList.Count = 1 Then
+		    Var WorldSettings As JSONMBS = WorldSettingsList.ChildNode
+		    
+		    Var AddedInventoryPaths As JSONMBS = WorldSettings.Query("$['InventoryComponentAppends','InventoryComponentAppendsNonDedicated'][*]['AddItems'][*]['ObjectPath']")
+		    For Idx As Integer = 0 To AddedInventoryPaths.LastRowIndex
+		      Var ItemPath As String = Self.NormalizePath(AddedInventoryPaths.ValueAt(Idx).StringValue)
+		      Self.ScanItem(ItemPath)
+		    Next
+		  Else
+		    Break
+		  End If
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanMapGrid(File As FolderItem)
+		  Var Stream As TextInputStream = TextInputStream.Open(File)
+		  Var Parsed As New JSONMBS(Stream.ReadAll(Encodings.UTF8))
+		  Stream.Close
+		  
+		  Var Results As JSONMBS = Parsed.Query("$[*].Properties.AttachedComponentClass.ObjectPath")
+		  For Idx As Integer = 0 To Results.LastRowIndex
+		    Var HarvestComponentPath As String = Self.NormalizePath(Results.ValueAt(Idx))
+		    Var HarvestComponent As JSONMBS = Self.PropertiesForPath(HarvestComponentPath)
+		    If HarvestComponent Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var ItemPaths As JSONMBS = HarvestComponent.Query("$.HarvestResourceEntries[*].ResourceItem.ObjectPath")
+		    For ItemIdx As Integer = 0 To ItemPaths.LastRowIndex
+		      Self.ScanItem(Self.NormalizePath(ItemPaths.ValueAt(ItemIdx)), "harvestable", "resource")
+		    Next
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -975,7 +1109,7 @@ Protected Class ModDiscoveryEngine2
 		      Siblings = New Dictionary
 		      NativeParents.Value(NativeParent) = Siblings
 		    End If
-		    Siblings.Value(ObjectPath) = True
+		    Siblings.Value(ObjectPath) = Asset
 		  Next
 		  
 		  // The primal game data is the kicking off point for most mods
@@ -990,7 +1124,9 @@ Protected Class ModDiscoveryEngine2
 		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/Engine.LevelScriptActor'") Then
 		    Var ScriptActorPaths As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/Engine.LevelScriptActor'")
 		    For Each Entry As DictionaryEntry In ScriptActorPaths
-		      Self.ScanLevelScriptActor(Entry.Key.StringValue)
+		      Var Asset As JSONMBS = Entry.Value
+		      Var MapName As String = Asset.Child("TagsAndValues").Value("ModuleName")
+		      Self.ScanMap(Entry.Key.StringValue, MapName)
 		    Next
 		  End If
 		  
@@ -1069,6 +1205,43 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ScanSpawnContainer(Path As String, ParamArray AdditionalTags() As String)
+		  Self.ScanSpawnContainer(Path, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanSpawnContainer(Path As String, AdditionalTags() As String)
+		  Self.AddTagsToPath(Path, AdditionalTags)
+		  
+		  If Self.mPathsScanned.HasKey(Path) Then
+		    Return
+		  End If
+		  Self.mPathsScanned.Value(Path) = True
+		  
+		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
+		  If Properties Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mSpawnPaths.Value(Path) = True
+		  
+		  Var SpawnedCreaturePaths As JSONMBS = Properties.Query("$.NPCSpawnEntries[*].NPCsToSpawn[*].AssetPathName")
+		  Var ReplacedCreaturePaths As JSONMBS = Properties.Query("$.NPCSpawnEntries[*].NPCRandomSpawnClassWeights[*].FromClass.AssetPathName")
+		  Var ReplacementCreaturePaths As JSONMBS = Properties.Query("$.NPCSpawnEntries[*].NPCRandomSpawnClassWeights[*].ToClasses[*].AssetPathName")
+		  Var LimitedCreaturePaths As JSONMBS = Properties.Query("$.NPCSpawnLimits[*].NPCClass.AssetPathName")
+		  Var PathLists() As JSONMBS = Array(SpawnedCreaturePaths, LimitedCreaturePaths, ReplacedCreaturePaths, ReplacementCreaturePaths)
+		  
+		  For Each PathList As JSONMBS In PathLists
+		    For Idx As Integer = 0 To PathList.LastRowIndex
+		      Var CreaturePath As String = Self.NormalizePath(PathList.ValueAt(Idx))
+		      Self.ScanCreature(CreaturePath, False)
+		    Next
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ScanUnlock(Path As String)
 		  If Self.mPathsScanned.HasKey(Path) Then
 		    Return
@@ -1115,6 +1288,7 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Self.mThread = New Beacon.Thread
 		  Self.mThread.DebugIdentifier = "ArkSA.ModDiscoveryEngine2"
+		  Self.mThread.Priority = Thread.LowestPriority
 		  AddHandler mThread.Run, WeakAddressOf mThread_Run
 		  AddHandler mThread.UserInterfaceUpdate, WeakAddressOf mThread_UserInterfaceUpdate
 		  
@@ -1157,15 +1331,16 @@ Protected Class ModDiscoveryEngine2
 		  If ContentPackId = Self.OfficialContentPackId Then
 		    Return
 		  End If
-		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  
+		  Var ClassString As String = Path.NthField(".", 2)
 		  Var CreatureName As String = Properties.Lookup("DescriptiveName", "").StringValue.ReplaceLineEndings(" ")
 		  If CreatureName.IsEmpty Then
-		    CreatureName = ArkSA.LabelFromClassString(Path.NthField(".", 2))
+		    CreatureName = ArkSA.LabelFromClassString(ClassString)
 		  End If
 		  
+		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
 		  Var CreatureId As String = Self.CreateObjectId(Path, ContentPackId)
 		  Var Creature As New ArkSA.MutableCreature(Path, CreatureId)
 		  Creature.Availability = ArkSA.Maps.UniversalMask
@@ -1251,6 +1426,14 @@ Protected Class ModDiscoveryEngine2
 		  
 		  If Self.mBossPaths.HasKey(Path) Then
 		    Creature.AddTag("boss")
+		    
+		    If ClassString.Contains("Easy") Or ClassString.Contains("Gamma") Then
+		      Creature.Label = Creature.Label + " Easy"
+		    ElseIf ClassString.Contains("Medium") Or ClassString.Contains("Beta") Then
+		      Creature.Label = Creature.Label + " Medium"
+		    ElseIf ClassString.Contains("Hard") Or ClassString.Contains("Alpha") Then
+		      Creature.Label = Creature.Label + " Hard"
+		    End If
 		  End If
 		  
 		  If Self.mTags.HasKey(Path) Then
@@ -1268,7 +1451,6 @@ Protected Class ModDiscoveryEngine2
 		  If ContentPackId = Self.OfficialContentPackId Then
 		    Return
 		  End If
-		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  
@@ -1277,6 +1459,7 @@ Protected Class ModDiscoveryEngine2
 		    ItemName = ArkSA.LabelFromClassString(Path.NthField(".", 2))
 		  End If
 		  
+		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
 		  Var ItemId As String = Self.CreateObjectId(Path, ContentPackId)
 		  Var Item As New ArkSA.MutableEngram(Path, ItemId)
 		  Item.Availability = ArkSA.Maps.UniversalMask
@@ -1363,10 +1546,10 @@ Protected Class ModDiscoveryEngine2
 		  If ContentPackId = Self.OfficialContentPackId Then
 		    Return
 		  End If
-		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  
+		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
 		  Var DropId As String = Self.CreateObjectId(Path, ContentPackId)
 		  Var Drop As New ArkSA.MutableLootContainer(Path, DropId)
 		  Var ClassString As String = Path.NthField(".", 2)
@@ -1381,7 +1564,9 @@ Protected Class ModDiscoveryEngine2
 		      Drop.Label = ArkSA.LabelFromClassString(ClassString)
 		    Else
 		      // Allows mod authors to set good names... but they won't
-		      Break
+		      #if DebugBuild
+		        System.DebugLog("Found a loot drop named " + DescriptiveName)
+		      #endif
 		      Drop.Label = DescriptiveName
 		    End Select
 		  End If
@@ -1440,6 +1625,9 @@ Protected Class ModDiscoveryEngine2
 		      Drop.IconID = If(IsBonus, "d66cd81d-a51d-574a-9b69-826f3e75a4b2", "fccfbd07-424c-5902-b5bb-9c6165fe828f")
 		      Drop.AddTag("crate")
 		      Drop.AddTag("rare")
+		    ElseIf ClassString.Contains("Beaver") Then
+		      Drop.IconID = "53f23d4d-658d-511b-bc53-f0c987d288bc"
+		      Drop.AddTag("beaver")
 		    Else
 		      Drop.AddTag("drop")
 		      Drop.IconID = If(IsBonus, "ca8cdf82-cbf8-5531-808a-fb91d413505d", "d5bb71e5-fba5-51f3-b120-f1abadc1fa6e")
@@ -1482,7 +1670,7 @@ Protected Class ModDiscoveryEngine2
 		      Var OverridePath As String = Self.NormalizePath(ItemSet.Child("ItemSetOverride").Value("ObjectPath").StringValue)
 		      Var OverrideProperties As JSONMBS = Self.PropertiesForPath(OverridePath)
 		      If OverrideProperties Is Nil Then
-		        COntinue
+		        Continue
 		      End If
 		      Var OriginalItemSet As JSONMBS = ItemSet
 		      ItemSet = New JSONMBS(OverrideProperties.Child("ItemSet")) // Make sure to use a clone or you update the override item set
@@ -1517,7 +1705,10 @@ Protected Class ModDiscoveryEngine2
 		  
 		  For Each Label As String In Labels
 		    Var Siblings() As JSONMBS = ItemSetsByLabel.Value(Label)
-		    If Siblings.Count <= 1 Then
+		    If Siblings.Count = 0 Then
+		      Continue
+		    ElseIf Siblings.Count = 1 Then
+		      Siblings(0).Value("SetName") = Label
 		      Continue
 		    End If
 		    
@@ -1613,7 +1804,199 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Method, Flags = &h21
 		Private Sub SyncSpawnContainer(Path As String)
+		  Var ContentPackId As String = Self.ContentPackIdForPath(Path)
+		  If ContentPackId = Self.OfficialContentPackId Then
+		    Return
+		  End If
 		  
+		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
+		  
+		  Var Pack As Beacon.ContentPack = Self.mContentPacks.Value(ContentPackId)
+		  Var SpawnContainerId As String = Self.CreateObjectId(Path, ContentPackId)
+		  Var SpawnContainer As New ArkSA.MutableSpawnPoint(Path, SpawnContainerId)
+		  SpawnContainer.ContentPackId = ContentPackId
+		  SpawnContainer.ContentPackName = Pack.Name
+		  
+		  Var ClassString As String = Path.NthField(".", 2)
+		  SpawnContainer.Label = ArkSA.LabelFromClassString(ClassString)
+		  
+		  Var Limits As JSONMBS
+		  If Properties.HasChild("NPCSpawnLimits") Then
+		    Limits = Properties.Child("NPCSpawnLimits")
+		  End If
+		  If (Limits Is Nil) = False Then
+		    For Idx As Integer = 0 To Limits.LastRowIndex
+		      Var Limit As JSONMBS = Limits.ChildAt(Idx)
+		      Var ClassInfo As JSONMBS = Limit.Child("NPCClass")
+		      If ClassInfo Is Nil Or ClassInfo.IsNull Then
+		        Continue
+		      End If
+		      Var CreaturePath As String = Self.NormalizePath(ClassInfo.Value("AssetPathName"))
+		      Var CreatureId As String = Self.CreateObjectId(CreaturePath)
+		      Var CreatureRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, CreatureId, CreaturePath)
+		      SpawnContainer.Limit(CreatureRef) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
+		    Next
+		  End If
+		  
+		  Var SpawnSetsList As JSONMBS
+		  If Properties.HasChild("NPCSpawnEntries") Then
+		    SpawnSetsList = Properties.Child("NPCSpawnEntries")
+		  End If
+		  If (SpawnSetsList Is Nil) = False Then
+		    Var SpawnSets() As JSONMBS
+		    Var Labels() As String
+		    Var SpawnSetsByLabel As New Dictionary
+		    
+		    For Idx As Integer = 0 To SpawnSetsList.LastRowIndex
+		      Var SpawnSet As JSONMBS = SpawnSetsList.ChildAt(Idx)
+		      SpawnSets.Add(SpawnSet)
+		      
+		      Var Label As String = SpawnSet.Value("AnEntryName").StringValue.Trim
+		      If Label.IsEmpty Then
+		        Label = "Unnamed Spawn Set"
+		      End If
+		      
+		      Var Siblings() As JSONMBS
+		      If SpawnSetsByLabel.HasKey(Label) Then
+		        Siblings = SpawnSetsByLabel.Value(Label)
+		      Else
+		        SpawnSetsByLabel.Value(Label) = Siblings
+		      End If
+		      Siblings.Add(SpawnSet)
+		      
+		      If Labels.IndexOf(Label) = -1 Then
+		        Labels.Add(Label)
+		      End If
+		    Next
+		    
+		    For Each Label As String In Labels
+		      Var Siblings() As JSONMBS = SpawnSetsByLabel.Value(Label)
+		      If Siblings.Count = 0 Then
+		        Continue
+		      ElseIf Siblings.Count = 1 Then
+		        Siblings(0).Value("AnEntryName") = Label
+		        Continue
+		      End If
+		      
+		      For Idx As Integer = 0 To Siblings.LastIndex
+		        Var Suffix As Integer = Idx + 1
+		        Siblings(Idx).Value("AnEntryName") = Label + " " + Suffix.ToString(Locale.Raw, "0")
+		      Next
+		    Next
+		    
+		    For Idx As Integer = 0 To SpawnSets.LastIndex
+		      Var SpawnSetId As String = Beacon.UUID.v5(SpawnContainerId + ":" + Idx.ToString(Locale.Raw, "0"))
+		      Self.SyncSpawnSet(SpawnContainer, SpawnSetId, SpawnSets(Idx))
+		    Next
+		  End If
+		  
+		  If Self.mTags.HasKey(Path) Then
+		    Var Tags() As String = Self.mTags.Value(Path)
+		    SpawnContainer.AddTags(Tags)
+		  End If
+		  
+		  Self.AddBlueprint(SpawnContainer)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncSpawnSet(SpawnContainer As ArkSA.MutableSpawnPoint, SpawnSetId As String, Source As JSONMBS)
+		  Var SpawnSet As New ArkSA.MutableSpawnPointSet
+		  SpawnSet.SetId = SpawnSetId
+		  SpawnSet.Label = Source.Value("AnEntryName")
+		  SpawnSet.RawWeight = Source.Value("EntryWeight")
+		  SpawnSet.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(Source.Value("SpawnMinDistanceFromPlayersMultiplier"), True)
+		  SpawnSet.MinDistanceFromStructuresMultiplier = NullableDouble.FromVariant(Source.Value("SpawnMinDistanceFromStructuresMultiplier"), True)
+		  SpawnSet.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(Source.Value("SpawnMinDistanceFromTamedDinosMultiplier"), True)
+		  SpawnSet.SpreadRadius = NullableDouble.FromVariant(Source.Value("ManualSpawnPointSpreadRadius"), True)
+		  SpawnSet.WaterOnlyMinimumHeight = NullableDouble.FromVariant(Source.Value("WaterOnlySpawnMinimumWaterHeight"), True)
+		  SpawnSet.LevelOffsetBeforeMultiplier = Source.Lookup("bAddLevelOffsetBeforeMultiplier", False).BooleanValue
+		  SpawnSet.GroupOffset = Beacon.Point3d.FromSaveData(Source.Child("GroupSpawnOffset"))
+		  
+		  Var NPCsToSpawn As JSONMBS = Source.Child("NPCsToSpawn")
+		  Var NPCsSpawnOffsets As JSONMBS = Source.Child("NPCsSpawnOffsets")
+		  Var NPCsToSpawnPercentageChance As JSONMBS = Source.Child("NPCsToSpawnPercentageChance")
+		  Var NPCMinLevelOffset As JSONMBS = Source.Child("NPCMinLevelOffset")
+		  Var NPCMaxLevelOffset As JSONMBS = Source.Child("NPCMaxLevelOffset")
+		  Var NPCMinLevelMultiplier As JSONMBS = Source.Child("NPCMinLevelMultiplier")
+		  Var NPCMaxLevelMultiplier As JSONMBS = Source.Child("NPCMaxLevelMultiplier")
+		  Var NPCOverrideLevel As JSONMBS = Source.Child("NPCOverrideLevel")
+		  Var NPCDifficultyLevelRanges As JSONMBS = Source.Child("NPCDifficultyLevelRanges")
+		  
+		  For Idx As Integer = 0 To NPCsToSpawn.LastRowIndex
+		    Var SpawnObj As JSONMBS = NPCsToSpawn.ChildAt(Idx)
+		    Var CreaturePath As String = Self.NormalizePath(SpawnObj.Value("AssetPathName").StringValue)
+		    Var CreatureId As String = Self.CreateObjectId(CreaturePath)
+		    Var CreatureRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, CreatureId, CreaturePath)
+		    
+		    Var Entry As New ArkSA.MutableSpawnPointSetEntry(CreatureRef)
+		    Entry.EntryId = Beacon.UUID.v5(SpawnSetId + ":" + Idx.ToString(Locale.Raw, "0"))
+		    If NPCsToSpawnPercentageChance.LastRowIndex >= Idx Then
+		      Entry.SpawnChance = NPCsToSpawnPercentageChance.ValueAt(Idx).DoubleValue
+		    Else
+		      Entry.SpawnChance = Nil
+		    End If
+		    If NPCsSpawnOffsets.LastRowIndex >= Idx Then
+		      Entry.Offset = Beacon.Point3D.FromSaveData(NPCsSpawnOffsets.ChildAt(Idx))
+		    Else
+		      Entry.Offset = Nil
+		    End If
+		    If NPCMinLevelOffset.LastRowIndex >= Idx And NPCMaxLevelOffset.LastRowIndex >= Idx Then
+		      Entry.MinLevelOffset = NPCMinLevelOffset.ValueAt(Idx).DoubleValue
+		      Entry.MaxLevelOffset = NPCMaxLevelOffset.ValueAt(Idx).DoubleValue
+		    Else
+		      Entry.MinLevelOffset = Nil
+		      Entry.MaxLevelOffset = Nil
+		    End If
+		    If NPCMinLevelMultiplier.LastRowIndex >= Idx ANd NPCMaxLevelMultiplier.LastRowIndex >= Idx Then
+		      Entry.MinLevelMultiplier = NPCMinLevelMultiplier.ValueAt(Idx).DoubleValue
+		      Entry.MaxLevelMultiplier = NPCMaxLevelMultiplier.ValueAt(Idx).DoubleValue
+		    Else
+		      Entry.MinLevelMultiplier = Nil
+		      Entry.MaxLevelMultiplier = Nil
+		    End If
+		    If NPCOverrideLevel.LastRowIndex >= Idx Then
+		      Entry.LevelOverride = NPCOverrideLevel.ValueAt(Idx).DoubleValue
+		    Else
+		      Entry.LevelOverride = Nil
+		    End If
+		    
+		    If NPCDifficultyLevelRanges.LastRowIndex >= Idx Then
+		      Var LevelRange As JSONMBS = NPCDifficultyLevelRanges.ChildAt(Idx)
+		      Var MinLevels As JSONMBS = LevelRange.Child("EnemyLevelsMin")
+		      Var MaxLevels As JSONMBS = LevelRange.Child("EnemyLevelsMax")
+		      Var Difficulties As JSONMBS = LevelRange.Child("GameDifficulties")
+		      Var LevelBound As Integer = Min(MinLevels.LastRowIndex, MaxLevels.LastRowIndex, Difficulties.LastRowIndex)
+		      For LevelIdx As Integer = 0 To LevelBound
+		        Var MinLevel As Double = MinLevels.ValueAt(LevelIdx).DoubleValue
+		        Var MaxLevel As Double = MaxLevels.ValueAt(LevelIdx).DoubleValue
+		        Var Difficulty As Double = Difficulties.ValueAt(LevelIdx).DoubleValue
+		        Entry.Append(New ArkSA.SpawnPointLevel(MinLevel, MaxLevel, Difficulty))
+		      Next
+		    End If
+		    
+		    SpawnSet.Append(Entry)
+		  Next
+		  
+		  Var NPCRandomSpawnClassWeights As JSONMBS = Source.Child("NPCRandomSpawnClassWeights")
+		  For Idx As Integer = 0 To NPCRandomSpawnClassWeights.LastRowIndex
+		    Var NPCRandomSpawnClassWeight As JSONMBS = NPCRandomSpawnClassWeights.ChildAt(Idx)
+		    Var FromCreaturePath As String = Self.NormalizePath(NPCRandomSpawnClassWeight.Child("FromClass").Value("AssetPathName"))
+		    Var FromCreatureId As String = Self.CreateObjectId(FromCreaturePath)
+		    Var FromCreatureRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, FromCreatureId, FromCreaturePath)
+		    Var ToClasses As JSONMBS = NPCRandomSpawnClassWeight.Child("ToClasses")
+		    Var Weights As JSONMBS = NPCRandomSpawnClassWeight.Child("Weights")
+		    For ReplacementIdx As Integer = 0 To ToClasses.LastRowIndex
+		      Var ToCreaturePath As String = Self.NormalizePath(ToClasses.ChildAt(ReplacementIdx).Value("AssetPathName"))
+		      Var ToCreatureId As String = Self.CreateObjectId(ToCreaturePath)
+		      Var ToCreatureRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, ToCreatureId, ToCreaturePath)
+		      Var Weight As Double = Weights.ValueAt(ReplacementIdx)
+		      
+		      SpawnSet.CreatureReplacementWeight(FromCreatureRef, ToCreatureRef) = Weight
+		    Next
+		  Next
+		  
+		  SpawnContainer.AddSet(SpawnSet)
 		End Sub
 	#tag EndMethod
 

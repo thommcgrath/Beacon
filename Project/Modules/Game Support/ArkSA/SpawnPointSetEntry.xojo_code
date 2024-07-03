@@ -139,13 +139,13 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  If Dict.HasKey("spawnOffset") Then
-		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("spawnOffset"))
+		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dictionary(Dict.Value("spawnOffset")))
 		  ElseIf Dict.HasKey("Spawn Offset") Then
-		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("Spawn Offset"))
+		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dictionary(Dict.Value("Spawn Offset")))
 		  ElseIf Dict.HasKey("spawn_offset") Then
-		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("spawn_offset"))
+		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dictionary(Dict.Value("spawn_offset")))
 		  ElseIf Dict.HasKey("Offset") Then
-		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("Offset"))
+		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dictionary(Dict.Value("Offset")))
 		  End If
 		  
 		  Var Levels() As Dictionary
