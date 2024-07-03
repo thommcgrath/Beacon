@@ -1200,6 +1200,20 @@ Protected Class ModDiscoveryEngine2
 		        Self.ScanCreature(Self.NormalizePath(CreaturePath), False)
 		      Next
 		    Next
+		    
+		    // Remapped unlocks
+		    Var RemappedUnlockPaths As JSONMBS = AssetContainer.Query("$.Remap_Engrams[*].ToClass.AssetPathName")
+		    For Idx As Integer = 0 To RemappedUnlockPaths.LastRowIndex
+		      Var UnlockPath As String = Self.NormalizePath(RemappedUnlockPaths.ValueAt(Idx))
+		      Self.ScanUnlock(UnlockPath)
+		    Next
+		    
+		    // Remapped items
+		    Var RemappedItemPaths As JSONMBS = AssetContainer.Query("$.Remap_Items[*].ToClass.AssetPathName")
+		    For Idx As Integer = 0 To RemappedItemPaths.LastRowIndex
+		      Var ItemPath As String = Self.NormalizePath(RemappedItemPaths.ValueAt(Idx))
+		      Self.ScanItem(ItemPath)
+		    Next
 		  Next
 		End Sub
 	#tag EndMethod
@@ -1335,7 +1349,7 @@ Protected Class ModDiscoveryEngine2
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  
 		  Var ClassString As String = Path.NthField(".", 2)
-		  Var CreatureName As String = Properties.Lookup("DescriptiveName", "").StringValue.ReplaceLineEndings(" ")
+		  Var CreatureName As String = Properties.Lookup("DescriptiveName", "").StringValue.ReplaceLineEndings(" ").Trim
 		  If CreatureName.IsEmpty Then
 		    CreatureName = ArkSA.LabelFromClassString(ClassString)
 		  End If
@@ -1454,7 +1468,7 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  
-		  Var ItemName As String = Properties.Lookup("DescriptiveNameBase", "").StringValue.ReplaceLineEndings(" ")
+		  Var ItemName As String = Properties.Lookup("DescriptiveNameBase", "").StringValue.ReplaceLineEndings(" ").Trim
 		  If ItemName.IsEmpty Then
 		    ItemName = ArkSA.LabelFromClassString(Path.NthField(".", 2))
 		  End If
