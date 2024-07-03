@@ -1,12 +1,13 @@
 #tag Class
 Protected Class ModDiscoverySettings
 	#tag Method, Flags = &h0
-		Sub Constructor(ContentPackIds As Dictionary, DeleteBlueprints As Boolean, IgnoreBuiltInClasses As Boolean, Threshold As Double, UseNewDiscovery As Boolean)
+		Sub Constructor(ContentPackIds As Dictionary, DeleteBlueprints As Boolean, IgnoreBuiltInClasses As Boolean, Threshold As Double, UseNewDiscovery As Boolean, UploadToCommunity As Boolean)
 		  Self.mContentPackIds = ContentPackIds.Clone
 		  Self.mDeleteBlueprints = DeleteBlueprints
 		  Self.mIgnoreBuiltInClasses = IgnoreBuiltInClasses
 		  Self.mThreshold = Threshold
 		  Self.mUseNewDiscovery = UseNewDiscovery And ArkSA.ModDiscoveryEngine2.IsAvailable
+		  Self.mUploadToCommunity = UploadToCommunity
 		End Sub
 	#tag EndMethod
 
@@ -45,6 +46,12 @@ Protected Class ModDiscoverySettings
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function UploadToCommunity() As Boolean
+		  Return Self.mUploadToCommunity
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UseNewDiscovery() As Boolean
 		  Return Self.mUseNewDiscovery
 		End Function
@@ -65,6 +72,10 @@ Protected Class ModDiscoverySettings
 
 	#tag Property, Flags = &h21
 		Private mThreshold As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUploadToCommunity As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

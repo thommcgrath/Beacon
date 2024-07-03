@@ -1669,6 +1669,17 @@ End
 		  Self.mNumRemovedBlueprints = Self.mNumRemovedBlueprints + BlueprintsToDelete.Count
 		  Self.mNumErrorBlueprints = Self.mNumErrorBlueprints + ErrorDict.KeyCount
 		  
+		  If Preferences.OnlineEnabled And Me.Settings.UploadToCommunity Then
+		    Try
+		      Var Exported As MemoryBlock = Beacon.BuildExport(True, ContentPack)
+		      If (Exported Is Nil) = False Then
+		        Var Request As New BeaconAPI.Request("discovery/" + ContentPack.ContentPackId, "PUT", Exported, "application/octet-stream")
+		        Call BeaconAPI.SendSync(Request) // Response doesn't actually matter
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Uploading mod to community")
+		    End Try
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event

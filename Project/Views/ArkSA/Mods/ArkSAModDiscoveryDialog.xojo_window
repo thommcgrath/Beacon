@@ -814,10 +814,14 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
+		  Var UploadToCommunity As Boolean = True
 		  Var ContentPackIds As New Dictionary
 		  If Self.mForcedContentPacks.Count > 0 Then
 		    For Each Pack As Beacon.ContentPack In Self.mForcedContentPacks
 		      ContentPackIds.Value(Pack.MarketplaceId) = Pack.ContentPackId
+		      If Pack.IsLocal = False Then
+		        UploadToCommunity = False
+		      End If
 		    Next
 		  Else
 		    Var Matcher As New Regex
@@ -857,7 +861,7 @@ End
 		  End If
 		  
 		  Var Threshold As Double = (100 - Self.ThresholdField.DoubleValue) / 100
-		  Self.mSettings = New ArkSA.ModDiscoverySettings(ContentPackIds, Self.AllowDeleteCheck.Value, Self.IgnoreBuiltInClassesCheck.Value, Threshold, UseNewDiscovery)
+		  Self.mSettings = New ArkSA.ModDiscoverySettings(ContentPackIds, Self.AllowDeleteCheck.Value, Self.IgnoreBuiltInClassesCheck.Value, Threshold, UseNewDiscovery, UploadToCommunity)
 		  Self.Hide
 		End Sub
 	#tag EndEvent
