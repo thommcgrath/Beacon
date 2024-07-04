@@ -16,6 +16,15 @@ Protected Module ArkSA
 		  End If
 		  
 		  mBlueprintProviders.Value(Provider.BlueprintProviderId) = New WeakRef(Provider)
+		  
+		  #if DebugBuild
+		    Var ActiveProviders() As ArkSA.BlueprintProvider = ActiveBlueprintProviders
+		    Var ProviderIds() As String
+		    For Each ActiveProvider As ArkSA.BlueprintProvider In ActiveProviders
+		      ProviderIds.Add(ActiveProvider.BlueprintProviderId)
+		    Next
+		    System.DebugLog("Active providers is now " + String.FromArray(ProviderIds, ", "))
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -514,6 +523,15 @@ Protected Module ArkSA
 		  
 		  If mBlueprintProviders.HasKey(Provider.BlueprintProviderId) Then
 		    mBlueprintProviders.Remove(Provider.BlueprintProviderId)
+		    
+		    #if DebugBuild
+		      Var ActiveProviders() As ArkSA.BlueprintProvider = ActiveBlueprintProviders
+		      Var ProviderIds() As String
+		      For Each ActiveProvider As ArkSA.BlueprintProvider In ActiveProviders
+		        ProviderIds.Add(ActiveProvider.BlueprintProviderId)
+		      Next
+		      System.DebugLog("Active providers is now " + String.FromArray(ProviderIds, ", "))
+		    #endif
 		  End If
 		End Sub
 	#tag EndMethod

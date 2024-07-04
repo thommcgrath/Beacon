@@ -45,7 +45,6 @@ Begin ModEditorView ArkSAModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -369,14 +368,12 @@ Begin ModEditorView ArkSAModEditorView
       End
    End
    Begin ArkSA.ModDiscoveryEngine DiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine2 DiscoveryEngine2
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -450,6 +447,12 @@ End
 	#tag Method, Flags = &h21
 		Private Function BlueprintDictionary(Mode As Integer) As Dictionary
 		  Return Self.mBlueprints(Mode)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BlueprintProvider() As ArkSA.BlueprintProvider
+		  Return Self.mController
 		End Function
 	#tag EndMethod
 

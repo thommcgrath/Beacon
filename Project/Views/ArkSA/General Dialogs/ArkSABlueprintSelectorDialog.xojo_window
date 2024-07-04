@@ -86,7 +86,7 @@ Begin BeaconDialog ArkSABlueprintSelectorDialog
       HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   254
       Index           =   -2147483648
       InitialParent   =   ""
@@ -329,7 +329,6 @@ Begin BeaconDialog ArkSABlueprintSelectorDialog
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      Spec            =   ""
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -716,7 +715,9 @@ End
 		  Var Tags As Beacon.TagSpec = Self.Picker.Spec
 		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
 		  Var RecentPaths() As String = Preferences.ArkSARecentBlueprints(Self.mCategory, Self.mSubgroup)
-		  Var FilteredBlueprints() As ArkSA.Blueprint
+		  Var RecentBlueprints(), FilteredBlueprints() As ArkSA.Blueprint
+		  Var SortValues() As String
+		  Var SortByName As Boolean = Self.List.HeadingIndex = 0
 		  For Each Provider As ArkSA.BlueprintProvider In Providers
 		    For Each Path As String In RecentPaths
 		      Var BlueprintsAtPath() As ArkSA.Blueprint = Provider.GetBlueprintsByPath(Path, Self.mMods)
@@ -725,7 +726,7 @@ End
 		          Continue
 		        End If
 		        
-		        FilteredBlueprints.Add(Blueprint)
+		        RecentBlueprints.Add(Blueprint)
 		        Blacklist.Value(Blueprint.BlueprintId) = True
 		      Next
 		    Next
@@ -737,8 +738,12 @@ End
 		      End If
 		      
 		      FilteredBlueprints.Add(Blueprint)
+		      Blacklist.Value(Blueprint.BlueprintId) = True
+		      SortValues.Add(If(SortByName, Blueprint.Label, Blueprint.ContentPackName))
 		    Next
 		  Next
+		  
+		  SortValues.SortWith(FilteredBlueprints)
 		  
 		  Var SelectedIds() As String
 		  If Self.List.SelectedRowCount = 1 Then
@@ -754,11 +759,17 @@ End
 		  End If
 		  
 		  Self.List.SelectionChangeBlocked = True
-		  Self.List.RowCount = FilteredBlueprints.Count
-		  For Idx As Integer = 0 To FilteredBlueprints.LastIndex
-		    Var Blueprint As ArkSA.Blueprint = FilteredBlueprints(Idx)
+		  Self.List.RowCount = RecentBlueprints.Count + FilteredBlueprints.Count
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    Var Blueprint As ArkSA.Blueprint
+		    If Idx <= RecentBlueprints.LastIndex Then
+		      Blueprint = RecentBlueprints(Idx)
+		    Else
+		      Blueprint = FilteredBlueprints(Idx - RecentBlueprints.Count)
+		    End If
 		    Self.List.CellTextAt(Idx, 0) = Blueprint.Label
 		    Self.List.CellTextAt(Idx, 1) = Blueprint.ContentPackName
+		    Self.List.CellTooltipAt(Idx, 1) = Blueprint.ContentPackName
 		    Self.List.RowTagAt(Idx) = Blueprint
 		    Self.List.RowSelectedAt(Idx) = SelectedIds.IndexOf(Blueprint.BlueprintId) > -1
 		  Next
@@ -825,6 +836,13 @@ End
 		    Self.Hide
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ColumnSorted(column As Integer) As Boolean
+		  #Pragma Unused Column
+		  Self.UpdateFilter()
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
