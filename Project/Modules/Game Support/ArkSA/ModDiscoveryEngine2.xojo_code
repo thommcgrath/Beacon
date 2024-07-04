@@ -277,92 +277,96 @@ Protected Class ModDiscoveryEngine2
 		  Var ModInfos As New Dictionary
 		  Var HadSomeSuccess As Boolean
 		  For Each ModId As String In ModIds
-		    Var ModInfo As CurseForge.ModInfo = CurseForge.LookupMod(ModId)
-		    If ModInfo Is Nil Then
-		      Continue
-		    ElseIf ModInfo.IsArkSA = False Then
-		      App.Log("Mod " + ModInfo.ModName + " (" + ModId + ") is not an Ark: Survival Ascended mod.")
-		      Continue
-		    End If
-		    ModInfos.Value(ModId) = ModInfo
-		    
-		    Var ModFolder As FolderItem = DiscoveryRoot.Child(ModId)
-		    If Not ModFolder.CheckIsFolder Then
-		      App.Log("Could not create discovery folder for mod " + ModId)
-		      Continue
-		    End If
-		    Var DownloadRequired As Boolean = True
-		    Var InfoFile As FolderItem = ModFolder.Child("Mod.json")
-		    If InfoFile.Exists Then
-		      Var StoredInfo As New CurseForge.ModInfo(InfoFile)
-		      If StoredInfo.LastUpdateString = ModInfo.LastUpdateString Then
-		        // We already have this mod downloaded and it does not need updating
-		        DownloadRequired = False
+		    Try
+		      Var ModInfo As CurseForge.ModInfo = CurseForge.LookupMod(ModId)
+		      If ModInfo Is Nil Then
+		        Continue
+		      ElseIf ModInfo.IsArkSA = False Then
+		        App.Log("Mod " + ModInfo.ModName + " (" + ModId + ") is not an Ark: Survival Ascended mod.")
+		        Continue
 		      End If
-		    End If
-		    
-		    If DownloadRequired Then
-		      Self.StatusMessage = "Downloading mod " + ModInfo.ModName + "…"
-		      Var Download As ArkSA.ModDownload = ArkSA.DownloadMod(ModInfo)
-		      If Download Is Nil Then
+		      ModInfos.Value(ModId) = ModInfo
+		      
+		      Var ModFolder As FolderItem = DiscoveryRoot.Child(ModId)
+		      If Not ModFolder.CheckIsFolder Then
+		        App.Log("Could not create discovery folder for mod " + ModId)
+		        Continue
+		      End If
+		      Var DownloadRequired As Boolean = True
+		      Var InfoFile As FolderItem = ModFolder.Child("Mod.json")
+		      If InfoFile.Exists Then
+		        Var StoredInfo As New CurseForge.ModInfo(InfoFile)
+		        If StoredInfo.LastUpdateString = ModInfo.LastUpdateString Then
+		          // We already have this mod downloaded and it does not need updating
+		          DownloadRequired = False
+		        End If
+		      End If
+		      
+		      If DownloadRequired Then
+		        Self.StatusMessage = "Downloading mod " + ModInfo.ModName + "…"
+		        Var Download As ArkSA.ModDownload = ArkSA.DownloadMod(ModInfo)
+		        If Download Is Nil Then
+		          Continue
+		        End If
+		        
+		        Self.StatusMessage = "Extracting " + Download.Filename + "…"
+		        Do
+		          Var Entry As ArchiveEntryMBS = Download.NextHeader
+		          If Entry Is Nil Then
+		            Exit
+		          End If
+		          
+		          If Entry.Filename <> "Manifest_UFSFiles_Win64.txt" Then
+		            Select Case Entry.Filename.LastField(".")
+		            Case "pak", "ucas", "utoc"
+		            Else
+		              Continue
+		            End Select
+		          End If
+		          
+		          Var TargetSize As UInt64 = Entry.Size
+		          Var OutStream As BinaryStream = BinaryStream.Create(ModFolder.Child(Entry.Filename), True)
+		          While OutStream.Length <> TargetSize
+		            OutStream.Write(Download.ReadDataBlockMemory())
+		          Wend
+		          OutStream.Close
+		        Loop
+		        Download.CloseArchive()
+		      End If
+		      
+		      Var ManifestFile As FolderItem = ModFolder.Child("Manifest_UFSFiles_Win64.txt")
+		      Var ManifestStream As TextInputStream = TextInputStream.Open(ManifestFile)
+		      Var Found As Boolean
+		      Do Until ManifestStream.EndOfFile
+		        Var ManifestLine As String = ManifestStream.ReadLine(Encodings.UTF8)
+		        Var Matches As RegExMatch = ManifestPattern.Search(ManifestLine)
+		        If (Matches Is Nil) = False Then
+		          Var PackageName As String = Matches.SubExpressionString(1)
+		          ModPackageNames.Value(ModId) = PackageName
+		          Var ContentPackId As String = Self.mSettings.ContentPackId(ModId)
+		          Self.mContentPackIdsByPackage.Value(PackageName) = ContentPackId
+		          
+		          Var Pack As New Beacon.MutableContentPack(ArkSA.Identifier, ModInfo.ModName, ContentPackId)
+		          Pack.Marketplace = Beacon.MarketplaceCurseForge
+		          Pack.MarketplaceId = ModId
+		          Self.mContentPacks.Value(ContentPackId) = Pack
+		          
+		          Found = True
+		          Exit
+		        End If
+		      Loop
+		      ManifestStream.Close
+		      
+		      If Not Found Then
+		        App.Log("Could not find package name for " + ModId)
 		        Continue
 		      End If
 		      
-		      Self.StatusMessage = "Extracting " + Download.Filename + "…"
-		      Do
-		        Var Entry As ArchiveEntryMBS = Download.NextHeader
-		        If Entry Is Nil Then
-		          Exit
-		        End If
-		        
-		        If Entry.Filename <> "Manifest_UFSFiles_Win64.txt" Then
-		          Select Case Entry.Filename.LastField(".")
-		          Case "pak", "ucas", "utoc"
-		          Else
-		            Continue
-		          End Select
-		        End If
-		        
-		        Var TargetSize As UInt64 = Entry.Size
-		        Var OutStream As BinaryStream = BinaryStream.Create(ModFolder.Child(Entry.Filename), True)
-		        While OutStream.Length <> TargetSize
-		          OutStream.Write(Download.ReadDataBlockMemory())
-		        Wend
-		        OutStream.Close
-		      Loop
-		      Download.CloseArchive()
-		    End If
-		    
-		    Var ManifestFile As FolderItem = ModFolder.Child("Manifest_UFSFiles_Win64.txt")
-		    Var ManifestStream As TextInputStream = TextInputStream.Open(ManifestFile)
-		    Var Found As Boolean
-		    Do Until ManifestStream.EndOfFile
-		      Var ManifestLine As String = ManifestStream.ReadLine(Encodings.UTF8)
-		      Var Matches As RegExMatch = ManifestPattern.Search(ManifestLine)
-		      If (Matches Is Nil) = False Then
-		        Var PackageName As String = Matches.SubExpressionString(1)
-		        ModPackageNames.Value(ModId) = PackageName
-		        Var ContentPackId As String = Self.mSettings.ContentPackId(ModId)
-		        Self.mContentPackIdsByPackage.Value(PackageName) = ContentPackId
-		        
-		        Var Pack As New Beacon.MutableContentPack(ArkSA.Identifier, ModInfo.ModName, ContentPackId)
-		        Pack.Marketplace = Beacon.MarketplaceCurseForge
-		        Pack.MarketplaceId = ModId
-		        Self.mContentPacks.Value(ContentPackId) = Pack
-		        
-		        Found = True
-		        Exit
-		      End If
-		    Loop
-		    ManifestStream.Close
-		    
-		    If Not Found Then
-		      App.Log("Could not find package name for " + ModId)
-		      Continue
-		    End If
-		    
-		    InfoFile.Write(ModInfo.ToString(True))
-		    HadSomeSuccess = True
+		      InfoFile.Write(ModInfo.ToString(True))
+		      HadSomeSuccess = True
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to download mod " + ModId)
+		    End Try
 		  Next
 		  
 		  If Not HadSomeSuccess Then
