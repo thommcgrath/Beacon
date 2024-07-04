@@ -1046,6 +1046,74 @@ Protected Module ArkSA
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.Creature, Array2() As ArkSA.Creature) As ArkSA.Creature()
+		  Var Unique As New Dictionary
+		  For Each Creature As ArkSA.Creature In Array1
+		    Unique.Value(Creature.BlueprintId) = Creature
+		  Next
+		  For Each Creature As ArkSA.Creature In Array2
+		    Unique.Value(Creature.BlueprintId) = Creature
+		  Next
+		  Var Merged() As ArkSA.Creature
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.Engram, Array2() As ArkSA.Engram) As ArkSA.Engram()
+		  Var Unique As New Dictionary
+		  For Each Engram As ArkSA.Engram In Array1
+		    Unique.Value(Engram.BlueprintId) = Engram
+		  Next
+		  For Each Engram As ArkSA.Engram In Array2
+		    Unique.Value(Engram.BlueprintId) = Engram
+		  Next
+		  Var Merged() As ArkSA.Engram
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.LootContainer, Array2() As ArkSA.LootContainer) As ArkSA.LootContainer()
+		  Var Unique As New Dictionary
+		  For Each LootContainer As ArkSA.LootContainer In Array1
+		    Unique.Value(LootContainer.BlueprintId) = LootContainer
+		  Next
+		  For Each LootContainer As ArkSA.LootContainer In Array2
+		    Unique.Value(LootContainer.BlueprintId) = LootContainer
+		  Next
+		  Var Merged() As ArkSA.LootContainer
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.SpawnPoint, Array2() As ArkSA.SpawnPoint) As ArkSA.SpawnPoint()
+		  Var Unique As New Dictionary
+		  For Each SpawnPoint As ArkSA.SpawnPoint In Array1
+		    Unique.Value(SpawnPoint.BlueprintId) = SpawnPoint
+		  Next
+		  For Each SpawnPoint As ArkSA.SpawnPoint In Array2
+		    Unique.Value(SpawnPoint.BlueprintId) = SpawnPoint
+		  Next
+		  Var Merged() As ArkSA.SpawnPoint
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function ModTagFromPath(Path As String) As String
 		  If Path.BeginsWith("/Game/Mods/") Then

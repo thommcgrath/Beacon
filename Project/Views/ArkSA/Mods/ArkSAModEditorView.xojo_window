@@ -669,7 +669,7 @@ End
 		  Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Task.Mode)
 		  Var Blueprints() As ArkSA.Blueprint = Task.Blueprints
 		  For Idx As Integer = 0 To Blueprints.LastIndex
-		    Var Blueprint As ArkSA.Blueprint = Sender.GetBlueprint(Blueprints(Idx).BlueprintId)
+		    Var Blueprint As ArkSA.Blueprint = ArkSA.BlueprintProvider(Sender).GetBlueprint(Blueprints(Idx).BlueprintId)
 		    If (Blueprint Is Nil) = False Then
 		      CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Blueprint
 		    ElseIf CurrentBlueprints.HasKey(Blueprints(Idx).BlueprintId) Then

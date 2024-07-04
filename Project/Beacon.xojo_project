@@ -958,6 +958,7 @@ Module=CurseForge;Modules/CurseForge.xojo_code;&h0000000010F887FF;&h000000001444
 Class=ModInfo;Modules/CurseForge/ModInfo.xojo_code;&h000000005C426FFF;&h0000000010F887FF;false
 Interface=BlueprintProvider;Modules/Game Support/ArkSA/BlueprintProvider.xojo_code;&h000000004631FFFF;&h000000004504AFFF;false
 Class=TagSpec;Modules/Beacon/TagSpec.xojo_code;&h000000007589FFFF;&h0000000055ADDFFF;false
+Class=BlueprintContainer;Modules/Game Support/ArkSA/BlueprintContainer.xojo_code;&h00000000301427FF;&h000000004504AFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=2

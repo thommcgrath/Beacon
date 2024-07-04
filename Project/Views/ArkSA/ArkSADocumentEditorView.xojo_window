@@ -290,6 +290,10 @@ End
 		    Self.mImportWindow.Close
 		    Self.mImportWindow = Nil
 		  End If
+		  
+		  If (Self.Project Is Nil) = False Then
+		    ArkSA.DeactivateBlueprintProvider(Self.Project)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -319,6 +323,8 @@ End
 		  If (Panel Is Nil) = False Then
 		    Panel.SwitchedFrom()
 		  End If
+		  
+		  ArkSA.DeactivateBlueprintProvider(Self.Project)
 		End Sub
 	#tag EndEvent
 
@@ -334,6 +340,7 @@ End
 	#tag Event
 		Sub Opening()
 		  If (Self.Project Is Nil) = False Then
+		    ArkSA.ActivateBlueprintProvider(Self.Project)
 		    Var ProjectId As String = Self.Project.ProjectId
 		    Var LastConfigName As String = Preferences.ProjectState(ProjectId, "Editor", "")
 		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(ProjectId, "Config Set", "").StringValue)
@@ -395,6 +402,8 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
+		  ArkSA.ActivateBlueprintProvider(Self.Project)
+		  
 		  Var Panel As ArkSAConfigEditor = Self.CurrentPanel
 		  If (Panel Is Nil) = False Then
 		    Panel.SwitchedTo(UserData)

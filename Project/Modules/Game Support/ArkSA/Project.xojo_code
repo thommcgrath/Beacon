@@ -165,6 +165,9 @@ Inherits Beacon.Project
 
 	#tag Event
 		Function ProcessEmbeddedContentPack(Pack As Beacon.ContentPack, FileContent As String) As Boolean
+		  // mEmbeddedBlueprints will have keys of BlueprintId and values of Blueprint for fast access
+		  // mEmbeddedContentPacks will have keys of ContentPackId and values of BlueprintId() to quickly find blueprints of a given pack
+		  
 		  Var BlueprintDicts() As Variant
 		  Try
 		    BlueprintDicts = Beacon.ParseJSON(FileContent)
@@ -172,7 +175,7 @@ Inherits Beacon.Project
 		    Return False
 		  End Try
 		  
-		  Var FreshBlueprints() As ArkSA.Blueprint
+		  Var BlueprintIds() As String
 		  For Each BlueprintDict As Variant In BlueprintDicts
 		    If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
 		      Continue
@@ -183,16 +186,12 @@ Inherits Beacon.Project
 		      Continue
 		    End If
 		    
-		    Var StoredBlueprint As ArkSA.Blueprint = ArkSA.DataSource.Pool.Get(False).GetBlueprint(ProjectBlueprint.BlueprintId, False)
-		    If StoredBlueprint Is Nil Or ProjectBlueprint.LastUpdate > StoredBlueprint.LastUpdate Then
-		      FreshBlueprints.Add(ProjectBlueprint)
-		    End If
+		    Self.mEmbeddedBlueprints.Value(ProjectBlueprint.BlueprintId) = ProjectBlueprint
+		    BlueprintIds.Add(ProjectBlueprint.BlueprintId)
 		  Next
+		  Self.mEmbeddedContentPacks.Value(Pack.ContentPackId) = BlueprintIds
 		  
-		  If FreshBlueprints.Count > 0 Then
-		    Self.mEmbeddedBlueprints.Value(Pack.ContentPackId) = FreshBlueprints
-		    Return True
-		  End If
+		  Return BlueprintIds.Count > 0
 		End Function
 	#tag EndEvent
 
@@ -455,8 +454,9 @@ Inherits Beacon.Project
 		Sub Constructor()
 		  Self.mMapMask = 1 // Play it safe, do not bother calling ArkSA.Maps here in case database access is fubar
 		  Self.mEmbeddedBlueprints = New Dictionary
-		  
+		  Self.mEmbeddedContentPacks = New Dictionary
 		  Super.Constructor
+		  Self.mBlueprintContainer = New ArkSA.BlueprintContainer(Self.ProjectId, Self.mEmbeddedBlueprints)
 		  
 		  Self.ContentPackEnabled(ArkSA.UserContentPackId) = True // Force it
 		End Sub
@@ -758,10 +758,19 @@ Inherits Beacon.Project
 	#tag Method, Flags = &h0
 		Function EmbeddedBlueprints(Pack As Beacon.ContentPack) As ArkSA.Blueprint()
 		  Var Blueprints() As ArkSA.Blueprint
-		  If Pack Is Nil Or Self.mEmbeddedBlueprints.HasKey(Pack.ContentPackId) = False Then
+		  If Pack Is Nil Or Self.mEmbeddedContentPacks.HasKey(Pack.ContentPackId) = False Then
 		    Return Blueprints
 		  End If
-		  Return Self.mEmbeddedBlueprints.Value(Pack.ContentPackId)
+		  
+		  Var BlueprintIds() As String = Self.mEmbeddedContentPacks.Value(Pack.ContentPackId)
+		  For Each BlueprintId As String In BlueprintIds
+		    Try
+		      Blueprints.Add(Self.mEmbeddedBlueprints.Value(BlueprintId))
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Return Blueprints
 		End Function
 	#tag EndMethod
 
@@ -803,8 +812,15 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Convert() As ArkSA.BlueprintProvider
+		  Return Self.mBlueprintContainer
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ProcessEmbeddedContent()
-		  Self.mEmbeddedBlueprints = New Dictionary
+		  Self.mEmbeddedBlueprints.RemoveAll
+		  Self.mEmbeddedContentPacks.RemoveAll
 		  Super.ProcessEmbeddedContent()
 		  
 		End Sub
@@ -859,7 +875,15 @@ Inherits Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mBlueprintContainer As ArkSA.BlueprintContainer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mEmbeddedBlueprints As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEmbeddedContentPacks As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

@@ -1168,23 +1168,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Merge(Array1() As ArkSA.Engram, Array2() As ArkSA.Engram) As ArkSA.Engram()
-		  Var Unique As New Dictionary
-		  For Each Engram As ArkSA.Engram In Array1
-		    Unique.Value(Engram.EngramId) = Engram
-		  Next
-		  For Each Engram As ArkSA.Engram In Array2
-		    Unique.Value(Engram.EngramId) = Engram
-		  Next
-		  Var Merged() As ArkSA.Engram
-		  For Each Entry As DictionaryEntry In Unique
-		    Merged.Add(Entry.Value)
-		  Next
-		  Return Merged
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function Merge(LeftArray() As Beacon.Map, RightArray() As Beacon.Map) As Beacon.Map()
 		  Var Merged() As Beacon.Map
 		  For Each Map As Beacon.Map In LeftArray
