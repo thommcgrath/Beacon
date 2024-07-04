@@ -592,82 +592,83 @@ Protected Module ArkSA
 		    Var ResponseJson As New JSONItem(FileListSocket.LastContent)
 		    Var FileList As JSONItem = ResponseJson.Value("data")
 		    
-		    // Now look through the file list again for sibling files.
-		    Var Filesizes() As UInt64
-		    Var CandidateFiles() As JSONItem
+		    // Now look through for the windowsserver file
+		    Var DesiredFilename As String = FilenameBase + "-windowsserver " + FilenameVersion + ".zip"
+		    Var FileInfo As JSONItem
 		    For Idx As Integer = 0 To FileList.Count - 1
 		      Var File As JSONItem = FileList.ChildAt(Idx)
-		      Var FileMatches As RegexMatch = mModFilenameSearcher.Search(File.Value("fileName").StringValue)
-		      If FileMatches Is Nil Or FileMatches.SubExpressionString(1) <> FilenameBase Or FileMatches.SubExpressionString(3) <> FilenameVersion Then
+		      If File.Value("fileName").StringValue <> DesiredFilename Then
 		        Continue For Idx
 		      End If
 		      
-		      CandidateFiles.Add(File)
-		      Filesizes.Add(File.Value("fileLength").UInt64Value)
+		      FileInfo = File
+		      Exit For Idx
 		    Next
-		    Filesizes.SortWith(CandidateFiles)
 		    
-		    For Each CandidateFile As JSONItem In CandidateFiles
-		      Var FileHash As String
-		      Var Hashes As JSONItem = CandidateFile.Child("hashes")
-		      For Idx As Integer = 0 To Hashes.Count - 1
-		        Var Hash As JSONItem = Hashes.ChildAt(Idx)
-		        If Hash.Value("algo") = 1 Then
-		          FileHash = Hash.Value("value")
-		          Exit For Idx
-		        End If
-		      Next
-		      
-		      Var FileSize As Double = CandidateFile.Value("fileLength")
-		      Var FileName As String = CandidateFile.Value("fileName")
-		      
-		      Var DownloadUrl As String
-		      If CandidateFile.HasKey("downloadUrl") And CandidateFile.Value("downloadUrl").IsNull = False Then
-		        DownloadUrl = CandidateFile.Value("downloadUrl")
-		      Else
-		        // The url is predictable
-		        Var FileId As Integer = CandidateFile.Value("id")
-		        Var ParentFolderId As Integer = Floor(FileId / 1000)
-		        Var ChildFolderId As Integer = FileId - (ParentFolderId * 1000)
-		        DownloadUrl = "https://edge.forgecdn.net/files/" + ParentFolderId.ToString(Locale.Raw, "0") + "/" + ChildFolderId.ToString(Locale.Raw, "0") + "/" + EncodeURLComponent(FileName)
+		    If FileInfo Is Nil Then
+		      App.Log("Could not find file " + DesiredFilename + " for mod " + ModId + ".")
+		      Return Nil
+		    End If
+		    
+		    Var FileHash As String
+		    Var Hashes As JSONItem = FileInfo.Child("hashes")
+		    For Idx As Integer = 0 To Hashes.Count - 1
+		      Var Hash As JSONItem = Hashes.ChildAt(Idx)
+		      If Hash.Value("algo") = 1 Then
+		        FileHash = Hash.Value("value")
+		        Exit For Idx
 		      End If
-		      
-		      // This isn't officially supported, so let's pretend we're a browser.
-		      Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		      DownloadSocket.RequestHeader("User-Agent") = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
-		      DownloadSocket.Send("GET", DownloadUrl)
-		      If DownloadSocket.LastHTTPStatus <> 200 Then
-		        App.Log("Mod " + ModId + " was looked up, but the archive '" + FileName + "' could not be downloaded: HTTP #" + DownloadSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
-		        Continue For CandidateFile
-		      End If
-		      
-		      Var DownloadedBytes As Double
-		      If (DownloadSocket.LastContent Is Nil) = False Then
-		        DownloadedBytes = DownloadSocket.LastContent.Size
-		      End If
-		      If DownloadedBytes <> FileSize Then
-		        App.Log("Mod " + ModId + " downloaded " + Beacon.BytesToString(DownloadedBytes) + " of '" + FileName + "' but should have downloaded " + Beacon.BytesToString(FileSize) + ".")
-		        Continue For CandidateFile
-		      End If
-		      
-		      If FileHash.IsEmpty = False And (DownloadSocket.LastContent Is Nil) = False Then
-		        Var ComputedHash As String = EncodeHex(Crypto.SHA1(DownloadSocket.LastContent))
-		        If ComputedHash <> FileHash Then
-		          App.Log("Mod " + ModId + " downloaded '" + FileName + "' but checksum does not match. Expected " + FileHash.Lowercase + ", computed " + ComputedHash.Lowercase)
-		          Continue For CandidateFile
-		        End If
-		      End If
-		      
-		      Var Reader As New ArchiveReaderMBS
-		      Reader.SupportFilterAll
-		      Reader.SupportFormatAll
-		      If Not Reader.OpenData(DownloadSocket.LastContent) Then
-		        App.Log("Could not open archive '" + FileName + "' for mod " + ModId + ": " + Reader.ErrorString)
-		        Continue For CandidateFile
-		      End If
-		      
-		      Return New ArkSA.ModDownload(Reader, Filename)
 		    Next
+		    
+		    Var FileSize As Double = FileInfo.Value("fileLength")
+		    Var FileName As String = FileInfo.Value("fileName")
+		    
+		    Var DownloadUrl As String
+		    If FileInfo.HasKey("downloadUrl") And FileInfo.Value("downloadUrl").IsNull = False Then
+		      DownloadUrl = FileInfo.Value("downloadUrl")
+		    Else
+		      // The url is predictable
+		      Var FileId As Integer = FileInfo.Value("id")
+		      Var ParentFolderId As Integer = Floor(FileId / 1000)
+		      Var ChildFolderId As Integer = FileId - (ParentFolderId * 1000)
+		      DownloadUrl = "https://edge.forgecdn.net/files/" + ParentFolderId.ToString(Locale.Raw, "0") + "/" + ChildFolderId.ToString(Locale.Raw, "0") + "/" + EncodeURLComponent(FileName)
+		    End If
+		    
+		    // This isn't officially supported, so let's pretend we're a browser.
+		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
+		    DownloadSocket.RequestHeader("User-Agent") = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+		    DownloadSocket.Send("GET", DownloadUrl)
+		    If DownloadSocket.LastHTTPStatus <> 200 Then
+		      App.Log("Mod " + ModId + " was looked up, but the archive '" + FileName + "' could not be downloaded: HTTP #" + DownloadSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		      Return Nil
+		    End If
+		    
+		    Var DownloadedBytes As Double
+		    If (DownloadSocket.LastContent Is Nil) = False Then
+		      DownloadedBytes = DownloadSocket.LastContent.Size
+		    End If
+		    If DownloadedBytes <> FileSize Then
+		      App.Log("Mod " + ModId + " downloaded " + Beacon.BytesToString(DownloadedBytes) + " of '" + FileName + "' but should have downloaded " + Beacon.BytesToString(FileSize) + ".")
+		      Return Nil
+		    End If
+		    
+		    If FileHash.IsEmpty = False And (DownloadSocket.LastContent Is Nil) = False Then
+		      Var ComputedHash As String = EncodeHex(Crypto.SHA1(DownloadSocket.LastContent))
+		      If ComputedHash <> FileHash Then
+		        App.Log("Mod " + ModId + " downloaded '" + FileName + "' but checksum does not match. Expected " + FileHash.Lowercase + ", computed " + ComputedHash.Lowercase)
+		        Return Nil
+		      End If
+		    End If
+		    
+		    Var Reader As New ArchiveReaderMBS
+		    Reader.SupportFilterAll
+		    Reader.SupportFormatAll
+		    If Not Reader.OpenData(DownloadSocket.LastContent) Then
+		      App.Log("Could not open archive '" + FileName + "' for mod " + ModId + ": " + Reader.ErrorString)
+		      Return Nil
+		    End If
+		    
+		    Return New ArkSA.ModDownload(Reader, Filename)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Trying to download mod " + ModId)
 		    Return Nil
@@ -834,6 +835,52 @@ Protected Module ArkSA
 		  Var ExtraClauses() As String
 		  Var ExtraValues() As Variant
 		  Return Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatures(Extends Providers() As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Creature()
+		  Var Creatures() As ArkSA.Creature
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Creatures = Creatures.Merge(Provider.GetCreatures(SearchText, ContentPacks, Tags))
+		  Next
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngrams(Extends Providers() As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Engram()
+		  Var Engrams() As ArkSA.Engram
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Engrams = Engrams.Merge(Provider.GetEngrams(SearchText, ContentPacks, Tags))
+		  Next
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainers(Extends Providers() As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil, IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
+		  Var Containers() As ArkSA.LootContainer
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Containers = Containers.Merge(Provider.GetLootContainers(SearchText, ContentPacks, Tags, IncludeExperimental))
+		  Next
+		  Return Containers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPoints(Extends Providers() As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.SpawnPoint()
+		  Var SpawnPoints() As ArkSA.SpawnPoint
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    SpawnPoints = SpawnPoints.Merge(Provider.GetSpawnPoints(SearchText, ContentPacks, Tags))
+		  Next
+		  Return SpawnPoints
 		End Function
 	#tag EndMethod
 
@@ -1047,7 +1094,36 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.Blueprint, Array2() As ArkSA.Blueprint) As ArkSA.Blueprint()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
+		  Var Unique As New Dictionary
+		  For Each Blueprint As ArkSA.Blueprint In Array1
+		    Unique.Value(Blueprint.BlueprintId) = Blueprint
+		  Next
+		  For Each Blueprint As ArkSA.Blueprint In Array2
+		    Unique.Value(Blueprint.BlueprintId) = Blueprint
+		  Next
+		  Var Merged() As ArkSA.Blueprint
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Merge(Extends Array1() As ArkSA.Creature, Array2() As ArkSA.Creature) As ArkSA.Creature()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
 		  Var Unique As New Dictionary
 		  For Each Creature As ArkSA.Creature In Array1
 		    Unique.Value(Creature.BlueprintId) = Creature
@@ -1065,6 +1141,12 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h0
 		Function Merge(Extends Array1() As ArkSA.Engram, Array2() As ArkSA.Engram) As ArkSA.Engram()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
 		  Var Unique As New Dictionary
 		  For Each Engram As ArkSA.Engram In Array1
 		    Unique.Value(Engram.BlueprintId) = Engram
@@ -1082,6 +1164,12 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h0
 		Function Merge(Extends Array1() As ArkSA.LootContainer, Array2() As ArkSA.LootContainer) As ArkSA.LootContainer()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
 		  Var Unique As New Dictionary
 		  For Each LootContainer As ArkSA.LootContainer In Array1
 		    Unique.Value(LootContainer.BlueprintId) = LootContainer
@@ -1099,6 +1187,12 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h0
 		Function Merge(Extends Array1() As ArkSA.SpawnPoint, Array2() As ArkSA.SpawnPoint) As ArkSA.SpawnPoint()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
 		  Var Unique As New Dictionary
 		  For Each SpawnPoint As ArkSA.SpawnPoint In Array1
 		    Unique.Value(SpawnPoint.BlueprintId) = SpawnPoint
