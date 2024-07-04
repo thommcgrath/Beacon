@@ -633,6 +633,7 @@ Inherits Beacon.Project
 	#tag Method, Flags = &h0
 		Function CreateTrollConfigOrganizer(Profile As ArkSA.ServerProfile) As ArkSA.ConfigOrganizer
 		  Var Values As New ArkSA.ConfigOrganizer
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
 		  
 		  If (Profile Is Nil) = False Then
 		    Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Profile.Name))
@@ -680,8 +681,8 @@ Inherits Beacon.Project
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoHarvestingDamageMultiplier=0.0000001"))
 		  
 		  Var Packs As Beacon.StringList = Self.ContentPacks
-		  Var Containers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", Packs, Nil, True)
-		  Var Engram As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("f25b4d0e-2a1c-57c0-b54c-99d9083b2ca0")
+		  Var Containers() As ArkSA.LootContainer = Providers.GetLootContainers("", Packs, Nil, True)
+		  Var Engram As ArkSA.Engram = Providers(0).GetEngram("f25b4d0e-2a1c-57c0-b54c-99d9083b2ca0")
 		  Var Mask As UInt64 = Self.MapMask
 		  Var LootDrops As New ArkSA.Configs.LootDrops
 		  For Each Container As ArkSA.LootContainer In Containers
@@ -719,7 +720,7 @@ Inherits Beacon.Project
 		    Values.Add(LootValue)
 		  Next
 		  
-		  Var Craftable() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams("", Packs, New Beacon.TagSpec(Array("blueprintable"), Array("generic")))
+		  Var Craftable() As ArkSA.Engram = Providers.GetEngrams("", Packs, New Beacon.TagSpec(Array("blueprintable"), Array("generic")))
 		  Var CoinFlip As Integer = Rand.InRange(0, 1)
 		  If CoinFlip = 0 Then
 		    // Turdcraft
@@ -730,7 +731,7 @@ Inherits Beacon.Project
 		    Next CraftableEngram
 		  Else
 		    // Randomcraft
-		    Var Choices() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams("", Packs, New Beacon.TagSpec(Array("blueprintable"), Array("generic")))
+		    Var Choices() As ArkSA.Engram = Providers.GetEngrams("", Packs, New Beacon.TagSpec(Array("blueprintable"), Array("generic")))
 		    For Each CraftableEngram As ArkSA.Engram In Craftable
 		      Var Idx As Integer = Rand.InRange(Choices.FirstIndex, Choices.LastIndex)
 		      

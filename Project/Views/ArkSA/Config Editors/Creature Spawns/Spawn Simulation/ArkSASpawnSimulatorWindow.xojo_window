@@ -592,14 +592,14 @@ End
 			    
 			    Select Case Value
 			    Case Self.ModeSpawnPoints
-			      Var SpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPoints("", Self.mProject.ContentPacks, "")
+			      Var SpawnPoints() As ArkSA.SpawnPoint = ArkSA.ActiveBlueprintProviders.GetSpawnPoints("", Self.mProject.ContentPacks, Nil)
 			      For Each SpawnPoint As ArkSA.SpawnPoint In SpawnPoints
 			        If SpawnPoint.ValidForMap(Self.MapMenu.SelectedRowTag) Then
 			          Self.FilterMenu.AddRow(SpawnPoint.Label, SpawnPoint)
 			        End If
 			      Next
 			    Case Self.ModeCreatures
-			      Var Creatures() As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreatures("", Self.mProject.ContentPacks, "")
+			      Var Creatures() As ArkSA.Creature = ArkSA.ActiveBlueprintProviders.GetCreatures("", Self.mProject.ContentPacks, Nil)
 			      For Each Creature As ArkSA.Creature In Creatures
 			        Self.FilterMenu.AddRow(Creature.Label, Creature)
 			      Next

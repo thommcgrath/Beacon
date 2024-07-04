@@ -1296,7 +1296,9 @@ End
 		  Next
 		  
 		  Var ContentPacks As Beacon.StringList = Self.mProject.ContentPacks
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  #Pragma Warning "No solution for this yet"
 		  Var EngramIds() As String = DataSource.GetRecipeEngramIds(ContentPacks, ArkSA.Maps.UniversalMask)
 		  For Each EngramId As String In EngramIds
 		    If Filter.HasKey(EngramId) Then
@@ -1313,7 +1315,7 @@ End
 		  If Self.mTargetRecipes.Count > 0 Then
 		    TargetRecipes = Self.mTargetRecipes
 		  Else
-		    TargetRecipes = DataSource.GetEngrams("", ContentPacks, Self.mTargetRecipeTags)
+		    TargetRecipes = Providers.GetEngrams("", ContentPacks, Self.mTargetRecipeTags)
 		  End If
 		  Var TargetRecipeMap As New Dictionary
 		  For Each Recipe As ArkSA.Engram In TargetRecipes
@@ -1324,7 +1326,7 @@ End
 		  If Self.mTargetIngredients.Count > 0 Then
 		    TargetIngredients = Self.mTargetIngredients
 		  Else
-		    TargetIngredients = DataSource.GetEngrams("", ContentPacks, Self.mTargetIngredientTags)
+		    TargetIngredients = Providers.GetEngrams("", ContentPacks, Self.mTargetIngredientTags)
 		  End If
 		  Var TargetMap As New Dictionary
 		  For Each Ingredient As ArkSA.Engram In TargetIngredients

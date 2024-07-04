@@ -791,10 +791,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildSourceList()
-		  Var Data As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		  
 		  Var Overrides() As ArkSA.LootDropOverride = Self.mConfig.Overrides
-		  Var AllowedLootContainers() As ArkSA.LootContainer = Data.GetLootContainers(Self.FilterField.Text.MakeUTF8, Self.mContentPacks, Nil, Preferences.ShowExperimentalLootSources)
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		  Var AllowedLootContainers() As ArkSA.LootContainer = Providers.GetLootContainers(Self.FilterField.Text.MakeUTF8, Self.mContentPacks, Nil, Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootContainers.LastIndex DownTo 0
 		    If Not AllowedLootContainers(X).ValidForMask(Self.mMask) Then
 		      AllowedLootContainers.RemoveAt(X)

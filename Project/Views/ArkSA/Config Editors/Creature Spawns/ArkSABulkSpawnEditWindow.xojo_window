@@ -815,7 +815,7 @@ End
 		  Var Creatures() As ArkSA.Creature
 		  Var CreatureIds() As String
 		  If AllCreaturesRadio.Value Then
-		    Creatures = ArkSA.DataSource.Pool.Get(False).GetCreatures("", Self.mMods)
+		    Creatures = ArkSA.ActiveBlueprintProviders.GetCreatures("", Self.mMods)
 		    For Each Creature As ArkSA.Creature In Creatures
 		      CreatureIds.Add(Creature.CreatureId)
 		    Next

@@ -503,28 +503,31 @@ End
 		Private Sub UpdateFilter()
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8.Trim
 		  Var SpawnPoints() As ArkSA.SpawnPoint
-		  
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		  Var FilterMode As Integer = Self.FilterMode
 		  If SearchText.IsEmpty Then
-		    SpawnPoints = ArkSA.DataSource.Pool.Get(False).GetSpawnPoints("", Self.mMods)
-		  Else
-		    Select Case Self.FilterMode
-		    Case Self.FilterModeSpawnPoint
-		      SpawnPoints = ArkSA.DataSource.Pool.Get(False).GetSpawnPoints(SearchText, Self.mMods)
-		    Case Self.FilterModeCreature
-		      Var Creatures() As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreatures(SearchText, Self.mMods)
-		      Var UniqueSpawnPoints As New Dictionary
-		      For Each Creature As ArkSA.Creature In Creatures
-		        Var CreatureSpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, Nil)
-		        For Each SpawnPoint As ArkSA.SpawnPoint In CreatureSpawnPoints
-		          UniqueSpawnPoints.Value(SpawnPoint.SpawnPointId) = SpawnPoint
-		        Next
-		      Next
-		      
-		      For Each Entry As DictionaryEntry In UniqueSpawnPoints
-		        SpawnPoints.Add(ArkSA.SpawnPoint(Entry.Value))
-		      Next
-		    End Select
+		    FilterMode = Self.FilterModeSpawnPoint
 		  End If
+		  
+		  Select Case Self.FilterMode
+		  Case Self.FilterModeSpawnPoint
+		    SpawnPoints = Providers.GetSpawnPoints(SearchText, Self.mMods)
+		  Case Self.FilterModeCreature
+		    Var Creatures() As ArkSA.Creature = Providers.GetCreatures(SearchText, Self.mMods)
+		    
+		    Var UniqueSpawnPoints As New Dictionary
+		    For Each Creature As ArkSA.Creature In Creatures
+		      #Pragma Warning "Don't have a solution for this yet"
+		      Var CreatureSpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, Nil)
+		      For Each SpawnPoint As ArkSA.SpawnPoint In CreatureSpawnPoints
+		        UniqueSpawnPoints.Value(SpawnPoint.SpawnPointId) = SpawnPoint
+		      Next
+		    Next
+		    
+		    For Each Entry As DictionaryEntry In UniqueSpawnPoints
+		      SpawnPoints.Add(ArkSA.SpawnPoint(Entry.Value))
+		    Next
+		  End Select
 		  
 		  Var Labels As Dictionary = ArkSA.DataSource.Pool.Get(False).GetSpawnPointLabels(Self.mAvailability)
 		  

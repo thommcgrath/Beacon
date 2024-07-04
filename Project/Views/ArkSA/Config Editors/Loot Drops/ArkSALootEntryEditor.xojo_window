@@ -727,7 +727,7 @@ End
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As Beacon.TagSpec = Self.Picker.Spec
 		  
-		  Var Engrams() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams(SearchText, Self.mMods, Tags)
+		  Var Engrams() As ArkSA.Engram = ArkSA.ActiveBlueprintProviders.GetEngrams(SearchText, Self.mMods, Tags)
 		  EngramList.RemoveAllRows
 		  
 		  Self.mEngramRowIndexes = New Dictionary

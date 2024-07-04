@@ -541,7 +541,7 @@ End
 		  Var Message As String
 		  Var LootSelector As New ArkSA.LootContainerSelector(TemplateSelector)
 		  If LootSelector.TestCode(Message) Then
-		    Var Sources() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", New Beacon.StringList, Nil, True)
+		    Var Sources() As ArkSA.LootContainer = ArkSA.ActiveBlueprintProviders.GetLootContainers("", New Beacon.StringList, Nil, True)
 		    Var Matches() As ArkSA.LootContainer = LootSelector.Matches(Sources)
 		    Self.MatchList.RemoveAllRows
 		    For Each Source As ArkSA.LootContainer In Matches
