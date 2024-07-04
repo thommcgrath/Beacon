@@ -1313,35 +1313,38 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveCreature(CreatureId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.Creature
-		  If CreatureId.IsEmpty = False Then
-		    Try
-		      Var Creature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(CreatureId)
-		      If (Creature Is Nil) = False Then
-		        Return Creature
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var Creatures() As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreaturesByPath(Path, ContentPacks)
-		      If Creatures.Count > 0 Then
-		        Return Creatures(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var Creatures() As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreaturesByClass(ClassString, ContentPacks)
-		      If Creatures.Count > 0 Then
-		        Return Creatures(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    If CreatureId.IsEmpty = False Then
+		      Try
+		        Var Creature As ArkSA.Creature = Provider.GetCreature(CreatureId)
+		        If (Creature Is Nil) = False Then
+		          Return Creature
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If Path.IsEmpty = False Then
+		      Try
+		        Var Creatures() As ArkSA.Creature = Provider.GetCreaturesByPath(Path, ContentPacks)
+		        If Creatures.Count > 0 Then
+		          Return Creatures(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If ClassString.IsEmpty = False Then
+		      Try
+		        Var Creatures() As ArkSA.Creature = Provider.GetCreaturesByClass(ClassString, ContentPacks)
+		        If Creatures.Count > 0 Then
+		          Return Creatures(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  Next
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
@@ -1442,35 +1445,38 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveLootContainer(LootDropId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.LootContainer
-		  If LootDropId.IsEmpty = False Then
-		    Try
-		      Var LootContainer As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainer(LootDropId)
-		      If (LootContainer Is Nil) = False Then
-		        Return LootContainer
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var LootContainers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainersByPath(Path, ContentPacks)
-		      If LootContainers.Count > 0 Then
-		        Return LootContainers(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var LootContainers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainersByClass(ClassString, ContentPacks)
-		      If LootContainers.Count > 0 Then
-		        Return LootContainers(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    If LootDropId.IsEmpty = False Then
+		      Try
+		        Var LootContainer As ArkSA.LootContainer = Provider.GetLootContainer(LootDropId)
+		        If (LootContainer Is Nil) = False Then
+		          Return LootContainer
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If Path.IsEmpty = False Then
+		      Try
+		        Var LootContainers() As ArkSA.LootContainer = Provider.GetLootContainersByPath(Path, ContentPacks)
+		        If LootContainers.Count > 0 Then
+		          Return LootContainers(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If ClassString.IsEmpty = False Then
+		      Try
+		        Var LootContainers() As ArkSA.LootContainer = Provider.GetLootContainersByClass(ClassString, ContentPacks)
+		        If LootContainers.Count > 0 Then
+		          Return LootContainers(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  Next
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
@@ -1505,35 +1511,38 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveSpawnPoint(SpawnPointId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.SpawnPoint
-		  If SpawnPointId.IsEmpty = False Then
-		    Try
-		      Var SpawnPoint As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPoint(SpawnPointId)
-		      If (SpawnPoint Is Nil) = False Then
-		        Return SpawnPoint
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var SpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsByPath(Path, ContentPacks)
-		      If SpawnPoints.Count > 0 Then
-		        Return SpawnPoints(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var SpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsByClass(ClassString, ContentPacks)
-		      If SpawnPoints.Count > 0 Then
-		        Return SpawnPoints(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    If SpawnPointId.IsEmpty = False Then
+		      Try
+		        Var SpawnPoint As ArkSA.SpawnPoint = Provider.GetSpawnPoint(SpawnPointId)
+		        If (SpawnPoint Is Nil) = False Then
+		          Return SpawnPoint
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If Path.IsEmpty = False Then
+		      Try
+		        Var SpawnPoints() As ArkSA.SpawnPoint = Provider.GetSpawnPointsByPath(Path, ContentPacks)
+		        If SpawnPoints.Count > 0 Then
+		          Return SpawnPoints(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If ClassString.IsEmpty = False Then
+		      Try
+		        Var SpawnPoints() As ArkSA.SpawnPoint = Provider.GetSpawnPointsByClass(ClassString, ContentPacks)
+		        If SpawnPoints.Count > 0 Then
+		          Return SpawnPoints(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  Next
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
