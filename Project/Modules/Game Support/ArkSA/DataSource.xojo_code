@@ -769,6 +769,12 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintProviderId() As String
+		  Return "Official"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Cache(Blueprint As ArkSA.Blueprint)
 		  If Blueprint Is Nil Then
 		    Return

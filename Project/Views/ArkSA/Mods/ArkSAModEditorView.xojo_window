@@ -1205,7 +1205,6 @@ End
 		    Return
 		  End If
 		  
-		  Var AdditionalProviders() As ArkSA.BlueprintProvider = Array(Self.mController)
 		  If Me.SelectedRowCount = 1 Then
 		    Var RowIdx As Integer = Me.SelectedRowIndex
 		    Var Blueprint As ArkSA.Blueprint = Me.RowTagAt(RowIdx)
@@ -1213,7 +1212,7 @@ End
 		      Return
 		    End If
 		    
-		    Blueprint = ArkSABlueprintEditorDialog.Present(Self, Blueprint, Self.mReadOnly, AdditionalProviders)
+		    Blueprint = ArkSABlueprintEditorDialog.Present(Self, Blueprint, Self.mReadOnly)
 		    If Blueprint Is Nil Then
 		      Return
 		    End If
@@ -1327,8 +1326,7 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Select Case Item.Name
 		  Case "AddBlueprint"
-		    Var AdditionalProviders() As ArkSA.BlueprintProvider = Array(Self.mController)
-		    Var Blueprint As ArkSA.Blueprint = ArkSABlueprintEditorDialog.Present(Self, Self.mController.ContentPack.ContentPackId, Self.mController.ContentPack.Name, False, AdditionalProviders)
+		    Var Blueprint As ArkSA.Blueprint = ArkSABlueprintEditorDialog.Present(Self, Self.mController.ContentPack.ContentPackId, Self.mController.ContentPack.Name, False)
 		    If (Blueprint Is Nil) = False Then
 		      Try
 		        Self.mController.SaveBlueprint(Blueprint)

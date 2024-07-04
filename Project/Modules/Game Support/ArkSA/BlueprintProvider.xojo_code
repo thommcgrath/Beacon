@@ -13,6 +13,12 @@ Protected Interface BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintProviderId() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBlueprint(BlueprintId As String, UseCache As Boolean = True) As ArkSA.Blueprint
 		  
 		End Function

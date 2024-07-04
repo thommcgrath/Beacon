@@ -50,6 +50,12 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintProviderId() As String
+		  Return Self.mContentPack.ContentPackId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CancelAllTasks()
 		  If Self.mPendingTasks.Count > 0 Then
 		    Self.mPendingTasks.ResizeTo(-1)
@@ -277,6 +283,12 @@ Implements ArkSA.BlueprintProvider
 		    End If
 		  End If
 		  
+		  Var RequiredTags(), ExcludedTags() As String
+		  Try
+		    TagPicker.ParseSpec(Tags, RequiredTags, ExcludedTags)
+		  Catch Err As RuntimeException
+		  End Try
+		  
 		  Var Results() As ArkSA.Blueprint
 		  Var Sources() As Dictionary = Array(Self.mChanges, Self.mOriginalBlueprints)
 		  Var CheckedIds As New Dictionary
@@ -302,7 +314,7 @@ Implements ArkSA.BlueprintProvider
 		        Continue
 		      End If
 		      
-		      If Blueprint.MatchesTags(Tags) = False Then
+		      If Blueprint.MatchesTags(RequiredTags, ExcludedTags) = False Then
 		        Continue
 		      End If
 		      

@@ -1,5 +1,46 @@
 #tag Module
 Protected Module ArkSA
+	#tag Method, Flags = &h1
+		Protected Sub ActivateBlueprintProvider(Provider As ArkSA.BlueprintProvider)
+		  If Provider Is Nil Then
+		    Return
+		  End If
+		  
+		  If mBlueprintProviders Is Nil Then
+		    mBlueprintProviders = New Dictionary
+		  End If
+		  
+		  If mBlueprintProviders.HasKey(Provider.BlueprintProviderId) And (WeakRef(mBlueprintProviders.Value(Provider.BlueprintProviderId)).Value Is Nil) = False Then
+		    // Provider is already active
+		    Return
+		  End If
+		  
+		  mBlueprintProviders.Value(Provider.BlueprintProviderId) = New WeakRef(Provider)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ActiveBlueprintProviders() As ArkSA.BlueprintProvider()
+		  Var Providers(0) As ArkSA.BlueprintProvider
+		  Providers(0) = ArkSA.DataSource.Pool.Get(False)
+		  
+		  If (mBlueprintProviders Is Nil) = False Then
+		    Var ProviderIds() As Variant = mBlueprintProviders.Keys
+		    For Each ProviderId As Variant In ProviderIds
+		      Var Ref As WeakRef = mBlueprintProviders.Value(ProviderId)
+		      If Ref.Value Is Nil Then
+		        mBlueprintProviders.Remove(ProviderId)
+		        Continue
+		      End If
+		      
+		      Providers.Add(ArkSA.BlueprintProvider(Ref.Value))
+		    Next
+		  End If
+		  
+		  Return Providers
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub AddTag(Extends Blueprint As ArkSA.MutableBlueprint, ParamArray TagsToAdd() As String)
 		  Blueprint.AddTags(TagsToAdd)
@@ -462,6 +503,19 @@ Protected Module ArkSA
 		    App.Log(Err, CurrentMethodName, "Copying blueprint data from dictionary")
 		    Return False
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub DeactivateBlueprintProvider(Provider As ArkSA.BlueprintProvider)
+		  If mBlueprintProviders Is Nil Or Provider Is Nil Then
+		    // No providers, so nothing to do
+		    Return
+		  End If
+		  
+		  If mBlueprintProviders.HasKey(Provider.BlueprintProviderId) Then
+		    mBlueprintProviders.Remove(Provider.BlueprintProviderId)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -1315,35 +1369,38 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveEngram(EngramId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.Engram
-		  If EngramId.IsEmpty = False Then
-		    Try
-		      Var Engram As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram(EngramId)
-		      If (Engram Is Nil) = False Then
-		        Return Engram
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var Engrams() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngramsByPath(Path, ContentPacks)
-		      If Engrams.Count > 0 Then
-		        Return Engrams(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var Engrams() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngramsByClass(ClassString, ContentPacks)
-		      If Engrams.Count > 0 Then
-		        Return Engrams(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    If EngramId.IsEmpty = False Then
+		      Try
+		        Var Engram As ArkSA.Engram = Provider.GetEngram(EngramId)
+		        If (Engram Is Nil) = False Then
+		          Return Engram
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If Path.IsEmpty = False Then
+		      Try
+		        Var Engrams() As ArkSA.Engram = Provider.GetEngramsByPath(Path, ContentPacks)
+		        If Engrams.Count > 0 Then
+		          Return Engrams(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If ClassString.IsEmpty = False Then
+		      Try
+		        Var Engrams() As ArkSA.Engram = Provider.GetEngramsByClass(ClassString, ContentPacks)
+		        If Engrams.Count > 0 Then
+		          Return Engrams(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  Next
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
@@ -1729,6 +1786,10 @@ Protected Module ArkSA
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mBlueprintProviders As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mModFilenameSearcher As RegEx
