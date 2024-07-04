@@ -55,17 +55,15 @@ Inherits ControlCanvas
 		Sub MouseUp(X As Integer, Y As Integer)
 		  If Self.mMouseDownCellIndex > -1 And Self.mCells(Self.mMouseDownCellIndex).Contains(X, Y) Then
 		    Var Tag As String = Self.mTags(Self.mMouseDownCellIndex)
-		    Var RequireIndex As Integer = Self.mRequireTags.IndexOf(Tag)
-		    Var ExcludeIndex As Integer = Self.mExcludeTags.IndexOf(Tag)
-		    
-		    If RequireIndex > -1 Then
-		      Self.mRequireTags.RemoveAt(RequireIndex)
-		      Self.mExcludeTags.Add(Tag)
-		    ElseIf ExcludeIndex > -1 Then
-		      Self.mExcludeTags.RemoveAt(ExcludeIndex)
-		    Else
-		      Self.mRequireTags.Add(Tag)
-		    End If
+		    Var State As Integer = Self.mSpec.StateOf(Tag)
+		    Select Case State
+		    Case Beacon.TagSpec.StateIndifferent
+		      Self.mSpec.RequireTag(Tag)
+		    Case Beacon.TagSpec.StateRequired
+		      Self.mSpec.ExcludeTag(Tag)
+		    Case Beacon.TagSpec.StateExcluded
+		      Self.mSpec.ClearTag(Tag)
+		    End Select
 		    
 		    RaiseEvent TagsChanged
 		  End If
@@ -111,17 +109,6 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Shared Function ArrayToString(Source() As String) As String
-		  Var Clone() As String
-		  For Each Value As String In Source
-		    Clone.Add(Value)
-		  Next
-		  Clone.Sort
-		  Return Clone.Join(",")
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub AutoResize()
 		  Var HeightDelta As Integer
@@ -135,8 +122,19 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub ClearSelections()
-		  Var Arr() As String
-		  Self.SetSelections(Arr, Arr)
+		  Var InitialHash As String = Self.mSpec.Fingerprint
+		  Self.mSpec = New Beacon.TagSpec
+		  Var NewHash As String = Self.mSpec.Fingerprint
+		  Var Changed As Boolean = NewHash <> InitialHash
+		  
+		  If Changed Then
+		    If Thread.Current = Nil Then
+		      RaiseEvent TagsChanged
+		      Self.Refresh
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerChange)
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -152,6 +150,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.Border = Self.BorderTop Or Self.BorderLeft Or Self.BorderBottom Or Self.BorderRight
+		  Self.mSpec = New Beacon.TagSpec
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -184,30 +183,16 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Function ExcludedTags() As String()
-		  Var Tags() As String
-		  For Each Tag As String In Self.mExcludeTags
-		    Tags.Add(Tag)
-		  Next
-		  Return Tags
+		  Return Self.mSpec.ExcludedTags
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ExcludeTag(Tag As String)
-		  Var Idx As Integer
-		  Var Changed As Boolean
-		  
-		  Idx = Self.mExcludeTags.IndexOf(Tag)
-		  If Idx = -1 Then
-		    Self.mExcludeTags.Add(Tag)
-		    Changed = True
-		  End If
-		  
-		  Idx = Self.mRequireTags.IndexOf(Tag)
-		  If Idx > -1 Then
-		    Self.mRequireTags.RemoveAt(Idx)
-		    Changed = True
-		  End If
+		  Var InitialHash As String = Self.mSpec.Fingerprint
+		  Self.mSpec.ExcludeTag(Tag)
+		  Var NewHash As String = Self.mSpec.Fingerprint
+		  Var Changed As Boolean = NewHash <> InitialHash
 		  
 		  If Changed Then
 		    If Thread.Current = Nil Then
@@ -233,20 +218,10 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub NeutralizeTag(Tag As String)
-		  Var Idx As Integer
-		  Var Changed As Boolean
-		  
-		  Idx = Self.mRequireTags.IndexOf(Tag)
-		  If Idx > -1 Then
-		    Self.mRequireTags.RemoveAt(Idx)
-		    Changed = True
-		  End If
-		  
-		  Idx = Self.mExcludeTags.IndexOf(Tag)
-		  If Idx > -1 Then
-		    Self.mExcludeTags.RemoveAt(Idx)
-		    Changed = True
-		  End If
+		  Var InitialHash As String = Self.mSpec.Fingerprint
+		  Self.mSpec.ClearTag(Tag)
+		  Var NewHash As String = Self.mSpec.Fingerprint
+		  Var Changed As Boolean = NewHash <> InitialHash
 		  
 		  If Changed Then
 		    If Thread.Current = Nil Then
@@ -291,8 +266,9 @@ Inherits ControlCanvas
 		      Self.mCells(I) = Nil
 		      Continue For I
 		    End If
-		    Var Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
-		    Var Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
+		    Var State As Integer = Self.mSpec.StateOf(Tag)
+		    Var Required As Boolean = State = Beacon.TagSpec.StateRequired
+		    Var Excluded As Boolean = State = Beacon.TagSpec.StateExcluded
 		    Var Pressed As Boolean = Self.mMousePressedIndex = I
 		    Tag = Tag.ReplaceAll("_", " ").Titlecase
 		    
@@ -349,59 +325,17 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub ParseSpec(Value As String, ByRef RequiredTags() As String, ByRef ExcludedTags() As String)
-		  RequiredTags.ResizeTo(-1)
-		  ExcludedTags.ResizeTo(-1)
-		  
-		  If Value.IsEmpty Then
-		    Return
-		  End If
-		  
-		  
-		  Try
-		    Var Spec As Dictionary = Beacon.ParseJSON(Value)
-		    
-		    Var Required() As Variant = Spec.Value("required")
-		    For Each Tag As String In Required
-		      RequiredTags.Add(Tag)
-		    Next Tag
-		    
-		    Var Excluded() As Variant = Spec.Value("excluded")
-		    For Each Tag As String In Excluded
-		      ExcludedTags.Add(Tag)
-		    Next Tag
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Parsing tag spec")
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function RequiredTags() As String()
-		  Var Tags() As String
-		  For Each Tag As String In Self.mRequireTags
-		    Tags.Add(Tag)
-		  Next
-		  Return Tags
+		  Return Self.mSpec.RequiredTags
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RequireTag(Tag As String)
-		  Var Idx As Integer
-		  Var Changed As Boolean
-		  
-		  Idx = Self.mRequireTags.IndexOf(Tag)
-		  If Idx = -1 Then
-		    Self.mRequireTags.Add(Tag)
-		    Changed = True
-		  End If
-		  
-		  Idx = Self.mExcludeTags.IndexOf(Tag)
-		  If Idx > -1 Then
-		    Self.mExcludeTags.RemoveAt(Idx)
-		    Changed = True
-		  End If
+		  Var InitialHash As String = Self.mSpec.Fingerprint
+		  Self.mSpec.RequireTag(Tag)
+		  Var NewHash As String = Self.mSpec.Fingerprint
+		  Var Changed As Boolean = NewHash <> InitialHash
 		  
 		  If Changed Then
 		    If Thread.Current = Nil Then
@@ -428,54 +362,6 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub SetSelections(RequiredTags() As String, ExcludedTags() As String)
-		  If RequiredTags = Nil Then
-		    Var Temp() As String
-		    RequiredTags = Temp
-		  End If
-		  If ExcludedTags = Nil Then
-		    Var Temp() As String
-		    ExcludedTags = Temp
-		  End If
-		  
-		  For I As Integer = RequiredTags.LastIndex DownTo RequiredTags.FirstRowIndex
-		    If RequiredTags(I) <> "object" And Self.mTags.IndexOf(RequiredTags(I)) = -1 Then
-		      RequiredTags.RemoveAt(I)
-		    End If
-		  Next
-		  For I As Integer = ExcludedTags.LastIndex DownTo ExcludedTags.FirstRowIndex
-		    If Self.mTags.IndexOf(ExcludedTags(I)) = -1 Then
-		      ExcludedTags.RemoveAt(I)
-		    End If
-		  Next
-		  
-		  Var RequireCurrentString As String = Self.ArrayToString(Self.mRequireTags)
-		  Var RequireNewString As String = Self.ArrayToString(RequiredTags)
-		  Var Changed As Boolean = RequireCurrentString <> RequireNewString
-		  
-		  If Not Changed Then
-		    Var ExcludeCurrentString As String = Self.ArrayToString(Self.mExcludeTags)
-		    Var ExcludeNewString As String = Self.ArrayToString(ExcludedTags)
-		    Changed = ExcludeCurrentString <> ExcludeNewString
-		  End If
-		  
-		  If Not Changed Then
-		    Return
-		  End If
-		  
-		  Self.mRequireTags = RequiredTags.Clone
-		  Self.mExcludeTags = ExcludedTags.Clone
-		  
-		  If Thread.Current = Nil Then
-		    RaiseEvent TagsChanged
-		    Self.Refresh
-		  Else
-		    Call CallLater.Schedule(0, AddressOf TriggerChange)
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub ShowContextualMenu(CellIndex As Integer, MouseX As Integer, MouseY As Integer)
 		  Var Base As New DesktopMenuItem
@@ -484,21 +370,22 @@ Inherits ControlCanvas
 		  If CellIndex > -1 Then
 		    Var Tag As String = Self.mTags(CellIndex)
 		    Var TagHuman As String = Tag.ReplaceAll("_", " ").Titlecase
+		    Var State As Integer = Self.mSpec.StateOf(Tag)
 		    
 		    Var RequireItem As New DesktopMenuItem("Results Must Be Tagged With """ + TagHuman + """", "require:" + Tag)
-		    RequireItem.HasCheckMark = Self.mRequireTags.IndexOf(Tag) > -1
+		    RequireItem.HasCheckMark = State = Beacon.TagSpec.StateRequired
 		    If Self.RequireTagCaption.IsEmpty = False Then
 		      RequireItem.Text = Self.RequireTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
 		    
 		    Var ExcludeItem As New DesktopMenuItem("Do Not Show Results Tagged With """ + TagHuman + """", "exclude:" + Tag)
-		    ExcludeItem.HasCheckMark = Self.mExcludeTags.IndexOf(Tag) > -1
+		    ExcludeItem.HasCheckMark = State = Beacon.TagSpec.StateExcluded
 		    If Self.ExcludeTagCaption.IsEmpty = False Then
 		      ExcludeItem.Text = Self.ExcludeTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
 		    
 		    Var NeutralItem As New DesktopMenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
-		    NeutralItem.HasCheckMark = RequireItem.HasCheckMark = False And ExcludeItem.HasCheckMark = False
+		    NeutralItem.HasCheckMark = State = Beacon.TagSpec.StateIndifferent
 		    If Self.NeutralTagCaption.IsEmpty = False Then
 		      NeutralItem.Text = Self.NeutralTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
@@ -576,9 +463,11 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub Tags(Assigns Values() As String)
-		  If Values = Nil Then
+		  If Values Is Nil Then
 		    Return
 		  End If
+		  
+		  Var OldTags() As String = String.FromArray(Self.mTags, ",").Split(",")
 		  
 		  Var Changed As Boolean
 		  If Self.mTags.LastIndex <> Values.LastIndex Then
@@ -597,15 +486,13 @@ Inherits ControlCanvas
 		    Self.mCells.ResizeTo(Self.mTags.LastIndex)
 		    
 		    Var FireChangeEvent As Boolean
-		    For I As Integer = Self.mRequireTags.LastIndex DownTo 0
-		      If Self.mTags.IndexOf(Self.mRequireTags(I)) = -1 Then
-		        Self.mRequireTags.RemoveAt(I)
-		        FireChangeEvent = True
-		      End
-		      If Self.mTags.IndexOf(Self.mExcludeTags(I)) = -1 Then
-		        Self.mExcludeTags.RemoveAt(I)
-		        FireChangeEvent = True
+		    For Each Tag As String In OldTags
+		      If Self.mTags.IndexOf(Tag) > -1 Then
+		        // No change necessary
+		        Continue
 		      End If
+		      Self.mSpec.ClearTag(Tag)
+		      FireChangeEvent = True
 		    Next
 		    
 		    If FireChangeEvent Then
@@ -684,10 +571,6 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExcludeTags() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mHiddenTags() As String
 	#tag EndProperty
 
@@ -708,11 +591,11 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mRequireTags() As String
+		Private mScrollPosition As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mScrollPosition As Integer
+		Private mSpec As Beacon.TagSpec
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -730,20 +613,20 @@ Inherits ControlCanvas
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Var Dict As New Dictionary
-			  Dict.Value("required") = Self.mRequireTags
-			  Dict.Value("excluded") = Self.mExcludeTags
-			  Return Beacon.GenerateJSON(Dict, False)
+			  Return New Beacon.TagSpec(Self.mSpec)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var RequiredTags(), ExcludedTags() As String
-			  Self.ParseSpec(Value, RequiredTags, ExcludedTags)
-			  Self.SetSelections(RequiredTags, ExcludedTags)
+			  If Value Is Nil Then
+			    Self.mSpec = New Beacon.TagSpec
+			  Else
+			    Self.mSpec = New Beacon.TagSpec(Value)
+			  End If
+			  Self.Refresh
 			End Set
 		#tag EndSetter
-		Spec As String
+		Spec As Beacon.TagSpec
 	#tag EndComputedProperty
 
 

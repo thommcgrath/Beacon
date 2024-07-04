@@ -622,7 +622,7 @@ End
 		    Next
 		    Self.mMods = ModList
 		    Preferences.PresetsEnabledMods = PrefsDict
-		    Var Spec As String = Self.Picker.Spec
+		    Var Spec As Beacon.TagSpec = Self.Picker.Spec
 		    Self.Picker.Tags = ArkSA.DataSource.Pool.Get(False).GetTags(Self.mMods, ArkSA.CategoryEngrams)
 		    Self.Picker.Spec = Spec
 		    Self.UpdateFilter
@@ -725,7 +725,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
-		  Var Tags As String = Self.Picker.Spec
+		  Var Tags As Beacon.TagSpec = Self.Picker.Spec
 		  
 		  Var Engrams() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams(SearchText, Self.mMods, Tags)
 		  EngramList.RemoveAllRows

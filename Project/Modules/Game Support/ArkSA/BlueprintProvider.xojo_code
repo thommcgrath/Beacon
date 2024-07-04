@@ -1,12 +1,6 @@
 #tag Interface
 Protected Interface BlueprintProvider
 	#tag Method, Flags = &h0
-		Function AuthoritativeForContentPackIds() As String()
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As ArkSA.Blueprint) As Boolean
 		  
 		End Function
@@ -25,7 +19,7 @@ Protected Interface BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
+		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
 		  
 		End Function
 	#tag EndMethod
@@ -43,7 +37,7 @@ Protected Interface BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Creature()
+		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Creature()
 		  
 		End Function
 	#tag EndMethod
@@ -73,13 +67,13 @@ Protected Interface BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Engram()
+		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.Engram()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Engram()
+		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Engram()
 		  
 		End Function
 	#tag EndMethod
@@ -109,7 +103,7 @@ Protected Interface BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
+		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil, IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
 		  
 		End Function
 	#tag EndMethod
@@ -133,7 +127,7 @@ Protected Interface BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.SpawnPoint()
+		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.SpawnPoint()
 		  
 		End Function
 	#tag EndMethod

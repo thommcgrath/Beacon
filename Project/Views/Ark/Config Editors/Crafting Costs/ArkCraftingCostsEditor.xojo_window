@@ -267,6 +267,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -502,7 +503,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CreateFibercraftServer()
 		  Var Fiber As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram("244bc843-2540-486e-af4a-8824500c0e56")
-		  If ArkAdjustIngredientDialog.Present(Self, Self.Project, Nil, "{""required"":[],""excluded"":[""no_fibercraft""]}", Nil, "", Fiber, 0.00001, ArkAdjustIngredientDialog.RoundUp, False) Then
+		  If ArkAdjustIngredientDialog.Present(Self, Self.Project, Nil, New Beacon.TagSpec(Nil, Array("no_fibercraft")), Nil, Nil, Fiber, 0.00001, ArkAdjustIngredientDialog.RoundUp, False) Then
 		    Self.Modified = True
 		    Self.SetupUI()
 		  End If

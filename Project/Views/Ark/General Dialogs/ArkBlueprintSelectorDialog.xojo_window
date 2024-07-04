@@ -437,13 +437,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddBlueprintsToList(Blueprints() As Ark.Blueprint, Blacklist() As String, AddToBlacklist As Boolean, CheckTags As Boolean)
-		  Var RequiredTags(), ExcludedTags() As String
+		  Var Tags As Beacon.TagSpec
 		  If CheckTags Then
-		    Try
-		      RequiredTags = Self.Picker.RequiredTags()
-		      ExcludedTags = Self.Picker.ExcludedTags()
-		    Catch Err As RuntimeException
-		    End Try
+		    Tags = Self.Picker.Spec
 		  End If
 		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
@@ -451,7 +447,7 @@ End
 		      Continue
 		    End If
 		    
-		    If CheckTags = True And Blueprint.MatchesTags(RequiredTags, ExcludedTags) = False Then
+		    If CheckTags = True And Blueprint.Matches(Tags) = False Then
 		      Continue
 		    End If
 		    
@@ -723,7 +719,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
-		  Var Tags As String = Self.Picker.Spec
+		  Var Tags As Beacon.TagSpec = Self.Picker.Spec
 		  
 		  Var Blacklist() As String
 		  Blacklist.ResizeTo(Self.mExcluded.LastIndex)

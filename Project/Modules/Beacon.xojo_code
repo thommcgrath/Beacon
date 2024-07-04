@@ -108,13 +108,13 @@ Protected Module Beacon
 		  For Each ContentPack As Beacon.ContentPack In ContentPacks
 		    Select Case ContentPack.GameId
 		    Case Ark.Identifier
-		      Var Blueprints() As Ark.Blueprint = ArkDataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		      Var Blueprints() As Ark.Blueprint = ArkDataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), Nil)
 		      Var Filename As String = Ark.AddToArchive(Archive, ContentPack, Blueprints)
 		      If Filename.IsEmpty = False Then
 		        Filenames.Add(Filename)
 		      End If
 		    Case ArkSA.Identifier
-		      Var Blueprints() As ArkSA.Blueprint = ArkSADataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		      Var Blueprints() As ArkSA.Blueprint = ArkSADataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), Nil)
 		      Var Filename As String = ArkSA.AddToArchive(Archive, ContentPack, Blueprints)
 		      If Filename.IsEmpty = False Then
 		        Filenames.Add(Filename)

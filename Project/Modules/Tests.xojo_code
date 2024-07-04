@@ -153,11 +153,11 @@ Protected Module Tests
 		  System.DebugLog("Single cached duration: " + CachedDuration.ToString(Locale.Current, "#,##0") + " microseconds")
 		  
 		  StartTime = System.Microseconds
-		  Call DataSource.GetBlueprints("", New Beacon.StringList("38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"), "")
+		  Call DataSource.GetBlueprints("", New Beacon.StringList("38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"), Nil)
 		  InitialDuration = System.Microseconds - StartTime
 		  
 		  StartTime = System.Microseconds
-		  Call DataSource.GetBlueprints("", New Beacon.StringList("38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"), "")
+		  Call DataSource.GetBlueprints("", New Beacon.StringList("38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"), Nil)
 		  CachedDuration = System.Microseconds - StartTime
 		  
 		  System.DebugLog("Search initial duration: " + InitialDuration.ToString(Locale.Current, "#,##0") + " microseconds")

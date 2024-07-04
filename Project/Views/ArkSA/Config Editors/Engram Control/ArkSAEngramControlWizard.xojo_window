@@ -228,6 +228,7 @@ Begin BeaconDialog ArkSAEngramControlWizard
    End
    Begin Thread WorkThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3
@@ -431,7 +432,7 @@ End
 		  End If
 		  Var DisabledByDefault As Boolean = Config.OnlyAllowSpecifiedEngrams
 		  
-		  Var Engrams() As ArkSA.Engram = Beacon.Merge(Config.Engrams, ArkSA.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, ""))
+		  Var Engrams() As ArkSA.Engram = Beacon.Merge(Config.Engrams, ArkSA.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, Nil))
 		  Self.mEngramCount = Engrams.Count
 		  
 		  // Do the work

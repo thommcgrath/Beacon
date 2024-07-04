@@ -796,7 +796,7 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Blueprint()
+		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Blueprint()
 		  Var Categories() As String = ArkSA.Categories
 		  Var Blueprints() As ArkSA.Blueprint
 		  Var ExtraClauses() As String
@@ -812,7 +812,7 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Blueprint()
+		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.Blueprint()
 		  Var ExtraClauses() As String
 		  Var ExtraValues() As Variant
 		  Return Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
@@ -950,6 +950,25 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Matches(Extends Blueprint As ArkSA.Blueprint, Spec As Beacon.TagSpec) As Boolean
+		  If Spec Is Nil Then
+		    Return True
+		  End If
+		  
+		  Var Tags() As String = Spec.FilteredTags
+		  For Each Tag As String In Tags
+		    Var State As Integer = Spec.StateOf(Tag)
+		    Var IsTagged As Boolean = Blueprint.IsTagged(Tag)
+		    If (State = Beacon.TagSpec.StateRequired And IsTagged = False) Or (State = Beacon.TagSpec.StateExcluded And IsTagged = True) Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Matches(Extends Blueprint As ArkSA.Blueprint, Rx As PCRE2CodeMBS, Flags As Integer = ArkSA.FlagMatchAny) As Boolean
 		  If Rx Is Nil Then
 		    Return True
@@ -1006,36 +1025,6 @@ Protected Module ArkSA
 		  End If
 		  
 		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MatchesTags(Extends Blueprint As ArkSA.Blueprint, RequiredTags() As String, ExcludedTags() As String) As Boolean
-		  If (RequiredTags Is Nil) = False Then
-		    For Each Tag As String In RequiredTags
-		      If Blueprint.IsTagged(Tag) = False Then
-		        Return False
-		      End If
-		    Next
-		  End If
-		  
-		  If (ExcludedTags Is Nil) = False Then
-		    For Each Tag As String In ExcludedTags
-		      If Blueprint.IsTagged(Tag) = True Then
-		        Return False
-		      End If
-		    Next
-		  End If
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MatchesTags(Extends Blueprint As ArkSA.Blueprint, TagString As String) As Boolean
-		  Var RequiredTags(), ExcludedTags() As String
-		  TagPicker.ParseSpec(TagString, RequiredTags, ExcludedTags)
-		  Return Blueprint.MatchesTags(RequiredTags, ExcludedTags)
 		End Function
 	#tag EndMethod
 

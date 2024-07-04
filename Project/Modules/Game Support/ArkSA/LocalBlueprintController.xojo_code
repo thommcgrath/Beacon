@@ -39,13 +39,13 @@ Inherits ArkSA.BlueprintController
 		  
 		  Select Case Task.Mode
 		  Case Self.ModeCreatures
-		    Task.Blueprints = DataSource.GetCreatures("", Mods, "")
+		    Task.Blueprints = DataSource.GetCreatures("", Mods, Nil)
 		  Case Self.ModeEngrams
-		    Task.Blueprints = DataSource.GetEngrams("", Mods, "")
+		    Task.Blueprints = DataSource.GetEngrams("", Mods, Nil)
 		  Case Self.ModeLootDrops
-		    Task.Blueprints = DataSource.GetLootContainers("", Mods, "", True)
+		    Task.Blueprints = DataSource.GetLootContainers("", Mods, Nil, True)
 		  Case Self.ModeSpawnPoints
-		    Task.Blueprints = DataSource.GetSpawnPoints("", Mods, "")
+		    Task.Blueprints = DataSource.GetSpawnPoints("", Mods, Nil)
 		  End Select
 		  
 		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))

@@ -713,14 +713,7 @@ End
 		    Blacklist.Value(BlueprintId) = True
 		  Next
 		  
-		  Var RequiredTags(), ExcludedTags() As String
-		  Var Tags As String = Self.Picker.Spec
-		  Try
-		    RequiredTags = Self.Picker.RequiredTags()
-		    ExcludedTags = Self.Picker.ExcludedTags()
-		  Catch Err As RuntimeException
-		  End Try
-		  
+		  Var Tags As Beacon.TagSpec = Self.Picker.Spec
 		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
 		  Var RecentPaths() As String = Preferences.ArkSARecentBlueprints(Self.mCategory, Self.mSubgroup)
 		  Var FilteredBlueprints() As ArkSA.Blueprint
@@ -728,7 +721,7 @@ End
 		    For Each Path As String In RecentPaths
 		      Var BlueprintsAtPath() As ArkSA.Blueprint = Provider.GetBlueprintsByPath(Path, Self.mMods)
 		      For Each Blueprint As ArkSA.Blueprint In BlueprintsAtPath
-		        If Blacklist.HasKey(Blueprint.BlueprintId) Or (IsFiltered = True And Blueprint.Matches(SearchText) = False) Or Blueprint.MatchesTags(RequiredTags, ExcludedTags) = False Then
+		        If Blacklist.HasKey(Blueprint.BlueprintId) Or (IsFiltered = True And Blueprint.Matches(SearchText) = False) Or Blueprint.Matches(Tags) = False Then
 		          Continue
 		        End If
 		        

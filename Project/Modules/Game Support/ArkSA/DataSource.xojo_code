@@ -723,7 +723,7 @@ Implements ArkSA.BlueprintProvider
 		Sub TestPerformance()
 		  Var TestDoc As New ArkSA.Project
 		  Var Packs As Beacon.StringList = TestDoc.ContentPacks
-		  Var Tags As String = Preferences.SelectedTag(ArkSA.CategoryEngrams, "8e58f9e4") // Use a strange subgroup here to always get the default
+		  Var Tags As Beacon.TagSpec = Preferences.SelectedTag(ArkSA.CategoryEngrams, "8e58f9e4") // Use a strange subgroup here to always get the default
 		  Call Self.GetBlueprints(ArkSA.CategoryEngrams, "", Packs, Tags)
 		End Sub
 	#tag EndEvent
@@ -742,18 +742,6 @@ Implements ArkSA.BlueprintProvider
 		  End If
 		  
 		  Return Files
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AuthoritativeForContentPackIds() As String()
-		  Var ContentPackIds() As String
-		  Var Rows As RowSet = Self.SQLSelect("SELECT DISTINCT content_pack_id FROM content_packs;")
-		  While Not Rows.AfterLastRow
-		    ContentPackIds.Add(Rows.Column("content_pack_id").StringValue)
-		    Rows.MoveToNextRow
-		  Wend
-		  Return ContentPackIds
 		End Function
 	#tag EndMethod
 
@@ -1120,8 +1108,8 @@ Implements ArkSA.BlueprintProvider
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
+	#tag Method, Flags = &h0
+		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
 		  Var Blueprints() As ArkSA.Blueprint
 		  
 		  Try
@@ -1162,9 +1150,9 @@ Implements ArkSA.BlueprintProvider
 		      Next
 		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
-		    If Tags.IsEmpty = False Then
+		    If (Tags Is Nil) = False Then
 		      Var RequiredTags(), ExcludedTags() As String
-		      TagPicker.ParseSpec(Tags, RequiredTags, ExcludedTags)
+		      Tags.OrganizeTags(RequiredTags, ExcludedTags)
 		      Var ObjectTagIndex As Integer = RequiredTags.IndexOf("object")
 		      If ObjectTagIndex > -1 Then
 		        RequiredTags.RemoveAt(ObjectTagIndex)
@@ -1483,7 +1471,7 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Creature()
+		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Creature()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -1590,7 +1578,7 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Engram()
+		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.Engram()
 		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
 		  Var ExtraValues(0) As Variant
 		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryEngrams, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
@@ -1605,7 +1593,7 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Engram()
+		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Engram()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -1869,7 +1857,7 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
+		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil, IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -2077,7 +2065,7 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.SpawnPoint()
+		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.SpawnPoint()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -2123,7 +2111,7 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointsForCreature(Creature As ArkSA.Creature, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.SpawnPoint()
+		Function GetSpawnPointsForCreature(Creature As ArkSA.Creature, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.SpawnPoint()
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  Clauses.Add("spawn_points.sets LIKE :placeholder:")

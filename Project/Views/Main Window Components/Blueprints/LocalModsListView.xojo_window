@@ -119,6 +119,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -194,12 +195,14 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine ArkDiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine ArkSADiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -238,6 +241,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   600
    End
    Begin ArkSA.ModDiscoveryEngine2 ArkSADiscoveryEngine2
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1390,7 +1394,7 @@ End
 		    Packs.Value(WorkshopId) = Pack
 		  Next
 		  
-		  Var CurrentBlueprints() As Ark.Blueprint = Database.GetBlueprints("", ModsFilter, "")
+		  Var CurrentBlueprints() As Ark.Blueprint = Database.GetBlueprints("", ModsFilter, Nil)
 		  Var CurrentBlueprintMap As New Dictionary
 		  For Each Blueprint As Ark.Blueprint In CurrentBlueprints
 		    CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
@@ -1529,7 +1533,7 @@ End
 		  
 		  // Find existing blueprints
 		  Var Map As New Dictionary
-		  Var ExistingBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		  Var ExistingBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), Nil)
 		  For Each Blueprint As ArkSA.Blueprint In ExistingBlueprints
 		    Map.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
@@ -1632,7 +1636,7 @@ End
 		  
 		  // Find existing blueprints
 		  Var Map As New Dictionary
-		  Var ExistingBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		  Var ExistingBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), Nil)
 		  For Each Blueprint As ArkSA.Blueprint In ExistingBlueprints
 		    Map.Value(Blueprint.BlueprintId) = Blueprint
 		  Next

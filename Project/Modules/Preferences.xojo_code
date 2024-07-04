@@ -469,7 +469,7 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SelectedTag(Category As String, Subgroup As String) As String
+		Protected Function SelectedTag(Category As String, Subgroup As String) As Beacon.TagSpec
 		  Var Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
@@ -495,19 +495,23 @@ Protected Module Preferences
 		  End Select
 		  
 		  Init
-		  Return mManager.StringValue(Key, Default)
+		  Return Beacon.TagSpec.FromString(mManager.StringValue(Key, Default))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub SelectedTag(Category As String, Subgroup As String, Assigns Value As String)
+		Protected Sub SelectedTag(Category As String, Subgroup As String, Assigns Value As Beacon.TagSpec)
 		  Var Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
 		  Key = Key + " Tags"
 		  
-		  mManager.StringValue(Key) = Value
+		  If Value Is Nil Then
+		    mManager.ClearValue(Key)
+		  Else
+		    mManager.StringValue(Key) = Value.ToString
+		  End If
 		End Sub
 	#tag EndMethod
 

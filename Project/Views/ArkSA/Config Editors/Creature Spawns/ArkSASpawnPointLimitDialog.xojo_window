@@ -387,7 +387,7 @@ End
 		    SelectableCreatures.Add(Nil)
 		  End If
 		  
-		  Var AllCreatures() As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreatures("", Mods, "")
+		  Var AllCreatures() As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreatures("", Mods, Nil)
 		  For Each Creature As ArkSA.Creature In AllCreatures
 		    If IsNull(Creature) Or Map.HasKey(Creature.CreatureId) Then
 		      Continue

@@ -158,6 +158,7 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
          LockRight       =   True
          LockTop         =   True
          Modified        =   False
+         ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -511,7 +512,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BuildQuickDropMenu(Menu As DesktopMenuItem)
 		  Var Data As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		  Var Containers() As ArkSA.LootContainer = Data.GetLootContainers("", Self.Project.ContentPacks, "", Preferences.ShowExperimentalLootSources)
+		  Var Containers() As ArkSA.LootContainer = Data.GetLootContainers("", Self.Project.ContentPacks, Nil, Preferences.ShowExperimentalLootSources)
 		  Var HasExperimentalContainers As Boolean = Data.HasExperimentalLootContainers(Self.Project.ContentPacks)
 		  Var Config As ArkSA.Configs.LootDrops = Self.Config(False)
 		  Var Mask As UInt64 = Self.Project.MapMask
@@ -525,7 +526,7 @@ End
 		    Next
 		  End If
 		  
-		  Var AllContainers() As ArkSA.LootContainer = Data.GetLootContainers("", Self.Project.ContentPacks, "")
+		  Var AllContainers() As ArkSA.LootContainer = Data.GetLootContainers("", Self.Project.ContentPacks, Nil)
 		  Var Labels As Dictionary = AllContainers.Disambiguate(Self.Project.MapMask)
 		  
 		  If Containers.Count = 0 Then
@@ -748,7 +749,7 @@ End
 		  // Select the given loot drops
 		  
 		  Var VisibleOverrides() As ArkSA.LootDropOverride = Self.Config(False).Overrides(Self.FilterField.Text)
-		  Var AllContainers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", Self.Project.ContentPacks, "")
+		  Var AllContainers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", Self.Project.ContentPacks, Nil)
 		  Var Labels As Dictionary = AllContainers.Disambiguate(Self.Project.MapMask, VisibleOverrides)
 		  VisibleOverrides.Sort
 		  

@@ -50,7 +50,7 @@ Inherits Beacon.Project
 
 	#tag Event
 		Function ExportContentPack(Pack As Beacon.ContentPack) As String
-		  Var Blueprints() As ArkSA.Blueprint = ArkSA.DataSource.Pool.Get(False).GetBlueprints("", New Beacon.StringList(Pack.ContentPackId), "")
+		  Var Blueprints() As ArkSA.Blueprint = ArkSA.DataSource.Pool.Get(False).GetBlueprints("", New Beacon.StringList(Pack.ContentPackId), Nil)
 		  If Blueprints.Count = 0 Then
 		    Return ""
 		  End If
@@ -485,7 +485,7 @@ Inherits Beacon.Project
 		    End If
 		    
 		    Var ConfigUpdated As Boolean
-		    Var SpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsForCreature(ReplacedCreature, Self.ContentPacks, "")
+		    Var SpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsForCreature(ReplacedCreature, Self.ContentPacks, Nil)
 		    For Each SourceSpawnPoint As ArkSA.SpawnPoint In SpawnPoints
 		      If SourceSpawnPoint.ValidForMask(Self.MapMask) = False Then
 		        Continue
@@ -672,7 +672,7 @@ Inherits Beacon.Project
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoHarvestingDamageMultiplier=0.0000001"))
 		  
 		  Var Packs As Beacon.StringList = Self.ContentPacks
-		  Var Containers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", Packs, "", True)
+		  Var Containers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainers("", Packs, Nil, True)
 		  Var Engram As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("f25b4d0e-2a1c-57c0-b54c-99d9083b2ca0")
 		  Var Mask As UInt64 = Self.MapMask
 		  Var LootDrops As New ArkSA.Configs.LootDrops
@@ -711,7 +711,7 @@ Inherits Beacon.Project
 		    Values.Add(LootValue)
 		  Next
 		  
-		  Var Craftable() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
+		  Var Craftable() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams("", Packs, New Beacon.TagSpec(Array("blueprintable"), Array("generic")))
 		  Var CoinFlip As Integer = Rand.InRange(0, 1)
 		  If CoinFlip = 0 Then
 		    // Turdcraft
@@ -722,7 +722,7 @@ Inherits Beacon.Project
 		    Next CraftableEngram
 		  Else
 		    // Randomcraft
-		    Var Choices() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
+		    Var Choices() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams("", Packs, New Beacon.TagSpec(Array("blueprintable"), Array("generic")))
 		    For Each CraftableEngram As ArkSA.Engram In Craftable
 		      Var Idx As Integer = Rand.InRange(Choices.FirstIndex, Choices.LastIndex)
 		      

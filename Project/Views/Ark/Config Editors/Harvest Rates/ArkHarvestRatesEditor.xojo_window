@@ -677,7 +677,7 @@ End
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
-		  Engrams = Ark.DataSource.Pool.Get(False).GetEngrams("", Self.Project.ContentPacks, "{""required"":[""harvestable""],""excluded"":[]}")
+		  Engrams = Ark.DataSource.Pool.Get(False).GetEngrams("", Self.Project.ContentPacks, New Beacon.TagSpec(Array("harvestable"), Nil))
 		  For Each Engram As Ark.Engram In Engrams
 		    If SkippedEngrams.HasKey(Engram.EngramId) Then
 		      Continue
