@@ -286,18 +286,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Extension(Extends File As FolderItem) As String
-		  Var Name As String = File.Name
-		  If Name.IndexOf(".") = -1 Then
-		    Return ""
-		  End If
-		  
-		  Var Parts() As String = Name.Split(".")
-		  Return "." + Parts(Parts.LastIndex)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ExtensionMatches(Extends File As FolderItem, ParamArray PossibleExtensions() As String) As Boolean
 		  Return File.ExtensionMatches(PossibleExtensions)
 		End Function
@@ -306,8 +294,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function ExtensionMatches(Extends File As FolderItem, PossibleExtensions() As String) As Boolean
 		  For Each Extension As String In PossibleExtensions
-		    If Extension.BeginsWith(".") = False Then
-		      Extension = "." + Extension
+		    If Extension.BeginsWith(".") Then
+		      Extension = Extension.Middle(1)
 		    End If
 		    
 		    If File.Extension = Extension Then
