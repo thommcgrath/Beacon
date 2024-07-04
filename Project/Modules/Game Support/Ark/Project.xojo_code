@@ -191,6 +191,7 @@ Inherits Beacon.Project
 		  
 		  If FreshBlueprints.Count > 0 Then
 		    Self.mEmbeddedBlueprints.Value(Pack.ContentPackId) = FreshBlueprints
+		    Self.mHasUnsavedContent = True
 		    Return True
 		  End If
 		End Function

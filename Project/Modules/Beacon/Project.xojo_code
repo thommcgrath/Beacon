@@ -1080,6 +1080,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasUnsavedContent() As Boolean
+		  Return Self.mHasUnsavedContent
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImplementedConfigs() As Iterable
 		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
 		  Var Groups() As Variant
@@ -1334,6 +1340,8 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub ProcessEmbeddedContent()
+		  Self.mHasUnsavedContent = False // The called event is expected to set this
+		  
 		  Var ContentPacksJson As String = Self.GetFile("Content Packs.json")
 		  If ContentPacksJson.IsEmpty Then
 		    Return
@@ -2055,6 +2063,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mEmbeddedContentPacks As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mHasUnsavedContent As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

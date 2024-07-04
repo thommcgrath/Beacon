@@ -166,7 +166,7 @@ Inherits Beacon.Project
 	#tag Event
 		Function ProcessEmbeddedContentPack(Pack As Beacon.ContentPack, FileContent As String) As Boolean
 		  // mEmbeddedBlueprints will have keys of BlueprintId and values of Blueprint for fast access
-		  // mEmbeddedContentPacks will have keys of ContentPackId and values of BlueprintId() to quickly find blueprints of a given pack
+		  // mEmbeddedBlueprintIds will have keys of ContentPackId and values of BlueprintId() to quickly find blueprints of a given pack
 		  
 		  Var BlueprintDicts() As Variant
 		  Try
@@ -176,6 +176,7 @@ Inherits Beacon.Project
 		  End Try
 		  
 		  Var BlueprintIds() As String
+		  Var DataSource As ArkSA.DataSource
 		  For Each BlueprintDict As Variant In BlueprintDicts
 		    If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
 		      Continue
@@ -188,8 +189,15 @@ Inherits Beacon.Project
 		    
 		    Self.mEmbeddedBlueprints.Value(ProjectBlueprint.BlueprintId) = ProjectBlueprint
 		    BlueprintIds.Add(ProjectBlueprint.BlueprintId)
+		    
+		    If Self.mHasUnsavedContent = False Then
+		      If DataSource Is Nil Then
+		        DataSource = ArkSA.DataSource.Pool.Get(False)
+		      End If
+		      Self.mHasUnsavedContent = DataSource.GetBlueprint(ProjectBlueprint.BlueprintId, False) Is Nil
+		    End If
 		  Next
-		  Self.mEmbeddedContentPacks.Value(Pack.ContentPackId) = BlueprintIds
+		  Self.mEmbeddedBlueprintIds.Value(Pack.ContentPackId) = BlueprintIds
 		  
 		  Return BlueprintIds.Count > 0
 		End Function
@@ -454,7 +462,7 @@ Inherits Beacon.Project
 		Sub Constructor()
 		  Self.mMapMask = 1 // Play it safe, do not bother calling ArkSA.Maps here in case database access is fubar
 		  Self.mEmbeddedBlueprints = New Dictionary
-		  Self.mEmbeddedContentPacks = New Dictionary
+		  Self.mEmbeddedBlueprintIds = New Dictionary
 		  Super.Constructor
 		  Self.mBlueprintContainer = New ArkSA.BlueprintContainer(Self.ProjectId, Self.mEmbeddedBlueprints)
 		  
@@ -756,16 +764,33 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EmbeddedBlueprints(Pack As Beacon.ContentPack) As ArkSA.Blueprint()
+		Function EmbeddedBlueprints(Pack As Beacon.ContentPack, UnsavedOnly As Boolean) As ArkSA.Blueprint()
+		  Var DataSource As ArkSA.DataSource
+		  If UnsavedOnly = True Then
+		    DataSource = ArkSA.DataSource.Pool.Get(False)
+		  End If
+		  
 		  Var Blueprints() As ArkSA.Blueprint
-		  If Pack Is Nil Or Self.mEmbeddedContentPacks.HasKey(Pack.ContentPackId) = False Then
+		  If Pack Is Nil Or Self.mEmbeddedBlueprintIds.HasKey(Pack.ContentPackId) = False Then
 		    Return Blueprints
 		  End If
 		  
-		  Var BlueprintIds() As String = Self.mEmbeddedContentPacks.Value(Pack.ContentPackId)
+		  Var BlueprintIds() As String = Self.mEmbeddedBlueprintIds.Value(Pack.ContentPackId)
 		  For Each BlueprintId As String In BlueprintIds
 		    Try
-		      Blueprints.Add(Self.mEmbeddedBlueprints.Value(BlueprintId))
+		      Var ProjectBlueprint As ArkSA.Blueprint = Self.mEmbeddedBlueprints.Value(BlueprintId)
+		      If ProjectBlueprint Is Nil Then
+		        Continue
+		      End If
+		      
+		      If UnsavedOnly = True Then
+		        Var SavedBlueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId, False)
+		        If (SavedBlueprint Is Nil) = False And SavedBlueprint.LastUpdate >= ProjectBlueprint.LastUpdate Then
+		          Continue
+		        End If
+		      End If
+		      
+		      Blueprints.Add(ProjectBlueprint)
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
@@ -820,7 +845,7 @@ Inherits Beacon.Project
 	#tag Method, Flags = &h0
 		Sub ProcessEmbeddedContent()
 		  Self.mEmbeddedBlueprints.RemoveAll
-		  Self.mEmbeddedContentPacks.RemoveAll
+		  Self.mEmbeddedBlueprintIds.RemoveAll
 		  Super.ProcessEmbeddedContent()
 		  
 		End Sub
@@ -879,11 +904,11 @@ Inherits Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEmbeddedBlueprints As Dictionary
+		Private mEmbeddedBlueprintIds As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEmbeddedContentPacks As Dictionary
+		Private mEmbeddedBlueprints As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

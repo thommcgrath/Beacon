@@ -34,6 +34,12 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintContainer() As ArkSA.BlueprintContainer
+		  Return Self.mContainer
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CancelAllTasks()
 		  If Self.mPendingTasks.Count > 0 Then
 		    Self.mPendingTasks.ResizeTo(-1)

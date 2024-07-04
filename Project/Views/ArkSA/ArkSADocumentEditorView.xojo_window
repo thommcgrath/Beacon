@@ -1367,7 +1367,7 @@ End
 		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods."))
 		  Me.Append(OmniBarItem.CreateButton("ToolsButton", "Tools", IconToolbarTools, "Use convenience tools for this project."))
 		  
-		  Self.ShowBlueprintsButton = Self.Project.HasEmbeddedContentPacks
+		  Self.ShowBlueprintsButton = Self.Project.HasUnsavedContent
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1468,8 +1468,15 @@ End
 		    End If
 		    Self.UpdateConfigList()
 		  Case "BlueprintsButton"
+		    Self.Project.ProcessEmbeddedContent()
+		    If Self.Project.HasUnsavedContent = False Then
+		      Self.ShowAlert("Sorry, Beacon made a mistake", "Looks like there are no more blueprints in this project that are missing from your Mods section. This button will be hidden.")
+		      Self.ShowBlueprintsButton = False
+		      Return
+		    End If
+		    
 		    ArkSASaveBlueprintsDialog.Present(Self, Self.Project)
-		    Self.ShowBlueprintsButton = Self.Project.HasEmbeddedContentPacks
+		    Self.ShowBlueprintsButton = Self.Project.HasUnsavedContent
 		  End Select
 		End Sub
 	#tag EndEvent
