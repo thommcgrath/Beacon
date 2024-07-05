@@ -46,7 +46,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -78,7 +78,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -247,11 +247,11 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#DeleteContentTooltip"
-      Top             =   218
+      Top             =   251
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -309,11 +309,11 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#IgnoreBuiltInClassesTooltip"
-      Top             =   250
+      Top             =   283
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -349,14 +349,14 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c000000
       Tooltip         =   "#ThresholdTooltip"
-      Top             =   282
+      Top             =   315
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -382,14 +382,14 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "#ThresholdCaption"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#ThresholdTooltip"
-      Top             =   282
+      Top             =   315
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -414,14 +414,14 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "%"
       TextAlignment   =   1
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   282
+      Top             =   315
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -582,7 +582,7 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   16
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#InstallServerTooltip"
@@ -591,6 +591,36 @@ Begin BeaconDialog ArkSAModDiscoveryDialog
       Underline       =   False
       Visible         =   True
       Width           =   150
+   End
+   Begin DesktopCheckBox ReplaceBlueprintsCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "#ReplaceBlueprintsCaption"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   147
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "#ReplaceBlueprintsTooltip"
+      Top             =   219
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   433
    End
 End
 #tag EndDesktopWindow
@@ -603,11 +633,17 @@ End
 		  
 		  Self.SetupUI
 		  
+		  Var DefaultSettings As ArkSA.ModDiscoverySettings = Preferences.ArkSADiscoverySettings
+		  
 		  If Self.UseNewDiscoveryCheck.Visible Then
 		    Try
 		      Var SteamRoot As New FolderItem(Preferences.ArkSADedicatedPath, FolderItem.PathModes.Native)
 		      If SteamRoot.Exists And SteamRoot.IsFolder Then
-		        Self.UseNewDiscoveryCheck.Value = True
+		        If DefaultSettings Is Nil Then
+		          Self.UseNewDiscoveryCheck.Value = True
+		        Else
+		          Self.UseNewDiscoveryCheck.Value = DefaultSettings.UseNewDiscovery
+		        End If
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
@@ -623,7 +659,17 @@ End
 		    Self.ModsField.ReadOnly = True
 		  End If
 		  
-		  Self.ThresholdField.DoubleValue = 50
+		  If DefaultSettings Is Nil Then
+		    Self.ReplaceBlueprintsCheck.Value = True
+		    Self.AllowDeleteCheck.Value = True
+		    Self.IgnoreBuiltInClassesCheck.Value = False
+		    Self.ThresholdField.DoubleValue = 50
+		  Else
+		    Self.ReplaceBlueprintsCheck.Value = DefaultSettings.ReplaceBlueprints
+		    Self.AllowDeleteCheck.Value = DefaultSettings.DeleteBlueprints
+		    Self.IgnoreBuiltInClassesCheck.Value = DefaultSettings.IgnoreBuiltInClasses
+		    Self.ThresholdField.DoubleValue = DefaultSettings.Threshold * 100
+		  End If
 		  
 		  Self.SwapButtons()
 		End Sub
@@ -702,7 +748,8 @@ End
 		  Self.ModsField.Top = StartY + 12
 		  Self.ModsLabel.Top = Self.ModsField.Top
 		  Self.ModsLabel.Height = Self.ModsField.Height
-		  Self.AllowDeleteCheck.Top = Self.ModsField.Bottom + 12
+		  Self.ReplaceBlueprintsCheck.Top = Self.ModsField.Bottom + 12
+		  Self.AllowDeleteCheck.Top = Self.ReplaceBlueprintsCheck.Bottom + 12
 		  If Self.IgnoreBuiltInClassesCheck.Visible Then
 		    Self.IgnoreBuiltInClassesCheck.Top = Self.AllowDeleteCheck.Bottom + 12
 		    StartY = Self.IgnoreBuiltInClassesCheck.Bottom
@@ -732,6 +779,8 @@ End
 		  Self.ThresholdSuffixLabel.Left = Self.ThresholdField.Right + 6
 		  Self.AllowDeleteCheck.Left = Self.ModsField.Left
 		  Self.AllowDeleteCheck.Width = Self.ModsField.Width
+		  Self.ReplaceBlueprintsCheck.Left = Self.ModsField.Left
+		  Self.ReplaceBlueprintsCheck.Width = Self.ModsField.Width
 		  Self.IgnoreBuiltInClassesCheck.Left = Self.ModsField.Left
 		  Self.IgnoreBuiltInClassesCheck.Width = Self.ModsField.Width
 		  Self.SteamPathField.Left = Self.ModsField.Left
@@ -788,6 +837,12 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageWorking, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ReplaceBlueprintsCaption, Type = String, Dynamic = True, Default = \"Replace Previously Discovered Blueprints", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ReplaceBlueprintsTooltip, Type = String, Dynamic = True, Default = \"For mods that were already discovered\x2C this option will replace any blueprint found by discovery. This can be useful for finding changes\x2C but if you made changes to manual blueprints (such as renaming things) those changes would be lost.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SteamPathCaption, Type = String, Dynamic = True, Default = \"Dedicated Server Path:", Scope = Private
@@ -860,8 +915,25 @@ End
 		    Preferences.ArkSADedicatedPath = SteamPath
 		  End If
 		  
+		  Var Options As Integer
+		  If Self.AllowDeleteCheck.Value Then
+		    Options = Options Or ArkSA.ModDiscoverySettings.OptionDeleteBlueprints
+		  End If
+		  If Self.ReplaceBlueprintsCheck.Value Then
+		    Options = Options Or ArkSA.ModDiscoverySettings.OptionReplaceBlueprints
+		  End If
+		  If Self.UseNewDiscoveryCheck.Visible And Self.UseNewDiscoveryCheck.Value Then
+		    Options = Options Or ArkSA.ModDiscoverySettings.OptionUseNewDiscovery
+		  ElseIf Self.IgnoreBuiltInClassesCheck.Value Then
+		    Options = Options Or ArkSA.ModDiscoverySettings.OptionIgnoreBuiltInClasses
+		  End If
+		  If UploadToCommunity Then
+		    Options = Options Or ArkSA.ModDiscoverySettings.OptionUploadToCommunity
+		  End If
+		  
 		  Var Threshold As Double = (100 - Self.ThresholdField.DoubleValue) / 100
-		  Self.mSettings = New ArkSA.ModDiscoverySettings(ContentPackIds, Self.AllowDeleteCheck.Value, Self.IgnoreBuiltInClassesCheck.Value, Threshold, UseNewDiscovery, UploadToCommunity)
+		  Self.mSettings = New ArkSA.ModDiscoverySettings(ContentPackIds, Options, Threshold)
+		  Preferences.ArkSADiscoverySettings = Self.mSettings
 		  Self.Hide
 		End Sub
 	#tag EndEvent

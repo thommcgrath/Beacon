@@ -620,6 +620,26 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return ArkSA.ModDiscoverySettings.FromJSONItem(mManager.JSONValue("ArkSA Mod Discovery Settings"))
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  If Value Is Nil Then
+			    mManager.ClearValue("ArkSA Mod Discovery Settings")
+			  Else
+			    mManager.JSONValue("ArkSA Mod Discovery Settings") = Value.ToJSONItem
+			  End If
+			End Set
+		#tag EndSetter
+		Protected ArkSADiscoverySettings As ArkSA.ModDiscoverySettings
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  
 			  Var StringValue As String = mManager.StringValue("ArkSA Last Template Map Filter")
 			  If StringValue.IsEmpty Then

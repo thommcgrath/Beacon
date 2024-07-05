@@ -1,13 +1,20 @@
 #tag Class
 Protected Class ModDiscoverySettings
 	#tag Method, Flags = &h0
-		Sub Constructor(ContentPackIds As Dictionary, DeleteBlueprints As Boolean, IgnoreBuiltInClasses As Boolean, Threshold As Double, UseNewDiscovery As Boolean, UploadToCommunity As Boolean)
+		Sub Constructor(ContentPackIds As Dictionary, Options As Integer, Threshold As Double)
+		  If (Options And Self.OptionUseNewDiscovery) > 0 And ArkSA.ModDiscoveryEngine2.IsAvailable = False Then
+		    Options = Options And Not Self.OptionUseNewDiscovery
+		  End If
+		  If (Options And Self.OptionUploadToCommunity) > 0 And (Options And Self.OptionUseNewDiscovery) = 0 Then
+		    Options = Options And Not Self.OptionUploadToCommunity
+		  End If
+		  If (Options And Self.OptionIgnoreBuiltInClasses) > 0 And (Options And Self.OptionUseNewDiscovery) > 0 Then
+		    Options = Options And Not Self.OptionIgnoreBuiltInClasses
+		  End If
+		  
 		  Self.mContentPackIds = ContentPackIds.Clone
-		  Self.mDeleteBlueprints = DeleteBlueprints
-		  Self.mIgnoreBuiltInClasses = IgnoreBuiltInClasses
+		  Self.mOptions = Options
 		  Self.mThreshold = Threshold
-		  Self.mUseNewDiscovery = UseNewDiscovery And ArkSA.ModDiscoveryEngine2.IsAvailable
-		  Self.mUploadToCommunity = UploadToCommunity
 		End Sub
 	#tag EndMethod
 
@@ -19,13 +26,57 @@ Protected Class ModDiscoverySettings
 
 	#tag Method, Flags = &h0
 		Function DeleteBlueprints() As Boolean
-		  Return Self.mDeleteBlueprints
+		  Return (Self.mOptions And Self.OptionDeleteBlueprints) > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromDictionary(Source As Dictionary) As ArkSA.ModDiscoverySettings
+		  If Source Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Var Item As New JSONItem(Source)
+		    Return FromJSONItem(Item)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromJSONItem(Source As JSONItem) As ArkSA.ModDiscoverySettings
+		  If Source Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Return New ArkSA.ModDiscoverySettings(New Dictionary, Source.Value("options").IntegerValue, Source.Value("threshold").DoubleValue)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromString(Source As String) As ArkSA.ModDiscoverySettings
+		  If Source.IsEmpty Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Var Item As New JSONItem(Source)
+		    Return FromJSONItem(Item)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IgnoreBuiltInClasses() As Boolean
-		  Return Self.mIgnoreBuiltInClasses
+		  Return (Self.mOptions And Self.OptionIgnoreBuiltInClasses) > 0
 		End Function
 	#tag EndMethod
 
@@ -40,20 +91,55 @@ Protected Class ModDiscoverySettings
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Options() As Integer
+		  Return Self.mOptions
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReplaceBlueprints() As Boolean
+		  Return (Self.mOptions And Self.OptionReplaceBlueprints) > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Threshold() As Double
 		  Return Self.mThreshold
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ToDictionary() As Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("options") = Self.mOptions
+		  Dict.Value("threshold") = Self.mThreshold
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToJSONItem() As JSONItem
+		  Return New JSONItem(Self.ToDictionary)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToString() As String
+		  Var SaveData As JSONItem = Self.ToJSONItem
+		  SaveData.Compact = True
+		  Return SaveData.ToString
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UploadToCommunity() As Boolean
-		  Return Self.mUploadToCommunity
+		  Return (Self.mOptions And Self.OptionUploadToCommunity) > 0
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function UseNewDiscovery() As Boolean
-		  Return Self.mUseNewDiscovery
+		  Return (Self.mOptions And Self.OptionUseNewDiscovery) > 0
 		End Function
 	#tag EndMethod
 
@@ -63,24 +149,28 @@ Protected Class ModDiscoverySettings
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDeleteBlueprints As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mIgnoreBuiltInClasses As Boolean
+		Private mOptions As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mThreshold As Double
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUploadToCommunity As Boolean
-	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUseNewDiscovery As Boolean
-	#tag EndProperty
+	#tag Constant, Name = OptionDeleteBlueprints, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionIgnoreBuiltInClasses, Type = Double, Dynamic = False, Default = \"8", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionReplaceBlueprints, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionUploadToCommunity, Type = Double, Dynamic = False, Default = \"16", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionUseNewDiscovery, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

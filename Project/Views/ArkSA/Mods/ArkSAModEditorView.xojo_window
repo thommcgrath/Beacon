@@ -1436,7 +1436,7 @@ End
 		    Thread.Current.Sleep(100)
 		  Wend
 		  
-		  If Self.mDiscoveryShouldDelete Then
+		  If Me.Settings.DeleteBlueprints Then
 		    Var CurrentBlueprints() As ArkSA.Blueprint = Self.mController.AllBlueprints
 		    Var CurrentBlueprintMap As New Dictionary
 		    For Each Blueprint As ArkSA.Blueprint In CurrentBlueprints
@@ -1456,7 +1456,18 @@ End
 		    Self.mController.DeleteBlueprints(BlueprintsToDelete)
 		  End If
 		  
-		  Self.mController.SaveBlueprints(Blueprints)
+		  If Me.Settings.ReplaceBlueprints Then
+		    Self.mController.SaveBlueprints(Blueprints)
+		  Else
+		    Var NewBlueprints() As ArkSA.Blueprint
+		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		      If (Self.mController.BlueprintContainer.GetBlueprint(Blueprint.BlueprintId) Is Nil) = False Then
+		        Continue
+		      End If
+		      NewBlueprints.Add(Blueprint)
+		    Next
+		    Self.mController.SaveBlueprints(NewBlueprints)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1493,7 +1504,7 @@ End
 		    Thread.Current.Sleep(100)
 		  Wend
 		  
-		  If Self.mDiscoveryShouldDelete Then
+		  If Me.Settings.DeleteBlueprints Then
 		    Var CurrentBlueprints() As ArkSA.Blueprint = Self.mController.AllBlueprints
 		    Var CurrentBlueprintMap As New Dictionary
 		    For Each Blueprint As ArkSA.Blueprint In CurrentBlueprints
@@ -1513,7 +1524,18 @@ End
 		    Self.mController.DeleteBlueprints(BlueprintsToDelete)
 		  End If
 		  
-		  Self.mController.SaveBlueprints(Blueprints)
+		  If Me.Settings.ReplaceBlueprints Then
+		    Self.mController.SaveBlueprints(Blueprints)
+		  Else
+		    Var NewBlueprints() As ArkSA.Blueprint
+		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		      If (Self.mController.BlueprintContainer.GetBlueprint(Blueprint.BlueprintId) Is Nil) = False Then
+		        Continue
+		      End If
+		      NewBlueprints.Add(Blueprint)
+		    Next
+		    Self.mController.SaveBlueprints(NewBlueprints)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

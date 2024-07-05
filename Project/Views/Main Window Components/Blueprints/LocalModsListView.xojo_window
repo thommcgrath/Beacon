@@ -119,7 +119,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -195,14 +194,12 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine ArkDiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine ArkSADiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -241,7 +238,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   600
    End
    Begin ArkSA.ModDiscoveryEngine2 ArkSADiscoveryEngine2
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1519,12 +1515,16 @@ End
 	#tag Event
 		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
-		  Var ShouldDelete As Boolean = Self.mDiscoveryShouldDelete
+		  Var ShouldDelete As Boolean = Me.Settings.DeleteBlueprints
+		  Var ShouldReplace As Boolean = Me.Settings.ReplaceBlueprints
 		  
 		  // Save the new content pack
 		  If Blueprints.Count > 0 Then
+		    Var IsNew As Boolean = DataSource.GetContentPackWithId(ContentPack.ContentPackId) Is Nil
 		    If DataSource.SaveContentPack(ContentPack, False) Then
-		      Self.mNumAddedMods = Self.mNumAddedMods + 1
+		      If IsNew Then
+		        Self.mNumAddedMods = Self.mNumAddedMods + 1
+		      End If
 		    Else
 		      ContentPack = DataSource.GetContentPackWithId(ArkSA.UserContentPackId)
 		      ShouldDelete = False
@@ -1538,21 +1538,24 @@ End
 		    Map.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
-		  // Existing blueprints should not be saved over
+		  // Existing blueprints should not be saved over unless requested
 		  Var BlueprintsToSave() As ArkSA.Blueprint
 		  For Each Blueprint As ArkSA.Blueprint In Blueprints
 		    If Map.HasKey(Blueprint.BlueprintId) Then
 		      Map.Remove(Blueprint.BlueprintId)
-		    Else
-		      If Blueprint.ContentPackId <> ContentPack.ContentPackId Then
-		        Var Mutable As ArkSA.MutableBlueprint = Blueprint.MutableVersion
-		        Mutable.ContentPackId = ContentPack.ContentPackId
-		        Mutable.ContentPackName = ContentPack.Name
-		        Mutable.RegenerateBlueprintId()
-		        Blueprint = Mutable.ImmutableVersion
+		      If ShouldReplace = False Then
+		        Continue
 		      End If
-		      BlueprintsToSave.Add(Blueprint)
 		    End If
+		    
+		    If Blueprint.ContentPackId <> ContentPack.ContentPackId Then
+		      Var Mutable As ArkSA.MutableBlueprint = Blueprint.MutableVersion
+		      Mutable.ContentPackId = ContentPack.ContentPackId
+		      Mutable.ContentPackName = ContentPack.Name
+		      Mutable.RegenerateBlueprintId()
+		      Blueprint = Mutable.ImmutableVersion
+		    End If
+		    BlueprintsToSave.Add(Blueprint)
 		  Next
 		  
 		  // Setup blueprints to be deleted, if necessary
@@ -1622,12 +1625,16 @@ End
 	#tag Event
 		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
-		  Var ShouldDelete As Boolean = Self.mDiscoveryShouldDelete
+		  Var ShouldDelete As Boolean = Me.Settings.DeleteBlueprints
+		  Var ShouldReplace As Boolean = Me.Settings.ReplaceBlueprints
 		  
 		  // Save the new content pack
 		  If Blueprints.Count > 0 Then
+		    Var IsNew As Boolean = DataSource.GetContentPackWithId(ContentPack.ContentPackId) Is Nil
 		    If DataSource.SaveContentPack(ContentPack, False) Then
-		      Self.mNumAddedMods = Self.mNumAddedMods + 1
+		      If IsNew Then
+		        Self.mNumAddedMods = Self.mNumAddedMods + 1
+		      End If
 		    Else
 		      ContentPack = DataSource.GetContentPackWithId(ArkSA.UserContentPackId)
 		      ShouldDelete = False
@@ -1641,21 +1648,24 @@ End
 		    Map.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
-		  // Existing blueprints should not be saved over
+		  // Existing blueprints should not be saved over unless requested
 		  Var BlueprintsToSave() As ArkSA.Blueprint
 		  For Each Blueprint As ArkSA.Blueprint In Blueprints
 		    If Map.HasKey(Blueprint.BlueprintId) Then
 		      Map.Remove(Blueprint.BlueprintId)
-		    Else
-		      If Blueprint.ContentPackId <> ContentPack.ContentPackId Then
-		        Var Mutable As ArkSA.MutableBlueprint = Blueprint.MutableVersion
-		        Mutable.ContentPackId = ContentPack.ContentPackId
-		        Mutable.ContentPackName = ContentPack.Name
-		        Mutable.RegenerateBlueprintId()
-		        Blueprint = Mutable.ImmutableVersion
+		      If ShouldReplace = False Then
+		        Continue
 		      End If
-		      BlueprintsToSave.Add(Blueprint)
 		    End If
+		    
+		    If Blueprint.ContentPackId <> ContentPack.ContentPackId Then
+		      Var Mutable As ArkSA.MutableBlueprint = Blueprint.MutableVersion
+		      Mutable.ContentPackId = ContentPack.ContentPackId
+		      Mutable.ContentPackName = ContentPack.Name
+		      Mutable.RegenerateBlueprintId()
+		      Blueprint = Mutable.ImmutableVersion
+		    End If
+		    BlueprintsToSave.Add(Blueprint)
 		  Next
 		  
 		  // Setup blueprints to be deleted, if necessary
