@@ -815,6 +815,16 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetBlueprints(Extends Providers() As ArkSA.BlueprintProvider, Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
+		  Var Blueprints() As ArkSA.Blueprint
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Blueprints = Blueprints.Merge(Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues))
+		  Next
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Blueprint()
 		  Var Categories() As String = ArkSA.Categories
 		  Var Blueprints() As ArkSA.Blueprint
@@ -835,12 +845,6 @@ Protected Module ArkSA
 		  Var ExtraClauses() As String
 		  Var ExtraValues() As Variant
 		  Return Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
-		  
 		End Function
 	#tag EndMethod
 
