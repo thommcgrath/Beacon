@@ -81,6 +81,24 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Contains(Creature As ArkSA.Creature) As Boolean
+		  If Creature Is Nil Then
+		    Return False
+		  End If
+		  
+		  If Self.mLimits.HasBlueprint(Creature.BlueprintId) Then
+		    Return True
+		  End If
+		  
+		  For Each Set As ArkSA.SpawnPointSet In Self.mSets
+		    If Set.Contains(Creature) Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ContentPackId() As String
 		  // Part of the ArkSA.Blueprint interface.
 		  

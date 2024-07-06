@@ -34,6 +34,32 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Contains(Creature As ArkSA.Creature) As Boolean
+		  If Creature Is Nil Then
+		    Return False
+		  End If
+		  
+		  For Each Entry As ArkSA.SpawnPointSetEntry In Self.mEntries
+		    If Entry.CreatureId = Creature.BlueprintId Then
+		      Return True
+		    End If
+		  Next
+		  
+		  If Self.mReplacements.HasBlueprint(Creature.BlueprintId) Then
+		    Return True
+		  End If
+		  
+		  Var BlueprintIds() As String = Self.mReplacements.BlueprintIds
+		  For Each BlueprintId As String In BlueprintIds
+		    Var Options As ArkSA.BlueprintAttributeManager = Self.mReplacements.Value(BlueprintId, Self.ReplacementsAttribute)
+		    If Options.HasBlueprint(Creature.BlueprintId) Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub CopyFrom(Source As ArkSA.SpawnPointSet)
 		  Self.mCachedHash = ""
@@ -107,9 +133,16 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreatureId As String, ToCreatureId As String) As NullableDouble
-		  Var FromCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(FromCreatureID)
-		  Var ToCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(ToCreatureID)
-		  Return Self.CreatureReplacementWeight(FromCreature, ToCreature)
+		  If Not Self.mReplacements.HasBlueprint(FromCreatureId) Then
+		    Return Nil
+		  End If
+		  
+		  Var Options As ArkSA.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureId, Self.ReplacementsAttribute)
+		  If Options.HasAttribute(ToCreatureId, "Weight") Then
+		    Return Options.Value(ToCreatureId, "Weight").DoubleValue
+		  End If
+		  
+		  Return Nil
 		End Function
 	#tag EndMethod
 

@@ -121,6 +121,12 @@ Protected Interface BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetRecipeEngramIds(ContentPacks As Beacon.StringList, Mask As UInt64) As String()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetSpawnPoint(SpawnPointId As String, UseCache As Boolean = True) As ArkSA.SpawnPoint
 		  
 		End Function
@@ -140,6 +146,12 @@ Protected Interface BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPointsByPath(Path As String, ContentPacks As Beacon.StringList) As ArkSA.SpawnPoint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsForCreature(Creature As ArkSA.Creature, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.SpawnPoint()
 		  
 		End Function
 	#tag EndMethod

@@ -1298,8 +1298,10 @@ End
 		  Var ContentPacks As Beacon.StringList = Self.mProject.ContentPacks
 		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		  #Pragma Warning "No solution for this yet"
-		  Var EngramIds() As String = DataSource.GetRecipeEngramIds(ContentPacks, ArkSA.Maps.UniversalMask)
+		  Var EngramIds() As String
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    EngramIds.Merge(Provider.GetRecipeEngramIds(ContentPacks, ArkSA.Maps.UniversalMask))
+		  Next
 		  For Each EngramId As String In EngramIds
 		    If Filter.HasKey(EngramId) Then
 		      Continue

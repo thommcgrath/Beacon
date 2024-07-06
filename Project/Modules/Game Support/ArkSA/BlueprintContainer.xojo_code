@@ -351,6 +351,26 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetRecipeEngramIds(ContentPacks As Beacon.StringList, Mask As UInt64) As String()
+		  Var Engrams() As ArkSA.Engram = Self.GetEngrams("", ContentPacks, Nil)
+		  Var Matches() As String
+		  For Each Engram As ArkSA.Engram In Engrams
+		    If (Engram.Availability And Mask) = 0 Then
+		      Continue
+		    End If
+		    
+		    Var Ingredients() As ArkSA.CraftingCostIngredient = Engram.Recipe()
+		    If Ingredients Is Nil Or Ingredients.Count = 0 Then
+		      Continue
+		    End If
+		    
+		    Matches.Add(Engram.BlueprintId)
+		  Next
+		  Return Matches
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetSpawnPoint(SpawnPointId As String, UseCache As Boolean = True) As ArkSA.SpawnPoint
 		  // Part of the ArkSA.BlueprintProvider interface.
 		  
@@ -400,6 +420,18 @@ Implements ArkSA.BlueprintProvider
 		    Results(Idx) = ArkSA.SpawnPoint(Blueprints(Idx))
 		  Next
 		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsForCreature(Creature As ArkSA.Creature, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.SpawnPoint()
+		  Var Points() As ArkSA.SpawnPoint = Self.GetSpawnPoints("", ContentPacks, Tags)
+		  Var Matches() As ArkSA.SpawnPoint
+		  For Each Point As ArkSA.SpawnPoint In Points
+		    If Point.Contains(Creature) Then
+		      Matches.Add(Point)
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 

@@ -808,6 +808,16 @@ Protected Module ArkSA
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Fingerprint(Extends Providers() As ArkSA.BlueprintProvider) As String
+		  Var Members() As String
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Members.Add(Provider.BlueprintProviderId)
+		  Next
+		  Return EncodeHex(Crypto.MD5(String.FromArray(Members, ",")))
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function GenerateBlueprintId(ContentPackId As String, Path As String) As String
 		  Return Beacon.UUID.v5(ContentPackId.Lowercase + ":" + Path.Lowercase)
