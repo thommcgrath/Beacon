@@ -124,6 +124,9 @@ Protected Class Identity
 		    Var IsAnonymous As Boolean = Row.Column("anonymous").BooleanValue
 		    Var ExpirationString As String = Row.Column("expiration").StringValue
 		    Var Expiration As DateTime
+		    If ExpirationString.IsEmpty = False Then
+		      Expiration = NewDateFromSQLDateTime(ExpirationString)
+		    End If
 		    
 		    Var Licenses() As Beacon.OmniLicense
 		    Var LicensesJson() As Variant
