@@ -1488,7 +1488,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetContentPackWithSteamId(SteamId As String, Type As Integer) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace_id = ?1 AND type = ?2 0 ORDER BY type DESC LIMIT 1;", SteamId, Type)
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace_id = ?1 AND type = ?2 ORDER BY type DESC LIMIT 1;", SteamId, Type)
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
 		  If Packs.Count = 1 Then
 		    Return Packs(0)
