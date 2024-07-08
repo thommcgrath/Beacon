@@ -10,14 +10,14 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   296
+   Height          =   360
    ImplicitInstance=   True
    MacProcID       =   0
-   MaximumHeight   =   296
+   MaximumHeight   =   360
    MaximumWidth    =   600
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   296
+   MinimumHeight   =   360
    MinimumWidth    =   600
    Resizeable      =   False
    Title           =   "#DialogTitle"
@@ -174,11 +174,11 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   184
+      Top             =   224
       Transparent     =   False
       Underline       =   False
       Value           =   True
@@ -204,18 +204,18 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   216
+      Top             =   288
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   389
    End
-   Begin DesktopLabel IntermediateField
+   Begin UITweaks.ResizedLabel IntermediateField
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -270,11 +270,11 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   256
+      Top             =   320
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -302,7 +302,38 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   320
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton ShardsButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "#Language.CommonChoose"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   191
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -310,7 +341,166 @@ Begin BeaconDialog ArkSASetupTransferrableElementDialog
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   80
+      Width           =   90
+   End
+   Begin UITweaks.ResizedPushButton ElementButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "#Language.CommonChoose"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   191
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   192
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   90
+   End
+   Begin UITweaks.ResizedLabel ShardsField
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   293
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Shards"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   256
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   287
+   End
+   Begin UITweaks.ResizedLabel ElementField
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   293
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Element"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   192
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   287
+   End
+   Begin UITweaks.ResizedLabel ShardsLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "#LabelShardsIngredient"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   256
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   159
+   End
+   Begin UITweaks.ResizedLabel ElementLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "#LabelElementIngredient"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   192
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   159
    End
 End
 #tag EndDesktopWindow
@@ -318,39 +508,30 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.ExplanationLabel.Height = Self.ExplanationLabel.IdealHeight
-		  Self.IntermediateLabel.SizeToFit
-		  
-		  Self.ChooseIntermediateButton.Top = Self.ExplanationLabel.Bottom + 12
-		  Self.IntermediateLabel.Top = Self.ChooseIntermediateButton.Top
-		  Self.IntermediateLabel.Height = Self.ChooseIntermediateButton.Height
-		  Self.IntermediateField.Top = Self.ChooseIntermediateButton.Top
-		  Self.IntermediateField.Height = Self.ChooseIntermediateButton.Height
-		  Self.ChooseIntermediateButton.Left = Self.IntermediateLabel.Right + 12
-		  Self.IntermediateField.Left = Self.ChooseIntermediateButton.Right + 12
-		  Self.IntermediateField.Width = Self.Width - (20 + Self.IntermediateField.Left)
-		  
-		  Self.CraftIntoShardsRadio.Top = Self.ChooseIntermediateButton.Bottom + 12
-		  Self.CraftIntoShardsRadio.Left = Self.IntermediateLabel.Right + 12
-		  Self.CraftIntoShardsRadio.Width = Self.Width - (20 + Self.CraftIntoShardsRadio.Left)
-		  
-		  Self.CraftIntoElementRadio.Top = Self.CraftIntoShardsRadio.Bottom + 12
-		  Self.CraftIntoElementRadio.Left = Self.IntermediateLabel.Right + 12
-		  Self.CraftIntoElementRadio.Width = Self.Width - (20 + Self.CraftIntoElementRadio.Left)
-		  
-		  Self.ActionButton.Top = Self.CraftIntoElementRadio.Bottom + 20
-		  Self.CancelButton.Top = Self.ActionButton.Top
-		  
-		  Self.Height = Self.CancelButton.Bottom + 20
+		  If (Self.mIntermediate Is Nil) = False Then
+		    Self.IntermediateField.Text = Self.mIntermediate.Label + " (" + Self.mIntermediate.ContentPackName + ")"
+		  End If
+		  If (Self.mShards Is Nil) = False Then
+		    Self.ShardsField.Text = Self.mShards.Label + " (" + Self.mShards.ContentPackName + ")"
+		  End If
+		  If (Self.mElement Is Nil) = False Then
+		    Self.ElementField.Text = Self.mElement.Label + " (" + Self.mElement.ContentPackName + ")"
+		  End If
+		  Self.SetupUI()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Config As ArkSA.Configs.CraftingCosts, Mods As Beacon.StringList)
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  
 		  Self.mConfig = Config
 		  Self.mMods = Mods
-		  Self.mIntermediate = ArkSA.DataSource.Pool.Get(False).GetEngram("82d8bf54-08bc-5d9e-9f23-a63e24a1273f")
+		  Self.mIntermediate = DataSource.GetEngram("82d8bf54-08bc-5d9e-9f23-a63e24a1273f")
+		  Self.mShards = DataSource.GetEngram("a3cb0922-6c3e-5c3d-88ea-a47011f97d68")
+		  Self.mElement = DataSource.GetEngram("1ca85b1a-41cd-5b93-ba08-872a5edcc376")
+		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -369,6 +550,71 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SetupUI()
+		  Var Labels() As DesktopLabel
+		  Labels.Add(Self.IntermediateLabel)
+		  Labels.Add(Self.ElementLabel)
+		  If Self.CraftIntoShardsRadio.Value Then
+		    Labels.Add(Self.ShardsLabel)
+		  End If
+		  BeaconUI.SizeToFit(Labels)
+		  
+		  Self.ExplanationLabel.Height = Self.ExplanationLabel.IdealHeight
+		  
+		  Self.ChooseIntermediateButton.Top = Self.ExplanationLabel.Bottom + 12
+		  Self.IntermediateLabel.Top = Self.ChooseIntermediateButton.Top
+		  Self.IntermediateLabel.Height = Self.ChooseIntermediateButton.Height
+		  Self.IntermediateField.Top = Self.ChooseIntermediateButton.Top
+		  Self.IntermediateField.Height = Self.ChooseIntermediateButton.Height
+		  Self.ChooseIntermediateButton.Left = Self.IntermediateLabel.Right + 12
+		  Self.IntermediateField.Left = Self.ChooseIntermediateButton.Right + 12
+		  Self.IntermediateField.Width = Self.Width - (20 + Self.IntermediateField.Left)
+		  
+		  Self.ElementLabel.Top = Self.IntermediateField.Bottom + 12
+		  Self.ElementButton.Top = Self.ElementLabel.Top
+		  Self.ElementField.Top = Self.ElementLabel.Top
+		  
+		  Self.ElementButton.Left = Self.ElementLabel.Right + 12
+		  Self.ElementField.Left = Self.ElementButton.Right + 12
+		  Self.ElementField.Width = Self.Width - (20 + Self.ElementField.Left)
+		  
+		  Self.CraftIntoShardsRadio.Top = Self.ElementField.Bottom + 12
+		  Self.CraftIntoShardsRadio.Left = Self.IntermediateLabel.Right + 12
+		  Self.CraftIntoShardsRadio.Width = Self.Width - (20 + Self.CraftIntoShardsRadio.Left)
+		  
+		  If Self.CraftIntoShardsRadio.Value Then
+		    Self.ShardsLabel.Visible = True
+		    Self.ShardsButton.Visible = True
+		    Self.ShardsField.Visible = True
+		    
+		    Self.ShardsLabel.Top = Self.CraftIntoShardsRadio.Bottom + 12
+		    Self.ShardsButton.Top = Self.ShardsLabel.Top
+		    Self.ShardsField.Top = Self.ShardsLabel.Top
+		    
+		    Self.ShardsButton.Left = Self.ShardsLabel.Right + 12
+		    Self.ShardsField.Left = Self.ShardsButton.Right + 12
+		    Self.ShardsField.Width = Self.Width - (20 + Self.ShardsField.Left)
+		    
+		    Self.CraftIntoElementRadio.Top = Self.ShardsField.Bottom + 12
+		  Else
+		    Self.ShardsLabel.Visible = False
+		    Self.ShardsButton.Visible = False
+		    Self.ShardsField.Visible = False
+		    
+		    Self.CraftIntoElementRadio.Top = Self.CraftIntoShardsRadio.Bottom + 12
+		  End If
+		  
+		  Self.CraftIntoElementRadio.Left = Self.IntermediateLabel.Right + 12
+		  Self.CraftIntoElementRadio.Width = Self.Width - (20 + Self.CraftIntoElementRadio.Left)
+		  
+		  Self.ActionButton.Top = Self.CraftIntoElementRadio.Bottom + 20
+		  Self.CancelButton.Top = Self.ActionButton.Top
+		  
+		  Self.Height = Self.CancelButton.Bottom + 20
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -379,11 +625,19 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mElement As ArkSA.Engram
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mIntermediate As ArkSA.Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMods As Beacon.StringList
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mShards As ArkSA.Engram
 	#tag EndProperty
 
 
@@ -408,13 +662,19 @@ End
 	#tag Constant, Name = Explanation, Type = String, Dynamic = True, Default = \"This tool will add or change the crafting costs necessary to make element transferrable. Most admins choose to use soap as the intermediate ingredient. This means 1 soap would require 1 element to craft. Then 100 shards would be crafted from 1 soap. And finally the normal 1 element is crafted from 100 shards. This allows the element to be transferred as soap without prohibiting shards being turned into element.", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = LabelIntermediateIngredient, Type = String, Dynamic = True, Default = \"Intermediate Ingredient:", Scope = Protected
+	#tag Constant, Name = LabelElementIngredient, Type = String, Dynamic = True, Default = \"Element Item:", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelIntermediateIngredient, Type = String, Dynamic = True, Default = \"Intermediate Item:", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = LabelIntermediateToElement, Type = String, Dynamic = True, Default = \"Intermediate crafts into 1 element", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = LabelIntermediateToShards, Type = String, Dynamic = True, Default = \"Intermediate crafts into 100 shards", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelShardsIngredient, Type = String, Dynamic = True, Default = \"Shards Item:", Scope = Protected
 	#tag EndConstant
 
 
@@ -427,15 +687,29 @@ End
 		  Var Engrams() As ArkSA.Engram = ArkSABlueprintSelectorDialog.Present(Self, "", Exclude, Self.mMods, ArkSABlueprintSelectorDialog.SelectModes.Single)
 		  If Engrams <> Nil And Engrams.Count = 1 Then
 		    Self.mIntermediate = Engrams(0)
-		    Self.IntermediateField.Text = Self.mIntermediate.Label
+		    Self.IntermediateField.Text = Self.mIntermediate.Label + " (" + Self.mIntermediate.ContentPackName + ")"
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CraftIntoShardsRadio
+	#tag Event
+		Sub ValueChanged()
+		  Self.SetupUI
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CraftIntoElementRadio
+	#tag Event
+		Sub ValueChanged()
+		  Self.SetupUI
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Element As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("1ca85b1a-41cd-5b93-ba08-872a5edcc376")
+		  Var Element As ArkSA.Engram = Self.mElement
 		  If Element Is Nil Then
 		    If Self.ShowConfirm(Self.ErrorNoElementMessage, Self.ErrorNoElementExplanation, Self.ButtonRefreshNow, Language.CommonCancel) Then
 		      App.SyncGamedata(False, True)
@@ -448,7 +722,7 @@ End
 		  Self.mConfig.Add(IntermediateCost)
 		  
 		  If Self.CraftIntoShardsRadio.Value Then
-		    Var Shards As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("a3cb0922-6c3e-5c3d-88ea-a47011f97d68")
+		    Var Shards As ArkSA.Engram = Self.mShards
 		    If Shards Is Nil Then
 		      If Self.ShowConfirm(Self.ErrorNoShardsMessage, Self.ErrorNoShardsExplanation, Self.ButtonRefreshNow, Language.CommonCancel) Then
 		        App.SyncGamedata(False, True)
@@ -477,6 +751,30 @@ End
 		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ShardsButton
+	#tag Event
+		Sub Pressed()
+		  Var Exclude() As ArkSA.Engram
+		  Var Engrams() As ArkSA.Engram = ArkSABlueprintSelectorDialog.Present(Self, "", Exclude, Self.mMods, ArkSABlueprintSelectorDialog.SelectModes.Single)
+		  If Engrams <> Nil And Engrams.Count = 1 Then
+		    Self.mShards = Engrams(0)
+		    Self.ShardsField.Text = Self.mShards.Label + " (" + Self.mShards.ContentPackName + ")"
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ElementButton
+	#tag Event
+		Sub Pressed()
+		  Var Exclude() As ArkSA.Engram
+		  Var Engrams() As ArkSA.Engram = ArkSABlueprintSelectorDialog.Present(Self, "", Exclude, Self.mMods, ArkSABlueprintSelectorDialog.SelectModes.Single)
+		  If Engrams <> Nil And Engrams.Count = 1 Then
+		    Self.mElement = Engrams(0)
+		    Self.ElementField.Text = Self.mElement.Label + " (" + Self.mElement.ContentPackName + ")"
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
