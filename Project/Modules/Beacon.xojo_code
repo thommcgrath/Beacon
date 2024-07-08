@@ -938,19 +938,31 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function HardwareId(ForceModern As Boolean = False) As String
+		Protected Function HardwareId() As String
+		  Return HardwareId(Preferences.HardwareIdVersion)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function HardwareId(Version As Integer) As String
 		  #if TargetMacOS
-		    #Pragma Unused ForceModern
+		    #Pragma Unused Version
 		    Return SystemInformationMBS.MacUUID.Lowercase
 		  #elseif TargetWindows Or TargetLinux
-		    Var Source As String = SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey
-		    If ForceModern = False And Preferences.HardwareIdVersion = 4 Then
-		      Return Beacon.UUID.v4(Crypto.HashAlgorithms.MD5, Source)
+		    Var Pieces(3) As String = Array(SystemInformationMBS.HardDiscSerial, SystemInformationMBS.CPUBrandString, "", SystemInformationMBS.WinProductKey)
+		    If Version >= 6 Then
+		      Pieces(2) = Preferences.DeviceSalt
 		    Else
+		      Pieces(2) = SystemInformationMBS.MACAddress
+		    End If
+		    Var Source As String = String.FromArray(Pieces, ":")
+		    If Version >= 5 Then
 		      Return Beacon.UUID.v5(Source)
+		    Else
+		      Return Beacon.UUID.v4(Crypto.HashAlgorithms.MD5, Source)
 		    End If
 		  #elseif TargetiOS
-		    #Pragma Unused ForceModern
+		    #Pragma Unused Version
 		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 		    
 		    Const UIKitFramework = "UIKit.framework"
@@ -970,7 +982,7 @@ Protected Module Beacon
 		    
 		    Return Identifier.DefineEncoding(Encodings.UTF8).Lowercase
 		  #else
-		    #Pragma Unused ForceModern
+		    #Pragma Unused Version
 		    #Pragma Error "HardwareID not implemented for this platform"
 		  #endif
 		End Function

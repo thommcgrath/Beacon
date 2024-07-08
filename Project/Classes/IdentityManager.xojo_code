@@ -17,13 +17,14 @@ Protected Class IdentityManager
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
+		  Const UseEncryption = Not DebugBuild
+		  
 		  Var AppSupport As FolderItem = App.ApplicationSupport
 		  
 		  Var DatabaseFile As FolderItem = AppSupport.Child("Identities.sqlite")
 		  Var Database As New SQLiteDatabase
-		  #if Not DebugBuild
-		    Var Key As String = Crypto.SHA3_256("8df95865-3fac-4c79-8ee6-8ee98ca199df " + Beacon.SystemAccountName + " " + Beacon.HardwareId(True))
-		    Database.EncryptionKey = "aes256:" + Key.ReplaceAll(Chr(0), Chr(1)) // https://forum.xojo.com/t/sqlitedatabase-encryptionkey-key-derivation/76366/9?u=thom_mcgrath
+		  #if UseEncryption
+		    Database.EncryptionKey = Self.GenerateKey
 		  #endif
 		  Database.DatabaseFile = DatabaseFile
 		  
@@ -38,6 +39,10 @@ Protected Class IdentityManager
 		    DatabaseFile.Remove
 		  End If
 		  
+		  Preferences.HardwareIdVersion = 6
+		  #if UseEncryption
+		    Database.EncryptionKey = Self.GenerateKey
+		  #endif
 		  Database.CreateDatabase
 		  Database.ExecuteSQL("CREATE TABLE identities (user_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, public_key TEXT COLLATE NOCASE NOT NULL, private_key TEXT COLLATE NOCASE NOT NULL, cloud_key TEXT NOT NULL DEFAULT '', licenses TEXT NOT NULL DEFAULT '[]', username TEXT COLLATE NOCASE NOT NULL DEFAULT '', anonymous BOOLEAN NOT NULL DEFAULT TRUE, banned BOOLEAN NOT NULL DEFAULT FALSE, signature TEXT NOT NULL DEFAULT '', signature_fields TEXT NOT NULL DEFAULT '[]', expiration TEXT NOT NULL DEFAULT '', active BOOLEAN NOT NULL DEFAULT FALSE, merged BOOLEAN NOT NULL DEFAULT FALSE);")
 		  Self.mDatabase = Database
@@ -68,8 +73,6 @@ Protected Class IdentityManager
 		      #endif
 		    End If
 		  End If
-		  
-		  Preferences.HardwareIdVersion = 5
 		End Sub
 	#tag EndMethod
 
@@ -159,6 +162,13 @@ Protected Class IdentityManager
 		  End If
 		  
 		  Return Beacon.Identity.Load(Rows)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function GenerateKey() As String
+		  Var Key As String = Crypto.SHA3_256("8df95865-3fac-4c79-8ee6-8ee98ca199df " + Beacon.SystemAccountName + " " + Beacon.HardwareId)
+		  Return "aes256:" + Key.ReplaceAll(Chr(0), Chr(1)) // https://forum.xojo.com/t/sqlitedatabase-encryptionkey-key-derivation/76366/9?u=thom_mcgrath
 		End Function
 	#tag EndMethod
 

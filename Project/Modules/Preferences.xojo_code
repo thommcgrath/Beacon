@@ -160,6 +160,28 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function HardwareIdVersion() As Integer
+		  Init
+		  Return mManager.IntegerValue("Hardware Id Version", 6)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub HardwareIdVersion(Force As Boolean = False, Assigns NewValue As Integer)
+		  Init
+		  
+		  If Force = False And mManager.IntegerValue("Hardware Id Version", 0) = NewValue Then
+		    Return
+		  End If
+		  
+		  mManager.IntegerValue("Hardware Id Version") = NewValue
+		  
+		  // Update private key encryption in case the hardware id changes
+		  EncryptPrivateKey()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function HiddenTags() As String()
 		  Init
 		  Return mManager.StringValue("Hidden Tags", DefaultHiddenTags).Split(",")
@@ -224,6 +246,11 @@ Protected Module Preferences
 		    End If
 		  End If
 		  
+		  Var NewestUsedBuild As Integer = NewestUsedBuild
+		  If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
+		    HardwareIdVersion = 4
+		  End If
+		  
 		  If mManager.StringValue("Device Private Key").IsEmpty = False Then
 		    Try
 		      Var PrivateKey As String = EncodeHex(BeaconEncryption.SlowDecrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, mManager.StringValue("Device Private Key")))
@@ -241,12 +268,8 @@ Protected Module Preferences
 		    Call Crypto.RSAGenerateKeyPair(4096, PrivateKey, PublicKey)
 		    mDevicePublicKey = PublicKey
 		    mDevicePrivateKey = PrivateKey
-		    EncryptPrivateKey()
-		  End If
-		  
-		  Var NewestUsedBuild As Integer = NewestUsedBuild
-		  If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
-		    HardwareIdVersion = 4
+		    HardwareIdVersion(True) = 6
+		    App.Log("Generated new device private key")
 		  End If
 		  
 		  Var DefaultGameId As String = NewProjectGameId
@@ -1008,6 +1031,26 @@ Protected Module Preferences
 		Protected DevicePublicKey As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  
+			  If mDeviceSalt.IsEmpty Then
+			    If mManager.HasKey("Device Salt") Then
+			      mDeviceSalt = DecodeBase64URLMBS(mManager.StringValue("Device Salt"))
+			    Else
+			      mDeviceSalt = Crypto.GenerateRandomBytes(32)
+			      mManager.StringValue("Device Salt") = EncodeBase64URLMBS(mDeviceSalt)
+			    End If
+			  End If
+			  
+			  Return mDeviceSalt
+			End Get
+		#tag EndGetter
+		Protected DeviceSalt As String
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
@@ -1022,25 +1065,6 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected EntryEditorSize As Size
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.IntegerValue("Hardware Id Version", 5)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.IntegerValue("Hardware Id Version") = Value
-			  
-			  // Update private key encryption in case the hardware id changes
-			  EncryptPrivateKey()
-			End Set
-		#tag EndSetter
-		Protected HardwareIdVersion As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -1164,6 +1188,10 @@ Protected Module Preferences
 
 	#tag Property, Flags = &h21
 		Private mDevicePublicKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeviceSalt As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
