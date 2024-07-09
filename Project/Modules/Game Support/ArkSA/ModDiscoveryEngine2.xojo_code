@@ -1052,8 +1052,7 @@ Protected Class ModDiscoveryEngine2
 		      If ToPath.IsEmpty Then
 		        Continue
 		      End If
-		      Var Weight As Double = Weights.ValueAt(ReplacementIdx)
-		      If Weight > 0 Then
+		      If ReplacementIdx > Weights.LastRowIndex Or Weights.ValueAt(ReplacementIdx).DoubleValue > 0.0 Then
 		        Self.ScanCreature(ToPath, False)
 		      End If
 		    Next
