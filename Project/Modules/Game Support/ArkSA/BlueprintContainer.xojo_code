@@ -311,11 +311,13 @@ Implements ArkSA.BlueprintProvider
 		  
 		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryLootContainers, SearchText, ContentPacks, Tags)
 		  Var Results() As ArkSA.LootContainer
-		  Results.ResizeTo(Blueprints.LastIndex)
-		  For Idx As Integer = 0 To Results.LastIndex
+		  For Idx As Integer = 0 To Blueprints.LastIndex
 		    Var Container As ArkSA.LootContainer = ArkSA.LootContainer(Blueprints(Idx))
+		    If Container Is Nil Then
+		      Continue
+		    End If
 		    If IncludeExperimental = True Or Container.Experimental = False Then
-		      Results(Idx) = Container
+		      Results.Add(Container)
 		    End If
 		  Next
 		  Return Results
@@ -510,14 +512,6 @@ Implements ArkSA.BlueprintProvider
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mBlueprintProviderId"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
