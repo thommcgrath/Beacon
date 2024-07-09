@@ -1117,9 +1117,15 @@ Protected Module ArkSA
 		  
 		  Var Unique As New Dictionary
 		  For Each Blueprint As ArkSA.Blueprint In Array1
+		    If Blueprint Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  For Each Blueprint As ArkSA.Blueprint In Array2
+		    If Blueprint Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  Var Merged() As ArkSA.Blueprint
@@ -1140,9 +1146,15 @@ Protected Module ArkSA
 		  
 		  Var Unique As New Dictionary
 		  For Each Creature As ArkSA.Creature In Array1
+		    If Creature Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(Creature.BlueprintId) = Creature
 		  Next
 		  For Each Creature As ArkSA.Creature In Array2
+		    If Creature Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(Creature.BlueprintId) = Creature
 		  Next
 		  Var Merged() As ArkSA.Creature
@@ -1163,9 +1175,15 @@ Protected Module ArkSA
 		  
 		  Var Unique As New Dictionary
 		  For Each Engram As ArkSA.Engram In Array1
+		    If Engram Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(Engram.BlueprintId) = Engram
 		  Next
 		  For Each Engram As ArkSA.Engram In Array2
+		    If Engram Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(Engram.BlueprintId) = Engram
 		  Next
 		  Var Merged() As ArkSA.Engram
@@ -1186,9 +1204,15 @@ Protected Module ArkSA
 		  
 		  Var Unique As New Dictionary
 		  For Each LootContainer As ArkSA.LootContainer In Array1
+		    If LootContainer Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(LootContainer.BlueprintId) = LootContainer
 		  Next
 		  For Each LootContainer As ArkSA.LootContainer In Array2
+		    If LootContainer Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(LootContainer.BlueprintId) = LootContainer
 		  Next
 		  Var Merged() As ArkSA.LootContainer
@@ -1209,9 +1233,15 @@ Protected Module ArkSA
 		  
 		  Var Unique As New Dictionary
 		  For Each SpawnPoint As ArkSA.SpawnPoint In Array1
+		    If SpawnPoint Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(SpawnPoint.BlueprintId) = SpawnPoint
 		  Next
 		  For Each SpawnPoint As ArkSA.SpawnPoint In Array2
+		    If SpawnPoint Is Nil Then
+		      Continue
+		    End If
 		    Unique.Value(SpawnPoint.BlueprintId) = SpawnPoint
 		  Next
 		  Var Merged() As ArkSA.SpawnPoint
