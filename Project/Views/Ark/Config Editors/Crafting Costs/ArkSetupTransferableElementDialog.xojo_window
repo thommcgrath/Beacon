@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog ArkSetupTransferrableElementDialog
+Begin BeaconDialog ArkSetupTransferableElementDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -20,7 +20,7 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
    MinimumHeight   =   296
    MinimumWidth    =   600
    Resizeable      =   False
-   Title           =   "Setup Transferrable Element"
+   Title           =   "Setup Transferable Element"
    Type            =   8
    Visible         =   True
    Width           =   600
@@ -47,7 +47,7 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Setup Transferrable Element"
+      Text            =   "Setup Transferable Element"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -80,7 +80,7 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "This tool will add or change the crafting costs necessary to make element transferrable. Most admins choose to use soap as the intermediate ingredient. This means 1 soap would require 1 element to craft. Then 100 shards would be crafted from 1 soap. And finally the normal 1 element is crafted from 100 shards. This allows the element to be transferred as soap without prohibiting shards being turned into element."
+      Text            =   "This tool will add or change the crafting costs necessary to make element transferable. Most admins choose to use soap as the intermediate ingredient. This means 1 soap would require 1 element to craft. Then 100 shards would be crafted from 1 soap. And finally the normal 1 element is crafted from 100 shards. This allows the element to be transferred as soap without prohibiting shards being turned into element."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -331,7 +331,7 @@ End
 		    Return False
 		  End If
 		  
-		  Var Win As New ArkSetupTransferrableElementDialog(Config, ContentPacks)
+		  Var Win As New ArkSetupTransferableElementDialog(Config, ContentPacks)
 		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close

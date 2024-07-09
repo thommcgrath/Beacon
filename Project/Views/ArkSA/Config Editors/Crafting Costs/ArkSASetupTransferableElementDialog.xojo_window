@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog ArkSASetupTransferrableElementDialog
+Begin BeaconDialog ArkSASetupTransferableElementDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -542,7 +542,7 @@ End
 		    Return False
 		  End If
 		  
-		  Var Win As New ArkSASetupTransferrableElementDialog(Config, ContentPacks)
+		  Var Win As New ArkSASetupTransferableElementDialog(Config, ContentPacks)
 		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -644,7 +644,7 @@ End
 	#tag Constant, Name = ButtonRefreshNow, Type = String, Dynamic = True, Default = \"Rebuild Now", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = DialogTitle, Type = String, Dynamic = True, Default = \"Setup Transferrable Element", Scope = Protected
+	#tag Constant, Name = DialogTitle, Type = String, Dynamic = True, Default = \"Setup Transferable Element", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = ErrorNoElementExplanation, Type = String, Dynamic = True, Default = \"Beacon could not find Element in its database. Would you like Beacon to rebuild its blueprints database\?", Scope = Protected
@@ -659,7 +659,7 @@ End
 	#tag Constant, Name = ErrorNoShardsMessage, Type = String, Dynamic = True, Default = \"Could not find element shards", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Explanation, Type = String, Dynamic = True, Default = \"This tool will add or change the crafting costs necessary to make element transferrable. Most admins choose to use soap as the intermediate ingredient. This means 1 soap would require 1 element to craft. Then 100 shards would be crafted from 1 soap. And finally the normal 1 element is crafted from 100 shards. This allows the element to be transferred as soap without prohibiting shards being turned into element.", Scope = Protected
+	#tag Constant, Name = Explanation, Type = String, Dynamic = True, Default = \"This tool will add or change the crafting costs necessary to make element transferable. Most admins choose to use soap as the intermediate ingredient. This means 1 soap would require 1 element to craft. Then 100 shards would be crafted from 1 soap. And finally the normal 1 element is crafted from 100 shards. This allows the element to be transferred as soap without prohibiting shards being turned into element.", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = LabelElementIngredient, Type = String, Dynamic = True, Default = \"Element Item:", Scope = Protected
