@@ -42,12 +42,31 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
-		$parameters->orderBy = $schema->Table() . '.name';
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
 		$parameters->AddFromFilter($schema, $filters, 'marketplace');
 		$parameters->AddFromFilter($schema, $filters, 'marketplaceId');
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		$parameters->allowAll = true;
+
+		$sort_column = $schema->Accessor('name');
+		$sort_direction = 'DESC';
+		if (isset($filters['sort'])) {
+			switch ($filters['sort']) {
+			case 'gameId':
+				$sort_column = $schema->Accessor('gameId');
+				break;
+			case 'marketplaceId':
+				$sort_column = $schema->Accessor('marketplaceId');
+				break;
+			case 'lastUpdate':
+				$sort_column = $schema->Accessor('lastUpdate');
+				break;
+			}
+		}
+		if (isset($filters['direction'])) {
+			$sort_direction = (strtolower($filters['direction']) === 'desc' ? 'DESC' : 'ASC');
+		}
+		$parameters->orderBy = "{$sort_column} {$sort_direction}";
 
 		if (isset($filters['search']) && empty($filters['search']) === false) {
 			$searchValue = '%' . str_replace(['%', '_'], ['\\%', '\\_'], trim($filters['search'])) . '%';
