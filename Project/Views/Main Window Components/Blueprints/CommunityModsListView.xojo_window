@@ -622,62 +622,6 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  If Column = Self.ColumnStatus Then
-		    Return False
-		  End If
-		  
-		  Var Mod1 As BeaconAPI.ContentPack = Me.RowTagAt(Row1)
-		  Var Mod2 As BeaconAPI.ContentPack = Me.RowTagAt(Row2)
-		  
-		  If (Mod1 Is Nil) = False And Mod2 Is Nil Then
-		    Result = 1
-		    Return True
-		  ElseIf Mod1 Is Nil And (Mod2 Is Nil) = False Then
-		    Result = -1
-		    Return True
-		  ElseIf Mod1 Is Nil And Mod2 Is Nil Then
-		    Result = 0
-		    Return True
-		  End If
-		  
-		  Select Case Column
-		  Case Self.ColumnName
-		    Result = Mod1.Name.Compare(Mod2.Name, ComparisonOptions.CaseInsensitive)
-		  Case Self.ColumnGameId
-		    Result = Mod1.GameId.Compare(Mod2.GameId, ComparisonOptions.CaseInsensitive)
-		  Case Self.ColumnModId
-		    If IsNumeric(Mod1.MarketplaceId) And IsNumeric(Mod2.MarketplaceId) Then
-		      Try
-		        Var Mod1Id As Integer = Integer.FromString(Mod1.MarketplaceId, Locale.Raw)
-		        Var Mod2Id As Integer = Integer.FromString(Mod2.MarketplaceId, Locale.Raw)
-		        If Mod1Id > Mod2Id Then
-		          Result = 1
-		        ElseIf Mod2Id > Mod1Id Then
-		          Result = -1
-		        Else
-		          Result = 0
-		        End If
-		        Return True
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
-		    
-		    Result = Mod1.MarketplaceId.Compare(Mod2.MarketplaceId, ComparisonOptions.CaseSensitive)
-		  Case Self.ColumnUpdated
-		    If Mod1.LastUpdate > Mod2.LastUpdate Then
-		      Result = 1
-		    ElseIf Mod2.LastUpdate > Mod1.LastUpdate Then
-		      Result = -1
-		    Else
-		      Result = 0
-		    End If
-		  End Select
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
 		Function ColumnSorted(column As Integer) As Boolean
 		  If Column = Self.ColumnStatus Then
 		    Return True
