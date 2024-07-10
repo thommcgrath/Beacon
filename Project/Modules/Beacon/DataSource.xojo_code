@@ -1153,8 +1153,13 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function TotalChanges() As Integer
-		  Var Rows As RowSet = Self.SQLSelect("SELECT total_changes();")
-		  Return Rows.ColumnAt(0).IntegerValue
+		  Try
+		    Var Rows As RowSet = Self.SQLSelect("SELECT total_changes();")
+		    Return Rows.ColumnAt(0).IntegerValue
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Checking for database changes")
+		    Return 0
+		  End Try
 		End Function
 	#tag EndMethod
 
