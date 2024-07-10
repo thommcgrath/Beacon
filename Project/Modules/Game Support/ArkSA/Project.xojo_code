@@ -766,29 +766,30 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function EmbeddedBlueprints(Pack As Beacon.ContentPack, UnsavedOnly As Boolean) As ArkSA.Blueprint()
-		  Var DataSource As ArkSA.DataSource
-		  If UnsavedOnly = True Then
-		    DataSource = ArkSA.DataSource.Pool.Get(False)
-		  End If
-		  
 		  Var Blueprints() As ArkSA.Blueprint
 		  If Pack Is Nil Or Self.mEmbeddedBlueprintIds.HasKey(Pack.ContentPackId) = False Then
 		    Return Blueprints
+		  End If
+		  
+		  Var SkipBlueprints As New Dictionary
+		  If UnsavedOnly Then
+		    Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		    Var Categories() As String = ArkSA.Categories
+		    Var Packs As New Beacon.StringList(Pack.ContentPackId)
+		    For Each Category As String In Categories
+		      Var SavedBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints(Category, "", Packs, Nil)
+		      For Each Blueprint As ArkSA.Blueprint In SavedBlueprints
+		        SkipBlueprints.Value(Blueprint.BlueprintId) = True
+		      Next
+		    Next
 		  End If
 		  
 		  Var BlueprintIds() As String = Self.mEmbeddedBlueprintIds.Value(Pack.ContentPackId)
 		  For Each BlueprintId As String In BlueprintIds
 		    Try
 		      Var ProjectBlueprint As ArkSA.Blueprint = Self.mEmbeddedBlueprints.Value(BlueprintId)
-		      If ProjectBlueprint Is Nil Then
+		      If ProjectBlueprint Is Nil Or SkipBlueprints.HasKey(ProjectBlueprint.BlueprintId) Then
 		        Continue
-		      End If
-		      
-		      If UnsavedOnly = True Then
-		        Var SavedBlueprint As ArkSA.Blueprint = DataSource.GetBlueprint(BlueprintId, False)
-		        If (SavedBlueprint Is Nil) = False And SavedBlueprint.LastUpdate >= ProjectBlueprint.LastUpdate Then
-		          Continue
-		        End If
 		      End If
 		      
 		      Blueprints.Add(ProjectBlueprint)
