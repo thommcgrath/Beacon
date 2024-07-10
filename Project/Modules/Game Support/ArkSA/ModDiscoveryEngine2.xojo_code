@@ -190,6 +190,9 @@ Protected Class ModDiscoveryEngine2
 		  Else
 		    File = File.Child("Mods").Child(PathComponents(0)).Child("Content")
 		  End If
+		  If File Is Nil Or File.Exists = False Then
+		    Return Nil
+		  End If
 		  PathComponents.RemoveAt(0) // remove the package name
 		  ClassString = PathComponents(PathComponents.LastIndex).NthField(".", 1)
 		  PathComponents(PathComponents.LastIndex) = ClassString + ".json"
@@ -203,6 +206,9 @@ Protected Class ModDiscoveryEngine2
 		  Next
 		  
 		  Return File
+		  
+		  Exception Err As RuntimeException
+		    Return Nil
 		End Function
 	#tag EndMethod
 
@@ -662,7 +668,7 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Var ClassString As String
 		  Var File As FolderItem = Self.FileForPath(Path, ClassString)
-		  If File Is Nil Then
+		  If File Is Nil Or File.Exists = False Then
 		    Self.mPropertiesCache.Value(Path) = Nil
 		    Return Nil
 		  End If
@@ -857,6 +863,32 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ScanInventory(Path As String)
+		  If Self.mPathsScanned.HasKey(Path) Then
+		    Return
+		  End If
+		  Self.mPathsScanned.Value(Path) = True
+		  
+		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
+		  If Properties Is Nil Then
+		    Return
+		  End If
+		  
+		  Var InventoryPaths As JSONMBS = Properties.Query("$.DefaultInventoryItems[*].ObjectPath")
+		  For Idx As Integer = 0 To InventoryPaths.LastRowIndex
+		    Var ItemPath As String = Self.NormalizePath(InventoryPaths.ValueAt(Idx))
+		    Self.ScanItem(ItemPath)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanItem(Path As String, NoSync As Boolean, ParamArray AdditionalTags() As String)
+		  Self.ScanItem(Path, NoSync, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ScanItem(Path As String, NoSync As Boolean, AdditionalTags() As String)
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
@@ -872,6 +904,18 @@ Protected Class ModDiscoveryEngine2
 		  
 		  If Properties.HasKey("DescriptiveNameBase") And NoSync = False Then
 		    Self.mItemPaths.Value(Path) = True
+		  End If
+		  
+		  If Properties.HasChild("ActiveRequiresFuelItems") Then
+		    Var FuelItems As JSONMBS = Properties.Child("ActiveRequiresFuelItems")
+		    For Idx As Integer = 0 To FuelItems.LastRowIndex
+		      Var FuelItem As JSONMBS = FuelItems.ChildAt(Idx)
+		      If FuelItem Is Nil Or FuelItem.IsNull Then
+		        Continue
+		      End If
+		      Var FuelItemPath As String = Self.NormalizePath(FuelItem.Value("ObjectPath"))
+		      Self.ScanItem(FuelItemPath)
+		    Next
 		  End If
 		  
 		  If Properties.HasChild("FuelItemsConsumedGiveItems") Then
@@ -948,12 +992,6 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanItem(Path As String, NoSync As Boolean, ParamArray AdditionalTags() As String)
-		  Self.ScanItem(Path, NoSync, AdditionalTags)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ScanItem(Path As String, ParamArray AdditionalTags() As String)
 		  Self.ScanItem(Path, False, AdditionalTags)
 		End Sub
@@ -962,6 +1000,12 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Sub ScanItem(Path As String, AdditionalTags() As String)
 		  Self.ScanItem(Path, False, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
+		  Self.ScanLootDrop(Path, Type, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
@@ -1005,12 +1049,6 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanItem(ItemPath)
 		    Next
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
-		  Self.ScanLootDrop(Path, Type, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
@@ -1212,6 +1250,13 @@ Protected Class ModDiscoveryEngine2
 		    End If
 		  #endif
 		  
+		  // These are the inventories of things like crafting stations
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalInventoryComponent'") Then
+		    Var InventoryAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalInventoryComponent'")
+		    For Each Entry As DictionaryEntry In InventoryAssets
+		      Self.ScanInventory(Entry.Key.StringValue)
+		    Next
+		  End If
 		  
 		  
 		  
