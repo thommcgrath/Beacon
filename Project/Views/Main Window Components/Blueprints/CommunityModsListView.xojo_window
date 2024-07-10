@@ -398,7 +398,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function SelectedModIds() As String()
-		  If Self.Working Then
+		  If Self.Working Or Self.List Is Nil Then
 		    Return Self.mSelectedModIds
 		  End If
 		  
@@ -408,7 +408,12 @@ End
 		      Continue
 		    End If
 		    
-		    Ids.Add(BeaconAPI.ContentPack(Self.List.RowTagAt(Idx)).ContentPackId)
+		    Var ModInfo As BeaconAPI.ContentPack = Self.List.RowTagAt(Idx)
+		    If ModInfo Is Nil Then
+		      Continue
+		    End If
+		    
+		    Ids.Add(ModInfo.ContentPackId)
 		  Next
 		  Return Ids
 		End Function
@@ -546,6 +551,28 @@ End
 		    Params.Value("search") = Filter
 		  End If
 		  
+		  Var SortingColumn As Integer = Me.SortingColumn
+		  If SortingColumn = -1 Then
+		    SortingColumn = Self.ColumnName
+		  End If
+		  
+		  Select Case SortingColumn
+		  Case Self.ColumnName
+		    Params.Value("sort") = "name"
+		  Case Self.ColumnGameId
+		    Params.Value("sort") = "gameId"
+		  Case Self.ColumnModId
+		    Params.Value("sort") = "marketplaceId"
+		  Case Self.ColumnUpdated
+		    Params.Value("sort") = "lastUpdate"
+		  End Select
+		  
+		  If Me.ColumnSortDirectionAt(SortingColumn) = DesktopListbox.SortDirections.Descending Then
+		    Params.Value("direction") = "desc"
+		  Else
+		    Params.Value("direction") = "asc"
+		  End If
+		  
 		  Var Request As New BeaconAPI.Request("/discovery", "GET", Params, AddressOf APICallback_ListMods)
 		  Request.Tag = RequestToken
 		  BeaconAPI.Send(Request)
@@ -593,6 +620,72 @@ End
 		Sub Opening()
 		  Me.ColumnAlignmentAt(Self.ColumnModId) = DesktopListBox.Alignments.Right
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  If Column = Self.ColumnStatus Then
+		    Return False
+		  End If
+		  
+		  Var Mod1 As BeaconAPI.ContentPack = Me.RowTagAt(Row1)
+		  Var Mod2 As BeaconAPI.ContentPack = Me.RowTagAt(Row2)
+		  
+		  If (Mod1 Is Nil) = False And Mod2 Is Nil Then
+		    Result = 1
+		    Return True
+		  ElseIf Mod1 Is Nil And (Mod2 Is Nil) = False Then
+		    Result = -1
+		    Return True
+		  ElseIf Mod1 Is Nil And Mod2 Is Nil Then
+		    Result = 0
+		    Return True
+		  End If
+		  
+		  Select Case Column
+		  Case Self.ColumnName
+		    Result = Mod1.Name.Compare(Mod2.Name, ComparisonOptions.CaseInsensitive)
+		  Case Self.ColumnGameId
+		    Result = Mod1.GameId.Compare(Mod2.GameId, ComparisonOptions.CaseInsensitive)
+		  Case Self.ColumnModId
+		    If IsNumeric(Mod1.MarketplaceId) And IsNumeric(Mod2.MarketplaceId) Then
+		      Try
+		        Var Mod1Id As Integer = Integer.FromString(Mod1.MarketplaceId, Locale.Raw)
+		        Var Mod2Id As Integer = Integer.FromString(Mod2.MarketplaceId, Locale.Raw)
+		        If Mod1Id > Mod2Id Then
+		          Result = 1
+		        ElseIf Mod2Id > Mod1Id Then
+		          Result = -1
+		        Else
+		          Result = 0
+		        End If
+		        Return True
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    Result = Mod1.MarketplaceId.Compare(Mod2.MarketplaceId, ComparisonOptions.CaseSensitive)
+		  Case Self.ColumnUpdated
+		    If Mod1.LastUpdate > Mod2.LastUpdate Then
+		      Result = 1
+		    ElseIf Mod2.LastUpdate > Mod1.LastUpdate Then
+		      Result = -1
+		    Else
+		      Result = 0
+		    End If
+		  End Select
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ColumnSorted(column As Integer) As Boolean
+		  If Column = Self.ColumnStatus Then
+		    Return True
+		  End If
+		  
+		  Me.ReloadAllPages()
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
