@@ -393,7 +393,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  For Each Source As Beacon.DataSource In Sources
 		    Source.EmptyCaches()
 		  Next
-		  BeaconUI.ShowAlert("Caches have been emptied. It is recommended to reload any open projects.", "Opening a project loads the caches with data that may not be stored in your local database. Reloading your projects after emptying caches will improve reliability.")
+		  BeaconUI.ShowAlert("Caches have been emptied.", "Hopefully that fixes your issue.")
 		  Return True
 		End Function
 	#tag EndMenuHandler
