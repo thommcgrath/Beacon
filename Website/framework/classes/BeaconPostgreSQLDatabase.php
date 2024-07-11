@@ -2,14 +2,14 @@
 
 class BeaconPostgreSQLDatabase extends BeaconDatabase {
 	protected $transactions = [];
-	
+
 	public function Connect() {
 		if ($this->IsConnected()) {
 			return;
 		}
 		$this->SetConnection(null);
 		$settings = $this->Settings();
-		
+
 		$pieces = [];
 		$is_ip = ip2long($settings->Host());
 		if ($is_ip) {
@@ -25,27 +25,27 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			$pieces['sslmode'] = 'require';
 		}
 		$pieces['options'] = '--client_encoding=UTF8 --application_name=Website';
-		
+
 		$options = [];
 		foreach ($pieces as $key => $value) {
 			$options[] = $key . "='" . str_replace(["'", "\\"], ["\\'", "\\\\"], $value) . "'";
 		}
-		
+
 		$connection = pg_connect(implode(' ', $options));
 		if ($connection === false) {
 			throw new Exception('Unable to connect to database');
 		} else {
 			$this->SetConnection($connection);
-		}	
+		}
 	}
-	
+
 	public function Reconnect () {
 		$success = @pg_connection_reset($this->Connection());
 		if ($success === false) {
 			throw new Exception('Unable to reconnect to database');
 		}
 	}
-	
+
 	public function IsConnected() {
 		if (is_null($this->Connection())) {
 			return false;
@@ -53,7 +53,7 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			return pg_connection_status($this->Connection()) == PGSQL_CONNECTION_OK;
 		}
 	}
-	
+
 	public function Close() {
 		if (is_null($this->Connection()) === false) {
 			if ($this->IsConnected()) {
@@ -63,10 +63,10 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			$this->transactions = [];
 		}
 	}
-	
+
 	public function BeginTransaction() {
 		$this->SetConnectionMode(static::CONNECTION_WRITABLE);
-		
+
 		$this->Connect();
 		if (count($this->transactions) == 0) {
 			$this->Query('BEGIN TRANSACTION');
@@ -77,11 +77,11 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			$this->Query('SAVEPOINT ' . $this->EscapeIdentifier($savepoint));
 		}
 	}
-	
+
 	public function InTransaction() {
 		return count($this->transactions) > 0;
 	}
-	
+
 	public function Commit() {
 		$this->Connect();
 		if (count($this->transactions) > 0) {
@@ -93,7 +93,7 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			}
 		}
 	}
-	
+
 	public function Rollback() {
 		$this->Connect();
 		if (count($this->transactions) > 0) {
@@ -106,7 +106,7 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			}
 		}
 	}
-	
+
 	private function ResetTransactions() {
 		$this->transactions = [];
 		$state = pg_transaction_status($this->Connection());
@@ -114,25 +114,25 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			pg_query($this->Connection(), 'ROLLBACK TRANSACTION');
 		}
 	}
-	
+
 	public function Query(string $sql, ...$params) {
 		$this->Connect(); // Will only actually connect if necessary
 		if (!is_array($params)) {
 			$params = [];
 		}
-		
+
 		// for backwards compatibility, if $params contains a single array element,
 		// it is being called with the legacy signature of ($sql, array($param1, $param2, ...))
 		if ((count($params) == 1) && (is_array($params[0]))) {
 			$params = $params[0];
 		}
-		
+
 		for ($i = 0; $i < count($params); $i++) {
 			if (is_bool($params[$i])) {
 				$params[$i] = $params[$i] ? 't' : 'f';
 			}
 		}
-		
+
 		if (count($params) > 0) {
 			$success = pg_send_query_params($this->Connection(), $sql, $params);
 		} else {
@@ -149,7 +149,13 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 					return new BeaconPostgreSQLRecordSet($result);
 				} else {
 					$this->ResetTransactions();
-					throw new BeaconQueryException($state, $sql);
+					$errorCode = pg_result_error_field($result, PGSQL_DIAG_SQLSTATE);
+					$errorMessage = pg_result_error_field($result, PGSQL_DIAG_MESSAGE_PRIMARY);
+					$errorDetail = pg_result_error_field($result, PGSQL_DIAG_MESSAGE_DETAIL);
+					if (is_null($errorDetail) === false) {
+						$errorMessage .= "\n{$errorDetail}";
+					}
+					throw new BeaconQueryException($errorMessage, $sql, $errorCode);
 				}
 			}
 		}
@@ -157,27 +163,27 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 		$this->ResetTransactions();
 		throw new BeaconQueryException($error, $sql);
 	}
-	
+
 	public function ExamineQuery(string $sql, ...$params) {
 		if (!is_array($params)) {
 			$params = [];
 		}
-		
+
 		if ((count($params) == 1) && (is_array($params[0]))) {
 			$params = $params[0];
 		}
-		
+
 		for ($i = 0; $i < count($params); $i++) {
 			if (is_bool($params[$i])) {
 				$params[$i] = $params[$i] ? 't' : 'f';
 			}
-			
+
 			$sql = str_replace('$' . ($i + 1), $this->EscapeLiteral($params[$i]), $sql);
 		}
-		
+
 		return $sql;
 	}
-	
+
 	public function Insert(string $table, array $data) {
 		$i = 1;
 		$columns = [];
@@ -193,26 +199,29 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 		$this->Query($sql, $values);
 		$this->Commit();
 	}
-	
+
 	public function Update(string $table, array $data, array $conditions) {
 		$i = 1;
 		$set_columns = [];
 		$select_columns = [];
+		$distinct_columns = [];
 		$values = array_merge(array_values($data), array_values($conditions));
 		foreach ($data as $column => $value) {
 			$set_columns[] = $this->EscapeIdentifier($column) . ' = $' . $i;
+			$distinct_columns[] = $this->EscapeIdentifier($column) . ' IS DISTINCT FROM $' . $i;
 			$i++;
 		}
 		foreach ($conditions as $column => $value) {
 			$select_columns[] = $this->EscapeIdentifier($column) . ' = $' . $i;
 			$i++;
 		}
+		$select_columns[] = '(' . implode(' OR ', $distinct_columns) . ')';
 		$sql = 'UPDATE ' . $this->EscapeIdentifier($table) . ' SET ' . implode(', ', $set_columns) . ' WHERE ' . implode(' AND ', $select_columns);
 		$this->BeginTransaction();
 		$this->Query($sql, $values);
 		$this->Commit();
 	}
-	
+
 	public function Upsert(string $table, array $data, array $conflict_columns) {
 		$i = 1;
 		$columns = [];
@@ -229,9 +238,9 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			$column_escaped = $this->EscapeIdentifier($column);
 			$placeholder = '$' . $i;
 			$i++;
-			
+
 			$columns[] = $column_escaped;
-			$placeholders[] = $placeholder;			
+			$placeholders[] = $placeholder;
 			if (in_array($column, $conflict_columns) === false) {
 				$assignments[] = $column_escaped . ' = ' . $placeholder;
 				$clauses[] = $table_escaped . '.' . $column_escaped . ' IS DISTINCT FROM ' . $placeholder;
@@ -253,10 +262,10 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			$inserted = $this->Query('SELECT * FROM ' . $table_escaped . ' WHERE ' . implode(' AND ', $clauses) . ' LIMIT 1;', $values);
 		}
 		$this->Commit();
-		
+
 		return $inserted;
 	}
-	
+
 	public function Host() {
 		if ($this->IsConnected()) {
 			return pg_host($this->Connection());
@@ -264,7 +273,7 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			return $this->Settings()->Host();
 		}
 	}
-	
+
 	public function EscapeIdentifier(string $identifier) {
 		$this->Connect();
 		$pieces = explode('.', $identifier);
@@ -273,17 +282,17 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 		}
 		return implode('.', $pieces);
 	}
-	
+
 	public function EscapeLiteral(string $literal) {
 		$this->Connect();
 		return pg_escape_literal($this->Connection(), $literal);
 	}
-	
+
 	public function EscapeBinary(string $binary) {
 		$this->Connect();
 		return pg_escape_bytea($this->Connection(), $binary);
 	}
-	
+
 	public function UnescapeBinary(string $string) {
 		return pg_unescape_bytea($string);
 	}

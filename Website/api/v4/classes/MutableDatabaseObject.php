@@ -11,6 +11,10 @@ trait MutableDatabaseObject {
 		return $value;
 	}
 
+	protected static function ValuesEqual(DatabaseObjectProperty $definition, mixed $valueOne, mixed $valueTwo): bool {
+		return $valueOne === $valueTwo;
+	}
+
 	protected function SetProperty(string|DatabaseObjectProperty $property, mixed $value): void {
 		if (is_string($property)) {
 			$schema = $this->DatabaseSchema();
@@ -18,7 +22,7 @@ trait MutableDatabaseObject {
 		}
 
 		$propertyName = $property->PropertyName();
-		if ($this->$propertyName !== $value) {
+		if (static::ValuesEqual($property, $this->$propertyName, $value) === false) {
 			$this->$propertyName = $value;
 			$this->changedProperties[] = $propertyName;
 		}

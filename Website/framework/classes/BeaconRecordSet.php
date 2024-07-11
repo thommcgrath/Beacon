@@ -14,6 +14,7 @@ abstract class BeaconRecordSet {
 	abstract public function FieldCount();
 	abstract public function FieldName(int $index);
 	abstract public function IndexOf(string $column);
+	abstract public function AsArray(): array;
 }
 
 ?>

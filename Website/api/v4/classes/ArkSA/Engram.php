@@ -112,28 +112,52 @@ class Engram extends MutableBlueprint {
 	protected function SaveChildObjects(BeaconDatabase $database): void {
 		parent::SaveChildObjects($database);
 
-		$validIngredients = [];
+		$ingredientRows = $database->Query('SELECT ingredient_id FROM arksa.crafting_costs WHERE engram_id = $1;', $this->objectId);
+		$existingIngredients = [];
+		while (!$ingredientRows->EOF()) {
+			$existingIngredients[$ingredientRows->Field('ingredient_id')] = true;
+			$ingredientRows->MoveNext();
+		}
 		if (is_null($this->recipe) === false) {
 			foreach ($this->recipe as $ingredient) {
 				$ingredientId = $ingredient['engramId'];
 				$quantity = $ingredient['quantity'];
 				$exact = $ingredient['exact'];
 
-				$validIngredients[] = $ingredientId;
-				$database->Query('INSERT INTO arksa.crafting_costs (engram_id, ingredient_id, quantity, exact) VALUES ($1, $2, $3, $4) ON CONFLICT (engram_id, ingredient_id) DO UPDATE SET quantity = $3, exact = $4 WHERE crafting_costs.quantity IS DISTINCT FROM $3 OR crafting_costs.exact IS DISTINCT FROM $4;', $this->objectId, $ingredientId, $quantity, $exact);
+				if (array_key_exists($ingredientId, $existingIngredients)) {
+					unset($existingIngredients[$ingredientId]);
+					$database->Query('UPDATE arksa.crafting_costs SET quantity = $3, exact = $4 WHERE engram_id = $1 AND ingredient_id = $2 AND (quantity != $3 OR exact != $4);', $this->objectId, $ingredientId, $quantity, $exact);
+				} else {
+					$database->Query('INSERT INTO arksa.crafting_costs (engram_id, ingredient_id, quantity, exact) VALUES ($1, $2, $3, $4);', $this->objectId, $ingredientId, $quantity, $exact);
+				}
 			}
 		}
-		$database->Query('DELETE FROM arksa.crafting_costs WHERE engram_id = $1 AND NOT (ingredient_id = ANY($2));', $this->objectId, '{' . implode(',', $validIngredients) . '}');
+		foreach ($existingIngredients as $ingredientId => $true) {
+			$database->Query('DELETE FROM arksa.crafting_costs WHERE engram_id = $1 AND ingredient_id = $2;', $this->objectId, $ingredientId);
+		}
 
-		$validStats = [];
+		$statRows = $database->Query('SELECT stat_index FROM arksa.engram_stats WHERE engram_id = $1;', $this->objectId);
+		$existingStats = [];
+		while (!$statRows->EOF()) {
+			$existingStats[$statRows->Field('stat_index')] = true;
+			$statRows->MoveNext();
+		}
 		if (is_null($this->stats) === false) {
 			foreach ($this->stats as $stat) {
-				$index = intval($stat['statIndex']);
-				$validStats[] = $index;
-				$database->Query('INSERT INTO arksa.engram_stats (engram_id, stat_index, randomizer_range_override, randomizer_range_multiplier, state_modifier_scale, rating_value_multiplier, initial_value_constant) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (engram_id, stat_index) DO UPDATE SET randomizer_range_override = $3, randomizer_range_multiplier = $4, state_modifier_scale = $5, rating_value_multiplier = $6, initial_value_constant = $7 WHERE engram_stats.randomizer_range_override IS DISTINCT FROM $3 OR engram_stats.randomizer_range_multiplier IS DISTINCT FROM $4 OR engram_stats.state_modifier_scale IS DISTINCT FROM $5 OR engram_stats.rating_value_multiplier IS DISTINCT FROM $7 OR engram_stats.initial_value_constant IS DISTINCT FROM $7;', $this->objectId, $index, $stat['randomizerRangeOverride'], $stat['randomizerRangeMultiplier'], $stat['stateModifierScale'], $stat['ratingValueMultiplier'], $stat['initialValueConstant']);
+				$statIndex = intval($stat['statIndex']);
+
+				if (array_key_exists($statIndex, $existingStats)) {
+					unset($existingStats[$statIndex]);
+					$sql = 'UPDATE arksa.engram_stats SET randomizer_range_override = $3, randomizer_range_multiplier = $4, state_modifier_scale = $5, rating_value_multiplier = $6, initial_value_constant = $7 WHERE engram_id = $1 AND stat_index = $2 AND (randomizer_range_override != $3::NUMERIC(16,6) OR randomizer_range_multiplier != $4::NUMERIC(16,6) OR state_modifier_scale != $5::NUMERIC(16,6) OR rating_value_multiplier != $6::NUMERIC(16,6) OR initial_value_constant != $7::NUMERIC(16,6));';
+				} else {
+					$sql = 'INSERT INTO arksa.engram_stats (engram_id, stat_index, randomizer_range_override, randomizer_range_multiplier, state_modifier_scale, rating_value_multiplier, initial_value_constant) VALUES ($1, $2, $3, $4, $5, $6, $7);';
+				}
+				$database->Query($sql, $this->objectId, $statIndex, $stat['randomizerRangeOverride'], $stat['randomizerRangeMultiplier'], $stat['stateModifierScale'], $stat['ratingValueMultiplier'], $stat['initialValueConstant']);
 			}
 		}
-		$database->Query('DELETE FROM arksa.engram_stats WHERE engram_id = $1 AND NOT (stat_index = ANY($2));', $this->objectId, '{' . implode(',', $validStats) . '}');
+		foreach ($existingStats as $statIndex => $true) {
+			$database->Query('DELETE FROM arksa.engram_stats WHERE engram_id = $1 AND stat_index = $2;', $this->objectId, $statIndex);
+		}
 	}
 }
 

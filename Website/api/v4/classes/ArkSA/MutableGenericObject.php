@@ -7,7 +7,7 @@ trait MutableGenericObject {
 	use MutableDatabaseObject {
 		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
 	}
-	
+
 	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
 		switch ($definition->PropertyName()) {
 		case 'tags':

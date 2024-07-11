@@ -236,6 +236,16 @@ class LootDrop extends MutableBlueprint {
 		parent::Edit($properties, $restoreDefaults);
 	}
 
+	protected static function ValuesEqual(DatabaseObjectProperty $definition, mixed $valueOne, mixed $valueTwo): bool {
+		switch ($definition->PropertyName()) {
+		case 'multiplierMin':
+		case 'multiplierMax':
+			return number_format($valueOne, 4, '.', '') === number_format($valueTwo, 4, '.', '');
+		default:
+			return parent::ValuesEqual($definition, $valueOne, $valueTwo);
+		}
+	}
+
 	protected function SaveChildObjects(BeaconDatabase $database): void {
 		parent::SaveChildObjects($database);
 		$this->SaveItemSets($database);
@@ -243,138 +253,146 @@ class LootDrop extends MutableBlueprint {
 
 	protected function SaveItemSets(BeaconDatabase $database): void {
 		$lootContainerId = $this->ObjectID();
-		$keepItemSets = [];
-		$counters = [];
+		$rows = $database->Query('SELECT loot_item_set_id FROM arksa.loot_item_sets WHERE loot_drop_id = $1', $lootContainerId);
+		$existingSets = [];
+		while (!$rows->EOF()) {
+			$itemSetId = $rows->Field('loot_item_set_id');
+			$existingSets[$itemSetId] = true;
+			$rows->MoveNext();
+		}
+
 		if (is_null($this->itemSets) === false) {
 			foreach ($this->itemSets as $itemSet) {
-				$lootItemSetId = $itemSet['lootItemSetId'];
-				if (BeaconCommon::IsUUID($lootItemSetId)) {
-					$keepItemSets[] = $lootItemSetId;
+				$itemSetId = $itemSet['lootItemSetId'];
+				if (BeaconCommon::IsUUID($itemSetId) === false) {
+					throw new Exception('Item set ID "' . $itemSetId . '" is not a UUID.');
+				}
+
+				if ($this->SaveItemSetEntries($database, $itemSetId, $itemSet['entries']) === false) {
+					continue;
+				}
+
+				$values = [
+					$itemSetId,
+					$lootContainerId,
+					$itemSet['label'],
+					$itemSet['minEntries'],
+					$itemSet['maxEntries'],
+					$itemSet['weight'],
+					$itemSet['preventDuplicates'],
+				];
+
+				if (array_key_exists($itemSetId, $existingSets)) {
+					unset($existingSets[$itemSetId]);
+					$sql = 'UPDATE arksa.loot_item_sets SET loot_drop_id = $2, label = $3, min_entries = $4, max_entries = $5, weight = $6, prevent_duplicates = $7 WHERE loot_item_set_id = $1 AND (loot_drop_id != $2 OR label != $3 OR min_entries != $4 OR max_entries != $5 OR weight != $6::NUMERIC(16,6) OR prevent_duplicates != $7);';
 				} else {
-					throw new Exception('Item set ID is not a v4 UUID.');
+					$sql = 'INSERT INTO arksa.loot_item_sets SET (loot_item_set_id, loot_drop_id, label, min_entries, max_entries, weight, prevent_duplicates, sync_sort_key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);';
+					$values[] = bin2hex(random_bytes(4));
 				}
-
-				$columnMap = [
-					'label' => 'label',
-					'minEntries' => 'min_entries',
-					'maxEntries' => 'max_entries',
-					'weight' => 'weight',
-					'preventDuplicates' => 'prevent_duplicates',
-				];
-				$columns = [
-					'loot_item_set_id' => $lootItemSetId,
-					'loot_drop_id' => $lootContainerId,
-				];
-				foreach ($columnMap as $propertyName => $columnName) {
-					if (array_key_exists($propertyName, $itemSet)) {
-						$columns[$columnName] = $itemSet[$propertyName];
-					}
-				}
-				$columns['sync_sort_key'] = BeaconCommon::CreateUniqueSort(implode(',', [
-					BeaconCommon::SortString($itemSet['label']),
-					BeaconCommon::SortDouble($itemSet['weight'])
-				]), $counters);
-
-				$database->Upsert('arksa.loot_item_sets', $columns, ['loot_item_set_id']);
-				$this->SaveItemSetEntries($database, $lootItemSetId, $itemSet['entries']);
+				$database->Query($sql, $values);
 			}
 		}
 
-		if (count($keepItemSets) > 0) {
-			$database->Query('DELETE FROM arksa.loot_item_sets WHERE loot_drop_id = $1 AND loot_item_set_id NOT IN (\'' . implode('\', \'', $keepItemSets) . '\');', $lootContainerId);
-		} else {
-			$database->Query('DELETE FROM arksa.loot_item_sets WHERE loot_drop_id = $1;', $lootContainerId);
+		foreach ($existingSets as $itemSetId => $itemSet) {
+			$database->Query('DELETE FROM arksa.loot_item_sets WHERE loot_item_set_id = $1;', $itemSetId);
 		}
 	}
 
-	protected function SaveItemSetEntries(BeaconDatabase $database, string $lootItemSetId, ?array $entries) {
-		$keepEntries = [];
-		$counters = [];
+	protected function SaveItemSetEntries(BeaconDatabase $database, string $lootItemSetId, ?array $entries): bool {
+		$rows = $database->Query('SELECT loot_item_set_entry_id FROM arksa.loot_item_set_entries WHERE loot_item_set_id = $1', $lootItemSetId);
+		$existingEntries = [];
+		$entriesSaved = 0;
+		while (!$rows->EOF()) {
+			$entryId = $rows->Field('loot_item_set_entry_id');
+			$existingEntries[$entryId] = true;
+			$rows->MoveNext();
+		}
+
 		if (is_null($entries) === false) {
 			foreach ($entries as $entry) {
-				$lootItemSetEntryId = $entry['lootItemSetEntryId'];
-				if (BeaconCommon::IsUUID($lootItemSetEntryId)) {
-					$keepEntries[] = $lootItemSetEntryId;
+				$entryId = $entry['lootItemSetEntryId'];
+				if (BeaconCommon::IsUUID($entryId) === false) {
+					throw new Exception('Entry ID "' . $entryId . '" is not a UUID.');
+				}
+
+				if ($this->SaveItemSetEntryOptions($database, $entryId, $entry['options']) === false) {
+					continue;
+				}
+
+				$values = [
+					$entryId,
+					$lootItemSetId,
+					$entry['minQuantity'],
+					$entry['maxQuantity'],
+					$entry['minQuality'],
+					$entry['maxQuality'],
+					$entry['blueprintChance'],
+					$entry['weight'],
+					$entry['singleItemQuantity'],
+					$entry['preventGrinding'],
+					$entry['statClampMultiplier'],
+				];
+
+				if (array_key_exists($entryId, $existingEntries)) {
+					unset($existingEntries[$entryId]);
+					$sql = 'UPDATE arksa.loot_item_set_entries SET loot_item_set_id = $2, min_quantity = $3, max_quantity = $4, min_quality = $5, max_quality = $6, blueprint_chance = $7, weight = $8, single_item_quantity = $9, prevent_grinding = $10, stat_clamp_multiplier = $11 WHERE loot_item_set_entry_id = $1 AND (loot_item_set_id != $2 OR min_quantity != $3 OR max_quantity != $4 OR min_quality != $5 OR max_quality != $6 OR blueprint_chance != $7::NUMERIC(16,6) OR weight != $8::NUMERIC(16,6) OR single_item_quantity != $9 OR prevent_grinding != $10 OR stat_clamp_multiplier != $11::NUMERIC(16,6));';
 				} else {
-					throw new Exception('Entry ID is not a v4 UUID.');
+					$sql = 'INSERT INTO arksa.loot_item_set_entries (loot_item_set_entry_id, loot_item_set_id, min_quantity, max_quantity, min_quality, max_quality, blueprint_chance, weight, single_item_quantity, prevent_grinding, stat_clamp_multiplier, synx_sort_key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);';
+					$values[] = bin2hex(random_bytes(4));
 				}
-
-				$columnMap = [
-					'minQuantity' => 'min_quantity',
-					'maxQuantity' => 'max_quantity',
-					'minQuality' => 'min_quality',
-					'maxQuality' => 'max_quality',
-					'blueprintChance' => 'blueprint_chance',
-					'weight' => 'weight',
-					'singleItemQuantity' => 'single_item_quantity',
-					'preventGrinding' => 'prevent_grinding',
-					'statClampMultiplier' => 'stat_clamp_multiplier',
-				];
-				$columns = [
-					'loot_item_set_entry_id' => $lootItemSetEntryId,
-					'loot_item_set_id' => $lootItemSetId,
-				];
-				foreach ($columnMap as $propertyName => $columnName) {
-					if (array_key_exists($propertyName, $entry)) {
-						$columns[$columnName] = $entry[$propertyName];
-					}
-				}
-				$columns['sync_sort_key'] = BeaconCommon::CreateUniqueSort(implode(',', [
-					BeaconCommon::SortDouble($entry['weight']),
-					BeaconCommon::SortInteger($entry['minQuantity']),
-					BeaconCommon::SortInteger($entry['maxQuantity']),
-					BeaconCommon::SortDouble($entry['blueprintChance']),
-					BeaconCommon::SortString($entry['minQuality']),
-					BeaconCommon::SortString($entry['maxQuality'])
-				]), $counters);
-
-				$database->Upsert('arksa.loot_item_set_entries', $columns, ['loot_item_set_entry_id']);
-				$this->SaveItemSetEntryOptions($database, $lootItemSetEntryId, $entry['options']);
+				$database->Query($sql, $values);
+				$entriesSaved++;
 			}
 		}
-		if (count($keepEntries) > 0) {
-			$database->Query('DELETE FROM arksa.loot_item_set_entries WHERE loot_item_set_id = $1 AND loot_item_set_entry_id NOT IN (\'' . implode('\', \'', $keepEntries) . '\');', $lootItemSetId);
-		} else {
-			$database->Query('DELETE FROM arksa.loot_item_set_entries WHERE loot_item_set_id = $1;', $lootItemSetId);
+
+		foreach ($existingEntries as $entryId => $entry) {
+			$database->Query('DELETE FROM arksa.loot_item_set_entries WHERE loot_item_set_entry_id = $1;', $entryId);
 		}
+
+		return $entriesSaved > 0;
 	}
 
-	protected function SaveItemSetEntryOptions(BeaconDatabase $database, string $lootItemSetEntryId, ?array $options) {
-		$keepOptions = [];
-		$counters = [];
+	protected function SaveItemSetEntryOptions(BeaconDatabase $database, string $lootItemSetEntryId, ?array $options): bool {
+		$rows = $database->Query('SELECT loot_item_set_entry_option_id FROM arksa.loot_item_set_entry_options WHERE loot_item_set_entry_id = $1', $lootItemSetEntryId);
+		$existingOptions = [];
+		$optionsSaved = 0;
+		while (!$rows->EOF()) {
+			$optionId = $rows->Field('loot_item_set_entry_option_id');
+			$existingOptions[$optionId] = true;
+			$rows->MoveNext();
+		}
+
 		if (is_null($options) === false) {
 			foreach ($options as $option) {
-				$lootItemSetEntryOptionId = $option['lootItemSetEntryOptionId'];
-				if (BeaconCommon::IsUUID($lootItemSetEntryOptionId)) {
-					$keepOptions[] = $lootItemSetEntryOptionId;
-				} else {
-					throw new Exception('Option ID is not a v4 UUID.');
+				$optionId = $option['lootItemSetEntryOptionId'];
+				if (BeaconCommon::IsUUID($optionId) === false) {
+					throw new Exception('Option ID "' . $optionId . '" is not a UUID.');
 				}
 
-				$engramRow = $database->Query('SELECT class_string FROM arksa.engrams WHERE object_id = $1;', $option['engramId']);
-				if ($engramRow->RecordCount() !== 1) {
-					throw new Exception('Could not find engram ' . $option['engramId']);
-				}
-				$classString = $engramRow->Field('class_string');
-				$columns = [
-					'loot_item_set_entry_option_id' => $lootItemSetEntryOptionId,
-					'loot_item_set_entry_id' => $lootItemSetEntryId,
-					'weight' => $option['weight'],
-					'engram_id' => $option['engramId'],
+				$values = [
+					$optionId,
+					$lootItemSetEntryId,
+					$option['weight'],
+					$option['engramId'],
 				];
-				$columns['sync_sort_key'] = BeaconCommon::CreateUniqueSort(implode(',', [
-					BeaconCommon::SortString($classString),
-					BeaconCommon::SortDouble($option['weight'])
-				]), $counters);
 
-				$database->Upsert('arksa.loot_item_set_entry_options', $columns, ['loot_item_set_entry_option_id']);
+				if (array_key_exists($optionId, $existingOptions)) {
+					unset($existingOptions[$optionId]);
+					$sql = 'UPDATE arksa.loot_item_set_entry_options SET loot_item_set_entry_id = $2, weight = $3, engram_id = $4 WHERE loot_item_set_entry_option_id = $1 AND (loot_item_set_entry_id != $2 OR weight != $3::NUMERIC(16,6) OR engram_id != $4);';
+				} else {
+					$sql = 'INSERT INTO arksa.loot_item_set_entry_options (loot_item_set_entry_option_id, loot_item_set_entry_id, weight, engram_id, sync_sort_key) VALUES ($1, $2, $3, $4, $5);';
+					$values[] = bin2hex(random_bytes(4));
+				}
+				$database->Query($sql, $values);
+				$optionsSaved++;
 			}
 		}
-		if (count($keepOptions) > 0) {
-			$database->Query('DELETE FROM arksa.loot_item_set_entry_options WHERE loot_item_set_entry_id = $1 AND loot_item_set_entry_option_id NOT IN (\'' . implode('\', \'', $keepOptions) . '\');', $lootItemSetEntryId);
-		} else {
-			$database->Query('DELETE FROM arksa.loot_item_set_entry_options WHERE loot_item_set_entry_id = $1;', $lootItemSetEntryId);
+
+		foreach ($existingOptions as $optionId => $option) {
+			$database->Query('DELETE FROM arksa.loot_item_set_entry_options WHERE loot_item_set_entry_option_id = $1;', $optionId);
 		}
+
+		return $optionsSaved > 0;
 	}
 }
 

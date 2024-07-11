@@ -97,10 +97,27 @@ class Creature extends MutableBlueprint {
 		return $this->dinoNameTag;
 	}
 
+	protected static function ValuesEqual(DatabaseObjectProperty $definition, mixed $valueOne, mixed $valueTwo): bool {
+		switch ($definition->PropertyName()) {
+		case 'incubationTime':
+		case 'matureTime':
+		case 'minMatingInterval':
+		case 'maxMatingInterval':
+			return intval($valueOne) === intval($valueTwo);
+		default:
+			return parent::ValuesEqual($definition, $valueOne, $valueTwo);
+		}
+	}
+
 	protected function SaveChildObjects(BeaconDatabase $database): void {
 		parent::SaveChildObjects($database);
 
-		$validStats = [];
+		$statRows = $database->Query('SELECT stat_index FROM arksa.creature_stats WHERE creature_id = $1;', $this->objectId);
+		$existingStats = [];
+		while (!$statRows->EOF()) {
+			$existingStats[$statRows->Field('stat_index')] = true;
+			$statRows->MoveNext();
+		}
 		if (is_null($this->stats) === false) {
 			foreach ($this->stats as $stat) {
 				if (array_key_exists('statIndex', $stat)) {
@@ -110,14 +127,20 @@ class Creature extends MutableBlueprint {
 				} else {
 					continue;
 				}
+				$statIndex = intval($stat[$keys[0]]);
 
-				$index = intval($stat[$keys[0]]);
-				$validStats[] = $index;
-				$database->Query('INSERT INTO arksa.creature_stats (creature_id, stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (creature_id, stat_index) DO UPDATE SET base_value = $3, per_level_wild_multiplier = $4, per_level_tamed_multiplier = $5, add_multiplier = $6, affinity_multiplier = $7 WHERE creature_stats.base_value IS DISTINCT FROM $3 OR creature_stats.per_level_wild_multiplier IS DISTINCT FROM $4 OR creature_stats.per_level_tamed_multiplier IS DISTINCT FROM $5 OR creature_stats.add_multiplier IS DISTINCT FROM $7 OR creature_stats.affinity_multiplier IS DISTINCT FROM $7;', $this->objectId, $index, $stat[$keys[1]], $stat[$keys[2]], $stat[$keys[3]], $stat[$keys[4]], $stat[$keys[5]]);
+				if (array_key_exists($statIndex, $existingStats)) {
+					unset($existingStats[$statIndex]);
+					$sql = 'UPDATE arksa.creature_stats SET base_value = $3, per_level_wild_multiplier = $4, per_level_tamed_multiplier = $5, add_multiplier = $6, affinity_multiplier = $7 WHERE creature_id = $1 AND stat_index = $2 AND (base_value != $3::NUMERIC(16,6) OR per_level_wild_multiplier != $4::NUMERIC(16,6) OR per_level_tamed_multiplier != $5::NUMERIC(16,6) OR add_multiplier != $6::NUMERIC(16,6) OR affinity_multiplier != $7::NUMERIC(16,6));';
+				} else {
+					$sql = 'INSERT INTO arksa.creature_stats (creature_id, stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier) VALUES ($1, $2, $3, $4, $5, $6, $7);';
+				}
+				$database->Query($sql, $this->objectId, $statIndex, $stat[$keys[1]], $stat[$keys[2]], $stat[$keys[3]], $stat[$keys[4]], $stat[$keys[5]]);
 			}
 		}
-
-		$database->Query('DELETE FROM arksa.creature_stats WHERE creature_id = $1 AND NOT (stat_index = ANY($2));', $this->objectId, '{' . implode(',', $validStats) . '}');
+		foreach ($existingStats as $statIndex => $true) {
+			$database->Query('DELETE FROM arksa.creature_stats WHERE creature_id = $1 AND stat_index = $2;', $this->objectId, $statIndex);
+		}
 	}
 }
 

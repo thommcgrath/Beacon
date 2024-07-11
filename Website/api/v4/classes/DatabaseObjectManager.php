@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconUUID, Exception;
+use BeaconCommon, BeaconQueryException, BeaconUUID, Exception;
 
 class DatabaseObjectManager {
 	const kFeatureCreate = 1;
@@ -309,7 +309,26 @@ class DatabaseObjectManager {
 			$database->Commit();
 		} catch (Exception $err) {
 			$database->Rollback();
-			return Response::NewJsonError('After saving the new objects, one or more required objects are still missing. The changes have been reverted.', null, 500);
+
+			$details = [
+				'code' => $err->getCode(),
+				'message' => $err->getMessage(),
+			];
+			if ($err instanceof BeaconQueryException && $details['code'] === 23503) {
+				// Foreign key violation
+				unset($details['message']);
+				if (preg_match('/insert or update on table "(.+)" violates foreign key constraint "(.+)"/', $err->getMessage(), $matches) === 1) {
+					$details['sourceTable'] = $matches[1];
+				}
+
+				if (preg_match('/Key \((.+)\)=\((.+)\) is not present in table "(.+)"./', $err->getMessage(), $matches) === 1) {
+					$details['column'] = $matches[1];
+					$details['value'] = $matches[2];
+					$details['targetTable'] = $matches[3];
+				}
+			}
+
+			return Response::NewJsonError('After saving the new objects, one or more required objects are still missing. The changes have been reverted.', $details, 500);
 		}
 
 		return Response::NewJson([
