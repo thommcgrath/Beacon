@@ -1257,11 +1257,6 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanInventory(Entry.Key.StringValue)
 		    Next
 		  End If
-		  
-		  
-		  
-		  
-		  
 		End Sub
 	#tag EndMethod
 
