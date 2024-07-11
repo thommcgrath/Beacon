@@ -337,7 +337,7 @@ class LootDrop extends MutableBlueprint {
 					unset($existingEntries[$entryId]);
 					$sql = 'UPDATE arksa.loot_item_set_entries SET loot_item_set_id = $2, min_quantity = $3, max_quantity = $4, min_quality = $5, max_quality = $6, blueprint_chance = $7, weight = $8, single_item_quantity = $9, prevent_grinding = $10, stat_clamp_multiplier = $11 WHERE loot_item_set_entry_id = $1 AND (loot_item_set_id != $2 OR min_quantity != $3 OR max_quantity != $4 OR min_quality != $5 OR max_quality != $6 OR blueprint_chance != $7::NUMERIC(16,6) OR weight != $8::NUMERIC(16,6) OR single_item_quantity != $9 OR prevent_grinding != $10 OR stat_clamp_multiplier != $11::NUMERIC(16,6));';
 				} else {
-					$sql = 'INSERT INTO arksa.loot_item_set_entries (loot_item_set_entry_id, loot_item_set_id, min_quantity, max_quantity, min_quality, max_quality, blueprint_chance, weight, single_item_quantity, prevent_grinding, stat_clamp_multiplier, synx_sort_key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);';
+					$sql = 'INSERT INTO arksa.loot_item_set_entries (loot_item_set_entry_id, loot_item_set_id, min_quantity, max_quantity, min_quality, max_quality, blueprint_chance, weight, single_item_quantity, prevent_grinding, stat_clamp_multiplier, sync_sort_key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);';
 					$values[] = bin2hex(random_bytes(4));
 				}
 				$database->Query($sql, $values);
