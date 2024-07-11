@@ -286,7 +286,7 @@ class LootDrop extends MutableBlueprint {
 					unset($existingSets[$itemSetId]);
 					$sql = 'UPDATE arksa.loot_item_sets SET loot_drop_id = $2, label = $3, min_entries = $4, max_entries = $5, weight = $6, prevent_duplicates = $7 WHERE loot_item_set_id = $1 AND (loot_drop_id != $2 OR label != $3 OR min_entries != $4 OR max_entries != $5 OR weight != $6::NUMERIC(16,6) OR prevent_duplicates != $7);';
 				} else {
-					$sql = 'INSERT INTO arksa.loot_item_sets SET (loot_item_set_id, loot_drop_id, label, min_entries, max_entries, weight, prevent_duplicates, sync_sort_key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);';
+					$sql = 'INSERT INTO arksa.loot_item_sets (loot_item_set_id, loot_drop_id, label, min_entries, max_entries, weight, prevent_duplicates, sync_sort_key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);';
 					$values[] = bin2hex(random_bytes(4));
 				}
 				$database->Query($sql, $values);
