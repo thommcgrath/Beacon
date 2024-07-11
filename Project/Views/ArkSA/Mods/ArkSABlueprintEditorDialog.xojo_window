@@ -2763,6 +2763,15 @@ End
 		  If Self.mSampleProject Is Nil Then
 		    Self.mSampleProject = New ArkSA.Project
 		    Self.mSampleProject.MapMask = ArkSA.Maps.UniversalMask
+		    
+		    Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		    For Each Provider As ArkSA.BlueprintProvider In Providers
+		      If Provider IsA Beacon.DataSource Then
+		        Continue
+		      End If
+		      
+		      Self.mSampleProject.ContentPackEnabled(Provider.BlueprintProviderId) = True
+		    Next
 		  End If
 		  Return Self.mSampleProject
 		End Function
