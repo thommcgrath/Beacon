@@ -51,6 +51,17 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FindEngram(EngramId As String) As ArkSA.BlueprintReference
+		  For Each Entry As ArkSA.LootItemSetEntry In Self.mEntries
+		    Var Reference As ArkSA.BlueprintReference = Entry.FindEngram(EngramId)
+		    If (Reference Is Nil) = False Then
+		      Return Reference
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As ArkSA.LootItemSet
 		  Var Set As New ArkSA.MutableLootItemSet
 		  If NewUUID Then

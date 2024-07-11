@@ -175,6 +175,21 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FindCreature(CreatureId As String) As ArkSA.BlueprintReference
+		  If Self.mLimits.HasBlueprint(CreatureId) Then
+		    Return Self.mLimits.Reference(CreatureId)
+		  End If
+		  
+		  For Each SpawnSet As ArkSA.SpawnPointSet In Self.mSets
+		    Var Reference As ArkSA.BlueprintReference = SpawnSet.FindCreature(CreatureId)
+		    If (Reference Is Nil) = False Then
+		      Return Reference
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImmutableVersion() As ArkSA.SpawnPoint
 		  Return Self
 		End Function

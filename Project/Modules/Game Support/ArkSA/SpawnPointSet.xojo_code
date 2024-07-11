@@ -164,6 +164,33 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FindCreature(CreatureId As String) As ArkSA.BlueprintReference
+		  If (Self.mReplacements Is Nil) = False Then
+		    If Self.mReplacements.HasBlueprint(CreatureId) Then
+		      Return Self.mReplacements.Reference(CreatureId)
+		    End If
+		    
+		    Var ReplacedCreatures() As ArkSA.BlueprintReference = Self.ReplacedCreatureRefs
+		    For Each FromCreatureRef As ArkSA.BlueprintReference In ReplacedCreatures
+		      Var ReplacementCreatures() As ArkSA.BlueprintReference = Self.ReplacementCreatures(FromCreatureRef)
+		      For Each ToCreatureRef As ArkSA.BlueprintReference In ReplacementCreatures
+		        If ToCreatureRef.BlueprintId = CreatureId Then
+		          Return ToCreatureRef
+		        End If
+		      Next
+		    Next
+		  End If
+		  
+		  For Each Entry As ArkSA.SpawnPointSetEntry In Self.mEntries
+		    Var Reference As ArkSA.BlueprintReference = Entry.CreatureReference
+		    If (Reference Is Nil) = False And Reference.BlueprintId = CreatureId Then
+		      Return Reference
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary) As ArkSA.SpawnPointSet
 		  If SaveData Is Nil Then
 		    Return Nil

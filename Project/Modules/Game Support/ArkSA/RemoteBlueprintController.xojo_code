@@ -197,6 +197,64 @@ Inherits ArkSA.BlueprintController
 		  
 		  If Response.HTTPStatus <> 200 And Response.HTTPStatus <> 201 Then
 		    Task.Errored = True
+		    
+		    Try
+		      Var Details As Dictionary = Response.JSON
+		      If Details.Lookup("code", 0).IntegerValue = 23503 Then
+		        Var Column As String = Details.Lookup("column", "").StringValue
+		        Var SourceTable As String = Details.Lookup("sourceTable", "").StringValue
+		        Var FullColumn As String = SourceTable + "." + Column
+		        
+		        Select Case FullColumn
+		        Case "crafting_costs.ingredient_id"
+		          Var IngredientId As String = Details.Lookup("value", "").StringValue
+		          For Each Blueprint As ArkSA.Blueprint In Blueprints
+		            If (Blueprint IsA ArkSA.Engram) = False Then
+		              Continue
+		            End If
+		            
+		            Var Engram As ArkSA.Engram = ArkSA.Engram(Blueprint)
+		            Var Ingredient As ArkSA.BlueprintReference = Engram.FindIngredient(IngredientId)
+		            If (Ingredient Is Nil) = False Then
+		              Task.ErrorMessage = "Ingredient """ + Ingredient.Label + """ of item """ + Engram.Label + """ does not exist."
+		              Return
+		            End If
+		          Next
+		        Case "loot_item_set_entry_options.engram_id"
+		          Var EngramId As String = Details.Lookup("value", "").StringValue
+		          For Each Blueprint As ArkSA.Blueprint In Blueprints
+		            If (Blueprint IsA ArkSA.LootContainer) = False Then
+		              Continue
+		            End If
+		            
+		            Var LootContainer As ArkSA.LootContainer = ArkSA.LootContainer(Blueprint)
+		            Var Engram As ArkSA.BlueprintReference = LootContainer.FindEngram(EngramId)
+		            If (Engram Is Nil) = False Then
+		              Task.ErrorMessage = "Item """ + Engram.Label + """ of loot drop """ + LootContainer.Label + """ does not exist."
+		              Return
+		            End If
+		          Next
+		        Case "spawn_point_limits.creature_id", "spawn_point_set_replacements.target_creature_id", "spawn_point_set_replacements.replacement_creature_id", "spawn_point_set_entries.creature_id"
+		          Var CreatureId As String = Details.Lookup("value", "").StringValue
+		          For Each Blueprint As ArkSA.Blueprint In Blueprints
+		            If (Blueprint IsA ArkSA.SpawnPoint) = False Then
+		              Continue
+		            End If
+		            
+		            Var SpawnContainer As ArkSA.SpawnPoint = ArkSA.SpawnPoint(Blueprint)
+		            Var Creature As ArkSA.BlueprintReference = SpawnContainer.FindCreature(CreatureId)
+		            If (Creature Is Nil) = False Then
+		              Task.ErrorMessage = "Creature """ + Creature.Label + """ of spawn point """ + SpawnContainer.Label + """ does not exist."
+		              Return
+		            End If
+		          Next
+		        Else
+		          Break
+		        End Select
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		    
 		    Task.ErrorMessage = Response.Message
 		  End If
 		End Sub
