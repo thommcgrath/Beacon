@@ -103,9 +103,17 @@ class Creature extends MutableBlueprint {
 		$validStats = [];
 		if (is_null($this->stats) === false) {
 			foreach ($this->stats as $stat) {
-				$index = intval($stat['statIndex']);
+				if (array_key_exists('statIndex', $stat)) {
+					$keys = ['statIndex', 'baseValue', 'perLevelWildMultiplier', 'perLevelTamedMultiplier', 'addMultiplier', 'affinityMultiplier'];
+				} elseif (array_key_exists('stat_index', $stat)) {
+					$keys = ['stat_index', 'base_value', 'per_level_wild_multiplier', 'per_level_tamed_multiplier', 'add_multiplier', 'affinity_multiplier'];
+				} else {
+					continue;
+				}
+
+				$index = intval($stat[$keys[0]]);
 				$validStats[] = $index;
-				$database->Query('INSERT INTO arksa.creature_stats (creature_id, stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (creature_id, stat_index) DO UPDATE SET base_value = $3, per_level_wild_multiplier = $4, per_level_tamed_multiplier = $5, add_multiplier = $6, affinity_multiplier = $7 WHERE creature_stats.base_value IS DISTINCT FROM $3 OR creature_stats.per_level_wild_multiplier IS DISTINCT FROM $4 OR creature_stats.per_level_tamed_multiplier IS DISTINCT FROM $5 OR creature_stats.add_multiplier IS DISTINCT FROM $7 OR creature_stats.affinity_multiplier IS DISTINCT FROM $7;', $this->objectId, $index, $stat['baseValue'], $stat['perLevelWildMultiplier'], $stat['perLevelTamedMultiplier'], $stat['addMultiplier'], $stat['affinityMultiplier']);
+				$database->Query('INSERT INTO arksa.creature_stats (creature_id, stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (creature_id, stat_index) DO UPDATE SET base_value = $3, per_level_wild_multiplier = $4, per_level_tamed_multiplier = $5, add_multiplier = $6, affinity_multiplier = $7 WHERE creature_stats.base_value IS DISTINCT FROM $3 OR creature_stats.per_level_wild_multiplier IS DISTINCT FROM $4 OR creature_stats.per_level_tamed_multiplier IS DISTINCT FROM $5 OR creature_stats.add_multiplier IS DISTINCT FROM $7 OR creature_stats.affinity_multiplier IS DISTINCT FROM $7;', $this->objectId, $index, $stat[$keys[1]], $stat[$keys[2]], $stat[$keys[3]], $stat[$keys[4]], $stat[$keys[5]]);
 			}
 		}
 
