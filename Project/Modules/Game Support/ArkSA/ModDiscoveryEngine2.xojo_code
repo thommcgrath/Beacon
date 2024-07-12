@@ -1265,7 +1265,7 @@ Protected Class ModDiscoveryEngine2
 		  Var PrimalGameData As JSONMBS = Self.PropertiesForPath(Path)
 		  Var AssetContainers() As JSONMBS = Array(PrimalGameData)
 		  
-		  If PrimalGameData.HasKey("AdditionalModDataAsset") Then
+		  If PrimalGameData.HasKey("AdditionalModDataAsset") And PrimalGameData.Value("AdditionalModDataAsset").IsNull = False Then
 		    Var AdditionalModDataAssetPath As String = Self.NormalizePath(PrimalGameData.Child("AdditionalModDataAsset").Value("ObjectPath"))
 		    Var AdditionalModDataAsset As JSONMBS = Self.PropertiesForPath(AdditionalModDataAssetPath)
 		    If (AdditionalModDataAsset Is Nil) = False Then
