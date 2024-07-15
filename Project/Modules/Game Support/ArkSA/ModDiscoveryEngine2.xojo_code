@@ -1301,7 +1301,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    // Stuff added to crafting stations
-		    Var AdditionalStructureEngrams As JSONMBS = AssetContainer.Query("$.AdditionalStructureEngrams[*].ClassAdditions.AssetPathName")
+		    Var AdditionalStructureEngrams As JSONMBS = AssetContainer.Query("$.AdditionalStructureEngrams[*].ClassAdditions[*].AssetPathName")
 		    For Idx As Integer = 0 To AdditionalStructureEngrams.LastRowIndex
 		      Var ItemPath As String = AdditionalStructureEngrams.ValueAt(Idx)
 		      If ItemPath.IsEmpty Then
@@ -1335,10 +1335,36 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    // Remapped items
-		    Var RemappedItemPaths As JSONMBS = AssetContainer.Query("$.Remap_Items[*].ToClass.AssetPathName")
+		    Var RemappedItemPaths As JSONMBS = AssetContainer.Query("$['Remap_Items','Remap_ResourceComponents'][*]['ToClass']['AssetPathName']")
 		    For Idx As Integer = 0 To RemappedItemPaths.LastRowIndex
 		      Var ItemPath As String = Self.NormalizePath(RemappedItemPaths.ValueAt(Idx))
 		      Self.ScanItem(ItemPath)
+		    Next
+		    
+		    // Remapped creatures
+		    Var RemappedCreaturePaths As JSONMBS = AssetContainer.Query("$.Remap_NPC[*].ToClass.AssetPathName")
+		    For Idx As Integer = 0 To RemappedCreaturePaths.LastRowIndex
+		      Var CreaturePath As String = Self.NormalizePath(RemappedCreaturePaths.ValueAt(Idx))
+		      Self.ScanCreature(CreaturePath, False)
+		    Next
+		    
+		    // Remapped loot drops
+		    Var RemappedLootDrops As JSONMBS = AssetContainer.Query("$.Remap_SupplyCrates[*].ToClass.AssetPathName")
+		    For Idx As Integer = 0 To RemappedLootDrops.LastRowIndex
+		      Var DropPath As String = Self.NormalizePath(RemappedLootDrops.ValueAt(Idx))
+		      Self.ScanLootDrop(DropPath, LootDropType.Regular)
+		    Next
+		    Var RemappedEventDrops As JSONMBS = AssetContainer.Query("$.Remap_ActiveEventSupplyCrates[*].ReplacementCrateClasses[*].AssetPathName")
+		    For Idx As Integer = 0 To RemappedEventDrops.LastRowIndex
+		      Var DropPath As String = Self.NormalizePath(RemappedEventDrops.ValueAt(Idx))
+		      Self.ScanLootDrop(DropPath, LootDropType.Regular)
+		    Next
+		    
+		    // Remapped spawn points
+		    Var RemappedSpawnPoints As JSONMBS = AssetContainer.Query("$.Remap_NPCSpawnEntries[*].ToClass.AssetPathName")
+		    For Idx As Integer = 0 To RemappedSpawnPoints.LastRowIndex
+		      Var SpawnPath As String = Self.NormalizePath(RemappedSpawnPoints.ValueAt(Idx))
+		      Self.ScanSpawnContainer(SpawnPath)
 		    Next
 		    
 		    // These are essentially script objects that are unpredictable. So for each, we're going to grab every path
