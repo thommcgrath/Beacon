@@ -1623,22 +1623,20 @@ End
 #tag EndEvents
 #tag Events ArkSADiscoveryEngine2
 	#tag Event
-		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
+		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, ConfirmedBlueprints() As ArkSA.Blueprint, UnconfirmedBlueprints() As ArkSA.Blueprint)
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
 		  Var ShouldDelete As Boolean = Me.Settings.DeleteBlueprints
 		  Var ShouldReplace As Boolean = Me.Settings.ReplaceBlueprints
 		  
 		  // Save the new content pack
-		  If Blueprints.Count > 0 Then
-		    Var IsNew As Boolean = DataSource.GetContentPackWithId(ContentPack.ContentPackId) Is Nil
-		    If DataSource.SaveContentPack(ContentPack, False) Then
-		      If IsNew Then
-		        Self.mNumAddedMods = Self.mNumAddedMods + 1
-		      End If
-		    Else
-		      ContentPack = DataSource.GetContentPackWithId(ArkSA.UserContentPackId)
-		      ShouldDelete = False
+		  Var IsNew As Boolean = DataSource.GetContentPackWithId(ContentPack.ContentPackId) Is Nil
+		  If DataSource.SaveContentPack(ContentPack, False) Then
+		    If IsNew Then
+		      Self.mNumAddedMods = Self.mNumAddedMods + 1
 		    End If
+		  Else
+		    ContentPack = DataSource.GetContentPackWithId(ArkSA.UserContentPackId)
+		    ShouldDelete = False
 		  End If
 		  
 		  // Find existing blueprints
@@ -1650,7 +1648,7 @@ End
 		  
 		  // Existing blueprints should not be saved over unless requested
 		  Var BlueprintsToSave() As ArkSA.Blueprint
-		  For Each Blueprint As ArkSA.Blueprint In Blueprints
+		  For Each Blueprint As ArkSA.Blueprint In ConfirmedBlueprints
 		    If Map.HasKey(Blueprint.BlueprintId) Then
 		      Map.Remove(Blueprint.BlueprintId)
 		      If ShouldReplace = False Then
@@ -1677,7 +1675,7 @@ End
 		  End If
 		  
 		  Var ErrorDict As New Dictionary
-		  Call DataSource.SaveBlueprints(Blueprints, BlueprintsToDelete, ErrorDict, True)
+		  Call DataSource.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True)
 		  
 		  Self.mNumAddedBlueprints = Self.mNumAddedBlueprints + BlueprintsToSave.Count
 		  Self.mNumRemovedBlueprints = Self.mNumRemovedBlueprints + BlueprintsToDelete.Count

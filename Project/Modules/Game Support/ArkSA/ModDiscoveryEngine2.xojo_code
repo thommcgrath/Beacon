@@ -1,13 +1,14 @@
 #tag Class
 Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
-		Private Sub AddBlueprint(Blueprint As ArkSA.Blueprint)
+		Private Sub AddBlueprint(Blueprint As ArkSA.Blueprint, LowConfidence As Boolean)
+		  Var TargetDict As Dictionary = If(LowConfidence, Self.mLowConfidenceBlueprints, Self.mFoundBlueprints)
 		  Var ContentPackId As String = Blueprint.ContentPackId
 		  Var Siblings() As ArkSA.Blueprint
-		  If Self.mFoundBlueprints.HasKey(ContentPackId) Then
-		    Siblings = Self.mFoundBlueprints.Value(ContentPackId)
+		  If TargetDict.HasKey(ContentPackId) Then
+		    Siblings = TargetDict.Value(ContentPackId)
 		  Else
-		    Self.mFoundBlueprints.Value(ContentPackId) = Siblings
+		    TargetDict.Value(ContentPackId) = Siblings
 		  End If
 		  Siblings.Add(Blueprint.ImmutableVersion)
 		End Sub
@@ -79,6 +80,8 @@ Protected Class ModDiscoveryEngine2
 		  Self.mInventoryNames = New Dictionary
 		  Self.mBossPaths = New Dictionary
 		  Self.mScriptedObjectPaths = New Dictionary
+		  Self.mLowConfidencePaths = New Dictionary
+		  Self.mLowConfidenceBlueprints = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -581,11 +584,19 @@ Protected Class ModDiscoveryEngine2
 		  For Each Entry As DictionaryEntry In Self.mContentPacks
 		    Var ContentPackId As String = Entry.Key
 		    Var Pack As Beacon.ContentPack = Entry.Value
-		    Var Blueprints() As ArkSA.Blueprint
+		    Var ConfirmedBlueprints() As ArkSA.Blueprint
+		    Var UnconfirmedBlueprints() As ArkSA.Blueprint
 		    If Self.mFoundBlueprints.HasKey(ContentPackId) Then
-		      Blueprints = Self.mFoundBlueprints.Value(ContentPackId)
+		      ConfirmedBlueprints = Self.mFoundBlueprints.Value(ContentPackId)
+		    ElseIf Self.mLowConfidenceBlueprints.HasKey(ContentPackId) Then
+		      UnconfirmedBlueprints = Self.mFoundBlueprints.Value(ContentPackId)
+		    Else
+		      Continue
 		    End If
-		    RaiseEvent ContentPackDiscovered(Pack, Blueprints)
+		    
+		    If ConfirmedBlueprints.Count > 0 Or UnconfirmedBlueprints.Count > 0 Then
+		      RaiseEvent ContentPackDiscovered(Pack, ConfirmedBlueprints, UnconfirmedBlueprints)
+		    End If
 		  Next
 		  
 		  // So these things are not taking up memory they don't need to
@@ -732,13 +743,14 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanCreature(Path As String, IsBoss As Boolean, AdditionalTags() As String)
+		Private Sub ScanCreature(Path As String, Options As Integer, AdditionalTags() As String)
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
-		  If Self.mPathsScanned.HasKey(Path) Then
+		  Var IsBoss As Boolean = (Options And Self.CreatureOptionIsBoss) <> 0
+		  Var LowConfidence As Boolean = (Options And Self.CreatureOptionLowConfidence) <> 0
+		  If Self.ShouldScanPath(Path, LowConfidence) = False Then
 		    Return
 		  End If
-		  Self.mPathsScanned.Value(Path) = True
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  If Properties Is Nil Then
@@ -857,17 +869,28 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanCreature(Path As String, IsBoss As Boolean, ParamArray AdditionalTags() As String)
-		  Self.ScanCreature(Path, IsBoss, AdditionalTags)
+		Private Sub ScanCreature(Path As String, Options As Integer, ParamArray AdditionalTags() As String)
+		  Self.ScanCreature(Path, Options, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanCreature(Path As String, ParamArray AdditionalTags() As String)
+		  Self.ScanCreature(Path, 0, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanCreature(Path As String, AdditionalTags() As String)
+		  Self.ScanCreature(Path, 0, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ScanInventory(Path As String)
-		  If Self.mPathsScanned.HasKey(Path) Then
+		  If Self.ShouldScanPath(Path, False) = False Then
 		    Return
 		  End If
-		  Self.mPathsScanned.Value(Path) = True
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  If Properties Is Nil Then
@@ -883,19 +906,20 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanItem(Path As String, NoSync As Boolean, ParamArray AdditionalTags() As String)
-		  Self.ScanItem(Path, NoSync, AdditionalTags)
+		Private Sub ScanItem(Path As String, Options As Integer, ParamArray AdditionalTags() As String)
+		  Self.ScanItem(Path, Options, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanItem(Path As String, NoSync As Boolean, AdditionalTags() As String)
+		Private Sub ScanItem(Path As String, Options As Integer, AdditionalTags() As String)
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
-		  If Self.mPathsScanned.HasKey(Path) Then
+		  Var NoSync As Boolean = (Options And Self.ItemOptionNoSync) <> 0
+		  Var LowConfidence As Boolean = (Options And Self.ItemOptionLowConfidence) <> 0
+		  If Self.ShouldScanPath(Path, LowConfidence) = False Then
 		    Return
 		  End If
-		  Self.mPathsScanned.Value(Path) = True
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  If Properties Is Nil Then
@@ -976,13 +1000,13 @@ Protected Class ModDiscoveryEngine2
 		    End If
 		    
 		    For Each BossPath As String In BossPaths
-		      Self.ScanCreature(BossPath, True)
+		      Self.ScanCreature(BossPath, Self.CreatureOptionIsBoss)
 		    Next
 		  End If
 		  
 		  If Properties.HasKey("StructureToBuild") Then
 		    Var StructurePath As String = Self.NormalizePath(Properties.Child("StructureToBuild").Value("AssetPathName"))
-		    Self.ScanItem(StructurePath, True)
+		    Self.ScanItem(StructurePath, Self.ItemOptionNoSync)
 		  End If
 		  
 		  If Properties.HasKey("DungeonArenaManagerClass") And Properties.Value("DungeonArenaManagerClass").IsNull = False Then
@@ -993,30 +1017,30 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Method, Flags = &h21
 		Private Sub ScanItem(Path As String, ParamArray AdditionalTags() As String)
-		  Self.ScanItem(Path, False, AdditionalTags)
+		  Self.ScanItem(Path, 0, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ScanItem(Path As String, AdditionalTags() As String)
-		  Self.ScanItem(Path, False, AdditionalTags)
+		  Self.ScanItem(Path, 0, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
-		  Self.ScanLootDrop(Path, Type, AdditionalTags)
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, Options As Integer, ParamArray AdditionalTags() As String)
+		  Self.ScanLootDrop(Path, Type, Options, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanLootDrop(Path As String, Type As LootDropType, AdditionalTags() As String)
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, Options As Integer, AdditionalTags() As String)
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
-		  If Self.mPathsScanned.HasKey(Path) Then
+		  Var LowConfidence As Boolean = (Options And Self.DropOptionLowConfidence) <> 0
+		  If Self.ShouldScanPath(Path, LowConfidence) = False Then
 		    Return
 		  End If
-		  Self.mPathsScanned.Value(Path) = True
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  If Properties Is Nil Then
@@ -1053,6 +1077,18 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, ParamArray AdditionalTags() As String)
+		  Self.ScanLootDrop(Path, Type, 0, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanLootDrop(Path As String, Type As LootDropType, AdditionalTags() As String)
+		  Self.ScanLootDrop(Path, Type, 0, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ScanMap(Path As String, MapName As String)
 		  Var MapFile As FolderItem = Self.FileForPath(Path)
 		  
@@ -1077,7 +1113,7 @@ Protected Class ModDiscoveryEngine2
 		  Var BossClassDifficultyPaths As JSONMBS = Parsed.Query("$[*].Properties.BossClassDifficultyMap[*].ObjectPath")
 		  For Idx As Integer = 0 To BossClassDifficultyPaths.LastRowIndex
 		    Var BossPath As String = Self.NormalizePath(BossClassDifficultyPaths.ValueAt(Idx))
-		    Self.ScanCreature(BossPath, True)
+		    Self.ScanCreature(BossPath, Self.CreatureOptionIsBoss)
 		  Next
 		  
 		  Var NPCRandomSpawnClassWeights As JSONMBS = Parsed.Query("$[*].Properties.NPCRandomSpawnClassWeights[*]")
@@ -1091,7 +1127,7 @@ Protected Class ModDiscoveryEngine2
 		        Continue
 		      End If
 		      If ReplacementIdx > Weights.LastRowIndex Or Weights.ValueAt(ReplacementIdx).DoubleValue > 0.0 Then
-		        Self.ScanCreature(ToPath, False)
+		        Self.ScanCreature(ToPath)
 		      End If
 		    Next
 		  Next
@@ -1224,7 +1260,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		  End If
 		  
-		  // ScanPrimalGameData will film mScriptedObjectPaths. We can compare those paths against
+		  // ScanPrimalGameData will fill mScriptedObjectPaths. We can compare those paths against
 		  // certain parents to take a good guess at what the script makes use of. The problem
 		  // with this is it cannot detect *how* something is used, so a boss won't be seen as a
 		  // boss since if it isn't linked through traditional means.
@@ -1232,23 +1268,62 @@ Protected Class ModDiscoveryEngine2
 		    Var DinoAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalDinoCharacter'")
 		    For Each Entry As DictionaryEntry In DinoAssets
 		      Var DinoPath As String = Entry.Key.StringValue
-		      If Self.mScriptedObjectPaths.HasKey(DinoPath) Then
-		        Self.ScanCreature(DinoPath, False)
+		      Var DinoOptions As Integer
+		      If Self.mScriptedObjectPaths.HasKey(DinoPath) = False Then
+		        DinoOptions = DinoOptions Or Self.CreatureOptionLowConfidence
 		      End If
+		      Self.ScanCreature(DinoPath, DinoOptions)
 		    Next
 		  End If
-		  #if false
-		    // This probably isn't needed and may make results worse
-		    If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem'") Then
-		      Var ItemAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem'")
-		      For Each Entry As DictionaryEntry In ItemAssets
-		        Var ItemPath As String = Entry.Key.StringValue
-		        If Self.mScriptedObjectPaths.HasKey(ItemPath) Then
-		          Self.ScanItem(ItemPath)
-		        End If
-		      Next
-		    End If
-		  #endif
+		  
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem'") Then
+		    Var ItemAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem'")
+		    For Each Entry As DictionaryEntry In ItemAssets
+		      Var ItemPath As String = Entry.Key.StringValue
+		      Var ItemOptions As Integer
+		      If Self.mScriptedObjectPaths.HasKey(ItemPath) = False Then
+		        ItemOptions = ItemOptions Or Self.ItemOptionLowConfidence
+		      End If
+		      Self.ScanItem(ItemPath, ItemOptions)
+		    Next
+		  End If
+		  
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalStructureItemContainer_SupplyCrate'") Then
+		    Var DropAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalStructureItemContainer_SupplyCrate'")
+		    For Each Entry As DictionaryEntry In DropAssets
+		      Var DropPath As String = Entry.Key.StringValue
+		      Var DropOptions As Integer
+		      If Self.mScriptedObjectPaths.HasKey(DropPath) = False Then
+		        DropOptions = DropOptions Or Self.DropOptionLowConfidence
+		      End If
+		      Self.ScanLootDrop(DropPath, LootDropType.Regular, DropOptions)
+		    Next
+		  End If
+		  
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.NPCSpawnEntriesContainer'") Then
+		    Var SpawnAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.NPCSpawnEntriesContainer'")
+		    For Each Entry As DictionaryEntry In SpawnAssets
+		      Var SpawnPath As String = Entry.Key.StringValue
+		      Var SpawnOptions As Integer
+		      If Self.mScriptedObjectPaths.HasKey(SpawnPath) = False Then
+		        SpawnOptions = SpawnOptions Or Self.SpawnOptionLowConfidence
+		      End If
+		      Self.ScanSpawnContainer(SpawnPath, SpawnOptions)
+		    Next
+		  End If
+		  
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalEngramEntry'") Then
+		    Var UnlockAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalEngramEntry'")
+		    For Each Entry As DictionaryEntry In UnlockAssets
+		      Var UnlockPath As String = Entry.Key.StringValue
+		      Var UnlockOptions As Integer
+		      If Self.mScriptedObjectPaths.HasKey(UnlockPath) = False Then
+		        UnlockOptions = UnlockOptions Or Self.UnlockOptionLowConfidence
+		      End If
+		      Self.ScanUnlock(UnlockPath, UnlockOptions)
+		    Next
+		  End If
+		  
 		  
 		  // These are the inventories of things like crafting stations
 		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalInventoryComponent'") Then
@@ -1323,7 +1398,7 @@ Protected Class ModDiscoveryEngine2
 		          Continue
 		        End If
 		        
-		        Self.ScanCreature(Self.NormalizePath(CreaturePath), False)
+		        Self.ScanCreature(Self.NormalizePath(CreaturePath))
 		      Next
 		    Next
 		    
@@ -1345,7 +1420,7 @@ Protected Class ModDiscoveryEngine2
 		    Var RemappedCreaturePaths As JSONMBS = AssetContainer.Query("$.Remap_NPC[*].ToClass.AssetPathName")
 		    For Idx As Integer = 0 To RemappedCreaturePaths.LastRowIndex
 		      Var CreaturePath As String = Self.NormalizePath(RemappedCreaturePaths.ValueAt(Idx))
-		      Self.ScanCreature(CreaturePath, False)
+		      Self.ScanCreature(CreaturePath)
 		    Next
 		    
 		    // Remapped loot drops
@@ -1390,19 +1465,19 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanSpawnContainer(Path As String, ParamArray AdditionalTags() As String)
-		  Self.ScanSpawnContainer(Path, AdditionalTags)
+		Private Sub ScanSpawnContainer(Path As String, Options As Integer, ParamArray AdditionalTags() As String)
+		  Self.ScanSpawnContainer(Path, Options, AdditionalTags)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanSpawnContainer(Path As String, AdditionalTags() As String)
+		Private Sub ScanSpawnContainer(Path As String, Options As Integer, AdditionalTags() As String)
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
-		  If Self.mPathsScanned.HasKey(Path) Then
+		  Var LowConfidence As Boolean = (Options And Self.SpawnOptionLowConfidence) <> 0
+		  If Self.ShouldScanPath(Path, LowConfidence) = False Then
 		    Return
 		  End If
-		  Self.mPathsScanned.Value(Path) = True
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  If Properties Is Nil Then
@@ -1420,21 +1495,45 @@ Protected Class ModDiscoveryEngine2
 		  For Each PathList As JSONMBS In PathLists
 		    For Idx As Integer = 0 To PathList.LastRowIndex
 		      Var CreaturePath As String = Self.NormalizePath(PathList.ValueAt(Idx))
-		      Self.ScanCreature(CreaturePath, False)
+		      Self.ScanCreature(CreaturePath)
 		    Next
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ScanSpawnContainer(Path As String, AdditionalTags() As String)
+		  Self.ScanSpawnContainer(Path, 0, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanSpawnContainer(Path As String, ParamArray AdditionalTags() As String)
+		  Self.ScanSpawnContainer(Path, 0, AdditionalTags)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ScanUnlock(Path As String)
-		  If Self.mPathsScanned.HasKey(Path) Then
+		  Self.ScanUnlock(Path, 0)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanUnlock(Path As String, Options As Integer)
+		  Var LowConfidence As Boolean = (Options And Self.UnlockOptionLowConfidence) <> 0
+		  If Self.ShouldScanPath(Path, LowConfidence) = False Then
 		    Return
 		  End If
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  If Properties Is Nil Then
 		    Return
+		  End If
+		  
+		  Var ItemOptions As Integer
+		  If LowConfidence Then
+		    ItemOptions = ItemOptions Or Self.ItemOptionLowConfidence
 		  End If
 		  
 		  Var UnlockString As String = Path.NthField(".", 2) + "_C"
@@ -1447,13 +1546,28 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Var ItemPath As String = Self.NormalizePath(Properties.Child("BluePrintEntry").Value("ObjectPath"))
 		  Self.mUnlockDetails.Value(ItemPath) = New Dictionary("UnlockString": UnlockString, "RequiredLevel": RequiredLevel, "RequiredPoints": RequiredPoints)
-		  Self.ScanItem(ItemPath)
+		  Self.ScanItem(ItemPath, ItemOptions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Settings() As ArkSA.ModDiscoverySettings
 		  Return Self.mSettings
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ShouldScanPath(Path As String, LowConfidence As Boolean) As Boolean
+		  If Self.mPathsScanned.HasKey(Path) Then
+		    // If was previously scanned in low confidence mode, and we're not scanning in low confidence mode now, switch it away from low confidence.
+		    If Self.mPathsScanned.Value(Path).BooleanValue = True And LowConfidence = False Then
+		      Self.mPathsScanned.Value(Path) = False
+		    End If
+		    Return False
+		  Else
+		    Self.mPathsScanned.Value(Path) = LowConfidence
+		    Return True
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1627,7 +1741,7 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Creature.LastUpdate = Self.mTimestamp
-		  Self.AddBlueprint(Creature)
+		  Self.AddBlueprint(Creature, Self.mPathsScanned.Lookup(Path, False).BooleanValue)
 		End Sub
 	#tag EndMethod
 
@@ -1727,7 +1841,7 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Item.LastUpdate = Self.mTimestamp
-		  Self.AddBlueprint(Item)
+		  Self.AddBlueprint(Item, Self.mPathsScanned.Lookup(Path, False).BooleanValue)
 		End Sub
 	#tag EndMethod
 
@@ -1920,7 +2034,7 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Drop.LastUpdate = Self.mTimestamp
-		  Self.AddBlueprint(Drop)
+		  Self.AddBlueprint(Drop, Self.mPathsScanned.Lookup(Path, False).BooleanValue)
 		End Sub
 	#tag EndMethod
 
@@ -2092,7 +2206,7 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  SpawnContainer.LastUpdate = Self.mTimestamp
-		  Self.AddBlueprint(SpawnContainer)
+		  Self.AddBlueprint(SpawnContainer, Self.mPathsScanned.Lookup(Path, False).BooleanValue)
 		End Sub
 	#tag EndMethod
 
@@ -2215,7 +2329,7 @@ Protected Class ModDiscoveryEngine2
 
 
 	#tag Hook, Flags = &h0
-		Event ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
+		Event ContentPackDiscovered(ContentPack As Beacon.ContentPack, ConfirmedBlueprints() As ArkSA.Blueprint, UnconfirmedBlueprints() As ArkSA.Blueprint)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -2276,6 +2390,14 @@ Protected Class ModDiscoveryEngine2
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLowConfidenceBlueprints As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLowConfidencePaths As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPathsScanned As Dictionary
 	#tag EndProperty
 
@@ -2324,7 +2446,28 @@ Protected Class ModDiscoveryEngine2
 	#tag EndProperty
 
 
+	#tag Constant, Name = CreatureOptionIsBoss, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureOptionLowConfidence, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = DropOptionLowConfidence, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ItemOptionLowConfidence, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ItemOptionNoSync, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = OfficialContentPackId, Type = String, Dynamic = False, Default = \"b32a3d73-9406-56f2-bd8f-936ee0275249", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SpawnOptionLowConfidence, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = UnlockOptionLowConfidence, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 

@@ -45,6 +45,7 @@ Begin ModEditorView ArkSAModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -368,12 +369,14 @@ Begin ModEditorView ArkSAModEditorView
       End
    End
    Begin ArkSA.ModDiscoveryEngine DiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine2 DiscoveryEngine2
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -1496,7 +1499,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
+		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, ConfirmedBlueprints() As ArkSA.Blueprint, UnconfirmedBlueprints() As ArkSA.Blueprint)
 		  #Pragma Unused ContentPack
 		  
 		  // Wait for the controller to be finished
@@ -1511,7 +1514,7 @@ End
 		      CurrentBlueprintMap.Value(Blueprint.BlueprintId) = Blueprint
 		    Next
 		    
-		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    For Each Blueprint As ArkSA.Blueprint In ConfirmedBlueprints
 		      If CurrentBlueprintMap.HasKey(Blueprint.BlueprintId) Then
 		        CurrentBlueprintMap.Remove(Blueprint.BlueprintId)
 		      End If
@@ -1525,10 +1528,10 @@ End
 		  End If
 		  
 		  If Me.Settings.ReplaceBlueprints Then
-		    Self.mController.SaveBlueprints(Blueprints)
+		    Self.mController.SaveBlueprints(ConfirmedBlueprints)
 		  Else
 		    Var NewBlueprints() As ArkSA.Blueprint
-		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		    For Each Blueprint As ArkSA.Blueprint In ConfirmedBlueprints
 		      If (Self.mController.BlueprintContainer.GetBlueprint(Blueprint.BlueprintId) Is Nil) = False Then
 		        Continue
 		      End If
