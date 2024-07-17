@@ -68,28 +68,6 @@ Inherits ArkSA.CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SpawnLimitPercent(Assigns Value As NullableDouble)
-		  If Self.mSpawnLimitPercent = Value Then
-		    Return
-		  End If
-		  
-		  Self.mSpawnLimitPercent = Value
-		  Self.mModified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SpawnWeightMultiplier(Assigns Value As Double)
-		  If Self.mSpawnWeightMultiplier = Value Then
-		    Return
-		  End If
-		  
-		  Self.mSpawnWeightMultiplier = Value
-		  Self.mModified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub TamedDamageMultiplier(Assigns Value As Double)
 		  If Self.mTamedDamageMultiplier = Value Then
 		    Return
@@ -107,6 +85,39 @@ Inherits ArkSA.CreatureBehavior
 		  End If
 		  
 		  Self.mTamedResistanceMultiplier = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TamedSpeedMultiplier(Assigns Value As Double)
+		  If Self.mTamedSpeedMultiplier = Value Then
+		    Return
+		  End If
+		  
+		  Self.mTamedSpeedMultiplier = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TamedStaminaMultiplier(Assigns Value As Double)
+		  If Self.mTamedStaminaMultiplier = Value Then
+		    Return
+		  End If
+		  
+		  Self.mTamedStaminaMultiplier = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub WildSpeedMultiplier(Assigns Value As Double)
+		  If Self.mWildSpeedMultiplier = Value Then
+		    Return
+		  End If
+		  
+		  Self.mWildSpeedMultiplier = Value
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod

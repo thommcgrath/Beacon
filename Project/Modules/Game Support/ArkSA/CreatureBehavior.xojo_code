@@ -21,8 +21,9 @@ Implements Beacon.BlueprintConsumer
 		  Self.mReplacementCreature = Nil
 		  Self.mProhibitTaming = False
 		  Self.mProhibitTransfer = False
-		  Self.mSpawnWeightMultiplier = 1.0
-		  Self.mSpawnLimitPercent = Nil
+		  Self.mWildSpeedMultiplier = 1.0
+		  Self.mTamedSpeedMultiplier = 1.0
+		  Self.mTamedStaminaMultiplier = 1.0
 		End Sub
 	#tag EndMethod
 
@@ -44,8 +45,9 @@ Implements Beacon.BlueprintConsumer
 		  Self.mTamedResistanceMultiplier = Source.mTamedResistanceMultiplier
 		  Self.mProhibitTaming = Source.mProhibitTaming
 		  Self.mProhibitTransfer = Source.mProhibitTransfer
-		  Self.mSpawnWeightMultiplier = Source.mSpawnWeightMultiplier
-		  Self.mSpawnLimitPercent = Source.mSpawnLimitPercent
+		  Self.mWildSpeedMultiplier = Source.mWildSpeedMultiplier
+		  Self.mTamedSpeedMultiplier = Source.mTamedSpeedMultiplier
+		  Self.mTamedStaminaMultiplier = Source.mTamedStaminaMultiplier
 		End Sub
 	#tag EndMethod
 
@@ -98,12 +100,9 @@ Implements Beacon.BlueprintConsumer
 		    Behavior.mResistanceMultiplier = Dict.Lookup("Resistance Multiplier", 1.0)
 		    Behavior.mTamedDamageMultiplier = Dict.Lookup("Tamed Damage Multiplier", 1.0)
 		    Behavior.mTamedResistanceMultiplier = Dict.Lookup("Tamed Resistance Multiplier", 1.0)
-		    Behavior.mSpawnWeightMultiplier = Dict.Lookup("Spawn Weight Multiplier", 1.0)
-		    If Dict.HasKey("Spawn Limit Percent") Then
-		      Behavior.mSpawnLimitPercent = Dict.Value("Spawn Limit Percent").DoubleValue
-		    Else
-		      Behavior.mSpawnLimitPercent = Nil
-		    End If
+		    Behavior.mTamedSpeedMultiplier = Dict.Lookup("Tamed Speed Multiplier", 1.0)
+		    Behavior.mTamedStaminaMultiplier = Dict.Lookup("Tamed Stamina Multiplier", 1.0)
+		    Behavior.mWildSpeedMultiplier = Dict.Lookup("Wild Speed Multiplier", 1.0)
 		  End If
 		  Behavior.mProhibitTaming = Dict.Lookup("Prevent Taming", False)
 		  Behavior.mProhibitTransfer = Dict.Lookup("Prohibit Transfer", False)
@@ -199,18 +198,6 @@ Implements Beacon.BlueprintConsumer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SpawnLimitPercent() As NullableDouble
-		  Return Self.mSpawnLimitPercent
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SpawnWeightMultiplier() As Double
-		  Return Self.mSpawnWeightMultiplier
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function TamedDamageMultiplier() As Double
 		  Return Self.mTamedDamageMultiplier
 		End Function
@@ -219,6 +206,18 @@ Implements Beacon.BlueprintConsumer
 	#tag Method, Flags = &h0
 		Function TamedResistanceMultiplier() As Double
 		  Return Self.mTamedResistanceMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TamedSpeedMultiplier() As Double
+		  Return Self.mTamedSpeedMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TamedStaminaMultiplier() As Double
+		  Return Self.mTamedStaminaMultiplier
 		End Function
 	#tag EndMethod
 
@@ -255,11 +254,14 @@ Implements Beacon.BlueprintConsumer
 		    If Self.mTamedResistanceMultiplier <> 1.0 Then
 		      Dict.Value("Tamed Resistance Multiplier") = Self.mTamedResistanceMultiplier
 		    End If
-		    If Self.mSpawnWeightMultiplier <> 1.0 Then
-		      Dict.Value("Spawn Weight Multiplier") = Self.mSpawnWeightMultiplier
+		    If Self.mWildSpeedMultiplier <> 1.0 Then
+		      Dict.Value("Wild Speed Multiplier") = Self.mWildSpeedMultiplier
 		    End If
-		    If (Self.mSpawnLimitPercent Is Nil) = False Then
-		      Dict.Value("Spawn Limit Percent") = Self.mSpawnLimitPercent.DoubleValue
+		    If Self.mTamedSpeedMultiplier <> 1.0 Then
+		      Dict.Value("Tamed Speed Multiplier") = Self.mTamedSpeedMultiplier
+		    End If
+		    If Self.mTamedStaminaMultiplier <> 1.0 Then
+		      Dict.Value("Tamed Stamina Multiplier") = Self.mTamedStaminaMultiplier
 		    End If
 		  End If
 		  If Self.mProhibitTaming Then
@@ -269,6 +271,12 @@ Implements Beacon.BlueprintConsumer
 		    Dict.Value("Prohibit Transfer") = True
 		  End If
 		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function WildSpeedMultiplier() As Double
+		  Return Self.mWildSpeedMultiplier
 		End Function
 	#tag EndMethod
 
@@ -302,14 +310,6 @@ Implements Beacon.BlueprintConsumer
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mSpawnLimitPercent As NullableDouble
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mSpawnWeightMultiplier As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
 		Protected mTamedDamageMultiplier As Double = 1.0
 	#tag EndProperty
 
@@ -318,7 +318,19 @@ Implements Beacon.BlueprintConsumer
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mTamedSpeedMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mTamedStaminaMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mTargetCreature As ArkSA.BlueprintReference
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mWildSpeedMultiplier As Double = 1.0
 	#tag EndProperty
 
 
