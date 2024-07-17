@@ -45,7 +45,6 @@ Begin ModEditorView ArkSAModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -369,14 +368,12 @@ Begin ModEditorView ArkSAModEditorView
       End
    End
    Begin ArkSA.ModDiscoveryEngine DiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine2 DiscoveryEngine2
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -1068,6 +1065,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLowConfidenceDialog As ArkSALowConfidenceBlueprintsDialog
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMode As Integer
 	#tag EndProperty
 
@@ -1482,6 +1483,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Finished()
+		  // Will do nothing if there is nothing to do
+		  Self.mLowConfidenceDialog.Present(Self)
+		  Self.mLowConfidenceDialog = Nil
+		  
 		  Self.Pages.SelectedPanelIndex = 0
 		  Self.Reload
 		  Self.UpdateUI
@@ -1491,6 +1496,7 @@ End
 		Sub Started()
 		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
 		  Self.Pages.SelectedPanelIndex = 1
+		  Self.mLowConfidenceDialog = New ArkSALowConfidenceBlueprintsDialog(Me.Settings, Self.mController)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1519,6 +1525,11 @@ End
 		        CurrentBlueprintMap.Remove(Blueprint.BlueprintId)
 		      End If
 		    Next
+		    For Each Blueprint As ArkSA.Blueprint In UnconfirmedBlueprints
+		      If CurrentBlueprintMap.HasKey(Blueprint.BlueprintId) Then
+		        CurrentBlueprintMap.Remove(Blueprint.BlueprintId)
+		      End If
+		    Next
 		    
 		    Var BlueprintsToDelete() As ArkSA.Blueprint
 		    For Each Entry As DictionaryEntry In CurrentBlueprintMap
@@ -1539,6 +1550,8 @@ End
 		    Next
 		    Self.mController.SaveBlueprints(NewBlueprints)
 		  End If
+		  
+		  Self.mLowConfidenceDialog.AddCandidates(UnconfirmedBlueprints)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

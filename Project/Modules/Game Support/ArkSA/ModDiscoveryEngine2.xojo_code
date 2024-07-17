@@ -80,7 +80,6 @@ Protected Class ModDiscoveryEngine2
 		  Self.mInventoryNames = New Dictionary
 		  Self.mBossPaths = New Dictionary
 		  Self.mScriptedObjectPaths = New Dictionary
-		  Self.mLowConfidencePaths = New Dictionary
 		  Self.mLowConfidenceBlueprints = New Dictionary
 		End Sub
 	#tag EndMethod
@@ -588,10 +587,9 @@ Protected Class ModDiscoveryEngine2
 		    Var UnconfirmedBlueprints() As ArkSA.Blueprint
 		    If Self.mFoundBlueprints.HasKey(ContentPackId) Then
 		      ConfirmedBlueprints = Self.mFoundBlueprints.Value(ContentPackId)
-		    ElseIf Self.mLowConfidenceBlueprints.HasKey(ContentPackId) Then
-		      UnconfirmedBlueprints = Self.mFoundBlueprints.Value(ContentPackId)
-		    Else
-		      Continue
+		    End If
+		    If Self.mLowConfidenceBlueprints.HasKey(ContentPackId) Then
+		      UnconfirmedBlueprints = Self.mLowConfidenceBlueprints.Value(ContentPackId)
 		    End If
 		    
 		    If ConfirmedBlueprints.Count > 0 Or UnconfirmedBlueprints.Count > 0 Then
@@ -1038,12 +1036,22 @@ Protected Class ModDiscoveryEngine2
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
 		  Var LowConfidence As Boolean = (Options And Self.DropOptionLowConfidence) <> 0
+		  #if DebugBuild
+		    System.DebugLog("Scanning drop " + Path + ". Low confidence = " + If(LowConfidence, "True", "False"))
+		  #endif
 		  If Self.ShouldScanPath(Path, LowConfidence) = False Then
 		    Return
 		  End If
 		  
 		  Var Properties As JSONMBS = Self.PropertiesForPath(Path)
 		  If Properties Is Nil Then
+		    Return
+		  End If
+		  
+		  If Properties.HasKey("ItemSets") = False Then
+		    #if DebugBuild
+		      System.DebugLog("Skipping " + Path + " because it has no ItemSets property.")
+		    #endif
 		    Return
 		  End If
 		  
@@ -1323,7 +1331,6 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanUnlock(UnlockPath, UnlockOptions)
 		    Next
 		  End If
-		  
 		  
 		  // These are the inventories of things like crafting stations
 		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalInventoryComponent'") Then
@@ -2391,10 +2398,6 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Property, Flags = &h21
 		Private mLowConfidenceBlueprints As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLowConfidencePaths As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

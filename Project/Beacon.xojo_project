@@ -959,6 +959,7 @@ Class=ModInfo;Modules/CurseForge/ModInfo.xojo_code;&h000000005C426FFF;&h00000000
 Interface=BlueprintProvider;Modules/Game Support/ArkSA/BlueprintProvider.xojo_code;&h000000004631FFFF;&h000000004504AFFF;false
 Class=TagSpec;Modules/Beacon/TagSpec.xojo_code;&h000000007589FFFF;&h0000000055ADDFFF;false
 Class=BlueprintContainer;Modules/Game Support/ArkSA/BlueprintContainer.xojo_code;&h00000000301427FF;&h000000004504AFFF;false
+DesktopWindow=ArkSALowConfidenceBlueprintsDialog;Views/ArkSA/Mods/ArkSALowConfidenceBlueprintsDialog.xojo_window;&h0000000079F8DFFF;&h000000004B8DE7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=3

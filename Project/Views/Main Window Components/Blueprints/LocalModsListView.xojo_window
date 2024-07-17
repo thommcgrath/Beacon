@@ -941,6 +941,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mArkSALowConfidenceDialog As ArkSALowConfidenceBlueprintsDialog
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDiscoveredMods() As Beacon.ContentPack
 	#tag EndProperty
 
@@ -1646,6 +1650,13 @@ End
 		    Map.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
+		  // Do not delete the unconfirmed stuff. The dialog will do that later.
+		  For Each Blueprint As ArkSA.Blueprint In UnconfirmedBlueprints
+		    If Map.HasKey(Blueprint.BlueprintId) Then
+		      Map.Remove(Blueprint.BlueprintId)
+		    End If
+		  Next
+		  
 		  // Existing blueprints should not be saved over unless requested
 		  Var BlueprintsToSave() As ArkSA.Blueprint
 		  For Each Blueprint As ArkSA.Blueprint In ConfirmedBlueprints
@@ -1692,6 +1703,8 @@ End
 		      App.Log(Err, CurrentMethodName, "Uploading mod to community")
 		    End Try
 		  End If
+		  
+		  Self.mArkSALowConfidenceDialog.AddCandidates(UnconfirmedBlueprints)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1705,6 +1718,9 @@ End
 		    Self.mProgress.Close
 		    Self.mProgress = Nil
 		  End If
+		  
+		  Self.mArkSALowConfidenceDialog.Present(Self)
+		  Self.mArkSALowConfidenceDialog = Nil
 		  
 		  If Me.WasSuccessful Then
 		    Self.RefreshMods()
@@ -1726,6 +1742,7 @@ End
 		  Self.mNumErrorBlueprints = 0
 		  Self.mNumAddedMods = 0
 		  Self.mNumRemovedBlueprints = 0
+		  Self.mArkSALowConfidenceDialog = New ArkSALowConfidenceBlueprintsDialog(Me.Settings, Nil)
 		  
 		  Self.mProgress = New ProgressWindow("Running mod discovery", Me.StatusMessage)
 		  AddHandler mProgress.CancelPressed, WeakAddressOf mProgress_CancelPressed
