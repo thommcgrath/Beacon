@@ -286,8 +286,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ExtensionMatches(Extends File As FolderItem, ParamArray PossibleExtensions() As String) As Boolean
-		  Return File.ExtensionMatches(PossibleExtensions)
+		Function Extension(Extends File As FolderItem) As String
+		  #if XojoVersion >= 2024.01
+		    #Pragma Error "Remove this method"
+		  #endif
+		  
+		  Var Name As String = File.Name
+		  If Name.IndexOf(".") = -1 Then
+		    Return ""
+		  End If
+		  
+		  Var Parts() As String = Name.Split(".")
+		  Return Parts(Parts.LastIndex)
 		End Function
 	#tag EndMethod
 
@@ -302,6 +312,12 @@ Protected Module FrameworkExtensions
 		      Return True
 		    End If
 		  Next Extension
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExtensionMatches(Extends File As FolderItem, ParamArray PossibleExtensions() As String) As Boolean
+		  Return File.ExtensionMatches(PossibleExtensions)
 		End Function
 	#tag EndMethod
 
