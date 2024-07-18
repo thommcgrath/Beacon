@@ -81,7 +81,7 @@ Begin ArkSAConfigEditor ArkSASpoilTimersEditor
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   969
       Begin DesktopGroupBox DecayPreviewGroup
@@ -190,7 +190,7 @@ Begin ArkSAConfigEditor ArkSASpoilTimersEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   1
+            TabIndex        =   2
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Your structures will destroy before they finish decaying."
@@ -227,7 +227,7 @@ Begin ArkSAConfigEditor ArkSASpoilTimersEditor
             ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
-            TabIndex        =   2
+            TabIndex        =   1
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
@@ -970,6 +970,69 @@ Begin ArkSAConfigEditor ArkSASpoilTimersEditor
             _mInitialParent =   ""
             _mName          =   ""
             _mPanelIndex    =   0
+         End
+         Begin DesktopLabel DisableDinoDecayClaimingLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "DecayGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   21
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "#LabelDisableDinoDecayClaiming"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   "#TooltipDisableDinoDecayClaiming"
+            Top             =   425
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin SwitchControl DisableDinoDecayClaimingSwitch
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            ContentHeight   =   0
+            Enabled         =   True
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "DecayGroup"
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            ScrollActive    =   False
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   22
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   "#TooltipDisableDinoDecayClaiming"
+            Top             =   425
+            Transparent     =   True
+            Visible         =   True
+            Width           =   40
          End
       End
       Begin UITweaks.ResizedTextField SpoilTimeMultiplierField
@@ -1789,6 +1852,7 @@ End
 		  Self.ClampSpoilTimesSwitch.Value(False) = Config.ClampItemSpoilingTimes
 		  Self.CorpseDecomposeMultiplierField.Text = Config.GlobalCorpseDecompositionTimeMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.ItemDecomposeMultiplierField.Text = Config.GlobalItemDecompositionTimeMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.DisableDinoDecayClaimingSwitch.Value(False) = Config.DisableDinoDecayClaiming
 		  
 		  Self.PvEDinoDecaySwitch.Enabled = Not Self.PvPDinoDecaySwitch.Value
 		  Self.PvEStructureDecaySwitch.Enabled = Not Self.PvEStructureDecaySwitch.Value
@@ -1968,6 +2032,9 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = LabelDisableDinoDecayClaiming, Type = String, Dynamic = True, Default = \"Disable Decayed Creature Claiming:", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageDecay, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
@@ -1996,6 +2063,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = TooltipDinoDecayMultiplier, Type = String, Dynamic = False, Default = \"Adjusts the time it takes for creatures decay. Higher values will increase the decay time\x2C while lower values will decrease the decay time.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipDisableDinoDecayClaiming, Type = String, Dynamic = True, Default = \"When turned on\x2C creatures are not claimable after their decay period passes. This setting is most useful with Auto Destroy Creatures also turned on.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = TooltipFastDecayPeriod, Type = String, Dynamic = False, Default = \"Adjusts the amount of time it takes for structures affected by fast decay to decay.", Scope = Private
@@ -2275,6 +2345,21 @@ End
 		  Self.SettingUp = True
 		  Var Config As ArkSA.Configs.SpoilTimers = Self.Config(True)
 		  Config.FastDecayInterval = Interval.TotalSeconds
+		  Self.Modified = Config.Modified
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DisableDinoDecayClaimingSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Config As ArkSA.Configs.SpoilTimers = Self.Config(True)
+		  Config.DisableDinoDecayClaiming = Me.Value
 		  Self.Modified = Config.Modified
 		  Self.SettingUp = False
 		End Sub

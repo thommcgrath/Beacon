@@ -615,16 +615,16 @@ Implements ArkSA.BlueprintProvider
 		      For Each Entry As DictionaryEntry In PacksToRemove
 		        Call Self.DeleteContentPack(Entry.Key.StringValue, False)
 		      Next
+		      
+		      Self.RunContentPackMigrations()
+		      Self.CleanForeignKeyViolations()
+		      
+		      Self.CommitTransaction()
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Importing Ark Ascended user blueprints")
 		      Self.RollbackTransaction()
 		      Return
 		    End Try
-		    
-		    Self.RunContentPackMigrations()
-		    Self.CleanForeignKeyViolations()
-		    
-		    Self.CommitTransaction()
 		  End Select
 		End Sub
 	#tag EndEvent
