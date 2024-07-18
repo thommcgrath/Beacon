@@ -588,7 +588,12 @@ End
 		  Var ErrorDict As New Dictionary
 		  Var Saved As Boolean
 		  If Self.mController Is Nil Then
-		    Saved = ArkSA.DataSource.Pool.Get(True).SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True)
+		    // This returns true if changes were made, false if there were no changes, so check ErrorDict to determine errors.
+		    If ArkSA.DataSource.Pool.Get(True).SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True) Then
+		      Saved = True
+		    Else
+		      Saved = ErrorDict.KeyCount = 0
+		    End If
 		  Else
 		    Self.mController.SaveBlueprints(BlueprintsToSave)
 		    Self.mController.DeleteBlueprints(BlueprintsToDelete)
