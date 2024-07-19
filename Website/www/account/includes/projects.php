@@ -49,6 +49,7 @@ if (count($projects) > 0) {
 	echo '</table>';
 } else {
 	echo '<p>You have not created any projects yet!<span class="text-lighter smaller"><br>(Or at least haven\'t saved any to Beacon\'s Cloud.)</span></p>';
+	echo '<p>Projects can be created from inside the Beacon app. Don\'t have Beacon installed? <a href="https://usebeacon.app/download">Download it here</a>.</p>';
 }
 
 echo '</div>';
