@@ -985,7 +985,7 @@ End
 #tag Events InstallServerButton
 	#tag Event
 		Sub Pressed()
-		  Var Url As String = "steam://nav/games/details/2430930"
+		  Var Url As String = "steam://open/games/details/2430930"
 		  #if TargetWindows
 		    Var Sh As New Shell
 		    Sh.Execute("start """" """ + Url + """")
