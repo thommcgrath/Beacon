@@ -1,6 +1,7 @@
 #tag Class
 Protected Class EngramControl
 Inherits Ark.ConfigGroup
+Implements NotificationKit.Receiver
 	#tag Event
 		Sub CopyFrom(Other As Ark.ConfigGroup)
 		  Var Source As Ark.Configs.EngramControl = Ark.Configs.EngramControl(Other)
@@ -54,7 +55,7 @@ Inherits Ark.ConfigGroup
 		  Var UnlockEntries(), OverrideEntries() As String
 		  Var UnlockConfigs(), OverrideConfigs() As Ark.ConfigValue
 		  Var Whitelisting As Boolean = Self.OnlyAllowSpecifiedEngrams
-		  Var Engrams() As Ark.Engram = Self.Engrams
+		  Var Engrams() As Ark.Engram = Self.Engrams(Ark.BlueprintReference.DefaultOptions And Not Ark.BlueprintReference.OptionUseCache)
 		  For Each Engram As Ark.Engram In Engrams
 		    // Get the unlock string from the engram if available, or use the backup if not available.
 		    If (Engram Is Nil) Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
@@ -359,6 +360,13 @@ Inherits Ark.ConfigGroup
 		  Super.Constructor()
 		  
 		  Self.mOverrides = New Ark.BlueprintAttributeManager
+		  NotificationKit.Watch(Self, ArkSA.DataSource.Notification_EngramsChanged)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  NotificationKit.Ignore(Self, ArkSA.DataSource.Notification_EngramsChanged)
 		End Sub
 	#tag EndMethod
 
@@ -397,7 +405,7 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Engrams() As Ark.Engram()
+		Function Engrams(ResolutionOptions As Integer = Ark.BlueprintReference.DefaultOptions) As Ark.Engram()
 		  Var References() As Ark.BlueprintReference = Self.mOverrides.References
 		  Var Results() As Ark.Engram
 		  For Each Reference As Ark.BlueprintReference In References
@@ -405,7 +413,7 @@ Inherits Ark.ConfigGroup
 		      Continue
 		    End If
 		    
-		    Var Blueprint As Ark.Blueprint = Reference.Resolve
+		    Var Blueprint As Ark.Blueprint = Reference.Resolve(Nil, ResolutionOptions)
 		    If (Blueprint Is Nil = False) And Blueprint IsA Ark.Engram Then
 		      Results.Add(Ark.Engram(Blueprint))
 		    End If
@@ -554,10 +562,8 @@ Inherits Ark.ConfigGroup
 		        If Engrams.Count = 0 Then
 		          Engrams.Add(Ark.Engram.CreateFromEntryString(EntryString))
 		        End If
-		        For Each Engram As Ark.Engram In Engrams
-		          Config.AutoUnlockEngram(Engram) = True
-		          Config.RequiredPlayerLevel(Engram) = Level
-		        Next
+		        Config.AutoUnlockEngram(Engrams(0)) = True
+		        Config.RequiredPlayerLevel(Engrams(0)) = Level
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
@@ -682,6 +688,24 @@ Inherits Ark.ConfigGroup
 		  
 		  Self.mPointsPerLevel.ResizeTo(LastRowIndex)
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case Ark.DataSource.Notification_EngramsChanged
+		    Var Engrams() As Ark.Engram = Self.Engrams(0)
+		    For Each Engram As Ark.Engram In Engrams
+		      If Engram Is Nil Or Engram.HasUnlockDetails = False Or Self.mOverrides.HasAttribute(Engram, Self.KeyEntryString) = False Then
+		        Continue
+		      End If
+		      
+		      Self.SetAttributeForEngram(Engram, Self.KeyEntryString, Engram.EntryString)
+		    Next
+		  End Select
 		End Sub
 	#tag EndMethod
 

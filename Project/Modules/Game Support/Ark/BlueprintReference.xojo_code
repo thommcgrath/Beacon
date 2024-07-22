@@ -324,7 +324,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Resolve(Packs As Beacon.StringList = Nil, Options As Integer = 3) As Ark.Blueprint
+		Function Resolve(Packs As Beacon.StringList = Nil, Options As Integer = Ark.BlueprintReference.DefaultOptions) As Ark.Blueprint
 		  If (Options And Self.OptionUseCache) = Self.OptionUseCache And (Self.mBlueprint Is Nil) = False Then
 		    Return Self.mBlueprint
 		  End If
@@ -405,6 +405,9 @@ Implements Beacon.NamedItem
 		Private mPath As String
 	#tag EndProperty
 
+
+	#tag Constant, Name = DefaultOptions, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = KindCreature, Type = String, Dynamic = False, Default = \"creature", Scope = Public
 	#tag EndConstant
