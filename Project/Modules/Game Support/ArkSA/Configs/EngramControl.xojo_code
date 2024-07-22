@@ -309,34 +309,41 @@ Implements Beacon.BlueprintConsumer
 
 
 	#tag Method, Flags = &h21
-		Private Shared Sub AddOverrideToConfig(Config As ArkSA.Configs.EngramControl, DataSource As ArkSA.DataSource, Details As Dictionary, ContentPacks As Beacon.StringList)
+		Private Shared Sub AddOverrideToConfig(Config As ArkSA.Configs.EngramControl, Providers() As ArkSA.BlueprintProvider, Details As Dictionary, ContentPacks As Beacon.StringList)
 		  If Not Details.HasKey("EngramClassName") Then
 		    Return
 		  End If
 		  
 		  Try
 		    Var EntryString As String = Details.Value("EngramClassName")
-		    Var Engrams() As ArkSA.Engram = DataSource.GetEngramsByEntryString(EntryString, ContentPacks)
+		    Var Engrams() As ArkSA.Engram
+		    For Each Provider As ArkSA.BlueprintProvider In Providers
+		      Engrams = Engrams.Merge(Provider.GetEngramsByEntryString(EntryString, ContentPacks))
+		      If Engrams.Count > 0 Then
+		        Exit
+		      End If
+		    Next
 		    If Engrams.Count = 0 Then
 		      Engrams.Add(ArkSA.Engram.CreateFromEntryString(EntryString))
 		    End If
-		    For Each Engram As ArkSA.Engram In Engrams
-		      If Details.HasKey("EngramHidden") Then
-		        Config.Hidden(Engram) = Details.BooleanValue("EngramHidden", False)
-		      End If
-		      
-		      If Details.HasKey("RemoveEngramPreReq") Then
-		        Config.RemovePrerequisites(Engram) = Details.BooleanValue("RemoveEngramPreReq", False)
-		      End If
-		      
-		      If Details.HasKey("EngramLevelRequirement") And Details.Value("EngramLevelRequirement").Type = Variant.TypeDouble Then
-		        Config.RequiredPlayerLevel(Engram) = Details.Value("EngramLevelRequirement").DoubleValue
-		      End If
-		      
-		      If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
-		        Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
-		      End If
-		    Next
+		    
+		    Var Engram As ArkSA.Engram = Engrams(0)
+		    
+		    If Details.HasKey("EngramHidden") Then
+		      Config.Hidden(Engram) = Details.BooleanValue("EngramHidden", False)
+		    End If
+		    
+		    If Details.HasKey("RemoveEngramPreReq") Then
+		      Config.RemovePrerequisites(Engram) = Details.BooleanValue("RemoveEngramPreReq", False)
+		    End If
+		    
+		    If Details.HasKey("EngramLevelRequirement") And Details.Value("EngramLevelRequirement").Type = Variant.TypeDouble Then
+		      Config.RequiredPlayerLevel(Engram) = Details.Value("EngramLevelRequirement").DoubleValue
+		    End If
+		    
+		    If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
+		      Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
+		    End If
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
@@ -470,8 +477,9 @@ Implements Beacon.BlueprintConsumer
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		  
 		  Var Config As New ArkSA.Configs.EngramControl
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  Config.AutoUnlockAllEngrams = ParsedData.BooleanValue("bAutoUnlockAllEngrams", False)
 		  Config.OnlyAllowSpecifiedEngrams = ParsedData.BooleanValue("bOnlyAllowSpecifiedEngrams", False)
 		  
@@ -505,6 +513,7 @@ Implements Beacon.BlueprintConsumer
 		      Overrides.Add(ParsedValue)
 		    End If
 		    
+		    Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastIndex
 		      Try
 		        Var Details As Dictionary = Overrides(Idx)
@@ -512,7 +521,7 @@ Implements Beacon.BlueprintConsumer
 		        Var Engram As ArkSA.Engram = DataSource.GetEngramByItemID(ItemID)
 		        If (Engram Is Nil) = False And Engram.EntryString.IsEmpty = False Then
 		          Details.Value("EngramClassName") = Engram.EntryString
-		          AddOverrideToConfig(Config, DataSource, Details, ContentPacks)
+		          AddOverrideToConfig(Config, Providers, Details, ContentPacks)
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -536,7 +545,7 @@ Implements Beacon.BlueprintConsumer
 		        Continue
 		      End Try
 		      
-		      AddOverrideToConfig(Config, DataSource, Details, ContentPacks)
+		      AddOverrideToConfig(Config, Providers, Details, ContentPacks)
 		    Next
 		  End If
 		  
@@ -565,7 +574,10 @@ Implements Beacon.BlueprintConsumer
 		        Var EntryString As String = Details.Value("EngramClassName")
 		        Var Level As Integer = Details.Value("LevelToAutoUnlock")
 		        
-		        Var Engrams() As ArkSA.Engram = DataSource.GetEngramsByEntryString(EntryString, ContentPacks)
+		        Var Engrams() As ArkSA.Engram
+		        For Each Provider As ArkSA.BlueprintProvider In Providers
+		          Engrams = Engrams.Merge(Provider.GetEngramsByEntryString(EntryString, ContentPacks))
+		        Next
 		        If Engrams.Count = 0 Then
 		          Engrams.Add(ArkSA.Engram.CreateFromEntryString(EntryString))
 		        End If
