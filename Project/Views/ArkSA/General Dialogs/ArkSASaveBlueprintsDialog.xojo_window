@@ -237,7 +237,6 @@ Begin BeaconDialog ArkSASaveBlueprintsDialog
    End
    Begin Thread SaveThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -254,11 +253,25 @@ End
 	#tag Event
 		Sub Opening()
 		  Var Packs() As Beacon.ContentPack = Self.mProject.EmbeddedContentPacks
+		  Var PackNames() As String
+		  PackNames.ResizeTo(Packs.LastIndex)
+		  For Idx As Integer = 0 To PackNames.LastIndex
+		    PackNames(Idx) = Packs(Idx).Name
+		  Next
+		  PackNames.SortWith(Packs)
+		  
 		  For Each Pack As Beacon.ContentPack In Packs
 		    Var Blueprints() As ArkSA.Blueprint = Self.mProject.EmbeddedBlueprints(Pack, True)
 		    If Blueprints.Count = 0 Then
 		      Continue
 		    End If
+		    
+		    Var BlueprintNames() As String
+		    BlueprintNames.ResizeTo(Blueprints.LastIndex)
+		    For Idx As Integer = 0 To BlueprintNames.LastIndex
+		      BlueprintNames(Idx) = Blueprints(Idx).Label
+		    Next
+		    BlueprintNames.SortWith(Blueprints)
 		    
 		    Self.mUnsavedBlueprints.Value(Pack.ContentPackId) = Blueprints
 		    
