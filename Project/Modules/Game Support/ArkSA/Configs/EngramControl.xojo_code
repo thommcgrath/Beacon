@@ -1,7 +1,7 @@
 #tag Class
 Protected Class EngramControl
 Inherits ArkSA.ConfigGroup
-Implements Beacon.BlueprintConsumer
+Implements Beacon.BlueprintConsumer, NotificationKit.Receiver
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
@@ -56,7 +56,7 @@ Implements Beacon.BlueprintConsumer
 		  Var UnlockEntries(), OverrideEntries() As String
 		  Var UnlockConfigs(), OverrideConfigs() As ArkSA.ConfigValue
 		  Var Whitelisting As Boolean = Self.OnlyAllowSpecifiedEngrams
-		  Var Engrams() As ArkSA.Engram = Self.Engrams
+		  Var Engrams() As ArkSA.Engram = Self.Engrams(ArkSA.BlueprintReference.DefaultOptions And Not ArkSA.BlueprintReference.OptionUseCache)
 		  For Each Engram As ArkSA.Engram In Engrams
 		    // Get the unlock string from the engram if available, or use the backup if not available.
 		    If (Engram Is Nil) Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
@@ -381,6 +381,13 @@ Implements Beacon.BlueprintConsumer
 		  Super.Constructor()
 		  
 		  Self.mOverrides = New ArkSA.BlueprintAttributeManager
+		  NotificationKit.Watch(Self, ArkSA.DataSource.Notification_EngramsChanged)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  NotificationKit.Ignore(Self, ArkSA.DataSource.Notification_EngramsChanged)
 		End Sub
 	#tag EndMethod
 
@@ -419,7 +426,7 @@ Implements Beacon.BlueprintConsumer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Engrams() As ArkSA.Engram()
+		Function Engrams(ResolutionOptions As Integer = ArkSA.BlueprintReference.DefaultOptions) As ArkSA.Engram()
 		  Var References() As ArkSA.BlueprintReference = Self.mOverrides.References
 		  Var Results() As ArkSA.Engram
 		  For Each Reference As ArkSA.BlueprintReference In References
@@ -427,7 +434,7 @@ Implements Beacon.BlueprintConsumer
 		      Continue
 		    End If
 		    
-		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(Nil, ResolutionOptions)
 		    If (Blueprint Is Nil = False) And Blueprint IsA ArkSA.Engram Then
 		      Results.Add(ArkSA.Engram(Blueprint))
 		    End If
@@ -718,6 +725,24 @@ Implements Beacon.BlueprintConsumer
 		  
 		  Return Self.mOverrides.MigrateBlueprints(Migrator)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case ArkSA.DataSource.Notification_EngramsChanged
+		    Var Engrams() As ArkSA.Engram = Self.Engrams(0)
+		    For Each Engram As ArkSA.Engram In Engrams
+		      If Engram Is Nil Or Engram.HasUnlockDetails = False Or Self.mOverrides.HasAttribute(Engram, Self.KeyEntryString) = False Then
+		        Continue
+		      End If
+		      
+		      Self.SetAttributeForEngram(Engram, Self.KeyEntryString, Engram.EntryString)
+		    Next
+		  End Select
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
