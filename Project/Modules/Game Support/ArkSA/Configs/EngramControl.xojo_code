@@ -584,14 +584,15 @@ Implements Beacon.BlueprintConsumer, NotificationKit.Receiver
 		        Var Engrams() As ArkSA.Engram
 		        For Each Provider As ArkSA.BlueprintProvider In Providers
 		          Engrams = Engrams.Merge(Provider.GetEngramsByEntryString(EntryString, ContentPacks))
+		          If Engrams.Count > 0 Then
+		            Exit
+		          End If
 		        Next
 		        If Engrams.Count = 0 Then
 		          Engrams.Add(ArkSA.Engram.CreateFromEntryString(EntryString))
 		        End If
-		        For Each Engram As ArkSA.Engram In Engrams
-		          Config.AutoUnlockEngram(Engram) = True
-		          Config.RequiredPlayerLevel(Engram) = Level
-		        Next
+		        Config.AutoUnlockEngram(Engrams(0)) = True
+		        Config.RequiredPlayerLevel(Engrams(0)) = Level
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
