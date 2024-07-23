@@ -323,7 +323,7 @@ Inherits DesktopListBox
 		      BackgroundColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.SelectedContentBackgroundColor)
 		      TextColor = SystemColors.AlternateSelectedControlTextColor
 		    Else
-		      BackgroundColor = SystemColors.UnemphasizedSelectedContentBackgroundColor
+		      BackgroundColor = Self.mUnfocusedSelectionColor
 		      TextColor = SystemColors.UnemphasizedSelectedTextColor
 		    End If
 		    SecondaryTextColor = TextColor
@@ -540,6 +540,9 @@ Inherits DesktopListBox
 		  End If
 		  If Self.mRowOddColor Is Nil Then
 		    Self.mRowOddColor = New ColorGroup(&cF1F2F200, &cFFFFFFF3)
+		  End If
+		  If Self.mUnfocusedSelectionColor Is Nil Then
+		    Self.mUnfocusedSelectionColor = New ColorGroup(&c000000D8, &cFFFFFFD8)
 		  End If
 		  
 		  Super.Constructor
@@ -1254,6 +1257,10 @@ Inherits DesktopListBox
 
 	#tag Property, Flags = &h21
 		Private mTypeaheadTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mUnfocusedSelectionColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
