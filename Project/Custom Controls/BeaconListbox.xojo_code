@@ -271,7 +271,7 @@ Inherits DesktopListBox
 		  
 		  RaiseEvent Opening
 		  
-		  Self.Transparent = False
+		  Self.Transparent = TargetMacOS
 		  
 		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
 		  Self.mOpened = True
@@ -328,7 +328,7 @@ Inherits DesktopListBox
 		    End If
 		    SecondaryTextColor = TextColor
 		  Else
-		    BackgroundColor = If(Row Mod 2 = 0, SystemColors.ListEvenRowColor, SystemColors.ListOddRowColor)
+		    BackgroundColor = If(Row Mod 2 = 0, Self.mRowEvenColor, Self.mRowOddColor)
 		    TextColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.TextColor)
 		    SecondaryTextColor = If(RowInvalid, TextColor, SystemColors.SecondaryLabelColor)
 		  End If
@@ -534,6 +534,13 @@ Inherits DesktopListBox
 		  AddHandler mScrollWatchTimer.Action, WeakAddressOf mScrollWatchTimer_Action
 		  
 		  Self.mRequestedPages = New Dictionary
+		  
+		  If Self.mRowEvenColor Is Nil Then
+		    Self.mRowEvenColor = New ColorGroup(&cFFFEFE00, &cFFFFFFFF)
+		  End If
+		  If Self.mRowOddColor Is Nil Then
+		    Self.mRowOddColor = New ColorGroup(&cF1F2F200, &cFFFFFFF3)
+		  End If
 		  
 		  Super.Constructor
 		End Sub
@@ -1219,6 +1226,14 @@ Inherits DesktopListBox
 
 	#tag Property, Flags = &h21
 		Private mRequestedPages As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mRowEvenColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mRowOddColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
