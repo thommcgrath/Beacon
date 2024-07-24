@@ -466,7 +466,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 		  Dict.Value("multipliers") = New Dictionary("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)
 		  Dict.Value("uiColor") = Self.mUIColor.ToHex
 		  Dict.Value("iconId") = Self.mIconID
-		  Dict.Value("sort") = Self.mSortValue
+		  Dict.Value("sort") = Self.mSortValue.ToString(Locale.Raw, "000")
 		  Dict.Value("experimental") = Self.mExperimental
 		  Dict.Value("notes") = Self.mNotes
 		  Dict.Value("requirements") = Beacon.GenerateJSON(Self.mRequirements, False)
