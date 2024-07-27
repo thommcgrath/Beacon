@@ -687,7 +687,7 @@ Inherits Beacon.DataSource
 		              MarketplaceId = Dict.Value("workshop_id").StringValue
 		            End If
 		            
-		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, type, game_id, last_update, required) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Marketplace, MarketplaceId, True, False, Beacon.ContentPack.TypeLocal, Self.Identifier, Now.SecondsFrom1970, False, False)
+		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, type, game_id, last_update, required) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Marketplace, MarketplaceId, True, False, Beacon.ContentPack.TypeLocal, Self.Identifier, Now.SecondsFrom1970, False)
 		          End If
 		        End If
 		      Catch Err As RuntimeException
