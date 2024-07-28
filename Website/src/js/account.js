@@ -689,7 +689,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			};
 
 			if (tokenInfo.provider === 'nitrado') {
-				BeaconWebRequest.get('https://api.nitrado.net/token', { Authorization: `Bearer ${tokenInfo.accessToken}` }).then((response) => {
+				BeaconWebRequest.get(`https://api.nitrado.net/token?access_token=${encodeURIComponent(tokenInfo.accessToken)}`).then((response) => {
 					const parsed = JSON.parse(response.body);
 					if (parsed.data.token.scopes.includes('service') === false) {
 						staticTokenErrorField.innerText = 'The long life token is valid, but is missing the "service" scope that Beacon requires.';
@@ -699,8 +699,27 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 					}
 					tokenInfo.providerSpecific.user = parsed.data.token.user;
 					submitFunction();
-				}).catch(() => {
-					staticTokenErrorField.innerText = 'The long life token is not valid. Double check the Nitrado website, as the beginning of the token can wrap to another line.';
+				}).catch((response) => {
+					switch (response.status) {
+					case 0:
+						staticTokenErrorField.innerText = 'The browser could not connect to Nitrado. An ad blocker or malware protection may be to blame.';
+						break;
+					case 401:
+						staticTokenErrorField.innerText = 'The long life token is not valid. Double check the Nitrado website, as the beginning of the token can wrap to another line.';
+						break;
+					case 403:
+						staticTokenErrorField.innerText = 'The browser blocked the request to check the token. An ad blocker or malware protection may be to blame.';
+						break;
+					case 429:
+						staticTokenErrorField.innerText = 'You have exceeded Nitrado\'s rate limit. Please try again later.';
+						break;
+					case 504:
+						staticTokenErrorField.innerText = 'Nitrado is currently offline for maintenance.';
+						break;
+					default:
+						staticTokenErrorField.innerText = `An unexpected HTTP #${response.status} code was returned from Nitrado.`;
+						break;
+					}
 					staticTokenErrorField.classList.remove('hidden');
 					staticTokenActionButton.disabled = false;
 				});
