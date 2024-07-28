@@ -2308,7 +2308,7 @@ Protected Class ModDiscoveryEngine2
 		      Var ToCreaturePath As String = Self.NormalizePath(ToClasses.ChildAt(ReplacementIdx).Value("AssetPathName"))
 		      Var ToCreatureId As String = Self.CreateObjectId(ToCreaturePath)
 		      Var ToCreatureRef As New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindCreature, ToCreatureId, ToCreaturePath)
-		      Var Weight As Double = Weights.ValueAt(ReplacementIdx)
+		      Var Weight As Double = Weights.ValueAt(Min(ReplacementIdx, Weights.LastRowIndex))
 		      
 		      SpawnSet.CreatureReplacementWeight(FromCreatureRef, ToCreatureRef) = Weight
 		    Next
