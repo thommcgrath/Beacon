@@ -6,6 +6,7 @@ configkeys:
   - ConfigAddNPCSpawnEntriesContainer
   - ConfigOverrideNPCSpawnEntriesContainer
   - ConfigSubtractNPCSpawnEntriesContainer
+  - DinoSpawnWeightMultipliers
 supportedgames:
   - "Ark: Survival Ascended"
 requiresomni: true

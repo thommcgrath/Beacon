@@ -5,11 +5,14 @@ grand_parent: Config Editors
 configkeys:
   - DinoClassDamageMultipliers
   - DinoClassResistanceMultipliers
+  - DinoClassSpeedMultipliers
   - NPCReplacements
   - PreventDinoTameClassNames
   - PreventTransferForClassNames
   - TamedDinoClassDamageMultipliers
   - TamedDinoClassResistanceMultipliers
+  - TamedDinoClassSpeedMultipliers
+  - TamedDinoClassStaminaMultipliers
 supportedgames:
   - "Ark: Survival Ascended"
 requiresomni: true
