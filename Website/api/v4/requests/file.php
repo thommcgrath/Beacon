@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Response, Core};
-	
+
 function handleRequest(array $context): ?Response {
 	$user = Core::User();
 	$prefix = '/' . $user->UserId();
@@ -10,12 +10,12 @@ function handleRequest(array $context): ?Response {
 	if (isset($context['pathParameters']['filePath'])) {
 		$remote_path .= $context['pathParameters']['filePath'];
 	}
-	
+
 	$prohibited_path = '/' . $user->UserId() . '/Documents/';
 	if (str_starts_with($remote_path, $prohibited_path)) {
 		return Response::NewJsonError('Use the projects API for accessing projects', null, 446);
 	}
-	
+
 	switch ($context['routeKey']) {
 	case 'GET /files':
 	case 'GET /files/{...filePath}':
@@ -27,7 +27,7 @@ function handleRequest(array $context): ?Response {
 				if (str_starts_with($file['path'], $prohibited_path)) {
 					continue;
 				}
-				
+
 				$file['path'] = substr($file['path'], $prefix_len);
 				$filtered[] = $file;
 			}
@@ -41,23 +41,33 @@ function handleRequest(array $context): ?Response {
 		if (BeaconCloudStorage::PutFile($remote_path, Core::Body())) {
 			$details = BeaconCloudStorage::DetailsForFile($remote_path);
 			$details['path'] = substr($details['path'], $prefix_len);
-			
+
+			$eventBody = [];
+			if (isset($_SERVER['HTTP_X_BEACON_DEVICE_ID'])) {
+				$eventBody['deviceId'] = $_SERVER['HTTP_X_BEACON_DEVICE_ID'];
+			}
+
 			$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
-			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', '', $pusherSocketId);
-			
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', $eventBody, $pusherSocketId);
+
 			return Response::NewJson($details, 200);
 		} else {
 			return Response::NewJsonError('Something went wrong', null, 500);
 		}
 	case 'DELETE /files/{...filePath}':
 		BeaconCloudStorage::DeleteFile($remote_path);
-		
+
+		$eventBody = [];
+		if (isset($_SERVER['HTTP_X_BEACON_DEVICE_ID'])) {
+			$eventBody['deviceId'] = $_SERVER['HTTP_X_BEACON_DEVICE_ID'];
+		}
+
 		$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
-		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', '', $pusherSocketId);
-		
+		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', $eventBody, $pusherSocketId);
+
 		return Response::NewNoContent();
 	}
-	
+
 	return Response::NewJsonError('Route not found', null, 404);
 }
 
