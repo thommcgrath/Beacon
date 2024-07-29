@@ -26,7 +26,6 @@ Begin BeaconWindow DebugWindow Implements NotificationKit.Receiver
    Width           =   600
    Begin Beacon.Thread CollectionThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -639,31 +638,7 @@ End
 		  If (Identity Is Nil) = False Then
 		    Var IdentityLicenses() As Beacon.OmniLicense = Identity.Licenses
 		    For Each License As Beacon.OmniLicense In IdentityLicenses
-		      Var GameNames() As String
-		      If License.IsFlagged(Ark.OmniFlag) Then
-		        GameNames.Add(Language.GameName(Ark.Identifier))
-		      End If
-		      If License.IsFlagged(ArkSA.OmniFlag) Then
-		        GameNames.Add(Language.GameName(ArkSA.Identifier))
-		      End If
-		      If License.IsFlagged(SDTD.OmniFlag)Then
-		        GameNames.Add(Language.GameName(SDTD.Identifier))
-		      End If
-		      If License.IsFlagged(Palworld.OmniFlag) Then
-		        GameNames.Add(Language.GameName(Palworld.Identifier))
-		      End If
-		      If License.IsFlagged(Beacon.OmniLicense.CuratorFlag) Then
-		        GameNames.Add("Curator Access")
-		      End If
-		      
-		      Var LicenseText As String = Language.EnglishOxfordList(GameNames)
-		      
-		      If License.Expiration.IsEmpty = False Then
-		        Var Expiration As DateTime = License.ExpirationDateTime
-		        LicenseText = LicenseText + ", " + Language.ReplacePlaceholders(Self.ExpiresCaption, Expiration.ToString)
-		      End If
-		      
-		      Licenses.Add(LicenseText)
+		      Licenses.Add(License.Description)
 		    Next
 		  End If
 		  
@@ -746,9 +721,6 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = CollectingCaption, Type = String, Dynamic = True, Default = \"Collecting Debug Info\xE2\x80\xA6", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = ExpiresCaption, Type = String, Dynamic = True, Default = \"expires \?1", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = FastClockCaption, Type = String, Dynamic = True, Default = \"fast by \?1", Scope = Private

@@ -8,6 +8,36 @@ Protected Module Language
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Description(Extends License As Beacon.OmniLicense) As String
+		  Var GameNames() As String
+		  If License.IsFlagged(Ark.OmniFlag) Then
+		    GameNames.Add(Language.GameName(Ark.Identifier))
+		  End If
+		  If License.IsFlagged(ArkSA.OmniFlag) Then
+		    GameNames.Add(Language.GameName(ArkSA.Identifier))
+		  End If
+		  If License.IsFlagged(SDTD.OmniFlag)Then
+		    GameNames.Add(Language.GameName(SDTD.Identifier))
+		  End If
+		  If License.IsFlagged(Palworld.OmniFlag) Then
+		    GameNames.Add(Language.GameName(Palworld.Identifier))
+		  End If
+		  If License.IsFlagged(Beacon.OmniLicense.CuratorFlag) Then
+		    GameNames.Add("Curator Access")
+		  End If
+		  
+		  Var LicenseText As String = EnglishOxfordList(GameNames)
+		  
+		  If License.Expiration.IsEmpty = False Then
+		    Var Expiration As DateTime = License.ExpirationDateTime
+		    LicenseText = LicenseText + ", " + ReplacePlaceholders(CommonExpiresOnDate, Expiration.ToString)
+		  End If
+		  
+		  Return LicenseText
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function EnglishOxfordList(Items() As Beacon.NamedItem, Conjunction As String = "and", Limit As Integer = -1) As String
 		  Var Names() As String
@@ -264,6 +294,9 @@ Protected Module Language
 	#tag EndConstant
 
 	#tag Constant, Name = CommonContinue, Type = String, Dynamic = True, Default = \"Continue", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonExpiresOnDate, Type = String, Dynamic = True, Default = \"expires \?1", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = CommonOk, Type = String, Dynamic = True, Default = \"OK", Scope = Protected

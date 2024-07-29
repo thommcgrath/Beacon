@@ -89,21 +89,27 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function Licenses() As Beacon.OmniLicense()
-		  Var Arr() As Beacon.OmniLicense
-		  For Each License As Beacon.OmniLicense In Self.mLicenses
-		    If License.IsValidForCurrentBuild Then
-		      Arr.Add(License)
-		    End If
-		  Next
-		  Return Arr
+		  Return Self.LicensesForBuild(App.BuildNumber, 2147483647)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Licenses(Flags As Integer) As Beacon.OmniLicense()
+		  Return Self.LicensesForBuild(App.BuildNumber, Flags)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LicensesForBuild(BuildNumber As Integer) As Beacon.OmniLicense()
+		  Return Self.LicensesForBuild(BuildNumber, 2147483647)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LicensesForBuild(BuildNumber As Integer, Flags As Integer) As Beacon.OmniLicense()
 		  Var Arr() As Beacon.OmniLicense
 		  For Each License As Beacon.OmniLicense In Self.mLicenses
-		    If (License.Flags And Flags) > 0 And License.IsValidForCurrentBuild Then
+		    If (License.Flags And Flags) > 0 And License.IsValidForBuild(BuildNumber) Then
 		      Arr.Add(License)
 		    End If
 		  Next
