@@ -477,6 +477,7 @@ Protected Class ProjectController
 		      If App.Pusher.SocketId.IsEmpty = False Then
 		        Request.RequestHeader("X-Beacon-Pusher-Id") = App.Pusher.SocketId
 		      End If
+		      Request.RequestHeader("X-Beacon-Device-Id") = Beacon.HardwareId
 		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		      Saved = Response.HTTPStatus = 200 Or Response.HTTPStatus = 201
 		      Message = Self.ErrorMessageFromResponse(Response)

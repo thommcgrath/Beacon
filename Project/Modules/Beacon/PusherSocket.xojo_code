@@ -256,6 +256,7 @@ Protected Class PusherSocket
 		    End If
 		  Wend
 		  Self.State = Beacon.PusherSocket.States.Disconnected
+		  Self.mCurl = Nil
 		  
 		  If ShouldReconnect Then
 		    // Resubscribe to channels
@@ -264,8 +265,6 @@ Protected Class PusherSocket
 		    Next
 		    GoTo ReconnectPoint
 		  End If
-		  
-		  Self.mCurl = Nil
 		End Sub
 	#tag EndMethod
 
