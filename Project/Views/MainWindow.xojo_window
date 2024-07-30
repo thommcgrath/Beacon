@@ -746,6 +746,8 @@ End
 		        ProfileButton.Caption = ""
 		      End If
 		    End If
+		    
+		    Self.UpdateRenewButton()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1031,6 +1033,42 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateRenewButton()
+		  If Self.NavBar Is Nil Then
+		    Return
+		  End If
+		  
+		  Var RenewButton As OmniBarItem = Self.NavBar.Item("NavRenew")
+		  If RenewButton Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Manager As IdentityManager = App.IdentityManager
+		  If Manager Is Nil Then
+		    RenewButton.Visible = False
+		    Return
+		  End If
+		  
+		  Var Identity As Beacon.Identity = Manager.CurrentIdentity
+		  If Identity Is Nil Then
+		    RenewButton.Visible = False
+		    Return
+		  End If
+		  
+		  Var Licenses() As Beacon.OmniLicense = Identity.ExpiredLicenses()
+		  If Licenses.Count = 0 Then
+		    RenewButton.Visible = False
+		  ElseIf Licenses.Count = 1 Then
+		    RenewButton.HelpTag = "Your update plan for '" + Licenses(0).Description(False) + "' expired on " + Licenses(0).ExpirationDateTime.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.None) + ". Renew your update plan to gain access to new features."
+		    RenewButton.Visible = True
+		  Else
+		    RenewButton.HelpTag = "You have " + Language.NounWithQuantity(Licenses.Count, "expired update plan", "expired update plans") + ". Renew your update plans to gain access to new features."
+		    RenewButton.Visible = True
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function WindowTypeLabel() As String
 		  Select Case Self.Pages.SelectedPanelIndex
@@ -1125,9 +1163,15 @@ End
 		  Var Pusher As OmniBarItem = OmniBarItem.CreateButton("NavPusher", "", IconToolbarCloudDisconnected, "")
 		  Pusher.Visible = False
 		  
-		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace("MidSpacer"), Update, Pusher, OmniBarItem.CreateSeparator("UserSeparator"), User)
+		  Var Renew As OmniBarItem = OmniBarItem.CreateButton("NavRenew", "Renew Update Plan", IconToolbarRenew, "Renew your Beacon update plan")
+		  Renew.AlwaysUseActiveColor = True
+		  Renew.ActiveColor = OmniBarItem.ActiveColors.Orange
+		  Renew.Visible = False
 		  
-		  Self.UpdatePusherStatus
+		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace("MidSpacer"), Renew, Update, Pusher, OmniBarItem.CreateSeparator("UserSeparator"), User)
+		  
+		  Self.UpdatePusherStatus()
+		  Self.UpdateRenewButton()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1155,6 +1199,8 @@ End
 		      App.Pusher.Start()
 		    End If
 		    Return
+		  Case "NavRenew"
+		    System.GotoURL(Beacon.WebURL("/omni"))
 		  Else
 		    Return
 		  End Select

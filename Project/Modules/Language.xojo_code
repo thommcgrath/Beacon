@@ -9,7 +9,7 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Description(Extends License As Beacon.OmniLicense) As String
+		Function Description(Extends License As Beacon.OmniLicense, WithExpiration As Boolean = True) As String
 		  Var GameNames() As String
 		  If License.IsFlagged(Ark.OmniFlag) Then
 		    GameNames.Add(Language.GameName(Ark.Identifier))
@@ -29,7 +29,7 @@ Protected Module Language
 		  
 		  Var LicenseText As String = EnglishOxfordList(GameNames)
 		  
-		  If License.Expiration.IsEmpty = False Then
+		  If WithExpiration And License.Expiration.IsEmpty = False Then
 		    Var Expiration As DateTime = License.ExpirationDateTime
 		    LicenseText = LicenseText + ", " + ReplacePlaceholders(CommonExpiresOnDate, Expiration.ToString)
 		  End If

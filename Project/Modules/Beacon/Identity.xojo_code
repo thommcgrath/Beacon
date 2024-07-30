@@ -27,6 +27,18 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ExpiredLicenses() As Beacon.OmniLicense()
+		  Var Arr() As Beacon.OmniLicense
+		  For Each License As Beacon.OmniLicense In Self.mLicenses
+		    If License.IsExpired Then
+		      Arr.Add(License)
+		    End If
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromUserApi(UserData As Dictionary) As Beacon.Identity
 		  Try
 		    Var UserId As String = UserData.Value("userId").StringValue
@@ -139,15 +151,12 @@ Protected Class Identity
 		    If Row.Column("licenses").Value.IsNull = False Then
 		      LicensesJson = Beacon.ParseJSON(Row.Column("licenses").StringValue)
 		    End If
-		    Var OmniFlags As Integer
 		    For Each Member As Variant In LicensesJson
 		      If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
 		        Continue
 		      End If
 		      
-		      Var License As New Beacon.OmniLicense(Dictionary(Member))
-		      OmniFlags = OmniFlags Or License.Flags
-		      Licenses.Add(License)
+		      Licenses.Add(New Beacon.OmniLicense(Dictionary(Member)))
 		    Next
 		    
 		    Var SignatureParts() As Variant
