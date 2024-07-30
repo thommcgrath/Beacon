@@ -1756,7 +1756,7 @@ Implements ArkSA.BlueprintProvider
 		Function GetLootContainerIcon(Container As ArkSA.LootContainer, ForegroundColor As Color, BackgroundColor As Color) As Picture
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
 		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
-		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
+		  BackgroundColor = SystemColors.WindowBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
 		  
 		  Var AccentColor As Color
 		  Var IconID As String
