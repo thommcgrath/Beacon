@@ -1,7 +1,7 @@
 #tag Class
 Protected Class EngramControl
 Inherits ArkSA.ConfigGroup
-Implements Beacon.BlueprintConsumer
+Implements Beacon.BlueprintConsumer, NotificationKit.Receiver
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
@@ -56,7 +56,7 @@ Implements Beacon.BlueprintConsumer
 		  Var UnlockEntries(), OverrideEntries() As String
 		  Var UnlockConfigs(), OverrideConfigs() As ArkSA.ConfigValue
 		  Var Whitelisting As Boolean = Self.OnlyAllowSpecifiedEngrams
-		  Var Engrams() As ArkSA.Engram = Self.Engrams
+		  Var Engrams() As ArkSA.Engram = Self.Engrams(ArkSA.BlueprintReference.DefaultOptions And Not ArkSA.BlueprintReference.OptionUseCache)
 		  For Each Engram As ArkSA.Engram In Engrams
 		    // Get the unlock string from the engram if available, or use the backup if not available.
 		    If (Engram Is Nil) Or Project.ContentPackEnabled(Engram.ContentPackId) = False Then
@@ -309,34 +309,41 @@ Implements Beacon.BlueprintConsumer
 
 
 	#tag Method, Flags = &h21
-		Private Shared Sub AddOverrideToConfig(Config As ArkSA.Configs.EngramControl, DataSource As ArkSA.DataSource, Details As Dictionary, ContentPacks As Beacon.StringList)
+		Private Shared Sub AddOverrideToConfig(Config As ArkSA.Configs.EngramControl, Providers() As ArkSA.BlueprintProvider, Details As Dictionary, ContentPacks As Beacon.StringList)
 		  If Not Details.HasKey("EngramClassName") Then
 		    Return
 		  End If
 		  
 		  Try
 		    Var EntryString As String = Details.Value("EngramClassName")
-		    Var Engrams() As ArkSA.Engram = DataSource.GetEngramsByEntryString(EntryString, ContentPacks)
+		    Var Engrams() As ArkSA.Engram
+		    For Each Provider As ArkSA.BlueprintProvider In Providers
+		      Engrams = Engrams.Merge(Provider.GetEngramsByEntryString(EntryString, ContentPacks))
+		      If Engrams.Count > 0 Then
+		        Exit
+		      End If
+		    Next
 		    If Engrams.Count = 0 Then
 		      Engrams.Add(ArkSA.Engram.CreateFromEntryString(EntryString))
 		    End If
-		    For Each Engram As ArkSA.Engram In Engrams
-		      If Details.HasKey("EngramHidden") Then
-		        Config.Hidden(Engram) = Details.BooleanValue("EngramHidden", False)
-		      End If
-		      
-		      If Details.HasKey("RemoveEngramPreReq") Then
-		        Config.RemovePrerequisites(Engram) = Details.BooleanValue("RemoveEngramPreReq", False)
-		      End If
-		      
-		      If Details.HasKey("EngramLevelRequirement") And Details.Value("EngramLevelRequirement").Type = Variant.TypeDouble Then
-		        Config.RequiredPlayerLevel(Engram) = Details.Value("EngramLevelRequirement").DoubleValue
-		      End If
-		      
-		      If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
-		        Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
-		      End If
-		    Next
+		    
+		    Var Engram As ArkSA.Engram = Engrams(0)
+		    
+		    If Details.HasKey("EngramHidden") Then
+		      Config.Hidden(Engram) = Details.BooleanValue("EngramHidden", False)
+		    End If
+		    
+		    If Details.HasKey("RemoveEngramPreReq") Then
+		      Config.RemovePrerequisites(Engram) = Details.BooleanValue("RemoveEngramPreReq", False)
+		    End If
+		    
+		    If Details.HasKey("EngramLevelRequirement") And Details.Value("EngramLevelRequirement").Type = Variant.TypeDouble Then
+		      Config.RequiredPlayerLevel(Engram) = Details.Value("EngramLevelRequirement").DoubleValue
+		    End If
+		    
+		    If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
+		      Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
+		    End If
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
@@ -374,6 +381,13 @@ Implements Beacon.BlueprintConsumer
 		  Super.Constructor()
 		  
 		  Self.mOverrides = New ArkSA.BlueprintAttributeManager
+		  NotificationKit.Watch(Self, ArkSA.DataSource.Notification_EngramsChanged)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  NotificationKit.Ignore(Self, ArkSA.DataSource.Notification_EngramsChanged)
 		End Sub
 	#tag EndMethod
 
@@ -412,7 +426,7 @@ Implements Beacon.BlueprintConsumer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Engrams() As ArkSA.Engram()
+		Function Engrams(ResolutionOptions As Integer = ArkSA.BlueprintReference.DefaultOptions) As ArkSA.Engram()
 		  Var References() As ArkSA.BlueprintReference = Self.mOverrides.References
 		  Var Results() As ArkSA.Engram
 		  For Each Reference As ArkSA.BlueprintReference In References
@@ -420,7 +434,7 @@ Implements Beacon.BlueprintConsumer
 		      Continue
 		    End If
 		    
-		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve
+		    Var Blueprint As ArkSA.Blueprint = Reference.Resolve(Nil, ResolutionOptions)
 		    If (Blueprint Is Nil = False) And Blueprint IsA ArkSA.Engram Then
 		      Results.Add(ArkSA.Engram(Blueprint))
 		    End If
@@ -470,8 +484,9 @@ Implements Beacon.BlueprintConsumer
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		  
 		  Var Config As New ArkSA.Configs.EngramControl
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  Config.AutoUnlockAllEngrams = ParsedData.BooleanValue("bAutoUnlockAllEngrams", False)
 		  Config.OnlyAllowSpecifiedEngrams = ParsedData.BooleanValue("bOnlyAllowSpecifiedEngrams", False)
 		  
@@ -505,6 +520,7 @@ Implements Beacon.BlueprintConsumer
 		      Overrides.Add(ParsedValue)
 		    End If
 		    
+		    Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastIndex
 		      Try
 		        Var Details As Dictionary = Overrides(Idx)
@@ -512,7 +528,7 @@ Implements Beacon.BlueprintConsumer
 		        Var Engram As ArkSA.Engram = DataSource.GetEngramByItemID(ItemID)
 		        If (Engram Is Nil) = False And Engram.EntryString.IsEmpty = False Then
 		          Details.Value("EngramClassName") = Engram.EntryString
-		          AddOverrideToConfig(Config, DataSource, Details, ContentPacks)
+		          AddOverrideToConfig(Config, Providers, Details, ContentPacks)
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -536,7 +552,7 @@ Implements Beacon.BlueprintConsumer
 		        Continue
 		      End Try
 		      
-		      AddOverrideToConfig(Config, DataSource, Details, ContentPacks)
+		      AddOverrideToConfig(Config, Providers, Details, ContentPacks)
 		    Next
 		  End If
 		  
@@ -565,14 +581,18 @@ Implements Beacon.BlueprintConsumer
 		        Var EntryString As String = Details.Value("EngramClassName")
 		        Var Level As Integer = Details.Value("LevelToAutoUnlock")
 		        
-		        Var Engrams() As ArkSA.Engram = DataSource.GetEngramsByEntryString(EntryString, ContentPacks)
+		        Var Engrams() As ArkSA.Engram
+		        For Each Provider As ArkSA.BlueprintProvider In Providers
+		          Engrams = Engrams.Merge(Provider.GetEngramsByEntryString(EntryString, ContentPacks))
+		          If Engrams.Count > 0 Then
+		            Exit
+		          End If
+		        Next
 		        If Engrams.Count = 0 Then
 		          Engrams.Add(ArkSA.Engram.CreateFromEntryString(EntryString))
 		        End If
-		        For Each Engram As ArkSA.Engram In Engrams
-		          Config.AutoUnlockEngram(Engram) = True
-		          Config.RequiredPlayerLevel(Engram) = Level
-		        Next
+		        Config.AutoUnlockEngram(Engrams(0)) = True
+		        Config.RequiredPlayerLevel(Engrams(0)) = Level
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
@@ -706,6 +726,24 @@ Implements Beacon.BlueprintConsumer
 		  
 		  Return Self.mOverrides.MigrateBlueprints(Migrator)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case ArkSA.DataSource.Notification_EngramsChanged
+		    Var Engrams() As ArkSA.Engram = Self.Engrams(0)
+		    For Each Engram As ArkSA.Engram In Engrams
+		      If Engram Is Nil Or Engram.HasUnlockDetails = False Or Self.mOverrides.HasAttribute(Engram, Self.KeyEntryString) = False Then
+		        Continue
+		      End If
+		      
+		      Self.SetAttributeForEngram(Engram, Self.KeyEntryString, Engram.EntryString)
+		    Next
+		  End Select
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

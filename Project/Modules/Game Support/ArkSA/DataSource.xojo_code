@@ -1,6 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
+Implements ArkSA.BlueprintProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
@@ -614,16 +615,16 @@ Inherits Beacon.DataSource
 		      For Each Entry As DictionaryEntry In PacksToRemove
 		        Call Self.DeleteContentPack(Entry.Key.StringValue, False)
 		      Next
+		      
+		      Self.RunContentPackMigrations()
+		      Self.CleanForeignKeyViolations()
+		      
+		      Self.CommitTransaction()
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Importing Ark Ascended user blueprints")
 		      Self.RollbackTransaction()
 		      Return
 		    End Try
-		    
-		    Self.RunContentPackMigrations()
-		    Self.CleanForeignKeyViolations()
-		    
-		    Self.CommitTransaction()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -722,7 +723,7 @@ Inherits Beacon.DataSource
 		Sub TestPerformance()
 		  Var TestDoc As New ArkSA.Project
 		  Var Packs As Beacon.StringList = TestDoc.ContentPacks
-		  Var Tags As String = Preferences.SelectedTag(ArkSA.CategoryEngrams, "8e58f9e4") // Use a strange subgroup here to always get the default
+		  Var Tags As Beacon.TagSpec = Preferences.SelectedTag(ArkSA.CategoryEngrams, "8e58f9e4") // Use a strange subgroup here to always get the default
 		  Call Self.GetBlueprints(ArkSA.CategoryEngrams, "", Packs, Tags)
 		End Sub
 	#tag EndEvent
@@ -752,6 +753,12 @@ Inherits Beacon.DataSource
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT type FROM content_packs WHERE content_pack_id = ?1;", Item.ContentPackId)
 		  Return Rows.RowCount = 1 And Rows.Column("type").IntegerValue = Beacon.ContentPack.TypeLocal
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BlueprintProviderId() As String
+		  Return "Official"
 		End Function
 	#tag EndMethod
 
@@ -1102,31 +1109,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Blueprint()
-		  Var Categories() As String = ArkSA.Categories
-		  Var Blueprints() As ArkSA.Blueprint
-		  Var ExtraClauses() As String
-		  Var ExtraValues() As Variant
-		  For Each Category As String In Categories
-		    Var Results() As ArkSA.Blueprint = Self.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
-		    For Each Result As ArkSA.Blueprint In Results
-		      Blueprints.Add(Result)
-		    Next
-		  Next
-		  Return Blueprints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Blueprint()
-		  Var ExtraClauses() As String
-		  Var ExtraValues() As Variant
-		  Return Self.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
+		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
 		  Var Blueprints() As ArkSA.Blueprint
 		  
 		  Try
@@ -1167,9 +1150,9 @@ Inherits Beacon.DataSource
 		      Next
 		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
-		    If Tags.IsEmpty = False Then
+		    If (Tags Is Nil) = False Then
 		      Var RequiredTags(), ExcludedTags() As String
-		      TagPicker.ParseSpec(Tags, RequiredTags, ExcludedTags)
+		      Tags.OrganizeTags(RequiredTags, ExcludedTags)
 		      Var ObjectTagIndex As Integer = RequiredTags.IndexOf("object")
 		      If ObjectTagIndex > -1 Then
 		        RequiredTags.RemoveAt(ObjectTagIndex)
@@ -1488,7 +1471,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Creature()
+		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Creature()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -1595,7 +1578,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.Engram()
+		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.Engram()
 		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
 		  Var ExtraValues(0) As Variant
 		  Var Blueprints() As ArkSA.Blueprint = Self.GetBlueprints(ArkSA.CategoryEngrams, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
@@ -1610,7 +1593,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.Engram()
+		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Engram()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -1773,7 +1756,7 @@ Inherits Beacon.DataSource
 		Function GetLootContainerIcon(Container As ArkSA.LootContainer, ForegroundColor As Color, BackgroundColor As Color) As Picture
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
 		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
-		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
+		  BackgroundColor = SystemColors.WindowBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
 		  
 		  Var AccentColor As Color
 		  Var IconID As String
@@ -1874,7 +1857,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
+		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil, IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -2082,7 +2065,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As ArkSA.SpawnPoint()
+		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.SpawnPoint()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -2128,7 +2111,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointsForCreature(Creature As ArkSA.Creature, ContentPacks As Beacon.StringList, Tags As String) As ArkSA.SpawnPoint()
+		Function GetSpawnPointsForCreature(Creature As ArkSA.Creature, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.SpawnPoint()
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  Clauses.Add("spawn_points.sets LIKE :placeholder:")

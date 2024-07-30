@@ -6,6 +6,7 @@ configkeys:
   - DinoClassDamageMultipliers
   - DinoClassResistanceMultipliers
   - NPCReplacements
+  - PreventBreedingForClassNames
   - PreventDinoTameClassNames
   - PreventTransferForClassNames
   - TamedDinoClassDamageMultipliers

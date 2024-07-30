@@ -44,7 +44,7 @@ Protected Module Configs
 		    Tools.ResizeTo(-1)
 		    Tools.Add(New ArkSA.ProjectTool("Adjust Crafting Costs", "6600245b-54b4-4b85-8f26-3792084ca2fa", NameCraftingCosts))
 		    Tools.Add(New ArkSA.ProjectTool("Setup Fibercraft Server", "94eced5b-be7d-441a-a5b3-f4a9bf40a856", NameCraftingCosts))
-		    Tools.Add(New ArkSA.ProjectTool("Setup Transferrable Element", "3db64fe3-9134-4a19-a255-7712c8c70a83", NameCraftingCosts))
+		    Tools.Add(New ArkSA.ProjectTool("Setup Transferable Element", "3db64fe3-9134-4a19-a255-7712c8c70a83", NameCraftingCosts))
 		    Tools.Add(New ArkSA.ProjectTool("Convert Creature Replacements to Spawn Point Additions", "614cfc80-b7aa-437d-b17e-01534f2ab778", NameCreatureSpawns, NameCreatureAdjustments))
 		    Tools.Add(New ArkSA.ProjectTool("Quick Edit Creature Spawns", "8913bca3-fbae-43bd-a94b-7c3ac06b6ca1", NameCreatureSpawns))
 		    #if False

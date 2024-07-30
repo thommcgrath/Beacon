@@ -904,7 +904,7 @@ End
 		  Var CreaturesProcessed As Integer = 0
 		  Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for 0 of " + TotalCreaturesText + "…"))
 		  For Each Creature As Ark.Creature In Self.mCreatures
-		    Var Points() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, "")
+		    Var Points() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, Nil)
 		    For Each Definition As Ark.SpawnPoint In Points
 		      If Definition.ValidForMask(Self.mMask) = False Then
 		        Continue

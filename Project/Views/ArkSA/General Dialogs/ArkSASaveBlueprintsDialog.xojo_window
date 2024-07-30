@@ -237,7 +237,6 @@ Begin BeaconDialog ArkSASaveBlueprintsDialog
    End
    Begin Thread SaveThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -254,7 +253,28 @@ End
 	#tag Event
 		Sub Opening()
 		  Var Packs() As Beacon.ContentPack = Self.mProject.EmbeddedContentPacks
+		  Var PackNames() As String
+		  PackNames.ResizeTo(Packs.LastIndex)
+		  For Idx As Integer = 0 To PackNames.LastIndex
+		    PackNames(Idx) = Packs(Idx).Name
+		  Next
+		  PackNames.SortWith(Packs)
+		  
 		  For Each Pack As Beacon.ContentPack In Packs
+		    Var Blueprints() As ArkSA.Blueprint = Self.mProject.EmbeddedBlueprints(Pack, True)
+		    If Blueprints.Count = 0 Then
+		      Continue
+		    End If
+		    
+		    Var BlueprintNames() As String
+		    BlueprintNames.ResizeTo(Blueprints.LastIndex)
+		    For Idx As Integer = 0 To BlueprintNames.LastIndex
+		      BlueprintNames(Idx) = Blueprints(Idx).Label
+		    Next
+		    BlueprintNames.SortWith(Blueprints)
+		    
+		    Self.mUnsavedBlueprints.Value(Pack.ContentPackId) = Blueprints
+		    
 		    Self.List.AddExpandableRow(Pack.Name)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Pack
 		    Self.List.CellCheckBoxStateAt(Self.List.LastAddedRowIndex, 0) = DesktopCheckBox.VisualStates.Checked
@@ -270,8 +290,8 @@ End
 		Private Sub Constructor(Project As ArkSA.Project)
 		  Self.mProject = Project
 		  Self.mStates = New Dictionary
+		  Self.mUnsavedBlueprints = New Dictionary
 		  Super.Constructor
-		  
 		End Sub
 	#tag EndMethod
 
@@ -303,6 +323,10 @@ End
 		Private mStates As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUnsavedBlueprints As Dictionary
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
@@ -320,13 +344,13 @@ End
 		      Continue
 		    Case DesktopCheckBox.VisualStates.Checked
 		      ContentPacks.Add(Pack)
-		      Var Temp() As ArkSA.Blueprint = Self.mProject.EmbeddedBlueprints(Pack)
+		      Var Temp() As ArkSA.Blueprint = Self.mUnsavedBlueprints.Value(Pack.ContentPackId)
 		      For Each Blueprint As ArkSA.Blueprint In Temp
 		        Blueprints.Add(Blueprint)
 		      Next
 		    Case DesktopCheckBox.VisualStates.Indeterminate
 		      ContentPacks.Add(Pack)
-		      Var Temp() As ArkSA.Blueprint = Self.mProject.EmbeddedBlueprints(Pack)
+		      Var Temp() As ArkSA.Blueprint = Self.mUnsavedBlueprints.Value(Pack.ContentPackId)
 		      For Each Blueprint As ArkSA.Blueprint In Temp
 		        Var BlueprintState As DesktopCheckBox.VisualStates = Self.mStates.Lookup(Blueprint.BlueprintId, DesktopCheckBox.VisualStates.Unchecked)
 		        If BlueprintState = DesktopCheckBox.VisualStates.Checked Then
@@ -358,7 +382,7 @@ End
 	#tag Event
 		Sub RowExpanded(row As Integer)
 		  Var Pack As Beacon.ContentPack = Me.RowTagAt(Row)
-		  Var Blueprints() As ArkSA.Blueprint = Self.mProject.EmbeddedBlueprints(Pack)
+		  Var Blueprints() As ArkSA.Blueprint = Self.mUnsavedBlueprints.Value(Pack.ContentPackId)
 		  Var PackState As DesktopCheckBox.VisualStates = Self.mStates.Lookup(Pack.ContentPackId, DesktopCheckBox.VisualStates.Checked)
 		  For Each Blueprint As ArkSA.Blueprint In Blueprints
 		    Me.AddRow(Blueprint.Label)
@@ -384,7 +408,7 @@ End
 		    Var Pack As Beacon.ContentPack = RowTag
 		    Self.mStates.Value(Pack.ContentPackId) = Checked
 		    
-		    Var Blueprints() As ArkSA.Blueprint = Self.mProject.EmbeddedBlueprints(Pack)
+		    Var Blueprints() As ArkSA.Blueprint = Self.mUnsavedBlueprints.Value(Pack.ContentPackId)
 		    For Each Blueprint As ArkSA.Blueprint In Blueprints
 		      Self.mStates.Value(Blueprint.BlueprintId) = Checked
 		    Next

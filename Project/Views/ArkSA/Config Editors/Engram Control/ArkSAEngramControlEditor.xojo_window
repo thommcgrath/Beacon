@@ -525,7 +525,13 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetupEngramsList(SelectEngrams() As ArkSA.Engram = Nil)
 		  Var Config As ArkSA.Configs.EngramControl = Self.Config(False)
-		  Var Engrams() As ArkSA.Engram = Beacon.Merge(Config.Engrams, ArkSA.DataSource.Pool.Get(False).GetEngramEntries("", Self.Project.ContentPacks, ""))
+		  Var Engrams() As ArkSA.Engram = Config.Engrams
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		  Var ContentPackIds As Beacon.StringList = Self.Project.ContentPacks
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Engrams = Engrams.Merge(Provider.GetEngramEntries("", ContentPackIds, Nil))
+		  Next
+		  
 		  Var LabelCounts As New Dictionary
 		  For Each Engram As ArkSA.Engram In Engrams
 		    LabelCounts.Value(Engram.Label) = LabelCounts.Lookup(Engram.Label, 0) + 1

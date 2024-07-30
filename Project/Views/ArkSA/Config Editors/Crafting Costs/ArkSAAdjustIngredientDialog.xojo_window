@@ -391,6 +391,7 @@ Begin BeaconDialog ArkSAAdjustIngredientDialog
    End
    Begin Thread ProcessorThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -820,7 +821,7 @@ End
 		    Self.TargetRecipeMenu.SelectedRowIndex = Self.TargetModeSelected
 		    Self.TargetRecipeField.Text = Self.RecipesCaption(Self.mTargetRecipes)
 		    Self.TargetRecipeField.Italic = Self.mTargetRecipes.Count = 0
-		  ElseIf Self.mTargetRecipeTags.IsEmpty = False Then
+		  ElseIf (Self.mTargetRecipeTags Is Nil) = False And Self.mTargetRecipeTags.IsEmpty = False Then
 		    Self.TargetRecipeMenu.SelectedRowIndex = Self.TargetModeTagged
 		    Self.TargetRecipeTagPicker.Spec = Self.mTargetRecipeTags
 		  End If
@@ -829,7 +830,7 @@ End
 		    Self.TargetIngredientMenu.SelectedRowIndex = Self.TargetModeSelected
 		    Self.TargetIngredientField.Text = Self.IngredientsCaption(Self.mTargetIngredients)
 		    Self.TargetIngredientField.Italic = Self.mTargetIngredients.Count = 0
-		  ElseIf Self.mTargetIngredientTags.IsEmpty = False Then
+		  ElseIf (Self.mTargetIngredientTags Is Nil) = False And Self.mTargetIngredientTags.IsEmpty = False Then
 		    Self.TargetIngredientMenu.SelectedRowIndex = Self.TargetModeTagged
 		    Self.TargetIngredientTagPicker.Spec = Self.mTargetIngredientTags
 		  End If
@@ -850,7 +851,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Project As ArkSA.Project, TargetRecipes() As ArkSA.Engram = Nil, TargetRecipeTags As String = "", TargetIngredients() As ArkSA.Engram, TargetIngredientTags As String, ReplacementIngredient As ArkSA.Engram, Multiplier As Double, RoundingMode As Integer, RemoveZeroQuantities As Boolean)
+		Private Sub Constructor(Project As ArkSA.Project, TargetRecipes() As ArkSA.Engram = Nil, TargetRecipeTags As Beacon.TagSpec = Nil, TargetIngredients() As ArkSA.Engram, TargetIngredientTags As Beacon.TagSpec, ReplacementIngredient As ArkSA.Engram, Multiplier As Double, RoundingMode As Integer, RemoveZeroQuantities As Boolean)
 		  // Calling the overridden superclass constructor.
 		  Self.mMultiplier = Multiplier
 		  Self.mProject = Project
@@ -869,8 +870,12 @@ End
 		      Self.mTargetRecipes(Idx) = TargetRecipes(Idx)
 		    Next
 		  End If
-		  Self.mTargetIngredientTags = TargetIngredientTags
-		  Self.mTargetRecipeTags = TargetRecipeTags
+		  If (TargetIngredientTags Is Nil) = False Then
+		    Self.mTargetIngredientTags = New Beacon.TagSpec(TargetIngredientTags)
+		  End If
+		  If (TargetRecipeTags Is Nil) = False Then
+		    Self.mTargetRecipeTags = New Beacon.TagSpec(TargetRecipeTags)
+		  End If
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -888,7 +893,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Project As ArkSA.Project, TargetRecipes() As ArkSA.Engram = Nil, TargetRecipeTags As String = "", TargetIngredients() As ArkSA.Engram = Nil, TargetIngredientTags As String = "", ReplacementIngredient As ArkSA.Engram = Nil, Multiplier As Double = 1.0, RoundingMode As Integer = 0, RemoveZeroQuantities As Boolean = False) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Project As ArkSA.Project, TargetRecipes() As ArkSA.Engram = Nil, TargetRecipeTags As Beacon.TagSpec = Nil, TargetIngredients() As ArkSA.Engram = Nil, TargetIngredientTags As Beacon.TagSpec = Nil, ReplacementIngredient As ArkSA.Engram = Nil, Multiplier As Double = 1.0, RoundingMode As Integer = 0, RemoveZeroQuantities As Boolean = False) As Boolean
 		  Var Win As New ArkSAAdjustIngredientDialog(Project, TargetRecipes, TargetRecipeTags, TargetIngredients, TargetIngredientTags, ReplacementIngredient, Multiplier, RoundingMode, RemoveZeroQuantities)
 		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
@@ -1082,7 +1087,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTargetIngredientTags As String
+		Private mTargetIngredientTags As Beacon.TagSpec
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1094,7 +1099,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTargetRecipeTags As String
+		Private mTargetRecipeTags As Beacon.TagSpec
 	#tag EndProperty
 
 
@@ -1223,15 +1228,15 @@ End
 		  Select Case Self.TargetRecipeMenu.SelectedRowIndex
 		  Case Self.TargetModeAll
 		    Self.mTargetRecipes.ResizeTo(-1)
-		    Self.mTargetRecipeTags = ""
+		    Self.mTargetRecipeTags = Nil
 		  Case Self.TargetModeTagged
 		    Self.mTargetRecipes.ResizeTo(-1)
 		    Self.mTargetRecipeTags = Self.TargetRecipeTagPicker.Spec
 		  Case Self.TargetModeSelected
-		    Self.mTargetRecipeTags = ""
+		    Self.mTargetRecipeTags = Nil
 		  Case Self.TargetModeEdited
 		    Self.mTargetRecipes.ResizeTo(-1)
-		    Self.mTargetRecipeTags = ""
+		    Self.mTargetRecipeTags = Nil
 		    
 		    Var Config As ArkSA.ConfigGroup = Self.mProject.ConfigGroup(ArkSA.Configs.NameCraftingCosts)
 		    If Config IsA ArkSA.Configs.CraftingCosts Then
@@ -1241,12 +1246,12 @@ End
 		  Select Case Self.TargetIngredientMenu.SelectedRowIndex
 		  Case Self.TargetModeAll
 		    Self.mTargetIngredients.ResizeTo(-1)
-		    Self.mTargetIngredientTags = ""
+		    Self.mTargetIngredientTags = Nil
 		  Case Self.TargetModeTagged
 		    Self.mTargetIngredients.ResizeTo(-1)
 		    Self.mTargetIngredientTags = Self.TargetIngredientTagPicker.Spec
 		  Case Self.TargetModeSelected
-		    Self.mTargetIngredientTags = ""
+		    Self.mTargetIngredientTags = Nil
 		  End Select
 		  If Self.ReplacementMenu.SelectedRowIndex = Self.TargetModeAll Then
 		    Self.mReplacement = Nil
@@ -1291,8 +1296,12 @@ End
 		  Next
 		  
 		  Var ContentPacks As Beacon.StringList = Self.mProject.ContentPacks
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		  Var EngramIds() As String = DataSource.GetRecipeEngramIds(ContentPacks, ArkSA.Maps.UniversalMask)
+		  Var EngramIds() As String
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    EngramIds.Merge(Provider.GetRecipeEngramIds(ContentPacks, ArkSA.Maps.UniversalMask))
+		  Next
 		  For Each EngramId As String In EngramIds
 		    If Filter.HasKey(EngramId) Then
 		      Continue
@@ -1308,7 +1317,7 @@ End
 		  If Self.mTargetRecipes.Count > 0 Then
 		    TargetRecipes = Self.mTargetRecipes
 		  Else
-		    TargetRecipes = DataSource.GetEngrams("", ContentPacks, Self.mTargetRecipeTags)
+		    TargetRecipes = Providers.GetEngrams("", ContentPacks, Self.mTargetRecipeTags)
 		  End If
 		  Var TargetRecipeMap As New Dictionary
 		  For Each Recipe As ArkSA.Engram In TargetRecipes
@@ -1319,7 +1328,7 @@ End
 		  If Self.mTargetIngredients.Count > 0 Then
 		    TargetIngredients = Self.mTargetIngredients
 		  Else
-		    TargetIngredients = DataSource.GetEngrams("", ContentPacks, Self.mTargetIngredientTags)
+		    TargetIngredients = Providers.GetEngrams("", ContentPacks, Self.mTargetIngredientTags)
 		  End If
 		  Var TargetMap As New Dictionary
 		  For Each Ingredient As ArkSA.Engram In TargetIngredients

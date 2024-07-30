@@ -35,8 +35,8 @@ Begin ArkSAConfigEditor ArkSADinoAdjustmentsEditor
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   5
-      ColumnWidths    =   "*,120,120,120,120"
+      ColumnCount     =   8
+      ColumnWidths    =   "*,100,100,100,100,100,100,100"
       DefaultRowHeight=   34
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -55,7 +55,7 @@ Begin ArkSAConfigEditor ArkSADinoAdjustmentsEditor
       Height          =   454
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Creature	Wild Damage	Wild Resistance	Tamed Damage	Tamed Resistance"
+      InitialValue    =   "Creature	Wild Dmg	Wild Resist	Wild Speed	Tamed Dmg	Tamed Resist	Tamed Speed	Tamed Stam"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -387,27 +387,36 @@ End
 		      TameTransferSuffix = "cannot be transferred"
 		    End If
 		    
+		    Self.List.AddRow()
+		    Var RowIdx As Integer = Self.List.LastAddedRowIndex
 		    If Behavior.ProhibitSpawning Then
 		      Label = Label + EndOfLine + "Disabled"
 		      If TameTransferSuffix.IsEmpty = False Then
 		        Label = Label + ", " + TameTransferSuffix
 		      End If
-		      Self.List.AddRow(Label)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Label
 		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
 		      Label = Label + EndOfLine + "Replaced with " + Behavior.ReplacementCreature.Label
 		      If TameTransferSuffix.IsEmpty = False Then
 		        Label = Label + ", " + TameTransferSuffix
 		      End If
-		      Self.List.AddRow(Label)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Label
 		    Else
 		      If TameTransferSuffix.IsEmpty = False Then
 		        Label = Label + EndOfLine + TameTransferSuffix.Left(1).Uppercase + TameTransferSuffix.Middle(1)
 		      End If
-		      Self.List.AddRow(Label, Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####"))
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Label
+		      Self.List.CellTextAt(RowIdx, Self.ColumnWildDamage) = Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnWildResistance) = Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnWildSpeed) = Behavior.WildSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnTamedDamage) = Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnTamedResistance) = Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnTamedSpeed) = Behavior.TamedSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnTamedStamina) = Behavior.TamedStaminaMultiplier.ToString(Locale.Current, "0.0#####")
 		    End If
 		    
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.CreatureId) > -1
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetCreature
+		    Self.List.RowSelectedAt(RowIdx) = Selections.IndexOf(Behavior.TargetCreature.CreatureId) > -1
+		    Self.List.RowTagAt(RowIdx) = Behavior.TargetCreature
 		  Next
 		  
 		  Self.List.Sort()
@@ -426,16 +435,25 @@ End
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnTamedDamage, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = ColumnTamedDamage, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnTamedResistance, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnTamedResistance, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnTamedSpeed, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnTamedStamina, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnWildDamage, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnWildResistance, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnWildSpeed, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.arksa.dinoadjustment", Scope = Private
@@ -449,8 +467,11 @@ End
 		Sub Opening()
 		  Me.ColumnAlignmentAt(Self.ColumnWildDamage) = DesktopListbox.Alignments.Center
 		  Me.ColumnAlignmentAt(Self.ColumnWildResistance) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnWildSpeed) = DesktopListbox.Alignments.Center
 		  Me.ColumnAlignmentAt(Self.ColumnTamedDamage) = DesktopListbox.Alignments.Center
 		  Me.ColumnAlignmentAt(Self.ColumnTamedResistance) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnTamedSpeed) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnTamedStamina) = DesktopListbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -459,7 +459,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  If Self.MessageLabel.Text.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		    Self.MessageLabel.Text = Self.mMessage
+		    Self.MessageLabel.Text = Self.mMessage.ReplaceAll("&", "&&")
 		  End If
 		  
 		  If Self.Title.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
@@ -467,7 +467,7 @@ End
 		  End If
 		  
 		  If Self.DetailLabel.Text.Compare(Self.mDetail, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		    Self.DetailLabel.Text = Self.mDetail
+		    Self.DetailLabel.Text = Self.mDetail.ReplaceAll("&", "&&")
 		  End If
 		  
 		  If Self.CancelButton.Enabled <> Self.mCancelPressed Then
@@ -512,7 +512,7 @@ End
 		    End If
 		    
 		    If Self.SubDetailLabel.Text.Compare(Self.mSubDetail, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		      Self.SubDetailLabel.Text = Self.SubDetail
+		      Self.SubDetailLabel.Text = Self.SubDetail.ReplaceAll("&", "&&")
 		    End If
 		    
 		    Var SubProgressValue, SubProgressMaximum As Integer

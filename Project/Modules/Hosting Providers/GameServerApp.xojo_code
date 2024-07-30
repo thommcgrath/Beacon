@@ -1,5 +1,10 @@
 #tag Module
 Protected Module GameServerApp
+	#tag Property, Flags = &h21
+		Private RatelimitRemaining As Integer = 40
+	#tag EndProperty
+
+
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"GameServerApp.com", Scope = Protected
 	#tag EndConstant
 

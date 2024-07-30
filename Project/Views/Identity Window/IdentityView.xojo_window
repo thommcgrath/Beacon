@@ -432,7 +432,7 @@ End
 		  Next File
 		  
 		  If Files.Count = 1 Then
-		    Var Extension As String = Files(0).Extension
+		    Var Extension As String = "." + Files(0).Extension
 		    Var BaseName As String = Files(0).Name.Left(Files(0).Name.Length - Extension.Length)
 		    
 		    Var SaveDialog As New SaveFileDialog

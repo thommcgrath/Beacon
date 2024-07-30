@@ -8,6 +8,36 @@ Protected Module Language
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Description(Extends License As Beacon.OmniLicense, WithExpiration As Boolean = True) As String
+		  Var GameNames() As String
+		  If License.IsFlagged(Ark.OmniFlag) Then
+		    GameNames.Add(Language.GameName(Ark.Identifier))
+		  End If
+		  If License.IsFlagged(ArkSA.OmniFlag) Then
+		    GameNames.Add(Language.GameName(ArkSA.Identifier))
+		  End If
+		  If License.IsFlagged(SDTD.OmniFlag)Then
+		    GameNames.Add(Language.GameName(SDTD.Identifier))
+		  End If
+		  If License.IsFlagged(Palworld.OmniFlag) Then
+		    GameNames.Add(Language.GameName(Palworld.Identifier))
+		  End If
+		  If License.IsFlagged(Beacon.OmniLicense.CuratorFlag) Then
+		    GameNames.Add("Curator Access")
+		  End If
+		  
+		  Var LicenseText As String = EnglishOxfordList(GameNames)
+		  
+		  If WithExpiration And License.Expiration.IsEmpty = False Then
+		    Var Expiration As DateTime = License.ExpirationDateTime
+		    LicenseText = LicenseText + ", " + ReplacePlaceholders(CommonExpiresOnDate, Expiration.ToString)
+		  End If
+		  
+		  Return LicenseText
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function EnglishOxfordList(Items() As Beacon.NamedItem, Conjunction As String = "and", Limit As Integer = -1) As String
 		  Var Names() As String
@@ -50,7 +80,11 @@ Protected Module Language
 		    Var Remaining As Integer = Items.Count - (Limit - 1)
 		    AllowedItems.Add(Conjunction + " " + Remaining.ToString(Locale.Current, "0") + " others")
 		    
-		    Return String.FromArray(AllowedItems, ", ")
+		    If AllowedItems.Count > 2 Then
+		      Return String.FromArray(AllowedItems, ", ")
+		    Else
+		      Return AllowedItems(0) + " " + AllowedItems(1)
+		    End If
 		  Else
 		    Var List As String = Items(0)
 		    For Idx As Integer = 1 To Items.LastIndex - 1
@@ -260,6 +294,9 @@ Protected Module Language
 	#tag EndConstant
 
 	#tag Constant, Name = CommonContinue, Type = String, Dynamic = True, Default = \"Continue", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonExpiresOnDate, Type = String, Dynamic = True, Default = \"expires \?1", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = CommonOk, Type = String, Dynamic = True, Default = \"OK", Scope = Protected

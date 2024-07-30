@@ -514,7 +514,7 @@ End
 		      Var Creatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures(SearchText, Self.mMods)
 		      Var UniqueSpawnPoints As New Dictionary
 		      For Each Creature As Ark.Creature In Creatures
-		        Var CreatureSpawnPoints() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, "")
+		        Var CreatureSpawnPoints() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, Nil)
 		        For Each SpawnPoint As Ark.SpawnPoint In CreatureSpawnPoints
 		          UniqueSpawnPoints.Value(SpawnPoint.SpawnPointId) = SpawnPoint
 		        Next

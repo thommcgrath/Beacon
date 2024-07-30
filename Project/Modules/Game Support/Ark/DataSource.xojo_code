@@ -687,7 +687,7 @@ Inherits Beacon.DataSource
 		              MarketplaceId = Dict.Value("workshop_id").StringValue
 		            End If
 		            
-		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, type, game_id, last_update, required) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Marketplace, MarketplaceId, True, False, Beacon.ContentPack.TypeLocal, Self.Identifier, Now.SecondsFrom1970, False, False)
+		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, type, game_id, last_update, required) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Marketplace, MarketplaceId, True, False, Beacon.ContentPack.TypeLocal, Self.Identifier, Now.SecondsFrom1970, False)
 		          End If
 		        End If
 		      Catch Err As RuntimeException
@@ -696,7 +696,7 @@ Inherits Beacon.DataSource
 		    Next
 		    
 		    // Yes, delete the stuff from the packs we want to **keep** because that happens first. It clears out the mods.
-		    Call Self.SaveBlueprints(Unpacked, Self.GetBlueprints("", KeepPacks, ""), Nil, False)
+		    Call Self.SaveBlueprints(Unpacked, Self.GetBlueprints("", KeepPacks, Nil), Nil, False)
 		    For Each ContentPackId As String In RemovePacks
 		      Call Self.DeleteContentPack(ContentPackId, False)
 		    Next ContentPackId
@@ -836,7 +836,7 @@ Inherits Beacon.DataSource
 		Sub TestPerformance()
 		  Var TestDoc As New Ark.Project
 		  Var Packs As Beacon.StringList = TestDoc.ContentPacks
-		  Var Tags As String = Preferences.SelectedTag(Ark.CategoryEngrams, "8e58f9e4") // Use a strange subgroup here to always get the default
+		  Var Tags As Beacon.TagSpec = Preferences.SelectedTag(Ark.CategoryEngrams, "8e58f9e4") // Use a strange subgroup here to always get the default
 		  Call Self.GetBlueprints(Ark.CategoryEngrams, "", Packs, Tags)
 		End Sub
 	#tag EndEvent
@@ -1156,7 +1156,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Blueprint()
+		Function GetBlueprints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As Ark.Blueprint()
 		  Var Categories() As String = Ark.Categories
 		  Var Blueprints() As Ark.Blueprint
 		  Var ExtraClauses() As String
@@ -1172,7 +1172,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As Ark.Blueprint()
+		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As Ark.Blueprint()
 		  Var ExtraClauses() As String
 		  Var ExtraValues() As Variant
 		  Return Self.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
@@ -1180,7 +1180,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As Ark.Blueprint()
+		Private Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec, ExtraClauses() As String, ExtraValues() As Variant) As Ark.Blueprint()
 		  Var Blueprints() As Ark.Blueprint
 		  
 		  Try
@@ -1221,9 +1221,9 @@ Inherits Beacon.DataSource
 		      Next
 		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
-		    If Tags.IsEmpty = False Then
+		    If (Tags Is Nil) = False Then
 		      Var RequiredTags(), ExcludedTags() As String
-		      TagPicker.ParseSpec(Tags, RequiredTags, ExcludedTags)
+		      Tags.OrganizeTags(RequiredTags, ExcludedTags)
 		      Var ObjectTagIndex As Integer = RequiredTags.IndexOf("object")
 		      If ObjectTagIndex > -1 Then
 		        RequiredTags.RemoveAt(ObjectTagIndex)
@@ -1488,7 +1488,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetContentPackWithSteamId(SteamId As String, Type As Integer) As Beacon.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace_id = ?1 AND type = ?2 0 ORDER BY type DESC LIMIT 1;", SteamId, Type)
+		  Var Results As RowSet = Self.SQLSelect("SELECT " + Self.ContentPackColumns + " FROM content_packs WHERE marketplace_id = ?1 AND type = ?2 ORDER BY type DESC LIMIT 1;", SteamId, Type)
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
 		  If Packs.Count = 1 Then
 		    Return Packs(0)
@@ -1562,7 +1562,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Creature()
+		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As Ark.Creature()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -1654,7 +1654,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As Ark.Engram()
+		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As Ark.Engram()
 		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
 		  Var ExtraValues(0) As Variant
 		  Var Blueprints() As Ark.Blueprint = Self.GetBlueprints(Ark.CategoryEngrams, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
@@ -1669,7 +1669,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Engram()
+		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As Ark.Engram()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -1933,7 +1933,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As Ark.LootContainer()
+		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil, IncludeExperimental As Boolean = False) As Ark.LootContainer()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -2141,7 +2141,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.SpawnPoint()
+		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As Ark.SpawnPoint()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
@@ -2187,7 +2187,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointsForCreature(Creature As Ark.Creature, ContentPacks As Beacon.StringList, Tags As String) As Ark.SpawnPoint()
+		Function GetSpawnPointsForCreature(Creature As Ark.Creature, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As Ark.SpawnPoint()
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  Clauses.Add("spawn_points.sets LIKE :placeholder:")

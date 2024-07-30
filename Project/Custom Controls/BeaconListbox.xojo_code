@@ -61,13 +61,24 @@ Inherits DesktopListBox
 		  DeleteItem.Enabled = CanDelete
 		  Base.AddMenu(DeleteItem)
 		  
-		  Call ConstructContextualMenu(Base, X, Y)
+		  Self.HandleToggleMenu(Base, X, Y)
 		  
-		  Var Bound As Integer = Base.Count - 1
-		  For I As Integer = 0 To Bound
-		    If Base.MenuAt(I) = DeleteItem And I < Bound Then
-		      Base.AddMenuAt(I + 1, New DesktopMenuItem(DesktopMenuItem.TextSeparator))
-		    End If
+		  Var Children As New DesktopMenuItem
+		  Call ConstructContextualMenu(Children, X, Y)
+		  If Children.Count = 0 Then
+		    Return True
+		  End If
+		  
+		  Var Items() As DesktopMenuItem
+		  For Idx As Integer = 0 To Children.LastRowIndex
+		    Items.Add(Children.MenuAt(Idx))
+		  Next
+		  Children.RemoveAllRows
+		  
+		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
+		  
+		  For Each Item As DesktopMenuItem In Items
+		    Base.AddMenu(Item)
 		  Next
 		  
 		  Return True
@@ -76,23 +87,42 @@ Inherits DesktopListBox
 
 	#tag Event
 		Function ContextualMenuItemSelected(selectedItem As DesktopMenuItem) As Boolean
-		  If SelectedItem.Tag <> Nil And SelectedItem.Tag.Type = Variant.TypeString Then
-		    Select Case SelectedItem.Tag
-		    Case "edit"
-		      Self.DoEdit()
-		      Return True
-		    Case "cut"
-		      Self.DoCut()
-		      Return True
-		    Case "copy"
-		      Self.DoCopy()
-		      Return True
-		    Case "paste"
-		      Self.DoPaste()
-		      Return True
-		    Case "clear"
-		      Self.DoClear()
-		      Return True
+		  If SelectedItem.Tag.IsNull = False Then
+		    Select Case SelectedItem.Tag.Type
+		    Case Variant.TypeString
+		      Select Case SelectedItem.Tag.StringValue
+		      Case "edit"
+		        Self.DoEdit()
+		        Return True
+		      Case "cut"
+		        Self.DoCut()
+		        Return True
+		      Case "copy"
+		        Self.DoCopy()
+		        Return True
+		      Case "paste"
+		        Self.DoPaste()
+		        Return True
+		      Case "clear"
+		        Self.DoClear()
+		        Return True
+		      End Select
+		    Case Variant.TypeObject
+		      If SelectedItem.Tag.ObjectValue IsA Dictionary And Dictionary(SelectedItem.Tag.ObjectValue).HasKey("Action") Then
+		        Var ActionInfo As Dictionary = SelectedItem.Tag
+		        Select Case ActionInfo.Value("Action").StringValue
+		        Case "ToggleColumn"
+		          Var Column As Integer = ActionInfo.Value("Column")
+		          Var DesiredValue As Boolean = ActionInfo.Value("DesiredValue")
+		          For Idx As Integer = Self.LastRowIndex DownTo 0
+		            If Self.CellCheckBoxValueAt(Idx, Column) <> DesiredValue Then
+		              Self.CellCheckBoxValueAt(Idx, Column) = DesiredValue
+		              RaiseEvent CellAction(Idx, Column)
+		            End If
+		          Next
+		          Return True
+		        End Select
+		      End If
 		    End Select
 		  End If
 		  
@@ -241,7 +271,7 @@ Inherits DesktopListBox
 		  
 		  RaiseEvent Opening
 		  
-		  Self.Transparent = False
+		  Self.Transparent = TargetMacOS
 		  
 		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
 		  Self.mOpened = True
@@ -293,12 +323,12 @@ Inherits DesktopListBox
 		      BackgroundColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.SelectedContentBackgroundColor)
 		      TextColor = SystemColors.AlternateSelectedControlTextColor
 		    Else
-		      BackgroundColor = SystemColors.UnemphasizedSelectedContentBackgroundColor
+		      BackgroundColor = Self.mUnfocusedSelectionColor
 		      TextColor = SystemColors.UnemphasizedSelectedTextColor
 		    End If
 		    SecondaryTextColor = TextColor
 		  Else
-		    BackgroundColor = If(Row Mod 2 = 0, SystemColors.ListEvenRowColor, SystemColors.ListOddRowColor)
+		    BackgroundColor = If(Row Mod 2 = 0, Self.mRowEvenColor, Self.mRowOddColor)
 		    TextColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.TextColor)
 		    SecondaryTextColor = If(RowInvalid, TextColor, SystemColors.SecondaryLabelColor)
 		  End If
@@ -505,6 +535,16 @@ Inherits DesktopListBox
 		  
 		  Self.mRequestedPages = New Dictionary
 		  
+		  If Self.mRowEvenColor Is Nil Then
+		    Self.mRowEvenColor = New ColorGroup(&cFFFEFE00, &cFFFFFFFF)
+		  End If
+		  If Self.mRowOddColor Is Nil Then
+		    Self.mRowOddColor = New ColorGroup(&cF1F2F200, &cFFFFFFF3)
+		  End If
+		  If Self.mUnfocusedSelectionColor Is Nil Then
+		    Self.mUnfocusedSelectionColor = New ColorGroup(&c000000D8, &cFFFFFFD8)
+		  End If
+		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -658,6 +698,64 @@ Inherits DesktopListBox
 		  
 		  Self.mLastChangeIndex = Self.SelectedRowIndex
 		  Self.mLastChangeCount = Self.SelectedRowCount
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub HandleToggleMenu(Base As DesktopMenuItem, X As Integer, Y As Integer)
+		  If Self.RowCount < 2 Then
+		    Return
+		  End If
+		  
+		  Var Row As Integer = Self.RowFromXY(X, Y)
+		  If Row < 0 Or Row > Self.LastRowIndex Then
+		    Return
+		  End If
+		  
+		  Var CheckBoxColumnCount As Integer
+		  Var FirstCheckBoxColumn As Integer = -1
+		  For ColumnIdx As Integer = 0 To Self.LastColumnIndex
+		    If Self.CellTypeAt(Row, ColumnIdx) = DesktopListBox.CellTypes.CheckBox Then
+		      CheckBoxColumnCount = CheckBoxColumnCount + 1
+		      If FirstCheckBoxColumn = -1 Then
+		        FirstCheckBoxColumn = ColumnIdx
+		      End If
+		    End If
+		  Next
+		  If CheckBoxColumnCount = 0 Then
+		    Return
+		  End If
+		  
+		  Var Column As Integer = -1
+		  If CheckBoxColumnCount > 1 Then
+		    Column = Self.ColumnFromXY(X, Y)
+		    If Self.CellTypeAt(Row, Column) <> DesktopListbox.CellTypes.CheckBox Then
+		      Return
+		    End If
+		  ElseIf CheckboxColumnCount > 0 Then
+		    Column = FirstCheckBoxColumn
+		  End If
+		  
+		  If Column < 0 Or Column > Self.LastColumnIndex Then
+		    Return
+		  End If
+		  
+		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
+		  
+		  Var IsChecked As Boolean = Self.CellCheckBoxValueAt(Row, Column)
+		  Var ToggleItem As New DesktopMenuItem
+		  If CheckBoxColumnCount > 1 Then
+		    If Self.HasHeader And Self.HeaderAt(Column).Trim.IsEmpty = False Then
+		      Var ColumnName As String = Self.HeaderAt(Column).Trim
+		      ToggleItem.Text = Language.ReplacePlaceholders(If(IsChecked, Self.UncheckAllNamed, Self.CheckAllNamed), ColumnName)
+		    Else
+		      ToggleItem.Text = If(IsChecked, Self.UncheckAllUnnamed, Self.CheckAllUnnamed)
+		    End If
+		  Else
+		    ToggleItem.Text = If(IsChecked, Self.UncheckAllSingle, Self.CheckAllSingle)
+		  End If
+		  ToggleItem.Tag = New Dictionary("Action": "ToggleColumn", "Column": Column, "DesiredValue": Not IsChecked)
+		  Base.AddMenu(ToggleItem)
 		End Sub
 	#tag EndMethod
 
@@ -1134,6 +1232,14 @@ Inherits DesktopListBox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private Shared mRowEvenColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mRowOddColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mScrollTask As AnimationKit.ScrollTask
 	#tag EndProperty
 
@@ -1151,6 +1257,10 @@ Inherits DesktopListBox
 
 	#tag Property, Flags = &h21
 		Private mTypeaheadTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mUnfocusedSelectionColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1220,6 +1330,15 @@ Inherits DesktopListBox
 	#tag Constant, Name = AlternateRowColor, Type = Color, Dynamic = False, Default = \"&cFAFAFA", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = CheckAllNamed, Type = String, Dynamic = True, Default = \"Check All In \'\?1\' Column", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CheckAllSingle, Type = String, Dynamic = True, Default = \"Check All", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CheckAllUnnamed, Type = String, Dynamic = True, Default = \"Check All In This Column", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = DoubleLineRowHeight, Type = Double, Dynamic = False, Default = \"38", Scope = Public
 	#tag EndConstant
 
@@ -1257,6 +1376,15 @@ Inherits DesktopListBox
 	#tag EndConstant
 
 	#tag Constant, Name = TextColor, Type = Color, Dynamic = False, Default = \"&c000000", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = UncheckAllNamed, Type = String, Dynamic = True, Default = \"Uncheck All In \'\?1\' Column", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = UncheckAllSingle, Type = String, Dynamic = True, Default = \"Uncheck All", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = UncheckAllUnnamed, Type = String, Dynamic = True, Default = \"Uncheck All In This Column", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UseRoundedRows, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private

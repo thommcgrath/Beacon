@@ -34,6 +34,32 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Contains(Creature As ArkSA.Creature) As Boolean
+		  If Creature Is Nil Then
+		    Return False
+		  End If
+		  
+		  For Each Entry As ArkSA.SpawnPointSetEntry In Self.mEntries
+		    If Entry.CreatureId = Creature.BlueprintId Then
+		      Return True
+		    End If
+		  Next
+		  
+		  If Self.mReplacements.HasBlueprint(Creature.BlueprintId) Then
+		    Return True
+		  End If
+		  
+		  Var BlueprintIds() As String = Self.mReplacements.BlueprintIds
+		  For Each BlueprintId As String In BlueprintIds
+		    Var Options As ArkSA.BlueprintAttributeManager = Self.mReplacements.Value(BlueprintId, Self.ReplacementsAttribute)
+		    If Options.HasBlueprint(Creature.BlueprintId) Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub CopyFrom(Source As ArkSA.SpawnPointSet)
 		  Self.mCachedHash = ""
@@ -107,9 +133,16 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreatureId As String, ToCreatureId As String) As NullableDouble
-		  Var FromCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(FromCreatureID)
-		  Var ToCreature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(ToCreatureID)
-		  Return Self.CreatureReplacementWeight(FromCreature, ToCreature)
+		  If Not Self.mReplacements.HasBlueprint(FromCreatureId) Then
+		    Return Nil
+		  End If
+		  
+		  Var Options As ArkSA.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureId, Self.ReplacementsAttribute)
+		  If Options.HasAttribute(ToCreatureId, "Weight") Then
+		    Return Options.Value(ToCreatureId, "Weight").DoubleValue
+		  End If
+		  
+		  Return Nil
 		End Function
 	#tag EndMethod
 
@@ -127,6 +160,33 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function Entry(AtIndex As Integer) As ArkSA.SpawnPointSetEntry
 		  Return Self.mEntries(AtIndex).ImmutableVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FindCreature(CreatureId As String) As ArkSA.BlueprintReference
+		  If (Self.mReplacements Is Nil) = False Then
+		    If Self.mReplacements.HasBlueprint(CreatureId) Then
+		      Return Self.mReplacements.Reference(CreatureId)
+		    End If
+		    
+		    Var ReplacedCreatures() As ArkSA.BlueprintReference = Self.ReplacedCreatureRefs
+		    For Each FromCreatureRef As ArkSA.BlueprintReference In ReplacedCreatures
+		      Var ReplacementCreatures() As ArkSA.BlueprintReference = Self.ReplacementCreatures(FromCreatureRef)
+		      For Each ToCreatureRef As ArkSA.BlueprintReference In ReplacementCreatures
+		        If ToCreatureRef.BlueprintId = CreatureId Then
+		          Return ToCreatureRef
+		        End If
+		      Next
+		    Next
+		  End If
+		  
+		  For Each Entry As ArkSA.SpawnPointSetEntry In Self.mEntries
+		    Var Reference As ArkSA.BlueprintReference = Entry.CreatureReference
+		    If (Reference Is Nil) = False And Reference.BlueprintId = CreatureId Then
+		      Return Reference
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -184,7 +244,7 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		  
 		  Var SpawnOffsetKey As Variant = SaveData.FirstKey("spawnOffset", "Spawn Offset", "spawn_offset", "GroupOffset")
 		  If SpawnOffsetKey.IsNull = False Then
-		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(SaveData.Value(SpawnOffsetKey))
+		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Dictionary(SaveData.Value(SpawnOffsetKey)))
 		    If (SpawnOffset Is Nil) = False Then
 		      Set.GroupOffset = SpawnOffset
 		    End If
@@ -617,6 +677,8 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
+		  
+		  #Pragma Unused Project
 		  
 		  Location = Location + Beacon.Issue.Separator + Self.mSetId
 		  

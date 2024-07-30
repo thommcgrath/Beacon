@@ -727,6 +727,7 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       Width           =   999
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -745,6 +746,7 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       LockRight       =   False
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   19
@@ -755,6 +757,10 @@ Begin ArkSAConfigEditor ArkSAStatLimitsEditor
       Transparent     =   False
       Visible         =   True
       Width           =   275
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
 #tag EndDesktopWindow
@@ -859,9 +865,8 @@ End
 		Protected Sub UpdateList()
 		  Var Filter As String = Self.FilterField.Text.Trim
 		  Var Engrams() As ArkSA.Engram
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  If Filter.IsEmpty = False Then
-		    Engrams = DataSource.GetEngrams(Filter, Self.Project.ContentPacks)
+		    Engrams = ArkSA.ActiveBlueprintProviders.GetEngrams(Filter, Self.Project.ContentPacks)
 		  Else
 		    Static EngramIds() As String
 		    If EngramIds.Count = 0 Then
@@ -903,12 +908,16 @@ End
 		      EngramIds.Add("333501ed-86af-55c4-bbc6-3845fc31a31e") // Tek Shield
 		    End If
 		    
+		    Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
 		    For Each EngramId As String In EngramIds
-		      Var Engram As ArkSA.Engram = DataSource.GetEngram(EngramId)
-		      If Engram Is Nil Then
-		        Continue
-		      End If
-		      Engrams.Add(Engram)
+		      For Each Provider As ArkSA.BlueprintProvider In Providers
+		        Var Engram As ArkSA.Engram = Provider.GetEngram(EngramId)
+		        If Engram Is Nil Then
+		          Continue For Provider
+		        End If
+		        Engrams.Add(Engram)
+		        Continue For EngramId
+		      Next
 		    Next
 		  End If
 		  

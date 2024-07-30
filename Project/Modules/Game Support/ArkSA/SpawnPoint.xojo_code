@@ -81,6 +81,24 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Contains(Creature As ArkSA.Creature) As Boolean
+		  If Creature Is Nil Then
+		    Return False
+		  End If
+		  
+		  If Self.mLimits.HasBlueprint(Creature.BlueprintId) Then
+		    Return True
+		  End If
+		  
+		  For Each Set As ArkSA.SpawnPointSet In Self.mSets
+		    If Set.Contains(Creature) Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ContentPackId() As String
 		  // Part of the ArkSA.Blueprint interface.
 		  
@@ -153,6 +171,21 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		  // Part of the Beacon.DisambiguationCandidate interface.
 		  
 		  Return ArkSA.Maps.LabelForMask(Self.Availability And Mask)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FindCreature(CreatureId As String) As ArkSA.BlueprintReference
+		  If Self.mLimits.HasBlueprint(CreatureId) Then
+		    Return Self.mLimits.Reference(CreatureId)
+		  End If
+		  
+		  For Each SpawnSet As ArkSA.SpawnPointSet In Self.mSets
+		    Var Reference As ArkSA.BlueprintReference = SpawnSet.FindCreature(CreatureId)
+		    If (Reference Is Nil) = False Then
+		      Return Reference
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 

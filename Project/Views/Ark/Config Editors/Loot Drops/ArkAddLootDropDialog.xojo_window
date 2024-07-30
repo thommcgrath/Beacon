@@ -794,7 +794,7 @@ End
 		  Var Data As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  Var Overrides() As Ark.LootDropOverride = Self.mConfig.Overrides
-		  Var AllowedLootContainers() As Ark.LootContainer = Data.GetLootContainers(Self.FilterField.Text.MakeUTF8, Self.mContentPacks, "", Preferences.ShowExperimentalLootSources)
+		  Var AllowedLootContainers() As Ark.LootContainer = Data.GetLootContainers(Self.FilterField.Text.MakeUTF8, Self.mContentPacks, Nil, Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootContainers.LastIndex DownTo 0
 		    If Not AllowedLootContainers(X).ValidForMask(Self.mMask) Then
 		      AllowedLootContainers.RemoveAt(X)

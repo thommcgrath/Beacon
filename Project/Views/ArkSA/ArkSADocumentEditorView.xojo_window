@@ -290,6 +290,10 @@ End
 		    Self.mImportWindow.Close
 		    Self.mImportWindow = Nil
 		  End If
+		  
+		  If (Self.Project Is Nil) = False Then
+		    ArkSA.DeactivateBlueprintProvider(Self.Project)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -319,6 +323,8 @@ End
 		  If (Panel Is Nil) = False Then
 		    Panel.SwitchedFrom()
 		  End If
+		  
+		  ArkSA.DeactivateBlueprintProvider(Self.Project)
 		End Sub
 	#tag EndEvent
 
@@ -334,6 +340,7 @@ End
 	#tag Event
 		Sub Opening()
 		  If (Self.Project Is Nil) = False Then
+		    ArkSA.ActivateBlueprintProvider(Self.Project)
 		    Var ProjectId As String = Self.Project.ProjectId
 		    Var LastConfigName As String = Preferences.ProjectState(ProjectId, "Editor", "")
 		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(ProjectId, "Config Set", "").StringValue)
@@ -395,6 +402,8 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
+		  ArkSA.ActivateBlueprintProvider(Self.Project)
+		  
 		  Var Panel As ArkSAConfigEditor = Self.CurrentPanel
 		  If (Panel Is Nil) = False Then
 		    Panel.SwitchedTo(UserData)
@@ -1358,7 +1367,7 @@ End
 		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods."))
 		  Me.Append(OmniBarItem.CreateButton("ToolsButton", "Tools", IconToolbarTools, "Use convenience tools for this project."))
 		  
-		  Self.ShowBlueprintsButton = Self.Project.HasEmbeddedContentPacks
+		  Self.ShowBlueprintsButton = Self.Project.HasUnsavedContent
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1459,8 +1468,15 @@ End
 		    End If
 		    Self.UpdateConfigList()
 		  Case "BlueprintsButton"
+		    Self.Project.ProcessEmbeddedContent()
+		    If Self.Project.HasUnsavedContent = False Then
+		      Self.ShowAlert("Sorry, Beacon made a mistake", "Looks like there are no more blueprints in this project that are missing from your Mods section. This button will be hidden.")
+		      Self.ShowBlueprintsButton = False
+		      Return
+		    End If
+		    
 		    ArkSASaveBlueprintsDialog.Present(Self, Self.Project)
-		    Self.ShowBlueprintsButton = Self.Project.HasEmbeddedContentPacks
+		    Self.ShowBlueprintsButton = Self.Project.HasUnsavedContent
 		  End Select
 		End Sub
 	#tag EndEvent

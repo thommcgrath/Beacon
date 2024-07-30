@@ -22,7 +22,7 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
    MinWidth        =   600
    Placement       =   3
    Resizable       =   "True"
-   Resizeable      =   True
+   Resizeable      =   False
    SystemUIVisible =   "True"
    Title           =   "Beacon Updates"
    Visible         =   True
@@ -196,11 +196,11 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          InitialParent   =   "ViewPanel"
          Italic          =   False
          Left            =   490
-         LockBottom      =   True
+         LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
          LockRight       =   True
-         LockTop         =   False
+         LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   8
@@ -228,11 +228,11 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          InitialParent   =   "ViewPanel"
          Italic          =   False
          Left            =   388
-         LockBottom      =   True
+         LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
          LockRight       =   True
-         LockTop         =   False
+         LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   7
@@ -356,11 +356,11 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          InitialParent   =   "ViewPanel"
          Italic          =   False
          Left            =   96
-         LockBottom      =   True
+         LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
-         LockTop         =   False
+         LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   9
@@ -388,9 +388,9 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
-         Multiline       =   False
+         Multiline       =   True
          Scope           =   2
          Selectable      =   False
          TabIndex        =   10
@@ -550,7 +550,8 @@ End
 		    If UpdatesKit.AutomaticallyDownloadsUpdates Then
 		      Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
 		    Else
-		      Self.ShowResults(UpdatesKit.AvailableDisplayVersion, UpdatesKit.AvailableNotesURL, UpdatesKit.AvailableDownloadURL, UpdatesKit.AvailableSignature, UpdatesKit.AvailableVersionIsLicensed)
+		      Var ConflictingLicenses() As Beacon.OmniLicense = UpdatesKit.AvailableVersionLicenseConflicts
+		      Self.ShowResults(UpdatesKit.AvailableDisplayVersion, UpdatesKit.AvailableNotesURL, UpdatesKit.AvailableDownloadURL, UpdatesKit.AvailableSignature, ConflictingLicenses)
 		    End If
 		  Case UpdatesKit.Notification_UpdateDownloaded
 		    If UpdatesKit.AutomaticallyDownloadsUpdates Then
@@ -644,7 +645,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowResults(Version As String, NotesURL As String, URL As String, Signature As String, IsLicensed As Boolean)
+		Private Sub ShowResults(Version As String, NotesURL As String, URL As String, Signature As String, ExpiredLicenses() As Beacon.OmniLicense)
 		  #Pragma Unused Version
 		  
 		  Self.mURL = URL
@@ -656,7 +657,22 @@ End
 		    Self.ResultsCancelButton.Caption = "Quit"
 		    Self.ResultsMessageLabel.Text = "A required Beacon update is available."
 		    Self.ResultsExplanationLabel.Text = "This update is required. Beacon will not function until updated."
+		  ElseIf ExpiredLicenses.Count > 1 Then
+		    Self.ResultsActionButton.Default = False
+		    Var Explanation As String = "Although a new version is available, the following licenses do not cover this new version. Beacon does not automatically update to versions that are not covered by your current licenses." + EndOfLine
+		    For Each License As Beacon.OmniLicense In ExpiredLicenses
+		      Explanation = Explanation + EndOfLine + License.Description
+		    Next
+		    Self.ResultsExplanationLabel.Text = Explanation.Trim
+		  ElseIf ExpiredLicenses.Count = 1 Then
+		    Self.ResultsActionButton.Default = False
+		    Self.ResultsExplanationLabel.Text = "Although a new version is available, your license for '" + ExpiredLicenses(0).Description + "' does not cover this new version. Beacon does not automatically update to versions that are not covered by your current licenses."
 		  End If
+		  
+		  Self.ResultsExplanationLabel.Height = Self.ResultsExplanationLabel.IdealHeight
+		  Self.ResultsActionButton.Top = Self.ResultsExplanationLabel.Bottom + 20
+		  Self.ResultsCancelButton.Top = Self.ResultsActionButton.Top
+		  Self.ResultsNotesButton.Top = Self.ResultsActionButton.Top
 		  
 		  Self.ViewPanel.SelectedPanelIndex = Self.ViewResults
 		End Sub
@@ -690,9 +706,6 @@ End
 	#tag Constant, Name = HeightDownload, Type = Double, Dynamic = False, Default = \"124", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightResults, Type = Double, Dynamic = False, Default = \"132", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = ViewCheck, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
@@ -711,13 +724,10 @@ End
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.ViewCheck
 		    Self.Height = Self.HeightCheck
-		    Self.Resizeable = False
 		  Case Self.ViewResults
-		    Self.Height = Self.HeightResults
-		    Self.Resizeable = True
+		    Self.Height = Self.ResultsExplanationLabel.Bottom + 20 + Self.ResultsActionButton.Height + 20
 		  Case Self.ViewDownload
 		    Self.Height = Self.HeightDownload
-		    Self.Resizeable = False
 		  End Select
 		  
 		  Self.DownloadWatchTimer.RunMode = If(Me.SelectedPanelIndex = Self.ViewDownload, Timer.RunModes.Multiple, Timer.RunModes.Off)

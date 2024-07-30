@@ -373,15 +373,21 @@ Begin ModEditorView ArkSAModEditorView
       Scope           =   0
       TabPanelIndex   =   0
    End
+   Begin ArkSA.ModDiscoveryEngine2 DiscoveryEngine2
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.ViewTitle = Self.mController.ContentPackName
+		  Self.ViewTitle = Self.mController.ContentPack.Name
 		  Self.SwitchMode(ArkSA.BlueprintController.ModeEngrams)
-		  Self.Status.RightCaption = Self.mController.ContentPackId
+		  Self.Status.RightCaption = Self.mController.ContentPack.ContentPackId
 		  
 		  If Self.mReadOnly Then
 		    Self.Status.LeftCaption = "Read Only"
@@ -444,6 +450,12 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function BlueprintProvider() As ArkSA.BlueprintProvider
+		  Return Self.mController
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function BuildRegEx(Pattern As String) As PCRE2CodeMBS
 		  Try
@@ -490,14 +502,14 @@ End
 		  AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
 		  
 		  Self.mController = Controller
-		  Self.ViewID = Controller.ContentPackId
+		  Self.ViewID = Controller.ContentPack.ContentPackId
 		  Self.mReadOnly = ReadOnly
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ContentPackId() As String
-		  Return Self.mController.ContentPackId
+		  Return Self.mController.ContentPack.ContentPackId
 		End Function
 	#tag EndMethod
 
@@ -516,7 +528,7 @@ End
 		  End Select
 		  
 		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPackName) + " " + ModeLabel + Beacon.FileExtensionDelta
+		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPack.Name) + " " + ModeLabel + Beacon.FileExtensionDelta
 		  Dialog.Filter = BeaconFileTypes.BeaconData + BeaconFileTypes.CSVFile
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
@@ -650,10 +662,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_BlueprintsLoaded(Sender As ArkSA.BlueprintController, Task As ArkSA.BlueprintControllerFetchTask)
+		  // The blueprints returned in this event may not be the latest versions. Recent edits
+		  // would get blown away, so use only the blueprint id to fetch the correct version
+		  // from the controller.
+		  
 		  Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Task.Mode)
 		  Var Blueprints() As ArkSA.Blueprint = Task.Blueprints
 		  For Idx As Integer = 0 To Blueprints.LastIndex
-		    CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Blueprints(Idx)
+		    Var Blueprint As ArkSA.Blueprint = Sender.BlueprintContainer.GetBlueprint(Blueprints(Idx).BlueprintId)
+		    If (Blueprint Is Nil) = False Then
+		      CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Blueprint
+		    ElseIf CurrentBlueprints.HasKey(Blueprints(Idx).BlueprintId) Then
+		      CurrentBlueprints.Remove(Blueprints(Idx).BlueprintId)
+		    End If
 		  Next
 		  
 		  If Task.Page < Task.TotalPages Then
@@ -793,7 +814,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Settings As ArkSA.ModDiscoverySettings = ArkSAModDiscoveryDialog.Present(Self.TrueWindow, Self.mController.MarketplaceId)
+		  Var Settings As ArkSA.ModDiscoverySettings = ArkSAModDiscoveryDialog.Present(Self.TrueWindow, Self.mController.ContentPack)
 		  If Settings Is Nil Then
 		    Return
 		  End If
@@ -807,7 +828,11 @@ End
 		  Next
 		  
 		  Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
-		  Self.DiscoveryEngine.Start(Settings)
+		  If Settings.UseNewDiscovery Then
+		    Self.DiscoveryEngine2.Start(Settings)
+		  Else
+		    Self.DiscoveryEngine.Start(Settings)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1037,6 +1062,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mLoadTotals() As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLowConfidenceDialog As ArkSALowConfidenceBlueprintsDialog
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1304,7 +1333,7 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Select Case Item.Name
 		  Case "AddBlueprint"
-		    Var Blueprint As ArkSA.Blueprint = ArkSABlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
+		    Var Blueprint As ArkSA.Blueprint = ArkSABlueprintEditorDialog.Present(Self, Self.mController.ContentPack.ContentPackId, Self.mController.ContentPack.Name, False)
 		    If (Blueprint Is Nil) = False Then
 		      Try
 		        Self.mController.SaveBlueprint(Blueprint)
@@ -1334,7 +1363,7 @@ End
 		    ImportMenu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
 		    DiscoverItem = New DesktopMenuItem("Run Mod Discovery")
-		    DiscoverItem.Enabled = Self.mController.Marketplace = Beacon.MarketplaceCurseForge And Self.mController.MarketplaceId.IsEmpty = False
+		    DiscoverItem.Enabled = Self.mController.ContentPack.Marketplace = Beacon.MarketplaceCurseForge And Self.mController.ContentPack.MarketplaceId.IsEmpty = False
 		    ImportMenu.AddMenu(DiscoverItem)
 		    
 		    Var Position As Point = Me.GlobalPosition
@@ -1393,13 +1422,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Started()
-		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
 		  Self.Pages.SelectedPanelIndex = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub StatusUpdated()
-		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1411,17 +1440,16 @@ End
 		    Thread.Current.Sleep(100)
 		  Wend
 		  
-		  
-		  If Self.mDiscoveryShouldDelete Then
+		  If Me.Settings.DeleteBlueprints Then
 		    Var CurrentBlueprints() As ArkSA.Blueprint = Self.mController.AllBlueprints
 		    Var CurrentBlueprintMap As New Dictionary
 		    For Each Blueprint As ArkSA.Blueprint In CurrentBlueprints
-		      CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
+		      CurrentBlueprintMap.Value(Blueprint.BlueprintId) = Blueprint
 		    Next
 		    
 		    For Each Blueprint As ArkSA.Blueprint In Blueprints
-		      If CurrentBlueprintMap.HasKey(Blueprint.Path) Then
-		        CurrentBlueprintMap.Remove(Blueprint.Path)
+		      If CurrentBlueprintMap.HasKey(Blueprint.BlueprintId) Then
+		        CurrentBlueprintMap.Remove(Blueprint.BlueprintId)
 		      End If
 		    Next
 		    
@@ -1432,7 +1460,98 @@ End
 		    Self.mController.DeleteBlueprints(BlueprintsToDelete)
 		  End If
 		  
-		  Self.mController.SaveBlueprints(Blueprints)
+		  If Me.Settings.ReplaceBlueprints Then
+		    Self.mController.SaveBlueprints(Blueprints)
+		  Else
+		    Var NewBlueprints() As ArkSA.Blueprint
+		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		      If (Self.mController.BlueprintContainer.GetBlueprint(Blueprint.BlueprintId) Is Nil) = False Then
+		        Continue
+		      End If
+		      NewBlueprints.Add(Blueprint)
+		    Next
+		    Self.mController.SaveBlueprints(NewBlueprints)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DiscoveryEngine2
+	#tag Event
+		Sub Error(ErrorMessage As String)
+		  Self.ShowAlert("There was an error with mod discovery", ErrorMessage)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished()
+		  // Will do nothing if there is nothing to do
+		  Self.mLowConfidenceDialog.Present(Self)
+		  Self.mLowConfidenceDialog = Nil
+		  
+		  Self.Pages.SelectedPanelIndex = 0
+		  Self.Reload
+		  Self.UpdateUI
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
+		  Self.Pages.SelectedPanelIndex = 1
+		  Self.mLowConfidenceDialog = New ArkSALowConfidenceBlueprintsDialog(Me.Settings, Self.mController)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub StatusUpdated()
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage.ReplaceAll("&", "&&")
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, ConfirmedBlueprints() As ArkSA.Blueprint, UnconfirmedBlueprints() As ArkSA.Blueprint)
+		  #Pragma Unused ContentPack
+		  
+		  // Wait for the controller to be finished
+		  While Self.mController.IsBusy
+		    Thread.Current.Sleep(100)
+		  Wend
+		  
+		  If Me.Settings.DeleteBlueprints Then
+		    Var CurrentBlueprints() As ArkSA.Blueprint = Self.mController.AllBlueprints
+		    Var CurrentBlueprintMap As New Dictionary
+		    For Each Blueprint As ArkSA.Blueprint In CurrentBlueprints
+		      CurrentBlueprintMap.Value(Blueprint.BlueprintId) = Blueprint
+		    Next
+		    
+		    For Each Blueprint As ArkSA.Blueprint In ConfirmedBlueprints
+		      If CurrentBlueprintMap.HasKey(Blueprint.BlueprintId) Then
+		        CurrentBlueprintMap.Remove(Blueprint.BlueprintId)
+		      End If
+		    Next
+		    For Each Blueprint As ArkSA.Blueprint In UnconfirmedBlueprints
+		      If CurrentBlueprintMap.HasKey(Blueprint.BlueprintId) Then
+		        CurrentBlueprintMap.Remove(Blueprint.BlueprintId)
+		      End If
+		    Next
+		    
+		    Var BlueprintsToDelete() As ArkSA.Blueprint
+		    For Each Entry As DictionaryEntry In CurrentBlueprintMap
+		      BlueprintsToDelete.Add(Entry.Value)
+		    Next
+		    Self.mController.DeleteBlueprints(BlueprintsToDelete)
+		  End If
+		  
+		  If Me.Settings.ReplaceBlueprints Then
+		    Self.mController.SaveBlueprints(ConfirmedBlueprints)
+		  Else
+		    Var NewBlueprints() As ArkSA.Blueprint
+		    For Each Blueprint As ArkSA.Blueprint In ConfirmedBlueprints
+		      If (Self.mController.BlueprintContainer.GetBlueprint(Blueprint.BlueprintId) Is Nil) = False Then
+		        Continue
+		      End If
+		      NewBlueprints.Add(Blueprint)
+		    Next
+		    Self.mController.SaveBlueprints(NewBlueprints)
+		  End If
+		  
+		  Self.mLowConfidenceDialog.AddCandidates(UnconfirmedBlueprints)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

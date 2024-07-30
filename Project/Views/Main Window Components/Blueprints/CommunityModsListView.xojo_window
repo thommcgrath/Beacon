@@ -398,7 +398,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function SelectedModIds() As String()
-		  If Self.Working Then
+		  If Self.Working Or Self.List Is Nil Then
 		    Return Self.mSelectedModIds
 		  End If
 		  
@@ -408,7 +408,12 @@ End
 		      Continue
 		    End If
 		    
-		    Ids.Add(BeaconAPI.ContentPack(Self.List.RowTagAt(Idx)).ContentPackId)
+		    Var ModInfo As BeaconAPI.ContentPack = Self.List.RowTagAt(Idx)
+		    If ModInfo Is Nil Then
+		      Continue
+		    End If
+		    
+		    Ids.Add(ModInfo.ContentPackId)
 		  Next
 		  Return Ids
 		End Function
@@ -546,6 +551,28 @@ End
 		    Params.Value("search") = Filter
 		  End If
 		  
+		  Var SortingColumn As Integer = Me.SortingColumn
+		  If SortingColumn = -1 Then
+		    SortingColumn = Self.ColumnName
+		  End If
+		  
+		  Select Case SortingColumn
+		  Case Self.ColumnName
+		    Params.Value("sort") = "name"
+		  Case Self.ColumnGameId
+		    Params.Value("sort") = "gameId"
+		  Case Self.ColumnModId
+		    Params.Value("sort") = "marketplaceId"
+		  Case Self.ColumnUpdated
+		    Params.Value("sort") = "lastUpdate"
+		  End Select
+		  
+		  If Me.ColumnSortDirectionAt(SortingColumn) = DesktopListbox.SortDirections.Descending Then
+		    Params.Value("direction") = "desc"
+		  Else
+		    Params.Value("direction") = "asc"
+		  End If
+		  
 		  Var Request As New BeaconAPI.Request("/discovery", "GET", Params, AddressOf APICallback_ListMods)
 		  Request.Tag = RequestToken
 		  BeaconAPI.Send(Request)
@@ -593,6 +620,16 @@ End
 		Sub Opening()
 		  Me.ColumnAlignmentAt(Self.ColumnModId) = DesktopListBox.Alignments.Right
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ColumnSorted(column As Integer) As Boolean
+		  If Column = Self.ColumnStatus Then
+		    Return True
+		  End If
+		  
+		  Me.ReloadAllPages()
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

@@ -285,11 +285,7 @@ Protected Module BeaconUI
 		    
 		    MaxHeight = Max(MaxHeight, Ceiling(G.TextHeight(Targets(Idx).Text, Targets(Idx).Width)))
 		  Next Idx
-		  #if TargetMacOS
-		    Return Round(MaxHeight * 1.15)
-		  #else
-		    Return MaxHeight
-		  #endif
+		  Return Round(MaxHeight * 1.15)
 		End Function
 	#tag EndMethod
 
@@ -306,7 +302,34 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function IdealWidth(ParamArray Targets() As DesktopCheckBox) As Integer
+		Protected Function IdealWidth(Targets() As DesktopButton) As Integer
+		  Var MaxWidth As Integer
+		  Var Pic As New Picture(20, 20)
+		  Var G As Graphics = Pic.Graphics
+		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    If Targets(Idx) Is Nil Or Targets(Idx).Visible = False Then
+		      Continue
+		    End If
+		    
+		    G.FontName = Targets(Idx).FontName
+		    G.FontSize = Targets(Idx).FontSize
+		    G.FontUnit = Targets(Idx).FontUnit
+		    G.Bold = Targets(Idx).Bold
+		    G.Italic = Targets(Idx).Italic
+		    G.Underline = Targets(Idx).Underline
+		    
+		    MaxWidth = Max(MaxWidth, Ceiling(G.TextWidth(Targets(Idx).Caption)))
+		  Next Idx
+		  #if TargetWindows
+		    Return Round(MaxWidth * 1.05) + 20
+		  #else
+		    Return MaxWidth + 22
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IdealWidth(ParamArray Targets() As DesktopButton) As Integer
 		  Return IdealWidth(Targets)
 		End Function
 	#tag EndMethod
@@ -335,6 +358,12 @@ Protected Module BeaconUI
 		  #else
 		    Return MaxWidth + 22
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IdealWidth(ParamArray Targets() As DesktopCheckBox) As Integer
+		  Return IdealWidth(Targets)
 		End Function
 	#tag EndMethod
 
@@ -368,6 +397,12 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h1
 		Protected Function IdealWidth(ParamArray Targets() As DesktopLabel) As Integer
 		  Return IdealWidth(Targets)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function IdealWidth(Extends Target As DesktopButton) As Integer
+		  Return IdealWidth(Target)
 		End Function
 	#tag EndMethod
 
@@ -703,6 +738,25 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub SizeToFit(ParamArray Targets() As DesktopButton)
+		  SizeToFit(Targets)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub SizeToFit(Targets() As DesktopButton)
+		  Var Width As Integer = IdealWidth(Targets)
+		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    If Targets(Idx) Is Nil Then
+		      Continue
+		    End If
+		    
+		    Targets(Idx).Width = Width
+		  Next Idx
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub SizeToFit(ParamArray Targets() As DesktopCheckBox)
 		  SizeToFit(Targets)
 		End Sub
@@ -737,6 +791,12 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h1
 		Protected Sub SizeToFit(ParamArray Targets() As DesktopLabel)
 		  SizeToFit(Targets)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SizeToFit(Extends Target As DesktopButton)
+		  SizeToFit(Target)
 		End Sub
 	#tag EndMethod
 

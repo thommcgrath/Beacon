@@ -473,10 +473,22 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  #Pragma Unused ChannelName
 		  #Pragma Unused EventName
 		  
-		  Var Json As Dictionary = Beacon.ParseJson(Payload)
-		  Var User As Dictionary = Json.Value("user")
-		  Var OtherUserId As String = User.Value("userId")
-		  Var OtherUsername As String = User.Value("username")
+		  Var OtherUserId, OtherUsername As String
+		  
+		  Try
+		    Var Json As JSONItem = New JSONItem(Payload)
+		    If Json.HasKey("deviceId") And Json.Value("deviceId").IsNull = False And Json.Value("deviceId").Type = Variant.TypeString And Beacon.HardwareId = Json.Value("deviceId") Then
+		      // Message was sent from this device
+		      Return
+		    End If
+		    
+		    Var User As JSONItem = Json.Child("user")
+		    OtherUserId = User.Value("userId")
+		    OtherUsername = User.Value("username")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing project save event")
+		    Return
+		  End Try
 		  
 		  Var Message, Explanation As String
 		  Var ProjectName As String = Self.Project.Title

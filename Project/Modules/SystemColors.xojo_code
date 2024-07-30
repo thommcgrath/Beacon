@@ -834,17 +834,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function UnemphasizedSelectedContentBackgroundColor() As Color
-		  Try
-		    #if TargetMacOS
-		      // 10.14+
-		      If MacIs1014Mojave Then
-		        Return New ColorGroupMimic("unemphasizedSelectedContentBackgroundColor")
-		      End If
-		    #endif
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Return New ColorGroupMimic(&cDCDCDC00, &c46464600)
+		  Return New ColorGroupMimic(&c000000E4, &cFFFFFFE1)
 		End Function
 	#tag EndMethod
 
@@ -866,16 +856,6 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function UnemphasizedSelectedTextColor() As Color
-		  Try
-		    #if TargetMacOS
-		      // 10.14+
-		      If MacIs1014Mojave Then
-		        Return New ColorGroupMimic("unemphasizedSelectedTextColor")
-		      End If
-		    #endif
-		  Catch Err As RuntimeException
-		  End Try
-		  
 		  Return New ColorGroupMimic(&c00000000, &cFFFFFF00)
 		End Function
 	#tag EndMethod

@@ -24,6 +24,7 @@ Inherits ArkSA.ConfigGroup
 		  Self.mPvEStructureDecayPeriodMultiplier = Source.mPvEStructureDecayPeriodMultiplier
 		  Self.mPvPDinoDecay = Source.mPvPDinoDecay
 		  Self.mPvPStructureDecay = Source.mPvPStructureDecay
+		  Self.mDisableDinoDecayClaiming = Source.mDisableDinoDecayClaiming
 		End Sub
 	#tag EndEvent
 
@@ -46,11 +47,12 @@ Inherits ArkSA.ConfigGroup
 		  Values.Add(New ArkSA.ConfigValue("CommandLineOption", "?", "PvPDinoDecay=" + If(Self.mPvPDinoDecay, "True", "False")))
 		  Values.Add(New ArkSA.ConfigValue("CommandLineOption", "?", "PvPStructureDecay=" + If(Self.mPvPStructureDecay, "True", "False")))
 		  
+		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bDisableDinoDecayClaiming=" + If(Self.mDisableDinoDecayClaiming, "True", "False")))
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "CropDecaySpeedMultiplier=" + Self.mCropDecaySpeedMultiplier.PrettyText))
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "FastDecayInterval=" + Self.mFastDecayInterval.ToString(Locale.Raw, "0")))
-		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalSpoilingTimeMultiplier=" + Self.mGlobalSpoilingTimeMultiplier.PrettyText))
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalCorpseDecompositionTimeMultiplier=" + Self.mGlobalCorpseDecompositionTimeMultiplier.PrettyText))
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalItemDecompositionTimeMultiplier=" + Self.mGlobalItemDecompositionTimeMultiplier.PrettyText))
+		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalSpoilingTimeMultiplier=" + Self.mGlobalSpoilingTimeMultiplier.PrettyText))
 		  
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DisableDinoDecayPvE=" + If(Self.mDisableDinoDecayPvE, "True", "False")))
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DisableStructureDecayPvE=" + If(Self.mDisableStructureDecayPvE, "True", "False")))
@@ -79,11 +81,12 @@ Inherits ArkSA.ConfigGroup
 		  Keys.Add(New ArkSA.ConfigOption("CommandLineOption", "?", "PvPDinoDecay"))
 		  Keys.Add(New ArkSA.ConfigOption("CommandLineOption", "?", "PvPStructureDecay"))
 		  
+		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bDisableDinoDecayClaiming"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "CropDecaySpeedMultiplier"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "FastDecayInterval"))
-		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalSpoilingTimeMultiplier"))
-		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalItemDecompositionTimeMultiplier"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalCorpseDecompositionTimeMultiplier"))
+		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalItemDecompositionTimeMultiplier"))
+		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "GlobalSpoilingTimeMultiplier"))
 		  
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DisableDinoDecayPvE"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DisableStructureDecayPvE"))
@@ -123,6 +126,7 @@ Inherits ArkSA.ConfigGroup
 		  Self.mPvEStructureDecayPeriodMultiplier = SaveData.Value("PvEStructureDecayPeriodMultiplier")
 		  Self.mPvPDinoDecay = SaveData.Value("PvPDinoDecay")
 		  Self.mPvPStructureDecay = SaveData.Value("PvPStructureDecay")
+		  Self.mDisableDinoDecayClaiming = SaveData.Lookup("DisableDinoDecayClaiming", False).BooleanValue
 		End Sub
 	#tag EndEvent
 
@@ -149,6 +153,7 @@ Inherits ArkSA.ConfigGroup
 		  SaveData.Value("PvEStructureDecayPeriodMultiplier") = Self.mPvEStructureDecayPeriodMultiplier
 		  SaveData.Value("PvPDinoDecay") = Self.mPvPDinoDecay
 		  SaveData.Value("PvPStructureDecay") = Self.mPvPStructureDecay
+		  SaveData.Value("DisableDinoDecayClaiming") = Self.mDisableDinoDecayClaiming
 		End Sub
 	#tag EndEvent
 
@@ -230,6 +235,9 @@ Inherits ArkSA.ConfigGroup
 		  End If
 		  If ParsedData.HasKey("GlobalItemDecompositionTimeMultiplier") Then
 		    Spoil.GlobalItemDecompositionTimeMultiplier = ParsedData.DoubleValue("GlobalItemDecompositionTimeMultiplier", Spoil.GlobalItemDecompositionTimeMultiplier)
+		  End If
+		  If ParsedData.HasKey("bDisableDinoDecayClaiming") Then
+		    Spoil.DisableDinoDecayClaiming = ParsedData.BooleanValue("bDisableDinoDecayClaiming", Spoil.DisableDinoDecayClaiming)
 		  End If
 		  
 		  // GameUserSettings.ini
@@ -342,6 +350,23 @@ Inherits ArkSA.ConfigGroup
 			End Set
 		#tag EndSetter
 		CropDecaySpeedMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDisableDinoDecayClaiming
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mDisableDinoDecayClaiming <> Value Then
+			    Self.mDisableDinoDecayClaiming = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		DisableDinoDecayClaiming As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -481,6 +506,10 @@ Inherits ArkSA.ConfigGroup
 
 	#tag Property, Flags = &h21
 		Private mCropDecaySpeedMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDisableDinoDecayClaiming As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -8,16 +8,16 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   410
+   Height          =   512
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   410
+   MaxHeight       =   512
    MaximizeButton  =   False
    MaxWidth        =   626
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   410
+   MinHeight       =   512
    MinimizeButton  =   False
    MinWidth        =   626
    Placement       =   1
@@ -252,7 +252,7 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
    Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   136
+      Height          =   238
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -518,14 +518,14 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   10
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   232
+         Top             =   266
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -552,14 +552,14 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   6
+         TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Tame Damage:"
+         Text            =   "Tamed Damage:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   232
+         Top             =   266
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -593,14 +593,14 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   13
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   266
+         Top             =   300
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -627,14 +627,14 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   9
+         TabIndex        =   12
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Tame Resistance:"
+         Text            =   "Tamed Resistance:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   266
+         Top             =   300
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -660,14 +660,14 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   8
+         TabIndex        =   11
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases tamed creature damage"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   232
+         Top             =   266
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -693,14 +693,14 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   11
+         TabIndex        =   14
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Less than 1.0 increases amount of damage taken"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   266
+         Top             =   300
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -804,6 +804,330 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
          Visible         =   True
          Width           =   356
       End
+      Begin UITweaks.ResizedLabel WildSpeedLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Wild Speed:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   232
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   120
+      End
+      Begin UITweaks.ResizedTextField WildSpeedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   152
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "1.0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   232
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel WildSpeedHelp
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   True
+         Left            =   244
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   8
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Greater than 1.0 increases wild creature speed"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   232
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   362
+      End
+      Begin UITweaks.ResizedLabel TameSpeedLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   15
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Tamed Speed:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   334
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   120
+      End
+      Begin UITweaks.ResizedTextField TameSpeedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   152
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   16
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "1.0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   334
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel TameSpeedHelp
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   True
+         Left            =   244
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   17
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Greater than 1.0 increases tamed creature speed"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   334
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   362
+      End
+      Begin UITweaks.ResizedLabel TameStaminaLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   18
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Tamed Stamina:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   368
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   120
+      End
+      Begin UITweaks.ResizedTextField TameStaminaField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   152
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   19
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "1.0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   368
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel TameStaminaHelp
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   True
+         Left            =   244
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   20
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Greater than 1.0 increases tamed creature stamina"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   368
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   362
+      End
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
@@ -831,7 +1155,7 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   370
+      Top             =   472
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -863,7 +1187,7 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   370
+      Top             =   472
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -957,7 +1281,7 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "When checked, the creature cannot be downloaded from an obelisk."
-      Top             =   332
+      Top             =   434
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -988,7 +1312,7 @@ Begin BeaconDialog ArkSADinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "When checked, the creature cannot be tamed."
-      Top             =   300
+      Top             =   402
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1009,8 +1333,11 @@ End
 		  
 		  Self.WildDamageField.Text = OneFormatted
 		  Self.WildResistanceField.Text = OneFormatted
+		  Self.WildSpeedField.Text = OneFormatted
 		  Self.TameDamageField.Text = OneFormatted
 		  Self.TameResistanceField.Text = OneFormatted
+		  Self.TameSpeedField.Text = OneFormatted
+		  Self.TameStaminaField.Text = OneFormatted
 		End Sub
 	#tag EndEvent
 
@@ -1058,8 +1385,11 @@ End
 		      Else
 		        Win.WildDamageField.Text = Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.WildResistanceField.Text = Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.WildSpeedField.Text = Behavior.WildSpeedMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.TameDamageField.Text = Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.TameResistanceField.Text = Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.TameSpeedField.Text = Behavior.TamedSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.TameStaminaField.Text = Behavior.TamedStaminaMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.ModeMultipliersRadio.Value = True
 		      End If
 		      Win.PreventTamingCheck.Value = Behavior.ProhibitTaming
@@ -1081,8 +1411,11 @@ End
 		  Else
 		    Behavior.DamageMultiplier = CDbl(Win.WildDamageField.Text)
 		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Text)
+		    Behavior.WildSpeedMultiplier = CDbl(Win.WildSpeedField.Text)
 		    Behavior.TamedDamageMultiplier = CDbl(Win.TameDamageField.Text)
 		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Text)
+		    Behavior.TamedSpeedMultiplier = CDbl(Win.TameSpeedField.Text)
+		    Behavior.TamedStaminaMultiplier = CDbl(Win.TameStaminaField.Text)
 		  End If
 		  Behavior.ProhibitTaming = Win.PreventTamingCheck.Value
 		  Behavior.ProhibitTransfer = Win.PreventTransferCheck.Value
@@ -1179,7 +1512,7 @@ End
 	#tag Constant, Name = HeightDisable, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"136", Scope = Private
+	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"238", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = HeightReplace, Type = Double, Dynamic = False, Default = \"32", Scope = Private
@@ -1277,15 +1610,18 @@ End
 		  ElseIf Self.ModeMultipliersRadio.Value Then
 		    Var DamageMultiplier As Double = CDbl(Self.WildDamageField.Text)
 		    Var ResistanceMultiplier As Double = CDbl(Self.WildResistanceField.Text)
+		    Var WildSpeedMultiplier as Double = CDbl(Self.WildSpeedField.Text)
 		    Var TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Text)
 		    Var TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Text)
+		    Var TamedSpeedMultiplier As Double = CDbl(Self.TameSpeedField.Text)
+		    Var TamedStaminaMultiplier As Double = CDbl(Self.TameStaminaField.Text)
 		    Var PreventTaming As Boolean = Self.PreventTamingCheck.Value
 		    
-		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Then
+		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Or WildSpeedMultiplier < 0 Or TamedSpeedMultiplier < 0 Or TamedStaminaMultiplier < 0 Then
 		      Self.ShowAlert("You have a multiplier that doesn't make sense", "It's ok to make the multipliers really small, but they must be at least zero.")
 		      Return
 		    End If
-		    If DamageMultiplier = 1.0 And ResistanceMultiplier = 1.0 And TamedDamageMultiplier = 1.0 And TamedResistanceMultiplier = 1.0 And PreventTaming = False And PreventTransfer = False Then
+		    If DamageMultiplier = 1.0 And ResistanceMultiplier = 1.0 And TamedDamageMultiplier = 1.0 And TamedResistanceMultiplier = 1.0 And WildSpeedMultiplier = 1.0 And TamedSpeedMultiplier = 1.0 And TamedStaminaMultiplier = 1.0 And PreventTaming = False And PreventTransfer = False Then
 		      Self.ShowAlert("You haven't changed any multipliers", "There's no reason to save a creature adjustment with no differences than official.")
 		      Return
 		    End If

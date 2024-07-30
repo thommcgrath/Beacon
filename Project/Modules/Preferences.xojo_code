@@ -160,6 +160,28 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function HardwareIdVersion() As Integer
+		  Init
+		  Return mManager.IntegerValue("Hardware Id Version", 6)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub HardwareIdVersion(Force As Boolean = False, Assigns NewValue As Integer)
+		  Init
+		  
+		  If Force = False And mManager.IntegerValue("Hardware Id Version", 0) = NewValue Then
+		    Return
+		  End If
+		  
+		  mManager.IntegerValue("Hardware Id Version") = NewValue
+		  
+		  // Update private key encryption in case the hardware id changes
+		  EncryptPrivateKey()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function HiddenTags() As String()
 		  Init
 		  Return mManager.StringValue("Hidden Tags", DefaultHiddenTags).Split(",")
@@ -224,6 +246,11 @@ Protected Module Preferences
 		    End If
 		  End If
 		  
+		  Var NewestUsedBuild As Integer = NewestUsedBuild
+		  If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
+		    HardwareIdVersion = 4
+		  End If
+		  
 		  If mManager.StringValue("Device Private Key").IsEmpty = False Then
 		    Try
 		      Var PrivateKey As String = EncodeHex(BeaconEncryption.SlowDecrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, mManager.StringValue("Device Private Key")))
@@ -241,12 +268,8 @@ Protected Module Preferences
 		    Call Crypto.RSAGenerateKeyPair(4096, PrivateKey, PublicKey)
 		    mDevicePublicKey = PublicKey
 		    mDevicePrivateKey = PrivateKey
-		    EncryptPrivateKey()
-		  End If
-		  
-		  Var NewestUsedBuild As Integer = NewestUsedBuild
-		  If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
-		    HardwareIdVersion = 4
+		    HardwareIdVersion(True) = 6
+		    App.Log("Generated new device private key")
 		  End If
 		  
 		  Var DefaultGameId As String = NewProjectGameId
@@ -469,7 +492,7 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SelectedTag(Category As String, Subgroup As String) As String
+		Protected Function SelectedTag(Category As String, Subgroup As String) As Beacon.TagSpec
 		  Var Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
@@ -495,19 +518,23 @@ Protected Module Preferences
 		  End Select
 		  
 		  Init
-		  Return mManager.StringValue(Key, Default)
+		  Return Beacon.TagSpec.FromString(mManager.StringValue(Key, Default))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub SelectedTag(Category As String, Subgroup As String, Assigns Value As String)
+		Protected Sub SelectedTag(Category As String, Subgroup As String, Assigns Value As Beacon.TagSpec)
 		  Var Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
 		  Key = Key + " Tags"
 		  
-		  mManager.StringValue(Key) = Value
+		  If Value Is Nil Then
+		    mManager.ClearValue(Key)
+		  Else
+		    mManager.StringValue(Key) = Value.ToString
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -582,6 +609,54 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected ArkLootItemSetEntryDefaults As JSONItem
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Var Default As String
+			  #if TargetWindows
+			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK Survival Ascended Dedicated Server"
+			  #elseif TargetLinux
+			    Default = SpecialFolder.UserHome + "/.steam/steam/steamapps/common/ARK Survival Ascended Dedicated Server"
+			  #elseif TargetMacOS
+			    // This is pointless, but whatever
+			    Default = SpecialFolder.ApplicationData.NativePath + "/Steam/SteamApps/common/ARK Survival Ascended Dedicated Server"
+			  #endif
+			  Return mManager.StringValue("ArkSA Dedicated Server Path", Default)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If ArkSADedicatedPath = Value Then
+			    Return
+			  End If
+			  
+			  mManager.StringValue("ArkSA Dedicated Server Path") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSADedicatedPath As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return ArkSA.ModDiscoverySettings.FromJSONItem(mManager.JSONValue("ArkSA Mod Discovery Settings"))
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  If Value Is Nil Then
+			    mManager.ClearValue("ArkSA Mod Discovery Settings")
+			  Else
+			    mManager.JSONValue("ArkSA Mod Discovery Settings") = Value.ToJSONItem
+			  End If
+			End Set
+		#tag EndSetter
+		Protected ArkSADiscoverySettings As ArkSA.ModDiscoverySettings
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -956,6 +1031,26 @@ Protected Module Preferences
 		Protected DevicePublicKey As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  
+			  If mDeviceSalt.IsEmpty Then
+			    If mManager.HasKey("Device Salt") Then
+			      mDeviceSalt = DecodeBase64URLMBS(mManager.StringValue("Device Salt"))
+			    Else
+			      mDeviceSalt = Crypto.GenerateRandomBytes(32)
+			      mManager.StringValue("Device Salt") = EncodeBase64URLMBS(mDeviceSalt)
+			    End If
+			  End If
+			  
+			  Return mDeviceSalt
+			End Get
+		#tag EndGetter
+		Protected DeviceSalt As String
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
@@ -970,25 +1065,6 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected EntryEditorSize As Size
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.IntegerValue("Hardware Id Version", 5)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.IntegerValue("Hardware Id Version") = Value
-			  
-			  // Update private key encryption in case the hardware id changes
-			  EncryptPrivateKey()
-			End Set
-		#tag EndSetter
-		Protected HardwareIdVersion As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -1112,6 +1188,10 @@ Protected Module Preferences
 
 	#tag Property, Flags = &h21
 		Private mDevicePublicKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeviceSalt As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

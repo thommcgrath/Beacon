@@ -431,7 +431,11 @@ End
 		  End If
 		  Var DisabledByDefault As Boolean = Config.OnlyAllowSpecifiedEngrams
 		  
-		  Var Engrams() As ArkSA.Engram = Beacon.Merge(Config.Engrams, ArkSA.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, ""))
+		  Var Engrams() As ArkSA.Engram = Config.Engrams
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Engrams = Engrams.Merge(Provider.GetEngramEntries("", Self.mProject.ContentPacks, Nil))
+		  Next
 		  Self.mEngramCount = Engrams.Count
 		  
 		  // Do the work

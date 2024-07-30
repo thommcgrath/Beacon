@@ -26,7 +26,7 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h1
 		Protected Function AutomaticallyDownloadsUpdates() As Boolean
-		  Return Preferences.AutomaticallyDownloadsUpdates And (mAvailableVersionIsLicensed Or mAvailableUpdateRequired)
+		  Return Preferences.AutomaticallyDownloadsUpdates And (mAvailableVersionExpiredLicenses.Count = 0 Or mAvailableUpdateRequired)
 		End Function
 	#tag EndMethod
 
@@ -85,8 +85,19 @@ Protected Module UpdatesKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function AvailableVersionIsLicensed() As Boolean
-		  Return mAvailableVersionIsLicensed
+		Protected Function AvailableVersionHasLicenseConflict() As Boolean
+		  Return mAvailableVersionExpiredLicenses.Count > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function AvailableVersionLicenseConflicts() As Beacon.OmniLicense()
+		  Var Arr() As Beacon.OmniLicense
+		  Arr.ResizeTo(mAvailableVersionExpiredLicenses.LastIndex)
+		  For Idx As Integer = 0 To Arr.LastIndex
+		    Arr(Idx) = mAvailableVersionExpiredLicenses(Idx)
+		  Next
+		  Return Arr
 		End Function
 	#tag EndMethod
 
@@ -433,14 +444,6 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h21
 		Private Sub MacSparkle_DidFindValidUpdate(Sender As SUUpdaterMBS, Update As SUAppcastItemMBS)
-		  Var MaxLicensedBuild As Integer
-		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
-		  If Identity Is Nil Then
-		    MaxLicensedBuild = 999999999
-		  Else
-		    MaxLicensedBuild = Identity.MaxLicensedBuild
-		  End If
-		  
 		  Var VersionParts() As String = Update.VersionString.Split(".")
 		  Var UpdateBuild As Integer
 		  Try
@@ -454,12 +457,13 @@ Protected Module UpdatesKit
 		    Return
 		  End Try
 		  
+		  ProcessLicenses(App.IdentityManager.CurrentIdentity, UpdateBuild)
+		  
 		  mAvailableDisplayVersion = Update.DisplayVersionString
 		  mAvailableDownloadURL = Update.FileURL
 		  mAvailableUpdateRequired = Update.CriticalUpdate
-		  mAvailableVersionIsLicensed = MaxLicensedBuild >= UpdateBuild
 		  
-		  Sender.automaticallyDownloadsUpdates = AutomaticallyDownloadsUpdates
+		  Sender.AutomaticallyDownloadsUpdates = AutomaticallyDownloadsUpdates
 		  
 		  NotificationKit.Post(Notification_UpdateAvailable, UpdateBuild)
 		End Sub
@@ -566,7 +570,7 @@ Protected Module UpdatesKit
 		    End If
 		    
 		    Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
-		    mAvailableVersionIsLicensed = Identity Is Nil Or Identity.MaxLicensedBuild >= LatestBuild
+		    ProcessLicenses(Identity, LatestBuild)
 		    mAvailableDisplayVersion = Dict.Value("version")
 		    mAvailableNotes = Dict.Value("notes")
 		    mAvailableNotesURL = Dict.Lookup("notes_url", "")
@@ -667,6 +671,32 @@ Protected Module UpdatesKit
 		  #else
 		    #Pragma Error "No implementation yet"
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ProcessLicenses(Identity As Beacon.Identity, UpdateVersion As Integer)
+		  mAvailableVersionExpiredLicenses.ResizeTo(-1)
+		  
+		  If Identity Is Nil Then
+		    Return
+		  End If
+		  
+		  Var ActiveLicenses() As Beacon.OmniLicense = Identity.LicensesForBuild(App.BuildNumber)
+		  Var UpdateLicenses() As Beacon.OmniLicense = Identity.LicensesForBuild(UpdateVersion)
+		  If ActiveLicenses.Count = UpdateLicenses.Count Then
+		    Return
+		  End If
+		  
+		  Var Dict As New Dictionary
+		  For Each License As Beacon.OmniLicense In UpdateLicenses
+		    Dict.Value(License.LicenseId) = License
+		  Next
+		  For Each License As Beacon.OmniLicense In ActiveLicenses
+		    If Dict.HasKey(License.LicenseId) = False Then
+		      mAvailableVersionExpiredLicenses.Add(License)
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -809,7 +839,7 @@ Protected Module UpdatesKit
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAvailableVersionIsLicensed As Boolean
+		Private mAvailableVersionExpiredLicenses() As Beacon.OmniLicense
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -86,7 +86,7 @@ Begin BeaconDialog ArkSABlueprintSelectorDialog
       HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   254
       Index           =   -2147483648
       InitialParent   =   ""
@@ -329,7 +329,6 @@ Begin BeaconDialog ArkSABlueprintSelectorDialog
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      Spec            =   ""
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -412,7 +411,19 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.Picker.Tags = ArkSA.DataSource.Pool.Get(False).GetTags(Self.mMods, Self.mCategory)
+		  Var AllTags() As String
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Var Tags() As String = Provider.GetTags(Self.mMods, Self.mCategory)
+		    For Each Tag As String In Tags
+		      If AllTags.IndexOf(Tag) = -1 Then
+		        AllTags.Add(Tag)
+		      End If
+		    Next
+		  Next
+		  AllTags.Sort
+		  
+		  Self.Picker.Tags = AllTags
 		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
 		  Self.UpdateFilter()
 		  Self.SwapButtons()
@@ -434,36 +445,6 @@ End
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Sub AddBlueprintsToList(Blueprints() As ArkSA.Blueprint, Blacklist() As String, AddToBlacklist As Boolean, CheckTags As Boolean)
-		  Var RequiredTags(), ExcludedTags() As String
-		  If CheckTags Then
-		    Try
-		      RequiredTags = Self.Picker.RequiredTags()
-		      ExcludedTags = Self.Picker.ExcludedTags()
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  For Each Blueprint As ArkSA.Blueprint In Blueprints
-		    If Blacklist.IndexOf(Blueprint.BlueprintId) > -1 Then
-		      Continue
-		    End If
-		    
-		    If CheckTags = True And Blueprint.MatchesTags(RequiredTags, ExcludedTags) = False Then
-		      Continue
-		    End If
-		    
-		    Self.List.AddRow(Blueprint.Label, Blueprint.ContentPackName)
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Blueprint
-		    
-		    If AddToBlacklist Then
-		      Blacklist.Add(Blueprint.BlueprintId)
-		    End If
-		  Next
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As ArkSA.Blueprint, Mods As Beacon.StringList, SelectMode As ArkSABlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
@@ -492,6 +473,7 @@ End
 		  Self.mMods = Mods
 		  Self.mCategory = Category
 		  Self.mSubgroup = Subgroup
+		  
 		  Super.Constructor
 		  
 		  If SelectMode = ArkSABlueprintSelectorDialog.SelectModes.ExplicitMultipleWithExcluded Then
@@ -723,27 +705,75 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
-		  Var Tags As String = Self.Picker.Spec
+		  Var IsFiltered As Boolean = SearchText.IsEmpty = False
 		  
-		  Var Blacklist() As String
-		  Blacklist.ResizeTo(Self.mExcluded.LastIndex)
-		  For Idx As Integer = 0 To Blacklist.LastIndex
-		    Blacklist(Idx) = Self.mExcluded(Idx)
+		  Var Blacklist As New Dictionary
+		  For Each BlueprintId As String In Self.mExcluded
+		    Blacklist.Value(BlueprintId) = True
 		  Next
 		  
-		  Self.List.RemoveAllRows
-		  Var ScrollPosition As Integer = Self.List.ScrollPosition
-		  
-		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var Tags As Beacon.TagSpec = Self.Picker.Spec
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
 		  Var RecentPaths() As String = Preferences.ArkSARecentBlueprints(Self.mCategory, Self.mSubgroup)
-		  For Each Path As String In RecentPaths
-		    Var BlueprintsAtPath() As ArkSA.Blueprint = DataSource.GetBlueprintsByPath(Path, Self.mMods)
-		    Self.AddBlueprintsToList(BlueprintsAtPath, Blacklist, True, True)
+		  Var RecentBlueprints(), FilteredBlueprints() As ArkSA.Blueprint
+		  Var SortValues() As String
+		  Var SortByName As Boolean = Self.List.HeadingIndex = 0
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    For Each Path As String In RecentPaths
+		      Var BlueprintsAtPath() As ArkSA.Blueprint = Provider.GetBlueprintsByPath(Path, Self.mMods)
+		      For Each Blueprint As ArkSA.Blueprint In BlueprintsAtPath
+		        If Blacklist.HasKey(Blueprint.BlueprintId) Or (IsFiltered = True And Blueprint.Matches(SearchText) = False) Or Blueprint.Matches(Tags) = False Then
+		          Continue
+		        End If
+		        
+		        RecentBlueprints.Add(Blueprint)
+		        Blacklist.Value(Blueprint.BlueprintId) = True
+		      Next
+		    Next
+		    
+		    Var Blueprints() As ArkSA.Blueprint = Provider.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
+		    For Each Blueprint As ArkSA.Blueprint In Blueprints
+		      If Blacklist.HasKey(Blueprint.BlueprintId) Then
+		        Continue
+		      End If
+		      
+		      FilteredBlueprints.Add(Blueprint)
+		      Blacklist.Value(Blueprint.BlueprintId) = True
+		      SortValues.Add(If(SortByName, Blueprint.Label, Blueprint.ContentPackName))
+		    Next
 		  Next
 		  
-		  Var Blueprints() As ArkSA.Blueprint = DataSource.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
-		  Self.AddBlueprintsToList(Blueprints, Blacklist, False, False)
-		  Self.List.ScrollPosition = ScrollPosition
+		  SortValues.SortWith(FilteredBlueprints)
+		  
+		  Var SelectedIds() As String
+		  If Self.List.SelectedRowCount = 1 Then
+		    SelectedIds.Add(ArkSA.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).BlueprintId)
+		  ElseIf Self.List.SelectedRowCount > 1 Then
+		    For Idx As Integer = 0 To Self.List.LastRowIndex
+		      If Self.List.RowSelectedAt(Idx) = False Then
+		        Continue
+		      End If
+		      
+		      SelectedIds.Add(ArkSA.Blueprint(Self.List.RowTagAt(Idx)).BlueprintId)
+		    Next
+		  End If
+		  
+		  Self.List.SelectionChangeBlocked = True
+		  Self.List.RowCount = RecentBlueprints.Count + FilteredBlueprints.Count
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    Var Blueprint As ArkSA.Blueprint
+		    If Idx <= RecentBlueprints.LastIndex Then
+		      Blueprint = RecentBlueprints(Idx)
+		    Else
+		      Blueprint = FilteredBlueprints(Idx - RecentBlueprints.Count)
+		    End If
+		    Self.List.CellTextAt(Idx, 0) = Blueprint.Label
+		    Self.List.CellTextAt(Idx, 1) = Blueprint.ContentPackName
+		    Self.List.CellTooltipAt(Idx, 1) = Blueprint.ContentPackName
+		    Self.List.RowTagAt(Idx) = Blueprint
+		    Self.List.RowSelectedAt(Idx) = SelectedIds.IndexOf(Blueprint.BlueprintId) > -1
+		  Next
+		  Self.List.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 
@@ -806,6 +836,13 @@ End
 		    Self.Hide
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ColumnSorted(column As Integer) As Boolean
+		  #Pragma Unused Column
+		  Self.UpdateFilter()
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton

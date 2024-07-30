@@ -3,11 +3,13 @@ title: Accounts
 parent: All Games
 grand_parent: Config Editors
 supportedgames:
+  - "Ark: Survival Ascended"
   - "Ark: Survival Evolved"
   - "7 Days to Die"
 redirect_from:
   - /configs/sdtd/accounts/
   - /configs/ark/accounts/
+  - /configs/arksa/accounts/
 ---
 {% include editortitle.markdown %}
 

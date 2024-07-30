@@ -1,5 +1,55 @@
 #tag Module
 Protected Module ArkSA
+	#tag Method, Flags = &h1
+		Protected Sub ActivateBlueprintProvider(Provider As ArkSA.BlueprintProvider)
+		  If Provider Is Nil Then
+		    Return
+		  End If
+		  
+		  If mBlueprintProviders Is Nil Then
+		    mBlueprintProviders = New Dictionary
+		  End If
+		  
+		  If mBlueprintProviders.HasKey(Provider.BlueprintProviderId) And (WeakRef(mBlueprintProviders.Value(Provider.BlueprintProviderId)).Value Is Nil) = False Then
+		    // Provider is already active
+		    Return
+		  End If
+		  
+		  mBlueprintProviders.Value(Provider.BlueprintProviderId) = New WeakRef(Provider)
+		  
+		  #if DebugBuild
+		    Var ActiveProviders() As ArkSA.BlueprintProvider = ActiveBlueprintProviders
+		    Var ProviderIds() As String
+		    For Each ActiveProvider As ArkSA.BlueprintProvider In ActiveProviders
+		      ProviderIds.Add(ActiveProvider.BlueprintProviderId)
+		    Next
+		    System.DebugLog("Active providers is now " + String.FromArray(ProviderIds, ", "))
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ActiveBlueprintProviders() As ArkSA.BlueprintProvider()
+		  Var Providers(0) As ArkSA.BlueprintProvider
+		  Providers(0) = ArkSA.DataSource.Pool.Get(False)
+		  
+		  If (mBlueprintProviders Is Nil) = False Then
+		    Var ProviderIds() As Variant = mBlueprintProviders.Keys
+		    For Each ProviderId As Variant In ProviderIds
+		      Var Ref As WeakRef = mBlueprintProviders.Value(ProviderId)
+		      If Ref.Value Is Nil Then
+		        mBlueprintProviders.Remove(ProviderId)
+		        Continue
+		      End If
+		      
+		      Providers.Add(ArkSA.BlueprintProvider(Ref.Value))
+		    Next
+		  End If
+		  
+		  Return Providers
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub AddTag(Extends Blueprint As ArkSA.MutableBlueprint, ParamArray TagsToAdd() As String)
 		  Blueprint.AddTags(TagsToAdd)
@@ -465,6 +515,168 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub DeactivateBlueprintProvider(Provider As ArkSA.BlueprintProvider)
+		  If mBlueprintProviders Is Nil Or Provider Is Nil Then
+		    // No providers, so nothing to do
+		    Return
+		  End If
+		  
+		  If mBlueprintProviders.HasKey(Provider.BlueprintProviderId) Then
+		    mBlueprintProviders.Remove(Provider.BlueprintProviderId)
+		    
+		    #if DebugBuild
+		      Var ActiveProviders() As ArkSA.BlueprintProvider = ActiveBlueprintProviders
+		      Var ProviderIds() As String
+		      For Each ActiveProvider As ArkSA.BlueprintProvider In ActiveProviders
+		        ProviderIds.Add(ActiveProvider.BlueprintProviderId)
+		      Next
+		      System.DebugLog("Active providers is now " + String.FromArray(ProviderIds, ", "))
+		    #endif
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DownloadMod(ModInfo As CurseForge.ModInfo) As ArkSA.ModDownload
+		  // This should only be run in a thread
+		  
+		  If mModFilenameSearcher Is Nil Then
+		    mModFilenameSearcher = New RegEx
+		    mModFilenameSearcher.SearchPattern = "^(.+)-([a-z+]+) (\d+)\.zip$"
+		  End If
+		  
+		  Var ModId As String = ModInfo.ModId.ToString(Locale.Raw, "0")
+		  Try
+		    Var RawInfo As New JSONItem(ModInfo.ToString(False))
+		    
+		    Var LatestFiles As JSONItem = RawInfo.Value("latestFiles")
+		    If LatestFiles.IsArray = False Then
+		      App.Log("Mod " + ModId + " has no files.")
+		      Return Nil
+		    End If
+		    
+		    Var MainFileId As Integer = RawInfo.Value("mainFileId")
+		    Var LatestFile As JSONItem
+		    For Idx As Integer = 0 To LatestFiles.Count - 1
+		      Var File As JSONItem = LatestFiles.ChildAt(Idx)
+		      If File.Value("id") <> MainFileId Or File.Value("isAvailable").BooleanValue = False Then
+		        Continue For Idx
+		      End If
+		      
+		      LatestFile = File
+		      Exit For Idx
+		    Next
+		    If LatestFile Is Nil Then
+		      App.Log("Could not find main file for mod " + ModId + " in list of files.")
+		      Return Nil
+		    End If
+		    
+		    // Need to find the version of the main file
+		    Var FilenameInfo As RegexMatch = mModFilenameSearcher.Search(LatestFile.Value("fileName").StringValue)
+		    If FilenameInfo Is Nil Then
+		      App.Log("Could not parse the filename for mod " + ModId + " in list of files.")
+		      Return Nil
+		    End If
+		    Var FilenameBase As String = FilenameInfo.SubExpressionString(1)
+		    Var FilenameVersion As String = FilenameInfo.SubExpressionString(3)
+		    
+		    // Get the full list of files
+		    Var FileListSocket As New SimpleHTTP.SynchronousHTTPSocket
+		    FileListSocket.RequestHeader("User-Agent") = App.UserAgent
+		    FileListSocket.RequestHeader("x-api-key") = Beacon.CurseForgeApiKey
+		    FileListSocket.Send("GET", "https://api.curseforge.com/v1/mods/" + ModId + "/files")
+		    If FileListSocket.LastHTTPStatus <> 200 Then
+		      App.Log("Could not list files for mod " + ModId + ": HTTP #" + FileListSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		      Return Nil
+		    End If
+		    Var ResponseJson As New JSONItem(FileListSocket.LastContent)
+		    Var FileList As JSONItem = ResponseJson.Value("data")
+		    
+		    // Now look through for the windowsserver file
+		    Var DesiredFilename As String = FilenameBase + "-windowsserver " + FilenameVersion + ".zip"
+		    Var FileInfo As JSONItem
+		    For Idx As Integer = 0 To FileList.Count - 1
+		      Var File As JSONItem = FileList.ChildAt(Idx)
+		      If File.Value("fileName").StringValue <> DesiredFilename Then
+		        Continue For Idx
+		      End If
+		      
+		      FileInfo = File
+		      Exit For Idx
+		    Next
+		    
+		    If FileInfo Is Nil Then
+		      App.Log("Could not find file " + DesiredFilename + " for mod " + ModId + ".")
+		      Return Nil
+		    End If
+		    
+		    Var FileHash As String
+		    Var Hashes As JSONItem = FileInfo.Child("hashes")
+		    For Idx As Integer = 0 To Hashes.Count - 1
+		      Var Hash As JSONItem = Hashes.ChildAt(Idx)
+		      If Hash.Value("algo") = 1 Then
+		        FileHash = Hash.Value("value")
+		        Exit For Idx
+		      End If
+		    Next
+		    
+		    Var FileSize As Double = FileInfo.Value("fileLength")
+		    Var FileName As String = FileInfo.Value("fileName")
+		    
+		    Var DownloadUrl As String
+		    If FileInfo.HasKey("downloadUrl") And FileInfo.Value("downloadUrl").IsNull = False Then
+		      DownloadUrl = FileInfo.Value("downloadUrl")
+		    Else
+		      // The url is predictable
+		      Var FileId As Integer = FileInfo.Value("id")
+		      Var ParentFolderId As Integer = Floor(FileId / 1000)
+		      Var ChildFolderId As Integer = FileId - (ParentFolderId * 1000)
+		      DownloadUrl = "https://edge.forgecdn.net/files/" + ParentFolderId.ToString(Locale.Raw, "0") + "/" + ChildFolderId.ToString(Locale.Raw, "0") + "/" + EncodeURLComponent(FileName)
+		    End If
+		    
+		    // This isn't officially supported, so let's pretend we're a browser.
+		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
+		    DownloadSocket.RequestHeader("User-Agent") = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+		    DownloadSocket.Send("GET", DownloadUrl)
+		    If DownloadSocket.LastHTTPStatus <> 200 Then
+		      App.Log("Mod " + ModId + " was looked up, but the archive '" + FileName + "' could not be downloaded: HTTP #" + DownloadSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		      Return Nil
+		    End If
+		    
+		    Var DownloadedBytes As Double
+		    If (DownloadSocket.LastContent Is Nil) = False Then
+		      DownloadedBytes = DownloadSocket.LastContent.Size
+		    End If
+		    If DownloadedBytes <> FileSize Then
+		      App.Log("Mod " + ModId + " downloaded " + Beacon.BytesToString(DownloadedBytes) + " of '" + FileName + "' but should have downloaded " + Beacon.BytesToString(FileSize) + ".")
+		      Return Nil
+		    End If
+		    
+		    If FileHash.IsEmpty = False And (DownloadSocket.LastContent Is Nil) = False Then
+		      Var ComputedHash As String = EncodeHex(Crypto.SHA1(DownloadSocket.LastContent))
+		      If ComputedHash <> FileHash Then
+		        App.Log("Mod " + ModId + " downloaded '" + FileName + "' but checksum does not match. Expected " + FileHash.Lowercase + ", computed " + ComputedHash.Lowercase)
+		        Return Nil
+		      End If
+		    End If
+		    
+		    Var Reader As New ArchiveReaderMBS
+		    Reader.SupportFilterAll
+		    Reader.SupportFormatAll
+		    If Not Reader.OpenData(DownloadSocket.LastContent) Then
+		      App.Log("Could not open archive '" + FileName + "' for mod " + ModId + ": " + Reader.ErrorString)
+		      Return Nil
+		    End If
+		    
+		    Return New ArkSA.ModDownload(Reader, Filename)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Trying to download mod " + ModId)
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ExportToCSV(Blueprints() As ArkSA.Blueprint) As String
 		  If Blueprints.Count = 0 Then
 		    Return ""
@@ -596,9 +808,93 @@ Protected Module ArkSA
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Fingerprint(Extends Providers() As ArkSA.BlueprintProvider) As String
+		  Var Members() As String
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Members.Add(Provider.BlueprintProviderId)
+		  Next
+		  Return EncodeHex(Crypto.MD5(String.FromArray(Members, ",")))
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function GenerateBlueprintId(ContentPackId As String, Path As String) As String
 		  Return Beacon.UUID.v5(ContentPackId.Lowercase + ":" + Path.Lowercase)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprints(Extends Providers() As ArkSA.BlueprintProvider, Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec, ExtraClauses() As String, ExtraValues() As Variant) As ArkSA.Blueprint()
+		  Var Blueprints() As ArkSA.Blueprint
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Blueprints = Blueprints.Merge(Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues))
+		  Next
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Blueprint()
+		  Var Categories() As String = ArkSA.Categories
+		  Var Blueprints() As ArkSA.Blueprint
+		  Var ExtraClauses() As String
+		  Var ExtraValues() As Variant
+		  For Each Category As String In Categories
+		    Var Results() As ArkSA.Blueprint = Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		    For Each Result As ArkSA.Blueprint In Results
+		      Blueprints.Add(Result)
+		    Next
+		  Next
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprints(Extends Provider As ArkSA.BlueprintProvider, Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As Beacon.TagSpec) As ArkSA.Blueprint()
+		  Var ExtraClauses() As String
+		  Var ExtraValues() As Variant
+		  Return Provider.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatures(Extends Providers() As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Creature()
+		  Var Creatures() As ArkSA.Creature
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Creatures = Creatures.Merge(Provider.GetCreatures(SearchText, ContentPacks, Tags))
+		  Next
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngrams(Extends Providers() As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.Engram()
+		  Var Engrams() As ArkSA.Engram
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Engrams = Engrams.Merge(Provider.GetEngrams(SearchText, ContentPacks, Tags))
+		  Next
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainers(Extends Providers() As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil, IncludeExperimental As Boolean = False) As ArkSA.LootContainer()
+		  Var Containers() As ArkSA.LootContainer
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    Containers = Containers.Merge(Provider.GetLootContainers(SearchText, ContentPacks, Tags, IncludeExperimental))
+		  Next
+		  Return Containers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPoints(Extends Providers() As ArkSA.BlueprintProvider, SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As Beacon.TagSpec = Nil) As ArkSA.SpawnPoint()
+		  Var SpawnPoints() As ArkSA.SpawnPoint
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    SpawnPoints = SpawnPoints.Merge(Provider.GetSpawnPoints(SearchText, ContentPacks, Tags))
+		  Next
+		  Return SpawnPoints
 		End Function
 	#tag EndMethod
 
@@ -733,36 +1029,226 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Matches(Extends Blueprint As ArkSA.Blueprint, Rx As PCRE2CodeMBS) As Boolean
-		  Return (Rx.Match(Blueprint.Path) Is Nil) = False Or (Rx.Match(Blueprint.ClassString) Is Nil) = False Or (Rx.Match(Blueprint.Label) Is Nil) = False Or (Rx.Match(Blueprint.BlueprintId) Is Nil) = False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Matches(Extends Blueprint As ArkSA.Blueprint, Filter As String) As Boolean
-		  Return Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Label.IndexOf(Filter) > -1 Or Blueprint.BlueprintId.IndexOf(Filter) > -1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MatchesTags(Extends Blueprint As ArkSA.Blueprint, RequiredTags() As String, ExcludedTags() As String) As Boolean
-		  If (RequiredTags Is Nil) = False Then
-		    For Each Tag As String In RequiredTags
-		      If Blueprint.IsTagged(Tag) = False Then
-		        Return False
-		      End If
-		    Next
+		Function Matches(Extends Blueprint As ArkSA.Blueprint, Spec As Beacon.TagSpec) As Boolean
+		  If Spec Is Nil Then
+		    Return True
 		  End If
 		  
-		  If (ExcludedTags Is Nil) = False Then
-		    For Each Tag As String In ExcludedTags
-		      If Blueprint.IsTagged(Tag) = True Then
-		        Return False
-		      End If
-		    Next
-		  End If
+		  Var Tags() As String = Spec.FilteredTags
+		  For Each Tag As String In Tags
+		    Var State As Integer = Spec.StateOf(Tag)
+		    Var IsTagged As Boolean = Blueprint.IsTagged(Tag)
+		    If (State = Beacon.TagSpec.StateRequired And IsTagged = False) Or (State = Beacon.TagSpec.StateExcluded And IsTagged = True) Then
+		      Return False
+		    End If
+		  Next
 		  
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Matches(Extends Blueprint As ArkSA.Blueprint, Rx As PCRE2CodeMBS, Flags As Integer = ArkSA.FlagMatchAny) As Boolean
+		  If Rx Is Nil Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchPath) > 0 And (Rx.Match(Blueprint.Path) Is Nil) = False Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchLabel) > 0 And ((Rx.Match(Blueprint.Label) Is Nil) = False Or ((Blueprint.AlternateLabel Is Nil) = False And (Rx.Match(Blueprint.AlternateLabel) Is Nil) = False)) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchClass) > 0 And (Rx.Match(Blueprint.ClassString) Is Nil) = False Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchBlueprintId) > 0 And (Rx.Match(Blueprint.BlueprintId) Is Nil) = False Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchUnlockString) > 0 And (Blueprint IsA ArkSA.Engram And ArkSA.Engram(Blueprint).EntryString.IsEmpty = False And (Rx.Match(ArkSA.Engram(Blueprint).EntryString) Is Nil) = False) Then
+		    Return True
+		  End If
+		  
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Matches(Extends Blueprint As ArkSA.Blueprint, Filter As String, Flags As Integer = ArkSA.FlagMatchAny) As Boolean
+		  If Filter.IsEmpty Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchPath) > 0 And Blueprint.Path.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchLabel) > 0 And (Blueprint.Label.Contains(Filter) Or ((Blueprint.AlternateLabel Is Nil) = False And Blueprint.AlternateLabel.Contains(Filter))) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchClass) > 0 And Blueprint.ClassString.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchBlueprintId) > 0 And Blueprint.BlueprintId.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  If (Flags And FlagMatchUnlockString) > 0 And Blueprint IsA ArkSA.Engram And ArkSA.Engram(Blueprint).EntryString.IsEmpty = False And ArkSA.Engram(Blueprint).EntryString.Contains(Filter) Then
+		    Return True
+		  End If
+		  
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.Blueprint, Array2() As ArkSA.Blueprint) As ArkSA.Blueprint()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
+		  Var Unique As New Dictionary
+		  For Each Blueprint As ArkSA.Blueprint In Array1
+		    If Blueprint Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(Blueprint.BlueprintId) = Blueprint
+		  Next
+		  For Each Blueprint As ArkSA.Blueprint In Array2
+		    If Blueprint Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(Blueprint.BlueprintId) = Blueprint
+		  Next
+		  Var Merged() As ArkSA.Blueprint
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.Creature, Array2() As ArkSA.Creature) As ArkSA.Creature()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
+		  Var Unique As New Dictionary
+		  For Each Creature As ArkSA.Creature In Array1
+		    If Creature Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(Creature.BlueprintId) = Creature
+		  Next
+		  For Each Creature As ArkSA.Creature In Array2
+		    If Creature Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(Creature.BlueprintId) = Creature
+		  Next
+		  Var Merged() As ArkSA.Creature
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.Engram, Array2() As ArkSA.Engram) As ArkSA.Engram()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
+		  Var Unique As New Dictionary
+		  For Each Engram As ArkSA.Engram In Array1
+		    If Engram Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(Engram.BlueprintId) = Engram
+		  Next
+		  For Each Engram As ArkSA.Engram In Array2
+		    If Engram Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(Engram.BlueprintId) = Engram
+		  Next
+		  Var Merged() As ArkSA.Engram
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.LootContainer, Array2() As ArkSA.LootContainer) As ArkSA.LootContainer()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
+		  Var Unique As New Dictionary
+		  For Each LootContainer As ArkSA.LootContainer In Array1
+		    If LootContainer Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(LootContainer.BlueprintId) = LootContainer
+		  Next
+		  For Each LootContainer As ArkSA.LootContainer In Array2
+		    If LootContainer Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(LootContainer.BlueprintId) = LootContainer
+		  Next
+		  Var Merged() As ArkSA.LootContainer
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Extends Array1() As ArkSA.SpawnPoint, Array2() As ArkSA.SpawnPoint) As ArkSA.SpawnPoint()
+		  If Array1 Is Nil Or Array1.Count = 0 Then
+		    Return Array2
+		  ElseIf Array2 Is Nil Or Array2.Count = 0 Then
+		    Return Array1
+		  End If
+		  
+		  Var Unique As New Dictionary
+		  For Each SpawnPoint As ArkSA.SpawnPoint In Array1
+		    If SpawnPoint Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(SpawnPoint.BlueprintId) = SpawnPoint
+		  Next
+		  For Each SpawnPoint As ArkSA.SpawnPoint In Array2
+		    If SpawnPoint Is Nil Then
+		      Continue
+		    End If
+		    Unique.Value(SpawnPoint.BlueprintId) = SpawnPoint
+		  Next
+		  Var Merged() As ArkSA.SpawnPoint
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
 		End Function
 	#tag EndMethod
 
@@ -1033,35 +1519,38 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveCreature(CreatureId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.Creature
-		  If CreatureId.IsEmpty = False Then
-		    Try
-		      Var Creature As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreature(CreatureId)
-		      If (Creature Is Nil) = False Then
-		        Return Creature
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var Creatures() As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreaturesByPath(Path, ContentPacks)
-		      If Creatures.Count > 0 Then
-		        Return Creatures(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var Creatures() As ArkSA.Creature = ArkSA.DataSource.Pool.Get(False).GetCreaturesByClass(ClassString, ContentPacks)
-		      If Creatures.Count > 0 Then
-		        Return Creatures(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    If CreatureId.IsEmpty = False Then
+		      Try
+		        Var Creature As ArkSA.Creature = Provider.GetCreature(CreatureId)
+		        If (Creature Is Nil) = False Then
+		          Return Creature
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If Path.IsEmpty = False Then
+		      Try
+		        Var Creatures() As ArkSA.Creature = Provider.GetCreaturesByPath(Path, ContentPacks)
+		        If Creatures.Count > 0 Then
+		          Return Creatures(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If ClassString.IsEmpty = False Then
+		      Try
+		        Var Creatures() As ArkSA.Creature = Provider.GetCreaturesByClass(ClassString, ContentPacks)
+		        If Creatures.Count > 0 Then
+		          Return Creatures(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  Next
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
@@ -1096,35 +1585,38 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveEngram(EngramId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.Engram
-		  If EngramId.IsEmpty = False Then
-		    Try
-		      Var Engram As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram(EngramId)
-		      If (Engram Is Nil) = False Then
-		        Return Engram
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var Engrams() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngramsByPath(Path, ContentPacks)
-		      If Engrams.Count > 0 Then
-		        Return Engrams(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var Engrams() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngramsByClass(ClassString, ContentPacks)
-		      If Engrams.Count > 0 Then
-		        Return Engrams(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    If EngramId.IsEmpty = False Then
+		      Try
+		        Var Engram As ArkSA.Engram = Provider.GetEngram(EngramId)
+		        If (Engram Is Nil) = False Then
+		          Return Engram
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If Path.IsEmpty = False Then
+		      Try
+		        Var Engrams() As ArkSA.Engram = Provider.GetEngramsByPath(Path, ContentPacks)
+		        If Engrams.Count > 0 Then
+		          Return Engrams(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If ClassString.IsEmpty = False Then
+		      Try
+		        Var Engrams() As ArkSA.Engram = Provider.GetEngramsByClass(ClassString, ContentPacks)
+		        If Engrams.Count > 0 Then
+		          Return Engrams(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  Next
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
@@ -1159,35 +1651,38 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveLootContainer(LootDropId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.LootContainer
-		  If LootDropId.IsEmpty = False Then
-		    Try
-		      Var LootContainer As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainer(LootDropId)
-		      If (LootContainer Is Nil) = False Then
-		        Return LootContainer
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var LootContainers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainersByPath(Path, ContentPacks)
-		      If LootContainers.Count > 0 Then
-		        Return LootContainers(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var LootContainers() As ArkSA.LootContainer = ArkSA.DataSource.Pool.Get(False).GetLootContainersByClass(ClassString, ContentPacks)
-		      If LootContainers.Count > 0 Then
-		        Return LootContainers(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    If LootDropId.IsEmpty = False Then
+		      Try
+		        Var LootContainer As ArkSA.LootContainer = Provider.GetLootContainer(LootDropId)
+		        If (LootContainer Is Nil) = False Then
+		          Return LootContainer
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If Path.IsEmpty = False Then
+		      Try
+		        Var LootContainers() As ArkSA.LootContainer = Provider.GetLootContainersByPath(Path, ContentPacks)
+		        If LootContainers.Count > 0 Then
+		          Return LootContainers(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If ClassString.IsEmpty = False Then
+		      Try
+		        Var LootContainers() As ArkSA.LootContainer = Provider.GetLootContainersByClass(ClassString, ContentPacks)
+		        If LootContainers.Count > 0 Then
+		          Return LootContainers(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  Next
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
@@ -1222,35 +1717,38 @@ Protected Module ArkSA
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveSpawnPoint(SpawnPointId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.SpawnPoint
-		  If SpawnPointId.IsEmpty = False Then
-		    Try
-		      Var SpawnPoint As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPoint(SpawnPointId)
-		      If (SpawnPoint Is Nil) = False Then
-		        Return SpawnPoint
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var SpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsByPath(Path, ContentPacks)
-		      If SpawnPoints.Count > 0 Then
-		        Return SpawnPoints(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var SpawnPoints() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsByClass(ClassString, ContentPacks)
-		      If SpawnPoints.Count > 0 Then
-		        Return SpawnPoints(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders()
+		  For Each Provider As ArkSA.BlueprintProvider In Providers
+		    If SpawnPointId.IsEmpty = False Then
+		      Try
+		        Var SpawnPoint As ArkSA.SpawnPoint = Provider.GetSpawnPoint(SpawnPointId)
+		        If (SpawnPoint Is Nil) = False Then
+		          Return SpawnPoint
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If Path.IsEmpty = False Then
+		      Try
+		        Var SpawnPoints() As ArkSA.SpawnPoint = Provider.GetSpawnPointsByPath(Path, ContentPacks)
+		        If SpawnPoints.Count > 0 Then
+		          Return SpawnPoints(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If ClassString.IsEmpty = False Then
+		      Try
+		        Var SpawnPoints() As ArkSA.SpawnPoint = Provider.GetSpawnPointsByClass(ClassString, ContentPacks)
+		        If SpawnPoints.Count > 0 Then
+		          Return SpawnPoints(0)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  Next
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
@@ -1511,6 +2009,15 @@ Protected Module ArkSA
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mBlueprintProviders As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModFilenameSearcher As RegEx
+	#tag EndProperty
+
+
 	#tag Constant, Name = CategoryCreatures, Type = String, Dynamic = False, Default = \"creatures", Scope = Protected
 	#tag EndConstant
 
@@ -1530,6 +2037,24 @@ Protected Module ArkSA
 	#tag EndConstant
 
 	#tag Constant, Name = Enabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchAny, Type = Double, Dynamic = False, Default = \"31", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchBlueprintId, Type = Double, Dynamic = False, Default = \"16", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchClass, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchLabel, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchPath, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FlagMatchUnlockString, Type = Double, Dynamic = False, Default = \"8", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FullName, Type = String, Dynamic = False, Default = \"Ark: Survival Ascended", Scope = Protected

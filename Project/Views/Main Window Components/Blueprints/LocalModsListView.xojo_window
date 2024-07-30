@@ -119,7 +119,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -195,14 +194,12 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine ArkDiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin ArkSA.ModDiscoveryEngine ArkSADiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -239,6 +236,12 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Transparent     =   True
       Visible         =   True
       Width           =   600
+   End
+   Begin ArkSA.ModDiscoveryEngine2 ArkSADiscoveryEngine2
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
    End
 End
 #tag EndDesktopWindow
@@ -697,7 +700,11 @@ End
 		  
 		  Try
 		    Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
-		    Self.ArkSADiscoveryEngine.Start(Settings)
+		    If Settings.UseNewDiscovery Then
+		      Self.ArkSADiscoveryEngine2.Start(Settings)
+		    Else
+		      Self.ArkSADiscoveryEngine.Start(Settings)
+		    End If
 		  Catch Err As RuntimeException
 		    Self.ShowAlert("Beacon could not start mod discovery", Err.Message)
 		  End Try
@@ -932,6 +939,10 @@ End
 		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mArkSALowConfidenceDialog As ArkSALowConfidenceBlueprintsDialog
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDiscoveredMods() As Beacon.ContentPack
@@ -1383,7 +1394,7 @@ End
 		    Packs.Value(WorkshopId) = Pack
 		  Next
 		  
-		  Var CurrentBlueprints() As Ark.Blueprint = Database.GetBlueprints("", ModsFilter, "")
+		  Var CurrentBlueprints() As Ark.Blueprint = Database.GetBlueprints("", ModsFilter, Nil)
 		  Var CurrentBlueprintMap As New Dictionary
 		  For Each Blueprint As Ark.Blueprint In CurrentBlueprints
 		    CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
@@ -1508,12 +1519,16 @@ End
 	#tag Event
 		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, Blueprints() As ArkSA.Blueprint)
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
-		  Var ShouldDelete As Boolean = Self.mDiscoveryShouldDelete
+		  Var ShouldDelete As Boolean = Me.Settings.DeleteBlueprints
+		  Var ShouldReplace As Boolean = Me.Settings.ReplaceBlueprints
 		  
 		  // Save the new content pack
 		  If Blueprints.Count > 0 Then
+		    Var IsNew As Boolean = DataSource.GetContentPackWithId(ContentPack.ContentPackId) Is Nil
 		    If DataSource.SaveContentPack(ContentPack, False) Then
-		      Self.mNumAddedMods = Self.mNumAddedMods + 1
+		      If IsNew Then
+		        Self.mNumAddedMods = Self.mNumAddedMods + 1
+		      End If
 		    Else
 		      ContentPack = DataSource.GetContentPackWithId(ArkSA.UserContentPackId)
 		      ShouldDelete = False
@@ -1522,26 +1537,29 @@ End
 		  
 		  // Find existing blueprints
 		  Var Map As New Dictionary
-		  Var ExistingBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		  Var ExistingBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), Nil)
 		  For Each Blueprint As ArkSA.Blueprint In ExistingBlueprints
 		    Map.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
-		  // Existing blueprints should not be saved over
+		  // Existing blueprints should not be saved over unless requested
 		  Var BlueprintsToSave() As ArkSA.Blueprint
 		  For Each Blueprint As ArkSA.Blueprint In Blueprints
 		    If Map.HasKey(Blueprint.BlueprintId) Then
 		      Map.Remove(Blueprint.BlueprintId)
-		    Else
-		      If Blueprint.ContentPackId <> ContentPack.ContentPackId Then
-		        Var Mutable As ArkSA.MutableBlueprint = Blueprint.MutableVersion
-		        Mutable.ContentPackId = ContentPack.ContentPackId
-		        Mutable.ContentPackName = ContentPack.Name
-		        Mutable.RegenerateBlueprintId()
-		        Blueprint = Mutable.ImmutableVersion
+		      If ShouldReplace = False Then
+		        Continue
 		      End If
-		      BlueprintsToSave.Add(Blueprint)
 		    End If
+		    
+		    If Blueprint.ContentPackId <> ContentPack.ContentPackId Then
+		      Var Mutable As ArkSA.MutableBlueprint = Blueprint.MutableVersion
+		      Mutable.ContentPackId = ContentPack.ContentPackId
+		      Mutable.ContentPackName = ContentPack.Name
+		      Mutable.RegenerateBlueprintId()
+		      Blueprint = Mutable.ImmutableVersion
+		    End If
+		    BlueprintsToSave.Add(Blueprint)
 		  Next
 		  
 		  // Setup blueprints to be deleted, if necessary
@@ -1593,6 +1611,138 @@ End
 		  Self.mNumErrorBlueprints = 0
 		  Self.mNumAddedMods = 0
 		  Self.mNumRemovedBlueprints = 0
+		  
+		  Self.mProgress = New ProgressWindow("Running mod discovery", Me.StatusMessage)
+		  AddHandler mProgress.CancelPressed, WeakAddressOf mProgress_CancelPressed
+		  Self.mProgress.Show(Self.TrueWindow)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub StatusUpdated()
+		  If (Self.mProgress Is Nil) = False Then
+		    Self.mProgress.Detail = Me.StatusMessage
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ArkSADiscoveryEngine2
+	#tag Event
+		Sub ContentPackDiscovered(ContentPack As Beacon.ContentPack, ConfirmedBlueprints() As ArkSA.Blueprint, UnconfirmedBlueprints() As ArkSA.Blueprint)
+		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(True)
+		  Var ShouldDelete As Boolean = Me.Settings.DeleteBlueprints
+		  Var ShouldReplace As Boolean = Me.Settings.ReplaceBlueprints
+		  
+		  // Save the new content pack
+		  Var IsNew As Boolean = DataSource.GetContentPackWithId(ContentPack.ContentPackId) Is Nil
+		  If DataSource.SaveContentPack(ContentPack, False) Then
+		    If IsNew Then
+		      Self.mNumAddedMods = Self.mNumAddedMods + 1
+		    End If
+		  Else
+		    ContentPack = DataSource.GetContentPackWithId(ArkSA.UserContentPackId)
+		    ShouldDelete = False
+		  End If
+		  
+		  // Find existing blueprints
+		  Var Map As New Dictionary
+		  Var ExistingBlueprints() As ArkSA.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), Nil)
+		  For Each Blueprint As ArkSA.Blueprint In ExistingBlueprints
+		    Map.Value(Blueprint.BlueprintId) = Blueprint
+		  Next
+		  
+		  // Do not delete the unconfirmed stuff. The dialog will do that later.
+		  For Each Blueprint As ArkSA.Blueprint In UnconfirmedBlueprints
+		    If Map.HasKey(Blueprint.BlueprintId) Then
+		      Map.Remove(Blueprint.BlueprintId)
+		    End If
+		  Next
+		  
+		  // Existing blueprints should not be saved over unless requested
+		  Var BlueprintsToSave() As ArkSA.Blueprint
+		  For Each Blueprint As ArkSA.Blueprint In ConfirmedBlueprints
+		    If Map.HasKey(Blueprint.BlueprintId) Then
+		      Map.Remove(Blueprint.BlueprintId)
+		      If ShouldReplace = False Then
+		        Continue
+		      End If
+		    End If
+		    
+		    If Blueprint.ContentPackId <> ContentPack.ContentPackId Then
+		      Var Mutable As ArkSA.MutableBlueprint = Blueprint.MutableVersion
+		      Mutable.ContentPackId = ContentPack.ContentPackId
+		      Mutable.ContentPackName = ContentPack.Name
+		      Mutable.RegenerateBlueprintId()
+		      Blueprint = Mutable.ImmutableVersion
+		    End If
+		    BlueprintsToSave.Add(Blueprint)
+		  Next
+		  
+		  // Setup blueprints to be deleted, if necessary
+		  Var BlueprintsToDelete() As ArkSA.Blueprint
+		  If ShouldDelete Then
+		    For Each Entry As DictionaryEntry In Map
+		      BlueprintsToDelete.Add(Entry.Value)
+		    Next
+		  End If
+		  
+		  Var ErrorDict As New Dictionary
+		  Call DataSource.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True)
+		  
+		  Self.mNumAddedBlueprints = Self.mNumAddedBlueprints + BlueprintsToSave.Count
+		  Self.mNumRemovedBlueprints = Self.mNumRemovedBlueprints + BlueprintsToDelete.Count
+		  Self.mNumErrorBlueprints = Self.mNumErrorBlueprints + ErrorDict.KeyCount
+		  
+		  If Preferences.OnlineEnabled And Me.Settings.UploadToCommunity Then
+		    Try
+		      Var Exported As MemoryBlock = Beacon.BuildExport(True, ContentPack)
+		      If (Exported Is Nil) = False Then
+		        Var Request As New BeaconAPI.Request("discovery/" + ContentPack.ContentPackId, "PUT", Exported, "application/octet-stream")
+		        Call BeaconAPI.SendSync(Request) // Response doesn't actually matter
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Uploading mod to community")
+		    End Try
+		  End If
+		  
+		  Self.mArkSALowConfidenceDialog.AddCandidates(UnconfirmedBlueprints)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(ErrorMessage As String)
+		  Self.ShowAlert("There was an error with mod discovery", ErrorMessage)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished()
+		  If (Self.mProgress Is Nil) = False Then
+		    Self.mProgress.Close
+		    Self.mProgress = Nil
+		  End If
+		  
+		  Self.mArkSALowConfidenceDialog.Present(Self)
+		  Self.mArkSALowConfidenceDialog = Nil
+		  
+		  If Me.WasSuccessful Then
+		    Self.RefreshMods()
+		  Else
+		    Return
+		  End If
+		  
+		  Var Message As String = "Added " + Language.NounWithQuantity(Self.mNumAddedMods, "new mod", "new mods") + ", " + Language.NounWithQuantity(Self.mNumAddedBlueprints, "new or updated blueprint", "new or updated blueprints") + ", and removed " + Language.NounWithQuantity(Self.mNumRemovedBlueprints, "blueprint", "blueprints") + "."
+		  If Self.mNumErrorBlueprints > 0 Then
+		    Message = Message + " " + Language.NounWithQuantity(Self.mNumErrorBlueprints, "blueprint", "blueprints") + " had errors and could not be imported."
+		  End If
+		  
+		  Self.ShowAlert("Mod discovery has finished", Message)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.mNumAddedBlueprints = 0
+		  Self.mNumErrorBlueprints = 0
+		  Self.mNumAddedMods = 0
+		  Self.mNumRemovedBlueprints = 0
+		  Self.mArkSALowConfidenceDialog = New ArkSALowConfidenceBlueprintsDialog(Me.Settings, Nil)
 		  
 		  Self.mProgress = New ProgressWindow("Running mod discovery", Me.StatusMessage)
 		  AddHandler mProgress.CancelPressed, WeakAddressOf mProgress_CancelPressed

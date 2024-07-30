@@ -27,6 +27,18 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ExpiredLicenses() As Beacon.OmniLicense()
+		  Var Arr() As Beacon.OmniLicense
+		  For Each License As Beacon.OmniLicense In Self.mLicenses
+		    If License.IsExpired Then
+		      Arr.Add(License)
+		    End If
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromUserApi(UserData As Dictionary) As Beacon.Identity
 		  Try
 		    Var UserId As String = UserData.Value("userId").StringValue
@@ -89,21 +101,27 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function Licenses() As Beacon.OmniLicense()
-		  Var Arr() As Beacon.OmniLicense
-		  For Each License As Beacon.OmniLicense In Self.mLicenses
-		    If License.IsValidForCurrentBuild Then
-		      Arr.Add(License)
-		    End If
-		  Next
-		  Return Arr
+		  Return Self.LicensesForBuild(App.BuildNumber, 2147483647)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Licenses(Flags As Integer) As Beacon.OmniLicense()
+		  Return Self.LicensesForBuild(App.BuildNumber, Flags)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LicensesForBuild(BuildNumber As Integer) As Beacon.OmniLicense()
+		  Return Self.LicensesForBuild(BuildNumber, 2147483647)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LicensesForBuild(BuildNumber As Integer, Flags As Integer) As Beacon.OmniLicense()
 		  Var Arr() As Beacon.OmniLicense
 		  For Each License As Beacon.OmniLicense In Self.mLicenses
-		    If (License.Flags And Flags) > 0 And License.IsValidForCurrentBuild Then
+		    If (License.Flags And Flags) > 0 And License.IsValidForBuild(BuildNumber) Then
 		      Arr.Add(License)
 		    End If
 		  Next
@@ -124,21 +142,21 @@ Protected Class Identity
 		    Var IsAnonymous As Boolean = Row.Column("anonymous").BooleanValue
 		    Var ExpirationString As String = Row.Column("expiration").StringValue
 		    Var Expiration As DateTime
+		    If ExpirationString.IsEmpty = False Then
+		      Expiration = NewDateFromSQLDateTime(ExpirationString)
+		    End If
 		    
 		    Var Licenses() As Beacon.OmniLicense
 		    Var LicensesJson() As Variant
 		    If Row.Column("licenses").Value.IsNull = False Then
 		      LicensesJson = Beacon.ParseJSON(Row.Column("licenses").StringValue)
 		    End If
-		    Var OmniFlags As Integer
 		    For Each Member As Variant In LicensesJson
 		      If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
 		        Continue
 		      End If
 		      
-		      Var License As New Beacon.OmniLicense(Dictionary(Member))
-		      OmniFlags = OmniFlags Or License.Flags
-		      Licenses.Add(License)
+		      Licenses.Add(New Beacon.OmniLicense(Dictionary(Member)))
 		    Next
 		    
 		    Var SignatureParts() As Variant

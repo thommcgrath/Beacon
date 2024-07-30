@@ -223,6 +223,16 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FindIngredient(IngredientId As String) As ArkSA.BlueprintReference
+		  For Each Ingredient As ArkSA.CraftingCostIngredient In Self.mIngredients
+		    If Ingredient.Reference.BlueprintId = IngredientId Then
+		      Return Ingredient.Reference
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GeneratedClassBlueprintPath() As String
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
 		End Function

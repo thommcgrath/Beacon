@@ -278,15 +278,15 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		  #Pragma Unused ForAPI
 		  
 		  If Self.mIncubationTime > 0 Then
-		    Dict.Value("incubation_time") = Self.mIncubationTime
+		    Dict.Value("incubationTime") = Self.mIncubationTime
 		  Else
-		    Dict.Value("incubation_time") = Nil
+		    Dict.Value("incubationTime") = Nil
 		  End If
 		  
 		  If Self.mMatureTime > 0 Then
-		    Dict.Value("mature_time") = Self.mMatureTime
+		    Dict.Value("matureTime") = Self.mMatureTime
 		  Else
-		    Dict.Value("mature_time")= Nil
+		    Dict.Value("matureTime")= Nil
 		  End If
 		  
 		  If (Self.mStats Is Nil) = False And Self.mStats.KeyCount > 0 Then
@@ -298,12 +298,12 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		      Var StatInfo As Dictionary = Entry.Value
 		      
 		      Var PackedStats As New Dictionary
-		      PackedStats.Value("stat_index") = StatIndex
-		      PackedStats.Value("base_value") = StatInfo.Lookup(Self.KeyBase, Self.MissingStatValue).DoubleValue
-		      PackedStats.Value("per_level_wild_multiplier") = StatInfo.Lookup(Self.KeyWild, Self.MissingStatValue).DoubleValue
-		      PackedStats.Value("per_level_tamed_multiplier") = StatInfo.Lookup(Self.KeyTamed, Self.MissingStatValue).DoubleValue
-		      PackedStats.Value("add_multiplier") = StatInfo.Lookup(Self.KeyAdd, Self.MissingStatValue).DoubleValue
-		      PackedStats.Value("affinity_multiplier") = StatInfo.Lookup(Self.KeyAffinity, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("statIndex") = StatIndex
+		      PackedStats.Value("baseValue") = StatInfo.Lookup(Self.KeyBase, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("perLevelWildMultiplier") = StatInfo.Lookup(Self.KeyWild, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("perLevelTamedMultiplier") = StatInfo.Lookup(Self.KeyTamed, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("addMultiplier") = StatInfo.Lookup(Self.KeyAdd, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("affinityMultiplier") = StatInfo.Lookup(Self.KeyAffinity, Self.MissingStatValue).DoubleValue
 		      
 		      Stats.Add(PackedStats)
 		      Indexes.Add(StatIndex)
@@ -316,17 +316,17 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		  End If
 		  
 		  If Self.mStatsMask > 0 Then
-		    Dict.Value("used_stats") = Self.mStatsMask
+		    Dict.Value("usedStats") = Self.mStatsMask
 		  Else
-		    Dict.Value("used_stats") = Nil
+		    Dict.Value("usedStats") = Nil
 		  End If
 		  
 		  If Self.mMinMatingInterval > 0 And Self.mMaxMatingInterval > 0 Then
-		    Dict.Value("mating_interval_min") = Self.mMinMatingInterval
-		    Dict.Value("mating_interval_max") = Self.mMaxMatingInterval
+		    Dict.Value("minMatingInterval") = Self.mMinMatingInterval
+		    Dict.Value("maxMatingInterval") = Self.mMaxMatingInterval
 		  Else
-		    Dict.Value("mating_interval_min") = Nil
-		    Dict.Value("mating_interval_max") = Nil
+		    Dict.Value("minMatingInterval") = Nil
+		    Dict.Value("maxMatingInterval") = Nil
 		  End If
 		  
 		  Dict.Value("dinoNameTag") = NullableString.ToVariant(Self.mNameTag)

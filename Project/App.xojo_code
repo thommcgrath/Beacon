@@ -393,7 +393,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  For Each Source As Beacon.DataSource In Sources
 		    Source.EmptyCaches()
 		  Next
-		  BeaconUI.ShowAlert("Caches have been emptied. It is recommended to reload any open projects.", "Opening a project loads the caches with data that may not be stored in your local database. Reloading your projects after emptying caches will improve reliability.")
+		  BeaconUI.ShowAlert("Caches have been emptied.", "Hopefully that fixes your issue.")
 		  Return True
 		End Function
 	#tag EndMenuHandler
@@ -1539,7 +1539,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Sub Pusher_CloudUpdated(ChannelName As String, EventName As String, Payload As String)
 		  #Pragma Unused ChannelName
 		  #Pragma Unused EventName
-		  #Pragma Unused Payload
+		  
+		  Try
+		    Var Json As JSONItem = New JSONItem(Payload)
+		    If Json.HasKey("deviceId") And Json.Value("deviceId").IsNull = False And Json.Value("deviceId").Type = Variant.TypeString And Beacon.HardwareId = Json.Value("deviceId") Then
+		      // Message was sent from this device
+		      Return
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing cloud update event")
+		    Return
+		  End Try
 		  
 		  // Even though the server is telling us changes were made, wait just in case
 		  UserCloud.Sync(False)

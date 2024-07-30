@@ -120,7 +120,7 @@ Protected Class LootContainerSelector
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		  Case Beacon.TemplateSelector.Languages.JavaScript
-		    Var Engine As JavaScriptEngineMBS = Self.CreateEngine(ArkSA.DataSource.Pool.Get(False).GetLootContainer("b537ea4d-e0a8-4c92-9763-24d3df5e1562"))
+		    Var Engine As JavaScriptEngineMBS = Self.CreateEngine(ArkSA.DataSource.Pool.Get(False).GetLootContainer("0d3fc51b-bbb3-5055-9ffc-53f4bfcbd9fc"))
 		    Try
 		      Call Engine.Evaluate("function execute() {" + EndOfLine + Self.mCode + EndOfLine + "}")
 		      Call Engine.CallFunction("execute")

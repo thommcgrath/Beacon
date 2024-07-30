@@ -265,6 +265,7 @@ Begin ArkSAConfigEditor ArkSACraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -457,7 +458,7 @@ End
 		  Case "94eced5b-be7d-441a-a5b3-f4a9bf40a856"
 		    Self.CreateFibercraftServer()
 		  Case "3db64fe3-9134-4a19-a255-7712c8c70a83"
-		    Self.SetupTransferrableElement()
+		    Self.SetupTransferableElement()
 		  Case "6600245b-54b4-4b85-8f26-3792084ca2fa"
 		    If ArkSAAdjustIngredientDialog.Present(Self, Self.Project) Then
 		      Self.Modified = True
@@ -500,7 +501,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CreateFibercraftServer()
 		  Var Fiber As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngram("31815d05-b6ef-586b-b415-bf278f1a3668")
-		  If ArkSAAdjustIngredientDialog.Present(Self, Self.Project, Nil, "{""required"":[],""excluded"":[""no_fibercraft""]}", Nil, "", Fiber, 0.00001, ArkAdjustIngredientDialog.RoundUp, False) Then
+		  If ArkSAAdjustIngredientDialog.Present(Self, Self.Project, Nil, New Beacon.TagSpec(Nil, Array("no_fibercraft")), Nil, Nil, Fiber, 0.00001, ArkAdjustIngredientDialog.RoundUp, False) Then
 		    Self.Modified = True
 		    Self.SetupUI()
 		  End If
@@ -536,9 +537,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetupTransferrableElement()
+		Private Sub SetupTransferableElement()
 		  Var Config As ArkSA.Configs.CraftingCosts = Self.Config(False)
-		  If ArkSASetupTransferrableElementDialog.Present(Self, Config, Self.Project.ContentPacks) Then
+		  If ArkSASetupTransferableElementDialog.Present(Self, Config, Self.Project.ContentPacks) Then
 		    Call Self.Config(True) // Forces adding the config to the file
 		    Self.UpdateList()
 		    Self.Modified = Config.Modified

@@ -2763,6 +2763,15 @@ End
 		  If Self.mSampleProject Is Nil Then
 		    Self.mSampleProject = New ArkSA.Project
 		    Self.mSampleProject.MapMask = ArkSA.Maps.UniversalMask
+		    
+		    Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		    For Each Provider As ArkSA.BlueprintProvider In Providers
+		      If Provider IsA Beacon.DataSource Then
+		        Continue
+		      End If
+		      
+		      Self.mSampleProject.ContentPackEnabled(Provider.BlueprintProviderId) = True
+		    Next
 		  End If
 		  Return Self.mSampleProject
 		End Function
@@ -3416,8 +3425,7 @@ End
 		    Engrams.Add(ArkSA.CraftingCostIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
 		  Next
 		  
-		  Var Mods As New Beacon.StringList
-		  Var NewEngrams() As ArkSA.Engram = ArkSABlueprintSelectorDialog.Present(Self, "Resources", Engrams, Mods, ArkSABlueprintSelectorDialog.SelectModes.ExplicitMultiple)
+		  Var NewEngrams() As ArkSA.Engram = ArkSABlueprintSelectorDialog.Present(Self, "Resources", Engrams, New Beacon.StringList, ArkSABlueprintSelectorDialog.SelectModes.ExplicitMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If

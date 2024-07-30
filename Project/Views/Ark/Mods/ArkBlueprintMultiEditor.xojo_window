@@ -375,14 +375,14 @@ End
 		  
 		  Self.AdjustDimensions()
 		  
-		  Var CommonTags() As String
+		  Var CommonTags As New Beacon.TagSpec
 		  For I As Integer = 0 To Tags.KeyCount - 1
 		    Var Tag As String = Tags.Key(I)
 		    If Tags.Lookup(Tag, 0) = BlueprintCount Then
-		      CommonTags.Add(Tag)
+		      CommonTags.RequireTag(Tag)
 		    End If
 		  Next
-		  Self.Picker.SetSelections(CommonTags, Nil)
+		  Self.Picker.Spec = CommonTags
 		  
 		  Self.Modified = False
 		End Sub

@@ -348,6 +348,7 @@ Protected Module UserCloud
 		  If App.Pusher.SocketId.IsEmpty = False Then
 		    Request.RequestHeader("X-Beacon-Pusher-Id") = App.Pusher.SocketId
 		  End If
+		  Request.RequestHeader("X-Beacon-Device-Id") = Beacon.HardwareId
 		  
 		  PendingRequests.Value(Request.RequestID) = Request
 		  BeaconAPI.Send(Request)

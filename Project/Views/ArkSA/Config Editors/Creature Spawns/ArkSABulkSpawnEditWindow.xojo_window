@@ -815,7 +815,7 @@ End
 		  Var Creatures() As ArkSA.Creature
 		  Var CreatureIds() As String
 		  If AllCreaturesRadio.Value Then
-		    Creatures = ArkSA.DataSource.Pool.Get(False).GetCreatures("", Self.mMods)
+		    Creatures = ArkSA.ActiveBlueprintProviders.GetCreatures("", Self.mMods)
 		    For Each Creature As ArkSA.Creature In Creatures
 		      CreatureIds.Add(Creature.CreatureId)
 		    Next
@@ -904,7 +904,7 @@ End
 		  Var CreaturesProcessed As Integer = 0
 		  Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for 0 of " + TotalCreaturesText + "…"))
 		  For Each Creature As ArkSA.Creature In Self.mCreatures
-		    Var Points() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, "")
+		    Var Points() As ArkSA.SpawnPoint = ArkSA.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, Nil)
 		    For Each Definition As ArkSA.SpawnPoint In Points
 		      If Definition.ValidForMask(Self.mMask) = False Then
 		        Continue

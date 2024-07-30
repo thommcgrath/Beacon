@@ -237,7 +237,6 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
    End
    Begin Thread SaveThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -254,6 +253,12 @@ End
 	#tag Event
 		Sub Opening()
 		  Var Packs() As Beacon.ContentPack = Self.mProject.EmbeddedContentPacks
+		  Var PackNames() As String
+		  PackNames.ResizeTo(Packs.LastIndex)
+		  For Idx As Integer = 0 To PackNames.LastIndex
+		    PackNames(Idx) = Packs(Idx).Name
+		  Next
+		  PackNames.SortWith(Packs)
 		  For Each Pack As Beacon.ContentPack In Packs
 		    Self.List.AddExpandableRow(Pack.Name)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Pack
@@ -359,6 +364,13 @@ End
 		Sub RowExpanded(row As Integer)
 		  Var Pack As Beacon.ContentPack = Me.RowTagAt(Row)
 		  Var Blueprints() As Ark.Blueprint = Self.mProject.EmbeddedBlueprints(Pack)
+		  Var BlueprintNames() As String
+		  BlueprintNames.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To BlueprintNames.LastIndex
+		    BlueprintNames(Idx) = Blueprints(Idx).Label
+		  Next
+		  BlueprintNames.SortWith(Blueprints)
+		  
 		  Var PackState As DesktopCheckBox.VisualStates = Self.mStates.Lookup(Pack.ContentPackId, DesktopCheckBox.VisualStates.Checked)
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Me.AddRow(Blueprint.Label)

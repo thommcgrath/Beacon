@@ -888,6 +888,8 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
+		  Var Providers() As ArkSA.BlueprintProvider = ArkSA.ActiveBlueprintProviders
+		  
 		  Var Engrams() As ArkSA.Engram
 		  If Self.mEngrams.LastIndex = -1 Then
 		    If Not Self.EntryStringField.Text.EndsWith("_C") Then
@@ -895,7 +897,10 @@ End
 		      Return
 		    End If
 		    
-		    Var ExistingEngrams() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngramsByEntryString(Self.EntryStringField.Text, Nil)
+		    Var ExistingEngrams() As ArkSA.Engram
+		    For Each Provider As ArkSA.BlueprintProvider In Providers
+		      ExistingEngrams = ExistingEngrams.Merge(Provider.GetEngramsByEntryString(Self.EntryStringField.Text, Nil))
+		    Next
 		    If ExistingEngrams.Count = 0 Then
 		      ExistingEngrams.Add(ArkSA.Engram.CreateFromEntryString(Self.EntryStringField.Text))
 		    End If
@@ -1007,7 +1012,12 @@ End
 		      Self.mConfig.AutoUnlockEngram(Engram) = AutoUnlock
 		    End If
 		    
-		    If ArkSA.DataSource.Pool.Get(False).BlueprintIsCustom(Engram) = True Or Engram.ManualUnlock = True Or Self.mConfig.EffectivelyAutoUnlocked(Engram) = True Then
+		    Var BlueprintIsCustom As Boolean
+		    For Each Provider As ArkSA.BlueprintProvider In Providers
+		      BlueprintIsCustom = BlueprintIsCustom Or Provider.BlueprintIsCustom(Engram)
+		    Next
+		    
+		    If BlueprintIsCustom = True Or Engram.ManualUnlock = True Or Self.mConfig.EffectivelyAutoUnlocked(Engram) = True Then
 		      If EditLevel Then
 		        Self.mConfig.RequiredPlayerLevel(Engram) = RequiredLevel
 		      End If

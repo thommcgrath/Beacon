@@ -210,6 +210,10 @@ Implements Beacon.HostingProvider
 
 	#tag Method, Flags = &h21
 		Private Function RunRequest(Request As GameServerApp.APIRequest) As GameServerApp.APIResponse
+		  If RatelimitRemaining < 5 Then
+		    Thread.Current.Sleep(60000)
+		  End If
+		  
 		  Var Headers As Dictionary = Request.Headers
 		  Var Content As MemoryBlock = Request.Content
 		  Var RequestMethod As String = Request.RequestMethod
@@ -234,6 +238,14 @@ Implements Beacon.HostingProvider
 		  If Locked Then
 		    Preferences.ReleaseConnection()
 		  End If
+		  
+		  Var RatelimitHeader As String = Socket.ResponseHeader("x-ratelimit-remaining")
+		  If RatelimitHeader.IsEmpty Then
+		    RatelimitRemaining = 40
+		  Else
+		    RatelimitRemaining = Integer.FromString(RatelimitHeader, Locale.Raw)
+		  End If
+		  
 		  Return GameServerApp.APIResponse.FromSocket(Socket)
 		End Function
 	#tag EndMethod

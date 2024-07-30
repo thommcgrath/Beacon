@@ -108,13 +108,13 @@ Protected Module Beacon
 		  For Each ContentPack As Beacon.ContentPack In ContentPacks
 		    Select Case ContentPack.GameId
 		    Case Ark.Identifier
-		      Var Blueprints() As Ark.Blueprint = ArkDataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		      Var Blueprints() As Ark.Blueprint = ArkDataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), Nil)
 		      Var Filename As String = Ark.AddToArchive(Archive, ContentPack, Blueprints)
 		      If Filename.IsEmpty = False Then
 		        Filenames.Add(Filename)
 		      End If
 		    Case ArkSA.Identifier
-		      Var Blueprints() As ArkSA.Blueprint = ArkSADataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		      Var Blueprints() As ArkSA.Blueprint = ArkSADataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), Nil)
 		      Var Filename As String = ArkSA.AddToArchive(Archive, ContentPack, Blueprints)
 		      If Filename.IsEmpty = False Then
 		        Filenames.Add(Filename)
@@ -444,6 +444,20 @@ Protected Module Beacon
 		  End Select
 		  
 		  Return "/configs/" + EncodeURLComponent(GameId.Lowercase) + "/" + EncodeURLComponent(Slug.Lowercase) + "/"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackIds(Extends ContentPacks() As Beacon.ContentPack) As String()
+		  Var Ids() As String
+		  Ids.ResizeTo(ContentPacks.LastIndex)
+		  For Idx As Integer = 0 To ContentPacks.LastIndex
+		    If ContentPacks(Idx) Is Nil Then
+		      Continue
+		    End If
+		    Ids(Idx) = ContentPacks(Idx).ContentPackId
+		  Next
+		  Return Ids
 		End Function
 	#tag EndMethod
 
@@ -924,19 +938,31 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function HardwareId(ForceModern As Boolean = False) As String
+		Protected Function HardwareId() As String
+		  Return HardwareId(Preferences.HardwareIdVersion)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function HardwareId(Version As Integer) As String
 		  #if TargetMacOS
-		    #Pragma Unused ForceModern
+		    #Pragma Unused Version
 		    Return SystemInformationMBS.MacUUID.Lowercase
 		  #elseif TargetWindows Or TargetLinux
-		    Var Source As String = SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey
-		    If ForceModern = False And Preferences.HardwareIdVersion = 4 Then
-		      Return Beacon.UUID.v4(Crypto.HashAlgorithms.MD5, Source)
+		    Var Pieces(3) As String = Array(SystemInformationMBS.HardDiscSerial, SystemInformationMBS.CPUBrandString, "", SystemInformationMBS.WinProductKey)
+		    If Version >= 6 Then
+		      Pieces(2) = Preferences.DeviceSalt
 		    Else
+		      Pieces(2) = SystemInformationMBS.MACAddress
+		    End If
+		    Var Source As String = String.FromArray(Pieces, ":")
+		    If Version >= 5 Then
 		      Return Beacon.UUID.v5(Source)
+		    Else
+		      Return Beacon.UUID.v4(Crypto.HashAlgorithms.MD5, Source)
 		    End If
 		  #elseif TargetiOS
-		    #Pragma Unused ForceModern
+		    #Pragma Unused Version
 		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 		    
 		    Const UIKitFramework = "UIKit.framework"
@@ -956,7 +982,7 @@ Protected Module Beacon
 		    
 		    Return Identifier.DefineEncoding(Encodings.UTF8).Lowercase
 		  #else
-		    #Pragma Unused ForceModern
+		    #Pragma Unused Version
 		    #Pragma Error "HardwareID not implemented for this platform"
 		  #endif
 		End Function
@@ -1146,23 +1172,6 @@ Protected Module Beacon
 		    Unique.Value(Engram.EngramId) = Engram
 		  Next
 		  Var Merged() As Ark.Engram
-		  For Each Entry As DictionaryEntry In Unique
-		    Merged.Add(Entry.Value)
-		  Next
-		  Return Merged
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Merge(Array1() As ArkSA.Engram, Array2() As ArkSA.Engram) As ArkSA.Engram()
-		  Var Unique As New Dictionary
-		  For Each Engram As ArkSA.Engram In Array1
-		    Unique.Value(Engram.EngramId) = Engram
-		  Next
-		  For Each Engram As ArkSA.Engram In Array2
-		    Unique.Value(Engram.EngramId) = Engram
-		  Next
-		  Var Merged() As ArkSA.Engram
 		  For Each Entry As DictionaryEntry In Unique
 		    Merged.Add(Entry.Value)
 		  Next

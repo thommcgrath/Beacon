@@ -39,9 +39,13 @@ Implements Beacon.BlueprintConsumer
 		    End If
 		  Next
 		  
-		  // Inject overrides for things that would go over the limit
+		  // Inject overrides for things that would go over the limit.
+		  // Don't use ActiveBlueprintProviders here because the project may not be in the foreground when this is called.
 		  If Self.mGlobalMultiplier <> 1.0 Then
-		    Var AllEngrams() As ArkSA.Engram = ArkSA.DataSource.Pool.Get(False).GetEngrams("", Project.ContentPacks)
+		    Var Providers() As ArkSA.BlueprintProvider
+		    Providers.Add(ArkSA.DataSource.Pool.Get(False))
+		    Providers.Add(Project)
+		    Var AllEngrams() As ArkSA.Engram = Providers.GetEngrams("", Project.ContentPacks)
 		    For Each Engram As ArkSA.Engram In AllEngrams
 		      If Self.mOverrides.HasBlueprint(Engram) Or (Engram.StackSize Is Nil) Or Engram.StackSize.DoubleValue = 1 Or Engram.StackSize.DoubleValue * Self.mGlobalMultiplier < Self.MaximumQuantity Then
 		        Continue

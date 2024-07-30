@@ -614,6 +614,25 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Matches(Extends Blueprint As Ark.Blueprint, Spec As Beacon.TagSpec) As Boolean
+		  If Spec Is Nil Then
+		    Return True
+		  End If
+		  
+		  Var Tags() As String = Spec.FilteredTags
+		  For Each Tag As String In Tags
+		    Var State As Integer = Spec.StateOf(Tag)
+		    Var IsTagged As Boolean = Blueprint.IsTagged(Tag)
+		    If (State = Beacon.TagSpec.StateRequired And IsTagged = False) Or (State = Beacon.TagSpec.StateExcluded And IsTagged = True) Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Matches(Extends Blueprint As Ark.Blueprint, Rx As PCRE2CodeMBS) As Boolean
 		  Return (Rx.Match(Blueprint.Path) Is Nil) = False Or (Rx.Match(Blueprint.ClassString) Is Nil) = False Or (Rx.Match(Blueprint.Label) Is Nil) = False Or (Rx.Match(Blueprint.BlueprintId) Is Nil) = False
 		End Function
@@ -622,28 +641,6 @@ Protected Module Ark
 	#tag Method, Flags = &h0
 		Function Matches(Extends Blueprint As Ark.Blueprint, Filter As String) As Boolean
 		  Return Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Path.IndexOf(Filter) > -1 Or Blueprint.Label.IndexOf(Filter) > -1 Or Blueprint.BlueprintId.IndexOf(Filter) > -1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MatchesTags(Extends Blueprint As Ark.Blueprint, RequiredTags() As String, ExcludedTags() As String) As Boolean
-		  If (RequiredTags Is Nil) = False Then
-		    For Each Tag As String In RequiredTags
-		      If Blueprint.IsTagged(Tag) = False Then
-		        Return False
-		      End If
-		    Next
-		  End If
-		  
-		  If (ExcludedTags Is Nil) = False Then
-		    For Each Tag As String In ExcludedTags
-		      If Blueprint.IsTagged(Tag) = True Then
-		        Return False
-		      End If
-		    Next
-		  End If
-		  
-		  Return True
 		End Function
 	#tag EndMethod
 

@@ -170,6 +170,19 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Hidden()
+		  Var Bound As Integer = Self.PageCount - 1
+		  For Idx As Integer = 0 To Bound
+		    Var View As BeaconSubview = Self.Page(Idx)
+		    If (View Is Nil) = False And View IsA ArkSAModEditorView Then
+		      Var Provider As ArkSA.BlueprintProvider = ArkSAModEditorView(View).BlueprintProvider
+		      ArkSA.DeactivateBlueprintProvider(Provider)
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  Self.AppendPage(Self.LocalModsView)
 		  Self.AppendPage(Self.CommunityModsView)
@@ -206,6 +219,21 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Var Bound As Integer = Self.PageCount - 1
+		  For Idx As Integer = 0 To Bound
+		    Var View As BeaconSubview = Self.Page(Idx)
+		    If (View Is Nil) = False And View IsA ArkSAModEditorView Then
+		      Var Provider As ArkSA.BlueprintProvider = ArkSAModEditorView(View).BlueprintProvider
+		      ArkSA.ActivateBlueprintProvider(Provider)
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Function CloseModView(ModId As String) As Boolean
@@ -224,8 +252,12 @@ End
 
 	#tag Method, Flags = &h0
 		Function CloseView(View As BeaconSubview) As Boolean
-		  If View.CanBeClosed = False Or View.ConfirmClose() = False Then
+		  If View Is Nil Or View.CanBeClosed = False Or View.ConfirmClose() = False Then
 		    Return False
+		  End If
+		  
+		  If View IsA ArkSAModEditorView Then
+		    ArkSA.DeactivateBlueprintProvider(ArkSAModEditorView(View).BlueprintProvider)
 		  End If
 		  
 		  Self.Nav.Remove(View.LinkedOmniBarItem)
@@ -284,6 +316,7 @@ End
 		      End If
 		      
 		      View = New ArkSAModEditorView(Controller, Mode = ModsListView.ViewModes.LocalReadOnly)
+		      ArkSA.ActivateBlueprintProvider(ArkSAModEditorView(View).BlueprintProvider)
 		      Self.EmbedView(View)
 		    End Select
 		  End If

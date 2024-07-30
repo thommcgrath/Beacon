@@ -200,15 +200,18 @@ Protected Class PusherSocket
 		      
 		      Var EventName As String = Json.Value("event")
 		      Var Data As JsonItem
-		      If Json.HasKey("data") Then
-		        Var Payload As Variant = Json.Value("data")
-		        Select Case Payload.Type
-		        Case Variant.TypeString
-		          Data = New JsonItem(Payload.StringValue)
-		        Case Variant.TypeObject
-		          Data = JsonItem(Payload.ObjectValue)
-		        End Select
-		      End If
+		      Try
+		        If Json.HasKey("data") Then
+		          Var Payload As Variant = Json.Value("data")
+		          Select Case Payload.Type
+		          Case Variant.TypeString
+		            Data = New JsonItem(Payload.StringValue)
+		          Case Variant.TypeObject
+		            Data = JsonItem(Payload.ObjectValue)
+		          End Select
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
 		      
 		      Select Case EventName
 		      Case "pusher:connection_established"
@@ -253,6 +256,7 @@ Protected Class PusherSocket
 		    End If
 		  Wend
 		  Self.State = Beacon.PusherSocket.States.Disconnected
+		  Self.mCurl = Nil
 		  
 		  If ShouldReconnect Then
 		    // Resubscribe to channels
@@ -261,8 +265,6 @@ Protected Class PusherSocket
 		    Next
 		    GoTo ReconnectPoint
 		  End If
-		  
-		  Self.mCurl = Nil
 		End Sub
 	#tag EndMethod
 

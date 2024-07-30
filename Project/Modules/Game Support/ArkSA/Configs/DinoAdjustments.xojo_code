@@ -42,20 +42,15 @@ Implements Beacon.BlueprintConsumer
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
 		        Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "TamedDinoClassResistanceMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")", "TamedDinoClassResistanceMultipliers:" + Behavior.TargetCreature.ClassString))
 		      End If
-		      
-		      #if EnableSpawnWeights
-		        If Behavior.SpawnWeightMultiplier <> 1.0 Or (Behavior.SpawnLimitPercent Is Nil) = False Then
-		          Var Elements() As String = Array("DinoNameTag=""" + Behavior.TargetCreature.ClassString + """")
-		          If Behavior.SpawnWeightMultiplier <> 1.0 Then
-		            Elements.Add("SpawnWeightMultiplier=" + Behavior.SpawnWeightMultiplier.PrettyText)
-		          End If
-		          If (Behavior.SpawnLimitPercent Is Nil) = False Then
-		            Elements.Add("OverrideSpawnLimitPercentage=True")
-		            Elements.Add("SpawnLimitPercentage=" + Behavior.SpawnLimitPercent.DoubleValue.PrettyText)
-		          End If
-		          Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoSpawnWeightMultipliers=" + Elements.Join(","), "DinoSpawnWeightMultipliers:" + Behavior.TargetCreature.ClassString))
-		        End If
-		      #endif
+		      If Behavior.WildSpeedMultiplier <> 1.0 Then
+		        Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoClassSpeedMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.WildSpeedMultiplier.PrettyText + ")", "DinoClassSpeedMultipliers:" + Behavior.TargetCreature.ClassString))
+		      End If
+		      If Behavior.TamedSpeedMultiplier <> 1.0 Then
+		        Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "TamedDinoClassSpeedMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedSpeedMultiplier.PrettyText + ")", "TamedDinoClassSpeedMultipliers:" + Behavior.TargetCreature.ClassString))
+		      End If
+		      If Behavior.TamedStaminaMultiplier <> 1.0 Then
+		        Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "TamedDinoClassStaminaMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedStaminaMultiplier.PrettyText + ")", "TamedDinoClassStaminaMultipliers:" + Behavior.TargetCreature.ClassString))
+		      End If
 		    End If
 		    If Behavior.ProhibitTaming Then
 		      Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "PreventDinoTameClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventDinoTameClassNames:" + Behavior.TargetCreature.ClassString))
@@ -75,13 +70,13 @@ Implements Beacon.BlueprintConsumer
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "NPCReplacements"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoClassDamageMultipliers"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoClassResistanceMultipliers"))
+		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoClassSpeedMultipliers"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "TamedDinoClassDamageMultipliers"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "TamedDinoClassResistanceMultipliers"))
+		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "TamedDinoClassSpeedMultipliers"))
+		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "TamedDinoClassStaminaMultipliers"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "PreventDinoTameClassNames"))
 		  Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "PreventTransferForClassNames"))
-		  #if EnableSpawnWeights
-		    Keys.Add(New ArkSA.ConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "DinoSpawnWeightMultipliers"))
-		  #endif
 		  Return Keys
 		End Function
 	#tag EndEvent
@@ -326,22 +321,59 @@ Implements Beacon.BlueprintConsumer
 		    End Try
 		  Next
 		  
-		  #if EnableSpawnWeights
-		    Var SpawnWeights() As Variant = ParsedData.AutoArrayValue("DinoSpawnWeightMultipliers")
-		    For Each Entry As Variant In SpawnWeights
-		      Try
-		        Var Dict As Dictionary = Entry
-		        Var TargetClass As String = Dict.Value("
-		        If Dict.HasKey("SpawnWeightMultiplier") Then
-		          
-		        End If
-		        If Dict.HasKey("SpawnLimitPercentage") Then
-		          
-		        End If
-		      Catch Err As RuntimeException
-		      End Try
-		    Next
-		  #endif
+		  Var WildSpeedMultipliers() As Variant = ParsedData.AutoArrayValue("DinoClassSpeedMultipliers")
+		  For Each Entry As Variant In WildSpeedMultipliers
+		    Try
+		      Var Dict As Dictionary = Entry
+		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
+		        Continue
+		      End If
+		      
+		      Var TargetClass As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
+		      Behavior.WildSpeedMultiplier = Multiplier
+		      Config.Add(Behavior)
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Var TamedSpeedMultipliers() As Variant = ParsedData.AutoArrayValue("TamedDinoClassSpeedMultipliers")
+		  For Each Entry As Variant In TamedSpeedMultipliers
+		    Try
+		      Var Dict As Dictionary = Entry
+		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
+		        Continue
+		      End If
+		      
+		      Var TargetClass As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
+		      Behavior.TamedSpeedMultiplier = Multiplier
+		      Config.Add(Behavior)
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Var TamedStaminaMultipliers() As Variant = ParsedData.AutoArrayValue("TamedDinoClassStaminaMultipliers")
+		  For Each Entry As Variant In TamedStaminaMultipliers
+		    Try
+		      Var Dict As Dictionary = Entry
+		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
+		        Continue
+		      End If
+		      
+		      Var TargetClass As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      
+		      Var Behavior As ArkSA.MutableCreatureBehavior = MutableBehavior(Config, ArkSA.ResolveCreature("", "", TargetClass, ContentPacks, True))
+		      Behavior.TamedStaminaMultiplier = Multiplier
+		      Config.Add(Behavior)
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
 		  
 		  If Config.Modified Then
 		    Return Config
@@ -449,10 +481,6 @@ Implements Beacon.BlueprintConsumer
 	#tag Property, Flags = &h21
 		Private mBehaviors As Dictionary
 	#tag EndProperty
-
-
-	#tag Constant, Name = EnableSpawnWeights, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior
