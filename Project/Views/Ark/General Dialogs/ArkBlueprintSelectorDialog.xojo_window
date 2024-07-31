@@ -329,7 +329,6 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      Spec            =   ""
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -436,28 +435,9 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddBlueprintsToList(Blueprints() As Ark.Blueprint, Blacklist() As String, AddToBlacklist As Boolean, CheckTags As Boolean)
-		  Var Tags As Beacon.TagSpec
-		  If CheckTags Then
-		    Tags = Self.Picker.Spec
-		  End If
-		  
-		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    If Blacklist.IndexOf(Blueprint.BlueprintId) > -1 Then
-		      Continue
-		    End If
-		    
-		    If CheckTags = True And Blueprint.Matches(Tags) = False Then
-		      Continue
-		    End If
-		    
-		    Self.List.AddRow(Blueprint.Label, Blueprint.ContentPackName)
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Blueprint
-		    
-		    If AddToBlacklist Then
-		      Blacklist.Add(Blueprint.BlueprintId)
-		    End If
-		  Next
+		Private Sub AddBlueprintToList(Blueprint As Ark.Blueprint)
+		  Self.List.AddRow(Blueprint.Label, Blueprint.ContentPackName)
+		  Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Blueprint
 		End Sub
 	#tag EndMethod
 
@@ -721,10 +701,9 @@ End
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As Beacon.TagSpec = Self.Picker.Spec
 		  
-		  Var Blacklist() As String
-		  Blacklist.ResizeTo(Self.mExcluded.LastIndex)
-		  For Idx As Integer = 0 To Blacklist.LastIndex
-		    Blacklist(Idx) = Self.mExcluded(Idx)
+		  Var Blacklist As New Dictionary
+		  For Each BlueprintId As String In Self.mExcluded
+		    Blacklist.Value(BlueprintId) = True
 		  Next
 		  
 		  Self.List.RemoveAllRows
@@ -734,11 +713,25 @@ End
 		  Var RecentPaths() As String = Preferences.ArkRecentBlueprints(Self.mCategory, Self.mSubgroup)
 		  For Each Path As String In RecentPaths
 		    Var BlueprintsAtPath() As Ark.Blueprint = DataSource.GetBlueprintsByPath(Path, Self.mMods)
-		    Self.AddBlueprintsToList(BlueprintsAtPath, Blacklist, True, True)
+		    For Each Blueprint As Ark.Blueprint In BlueprintsAtPath
+		      If Blacklist.HasKey(Blueprint.BlueprintId) Or Blueprint.Matches(SearchText) = False Or Blueprint.Matches(Tags) = False Then
+		        Continue
+		      End If
+		      
+		      Self.AddBlueprintToList(Blueprint)
+		      Blacklist.Value(Blueprint.BlueprintId) = True // To make sure the next loop doesn't also add it
+		    Next
 		  Next
 		  
 		  Var Blueprints() As Ark.Blueprint = DataSource.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
-		  Self.AddBlueprintsToList(Blueprints, Blacklist, False, True)
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blacklist.HasKey(Blueprint.BlueprintId) Then
+		      Continue
+		    End If
+		    
+		    Self.AddBlueprintToList(Blueprint)
+		  Next
+		  
 		  Self.List.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
