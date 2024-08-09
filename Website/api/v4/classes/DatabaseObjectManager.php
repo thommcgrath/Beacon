@@ -302,7 +302,7 @@ class DatabaseObjectManager {
 				}
 			} catch (Exception $err) {
 				$database->Rollback();
-				return Response::NewJsonError($err, $member, 500);
+				return Response::NewJsonError($err->getMessage(), $member, 500);
 			}
 		}
 		try {
