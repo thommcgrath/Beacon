@@ -191,7 +191,7 @@ End
 		      Explanation = "Beacon's databases do not have data. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
 		    Else
 		      Message = "Databases have been updated"
-		      Explanation = "Beacon's database are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
+		      Explanation = "Beacon's databases are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
 		    End If
 		    Self.Hide
 		    BeaconUI.ShowAlert(Message, Explanation)
