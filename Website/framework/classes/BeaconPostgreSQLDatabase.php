@@ -149,7 +149,7 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 					return new BeaconPostgreSQLRecordSet($result);
 				} else {
 					$this->ResetTransactions();
-					$errorCode = pg_result_error_field($result, PGSQL_DIAG_SQLSTATE);
+					$errorCode = intval(pg_result_error_field($result, PGSQL_DIAG_SQLSTATE));
 					$errorMessage = pg_result_error_field($result, PGSQL_DIAG_MESSAGE_PRIMARY);
 					$errorDetail = pg_result_error_field($result, PGSQL_DIAG_MESSAGE_DETAIL);
 					if (is_null($errorDetail) === false) {
