@@ -762,6 +762,7 @@ End
 		      Self.SingleItemCheckbox.Enabled = Self.SingleEntryCheckbox.Value
 		    Else
 		      Self.SingleItemCheckbox.Enabled = True
+		      Self.SingleEntryCheckbox.Visible = False
 		    End If
 		  Else
 		    Self.SingleEntryCheckbox.Visible = False
