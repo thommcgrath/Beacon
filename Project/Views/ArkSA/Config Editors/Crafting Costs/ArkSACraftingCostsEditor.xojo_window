@@ -810,6 +810,72 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
+		  Select Case HitItem.Tag.Type
+		  Case HitItem.Tag.TypeObject
+		    Select Case HitItem.Tag.ObjectValue
+		    Case IsA Dictionary
+		      Var Tag As Dictionary = HitItem.Tag
+		      If Tag.HasKey("Action") And Tag.Value("Action").Type = Variant.TypeString Then
+		        Select Case Tag.Value("Action").StringValue
+		        Case "Load Defaults"
+		          Var Recipes() As ArkSA.CraftingCost = Tag.Value("Recipes")
+		          Var NumWithContent As Integer
+		          For Each Recipe As ArkSA.CraftingCost In Recipes
+		            If Recipe.Count > 0 Then
+		              NumWithContent = NumWithContent + 1
+		            End If
+		          Next
+		          If NumWithContent > 0 And Self.ShowConfirm("Replace existing ingredients?", "Default ingredients will replace existing ingredients. " + Language.NounWithQuantity(NumWithContent, "recipe has", "recipes have") + " ingredients already.", "Load", Language.CommonCancel) = False Then
+		            Return True
+		          End If
+		          
+		          Var NewRecipes() As ArkSA.CraftingCost
+		          Var Config As ArkSA.Configs.CraftingCosts = Self.Config(True)
+		          For Each Recipe As ArkSA.CraftingCost In Recipes
+		            Var NewRecipe As New ArkSA.CraftingCost(Recipe.EngramReference, True)
+		            NewRecipes.Add(NewRecipe)
+		            Config.Add(NewRecipe)
+		          Next
+		          
+		          Self.Modified = Config.Modified
+		          Self.UpdateList(NewRecipes)
+		        End Select
+		      End If
+		    End Select
+		  End Select
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
+		  Var RowIdx As Integer = Me.RowFromXY(X, Y)
+		  If RowIdx < 0 Or RowIdx > Me.LastRowIndex Then
+		    Return False
+		  End If
+		  
+		  Var PressedRecipe As ArkSA.CraftingCost = Me.RowTagAt(RowIdx)
+		  Var Recipes() As ArkSA.CraftingCost
+		  If Me.RowSelectedAt(RowIdx) = True Then
+		    For Idx As Integer = 0 To Me.LastRowIndex
+		      If Me.RowSelectedAt(Idx) = False Then
+		        Continue
+		      End If
+		      
+		      Recipes.Add(Me.RowTagAt(Idx))
+		    Next
+		  Else
+		    Recipes.Add(PressedRecipe)
+		  End If
+		  
+		  Var Tag As New Dictionary
+		  Tag.Value("Action") = "Load Defaults"
+		  Tag.Value("Recipes") = Recipes
+		  
+		  Base.AddMenu(New DesktopMenuItem("Load Default Contents", Tag))
+		  Return True
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
 	#tag Event

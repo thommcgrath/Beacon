@@ -78,6 +78,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EngramReference() As Ark.BlueprintReference
+		  Return Self.mEngramRef
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Dictionary
 		  Var Ingredients() As Dictionary
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
