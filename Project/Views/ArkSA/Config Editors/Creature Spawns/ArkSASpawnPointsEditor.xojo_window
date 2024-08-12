@@ -793,6 +793,79 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
+		  Var RowIdx As Integer = Me.RowFromXY(X, Y)
+		  If RowIdx < 0 Or RowIdx > Me.LastRowIndex Then
+		    Return False
+		  End If
+		  
+		  Var PressedOverride As ArkSA.SpawnPointOverride = Me.RowTagAt(RowIdx)
+		  Var Overrides() As ArkSA.SpawnPointOverride
+		  If Me.RowSelectedAt(RowIdx) = True Then
+		    For Idx As Integer = 0 To Me.LastRowIndex
+		      If Me.RowSelectedAt(Idx) = False Then
+		        Continue
+		      End If
+		      
+		      Var Override As ArkSA.SpawnPointOverride = Me.RowTagAt(Idx)
+		      If Override.Mode <> ArkSA.SpawnPointOverride.ModeOverride Then
+		        Continue
+		      End If
+		      Overrides.Add(Override)
+		    Next
+		  ElseIf PressedOverride.Mode = ArkSA.SpawnPointOverride.ModeOverride Then
+		    Overrides.Add(PressedOverride)
+		  End If
+		  
+		  Var Tag As New Dictionary
+		  Tag.Value("Action") = "Load Defaults"
+		  Tag.Value("Overrides") = Overrides
+		  
+		  Var LoadDefaultItem As New DesktopMenuItem("Load Default Contents", Tag)
+		  LoadDefaultItem.Enabled = Overrides.Count > 0
+		  Base.AddMenu(LoadDefaultItem)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
+		  Select Case HitItem.Tag.Type
+		  Case HitItem.Tag.TypeObject
+		    Select Case HitItem.Tag.ObjectValue
+		    Case IsA Dictionary
+		      Var Tag As Dictionary = HitItem.Tag
+		      If Tag.HasKey("Action") And Tag.Value("Action").Type = Variant.TypeString Then
+		        Select Case Tag.Value("Action").StringValue
+		        Case "Load Defaults"
+		          Var Overrides() As ArkSA.SpawnPointOverride = Tag.Value("Overrides")
+		          Var NumWithContent As Integer
+		          For Each Override As ArkSA.SpawnPointOverride In Overrides
+		            If Override.Count > 0 Then
+		              NumWithContent = NumWithContent + 1
+		            End If
+		          Next
+		          If NumWithContent > 0 And Self.ShowConfirm("Replace existing contents?", "Default spawn point contents will replace existing content. " + Language.NounWithQuantity(NumWithContent, "spawn point has", "spawn points have") + " content already.", "Load", Language.CommonCancel) = False Then
+		            Return True
+		          End If
+		          
+		          Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		          Var Config As ArkSA.Configs.SpawnPoints = Self.Config(True)
+		          For Each Override As ArkSA.SpawnPointOverride In Overrides
+		            Var Mutable As New ArkSA.MutableSpawnPointOverride(Override.SpawnPointReference, Override.Mode)
+		            DataSource.LoadDefaults(Mutable)
+		            Config.Add(Mutable)
+		          Next
+		          
+		          Self.Modified = Config.Modified
+		          Self.UpdateList(Overrides)
+		        End Select
+		      End If
+		    End Select
+		  End Select
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
 	#tag Event
