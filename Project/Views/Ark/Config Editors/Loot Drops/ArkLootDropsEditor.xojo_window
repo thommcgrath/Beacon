@@ -988,6 +988,72 @@ End
 		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
+		  Select Case HitItem.Tag.Type
+		  Case HitItem.Tag.TypeObject
+		    Select Case HitItem.Tag.ObjectValue
+		    Case IsA Dictionary
+		      Var Tag As Dictionary = HitItem.Tag
+		      If Tag.HasKey("Action") And Tag.Value("Action").Type = Variant.TypeString Then
+		        Select Case Tag.Value("Action").StringValue
+		        Case "Load Defaults"
+		          Var Overrides() As Ark.LootDropOverride = Tag.Value("Overrides")
+		          Var NumWithContent As Integer
+		          For Each Override As Ark.LootDropOverride In Overrides
+		            If Override.Count > 0 Then
+		              NumWithContent = NumWithContent + 1
+		            End If
+		          Next
+		          If NumWithContent > 0 And Self.ShowConfirm("Replace existing contents?", "Default loot drop contents will replace existing content. " + Language.NounWithQuantity(NumWithContent, "loot drop has", "loot drops have") + " content already.", "Load", Language.CommonCancel) = False Then
+		            Return True
+		          End If
+		          
+		          Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		          Var Config As Ark.Configs.LootDrops = Self.Config(True)
+		          For Each Override As Ark.LootDropOverride In Overrides
+		            Var Mutable As New Ark.MutableLootDropOverride(Override.LootDropReference)
+		            DataSource.LoadDefaults(Mutable)
+		            Config.Add(Mutable)
+		          Next
+		          
+		          Self.Modified = Config.Modified
+		          Self.UpdateContainerList(Overrides)
+		        End Select
+		      End If
+		    End Select
+		  End Select
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
+		  Var RowIdx As Integer = Me.RowFromXY(X, Y)
+		  If RowIdx < 0 Or RowIdx > Me.LastRowIndex Then
+		    Return False
+		  End If
+		  
+		  Var PressedOverride As Ark.LootDropOverride = Me.RowTagAt(RowIdx)
+		  Var Overrides() As Ark.LootDropOverride
+		  If Me.RowSelectedAt(RowIdx) = True Then
+		    For Idx As Integer = 0 To Me.LastRowIndex
+		      If Me.RowSelectedAt(Idx) = False Then
+		        Continue
+		      End If
+		      
+		      Overrides.Add(Me.RowTagAt(Idx))
+		    Next
+		  Else
+		    Overrides.Add(PressedOverride)
+		  End If
+		  
+		  Var Tag As New Dictionary
+		  Tag.Value("Action") = "Load Defaults"
+		  Tag.Value("Overrides") = Overrides
+		  
+		  Base.AddMenu(New DesktopMenuItem("Load Default Contents", Tag))
+		  Return True
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
 	#tag Event
