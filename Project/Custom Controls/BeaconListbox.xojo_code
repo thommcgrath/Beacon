@@ -420,7 +420,7 @@ Inherits DesktopListBox
 		    Var LineColor As Color = If(I = 0, TextColor, SecondaryTextColor)
 		    
 		    Clip.DrawingColor = LineColor
-		    If Not PaintCellText(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
+		    If Not PaintCellText(Clip, Row, Column, Lines(I), DrawLeft, LinePosition, IsHighlighted) Then
 		      Clip.DrawText(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
 		    End If
 		    
@@ -1092,7 +1092,7 @@ Inherits DesktopListBox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		Event PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

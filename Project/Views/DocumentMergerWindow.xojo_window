@@ -862,7 +862,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		Function PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 		  #Pragma Unused Row
 		  #Pragma Unused VerticalPosition
 		  #Pragma Unused IsHighlighted
@@ -881,7 +881,6 @@ End
 		    Path.AddLineToPoint(IndicatorLeft + (IndicatorWidth / 2), IndicatorTop + IndicatorHeight)
 		    Path.AddLineToPoint(IndicatorLeft, IndicatorTop)
 		    
-		    G.DrawingColor = TextColor
 		    G.FillPath(Path)
 		    
 		    Return False // Yes, this is correct, we are adding to the text instead of replacing it

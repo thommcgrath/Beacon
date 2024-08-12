@@ -546,11 +546,10 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		Function PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 		  #Pragma Unused G
 		  #Pragma Unused Row
 		  #Pragma Unused Line
-		  #Pragma Unused TextColor
 		  #Pragma Unused HorizontalPosition
 		  #Pragma Unused VerticalPosition
 		  #Pragma Unused IsHighlighted
