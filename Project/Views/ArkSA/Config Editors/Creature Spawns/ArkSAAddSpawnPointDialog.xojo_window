@@ -681,14 +681,14 @@ End
 		    
 		    Var DefinedModes As Integer
 		    Var Point As ArkSA.SpawnPoint = Me.RowTagAt(I)
-		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Override") Then
+		    If Self.mDefinedSpawns.HasKey(ArkSA.SpawnPointOverride.GetUniqueKey(Point, ArkSA.SpawnPointOverride.ModeOverride)) Then
 		      // Include Append and Remove here so they cannot be selected if Override is already defined
 		      DefinedModes = DefinedModes Or ArkSA.SpawnPointOverride.ModeOverride Or ArkSA.SpawnPointOverride.ModeAppend Or ArkSA.SpawnPointOverride.ModeRemove
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Append") Then
+		    If Self.mDefinedSpawns.HasKey(ArkSA.SpawnPointOverride.GetUniqueKey(Point, ArkSA.SpawnPointOverride.ModeAppend)) Then
 		      DefinedModes = DefinedModes Or ArkSA.SpawnPointOverride.ModeOverride Or ArkSA.SpawnPointOverride.ModeAppend
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Remove") Then
+		    If Self.mDefinedSpawns.HasKey(ArkSA.SpawnPointOverride.GetUniqueKey(Point, ArkSA.SpawnPointOverride.ModeRemove)) Then
 		      DefinedModes = DefinedModes Or ArkSA.SpawnPointOverride.ModeOverride Or ArkSA.SpawnPointOverride.ModeRemove
 		    End If
 		    
