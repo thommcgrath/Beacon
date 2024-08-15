@@ -194,7 +194,7 @@ Begin ArkSADiscoveryView ArkSAFilesDiscoveryView
       LockTop         =   True
       MaximumCharactersAllowed=   0
       Password        =   False
-      ReadOnly        =   False
+      ReadOnly        =   True
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
