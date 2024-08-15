@@ -16,6 +16,11 @@ class Map extends DatabaseObject implements JsonSerializable {
 	protected int $sortOrder;
 	protected int $engramGroups;
 	protected int $lastUpdate;
+	protected float $cycleScaleMultiplier;
+	protected float $dayScaleMultiplier;
+	protected float $nightScaleMultiplier;
+	protected int $dayStartTime;
+	protected int $dayEndTime;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->mapId = $row->Field('map_id');
@@ -29,6 +34,11 @@ class Map extends DatabaseObject implements JsonSerializable {
 		$this->sortOrder = filter_var($row->Field('sort'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 999;
 		$this->engramGroups = filter_var($row->Field('engram_groups'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 10;
 		$this->lastUpdate = round($row->Field('last_update'));
+		$this->cycleScaleMultiplier = filter_var($row->Field('cycle_scale_multiplier'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 1.0;
+		$this->dayScaleMultiplier = filter_var($row->Field('day_scale_multiplier'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 1.0;
+		$this->nightScaleMultiplier = filter_var($row->Field('night_scale_multiplier'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 1.0;
+		$this->dayStartTime = filter_var($row->Field('day_start_time'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 18900;
+		$this->dayEndTime = filter_var($row->Field('day_end_time'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 73400;
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -43,7 +53,12 @@ class Map extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('mask'),
 			new DatabaseObjectProperty('sortOrder', ['columnName' => 'sort']),
 			new DatabaseObjectProperty('engramGroups', ['columnName' => 'engram_groups']),
-			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)'])
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
+			new DatabaseObjectProperty('cycleScaleMultiplier', ['columnName' => 'cycle_scale_multiplier']),
+			new DatabaseObjectProperty('dayScaleMultiplier', ['columnName' => 'day_scale_multiplier']),
+			new DatabaseObjectProperty('nightScaleMultiplier', ['columnName' => 'night_scale_multiplier']),
+			new DatabaseObjectProperty('dayStartTime', ['columnName' => 'day_start_time']),
+			new DatabaseObjectProperty('dayEndTime', ['columnName' => 'day_end_time']),
 		]);
 	}
 
@@ -119,6 +134,26 @@ class Map extends DatabaseObject implements JsonSerializable {
 		return $this->engramGroups;
 	}
 
+	public function CycleScaleMultiplier(): float {
+		return $this->cycleScaleMultiplier;
+	}
+
+	public function DayScaleMultiplier(): float {
+		return $this->dayScaleMultiplier;
+	}
+
+	public function NightScaleMultiplier(): float {
+		return $this->nightScaleMultiplier;
+	}
+
+	public function DayStartTime(): int {
+		return $this->dayStartTime;
+	}
+
+	public function DayEndTime(): int {
+		return $this->dayEndTime;
+	}
+
 	public function jsonSerialize(): mixed {
 		return [
 			'mapId' => $this->mapId,
@@ -132,6 +167,11 @@ class Map extends DatabaseObject implements JsonSerializable {
 			'sortOrder' => $this->sortOrder,
 			'engramGroups' => $this->engramGroups,
 			'lastUpdate' => $this->lastUpdate,
+			'cycleScaleMultiplier' => $this->cycleScaleMultiplier,
+			'dayScaleMultiplier' => $this->dayScaleMultiplier,
+			'nightScaleMultiplier' => $this->nightScaleMultiplier,
+			'dayStartTime' => $this->dayStartTime,
+			'dayEndTime' => $this->dayEndTime,
 		];
 	}
 
