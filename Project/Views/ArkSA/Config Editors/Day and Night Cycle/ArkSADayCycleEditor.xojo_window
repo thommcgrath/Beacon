@@ -443,7 +443,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Result"
+      Text            =   "#ResultCaption"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -869,7 +869,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Warm (4-6)"
+      Text            =   "#WarmSeasonCaption"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -902,7 +902,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Cold (7-9)"
+      Text            =   "#ColdSeasonCaption"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -1067,7 +1067,7 @@ End
 		    Self.ColdDayMinutesField.Visible = True
 		    Self.ColdNightMinutesField.Visible = True
 		    Self.ColdCycleField.Visible = True
-		    Self.ResultLabel.Text = "Balanced (0-3)"
+		    Self.ResultLabel.Text = Self.BalancedSeasonCaption
 		  Else
 		    Self.WarmSeasonLabel.Visible = False
 		    Self.WarmDayMinutesField.Visible = False
@@ -1077,7 +1077,7 @@ End
 		    Self.ColdDayMinutesField.Visible = False
 		    Self.ColdNightMinutesField.Visible = False
 		    Self.ColdCycleField.Visible = False
-		    Self.ResultLabel.Text = "Result"
+		    Self.ResultLabel.Text = Self.ResultCaption
 		  End If
 		  
 		  Self.SettingUp = WasSettingUp
@@ -1104,16 +1104,28 @@ End
 	#tag Constant, Name = BalancedNightMultiplier, Type = Double, Dynamic = False, Default = \"1.0", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = BalancedSeasonCaption, Type = String, Dynamic = True, Default = \"50%/50% (0-3)", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = ColdDayMultiplier, Type = Double, Dynamic = False, Default = \"4.5", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColdNightMultiplier, Type = Double, Dynamic = False, Default = \"0.5", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ColdSeasonCaption, Type = String, Dynamic = True, Default = \"10%/90% (7-9)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ResultCaption, Type = String, Dynamic = True, Default = \"Result", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = WarmDayMultiplier, Type = Double, Dynamic = False, Default = \"0.5", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = WarmNightMultiplier, Type = Double, Dynamic = False, Default = \"4.5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = WarmSeasonCaption, Type = String, Dynamic = True, Default = \"90%/10% (4-6)", Scope = Private
 	#tag EndConstant
 
 
