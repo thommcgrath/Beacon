@@ -1327,8 +1327,22 @@ Protected Module Beacon
 		  Parser.SearchPattern = "^((\d+)\s*(d|day|days))?\s*((\d+)\s*(h|hour|hours))?\s*((\d+)\s*(m|minute|minutes))?\s*((\d+)(\.(\d+))?\s*(s|second|seconds))?$"
 		  
 		  Var Matches As RegExMatch = Parser.Search(Input)
-		  If Matches = Nil Then
-		    Return Nil
+		  If Matches Is Nil Then
+		    If IsNumeric(Input) = False Then
+		      Return Nil
+		    End If
+		    
+		    Try
+		      Var ImpliedMinutes As Double = Double.FromString(Input, Locale.Current)
+		      Var ImpliedSeconds As Integer
+		      If ImpliedMinutes > Floor(ImpliedMinutes) Then
+		        ImpliedSeconds = Round((ImpliedMinutes - Floor(ImpliedMinutes)) * 60)
+		        ImpliedMinutes = Floor(ImpliedMinutes)
+		      End If
+		      Return New DateInterval(0, 0, 0, 0, ImpliedMinutes, ImpliedSeconds)
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
 		  End If
 		  
 		  Var MatchCount As Integer = Matches.SubExpressionCount

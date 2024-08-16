@@ -912,6 +912,38 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Visible         =   True
       Width           =   120
    End
+   Begin DesktopLabel DisclaimerLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   80
+      Index           =   -2147483648
+      Italic          =   True
+      Left            =   157
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   True
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   25
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "#DisclaimerCaption"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   269
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   504
+   End
 End
 #tag EndDesktopWindow
 
@@ -1114,6 +1146,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ColdSeasonCaption, Type = String, Dynamic = True, Default = \"10%/90% (7-9)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = DisclaimerCaption, Type = String, Dynamic = False, Default = \"These times are accurate for a server running at the standard 30FPS. A non-dedicated server\x2C single player\x2C or dedicated server under heavy load will experience reduced clock accuracy.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ResultCaption, Type = String, Dynamic = True, Default = \"Result", Scope = Private
