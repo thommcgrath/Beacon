@@ -67,7 +67,7 @@ Implements Beacon.Map
 
 	#tag Method, Flags = &h0
 		Function DayEndTime() As Integer
-		  Return Self.mDayStartTime
+		  Return Self.mDayEndTime
 		End Function
 	#tag EndMethod
 

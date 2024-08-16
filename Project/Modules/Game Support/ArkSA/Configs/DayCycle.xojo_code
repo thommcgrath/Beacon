@@ -48,6 +48,11 @@ Inherits ArkSA.ConfigGroup
 		  If SaveData.HasKey("Night") Then
 		    Self.mNightSpeedMultiplier = SaveData.Value("Night").DoubleValue
 		  End If
+		  If SaveData.HasKey("Map") Then
+		    Self.mPreviewMapIdentifier = SaveData.Value("Map").StringValue
+		  Else
+		    Self.mPreviewMapIdentifier = "TheIsland"
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -57,6 +62,7 @@ Inherits ArkSA.ConfigGroup
 		  
 		  SaveData.Value("Day") = Self.mDaySpeedMultiplier
 		  SaveData.Value("Night") = Self.mNightSpeedMultiplier
+		  SaveData.Value("Map") = Self.mPreviewMapIdentifier
 		End Sub
 	#tag EndEvent
 
@@ -65,6 +71,7 @@ Inherits ArkSA.ConfigGroup
 		Sub Constructor()
 		  Self.mDaySpeedMultiplier = 1.0
 		  Self.mNightSpeedMultiplier = 1.0
+		  Self.mPreviewMapIdentifier = "TheIsland"
 		  Super.Constructor()
 		End Sub
 	#tag EndMethod
@@ -132,6 +139,10 @@ Inherits ArkSA.ConfigGroup
 		Private mNightSpeedMultiplier As Double
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mPreviewMapIdentifier As String
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -152,6 +163,23 @@ Inherits ArkSA.ConfigGroup
 			End Set
 		#tag EndSetter
 		NightSpeedMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPreviewMapIdentifier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mPreviewMapIdentifier <> Value Then
+			    Self.mPreviewMapIdentifier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		PreviewMapIdentifier As String
 	#tag EndComputedProperty
 
 

@@ -9,7 +9,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   438
+   Height          =   512
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -42,7 +42,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   126
+      Left            =   157
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -52,14 +52,14 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   93
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -83,7 +83,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   126
+      Left            =   157
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -93,14 +93,14 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   127
+      Top             =   193
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -127,18 +127,18 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Day Time:"
+      Text            =   "Day Speed:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   93
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   94
+      Width           =   125
    End
    Begin UITweaks.ResizedLabel NightLabel
       AllowAutoDeactivate=   True
@@ -160,18 +160,18 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Night Time:"
+      Text            =   "Night Speed:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   127
+      Top             =   193
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   94
+      Width           =   125
    End
    Begin UITweaks.ResizedLabel FullLabel
       AllowAutoDeactivate=   True
@@ -193,18 +193,18 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Full Cycle:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   161
+      Top             =   227
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   94
+      Width           =   125
    End
    Begin UITweaks.ResizedLabel DayEqualsLabel
       AllowAutoDeactivate=   True
@@ -217,7 +217,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   218
+      Left            =   249
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -226,14 +226,14 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "="
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   93
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -250,7 +250,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   218
+      Left            =   249
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -259,14 +259,14 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "="
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   127
+      Top             =   193
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -289,7 +289,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   246
+      Left            =   277
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -299,19 +299,19 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "40"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   93
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   80
+      Width           =   120
    End
    Begin UITweaks.ResizedTextField NightLengthField
       AllowAutoDeactivate=   True
@@ -330,7 +330,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   246
+      Left            =   277
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -340,52 +340,19 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "20"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   127
+      Top             =   193
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedLabel MinuteLabels
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   0
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   338
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "minutes"
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   93
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   83
+      Width           =   120
    End
    Begin UITweaks.ResizedLabel FullLengthField
       AllowAutoDeactivate=   True
@@ -398,7 +365,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   246
+      Left            =   277
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -407,18 +374,18 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   True
-      TabIndex        =   13
+      TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "60"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   161
+      Top             =   227
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   80
+      Width           =   120
    End
    Begin DesktopLabel MultiplierLabel
       AllowAutoDeactivate=   True
@@ -431,7 +398,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   126
+      Left            =   157
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -440,14 +407,14 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   0
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Multiplier"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   61
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -464,7 +431,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   246
+      Left            =   277
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -473,761 +440,18 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Result"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin DesktopGroupBox AberrationSeasonsGroup
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "Aberration Seasons"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   178
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   15
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   195
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   579
-      Begin UITweaks.ResizedLabel BalancedMinutesLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Days Ending In 0, 1, 2, or 3:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   263
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   194
-      End
-      Begin UITweaks.ResizedLabel WarmSeasonLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Days Ending In 4, 5, or 6:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   297
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   194
-      End
-      Begin UITweaks.ResizedLabel ColdSeasonLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Days Ending In 7, 8, or 9:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   331
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   194
-      End
-      Begin UITweaks.ResizedTextField BalancedDayMinutesField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   246
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "30"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   263
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField WarmDayMinutesField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   246
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "54"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   297
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField ColdDayMinutesField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   246
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "6"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   331
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedLabel MinuteLabels
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   3
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   522
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   6
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "minutes"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   263
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   57
-      End
-      Begin UITweaks.ResizedLabel MinuteLabels
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   4
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   522
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   7
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "minutes"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   297
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   57
-      End
-      Begin UITweaks.ResizedLabel MinuteLabels
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   5
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   522
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "minutes"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   331
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   57
-      End
-      Begin UITweaks.ResizedTextField BalancedNightMinutesField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   338
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "30"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   263
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField WarmNightMinutesField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   338
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   10
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "6"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   297
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField ColdNightMinutesField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   338
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   11
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "54"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   331
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel AberrationDayLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   246
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   12
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Day"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   231
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel AberrationNightLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   338
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   13
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Night"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   231
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel AberrationCycleLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   430
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   14
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Cycle"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   231
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel BalancedCycleField
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   430
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   True
-         TabIndex        =   15
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "60"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   263
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel WarmCycleField
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   430
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   True
-         TabIndex        =   16
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "60"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   297
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel ColdCycleField
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "AberrationSeasonsGroup"
-         Italic          =   False
-         Left            =   430
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   True
-         TabIndex        =   17
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "60"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   331
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-   End
-   Begin UITweaks.ResizedLabel MinuteLabels
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   2
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   338
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   16
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "minutes"
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   161
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   83
-   End
-   Begin UITweaks.ResizedLabel MinuteLabels
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   1
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   338
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   18
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "minutes"
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
       Top             =   127
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   83
+      Width           =   120
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
@@ -1254,7 +478,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   19
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -1262,6 +486,431 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Transparent     =   True
       Visible         =   True
       Width           =   714
+   End
+   Begin UITweaks.ResizedPopupMenu MapMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   157
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   61
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   200
+   End
+   Begin UITweaks.ResizedLabel MapLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Preview With Map:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   61
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   125
+   End
+   Begin UITweaks.ResizedLabel DayRangeLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Daylight Hours:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   93
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   125
+   End
+   Begin UITweaks.ResizedLabel DayRangeField
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   157
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "5:30am to 8:30pm"
+      TextAlignment   =   1
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   93
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   200
+   End
+   Begin UITweaks.ResizedTextField WarmDayMinutesField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   409
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "54"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   159
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   120
+   End
+   Begin UITweaks.ResizedTextField WarmNightMinutesField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   409
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "6"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   193
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   120
+   End
+   Begin DesktopLabel WarmCycleField
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   409
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "60"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   227
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   120
+   End
+   Begin UITweaks.ResizedTextField ColdDayMinutesField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   541
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "6"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   159
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   120
+   End
+   Begin UITweaks.ResizedTextField ColdNightMinutesField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   541
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "54"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   193
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   120
+   End
+   Begin DesktopLabel ColdCycleField
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   541
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "60"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   227
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   120
+   End
+   Begin UITweaks.ResizedLabel WarmSeasonLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   409
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Warm (4-6)"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   127
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   120
+   End
+   Begin UITweaks.ResizedLabel ColdSeasonLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   541
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Cold (7-9)"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   127
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   120
    End
 End
 #tag EndDesktopWindow
@@ -1279,10 +928,24 @@ End
 		  
 		  Var Instance As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
+		  Var SelectedMap As ArkSA.Map
+		  If Self.MapMenu.SelectedRowIndex > -1 Then
+		    SelectedMap = Self.MapMenu.SelectedRowTag
+		  End If
+		  If SelectedMap Is Nil Then
+		    SelectedMap = Instance.GetMap(Self.Config(False).PreviewMapIdentifier)
+		  End If
+		  Self.MapMenu.RemoveAllRows
+		  Var Maps() As ArkSA.Map = Instance.GetMaps()
+		  For Each Map As ArkSA.Map In Maps
+		    Self.MapMenu.AddRow(New DesktopMenuItem(Map.Name, Map))
+		    If (SelectedMap Is Nil) = False And SelectedMap.MapId = Map.MapId Then
+		      Self.MapMenu.SelectedRowIndex = Self.MapMenu.LastAddedRowIndex
+		    End If
+		  Next
+		  
 		  Self.mDaySecondsPerHour = Instance.GetDoubleVariable("Day Seconds Per Hour")
 		  Self.mNightSecondsPerHour = Instance.GetDoubleVariable("Night Seconds Per Hour")
-		  Self.mTheIsland = Instance.GetMap("TheIsland")
-		  Self.mAberration = Instance.GetMap("Aberration")
 		  
 		  Self.UpdateCalculations()
 		End Sub
@@ -1290,11 +953,11 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Function ComputeMultiplier(DesiredMinutes As Double, OfficialSeconds As Double) As Double
-		  If DesiredMinutes = 0 Then
+		Private Function ComputeMultiplier(DesiredInterval As DateInterval, OfficialSeconds As Double) As Double
+		  If DesiredInterval Is Nil Or DesiredInterval.TotalSeconds = 0 Then
 		    Return 0
 		  Else
-		    Return OfficialSeconds / (DesiredMinutes * 60)
+		    Return OfficialSeconds / DesiredInterval.TotalSeconds
 		  End If
 		End Function
 	#tag EndMethod
@@ -1312,32 +975,48 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Function MilitaryTime(SecondsSinceMidnight As Double) As String
+		  // I'd rather call this 24HourTime, but I can't start a function with a number
+		  
+		  Var Hours As Integer = Floor(SecondsSinceMidnight / 3600)
+		  SecondsSinceMidnight = SecondsSinceMidnight - (Hours * 3600)
+		  Var Minutes As Integer = Floor(SecondsSinceMidnight / 60)
+		  SecondsSinceMidnight = SecondsSinceMidnight - (Minutes * 60)
+		  
+		  Return Hours.ToString(Locale.Raw, "00") + ":" + Minutes.ToString(Locale.Raw, "00")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateCalculations(Force As Boolean = False)
 		  Var Focus As DesktopUIControl
 		  If Force = False Then
 		    Focus = Self.Focus
 		  End If
 		  
-		  Var Config As ArkSA.Configs.DayCycle = Self.Config(False)
+		  If Self.MapMenu.SelectedRowIndex = -1 Then
+		    Return
+		  End If
 		  
+		  Var WasSettingUp As Boolean = Self.SettingUp
+		  Self.SettingUp = True
+		  
+		  Var Config As ArkSA.Configs.DayCycle = Self.Config(False)
 		  Var DayMultiplier As Double = Config.DaySpeedMultiplier
 		  Var NightMultiplier As Double = Config.NightSpeedMultiplier
+		  Var Map As ArkSA.Map = Self.MapMenu.SelectedRowTag
 		  
-		  Var OfficialDaySeconds, OfficialNightSeconds As Double
-		  Var DayLengthMinutes, NightLengthMinutes, FullLengthMinutes As Double
-		  If (Self.mTheIsland Is Nil) = False Then
-		    OfficialDaySeconds = Self.mTheIsland.DayRealtimeSeconds(Self.mDaySecondsPerHour)
-		    OfficialNightSeconds = Self.mTheIsland.NightRealtimeSeconds(Self.mNightSecondsPerHour)
-		    
-		    If DayMultiplier > 0 Then
-		      DayLengthMinutes = (OfficialDaySeconds / DayMultiplier) / 60
-		    End If
-		    If NightMultiplier > 0 Then
-		      NightLengthMinutes = (OfficialNightSeconds / NightMultiplier) / 60
-		    End If
-		    If DayMultiplier > 0 And NightMultiplier > 0 Then
-		      FullLengthMinutes = DayLengthMinutes + NightLengthMinutes
-		    End If
+		  Var OfficialDaySeconds As Double = Map.DayRealtimeSeconds(Self.mDaySecondsPerHour)
+		  Var OfficialNightSeconds As Double = Map.NightRealtimeSeconds(Self.mNightSecondsPerHour)
+		  Var DayLengthSeconds, NightLengthSeconds, FullLengthSeconds As Double
+		  If DayMultiplier > 0 Then
+		    DayLengthSeconds = OfficialDaySeconds / DayMultiplier
+		  End If
+		  If NightMultiplier > 0 Then
+		    NightLengthSeconds = OfficialNightSeconds / NightMultiplier
+		  End If
+		  If DayMultiplier > 0 And NightMultiplier > 0 Then
+		    FullLengthSeconds = Round(DayLengthSeconds + NightLengthSeconds)
 		  End If
 		  
 		  If Focus <> Self.DayMultiplierField Then
@@ -1347,62 +1026,64 @@ End
 		    Self.NightMultiplierField.Text = Config.NightSpeedMultiplier.PrettyText
 		  End If
 		  If Focus <> Self.DayLengthField Then
-		    Self.DayLengthField.Text = If(DayLengthMinutes > 0, DayLengthMinutes.PrettyText(2), "∞")
+		    Self.DayLengthField.Text = If(DayLengthSeconds > 0, Beacon.SecondsToString(Round(DayLengthSeconds)), "∞")
 		  End If
 		  If Focus <> Self.NightLengthField Then
-		    Self.NightLengthField.Text = If(NightLengthMinutes > 0, NightLengthMinutes.PrettyText(2), "∞")
+		    Self.NightLengthField.Text = If(NightLengthSeconds > 0, Beacon.SecondsToString(Round(NightLengthSeconds)), "∞")
 		  End If
-		  Self.FullLengthField.Text = If(FullLengthMinutes > 0, FullLengthMinutes.PrettyText(2), "∞")
+		  Self.FullLengthField.Text = If(FullLengthSeconds > 0, Beacon.SecondsToString(FullLengthSeconds), "∞")
 		  
-		  If (Self.mAberration Is Nil) = False Then
-		    Var AbberationDayMinutes As Double = Self.mAberration.DayRealtimeSeconds(Self.mDaySecondsPerHour) / 60
-		    Var AberrationNightMinutes As Double = Self.mAberration.NightRealtimeSeconds(Self.mNightSecondsPerHour) / 60
+		  Self.DayRangeField.Text = Self.MilitaryTime(Map.DayStartTime) + " to " + Self.MilitaryTime(Map.DayEndTime)
+		  
+		  If Map.Identifier = "Aberration" Then
+		    Var WarmDaySeconds, WarmNightSeconds, WarmCycleSeconds, ColdDaySeconds, ColdNightSeconds, ColdCycleSeconds As Double
+		    WarmDaySeconds = OfficialDaySeconds / (Self.WarmDayMultiplier * DayMultiplier)
+		    WarmNightSeconds = OfficialNightSeconds / (Self.WarmNightMultiplier * NightMultiplier)
+		    ColdDaySeconds = OfficialDaySeconds / (Self.ColdDayMultiplier * DayMultiplier)
+		    ColdNightSeconds = OfficialNightSeconds / (Self.ColdNightMultiplier * NightMultiplier)
+		    ColdCycleSeconds = Round(ColdDaySeconds + ColdNightSeconds)
+		    WarmCycleSeconds = Round(WarmDaySeconds + WarmNightSeconds)
 		    
-		    Var BalancedDayMinutes, BalancedNightMinutes, BalancedCycleMinutes, WarmDayMinutes, WarmNightMinutes, WarmCycleMinutes, ColdDayMinutes, ColdNightMinutes, ColdCycleMinutes As Double
-		    BalancedDayMinutes = AbberationDayMinutes / (Self.BalancedDayMultiplier * DayMultiplier)
-		    BalancedNightMinutes = AberrationNightMinutes / (Self.BalancedNightMultiplier * NightMultiplier)
-		    WarmDayMinutes = AbberationDayMinutes / (Self.WarmDayMultiplier * DayMultiplier)
-		    WarmNightMinutes = AberrationNightMinutes / (Self.WarmNightMultiplier * NightMultiplier)
-		    ColdDayMinutes = AbberationDayMinutes / (Self.ColdDayMultiplier * DayMultiplier)
-		    ColdNightMinutes = AberrationNightMinutes / (Self.ColdNightMultiplier * NightMultiplier)
-		    BalancedCycleMinutes = BalancedDayMinutes + BalancedNightMinutes
-		    ColdCycleMinutes = ColdDayMinutes + ColdNightMinutes
-		    WarmCycleMinutes = WarmDayMinutes + WarmNightMinutes
-		    
-		    If Focus <> Self.BalancedDayMinutesField Then
-		      Self.BalancedDayMinutesField.Text = If(BalancedDayMinutes > 0, BalancedDayMinutes.PrettyText(2), "∞")
-		    End If
-		    If Focus <> Self.BalancedNightMinutesField Then
-		      Self.BalancedNightMinutesField.Text = If(BalancedNightMinutes > 0, BalancedNightMinutes.PrettyText(2), "∞")
-		    End If
 		    If Focus <> Self.WarmDayMinutesField Then
-		      Self.WarmDayMinutesField.Text = If(WarmDayMinutes > 0, WarmDayMinutes.PrettyText(2), "∞")
+		      Self.WarmDayMinutesField.Text = If(WarmDaySeconds > 0, Beacon.SecondsToString(Round(WarmDaySeconds)), "∞")
 		    End If
 		    If Focus <> Self.WarmNightMinutesField Then
-		      Self.WarmNightMinutesField.Text = If(WarmNightMinutes > 0, WarmNightMinutes.PrettyText(2), "∞")
+		      Self.WarmNightMinutesField.Text = If(WarmNightSeconds > 0, Beacon.SecondsToString(Round(WarmNightSeconds)), "∞")
 		    End If
 		    If Focus <> Self.ColdDayMinutesField Then
-		      Self.ColdDayMinutesField.Text = If(ColdDayMinutes > 0, ColdDayMinutes.PrettyText(2), "∞")
+		      Self.ColdDayMinutesField.Text = If(ColdDaySeconds > 0, Beacon.SecondsToString(Round(ColdDaySeconds)), "∞")
 		    End If
 		    If Focus <> Self.ColdNightMinutesField Then
-		      Self.ColdNightMinutesField.Text = If(ColdNightMinutes > 0, ColdNightMinutes.PrettyText(2), "∞")
+		      Self.ColdNightMinutesField.Text = If(ColdNightSeconds > 0, Beacon.SecondsToString(Round(ColdNightSeconds)), "∞")
 		    End If
-		    Self.BalancedCycleField.Text = If(BalancedCycleMinutes > 0, BalancedCycleMinutes.PrettyText(2), "∞")
-		    Self.WarmCycleField.Text = If(WarmCycleMinutes > 0, WarmCycleMinutes.PrettyText(2), "∞")
-		    Self.ColdCycleField.Text = If(ColdCycleMinutes > 0, ColdCycleMinutes.PrettyText(2), "∞")
+		    Self.WarmCycleField.Text = If(WarmCycleSeconds > 0, Beacon.SecondsToString(WarmCycleSeconds), "∞")
+		    Self.ColdCycleField.Text = If(ColdCycleSeconds > 0, Beacon.SecondsToString(ColdCycleSeconds), "∞")
 		    
-		    Self.AberrationSeasonsGroup.Visible = True
+		    Self.WarmSeasonLabel.Visible = True
+		    Self.WarmDayMinutesField.Visible = True
+		    Self.WarmNightMinutesField.Visible = True
+		    Self.WarmCycleField.Visible = True
+		    Self.ColdSeasonLabel.Visible = True
+		    Self.ColdDayMinutesField.Visible = True
+		    Self.ColdNightMinutesField.Visible = True
+		    Self.ColdCycleField.Visible = True
+		    Self.ResultLabel.Text = "Balanced (0-3)"
 		  Else
-		    Self.AberrationSeasonsGroup.Visible = False
+		    Self.WarmSeasonLabel.Visible = False
+		    Self.WarmDayMinutesField.Visible = False
+		    Self.WarmNightMinutesField.Visible = False
+		    Self.WarmCycleField.Visible = False
+		    Self.ColdSeasonLabel.Visible = False
+		    Self.ColdDayMinutesField.Visible = False
+		    Self.ColdNightMinutesField.Visible = False
+		    Self.ColdCycleField.Visible = False
+		    Self.ResultLabel.Text = "Result"
 		  End If
 		  
+		  Self.SettingUp = WasSettingUp
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mAberration As ArkSA.Map
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
@@ -1414,10 +1095,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mNightSecondsPerHour As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTheIsland As ArkSA.Map
 	#tag EndProperty
 
 
@@ -1489,21 +1166,19 @@ End
 #tag Events DayLengthField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mTheIsland Is Nil Then
+		  If Self.SettingUp Or Self.MapMenu.SelectedRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Var DesiredMinutes As Double
-		  Try
-		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
-		  Catch Err As RuntimeException
+		  Var DesiredInterval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If DesiredInterval Is Nil Then
 		    Return
-		  End Try
+		  End If
 		  
-		  Var OfficialSeconds As Double = Self.mTheIsland.DayRealtimeSeconds(Self.mDaySecondsPerHour)
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour)
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1513,165 +1188,19 @@ End
 #tag Events NightLengthField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mTheIsland Is Nil Then
+		  If Self.SettingUp Or Self.MapMenu.SelectedRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Var DesiredMinutes As Double
-		  Try
-		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var OfficialSeconds As Double = Self.mTheIsland.NightRealtimeSeconds(Self.mNightSecondsPerHour)
-		  
-		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
-		  Self.Modified = True
-		  Self.UpdateCalculations()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BalancedDayMinutesField
-	#tag Event
-		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
+		  Var DesiredInterval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If DesiredInterval Is Nil Then
 		    Return
 		  End If
 		  
-		  Var DesiredMinutes As Double
-		  Try
-		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var OfficialSeconds As Double = Self.mAberration.DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.BalancedDayMultiplier
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour)
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
-		  Self.Modified = True
-		  Self.UpdateCalculations()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events WarmDayMinutesField
-	#tag Event
-		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
-		    Return
-		  End If
-		  
-		  Var DesiredMinutes As Double
-		  Try
-		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var OfficialSeconds As Double = Self.mAberration.DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.WarmDayMultiplier
-		  
-		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
-		  Self.Modified = True
-		  Self.UpdateCalculations()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ColdDayMinutesField
-	#tag Event
-		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
-		    Return
-		  End If
-		  
-		  Var DesiredMinutes As Double
-		  Try
-		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var OfficialSeconds As Double = Self.mAberration.DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.ColdDayMultiplier
-		  
-		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
-		  Self.Modified = True
-		  Self.UpdateCalculations()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BalancedNightMinutesField
-	#tag Event
-		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
-		    Return
-		  End If
-		  
-		  Var DesiredMinutes As Double
-		  Try
-		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var OfficialSeconds As Double = Self.mAberration.NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.BalancedNightMultiplier
-		  
-		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
-		  Self.Modified = True
-		  Self.UpdateCalculations()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events WarmNightMinutesField
-	#tag Event
-		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
-		    Return
-		  End If
-		  
-		  Var DesiredMinutes As Double
-		  Try
-		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var OfficialSeconds As Double = Self.mAberration.NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.WarmNightMultiplier
-		  
-		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
-		  Self.Modified = True
-		  Self.UpdateCalculations()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ColdNightMinutesField
-	#tag Event
-		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
-		    Return
-		  End If
-		  
-		  Var DesiredMinutes As Double
-		  Try
-		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var OfficialSeconds As Double = Self.mAberration.NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.ColdNightMultiplier
-		  
-		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1682,6 +1211,107 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapMenu
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.Config(True).PreviewMapIdentifier = ArkSA.Map(Item.Tag).Identifier
+		  Self.Modified = True
+		  Self.UpdateCalculations(True)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WarmDayMinutesField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Or Self.MapMenu.SelectedRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Var DesiredInterval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If DesiredInterval Is Nil Then
+		    Return
+		  End If
+		  
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.WarmDayMultiplier
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
+		  Self.Modified = True
+		  Self.UpdateCalculations()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WarmNightMinutesField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Or Self.MapMenu.SelectedRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Var DesiredInterval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If DesiredInterval Is Nil Then
+		    Return
+		  End If
+		  
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.WarmNightMultiplier
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
+		  Self.Modified = True
+		  Self.UpdateCalculations()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ColdDayMinutesField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Or Self.MapMenu.SelectedRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Var DesiredInterval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If DesiredInterval Is Nil Then
+		    Return
+		  End If
+		  
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.ColdDayMultiplier
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
+		  Self.Modified = True
+		  Self.UpdateCalculations()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ColdNightMinutesField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Or Self.MapMenu.SelectedRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Var DesiredInterval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If DesiredInterval Is Nil Then
+		    Return
+		  End If
+		  
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.ColdNightMultiplier
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
+		  Self.Modified = True
+		  Self.UpdateCalculations()
+		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
