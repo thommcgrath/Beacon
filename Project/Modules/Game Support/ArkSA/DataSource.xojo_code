@@ -11,7 +11,7 @@ Implements ArkSA.BlueprintProvider
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, last_update INTEGER NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]', stats TEXT);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, last_update INTEGER NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL, name_tag TEXT COLLATE NOCASE);")
-		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, type TEXT COLLATE NOCASE NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, type TEXT COLLATE NOCASE NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL, cycle_scale_multiplier REAL NOT NULL, day_scale_multiplier REAL NOT NULL, night_scale_multiplier REAL NOT NULL, day_start_time INTEGER NOT NULL, day_end_time INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, last_update INTEGER NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE spawn_point_populations (population_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, spawn_point_id TEXT COLLATE NOCASE NOT NULL REFERENCES spawn_points(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, map_id TEXT COLLATE NOCASE NOT NULL REFERENCES maps(ark_identifier) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, instances INTEGER NOT NULL, target_population INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT, gsa_placeholder TEXT COLLATE NOCASE, uwp_changes TEXT);")
@@ -136,7 +136,7 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 104
+		  Return 105
 		End Function
 	#tag EndEvent
 
@@ -439,12 +439,17 @@ Implements ArkSA.BlueprintProvider
 		      Var Type As String = MapDict.Value("type")
 		      Var Mask As UInt64 = MapDict.Value("mask")
 		      Var Sort As Integer = MapDict.Value("sortOrder")
+		      Var CycleScaleMultiplier As Double = MapDict.Lookup("cycleScaleMultiplier", 1.0).DoubleValue
+		      Var DayScaleMultiplier As Double = MapDict.Lookup("dayScaleMultiplier", 1.0).DoubleValue
+		      Var NightScaleMultiplier As Double = MapDict.Lookup("nightScaleMultiplier", 1.0).DoubleValue
+		      Var DayStartTime As Integer = MapDict.Lookup("dayStartTime", 18900).IntegerValue
+		      Var DayEndTime As Integer = MapDict.Lookup("dayEndTime", 73440).IntegerValue
 		      
 		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM maps WHERE object_id = ?1;", MapId)
 		      If Results.RowCount = 1 Then
-		        Self.SQLExecute("UPDATE maps SET content_pack_id = ?2, label = ?3, ark_identifier = ?4, difficulty_scale = ?5, type = ?6, mask = ?7, sort = ?8 WHERE object_id = ?1;", MapId, ContentPackId, Label, Identifier, Difficulty, Type, Mask, Sort)
+		        Self.SQLExecute("UPDATE maps SET content_pack_id = ?2, label = ?3, ark_identifier = ?4, difficulty_scale = ?5, type = ?6, mask = ?7, sort = ?8, cycle_scale_multiplier = ?9, day_scale_multiplier = ?10, night_scale_multiplier = ?11, day_start_time = ?12, day_end_time = ?13 WHERE object_id = ?1;", MapId, ContentPackId, Label, Identifier, Difficulty, Type, Mask, Sort, CycleScaleMultiplier, DayScaleMultiplier, NightScaleMultiplier, DayStartTime, DayEndTime)
 		      Else
-		        Self.SQLExecute("INSERT INTO maps (object_id, content_pack_id, label, ark_identifier, difficulty_scale, type, mask, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", MapId, ContentPackId, Label, Identifier, Difficulty, Type, Mask, Sort)
+		        Self.SQLExecute("INSERT INTO maps (object_id, content_pack_id, label, ark_identifier, difficulty_scale, type, mask, sort, cycle_scale_multiplier, day_scale_multiplier, night_scale_multiplier, day_start_time, day_end_time) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13);", MapId, ContentPackId, Label, Identifier, Difficulty, Type, Mask, Sort, CycleScaleMultiplier, DayScaleMultiplier, NightScaleMultiplier, DayStartTime, DayEndTime)
 		      End If
 		    Next
 		    ArkSA.Maps.ClearCache
@@ -1931,7 +1936,7 @@ Implements ArkSA.BlueprintProvider
 		    Return Nil
 		  End If
 		  
-		  Return New ArkSA.Map(Rows.Column("object_id").StringValue, Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("type").StringValue, Rows.Column("content_pack_id").StringValue, Rows.Column("sort").IntegerValue)
+		  Return New ArkSA.Map(Rows)
 		End Function
 	#tag EndMethod
 
@@ -1940,7 +1945,7 @@ Implements ArkSA.BlueprintProvider
 		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps ORDER BY type, sort;")
 		  Var Maps() As ArkSA.Map
 		  While Rows.AfterLastRow = False
-		    Maps.Add(New ArkSA.Map(Rows.Column("object_id").StringValue, Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("type").StringValue, Rows.Column("content_pack_id").StringValue, Rows.Column("sort").IntegerValue))
+		    Maps.Add(New ArkSA.Map(Rows))
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Maps
@@ -1952,7 +1957,7 @@ Implements ArkSA.BlueprintProvider
 		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & ?1) = mask ORDER BY type, sort;", Mask)
 		  Var Maps() As ArkSA.Map
 		  While Rows.AfterLastRow = False
-		    Maps.Add(New ArkSA.Map(Rows.Column("object_id").StringValue, Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("type").StringValue, Rows.Column("content_pack_id").StringValue, Rows.Column("sort").IntegerValue))
+		    Maps.Add(New ArkSA.Map(Rows))
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Maps

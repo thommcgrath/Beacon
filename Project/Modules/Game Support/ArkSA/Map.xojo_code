@@ -2,7 +2,31 @@
 Protected Class Map
 Implements Beacon.Map
 	#tag Method, Flags = &h0
+		Sub Constructor(Row As RowSet)
+		  Self.Constructor(Row.Column("object_id").StringValue,_
+		  Row.Column("label").StringValue,_
+		  Row.Column("ark_identifier").StringValue,_
+		  Row.Column("mask").Value.UInt64Value,_
+		  Row.Column("difficulty_scale").DoubleValue,_
+		  Row.Column("type").StringValue,_
+		  Row.Column("content_pack_id").StringValue,_
+		  Row.Column("sort").IntegerValue,_
+		  Row.Column("cycle_scale_multiplier").DoubleValue,_
+		  Row.Column("day_scale_multiplier").DoubleValue,_
+		  Row.Column("night_scale_multiplier").DoubleValue,_
+		  Row.Column("day_start_time").IntegerValue,_
+		  Row.Column("day_end_time").IntegerValue)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(MapId As String, HumanName As String, Identifier As String, Mask As UInt64, DifficultyScale As Double, Type As String, ContentPackId As String, Sort As Integer)
+		  Self.Constructor(MapId, HumanName, Identifier, Mask, DifficultyScale, Type, ContentPackId, Sort, 1.0, 1.0, 1.0, 18900, 73440)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(MapId As String, HumanName As String, Identifier As String, Mask As UInt64, DifficultyScale As Double, Type As String, ContentPackId As String, Sort As Integer, CycleScaleMultiplier As Double, DayScaleMultiplier As Double, NightScaleMultiplier As Double, DayStartTime As Integer, DayEndTime As Integer)
 		  Select Case Type
 		  Case Beacon.MapTypeCanon, Beacon.MapTypeNonCanon, Beacon.MapTypeThirdParty
 		  Else
@@ -19,6 +43,11 @@ Implements Beacon.Map
 		  Self.mType = Type
 		  Self.mContentPackId = ContentPackId
 		  Self.mSort = Sort
+		  Self.mCycleScaleMultiplier = CycleScaleMultiplier
+		  Self.mDayScaleMultiplier = DayScaleMultiplier
+		  Self.mNightScaleMultiplier = NightScaleMultiplier
+		  Self.mDayStartTime = DayStartTime
+		  Self.mDayEndTime = DayEndTime
 		End Sub
 	#tag EndMethod
 
@@ -27,6 +56,42 @@ Implements Beacon.Map
 		  // Part of the Beacon.Map interface.
 		  
 		  Return Self.mContentPackId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CycleScaleMultiplier() As Double
+		  Return Self.mCycleScaleMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DayEndTime() As Integer
+		  Return Self.mDayStartTime
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DayLength() As Integer
+		  Return Self.mDayEndTime - Self.mDayStartTime
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DayRealtimeSeconds(SecondsPerHour As Double) As Double
+		  Return (Self.DayLength / 3600) * (SecondsPerHour / (Self.mCycleScaleMultiplier * Self.mDayScaleMultiplier))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DayScaleMultiplier() As Double
+		  Return Self.mDayScaleMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DayStartTime() As Integer
+		  Return Self.mDayStartTime
 		End Function
 	#tag EndMethod
 
@@ -90,6 +155,24 @@ Implements Beacon.Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NightLength() As Integer
+		  Return 86400 - Self.DayLength
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function NightRealtimeSeconds(SecondsPerHour As Double) As Double
+		  Return (Self.NightLength / 3600) * (SecondsPerHour / (Self.mCycleScaleMultiplier * Self.mNightScaleMultiplier))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function NightScaleMultiplier() As Double
+		  Return Self.mNightScaleMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As ArkSA.Map) As Integer
 		  If Other Is Nil Then
 		    Return 1
@@ -137,6 +220,22 @@ Implements Beacon.Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCycleScaleMultiplier As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDayEndTime As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDayScaleMultiplier As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDayStartTime As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDifficultyScale As Double
 	#tag EndProperty
 
@@ -154,6 +253,10 @@ Implements Beacon.Map
 
 	#tag Property, Flags = &h21
 		Private mName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNightScaleMultiplier As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

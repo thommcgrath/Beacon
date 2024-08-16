@@ -1269,16 +1269,20 @@ End
 #tag WindowCode
 	#tag Event
 		Sub SetupUI()
+		  // Aberration
+		  // Cycle Scale: 0.45
+		  // Day Scale: 1.0
+		  // Night Scale: 2.0
+		  // Days 0-3 (Balanced): 1.0 / 1.0
+		  // Days 4-6 (Cold): 0.5 / 4.5
+		  // Days 7-9 (Warm): 4.5 / 0.5
+		  
 		  Var Instance As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
-		  Self.mOfficialDaySeconds = Instance.GetDoubleVariable("Day Length Seconds", 2483)
-		  Self.mOfficialNightSeconds = Instance.GetDoubleVariable("Night Length Seconds", 1117)
-		  Self.mBalancedDaySeconds = Instance.GetDoubleVariable("Balanced Day Seconds", 1967)
-		  Self.mBalancedNightSeconds = Instance.GetDoubleVariable("Balanced Night Seconds", 1514)
-		  Self.mWarmDaySeconds = Instance.GetDoubleVariable("Warm Day Seconds", 3935)
-		  Self.mWarmNightSeconds = Instance.GetDoubleVariable("Warm Night Seconds", 336)
-		  Self.mColdDaySeconds = Instance.GetDoubleVariable("Cold Day Seconds", 437)
-		  Self.mColdNightSeconds = Instance.GetDoubleVariable("Cold Night Seconds", 3030)
+		  Self.mDaySecondsPerHour = Instance.GetDoubleVariable("Day Seconds Per Hour")
+		  Self.mNightSecondsPerHour = Instance.GetDoubleVariable("Night Seconds Per Hour")
+		  Self.mTheIsland = Instance.GetMap("TheIsland")
+		  Self.mAberration = Instance.GetMap("Aberration")
 		  
 		  Self.UpdateCalculations()
 		End Sub
@@ -1286,11 +1290,11 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Function ComputeMultiplier(DesiredLength As Double, OfficialLength As Double) As Double
-		  If DesiredLength = 0 Then
+		Private Function ComputeMultiplier(DesiredMinutes As Double, OfficialSeconds As Double) As Double
+		  If DesiredMinutes = 0 Then
 		    Return 0
 		  Else
-		    Return OfficialLength / (DesiredLength * 60)
+		    Return OfficialSeconds / (DesiredMinutes * 60)
 		  End If
 		End Function
 	#tag EndMethod
@@ -1309,34 +1313,31 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCalculations(Force As Boolean = False)
+		  Var Focus As DesktopUIControl
+		  If Force = False Then
+		    Focus = Self.Focus
+		  End If
+		  
 		  Var Config As ArkSA.Configs.DayCycle = Self.Config(False)
 		  
 		  Var DayMultiplier As Double = Config.DaySpeedMultiplier
 		  Var NightMultiplier As Double = Config.NightSpeedMultiplier
-		  Var DayLengthMinutes, NightLengthMinutes, FullLengthMinutes As Double
-		  Var BalancedDayMinutes, BalancedNightMinutes, BalancedCycleMinutes, WarmDayMinutes, WarmNightMinutes, WarmCycleMinutes, ColdDayMinutes, ColdNightMinutes, ColdCycleMinutes As Double
-		  If DayMultiplier > 0 Then
-		    DayLengthMinutes = (Self.mOfficialDaySeconds / DayMultiplier) / 60
-		    BalancedDayMinutes = (Self.mBalancedDaySeconds / DayMultiplier) / 60
-		    WarmDayMinutes = (Self.mWarmDaySeconds / DayMultiplier) / 60
-		    ColdDayMinutes = (Self.mColdDaySeconds / DayMultiplier) / 60
-		  End If
-		  If NightMultiplier > 0 Then
-		    NightLengthMinutes = (Self.mOfficialNightSeconds / NightMultiplier) / 60
-		    BalancedNightMinutes = (Self.mBalancedNightSeconds / NightMultiplier) / 60
-		    WarmNightMinutes = (Self.mWarmNightSeconds / NightMultiplier) / 60
-		    ColdNightMinutes = (Self.mColdNightSeconds / NightMultiplier) / 60
-		  End If
-		  If DayMultiplier > 0 And NightMultiplier > 0 Then
-		    FullLengthMinutes = DayLengthMinutes + NightLengthMinutes
-		    BalancedCycleMinutes = BalancedDayMinutes + BalancedNightMinutes
-		    WarmCycleMinutes = WarmDayMinutes + WarmNightMinutes
-		    ColdCycleMinutes = ColdDayMinutes + ColdNightMinutes
-		  End If
 		  
-		  Var Focus As DesktopUIControl
-		  If Force = False Then
-		    Focus = Self.Focus
+		  Var OfficialDaySeconds, OfficialNightSeconds As Double
+		  Var DayLengthMinutes, NightLengthMinutes, FullLengthMinutes As Double
+		  If (Self.mTheIsland Is Nil) = False Then
+		    OfficialDaySeconds = Self.mTheIsland.DayRealtimeSeconds(Self.mDaySecondsPerHour)
+		    OfficialNightSeconds = Self.mTheIsland.NightRealtimeSeconds(Self.mNightSecondsPerHour)
+		    
+		    If DayMultiplier > 0 Then
+		      DayLengthMinutes = (OfficialDaySeconds / DayMultiplier) / 60
+		    End If
+		    If NightMultiplier > 0 Then
+		      NightLengthMinutes = (OfficialNightSeconds / NightMultiplier) / 60
+		    End If
+		    If DayMultiplier > 0 And NightMultiplier > 0 Then
+		      FullLengthMinutes = DayLengthMinutes + NightLengthMinutes
+		    End If
 		  End If
 		  
 		  If Focus <> Self.DayMultiplierField Then
@@ -1351,47 +1352,56 @@ End
 		  If Focus <> Self.NightLengthField Then
 		    Self.NightLengthField.Text = If(NightLengthMinutes > 0, NightLengthMinutes.PrettyText(2), "∞")
 		  End If
-		  If Focus <> Self.BalancedDayMinutesField Then
-		    Self.BalancedDayMinutesField.Text = If(BalancedDayMinutes > 0, BalancedDayMinutes.PrettyText(2), "∞")
-		  End If
-		  If Focus <> Self.BalancedNightMinutesField Then
-		    Self.BalancedNightMinutesField.Text = If(BalancedNightMinutes > 0, BalancedNightMinutes.PrettyText(2), "∞")
-		  End If
-		  If Focus <> Self.WarmDayMinutesField Then
-		    Self.WarmDayMinutesField.Text = If(WarmDayMinutes > 0, WarmDayMinutes.PrettyText(2), "∞")
-		  End If
-		  If Focus <> Self.WarmNightMinutesField Then
-		    Self.WarmNightMinutesField.Text = If(WarmNightMinutes > 0, WarmNightMinutes.PrettyText(2), "∞")
-		  End If
-		  If Focus <> Self.ColdDayMinutesField Then
-		    Self.ColdDayMinutesField.Text = If(ColdDayMinutes > 0, ColdDayMinutes.PrettyText(2), "∞")
-		  End If
-		  If Focus <> Self.ColdNightMinutesField Then
-		    Self.ColdNightMinutesField.Text = If(ColdNightMinutes > 0, ColdNightMinutes.PrettyText(2), "∞")
+		  Self.FullLengthField.Text = If(FullLengthMinutes > 0, FullLengthMinutes.PrettyText(2), "∞")
+		  
+		  If (Self.mAberration Is Nil) = False Then
+		    Var AbberationDayMinutes As Double = Self.mAberration.DayRealtimeSeconds(Self.mDaySecondsPerHour) / 60
+		    Var AberrationNightMinutes As Double = Self.mAberration.NightRealtimeSeconds(Self.mNightSecondsPerHour) / 60
+		    
+		    Var BalancedDayMinutes, BalancedNightMinutes, BalancedCycleMinutes, WarmDayMinutes, WarmNightMinutes, WarmCycleMinutes, ColdDayMinutes, ColdNightMinutes, ColdCycleMinutes As Double
+		    BalancedDayMinutes = AbberationDayMinutes / (Self.BalancedDayMultiplier * DayMultiplier)
+		    BalancedNightMinutes = AberrationNightMinutes / (Self.BalancedNightMultiplier * NightMultiplier)
+		    WarmDayMinutes = AbberationDayMinutes / (Self.WarmDayMultiplier * DayMultiplier)
+		    WarmNightMinutes = AberrationNightMinutes / (Self.WarmNightMultiplier * NightMultiplier)
+		    ColdDayMinutes = AbberationDayMinutes / (Self.ColdDayMultiplier * DayMultiplier)
+		    ColdNightMinutes = AberrationNightMinutes / (Self.ColdNightMultiplier * NightMultiplier)
+		    BalancedCycleMinutes = BalancedDayMinutes + BalancedNightMinutes
+		    ColdCycleMinutes = ColdDayMinutes + ColdNightMinutes
+		    WarmCycleMinutes = WarmDayMinutes + WarmNightMinutes
+		    
+		    If Focus <> Self.BalancedDayMinutesField Then
+		      Self.BalancedDayMinutesField.Text = If(BalancedDayMinutes > 0, BalancedDayMinutes.PrettyText(2), "∞")
+		    End If
+		    If Focus <> Self.BalancedNightMinutesField Then
+		      Self.BalancedNightMinutesField.Text = If(BalancedNightMinutes > 0, BalancedNightMinutes.PrettyText(2), "∞")
+		    End If
+		    If Focus <> Self.WarmDayMinutesField Then
+		      Self.WarmDayMinutesField.Text = If(WarmDayMinutes > 0, WarmDayMinutes.PrettyText(2), "∞")
+		    End If
+		    If Focus <> Self.WarmNightMinutesField Then
+		      Self.WarmNightMinutesField.Text = If(WarmNightMinutes > 0, WarmNightMinutes.PrettyText(2), "∞")
+		    End If
+		    If Focus <> Self.ColdDayMinutesField Then
+		      Self.ColdDayMinutesField.Text = If(ColdDayMinutes > 0, ColdDayMinutes.PrettyText(2), "∞")
+		    End If
+		    If Focus <> Self.ColdNightMinutesField Then
+		      Self.ColdNightMinutesField.Text = If(ColdNightMinutes > 0, ColdNightMinutes.PrettyText(2), "∞")
+		    End If
+		    Self.BalancedCycleField.Text = If(BalancedCycleMinutes > 0, BalancedCycleMinutes.PrettyText(2), "∞")
+		    Self.WarmCycleField.Text = If(WarmCycleMinutes > 0, WarmCycleMinutes.PrettyText(2), "∞")
+		    Self.ColdCycleField.Text = If(ColdCycleMinutes > 0, ColdCycleMinutes.PrettyText(2), "∞")
+		    
+		    Self.AberrationSeasonsGroup.Visible = True
+		  Else
+		    Self.AberrationSeasonsGroup.Visible = False
 		  End If
 		  
-		  Self.FullLengthField.Text = If(FullLengthMinutes > 0, FullLengthMinutes.PrettyText(2), "∞")
-		  Self.BalancedCycleField.Text = If(BalancedCycleMinutes > 0, BalancedCycleMinutes.PrettyText(2), "∞")
-		  Self.WarmCycleField.Text = If(WarmCycleMinutes > 0, WarmCycleMinutes.PrettyText(2), "∞")
-		  Self.ColdCycleField.Text = If(ColdCycleMinutes > 0, ColdCycleMinutes.PrettyText(2), "∞")
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mBalancedDaySeconds As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBalancedNightSeconds As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColdDaySeconds As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColdNightSeconds As Double
+		Private mAberration As ArkSA.Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1399,20 +1409,35 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOfficialDaySeconds As Double
+		Private mDaySecondsPerHour As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOfficialNightSeconds As Double
+		Private mNightSecondsPerHour As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWarmDaySeconds As Double
+		Private mTheIsland As ArkSA.Map
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mWarmNightSeconds As Double
-	#tag EndProperty
+
+	#tag Constant, Name = BalancedDayMultiplier, Type = Double, Dynamic = False, Default = \"1.0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = BalancedNightMultiplier, Type = Double, Dynamic = False, Default = \"1.0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColdDayMultiplier, Type = Double, Dynamic = False, Default = \"4.5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColdNightMultiplier, Type = Double, Dynamic = False, Default = \"0.5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = WarmDayMultiplier, Type = Double, Dynamic = False, Default = \"0.5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = WarmNightMultiplier, Type = Double, Dynamic = False, Default = \"4.5", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -1424,8 +1449,15 @@ End
 		    Return
 		  End If
 		  
+		  Var DesiredMultiplier As Double
+		  Try
+		    DesiredMultiplier = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = CDbl(Me.Text)
+		  Self.Config(True).DaySpeedMultiplier = DesiredMultiplier
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1439,8 +1471,15 @@ End
 		    Return
 		  End If
 		  
+		  Var DesiredMultiplier As Double
+		  Try
+		    DesiredMultiplier = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = CDbl(Me.Text)
+		  Self.Config(True).NightSpeedMultiplier = DesiredMultiplier
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1450,12 +1489,21 @@ End
 #tag Events DayLengthField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mTheIsland Is Nil Then
 		    Return
 		  End If
 		  
+		  Var DesiredMinutes As Double
+		  Try
+		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var OfficialSeconds As Double = Self.mTheIsland.DayRealtimeSeconds(Self.mDaySecondsPerHour)
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mOfficialDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1465,12 +1513,21 @@ End
 #tag Events NightLengthField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mTheIsland Is Nil Then
 		    Return
 		  End If
 		  
+		  Var DesiredMinutes As Double
+		  Try
+		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var OfficialSeconds As Double = Self.mTheIsland.NightRealtimeSeconds(Self.mNightSecondsPerHour)
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mOfficialNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1480,12 +1537,21 @@ End
 #tag Events BalancedDayMinutesField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
 		    Return
 		  End If
 		  
+		  Var DesiredMinutes As Double
+		  Try
+		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var OfficialSeconds As Double = Self.mAberration.DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.BalancedDayMultiplier
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mBalancedDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1495,12 +1561,21 @@ End
 #tag Events WarmDayMinutesField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
 		    Return
 		  End If
 		  
+		  Var DesiredMinutes As Double
+		  Try
+		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var OfficialSeconds As Double = Self.mAberration.DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.WarmDayMultiplier
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mWarmDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1510,12 +1585,21 @@ End
 #tag Events ColdDayMinutesField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
 		    Return
 		  End If
 		  
+		  Var DesiredMinutes As Double
+		  Try
+		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var OfficialSeconds As Double = Self.mAberration.DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.ColdDayMultiplier
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mColdDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1525,12 +1609,21 @@ End
 #tag Events BalancedNightMinutesField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
 		    Return
 		  End If
 		  
+		  Var DesiredMinutes As Double
+		  Try
+		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var OfficialSeconds As Double = Self.mAberration.NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.BalancedNightMultiplier
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mBalancedNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1540,12 +1633,21 @@ End
 #tag Events WarmNightMinutesField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
 		    Return
 		  End If
 		  
+		  Var DesiredMinutes As Double
+		  Try
+		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var OfficialSeconds As Double = Self.mAberration.NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.WarmNightMultiplier
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mWarmNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1555,12 +1657,21 @@ End
 #tag Events ColdNightMinutesField
 	#tag Event
 		Sub TextChanged()
-		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Or Self.mAberration Is Nil Then
 		    Return
 		  End If
 		  
+		  Var DesiredMinutes As Double
+		  Try
+		    DesiredMinutes = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var OfficialSeconds As Double = Self.mAberration.NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.ColdNightMultiplier
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mColdNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredMinutes, OfficialSeconds)
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
