@@ -8,7 +8,8 @@ class Map extends DatabaseObject implements JsonSerializable {
 	protected string $mapId;
 	protected string $contentPackId;
 	protected string $label;
-	protected string $arkIdentifier;
+	protected string $worldName;
+	protected string $arkIdentifier; // Deprecated, needed by Beacon 2.0.0 through 2.3.0 inclusive
 	protected float $difficultyScale;
 	protected bool $isOfficial;
 	protected string $type;
@@ -26,6 +27,7 @@ class Map extends DatabaseObject implements JsonSerializable {
 		$this->mapId = $row->Field('map_id');
 		$this->contentPackId = $row->Field('content_pack_id');
 		$this->label = $row->Field('label');
+		$this->worldName = $row->Field('world_name');
 		$this->arkIdentifier = $row->Field('ark_identifier');
 		$this->difficultyScale = filter_var($row->Field('difficulty_scale'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 4.0;
 		$this->isOfficial = filter_var($row->Field('official'), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? false;
@@ -46,6 +48,7 @@ class Map extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('mapId', ['primaryKey' => true, 'columnName' => 'map_id']),
 			new DatabaseObjectProperty('contentPackId', ['columnName' => 'content_pack_id']),
 			new DatabaseObjectProperty('label'),
+			new DatabaseObjectProperty('worldName', ['columnName' => 'world_name']),
 			new DatabaseObjectProperty('arkIdentifier', ['columnName' => 'ark_identifier']),
 			new DatabaseObjectProperty('difficultyScale', ['columnName' => 'difficulty_scale']),
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'official']),
@@ -67,6 +70,7 @@ class Map extends DatabaseObject implements JsonSerializable {
 		$parameters->allowAll = true;
 		$parameters->orderBy = $schema->Accessor('isOfficial') . ' DESC, ' . $schema->Accessor('sortOrder') . ', ' . $schema->Accessor('label');
 		$parameters->AddFromFilter($schema, $filters, 'arkIdentifier');
+		$parameters->AddFromFilter($schema, $filters, 'worldName');
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 
 		if (isset($filters['mask'])) {
@@ -90,7 +94,7 @@ class Map extends DatabaseObject implements JsonSerializable {
 			return parent::Fetch($uuid);
 		}
 
-		$results = static::Search(['arkIdentifier' => $uuid], true);
+		$results = static::Search(['worldName' => $uuid], true);
 		if (count($results) === 1) {
 			return $results[0];
 		}
@@ -104,6 +108,10 @@ class Map extends DatabaseObject implements JsonSerializable {
 
 	public function MapId(): string {
 		return $this->map_id;
+	}
+
+	public function WorldName(): string {
+		return $this->world_name;
 	}
 
 	public function Identifier(): string {
@@ -159,6 +167,7 @@ class Map extends DatabaseObject implements JsonSerializable {
 			'mapId' => $this->mapId,
 			'contentPackId' => $this->contentPackId,
 			'label' => $this->label,
+			'worldName' => $this->worldName,
 			'arkIdentifier' => $this->arkIdentifier,
 			'difficultyScale' => $this->difficultyScale,
 			'isOfficial' => $this->isOfficial,
