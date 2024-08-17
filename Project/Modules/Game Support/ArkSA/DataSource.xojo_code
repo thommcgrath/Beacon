@@ -436,7 +436,7 @@ Implements ArkSA.BlueprintProvider
 		      Var Label As String = MapDict.Value("label")
 		      Var WorldName As String = If(MapDict.HasKey("worldName"), MapDict.Value("worldName").StringValue, MapDict.Value("arkIdentifier").StringValue)
 		      Var Difficulty As Double = MapDict.Value("difficultyScale")
-		      Var Type As String = MapDict.Value("type")
+		      Var Type As String = If(MapDict.HasKey("type"), MapDict.Value("type").StringValue, If(MapDict.Value("official").BooleanValue, Beacon.MapTypeCanon, Beacon.MapTypeNonCanon))
 		      Var Mask As UInt64 = MapDict.Value("mask")
 		      Var Sort As Integer = MapDict.Value("sortOrder")
 		      Var CycleScaleMultiplier As Double = MapDict.Lookup("cycleScaleMultiplier", 1.0).DoubleValue
