@@ -5,7 +5,7 @@ Implements Beacon.Map
 		Sub Constructor(Row As RowSet)
 		  Self.Constructor(Row.Column("object_id").StringValue,_
 		  Row.Column("label").StringValue,_
-		  Row.Column("ark_identifier").StringValue,_
+		  Row.Column("world_name").StringValue,_
 		  Row.Column("mask").Value.UInt64Value,_
 		  Row.Column("difficulty_scale").DoubleValue,_
 		  Row.Column("type").StringValue,_

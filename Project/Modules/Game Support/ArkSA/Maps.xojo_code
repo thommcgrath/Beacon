@@ -63,18 +63,6 @@ Protected Module Maps
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ScorchedEarth() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("ScorchedEarth")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function TheIsland() As ArkSA.Map
-		  Return ArkSA.DataSource.Pool.Get(False).GetMap("TheIsland")
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mLabels As Dictionary

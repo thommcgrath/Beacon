@@ -64,7 +64,7 @@ Inherits Beacon.Thread
 		    Project.MapMask = Profile.Mask
 		  End If
 		  If Project.MapMask = CType(0, UInt64) Then
-		    Project.MapMask = ArkSA.Maps.TheIsland.Mask
+		    Project.MapMask = 1
 		  End If
 		  If ParsedData.HasKey("SessionName") Then
 		    Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
