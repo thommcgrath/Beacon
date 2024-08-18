@@ -179,10 +179,7 @@ End
 		Sub Paint(g As Graphics, areas() As Rect)
 		  #Pragma Unused Areas
 		  
-		  G.DrawingColor = SystemColors.UnderPageBackgroundColor
-		  G.FillRectangle(0, 0, G.Width, G.Height)
-		  
-		  G.DrawingColor = SystemColors.ListEvenRowColor
+		  G.DrawingColor = &c000000EE
 		  G.FillRectangle(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent
