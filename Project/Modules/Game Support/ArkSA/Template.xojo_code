@@ -2,14 +2,6 @@
 Protected Class Template
 Inherits Beacon.Template
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
-	#tag Event
-		Sub Save(SaveData As Dictionary)
-		  SaveData.Value("Kind") = Self.Kind
-		  RaiseEvent Save(SaveData)
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.Template
 		  If Dict Is Nil Then
@@ -37,17 +29,6 @@ Inherits Beacon.Template
 		  Return ArkSA.Identifier
 		End Function
 	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Kind() As String
-		  Return "LootTemplate"
-		End Function
-	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0
-		Event Save(SaveData As Dictionary)
-	#tag EndHook
 
 
 	#tag ViewBehavior

@@ -57,22 +57,22 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mLabel = "Untitled Template"
+		  Super.Constructor()
+		  
 		  Self.mGrouping = "Miscellaneous"
 		  Self.mMinEntriesSelected = 1
 		  Self.mMaxEntriesSelected = 1
 		  Self.mModifierValues = New Dictionary
-		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.LootTemplate)
-		  Self.mLabel = Source.mLabel
+		  Super.Constructor(Source)
+		  
 		  Self.mGrouping = Source.mGrouping
 		  Self.mMinEntriesSelected = Source.mMinEntriesSelected
 		  Self.mMaxEntriesSelected = Source.mMaxEntriesSelected
-		  Self.mUUID = Source.mUUID
 		  
 		  Self.mModifierValues = New Dictionary
 		  For Each Entry As DictionaryEntry In Source.mModifierValues

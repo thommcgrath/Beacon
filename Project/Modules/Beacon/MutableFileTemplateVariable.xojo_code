@@ -1,33 +1,27 @@
 #tag Class
-Protected Class Template
-Inherits Beacon.Template
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+Protected Class MutableFileTemplateVariable
+Inherits Beacon.FileTemplateVariable
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Beacon.Template
-		  If Dict Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Var Game As String = Dict.Lookup("Game", Ark.Identifier)
-		  If Game <> Ark.Identifier Then
-		    Return Beacon.Template.FromSaveData(Dict)
-		  End If
-		  
-		  Var Kind As String = Dict.Lookup("Kind", "LootTemplate")
-		  Select Case Kind
-		  Case "LootTemplate"
-		    Return Ark.LootTemplate.FromSaveData(Dict)
-		  Else
-		    App.Log("Unknown Ark.Template kind " + Kind + ".")
-		    Return Nil
-		  End Select
+		Function ImmutableVersion() As Beacon.FileTemplateVariable
+		  Return New Beacon.FileTemplateVariable(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameId() As String
-		  Return Ark.Identifier
+		Function MutableVersion() As Beacon.MutableFileTemplateVariable
+		  Return Self
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Name(Assigns Value As String)
+		  If Self.mName.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mName = Value
+		  Self.mModified = True
+		End Sub
 	#tag EndMethod
 
 

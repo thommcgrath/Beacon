@@ -184,6 +184,8 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function GameName(GameId As String) As String
 		  Select Case GameId
+		  Case "Common"
+		    Return "Universal"
 		  Case Ark.Identifier
 		    Return Ark.FullName
 		  Case SDTD.Identifier
@@ -279,6 +281,33 @@ Protected Module Language
 		    Source = Source.ReplaceAll("?" + Placeholder.ToString(Locale.Raw, "0"), Values(I))
 		  Next
 		  Return Source
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function TemplateKindLabel(Template As Beacon.Template) As String
+		  If Template Is Nil Then
+		    Return ""
+		  End If
+		  
+		  Return TemplateKindLabel(Template.GameId, Template.Kind)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function TemplateKindLabel(GameId As String, Kind As String) As String
+		  Select Case GameId
+		  Case Ark.Identifier, ArkSA.Identifier
+		    Select Case Kind
+		    Case "LootTemplate", "Loot"
+		      Return "Loot"
+		    End Select
+		  Case "Common"
+		    Select Case Kind
+		    Case "FileTemplate", "File"
+		      Return "File"
+		    End Select
+		  End Select
 		End Function
 	#tag EndMethod
 

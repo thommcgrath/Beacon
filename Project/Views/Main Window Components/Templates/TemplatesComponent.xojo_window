@@ -83,7 +83,7 @@ Begin BeaconPagedSubview TemplatesComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   300
       Begin ListTemplatesComponent PresetsList
@@ -312,24 +312,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewTemplate()
-		  Var GameId As String = GameSelectorWindow.Present(Self, Beacon.Game.FeatureTemplates, False)
-		  If GameId.IsEmpty Then
-		    Return
+		  Var Template As Beacon.Template = TemplateKindChooserDialog.Present(Self)
+		  If (Template Is Nil) = False Then
+		    Self.OpenTemplate(Template)
 		  End If
-		  Self.NewTemplate(GameId)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub NewTemplate(GameId As String)
-		  Select Case GameId
-		  Case Ark.Identifier
-		    Self.OpenTemplate(New Ark.LootTemplate)
-		  Case ArkSA.Identifier
-		    Self.OpenTemplate(New ArkSA.LootTemplate)
-		  Else
-		    Self.ShowAlert("Beacon does not yet support templates for " + Language.GameName(GameId), "This feature is coming, but isn't ready in this version.")
-		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -359,6 +345,8 @@ End
 		      View = New ArkLootTemplateEditorView(Ark.LootTemplate(Template))
 		    Case IsA ArkSA.LootTemplate
 		      View = New ArkSALootTemplateEditorView(ArkSA.LootTemplate(Template))
+		    Case IsA Beacon.FileTemplate
+		      View = New FileTemplateEditorView(Beacon.FileTemplate(Template))
 		    Else
 		      Self.ShowAlert("Beacon does not yet support templates for this game.", "This feature is coming, but isn't ready in this version.")
 		      Return
@@ -403,6 +391,8 @@ End
 		      View = New ArkLootTemplateEditorView(Ark.LootTemplate(Template))
 		    Case IsA ArkSA.LootTemplate
 		      View = New ArkSALootTemplateEditorView(ArkSA.LootTemplate(Template))
+		    Case IsA Beacon.FileTemplate
+		      View = New FileTemplateEditorView(Beacon.FileTemplate(Template))
 		    End Select
 		    Self.EmbedView(TemplateEditorView(View))
 		  End If

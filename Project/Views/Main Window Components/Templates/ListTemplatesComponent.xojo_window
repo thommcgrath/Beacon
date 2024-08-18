@@ -37,8 +37,8 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   3
-      ColumnWidths    =   "*,150,150"
+      ColumnCount     =   4
+      ColumnWidths    =   "*,150,100,150"
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -57,7 +57,7 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       Height          =   366
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Template Name	Game	Type"
+      InitialValue    =   "Template Name	Game	Kind	Type"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -409,6 +409,7 @@ End
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
 		    Self.List.CellTextAt(Idx, Self.ColumnName) = Templates(Idx).Label
 		    Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(Templates(Idx).GameId)
+		    Self.List.CellTextAt(Idx, Self.ColumnKind) = Language.TemplateKindLabel(Templates(Idx))
 		    
 		    Var CustomTemplate As Boolean = CommonData.IsTemplateCustom(Templates(Idx))
 		    Var OfficialTemplate As Boolean = CommonData.IsTemplateOfficial(Templates(Idx))
@@ -426,6 +427,7 @@ End
 		  
 		  Self.List.SizeColumnToFit(Self.ColumnGame, 150)
 		  Self.List.SizeColumnToFit(Self.ColumnType, 150)
+		  Self.List.SizeColumnToFit(Self.ColumnKind, 100)
 		  
 		  Self.List.Sort
 		  Self.List.EnsureSelectionIsVisible
@@ -449,10 +451,13 @@ End
 	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ColumnKind, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnType, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = ColumnType, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 

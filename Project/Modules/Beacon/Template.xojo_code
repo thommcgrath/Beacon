@@ -3,7 +3,15 @@ Protected Class Template
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
+		  Self.mLabel = "Untitled Template"
 		  Self.mUUID = Beacon.UUID.v4
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Constructor(Source As Beacon.Template)
+		  Self.mLabel = Source.mLabel
+		  Self.mUUID = Source.mUUID
 		End Sub
 	#tag EndMethod
 
@@ -20,6 +28,12 @@ Implements Beacon.NamedItem
 		    Template = Ark.Template.FromSaveData(Dict)
 		  Case ArkSA.Identifier
 		    Template = ArkSA.Template.FromSaveData(Dict)
+		  Case "Common"
+		    Var Kind As String = Dict.Lookup("Kind", "LootTemplate")
+		    Select Case Kind
+		    Case "FileTemplate"
+		      Template = Beacon.FileTemplate.FromSaveData(Dict)
+		    End Select
 		  End Select
 		  If (Template Is Nil) = False Then
 		    Template.mUUID = Dict.Value("ID")
@@ -67,6 +81,14 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Kind() As String
+		  Var Err As New UnsupportedOperationException
+		  Err.Message = "Forgot to override Kind"
+		  Raise Err
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label() As String
 		  Return Self.mLabel
 		End Function
@@ -78,6 +100,7 @@ Implements Beacon.NamedItem
 		  Dict.Value("ID") = Self.mUUID
 		  Dict.Value("Game") = Self.GameId
 		  Dict.Value("Label") = Self.mLabel
+		  Dict.Value("Kind") = Self.Kind
 		  RaiseEvent Save(Dict)
 		  Return Dict
 		End Function
