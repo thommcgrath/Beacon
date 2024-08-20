@@ -490,7 +490,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			}
 
 			// Only accept users who are already in the member list
-			$rows = $database->Query('SELECT user_id, role, fingerprint FROM project_members WHERE project_id = $1;', $projectId);
+			$rows = $database->Query('SELECT user_id, role, fingerprint FROM public.project_members WHERE project_id = $1;', $projectId);
 			while (!$rows->EOF()) {
 				$userId = $rows->Field('user_id');
 				$fingerprint = $rows->Field('fingerprint');
@@ -502,10 +502,10 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 						throw new Exception('Member ' . $userId . ' must have keys role, encryptedPassword, and fingerprint.', 400);
 					}
 
-					if ($role !== $member['role'] || $fingerprint !== $member['fingerprint']) {
+					if ($fingerprint !== $member['fingerprint']) {
 						$members[] = [
 							'userId' => $userId,
-							'role' => $member['role'],
+							'role' => $role,
 							'encryptedPassword' => $member['encryptedPassword'],
 							'fingerprint' => $member['fingerprint'],
 						];
@@ -626,7 +626,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$database->Update('public.projects', $columns, ['project_id' => $projectId]);
 		}
 		foreach ($members as $member) {
-			$database->Query('INSERT INTO public.project_members (project_id, user_id, role, encrypted_password, fingerprint) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (project_id, user_id) DO UPDATE SET role = EXCLUDED.role, encrypted_password = EXCLUDED.encrypted_password, fingerprint = EXCLUDED.fingerprint;', $projectId, $member['userId'], $member['role'], $member['encryptedPassword'], $member['fingerprint']);
+			$database->Query('INSERT INTO public.project_members (project_id, user_id, role, encrypted_password, fingerprint) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (project_id, user_id) DO UPDATE SET encrypted_password = EXCLUDED.encrypted_password, fingerprint = EXCLUDED.fingerprint;', $projectId, $member['userId'], $member['role'], $member['encryptedPassword'], $member['fingerprint']);
 		}
 		$project = static::FetchForUser($projectId, $user);
 		if (is_null($project)) {
