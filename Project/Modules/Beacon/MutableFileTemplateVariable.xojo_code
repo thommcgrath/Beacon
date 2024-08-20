@@ -8,6 +8,20 @@ Inherits Beacon.FileTemplateVariable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Label(Assigns Value As String)
+		  If Self.mLabel.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mLabel = Value
+		    Self.mModified = True
+		  End If
+		  
+		  If Self.mName.IsEmpty Then
+		    Self.mName = Self.SuggestName(Self.mLabel)
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MutableVersion() As Beacon.MutableFileTemplateVariable
 		  Return Self
 		End Function
@@ -20,6 +34,49 @@ Inherits Beacon.FileTemplateVariable
 		  End If
 		  
 		  Self.mName = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Options(Assigns Values() As String)
+		  If Values Is Nil Or Values.Count = 0 Then
+		    Return
+		  End If
+		  
+		  If Self.mType <> Self.TypeEnum Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Cannot set options for variable type " + Self.mType.ToString(Locale.Raw, "0")
+		    Raise Err
+		  End If
+		  
+		  Var OriginalValue As String = String.FromArray(Self.mEnumOptions, ",")
+		  Var NewValue As String = String.FromArray(Values, ",")
+		  If OriginalValue.Compare(NewValue, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mEnumOptions = Values.Clone
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RegexPattern(Assigns Value As String)
+		  If Self.mType <> Self.TypeText Then
+		    If Value.IsEmpty = False Then
+		      Var Err As New UnsupportedOperationException
+		      Err.Message = "Cannot set regex pattern for variable type " + Self.mType.ToString(Locale.Raw, "0")
+		      Raise Err
+		    End If
+		    Return
+		  End If
+		  
+		  If Self.mRegexPattern.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mRegexPattern = Value
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod

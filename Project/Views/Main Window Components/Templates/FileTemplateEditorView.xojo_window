@@ -207,6 +207,62 @@ Begin TemplateEditorView FileTemplateEditorView
          Visible         =   True
          Width           =   762
       End
+      Begin BeaconListbox VarsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   True
+         Bold            =   False
+         ColumnCount     =   3
+         ColumnWidths    =   "*,*,150"
+         DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   False
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   425
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "#HeaderCaptionLabel	#HeaderCaptionName	#HeaderCaptionType"
+         Italic          =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PageSize        =   100
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   1
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         TotalPages      =   -1
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         Width           =   762
+         _ScrollWidth    =   -1
+      End
    End
 End
 #tag EndDesktopWindow
@@ -277,6 +333,7 @@ End
 		  Self.ViewID = Self.mTemplate.UUID
 		  
 		  Self.Modified = False
+		  Self.mTemplate = New Beacon.MutableFileTemplate(Self.mTemplate) // Makes an unmodified copy
 		  NotificationKit.Post("Template Saved", Self.mTemplate)
 		  
 		  Self.Progress = BeaconSubview.ProgressNone
@@ -301,7 +358,64 @@ End
 		  Self.NameField.Text = Self.mTemplate.Label
 		  Self.BodyArea.Text = Self.mTemplate.Body
 		  
+		  Self.UpdateVariablesList()
+		  
 		  Self.mUpdating = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateVariablePositions()
+		  Var Vars() As Beacon.FileTemplateVariable
+		  For RowIdx As Integer = 0 To Self.VarsList.LastRowIndex
+		    Vars.Add(Self.VarsList.RowTagAt(RowIdx))
+		  Next
+		  Self.mTemplate.Variables = Vars
+		  Self.Modified = Self.mTemplate.Modified
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateVariablesList()
+		  Var SelectedVars() As Beacon.FileTemplateVariable
+		  For RowIdx As Integer = 0 To Self.VarsList.LastRowIndex
+		    If Self.VarsList.RowSelectedAt(RowIdx) Then
+		      SelectedVars.Add(Self.VarsList.RowTagAt(RowIdx))
+		    End If
+		  Next
+		  Self.UpdateVariablesList(SelectedVars)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateVariablesList(SelectedVars() As Beacon.FileTemplateVariable)
+		  Var SelDict As New Dictionary
+		  For Each Vr As Beacon.FileTemplateVariable In SelectedVars
+		    SelDict.Value(Vr.VariableId) = True
+		  Next
+		  
+		  Var Vars() As Beacon.FileTemplateVariable = Self.mTemplate.Variables
+		  Self.VarsList.RowCount = Vars.Count
+		  For RowIdx As Integer = 0 To Vars.LastIndex
+		    Self.VarsList.CellTextAt(RowIdx, Self.ColumnVarLabel) = Vars(RowIdx).Label
+		    Self.VarsList.CellTextAt(RowIdx, Self.ColumnVarName) = Vars(RowIdx).Name
+		    Select Case Vars(RowIdx).Type
+		    Case Beacon.FileTemplateVariable.TypeText
+		      Self.VarsList.CellTextAt(RowIdx, Self.ColumnVarType) = TypeCaptionText
+		    Case Beacon.FileTemplateVariable.TypeBoolean
+		      Self.VarsList.CellTextAt(RowIdx, Self.ColumnVarType) = TypeCaptionBoolean
+		    Case Beacon.FileTemplateVariable.TypeEnum
+		      Self.VarsList.CellTextAt(RowIdx, Self.ColumnVarType) = TypeCaptionEnum
+		    End Select
+		    Self.VarsList.RowTagAt(RowIdx) = Vars(RowIdx)
+		    Self.VarsList.RowSelectedAt(RowIdx) = SelDict.HasKey(Vars(RowIdx).VariableId)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateVariablesList(SelectedVar As Beacon.FileTemplateVariable)
+		  Self.UpdateVariablesList(Array(SelectedVar))
 		End Sub
 	#tag EndMethod
 
@@ -339,7 +453,43 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = AddVariableCaption, Type = String, Dynamic = True, Default = \"New Field", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = AddVariableHelpTag, Type = String, Dynamic = True, Default = \"Add a new custom field that will be passed to this script when built.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnVarLabel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnVarName, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnVarType, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ContentsCaption, Type = String, Dynamic = True, Default = \"Contents", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HeaderCaptionLabel, Type = String, Dynamic = True, Default = \"Display Name", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HeaderCaptionName, Type = String, Dynamic = True, Default = \"Accessor", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HeaderCaptionType, Type = String, Dynamic = True, Default = \"Type", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.templatevariable", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = NameCaption, Type = String, Dynamic = True, Default = \"Template Name:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NounVariablePlural, Type = String, Dynamic = True, Default = \"Fields", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NounVariableSingular, Type = String, Dynamic = True, Default = \"Field", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageScript, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -348,14 +498,28 @@ End
 	#tag Constant, Name = PageVariables, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = TypeCaptionBoolean, Type = String, Dynamic = True, Default = \"Switch", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeCaptionEnum, Type = String, Dynamic = True, Default = \"Menu", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeCaptionText, Type = String, Dynamic = True, Default = \"Text", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = VariablesCaption, Type = String, Dynamic = True, Default = \"Custom Fields", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
 #tag Events TemplateToolbar
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateTab("ScriptTab", "Contents"))
-		  Me.Append(OmniBarItem.CreateTab("VariablesTab", "Variables"))
+		  Me.Append(OmniBarItem.CreateTab("ScriptTab", Self.ContentsCaption))
+		  Me.Append(OmniBarItem.CreateTab("VariablesTab", Self.VariablesCaption))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddVariableButton", Self.AddVariableCaption, IconToolbarAdd, Self.AddVariableHelpTag))
 		  
 		  Me.Item("ScriptTab").Toggled = True
 		End Sub
@@ -369,6 +533,13 @@ End
 		    Self.Pages.SelectedPanelIndex = Self.PageScript
 		  Case "VariablesTab"
 		    Self.Pages.SelectedPanelIndex = Self.PageVariables
+		  Case "AddVariableButton"
+		    Var NewVar As Beacon.FileTemplateVariable = FileTemplateVariableEditorDialog.Present(Self)
+		    If (NewVar Is Nil) = False Then
+		      Self.mTemplate.Add(NewVar)
+		      Self.Modified = Self.mTemplate.Modified
+		      Self.UpdateVariablesList(NewVar)
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -409,6 +580,119 @@ End
 		  
 		  Self.mTemplate.Body = Me.Text
 		  Self.Modified = Self.mTemplate.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events VarsList
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.HasClipboardData(Self.kClipboardType)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function DragReorderRows(newPosition as Integer, parentRow as Integer) As Boolean
+		  #Pragma Unused NewPosition
+		  #Pragma Unused ParentRow
+		  
+		  Call CallLater.Schedule(1, AddressOf UpdateVariablePositions)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  If Warn Then
+		    Var SelVars() As Beacon.FileTemplateVariable
+		    For RowIdx As Integer = 0 To Me.LastRowIndex
+		      If Me.RowSelectedAt(RowIdx) = False Then
+		        Continue
+		      End If
+		      
+		      SelVars.Add(Me.RowTagAt(RowIdx))
+		    Next
+		    If Self.ShowDeleteConfirmation(SelVars, Self.NounVariableSingular.Lowercase, Self.NounVariablePlural.Lowercase) = False Then
+		      Return
+		    End If
+		  End If
+		  
+		  For RowIdx As Integer = Me.LastRowIndex DownTo 0
+		    If Me.RowSelectedAt(RowIdx) = False Then
+		      Continue
+		    End If
+		    
+		    Self.mTemplate.RemoveAt(RowIdx)
+		  Next
+		  Self.Modified = Self.mTemplate.Modified
+		  Self.UpdateVariablesList
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var Data As New JSONItem
+		  For RowIdx As Integer = 0 To Me.LastRowIndex
+		    If Me.RowSelectedAt(RowIdx) = False Then
+		      Continue
+		    End If
+		    
+		    Var SaveData As JSONItem = Beacon.FileTemplateVariable(Me.RowTagAt(RowIdx)).ToJSON
+		    If (SaveData Is Nil) = False Then
+		      Data.Add(SaveData)
+		    End If
+		  Next
+		  Board.AddClipboardData(Self.kClipboardType, Data)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  Var Original As Beacon.FileTemplateVariable = Me.RowTagAt(Me.SelectedRowIndex)
+		  Var Edited As Beacon.FileTemplateVariable = FileTemplateVariableEditorDialog.Present(Self, Original)
+		  If Edited Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mTemplate.Add(Edited)
+		  Self.Modified = Self.mTemplate.Modified
+		  Self.UpdateVariablesList(Edited)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  Var Contents As JSONItem = Board.GetClipboardDataAsJSON(Self.kClipboardType)
+		  If Contents Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Bound As Integer = Contents.LastRowIndex
+		  Var SelVars() As Beacon.FileTemplateVariable
+		  For Idx As Integer = 0 To Bound
+		    Var SaveData As JSONItem = Contents.ChildAt(Idx)
+		    If SaveData Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var Vr As Beacon.FileTemplateVariable = Beacon.FileTemplateVariable.FromJSON(SaveData)
+		    If Vr Is Nil Then
+		      Continue
+		    End If
+		    
+		    Self.mTemplate.Add(Vr)
+		    Self.Modified = Self.mTemplate.Modified
+		    SelVars.Add(Vr)
+		  Next
+		  Self.UpdateVariablesList(SelVars)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

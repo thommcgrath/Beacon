@@ -292,6 +292,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Opening()
+		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Resized()
 		  Self.Resize()
 		End Sub

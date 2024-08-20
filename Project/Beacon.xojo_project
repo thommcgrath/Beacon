@@ -967,6 +967,7 @@ Class=MutableFileTemplateVariable;Modules/Beacon/MutableFileTemplateVariable.xoj
 Class=MutableFileTemplate;Modules/Beacon/MutableFileTemplate.xojo_code;&h0000000027EFEFFF;&h0000000055ADDFFF;false
 DesktopWindow=FileTemplateEditorView;Views/Main Window Components/Templates/FileTemplateEditorView.xojo_window;&h0000000070ADE7FF;&h000000001175E7FF;false
 DesktopWindow=TemplateKindChooserDialog;Views/Main Window Components/Templates/TemplateKindChooserDialog.xojo_window;&h000000004C407FFF;&h000000001175E7FF;false
+DesktopWindow=FileTemplateVariableEditorDialog;Views/Main Window Components/Templates/FileTemplateVariableEditorDialog.xojo_window;&h000000006CE01FFF;&h000000001175E7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=3

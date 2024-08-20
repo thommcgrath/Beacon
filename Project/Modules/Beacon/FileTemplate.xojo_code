@@ -1,6 +1,7 @@
 #tag Class
 Protected Class FileTemplate
 Inherits Beacon.Template
+Implements Beacon.Countable
 	#tag Event
 		Sub Save(SaveData As Dictionary)
 		  Var Vars() As Dictionary
@@ -44,6 +45,12 @@ Inherits Beacon.Template
 		    Self.mVariables(Idx) = Source.mVariables(Idx)
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Count() As Integer
+		  Return Self.mVariables.Count
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -96,6 +103,14 @@ Inherits Beacon.Template
 	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Beacon.FileTemplate
 		  Return Self
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Iterator() As Iterator
+		  // Part of the Iterable interface.
+		  
+		  
 		End Function
 	#tag EndMethod
 
