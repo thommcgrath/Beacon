@@ -1067,7 +1067,7 @@ End
 		  
 		  Self.DayRangeField.Text = Self.MilitaryTime(Map.DayStartTime) + " to " + Self.MilitaryTime(Map.DayEndTime)
 		  
-		  If Map.Identifier = "Aberration" Then
+		  If Map.Identifier = "Aberration_WP" Then
 		    Var WarmDaySeconds, WarmNightSeconds, WarmCycleSeconds, ColdDaySeconds, ColdNightSeconds, ColdCycleSeconds As Double
 		    WarmDaySeconds = OfficialDaySeconds / (Self.WarmDayMultiplier * DayMultiplier)
 		    WarmNightSeconds = OfficialNightSeconds / (Self.WarmNightMultiplier * NightMultiplier)
