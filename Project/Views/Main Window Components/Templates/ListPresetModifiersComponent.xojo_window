@@ -157,7 +157,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.ViewTitle = "Selectors"
+		  Self.ViewTitle = Self.NounModifierPlural
 		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
@@ -310,7 +310,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Self.Status.CenterCaption = Self.List.StatusMessage("Template Selector", "Template Selectors")
+		  Self.Status.CenterCaption = Self.List.StatusMessage(Self.NounModifierSingular, Self.NounModifierPlural)
 		End Sub
 	#tag EndMethod
 
@@ -320,13 +320,37 @@ End
 	#tag EndHook
 
 
+	#tag Constant, Name = CaptionCloneModifier, Type = String, Dynamic = True, Default = \"Duplicate", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CaptionEditModifier, Type = String, Dynamic = True, Default = \"Edit Selector", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CaptionNewModifier, Type = String, Dynamic = True, Default = \"New Selector", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = HelpTagCloneModifier, Type = String, Dynamic = True, Default = \"Create a copy of the selected loot drop selector.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HelpTagEditModifier, Type = String, Dynamic = True, Default = \"Edit the selected loot drop selector.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HelpTagNewModifier, Type = String, Dynamic = True, Default = \"Create a new loot drop selector.", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.templateselector", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NounModifierPlural, Type = String, Dynamic = True, Default = \"Loot Selectors", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = NounModifierSingular, Type = String, Dynamic = True, Default = \"Loot Selector", Scope = Public
 	#tag EndConstant
 
 
@@ -335,10 +359,10 @@ End
 #tag Events ModifiersToolbar
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("NewModifier", "New Selector", IconToolbarAdd, "Create a new loot drop selector."))
+		  Me.Append(OmniBarItem.CreateButton("NewModifier", Self.CaptionNewModifier, IconToolbarAdd, Self.HelpTagNewModifier))
 		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("EditModifier", "Edit Selector", IconToolbarEdit, "Edit the selected loot drop selector.", Self.List.SelectedRowCount = 1))
-		  Me.Append(OmniBarItem.CreateButton("CloneModifier", "Duplicate", IconToolbarClone, "Create a copy of the selected loot drop selector.", Self.List.SelectedRowCount > 0))
+		  Me.Append(OmniBarItem.CreateButton("EditModifier", Self.CaptionEditModifier, IconToolbarEdit, Self.HelpTagEditModifier, Self.List.SelectedRowCount = 1))
+		  Me.Append(OmniBarItem.CreateButton("CloneModifier", Self.CaptionCloneModifier, IconToolbarClone, Self.HelpTagCloneModifier, Self.List.SelectedRowCount > 0))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -386,7 +410,7 @@ End
 		    End If
 		  Next
 		  
-		  If Warn And Self.ShowDeleteConfirmation(Modifiers, "template selector", "template selectors") = False Then
+		  If Warn And Self.ShowDeleteConfirmation(Modifiers, Self.NounModifierSingular.Lowercase, Self.NounModifierPlural.Lowercase) = False Then
 		    Return
 		  End If
 		  

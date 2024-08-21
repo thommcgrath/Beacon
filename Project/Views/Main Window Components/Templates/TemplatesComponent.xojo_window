@@ -454,10 +454,10 @@ End
 		  ListItem.Toggled = True
 		  Self.PresetsList.LinkedOmniBarItem = ListItem
 		  
-		  Var ModifiersItem As OmniBarItem = OmniBarItem.CreateTab("ModifiersList", "Modifiers")
+		  Var ModifiersItem As OmniBarItem = OmniBarItem.CreateTab("ModifiersList", ListPresetModifiersComponent.NounModifierPlural)
 		  Self.ModifiersList.LinkedOmniBarItem = ModifiersItem
 		  
-		  Var VariablesItem As OmniBarItem = OmniBarItem.CreateTab("VariablesList", "Script Fields")
+		  Var VariablesItem As OmniBarItem = OmniBarItem.CreateTab("VariablesList", ListVariablesComponent.NounVariablePlural)
 		  Self.VariablesList.LinkedOmniBarItem = VariablesItem
 		  
 		  Me.Append(ListItem, ModifiersItem, VariablesItem, OmniBarItem.CreateSeparator)
