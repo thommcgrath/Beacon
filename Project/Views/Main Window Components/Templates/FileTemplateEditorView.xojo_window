@@ -72,13 +72,14 @@ Begin TemplateEditorView FileTemplateEditorView
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   False
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   762
       Begin UITweaks.ResizedTextField NameField
@@ -161,6 +162,7 @@ Begin TemplateEditorView FileTemplateEditorView
          Enabled         =   True
          HasBorder       =   False
          Height          =   362
+         HorizontalScrollPosition=   0
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
@@ -170,12 +172,14 @@ Begin TemplateEditorView FileTemplateEditorView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         SelectionLength =   0
          ShowInfoBar     =   False
          TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
          Top             =   104
+         VerticalScrollPosition=   0
          Visible         =   True
          Width           =   762
       End
@@ -185,6 +189,7 @@ Begin TemplateEditorView FileTemplateEditorView
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   1
          Index           =   -2147483648
@@ -196,6 +201,7 @@ Begin TemplateEditorView FileTemplateEditorView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   3
@@ -237,7 +243,7 @@ Begin TemplateEditorView FileTemplateEditorView
          Height          =   425
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "#HeaderCaptionLabel	#HeaderCaptionName	#HeaderCaptionType"
+         InitialValue    =   "#ListVariablesComponent.HeaderCaptionLabel	#ListVariablesComponent.HeaderCaptionName	#ListVariablesComponent.HeaderCaptionType"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -260,7 +266,9 @@ Begin TemplateEditorView FileTemplateEditorView
          TypeaheadColumn =   0
          Underline       =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   762
+         _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
    End
@@ -471,18 +479,6 @@ End
 	#tag Constant, Name = ContentsCaption, Type = String, Dynamic = True, Default = \"Contents", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeaderCaptionLabel, Type = String, Dynamic = True, Default = \"Display Name", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = HeaderCaptionName, Type = String, Dynamic = True, Default = \"Accessor", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = HeaderCaptionType, Type = String, Dynamic = True, Default = \"Type", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.templatevariable", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = NameCaption, Type = String, Dynamic = True, Default = \"Template Name:", Scope = Private
 	#tag EndConstant
 
@@ -601,7 +597,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.HasClipboardData(Self.kClipboardType)
+		  Return Board.HasClipboardData(ListVariablesComponent.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -652,7 +648,7 @@ End
 		      Data.Add(SaveData)
 		    End If
 		  Next
-		  Board.AddClipboardData(Self.kClipboardType, Data)
+		  Board.AddClipboardData(ListVariablesComponent.kClipboardType, Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -670,7 +666,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var Contents As JSONItem = Board.GetClipboardDataAsJSON(Self.kClipboardType)
+		  Var Contents As JSONItem = Board.GetClipboardDataAsJSON(ListVariablesComponent.kClipboardType)
 		  If Contents Is Nil Then
 		    Return
 		  End If

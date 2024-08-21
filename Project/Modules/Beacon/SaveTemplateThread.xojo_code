@@ -29,6 +29,7 @@ Inherits Thread
 	#tag Method, Flags = &h0
 		Sub Constructor(Templates() As Beacon.Template)
 		  Self.mTemplates = Templates
+		  Self.DebugIdentifier = "Beacon.SaveTemplateThread"
 		End Sub
 	#tag EndMethod
 

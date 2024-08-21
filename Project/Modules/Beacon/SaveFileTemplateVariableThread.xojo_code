@@ -1,13 +1,13 @@
 #tag Class
-Protected Class DeleteTemplateThread
+Protected Class SaveFileTemplateVariableThread
 Inherits Thread
 	#tag Event
 		Sub Run()
 		  Self.Retain
 		  
 		  Var Database As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
-		  For Each Template As Beacon.Template In Self.mTemplates
-		    Database.DeleteTemplate(Template, True)
+		  For Each TemplateVariable As Beacon.FileTemplateVariable In Self.mVariables
+		    Database.SaveFileTemplateVariable(TemplateVariable, False, True)
 		  Next
 		  Self.AddUserInterfaceUpdate(New Dictionary("State": "Finished"))
 		End Sub
@@ -17,7 +17,7 @@ Inherits Thread
 		Sub UserInterfaceUpdate(data() as Dictionary)
 		  For Each Dict As Dictionary In Data
 		    If Dict.Lookup("State", "").StringValue = "Finished" Then
-		      RaiseEvent DeleteComplete()
+		      RaiseEvent SaveComplete()
 		      Self.Release
 		    End If
 		  Next
@@ -26,28 +26,15 @@ Inherits Thread
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Templates() As Beacon.Template)
-		  Self.mTemplates = Templates
-		  Self.DebugIdentifier = "Beacon.DeleteTemplateThread"
+		Sub Constructor(Variables() As Beacon.FileTemplateVariable)
+		  Self.mVariables = Variables
+		  Self.DebugIdentifier = "Beacon.SaveFileTemplateVariableThread"
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ParamArray Templates() As Beacon.Template)
-		  Self.Constructor(Templates)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Delete(Templates() As Beacon.Template)
-		  Self.mTemplates = Templates
-		  Self.Start
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Delete(ParamArray Templates() As Beacon.Template)
-		  Self.Delete(Templates)
+		Sub Constructor(ParamArray Variables() As Beacon.FileTemplateVariable)
+		  Self.Constructor(Variables)
 		End Sub
 	#tag EndMethod
 
@@ -58,19 +45,32 @@ Inherits Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Templates() As Beacon.Template()
-		  Return Self.mTemplates
+		Sub Save(Variables() As Beacon.FileTemplateVariable)
+		  Self.mVariables = Variables
+		  Self.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Save(ParamArray Variables() As Beacon.FileTemplateVariable)
+		  Self.Save(Variables)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Variables() As Beacon.FileTemplateVariable()
+		  Return Self.mVariables
 		End Function
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event DeleteComplete()
+		Event SaveComplete()
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
-		Private mTemplates() As Beacon.Template
+		Private mVariables() As Beacon.FileTemplateVariable
 	#tag EndProperty
 
 

@@ -1,13 +1,13 @@
 #tag Class
-Protected Class DeleteTemplateThread
+Protected Class DeleteFileTemplateVariableThread
 Inherits Thread
 	#tag Event
 		Sub Run()
 		  Self.Retain
 		  
 		  Var Database As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
-		  For Each Template As Beacon.Template In Self.mTemplates
-		    Database.DeleteTemplate(Template, True)
+		  For Each TemplateVariable As Beacon.FileTemplateVariable In Self.mVariables
+		    Database.DeleteFileTemplateVariable(TemplateVariable, True)
 		  Next
 		  Self.AddUserInterfaceUpdate(New Dictionary("State": "Finished"))
 		End Sub
@@ -26,28 +26,28 @@ Inherits Thread
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Templates() As Beacon.Template)
-		  Self.mTemplates = Templates
-		  Self.DebugIdentifier = "Beacon.DeleteTemplateThread"
+		Sub Constructor(Variables() As Beacon.FileTemplateVariable)
+		  Self.mVariables = Variables
+		  Self.DebugIdentifier = "Beacon.DeleteFileTemplateVariableThread"
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ParamArray Templates() As Beacon.Template)
-		  Self.Constructor(Templates)
+		Sub Constructor(ParamArray Variables() As Beacon.FileTemplateVariable)
+		  Self.Constructor(Variables)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Delete(Templates() As Beacon.Template)
-		  Self.mTemplates = Templates
+		Sub Delete(Variables() As Beacon.FileTemplateVariable)
+		  Self.mVariables = Variables
 		  Self.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Delete(ParamArray Templates() As Beacon.Template)
-		  Self.Delete(Templates)
+		Sub Delete(ParamArray Variables() As Beacon.FileTemplateVariable)
+		  Self.Delete(Variables)
 		End Sub
 	#tag EndMethod
 
@@ -58,8 +58,8 @@ Inherits Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Templates() As Beacon.Template()
-		  Return Self.mTemplates
+		Function Variables() As Beacon.FileTemplateVariable()
+		  Return Self.mVariables
 		End Function
 	#tag EndMethod
 
@@ -70,7 +70,7 @@ Inherits Thread
 
 
 	#tag Property, Flags = &h21
-		Private mTemplates() As Beacon.Template
+		Private mVariables() As Beacon.FileTemplateVariable
 	#tag EndProperty
 
 

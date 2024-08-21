@@ -73,7 +73,7 @@ Begin BeaconPagedSubview TemplatesComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -83,7 +83,7 @@ Begin BeaconPagedSubview TemplatesComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   300
       Begin ListTemplatesComponent PresetsList
@@ -158,6 +158,37 @@ Begin BeaconPagedSubview TemplatesComponent
          Visible         =   True
          Width           =   300
       End
+      Begin ListVariablesComponent VariablesList
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   262
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
+         Visible         =   True
+         Width           =   300
+      End
    End
 End
 #tag EndDesktopWindow
@@ -173,6 +204,7 @@ End
 		Sub Opening()
 		  Self.AppendPage(Self.PresetsList)
 		  Self.AppendPage(Self.ModifiersList)
+		  Self.AppendPage(Self.VariablesList)
 		End Sub
 	#tag EndEvent
 
@@ -425,7 +457,10 @@ End
 		  Var ModifiersItem As OmniBarItem = OmniBarItem.CreateTab("ModifiersList", "Modifiers")
 		  Self.ModifiersList.LinkedOmniBarItem = ModifiersItem
 		  
-		  Me.Append(ListItem, ModifiersItem, OmniBarItem.CreateSeparator)
+		  Var VariablesItem As OmniBarItem = OmniBarItem.CreateTab("VariablesList", "Script Fields")
+		  Self.VariablesList.LinkedOmniBarItem = VariablesItem
+		  
+		  Me.Append(ListItem, ModifiersItem, VariablesItem, OmniBarItem.CreateSeparator)
 		End Sub
 	#tag EndEvent
 	#tag Event

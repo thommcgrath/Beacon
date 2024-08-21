@@ -523,7 +523,9 @@ Begin BeaconDialog FileTemplateVariableEditorDialog
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   294
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedLabel OptionsLabel
@@ -646,6 +648,7 @@ End
 		    End Select
 		    Self.TypeMenu.Enabled = False
 		    Self.TitleLabel.Text = Self.EditTitleCaption
+		    Self.mNameHasBeenCustomized = True
 		  End If
 		  
 		  Self.mReady = True

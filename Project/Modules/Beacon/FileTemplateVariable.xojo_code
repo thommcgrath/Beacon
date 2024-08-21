@@ -2,7 +2,7 @@
 Protected Class FileTemplateVariable
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.FileTemplateVariable)
+		Sub Constructor(Source As Beacon.FileTemplateVariable, GenerateNewId As Boolean = False)
 		  If Source Is Nil Then
 		    Var Err As New NilObjectException
 		    Err.Message = "Source variable is nil"
@@ -14,7 +14,11 @@ Implements Beacon.NamedItem
 		  Self.mName = Source.mName
 		  Self.mRegexPattern = Source.mRegexPattern
 		  Self.mType = Source.mType
-		  Self.mVariableId = Source.mVariableId
+		  If GenerateNewId Then
+		    Self.mVariableId = Beacon.UUID.v4
+		  Else
+		    Self.mVariableId = Source.mVariableId
+		  End If
 		End Sub
 	#tag EndMethod
 

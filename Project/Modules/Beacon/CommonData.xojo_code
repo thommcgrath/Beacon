@@ -9,6 +9,9 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE custom_templates (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, user_id TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_template_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_template_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, user_id TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE official_file_template_variables (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE custom_file_template_variables (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, user_id TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT NOT NULL);")
+		  
 		End Sub
 	#tag EndEvent
 
@@ -53,6 +56,18 @@ Inherits Beacon.DataSource
 		    Call UserCloud.Write("/Selectors.json", JSON)
 		  Else
 		    Call UserCloud.Delete("/Selectors.json")
+		  End If
+		  
+		  Var TemplateVariables() As Beacon.FileTemplateVariable = Self.GetFileTemplateVariables(Self.FlagIncludeUserItems)
+		  Var VariablesData As New JSONItem
+		  For Each TemplateVariable As Beacon.FileTemplateVariable In TemplateVariables
+		    VariablesData.Add(TemplateVariable.ToJSON)
+		  Next
+		  If VariablesData.Count > 0 Then
+		    VariablesData.Compact = False
+		    Call UserCloud.Write("/FileTemplateVariables.json", VariablesData.ToString)
+		  Else
+		    Call UserCloud.Delete("/FileTemplateVariables.json")
 		  End If
 		  
 		  Var ApprovedFilenames() As String
@@ -232,7 +247,6 @@ Inherits Beacon.DataSource
 		    Self.DeleteTemplate(TemplateUUID, False)
 		  Next TemplateUUID
 		  
-		  
 		  Var CurrentSelectors() As Beacon.TemplateSelector = Self.GetTemplateSelectors(FlagIncludeUserItems)
 		  Var RemoveSelectorUUIDs As New Beacon.StringList
 		  For Idx As Integer = CurrentSelectors.FirstIndex To CurrentSelectors.LastIndex
@@ -265,6 +279,41 @@ Inherits Beacon.DataSource
 		    Self.DeleteTemplateSelector(SelectorUUID, False)
 		  Next SelectorUUID
 		  
+		  Var CurrentVariables() As Beacon.FileTemplateVariable = Self.GetFileTemplateVariables(Self.FlagIncludeUserItems)
+		  Var RemoveVariableIds() As String
+		  For Idx As Integer = CurrentVariables.FirstIndex To CurrentVariables.LastIndex
+		    RemoveVariableIds.Add(CurrentVariables(Idx).VariableId)
+		  Next
+		  Var PossibleVariableFiles() As String = Array("/FileTemplateVariables.json")
+		  For Each FileName As String In PossibleVariableFiles
+		    Try
+		      Var Contents As MemoryBlock = UserCloud.Read(FileName)
+		      If Contents Is Nil Then
+		        Continue For FileName
+		      End If
+		      
+		      Var JSON As New JSONItem(Contents)
+		      For Idx As Integer = 0 To JSON.LastRowIndex
+		        Var TemplateVariable As Beacon.FileTemplateVariable = Beacon.FileTemplateVariable.FromJSON(JSON.ChildAt(Idx))
+		        If TemplateVariable Is Nil Then
+		          Continue For Idx
+		        End If
+		        
+		        Self.SaveFileTemplateVariable(TemplateVariable, False, False)
+		        
+		        Var VarIdx As Integer = RemoveVariableIds.IndexOf(TemplateVariable.VariableId)
+		        If VarIdx > -1 Then
+		          RemoveVariableIds.RemoveAt(VarIdx)
+		        End If
+		      Next
+		      
+		      Exit For FileName
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Importing cloud script fields")
+		    End Try
+		  Next
+		  Self.DeleteFileTemplateVariables(RemoveVariableIds, False)
+		  
 		  Self.CommitTransaction()
 		End Sub
 	#tag EndEvent
@@ -286,6 +335,9 @@ Inherits Beacon.DataSource
 		  
 		  Self.SQLExecute("DROP VIEW IF EXISTS template_selectors;")
 		  Self.SQLExecute("CREATE VIEW template_selectors AS SELECT object_id, user_id, game_id, label, language, code FROM custom_template_selectors UNION SELECT object_id, '00000000-0000-0000-0000-000000000000' AS user_id, game_id, label, language, code FROM official_template_selectors WHERE object_id NOT IN (SELECT object_id FROM custom_template_selectors);")
+		  
+		  Self.SQLExecute("DROP VIEW IF EXISTS file_template_variables;")
+		  Self.SQLExecute("CREATE VIEW file_template_variables AS SELECT object_id, user_id, game_id, label, contents FROM custom_file_template_variables UNION SELECT object_id, '00000000-0000-0000-0000-000000000000' AS user_id, game_id, label, contents FROM official_file_template_variables WHERE object_id NOT IN (SELECT object_id FROM custom_file_template_variables);")
 		End Sub
 	#tag EndEvent
 
@@ -306,12 +358,54 @@ Inherits Beacon.DataSource
 		Sub Constructor(AllowWriting As Boolean)
 		  Self.mTemplateCache = New Dictionary
 		  Self.mSelectorCache = New Dictionary
+		  Self.mVariablesCache = New Dictionary
 		  
 		  If mLock Is Nil Then
 		    mLock = New CriticalSection
 		  End If
 		  
 		  Super.Constructor(AllowWriting)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteFileTemplateVariable(TemplateVariable As Beacon.FileTemplateVariable, DoCloudExport As Boolean)
+		  Self.DeleteFileTemplateVariables(Array(TemplateVariable.VariableId), DoCloudExport)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteFileTemplateVariable(VariableId As String, DoCloudExport As Boolean)
+		  Self.DeleteFileTemplateVariables(Array(VariableId), DoCloudExport)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteFileTemplateVariables(TemplateVariables() As Beacon.FileTemplateVariable, DoCloudExport As Boolean)
+		  Var VariableIds() As String
+		  For Each TemplateVariable As Beacon.FileTemplateVariable In TemplateVariables
+		    VariableIds.Add(TemplateVariable.VariableId)
+		  Next
+		  Self.DeleteFileTemplateVariables(VariableIds, DoCloudExport)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteFileTemplateVariables(VariableIds() As String, DoCloudExport As Boolean)
+		  Var UserId As String = App.IdentityManager.CurrentUserId
+		  
+		  Self.BeginTransaction()
+		  For Each VariableId As String In VariableIds
+		    If Self.mVariablesCache.HasKey(UserId + ":" + VariableId) Then
+		      Self.mVariablesCache.Remove(UserId + ":" + VariableId)
+		    End If
+		    Self.SQLExecute("DELETE FROM custom_file_template_variables WHERE object_id = ?1 AND user_id = ?2;", VariableId, UserId)
+		  Next
+		  Self.CommitTransaction()
+		  
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -399,6 +493,93 @@ Inherits Beacon.DataSource
 		Function GetContentPackWithId(ContentPackId As String) As Beacon.ContentPack
 		  #Pragma Unused ContentPackId
 		  Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetFileTemplateVariable(VariableId As String) As Beacon.FileTemplateVariable
+		  Var UserId As String = App.IdentityManager.CurrentUserID
+		  Var NullId As String = Beacon.UUID.Null
+		  
+		  If Self.mVariablesCache.HasKey(UserId + ":" + VariableId) Then
+		    Return Self.mVariablesCache.Value(UserId + ":" + VariableId)
+		  ElseIf Self.mVariablesCache.HasKey(NullId + ":" + VariableId) Then
+		    Return Self.mVariablesCache.Value(NullId + ":" + VariableId)
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT user_id, contents FROM file_template_variables WHERE object_id = :object_id AND (user_id = :user_id OR user_id = :null_uuid);", VariableId, UserId, NullId)
+		  If Rows.RowCount = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Var Contents As New JSONItem(Rows.Column("contents").StringValue)
+		    Var TemplateVariable As Beacon.FileTemplateVariable = Beacon.FileTemplateVariable.FromJSON(Contents)
+		    If TemplateVariable Is Nil Then
+		      Return Nil
+		    End If
+		    
+		    Var CacheKey As String = Rows.Column("user_id").StringValue + ":" + VariableId
+		    Self.mVariablesCache.Value(CacheKey) = TemplateVariable
+		    Return TemplateVariable
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetFileTemplateVariables(Flags As Integer, Filter As String = "") As Beacon.FileTemplateVariable()
+		  Var Variables() As Beacon.FileTemplateVariable
+		  Var Rows As RowSet
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  
+		  Var UserIds() As String
+		  If (Flags And Self.FlagIncludeOfficialItems) = Self.FlagIncludeOfficialItems Then
+		    UserIds.Add("'" + Beacon.UUID.Null + "'")
+		  End If
+		  If (Flags And Self.FlagIncludeUserItems) = Self.FlagIncludeUserItems Then
+		    UserIds.Add(":user_id")
+		    Values.Add(App.IdentityManager.CurrentUserId)
+		  End If
+		  If UserIds.Count = 0 Then
+		    Return Variables()
+		  End If
+		  Clauses.Add("user_id IN (" + String.FromArray(UserIDs, ", ") + ")")
+		  
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("label LIKE :filter ESCAPE '\'")
+		    Values.Add(Self.EscapeLikeValue(Filter))
+		  End If
+		  
+		  Rows = Self.SQLSelect("SELECT object_id, user_id, contents FROM file_template_variables WHERE " + String.FromArray(Clauses, " AND ") + ";", Values)
+		  While Rows.AfterLastRow = False
+		    Var CacheKey As String = Rows.Column("user_id").StringValue + ":" + Rows.Column("object_id").StringValue
+		    If Self.mVariablesCache.HasKey(CacheKey) Then
+		      Variables.Add(Self.mVariablesCache.Value(CacheKey))
+		      Rows.MoveToNextRow
+		      Continue
+		    End If
+		    
+		    Try
+		      Var Contents As New JSONItem(Rows.Column("contents").StringValue)
+		      Var TemplateVariable As Beacon.FileTemplateVariable = Beacon.FileTemplateVariable.FromJSON(Contents)
+		      Self.mVariablesCache.Value(CacheKey) = TemplateVariable
+		      Variables.Add(TemplateVariable)
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Rows.MoveToNextRow
+		  Wend
+		  
+		  Return Variables
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetFileTemplateVariables(Filter As String = "") As Beacon.FileTemplateVariable()
+		  Return Self.GetFileTemplateVariables(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter)
 		End Function
 	#tag EndMethod
 
@@ -667,6 +848,52 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SaveFileTemplateVariable(TemplateVariable As Beacon.FileTemplateVariable, Official As Boolean, DoCloudExport As Boolean)
+		  If TemplateVariable Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Arr(0) As Beacon.FileTemplateVariable
+		  Arr(0) = TemplateVariable
+		  Self.SaveFileTemplateVariables(Arr, Official, DoCloudExport)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SaveFileTemplateVariables(TemplateVariables() As Beacon.FileTemplateVariable, Official As Boolean, DoCloudExport As Boolean)
+		  Self.BeginTransaction()
+		  For Each TemplateVariable As Beacon.FileTemplateVariable In TemplateVariables
+		    If TemplateVariable Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var JSON As JSONItem = TemplateVariable.ToJSON
+		    If JSON Is Nil Then
+		      Continue
+		    End If
+		    JSON.Compact = True
+		    Var Contents As String = JSON.ToString
+		    
+		    Var CacheKey As String
+		    If Official Then
+		      CacheKey = Beacon.UUID.Null + ":" + TemplateVariable.VariableId
+		      Self.SQLExecute("INSERT OR REPLACE INTO official_file_template_variables (object_id, game_id, label, contents) VALUES (:object_id, :game_id, :label, :contents);", TemplateVariable.VariableId, "Common", TemplateVariable.Label, Contents)
+		    Else
+		      Var UserId As String = App.IdentityManager.CurrentUserId
+		      CacheKey = UserId + ":" + TemplateVariable.VariableId
+		      Self.SQLExecute("INSERT OR REPLACE INTO custom_file_template_variables (object_id, game_id, label, contents, user_id) VALUES (:object_id, :game_id, :label, :contents, :user_id);", TemplateVariable.VariableId, "Common", TemplateVariable.Label, Contents, UserID)
+		    End If
+		    Self.mVariablesCache.Value(CacheKey) = TemplateVariable.ImmutableVersion
+		  Next TemplateVariable
+		  Self.CommitTransaction()
+		  
+		  If Official = False And DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SaveTemplate(Template As Beacon.Template, Official As Boolean, DoCloudExport As Boolean)
 		  If Template Is Nil Then
 		    Return
@@ -872,6 +1099,10 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private mUpdateNewsThread As Beacon.Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mVariablesCache As Dictionary
 	#tag EndProperty
 
 

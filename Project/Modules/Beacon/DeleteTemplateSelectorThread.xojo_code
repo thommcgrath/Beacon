@@ -28,6 +28,7 @@ Inherits Thread
 	#tag Method, Flags = &h0
 		Sub Constructor(Selectors() As Beacon.TemplateSelector)
 		  Self.mSelectors = Selectors
+		  Self.DebugIdentifier = "Beacon.DeleteTemplateSelectorThread"
 		End Sub
 	#tag EndMethod
 
