@@ -49,7 +49,10 @@ while (!$gameRows->EOF()) {
 }
 
 $remainingDays = ($daysInMonth - $today->format('d')) + 1; // Removes today, so +1 puts it back.
-$projection = $figures['MTD'] + ($rollingAverage * $remainingDays);
+$projection = ($rollingAverage * $remainingDays);
+if ($remainingDays < $daysInMonth) {
+	$projection = $projection + $figures['MTD'];
+}
 $fields[] = [
 	'title' => "Daily Average",
 	'value' => '$' . number_format($rollingAverage, 2),
@@ -65,14 +68,37 @@ $firstOfYear = new DateTime('first day of january this year', $timezone);
 $firstOfNextYear = new DateTime('first day of january next year', $timezone);
 $yearRows = $database->Query($query, $firstOfYear->format(SQL_DATE_FORMAT), $firstOfNextYear->format(SQL_DATE_FORMAT));
 $yearToDate = $yearRows->Field('total_usd');
-$estimatedTaxes = $yearToDate * 0.26;
+
+$taxable = $yearToDate + 63800; // Other income minus standard deduction and child tax credit
+
+// federal
+$estimatedTaxes = CalculateTax($taxable, 0, 23200, 0.10);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 23200, 94300, 0.12);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 94300, 201050, 0.22);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 201050, 383900, 0.24);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 383900, 487450, 0.32);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 487450, 731200, 0.25);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 731200, 999999999999, 0.37);
+
+// state
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 0, 20000, 0.03);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 20000, 100000, 0.05);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 100000, 200000, 0.055);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 200000, 400000, 0.06);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 400000, 500000, 0.065);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 500000, 1000000, 0.069);
+$estimatedTaxes = $estimatedTaxes + CalculateTax($taxable, 1000000, 999999999999, 0.0699);
+
+// Amount already withheld
+$estimatedTaxes = max($estimatedTaxes - 10900, 0);
+
 $fields[] = [
 	'title' => "Year To Date",
 	'value' => '$' . number_format($yearToDate, 2),
 	'short' => true,
 ];
 $fields[] = [
-	'title' => "Estimated Taxes",
+	'title' => "Expected Taxes",
 	'value' => '$' . number_format($estimatedTaxes, 2),
 	'short' => true,
 ];
@@ -123,6 +149,10 @@ function RunReport(string $label, ?string $gameId, DateTime $periodStart, DateTi
 	];
 
 	return $total;
+}
+
+function CalculateTax(float $taxable, float $rangeMin, float $rangeMax, float $rate) {
+	return max(min($taxable - $rangeMin, $rangeMax - $rangeMin), 0) * $rate;
 }
 
 ?>
