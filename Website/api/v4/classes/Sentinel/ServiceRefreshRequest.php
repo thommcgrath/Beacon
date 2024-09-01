@@ -47,7 +47,7 @@ class ServiceRefreshRequest extends DatabaseObject implements JsonSerializable {
 
 		if (isset($filters['userId'])) {
 			$userIdPlaceholder = $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = '(' . $schema->Comparison('userId', '=', $userIdPlaceholder) . ' OR service_refresh_requests.service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id IN (SELECT group_id FROM sentinel.service_groups WHERE user_id = $' . $userIdPlaceholder . ') OR group_id IN (SELECT group_id FROM sentinel.service_group_permissions WHERE user_id = $' . $userIdPlaceholder . ')))';
+			$parameters->clauses[] = '(' . $schema->Comparison('userId', '=', $userIdPlaceholder) . ' OR service_refresh_requests.service_id IN (SELECT service_id FROM sentinel.resolved_permissions WHERE user_id = $' . $userIdPlaceholder . '))';
 		}
 	}
 

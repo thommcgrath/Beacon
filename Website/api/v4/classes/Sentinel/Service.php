@@ -1,10 +1,14 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, ServiceToken};
+use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ServiceToken};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
+	use MutableDatabaseObject {
+		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
+	}
+
 	const PermissionView = 1;
 	const PermissionEdit = 2;
 	const PermissionDelete = 4;
@@ -101,8 +105,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('nitradoServiceId', ['columnName' => 'nitrado_service_id']),
 			new DatabaseObjectProperty('serviceTokenId', ['columnName' => 'service_token_id']),
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
-			new DatabaseObjectProperty('lastSuccess', ['columnName' => 'last_success', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
-			new DatabaseObjectProperty('lastError', ['columnName' => 'last_error', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
+			new DatabaseObjectProperty('lastSuccess', ['columnName' => 'last_success', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
+			new DatabaseObjectProperty('lastError', ['columnName' => 'last_error', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('inErrorState', ['columnName' => 'in_error_state', 'accessor' => '%%TABLE%%.last_error > %%TABLE%%.last_success', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('updateSchedule', ['columnName' => 'update_schedule']),
 			new DatabaseObjectProperty('name'),
@@ -110,7 +114,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('ipAddress', ['columnName' => 'ip_address']),
 			new DatabaseObjectProperty('gamePort', ['columnName' => 'game_port']),
 			new DatabaseObjectProperty('slotCount', ['columnName' => 'slot_count']),
-			new DatabaseObjectProperty('expiration'),
+			new DatabaseObjectProperty('expiration', ['accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('color'),
 			new DatabaseObjectProperty('platform'),
 			new DatabaseObjectProperty('rconPort', ['columnName' => 'rcon_port']),
@@ -270,6 +274,15 @@ class Service extends DatabaseObject implements JsonSerializable {
 		}
 	}*/
 
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
+		switch ($definition->PropertyName()) {
+		case 'gameSpecific':
+			return json_encode($value);
+		default:
+			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value);
+		}
+	}
+
 	public function ServiceId(): string {
 		return $this->serviceId;
 	}
@@ -299,7 +312,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetGameId(string $gameId): void {
-		$this->SetProperty('game_id', $gameId);
+		$this->SetProperty('gameId', $gameId);
 	}
 
 	public function LastSuccess(): int {
@@ -307,7 +320,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetLastSuccess(int $lastSuccess): void {
-		$this->SetProperty('last_sucess', $lastSuccess);
+		$this->SetProperty('lastSuccess', $lastSuccess);
 	}
 
 	public function LastError(): int {
@@ -315,7 +328,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetLastError(int $lastError): void {
-		$this->SetProperty('last_error', $lastError);
+		$this->SetProperty('lastError', $lastError);
 	}
 
 	public function InErrorState(): bool {
@@ -347,7 +360,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetIpAddress(string $ipAddress): void {
-		$this->SetProperty('ip_address', $ipAddress);
+		$this->SetProperty('ipAddress', $ipAddress);
 	}
 
 	public function GamePort(): int {
@@ -355,7 +368,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetGamePort(int $port): void {
-		$this->SetProperty('game_port', $port);
+		$this->SetProperty('gamePort', $port);
 	}
 
 	public function SlotCount(): int {
@@ -363,7 +376,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetSlotCount(int $slotCount): void {
-		$this->SetProperty('slot_count', $slotCount);
+		$this->SetProperty('slotCount', $slotCount);
 	}
 
 	public function Expiration(): int {
@@ -395,7 +408,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetRconPort(?int $port): void {
-		$this->SetProperty('rcon_port', $port);
+		$this->SetProperty('rconPort', $port);
 	}
 
 	public function GameSpecific(): array {
@@ -403,14 +416,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetGameSpecific(array $gameSpecific): void {
-		$this->SetProperty('game_specific', $gameSpecific);
-	}
-
-	public function Delete(): void {
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM ' . static::SQLSchemaName() . '.' . static::SQLTableName() . ' WHERE service_id = $1;', $this->serviceId);
-		$database->Commit();
+		$this->SetProperty('gameSpecific', $gameSpecific);
 	}
 
 	public function GetPermissions(string $userId): int {
@@ -484,7 +490,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		// Get service details for the expiration
 		$curl = curl_init('https://api.nitrado.net/services/' . $this->nitradoServiceId);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'Authorization: Bearer ' . $token->AccessToken()
+			'Authorization: Bearer ' . $token->AccessToken(true)
 		]);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($curl);
