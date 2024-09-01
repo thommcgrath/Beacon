@@ -149,7 +149,22 @@ Core::RegisterRoutes(
 		'/users/{userId}/tokens' => [
 			'GET' => 'tokens/list',
 			'POST' => 'tokens/create',
-		]
+		],
+		'/sentinel/services' => [
+			'GET' => 'sentinel/service/list',
+			'POST' => 'sentinel/service/create',
+		],
+		'/sentinel/services/{serviceId}' => [
+			'GET' => 'sentinel/service/get',
+		],
+		'/sentinel/serviceRefreshRequests' => [
+			'GET' => 'sentinel/service_refresh_request/list',
+			'POST' => 'sentinel/service_refresh_request/create',
+		],
+		'/sentinel/serviceRefreshRequests/{requestId}' => [
+			'GET' => 'sentinel/service_refresh_request/get',
+			'DELETE' => 'sentinel/service_refresh_request/delete',
+		],
 	]
 );
 
@@ -179,10 +194,6 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\LootDrop', 'arksa/loot
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\LootDropIcon', 'arksa/lootDropIcons', 'lootDropIconId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Map', 'arksa/maps', 'mapId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\SpawnPoint', 'arksa/spawnPoints', 'spawnPointId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/players', 'playerId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroup', 'sentinel/serviceGroups', 'serviceGroupId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Palworld\ConfigOption', 'palworld/configOptions', 'configOptionId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Palworld\GameVariable', 'palworld/gameVariables', 'key');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\SDTD\ConfigOption', '7dtd/configOptions', 'configOptionId');

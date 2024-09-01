@@ -1,15 +1,17 @@
 <?php
 
-BeaconAPI::Authorize();
+use BeaconAPI\v4\{Application, Response, Core};
+use BeaconAPI\v4\Sentinel\{Service};
+
+$requiredScopes[] = Application::kScopeSentinelServicesRead;
 
 function handleRequest(array $context): Response {
-	$user_id = BeaconAPI::UserID();
-		
-	$service = Sentinel\Service::GetByServiceID($context['pathParameters']['service_id']);
-	if ($service && $service->HasPermission($user_id, Sentinel\Service::PermissionView)) {
-		BeaconAPI::ReplySuccess($service);
+	$userId = Core::UserId();
+	$service = Service::Fetch($context['pathParameters']['serviceId']);
+	if ($service && $service->HasPermission($userId, Service::PermissionView)) {
+		return Response::NewJSON($service, 200);
 	} else {
-		BeaconAPI::ReplyError('Service not found', null, 404);
+		return Response::NewJsonError('Service not found', null, 404);
 	}
 }
 

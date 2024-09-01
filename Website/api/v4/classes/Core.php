@@ -208,7 +208,7 @@ class Core {
 		exit;
 	}
 
-	public static function RequestScopes(array ...$scopes): void {
+	public static function RequestScopes(string ...$scopes): void {
 		if (count($scopes) === 0) {
 			throw new Exception('Did not request any scopes to authorize');
 		}
