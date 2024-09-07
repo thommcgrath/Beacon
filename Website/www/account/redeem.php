@@ -46,7 +46,7 @@ if (isset($_REQUEST['process'])) {
 function RedeemCode(string $code, bool $confirmed): void {
 	global $user;
 
-	if (is_null($user)) {
+	if (is_null($user) || is_null($user->EmailId())) {
 		$return = BeaconCommon::AbsoluteURL('/account/redeem/' . urlencode($code) . '?process=redeem-confirm');
 		BeaconCommon::Redirect('/account/login/?return=' . urlencode($return));
 		return;
