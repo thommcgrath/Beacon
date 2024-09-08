@@ -48,6 +48,14 @@ class User extends DatabaseObject implements JsonSerializable {
 		$this->signature = null;
 		$this->userId = $row->Field('user_id');
 		$this->username = $row->Field('username') ?? 'Anonymous';
+
+		if (is_null($this->username) === false && is_null($this->cloudKey) === true) {
+			$this->cloudKey = bin2hex(BeaconEncryption::RSAEncrypt($this->publicKey, static::GenerateCloudKey()));
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			$database->Query('UPDATE public.users SET usercloud_key = $2 WHERE user_id = $1;', $this->userId, $this->cloudKey);
+			$database->Commit();
+		}
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -394,7 +402,7 @@ class User extends DatabaseObject implements JsonSerializable {
 
 	/* !Cloud Files */
 
-	public function CloudKey() {
+	public function CloudKey(): string {
 		return $this->cloudKey;
 	}
 
