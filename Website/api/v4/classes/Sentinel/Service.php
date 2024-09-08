@@ -14,8 +14,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 	const PermissionDelete = 4;
 
 	const GameArk = 'Ark';
+	const GameArkSA = 'ArkSA';
 	const Games = [
-		self::GameArk
+		self::GameArk,
+		self::GameArkSA,
 	];
 
 	const ColorNone = 'None';
@@ -49,11 +51,13 @@ class Service extends DatabaseObject implements JsonSerializable {
 	const PlatformXbox = 'Xbox';
 	const PlatformPlayStation = 'PlayStation';
 	const PlatformSwitch = 'Switch';
+	const PlatformUniversal = 'Universal';
 	const Platforms = [
 		self::PlatformPC,
 		self::PlatformXbox,
 		self::PlatformPlayStation,
-		self::PlatformSwitch
+		self::PlatformSwitch,
+		self::PlatformUniversal,
 	];
 
 	protected $serviceId = null;
@@ -100,21 +104,21 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('sentinel', 'services', [
-			new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id']),
+			new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('nitradoServiceId', ['columnName' => 'nitrado_service_id']),
 			new DatabaseObjectProperty('serviceTokenId', ['columnName' => 'service_token_id']),
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
-			new DatabaseObjectProperty('lastSuccess', ['columnName' => 'last_success', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
-			new DatabaseObjectProperty('lastError', ['columnName' => 'last_error', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
-			new DatabaseObjectProperty('inErrorState', ['columnName' => 'in_error_state', 'accessor' => '%%TABLE%%.last_error > %%TABLE%%.last_success', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('updateSchedule', ['columnName' => 'update_schedule']),
+			new DatabaseObjectProperty('lastSuccess', ['columnName' => 'last_success', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
+			new DatabaseObjectProperty('lastError', ['columnName' => 'last_error', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
+			new DatabaseObjectProperty('inErrorState', ['columnName' => 'in_error_state', 'accessor' => 'COALESCE(EXTRACT(EPOCH FROM %%TABLE%%.last_error), 0) > COALESCE(EXTRACT(EPOCH FROM %%TABLE%%.last_success), 0)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('updateSchedule', ['columnName' => 'update_schedule', 'required' => false]),
 			new DatabaseObjectProperty('name'),
 			new DatabaseObjectProperty('nickname'),
 			new DatabaseObjectProperty('ipAddress', ['columnName' => 'ip_address']),
 			new DatabaseObjectProperty('gamePort', ['columnName' => 'game_port']),
 			new DatabaseObjectProperty('slotCount', ['columnName' => 'slot_count']),
-			new DatabaseObjectProperty('expiration', ['accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
+			new DatabaseObjectProperty('expiration', ['accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
 			new DatabaseObjectProperty('color'),
 			new DatabaseObjectProperty('platform'),
 			new DatabaseObjectProperty('rconPort', ['columnName' => 'rcon_port']),
@@ -547,6 +551,9 @@ class Service extends DatabaseObject implements JsonSerializable {
 				$gameId = self::GameArk;
 				$platform = self::PlatformSwitch;
 				break;
+			case 'arksa':
+				$gameId = self::GameArkSA;
+				$platform = self::PlatformUniversal;
 			default:
 				throw new Exception('Unsupported game ' . $game);
 			}
