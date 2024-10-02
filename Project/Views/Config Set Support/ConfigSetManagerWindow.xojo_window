@@ -793,11 +793,24 @@ End
 		  Self.SetList.SelectedRowIndex = Self.SetList.LastAddedRowIndex
 		  Self.SetList.Sort
 		  
+		  Var SourceDict As Dictionary
+		  
 		  If Self.mProject.HasConfigSet(SourceSet) Then
-		    Self.mClones.Value(Set) = Self.mProject.ConfigSetData(SourceSet).Clone
+		    SourceDict = Self.mProject.ConfigSetData(SourceSet)
 		  ElseIf Self.mClones.HasKey(SourceSet) Then
-		    Self.mClones.Value(Set) = Dictionary(Self.mClones.Value(SourceSet)).Clone
+		    SourceDict = Self.mClones.Value(SourceSet)
+		  Else
+		    Return
 		  End If
+		  
+		  Var CopyDict As New Dictionary
+		  For Each Entry As DictionaryEntry In SourceDict
+		    Var GroupName As String = Entry.Key
+		    Var SourceGroup As Beacon.ConfigGroup = Entry.Value
+		    CopyDict.Value(GroupName) = SourceGroup.Clone
+		  Next
+		  
+		  Self.mClones.Value(Set) = CopyDict
 		End Sub
 	#tag EndEvent
 #tag EndEvents

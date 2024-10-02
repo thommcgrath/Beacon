@@ -2,6 +2,14 @@
 Protected Class ConfigGroup
 Implements Beacon.Validateable
 	#tag Method, Flags = &h0
+		Function Clone() As Beacon.ConfigGroup
+		  Var Err As New UnsupportedOperationException
+		  Err.Message = "Beacon.ConfigGroup.Clone must be overridden"
+		  Raise Err
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  
 		End Sub
