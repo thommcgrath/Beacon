@@ -457,7 +457,7 @@ Protected Module Preferences
 		    Return
 		  End If
 		  
-		  mConnectionLockCount = mConnectionLockCount
+		  mConnectionLockCount = mConnectionLockCount - 1
 		  mConnectionLock.Release
 		End Sub
 	#tag EndMethod
