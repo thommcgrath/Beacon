@@ -9,6 +9,7 @@ Private Class SimpleHTTPSocket
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mSocket = New URLConnection
+		  Self.mSocket.AllowCertificateValidation = Not DebugBuild
 		  AddHandler Self.mSocket.Error, WeakAddressOf mSocket_Error
 		  AddHandler Self.mSocket.ContentReceived, WeakAddressOf mSocket_ContentReceived
 		End Sub

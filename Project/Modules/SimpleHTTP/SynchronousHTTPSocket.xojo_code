@@ -71,6 +71,12 @@ Inherits URLConnection
 
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.AllowCertificateValidation = Not DebugBuild
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LastContent() As MemoryBlock
 		  Return Self.mLastContent
 		End Function

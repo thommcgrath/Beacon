@@ -998,6 +998,12 @@ End
 		    If Sh.ExitCode = 0 Then
 		      Return
 		    End If
+		  #elseif TargetLinux
+		    Var Sh As New Shell
+		    Sh.Execute("steam '" + Url + "'")
+		    If Sh.ExitCode = 0 Then
+		      Return
+		    End If
 		  #endif
 		  
 		  System.GotoURL(Url)

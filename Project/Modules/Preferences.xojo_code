@@ -619,7 +619,7 @@ Protected Module Preferences
 			  #if TargetWindows
 			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK Survival Ascended Dedicated Server"
 			  #elseif TargetLinux
-			    Default = SpecialFolder.UserHome + "/.steam/steam/steamapps/common/ARK Survival Ascended Dedicated Server"
+			    Default = SpecialFolder.UserHome.NativePath + "/.steam/steam/steamapps/common/ARK Survival Ascended Dedicated Server"
 			  #elseif TargetMacOS
 			    // This is pointless, but whatever
 			    Default = SpecialFolder.ApplicationData.NativePath + "/Steam/SteamApps/common/ARK Survival Ascended Dedicated Server"
@@ -780,7 +780,7 @@ Protected Module Preferences
 			  #if TargetWindows
 			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK"
 			  #elseif TargetLinux
-			    Default = SpecialFolder.UserHome + "/.steam/steam/steamapps/common/ARK"
+			    Default = SpecialFolder.UserHome.NativePath + "/.steam/steam/steamapps/common/ARK"
 			  #elseif TargetMacOS
 			    // This is pointless, but whatever
 			    Default = SpecialFolder.ApplicationData.NativePath + "/Steam/SteamApps/common/ARK"

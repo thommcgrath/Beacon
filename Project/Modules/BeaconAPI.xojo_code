@@ -180,6 +180,10 @@ Protected Module BeaconAPI
 		    Socket.RequestHeader("Authorization") = AuthHeader
 		  End If
 		  
+		  #if DebugBuild
+		    Socket.AllowCertificateValidation = False
+		  #endif
+		  
 		  If Request.Method = "GET" Then
 		    Var Query As String = Request.Query
 		    If Query <> "" Then

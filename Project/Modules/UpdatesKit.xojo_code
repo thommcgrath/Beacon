@@ -145,7 +145,7 @@ Protected Module UpdatesKit
 		      mLastCheckTime = DateTime.Now
 		      
 		      mSocket = New URLConnection
-		      mSocket.AllowCertificateValidation = True
+		      mSocket.AllowCertificateValidation = Not DebugBuild
 		      AddHandler mSocket.Error, AddressOf mSocket_Error
 		      AddHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
 		      AddHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
@@ -235,6 +235,7 @@ Protected Module UpdatesKit
 		  mIsDownloading = True
 		  mDownloadStart = System.Microseconds
 		  mDownloader = New URLConnection
+		  mDownloader.AllowCertificateValidation = Not DebugBuild
 		  mDownloader.RequestHeader("User-Agent") = App.UserAgent
 		  AddHandler mDownloader.ReceivingProgressed, AddressOf mDownloader_ReceivingProgressed
 		  AddHandler mDownloader.FileReceived, AddressOf mDownloader_FileReceived

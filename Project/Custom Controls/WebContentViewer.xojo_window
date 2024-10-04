@@ -31,7 +31,7 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Shared Function Available() As Boolean
-		  #if TargetMacOS
+		  #if TargetMacOS Or TargetLinux
 		    Return True
 		  #elseif TargetWindows
 		    Return DesktopWebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False

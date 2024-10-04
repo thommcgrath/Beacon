@@ -279,7 +279,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCancelled As Boolean
+		Private mCancelled As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

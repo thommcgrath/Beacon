@@ -421,6 +421,7 @@ Begin DesktopWindow UserWelcomeWindow
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   0
    End
 End
 #tag EndDesktopWindow
@@ -438,6 +439,11 @@ End
 		    Self.NSWindowMBS.styleMask = Self.NSWindowMBS.styleMask Or NSWindowMBS.NSFullSizeContentViewWindowMask
 		    Self.NSWindowMBS.titlebarAppearsTransparent = True
 		    Self.NSWindowMBS.titleVisibility = NSWindowMBS.NSWindowTitleHidden
+		  #endif
+		  
+		  #if DebugBuild
+		    Self.OAuthRedeemSocket.AllowCertificateValidation = False
+		    Self.OAuthStartSocket.AllowCertificateValidation = False
 		  #endif
 		  
 		  If Self.mLoginOnly Then

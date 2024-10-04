@@ -30,6 +30,7 @@ Protected Module DataUpdater
 		  App.Log("Check for data updates from " + CheckURL)
 		  
 		  Var Sock As New URLConnection
+		  Sock.AllowCertificateValidation = Not DebugBuild
 		  Sock.RequestHeader("User-Agent") = App.UserAgent
 		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  AddHandler Sock.ContentReceived, AddressOf mCheckSocket_ContentReceived
@@ -57,6 +58,7 @@ Protected Module DataUpdater
 		  mContentURLs.RemoveAt(mContentURLs.FirstIndex)
 		  
 		  Var Sock As New URLConnection
+		  Sock.AllowCertificateValidation = Not DebugBuild
 		  Sock.RequestHeader("User-Agent") = App.UserAgent
 		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  AddHandler Sock.ContentReceived, AddressOf mDownloadSocket_ContentReceived
