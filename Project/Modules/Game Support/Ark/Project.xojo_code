@@ -479,8 +479,7 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      Var SourceOverride As New Ark.MutableSpawnPointOverride(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend, False)
-		      SourceOverride.LoadDefaults()
+		      Var SourceOverride As New Ark.MutableSpawnPointOverride(SourceSpawnPoint, Ark.SpawnPointOverride.ModeAppend, True)
 		      
 		      Var Limit As Double = SourceOverride.Limit(ReplacedCreature)
 		      Var NewSets() As Ark.SpawnPointSet

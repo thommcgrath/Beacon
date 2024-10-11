@@ -158,6 +158,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
          LockRight       =   True
          LockTop         =   True
          Modified        =   False
+         ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -794,12 +795,9 @@ End
 		            Return True
 		          End If
 		          
-		          Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		          Var Config As Ark.Configs.SpawnPoints = Self.Config(True)
 		          For Each Override As Ark.SpawnPointOverride In Overrides
-		            Var Mutable As New Ark.MutableSpawnPointOverride(Override.SpawnPointReference, Override.Mode)
-		            DataSource.LoadDefaults(Mutable)
-		            Config.Add(Mutable)
+		            Config.Add(New Ark.SpawnPointOverride(Override.SpawnPoint, Override.Mode, True))
 		          Next
 		          
 		          Self.Modified = Config.Modified

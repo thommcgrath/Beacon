@@ -66,34 +66,6 @@ Inherits Ark.SpawnPointOverride
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadDefaults()
-		  Ark.DataSource.Pool.Get(False).LoadDefaults(Self)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub LoadDefaults(SetsString As String, LimitsString As String)
-		  Var Sets() As Variant = Beacon.ParseJSON(SetsString)
-		  For Each Set As Dictionary In Sets
-		    Var Created As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(Set)
-		    If (Created Is Nil) = False Then
-		      Self.Add(Created)
-		    End If
-		  Next
-		  
-		  Var Limits As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(Beacon.ParseJSON(LimitsString))
-		  Var References() As Ark.BlueprintReference = Limits.References
-		  For Each Reference As Ark.BlueprintReference In References
-		    Var Limit As Double = Limits.Value(Reference, LimitAttribute)
-		    Self.Limit(Reference) = Limit
-		  Next
-		  
-		  Exception Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Loading spawn set defaults")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Mode(Assigns Value As Integer)
 		  If Self.mMode = Value Then
 		    Return

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MutableSpawnPointOverride
 Inherits ArkSA.SpawnPointOverride
-Implements ArkSA.Prunable, Beacon.BlueprintConsumer
+Implements ArkSA.Prunable,Beacon.BlueprintConsumer
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Add(Set As ArkSA.SpawnPointSet)
@@ -63,34 +63,6 @@ Implements ArkSA.Prunable, Beacon.BlueprintConsumer
 		  
 		  Self.mLimits.Value(Creature, Self.LimitAttribute) = Value
 		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub LoadDefaults()
-		  ArkSA.DataSource.Pool.Get(False).LoadDefaults(Self)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub LoadDefaults(SetsString As String, LimitsString As String)
-		  Var Sets() As Variant = Beacon.ParseJSON(SetsString)
-		  For Each Set As Dictionary In Sets
-		    Var Created As ArkSA.SpawnPointSet = ArkSA.SpawnPointSet.FromSaveData(Set)
-		    If (Created Is Nil) = False Then
-		      Self.Add(Created)
-		    End If
-		  Next
-		  
-		  Var Limits As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(Beacon.ParseJSON(LimitsString))
-		  Var References() As ArkSA.BlueprintReference = Limits.References
-		  For Each Reference As ArkSA.BlueprintReference In References
-		    Var Limit As Double = Limits.Value(Reference, LimitAttribute)
-		    Self.Limit(Reference) = Limit
-		  Next
-		  
-		  Exception Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Loading spawn set defaults")
 		End Sub
 	#tag EndMethod
 

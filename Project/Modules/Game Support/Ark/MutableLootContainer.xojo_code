@@ -4,6 +4,8 @@ Inherits Ark.LootContainer
 Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Add(ItemSet As Ark.LootItemSet)
+		  Self.LoadPendingContents()
+		  
 		  Var Idx As Integer = Self.IndexOf(ItemSet)
 		  If Idx = -1 Then
 		    Var CurrentNames() As String
@@ -124,33 +126,7 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ContentsString(Assigns JSON As String)
-		  Var Parsed As Variant
-		  Try
-		    Parsed = Beacon.ParseJSON(JSON)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  // Sometimes the defaults have duplicated sets, which confuses Beacon's multi-editor.
-		  Var Names() As String
-		  
-		  Var Children() As Variant = Parsed
-		  Self.mItemSets.ResizeTo(-1)
-		  For Each SaveData As Dictionary In Children
-		    Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(SaveData)
-		    If (Set Is Nil) = False Then
-		      Var Label As String = Set.Label
-		      Var AdjustedLabel As String = Beacon.FindUniqueLabel(Label, Names)
-		      If AdjustedLabel <> Label Then
-		        Var Mutable As New Ark.MutableLootItemSet(Set)
-		        Mutable.Label = AdjustedLabel
-		        Set = New Ark.LootItemSet(Mutable)
-		      End If
-		      Names.Add(AdjustedLabel)
-		      Self.mItemSets.Add(Set)
-		    End If
-		  Next
-		  
+		  Self.mPendingContentsString = JSON
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -307,6 +283,7 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Idx As Integer, Assigns ItemSet As Ark.LootItemSet)
+		  Self.LoadPendingContents()
 		  Self.mItemSets(Idx) = ItemSet.ImmutableVersion
 		  Self.Modified = True
 		End Sub
@@ -339,6 +316,7 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Function RebuildItemSets(Mask As UInt64, ContentPacks As Beacon.StringList) As Integer
+		  Self.LoadPendingContents()
 		  Var NumChanged As Integer
 		  For Idx As Integer = 0 To Self.mItemSets.LastIndex
 		    If Self.mItemSets(Idx).TemplateUUID.IsEmpty Then
@@ -374,6 +352,7 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub RemoveAt(Idx As Integer)
+		  Self.LoadPendingContents()
 		  Self.mItemSets.RemoveAt(Idx)
 		  Self.Modified = True
 		End Sub
@@ -521,6 +500,7 @@ Implements Ark.MutableBlueprint
 		      Self.mItemSets.Add(Set)
 		    End If
 		  Next
+		  Self.mPendingContentsString = ""
 		End Sub
 	#tag EndMethod
 

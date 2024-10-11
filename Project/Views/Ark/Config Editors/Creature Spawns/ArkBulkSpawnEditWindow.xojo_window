@@ -915,8 +915,7 @@ End
 		        Continue
 		      End If
 		      
-		      Var Mutable As New Ark.MutableSpawnPointOverride(Definition, Ark.SpawnPointOverride.ModeOverride, False)
-		      Ark.DataSource.Pool.Get(False).LoadDefaults(Mutable)
+		      Var Mutable As New Ark.MutableSpawnPointOverride(Definition, Ark.SpawnPointOverride.ModeOverride, True)
 		      
 		      Var Remove As Ark.SpawnPointOverride = Self.mConfig.OverrideForSpawnPoint(Definition, Ark.SpawnPointOverride.ModeRemove)
 		      If (Remove Is Nil) = False Then

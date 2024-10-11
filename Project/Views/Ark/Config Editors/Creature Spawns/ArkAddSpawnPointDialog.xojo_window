@@ -635,7 +635,7 @@ End
 		  ElseIf Self.RemoveRadio.Value Then
 		    Mode = Ark.SpawnPointOverride.ModeRemove
 		  End If
-		  Var LoadDefaults As Boolean = Mode = Ark.SpawnPointOverride.ModeOverride And Self.LoadDefaultsCheck.Value = True
+		  Var WithDefaults As Boolean = Mode = ArkSA.SpawnPointOverride.ModeOverride And Self.LoadDefaultsCheck.Value = True
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.RowSelectedAt(I) Then
@@ -643,13 +643,7 @@ End
 		    End If
 		    
 		    Var SpawnPoint As Ark.SpawnPoint = Self.List.RowTagAt(I)
-		    Var MutableOverride As New Ark.MutableSpawnPointOverride(SpawnPoint, Mode, False)
-		    
-		    If LoadDefaults Then
-		      Ark.DataSource.Pool.Get(False).LoadDefaults(MutableOverride)
-		    End If
-		    
-		    Self.mSelectedOverrides.Add(MutableOverride.ImmutableVersion)
+		    Self.mSelectedOverrides.Add(New Ark.SpawnPointOverride(SpawnPoint, Mode, WithDefaults))
 		  Next
 		  
 		  Self.Hide

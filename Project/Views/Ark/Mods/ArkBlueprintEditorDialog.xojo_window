@@ -1362,6 +1362,7 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          LockRight       =   True
          LockTop         =   True
          Modified        =   False
+         ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   4
@@ -1701,6 +1702,7 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          LockRight       =   True
          LockTop         =   True
          Modified        =   False
+         ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   6
@@ -2398,26 +2400,16 @@ End
 		  Self.LootNotesArea.Text = Container.Notes
 		  Self.LootSortField.DoubleValue = Container.SortValue
 		  
-		  Var Override As New Ark.MutableLootDropOverride(Container, True)
-		  If Override.Count = 0 Then
-		    Ark.DataSource.Pool.Get(False).LoadDefaults(Override)
-		  End If
-		  
 		  Var Overrides(0) As Ark.LootDropOverride
-		  Overrides(0) = Override.ImmutableVersion
+		  Overrides(0) = New Ark.LootDropOverride(Container, True)
 		  Self.DropEditor.Overrides = Overrides
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub LoadBlueprint(Point As Ark.SpawnPoint)
-		  Var Override As New Ark.MutableSpawnPointOverride(Point, Ark.SpawnPointOverride.ModeOverride, True)
-		  If Override.Count = 0 Then
-		    Ark.DataSource.Pool.Get(False).LoadDefaults(Override)
-		  End If
-		  
 		  Var Overrides(0) As Ark.SpawnPointOverride
-		  Overrides(0) = Override.ImmutableVersion
+		  Overrides(0) = New Ark.SpawnPointOverride(Point, Ark.SpawnPointOverride.ModeOverride, True)
 		  Self.SpawnPointEditor1.Overrides = Overrides
 		End Sub
 	#tag EndMethod

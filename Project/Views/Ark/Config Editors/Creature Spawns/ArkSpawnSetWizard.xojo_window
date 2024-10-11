@@ -602,8 +602,7 @@ End
 		    If Override.Mode = Ark.SpawnPointOverride.ModeAppend Then
 		      Var Official As Ark.SpawnPoint = DataSource.GetSpawnPoint(Override.SpawnPointId)
 		      If (Official Is Nil) = False Then
-		        Var Template As New Ark.MutableSpawnPointOverride(Official, Ark.SpawnPointOverride.ModeOverride, False)
-		        Template.LoadDefaults()
+		        Var Template As New Ark.MutableSpawnPointOverride(Official, Ark.SpawnPointOverride.ModeOverride, True)
 		        For Each Set As Ark.SpawnPointSet In Template
 		          Sum = Sum + Set.RawWeight
 		        Next

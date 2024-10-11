@@ -1054,7 +1054,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #Pragma BreakOnExceptions False
 		  Try
 		    Var Primer As New URLConnection
-		    Var Response As String = Primer.SendSync("GET", "https://local-api.usebeacon.app/")
+		    Call Primer.SendSync("GET", "https://local-api.usebeacon.app/")
 		    Self.NextLaunchQueueTask()
 		  Catch Err As RuntimeException
 		    Call CallLater.Schedule(1000, AddressOf NextLaunchQueueTask)
