@@ -135,7 +135,7 @@ class SpawnPoint extends MutableBlueprint {
 				$database->Upsert('arksa.spawn_point_sets', $columns, ['spawn_point_set_id']);
 
 				$this->SaveSetEntries($database, $spawnPointSetId, $set['entries']);
-				$this->SaveSetReplacements($database, $spawnPointSetId, $set['replacements']);
+				$this->SaveSetReplacements($database, $spawnPointSetId, $set['replacements'] ?? null);
 			}
 		}
 		if (count($setsList) > 0) {
@@ -153,17 +153,17 @@ class SpawnPoint extends MutableBlueprint {
 					'spawn_point_set_entry_id' => $entry['spawnPointSetEntryId'],
 					'spawn_point_set_id' => $spawnPointSetId,
 					'creature_id' => $entry['creatureId'],
-					'weight' => $entry['weight'],
-					'override' => $entry['override'],
-					'min_level_multiplier' => $entry['minLevelMultiplier'],
-					'max_level_multiplier' => $entry['maxLevelMultiplier'],
-					'min_level_offset' => $entry['minLevelOffset'],
-					'max_level_offset' => $entry['maxLevelOffset'],
-					'spawn_offset' => (is_null($entry['spawnOffset']) ? null : ('(' . $entry['spawnOffset']['x'] . ',' . $entry['spawnOffset']['y'] . ',' . $entry['spawnOffset']['z'] . ')'))
+					'weight' => $entry['weight'] ?? null,
+					'override' => $entry['override'] ?? null,
+					'min_level_multiplier' => $entry['minLevelMultiplier'] ?? null,
+					'max_level_multiplier' => $entry['maxLevelMultiplier'] ?? null,
+					'min_level_offset' => $entry['minLevelOffset'] ?? null,
+					'max_level_offset' => $entry['maxLevelOffset'] ?? null,
+					'spawn_offset' => (isset($entry['spawnOffset']) === false || is_null($entry['spawnOffset']) ? null : ('(' . $entry['spawnOffset']['x'] . ',' . $entry['spawnOffset']['y'] . ',' . $entry['spawnOffset']['z'] . ')'))
 				], ['spawn_point_set_entry_id']);
 				$keepEntries[] = $inserted->Field('spawn_point_set_entry_id');
 
-				$this->SaveSetEntryLevels($database, $entry['spawnPointSetEntryId'], $entry['levelOverrides']);
+				$this->SaveSetEntryLevels($database, $entry['spawnPointSetEntryId'], $entry['levelOverrides'] ?? null);
 			}
 		}
 		if (count($keepEntries) > 0) {
