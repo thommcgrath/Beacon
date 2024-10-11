@@ -145,7 +145,8 @@ class Core {
 				Application::kScopeSentinelServicesCreate,
 				Application::kScopeSentinelServicesRead,
 				Application::kScopeSentinelServicesUpdate,
-				Application::kScopeSentinelServicesDelete
+				Application::kScopeSentinelServicesDelete,
+				Application::kScopeSentinelSubscriptionsRead,
 			];
 			$requiredScopes = [
 				Application::kScopeCommon

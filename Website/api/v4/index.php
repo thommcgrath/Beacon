@@ -153,9 +153,11 @@ Core::RegisterRoutes(
 		'/sentinel/services' => [
 			'GET' => 'sentinel/service/list',
 			'POST' => 'sentinel/service/create',
+			'DELETE' => 'sentinel/service/delete',
 		],
 		'/sentinel/services/{serviceId}' => [
 			'GET' => 'sentinel/service/get',
+			'DELETE' => 'sentinel/service/delete',
 		],
 		'/sentinel/serviceRefreshRequests' => [
 			'GET' => 'sentinel/service_refresh_request/list',
@@ -164,6 +166,9 @@ Core::RegisterRoutes(
 		'/sentinel/serviceRefreshRequests/{requestId}' => [
 			'GET' => 'sentinel/service_refresh_request/get',
 			'DELETE' => 'sentinel/service_refresh_request/delete',
+		],
+		'/sentinel/subscription' => [
+			'GET' => 'sentinel/subscription/get',
 		],
 	]
 );

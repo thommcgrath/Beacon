@@ -60,29 +60,29 @@ class Service extends DatabaseObject implements JsonSerializable {
 		self::PlatformUniversal,
 	];
 
-	protected $serviceId = null;
-	protected $userId = null;
-	protected $nitradoServiceId = null;
-	protected $serviceTokenId = null;
-	protected $gameId = null;
-	protected $lastSuccess = null;
-	protected $lastError = null;
-	protected $inErrorState = null;
-	protected $updateSchedule = null;
-	protected $name = null;
-	protected $nickname = null;
-	protected $ipAddress = null;
-	protected $gamePort = null;
-	protected $slotCount = null;
-	protected $expiration = null;
-	protected $color = null;
-	protected $platform = null;
-	protected $rconPort = null;
-	protected $gameSpecific = null;
+	protected string $serviceId;
+	protected string $subscriptionId;
+	protected int $nitradoServiceId;
+	protected string $serviceTokenId;
+	protected string $gameId;
+	protected ?int $lastSuccess;
+	protected ?int $lastError;
+	protected bool $inErrorState;
+	protected int $updateSchedule;
+	protected string $name;
+	protected ?string $nickname;
+	protected string $ipAddress;
+	protected int $gamePort;
+	protected int $slotCount;
+	protected int $expiration;
+	protected string $color;
+	protected string $platform;
+	protected int $rconPort;
+	protected array $gameSpecific;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
-		$this->userId = $row->Field('user_id');
+		$this->subscriptionId = $row->Field('subscription_id');
 		$this->nitradoServiceId = intval($row->Field('nitrado_service_id'));
 		$this->serviceTokenId = $row->Field('service_token_id');
 		$this->gameId = $row->Field('game_id');
@@ -105,7 +105,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('sentinel', 'services', [
 			new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
+			new DatabaseObjectProperty('subscriptionId', ['columnName' => 'subscription_id']),
 			new DatabaseObjectProperty('nitradoServiceId', ['columnName' => 'nitrado_service_id']),
 			new DatabaseObjectProperty('serviceTokenId', ['columnName' => 'service_token_id']),
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
@@ -129,12 +129,17 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Accessor('name');
-		$parameters->AddFromFilter($schema, $filters, 'userId');
+		$parameters->AddFromFilter($schema, $filters, 'serviceTokenId');
 		$parameters->AddFromFilter($schema, $filters, 'nitradoServiceId');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
 		$parameters->AddFromFilter($schema, $filters, 'ipAddress');
 		$parameters->AddFromFilter($schema, $filters, 'color');
 		$parameters->AddFromFilter($schema, $filters, 'platform');
+
+		if (isset($filters['userId'])) {
+			$placeholder = $parameters->AddValue($filters['userId']);
+			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.resolved_permissions WHERE user_id = $' . $placeholder . ' AND permissions > 0)';
+		}
 	}
 
 	protected static function ValidateProperty(string $property, mixed $value): void {
@@ -155,7 +160,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'serviceId' => $this->serviceId,
-			'userId' => $this->userId,
+			'subscriptionId' => $this->subscriptionId,
 			'nitradoServiceId' => $this->nitradoServiceId,
 			'serviceTokenId' => $this->serviceTokenId,
 			'gameId' => $this->gameId,
@@ -176,108 +181,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		];
 	}
 
-	/*protected static function FromRows(BeaconRecordSet $rows): array {
-		$services = [];
-		while (!$rows->EOF()) {
-			$services[] = new static($rows);
-			$rows->MoveNext();
-		}
-		return $services;
-	}
-
-	public static function Create(string $userId, array $properties): Service {
-		if (BeaconCommon::HasAllKeys($properties, 'nitrado_service_id', 'game_id', 'name', 'ip_address', 'slot_count', 'expiration', 'platform') === false) {
-			throw new Exception('Missing required properties.');
-		}
-		if (BeaconCommon::HasAnyKeys($properties, 'last_success', 'last_error', 'in_error_state', 'update_schedule')) {
-			throw new Exception('Some read-only properties have been included when they should not.');
-		}
-
-		if (isset($properties['service_id'])) {
-			$serviceId = $properties['service_id'];
-			if (BeaconCommon::IsUUID($serviceId) === false) {
-				throw new Exception('Service UUID is not a UUID.');
-			}
-		} else {
-			$serviceId = BeaconCommon::GenerateUUID();
-			$properties['service_id'] = $serviceId;
-		}
-		$properties['user_id'] = $userId;
-
-		if (is_numeric($properties['expiration'])) {
-			$properties['expiration'] = date('Y-m-d H:i:s', $properties['expiration']);
-		}
-
-		foreach ($properties as $property => $value) {
-			static::ValidateProperty($property, $value);
-		}
-
-		$database = BeaconCommon::Database();
-		try {
-			$database->BeginTransaction();
-			$database->Insert('sentinel.services', $properties);
-			$database->Commit();
-			return static::GetByServiceID($serviceId);
-		} catch (Exception $err) {
-			$database->Rollback();
-			throw $err;
-		}
-	}
-
-	public static function GetByServiceID(string $serviceId): ?Service {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLSchemaName() . '.' . static::SQLTableName() . ' WHERE service_id = $1;', $serviceId);
-		$services = static::FromRows($rows);
-		if (count($services) === 1) {
-			return $services[0];
-		}
-		return null;
-	}
-
-	public static function GetUserServices(string $userId, bool $include_shared): array {
-		$columns = implode(', ', static::SQLColumns());
-		$table = static::SQLSchemaName() . '.' . static::SQLTableName();
-		$sql = "SELECT $columns FROM $table";
-		if ($include_shared) {
-			$sql .= " WHERE service_id IN (SELECT service_id FROM sentinel.resolved_permissions WHERE user_id = $1 AND (permissions & $2) = $2)";
-		} else {
-			$sql .= " WHERE user_id = $1";
-		}
-		$sql .= " ORDER BY COALESCE(nickname, name);";
-
-		$database = BeaconCommon::Database();
-		$rows = $database->Query($sql, $userId, static::PermissionView);
-		$services = static::FromRows($rows);
-		return $services;
-	}
-
-	public static function GetForGroupID(string $group_id): array {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY COALESCE(nickname, name);', $group_id);
-		return static::FromRows($rows);
-	}
-
-	protected static function HookGetEditableProperties(): array {
-		return ['name', 'nickname', 'color'];
-	}
-
-	protected function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
-		switch ($property) {
-		case 'last_error':
-		case 'last_success':
-		case 'expiration':
-			$assignments[] = $property . ' = to_timestamp($' . $placeholder++ . ')';
-			$values[] = $this->$property;
-			break;
-		case 'game_specific':
-			$assignments[] = $property . ' = $' . $placeholder++;
-			$values[] = json_encode($this->$property);
-			break;
-		default:
-			parent::HookPrepareColumnWrite($property, $placeholder, $assignments, $values);
-		}
-	}*/
-
 	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
 		switch ($definition->PropertyName()) {
 		case 'gameSpecific':
@@ -291,15 +194,15 @@ class Service extends DatabaseObject implements JsonSerializable {
 		return $this->serviceId;
 	}
 
-	public function UserId(): string {
-		return $this->userId;
+	public function SubscriptionId(): string {
+		return $this->subscriptionId;
 	}
 
 	public function NitradoServiceId(): int {
 		return $this->nitradoServiceId;
 	}
 
-	public function ServiceTokenId(): ?string {
+	public function ServiceTokenId(): string {
 		return $this->serviceTokenId;
 	}
 

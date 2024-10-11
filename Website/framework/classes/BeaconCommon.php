@@ -1059,6 +1059,10 @@ abstract class BeaconCommon {
 		}
 		return $gameId;
 	}
+
+	public static function NounWithQuantity(int $quantity, string $singular, string $plural): string {
+		return number_format($quantity) . ' ' . (($quantity === 1) ? $singular : $plural);
+	}
 }
 
 ?>
