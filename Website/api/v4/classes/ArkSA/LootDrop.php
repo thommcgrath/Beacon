@@ -7,8 +7,9 @@ use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 class LootDrop extends MutableBlueprint {
 	protected float $multiplierMin;
 	protected float $multiplierMax;
-	protected string $uiColor;
+	protected string $uiColor; // Deprecated in favor of $iconColor
 	protected string $iconId;
+	protected string $iconColor;
 	protected string $sortOrder;
 	protected bool $experimental;
 	protected string $notes;
@@ -26,6 +27,7 @@ class LootDrop extends MutableBlueprint {
 		$this->multiplierMax = filter_var($row->Field('multiplier_max'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 1.0;
 		$this->uiColor = $row->Field('uicolor');
 		$this->iconId = $row->Field('icon');
+		$this->iconColor = $row->Field('icon_color');
 		$this->sortOrder = $row->Field('sort_order');
 		$this->experimental = filter_var($row->Field('experimental'), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? false;
 		$this->notes = $row->Field('notes');
@@ -82,8 +84,9 @@ class LootDrop extends MutableBlueprint {
 		$schema->AddColumns([
 			New DatabaseObjectProperty('multiplierMin', ['columnName' => 'multiplier_min', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			New DatabaseObjectProperty('multiplierMax', ['columnName' => 'multiplier_max', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-			New DatabaseObjectProperty('uiColor', ['columnName' => 'uicolor', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			New DatabaseObjectProperty('uiColor', ['columnName' => 'uicolor', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'public.ui_color_to_hex(%%TABLE%%.icon_color)']),
 			New DatabaseObjectProperty('iconId', ['columnName' => 'icon', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			New DatabaseObjectProperty('iconColor', ['columnName' => 'icon_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			New DatabaseObjectProperty('sortOrder', ['columnName' => 'sort_order', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			New DatabaseObjectProperty('experimental', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			New DatabaseObjectProperty('notes', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
@@ -128,6 +131,7 @@ class LootDrop extends MutableBlueprint {
 		];
 		$json['uiColor'] = $this->uiColor;
 		$json['iconId'] = $this->iconId;
+		$json['iconColor'] = $this->iconColor;
 		$json['sortOrder'] = $this->sortOrder;
 		$json['experimental'] = $this->experimental;
 		$json['notes'] = $this->notes;
@@ -164,14 +168,6 @@ class LootDrop extends MutableBlueprint {
 		return $this->uiColor;
 	}
 
-	public function SetUIColor(string $uicolor): void {
-		if (preg_match('/[A-F]{8}/i', $uicolor)) {
-			$this->uiColor = strtoupper($uicolor);
-		} else {
-			throw new Exception('Bad uiColor. Use 8-character hex.');
-		}
-	}
-
 	public function IconId(): string {
 		return $this->iconId;
 	}
@@ -180,6 +176,14 @@ class LootDrop extends MutableBlueprint {
 		if (BeaconCommon::IsUUID($iconId)) {
 			$this->iconId = $iconId;
 		}
+	}
+
+	public function IconColor(): string {
+		return $this->iconColor;
+	}
+
+	public function SetIconColor(string $iconColor): void {
+		$this->iconColor = $iconColor;
 	}
 
 	public function SortOrder(): int {
@@ -222,6 +226,43 @@ class LootDrop extends MutableBlueprint {
 		if (array_key_exists('sort', $properties) === true && array_key_exists('sortOrder', $properties) === false) {
 			$properties['sortOrder'] = $properties['sort'];
 			unset($properties['sort']);
+		}
+		if (array_key_exists('iconColor', $properties) === true) {
+			$properties['iconColor'] = ucfirst($properties['iconColor']);
+		}
+		if (array_key_exists('uiColor', $properties) === true) {
+			if (array_key_exists('iconColor', $properties) === false) {
+				$iconColor = 'White';
+				switch (strtoupper($properties['uiColor'])) {
+				case 'FFFFFF00';
+					$iconColor = 'White';
+					break;
+				case '00FF0000';
+					$iconColor = 'Green';
+					break;
+				case '88C8FF00';
+					$iconColor = 'Blue';
+					break;
+				case 'E6BAFF00';
+					$iconColor = 'Purple';
+					break;
+				case 'FFF02A00';
+					$iconColor = 'Yellow';
+					break;
+				case 'FFBABA00';
+					$iconColor = 'Red';
+					break;
+				case '00FFFF00';
+					$iconColor = 'Cyan';
+					break;
+				case 'FFA50000';
+					$iconColor = 'Orange';
+					break;
+				}
+
+				$properties['iconColor'] = $iconColor;
+			}
+			unset($properties['uiColor']);
 		}
 		return $properties;
 	}
