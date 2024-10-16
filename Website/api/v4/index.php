@@ -170,6 +170,13 @@ Core::RegisterRoutes(
 		'/sentinel/subscription' => [
 			'GET' => 'sentinel/subscription/get',
 		],
+		'/sentinel/rconCommands' => [
+			'GET' => 'sentinel/rcon_command/list',
+			'POST' => 'sentinel/rcon_command/create',
+		],
+		'/sentinel/rconCommands/{logId}' => [
+			'GET' => 'sentinel/rcon_command/get',
+		],
 	]
 );
 
