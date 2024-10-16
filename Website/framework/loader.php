@@ -75,6 +75,7 @@ spl_autoload_register(function($class_name) {
 	}
 });
 
+include(dirname(__FILE__, 2) . '/vendor/autoload.php');
 require(dirname(__FILE__) . '/config.php');
 
 $maintenance_mode = BeaconCommon::GetGlobal('Maintenance Mode');

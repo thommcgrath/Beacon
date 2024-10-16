@@ -1,3 +1,5 @@
 .user.ini
 ._*
 node_modules
+composer.phar
+vendor
