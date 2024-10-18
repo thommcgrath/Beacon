@@ -2,11 +2,13 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ServiceToken};
-use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
+		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
 		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
+		Validate as protected MutableDatabaseObjectValidate;
 	}
 
 	const PermissionView = 1;
@@ -62,43 +64,35 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	protected string $serviceId;
 	protected string $subscriptionId;
-	protected int $nitradoServiceId;
-	protected string $serviceTokenId;
 	protected string $gameId;
-	protected ?int $lastSuccess;
-	protected ?int $lastError;
+	protected string $connectionEncryptionKey;
+	protected array $connectionDetails;
+	protected string $connectionHash;
+	protected ?float $lastSuccess;
+	protected ?float $lastError;
+	protected ?float $lastGamelogTimestamp;
 	protected bool $inErrorState;
-	protected int $updateSchedule;
 	protected string $name;
 	protected ?string $nickname;
-	protected string $ipAddress;
-	protected int $gamePort;
-	protected int $slotCount;
-	protected int $expiration;
 	protected string $color;
 	protected string $platform;
-	protected int $rconPort;
 	protected array $gameSpecific;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
 		$this->subscriptionId = $row->Field('subscription_id');
-		$this->nitradoServiceId = intval($row->Field('nitrado_service_id'));
-		$this->serviceTokenId = $row->Field('service_token_id');
 		$this->gameId = $row->Field('game_id');
-		$this->lastSuccess = is_null($row->Field('last_success')) ? null : intval($row->Field('last_success'));
-		$this->lastError = is_null($row->Field('last_error')) ? null : intval($row->Field('last_error'));
+		$this->connectionEncryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($row->Field('connection_encryption_key')));
+		$this->connectionDetails = json_decode(BeaconEncryption::SymmetricDecrypt($this->connectionEncryptionKey, base64_decode($row->Field('connection_details'))), true);
+		$this->connectionHash = $row->Field('connection_hash');
+		$this->lastSuccess = is_null($row->Field('last_success')) ? null : floatval($row->Field('last_success'));
+		$this->lastError = is_null($row->Field('last_error')) ? null : floatval($row->Field('last_error'));
+		$this->lastGamelogTimestamp = is_null($row->Field('last_gamelog_timestamp')) ? null : floatval($row->Field('last_gamelog_timestamp'));
 		$this->inErrorState = $row->Field('in_error_state');
-		$this->updateSchedule = intval($row->Field('update_schedule'));
 		$this->name = $row->Field('name');
 		$this->nickname = $row->Field('nickname');
-		$this->ipAddress = $row->Field('ip_address');
-		$this->gamePort = intval($row->Field('game_port'));
-		$this->slotCount = intval($row->Field('slot_count'));
-		$this->expiration = intval($row->Field('expiration'));
 		$this->color = $row->Field('color');
 		$this->platform = $row->Field('platform');
-		$this->rconPort = is_null($row->Field('rcon_port')) ? null : intval($row->Field('rcon_port'));
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
 	}
 
@@ -106,22 +100,18 @@ class Service extends DatabaseObject implements JsonSerializable {
 		return new DatabaseSchema('sentinel', 'services', [
 			new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 			new DatabaseObjectProperty('subscriptionId', ['columnName' => 'subscription_id']),
-			new DatabaseObjectProperty('nitradoServiceId', ['columnName' => 'nitrado_service_id']),
-			new DatabaseObjectProperty('serviceTokenId', ['columnName' => 'service_token_id']),
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
+			new DatabaseObjectProperty('connectionEncryptionKey', ['columnName' => 'connection_encryption_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+			new DatabaseObjectProperty('connectionDetails', ['columnName' => 'connection_details', 'dependsOn' => ['connectionEncryptionKey'], 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('connectionHash', ['columnName' => 'connection_hash', 'required' => false, 'dependsOn' => ['connectionDetails']]),
 			new DatabaseObjectProperty('lastSuccess', ['columnName' => 'last_success', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
 			new DatabaseObjectProperty('lastError', ['columnName' => 'last_error', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
+			new DatabaseObjectProperty('lastGamelogTimestamp', ['columnName' => 'last_gamelog_timestamp', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
 			new DatabaseObjectProperty('inErrorState', ['columnName' => 'in_error_state', 'accessor' => 'COALESCE(EXTRACT(EPOCH FROM %%TABLE%%.last_error), 0) > COALESCE(EXTRACT(EPOCH FROM %%TABLE%%.last_success), 0)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('updateSchedule', ['columnName' => 'update_schedule', 'required' => false]),
 			new DatabaseObjectProperty('name'),
-			new DatabaseObjectProperty('nickname'),
-			new DatabaseObjectProperty('ipAddress', ['columnName' => 'ip_address']),
-			new DatabaseObjectProperty('gamePort', ['columnName' => 'game_port']),
-			new DatabaseObjectProperty('slotCount', ['columnName' => 'slot_count']),
-			new DatabaseObjectProperty('expiration', ['accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
-			new DatabaseObjectProperty('color'),
+			new DatabaseObjectProperty('nickname', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('platform'),
-			new DatabaseObjectProperty('rconPort', ['columnName' => 'rcon_port']),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
 		]);
 	}
@@ -129,6 +119,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Accessor('name');
+		$parameters->clauses[] = 'services.deleted = FALSE';
 		$parameters->AddFromFilter($schema, $filters, 'serviceTokenId');
 		$parameters->AddFromFilter($schema, $filters, 'nitradoServiceId');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
@@ -154,6 +145,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 				throw new Exception('Invalid platform.');
 			}
 			break;
+		case 'connection_details':
+			break;
 		}
 	}
 
@@ -161,32 +154,122 @@ class Service extends DatabaseObject implements JsonSerializable {
 		return [
 			'serviceId' => $this->serviceId,
 			'subscriptionId' => $this->subscriptionId,
-			'nitradoServiceId' => $this->nitradoServiceId,
-			'serviceTokenId' => $this->serviceTokenId,
 			'gameId' => $this->gameId,
+			'connectionDetails' => $this->connectionDetails,
 			'lastSuccess' => $this->lastSuccess,
 			'lastError' => $this->lastError,
+			'lastGamelogTimestamp' => $this->lastGamelogTimestamp,
 			'inErrorState' => $this->inErrorState,
-			'updateSchedule' => $this->updateSchedule,
 			'name' => $this->name,
 			'nickname' => $this->nickname,
-			'ipAddress' => $this->ipAddress,
-			'gamePort' => $this->gamePort,
-			'slotCount' => $this->slotCount,
-			'expiration' => $this->expiration,
 			'color' => $this->color,
 			'platform' => $this->platform,
-			'rconPort' => $this->rconPort,
 			'gameSpecific' => $this->gameSpecific,
 		];
 	}
 
-	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
+	protected static function InitializeProperties(array &$properties): void {
+		$properties['connectionEncryptionKey'] = BeaconEncryption::GenerateKey(256);
+		$properties['connectionHash'] = '';
+	}
+
+	protected static function Validate(array $properties): void {
+		static::MutableDatabaseObjectValidate($properties);
+
+		if (array_key_exists('connectionDetails', $properties)) {
+			$details = $properties['connectionDetails'];
+			if (is_null($details)) {
+				throw new Exception('connectionDetails must not be null');
+			}
+			if (is_array($details) === false) {
+				throw new Exception('connectionDetails must be an object');
+			}
+			if (BeaconCommon::HasAllKeys($details, 'type') === false) {
+				throw new Exception('connectionDetails must have a type key');
+			}
+
+			switch ($details['type']) {
+			case 'Nitrado':
+				if (BeaconCommon::HasAllKeys($details, 'serviceId', 'serviceTokenId') === false) {
+					throw new Exception('connectionDetails must have serviceId and serviceTokenId keys for Nitrado connections');
+				}
+				if (filter_var($details['serviceId'], FILTER_VALIDATE_INT) == false) {
+					throw new Exception('connectionDetails.serviceId is not a number');
+				}
+				if (BeaconCommon::IsUUID($details['serviceTokenId']) === false) {
+					throw new Exception('connectionDetails.serviceTokenId is not a UUID');
+				}
+				break;
+			case 'FTP':
+				if (BeaconCommon::HasAllKeys($details, 'host', 'rconPort', 'rconPassword', 'ftpPort', 'ftpUser', 'ftpPassword', 'ftpUsePassiveMode', 'ftpMode', 'ftpPath') === false) {
+					throw new Exception('connectionDetails must have host, rconPort, rconPassword, ftpPort, ftpUser, ftpPassword, ftpUsePassiveMode, ftpMode, and ftpPath keys for FTP connections');
+				}
+				if (filter_var($details['rconPort'], FILTER_VALIDATE_INT) === false || $details['rconPort'] < 1 || $details['rconPort'] > 65535) {
+					throw new Exception('connectionDetails.rconPort must be a number between 1 and 65535');
+				}
+				if (filter_var($details['ftpPort'], FILTER_VALIDATE_INT) === false || $details['ftpPort'] < 1 || $details['ftpPort'] > 65535) {
+					throw new Exception('connectionDetails.ftpPort must be a number between 1 and 65535');
+				}
+				if (filter_var($details['ftpUsePassiveMode'], FILTER_VALIDATE_BOOL) === false) {
+					throw new Exception('connectionDetails.ftpUsePassiveMode must be true or false');
+				}
+				if (in_array($details['ftpMode'], ['insecure', 'sftp', 'required_tls', 'optional_tls', 'implied_tls']) === false) {
+					throw new Exception('connectionDetails.ftpMode must be one of insecure, sftp, required_tls, optional_tls, or implied_tls');
+				}
+				if (in_array($details['ftpMode'], ['required_tls', 'optional_tls', 'implied_tls'])) {
+					if (array_key_exists('ftpValidateCertificates', $details) === false) {
+						throw new Exception('connectionDetails must have a ftpValidateCertificates key when TLS is enabeld');
+					}
+					if (filter_var($details['ftpValidateCertificates'], FILTER_VALIDATE_BOOL) === false) {
+						throw new Exception('connectionDetails.ftpValidateCertificates must be true or false');
+					}
+				}
+				if (empty($details['host'])) {
+					throw new Exception('connectionDetails.host must not be empty');
+				}
+				if (empty($details['rconPassword'])) {
+					throw new Exception('connectionDetails.rconPassword must not be empty');
+				}
+				if (empty($details['ftpUser'])) {
+					throw new Exception('connectionDetails.ftpUser must not be empty');
+				}
+				if (empty($details['ftpPassword'])) {
+					throw new Exception('connectionDetails.ftpPassword must not be empty');
+				}
+				if (empty($details['ftpPath'])) {
+					throw new Exception('connectionDetails.ftpPath must not be empty');
+				}
+				break;
+			default:
+				throw new Exception('Connection detail type ' . $details['type'] . ' is not supported');
+			}
+		}
+	}
+
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
 		switch ($definition->PropertyName()) {
 		case 'gameSpecific':
 			return json_encode($value);
+		case 'connectionEncryptionKey':
+			return base64_encode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $value));
+		case 'connectionDetails':
+			return base64_encode(BeaconEncryption::SymmetricEncrypt($otherProperties['connectionEncryptionKey'], json_encode($value)));
+		case 'connectionHash':
+			$details = $otherProperties['connectionDetails'];
+			$hashParts = [$details['type']];
+			switch ($details['type']) {
+			case 'Nitrado':
+				$hashParts[] = strtolower($details['serviceId']);
+				break;
+			case 'FTP':
+				$hashParts[] = strtolower($details['host']);
+				$hashParts[] = intval($details['rconPort']);
+				break;
+			}
+			$hashParts[] = '77345636-9d4c-429c-acc2-e400612e9974';
+			return hash('sha3-256', implode(':', $hashParts));
 		default:
-			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value);
+			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value, $otherProperties);
 		}
 	}
 
@@ -198,22 +281,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		return $this->subscriptionId;
 	}
 
-	public function NitradoServiceId(): int {
-		return $this->nitradoServiceId;
-	}
-
-	public function ServiceTokenId(): string {
-		return $this->serviceTokenId;
-	}
-
-	public function ServiceToken(): ?ServiceToken {
-		if (is_null($this->serviceTokenId)) {
-			return null;
-		}
-
-		return ServiceToken::Fetch($this->serviceTokenId);
-	}
-
 	public function GameId(): string {
 		return $this->gameId;
 	}
@@ -222,28 +289,28 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->SetProperty('gameId', $gameId);
 	}
 
-	public function LastSuccess(): int {
+	public function LastSuccess(): ?float {
 		return $this->lastSuccess;
 	}
 
-	public function SetLastSuccess(int $lastSuccess): void {
+	public function SetLastSuccess(float $lastSuccess): void {
 		$this->SetProperty('lastSuccess', $lastSuccess);
 	}
 
-	public function LastError(): int {
+	public function LastError(): ?float {
 		return $this->lastError;
 	}
 
-	public function SetLastError(int $lastError): void {
+	public function SetLastError(float $lastError): void {
 		$this->SetProperty('lastError', $lastError);
+	}
+
+	public function LastGamelogTimestamp(): ?float {
+		return $this->lastGamelogTimestamp;
 	}
 
 	public function InErrorState(): bool {
 		return $this->inErrorState;
-	}
-
-	public function UpdateSchedule(): int {
-		return $this->updateSchedule;
 	}
 
 	public function Name(): string {
@@ -262,38 +329,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->SetProperty('nickname', $nickname);
 	}
 
-	public function IpAddress(): string {
-		return $this->ipAddress;
-	}
-
-	public function SetIpAddress(string $ipAddress): void {
-		$this->SetProperty('ipAddress', $ipAddress);
-	}
-
-	public function GamePort(): int {
-		return $this->gamePort;
-	}
-
-	public function SetGamePort(int $port): void {
-		$this->SetProperty('gamePort', $port);
-	}
-
-	public function SlotCount(): int {
-		return $this->slotCount;
-	}
-
-	public function SetSlotCount(int $slotCount): void {
-		$this->SetProperty('slotCount', $slotCount);
-	}
-
-	public function Expiration(): int {
-		return $this->expiration;
-	}
-
-	public function SetExpiration(int $expiration): void {
-		$this->SetProperty('expiration', $expiration);
-	}
-
 	public function Color(): string {
 		return $this->color;
 	}
@@ -308,14 +343,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public function SetPlatform(string $platform): void {
 		$this->SetProperty('platform', $platform);
-	}
-
-	public function RconPort(): ?int {
-		return $this->rconPort;
-	}
-
-	public function SetRconPort(?int $port): void {
-		$this->SetProperty('rconPort', $port);
 	}
 
 	public function GameSpecific(): array {

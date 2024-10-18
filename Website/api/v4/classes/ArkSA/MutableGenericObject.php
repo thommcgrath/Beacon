@@ -8,12 +8,12 @@ trait MutableGenericObject {
 		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
 	}
 
-	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
 		switch ($definition->PropertyName()) {
 		case 'tags':
 			return '{' . implode(',', $value) . '}';
 		default:
-			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value);
+			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value, $otherProperties);
 		}
 	}
 }

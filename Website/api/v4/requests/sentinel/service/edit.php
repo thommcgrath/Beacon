@@ -1,16 +1,24 @@
 <?php
 
-BeaconAPI::Authorize();
+use BeaconAPI\v4\{Application, Response, Core};
+use BeaconAPI\v4\Sentinel\{Service};
+
+$requiredScopes[] = Application::kScopeSentinelServicesUpdate;
 
 function handleRequest(array $context): Response {
-	$user_id = BeaconAPI::UserID();
-		
-	$service = Sentinel\Service::GetByServiceID($context['pathParameters']['service_id']);
-	if ($service && $service->HasPermission($user_id, Sentinel\Service::PermissionEdit)) {
-		$service->Edit(BeaconAPI::JSONPayload());
-		BeaconAPI::ReplySuccess($service);
+	$userId = Core::UserId();
+
+	$service = Service::Fetch($context['pathParameters']['serviceId']);
+	if ($service && $service->HasPermission($userId, Service::PermissionEdit)) {
+		$serviceProperties = Core::BodyAsJson();
+		try {
+			$service->Edit($serviceProperties);
+			return Response::NewJson($service, 200);
+		} catch (Exception $err) {
+			return Response::NewJsonError('Could not edit service: ' . $err->getMessage(), $serviceProperties, 400);
+		}
 	} else {
-		BeaconAPI::ReplyError('Service not found', null, 404);
+		return Response::NewJsonError('Service not found', null, 404);
 	}
 }
 

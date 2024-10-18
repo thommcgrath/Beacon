@@ -6,7 +6,12 @@ use BeaconCommon, BeaconDatabase, BeaconUUID, Exception;
 trait MutableDatabaseObject {
 	protected $changedProperties = [];
 
-	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
+	// Called at the start of Create so that new objects can needed values
+	protected static function InitializeProperties(array &$properties): void {
+		// By default, do nothing
+	}
+
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
 		// By default, do nothing
 		return $value;
 	}
@@ -29,6 +34,7 @@ trait MutableDatabaseObject {
 	}
 
 	public static function Create(array $properties): DatabaseObject {
+		static::InitializeProperties($properties);
 		static::Validate($properties);
 
 		$schema = static::DatabaseSchema();
@@ -41,7 +47,7 @@ trait MutableDatabaseObject {
 		}
 
 		$primaryKeyPlaceholder = $primaryKeyColumn->Setter(1);
-		$values = [static::PreparePropertyValue($primaryKeyColumn, $primaryKey)];
+		$values = [static::PreparePropertyValue($primaryKeyColumn, $primaryKey, [])];
 		$placeholders = [$primaryKeyPlaceholder];
 		$columns = [$primaryKeyColumn->ColumnName()];
 		$placeholder = 2;
@@ -57,8 +63,16 @@ trait MutableDatabaseObject {
 				continue;
 			}
 
+			$dependsOn = $definition->DependsOn();
+			$otherProperties = [];
+			foreach ($dependsOn as $neededPropertyName) {
+				if (array_key_exists($neededPropertyName, $properties)) {
+					$otherProperties[$neededPropertyName] = $properties[$neededPropertyName];
+				}
+			}
+
 			$valuePlaceholder = $definition->Setter($placeholder++);
-			$value = static::PreparePropertyValue($definition, $properties[$propertyName]);
+			$value = static::PreparePropertyValue($definition, $properties[$propertyName], $otherProperties);
 
 			$placeholders[] = $valuePlaceholder;
 			$columns[] = $definition->ColumnName();
@@ -116,8 +130,14 @@ trait MutableDatabaseObject {
 				continue;
 			}
 
+			$dependsOn = $definition->DependsOn();
+			$otherProperties = [];
+			foreach ($dependsOn as $neededPropertyName) {
+				$otherProperties[$neededPropertyName] = $this->$neededPropertyName;
+			}
+
 			$assignments[] = $definition->ColumnName() . ' = ' . $definition->Setter('$' . $placeholder++);
-			$values[] = static::PreparePropertyValue($definition, $this->$propertyName);
+			$values[] = static::PreparePropertyValue($definition, $this->$propertyName, $otherProperties);
 		}
 		$values[] = $primaryKey;
 
