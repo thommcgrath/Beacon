@@ -13,6 +13,9 @@ function handleRequest(array $context): Response {
 		$serviceProperties = Core::BodyAsJson();
 		try {
 			$service->Edit($serviceProperties);
+			BeaconRabbitMQ::SendMessage('sentinel_watcher', 'com.thezaz.beacon.sentinel.updatedService', json_encode([
+				'service' => $service,
+			]));
 			return Response::NewJson($service, 200);
 		} catch (Exception $err) {
 			return Response::NewJsonError('Could not edit service: ' . $err->getMessage(), $serviceProperties, 400);

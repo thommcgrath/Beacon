@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Application, Response, Core};
-use BeaconAPI\v4\Sentinel\{Service, ServiceRefreshRequest, Subscription};
+use BeaconAPI\v4\Sentinel\{Service, Subscription};
 
 $requiredScopes[] = Application::kScopeSentinelServicesCreate;
 
@@ -44,18 +44,17 @@ function handleRequest(array $context): Response {
 	foreach ($serviceRequests as $serviceRequest) {
 		$serviceRequest['subscriptionId'] = $subscription->SubscriptionId();
 		try {
-			$newService = Service::Create($serviceRequest);
-			ServiceRefreshRequest::Create([
-				'serviceId' => $newService->ServiceId(),
-				'userId' => $userId,
-			]);
-			$newServices[] = $newService;
+			$newServices[] = Service::Create($serviceRequest);
 		} catch (Exception $err) {
 			$database->Rollback();
 			return Response::NewJsonError('Could not register service: ' . $err->getMessage(), $serviceRequest, 400);
 		}
 	}
 	$database->Commit();
+
+	BeaconRabbitMQ::SendMessage('sentinel_watcher', 'com.thezaz.beacon.sentinel.newServices', json_encode([
+		'services' => $newServices,
+	]));
 
 	if ($multiResponse) {
 		return Response::NewJson($newServices, 201);

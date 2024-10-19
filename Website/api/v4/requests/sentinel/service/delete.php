@@ -49,6 +49,9 @@ function handleRequest(array $context): Response {
 	}
 	try {
 		$database->Commit();
+		BeaconRabbitMQ::SendMessage('sentinel_watcher', 'com.thezaz.beacon.sentinel.deletedServices', json_encode([
+			'serviceIds' => $serviceIds,
+		]));
 		return Response::NewNoContent();
 	} catch (Exception $err) {
 		return Response::NewJsonError("There was an internal error while trying to delete the requested services.", ['error' => $err, 'serviceIds' => $serviceIds], 500);

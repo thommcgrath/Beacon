@@ -385,6 +385,14 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->inErrorState = $errored;
 	}
 
+	public function Delete(): void {
+		$schema = static::DatabaseSchema();
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET deleted = TRUE WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
+		$database->Commit();
+	}
+
 	public function RefreshDetails(): void {
 		$token = $this->ServiceToken();
 		if (is_null($token)) {

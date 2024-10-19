@@ -2,8 +2,6 @@
 
 use BeaconAPI\v4\{Application, Response, Core};
 use BeaconAPI\v4\Sentinel\{Service, RCONCommand};
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 
 $requiredScopes[] = Application::kScopeSentinelLogsUpdate;
 
@@ -32,18 +30,13 @@ function handleRequest(array $context): Response {
 		$command = RCONCommand::Create($obj);
 
 		// Send the command to RabbitMQ
-		$connection = new AMQPStreamConnection(BeaconCommon::GetGlobal('RabbitMQ Host'), BeaconCommon::GetGlobal('RabbitMQ Port'), BeaconCommon::GetGlobal('RabbitMQ User'), BeaconCommon::GetGlobal('RabbitMQ Password'), BeaconCommon::GetGlobal('RabbitMQ Virtual Host'));
-		$channel = $connection->channel();
-		$channel->queue_declare('', false, false, false, true);
-		$channel->basic_publish(new AMQPMessage(json_encode([
+		BeaconRabbitMQ::SendMessage('sentinel_watcher', 'com.thezaz.beacon.sentinel.rconCommand', json_encode([
 			'serviceId' => $serviceId,
 			'rconCommand' => $obj['command'],
 			'commandId' => $command->LogId(),
-		])), 'sentinel_watcher', 'com.thezaz.beacon.sentinel.rconCommand');
-		$channel->close();
-		$connection->close();
-		$database->Commit();
+		]));
 
+		$database->Commit();
 		return Response::NewJSON($command, 201);
 	} catch (Exception $err) {
 		$database->Rollback();
