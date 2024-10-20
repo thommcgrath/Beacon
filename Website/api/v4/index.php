@@ -161,14 +161,6 @@ Core::RegisterRoutes(
 			'PUT' => 'sentinel/service/edit',
 			'PATCH' => 'sentinel/service/edit',
 		],
-		'/sentinel/serviceRefreshRequests' => [
-			'GET' => 'sentinel/service_refresh_request/list',
-			'POST' => 'sentinel/service_refresh_request/create',
-		],
-		'/sentinel/serviceRefreshRequests/{requestId}' => [
-			'GET' => 'sentinel/service_refresh_request/get',
-			'DELETE' => 'sentinel/service_refresh_request/delete',
-		],
 		'/sentinel/subscription' => [
 			'GET' => 'sentinel/subscription/get',
 		],
