@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class LogMessage extends DatabaseObject implements JsonSerializable {
@@ -29,14 +29,14 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::LogLevelAlert,
 		self::LogLevelEmergency
 	];
-	
+
 	const LogTypeService = 'Service';
 	const LogTypeGameplay = 'Gameplay';
 	const LogTypes = [
 		self::LogTypeService,
 		self::LogTypeGameplay
 	];
-	
+
 	const AnalyzerStatusSkipped = 'Skipped';
 	const AnalyzerStatusPending = 'Pending';
 	const AnalyzerStatusAnalyzed = 'Analyzed';
@@ -45,7 +45,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::AnalyzerStatusPending,
 		self::AnalyzerStatusAnalyzed
 	];
-	
+
 	protected $messageId = null;
 	protected $serviceId = null;
 	protected $type = null;
@@ -54,7 +54,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	protected $level = null;
 	protected $analyzerStatus = null;
 	protected $metadata = null;
-	
+
 	public function __construct(BeaconRecordSet $row) {
 		$this->messageId = $row->Field('message_id');
 		$this->serviceId = $row->Field('service_id');
@@ -65,29 +65,44 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		$this->analyzerStatus = $row->Field('analyzer_status');
 		$this->metadata = json_decode($row->Field('metadata'), true);
 	}
-	
+
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('sentinel', 'service_logs', [
 			new DatabaseObjectProperty('messageId', ['primaryKey' => true, 'columnName' => 'message_id']),
 			new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
 			new DatabaseObjectProperty('type'),
-			new DatabaseObjectProperty('time', ['columnName' => 'log_time']),
+			new DatabaseObjectProperty('time', ['columnName' => 'log_time', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 			new DatabaseObjectProperty('message'),
 			new DatabaseObjectProperty('level'),
 			new DatabaseObjectProperty('analyzerStatus', ['columnName' => 'analyzer_status']),
 			new DatabaseObjectProperty('metadata')
-		]);	
+		]);
 	}
-	
+
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
-		$parameters->orderBy = $schema->Accessor('time') . ' DESC';
+		if (isset($filters['sortDirection'])) {
+			$sortDirection = (strtolower($filters['sortDirection']) === 'ascending' ? 'ASC' : 'DESC');
+		} else {
+			$sortDirection = 'DESC';
+		}
+		if (isset($filters['sortedColumn']) && $schema->hasProperty($filters['sortedColumn'])) {
+			$parameters->orderBy = $schema->Accessor($filters['sortedColumn']) . ' ' . $sortDirection;
+		} else {
+			$parameters->orderBy = $schema->Accessor('time') . ' ' . $sortDirection;
+		}
 		$parameters->AddFromFilter($schema, $filters, 'type');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'level');
 		$parameters->AddFromFilter($schema, $filters, 'analyzerStatus');
+
+		if (isset($filters['query'])) {
+			$languagePlaceholder = $parameters->AddValue('english');
+			$queryPlaceholder = $parameters->AddValue($filters['query']);
+			$parameters->clauses[] = 'message @@ websearch_to_tsquery($' . $languagePlaceholder . ', $' . $queryPlaceholder . ')';
+		}
 	}
-	
+
 	public static function Create(string $message, string $serviceId, ?string $level = null, ?string $type = null): LogMessage {
 		if (is_null($level) === false && in_array($level, self::LogLevels) === false) {
 			throw new Exception('Invalid log level');
@@ -95,7 +110,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		if (is_null($type) === false && in_array($type, self::LogTypes) === false) {
 			throw new Exception('Invalid log type');
 		}
-		
+
 		$log = new static();
 		$log->message = $message;
 		$log->serviceId = $serviceId;
@@ -107,38 +122,38 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 		return $log;
 	}
-	
+
 	protected static function HookConsumeLogLines(string $serviceId, float $last_timestamp, array $lines): array {
 		return [];
 	}
-	
+
 	public static function ConsumeLogFile(string $serviceId, string $file_content): array {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT COALESCE(EXTRACT(EPOCH FROM MAX(log_time)), 0) AS last_timestamp FROM sentinel.service_logs WHERE service_id = $1;', $serviceId);
 		$last_timestamp = floatval($rows->Field('last_timestamp'));
-		
+
 		// normalize line endings
 		$file_content = str_replace("\r\n", "\n", $file_content);
 		$file_content = str_replace("\r", "\n", $file_content);
-		
+
 		// split
 		$lines = explode("\n", $file_content);
-		
+
 		// let the game-specific class do the heavy lifting
 		$messages = static::HookConsumeLogLines($serviceId, $last_timestamp, $lines);
-		
+
 		// save
 		static::SaveLogs($messages);
-		
+
 		// and return
 		return $messages;
 	}
-	
+
 	public static function SaveLogs(array $messages): void {
 		if (count($messages) === 0) {
 			return;
 		}
-		
+
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		try {
@@ -152,11 +167,11 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 		$database->Commit();
 	}
-	
+
 	public static function RunAnalyzer(): void {
-		
+
 	}
-	
+
 	public static function GetMessageByID(string $messageId): ?LogMessage {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE message_id = $1;', $messageId);
@@ -165,7 +180,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 		return new static($rows);
 	}
-	
+
 	public static function GetMessagesForService(string $serviceId, int $offset = 0, int $limit = 500): array {
 		// Searches for a service or group
 		$database = BeaconCommon::Database();
@@ -177,12 +192,12 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 		return $messages;
 	}
-	
+
 	public function Save(): void {
 		$messages = [$this];
-		static::SaveLogs($messages);	
+		static::SaveLogs($messages);
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		return [
 			'messageId' => $this->messageId,
@@ -195,43 +210,43 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 			'metadata' => $this->metadata
 		];
 	}
-	
+
 	public function MessageId(): string {
 		return $this->messageId;
 	}
-	
+
 	public function ServiceId(): string {
 		return $this->serviceId;
 	}
-	
+
 	public function Type(): string {
 		return $this->type;
 	}
-	
+
 	public function Time(): float {
 		return $this->time;
 	}
-	
+
 	public function Message(): string {
 		return $this->message;
 	}
-	
+
 	public function Level(): string {
 		return $this->level;
 	}
-	
+
 	public function AnalyzerStatus(): string {
 		return $this->analyzerStatus;
 	}
-	
+
 	public function MetaData(): array {
 		return $this->metadata;
 	}
-	
+
 	public function IsError(): bool {
 		return 	in_array($this->level, self::ErrorLogLevels);
 	}
-	
+
 	/*public static function Search(string $serviceId, array $filters = [], bool $newest_first = true, int $page_num = 1, int $page_size = 250): array {
 		$page_num = max($page_num, 1);
 		$offset = $page_size * ($page_num - 1);
@@ -284,12 +299,12 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 		$main_sql .= ' OFFSET ' . $offset . ' LIMIT ' . $page_size . ';';
 		$total_sql .= ';';
-		
+
 		$database = BeaconCommon::Database();
 		$rows = $database->Query($main_sql, $values);
 		$totals = $database->Query($total_sql, $values);
 		$total = intval($totals->Field('num_results'));
-		
+
 		$results = [
 			'total' => $total,
 			'page' => $page_num,

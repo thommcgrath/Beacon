@@ -131,6 +131,11 @@ class Service extends DatabaseObject implements JsonSerializable {
 			$placeholder = $parameters->AddValue($filters['userId']);
 			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.resolved_permissions WHERE user_id = $' . $placeholder . ' AND permissions > 0)';
 		}
+
+		if (isset($filters['serviceGroupId'])) {
+			$placeholder = $parameters->AddValue($filters['serviceGroupId']);
+			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $' . $placeholder . ')';
+		}
 	}
 
 	protected static function ValidateProperty(string $property, mixed $value): void {

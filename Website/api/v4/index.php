@@ -106,11 +106,31 @@ Core::RegisterRoutes(
 			'GET' => 'pusher',
 		],
 		'/sentinel/services/{serviceId}/logs' => [
-			'GET' => 'sentinel/service/logs',
+			'GET' => 'sentinel/services/logs',
+		],
+		'/sentinel/serviceGroups' => [
+			'GET' => 'sentinel/serviceGroups/list',
+			'POST' => 'sentinel/serviceGroups/create',
+			'DELETE' => 'sentinel/serviceGroups/delete',
+		],
+		'/sentinel/serviceGroups/{serviceGroupId}' => [
+			'GET' => 'sentinel/serviceGroups/get',
+			'PATCH' => 'sentinel/serviceGroups/edit',
+			'DELETE' => 'sentinel/serviceGroups/delete',
 		],
 		'/sentinel/serviceGroups/{serviceGroupId}/members' => [
 			'GET' => 'sentinel/serviceGroups/members/list',
 			'POST' => 'sentinel/serviceGroups/members/edit',
+		],
+		'/sentinel/serviceGroupUsers' => [
+			'GET' => 'sentinel/serviceGroupUsers/list',
+			'POST' => 'sentinel/serviceGroupUsers/create',
+			'DELETE' => 'sentinel/serviceGroupUsers/delete',
+		],
+		'/sentinel/serviceGroupUsers/{serviceGroupUserId}' => [
+			'GET' => 'sentinel/serviceGroupUsers/get',
+			'PATCH' => 'sentinel/serviceGroupUsers/edit',
+			'DELETE' => 'sentinel/serviceGroupUsers/delete',
 		],
 		'/sessions/{sessionId}' => [
 			'GET' => 'sessions/get',
@@ -151,25 +171,24 @@ Core::RegisterRoutes(
 			'POST' => 'tokens/create',
 		],
 		'/sentinel/services' => [
-			'GET' => 'sentinel/service/list',
-			'POST' => 'sentinel/service/create',
-			'DELETE' => 'sentinel/service/delete',
+			'GET' => 'sentinel/services/list',
+			'POST' => 'sentinel/services/create',
+			'DELETE' => 'sentinel/services/delete',
 		],
 		'/sentinel/services/{serviceId}' => [
-			'GET' => 'sentinel/service/get',
-			'DELETE' => 'sentinel/service/delete',
-			'PUT' => 'sentinel/service/edit',
-			'PATCH' => 'sentinel/service/edit',
+			'GET' => 'sentinel/services/get',
+			'DELETE' => 'sentinel/services/delete',
+			'PATCH' => 'sentinel/services/edit',
 		],
 		'/sentinel/subscription' => [
-			'GET' => 'sentinel/subscription/get',
+			'GET' => 'sentinel/subscriptions/get',
 		],
 		'/sentinel/rconCommands' => [
-			'GET' => 'sentinel/rcon_command/list',
-			'POST' => 'sentinel/rcon_command/create',
+			'GET' => 'sentinel/rconCommands/list',
+			'POST' => 'sentinel/rconCommands/create',
 		],
 		'/sentinel/rconCommands/{logId}' => [
-			'GET' => 'sentinel/rcon_command/get',
+			'GET' => 'sentinel/rconCommands/get',
 		],
 	]
 );

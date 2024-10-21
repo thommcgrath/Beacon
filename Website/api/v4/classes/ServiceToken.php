@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconEncryption, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
+use BeaconCommon, BeaconEncryption, BeaconRabbitMQ, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
 
 class ServiceToken implements JsonSerializable {
 	final const ProviderNitrado = 'Nitrado';
@@ -134,6 +134,7 @@ class ServiceToken implements JsonSerializable {
 		$database->BeginTransaction();
 		if ($isUpdate) {
 			$database->Query("UPDATE public.service_tokens SET access_token = $2, refresh_token = $3, access_token_expiration = TO_TIMESTAMP($4), refresh_token_expiration = TO_TIMESTAMP($5), provider_specific = $6, needs_replacing = FALSE WHERE token_id = $1;", $tokenId, $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific));
+			BeaconRabbitMQ::SendMessage('sentinel_watcher', 'com.thezaz.beacon.sentinel.serviceTokenUpdated', json_encode(['serviceTokenId' => $tokenId]));
 		} else {
 			$database->Query("INSERT INTO public.service_tokens (token_id, user_id, provider, type, access_token, refresh_token, access_token_expiration, refresh_token_expiration, provider_specific, encryption_key) VALUES ($1, $2, $3, $4, $5, $6, TO_TIMESTAMP($7), TO_TIMESTAMP($8), $9, $10);", $tokenId, $userId, $provider, 'OAuth', $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific), $encryptedEncryptionKey);
 		}
@@ -498,6 +499,9 @@ class ServiceToken implements JsonSerializable {
 			$database->BeginTransaction();
 			$database->Query('DELETE FROM public.service_tokens WHERE token_id = $1;', $this->tokenId);
 			$database->Commit();
+
+			BeaconRabbitMQ::SendMessage('sentinel_watcher', 'com.thezaz.beacon.sentinel.serviceTokenDeleted', json_encode(['serviceTokenId' => $this->tokenId]));
+
 			return true;
 		}
 
