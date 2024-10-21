@@ -13,11 +13,11 @@ function handleRequest(array $context): Response {
 	} elseif (Core::IsJsonContentType()) {
 		$body = Core::BodyAsJson();
 		if (BeaconCommon::IsAssoc($body)) {
-			foreach ($body as $serviceGroupUser) {
-				$serviceGroupUserIds[] = $serviceGroupUser['serviceGroupUserId'];
-			}
+			$serviceGroupUserIds[] = $body['serviceGroupUserId'];
 		} else {
-			$serviceGroupUserIds = $body;
+			foreach ($body as $userObj) {
+				$serviceGroupUserIds[] = $userObj['serviceGroupUserId'];
+			}
 		}
 	}
 

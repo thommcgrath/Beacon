@@ -3,7 +3,7 @@
 use BeaconAPI\v4\{Application, Response, Core};
 use BeaconAPI\v4\Sentinel\{ServiceGroup, ServiceGroupUser};
 
-$requiredScopes[] = Application::kScopeSentinelServicesUpdate;
+$requiredScopes[] = Application::kScopeSentinelServicesRead;
 
 function handleRequest(array $context): Response {
 	$userId = Core::UserId();

@@ -118,10 +118,6 @@ Core::RegisterRoutes(
 			'PATCH' => 'sentinel/serviceGroups/edit',
 			'DELETE' => 'sentinel/serviceGroups/delete',
 		],
-		'/sentinel/serviceGroups/{serviceGroupId}/members' => [
-			'GET' => 'sentinel/serviceGroups/members/list',
-			'POST' => 'sentinel/serviceGroups/members/edit',
-		],
 		'/sentinel/serviceGroupUsers' => [
 			'GET' => 'sentinel/serviceGroupUsers/list',
 			'POST' => 'sentinel/serviceGroupUsers/create',
@@ -131,6 +127,15 @@ Core::RegisterRoutes(
 			'GET' => 'sentinel/serviceGroupUsers/get',
 			'PATCH' => 'sentinel/serviceGroupUsers/edit',
 			'DELETE' => 'sentinel/serviceGroupUsers/delete',
+		],
+		'/sentinel/serviceGroupMembers' => [
+			'GET' => 'sentinel/serviceGroupMembers/list',
+			'POST' => 'sentinel/serviceGroupMembers/create',
+			'DELETE' => 'sentinel/serviceGroupMembers/delete',
+		],
+		'/sentinel/serviceGroupMembers/{serviceGroupMemberId}' => [
+			'GET' => 'sentinel/serviceGroupMembers/get',
+			'DELETE' => 'sentinel/serviceGroupMembers/delete',
 		],
 		'/sessions/{sessionId}' => [
 			'GET' => 'sessions/get',

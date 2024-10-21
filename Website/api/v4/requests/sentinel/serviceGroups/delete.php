@@ -7,18 +7,17 @@ $requiredScopes[] = Application::kScopeSentinelServicesRead;
 
 function handleRequest(array $context): Response {
 	$userId = Core::UserId();
-
 	$serviceGroupIds = [];
 	if (isset($context['pathParameters']['serviceGroupId'])) {
 		$serviceGroupIds = explode(',', $context['pathParameters']['serviceGroupId']);
 	} elseif (Core::IsJsonContentType()) {
 		$body = Core::BodyAsJson();
 		if (BeaconCommon::IsAssoc($body)) {
-			foreach ($body as $serviceGroup) {
-				$serviceGroupIds[] = $serviceGroup['serviceGroupId'];
-			}
+			$serviceGroupIds[] = $body['serviceGroupId'];
 		} else {
-			$serviceGroupIds = $body;
+			foreach ($body as $groupObj) {
+				$serviceGroupIds[] = $groupObj['serviceGroupId'];
+			}
 		}
 	}
 

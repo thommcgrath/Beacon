@@ -41,7 +41,7 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 
 	public function jsonSerialize(): mixed {
 		return [
-			'groupId' => $this->groupId,
+			'serviceGroupId' => $this->groupId,
 			'userId' => $this->userId,
 			'name' => $this->name,
 			'color' => $this->color
