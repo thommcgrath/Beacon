@@ -1,12 +1,14 @@
 <?php
 
-BeaconAPI::Authorize();
+use BeaconAPI\v4\{Application, Response, Core};
+use BeaconAPI\v4\Sentinel\{PlayerNote};
+
+$requiredScopes[] = Application::kScopeSentinelPlayersRead;
 
 function handleRequest(array $context): Response {
-	$user_id = BeaconAPI::UserID();
-	
-	$notes = Sentinel\PlayerNote::Search($_GET);
-	BeaconAPI::ReplySuccess($notes);
+	$filters = $_GET;
+	$playerNotes = PlayerNote::Search($filters);
+	return Response::NewJson($playerNotes, 200);
 }
 
 ?>

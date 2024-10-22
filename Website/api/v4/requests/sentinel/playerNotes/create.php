@@ -1,15 +1,18 @@
 <?php
 
-BeaconAPI::Authorize();
-	
+use BeaconAPI\v4\{Application, Response, Core};
+use BeaconAPI\v4\Sentinel\{PlayerNote};
+
+$requiredScopes[] = Application::kScopeSentinelPlayersUpdate;
+
 function handleRequest(array $context): Response {
-	$user_id = BeaconAPI::UserID();
-		
+	$noteProperties = Core::BodyAsJson();
+	$noteProperties['userId'] = Core::UserId();
 	try {
-		$note = Sentinel\PlayerNote::Create($user_id, BeaconAPI::JSONPayload());
-		BeaconAPI::ReplySuccess($note);
+		$note = PlayerNote::Create($noteProperties);
+		return Response::NewJson($note, 201);
 	} catch (Exception $err) {
-		BeaconAPI::ReplyError($err->getMessage(), null, 400);
+		return Response::NewJsonError('Could not create player note: ' . $err->getMessage(), $noteProperties, 400);
 	}
 }
 

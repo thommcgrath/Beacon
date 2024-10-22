@@ -201,6 +201,14 @@ Core::RegisterRoutes(
 		'/sentinel/players/{playerId}' => [
 			'GET' => 'sentinel/players/get',
 		],
+		'/sentinel/playerNotes' => [
+			'GET' => 'sentinel/playerNotes/list',
+			'POST' => 'sentinel/playerNotes/create',
+		],
+		'/sentinel/playerNotes/{playerNoteId}' => [
+			'GET' => 'sentinel/playerNotes/get',
+			'PATCH' => 'sentinel/playerNotes/edit',
+		],
 	]
 );
 
