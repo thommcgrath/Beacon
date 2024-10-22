@@ -1,24 +1,17 @@
 <?php
 
-BeaconAPI::Authorize();
+use BeaconAPI\v4\{Application, Response, Core};
+use BeaconAPI\v4\Sentinel\{Player};
+
+$requiredScopes[] = Application::kScopeSentinelPlayersRead;
 
 function handleRequest(array $context): Response {
-	if (isset($_GET['player_id'])) {
-		$player_id = trim($_GET['player_id']);
-		$player = Sentinel\Player::GetByPlayerID($player_id);
-		BeaconAPI::ReplySuccess($player);
-	} elseif (isset($_GET['player_name'])) {
-		$player_name = trim($_GET['player_name']);
-		if (isset($_GET['provider'])) {
-			$provider = trim($_GET['provider']);
-		} else {
-			$provider = null;
-		}
-		$players = Sentinel\Player::GetByName($player_name, $provider);
-		BeaconAPI::ReplySuccess($players);
-	} else {
-		BeaconAPI::ReplyError('Bad request', null, 400);
+	$playerId = $context['pathParameters']['playerId'];
+	$player = Player::Fetch($playerId);
+	if (is_null($player)) {
+		return Response::NewJsonError('Player not found', $playerId, 404);
 	}
+	return Response::NewJson($player, 200);
 }
 
 ?>

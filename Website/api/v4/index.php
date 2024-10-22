@@ -195,6 +195,12 @@ Core::RegisterRoutes(
 		'/sentinel/rconCommands/{logId}' => [
 			'GET' => 'sentinel/rconCommands/get',
 		],
+		'/sentinel/players' => [
+			'GET' => 'sentinel/players/list',
+		],
+		'/sentinel/players/{playerId}' => [
+			'GET' => 'sentinel/players/get',
+		],
 	]
 );
 
