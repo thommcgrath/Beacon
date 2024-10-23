@@ -83,13 +83,13 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
+		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_services WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
 		if ($rows->RecordCount() !== 0) {
 			return false;
 		}
 
 		$database->BeginTransaction();
-		$database->Query('INSERT INTO sentinel.service_group_members (group_id, service_id) VALUES ($1, $2);', $this->groupId, $serviceId);
+		$database->Query('INSERT INTO sentinel.service_group_services (group_id, service_id) VALUES ($1, $2);', $this->groupId, $serviceId);
 		$database->Commit();
 		return true;
 	}
@@ -105,13 +105,13 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
+		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_services WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
 		if ($rows->RecordCount() !== 1) {
 			return false;
 		}
 
 		$database->BeginTransaction();
-		$database->Query('DELETE FROM sentinel.service_group_members WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
+		$database->Query('DELETE FROM sentinel.service_group_services WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
 		$database->Commit();
 		return true;
 	}
@@ -122,7 +122,7 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1;', $this->groupId);
+		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_services WHERE group_id = $1;', $this->groupId);
 		$ids = [];
 		while (!$rows->EOF()) {
 			$ids[] = $rows->Field('service_id');

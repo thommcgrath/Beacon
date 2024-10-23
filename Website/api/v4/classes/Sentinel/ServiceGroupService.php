@@ -4,24 +4,27 @@ namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject};
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
-class ServiceGroupMember extends DatabaseObject implements JsonSerializable {
+class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
 
-	protected string $serviceGroupMemberId;
+	protected string $serviceGroupServiceId;
 	protected string $serviceGroupId;
 	protected string $serviceId;
+	protected int $permissions;
 
 	public function __construct(BeaconRecordSet $row) {
-		$this->serviceGroupMemberId = $row->Field('service_group_member_id');
+		$this->serviceGroupServiceId = $row->Field('service_group_service_id');
 		$this->serviceGroupId = $row->Field('service_group_id');
 		$this->serviceId = $row->Field('service_id');
+		$this->permissions = $row->Field('permissions');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('sentinel', 'service_group_members', [
-			new DatabaseObjectProperty('serviceGroupMemberId', ['columnName' => 'service_group_member_id', 'primaryKey' => true, 'required' => false]),
+		return new DatabaseSchema('sentinel', 'service_group_services', [
+			new DatabaseObjectProperty('serviceGroupServiceId', ['columnName' => 'service_group_service_id', 'primaryKey' => true, 'required' => false]),
 			new DatabaseObjectProperty('serviceGroupId', ['columnName' => 'service_group_id']),
 			new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
+			new DatabaseObjectProperty('permissions', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 		]);
 	}
 
@@ -34,14 +37,15 @@ class ServiceGroupMember extends DatabaseObject implements JsonSerializable {
 
 	public function jsonSerialize(): mixed {
 		return [
-			'serviceGroupMemberId' => $this->serviceGroupMemberId,
+			'serviceGroupServiceId' => $this->serviceGroupServiceId,
 			'serviceGroupId' => $this->serviceGroupId,
 			'serviceId' => $this->serviceId,
+			'permissions' => $this->permissions,
 		];
 	}
 
-	public function ServiceGroupMemberId(): string {
-		return $this->serviceGroupMemberId;
+	public function ServiceGroupServiceId(): string {
+		return $this->serviceGroupServiceId;
 	}
 
 	public function ServiceGroupId(): string {
@@ -50,6 +54,10 @@ class ServiceGroupMember extends DatabaseObject implements JsonSerializable {
 
 	public function ServiceId(): string {
 		return $this->serviceId;
+	}
+
+	public function Permissions(): int {
+		return $this->permissions;
 	}
 }
 

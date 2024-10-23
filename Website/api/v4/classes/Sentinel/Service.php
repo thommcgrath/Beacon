@@ -129,12 +129,12 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 		if (isset($filters['userId'])) {
 			$placeholder = $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.resolved_permissions WHERE user_id = $' . $placeholder . ' AND permissions > 0)';
+			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.service_permissions WHERE user_id = $' . $placeholder . ' AND permissions > 0)';
 		}
 
 		if (isset($filters['serviceGroupId'])) {
 			$placeholder = $parameters->AddValue($filters['serviceGroupId']);
-			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $' . $placeholder . ')';
+			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.service_group_services WHERE group_id = $' . $placeholder . ')';
 		}
 	}
 
@@ -360,7 +360,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public function GetPermissions(string $userId): int {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.resolved_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $userId);
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $userId);
 		if ($rows->RecordCount() === 1) {
 			return $rows->Field('permissions');
 		} else {

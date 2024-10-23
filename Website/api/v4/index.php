@@ -128,14 +128,15 @@ Core::RegisterRoutes(
 			'PATCH' => 'sentinel/serviceGroupUsers/edit',
 			'DELETE' => 'sentinel/serviceGroupUsers/delete',
 		],
-		'/sentinel/serviceGroupMembers' => [
-			'GET' => 'sentinel/serviceGroupMembers/list',
-			'POST' => 'sentinel/serviceGroupMembers/create',
-			'DELETE' => 'sentinel/serviceGroupMembers/delete',
+		'/sentinel/serviceGroupServices' => [
+			'GET' => 'sentinel/serviceGroupServices/list',
+			'POST' => 'sentinel/serviceGroupServices/create',
+			'DELETE' => 'sentinel/serviceGroupServices/delete',
 		],
-		'/sentinel/serviceGroupMembers/{serviceGroupMemberId}' => [
-			'GET' => 'sentinel/serviceGroupMembers/get',
-			'DELETE' => 'sentinel/serviceGroupMembers/delete',
+		'/sentinel/serviceGroupServices/{serviceGroupServiceId}' => [
+			'GET' => 'sentinel/serviceGroupServices/get',
+			'PATCH' => 'sentinel/serviceGroupServices/edit',
+			'DELETE' => 'sentinel/serviceGroupServices/delete',
 		],
 		'/sessions/{sessionId}' => [
 			'GET' => 'sessions/get',

@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Application, Response, Core};
-use BeaconAPI\v4\Sentinel\{ServiceGroup, ServiceGroupMember};
+use BeaconAPI\v4\Sentinel\{ServiceGroup, ServiceGroupService};
 
 $requiredScopes[] = Application::kScopeSentinelServicesRead;
 
@@ -15,7 +15,7 @@ function handleRequest(array $context): Response {
 			return Response::NewJsonError('Service group not found', null, 404);
 		}
 	}
-	return Response::NewJson(ServiceGroupMember::Search($filters), 200);
+	return Response::NewJson(ServiceGroupService::Search($filters), 200);
 }
 
 ?>

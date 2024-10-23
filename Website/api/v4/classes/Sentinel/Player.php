@@ -60,7 +60,7 @@ class Player extends DatabaseObject implements JsonSerializable {
 			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_characters WHERE service_id = $' . $placeholder . ')';
 		} elseif (isset($filters['serviceGroupId'])) {
 			$placeholder = $parameters->AddValue($filters['serviceGroupId']);
-			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_characters WHERE service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE service_group_id = $' . $placeholder . '))';
+			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_characters WHERE service_id IN (SELECT service_id FROM sentinel.service_group_services WHERE service_group_id = $' . $placeholder . '))';
 		}
 	}
 

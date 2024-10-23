@@ -184,7 +184,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	public static function GetMessagesForService(string $serviceId, int $offset = 0, int $limit = 500): array {
 		// Searches for a service or group
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id = $1 OR service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY log_time DESC OFFSET $2 LIMIT $3;', $serviceId, $offset, $limit);
+		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id = $1 OR service_id IN (SELECT service_id FROM sentinel.service_group_services WHERE group_id = $1) ORDER BY log_time DESC OFFSET $2 LIMIT $3;', $serviceId, $offset, $limit);
 		$messages = [];
 		while (!$rows->EOF()) {
 			$messages[] = new static($rows);
