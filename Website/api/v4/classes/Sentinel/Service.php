@@ -11,10 +11,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		Validate as protected MutableDatabaseObjectValidate;
 	}
 
-	const PermissionView = 1;
-	const PermissionEdit = 2;
-	const PermissionDelete = 4;
-
 	const GameArk = 'Ark';
 	const GameArkSA = 'ArkSA';
 	const Games = [

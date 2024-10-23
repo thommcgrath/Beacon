@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Application, Response, Core};
-use BeaconAPI\v4\Sentinel\{Service};
+use BeaconAPI\v4\Sentinel\{PermissionBits, Service};
 
 $requiredScopes[] = Application::kScopeSentinelServicesUpdate;
 
@@ -9,7 +9,7 @@ function handleRequest(array $context): Response {
 	$userId = Core::UserId();
 
 	$service = Service::Fetch($context['pathParameters']['serviceId']);
-	if ($service && $service->HasPermission($userId, Service::PermissionEdit)) {
+	if ($service && $service->HasPermission($userId, PermissionBits::ServiceUpdate)) {
 		$serviceProperties = Core::BodyAsJson();
 		try {
 			$service->Edit($serviceProperties);

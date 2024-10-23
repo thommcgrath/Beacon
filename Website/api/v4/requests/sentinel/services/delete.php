@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Application, Response, Core};
-use BeaconAPI\v4\Sentinel\{Service};
+use BeaconAPI\v4\Sentinel\{PermissionBits, Service};
 
 $requiredScopes[] = Application::kScopeSentinelServicesDelete;
 
@@ -35,7 +35,7 @@ function handleRequest(array $context): Response {
 	$database->BeginTransaction();
 	foreach ($serviceIds as $serviceId) {
 		$service = Service::Fetch($serviceId);
-		if ($service && $service->HasPermission($userId, Service::PermissionDelete)) {
+		if ($service && $service->HasPermission($userId, PermissionBits::ServiceDelete)) {
 			try {
 				$service->Delete();
 			} catch (Exception $err) {

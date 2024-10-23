@@ -7,10 +7,6 @@ use BeaconCommon, BeaconRecordSet, JsonSerializable;
 class ServiceGroup extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
 
-	const PermissionView = 1;
-	const PermissionEdit = 2;
-	const PermissionDelete = 4;
-
 	protected string $groupId;
 	protected string $userId;
 	protected string $name;
@@ -70,65 +66,6 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 
 	public function SetColor(string $color): void {
 		$this->SetProperty('color', $color);
-	}
-
-	public function AddService(string $serviceId, string $userId): bool {
-		if (BeaconCommon::IsUUID($serviceId) === false) {
-			return false;
-		}
-
-		$service = Service::Fetch($serviceId);
-		if (is_null($service) || $service->HasPermission($userId, Service::PermissionEdit) === false) {
-			return false;
-		}
-
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_services WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
-		if ($rows->RecordCount() !== 0) {
-			return false;
-		}
-
-		$database->BeginTransaction();
-		$database->Query('INSERT INTO sentinel.service_group_services (group_id, service_id) VALUES ($1, $2);', $this->groupId, $serviceId);
-		$database->Commit();
-		return true;
-	}
-
-	public function RemoveService(string $serviceId, string $userId): bool {
-		if (BeaconCommon::IsUUID($serviceId) === false) {
-			return false;
-		}
-
-		$service = Service::Fetch($serviceId);
-		if (is_null($service) || $service->HasPermission($userId, Service::PermissionEdit) === false) {
-			return false;
-		}
-
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_services WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
-		if ($rows->RecordCount() !== 1) {
-			return false;
-		}
-
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM sentinel.service_group_services WHERE group_id = $1 AND service_id = $2;', $this->groupId, $serviceId);
-		$database->Commit();
-		return true;
-	}
-
-	public function LoadServices(bool $fullObjects = true): array {
-		if ($fullObjects) {
-			return Service::Search(['serviceGroupId' => $this->groupId]);
-		}
-
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_services WHERE group_id = $1;', $this->groupId);
-		$ids = [];
-		while (!$rows->EOF()) {
-			$ids[] = $rows->Field('service_id');
-			$rows->MoveNext();
-		}
-		return $ids;
 	}
 
 	public function GetPermissions(string $userId): int {

@@ -1,14 +1,14 @@
 <?php
 
 use BeaconAPI\v4\{Application, Response, Core};
-use BeaconAPI\v4\Sentinel\{ServiceGroup};
+use BeaconAPI\v4\Sentinel\{PermissionBits, ServiceGroup};
 
 $requiredScopes[] = Application::kScopeSentinelServicesUpdate;
 
 function handleRequest(array $context): Response {
 	$userId = Core::UserId();
 	$group = ServiceGroup::Fetch($context['pathParameters']['serviceGroupId']);
-	if (is_null($group) || $group->HasPermission($userId, ServiceGroup::PermissionEdit) === false) {
+	if (is_null($group) || $group->HasPermission($userId, PermissionBits::ServiceGroupUpdate) === false) {
 		return Response::NewJsonError('Service group not found', null, 404);
 	}
 	$groupProperties = Core::BodyAsJson();

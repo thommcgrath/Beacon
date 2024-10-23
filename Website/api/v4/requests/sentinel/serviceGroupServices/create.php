@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Application, Response, Core};
-use BeaconAPI\v4\Sentinel\{ServiceGroup, ServiceGroupService};
+use BeaconAPI\v4\Sentinel\{PermissionBits, ServiceGroup, ServiceGroupService};
 
 $requiredScopes[] = Application::kScopeSentinelServicesCreate;
 
@@ -36,7 +36,7 @@ function handleRequest(array $context): Response {
 		$serviceGroupId = $serviceGroupServiceRequest['serviceGroupId'];
 		if (isset($serviceGroupCache[$serviceGroupId]) === false) {
 			$serviceGroup = ServiceGroup::Fetch($serviceGroupId);
-			if (is_null($serviceGroup) || $serviceGroup->HasPermission($userId, ServiceGroup::PermissionEdit) === false) {
+			if (is_null($serviceGroup) || $serviceGroup->HasPermission($userId, PermissionBits::ServiceGroupUpdateContents) === false) {
 				return Response::NewJsonError('Service group not found', $serviceGroupId, 400);
 			}
 			$serviceGroupCache[$serviceGroupId] = $serviceGroup;

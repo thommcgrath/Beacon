@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Application, Response, Core};
-use BeaconAPI\v4\Sentinel\{Service, RCONCommand};
+use BeaconAPI\v4\Sentinel\{PermissionBits, Service, RCONCommand};
 
 $requiredScopes[] = Application::kScopeSentinelLogsUpdate;
 
@@ -19,7 +19,7 @@ function handleRequest(array $context): Response {
 	}
 
 	$service = Service::Fetch($serviceId);
-	if (is_null($service) || $service->HasPermission($userId, Service::PermissionEdit) === false) {
+	if (is_null($service) || $service->HasPermission($userId, PermissionBits::ServiceUpdate) === false) {
 		return Response::NewJsonError('User not authorized for this service.', null, 400);
 	}
 
