@@ -507,6 +507,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ForcedContentPacks() As Beacon.StringList
+		  Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity) As Beacon.Project
 		  Var AdditionalProperties As New Dictionary
 		  Return FromSaveData(SaveData, Identity, AdditionalProperties)

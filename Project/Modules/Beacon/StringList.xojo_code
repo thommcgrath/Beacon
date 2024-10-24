@@ -125,6 +125,23 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Add(Other As Beacon.StringList) As Beacon.StringList
+		  Var NewList As New Beacon.StringList
+		  For Each Member As String In Self.mItems
+		    NewList.mItems.Add(Member)
+		  Next
+		  If (Other Is Nil) = False Then
+		    For Each Member As String In Other.mItems
+		      If NewList.mItems.IndexOf(Member) = -1 Then
+		        NewList.mItems.Add(Member)
+		      End If
+		    Next
+		  End If
+		  Return NewList
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.StringList) As Integer
 		  If Other = Nil Then
 		    Return 1

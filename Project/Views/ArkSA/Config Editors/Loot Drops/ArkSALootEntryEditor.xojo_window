@@ -1005,7 +1005,7 @@ End
 		    Return
 		  End If
 		  
-		  Var ModPicker As New ModSelectionGrid(ArkSA.DataSource.Pool.Get(False), Self.mMods)
+		  Var ModPicker As New ModSelectionGrid(ArkSA.DataSource.Pool.Get(False), Self.mMods, Nil)
 		  Var Controller As New PopoverController("Select Mods", ModPicker)
 		  Controller.Show(Me)
 		  

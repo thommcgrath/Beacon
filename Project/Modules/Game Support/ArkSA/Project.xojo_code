@@ -801,6 +801,22 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ForcedContentPacks() As Beacon.StringList
+		  Var Mods As Beacon.StringList = Super.ForcedContentPacks()
+		  If Mods Is Nil Then
+		    Mods = New Beacon.StringList
+		  End If
+		  
+		  Var Maps() As Beacon.Map = ArkSA.Maps.ForMask(Self.mMapMask)
+		  For Each Map As Beacon.Map In Maps
+		    Mods.Append(Map.ContentPackId)
+		  Next
+		  
+		  Return Mods
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameId() As String
 		  Return ArkSA.Identifier
 		End Function
