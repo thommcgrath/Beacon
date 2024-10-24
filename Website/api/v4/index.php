@@ -210,6 +210,36 @@ Core::RegisterRoutes(
 			'GET' => 'sentinel/playerNotes/get',
 			'PATCH' => 'sentinel/playerNotes/edit',
 		],
+		'/sentinel/scripts' => [
+			'GET' => 'sentinel/scripts/list',
+			'POST' => 'sentinel/scripts/create',
+			'DELETE' => 'sentinel/scripts/delete',
+		],
+		'/sentinel/scripts/{scriptId}' => [
+			'GET' => 'sentinel/scripts/get',
+			'PATCH' => 'sentinel/scripts/edit',
+			'DELETE' => 'sentinel/scripts/delete',
+		],
+		'/sentinel/scriptUsers' => [
+			'GET' => 'sentinel/scriptUsers/list',
+			'POST' => 'sentinel/scriptUsers/create',
+			'DELETE' => 'sentinel/scriptUsers/delete',
+		],
+		'/sentinel/scriptUsers/{scriptUserId}' => [
+			'GET' => 'sentinel/scriptUsers/get',
+			'PATCH' => 'sentinel/scriptUsers/edit',
+			'DELETE' => 'sentinel/scriptUsers/delete',
+		],
+		'/sentinel/serviceGroupScripts' => [
+			'GET' => 'sentinel/serviceGroupScripts/list',
+			'POST' => 'sentinel/serviceGroupScripts/create',
+			'DELETE' => 'sentinel/serviceGroupScripts/delete',
+		],
+		'/sentinel/serviceGroupScripts/{serviceGroupScriptId}' => [
+			'GET' => 'sentinel/serviceGroupScripts/get',
+			'PATCH' => 'sentinel/serviceGroupScripts/edit',
+			'DELETE' => 'sentinel/serviceGroupScripts/delete',
+		],
 	]
 );
 
