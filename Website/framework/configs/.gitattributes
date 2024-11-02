@@ -2,5 +2,3 @@ aus-web-1.php filter=git-crypt-host-aus-web-1 diff=git-crypt-host-aus-web-1
 useast-web-1.php filter=git-crypt-host-useast-web-1 diff=git-crypt-host-useast-web-1
 impulse.php filter=git-crypt-host-impulse diff=git-crypt-host-impulse
 local.php filter=git-crypt-host-local diff=git-crypt-host-local
-eur-web-1.php filter=git-crypt-host-eur-web-1 diff=git-crypt-host-eur-web-1
-uswest-web-1.php filter=git-crypt-host-uswest-web-1 diff=git-crypt-host-uswest-web-1
