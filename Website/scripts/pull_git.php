@@ -46,9 +46,9 @@ if ($current_hash === $desired_hash) {
 
 $commands = [
 	'cd ' . escapeshellarg($root),
-	//'git clean -fd',
-	//'git pull',
-	//'git reset --hard ' . escapeshellarg($desired_hash),
+	'git clean -fd',
+	'git pull',
+	'git reset --hard ' . escapeshellarg($desired_hash),
 ];
 
 if (file_exists("{$root}/Website/composer.phar")) {
