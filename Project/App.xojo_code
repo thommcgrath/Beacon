@@ -249,6 +249,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  #endif
 		  
+		  #if DebugBuild And TargetMacOS
+		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_DebugWait)
+		  #endif
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckBetaExpiration)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupLogs)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
@@ -1043,6 +1046,20 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Sub LaunchQueue_CleanupConfigBackups()
 		  Beacon.CleanupConfigBackups()
 		  Self.NextLaunchQueueTask
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_DebugWait()
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Var Primer As New URLConnection
+		    Call Primer.SendSync("GET", "https://local-api.usebeacon.app/")
+		    Self.NextLaunchQueueTask()
+		  Catch Err As RuntimeException
+		    Call CallLater.Schedule(1000, AddressOf NextLaunchQueueTask)
+		  End Try
+		  #Pragma BreakOnExceptions Default
 		End Sub
 	#tag EndMethod
 

@@ -262,7 +262,14 @@ End
 		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue), UserId)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
 		      Self.List.CellTextAt(RowIdx, Self.ColumnGame) = Language.GameName(Project.GameId)
-		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
+		      Select Case Project.GameId
+		      Case Ark.Identifier
+		        Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
+		      Case ArkSA.Identifier
+		        Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = ArkSA.Maps.ForMask(Project.ArkMapMask).Label
+		      Else
+		        Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = "N/A"
+		      End Select
 		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
 		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnDownloads) = Project.DownloadCount.ToString(Locale.Current, "#,##0")

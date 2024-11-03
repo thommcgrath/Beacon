@@ -67,6 +67,8 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		  Self.mLimits = Source.mLimits.Clone
 		  Self.mMode = Source.mMode
 		  Self.mLastUpdate = Source.mLastUpdate
+		  Self.mPendingSetsString = Source.mPendingSetsString
+		  Self.mPendingLimitsString = Source.mPendingLimitsString
 		  
 		  Self.mSets.ResizeTo(Source.mSets.LastIndex)
 		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastIndex
@@ -98,6 +100,7 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
+		  Self.LoadPendingSets()
 		  Return Self.mSets.Count
 		End Function
 	#tag EndMethod
@@ -249,6 +252,7 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Set As Ark.SpawnPointSet) As Integer
+		  Self.LoadPendingSets()
 		  For I As Integer = 0 To Self.mSets.LastIndex
 		    If Self.mSets(I) = Set Then
 		      Return I
@@ -270,6 +274,7 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		Function Iterator() As Iterator
 		  // Part of the Iterable interface.
 		  
+		  Self.LoadPendingSets()
 		  Var Sets() As Variant
 		  Sets.ResizeTo(Self.mSets.LastIndex)
 		  For I As Integer = 0 To Self.mSets.LastIndex
@@ -295,6 +300,8 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h0
 		Function Limit(CreatureRef As Ark.BlueprintReference) As Double
+		  Self.LoadPendingLimits()
+		  
 		  If Self.mLimits.HasBlueprint(CreatureRef) Then
 		    Return Self.mLimits.Value(CreatureRef, Self.LimitAttribute)
 		  Else
@@ -305,6 +312,8 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h0
 		Function Limit(Creature As Ark.Creature) As Double
+		  Self.LoadPendingLimits()
+		  
 		  If Self.mLimits.HasBlueprint(Creature) Then
 		    Return Self.mLimits.Value(Creature, Self.LimitAttribute)
 		  Else
@@ -315,6 +324,8 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h0
 		Function Limits() As Dictionary
+		  Self.LoadPendingLimits()
+		  
 		  Var Limits As New Dictionary
 		  Var References() As Ark.BlueprintReference = Self.mLimits.References
 		  For Each Reference As Ark.BlueprintReference In References
@@ -330,13 +341,68 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LimitsString(Pretty As Boolean = False) As String
+		Function LimitsString() As String
+		  If Self.mPendingLimitsString.IsEmpty = False Then
+		    Return Self.mPendingLimitsString
+		  End If
+		  
 		  Try
-		    Return Beacon.GenerateJSON(Self.mLimits.SaveData, Pretty)
+		    Return Beacon.GenerateJSON(Self.mLimits.SaveData, False)
 		  Catch Err As RuntimeException
 		    Return ""
 		  End Try
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub LoadPendingLimits()
+		  If Self.mPendingLimitsString.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Try
+		    Self.mLimits = Ark.BlueprintAttributeManager.FromSaveData(Beacon.ParseJSON(Self.mPendingLimitsString))
+		    If Self.mLimits Is Nil Then
+		      Self.mLimits = New Ark.BlueprintAttributeManager
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.mPendingLimitsString = ""
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub LoadPendingSets()
+		  If Self.mPendingSetsString.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Try
+		    Var Names() As String
+		    Var Children() As Variant = Beacon.ParseJSON(Self.mPendingSetsString)
+		    Self.mSets.ResizeTo(-1)
+		    For Each SaveData As Dictionary In Children
+		      Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(SaveData)
+		      If Set Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var Label As String = Set.Label
+		      Var AdjustedLabel As String = Beacon.FindUniqueLabel(Label, Names)
+		      If AdjustedLabel <> Label Then
+		        Var Mutable As New Ark.MutableSpawnPointSet(Set)
+		        Mutable.Label = AdjustedLabel
+		        Set = New Ark.SpawnPointSet(Mutable)
+		      End If
+		      Names.Add(AdjustedLabel)
+		      Self.mSets.Add(Set)
+		    Next
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.mPendingSetsString = ""
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -395,6 +461,9 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		  Self.LoadPendingSets()
+		  Self.LoadPendingLimits()
+		  
 		  Var Sets() As Dictionary
 		  For Each Set As Ark.SpawnPointSet In Self.mSets
 		    Sets.Add(Set.SaveData(ForAPI))
@@ -449,12 +518,17 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 
 	#tag Method, Flags = &h0
 		Function Set(Index As Integer) As Ark.SpawnPointSet
+		  Self.LoadPendingSets()
 		  Return New Ark.SpawnPointSet(Self.mSets(Index))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SetsString(Pretty As Boolean = False) As String
+		Function SetsString() As String
+		  If Self.mPendingSetsString.IsEmpty = False Then
+		    Return Self.mPendingSetsString
+		  End If
+		  
 		  Var Objects() As Variant
 		  For Each Set As Ark.SpawnPointSet In Self.mSets
 		    If (Set Is Nil) = False Then
@@ -462,7 +536,7 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		    End If
 		  Next
 		  Try
-		    Return Beacon.GenerateJSON(Objects, Pretty)
+		    Return Beacon.GenerateJSON(Objects, False)
 		  Catch Err As RuntimeException
 		    Return ""
 		  End Try
@@ -552,6 +626,14 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 
 	#tag Property, Flags = &h1
 		Protected mPath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mPendingLimitsString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mPendingSetsString As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

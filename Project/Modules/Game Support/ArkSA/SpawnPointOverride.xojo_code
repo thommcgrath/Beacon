@@ -20,11 +20,11 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate,Beac
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Point As ArkSA.SpawnPoint, Mode As Integer, IncludeContents As Boolean)
+		Sub Constructor(Point As ArkSA.SpawnPoint, Mode As Integer, WithDefaults As Boolean)
 		  Self.Constructor(New ArkSA.BlueprintReference(Point), Mode)
 		  Self.mAvailability = Point.Availability
 		  
-		  If IncludeContents = False Then
+		  If WithDefaults = False Then
 		    Return
 		  End If
 		  
@@ -34,10 +34,11 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate,Beac
 		    Self.mSets.Add(Set.ImmutableClone)
 		  Next
 		  
-		  Self.mLimits = ArkSA.BlueprintAttributeManager.FromSaveData(Point.LimitsString)
-		  If Self.mLimits Is Nil Then
-		    Self.mLimits = New ArkSA.BlueprintAttributeManager
-		  End If
+		  Var Limits As Dictionary = Point.Limits
+		  Self.mLimits = New ArkSA.BlueprintAttributeManager
+		  For Each Entry As DictionaryEntry In Limits
+		    Self.mLimits.Value(ArkSA.Creature(Entry.Key), Self.LimitAttribute) = Entry.Value.DoubleValue
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -403,6 +404,17 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate,Beac
 		  End If
 		  
 		  Return Self.mSets(Idx).ImmutableVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SpawnPoint(Pack As Beacon.StringList = Nil, Options As Integer = 3) As ArkSA.SpawnPoint
+		  Var Blueprint As ArkSA.Blueprint = Self.mPointRef.Resolve(Pack, Options)
+		  If Blueprint Is Nil Or (Blueprint IsA ArkSA.SpawnPoint) = False Then
+		    Return Nil
+		  End If
+		  
+		  Return ArkSA.SpawnPoint(Blueprint)
 		End Function
 	#tag EndMethod
 

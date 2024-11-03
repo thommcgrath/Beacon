@@ -28,32 +28,6 @@ Implements Beacon.BlueprintConsumer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadDefaults()
-		  ArkSA.DataSource.Pool.Get(False).LoadDefaults(Self)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub LoadDefaults(MinItemSets As Integer, MaxItemSets As Integer, AddToDefaults As Boolean, PreventDuplicates As Boolean, SetsString As String)
-		  Self.MinItemSets = MinItemSets
-		  Self.MaxItemSets = MaxItemSets
-		  Self.AddToDefaults = AddToDefaults
-		  Self.PreventDuplicates = PreventDuplicates
-		  
-		  Var Sets() As Variant = Beacon.ParseJSON(SetsString)
-		  For Each Set As Dictionary In Sets
-		    Var Created As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(Set)
-		    If (Created Is Nil) = False Then
-		      Self.Add(Created)
-		    End If
-		  Next
-		  
-		  Exception Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Loading item set defaults")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub LootDropReference(Assigns Ref As ArkSA.BlueprintReference)
 		  If Self.mDropRef = Ref Then
 		    Return

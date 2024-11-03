@@ -854,6 +854,8 @@ End
 		  
 		  Self.mDestinations.ResizeTo(-1)
 		  
+		  Var WithDefaults As Boolean = Self.LoadDefaultsCheckbox.Visible And Self.LoadDefaultsCheckbox.Value
+		  
 		  For I As Integer = 0 To Self.SourceList.RowCount - 1
 		    If Not Self.SourceList.RowSelectedAt(I) Then
 		      Continue
@@ -869,16 +871,13 @@ End
 		      End If
 		    End If
 		    
-		    Self.mDestinations.Add(New Ark.LootDropOverride(Source, False))
+		    Self.mDestinations.Add(New Ark.LootDropOverride(Source, WithDefaults))
 		  Next
 		  
-		  If Self.LoadDefaultsCheckbox.Visible And Self.LoadDefaultsCheckbox.Value Then
+		  If WithDefaults Then
 		    // Skip the customize step, load defaults, and finish
-		    Var Instance As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    For Each Destination As Ark.LootDropOverride In Self.mDestinations
-		      Var Mutable As New Ark.MutableLootDropOverride(Destination)
-		      Instance.LoadDefaults(Mutable)
-		      Self.mConfig.Add(Mutable)
+		      Self.mConfig.Add(Destination)
 		    Next
 		    
 		    Self.mCancelled = False

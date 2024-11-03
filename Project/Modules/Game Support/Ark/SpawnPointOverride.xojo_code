@@ -20,11 +20,11 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Point As Ark.SpawnPoint, Mode As Integer, IncludeContents As Boolean)
+		Sub Constructor(Point As Ark.SpawnPoint, Mode As Integer, WithDefaults As Boolean)
 		  Self.Constructor(New Ark.BlueprintReference(Point), Mode)
 		  Self.mAvailability = Point.Availability
 		  
-		  If IncludeContents = False Then
+		  If WithDefaults = False Then
 		    Return
 		  End If
 		  
@@ -34,10 +34,11 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 		    Self.mSets.Add(Set.ImmutableClone)
 		  Next
 		  
-		  Self.mLimits = Ark.BlueprintAttributeManager.FromSaveData(Point.LimitsString)
-		  If Self.mLimits Is Nil Then
-		    Self.mLimits = New Ark.BlueprintAttributeManager
-		  End If
+		  Var Limits As Dictionary = Point.Limits
+		  Self.mLimits = New Ark.BlueprintAttributeManager
+		  For Each Entry As DictionaryEntry In Limits
+		    Self.mLimits.Value(Ark.Creature(Entry.Key), Self.LimitAttribute) = Entry.Value.DoubleValue
+		  Next
 		End Sub
 	#tag EndMethod
 

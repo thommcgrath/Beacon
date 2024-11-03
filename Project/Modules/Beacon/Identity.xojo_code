@@ -214,7 +214,7 @@ Protected Class Identity
 		Function OmniFlags() As Integer
 		  Var Flags As Integer
 		  For Each License As Beacon.OmniLicense In Self.mLicenses
-		    If License.IsExpired = False And License.IsValidForCurrentBuild Then
+		    If License.IsValidForCurrentBuild Then
 		      Flags = Flags Or License.Flags
 		    End If
 		  Next License

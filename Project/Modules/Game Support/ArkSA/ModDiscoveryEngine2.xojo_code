@@ -472,6 +472,16 @@ Protected Class ModDiscoveryEngine2
 		  BlacklistLines.Add("Engine/")
 		  BlacklistLines.Add("ShooterGame/Plugins/")
 		  BlacklistLines.Add("ShooterGame/AssetRegistry\.bin")
+		  BlacklistLines.Add("ShooterGame/Mods/Forglar/Content/Forglar_All/BigPalm5_SM")
+		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Swamp/Kapok/03/")
+		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Swamp/PondCypress/PondCypress_SM")
+		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Valley/Trees/Rainbow/RainbowGum_01")
+		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Valley/RedMarigold/SM_RedMarigold")
+		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Savannah/Acacia/Acacia_Nyrandil_SM")
+		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Savannah/Baobab/AfricanBaobab_B_Nyrandil_Platform")
+		  BlacklistLines.Add("ShooterGame/Mods/ALTHEMIA/Content/layer_foliage/althemia_BigFrond_Tree_SM")
+		  BlacklistLines.Add("ShooterGame/Mods/ALTHEMIA/Content/Assets/asset_map/Acacia_SM1")
+		  BlacklistLines.Add("ShooterGame/Mods/Enclave/Content/Environment/OriginalAssets/Vegetation/Mangrove")
 		  
 		  Var BlacklistFile As FolderItem = ExtractorRoot.Child("blacklist.txt")
 		  Var CurrentLines() As String

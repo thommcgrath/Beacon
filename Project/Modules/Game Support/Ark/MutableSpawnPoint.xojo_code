@@ -5,6 +5,8 @@ Implements Ark.MutableBlueprint
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
 		Sub AddSet(Set As Ark.SpawnPointSet, Replace As Boolean = False)
+		  Self.LoadPendingSets()
+		  
 		  Var Idx As Integer = Self.IndexOf(Set)
 		  If Idx = -1 Then
 		    Self.mSets.Add(Set.ImmutableVersion)
@@ -54,6 +56,7 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub ClearLimits()
 		  Self.mLimits = New Ark.BlueprintAttributeManager
+		  Self.mPendingLimitsString = ""
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -157,6 +160,8 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Limit(CreatureRef As Ark.BlueprintReference, Assigns Value As Double)
+		  Self.LoadPendingLimits()
+		  
 		  Value = Min(Abs(Value), 1.0)
 		  
 		  Var Exists As Boolean = Self.mLimits.HasBlueprint(CreatureRef)
@@ -176,6 +181,8 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Limit(Creature As Ark.Creature, Assigns Value As Double)
+		  Self.LoadPendingLimits()
+		  
 		  Value = Min(Abs(Value), 1.0)
 		  
 		  Var Exists As Boolean = Self.mLimits.HasBlueprint(Creature)
@@ -195,25 +202,8 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub LimitsString(Assigns Value As String)
-		  Try
-		    Var Parsed As Variant = Beacon.ParseJSON(Value)
-		    Var Manager As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(Parsed)
-		    If (Manager Is Nil) = False Then
-		      Self.mLimits = Manager
-		    ElseIf Parsed.IsNull = False And Parsed.Type = Variant.TypeObject And Parsed IsA Dictionary Then
-		      Var Dict As Dictionary = Parsed
-		      Manager = New Ark.BlueprintAttributeManager
-		      For Each Entry As DictionaryEntry In Dict
-		        Var Creature As Ark.Creature = Ark.ResolveCreature(Entry.Key.StringValue, "", "", Nil)
-		        If (Creature Is Nil) = False Then
-		          Manager.Value(Creature, Self.LimitAttribute) = Entry.Value.DoubleValue
-		        End If
-		      Next
-		    End If
-		    Self.mLimits = Manager
-		    Self.Modified = True
-		  Catch Err As RuntimeException
-		  End Try
+		  Self.mPendingLimitsString = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -252,6 +242,8 @@ Implements Ark.MutableBlueprint
 		Sub RemoveCreature(Creature As Ark.Creature)
 		  Self.Limit(Creature) = 0
 		  
+		  Self.LoadPendingSets()
+		  
 		  For SetIdx As Integer = Self.mSets.LastIndex DownTo 0
 		    Var MutableSet As Ark.MutableSpawnPointSet = Self.mSets(SetIdx).MutableVersion
 		    For EntryIdx As Integer = MutableSet.LastIndex DownTo 0
@@ -279,18 +271,21 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Reset()
 		  Self.ResizeTo(-1)
+		  Self.mPendingSetsString = ""
 		  Self.ClearLimits()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ResizeTo(Bound As Integer)
+		  Self.LoadPendingSets()
 		  Self.mSets.ResizeTo(Bound)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Set(Index As Integer, Assigns Value As Ark.SpawnPointSet)
+		  Self.LoadPendingSets()
 		  If Self.mSets(Index) <> Value Then
 		    Self.mSets(Index) = Value.ImmutableVersion
 		    Self.Modified = True
@@ -300,22 +295,7 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub SetsString(Assigns Value As String)
-		  Var Parsed As Variant
-		  Try
-		    Parsed = Beacon.ParseJSON(Value)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var Children() As Variant = Parsed
-		  Self.mSets.ResizeTo(-1)
-		  For Each SaveData As Dictionary In Children
-		    Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(SaveData)
-		    If Set <> Nil Then
-		      Self.mSets.Add(Set)
-		    End If
-		  Next
-		  
+		  Self.mPendingSetsString = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -426,6 +406,9 @@ Implements Ark.MutableBlueprint
 		      Self.mSets.Add(Set)
 		    Next
 		  End If
+		  
+		  Self.mPendingLimitsString = ""
+		  Self.mPendingSetsString = ""
 		End Sub
 	#tag EndMethod
 

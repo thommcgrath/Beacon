@@ -272,6 +272,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\SpawnPoint', 'arksa/sp
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Palworld\ConfigOption', 'palworld/configOptions', 'configOptionId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Palworld\GameVariable', 'palworld/gameVariables', 'key');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\SDTD\ConfigOption', '7dtd/configOptions', 'configOptionId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ProjectInvite', 'projectInvites', 'inviteCode');
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 

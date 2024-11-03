@@ -4,6 +4,7 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet, BeaconUUID, Exception;
 
 abstract class DatabaseObject {
+	const kPermissionNone = 0;
 	const kPermissionCreate = 1;
 	const kPermissionRead = 2;
 	const kPermissionUpdate = 4;

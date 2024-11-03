@@ -499,8 +499,7 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      Var SourceOverride As New ArkSA.MutableSpawnPointOverride(SourceSpawnPoint, ArkSA.SpawnPointOverride.ModeAppend, False)
-		      SourceOverride.LoadDefaults()
+		      Var SourceOverride As New ArkSA.MutableSpawnPointOverride(SourceSpawnPoint, ArkSA.SpawnPointOverride.ModeAppend, True)
 		      
 		      Var Limit As Double = SourceOverride.Limit(ReplacedCreature)
 		      Var NewSets() As ArkSA.SpawnPointSet
@@ -798,6 +797,22 @@ Inherits Beacon.Project
 		  Next
 		  
 		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ForcedContentPacks() As Beacon.StringList
+		  Var Mods As Beacon.StringList = Super.ForcedContentPacks()
+		  If Mods Is Nil Then
+		    Mods = New Beacon.StringList
+		  End If
+		  
+		  Var Maps() As Beacon.Map = ArkSA.Maps.ForMask(Self.mMapMask)
+		  For Each Map As Beacon.Map In Maps
+		    Mods.Append(Map.ContentPackId)
+		  Next
+		  
+		  Return Mods
 		End Function
 	#tag EndMethod
 

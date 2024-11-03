@@ -2646,26 +2646,16 @@ End
 		  Self.LootNotesArea.Text = Container.Notes
 		  Self.LootSortField.DoubleValue = Container.SortValue
 		  
-		  Var Override As New ArkSA.MutableLootDropOverride(Container, True)
-		  If Override.Count = 0 Then
-		    ArkSA.DataSource.Pool.Get(False).LoadDefaults(Override)
-		  End If
-		  
 		  Var Overrides(0) As ArkSA.LootDropOverride
-		  Overrides(0) = Override.ImmutableVersion
+		  Overrides(0) = New ArkSA.LootDropOverride(Container, True)
 		  Self.DropEditor.Overrides = Overrides
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub LoadBlueprint(Point As ArkSA.SpawnPoint)
-		  Var Override As New ArkSA.MutableSpawnPointOverride(Point, ArkSA.SpawnPointOverride.ModeOverride, True)
-		  If Override.Count = 0 Then
-		    ArkSA.DataSource.Pool.Get(False).LoadDefaults(Override)
-		  End If
-		  
 		  Var Overrides(0) As ArkSA.SpawnPointOverride
-		  Overrides(0) = Override.ImmutableVersion
+		  Overrides(0) = New ArkSA.SpawnPointOverride(Point, ArkSA.SpawnPointOverride.ModeOverride, True)
 		  Self.SpawnPointEditor1.Overrides = Overrides
 		End Sub
 	#tag EndMethod

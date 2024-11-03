@@ -328,11 +328,14 @@ End
 		    End If
 		  Next
 		  
-		  If Reason.EndsWith(".") = False Then
-		    Reason = Reason.Trim + "."
+		  If Reason.IsEmpty = False Then
+		    If Reason.EndsWith(".") = False Then
+		      Reason = Reason.Trim + "."
+		    End If
+		    Reason = "Reason: """ + Reason + """"
+		  Else
+		    Reason = "Sorry, no additional information is available."
 		  End If
-		  
-		  Reason = "Reason: """ + Reason + """"
 		  
 		  If RecentIdx > -1 Then
 		    If Self.ShowConfirm("Unable to load project """ + Sender.Name + """", Reason + EndOfLine + EndOfLine + "This project is in your recent projects list. Would you like to remove it from the list?", "Remove", "Keep") Then

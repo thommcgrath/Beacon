@@ -19,13 +19,16 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('Only anonymous users can be deleted.', $identifier, 400);
 	}
 
-	$database = BeaconCommon::Database();
-	$database->BeginTransaction();
-	$database->Query('DELETE FROM public.access_tokens WHERE user_id = $1;', $authenticatedUser->UserId());
-	$database->Query('DELETE FROM public.users WHERE user_id = $1;', $authenticatedUser->UserId());
-	$database->Commit();
+	try {
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM public.users WHERE user_id = $1;', $authenticatedUser->UserId());
+		$database->Commit();
 
-	return Response::NewJson('User was deleted', 200);
+		return Response::NewJson('User was deleted', 200);
+	} catch (Exception $err) {
+		return Response::NewJsonError('Could not delete user', $err->getMessage(), 500);
+	}
 }
 
 ?>

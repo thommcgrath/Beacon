@@ -84,6 +84,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 		  Self.mIconID = Source.mIconID
 		  Self.mUIColor = Source.mUIColor
 		  Self.mLastUpdate = Source.mLastUpdate
+		  Self.mPendingContentsString = Source.mPendingContentsString
 		  
 		  Self.mItemSets.ResizeTo(Source.mItemSets.LastIndex)
 		  For I As Integer = Source.mItemSets.FirstRowIndex To Source.mItemSets.LastIndex
@@ -115,6 +116,10 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 
 	#tag Method, Flags = &h0
 		Function ContentsString(Pretty As Boolean = False) As String
+		  If Self.mPendingContentsString.IsEmpty = False Then
+		    Return Self.mPendingContentsString
+		  End If
+		  
 		  Var Objects() As Variant
 		  For Each Set As ArkSA.LootItemSet In Self.mItemSets
 		    If (Set Is Nil) = False Then
@@ -133,6 +138,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 		Function Count() As Integer
 		  // Part of the Beacon.Countable interface.
 		  
+		  Self.LoadPendingContents()
 		  Return Self.mItemSets.Count
 		End Function
 	#tag EndMethod
@@ -169,6 +175,8 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 
 	#tag Method, Flags = &h0
 		Function DefaultItemSetWeight() As Double
+		  Self.LoadPendingContents()
+		  
 		  If Self.mItemSets.Count = 0 Then
 		    If Self.mAppendMode Then
 		      Return 0.5
@@ -217,6 +225,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 
 	#tag Method, Flags = &h0
 		Function FindEngram(EngramId As String) As ArkSA.BlueprintReference
+		  Self.LoadPendingContents()
 		  For Each ItemSet As ArkSA.LootItemSet In Self.mItemSets
 		    Var Reference As ArkSA.BlueprintReference = ItemSet.FindEngram(EngramId)
 		    If (Reference Is Nil) = False Then
@@ -335,6 +344,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 
 	#tag Method, Flags = &h0
 		Function IndexOf(ItemSet As ArkSA.LootItemSet) As Integer
+		  Self.LoadPendingContents()
 		  For Idx As Integer = 0 To Self.mItemSets.LastIndex
 		    If Self.mItemSets(Idx) = ItemSet Then
 		      Return Idx
@@ -356,6 +366,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 		Function Iterator() As Iterator
 		  // Part of the Iterable interface.
 		  
+		  Self.LoadPendingContents()
 		  Var Sets() As Variant
 		  Sets.ResizeTo(Self.mItemSets.LastIndex)
 		  For I As Integer = 0 To Self.mItemSets.LastIndex
@@ -379,6 +390,40 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 		Function LastUpdate() As Double
 		  Return Self.mLastUpdate
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub LoadPendingContents()
+		  If Self.mPendingContentsString.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Try
+		    // Sometimes the defaults have duplicated sets, which confuses Beacon's multi-editor.
+		    Var Names() As String
+		    Var Children() As Variant = Beacon.ParseJSON(Self.mPendingContentsString)
+		    Self.mItemSets.ResizeTo(-1)
+		    For Each SaveData As Dictionary In Children
+		      Var Set As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(SaveData)
+		      If Set Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var Label As String = Set.Label
+		      Var AdjustedLabel As String = Beacon.FindUniqueLabel(Label, Names)
+		      If AdjustedLabel <> Label Then
+		        Var Mutable As New ArkSA.MutableLootItemSet(Set)
+		        Mutable.Label = AdjustedLabel
+		        Set = New ArkSA.LootItemSet(Mutable)
+		      End If
+		      Names.Add(AdjustedLabel)
+		      Self.mItemSets.Add(Set)
+		    Next
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.mPendingContentsString = ""
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -449,6 +494,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 
 	#tag Method, Flags = &h0
 		Function Operator_Subscript(Idx As Integer) As ArkSA.LootItemSet
+		  Self.LoadPendingContents()
 		  Return Self.mItemSets(Idx)
 		End Function
 	#tag EndMethod
@@ -456,6 +502,8 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
 		  // Part of the ArkSA.Blueprint interface.
+		  
+		  Self.LoadPendingContents()
 		  
 		  Var Sets() As Dictionary
 		  Sets.ResizeTo(Self.mItemSets.LastIndex)
@@ -511,6 +559,8 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
+		  Self.LoadPendingContents()
+		  
 		  Var Children() As Variant
 		  For Each Set As ArkSA.LootItemSet In Self.mItemSets
 		    Children.Add(Set.SaveData)
@@ -557,6 +607,8 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 	#tag Method, Flags = &h0
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
+		  
+		  Self.LoadPendingContents()
 		  
 		  For Each Set As ArkSA.LootItemSet In Self.mItemSets
 		    Set.Validate(Location + Beacon.Issue.Separator + Self.ClassString, Issues, Project)
@@ -639,6 +691,10 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 
 	#tag Property, Flags = &h1
 		Protected mPath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mPendingContentsString As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

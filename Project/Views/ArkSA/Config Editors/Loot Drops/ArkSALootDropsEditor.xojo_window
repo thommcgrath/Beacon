@@ -1035,12 +1035,9 @@ End
 		            Return True
 		          End If
 		          
-		          Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		          Var Config As ArkSA.Configs.LootDrops = Self.Config(True)
 		          For Each Override As ArkSA.LootDropOverride In Overrides
-		            Var Mutable As New ArkSA.MutableLootDropOverride(Override.LootDropReference)
-		            DataSource.LoadDefaults(Mutable)
-		            Config.Add(Mutable)
+		            Config.Add(New ArkSA.LootDropOverride(Override.LootDrop, True))
 		          Next
 		          
 		          Self.Modified = Config.Modified

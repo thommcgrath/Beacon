@@ -73,15 +73,20 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Drop As ArkSA.LootContainer, IncludeItemSets As Boolean)
+		Sub Constructor(Drop As ArkSA.LootContainer, WithDefaults As Boolean)
 		  Self.Constructor(New ArkSA.BlueprintReference(Drop))
 		  Self.mAvailability = Drop.Availability
 		  Self.mExperimental = Drop.Experimental
 		  Self.mSortValue = Drop.SortValue
 		  
-		  If IncludeItemSets = False Then
+		  If WithDefaults = False Then
 		    Return
 		  End If
+		  
+		  Self.mMinItemSets = Drop.MinItemSets
+		  Self.mMaxItemSets = Drop.MaxItemSets
+		  Self.mAddToDefaults = False
+		  Self.mPreventDuplicates = Drop.PreventDuplicates
 		  
 		  For Each ItemSet As ArkSA.LootItemSet In Drop
 		    Self.mSets.Add(ItemSet.ImmutableClone)
