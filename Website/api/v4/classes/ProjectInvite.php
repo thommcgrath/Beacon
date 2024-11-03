@@ -103,21 +103,6 @@ class ProjectInvite extends DatabaseObject implements JsonSerializable {
 		return $this->expirationDate < time();
 	}
 
-	protected static function UserIsAdmin(User $user, string $projectId): bool {
-		if (BeaconCommon::IsUUID($projectId) === false) {
-			return false;
-		}
-
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT role FROM public.project_members WHERE user_id = $1 AND project_id = $2;', $user->UserId(), $projectId);
-		if ($rows->RecordCount() !== 1) {
-			return false;
-		}
-		$role = $rows->Field('role');
-
-		return $role === ProjectMember::kRoleOwner || $role === ProjectMember::kRoleAdmin;
-	}
-
 	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
 		if (is_null($newObjectProperties) || isset($newObjectProperties['projectId']) === false) {
 			return DatabaseObject::kPermissionNone;
@@ -135,7 +120,7 @@ class ProjectInvite extends DatabaseObject implements JsonSerializable {
 			return DatabaseObject::kPermissionNone;
 		}
 
-		if ($desiredPermissions < $member->Permissions()) {
+		if ($member->IsAdmin() && $desiredPermissions < $member->Permissions()) {
 			return DatabaseObject::kPermissionAll;
 		} else {
 			return DatabaseObject::kPermissionNone;
@@ -152,7 +137,7 @@ class ProjectInvite extends DatabaseObject implements JsonSerializable {
 		} catch (Exception $err) {
 			return DatabaseObject::kPermissionNone;
 		}
-		if ($rolePermissions < $member->Permissions()) {
+		if ($member->IsAdmin() && $rolePermissions < $member->Permissions()) {
 			return DatabaseObject::kPermissionAll;
 		} else {
 			return DatabaseObject::kPermissionNone;

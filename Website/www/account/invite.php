@@ -64,6 +64,8 @@ function RedeemCode(string $code, bool $confirmed): void {
 		return;
 	}
 
+	$project = Project::Fetch($invite->ProjectId());
+
 	if ($confirmed) {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -85,10 +87,11 @@ function RedeemCode(string $code, bool $confirmed): void {
 		}
 		$database->Commit();
 
+		BeaconPusher::SharedInstance()->TriggerEvent($project->PusherChannelName(), 'members-updated', $member);
+
 		echo '<p class="text-center"><span class="text-blue">Project invite accepted!</span><br>You are now a member of the project.</p>';
 	} else {
 		// Show confirmation
-		$project = Project::Fetch($invite->ProjectId());
 		echo '<form action="/account/invite" method="post"><input type="hidden" name="process" value="invite-final"><input type="hidden" name="code" value="' . htmlentities($code) . '">';
 		echo '<p>This invite code will add you to the project &quot;' . htmlentities($project->Title()) . '&quot;</p>';
 		echo '<div class="double-group"><div>&nbsp;</div><div><div class="button-group"><div><a href="/account/invite" class="button">Cancel</a></div><div><input type="submit" value="Accept Invite"></div></div></div>';
