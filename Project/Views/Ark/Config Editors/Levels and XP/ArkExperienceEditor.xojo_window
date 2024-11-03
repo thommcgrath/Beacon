@@ -405,6 +405,13 @@ End
 		    Columns(Self.ColumnTime) = Beacon.SecondsToString(TekBedSeconds)
 		    
 		    Self.List.AddRow(Columns)
+		    Var RowIndex As Integer = Self.List.LastAddedRowIndex
+		    Self.List.CellTagAt(RowIndex, Self.ColumnLevel) = Level
+		    Self.List.CellTagAt(RowIndex, Self.ColumnLevelXP) = LevelXP
+		    Self.List.CellTagAt(RowIndex, Self.ColumnTotalXP) = TotalXP
+		    Self.List.CellTagAt(RowIndex, Self.ColumnAscension) = IsAscensionLevel
+		    Self.List.CellTagAt(RowIndex, Self.ColumnTime) = TekBedSeconds
+		    
 		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = SelectLevels.IndexOf(Level) > -1
 		  Next
 		  
@@ -635,6 +642,28 @@ End
 		  Self.Modified = NewConfig.Modified
 		  Self.UpdateList(AddedLevels)
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Var Value1, Value2 As UInt64
+		  Select Case Column
+		  Case Self.ColumnLevel, Self.ColumnLevelXP, Self.ColumnTotalXP, Self.ColumnTime
+		    Value1 = Me.CellTagAt(Row1, Column)
+		    Value2 = Me.CellTagAt(Row2, Column)
+		  Case Self.ColumnAscension
+		    Value1 = If(Me.CellTagAt(Row1, Column).BooleanValue, 1, 0)
+		    Value2 = If(Me.CellTagAt(Row2, Column).BooleanValue, 1, 0)
+		  End Select
+		  
+		  If Value1 > Value2 Then
+		    Result = 1
+		  ElseIf Value1 < Value2 Then
+		    Result = -1
+		  Else
+		    Result = 0
+		  End If
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
