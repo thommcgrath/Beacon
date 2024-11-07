@@ -87,6 +87,9 @@ class ApplicationAuthFlow extends DatabaseObject {
 			if (is_null($codeVerifierHash) || strlen($codeVerifierHash) !== 43) {
 				throw new Exception('Verifier hash should be 43 base64url characters.');
 			}
+			if ($codeVerifierHash === '47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU') {
+				throw new Exception('Your challenge is built from an empty sha256 hash. This indicates a problem with your verifier generation or hashing code.');
+			}
 		}
 
 		if (in_array(Application::kScopeUsersPrivateKeyRead, $scopes)) {
@@ -110,7 +113,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		$rows = $database->Query('SELECT flow_id, (expiration < CURRENT_TIMESTAMP) AS expired, (code_hash IS NOT NULL) AS redeemed, (application_id = $1 AND scopes = $2 AND callback = $3 AND state = $4 AND verifier_hash_algorithm = $6 AND public_key IS NOT DISTINCT FROM $7) AS matches FROM public.application_auth_flows WHERE verifier_hash = $5;', $app->ApplicationId(), $scopesString, $callback, $state, $codeVerifierHash, $codeVerifierMethod, $publicKey);
 		if ($rows->RecordCount() === 1) {
 			if ($rows->Field('expired') === TRUE || $rows->Field('redeemed') === TRUE || $rows->Field('matches') === FALSE) {
-				throw new Exception('This flow has expired, has been completed, or the request parameters do not match.');
+				throw new Exception('This challenge is already in use by a pending authorization.');
 			}
 			return static::Fetch( $rows->Field('flow_id'));
 		}
@@ -250,7 +253,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$session = Session::Create($flow->User(), $flow->Application(), $flow->scopes, $flow->privateKeyEncrypted);
-		$database->Query("UPDATE public.application_auth_flows SET expiration = CURRENT_TIMESTAMP, private_key_encrypted = NULL, code_hash = NULL, user_id = NULL WHERE flow_id = $1;", $flow->FlowId());
+		$database->Query('DELETE FROM public.application_auth_flows WHERE flow_id = $1;', $flow->FlowId());
 		$database->Commit();
 		return $session;
 	}
@@ -263,6 +266,10 @@ class ApplicationAuthFlow extends DatabaseObject {
 	}
 
 	protected function CheckCodeVerifier(string $codeVerifier): bool {
+		if (empty($codeVerifier)) {
+			return false;
+		}
+
 		switch ($this->codeVerifierMethod) {
 		case 'S256':
 			return $this->codeVerifierHash === BeaconCommon::Base64UrlEncode(hash('sha256', $codeVerifier, true));

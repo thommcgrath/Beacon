@@ -6,7 +6,7 @@ require(dirname(__FILE__, 2) . '/framework/loader.php');
 $database = BeaconCommon::Database();
 $clauses = [
 	'public.access_tokens' => 'refresh_token_expiration < CURRENT_TIMESTAMP',
-	'public.application_auth_flows' => "expiration + '30 days'::INTERVAL < CURRENT_TIMESTAMP",
+	'public.application_auth_flows' => 'expiration < CURRENT_TIMESTAMP',
 	'public.oauth_requests' => 'expiration < CURRENT_TIMESTAMP',
 ];
 $cleaningNeeded = [];
