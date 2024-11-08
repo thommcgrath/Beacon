@@ -38,7 +38,17 @@ function handleRequest(array $context): Response {
 		$database->BeginTransaction();
 		$project = Project::Save($user, $manifest);
 		$path = $project->CloudStoragePath();
-		BeaconCloudStorage::PutFile($path, file_get_contents('php://input'));
+		$fileContents = file_get_contents('php://input');
+		if (isset($_SERVER['HTTP_X_BEACON_SHA256'])) {
+			$expectedHash = strtolower($_SERVER['HTTP_X_BEACON_SHA256']);
+			$computedHash = strtolower(hash('sha256', $fileContents));
+			if ($expectedHash !== $computedHash) {
+				$database->Rollback();
+				return Response::NewJsonError('Checksum failure', ['expectedHash' => $expectedHash, 'computedHash' => $computedHash], 400);
+			}
+		}
+		BeaconCloudStorage::PutFile($path, $fileContents);
+		$fileContents = null;
 		$database->Commit();
 
 		$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
