@@ -2,7 +2,9 @@
 
 use BeaconAPI\v4\{Application, Core, User, Response};
 
-$requiredScopes[] = Application::kScopeUsersRead;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeUsersRead;
+}
 
 function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];

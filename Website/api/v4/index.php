@@ -105,39 +105,6 @@ Core::RegisterRoutes(
 		'/pusher' => [
 			'GET' => 'pusher',
 		],
-		'/sentinel/services/{serviceId}/logs' => [
-			'GET' => 'sentinel/services/logs',
-		],
-		'/sentinel/serviceGroups' => [
-			'GET' => 'sentinel/serviceGroups/list',
-			'POST' => 'sentinel/serviceGroups/create',
-			'DELETE' => 'sentinel/serviceGroups/delete',
-		],
-		'/sentinel/serviceGroups/{serviceGroupId}' => [
-			'GET' => 'sentinel/serviceGroups/get',
-			'PATCH' => 'sentinel/serviceGroups/edit',
-			'DELETE' => 'sentinel/serviceGroups/delete',
-		],
-		'/sentinel/serviceGroupUsers' => [
-			'GET' => 'sentinel/serviceGroupUsers/list',
-			'POST' => 'sentinel/serviceGroupUsers/create',
-			'DELETE' => 'sentinel/serviceGroupUsers/delete',
-		],
-		'/sentinel/serviceGroupUsers/{serviceGroupUserId}' => [
-			'GET' => 'sentinel/serviceGroupUsers/get',
-			'PATCH' => 'sentinel/serviceGroupUsers/edit',
-			'DELETE' => 'sentinel/serviceGroupUsers/delete',
-		],
-		'/sentinel/serviceGroupServices' => [
-			'GET' => 'sentinel/serviceGroupServices/list',
-			'POST' => 'sentinel/serviceGroupServices/create',
-			'DELETE' => 'sentinel/serviceGroupServices/delete',
-		],
-		'/sentinel/serviceGroupServices/{serviceGroupServiceId}' => [
-			'GET' => 'sentinel/serviceGroupServices/get',
-			'PATCH' => 'sentinel/serviceGroupServices/edit',
-			'DELETE' => 'sentinel/serviceGroupServices/delete',
-		],
 		'/sessions/{sessionId}' => [
 			'GET' => 'sessions/get',
 			'DELETE' => 'sessions/delete',
@@ -176,25 +143,8 @@ Core::RegisterRoutes(
 			'GET' => 'tokens/list',
 			'POST' => 'tokens/create',
 		],
-		'/sentinel/services' => [
-			'GET' => 'sentinel/services/list',
-			'POST' => 'sentinel/services/create',
-			'DELETE' => 'sentinel/services/delete',
-		],
-		'/sentinel/services/{serviceId}' => [
-			'GET' => 'sentinel/services/get',
-			'DELETE' => 'sentinel/services/delete',
-			'PATCH' => 'sentinel/services/edit',
-		],
 		'/sentinel/subscription' => [
 			'GET' => 'sentinel/subscriptions/get',
-		],
-		'/sentinel/rconCommands' => [
-			'GET' => 'sentinel/rconCommands/list',
-			'POST' => 'sentinel/rconCommands/create',
-		],
-		'/sentinel/rconCommands/{logId}' => [
-			'GET' => 'sentinel/rconCommands/get',
 		],
 		'/sentinel/players' => [
 			'GET' => 'sentinel/players/list',
@@ -209,36 +159,6 @@ Core::RegisterRoutes(
 		'/sentinel/playerNotes/{playerNoteId}' => [
 			'GET' => 'sentinel/playerNotes/get',
 			'PATCH' => 'sentinel/playerNotes/edit',
-		],
-		'/sentinel/scripts' => [
-			'GET' => 'sentinel/scripts/list',
-			'POST' => 'sentinel/scripts/create',
-			'DELETE' => 'sentinel/scripts/delete',
-		],
-		'/sentinel/scripts/{scriptId}' => [
-			'GET' => 'sentinel/scripts/get',
-			'PATCH' => 'sentinel/scripts/edit',
-			'DELETE' => 'sentinel/scripts/delete',
-		],
-		'/sentinel/scriptUsers' => [
-			'GET' => 'sentinel/scriptUsers/list',
-			'POST' => 'sentinel/scriptUsers/create',
-			'DELETE' => 'sentinel/scriptUsers/delete',
-		],
-		'/sentinel/scriptUsers/{scriptUserId}' => [
-			'GET' => 'sentinel/scriptUsers/get',
-			'PATCH' => 'sentinel/scriptUsers/edit',
-			'DELETE' => 'sentinel/scriptUsers/delete',
-		],
-		'/sentinel/serviceGroupScripts' => [
-			'GET' => 'sentinel/serviceGroupScripts/list',
-			'POST' => 'sentinel/serviceGroupScripts/create',
-			'DELETE' => 'sentinel/serviceGroupScripts/delete',
-		],
-		'/sentinel/serviceGroupScripts/{serviceGroupScriptId}' => [
-			'GET' => 'sentinel/serviceGroupScripts/get',
-			'PATCH' => 'sentinel/serviceGroupScripts/edit',
-			'DELETE' => 'sentinel/serviceGroupScripts/delete',
 		],
 	]
 );
@@ -273,6 +193,15 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Palworld\ConfigOption', 'pal
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Palworld\GameVariable', 'palworld/gameVariables', 'key');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\SDTD\ConfigOption', '7dtd/configOptions', 'configOptionId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ProjectInvite', 'projectInvites', 'inviteCode');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\LogMessage', 'sentinel/logMessages', 'messageId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\RCONCommand', 'sentinel/rconCommands', 'logId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Script', 'sentinel/scripts', 'scriptId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ScriptUser', 'sentinel/scriptUsers', 'scriptUserId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroup', 'sentinel/serviceGroups', 'serviceGroupId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupScript', 'sentinel/serviceGroupScripts', 'serviceGroupScriptId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupService', 'sentinel/serviceGroupServices', 'serviceGroupServiceId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupUser', 'sentinel/serviceGroupUsers', 'serviceGroupUserId');
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 

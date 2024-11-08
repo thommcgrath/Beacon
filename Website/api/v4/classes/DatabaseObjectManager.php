@@ -59,16 +59,28 @@ class DatabaseObjectManager {
 			$methods = [];
 
 			if ($create || $update) {
-				$methods['POST'] = [$this, 'HandleBulkUpdate'];
+				$methods['POST'] = [
+					'handleRequest' => [$this, 'HandleBulkUpdate'],
+					'setupAuthParameters' => [$this->className, 'SetupAuthParameters'],
+				];
 			}
 			if ($read) {
-				$methods['GET'] = [$this, 'HandleList'];
+				$methods['GET'] = [
+					'handleRequest' => [$this, 'HandleList'],
+					'setupAuthParameters' => [$this->className, 'SetupAuthParameters'],
+				];
 			}
 			if ($update) {
-				$methods['PATCH'] = [$this, 'HandleBulkUpdate'];
+				$methods['PATCH'] = [
+					'handleRequest' => [$this, 'HandleBulkUpdate'],
+					'setupAuthParameters' => [$this->className, 'SetupAuthParameters'],
+				];
 			}
 			if ($delete) {
-				$methods['DELETE'] = [$this, 'HandleBulkDelete'];
+				$methods['DELETE'] = [
+					'handleRequest' => [$this, 'HandleBulkDelete'],
+					'setupAuthParameters' => [$this->className, 'SetupAuthParameters'],
+				];
 			}
 
 			Core::RegisterRoutes(["/{$this->path}" => $methods]);
@@ -77,16 +89,28 @@ class DatabaseObjectManager {
 			$methods = [];
 
 			if ($create || $update) {
-				$methods['PUT'] = [$this, 'HandleReplace'];
+				$methods['PUT'] = [
+					'handleRequest' => [$this, 'HandleReplace'],
+					'setupAuthParameters' => [$this->className, 'SetupAuthParameters'],
+				];
 			}
 			if ($read) {
-				$methods['GET'] = [$this, 'HandleFetch'];
+				$methods['GET'] = [
+					'handleRequest' => [$this, 'HandleFetch'],
+					'setupAuthParameters' => [$this->className, 'SetupAuthParameters'],
+				];
 			}
 			if ($update) {
-				$methods['PATCH'] = [$this, 'HandleUpdate'];
+				$methods['PATCH'] = [
+					'handleRequest' => [$this, 'HandleUpdate'],
+					'setupAuthParameters' => [$this->className, 'SetupAuthParameters'],
+				];
 			}
 			if ($delete) {
-				$methods['DELETE'] = [$this, 'HandleDelete'];
+				$methods['DELETE'] = [
+					'handleRequest' => [$this, 'HandleDelete'],
+					'setupAuthParameters' => [$this->className, 'SetupAuthParameters'],
+				];
 			}
 
 			Core::RegisterRoutes(["/{$this->path}/{{$this->varName}}" => $methods]);
@@ -104,7 +128,13 @@ class DatabaseObjectManager {
 	}
 
 	public function HandleList(array $context): Response {
-		$results = $this->className::Search($_GET);
+		$filters = $_GET;
+		try {
+			$this->className::AuthorizeListRequest($filters);
+		} catch (Exception $err) {
+			return Response::NewJsonError('Forbidden', $err, 403);
+		}
+		$results = $this->className::Search($filters);
 		if (is_null($this->subclassProperty)) {
 			return Response::NewJson($results, 200);
 		}
@@ -242,10 +272,15 @@ class DatabaseObjectManager {
 			$member = Core::BodyAsJSON();
 			$className = $this->GetClassName($member);
 
+			$user = Core::User();
+			$limits = $className::GetResourceLimitsForUser($user);
+			if (is_null($limits) === false && $limits->UsedResources() + 1 > $limits->AllowedResources()) {
+				return Response::NewJsonError('Cannot create more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', $limits, 400);
+			}
+
 			$schema = $className::DatabaseSchema();
 			$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
 			$primaryKey = $context['pathParameters'][$this->varName];
-			$user = Core::User();
 
 			$member[$primaryKeyProperty] = $primaryKey;
 
@@ -273,7 +308,20 @@ class DatabaseObjectManager {
 			$members = [$members];
 		}
 
+		$objectCounts = [];
+		foreach ($members as $member) {
+			$className = $this->GetClassName($member);
+			$objectCounts[$className] = ($objectCounts[$className] ?? 0) + 1;
+		}
+
 		$user = Core::User();
+		foreach ($objectCounts as $className => $objectCount) {
+			$limits = $className::GetResourceLimitsForUser($user);
+			if (is_null($limits) === false && $limits->SupportsMore($objectCount) === false) {
+				return Response::NewJsonError('Cannot create ' . $objectCount . ' more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', $limits, 400);
+			}
+		}
+
 		$primaryKeyProperties = [];
 		$newObjects = [];
 		$updatedObjects = [];

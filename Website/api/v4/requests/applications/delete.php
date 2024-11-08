@@ -2,7 +2,9 @@
 
 use BeaconAPI\v4\{Response, Application, Core};
 
-$requiredScopes[] = Application::kScopeAppsDelete;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeAppsDelete;
+}
 
 function handleRequest(array $context): Response {
 	$applicationId = $context['pathParameters']['applicationId'];
@@ -10,7 +12,7 @@ function handleRequest(array $context): Response {
 	if (is_null($app) || $app->UserId() !== Core::UserId()) {
 		return Response::NewJsonError('Application not found', null, 404);
 	}
-	
+
 	try {
 		$app->Delete();
 		return Response::NewNoContent();

@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{Application, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
 use BeaconCommon, BeaconRecordSet, DateInterval, DateTime, Exception, JsonSerializable;
 
 class Subscription extends DatabaseObject implements JsonSerializable {

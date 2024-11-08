@@ -60,14 +60,6 @@ abstract class DatabaseObject {
 		}
 	}
 
-	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
-		return self::kPermissionRead;
-	}
-
-	public function GetPermissionsForUser(User $user): int {
-		return self::kPermissionRead;
-	}
-
 	public static function GenerateObjectId(array $properties): string {
 		return BeaconUUID::v4();
 	}
@@ -238,6 +230,38 @@ abstract class DatabaseObject {
 
 		$propertyName = $property->PropertyName();
 		return $this->$propertyName;
+	}
+
+	// By default, the user cannot create objects. Return kPermissionCreate if
+	// the user should be allowed to create the object based on
+	// $newObjectProperties.
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return false;
+	}
+
+	// Get the permissions the object has for the given user. Logically
+	// OR the allowed permission bits.
+	public function GetPermissionsForUser(User $user): int {
+		return self::kPermissionRead;
+	}
+
+	// Allows the class to throw an exception if something is wrong with the
+	// filters used in a list request, such as not including a required key.
+	public static function AuthorizeListRequest(array &$filters): void {
+
+	}
+
+	// Allows the class to change the scope and authentication for incoming
+	// requests.
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+
+	}
+
+	// Allows the class to limit the number of it that may exist for each user.
+	// Return a ResourceLimit with the currently used number and the maximum
+	// allowed number. Return null for no limit.
+	public static function GetResourceLimitsForUser(User $user): ?ResourceLimit {
+		return null;
 	}
 }
 

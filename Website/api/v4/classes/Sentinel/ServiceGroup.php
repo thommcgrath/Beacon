@@ -1,12 +1,11 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, PermissibleObject};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
 class ServiceGroup extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
-	use PermissibleObject;
 
 	protected string $groupId;
 	protected string $userId;
@@ -73,28 +72,33 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 		$this->SetProperty('color', $color);
 	}
 
-	// Deprecated
-	public function GetPermissions(string $userId): int {
-		return $this->GetUserPermissions($userId);
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+		}
 	}
 
-	public function GetUserPermissions(string $userId): int {
-		if ($userId === $this->userId) {
-			return 9223372036854775807;
+	public function GetPermissionsForUser(User $user): int {
+		if ($user->UserId() === $this->userId) {
+			return self::kPermissionAll;
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.service_group_permissions WHERE service_group_id = $1 AND user_id = $2;', $this->groupId, $userId);
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_group_permissions WHERE service_group_id = $1 AND user_id = $2;', $this->serviceGroupId, $user->UserId());
 		if ($rows->RecordCount() === 1) {
 			return $rows->Field('permissions');
 		} else {
-			return 0;
+			return self::kPermissionNone;
 		}
 	}
 
-	// Deprecated
-	public function HasPermission(string $userId, int $desiredPermissions): bool {
-		return $this->UserHasPermission($userId, $desiredPermissions);
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return true;
+	}
+
+	public static function AuthorizeListRequest(array &$filters): void {
+		$filters['userId'] = Core::UserId();
 	}
 }
 

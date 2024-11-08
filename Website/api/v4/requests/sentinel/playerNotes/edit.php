@@ -3,7 +3,9 @@
 use BeaconAPI\v4\{Application, Response, Core};
 use BeaconAPI\v4\Sentinel\{PlayerNote};
 
-$requiredScopes[] = Application::kScopeSentinelPlayersUpdate;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeSentinelPlayersUpdate;
+}
 
 function handleRequest(array $context): Response {
 	$userId = Core::UserId();

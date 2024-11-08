@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
 class ServiceGroupUser extends DatabaseObject implements JsonSerializable {
@@ -67,6 +67,52 @@ class ServiceGroupUser extends DatabaseObject implements JsonSerializable {
 
 	public function SetPermissions(int $permissions): void {
 		$this->SetProperty('permissions', $permissions);
+	}
+
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeUsersRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+		}
+	}
+
+	public function GetPermissionsForUser(User $user): int {
+		if ($user->UserId() === $this->userId) {
+			return (self::kPermissionRead | self::kPermissionDelete);
+		}
+
+		$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $this->serviceGroupId, user: $user);
+		if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
+			return self::kPermissionNone;
+		}
+		return self::kPermissionAll;
+	}
+
+	public static function AuthorizeListRequest(array &$filters): void {
+		if (isset($filters['serviceGroupId'])) {
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT permissions FROM sentinel.service_group_permissions WHERE service_group_id = $1 AND user_id = $2;', $filters['serviceGroupId'], Core::UserId());
+			if ($rows->RecordCount() !== 1 || ($rows->Field('permissions') & ServiceGroup::kPermissionUpdate) === 0) {
+				throw new Exception('User does not have update permission on service group ' . $filters['serviceGroupId']);
+			}
+		} elseif (isset($filters['userId']) === false) {
+			// If they are not listing by group, they must list by user.
+			$filters['userId'] = Core::UserId();
+		}
+	}
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		if (is_null($newObjectProperties) || isset($newObjectProperties['serviceGroupId']) === false) {
+			return false;
+		}
+
+		$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $newObjectProperties['serviceGroupId'], user: $user);
+		if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
+			return false;
+		}
+
+		return true;
 	}
 }
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ServiceToken};
+use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, User};
 use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
@@ -354,6 +354,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->SetProperty('gameSpecific', $gameSpecific);
 	}
 
+	public function PusherChannelName(): string {
+		return 'service-' . strtolower(str_replace('-', '', $this->serviceId));
+	}
+
 	public function GetPermissions(string $userId): int {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $userId);
@@ -392,6 +396,32 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$database->BeginTransaction();
 		$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET deleted = TRUE WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
 		$database->Commit();
+	}
+
+	public static function GetResourceLimitsForUser(User $user): ?ResourceLimit {
+		$subscriptions = Subscription::Search(['userId' => $user->UserId()], true);
+		if (count($subscriptions) !== 1 || $subscriptions[0]->IsSuspended()) {
+			return new ResourceLimit(0, 0);
+		}
+		return new ResourceLimit($subscriptions[0]->UsedServices(), $subscriptions[0]->MaxServices());
+	}
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return true;
+	}
+
+	public function GetPermissionsForUser(User $user): int {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $user->UserId());
+		if ($rows->RecordCount() === 1) {
+			return $rows->Field('permissions');
+		} else {
+			return DatabaseObject::kPermissionNone;
+		}
+	}
+
+	public static function AuthorizeListRequest(array &$filters): void {
+		$filters['userId'] = Core::UserId();
 	}
 }
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
@@ -18,7 +18,7 @@ class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
 		$this->serviceGroupScriptId = $row->Field('service_group_script_id');
 		$this->serviceGroupId = $row->Field('service_group_id');
 		$this->scriptId = $row->Field('script_id');
-		$this->permissions = ($row->Field('permissions') | PermissionBits::ScriptRead) & PermissionBits::ScriptAll;
+		$this->permissions = ($row->Field('permissions') | self::kPermissionRead) & self::kPermissionAll;
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -35,16 +35,6 @@ class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('scriptId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceGroupId');
 		$parameters->AddFromFilter($schema, $filters, 'scriptId');
-
-		if (isset($filters['serviceGroupId']) && isset($filters['userId'])) {
-			$serviceGroupPlaceholder = $parameters->AddValue($filters['serviceGroupId']);
-			$userPlaceholder = $parameters->AddValue($filters['userId']);
-			$permissionPlaceholder = $parameters->AddValue(PermissionBits::ServiceGroupUpdateContents);
-			$parameters->clauses[] = 'service_group_scripts.service_group_id IN (SELECT service_group_id FROM sentinel.service_group_permissions WHERE service_group_d = $' . $serviceGroupPlaceholder . ' AND (user_id = $' . $userPlaceholder . ' OR (permissions & $' . $permissionPlaceholder . ') > 0))';
-		} elseif (isset($filters['userId'])) {
-			$userPlaceholder = $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = 'service_group_scripts.service_group_id IN (SELECT service_group_id FROM sentinel.service_group_permissions WHERE user_id = $' . $userPlaceholder . ')';
-		}
 	}
 
 	public function jsonSerialize(): mixed {
@@ -73,7 +63,7 @@ class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function SetPermissions(int $permissions): void {
-		$permissions = ($permissions | PermissionBits::ScriptRead) & PermissionBits::ScriptAll;
+		$permissions = ($permissions | self::kPermissionRead) & self::kPermissionAll;
 		$this->SetProperty('permissions', $permissions);
 	}
 
@@ -85,8 +75,67 @@ class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
 			if ($desiredPermissions <= 0) {
 				throw new Exception('Permissions must be a positive integer');
 			}
-			if (($desiredPermissions & PermissionBits::ScriptAll) !== $desiredPermissions) {
+			if (($desiredPermissions & self::kPermissionAll) !== $desiredPermissions) {
 				throw new Exception('Invalid permission bits');
+			}
+		}
+	}
+
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelScriptsRead;
+		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelScriptsWrite;
+			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+		}
+	}
+
+	public function GetPermissionsForUser(User $user): int {
+		$scriptPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Script', objectId: $this->scriptId, user: $user);
+		if (($scriptPermissions & Script::kPermissionShare) === 0) {
+			return self::kPermissionNone;
+		}
+		$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $this->serviceGroupId, user: $user);
+		if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
+			return self::kPermissionNone;
+		}
+		return self::kPermissionAll;
+	}
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		if (is_null($newObjectProperties) || isset($newObjectProperties['scriptId']) === false || isset($newObjectProperties['serviceGroupId']) === false) {
+			return false;
+		}
+
+		$scriptPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Script', objectId: $newObjectProperties['scriptId'], user: $user);
+		if (($scriptPermissions & Script::kPermissionShare) === 0) {
+			return false;
+		}
+
+		$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $newObjectProperties['serviceGroupId'], user: $user);
+		if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static function AuthorizeListRequest(array &$filters): void {
+		$user = null;
+		if (isset($filters['scriptId'])) {
+			$user = Core::User();
+			$scriptPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Script', objectId: $filters['scriptId'], user: $user);
+			if (($scriptPermissions & Script::kPermissionShare) === 0) {
+				throw new Exception('User does not have share permission on script ' . $filters['scriptId']);
+			}
+		}
+		if (isset($filters['serviceGroupId'])) {
+			if (is_null($user)) {
+				$user = Core::User();
+			}
+			$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $filters['serviceGroupId'], user: $user);
+			if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
+				throw new Exception('User does not have update permission on service group ' . $filters['serviceGroupId']);
 			}
 		}
 	}

@@ -2,8 +2,10 @@
 
 use BeaconAPI\v4\{Application, Response, Core, User};
 
-$requiredScopes[] = Application::kScopeUsersUpdate;
-$requiredScopes[] = Application::kScopeUsersDelete;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeUsersUpdate;
+	$requiredScopes[] = Application::kScopeUsersDelete;
+}
 
 function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];

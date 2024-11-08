@@ -28,14 +28,14 @@ class Application extends DatabaseObject implements JsonSerializable {
 	const kScopeUsersDelete = 'users:delete';
 	const kScopeUsersPrivateKeyRead = 'users.private_key:read';
 	const kScopeSentinelLogsRead = 'sentinel.logs:read';
-	const kScopeSentinelLogsUpdate = 'sentinel.logs:update';
+	const kScopeSentinelLogsWrite = 'sentinel.logs:write';
 	const kScopeSentinelPlayersRead = 'sentinel.players:read';
-	const kScopeSentinelPlayersUpdate = 'sentinel.players:update';
-	const kScopeSentinelServicesCreate = 'sentinel.services:create';
+	const kScopeSentinelPlayersWrite = 'sentinel.players:write';
 	const kScopeSentinelServicesRead = 'sentinel.services:read';
-	const kScopeSentinelServicesUpdate = 'sentinel.services:update';
-	const kScopeSentinelServicesDelete = 'sentinel.services:delete';
-	const kScopeSentinelSubscriptionsRead = 'sentinel.subscriptions:read';
+	const kScopeSentinelServicesWrite = 'sentinel.services:write';
+	const kScopeSentinelSubscriptionRead = 'sentinel.subscription:read';
+	const kScopeSentinelScriptsRead = 'sentinel.scripts:read';
+	const kScopeSentinelScriptsWrite = 'sentinel.scripts:write';
 
 	const kExperienceAppWebView = 1;
 
@@ -53,14 +53,14 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeUsersDelete,
 			self::kScopeUsersPrivateKeyRead,
 			self::kScopeSentinelLogsRead,
-			self::kScopeSentinelLogsUpdate,
+			self::kScopeSentinelLogsWrite,
 			self::kScopeSentinelPlayersRead,
-			self::kScopeSentinelPlayersUpdate,
-			self::kScopeSentinelServicesCreate,
+			self::kScopeSentinelPlayersWrite,
 			self::kScopeSentinelServicesRead,
-			self::kScopeSentinelServicesUpdate,
-			self::kScopeSentinelServicesDelete,
-			self::kScopeSentinelSubscriptionsRead,
+			self::kScopeSentinelServicesWrite,
+			self::kScopeSentinelSubscriptionRead,
+			self::kScopeSentinelScriptsRead,
+			self::kScopeSentinelScriptsWrite,
 		];
 	}
 
@@ -75,9 +75,6 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeAppsUpdate,
 			self::kScopeAppsDelete,
 			self::kScopeAuthPublicKey,
-			self::kScopeSentinelServicesCreate,
-			self::kScopeSentinelServicesUpdate,
-			self::kScopeSentinelServicesDelete
 		];
 	}
 

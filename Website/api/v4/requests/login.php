@@ -2,8 +2,10 @@
 
 use BeaconAPI\v4\{Application, ApplicationAuthFlow, Core, Response, Session, User};
 
-$requiredScopes = [];
-$authScheme = Core::kAuthSchemeNone;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes = [];
+	$authScheme = Core::kAuthSchemeNone;
+}
 
 function handleRequest(array $context): Response {
 	switch ($context['routeKey']) {

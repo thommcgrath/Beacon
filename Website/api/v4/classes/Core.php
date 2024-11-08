@@ -23,7 +23,7 @@ class Core {
 	public static function HandleCors(): void {
 		header('Access-Control-Allow-Origin: *');
 		header('Access-Control-Allow-Methods: DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT');
-		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');
+		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization,X-Beacon-Pusher-Id');
 		header('Access-Control-Expose-Headers: Content-Length,Content-Range');
 		header('Vary: Origin');
 
@@ -129,25 +129,7 @@ class Core {
 		$requiredScopes = [];
 		switch ($scheme) {
 		case self::kAuthSchemeBearer:
-			$supportedScopes = [
-				Application::kScopeCommon,
-				Application::kScopeAppsCreate,
-				Application::kScopeAppsRead,
-				Application::kScopeAppsUpdate,
-				Application::kScopeAppsDelete,
-				Application::kScopeUsersRead,
-				Application::kScopeUsersUpdate,
-				Application::kScopeUsersDelete,
-				Application::kScopeSentinelLogsRead,
-				Application::kScopeSentinelLogsUpdate,
-				Application::kScopeSentinelPlayersRead,
-				Application::kScopeSentinelPlayersUpdate,
-				Application::kScopeSentinelServicesCreate,
-				Application::kScopeSentinelServicesRead,
-				Application::kScopeSentinelServicesUpdate,
-				Application::kScopeSentinelServicesDelete,
-				Application::kScopeSentinelSubscriptionsRead,
-			];
+			$supportedScopes = Application::ValidScopes();
 			$requiredScopes = [
 				Application::kScopeCommon
 			];
@@ -423,10 +405,11 @@ class Core {
 				return;
 			}
 
-			$requiredScopes = ['common'];
+			$additionalScopes = [];
 			$authScheme = self::kAuthSchemeBearer;
 
 			$handler = $handlers[$requestMethod];
+			$authParametersHandler = null;
 			if (is_string($handler)) {
 				$handlerFile = $root . '/' . $handler . '.php';
 				if (file_exists($handlerFile) === false) {
@@ -435,6 +418,7 @@ class Core {
 					return;
 				}
 				$handler = 'handleRequest';
+				$authParametersHandler = 'setupAuthParameters';
 				try {
 					http_response_code(500); // Set a default. If there is a fatal error, it'll still be set.
 					require($handlerFile);
@@ -443,12 +427,23 @@ class Core {
 					Response::NewJsonError((BeaconCommon::InProduction() ? 'Error loading api source file.' : $err->getMessage()), null, 500)->Flush();
 					return;
 				}
+			} else if (is_array($handler) === true && isset($handler['handleRequest']) && is_callable($handler['handleRequest'])) {
+				if (isset($handler['setupAuthParameters'])) {
+					$authParametersHandler = $handler['setupAuthParameters'];
+				}
+				$handler = $handler['handleRequest'];
 			} else if (is_callable($handler) === true) {
 				// nothing to do
 			} else {
 				static::ManageRateLimit();
 				Response::NewJsonError('Endpoint not found', null, 404)->Flush();
 				return;
+			}
+
+			$requiredScopes = ['common'];
+			if (is_callable($authParametersHandler)) {
+				$editable = in_array($requestMethod, ['PUT', 'PATCH', 'POST', 'DELETE']);
+				$authParametersHandler($authScheme, $requiredScopes, $editable);
 			}
 
 			static::Authorize($authScheme, ...$requiredScopes);

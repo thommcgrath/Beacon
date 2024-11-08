@@ -1,14 +1,16 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, PermissibleObject};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class Script extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
-	use PermissibleObject;
 
 	const LanguageJavascript = 'JavaScript';
+
+	const kPermissionShare = 16;
+	const kPermissionAll = (self::kPermissionCreate | self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete | self::kPermissionShare);
 
 	protected string $scriptId;
 	protected string $userId;
@@ -128,16 +130,33 @@ class Script extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function RequiredReadPermissionBits(): int {
-		return PermissionBits::ScriptRead;
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelScriptsRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelScriptsWrite;
+		}
 	}
 
-	public static function RequiredWritePermissionBits(): int {
-		return PermissionBits::ScriptUpdate;
+	public function GetPermissionsForUser(User $user): int {
+		if ($user->UserId() === $this->userId) {
+			return self::kPermissionAll;
+		}
+
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.script_permissions WHERE script_id = $1 AND user_id = $2;', $this->scriptId, $user->UserId());
+		if ($rows->RecordCount() === 1) {
+			return $rows->Field('permissions');
+		} else {
+			return self::kPermissionNone;
+		}
 	}
 
-	public static function RequiredDeletePermissionBits(): int {
-		return PermissionBits::ScriptDelete;
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return true;
+	}
+
+	public static function AuthorizeListRequest(array &$filters): void {
+		$filters['userId'] = Core::UserId();
 	}
 }
 

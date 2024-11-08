@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class LogMessage extends DatabaseObject implements JsonSerializable {
@@ -91,15 +91,42 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		} else {
 			$parameters->orderBy = $schema->Accessor('time') . ' ' . $sortDirection;
 		}
-		$parameters->AddFromFilter($schema, $filters, 'type');
+
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'level');
 		$parameters->AddFromFilter($schema, $filters, 'analyzerStatus');
 
-		if (isset($filters['query'])) {
+		if (isset($filters['message'])) {
 			$languagePlaceholder = $parameters->AddValue('english');
-			$queryPlaceholder = $parameters->AddValue($filters['query']);
+			$queryPlaceholder = $parameters->AddValue($filters['message']);
 			$parameters->clauses[] = 'message @@ websearch_to_tsquery($' . $languagePlaceholder . ', $' . $queryPlaceholder . ')';
+		}
+
+		if (isset($filters['type'])) {
+			$types = explode(',', $filters['type']);
+			if (count($types) === 0) {
+				$placeholder = $parameters->AddValue($types[0]);
+				$parameters->clauses[] = $schema->Accessor('type') . ' = $' . $placeholder;
+			} elseif (count($types) > 0) {
+				$placeholders = [];
+				foreach ($types as $type) {
+					$placeholders[] = '$' . $parameters->AddValue($type);
+				}
+				$parameters->clauses[] = $schema->Accessor('type') . ' IN (' . implode(', ', $placeholders) . ')';
+			}
+		}
+
+		if (isset($filters['level'])) {
+			$levels = explode(',', $filters['level']);
+			if (count($levels) === 0) {
+				$placeholder = $parameters->AddValue($levels[0]);
+				$parameters->clauses[] = $schema->Accessor('level') . ' = $' . $placeholder;
+			} elseif (count($levels) > 0) {
+				$placeholders = [];
+				foreach ($levels as $level) {
+					$placeholders[] = '$' . $parameters->AddValue($level);
+				}
+				$parameters->clauses[] = $schema->Accessor('level') . ' IN (' . implode(', ', $placeholders) . ')';
+			}
 		}
 	}
 
@@ -247,81 +274,27 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		return 	in_array($this->level, self::ErrorLogLevels);
 	}
 
-	/*public static function Search(string $serviceId, array $filters = [], bool $newest_first = true, int $page_num = 1, int $page_size = 250): array {
-		$page_num = max($page_num, 1);
-		$offset = $page_size * ($page_num - 1);
-		$clauses = ['service_id = $1'];
-		$values = [$serviceId];
-		$placeholder = 2;
-		if (isset($filters['query']) && empty($filters['query']) === false) {
-			$clauses[] = 'message_vector @@ phraseto_tsquery(\'english\', $' . $placeholder++ . ')';
-			$values[] = $filters['query'];
+	public static function AuthorizeListRequest(array &$filters): void {
+		if (isset($filters['serviceId']) === false) {
+			throw new Exception('Must include a serviceId');
 		}
-		if (isset($filters['message_type']) && empty($filters['message_type']) === false) {
-			$clauses[] = 'type = $' . $placeholder++;
-			$values[] = $filters['message_type'];
-		}
-		if (isset($filters['event_type']) && empty($filters['event_type']) === false) {
-			$clauses[] = 'metadata @> $' . $placeholder++;
-			$values[] = json_encode(['event' => $filters['event_type']]);
-		}
-		if (isset($filters['min_level']) && isset($filters['max_level']) && empty($filters['min_level']) === false && empty($filters['max_level']) === false) {
-			if ($filters['min_level'] === $filters['max_level']) {
-				$clauses[] = 'level = $' . $placeholder++;
-				$values[] = $filters['min_level'];
-			} else {
-				$clauses[] = 'sentinel.log_level_position(level) BETWEEN sentinel.log_level_position($' . $placeholder++ . ') AND sentinel.log_level_position($' . $placeholder++ . ')';
-				$values[] = $filters['min_level'];
-				$values[] = $filters['max_level'];
-			}
-		} else if (isset($filters['min_level']) && empty($filters['min_level']) === false) {
-			$clauses[] = 'sentinel.log_level_position(level) >= sentinel.log_level_position($' . $placeholder++ . ')';
-			$values[] = $filters['min_level'];
-		} else if (isset($filters['max_level']) && empty($filters['max_level']) === false) {
-			$clauses[] = 'sentinel.log_level_position(level) <= sentinel.log_level_position($' . $placeholder++ . ')';
-			$values[] = $filters['max_level'];
-		}
-		if (isset($filters['newer_than']) && isset($filters['older_than']) && is_numeric($filters['newer_than']) && is_numeric($filters['older_than'])) {
-			$clauses[] = 'log_time BETWEEN to_timestamp($' . $placeholder++ . ') AND to_timestamp($' . $placeholder++ . ')';
-			$values[] = floatval($filters['newer_than']);
-			$values[] = floatval($filters['older_than']);
-		} else if (isset($filters['newer_than']) && is_numeric($filters['newer_than'])) {
-			$clauses[] = 'log_time >= to_timestamp($' . $placeholder++ . ')';
-			$values[] = floatval($filters['newer_than']);
-		} else if (isset($filters['older_than']) && is_numeric($filters['older_than'])) {
-			$clauses[] = 'log_time <= to_timestamp($' . $placeholder++ . ')';
-			$values[] = floatval($filters['older_than']);
-		}
-		$main_sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE ' . implode(' AND ', $clauses) . ' ORDER BY log_time';
-		$total_sql = 'SELECT COUNT(message_id) AS num_results FROM ' . static::SQLLongTableName() . ' WHERE ' . implode(' AND ', $clauses);
-		if ($newest_first) {
-			$main_sql .= ' DESC';
-		}
-		$main_sql .= ' OFFSET ' . $offset . ' LIMIT ' . $page_size . ';';
-		$total_sql .= ';';
 
-		$database = BeaconCommon::Database();
-		$rows = $database->Query($main_sql, $values);
-		$totals = $database->Query($total_sql, $values);
-		$total = intval($totals->Field('num_results'));
+		$serviceId = $filters['serviceId'];
+		$service = Service::Fetch($serviceId);
+		if (is_null($service) || $service->HasPermission(Core::UserId(), Service::kPermissionRead) === false) {
+			throw new Exception('Service not found');
+		}
+	}
 
-		$results = [
-			'total' => $total,
-			'page' => $page_num,
-			'range' => [
-				'start' => $offset + 1,
-				'end' => min($total, $offset + $page_size)
-			],
-			'params' => [
-				'filters' => $filters,
-				'newest_first' => $newest_first,
-				'page_num' => $page_num,
-				'page_size' => $page_size
-			],
-			'messages' => static::FromRows($rows)
-		];
-		return $results;
-	}*/
+	public function GetPermissionsForUser(User $user): int {
+		$servicePermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $this->serviceId, user: $user);
+		return $servicePermissions & DatabaseObject::kPermissionRead;
+	}
+
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeSentinelLogsRead;
+	}
 }
 
 ?>

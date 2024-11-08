@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class RCONCommand extends DatabaseObject implements JsonSerializable {
@@ -82,6 +82,42 @@ class RCONCommand extends DatabaseObject implements JsonSerializable {
 
 	public function Response(): ?string {
 		return $this->response;
+	}
+
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelServicesUpdate;
+		}
+	}
+
+	public static function AuthorizeListRequest(array &$filters): void {
+		if (isset($filters['serviceId']) === false) {
+			throw new Exception('Must include serviceId');
+		}
+
+		$serviceId = $filters['serviceId'];
+		$service = Service::Fetch($serviceId);
+		if (is_null($service) || $service->HasPermission(Core::UserId(), DatabaseObject::kPermissionRead) === false) {
+			throw new Exception('Service not found');
+		}
+	}
+
+	public function GetPermissionsForUser(User $user): int {
+		$servicePermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $this->serviceId, user: $user);
+		return $servicePermissions & DatabaseObject::kPermissionRead;
+	}
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		if (is_null($newObjectProperties) || isset($newObjectProperties['serviceId']) === false) {
+			return false;
+		}
+
+		$servicePermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $newObjectProperties['serviceId'], user: $user);
+		if (($servicePermissions & (DatabaseObject::kPermissionRead | DatabaseObject::kPermissionUpdate)) > 0) {
+			return true;
+		}
+		return false;
 	}
 }
 

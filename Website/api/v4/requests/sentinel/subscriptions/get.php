@@ -3,7 +3,9 @@
 use BeaconAPI\v4\{Application, Response, Core};
 use BeaconAPI\v4\Sentinel\{Subscription};
 
-$requiredScopes[] = Application::kScopeSentinelSubscriptionsRead;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeSentinelSubscriptionRead;
+}
 
 function handleRequest(array $context): Response {
 	$subscriptions = Subscription::Search(['userId' => Core::UserId()], true);

@@ -2,13 +2,15 @@
 
 use BeaconAPI\v4\{Application, Core, Response};
 
-$requiredScopes[] = Application::kScopeAppsCreate;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeAppsCreate;
+}
 
 function handleRequest(array $context): Response {
 	if (Core::IsJsonContentType() === false) {
 		return Response::NewJsonError('Send a JSON body', null, 400);
 	}
-	
+
 	$obj = Core::BodyAsJson();
 	$obj['userId'] = Core::UserId();
 	try {

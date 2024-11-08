@@ -103,27 +103,27 @@ class ProjectInvite extends DatabaseObject implements JsonSerializable {
 		return $this->expirationDate < time();
 	}
 
-	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
 		if (is_null($newObjectProperties) || isset($newObjectProperties['projectId']) === false) {
-			return DatabaseObject::kPermissionNone;
+			return false;
 		}
 
 		$projectId = strval($newObjectProperties['projectId']);
 		$member = ProjectMember::Fetch($projectId, $user->UserId());
 		if (is_null($member)) {
-			return DatabaseObject::kPermissionNone;
+			return false;
 		}
 
 		try {
 			$desiredPermissions = ProjectMember::PermissionsForRole($newObjectProperties['role']);
 		} catch (Exception $err) {
-			return DatabaseObject::kPermissionNone;
+			return false;
 		}
 
 		if ($member->IsAdmin() && $desiredPermissions < $member->Permissions()) {
-			return DatabaseObject::kPermissionAll;
+			return true;
 		} else {
-			return DatabaseObject::kPermissionNone;
+			return false;
 		}
 	}
 
