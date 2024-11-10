@@ -132,7 +132,7 @@ class DatabaseObjectManager {
 		try {
 			$this->className::AuthorizeListRequest($filters);
 		} catch (Exception $err) {
-			return Response::NewJsonError('Forbidden', $err, 403);
+			return Response::NewJsonError('Forbidden', $err->getMessage(), 403);
 		}
 		$results = $this->className::Search($filters);
 		if (is_null($this->subclassProperty)) {

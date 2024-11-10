@@ -1,18 +1,17 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class PlayerNote extends DatabaseObject implements JsonSerializable {
-	use MutableDatabaseObject {
-		Edit as protected MutableDatabaseObjectEdit;
-	}
+	use MutableDatabaseObject;
 
 	protected string $noteId;
 	protected string $playerId;
 	protected string $userId;
-	protected float $postTime;
+	protected float $dateCreated;
+	protected float $dateModified;
 	protected string $content;
 	protected array $edits;
 
@@ -20,7 +19,8 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 		$this->noteId = $row->Field('note_id');
 		$this->playerId = $row->Field('player_id');
 		$this->userId = $row->Field('user_id');
-		$this->postTime = floatval($row->Field('post_time'));
+		$this->dateCreated = floatval($row->Field('date_created'));
+		$this->dateModified = floatval($row->Field('date_modified'));
 		$this->content = $row->Field('content');
 		$this->edits = json_decode($row->Field('edits'), true);
 	}
@@ -30,15 +30,16 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('noteId', ['primaryKey' => true, 'columnName' => 'note_id', 'required' => false]),
 			new DatabaseObjectProperty('playerId', ['columnName' => 'player_id']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
-			new DatabaseObjectProperty('postTime', ['columnName' => 'post_time', 'required' => false, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
+			new DatabaseObjectProperty('dateCreated', ['columnName' => 'date_created', 'required' => false, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
+			new DatabaseObjectProperty('dateModified', ['columnName' => 'date_modified', 'required' => false, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 			new DatabaseObjectProperty('content', ['editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('edits', ['columnName' => 'edits', 'required' => false, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(edits_template))) FROM (SELECT EXTRACT(EPOCH FROM player_note_edits.edit_time) AS edit_time, player_note_edits.previous_content FROM sentinel.player_note_edits INNER JOIN sentinel.player_notes AS A ON (player_note_edits.note_id = A.note_id) WHERE player_note_edits.note_id = player_notes.note_id ORDER BY player_note_edits.edit_time DESC) AS edits_template), '[]')"]),
+			new DatabaseObjectProperty('edits', ['columnName' => 'edits', 'required' => false, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(edits_template))) FROM (SELECT EXTRACT(EPOCH FROM player_note_edits.date_created) AS \"editTime\", player_note_edits.previous_content AS \"previousContent\" FROM sentinel.player_note_edits INNER JOIN sentinel.player_notes AS A ON (player_note_edits.note_id = A.note_id) WHERE player_note_edits.note_id = player_notes.note_id ORDER BY player_note_edits.date_created DESC) AS edits_template), '[]')"]),
 		]);
 	}
 
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
-		$parameters->orderBy = $schema->Accessor('postTime') . ' DESC';
+		$parameters->orderBy = $schema->Accessor('dateCreated') . ' DESC';
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
 		$parameters->AddFromFilter($schema, $filters, 'userId');
 	}
@@ -48,7 +49,8 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 			'noteId' => $this->noteId,
 			'playerId' => $this->playerId,
 			'userId' => $this->userId,
-			'postTime' => $this->postTime,
+			'dateCreated' => $this->dateCreated,
+			'dateModified' => $this->dateModified,
 			'content' => $this->content,
 			'edits' => $this->edits,
 		];
@@ -66,12 +68,12 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 		return $this->userId;
 	}
 
-	public function PostTime(): float {
-		return $this->postTime;
+	public function DateCreated(): float {
+		return $this->dateCreated;
 	}
 
-	public function SetPostTime(float $postTime): drunk {
-		$this->SetProperty('post_time', $postTime);
+	public function DateModified(): float {
+		return $this->dateModified;
 	}
 
 	public function Content(): string {
@@ -82,19 +84,25 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 		$this->SetProperty('content', trim($content));
 	}
 
-	public function Edit(array $properties, bool $restoreDefaults = false): void {
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		try {
-			if (isset($properties['content']) && $properties['content'] !== $this->content) {
-				$database->Query('INSERT INTO sentinel.player_note_edits (note_id, previous_content) VALUES ($1, $2);', $this->noteId, $this->content);
-			}
-			$this->MutableDatabaseObjectEdit($properties, $restoreDefaults);
-		} catch (Exception $err) {
-			$database->Rollback();
-			throw $err;
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelPlayersRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelPlayersWrite;
 		}
-		$database->Commit();
+	}
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return true;
+	}
+
+	public function GetPermissionsForUser(User $user): int {
+		return self::kPermissionRead | ($user->UserId() === $this->userId ? self::kPermissionUpdate : 0);
+	}
+
+	public static function AuthorizeListRequest(array &$filters): void {
+		if (isset($filters['playerId']) === false) {
+			throw new Exception('Must include playerId filter');
+		}
 	}
 }
 

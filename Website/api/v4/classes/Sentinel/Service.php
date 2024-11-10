@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, User};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, User};
 use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
@@ -404,6 +404,13 @@ class Service extends DatabaseObject implements JsonSerializable {
 			return new ResourceLimit(0, 0);
 		}
 		return new ResourceLimit($subscriptions[0]->UsedServices(), $subscriptions[0]->MaxServices());
+	}
+
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+		}
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {

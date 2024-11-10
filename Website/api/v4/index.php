@@ -146,20 +146,6 @@ Core::RegisterRoutes(
 		'/sentinel/subscription' => [
 			'GET' => 'sentinel/subscriptions/get',
 		],
-		'/sentinel/players' => [
-			'GET' => 'sentinel/players/list',
-		],
-		'/sentinel/players/{playerId}' => [
-			'GET' => 'sentinel/players/get',
-		],
-		'/sentinel/playerNotes' => [
-			'GET' => 'sentinel/playerNotes/list',
-			'POST' => 'sentinel/playerNotes/create',
-		],
-		'/sentinel/playerNotes/{playerNoteId}' => [
-			'GET' => 'sentinel/playerNotes/get',
-			'PATCH' => 'sentinel/playerNotes/edit',
-		],
 	]
 );
 
@@ -202,6 +188,8 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroup', 'sen
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupScript', 'sentinel/serviceGroupScripts', 'serviceGroupScriptId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupService', 'sentinel/serviceGroupServices', 'serviceGroupServiceId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupUser', 'sentinel/serviceGroupUsers', 'serviceGroupUserId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/players', 'playerId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 

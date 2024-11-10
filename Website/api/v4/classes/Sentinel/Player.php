@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{Application, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class Player extends DatabaseObject implements JsonSerializable {
@@ -24,8 +24,8 @@ class Player extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('playerId', ['primaryKey' => true, 'columnName' => 'player_id']),
 			new DatabaseObjectProperty('name'),
 			new DatabaseObjectProperty('identifiers', ['accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(ids_template))) FROM (SELECT player_identifiers.provider, player_identifiers.name, player_identifiers.identifier FROM sentinel.player_identifiers INNER JOIN sentinel.players AS A ON (player_identifiers.player_id = A.player_id) WHERE player_identifiers.player_id = players.player_id) AS ids_template), '[]')"]),
-			new DatabaseObjectProperty('history', ['accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(history_template))) FROM (SELECT player_name_history.name, EXTRACT(EPOCH FROM player_name_history.change_time) AS change_time FROM sentinel.player_name_history INNER JOIN sentinel.players AS B ON (player_name_history.player_id = B.player_id) WHERE player_name_history.player_id = players.player_id ORDER BY player_name_history.change_time DESC) AS history_template), '[]')"]),
-			new DatabaseObjectProperty('characters', ['accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(characters_template))) FROM (SELECT services.service_id, services.name AS service_name, player_characters.specimen_id, player_characters.name, player_characters.tribe_id FROM sentinel.player_characters INNER JOIN sentinel.services ON (player_characters.service_id = services.service_id) INNER JOIN sentinel.players AS C ON (player_characters.player_id = C.player_id) WHERE player_characters.player_id = players.player_id ORDER BY player_characters.name) AS characters_template), '[]')"]),
+			new DatabaseObjectProperty('history', ['accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(history_template))) FROM (SELECT player_name_history.name, EXTRACT(EPOCH FROM player_name_history.change_time) AS \"changeTime\" FROM sentinel.player_name_history INNER JOIN sentinel.players AS B ON (player_name_history.player_id = B.player_id) WHERE player_name_history.player_id = players.player_id ORDER BY player_name_history.change_time DESC) AS history_template), '[]')"]),
+			new DatabaseObjectProperty('characters', ['accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(characters_template))) FROM (SELECT services.service_id AS \"serviceId\", services.name AS \"serviceName\", player_characters.specimen_id AS \"specimenId\", player_characters.name, player_characters.tribe_id AS \"tribeId\" FROM sentinel.player_characters INNER JOIN sentinel.services ON (player_characters.service_id = services.service_id) INNER JOIN sentinel.players AS C ON (player_characters.player_id = C.player_id) WHERE player_characters.player_id = players.player_id ORDER BY player_characters.name) AS characters_template), '[]')"]),
 		]);
 	}
 
@@ -80,6 +80,10 @@ class Player extends DatabaseObject implements JsonSerializable {
 
 	public function Name(): string {
 		return $this->name;
+	}
+
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelPlayersRead;
 	}
 }
 
