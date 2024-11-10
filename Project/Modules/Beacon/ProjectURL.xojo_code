@@ -67,7 +67,7 @@ Protected Class ProjectURL
 		  Case "http", "https"
 		    Static ProjectsUrl As String = BeaconApi.Url("/projects/")
 		    Self.mType = If(Url.BeginsWith(ProjectsUrl), Self.TypeCloud, Self.TypeWeb)
-		  Case "beacon", "beacon-cloud"
+		  Case "beacon", "beacon-cloud", "beacon-shared"
 		    Self.mType = Self.TypeCloud
 		    Self.mPath = "https" + Self.mPath.Middle(Scheme.Length)
 		  Case "temp"

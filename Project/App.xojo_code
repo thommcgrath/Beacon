@@ -739,6 +739,55 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function HandleRunTrigger(URL As String) As Boolean
+		  Const Success = True
+		  Const Failed = False
+		  
+		  Var SaveInfo As String = URL.Middle(4)
+		  Var QueryPos As Integer = SaveInfo.IndexOf("?")
+		  Var QueryString As String
+		  If QueryPos > -1 Then
+		    QueryString = SaveInfo.Middle(QueryPos + 1)
+		    SaveInfo = SaveInfo.Left(QueryPos)
+		  End If
+		  Try
+		    SaveInfo = Beacon.Decompress(DecodeBase64URL(SaveInfo))
+		  Catch Err As RuntimeException
+		    Self.Log(Err, CurrentMethodName, "Decoding deploy saveinfo")
+		    Return Failed
+		  End Try
+		  
+		  Var Action As Beacon.ScriptAction = Beacon.ScriptAction.FromQueryString(QueryString)
+		  If Action Is Nil Then
+		    Return Failed
+		  End If
+		  
+		  Var Actions(0) As Beacon.ScriptAction
+		  Actions(0) = Action
+		  
+		  Try
+		    Var ProjectUrl As New Beacon.ProjectUrl(SaveInfo)
+		    Self.mMainWindow.Documents.OpenProject(ProjectUrl, Actions)
+		    Return Success
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Var File As BookmarkedFolderItem
+		  Try
+		    File = BookmarkedFolderItem.FromSaveInfo(SaveInfo)
+		  Catch Err As RuntimeException
+		    Self.Log(Err, CurrentMethodName, "Decoding save info")
+		  End Try
+		  If (File Is Nil) = False And File.Exists Then
+		    Self.mMainWindow.Documents.OpenProject(File, Actions)
+		    Return Success
+		  End If
+		  
+		  Return Failed
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function HandleURL(URL As String, AlreadyConfirmed As Boolean = False) As Boolean
 		  If Self.mMainWindow Is Nil Then
@@ -863,38 +912,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      FrontmostView.SwitchToEditor(ConfigName)
 		    End If
 		  ElseIf URL.Left(4) = "run/" Then
-		    Var SaveInfo As String = URL.Middle(4)
-		    Var QueryPos As Integer = SaveInfo.IndexOf("?")
-		    Var QueryString As String
-		    If QueryPos > -1 Then
-		      QueryString = SaveInfo.Middle(QueryPos + 1)
-		      SaveInfo = SaveInfo.Left(QueryPos)
-		    End If
-		    Try
-		      SaveInfo = Beacon.Decompress(DecodeBase64URL(SaveInfo))
-		    Catch Err As RuntimeException
-		      Self.Log(Err, CurrentMethodName, "Decoding deploy saveinfo")
+		    If Self.HandleRunTrigger(URL) = False Then
+		      // Return true because we handled it, but since it errored, we don't show the main window.
 		      Return True
-		    End Try
-		    
-		    Var Action As Beacon.ScriptAction = Beacon.ScriptAction.FromQueryString(QueryString)
-		    If (Action Is Nil) = False Then
-		      Var Actions(0) As Beacon.ScriptAction
-		      Actions(0) = Action
-		      
-		      If SaveInfo.BeginsWith(Beacon.ProjectURL.TypeCloud + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeLocal + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeWeb + "://") Then
-		        Self.mMainWindow.Documents.OpenProject(SaveInfo, Actions)
-		      Else
-		        Var File As BookmarkedFolderItem
-		        Try
-		          File = BookmarkedFolderItem.FromSaveInfo(SaveInfo)
-		        Catch Err As RuntimeException
-		          Self.Log(Err, CurrentMethodName, "Decoding save info")
-		        End Try
-		        If (File Is Nil) = False And File.Exists Then
-		          Self.mMainWindow.Documents.OpenProject(File, Actions)
-		        End If
-		      End If
 		    End If
 		  Else
 		    Var LegacyURL As String = "thezaz.com/beacon/documents.php/"
