@@ -10,6 +10,7 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 	protected string $noteId;
 	protected string $playerId;
 	protected string $userId;
+	protected string $username;
 	protected float $dateCreated;
 	protected float $dateModified;
 	protected string $content;
@@ -19,6 +20,7 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 		$this->noteId = $row->Field('note_id');
 		$this->playerId = $row->Field('player_id');
 		$this->userId = $row->Field('user_id');
+		$this->username = $row->Field('user_name');
 		$this->dateCreated = floatval($row->Field('date_created'));
 		$this->dateModified = floatval($row->Field('date_modified'));
 		$this->content = $row->Field('content');
@@ -30,10 +32,13 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('noteId', ['primaryKey' => true, 'columnName' => 'note_id', 'required' => false]),
 			new DatabaseObjectProperty('playerId', ['columnName' => 'player_id']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
+			new DatabaseObjectProperty('userName', ['columnName' => 'user_name', 'accessor' => 'users.username', 'required' => false]),
 			new DatabaseObjectProperty('dateCreated', ['columnName' => 'date_created', 'required' => false, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 			new DatabaseObjectProperty('dateModified', ['columnName' => 'date_modified', 'required' => false, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 			new DatabaseObjectProperty('content', ['editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('edits', ['columnName' => 'edits', 'required' => false, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(edits_template))) FROM (SELECT EXTRACT(EPOCH FROM player_note_edits.date_created) AS \"editTime\", player_note_edits.previous_content AS \"previousContent\" FROM sentinel.player_note_edits INNER JOIN sentinel.player_notes AS A ON (player_note_edits.note_id = A.note_id) WHERE player_note_edits.note_id = player_notes.note_id ORDER BY player_note_edits.date_created DESC) AS edits_template), '[]')"]),
+			new DatabaseObjectProperty('edits', ['columnName' => 'edits', 'required' => false, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(edits_template))) FROM (SELECT EXTRACT(EPOCH FROM player_note_edits.previous_timestamp) AS \"previousTimestamp\", player_note_edits.previous_content AS \"previousContent\" FROM sentinel.player_note_edits INNER JOIN sentinel.player_notes AS A ON (player_note_edits.note_id = A.note_id) WHERE player_note_edits.note_id = player_notes.note_id ORDER BY player_note_edits.previous_timestamp DESC) AS edits_template), '[]')"]),
+		], [
+			"INNER JOIN public.users ON (player_notes.user_id = users.user_id)",
 		]);
 	}
 
@@ -42,6 +47,12 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('dateCreated') . ' DESC';
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
 		$parameters->AddFromFilter($schema, $filters, 'userId');
+
+		if (isset($filters['content'])) {
+			$contentPlaceholder = $parameters->AddValue($filters['content']);
+			$languagePlaceholder = $parameters->AddValue('english');
+			$parameters->clauses[] = '(player_notes.content_vector @@ websearch_to_tsquery($'. $languagePlaceholder . ', $'. $contentPlaceholder . ') OR ' . $schema->Accessor('noteId') . ' IN (SELECT note_id FROM sentinel.player_note_edits WHERE previous_content_vector @@ websearch_to_tsquery($' . $languagePlaceholder . ', $' . $contentPlaceholder . ')))';
+		}
 	}
 
 	public function jsonSerialize(): mixed {
@@ -49,6 +60,8 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 			'noteId' => $this->noteId,
 			'playerId' => $this->playerId,
 			'userId' => $this->userId,
+			'username' => $this->username,
+			'usernameFull' => $this->username . '#' . substr($this->userId, 0, 8),
 			'dateCreated' => $this->dateCreated,
 			'dateModified' => $this->dateModified,
 			'content' => $this->content,

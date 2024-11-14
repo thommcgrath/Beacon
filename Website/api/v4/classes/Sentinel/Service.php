@@ -58,6 +58,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 		self::PlatformUniversal,
 	];
 
+	const kPermissionShare = 16;
+	const kPermissionControl = 32;
+	const kPermissionAll = (self::kPermissionCreate | self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete | self::kPermissionShare | self::kPermissionControl);
+
 	protected string $serviceId;
 	protected string $subscriptionId;
 	protected string $gameId;

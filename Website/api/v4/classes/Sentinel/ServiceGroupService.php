@@ -10,12 +10,22 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 	protected string $serviceGroupServiceId;
 	protected string $serviceGroupId;
 	protected string $serviceId;
+	protected string $serviceName;
+	protected ?string $serviceNickname;
+	protected string $serviceDisplayName;
+	protected string $serviceGameId;
+	protected string $serviceColor;
 	protected int $permissions;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceGroupServiceId = $row->Field('service_group_service_id');
 		$this->serviceGroupId = $row->Field('service_group_id');
 		$this->serviceId = $row->Field('service_id');
+		$this->serviceName = $row->Field('service_name');
+		$this->serviceNickname = $row->Field('service_nickname');
+		$this->serviceDisplayName = $row->Field('service_display_name');
+		$this->serviceGameId = $row->Field('service_game_id');
+		$this->serviceColor = $row->Field('service_color');
 		$this->permissions = $row->Field('permissions');
 	}
 
@@ -25,6 +35,13 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('serviceGroupId', ['columnName' => 'service_group_id']),
 			new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
 			new DatabaseObjectProperty('permissions', ['editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('serviceName', ['columnName' => 'service_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.name']),
+			new DatabaseObjectProperty('serviceNickname', ['columnName' => 'service_nickname', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.nickname']),
+			new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'COALESCE(services.nickname, services.name)']),
+			new DatabaseObjectProperty('serviceGameId', ['columnName' => 'service_game_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.game_id']),
+			new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.color']),
+		], [
+			'INNER JOIN sentinel.services ON (service_group_services.service_id = services.service_id AND services.deleted = FALSE)',
 		]);
 	}
 
@@ -40,6 +57,11 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 			'serviceGroupServiceId' => $this->serviceGroupServiceId,
 			'serviceGroupId' => $this->serviceGroupId,
 			'serviceId' => $this->serviceId,
+			'serviceName' => $this->serviceName,
+			'serviceNickname' => $this->serviceNickname,
+			'serviceDisplayName' => $this->serviceDisplayName,
+			'serviceGameId' => $this->serviceGameId,
+			'serviceColor' => $this->serviceColor,
 			'permissions' => $this->permissions,
 		];
 	}
@@ -54,6 +76,10 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 
 	public function ServiceId(): string {
 		return $this->serviceId;
+	}
+
+	public function ServiceName(): string {
+		return $this->serviceName;
 	}
 
 	public function Permissions(): int {

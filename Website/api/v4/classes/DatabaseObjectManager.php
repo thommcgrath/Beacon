@@ -227,12 +227,14 @@ class DatabaseObjectManager {
 				'keyProperty' => $primaryKeyProperty,
 				$primaryKeyProperty => $primaryKey,
 				'object' => $member,
-				'reason' => 'Forbidden'
+				'reason' => 'Forbidden',
 			];
 		}
 
 		if (is_null($obj)) {
-			$member['userId'] = $user->UserId(); // In case it is needed
+			if (isset($member['userId']) === false) {
+				$member['userId'] = $user->UserId(); // In case it is needed
+			}
 			$obj = $className::Create($member);
 			if (is_null($obj)) {
 				return [

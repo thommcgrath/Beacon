@@ -7,24 +7,32 @@ use BeaconCommon, BeaconRecordSet, JsonSerializable;
 class ServiceGroup extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
 
-	protected string $groupId;
+	protected string $serviceGroupId;
 	protected string $userId;
 	protected string $name;
 	protected string $color;
+	protected array $users;
 
 	public function __construct(BeaconRecordSet $row) {
-		$this->groupId = $row->Field('service_group_id');
+		$this->serviceGroupId = $row->Field('service_group_id');
 		$this->userId = $row->Field('user_id');
 		$this->name = $row->Field('name');
 		$this->color = $row->Field('color');
+
+		$userList = json_decode($row->Field('users'), true);
+		$this->users = [];
+		foreach ($userList as $user) {
+			$this->users[$user['user_id']] = ($user['permissions'] | self::kPermissionRead) & self::kPermissionAll;
+		}
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('sentinel', 'service_groups', [
-			new DatabaseObjectProperty('groupId', ['primaryKey' => true, 'columnName' => 'service_group_id', 'required' => false]),
+			new DatabaseObjectProperty('serviceGroupId', ['primaryKey' => true, 'columnName' => 'service_group_id', 'required' => false]),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT service_group_permissions.user_id, service_group_permissions.permissions FROM sentinel.service_group_permissions INNER JOIN sentinel.service_groups AS A ON (service_group_permissions.service_group_id = A.service_group_id) WHERE service_group_permissions.service_group_id = service_groups.service_group_id ORDER BY service_groups.name ASC) AS users_template), '[]')"]),
 		]);
 	}
 
@@ -41,15 +49,16 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 
 	public function jsonSerialize(): mixed {
 		return [
-			'serviceGroupId' => $this->groupId,
+			'serviceGroupId' => $this->serviceGroupId,
 			'userId' => $this->userId,
 			'name' => $this->name,
-			'color' => $this->color
+			'color' => $this->color,
+			'users' => $this->users,
 		];
 	}
 
-	public function GroupId(): string {
-		return $this->groupId;
+	public function ServiceGroupId(): string {
+		return $this->serviceGroupId;
 	}
 
 	public function UserId(): string {
@@ -82,6 +91,8 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 	public function GetPermissionsForUser(User $user): int {
 		if ($user->UserId() === $this->userId) {
 			return self::kPermissionAll;
+		} elseif (array_key_exists($user->UserId(), $this->users)) {
+			return $this->users[$user->UserId()];
 		}
 
 		$database = BeaconCommon::Database();
