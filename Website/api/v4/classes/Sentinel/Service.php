@@ -71,9 +71,11 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected ?float $lastSuccess;
 	protected ?float $lastError;
 	protected ?float $lastGamelogTimestamp;
+	protected ?float $lastStatus;
 	protected bool $inErrorState;
 	protected string $name;
 	protected ?string $nickname;
+	protected string $displayName;
 	protected string $color;
 	protected string $platform;
 	protected array $gameSpecific;
@@ -88,9 +90,11 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->lastSuccess = is_null($row->Field('last_success')) ? null : floatval($row->Field('last_success'));
 		$this->lastError = is_null($row->Field('last_error')) ? null : floatval($row->Field('last_error'));
 		$this->lastGamelogTimestamp = is_null($row->Field('last_gamelog_timestamp')) ? null : floatval($row->Field('last_gamelog_timestamp'));
+		$this->lastStatus = is_null($row->Field('last_status')) ? null : floatval($row->Field('last_status'));
 		$this->inErrorState = $row->Field('in_error_state');
 		$this->name = $row->Field('name');
 		$this->nickname = $row->Field('nickname');
+		$this->displayName = $row->Field('display_name');
 		$this->color = $row->Field('color');
 		$this->platform = $row->Field('platform');
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
@@ -107,9 +111,11 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('lastSuccess', ['columnName' => 'last_success', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
 			new DatabaseObjectProperty('lastError', ['columnName' => 'last_error', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
 			new DatabaseObjectProperty('lastGamelogTimestamp', ['columnName' => 'last_gamelog_timestamp', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
+			new DatabaseObjectProperty('lastStatus', ['columnName' => 'last_status', 'accessor' => 'EXTRACT(EPOCH FROM GREATEST(%%TABLE%%.last_success, %%TABLE%%.last_error))', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('inErrorState', ['columnName' => 'in_error_state', 'accessor' => 'COALESCE(EXTRACT(EPOCH FROM %%TABLE%%.last_error), 0) > COALESCE(EXTRACT(EPOCH FROM %%TABLE%%.last_success), 0)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('name'),
 			new DatabaseObjectProperty('nickname', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'COALESCE(%%TABLE%%.nickname, %%TABLE%%.name)']),
 			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('platform'),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
@@ -118,12 +124,30 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
+
+		$sortOrder = 'ASC';
+		$sortColumn = 'displayName';
+		if (isset($filters['sortDirection']) && strtolower($filters['sortDirection']) === 'descending') {
+			$sortOrder = 'DESC';
+		}
+		if (isset($filters['sortedColumn'])) {
+			switch ($filters['sortedColumn']) {
+			case 'displayName':
+			case 'nickname':
+			case 'name':
+			case 'gameId':
+			case 'inErrorState':
+			case 'lastStatus':
+				$sortColumn = $filters['sortedColumn'];
+				break;
+			}
+		}
+		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortOrder;
+
 		$parameters->orderBy = $schema->Accessor('name');
 		$parameters->clauses[] = 'services.deleted = FALSE';
 		$parameters->AddFromFilter($schema, $filters, 'serviceTokenId');
-		$parameters->AddFromFilter($schema, $filters, 'nitradoServiceId');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
-		$parameters->AddFromFilter($schema, $filters, 'ipAddress');
 		$parameters->AddFromFilter($schema, $filters, 'color');
 		$parameters->AddFromFilter($schema, $filters, 'platform');
 
@@ -135,6 +159,20 @@ class Service extends DatabaseObject implements JsonSerializable {
 		if (isset($filters['serviceGroupId'])) {
 			$placeholder = $parameters->AddValue($filters['serviceGroupId']);
 			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.service_group_services WHERE group_id = $' . $placeholder . ')';
+		}
+
+		if (isset($filters['searchableName'])) {
+			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['searchableName']) . '%');
+			$parameters->clauses[] = '(services.name ILIKE $' . $placeholder . ' OR services.nickname ILIKE $' . $placeholder . ')';
+		} elseif (isset($filters['displayName'])) {
+			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['displayName']) . '%');
+			$parameters->clauses[] = $schema->Accessor('displayName') . ' ILIKE $' . $placeholder;
+		} elseif (isset($filters['nickname'])) {
+			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['nickname']) . '%');
+			$parameters->clauses[] = $schema->Accessor('nickname') . ' ILIKE $' . $placeholder;
+		} elseif (isset($filters['name'])) {
+			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['name']) . '%');
+			$parameters->clauses[] = $schema->Accessor('name') . ' ILIKE $' . $placeholder;
 		}
 	}
 
@@ -156,21 +194,32 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function jsonSerialize(): mixed {
-		return [
+		$json = [
 			'serviceId' => $this->serviceId,
 			'subscriptionId' => $this->subscriptionId,
 			'gameId' => $this->gameId,
 			'connectionDetails' => $this->connectionDetails,
+			'displayAddress' => null,
+			'numericAddress' => null,
 			'lastSuccess' => $this->lastSuccess,
 			'lastError' => $this->lastError,
 			'lastGamelogTimestamp' => $this->lastGamelogTimestamp,
+			'lastStatus' => $this->lastStatus,
 			'inErrorState' => $this->inErrorState,
 			'name' => $this->name,
 			'nickname' => $this->nickname,
+			'displayName' => $this->displayName,
 			'color' => $this->color,
 			'platform' => $this->platform,
 			'gameSpecific' => $this->gameSpecific,
 		];
+
+		if (isset($this->connectionDetails['ipAddress']) && isset($this->connectionDetails['gamePort'])) {
+			$json['displayAddress'] = $this->connectionDetails['ipAddress'] . ':' . $this->connectionDetails['gamePort'];
+			$json['numericAddress'] = ip2long($this->connectionDetails['ipAddress']) + ($this->connectionDetails['gamePort'] / 100000);
+		}
+
+		return $json;
 	}
 
 	protected static function InitializeProperties(array &$properties): void {

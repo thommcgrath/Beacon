@@ -49,13 +49,13 @@ if ($user->Is2FAProtected()) {
 		Response::NewJsonError('Incorrect username or password', ['code' => '2FA_ENABLED'], 403)->Flush();
 		exit;
 	}
-	
+
 	if (empty($deviceId) === false) {
 		if ($trust === true) {
 			$user->TrustDevice($deviceId);
 		} else if ($trust === false) {
 			$user->TrustDevice($deviceId);
-		}	
+		}
 	}
 }
 

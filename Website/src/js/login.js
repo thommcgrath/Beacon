@@ -15,10 +15,10 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			currentPage = pageName;
 			return;
 		}
-		
+
 		element.classList.add('hidden');
 	});
-	
+
 	const showPage = (newPage) => {
 		const fromElement = document.getElementById(`page_${currentPage}`);
 		const toElement = document.getElementById(`page_${newPage}`);
@@ -29,7 +29,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 		toElement.classList.remove('hidden');
 		currentPage = newPage;
 	};
-	
+
 	const focusFirst = (fieldIds, requireEmpty = true) => {
 		let focused = false;
 		for (const fieldId of fieldIds) {
@@ -40,15 +40,15 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 				break;
 			}
 		}
-		
+
 		// if we didn't focus on the first empty something, go back and focus on the first something
 		if (focused === false && requireEmpty === true) {
 			focusFirst(fieldIds, false);
-		}	
+		}
 	};
-	
+
 	let knownVulnerablePassword = '';
-	
+
 	const loginForm = document.getElementById('login_form_intro');
 	const loginEmailField = document.getElementById('login_email_field');
 	const loginPasswordField = document.getElementById('login_password_field');
@@ -56,23 +56,23 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 	const loginRecoverButton = document.getElementById('login_recover_button');
 	const loginCancelButton = document.getElementById('login_cancel_button');
 	const loginActionButton = document.getElementById('login_action_button');
-	
+
 	const totpForm = document.getElementById('login_form_totp');
 	const totpCodeField = document.getElementById('totp_code_field');
 	const totpRememberCheck = document.getElementById('totp_remember_check');
 	const totpCancelButton = document.getElementById('totp_cancel_button');
-	
+
 	const recoverForm = document.getElementById('login_recover_form');
 	const recoverEmailField = document.getElementById('recover_email_field');
 	const recoverActionButton = document.getElementById('recover_action_button');
 	const recoverCancelButton = document.getElementById('recover_cancel_button');
-	
+
 	const verifyForm = document.getElementById('login_verify_form');
 	const verifyCodeField = document.getElementById('verify_code_field');
 	const verifyEmailField = document.getElementById('verify_email_field');
 	const verifyCancelButton = document.getElementById('verify_cancel_button');
 	const verifyActionButton = document.getElementById('verify_action_button');
-	
+
 	const passwordPage = document.getElementById('page_password');
 	const passwordForm = document.getElementById('login_password_form');
 	const passwordEmailField = document.getElementById('password_email_field');
@@ -87,23 +87,23 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 	const passwordAuthenticatorCodeParagraph = document.getElementById('password_totp_paragraph');
 	const passwordAuthenticatorCodeLabel = document.getElementById('password_totp_label');
 	const passwordAuthenticatorCodeField = document.getElementById('password_totp_field');
-	
+
 	const authorizeActionButton = document.getElementById('authorize_action_button');
 	const authorizeCancelButton = document.getElementById('authorize_cancel_button');
 	const authorizeSwitchButton = document.getElementById('authorize_switch_button');
-	
+
 	const loginReturnURI = loginParams.return;
 	let loginRemember = false;
-	
+
 	let storedRemember = false;
 	let storedEmail = null;
 	const explicitEmail = loginParams.email;
-	
+
 	if (!explicitEmail && localStorage) {
 		storedEmail = localStorage.getItem('email');
 		storedRemember = (storedEmail !== null);
 	}
-	
+
 	if (sessionStorage) {
 		const userPassword = sessionStorage.getItem('account_password');
 		if (userPassword) {
@@ -111,7 +111,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			loginParams.userPassword = userPassword;
 		}
 	}
-	
+
 	// !Login Page
 	if (loginEmailField) {
 		if (explicitEmail) {
@@ -126,34 +126,36 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 	if (loginForm || totpForm) {
 		const loginFunction = (ev) => {
 			ev.preventDefault();
-			
-			if (!(loginEmailField && loginPasswordField)) {
+
+			if (!((loginEmailField || loginParams.userId) && loginPasswordField)) {
+				console.log('Not enough fields');
 				return false;
 			}
-			
-			const loginEmail = loginEmailField.value.trim();
+
+			const forcedUserId = loginParams.userId;
+			const loginUser = forcedUserId ? loginParams.userId : loginEmailField.value.trim();
 			const loginPassword = loginPasswordField.value;
-			
+
 			if (loginRememberCheck) {
 				loginRemember = loginRememberCheck.checked;
 			}
-			
+
 			if (loginRemember === false && localStorage) {
 				localStorage.removeItem('email');
 			}
 			if (sessionStorage) {
 				sessionStorage.removeItem('email');
 			}
-			
-			if (loginEmail === '' || loginPassword.length < 8) {
-				BeaconDialog.show('Incomplete Login', 'Email must not be blank and password have at least 8 characters.');
+
+			if (!loginUser || loginPassword.length < 8) {
+				BeaconDialog.show('Incomplete Login', 'Email must not be blank and password must  have at least 8 characters.');
 				return false;
 			}
-			
+
 			showPage('loading');
-			
+
 			const sessionBody = {
-				email: loginEmail,
+				email: loginUser,
 				password: loginPassword,
 				challenge: loginParams.challenge,
 				challengeExpiration: loginParams.challengeExpiration,
@@ -168,15 +170,17 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 				sessionBody.verificationCode = totpCode;
 				sessionBody.trust = totpRememberCheck.checked;
 			}
-			
+
 			BeaconWebRequest.post(`/account/auth/authenticate`, sessionBody).then((response) => {
-				if (localStorage && loginRemember) {
-					localStorage.setItem('email', loginEmail);
+				if (!forcedUserId) {
+					if (localStorage && loginRemember && loginUser) {
+						localStorage.setItem('email', loginUser);
+					}
+					if (sessionStorage) {
+						sessionStorage.setItem('email', loginUser);
+					}
 				}
-				if (sessionStorage) {
-					sessionStorage.setItem('email', loginEmail);
-				}
-				
+
 				try {
 					const obj = JSON.parse(response.body);
 					let url = loginParams.redeemUrl;
@@ -188,18 +192,18 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 					}
 					url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
 					url = url.replace('{{temporary}}', (loginRemember === false ? 'true' : 'false'));
-					
+
 					if (loginParams.flowRequiresPassword && sessionStorage) {
-						sessionStorage.setItem('account_password', sessionBody.password);	
+						sessionStorage.setItem('account_password', sessionBody.password);
 					}
-					
+
 					window.location = url;
 				} catch (e) {
 					console.log(e);
 				}
 			}).catch((error) => {
 				console.log(JSON.stringify(error));
-				
+
 				let loginErrorExplanation;
 				switch (error.status) {
 				case 400:
@@ -220,11 +224,11 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 						}
 					} catch (e) {
 					}
-					
+
 					BeaconDialog.show('Unable to complete login', loginErrorExplanation).then(() => {
 						showPage('login');
 					});
-					
+
 					break;
 				case 401:
 				case 403:
@@ -238,7 +242,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 						}
 					} catch (e) {
 					}
-					
+
 					BeaconDialog.show('Incorrect Login', 'Email or password is not correct.').then(() => {
 						showPage('login');
 					});
@@ -250,30 +254,30 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 					break;
 				}
 			});
-			
+
 			return false;
 		};
-		
+
 		if (loginForm) {
 			loginForm.addEventListener('submit', loginFunction);
 		}
-		
+
 		if (totpForm) {
 			totpForm.addEventListener('submit', loginFunction);
 		}
 	}
-	
+
 	if (loginRecoverButton) {
 		loginRecoverButton.addEventListener('click', (ev) => {
 			ev.preventDefault();
-			
+
 			if (recoverEmailField && loginEmailField) {
 				recoverEmailField.value = loginEmailField.value;
 			}
-			
+
 			showPage('recover');
 			focusFirst([recoverEmailField]);
-			
+
 			return false;
 		});
 	}
@@ -291,8 +295,8 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			focusFirst([loginPasswordField]);
 		});
 	}
-	
-	
+
+
 	// !Recovery Page
 	if (recoverForm) {
 		recoverForm.addEventListener('submit', (ev) => {
@@ -300,12 +304,12 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			if (recoverActionButton) {
 				recoverActionButton.disabled = true;
 			}
-			
+
 			if (!recoverEmailField) {
 				console.log('Missing email field');
 				return;
 			}
-			
+
 			const params = new URLSearchParams();
 			params.append('email', recoverEmailField.value.trim());
 			if (loginParams.loginId) {
@@ -315,14 +319,14 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			if (query.has('return')) {
 				params.append('return', query.get('return'));
 			}
-			
+
 			BeaconWebRequest.post('/account/auth/email', params).then((response) => {
 				try {
 					const obj = JSON.parse(response.body);
 					if (recoverActionButton) {
 						recoverActionButton.disabled = false;
 					}
-					
+
 					if (obj.verified) {
 						if (passwordEmailField) {
 							passwordEmailField.value = obj.email;
@@ -341,16 +345,16 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 				}
 			}).catch((error) => {
 				console.log(JSON.stringify(error));
-				
+
 				if (recoverActionButton) {
 					recoverActionButton.disabled = false;
 				}
-				
+
 				const alert = {
 					message: 'Unable to continue',
 					explanation: `There was a ${error.status} error while trying to send the verification email.`,
 				};
-				
+
 				try {
 					const obj = JSON.parse(error.body);
 					if (obj.message) {
@@ -359,12 +363,12 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 				} catch (err) {
 					console.log(err);
 				}
-				
+
 				BeaconDialog.show(alert.message, alert.explanation).then(() => {
 					showPage('recover');
 				});
 			});
-			
+
 			return false;
 		});
 	}
@@ -376,23 +380,23 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			return false;
 		});
 	}
-	
+
 	// !Address verification
 	if (verifyForm) {
 		verifyForm.addEventListener('submit', (ev) => {
 			ev.preventDefault();
-			
+
 			if (!(verifyCodeField && verifyEmailField)) {
 				console.log('Missing fields');
 				return;
 			}
-			
+
 			showPage('loading');
-			
+
 			const params = new URLSearchParams();
 			params.append('email', verifyEmailField.value.trim());
 			params.append('code', verifyCodeField.value.trim());
-			
+
 			BeaconWebRequest.post('/account/auth/verify', params).then((response) => {
 				try {
 					const obj = JSON.parse(response.body);
@@ -425,7 +429,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 					showPage('verify');
 				});
 			});
-			
+
 			return false;
 		});
 	}
@@ -437,14 +441,14 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			return false;
 		});
 	}
-	
+
 	// !Password form
 	if (passwordForm) {
 		let passwordConfirmChildrenReset = false;
-		
+
 		passwordForm.addEventListener('submit', (ev) => {
 			ev.preventDefault();
-			
+
 			const passwordEmail = (passwordEmailField) ? passwordEmailField.value.trim() : '';
 			const passwordVerificationCode = (passwordCodeField) ? passwordCodeField.value.trim() : '';
 			const passwordUsername = (passwordUsernameField) ? passwordUsernameField.value : '';
@@ -452,7 +456,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			const passwordConfirm = (passwordConfirmField) ? passwordConfirmField.value : '';
 			const passwordAllowVulnerable = (passwordInitial === knownVulnerablePassword);
 			const passwordAuthenticatorCode = (passwordAuthenticatorCodeField) ? passwordAuthenticatorCodeField.value : '';
-			
+
 			if (passwordInitial.length < 8) {
 				BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.');
 				return false;
@@ -461,7 +465,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 				BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.');
 				return false;
 			}
-			
+
 			const form = new URLSearchParams();
 			form.append('email', passwordEmail);
 			form.append('username', passwordUsername);
@@ -470,14 +474,14 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			form.append('allow_vulnerable', passwordAllowVulnerable);
 			form.append('confirm_reset_children', passwordConfirmChildrenReset);
 			form.append('verification_code', passwordAuthenticatorCode);
-			
+
 			showPage('loading');
 			BeaconWebRequest.post('/account/auth/password', form).then(() => {
 				try {
 					if (localStorage && loginRemember) {
 						localStorage.setItem('email', passwordEmail);
 					}
-					
+
 					// Password has been changed, so now we run through normal login
 					loginEmailField.value = passwordEmail;
 					loginPasswordField.value = passwordInitial;
@@ -488,11 +492,11 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 				}
 			}).catch((error) => {
 				console.log(JSON.stringify(error));
-				
+
 				let dialog;
 				try {
 					const obj = JSON.parse(error.body);
-					
+
 					switch (error.status) {
 					case 403:
 						if (passwordAuthenticatorCodeParagraph) {
@@ -506,7 +510,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 								if (passwordAuthenticatorCodeField) {
 									passwordAuthenticatorCodeField.classList.add('invalid');
 								}
-								
+
 								setTimeout(() => {
 									if (passwordAuthenticatorCodeLabel) {
 										passwordAuthenticatorCodeLabel.classList.remove('invalid');
@@ -540,7 +544,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 						dialog = BeaconDialog.show('Unable to create user', `There was a ${error.status} error while trying to create your account.`);
 						break;
 					}
-					
+
 					if (dialog) {
 						dialog.then(() => {
 							showPage('password');
@@ -563,11 +567,11 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 	if (passwordUseSuggestedLink) {
 		passwordUseSuggestedLink.addEventListener('click', (ev) => {
 			ev.preventDefault();
-			
+
 			if (passwordUsernameField) {
 				passwordUsernameField.value = ev.target.getAttribute('beacon-username');
 			}
-			
+
 			return false;
 		});
 	}
@@ -586,12 +590,12 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			}).catch((error) => {
 				console.log(JSON.stringify(error));
 			});
-			
+
 			ev.preventDefault();
 			return false;
 		});
 	}
-	
+
 	// !Authorization form
 	if (authorizeCancelButton) {
 		authorizeCancelButton.addEventListener('click', () => {
@@ -605,16 +609,16 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			}
 		});
 	}
-	
+
 	if (authorizeSwitchButton) {
 		authorizeSwitchButton.addEventListener('click', (ev) => {
 			ev.preventDefault();
-			
+
 			const currentLocation = window.location;
 			window.location = '/account/auth/redeem?return=' + encodeURIComponent(currentLocation);
 		});
 	}
-	
+
 	if (authorizeActionButton) {
 		authorizeActionButton.addEventListener('click', () => {
 			const authorizationBody = {
@@ -623,7 +627,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 				challenge: loginParams.challenge,
 				challengeExpiration: loginParams.challengeExpiration,
 			};
-			
+
 			let authPromise = null;
 			if (loginParams.userPassword) {
 				authorizationBody.password = loginParams.userPassword;
@@ -637,10 +641,10 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 					const authorizePasswordField = document.getElementById('authorizePasswordField');
 					const authorizePasswordActionButton = document.getElementById('authorizePasswordActionButton');
 					const authorizePasswordCancelButton = document.getElementById('authorizePasswordCancelButton');
-					
+
 					const authorizePasswordActionFunction = (ev) => {
 						ev.preventDefault();
-						
+
 						if (authorizePasswordField.value.length < 8) {
 							authorizePasswordFieldGroup.classList.add('shake');
 							setTimeout(() => {
@@ -648,36 +652,36 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 							}, 400);
 							return;
 						}
-						
+
 						authorizationBody.password = authorizePasswordField.value;
 						authorizePasswordActionButton.removeEventListener('click', authorizePasswordActionFunction);
-						
+
 						BeaconDialog.hideModal().then(() => {
 							authorizePasswordField.value = '';
 							resolve();
 						});
 					};
-					
+
 					const authorizePasswordCancelFunction = (ev) => {
 						ev.preventDefault();
-						
+
 						authorizationBody.password = null;
 						authorizePasswordCancelButton.removeEventListener('click', authorizePasswordCancelFunction);
-						
+
 						BeaconDialog.hideModal().then(() => {
 							authorizePasswordField.value = '';
 							reject();
 						});
 					};
-					
+
 					authorizePasswordActionButton.addEventListener('click', authorizePasswordActionFunction);
 					authorizePasswordCancelButton.addEventListener('click', authorizePasswordCancelFunction);
 					authorizePasswordField.value = '';
-					
+
 					BeaconDialog.showModal('authorizePasswordDialog');
 				});
 			}
-			
+
 			authPromise.then(() => {
 				BeaconWebRequest.post('/account/auth/authorize', authorizationBody).then((response) => {
 					try {
@@ -703,7 +707,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			});
 		});
 	}
-	
+
 	if (window.location.hash === '#create') {
 		if (recoverEmailField && explicitEmail) {
 			recoverEmailField.value = explicitEmail;
@@ -714,8 +718,8 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 		verifyCodeField.value = loginParams.code;
 		verifyForm.dispatchEvent(new Event('submit', {'bubbles': true, 'cancelable': true}));
 	}
-	
+
 	//if (window.location.search !== '') {
-	//	window.history.pushState({}, '', '/account/login');	
+	//	window.history.pushState({}, '', '/account/login');
 	//}
 });
