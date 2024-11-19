@@ -190,6 +190,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupService
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupUser', 'sentinel/serviceGroupUsers', 'serviceGroupUserId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/players', 'playerId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceUser', 'sentinel/serviceUsers', 'serviceUserId');
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 
