@@ -79,6 +79,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected string $color;
 	protected string $platform;
 	protected array $gameSpecific;
+	protected array $users;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
@@ -98,6 +99,12 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->color = $row->Field('color');
 		$this->platform = $row->Field('platform');
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
+
+		$userList = json_decode($row->Field('users'), true);
+		$this->users = [];
+		foreach ($userList as $user) {
+			$this->users[$user['user_id']] = ($user['permissions'] | self::kPermissionRead) & self::kPermissionAll;
+		}
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -119,6 +126,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('platform'),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
+			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT service_permissions.user_id, service_permissions.permissions FROM sentinel.service_permissions INNER JOIN sentinel.services AS A ON (service_permissions.service_id = A.service_id) WHERE service_permissions.service_id = services.service_id ORDER BY services.name ASC) AS users_template), '[]')"]),
 		]);
 	}
 
@@ -212,11 +220,26 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'color' => $this->color,
 			'platform' => $this->platform,
 			'gameSpecific' => $this->gameSpecific,
+			'users' => $this->users,
 		];
 
 		if (isset($this->connectionDetails['ipAddress']) && isset($this->connectionDetails['gamePort'])) {
 			$json['displayAddress'] = $this->connectionDetails['ipAddress'] . ':' . $this->connectionDetails['gamePort'];
 			$json['numericAddress'] = ip2long($this->connectionDetails['ipAddress']) + ($this->connectionDetails['gamePort'] / 100000);
+		} elseif (isset($this->connectionDetails['rconHost']) && isset($this->connectionDetails['rconPort'])) {
+			$json['displayAddress'] = $this->connectionDetails['rconHost'] . ':' . $this->connectionDetails['rconPort'];
+			$numeric = ip2long($this->connectionDetails['rconHost']);
+			if ($numeric === false) {
+				$numeric = BeaconCommon::WordToInt($this->connectionDetails['rconHost']);
+			}
+			$json['numericAddress'] = $numeric + ($this->connectionDetails['rconPort'] / 100000);
+		} elseif (isset($this->connectionDetails['ftpHost']) && isset($this->connectionDetails['rconPort'])) {
+			$json['displayAddress'] = $this->connectionDetails['ftpHost'] . ':' . $this->connectionDetails['rconPort'];
+			$numeric = ip2long($this->connectionDetails['ftpHost']);
+			if ($numeric === false) {
+				$numeric = BeaconCommon::WordToInt($this->connectionDetails['ftpHost']);
+			}
+			$json['numericAddress'] = $numeric + ($this->connectionDetails['rconPort'] / 100000);
 		}
 
 		return $json;
@@ -247,7 +270,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 				if (BeaconCommon::HasAllKeys($details, 'serviceId', 'serviceTokenId') === false) {
 					throw new Exception('connectionDetails must have serviceId and serviceTokenId keys for Nitrado connections');
 				}
-				if (filter_var($details['serviceId'], FILTER_VALIDATE_INT) == false) {
+				if (filter_var($details['serviceId'], FILTER_VALIDATE_INT) === false) {
 					throw new Exception('connectionDetails.serviceId is not a number');
 				}
 				if (BeaconCommon::IsUUID($details['serviceTokenId']) === false) {
@@ -255,8 +278,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 				}
 				break;
 			case 'FTP':
-				if (BeaconCommon::HasAllKeys($details, 'host', 'rconPort', 'rconPassword', 'ftpPort', 'ftpUser', 'ftpPassword', 'ftpUsePassiveMode', 'ftpMode', 'ftpPath') === false) {
-					throw new Exception('connectionDetails must have host, rconPort, rconPassword, ftpPort, ftpUser, ftpPassword, ftpUsePassiveMode, ftpMode, and ftpPath keys for FTP connections');
+				if (BeaconCommon::HasAllKeys($details, 'ftpHost', 'rconPort', 'ftpPort', 'ftpUsername', 'ftpPassword', 'ftpUsePassiveMode', 'ftpMode') === false) {
+					throw new Exception('connectionDetails must have host, rconPort, ftpPort, ftpUser, ftpPassword, ftpUsePassiveMode, ftpMode, and ftpPath keys for FTP connections');
 				}
 				if (filter_var($details['rconPort'], FILTER_VALIDATE_INT) === false || $details['rconPort'] < 1 || $details['rconPort'] > 65535) {
 					throw new Exception('connectionDetails.rconPort must be a number between 1 and 65535');
@@ -264,35 +287,42 @@ class Service extends DatabaseObject implements JsonSerializable {
 				if (filter_var($details['ftpPort'], FILTER_VALIDATE_INT) === false || $details['ftpPort'] < 1 || $details['ftpPort'] > 65535) {
 					throw new Exception('connectionDetails.ftpPort must be a number between 1 and 65535');
 				}
-				if (filter_var($details['ftpUsePassiveMode'], FILTER_VALIDATE_BOOL) === false) {
+				if (filter_var($details['ftpUsePassiveMode'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) === null) {
 					throw new Exception('connectionDetails.ftpUsePassiveMode must be true or false');
 				}
-				if (in_array($details['ftpMode'], ['insecure', 'sftp', 'required_tls', 'optional_tls', 'implied_tls']) === false) {
-					throw new Exception('connectionDetails.ftpMode must be one of insecure, sftp, required_tls, optional_tls, or implied_tls');
+				if (in_array($details['ftpMode'], ['ftp', 'ftps', 'ftp+tls', 'ftp-tls', 'sftp']) === false) {
+					throw new Exception('connectionDetails.ftpMode must be one of ftp, ftps, ftp+tls, ftp-tls, or sftp');
 				}
-				if (in_array($details['ftpMode'], ['required_tls', 'optional_tls', 'implied_tls'])) {
+				if (in_array($details['ftpMode'], ['ftp', 'ftps', 'ftp+tls'])) {
 					if (array_key_exists('ftpValidateCertificates', $details) === false) {
 						throw new Exception('connectionDetails must have a ftpValidateCertificates key when TLS is enabeld');
 					}
-					if (filter_var($details['ftpValidateCertificates'], FILTER_VALIDATE_BOOL) === false) {
+					if (filter_var($details['ftpValidateCertificates'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) === null) {
 						throw new Exception('connectionDetails.ftpValidateCertificates must be true or false');
 					}
 				}
-				if (empty($details['host'])) {
+				if (empty($details['ftpHost'])) {
 					throw new Exception('connectionDetails.host must not be empty');
 				}
-				if (empty($details['rconPassword'])) {
-					throw new Exception('connectionDetails.rconPassword must not be empty');
-				}
-				if (empty($details['ftpUser'])) {
-					throw new Exception('connectionDetails.ftpUser must not be empty');
+				if (empty($details['ftpUsername'])) {
+					throw new Exception('connectionDetails.ftpUsername must not be empty');
 				}
 				if (empty($details['ftpPassword'])) {
 					throw new Exception('connectionDetails.ftpPassword must not be empty');
 				}
-				if (empty($details['ftpPath'])) {
-					throw new Exception('connectionDetails.ftpPath must not be empty');
+
+				if (BeaconCommon::HasAnyKeys($details, 'ftpConfigPath', 'ftpLogsPath', 'ftpSavedArksPath')) {
+					$emptyKeys = BeaconCommon::FindEmptyKeys($details, 'ftpConfigPath', 'ftpLogsPath', 'ftpSavedArksPath');
+					if (count($emptyKeys) > 0) {
+						throw new Exception('When using custom paths, connectionDetails must have ' . (count($emptyKeys) === 1 ? 'a value for ' . $emptyKeys[0] : 'values for ' . BeaconCommon::ArrayToEnglish($emptyKeys)) . '.');
+					}
+					if (array_key_exists('ftpSavedPath', $details) || empty($details['ftpSavedPath']) === false) {
+						throw new Exception('connectionDetails.ftpSavedPath should not be included when using custom paths');
+					}
+				} elseif (empty($details['ftpSavedPath'])) {
+					throw new Exception('connectionDetails.ftpSavedPath must not be empty unless using custom paths');
 				}
+
 				break;
 			default:
 				throw new Exception('Connection detail type ' . $details['type'] . ' is not supported');
@@ -316,7 +346,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 				$hashParts[] = strtolower($details['serviceId']);
 				break;
 			case 'FTP':
-				$hashParts[] = strtolower($details['host']);
+				$hashParts[] = strtolower($details['rconHost'] ?? $details['ftpHost']);
 				$hashParts[] = intval($details['rconPort']);
 				break;
 			}
