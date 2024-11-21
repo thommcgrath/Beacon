@@ -173,8 +173,8 @@ class ServiceGroupUser extends DatabaseObject implements JsonSerializable {
 		if (isset($filters['serviceGroupId'])) {
 			$database = BeaconCommon::Database();
 			$rows = $database->Query('SELECT permissions FROM sentinel.service_group_permissions WHERE service_group_id = $1 AND user_id = $2;', $filters['serviceGroupId'], Core::UserId());
-			if ($rows->RecordCount() !== 1 || ($rows->Field('permissions') & ServiceGroup::kPermissionUpdate) === 0) {
-				throw new Exception('User does not have update permission on service group ' . $filters['serviceGroupId']);
+			if ($rows->RecordCount() !== 1 || ($rows->Field('permissions') & ServiceGroup::kPermissionRead) === 0) {
+				throw new Exception('User does not have read permission on service group ' . $filters['serviceGroupId']);
 			}
 		} elseif (isset($filters['userId']) === false) {
 			// If they are not listing by group, they must list by user.

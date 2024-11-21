@@ -9,6 +9,7 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 
 	protected string $serviceGroupServiceId;
 	protected string $serviceGroupId;
+	protected string $serviceGroupName;
 	protected string $serviceId;
 	protected string $serviceName;
 	protected ?string $serviceNickname;
@@ -20,6 +21,7 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceGroupServiceId = $row->Field('service_group_service_id');
 		$this->serviceGroupId = $row->Field('service_group_id');
+		$this->serviceGroupName = $row->Field('service_group_name');
 		$this->serviceId = $row->Field('service_id');
 		$this->serviceName = $row->Field('service_name');
 		$this->serviceNickname = $row->Field('service_nickname');
@@ -33,6 +35,7 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 		return new DatabaseSchema('sentinel', 'service_group_services', [
 			new DatabaseObjectProperty('serviceGroupServiceId', ['columnName' => 'service_group_service_id', 'primaryKey' => true, 'required' => false]),
 			new DatabaseObjectProperty('serviceGroupId', ['columnName' => 'service_group_id']),
+			new DatabaseObjectProperty('serviceGroupName', ['columnName' => 'service_group_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_groups.name']),
 			new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
 			new DatabaseObjectProperty('permissions', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('serviceName', ['columnName' => 'service_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.name']),
@@ -42,6 +45,7 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.color']),
 		], [
 			'INNER JOIN sentinel.services ON (service_group_services.service_id = services.service_id AND services.deleted = FALSE)',
+			'INNER JOIN sentinel.service_groups ON (service_group_services.service_group_id = service_groups.service_group_id)',
 		]);
 	}
 
@@ -50,12 +54,17 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceGroupId');
+		$parameters->AddFromFilter($schema, $filters, 'serviceGroupName');
+		$parameters->AddFromFilter($schema, $filters, 'serviceName');
+		$parameters->AddFromFilter($schema, $filters, 'serviceNickname');
+		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName');
 	}
 
 	public function jsonSerialize(): mixed {
 		return [
 			'serviceGroupServiceId' => $this->serviceGroupServiceId,
 			'serviceGroupId' => $this->serviceGroupId,
+			'serviceGroupName' => $this->serviceGroupName,
 			'serviceId' => $this->serviceId,
 			'serviceName' => $this->serviceName,
 			'serviceNickname' => $this->serviceNickname,
@@ -72,6 +81,10 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 
 	public function ServiceGroupId(): string {
 		return $this->serviceGroupId;
+	}
+
+	public function ServiceGroupName(): string {
+		return $this->serviceGroupName;
 	}
 
 	public function ServiceId(): string {
@@ -94,13 +107,16 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
+		// To make any changes at all, the user must have share permission on the server.
 		$servicePermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $this->serviceId, user: $user);
-		if (($servicePermissions & Script::kPermissionUpdate) === 0) {
+		if (($servicePermissions & Service::kPermissionShare) === 0) {
 			return self::kPermissionNone;
 		}
+
+		// If the user does not have update permission on the group, since they have share permission on the server, they should still be allowed to remove the server from the group.
 		$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $this->serviceGroupId, user: $user);
 		if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
-			return self::kPermissionNone;
+			return self::kPermissionDelete;
 		}
 		return self::kPermissionAll;
 	}
@@ -111,7 +127,7 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 		}
 
 		$servicePermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $newObjectProperties['serviceId'], user: $user);
-		if (($servicePermissions & Script::kPermissionUpdate) === 0) {
+		if (($servicePermissions & Service::kPermissionShare) === 0) {
 			return false;
 		}
 
@@ -128,8 +144,8 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 		if (isset($filters['serviceId'])) {
 			$user = Core::User();
 			$servicePermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $filters['serviceId'], user: $user);
-			if (($servicePermissions & Script::kPermissionUpdate) === 0) {
-				throw new Exception('User does not have update permission on service ' . $filters['serviceId']);
+			if (($servicePermissions & Service::kPermissionRead) === 0) {
+				throw new Exception('User does not have read permission on service ' . $filters['serviceId']);
 			}
 		}
 		if (isset($filters['serviceGroupId'])) {
@@ -137,8 +153,8 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 				$user = Core::User();
 			}
 			$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $filters['serviceGroupId'], user: $user);
-			if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
-				throw new Exception('User does not have update permission on service group ' . $filters['serviceGroupId']);
+			if (($groupPermissions & ServiceGroup::kPermissionRead) === 0) {
+				throw new Exception('User does not have read permission on service group ' . $filters['serviceGroupId']);
 			}
 		}
 	}

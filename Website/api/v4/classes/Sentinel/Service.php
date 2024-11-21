@@ -105,7 +105,11 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$userList = json_decode($row->Field('users'), true);
 		$this->users = [];
 		foreach ($userList as $user) {
-			$this->users[$user['user_id']] = ($user['permissions'] | self::kPermissionRead) & self::kPermissionAll;
+			$this->users[$user['user_id']] = [
+				'permissions' => ($user['permissions'] | self::kPermissionRead) & self::kPermissionAll,
+				'username' => $user['username'],
+				'usernameFull' => $user['username'] . '#' . substr($user['user_id'], 0, 8),
+			];
 		}
 	}
 
@@ -129,7 +133,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('platform'),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
-			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT service_permissions.user_id, service_permissions.permissions FROM sentinel.service_permissions INNER JOIN sentinel.services AS A ON (service_permissions.service_id = A.service_id) WHERE service_permissions.service_id = services.service_id ORDER BY services.name ASC) AS users_template), '[]')"]),
+			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT service_permissions.user_id, service_permissions.permissions, users.username FROM sentinel.service_permissions INNER JOIN sentinel.services AS A ON (service_permissions.service_id = A.service_id) INNER JOIN public.users ON (service_permissions.user_id = users.user_id) WHERE service_permissions.service_id = services.service_id ORDER BY services.name ASC) AS users_template), '[]')"]),
 		], [
 			'INNER JOIN sentinel.subscriptions ON (services.subscription_id = subscriptions.subscription_id)',
 		]);
