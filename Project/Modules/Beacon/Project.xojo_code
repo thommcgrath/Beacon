@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Project
-Implements ObservationKit.Observable
+Implements ObservationKit.Observable, NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function ActiveConfigSet() As Beacon.ConfigSet
 		  Return Self.mActiveConfigSet
@@ -370,6 +370,8 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Self.mUseCompression = True
+		  
+		  NotificationKit.Watch(Self, BeaconAPI.Notification_TokenIdUpdated)
 		End Sub
 	#tag EndMethod
 
@@ -466,6 +468,12 @@ Implements ObservationKit.Observable
 		    Self.Modified = True
 		    Self.NotifyObservers("Description", OldValue, Value)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  NotificationKit.Ignore(Self, BeaconAPI.Notification_TokenIdUpdated)
 		End Sub
 	#tag EndMethod
 
@@ -648,7 +656,7 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      Var MergedIdentity As Beacon.Identity = App.IdentityManager.Fetch(UserId, False)
+		      Var MergedIdentity As Beacon.Identity = App.IdentityManager.Fetch(UserId, True)
 		      If (MergedIdentity Is Nil) = False Then
 		        PossibleIdentities.Add(MergedIdentity)
 		      End If
@@ -1264,6 +1272,32 @@ Implements ObservationKit.Observable
 		  Self.mProjectId = Beacon.UUID.v4
 		  Self.mMembers = New Dictionary
 		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case BeaconAPI.Notification_TokenIdUpdated
+		    Var UserData As Dictionary = Notification.UserData
+		    Var OldTokenId As String = UserData.Value("oldTokenId")
+		    Var NewTokenId As String = UserData.Value("newTokenId")
+		    
+		    If Self.mProviderTokenKeys.HasKey(OldTokenId) Then
+		      Var Value As Variant = Self.mProviderTokenKeys.Value(OldTokenId)
+		      Self.mProviderTokenKeys.Remove(OldTokenId)
+		      Self.mProviderTokenKeys.Value(NewTokenId) = Value
+		      Self.Modified = True
+		    End If
+		    
+		    For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		      If (Profile.HostConfig Is Nil) = False Then
+		        Profile.HostConfig.MigrateProviderToken(OldTokenId, NewTokenId)
+		      End If
+		    Next
+		  End Select
 		End Sub
 	#tag EndMethod
 
