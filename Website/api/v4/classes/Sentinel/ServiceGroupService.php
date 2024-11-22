@@ -5,7 +5,9 @@ use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, D
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
 class ServiceGroupService extends DatabaseObject implements JsonSerializable {
-	use MutableDatabaseObject;
+	use MutableDatabaseObject{
+		Validate as protected MutableDatabaseObjectValidate;
+	}
 
 	protected string $serviceGroupServiceId;
 	protected string $serviceGroupId;
@@ -16,7 +18,8 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 	protected string $serviceDisplayName;
 	protected string $serviceGameId;
 	protected string $serviceColor;
-	protected int $permissions;
+	protected int $grantedPermissions;
+	protected int $sharedPermissions;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceGroupServiceId = $row->Field('service_group_service_id');
@@ -28,7 +31,8 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 		$this->serviceDisplayName = $row->Field('service_display_name');
 		$this->serviceGameId = $row->Field('service_game_id');
 		$this->serviceColor = $row->Field('service_color');
-		$this->permissions = $row->Field('permissions');
+		$this->grantedPermissions = $row->Field('granted_permissions');
+		$this->sharedPermissions = $row->Field('shared_permissions');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -37,7 +41,8 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('serviceGroupId', ['columnName' => 'service_group_id']),
 			new DatabaseObjectProperty('serviceGroupName', ['columnName' => 'service_group_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_groups.name']),
 			new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
-			new DatabaseObjectProperty('permissions', ['editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('grantedPermissions', ['columnName' => 'granted_permissions', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('sharedPermissions', ['columnName' => 'shared_permissions', 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('serviceName', ['columnName' => 'service_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.name']),
 			new DatabaseObjectProperty('serviceNickname', ['columnName' => 'service_nickname', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.nickname']),
 			new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'COALESCE(services.nickname, services.name)']),
@@ -54,10 +59,10 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceGroupId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceGroupName');
-		$parameters->AddFromFilter($schema, $filters, 'serviceName');
-		$parameters->AddFromFilter($schema, $filters, 'serviceNickname');
-		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName');
+		$parameters->AddFromFilter($schema, $filters, 'serviceGroupName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'serviceName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'serviceNickname', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
 	}
 
 	public function jsonSerialize(): mixed {
@@ -71,7 +76,8 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 			'serviceDisplayName' => $this->serviceDisplayName,
 			'serviceGameId' => $this->serviceGameId,
 			'serviceColor' => $this->serviceColor,
-			'permissions' => $this->permissions,
+			'grantedPermissions' => $this->grantedPermissions,
+			'sharedPermissions' => $this->sharedPermissions,
 		];
 	}
 
@@ -95,8 +101,42 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 		return $this->serviceName;
 	}
 
-	public function Permissions(): int {
-		return $this->permissions;
+	public function GrantedPermissions(): int {
+		return $this->grantedPermissions;
+	}
+
+	public function SharedPermissions(): int {
+		return $this->sharedPermissions;
+	}
+
+	protected static function Validate(array $properties): void {
+		static::MutableDatabaseObjectValidate($properties);
+
+		if (isset($properties['grantedPermissions'])) {
+			$desiredPermissions = intval($properties['grantedPermissions']);
+			if ($desiredPermissions <= 0) {
+				throw new Exception('grantedPermissions must be a positive integer');
+			}
+			if (($desiredPermissions & self::kPermissionAll) !== $desiredPermissions) {
+				throw new Exception('Invalid bits in grantedPermissions');
+			}
+		}
+		if (isset($properties['sharedPermissions'])) {
+			$desiredPermissions = intval($properties['sharedPermissions']);
+			if ($desiredPermissions <= 0) {
+				throw new Exception('sharedPermissions must be a positive integer');
+			}
+			if (($desiredPermissions & self::kPermissionAll) !== $desiredPermissions) {
+				throw new Exception('Invalid bits in sharedPermissions');
+			}
+		}
+		if (isset($properties['grantedPermissions']) && isset($properties['sharedPermissions'])) {
+			$grantedPermissions = intval($properties['grantedPermissions']);
+			$sharedPermissions = intval($properties['sharedPermissions']);
+			if (($grantedPermissions & $sharedPermissions) !== $grantedPermissions) {
+				throw new Exception('Any permissions included in grantedPermissions must also be included in sharedPermissions');
+			}
+		}
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
@@ -108,17 +148,19 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 
 	public function GetPermissionsForUser(User $user): int {
 		// To make any changes at all, the user must have share permission on the server.
+		// If the user does not have update permission on the group, since they have share permission on the server, they should still be allowed to remove the server from the group.
 		$servicePermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $this->serviceId, user: $user);
-		if (($servicePermissions & Service::kPermissionShare) === 0) {
+		$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $this->serviceGroupId, user: $user);
+
+		$hasServiceSharedPermission = ($servicePermissions & Service::kPermissionShare) > 0;
+		$hasServiceGroupUpdatePermission = ($groupPermissions & ServiceGroup::kPermissionUpdate) > 0;
+		if ($hasServiceSharedPermission && $hasServiceGroupUpdatePermission) {
+			return self::kPermissionAll;
+		} elseif ($hasServiceSharedPermission || $hasServiceGroupUpdatePermission) {
+			return self::kPermissionDelete;
+		} else {
 			return self::kPermissionNone;
 		}
-
-		// If the user does not have update permission on the group, since they have share permission on the server, they should still be allowed to remove the server from the group.
-		$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $this->serviceGroupId, user: $user);
-		if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
-			return self::kPermissionDelete;
-		}
-		return self::kPermissionAll;
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {

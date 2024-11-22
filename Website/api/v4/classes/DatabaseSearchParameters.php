@@ -21,8 +21,9 @@ class DatabaseSearchParameters {
 
 		$propertyName = $property->PropertyName();
 		if (isset($filters[$propertyName])) {
-			$this->clauses[] = $schema->Comparison($property, $operator, $this->placeholder++);
-			$this->values[] = $filters[$propertyName];
+			$value = $filters[$propertyName];
+			$this->clauses[] = $schema->Comparison($property, $operator, $this->placeholder++, $value); // $value is byref in case the value needs to be tweaked
+			$this->values[] = $value;
 		}
 	}
 

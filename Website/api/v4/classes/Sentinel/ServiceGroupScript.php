@@ -11,22 +11,34 @@ class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
 
 	protected string $serviceGroupScriptId;
 	protected string $serviceGroupId;
+	protected string $serviceGroupName;
 	protected string $scriptId;
-	protected int $permissions;
+	protected string $scriptName;
+	protected int $grantedPermissions;
+	protected int $sharedPermissions;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceGroupScriptId = $row->Field('service_group_script_id');
 		$this->serviceGroupId = $row->Field('service_group_id');
+		$this->serviceGroupName = $row->Field('service_group_name');
 		$this->scriptId = $row->Field('script_id');
-		$this->permissions = ($row->Field('permissions') | self::kPermissionRead) & self::kPermissionAll;
+		$this->scriptName = $row->Field('script_name');
+		$this->grantedPermissions = $row->Field('granted_permissions');
+		$this->sharedPermissions = $row->Field('shared_permissions');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('sentinel', 'service_group_scripts', [
 			new DatabaseObjectProperty('serviceGroupScriptId', ['primaryKey' => true, 'columnName' => 'service_group_script_id', 'required' => false]),
 			new DatabaseObjectProperty('serviceGroupId', ['columnName' => 'service_group_id']),
+			new DatabaseObjectProperty('serviceGroupName', ['columnName' => 'service_group_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_groups.name']),
 			new DatabaseObjectProperty('scriptId', ['columnName' => 'script_id']),
-			new DatabaseObjectProperty('permissions', ['editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('scriptName', ['columnName' => 'script_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.name']),
+			new DatabaseObjectProperty('grantedPermissions', ['columnName' => 'granted_permissions', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('sharedPermissions', ['columnName' => 'shared_permissions', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+		], [
+			'INNER JOIN sentinel.scripts ON (service_group_services.script_id = scripts.script_id)',
+			'INNER JOIN sentinel.service_groups ON (service_group_services.service_group_id = service_groups.service_group_id)',
 		]);
 	}
 
@@ -34,15 +46,20 @@ class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Accessor('scriptId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceGroupId');
+		$parameters->AddFromFilter($schema, $filters, 'serviceGroupName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'scriptId');
+		$parameters->AddFromFilter($schema, $filters, 'scriptName', 'ILIKE');
 	}
 
 	public function jsonSerialize(): mixed {
 		return [
 			'serviceGroupScriptId' => $this->serviceGroupScriptId,
 			'serviceGroupId' => $this->serviceGroupId,
+			'serviceGroupName' => $this->serviceGroupName,
 			'scriptId' => $this->scriptId,
-			'permissions' => $this->permissions,
+			'scriptName' => $this->scriptName,
+			'grantedPermissions' => $this->grantedPermissions,
+			'sharedPermissions' => $this->sharedPermissions,
 		];
 	}
 
@@ -58,25 +75,40 @@ class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
 		return $this->scriptId;
 	}
 
-	public function Permissions(): int {
-		return $this->permissions;
+	public function GrantedPermissions(): int {
+		return $this->grantedPermissions;
 	}
 
-	public function SetPermissions(int $permissions): void {
-		$permissions = ($permissions | self::kPermissionRead) & self::kPermissionAll;
-		$this->SetProperty('permissions', $permissions);
+	public function SharedPermissions(): int {
+		return $this->sharedPermissions;
 	}
 
 	protected static function Validate(array $properties): void {
 		static::MutableDatabaseObjectValidate($properties);
 
-		if (isset($properties['permissions'])) {
-			$desiredPermissions = intval($properties['permissions']);
+		if (isset($properties['grantedPermissions'])) {
+			$desiredPermissions = intval($properties['grantedPermissions']);
 			if ($desiredPermissions <= 0) {
-				throw new Exception('Permissions must be a positive integer');
+				throw new Exception('grantedPermissions must be a positive integer');
 			}
 			if (($desiredPermissions & self::kPermissionAll) !== $desiredPermissions) {
-				throw new Exception('Invalid permission bits');
+				throw new Exception('Invalid bits in grantedPermissions');
+			}
+		}
+		if (isset($properties['sharedPermissions'])) {
+			$desiredPermissions = intval($properties['sharedPermissions']);
+			if ($desiredPermissions <= 0) {
+				throw new Exception('sharedPermissions must be a positive integer');
+			}
+			if (($desiredPermissions & self::kPermissionAll) !== $desiredPermissions) {
+				throw new Exception('Invalid bits in sharedPermissions');
+			}
+		}
+		if (isset($properties['grantedPermissions']) && isset($properties['sharedPermissions'])) {
+			$grantedPermissions = intval($properties['grantedPermissions']);
+			$sharedPermissions = intval($properties['sharedPermissions']);
+			if (($grantedPermissions & $sharedPermissions) !== $grantedPermissions) {
+				throw new Exception('Any permissions included in grantedPermissions must also be included in sharedPermissions');
 			}
 		}
 	}
@@ -91,15 +123,20 @@ class ServiceGroupScript extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
+		// To make any changes at all, the user must have share permission on the script.
+		// If the user does not have update permission on the group, since they have share permission on the script, they should still be allowed to remove the script from the group.
 		$scriptPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Script', objectId: $this->scriptId, user: $user);
-		if (($scriptPermissions & Script::kPermissionShare) === 0) {
-			return self::kPermissionNone;
-		}
 		$groupPermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $this->serviceGroupId, user: $user);
-		if (($groupPermissions & ServiceGroup::kPermissionUpdate) === 0) {
+
+		$hasScriptSharedPermission = ($scriptPermissions & Script::kPermissionShare) > 0;
+		$hasServiceGroupUpdatePermission = ($groupPermissions & ServiceGroup::kPermissionUpdate) > 0;
+		if ($hasScriptSharedPermission && $hasServiceGroupUpdatePermission) {
+			return self::kPermissionAll;
+		} elseif ($hasScriptSharedPermission || $hasServiceGroupUpdatePermission) {
+			return self::kPermissionDelete;
+		} else {
 			return self::kPermissionNone;
 		}
-		return self::kPermissionAll;
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {

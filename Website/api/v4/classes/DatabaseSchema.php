@@ -116,7 +116,7 @@ class DatabaseSchema {
 		return $column->Setter($placeholder);
 	}
 
-	public function Comparison(string|DatabaseObjectProperty $column, string $operator, string|int $placeholder): string {
+	public function Comparison(string|DatabaseObjectProperty $column, string $operator, string|int $placeholder, mixed &$value = null): string {
 		if (is_string($column)) {
 			$columnName = $column;
 			$column = $this->Column($columnName) ?? $this->Property($columnName);
@@ -129,7 +129,15 @@ class DatabaseSchema {
 			$placeholder = '$' . $placeholder;
 		}
 
-		return $column->Accessor($this->table) . ' ' . $operator . ' ' . $placeholder;
+		if ($operator === 'ILIKE') {
+			$value = '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $value ?? '') . '%';
+			return $column->Accessor($this->table) . ' ILIKE ' . $placeholder;
+		} elseif ($operator === 'LIKE') {
+			$value = '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $value ?? '') . '%';
+			return $column->Accessor($this->table) . ' LIKE ' . $placeholder;
+		} else {
+			return $column->Accessor($this->table) . ' ' . $operator . ' ' . $placeholder;
+		}
 	}
 
 	public function AddColumn(string|DatabaseObjectProperty $column): void {
