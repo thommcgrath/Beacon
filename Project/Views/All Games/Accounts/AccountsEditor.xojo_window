@@ -274,6 +274,7 @@ End
 		    Var TokenId As String = Sender.UserData
 		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId, Self.Project, False)
 		    If (Token Is Nil) = False Then
+		      UpdateDict.Value("originalTokenId") = TokenId
 		      UpdateDict.Value("token") = Token
 		    End If
 		  Catch Err As RuntimeException
@@ -312,7 +313,7 @@ End
 		        Var Silent As Boolean = Sender.UserData
 		        For Idx As Integer = Tokens.LastIndex DownTo 0
 		          If Self.Project.ProviderTokenKey(Tokens(Idx).TokenId).IsEmpty = False Then
-		            // This token is alread linked to the project
+		            // This token is already linked to the project
 		            Tokens.RemoveAt(Idx)
 		          End If
 		        Next
@@ -353,9 +354,13 @@ End
 		    Try
 		      If Update.HasKey("token") Then
 		        Var Token As BeaconAPI.ProviderToken = Update.Value("token")
+		        Var OriginalTokenId As String = Update.Value("originalTokenId")
 		        If Token.IsEncrypted Then
-		          Var Key As String = Self.Project.ProviderTokenKey(Token.TokenId)
+		          Var Key As String = Self.Project.ProviderTokenKey(OriginalTokenId)
 		          Call Token.Decrypt(Key)
+		        End If
+		        If OriginalTokenId <> Token.TokenId Then
+		          Self.mTokens.Value(OriginalTokenId) = Token
 		        End If
 		        Self.mTokens.Value(Token.TokenId) = Token
 		        Self.UpdateUI()

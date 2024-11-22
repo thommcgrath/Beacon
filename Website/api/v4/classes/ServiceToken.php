@@ -208,6 +208,16 @@ class ServiceToken implements JsonSerializable {
 		}
 	}
 
+	public static function ResolveAlias(string $oldTokenId): ?string {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT new_service_token_id FROM public.service_token_aliases WHERE old_service_token_id = $1;', $oldTokenId);
+		if ($rows->RecordCount() === 1) {
+			return $rows->Field('new_service_token_id');
+		} else {
+			return null;
+		}
+	}
+
 	public static function Lookup(string $userId, ?string $provider = null, ?string $tokenId = null): array {
 		$database = BeaconCommon::Database();
 		$placeholder = 2;
@@ -293,7 +303,7 @@ class ServiceToken implements JsonSerializable {
 		}
 	}
 
-	public function MoveToUser(string|User $user): bool {
+	public function MoveToUser(string|User $user): void {
 		if ($user instanceof User) {
 			$userId = $user->UserId();
 		} else {
@@ -308,17 +318,28 @@ class ServiceToken implements JsonSerializable {
 			$newTokenId = static::StaticTokenId($userId, $this->provider, $this->accessToken);
 			break;
 		default:
-			return false;
+			return;
 		}
 
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$rows = $database->Query('SELECT token_id FROM public.service_tokens WHERE token_id = $1;', $newTokenId);
-		if ($rows->RecordCount() !== 0) {
-			$database->Rollback();
-			return false;
+		if ($rows->RecordCount() === 0) {
+			// The new account does not have the token, so we update it
+			$database->Query('UPDATE public.service_tokens SET user_id = $2, token_id = $3 WHERE token_id = $1;', $this->tokenId, $userId, $newTokenId);
+		} else {
+			// The new account already has a token with the same uuid, so we delete this one instead
+			$database->Query('DELETE FROM public.service_tokens WHERE token_id = $1;', $this->tokenId);
+			$returnValue = false;
 		}
-		$database->Query('UPDATE public.service_tokens SET user_id = $2, token_id = $3 WHERE token_id = $1;', $this->tokenId, $userId, $newTokenId);
+		$rows = $database->Query('SELECT old_service_token_id, new_service_token_id FROM public.service_token_aliases WHERE old_service_token_id = $1;', $this->tokenId);
+		if ($rows->RecordCount() === 0) {
+			// There is no alias from the old id to the new id
+			$database->Query('INSERT INTO public.service_token_aliases (old_service_token_id, new_service_token_id) VALUES ($1, $2);', $this->tokenId, $newTokenId);
+		} elseif ($rows->Field('new_service_token_id') !== $newTokenId) {
+			// There is an alias for the old id, but it puts to the wrong new id, so we update it
+			$database->Query('UPDATE public.service_token_aliases SET new_service_token_id = $2 WHERE old_service_token_id = $1;', $this->tokenId, $newTokenId);
+		}
 		$database->Commit();
 		BeaconPusher::SharedInstance()->TriggerEvent(User::PusherChannelNameForUserId($this->userId), 'service-tokens-updated', null);
 		BeaconPusher::SharedInstance()->TriggerEvent(User::PusherChannelNameForUserId($userId), 'service-tokens-updated', null);
@@ -326,7 +347,6 @@ class ServiceToken implements JsonSerializable {
 		$this->tokenId = $newTokenId;
 		$this->userId = $userId;
 		$this->userName = $user->Username() ?? 'Anonymous';
-		return true;
 	}
 
 	public function TokenId(): string {

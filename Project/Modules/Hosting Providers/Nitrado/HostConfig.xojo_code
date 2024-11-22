@@ -23,6 +23,17 @@ Implements Beacon.OAuthConsumer
 
 
 	#tag Method, Flags = &h0
+		Sub MigrateProviderToken(OldTokenId As String, NewTokenId As String)
+		  Super.MigrateProviderToken(OldTokenId, NewTokenId)
+		  
+		  If Self.mTokenId = OldTokenId Then
+		    Self.mTokenId = NewTokenId
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ProviderId() As String
 		  Return Nitrado.Identifier
 		End Function

@@ -89,10 +89,7 @@ function MergeUser(User $authenticatedUser, array $anonymousUser): Response {
 	// Service tokens are special because their uuid includes the user id
 	$tokens = ServiceToken::Lookup($userId);
 	foreach ($tokens as $token) {
-		// Returns true on success, false if the accounts already has the same service
-		if ($token->MoveToUser($authenticatedUser) === false) {
-			$token->Delete();
-		}
+		$token->MoveToUser($authenticatedUser);
 	}
 
 	// Migrating project members is hard
