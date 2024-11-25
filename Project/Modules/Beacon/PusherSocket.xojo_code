@@ -56,11 +56,13 @@ Protected Class PusherSocket
 		  
 		  If Preferences.OnlineEnabled = False Then
 		    Self.State = Beacon.PusherSocket.States.Disabled
+		    Self.mThreadStopTime = DateTime.Now.SecondsFrom1970
 		    Return
 		  End If
 		  
 		  #if DebugBuild
 		    Self.State = Beacon.PusherSocket.States.Disabled
+		    Self.mThreadStopTime = DateTime.Now.SecondsFrom1970
 		    Return
 		  #endif
 		  
@@ -73,6 +75,7 @@ Protected Class PusherSocket
 		    If Not Response.Success Then
 		      App.Log("Could not fetch pusher credentials")
 		      Self.State = Beacon.PusherSocket.States.Errored
+		      Self.mThreadStopTime = DateTime.Now.SecondsFrom1970
 		      Return
 		    End If
 		    
@@ -81,13 +84,16 @@ Protected Class PusherSocket
 		    If Not Enabled Then
 		      App.Log("Realtime communication is disabled")
 		      Self.State = Beacon.PusherSocket.States.Disabled
+		      Self.mThreadStopTime = DateTime.Now.SecondsFrom1970
 		      Return
 		    End If
+		    Self.mRestartWaitPeriod = Dict.Lookup("restartWaitPeriod", 60000)
 		    ClusterId = Dict.Value("cluster")
 		    AppKey = Dict.Value("key")
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Getting pusher credentials")
 		    Self.State = Beacon.PusherSocket.States.Errored
+		    Self.mThreadStopTime = DateTime.Now.SecondsFrom1970
 		    Return
 		  End Try
 		  
@@ -122,6 +128,7 @@ Protected Class PusherSocket
 		    // Error
 		    App.Log("Pusher socket error: " + Curl.LastErrorMessage)
 		    Self.State = Beacon.PusherSocket.States.Errored
+		    Self.mThreadStopTime = DateTime.Now.SecondsFrom1970
 		    Return
 		  End If
 		  
@@ -265,6 +272,8 @@ Protected Class PusherSocket
 		    Next
 		    GoTo ReconnectPoint
 		  End If
+		  
+		  Self.mThreadStopTime = DateTime.Now.SecondsFrom1970
 		End Sub
 	#tag EndMethod
 
@@ -305,17 +314,29 @@ Protected Class PusherSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RestartWaitPeriod() As Integer
+		  Return Self.mRestartWaitPeriod
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SocketId() As String
 		  Return Self.mSocketId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Start()
+		Sub Start(Force As Boolean = False)
 		  Var UserId As String = App.IdentityManager.CurrentUserId
 		  If UserId.IsEmpty Then
 		    Return
 		  End If
+		  
+		  If Not (Force = True Or Self.mRunThread Is Nil Or (Self.mRunThread.ThreadState = Thread.ThreadStates.NotRunning And Self.mThreadStopTime + (Self.mRestartWaitPeriod / 1000) < DateTime.Now.SecondsFrom1970)) Then
+		    Return
+		  End If
+		  
+		  System.DebugLog("Starting new pusher thread")
 		  
 		  Self.mStopped = False
 		  Self.mSocketId = ""
@@ -364,6 +385,8 @@ Protected Class PusherSocket
 		    RemoveHandler mRunThread.UserInterfaceUpdate, AddressOf mRunThread_UserInterfaceUpdate
 		    Self.mRunThread = Nil
 		  End If
+		  
+		  System.DebugLog("Pusher has been stopped")
 		End Sub
 	#tag EndMethod
 
@@ -376,6 +399,12 @@ Protected Class PusherSocket
 		  Self.mPendingMessages.Add(New Dictionary("event": "pusher:subscribe", "data": New Dictionary("channel": Channel)))
 		  Self.mChannels.Add(Channel)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ThreadStopTime() As Double
+		  Return Self.mThreadStopTime
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -412,6 +441,10 @@ Protected Class PusherSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRestartWaitPeriod As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRunThread As Global.Thread
 	#tag EndProperty
 
@@ -425,6 +458,10 @@ Protected Class PusherSocket
 
 	#tag Property, Flags = &h21
 		Private mStopped As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThreadStopTime As Double
 	#tag EndProperty
 
 

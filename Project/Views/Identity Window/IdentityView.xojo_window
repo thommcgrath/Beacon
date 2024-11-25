@@ -411,7 +411,7 @@ End
 		  
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged
-		    Self.mIdentity = Notification.UserData
+		    Self.mIdentity = Dictionary(Notification.UserData).Value("newIdentity")
 		    Self.UpdateUI()
 		  End Select
 		End Sub
