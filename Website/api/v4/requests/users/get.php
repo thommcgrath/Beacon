@@ -31,6 +31,7 @@ function handleRequest(array $context): Response {
 			'userId' => $user->UserId(),
 			'username' => $user->Username(false),
 			'usernameFull' => $user->Username(true),
+			'isAnonymous' => $user->IsAnonymous(),
 			'publicKey' => $user->PublicKey()
 		];
 	}
