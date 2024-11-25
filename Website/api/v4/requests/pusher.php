@@ -11,8 +11,9 @@ function handleRequest(array $context): Response {
 	if ($enabled) {
 		$response['cluster'] = BeaconCommon::GetGlobal('Pusher Cluster');
 		$response['key'] = BeaconCommon::GetGlobal('Pusher Key');
+		$response['restartWaitPeriod'] = 60000;
 	}
-	
+
 	return Response::NewJson($response, 200);
 }
 
