@@ -255,6 +255,8 @@ Inherits Global.Thread
 		        Var ErrorMessage As String = Data.Value("message")
 		        App.Log("Pusher error #" + ErrorCode.ToString(Locale.Raw, "0") + ": " + ErrorMessage)
 		        ShouldReconnect = True
+		      Case "reconnect"
+		        ShouldReconnect = True
 		      Else
 		        If Json.HasKey("channel") Then
 		          Var ChannelName As String = Json.Value("channel")
