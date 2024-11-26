@@ -757,6 +757,10 @@ End
 		    End If
 		    
 		    Self.UpdateRenewButton()
+		    
+		    If Self.PusherCheckTimer.RunMode <> Timer.RunModes.Multiple Then
+		      Self.PusherCheckTimer.RunMode = Timer.RunModes.Multiple
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod

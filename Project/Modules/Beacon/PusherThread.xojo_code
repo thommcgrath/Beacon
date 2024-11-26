@@ -83,7 +83,10 @@ Inherits Global.Thread
 		  Try
 		    Var Request As New BeaconAPI.Request("/pusher", "GET")
 		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
-		    If Not Response.Success Then
+		    If Response.HTTPStatus = 401 Or Response.HTTPStatus = 403 Then
+		      Self.State = Beacon.PusherSocket.States.Disabled
+		      Return
+		    ElseIf Response.Success = False Then
 		      App.Log("Could not fetch pusher credentials")
 		      Self.State = Beacon.PusherSocket.States.Errored
 		      Return
