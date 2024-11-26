@@ -72,10 +72,10 @@ Inherits Global.Thread
 		    Return
 		  End If
 		  
-		  // #if DebugBuild
-		  // Self.State = Beacon.PusherSocket.States.Disabled
-		  // Return
-		  // #endif
+		  #if DebugBuild
+		    Self.State = Beacon.PusherSocket.States.Disabled
+		    Return
+		  #endif
 		  
 		  Self.YieldToNext
 		  
