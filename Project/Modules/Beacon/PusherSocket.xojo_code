@@ -67,6 +67,26 @@ Protected Class PusherSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mActiveThread_Connected(Sender As Beacon.PusherThread)
+		  #Pragma Unused Sender
+		  
+		  Self.mLock.Enter
+		  Self.mPendingMessages.ResizeTo(-1)
+		  For Each Channel As String In Self.mChannels
+		    Var MessageData As New JSONItem
+		    MessageData.Value("channel") = Channel
+		    
+		    Var Message As New JSONItem
+		    Message.Value("event") = "pusher:subscribe"
+		    Message.Value("data") = MessageData
+		    
+		    Self.mPendingMessages.Add(Message)
+		  Next
+		  Self.mLock.Leave
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mActiveThread_EventReceived(Sender As Beacon.PusherThread, ChannelName As String, EventName As String, Payload As String)
 		  #Pragma Unused Sender
 		  
@@ -120,23 +140,6 @@ Protected Class PusherSocket
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub mActiveThread_SubscribeToChannels(Sender As Beacon.PusherThread)
-		  Self.mLock.Enter
-		  For Each Channel As String In Self.mChannels
-		    Var MessageData As New JSONItem
-		    MessageData.Value("channel") = Channel
-		    
-		    Var Message As New JSONItem
-		    Message.Value("event") = "pusher:subscribe"
-		    Message.Value("data") = MessageData
-		    
-		    Self.mPendingMessages.Add(Message)
-		  Next
-		  Self.mLock.Leave
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function SocketId() As String
 		  If (Self.mActiveThread Is Nil) = False Then
@@ -174,7 +177,7 @@ Protected Class PusherSocket
 		  AddHandler ActiveThread.EventReceived, AddressOf mActiveThread_EventReceived
 		  AddHandler ActiveThread.GetNextPendingMessage, AddressOf mActiveThread_GetNextPendingMessage
 		  AddHandler ActiveThread.StateChanged, AddressOf mActiveThread_StateChanged
-		  AddHandler ActiveThread.SubscribeToChannels, AddressOf mActiveThread_SubscribeToChannels
+		  AddHandler ActiveThread.Connected, AddressOf mActiveThread_Connected
 		  ActiveThread.Start
 		  Self.mActiveThread = ActiveThread
 		  Self.mLock.Leave
@@ -203,7 +206,7 @@ Protected Class PusherSocket
 		    RemoveHandler mActiveThread.EventReceived, AddressOf mActiveThread_EventReceived
 		    RemoveHandler mActiveThread.GetNextPendingMessage, AddressOf mActiveThread_GetNextPendingMessage
 		    RemoveHandler mActiveThread.StateChanged, AddressOf mActiveThread_StateChanged
-		    RemoveHandler mActiveThread.SubscribeToChannels, AddressOf mActiveThread_SubscribeToChannels
+		    RemoveHandler mActiveThread.Connected, AddressOf mActiveThread_Connected
 		    Self.mActiveThread = Nil
 		  End If
 		  

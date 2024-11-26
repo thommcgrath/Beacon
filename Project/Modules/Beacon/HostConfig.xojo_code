@@ -51,7 +51,8 @@ Protected Class HostConfig
 
 	#tag Method, Flags = &h0
 		Sub MigrateProviderToken(OldTokenId As String, NewTokenId As String)
-		  
+		  #Pragma Unused OldTokenId
+		  #Pragma Unused NewTokenId
 		End Sub
 	#tag EndMethod
 

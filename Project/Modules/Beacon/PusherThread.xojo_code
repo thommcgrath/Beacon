@@ -143,7 +143,7 @@ Inherits Global.Thread
 		  
 		  Curl.OptionTimeOut = 2
 		  
-		  RaiseEvent SubscribeToChannels()
+		  RaiseEvent Connected()
 		  
 		  Var LastExchangeTime As Double
 		  Var SentPing As Boolean
@@ -362,6 +362,10 @@ Inherits Global.Thread
 
 
 	#tag Hook, Flags = &h0
+		Event Connected()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event EventReceived(ChannelName As String, EventName As String, Payload As String)
 	#tag EndHook
 
@@ -371,10 +375,6 @@ Inherits Global.Thread
 
 	#tag Hook, Flags = &h0
 		Event StateChanged(NewState As Beacon.PusherSocket.States)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event SubscribeToChannels()
 	#tag EndHook
 
 
