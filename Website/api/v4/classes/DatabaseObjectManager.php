@@ -132,7 +132,7 @@ class DatabaseObjectManager {
 		try {
 			$this->className::AuthorizeListRequest($filters);
 		} catch (Exception $err) {
-			return Response::NewJsonError('Forbidden', $err->getMessage(), 403);
+			return Response::NewJsonError(code: 'forbidden', message: 'Forbidden', details: $err->getMessage(), httpStatus: 403);
 		}
 		$results = $this->className::Search($filters);
 		if (is_null($this->subclassProperty)) {
@@ -205,7 +205,7 @@ class DatabaseObjectManager {
 		if (is_null($obj) === false) {
 			return Response::NewJson($obj, 200);
 		} else {
-			return Response::NewJsonError('Not found', null, 404);
+			return Response::NewJsonError(code: 'objectNotFound', message: 'Not found', httpStatus: 404);
 		}
 	}
 
@@ -222,6 +222,7 @@ class DatabaseObjectManager {
 		$requiredPermissions = is_null($obj) ? DatabaseObject::kPermissionCreate : DatabaseObject::kPermissionUpdate;
 		if (($permissions & $requiredPermissions) !== $requiredPermissions) {
 			return [
+				'code' => 'forbidden',
 				'status' => 403,
 				'success' => false,
 				'keyProperty' => $primaryKeyProperty,
@@ -238,6 +239,7 @@ class DatabaseObjectManager {
 			$obj = $className::Create($member);
 			if (is_null($obj)) {
 				return [
+					'code' => 'exception',
 					'status' => 500,
 					'success' => false,
 					'keyProperty' => $primaryKeyProperty,
@@ -267,7 +269,7 @@ class DatabaseObjectManager {
 
 	protected function HandleWrite(array $context, bool $replace): Response {
 		if (Core::IsJsonContentType() === false) {
-			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
+			return Response::NewJsonError(code: 'badContentType', message: 'This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', details: $_SERVER['HTTP_CONTENT_TYPE'], httpStatus: 400);
 		}
 
 		try {
@@ -277,7 +279,7 @@ class DatabaseObjectManager {
 			$user = Core::User();
 			$limits = $className::GetResourceLimitsForUser($user);
 			if (is_null($limits) === false && $limits->UsedResources() + 1 > $limits->AllowedResources()) {
-				return Response::NewJsonError('Cannot create more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', $limits, 400);
+				return Response::NewJsonError(code: 'tooManyResources', message: 'Cannot create more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', details: $limits, httpStatus: 400);
 			}
 
 			$schema = $className::DatabaseSchema();
@@ -290,21 +292,21 @@ class DatabaseObjectManager {
 			if ($status['success'] === true) {
 				return Response::NewJson($status['object'], $status['status']);
 			} else {
-				return Response::NewJsonError($status['reason'], $status['object'], $status['status']);
+				return Response::NewJsonError(code: $status['code'], message: $status['reason'], details: $status['object'], httpStatus: $status['status']);
 			}
 		} catch (Exception $err) {
-			return Response::NewJsonError($err->getMessage(), null, 500);
+			return Response::NewJsonError(code: 'exception', message: $err->getMessage(), httpStatus: 500);
 		}
 	}
 
 	protected function HandleBulkWrite(array $context, bool $replace): Response {
 		if (Core::IsJsonContentType() === false) {
-			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
+			return Response::NewJsonError(code: 'badContentType', message: 'This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', details: $_SERVER['HTTP_CONTENT_TYPE'], httpStatus: 400);
 		}
 
 		$members = Core::BodyAsJSON();
 		if (count($members) === 0) {
-			return Response::NewJsonError('No objects to save', null, 400);
+			return Response::NewJsonError(code: 'noObjects', message: 'No objects to save', httpStatus: 400);
 		}
 		if (BeaconCommon::IsAssoc($members)) {
 			$members = [$members];
@@ -320,7 +322,7 @@ class DatabaseObjectManager {
 		foreach ($objectCounts as $className => $objectCount) {
 			$limits = $className::GetResourceLimitsForUser($user);
 			if (is_null($limits) === false && $limits->SupportsMore($objectCount) === false) {
-				return Response::NewJsonError('Cannot create ' . $objectCount . ' more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', $limits, 400);
+				return Response::NewJsonError(code: 'tooManyResources', message: 'Cannot create ' . $objectCount . ' more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', details: $limits, httpStatus: 400);
 			}
 		}
 
@@ -343,7 +345,7 @@ class DatabaseObjectManager {
 				$response = $this->WriteObject($user, $primaryKeyProperty, $member, $replace);
 				if ($response['success'] === false) {
 					$database->Rollback();
-					return Response::NewJsonError($response['reason'], $response['object'], $response['status']);
+					return Response::NewJsonError(code: $response['code'], message: $response['reason'], details: $response['object'], httpStatus: $response['status']);
 				}
 				if ($response['status'] === 201) {
 					$newObjects[] = $response['object'];
@@ -352,7 +354,7 @@ class DatabaseObjectManager {
 				}
 			} catch (Exception $err) {
 				$database->Rollback();
-				return Response::NewJsonError($err->getMessage(), $member, 500);
+				return Response::NewJsonError(code: 'exception', message: $err->getMessage(), details: $member, httpStatus: 500);
 			}
 		}
 		try {
@@ -378,7 +380,7 @@ class DatabaseObjectManager {
 				}
 			}
 
-			return Response::NewJsonError('After saving the new objects, one or more required objects are still missing. The changes have been reverted.', $details, 500);
+			return Response::NewJsonError(code: 'exception', message: 'After saving the new objects, one or more required objects are still missing. The changes have been reverted.', details: $details, httpStatus: 500);
 		}
 
 		return Response::NewJson([
@@ -417,24 +419,24 @@ class DatabaseObjectManager {
 			$user = Core::User();
 			$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: get_class($obj), objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch);
 			if (($permissions & DatabaseObject::kPermissionDelete) !== DatabaseObject::kPermissionDelete) {
-				return Response::NewJsonError('Forbidden', $obj, 403);
+				return Response::NewJsonError(code: 'forbidden', message: 'Forbidden', details: $obj, httpStatus: 403);
 			}
 
 			$obj->Delete();
 			return Response::NewNoContent();
 		} catch (Exception $err) {
-			return Response::NewJsonError($err->getMessage(), null, 500);
+			return Response::NewJsonError(code: 'exception', message: $err->getMessage(), httpStatus: 500);
 		}
 	}
 
 	public function HandleBulkDelete(array $context): Response {
 		if (Core::IsJsonContentType() === false) {
-			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
+			return Response::NewJsonError(code: 'badContentType', message: 'This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', details: $_SERVER['HTTP_CONTENT_TYPE'], httpStatus: 400);
 		}
 
 		$members = Core::BodyAsJSON();
 		if (count($members) === 0) {
-			return Response::NewJsonError('No objects to delete', null, 400);
+			return Response::NewJsonError(code: 'noObjects', message: 'No objects to delete', details: 400);
 		}
 		if (BeaconCommon::IsAssoc($members)) {
 			$members = [$members];
@@ -463,20 +465,20 @@ class DatabaseObjectManager {
 				$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: get_class($obj), objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch);
 				if (($permissions & DatabaseObject::kPermissionDelete) !== DatabaseObject::kPermissionDelete) {
 					$database->Rollback();
-					return Response::NewJsonError('Forbidden', $member, 403);
+					return Response::NewJsonError(code: 'forbidden', message: 'Forbidden', details: $member, httpStatus: 403);
 				}
 
 				$obj->Delete();
 			} catch (Exception $err) {
 				$database->Rollback();
-				return Response::NewJsonError('Internal server error', $member, 500);
+				return Response::NewJsonError(code: 'exception', message: $err->getMessage(), details: $member, httpStatus: 500);
 			}
 		}
 		try {
 			$database->Commit();
 		} catch (Exception $err) {
 			$database->Rollback();
-			return Response::NewJsonError('One or more of the deleted objects is needed by another object. The changes have been reverted.', null, 500);
+			return Response::NewJsonError(code: 'objectStillReferenced', message: 'One or more of the deleted objects is needed by another object. The changes have been reverted.', httpStatus: 500);
 		}
 
 		return Response::NewNoContent();

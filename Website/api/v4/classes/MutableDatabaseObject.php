@@ -6,7 +6,7 @@ use BeaconCommon, BeaconDatabase, BeaconUUID, Exception;
 trait MutableDatabaseObject {
 	protected $changedProperties = [];
 
-	// Called at the start of Create so that new objects can needed values
+	// Called at the start of Create so that new objects can provide needed values
 	protected static function InitializeProperties(array &$properties): void {
 		// By default, do nothing
 	}

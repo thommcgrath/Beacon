@@ -17,11 +17,16 @@ class Response {
 		return new static($code, json_encode($obj, JSON_PRETTY_PRINT), ['Content-Type' => 'application/json']);
 	}
 
-	public static function NewJsonError(string $message, mixed $details, int $code): static {
-		return static::NewJson([
-			'message' => $message,
-			'details' => $details
-		], $code);
+	public static function NewJsonError(string $message, mixed $details = null, int $httpStatus = 500, ?string $code = null): static {
+		$error = [
+			'type' => 'beacon.error',
+		];
+		if (is_null($code) === false) {
+			$error['code'] = $code;
+		}
+		$error['message'] = $message;
+		$error['details'] = $details;
+		return static::NewJson($error, $httpStatus);
 	}
 
 	public static function NewNoContent(): static {

@@ -63,7 +63,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 	const kPermissionAll = (self::kPermissionCreate | self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete | self::kPermissionShare | self::kPermissionControl);
 
 	protected string $serviceId;
-	protected string $subscriptionId;
 	protected string $userId;
 	protected string $gameId;
 	protected string $connectionEncryptionKey;
@@ -84,7 +83,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
-		$this->subscriptionId = $row->Field('subscription_id');
 		$this->userId = $row->Field('user_id');
 		$this->gameId = $row->Field('game_id');
 		$this->connectionEncryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($row->Field('connection_encryption_key')));
@@ -116,8 +114,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('sentinel', 'services', [
 			new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-			new DatabaseObjectProperty('subscriptionId', ['columnName' => 'subscription_id']),
-			new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'subscriptions.user_id']),
+			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
 			new DatabaseObjectProperty('connectionEncryptionKey', ['columnName' => 'connection_encryption_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 			new DatabaseObjectProperty('connectionDetails', ['columnName' => 'connection_details', 'dependsOn' => ['connectionEncryptionKey'], 'editable' => DatabaseObjectProperty::kEditableAlways]),
@@ -134,8 +131,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('platform'),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
 			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT service_permissions.user_id, service_permissions.permissions, users.username FROM sentinel.service_permissions INNER JOIN sentinel.services AS A ON (service_permissions.service_id = A.service_id) INNER JOIN public.users ON (service_permissions.user_id = users.user_id) WHERE service_permissions.service_id = services.service_id ORDER BY services.name ASC) AS users_template), '[]')"]),
-		], [
-			'INNER JOIN sentinel.subscriptions ON (services.subscription_id = subscriptions.subscription_id)',
 		]);
 	}
 
@@ -213,7 +208,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		$json = [
 			'serviceId' => $this->serviceId,
-			'subscriptionId' => $this->subscriptionId,
 			'userId' => $this->userId,
 			'gameId' => $this->gameId,
 			'connectionDetails' => $this->connectionDetails,
@@ -256,6 +250,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	protected static function InitializeProperties(array &$properties): void {
+		static::MutableDatabaseObjectInitializeProperties($properties);
 		$properties['connectionEncryptionKey'] = BeaconEncryption::GenerateKey(256);
 		$properties['connectionHash'] = '';
 	}
