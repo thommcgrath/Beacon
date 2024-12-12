@@ -93,7 +93,20 @@ trait MutableDatabaseObject {
 			return $obj;
 		} catch (Exception $err) {
 			$database->Rollback();
-			throw $err;
+
+			switch ($err->getCode()) {
+			case 23502:
+				// Not null
+				throw new APIException(message: $err->getMessage(), code: 'nullValue', httpStatus: 400);
+			case 23503:
+				// Foreign key
+				throw new APIException(message: $err->getMessage(), code: 'notFound', httpStatus: 400);
+			case 23505:
+				// Unique violation
+				throw new APIException(message: $err->getMessage(), code: 'duplicate', httpStatus: 400);
+			default:
+				throw $err;
+			}
 		}
 	}
 

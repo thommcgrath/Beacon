@@ -192,6 +192,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceUser', 'sentinel/serviceUsers', 'serviceUserId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceBan', 'sentinel/serviceBans', 'serviceBanId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroupBan', 'sentinel/serviceGroupBans', 'serviceGroupBanId');
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 

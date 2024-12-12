@@ -4,16 +4,16 @@ namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{APIException, Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
 
-class ServiceBan extends DatabaseObject implements JsonSerializable {
+class ServiceGroupBan extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
 		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
 	}
 
-	protected string $serviceBanId;
+	protected string $serviceGroupBanId;
 	protected string $playerId;
 	protected string $playerName;
-	protected string $serviceId;
-	protected string $serviceDisplayName;
+	protected string $serviceGroupId;
+	protected string $serviceGroupName;
 	protected ?int $expiration;
 	protected string $issuerId;
 	protected string $issuerName;
@@ -21,11 +21,11 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 	protected string $issuerComments;
 
 	public function __construct(BeaconRecordSet $row) {
-		$this->serviceBanId = $row->Field('service_ban_id');
+		$this->serviceGroupBanId = $row->Field('service_group_ban_id');
 		$this->playerId = $row->Field('player_id');
 		$this->playerName = $row->Field('player_name');
-		$this->serviceId = $row->Field('service_id');
-		$this->serviceDisplayName = $row->Field('service_display_name');
+		$this->serviceGroupId = $row->Field('service_group_id');
+		$this->serviceGroupName = $row->Field('service_group_name');
 		$this->expiration = is_null($row->Field('expiration')) === false ? intval($row->Field('expiration')) : null;
 		$this->issuerId = $row->Field('issued_by');
 		$this->issuerName = $row->Field('issuer_name');
@@ -34,21 +34,21 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('sentinel', 'service_bans', [
-			new DatabaseObjectProperty('serviceBanId', ['columnName' => 'service_ban_id', 'primaryKey' => true, 'required' => false]),
+		return new DatabaseSchema('sentinel', 'service_group_bans', [
+			new DatabaseObjectProperty('serviceGroupBanId', ['columnName' => 'service_group_ban_id', 'primaryKey' => true, 'required' => false]),
 			new DatabaseObjectProperty('playerId', ['columnName' => 'player_id', 'accessor' => '%%TABLE%%.%%COLUMN%%', 'setter' => "sentinel.get_player_id(%%PLACEHOLDER%%, TRUE)"]),
 			new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
-			new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
-			new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'COALESCE(services.nickname, services.name)']),
+			new DatabaseObjectProperty('serviceGroupId', ['columnName' => 'service_group_id']),
+			new DatabaseObjectProperty('serviceGroupName', ['columnName' => 'service_group_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_groups.name']),
 			new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP($1)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('issuerId', ['columnName' => 'issued_by']),
 			new DatabaseObjectProperty('issuerName', ['columnName' => 'issuer_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
 			new DatabaseObjectProperty('issuerNameFull', ['columnName' => 'issuer_name_full', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "(users.username || '#' || LEFT(users.user_id::TEXT, 8))"]),
 			new DatabaseObjectProperty('issuerComments', ['columnName' => 'issuer_comments']),
 		], [
-			'INNER JOIN public.users ON (service_bans.issued_by = users.user_id)',
-			'INNER JOIN sentinel.players ON (service_bans.player_id = players.player_id)',
-			'INNER JOIN sentinel.services ON (service_bans.service_id = services.service_id AND services.deleted = FALSE)',
+			'INNER JOIN public.users ON (service_group_bans.issued_by = users.user_id)',
+			'INNER JOIN sentinel.players ON (service_group_bans.player_id = players.player_id)',
+			'INNER JOIN sentinel.service_groups ON (service_group_bans.service_group_id = service_groups.service_group_id)',
 		]);
 	}
 
@@ -66,17 +66,17 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->AddFromFilter($schema, $filters, 'issuerId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceId');
+		$parameters->AddFromFilter($schema, $filters, 'serviceGroupId');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
 	}
 
 	public function jsonSerialize(): mixed {
 		return [
-			'serviceBanId' => $this->serviceBanId,
+			'serviceGroupBanId' => $this->serviceGroupBanId,
 			'playerId' => $this->playerId,
 			'playerName' => $this->playerName,
-			'serviceId' => $this->serviceId,
-			'serviceDisplayName' => $this->serviceDisplayName,
+			'serviceGroupId' => $this->serviceGroupId,
+			'serviceGroupName' => $this->serviceGroupName,
 			'expiration' => $this->expiration,
 			'issuerId' => $this->issuerId,
 			'issuerName' => $this->issuerName,
@@ -98,19 +98,19 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 			return self::kPermissionAll;
 		}
 
-		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $this->serviceId, user: $user);
-		if (($permissions & Service::kPermissionControl) === 0) {
+		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $this->serviceGroupId, user: $user);
+		if (($permissions & ServiceGroup::kPermissionUpdate) === 0) {
 			return self::kPermissionNone;
 		}
 		return self::kPermissionAll;
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
-		if (isset($filters['serviceId'])) {
+		if (isset($filters['serviceGroupId'])) {
 			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $filters['serviceId'], Core::UserId());
-			if ($rows->RecordCount() !== 1 || ($rows->Field('permissions') & Service::kPermissionControl) === 0) {
-				throw new Exception('User does not have update permission on service ' . $filters['serviceId']);
+			$rows = $database->Query('SELECT permissions FROM sentinel.service_group_permissions WHERE service_group_id = $1 AND user_id = $2;', $filters['serviceGroupId'], Core::UserId());
+			if ($rows->RecordCount() !== 1 || ($rows->Field('permissions') & ServiceGroup::kPermissionUpdate) === 0) {
+				throw new Exception('User does not have update permission on service group ' . $filters['serviceGroupId']);
 			}
 		} elseif (isset($filters['issuerId']) === false) {
 			// If they are not listing by service, they must list by user.
@@ -119,12 +119,12 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
-		if (is_null($newObjectProperties) || isset($newObjectProperties['serviceId']) === false) {
+		if (is_null($newObjectProperties) || isset($newObjectProperties['serviceGroupId']) === false) {
 			return false;
 		}
 
-		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $newObjectProperties['serviceId'], user: $user);
-		if (($permissions & Service::kPermissionControl) === 0) {
+		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\ServiceGroup', objectId: $newObjectProperties['serviceGroupId'], user: $user);
+		if (($permissions & ServiceGroup::kPermissionUpdate) === 0) {
 			return false;
 		}
 
