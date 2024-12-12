@@ -131,6 +131,8 @@ class DatabaseObjectManager {
 		$filters = $_GET;
 		try {
 			$this->className::AuthorizeListRequest($filters);
+		} catch (APIException $err) {
+			return Response::NewJsonError(code: $err->getBeaconErrorCode(), message: $err->getMessage(), httpStatus: $err->getHttpStatus());
 		} catch (Exception $err) {
 			return Response::NewJsonError(code: 'forbidden', message: 'Forbidden', details: $err->getMessage(), httpStatus: 403);
 		}
@@ -294,6 +296,8 @@ class DatabaseObjectManager {
 			} else {
 				return Response::NewJsonError(code: $status['code'], message: $status['reason'], details: $status['object'], httpStatus: $status['status']);
 			}
+		} catch (APIException $err) {
+			return Response::NewJsonError(code: $err->getBeaconErrorCode(), message: $err->getMessage(), httpStatus: $err->getHttpStatus());
 		} catch (Exception $err) {
 			return Response::NewJsonError(code: 'exception', message: $err->getMessage(), httpStatus: 500);
 		}
@@ -352,6 +356,9 @@ class DatabaseObjectManager {
 				} else {
 					$updatedObjects[] = $response['object'];
 				}
+			} catch (APIException $err) {
+				$database->Rollback();
+				return Response::NewJsonError(code: $err->getBeaconErrorCode(), message: $err->getMessage(), details: $member, httpStatus: $err->getHttpStatus());
 			} catch (Exception $err) {
 				$database->Rollback();
 				return Response::NewJsonError(code: 'exception', message: $err->getMessage(), details: $member, httpStatus: 500);
@@ -424,6 +431,8 @@ class DatabaseObjectManager {
 
 			$obj->Delete();
 			return Response::NewNoContent();
+		} catch (APIException $err) {
+			return Response::NewJsonError(code: $err->getBeaconErrorCode(), message: $err->getMessage(), httpStatus: $err->getHttpStatus());
 		} catch (Exception $err) {
 			return Response::NewJsonError(code: 'exception', message: $err->getMessage(), httpStatus: 500);
 		}
@@ -469,6 +478,9 @@ class DatabaseObjectManager {
 				}
 
 				$obj->Delete();
+			} catch (APIException $err) {
+				$database->Rollback();
+				return Response::NewJsonError(code: $err->getBeaconErrorCode(), message: $err->getMessage(), details: $member, httpStatus: $err->getHttpStatus());
 			} catch (Exception $err) {
 				$database->Rollback();
 				return Response::NewJsonError(code: 'exception', message: $err->getMessage(), details: $member, httpStatus: 500);

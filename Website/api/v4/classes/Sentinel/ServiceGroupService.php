@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconRecordSet, JsonSerializable;
+use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject{
@@ -117,7 +117,7 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 			if ($desiredPermissions <= 0) {
 				throw new Exception('grantedPermissions must be a positive integer');
 			}
-			if (($desiredPermissions & self::kPermissionAll) !== $desiredPermissions) {
+			if (($desiredPermissions & Service::kPermissionAll) !== $desiredPermissions) {
 				throw new Exception('Invalid bits in grantedPermissions');
 			}
 		}
@@ -126,7 +126,7 @@ class ServiceGroupService extends DatabaseObject implements JsonSerializable {
 			if ($desiredPermissions <= 0) {
 				throw new Exception('sharedPermissions must be a positive integer');
 			}
-			if (($desiredPermissions & self::kPermissionAll) !== $desiredPermissions) {
+			if (($desiredPermissions & Service::kPermissionAll) !== $desiredPermissions) {
 				throw new Exception('Invalid bits in sharedPermissions');
 			}
 		}
