@@ -60,14 +60,19 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 			switch ($filters['sortedColumn']) {
 			case 'username':
 			case 'playerName':
+			case 'expiration':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->AddFromFilter($schema, $filters, 'issuerId');
+		$parameters->AddFromFilter($schema, $filters, 'issuerName', 'LIKE');
+		$parameters->AddFromFilter($schema, $filters, 'issuerNameFull', 'LIKE');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
+		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'LIKE');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
+		$parameters->AddFromFilter($schema, $filters, 'playerName', 'LIKE');
 	}
 
 	public function jsonSerialize(): mixed {

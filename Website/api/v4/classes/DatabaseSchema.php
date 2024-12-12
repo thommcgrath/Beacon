@@ -4,6 +4,8 @@ namespace BeaconAPI\v4;
 use Exception;
 
 class DatabaseSchema {
+	const OptionDistinct = 1;
+
 	protected $schema = 'public';
 	protected $table = '';
 	protected $writeableTable = '';
@@ -11,8 +13,9 @@ class DatabaseSchema {
 	protected $columns = [];
 	protected $properties = [];
 	protected $joins = [];
+	protected bool $distinct = false;
 
-	public function __construct(string $schema, string $table, array $definitions, array $joins = []) {
+	public function __construct(string $schema, string $table, array $definitions, array $joins = [], int $options = 0) {
 		$this->schema = $schema;
 		$this->table = $table;
 		$this->writeableTable = $table;
@@ -20,6 +23,7 @@ class DatabaseSchema {
 			$this->AddColumn($definition);
 		}
 		$this->joins = $joins;
+		$this->distinct = ($options & self::OptionDistinct) === self::OptionDistinct;
 	}
 
 	public function Schema(): string {
@@ -65,6 +69,14 @@ class DatabaseSchema {
 		}
 
 		$this->AddColumn($column);
+	}
+
+	public function Distinct(): bool {
+		return $this->distinct;
+	}
+
+	public function SetDistinct(bool $distinct): void {
+		$this->distinct = $distinct;
 	}
 
 	public function PrimarySelector(): string {
@@ -205,7 +217,7 @@ class DatabaseSchema {
 		foreach ($this->columns as $definition) {
 			$selectors[] = $definition->Selector($this->table);
 		}
-		return implode(', ', $selectors);
+		return ($this->distinct ? 'DISTINCT ' : '') . implode(', ', $selectors);
 	}
 
 	public function EditableColumns(int $flags): array {
