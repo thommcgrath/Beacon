@@ -40,11 +40,11 @@ class ServiceGroupBan extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
 			new DatabaseObjectProperty('serviceGroupId', ['columnName' => 'service_group_id']),
 			new DatabaseObjectProperty('serviceGroupName', ['columnName' => 'service_group_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_groups.name']),
-			new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP($1)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('issuerId', ['columnName' => 'issued_by']),
 			new DatabaseObjectProperty('issuerName', ['columnName' => 'issuer_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
 			new DatabaseObjectProperty('issuerNameFull', ['columnName' => 'issuer_name_full', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "(users.username || '#' || LEFT(users.user_id::TEXT, 8))"]),
-			new DatabaseObjectProperty('issuerComments', ['columnName' => 'issuer_comments']),
+			new DatabaseObjectProperty('issuerComments', ['columnName' => 'issuer_comments', 'editable' => DatabaseObjectProperty::kEditableAlways]),
 		], [
 			'INNER JOIN public.users ON (service_group_bans.issued_by = users.user_id)',
 			'INNER JOIN sentinel.players ON (service_group_bans.player_id = players.player_id)',

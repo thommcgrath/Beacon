@@ -42,7 +42,7 @@ class Ban extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('parentClass', ['columnName' => 'parent_class', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "(CASE %%TABLE%%.parent_table WHEN 'services' THEN 'Service' WHEN 'service_groups' THEN 'ServiceGroup' ELSE %%TABLE%%.parent_table END)"]),
 				new DatabaseObjectProperty('parentId', ['columnName' => 'parent_id']),
 				new DatabaseObjectProperty('parentName', ['columnName' => 'parent_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-				new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP($1)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('issuerId', ['columnName' => 'issued_by']),
 				new DatabaseObjectProperty('issuerName', ['columnName' => 'issuer_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
 				new DatabaseObjectProperty('issuerNameFull', ['columnName' => 'issuer_name_full', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "(users.username || '#' || LEFT(users.user_id::TEXT, 8))"]),
@@ -59,11 +59,11 @@ class Ban extends DatabaseObject implements JsonSerializable {
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$sortDirection = (isset($filters['sortDirection']) && strtolower($filters['sortDirection']) === 'descending') ? 'DESC' : 'ASC';
-		$sortColumn = 'playerName';
+		$sortColumn = 'parentName';
 		if (isset($filters['sortedColumn'])) {
 			switch ($filters['sortedColumn']) {
 			case 'username':
-			case 'playerName':
+			case 'parentName':
 			case 'expiration':
 				$sortColumn = $filters['sortedColumn'];
 				break;
@@ -75,8 +75,16 @@ class Ban extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'issuerNameFull', 'LIKE');
 		$parameters->AddFromFilter($schema, $filters, 'parentId');
 		$parameters->AddFromFilter($schema, $filters, 'parentClass');
+		$parameters->AddFromFilter($schema, $filters, 'parentName');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
 		$parameters->AddFromFilter($schema, $filters, 'playerName', 'LIKE');
+
+		if (isset($filters['userId'])) {
+			$userIdPlaceholder = '$' . $parameters->AddValue($filters['userId']);
+			$servicePermissionPlaceholder = '$' . $parameters->AddValue(Service::kPermissionControl);
+			$serviceGroupPermissionPlaceholder = '$' . $parameters->AddValue(ServiceGroup::kPermissionUpdate);
+			$parameters->clauses[] = "bans.parent_id IN (SELECT service_id FROM sentinel.service_permissions WHERE user_id = {$userIdPlaceholder} AND (permissions & {$servicePermissionPlaceholder}) = {$servicePermissionPlaceholder} UNION SELECT service_group_id FROM sentinel.service_group_permissions WHERE user_id = {$userIdPlaceholder} AND (permissions & {$serviceGroupPermissionPlaceholder}) = {$serviceGroupPermissionPlaceholder})";
+		}
 	}
 
 	public function jsonSerialize(): mixed {
@@ -98,6 +106,10 @@ class Ban extends DatabaseObject implements JsonSerializable {
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
 		$requiredScopes[] = Application::kScopeSentinelServicesRead;
 		$requiredScopes[] = Application::kScopeUsersRead;
+	}
+
+	public static function AuthorizeListRequest(array &$filters): void {
+		$filters['userId'] = Core::UserId();
 	}
 }
 
