@@ -986,7 +986,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 				gameStatus.ArkSA = this.arkSACheck && this.arkSACheck.disabled === false && this.arkSACheck.checked ? StatusBuying : StatusNone;
 				for (const game of OtherGamesList) {
 					const lowerGameId = game.gameId.toLowerCase();
-					gameStatus[gameId] = (this[`${lowerGameId}Check`] && this[`${lowerGameId}Check`].disabled === false && this[`${lowerGameId}Check`].checked) ? StatusBuying : StatusNone;
+					gameStatus[game.gameId] = (this[`${lowerGameId}Check`] && this[`${lowerGameId}Check`].disabled === false && this[`${lowerGameId}Check`].checked) ? StatusBuying : StatusNone;
 				}
 			} else {
 				if (cart.arkLicense) {
