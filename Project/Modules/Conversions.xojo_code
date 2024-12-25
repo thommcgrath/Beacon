@@ -10,6 +10,12 @@ Protected Module Conversions
 		    DataSource = ArkSA.DataSource.Pool.Get(False)
 		  End If
 		  
+		  Var Path As String = Source.Path
+		  If Path.BeginsWith("/Game/Mods/") Then
+		    Path = Path.Middle(10)
+		    Break
+		  End If
+		  
 		  Var Results() As ArkSA.Engram = DataSource.GetEngramsByPath(Source.Path, Nil)
 		  If Results.Count = 1 Then
 		    Return Results(0)
