@@ -152,6 +152,9 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			case 'description':
 				$sort_column = $schema->Accessor('description');
 				break;
+			case 'revision':
+				$sort_column = $schema->Accessor('revision');
+				break;
 			}
 		}
 		if (isset($filters['direction'])) {
