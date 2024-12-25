@@ -49,7 +49,7 @@ Begin DocumentEditorView ArkSADocumentEditorView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   627
       Begin OmniNoticeBar OmniNoticeBanner

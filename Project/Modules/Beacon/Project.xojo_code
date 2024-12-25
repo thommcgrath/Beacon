@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Project
-Implements ObservationKit.Observable, NotificationKit.Receiver
+Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function ActiveConfigSet() As Beacon.ConfigSet
 		  Return Self.mActiveConfigSet
@@ -675,15 +675,15 @@ Implements ObservationKit.Observable, NotificationKit.Receiver
 		      Project.mRole = Beacon.ProjectMember.RoleGuest
 		      
 		      Try
-		        Var Member As Beacon.ProjectMember = Passwords.Value(UserId)
-		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64MBS(Member.EncryptedPassword), PossibleIdentity.PrivateKey)
-		        If Member.Fingerprint.IsEmpty Then
-		          Member = New Beacon.ProjectMember(PossibleIdentity, Member.Role)
-		          Member.SetPassword(DocumentPassword)
-		          Passwords.Value(UserId) = Member
-		        End If
-		        Project.mProjectPassword = DocumentPassword
-		        Project.mRole = Member.Role
+		        // Var Member As Beacon.ProjectMember = Passwords.Value(UserId)
+		        // Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64MBS(Member.EncryptedPassword), PossibleIdentity.PrivateKey)
+		        // If Member.Fingerprint.IsEmpty Then
+		        // Member = New Beacon.ProjectMember(PossibleIdentity, Member.Role)
+		        // Member.SetPassword(DocumentPassword)
+		        // Passwords.Value(UserId) = Member
+		        // End If
+		        // Project.mProjectPassword = DocumentPassword
+		        // Project.mRole = Member.Role
 		        
 		        Exit
 		      Catch Err As RuntimeException

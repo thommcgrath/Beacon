@@ -962,6 +962,7 @@ Class=BlueprintContainer;Modules/Game Support/ArkSA/BlueprintContainer.xojo_code
 DesktopWindow=ArkSALowConfidenceBlueprintsDialog;Views/ArkSA/Mods/ArkSALowConfidenceBlueprintsDialog.xojo_window;&h0000000079F8DFFF;&h000000004B8DE7FF;false
 MultiImage=IconToolbarRenew;Icons/IconToolbarRenew.xojo_image;&h0000000069621FFF;&h0000000007F977FF;false
 Class=PusherThread;Modules/Beacon/PusherThread.xojo_code;&h000000003D8F37FF;&h0000000055ADDFFF;false
+Module=Conversions;Modules/Conversions.xojo_code;&h000000001BDB5FFF;&h000000001444B7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=3

@@ -109,9 +109,8 @@ Inherits Beacon.DataSource
 		        End If
 		        
 		        Var ObjectId As String = Dict.Value("objectId").StringValue
-		        Var GameId As String = Dict.Value("gameId").StringValue
 		        Var TableName As String = Dict.Value("group").StringValue
-		        If GameId = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
+		        If TableName = "presets" Or TableName = "preset_modifiers" Then
 		          Select Case TableName
 		          Case "presets"
 		            Self.SQLExecute("DELETE FROM official_templates WHERE object_id = :object_id;", ObjectId)
@@ -151,8 +150,8 @@ Inherits Beacon.DataSource
 		    Next Value
 		  End If
 		  
-		  If ChangeDict.HasKey("template_selectors") Then
-		    Var TemplateSelectors() As Variant = ChangeDict.Value("template_selectors")
+		  If ChangeDict.HasAnyKey("templateSelectors", "template_selectors") Then
+		    Var TemplateSelectors() As Variant = ChangeDict.FirstValue("templateSelectors", "template_selectors")
 		    For Each Value As Variant In TemplateSelectors
 		      Try
 		        Var Dict As Dictionary = Value
@@ -161,13 +160,13 @@ Inherits Beacon.DataSource
 		          Continue
 		        End If
 		        
-		        Var SelectorUUID As String = Dict.Value("id").StringValue
-		        Var GameId As String = Dict.Value("game").StringValue
+		        Var SelectorId As String = Dict.FirstValue("templateSelectorId", "id").StringValue
+		        Var GameId As String = Dict.FirstValue("gameId", "game").StringValue
 		        Var Label As String = Dict.Value("label").StringValue
 		        Var Language As Beacon.TemplateSelector.Languages = Beacon.TemplateSelector.StringToLanguage(Dict.Value("language").StringValue)
 		        Var Code As String = Dict.Value("code").StringValue
 		        
-		        Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
+		        Var TemplateSelector As New Beacon.TemplateSelector(SelectorId, Label, GameId, Language, Code)
 		        Self.SaveTemplateSelector(TemplateSelector, True, IsUserData)
 		        StatusData.Value("Imported Template Selector") = True
 		      Catch Err As RuntimeException
@@ -602,6 +601,36 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetTemplateSelectorsWithLogic(GameId As String, Language As Beacon.TemplateSelector.Languages, Code As String) As Beacon.TemplateSelector()
+		  Var UserId As String = App.IdentityManager.CurrentUserId
+		  Var NullId As String = Beacon.UUID.Null
+		  
+		  Var Selectors() As Beacon.TemplateSelector
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, user_id, game_id, label, language, code FROM template_selectors WHERE game_id = :game_id AND language = :language AND code = :code AND (user_id = :user_id OR user_id = :null_uuid);", GameId, Beacon.TemplateSelector.LanguageToString(Language), Code, UserId, NullId)
+		  If Rows.RowCount = 0 Then
+		    Return Selectors
+		  End If
+		  
+		  While Rows.AfterLastRow = False
+		    Var SelectorId As String = Rows.Column("object_id").StringValue
+		    Var CacheKey As String = Rows.Column("user_id").StringValue + ":" + SelectorId
+		    
+		    If Self.mSelectorCache.HasKey(CacheKey) Then
+		      Selectors.Add(Self.mSelectorCache.Value(CacheKey))
+		    Else
+		      Var TemplateSelector As New Beacon.TemplateSelector(SelectorId, Rows.Column("label").StringValue, Rows.Column("game_id").StringValue, Beacon.TemplateSelector.StringToLanguage(Rows.Column("language").StringValue), Rows.Column("code").StringValue)
+		      Selectors.Add(TemplateSelector)
+		      Self.mSelectorCache.Value(CacheKey) = TemplateSelector
+		    End If
+		    
+		    Rows.MoveToNextRow
+		  Wend
+		  
+		  Return Selectors
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Identifier() As String
 		  Return "Common"
 		End Function
@@ -647,6 +676,50 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM official_templates WHERE object_id = ?1;", TemplateUUID)
+		  Return Rows.RowCount = 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsTemplateSelectorCustom(TemplateSelector As Beacon.TemplateSelector) As Boolean
+		  If TemplateSelector Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.IsTemplateSelectorCustom(TemplateSelector.UUID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsTemplateSelectorCustom(SelectorId As String) As Boolean
+		  Var UserId As String = App.IdentityManager.CurrentUserId
+		  
+		  If Self.mTemplateCache.HasKey(UserId + ":" + SelectorId) Then
+		    Return True
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM custom_template_selectors WHERE object_id = ?1 AND user_id = ?2;", SelectorId, UserId)
+		  Return Rows.RowCount = 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsTemplateSelectorOfficial(TemplateSelector As Beacon.TemplateSelector) As Boolean
+		  If TemplateSelector Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.IsTemplateSelectorOfficial(TemplateSelector.UUID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsTemplateSelectorOfficial(SelectorId As String) As Boolean
+		  If Self.mTemplateCache.HasKey(SelectorId) Then
+		    Return True
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM official_template_selectors WHERE object_id = ?1;", SelectorId)
 		  Return Rows.RowCount = 1
 		End Function
 	#tag EndMethod

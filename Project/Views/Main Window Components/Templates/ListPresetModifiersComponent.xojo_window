@@ -26,7 +26,7 @@ Begin TemplatesComponentView ListPresetModifiersComponent
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   630
    Begin OmniBar ModifiersToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -59,7 +59,7 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   300
+      Width           =   630
    End
    Begin BeaconListbox List
       AllowAutoDeactivate=   True
@@ -71,8 +71,8 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   "*,150"
+      ColumnCount     =   3
+      ColumnWidths    =   "*,150,150"
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -91,7 +91,7 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       Height          =   228
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Name	Game"
+      InitialValue    =   "Name	Game	Type"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -108,14 +108,14 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   41
+      Top             =   40
       TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   300
+      Width           =   630
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -149,7 +149,15 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       Top             =   269
       Transparent     =   True
       Visible         =   True
-      Width           =   300
+      Width           =   630
+   End
+   Begin Beacon.Thread AscendedConversionThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
    End
 End
 #tag EndDesktopWindow
@@ -158,6 +166,7 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.ViewTitle = "Selectors"
+		  Self.AscendedConversionThread.DebugIdentifier = "ListPresetModifiersComponent.AscendedConversionThread"
 		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
@@ -280,18 +289,33 @@ End
 		    SelectIDs.Add(Modifier.UUID)
 		  Next
 		  
-		  Var Modifiers() As Beacon.TemplateSelector = Beacon.CommonData.Pool.Get(False).GetTemplateSelectors(Beacon.CommonData.FlagIncludeUserItems)
+		  Var CommonData As Beacon.CommonData = Beacon.CommonData.Pool.Get(False)
+		  Var Modifiers() As Beacon.TemplateSelector = CommonData.GetTemplateSelectors(Beacon.CommonData.FlagIncludeUserItems Or Beacon.CommonData.FlagIncludeOfficialItems)
 		  
 		  Self.List.RowCount = Modifiers.Count
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    Self.List.CellTextAt(Idx, Self.ColumnName) = Modifiers(Idx).Label
-		    Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(Modifiers(Idx).GameId)
-		    Self.List.RowTagAt(Idx) = Modifiers(Idx)
-		    Self.List.RowSelectedAt(Idx) = SelectIDs.IndexOf(Modifiers(Idx).UUID) > -1
+		    Var TemplateSelector As Beacon.TemplateSelector = Modifiers(Idx)
+		    Var CustomSelector As Boolean = CommonData.IsTemplateSelectorCustom(TemplateSelector)
+		    Var OfficialSelector As Boolean = CommonData.IsTemplateSelectorOfficial(TemplateSelector)
+		    If OfficialSelector And CustomSelector Then
+		      Self.List.CellTextAt(Idx, Self.ColumnType) = "Customized Built-In"
+		    ElseIf OfficialSelector Then
+		      Self.List.CellTextAt(Idx, Self.ColumnType) = "Built-In"
+		    Else
+		      Self.List.CellTextAt(Idx, Self.ColumnType) = "Custom"
+		    End If
+		    
+		    Self.List.CellTextAt(Idx, Self.ColumnName) = TemplateSelector.Label
+		    Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(TemplateSelector.GameId)
+		    Self.List.RowTagAt(Idx) = TemplateSelector
+		    Self.List.RowSelectedAt(Idx) = SelectIDs.IndexOf(TemplateSelector.UUID) > -1
 		  Next
 		  
+		  Self.List.SizeColumnToFit(Self.ColumnGame, 150)
+		  Self.List.SizeColumnToFit(Self.ColumnType, 150)
+		  
 		  Self.List.Sort
-		  Self.List.SizeColumnToFit(Self.ColumnGame)
+		  Self.List.EnsureSelectionIsVisible
 		  
 		  Self.UpdateStatus
 		End Sub
@@ -320,10 +344,21 @@ End
 	#tag EndHook
 
 
+	#tag Property, Flags = &h21
+		Private mConversionTargets() As Beacon.TemplateSelector
+	#tag EndProperty
+
+
 	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnType, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ConvertToArkAscended, Type = String, Dynamic = True, Default = \"Convert to Ark: Survival Ascended", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.templateselector", Scope = Private
@@ -446,6 +481,101 @@ End
 		  End If
 		  
 		  Self.UpdateStatus
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
+		  Var RowIdx As Integer = Me.RowFromXY(X, Y)
+		  Var Targets() As Beacon.TemplateSelector
+		  If RowIdx > -1 Then
+		    If Me.RowSelectedAt(RowIdx) Then
+		      // Take all selected rows
+		      For Idx As Integer = 0 To Me.LastRowIndex
+		        If Me.RowSelectedAt(Idx) Then
+		          Targets.Add(Me.RowTagAt(Idx))
+		        End If
+		      Next
+		    Else
+		      // Take only the clicked row
+		      Targets.Add(Me.RowTagAt(RowIdx))
+		    End If
+		  End If
+		  
+		  Var ConvertItem As New DesktopMenuItem(Self.ConvertToArkAscended, Targets)
+		  ConvertItem.Name = "ConvertToArkAscended"
+		  ConvertItem.Enabled = False
+		  If Self.AscendedConversionThread.ThreadState = Thread.ThreadStates.NotRunning Then
+		    For Each Target As Beacon.TemplateSelector In Targets
+		      If Target.GameId = Ark.Identifier Then
+		        ConvertItem.Enabled = True
+		        Exit
+		      End If
+		    Next
+		  End If
+		  Base.AddMenu(ConvertItem)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
+		  If HitItem Is Nil Then
+		    Return False
+		  End If
+		  
+		  Select Case HitItem.Name
+		  Case "ConvertToArkAscended"
+		    Var Targets() As Beacon.TemplateSelector = HitItem.Tag
+		    For Each Target As Beacon.TemplateSelector In Targets
+		      If Target.GameId = Ark.Identifier Then
+		        Self.mConversionTargets.Add(Target)
+		      End If
+		    Next
+		    If Self.mConversionTargets.Count > 0 Then
+		      Self.AscendedConversionThread.Start
+		      Self.Progress = BeaconSubview.ProgressIndeterminate
+		    Else
+		      Self.ShowAlert("Nothing to convert", "None of the selected selectors are Ark: Survival Evolved selectors.")
+		    End If
+		  End Select
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events AscendedConversionThread
+	#tag Event
+		Sub Run()
+		  Var CommonData As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
+		  Var ConvertedSelectors() As Beacon.TemplateSelector
+		  For Each SourceSelector As Beacon.TemplateSelector In Self.mConversionTargets
+		    Var ConvertedSelector As Beacon.TemplateSelector = Conversions.EvolvedToAscended(SourceSelector)
+		    If ConvertedSelector Is Nil Then
+		      Continue
+		    End If
+		    ConvertedSelectors.Add(ConvertedSelector)
+		    CommonData.SaveTemplateSelector(ConvertedSelector, False, False)
+		  Next
+		  
+		  Var Update As New Dictionary
+		  Update.Value("Finished") = True
+		  Update.Value("Selectors") = ConvertedSelectors
+		  CommonData.ExportCloudFiles()
+		  Me.AddUserInterfaceUpdate(Update)
+		  Self.mConversionTargets.ResizeTo(-1)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    Var Finished As Boolean = Update.Lookup("Finished", False).BooleanValue
+		    If Finished Then
+		      Self.Progress = BeaconSubview.ProgressNone
+		    End If
+		    
+		    If Update.HasKey("Selectors") Then
+		      Var ConvertedSelectors() As Beacon.TemplateSelector = Update.Value("Selectors")
+		      Self.UpdateList(ConvertedSelectors)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
