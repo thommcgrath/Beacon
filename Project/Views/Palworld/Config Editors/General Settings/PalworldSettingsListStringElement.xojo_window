@@ -283,6 +283,49 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h1
+		Protected Sub AcceptChanges()
+		  If Self.mBlockChanges Then
+		    Return
+		  End If
+		  
+		  Var NewValue As String = Self.Value
+		  Select Case Self.mMode
+		  Case Self.PlainMode
+		    If Self.mValueField.Text.Compare(NewValue, ComparisonOptions.CaseSensitive) <> 0 Then
+		      Self.mBlockChanges = True
+		      Self.mValueField.Text = NewValue
+		      Self.mBlockChanges = False
+		    End If
+		  Case Self.ComboMode
+		    If Self.mInputMenu.Text.Compare(NewValue, ComparisonOptions.CaseSensitive) <> 0 Then
+		      Self.mBlockChanges = True
+		      Self.mInputMenu.Text = NewValue
+		      Self.mBlockChanges = False
+		    End If
+		  End Select
+		  
+		  Var Pattern As Variant = Self.mKey.Constraint("pattern")
+		  If Pattern.IsNull = False Then
+		    Var Matcher As New RegEx
+		    Matcher.SearchPattern = Pattern
+		    
+		    If Matcher.SearchPattern.BeginsWith("/") And Matcher.SearchPattern.EndsWith("/") Then
+		      Matcher.SearchPattern = Matcher.SearchPattern.Middle(1, Matcher.SearchPattern.Length - 2)
+		    End If
+		    
+		    If Matcher.Search(NewValue) Is Nil Then
+		      Self.mNameLabel.TextColor = SystemColors.SystemRedColor
+		      System.Beep
+		      Return
+		    End If
+		  End If
+		  
+		  Self.mNameLabel.TextColor = &c000000
+		  Self.UserValueChange(NewValue)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Key As Palworld.ConfigOption)
 		  If IsNull(Key.Constraint("oneof")) = False Then
@@ -417,17 +460,14 @@ End
 #tag Events mValueField
 	#tag Event
 		Sub TextChanged()
-		  If Self.mBlockChanges Then
-		    Return
-		  End If
-		  
-		  Self.UserValueChange(Self.Value)
+		  Self.AcceptChanges()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events mDismissButton
 	#tag Event
 		Sub Pressed()
+		  Self.mNameLabel.TextColor = &c000000
 		  Self.Delete()
 		End Sub
 	#tag EndEvent
@@ -461,11 +501,7 @@ End
 #tag Events mInputMenu
 	#tag Event
 		Sub TextChanged()
-		  If Self.mBlockChanges Then
-		    Return
-		  End If
-		  
-		  Self.UserValueChange(Self.Value)
+		  Self.AcceptChanges()
 		End Sub
 	#tag EndEvent
 	#tag Event
