@@ -745,9 +745,11 @@ End
 		  Self.MapSelector.LockChangeEvent
 		  Self.MapSelector.RemoveAll
 		  Var AllMaps() As Ark.Map = Ark.Maps.All
+		  Var MapNames() As String
 		  For Each Map As Ark.Map In AllMaps
-		    Self.MapSelector.Add(Map.Name)
+		    MapNames.Add(Map.Name)
 		  Next
+		  Self.MapSelector.Add(MapNames)
 		  Self.MapSelector.UnlockChangeEvent
 		  Self.UpdateUI()
 		End Sub
@@ -1723,6 +1725,13 @@ End
 		  Next
 		  
 		  Self.mUpdating = False
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RowCountChanged()
+		  Me.Height = Me.IdealHeight
+		  Self.ContentsList.Top = Me.Bottom + 20
+		  Self.ContentsList.Height = Self.LockExplanationLabel.Top - (12 + Self.ContentsList.Top)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
