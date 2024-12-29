@@ -5,7 +5,7 @@ Inherits Beacon.Project
 	#tag Event
 		Sub AddingProfile(Profile As Beacon.ServerProfile)
 		  If Profile.IsConsole Then
-		    Self.IsFlagged(Beacon.Project.FlagConsoleSafe) = True
+		    Self.IsFlagged(Ark.Project.FlagConsoleSafe) = True
 		    
 		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    Var PackIds() As String = Self.ContentPacks()
@@ -27,6 +27,7 @@ Inherits Beacon.Project
 		  ManifestData.Value("allowUcs") = Self.IsFlagged(Ark.Project.FlagAllowUCS2)
 		  ManifestData.Value("map") = Self.MapMask
 		  ManifestData.Value("uwpCompatibilityMode") = CType(Self.UWPMode, Integer)
+		  ManifestData.Value("isConsole") = Self.IsFlagged(Ark.Project.FlagConsoleSafe) // legacy
 		  
 		  Var ConfigSets() As Beacon.ConfigSet = Self.ConfigSets
 		  Var Editors() As String
@@ -225,12 +226,6 @@ Inherits Beacon.Project
 		    Self.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  End If
 		  
-		  If PlainData.HasKey("flags") = False Then
-		    If (PlainData.HasKey("allowUcs") And PlainData.Value("allowUcs").BooleanValue = True) Or (PlainData.HasKey("AllowUCS") And PlainData.Value("AllowUCS").BooleanValue = True) Then
-		      Self.Flags = Self.Flags Or Ark.Project.FlagAllowUCS2
-		    End If
-		  End If
-		  
 		  Self.UWPMode = CType(PlainData.FirstValue("uwpCompatibilityMode", "UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
 		  
 		  Self.MapMask = PlainData.FirstValue("map", "Map", "MapPreference", 1)
@@ -243,7 +238,7 @@ Inherits Beacon.Project
 		    Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
 		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
-		    Var ConsoleMode As Boolean = Self.IsFlagged(Beacon.Project.FlagConsoleSafe)
+		    Var ConsoleMode As Boolean = Self.IsFlagged(Ark.Project.FlagConsoleSafe)
 		    For Each Pack As Beacon.ContentPack In AllPacks
 		      Self.ContentPackEnabled(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
 		    Next
@@ -255,7 +250,7 @@ Inherits Beacon.Project
 		        Self.ContentPackEnabled(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
 		      Next
 		      
-		      Self.IsFlagged(Beacon.Project.FlagConsoleSafe) = True
+		      Self.IsFlagged(Ark.Project.FlagConsoleSafe) = True
 		    End If
 		  End If
 		End Sub
@@ -748,6 +743,17 @@ Inherits Beacon.Project
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function LegacyFlagValues() As JSONItem
+		  Var Flags As JSONItem = Super.LegacyFlagValues
+		  Flags.Value("allowUcs") = Ark.Project.FlagAllowUCS2
+		  Flags.Value("AllowUCS") = Ark.Project.FlagAllowUCS2
+		  Flags.Value("isConsole") = Ark.Project.FlagConsoleSafe
+		  Flags.Value("IsConsole") = Ark.Project.FlagConsoleSafe
+		  Return Flags
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function MapMask() As UInt64
 		  Return Self.mMapMask
@@ -785,6 +791,12 @@ Inherits Beacon.Project
 		  Super.ProcessEmbeddedContent()
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SupportsContentPack(Pack As Beacon.ContentPack) As Boolean
+		  Return Pack.IsConsoleSafe Or Self.IsFlagged(Ark.Project.FlagConsoleSafe) = False
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -845,6 +857,9 @@ Inherits Beacon.Project
 
 
 	#tag Constant, Name = FlagAllowUCS2, Type = Double, Dynamic = False, Default = \"4294967296", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagConsoleSafe, Type = Double, Dynamic = False, Default = \"8589934592", Scope = Public
 	#tag EndConstant
 
 

@@ -627,17 +627,15 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Project.mFlags = SaveData.Value("flags").UInt64Value
 		  Else
 		    Project.mFlags = 0
-		    If SaveData.HasKey("keepLocalBackup") And SaveData.Value("keepLocalBackup").BooleanValue = True Then
-		      Project.mFlags = Project.mFlags Or Beacon.Project.FlagKeepLocalBackup
-		    End If
 		    
-		    If (SaveData.HasKey("isConsole") And SaveData.Value("isConsole").BooleanValue = True) Or (SaveData.HasKey("IsConsole") And SaveData.Value("IsConsole").BooleanValue = True) Then
-		      Project.mFlags = Project.mFlags Or Beacon.Project.FlagConsoleSafe
-		    End If
-		    
-		    If (SaveData.HasKey("useCompression") And SaveData.Value("useCompression").BooleanValue = True) Or (SaveData.HasKey("UseCompression") And SaveData.Value("UseCompression").BooleanValue = True) Then
-		      Project.mFlags = Project.mFlags Or Beacon.Project.FlagUseCompression
-		    End If
+		    Var LegacyFlags As JSONItem = Project.LegacyFlagValues
+		    Var FlagKeys() As String = LegacyFlags.Keys
+		    For Each FlagKey As String In FlagKeys
+		      Var FlagValue As UInt64 = LegacyFlags.Value(FlagKey)
+		      If SaveData.HasKey(FlagKey) And SaveData.Value(FlagKey).BooleanValue = True Then
+		        Project.mFlags = Project.mFlags Or FlagValue
+		      End If
+		    Next
 		  End If
 		  
 		  Var Passwords As Dictionary = SaveData.FirstValue("members", "EncryptionKeys", New Dictionary)
@@ -738,10 +736,11 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    // Newest mod, keys are uuids and values are boolean
 		    Var AllPacks() As Beacon.ContentPack = Project.DataSource(False).GetContentPacks()
 		    Var Selections As Dictionary = SaveData.FirstValue("modSelections", "ModSelections", Nil)
-		    Var ConsoleMode As Boolean = Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
 		    For Each Pack As Beacon.ContentPack In AllPacks
-		      If Selections.HasKey(Pack.ContentPackId) = False Then
-		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And (Pack.IsConsoleSafe Or ConsoleMode = False)
+		      If Project.SupportsContentPack(Pack) = False Then
+		        Selections.Value(Pack.ContentPackId) = False
+		      ElseIf Selections.HasKey(Pack.ContentPackId) = False Then
+		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled
 		      End If
 		    Next
 		    Project.mContentPacks = Selections
@@ -1179,6 +1178,16 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function LastSavedVersion() As Integer
 		  Return Self.mLastSavedVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function LegacyFlagValues() As JSONItem
+		  Var Flags As New JSONItem // Needs to be case sensitive
+		  Flags.Value("keepLocalBackup") = Beacon.Project.FlagKeepLocalBackup
+		  Flags.Value("useCompression") = Beacon.Project.FlagUseCompression
+		  Flags.Value("UseCompression") = Beacon.Project.FlagUseCompression
+		  Return Flags
 		End Function
 	#tag EndMethod
 
@@ -1793,7 +1802,6 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  Manifest.Value("timestamp") = DateTime.Now.SecondsFrom1970
 		  Manifest.Value("modSelections") = Self.mContentPacks
 		  Manifest.Value("flags") = Self.mFlags
-		  Manifest.Value("isConsole") = Self.IsFlagged(Beacon.Project.FlagConsoleSafe) // legacy
 		  If Self.mLegacyTrustKey.IsEmpty = False Then
 		    Manifest.Value("legacyTrustKey") = Self.mLegacyTrustKey
 		  End If
@@ -2008,6 +2016,14 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SupportsContentPack(Pack As Beacon.ContentPack) As Boolean
+		  #Pragma Unused Pack
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Title() As String
 		  Return Self.mTitle
@@ -2184,13 +2200,10 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag Constant, Name = BinaryFormatLEBOM, Type = Double, Dynamic = False, Default = \"2916000471902660912", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = FlagConsoleSafe, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
 	#tag Constant, Name = FlagKeepLocalBackup, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = FlagUseCompression, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag Constant, Name = FlagUseCompression, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SaveDataVersion, Type = Double, Dynamic = False, Default = \"7", Scope = Protected

@@ -3,23 +3,6 @@ Protected Class Project
 Inherits Beacon.Project
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
-		Sub AddingProfile(Profile As Beacon.ServerProfile)
-		  If Profile.IsConsole Then
-		    Self.IsFlagged(Beacon.Project.FlagConsoleSafe) = True
-		    
-		    Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		    Var PackIds() As String = Self.ContentPacks()
-		    For Each PackId As String In PackIds
-		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(PackId)
-		      If Pack Is Nil Or Pack.IsConsoleSafe = False Then
-		        Self.ContentPackEnabled(PackId) = False
-		      End If
-		    Next
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
@@ -231,39 +214,9 @@ Inherits Beacon.Project
 		    Self.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  End If
 		  
-		  If PlainData.HasKey("flags") = False Then
-		    If (PlainData.HasKey("allowUcs") And PlainData.Value("allowUcs").BooleanValue = True) Or (PlainData.HasKey("AllowUCS") And PlainData.Value("AllowUCS").BooleanValue = True) Then
-		      Self.Flags = Self.Flags Or ArkSA.Project.FlagAllowUCS2
-		    End If
-		  End If
-		  
 		  Self.UWPMode = CType(PlainData.FirstValue("uwpCompatibilityMode", "UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, ArkSA.Project.UWPCompatibilityModes)
 		  
 		  Self.MapMask = PlainData.FirstValue("map", "Map", "MapPreference", 1)
-		  
-		  If PlainData.HasKey("modSelections") Or PlainData.HasKey("ModSelections") Then
-		    // Handled by the parent class
-		  ElseIf PlainData.HasKey("Mods") Then
-		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
-		    
-		    Var AllPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks()
-		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
-		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
-		    Var ConsoleMode As Boolean = Self.IsFlagged(Beacon.Project.FlagConsoleSafe)
-		    For Each Pack As Beacon.ContentPack In AllPacks
-		      Self.ContentPackEnabled(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
-		    Next
-		  ElseIf PlainData.HasKey("ConsoleModsOnly") Then
-		    Var ConsolePacksOnly As Boolean = PlainData.Value("ConsoleModsOnly")
-		    If ConsolePacksOnly Then
-		      Var AllPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks()
-		      For Each Pack As Beacon.ContentPack In AllPacks
-		        Self.ContentPackEnabled(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
-		      Next
-		      
-		      Self.IsFlagged(Beacon.Project.FlagConsoleSafe) = True
-		    End If
-		  End If
 		End Sub
 	#tag EndEvent
 
@@ -780,16 +733,7 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Flags() As UInt64
-		  Return Super.Flags And Not Beacon.Project.FlagConsoleSafe
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Flags(Assigns Value As UInt64)
-		  // Make sure console safe is excluded
-		  Value = Value And Not Beacon.Project.FlagConsoleSafe
-		  
 		  // Fire a notification if single player status changes
 		  Var WasSinglePlayer As Boolean = Self.IsFlagged(ArkSA.Project.FlagSinglePlayer)
 		  Super.Flags = Value
@@ -822,6 +766,15 @@ Inherits Beacon.Project
 	#tag Method, Flags = &h0
 		Function GameId() As String
 		  Return ArkSA.Identifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function LegacyFlagValues() As JSONItem
+		  Var Flags As JSONItem = Super.LegacyFlagValues
+		  Flags.Value("allowUcs") = Ark.Project.FlagAllowUCS2
+		  Flags.Value("AllowUCS") = Ark.Project.FlagAllowUCS2
+		  Return Flags
 		End Function
 	#tag EndMethod
 

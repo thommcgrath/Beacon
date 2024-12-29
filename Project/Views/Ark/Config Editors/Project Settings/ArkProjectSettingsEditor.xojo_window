@@ -469,6 +469,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
    End
    Begin Thread GFIComputeThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -631,7 +632,7 @@ End
 		  Self.DescriptionArea.Text = Self.Project.Description
 		  Self.CompressedSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagUseCompression)
 		  Self.AllowUCSSwitch.Value(False) = Self.Project.IsFlagged(Ark.Project.FlagAllowUCS2)
-		  Self.ConsoleModeSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
+		  Self.ConsoleModeSwitch.Value(False) = Self.Project.IsFlagged(Ark.Project.FlagConsoleSafe)
 		  Self.UWPModeMenu.SelectedRowIndex = CType(Self.Project.UWPMode, Integer)
 		  Self.LocalBackupSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagKeepLocalBackup)
 		  Self.ProjectIdField.Text = Self.Project.ProjectId
@@ -769,7 +770,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe) = Me.Value
+		  Self.Project.IsFlagged(Ark.Project.FlagConsoleSafe) = Me.Value
 		  
 		  If Me.Value Then
 		    Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks

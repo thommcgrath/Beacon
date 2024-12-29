@@ -223,7 +223,7 @@ End
 		  MeasurePic.Graphics.FontSize = 0
 		  MeasurePic.Graphics.Bold = True
 		  Var KeyNameWidth As Integer
-		  Var ConsoleSafe As Boolean = Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
+		  Var ConsoleSafe As Boolean = Self.Project.IsFlagged(Ark.Project.FlagConsoleSafe)
 		  
 		  For Each Key As Ark.ConfigOption In AllKeys
 		    If Ark.Configs.OtherSettings.KeySupported(Key, ContentPacks) = False Then

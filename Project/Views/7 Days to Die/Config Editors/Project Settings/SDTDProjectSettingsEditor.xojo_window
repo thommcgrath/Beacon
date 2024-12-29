@@ -179,7 +179,7 @@ Begin SDTDConfigEditor SDTDProjectSettingsEditor
       HasBorder       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   289
+      Height          =   321
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -209,67 +209,6 @@ Begin SDTDConfigEditor SDTDProjectSettingsEditor
       ValidationMask  =   ""
       Visible         =   True
       Width           =   562
-   End
-   Begin DesktopLabel ConsoleModeLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Force Console Compatibility:"
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   "#HelpConsoleMode"
-      Top             =   428
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   186
-   End
-   Begin SwitchControl ConsoleModeSwitch
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   20
-      Index           =   -2147483648
-      Left            =   218
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   "#HelpConsoleMode"
-      Top             =   428
-      Transparent     =   True
-      Visible         =   True
-      Width           =   40
    End
    Begin DesktopLabel CompressedLabel
       AllowAutoDeactivate=   True
@@ -414,16 +353,14 @@ End
 		  Self.TitleField.Text = Self.Project.Title
 		  Self.DescriptionArea.Text = Self.Project.Description
 		  Self.CompressedSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagUseCompression)
-		  Self.ConsoleModeSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
 		  Self.VersionMenu.SelectByTag(Self.Project.GameVersion)
 		  
-		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.ConsoleModeLabel, Self.CompressedLabel, Self.VersionLabel)
+		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.CompressedLabel, Self.VersionLabel)
 		  Var ControlLeft As Integer = Self.TitleLabel.Right + 12
 		  Self.TitleField.Left = ControlLeft
 		  Self.TitleField.Width = Self.Width - (ControlLeft + 20)
 		  Self.DescriptionArea.Left = ControlLeft
 		  Self.DescriptionArea.Width = Self.TitleField.Width
-		  Self.ConsoleModeSwitch.Left = ControlLeft
 		  Self.CompressedSwitch.Left = ControlLeft
 		  Self.VersionMenu.Left = ControlLeft
 		End Sub
@@ -477,30 +414,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ConsoleModeSwitch
-	#tag Event
-		Sub Pressed()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe) = Me.Value
-		  
-		  If Me.Value Then
-		    Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
-		    For Each Pack As Beacon.ContentPack In ContentPacks
-		      If Pack.IsConsoleSafe = False Then
-		        Self.Project.ContentPackEnabled(Pack.ContentPackId) = False
-		      End If
-		    Next
-		  End If
-		  
-		  Self.Modified = True
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events CompressedSwitch
 	#tag Event
 		Sub Pressed()
@@ -509,7 +422,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe) = Me.Value
+		  Self.Project.IsFlagged(Beacon.Project.FlagUseCompression) = Me.Value
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
