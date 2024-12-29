@@ -316,7 +316,7 @@ End
 		    Return
 		  End If
 		  
-		  If ArkExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, ArkSA.Configs.ExperienceCurves.MaxSupportedXP) Then
+		  If ArkSAExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, ArkSA.Configs.ExperienceCurves.MaxSupportedXP) Then
 		    Config = Self.Config(True)
 		    If Self.ViewingPlayerStats Then
 		      Config.AppendPlayerExperience(LevelXP)
@@ -346,7 +346,7 @@ End
 		    MinXP = Config.DinoMaxExperience
 		  End If
 		  
-		  Var Levels() As UInt64 = ArkExperienceWizard.Present(Self, Level, MinXP)
+		  Var Levels() As UInt64 = ArkSAExperienceWizard.Present(Self, Level, MinXP)
 		  If Levels.LastIndex = -1 Then
 		    Return
 		  End If
@@ -386,7 +386,7 @@ End
 		    MaxXP = If(Index < CapIndex, Config.DinoExperience(Index + 1), CType(ArkSA.Configs.ExperienceCurves.MaxSupportedXP, UInt64))
 		  End If
 		  
-		  If ArkExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, MaxXP) Then
+		  If ArkSAExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, MaxXP) Then
 		    Config = Self.Config(True)
 		    If Self.ViewingPlayerStats Then
 		      Config.PlayerExperience(Index) = LevelXP
