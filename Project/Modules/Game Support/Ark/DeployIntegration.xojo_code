@@ -82,7 +82,7 @@ Inherits Beacon.DeployIntegration
 		  Self.Log("Generating new ini files…")
 		  
 		  Var Format As Ark.Rewriter.EncodingFormat
-		  If Self.Project.AllowUCS2 Then
+		  If Self.Project.IsFlagged(Ark.Project.FlagAllowUCS2) Then
 		    Format = Ark.Rewriter.EncodingFormat.UCS2AndASCII
 		  Else
 		    Format = Ark.Rewriter.EncodingFormat.ASCII
@@ -367,7 +367,7 @@ Inherits Beacon.DeployIntegration
 		      ExtraGameIni = "[" + Ark.HeaderShooterGame + "]" + EndOfLine.UNIX + ExtraGameIni
 		    End If
 		    Var RewriteError As RuntimeException
-		    Var ExtraGameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, ExtraGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, ExtraGameIniOrganizer, Self.Project.ProjectId, Self.Project.LegacyTrustKey, If(Self.Project.AllowUCS2, Ark.Rewriter.EncodingFormat.UCS2AndASCII, Ark.Rewriter.EncodingFormat.ASCII), Ark.Project.UWPCompatibilityModes.Never, Self.NukeEnabled, RewriteError)
+		    Var ExtraGameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, ExtraGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, ExtraGameIniOrganizer, Self.Project.ProjectId, Self.Project.LegacyTrustKey, If(Self.Project.IsFlagged(Ark.Project.FlagAllowUCS2), Ark.Rewriter.EncodingFormat.UCS2AndASCII, Ark.Rewriter.EncodingFormat.ASCII), Ark.Project.UWPCompatibilityModes.Never, Self.NukeEnabled, RewriteError)
 		    If (RewriteError Is Nil) = False Then
 		      Self.SetError(RewriteError)
 		      Return False

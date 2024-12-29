@@ -12,7 +12,7 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Function GenerateConfigValues(Project As Ark.Project, Profile As Ark.ServerProfile) As Ark.ConfigValue()
-		  Var ConsoleSafe As Boolean = Project.ConsoleSafe
+		  Var ConsoleSafe As Boolean = Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
 		  Var Configs() As Ark.ConfigValue
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  Var IsGameServerApp As Boolean = (Profile.ProviderId = GameServerApp.Identifier)

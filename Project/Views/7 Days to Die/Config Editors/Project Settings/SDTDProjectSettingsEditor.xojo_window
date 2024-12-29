@@ -413,8 +413,8 @@ End
 		  
 		  Self.TitleField.Text = Self.Project.Title
 		  Self.DescriptionArea.Text = Self.Project.Description
-		  Self.CompressedSwitch.Value(False) = Self.Project.UseCompression
-		  Self.ConsoleModeSwitch.Value(False) = Self.Project.ConsoleSafe
+		  Self.CompressedSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagUseCompression)
+		  Self.ConsoleModeSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
 		  Self.VersionMenu.SelectByTag(Self.Project.GameVersion)
 		  
 		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.ConsoleModeLabel, Self.CompressedLabel, Self.VersionLabel)
@@ -485,7 +485,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.ConsoleSafe = Me.Value
+		  Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe) = Me.Value
 		  
 		  If Me.Value Then
 		    Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
@@ -509,7 +509,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.UseCompression = Me.Value
+		  Self.Project.IsFlagged(Beacon.Project.FlagConsoleSafe) = Me.Value
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub

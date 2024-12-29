@@ -15,7 +15,7 @@ Inherits Global.Thread
 		  Var LegacyTrustKey As String = Self.mProject.LegacyTrustKey
 		  
 		  Var Format As EncodingFormat = EncodingFormat.ASCII
-		  If Self.mProject.AllowUCS2 Then
+		  If Self.mProject.IsFlagged(ArkSA.Project.FlagAllowUCS2) Then
 		    Format = EncodingFormat.UCS2AndASCII
 		  End If
 		  

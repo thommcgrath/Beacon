@@ -66,7 +66,7 @@ Protected Module DedicatedServer
 		  End If
 		  
 		  Var Format As Ark.Rewriter.EncodingFormat
-		  If Project.AllowUCS2 Then
+		  If Project.IsFlagged(Ark.Project.FlagAllowUCS2) Then
 		    Format = Ark.Rewriter.EncodingFormat.UCS2AndASCII
 		  Else
 		    Format = Ark.Rewriter.EncodingFormat.ASCII

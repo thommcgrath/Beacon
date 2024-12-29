@@ -325,21 +325,6 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  Return Self.mConsoleSafe
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConsoleSafe(Assigns Value As Boolean)
-		  If Self.mConsoleSafe <> Value Then
-		    Self.mConsoleSafe = Value
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  // This class should only be created as a subclass
@@ -369,7 +354,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Next
 		  End If
 		  
-		  Self.mUseCompression = True
+		  Self.mFlags = Self.FlagUseCompression
 		  
 		  NotificationKit.Watch(Self, BeaconAPI.Notification_TokenIdUpdated)
 		End Sub
@@ -515,6 +500,23 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Flags() As UInt64
+		  Return Self.mFlags
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Flags(Assigns Value As UInt64)
+		  If Self.mFlags = Value Then
+		    Return
+		  End If
+		  
+		  Self.mFlags = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ForcedContentPacks() As Beacon.StringList
 		  Return Nil
 		End Function
@@ -621,15 +623,21 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Project.mLegacyTrustKey = SaveData.Value(LegacyTrustKey)
 		  End If
 		  
-		  If SaveData.HasKey("keepLocalBackup") Then
-		    Project.mKeepLocalBackup = SaveData.Value("keepLocalBackup")
-		  End If
-		  
-		  Project.mConsoleSafe = SaveData.FirstValue("isConsole", "IsConsole", Project.mConsoleSafe).BooleanValue
-		  
-		  Var UseCompressionKey As Variant = SaveData.FirstKey("useCompression", "UseCompression")
-		  If UseCompressionKey.IsNull = False Then
-		    Project.mUseCompression = SaveData.Value(UseCompressionKey)
+		  If SaveData.HasKey("flags") Then
+		    Project.mFlags = SaveData.Value("flags").UInt64Value
+		  Else
+		    Project.mFlags = 0
+		    If SaveData.HasKey("keepLocalBackup") And SaveData.Value("keepLocalBackup").BooleanValue = True Then
+		      Project.mFlags = Project.mFlags Or Beacon.Project.FlagKeepLocalBackup
+		    End If
+		    
+		    If (SaveData.HasKey("isConsole") And SaveData.Value("isConsole").BooleanValue = True) Or (SaveData.HasKey("IsConsole") And SaveData.Value("IsConsole").BooleanValue = True) Then
+		      Project.mFlags = Project.mFlags Or Beacon.Project.FlagConsoleSafe
+		    End If
+		    
+		    If (SaveData.HasKey("useCompression") And SaveData.Value("useCompression").BooleanValue = True) Or (SaveData.HasKey("UseCompression") And SaveData.Value("UseCompression").BooleanValue = True) Then
+		      Project.mFlags = Project.mFlags Or Beacon.Project.FlagUseCompression
+		    End If
 		  End If
 		  
 		  Var Passwords As Dictionary = SaveData.FirstValue("members", "EncryptionKeys", New Dictionary)
@@ -714,7 +722,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  End If
 		  
 		  If SaveData.HasKey("additionalFiles") Then
-		    If Project.mUseCompression Then
+		    If Project.IsFlagged(Beacon.Project.FlagUseCompression) Then
 		      Project.mAdditionalFiles = SaveData.Value("additionalFiles")
 		    Else
 		      Var AdditionalFiles As Dictionary = SaveData.Value("additionalFiles")
@@ -730,7 +738,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    // Newest mod, keys are uuids and values are boolean
 		    Var AllPacks() As Beacon.ContentPack = Project.DataSource(False).GetContentPacks()
 		    Var Selections As Dictionary = SaveData.FirstValue("modSelections", "ModSelections", Nil)
-		    Var ConsoleMode As Boolean = Project.ConsoleSafe
+		    Var ConsoleMode As Boolean = Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
 		    For Each Pack As Beacon.ContentPack In AllPacks
 		      If Selections.HasKey(Pack.ContentPackId) = False Then
 		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And (Pack.IsConsoleSafe Or ConsoleMode = False)
@@ -1144,16 +1152,17 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function KeepLocalBackup() As Boolean
-		  Return Self.mKeepLocalBackup
+		Function IsFlagged(Flags As UInt64) As Boolean
+		  Return (Self.mFlags And Flags) = Flags
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub KeepLocalBackup(Assigns Value As Boolean)
-		  If Self.mKeepLocalBackup <> Value Then
-		    Self.mKeepLocalBackup = Value
-		    Self.Modified = True
+		Sub IsFlagged(Flags As UInt64, Assigns Value As Boolean)
+		  If Value Then
+		    Self.Flags = Self.mFlags Or Flags
+		  Else
+		    Self.Flags = Self.mFlags And Not Flags
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1725,7 +1734,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function SaveData(Identity As Beacon.Identity) As MemoryBlock
-		  Return Self.SaveData(Identity, Self.mUseCompression, Nil)
+		  Return Self.SaveData(Identity, Self.IsFlagged(Self.FlagUseCompression), Nil)
 		End Function
 	#tag EndMethod
 
@@ -1766,7 +1775,8 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  Manifest.Value("savedWidth") = App.BuildNumber
 		  Manifest.Value("timestamp") = DateTime.Now.SecondsFrom1970
 		  Manifest.Value("modSelections") = Self.mContentPacks
-		  Manifest.Value("isConsole") = Self.mConsoleSafe
+		  Manifest.Value("flags") = Self.mFlags
+		  Manifest.Value("isConsole") = Self.IsFlagged(Beacon.Project.FlagConsoleSafe) // legacy
 		  If Self.mLegacyTrustKey.IsEmpty = False Then
 		    Manifest.Value("legacyTrustKey") = Self.mLegacyTrustKey
 		  End If
@@ -1830,7 +1840,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    ProjectData.Value("otherProperties") = AdditionalProperties
 		  End If
 		  
-		  ProjectData.Value("keepLocalBackup") = Self.mKeepLocalBackup
+		  ProjectData.Value("keepLocalBackup") = Self.IsFlagged(Beacon.Project.FlagKeepLocalBackup)
 		  
 		  If Compress Then
 		    Var Archive As Beacon.Archive = Beacon.Archive.Create()
@@ -1863,7 +1873,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function SaveData(Identity As Beacon.Identity, AdditionalProperties As Dictionary) As MemoryBlock
-		  Return Self.SaveData(Identity, Self.mUseCompression, AdditionalProperties)
+		  Return Self.SaveData(Identity, Self.IsFlagged(Beacon.Project.FlagUseCompression), AdditionalProperties)
 		End Function
 	#tag EndMethod
 
@@ -1999,21 +2009,6 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UseCompression() As Boolean
-		  Return Self.mUseCompression
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UseCompression(Assigns Value As Boolean)
-		  If Self.mUseCompression <> Value Then
-		    Self.mUseCompression = Value
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Validate() As Beacon.ProjectValidationResults
 		  Var Issues As New Beacon.ProjectValidationResults
 		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets()
@@ -2090,10 +2085,6 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConsoleSafe As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mContentPacks As Dictionary
 	#tag EndProperty
 
@@ -2105,12 +2096,12 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		Private mEmbeddedContentPacks As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mHasUnsavedContent As Boolean
+	#tag Property, Flags = &h21
+		Private mFlags As UInt64
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mKeepLocalBackup As Boolean
+	#tag Property, Flags = &h1
+		Protected mHasUnsavedContent As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -2165,15 +2156,20 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		Private mTitle As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUseCompression As Boolean
-	#tag EndProperty
-
 
 	#tag Constant, Name = BinaryFormatBEBOM, Type = Double, Dynamic = False, Default = \"3470482855257601832", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = BinaryFormatLEBOM, Type = Double, Dynamic = False, Default = \"2916000471902660912", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagConsoleSafe, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagKeepLocalBackup, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagUseCompression, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SaveDataVersion, Type = Double, Dynamic = False, Default = \"7", Scope = Protected

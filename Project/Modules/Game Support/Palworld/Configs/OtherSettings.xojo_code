@@ -13,7 +13,7 @@ Inherits Palworld.ConfigGroup
 
 	#tag Event
 		Function GenerateConfigValues(Project As Palworld.Project, Profile As Palworld.ServerProfile) As Palworld.ConfigValue()
-		  Var ConsoleSafe As Boolean = Project.ConsoleSafe
+		  Var ConsoleSafe As Boolean = Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
 		  Var Configs() As Palworld.ConfigValue
 		  Var DataSource As Palworld.DataSource = Palworld.DataSource.Pool.Get(False)
 		  For Each Entry As DictionaryEntry In Self.mSettings

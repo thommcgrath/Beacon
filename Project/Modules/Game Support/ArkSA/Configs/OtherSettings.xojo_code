@@ -13,7 +13,7 @@ Inherits ArkSA.ConfigGroup
 
 	#tag Event
 		Function GenerateConfigValues(Project As ArkSA.Project, Profile As ArkSA.ServerProfile) As ArkSA.ConfigValue()
-		  Var ConsoleSafe As Boolean = Project.ConsoleSafe
+		  Var ConsoleSafe As Boolean = Project.IsFlagged(Beacon.Project.FlagConsoleSafe)
 		  Var Configs() As ArkSA.ConfigValue
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  Var IsGameServerApp As Boolean = (Profile.ProviderId = GameServerApp.Identifier)

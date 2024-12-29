@@ -5,7 +5,7 @@ Inherits Beacon.Project
 	#tag Event
 		Sub AddingProfile(Profile As Beacon.ServerProfile)
 		  If Profile.IsConsole Then
-		    Self.ConsoleSafe = True
+		    Self.IsFlagged(Beacon.Project.FlagConsoleSafe) = True
 		    
 		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    Var PackIds() As String = Self.ContentPacks()
@@ -24,7 +24,7 @@ Inherits Beacon.Project
 		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
 		  
-		  ManifestData.Value("allowUcs") = Self.AllowUCS2
+		  ManifestData.Value("allowUcs") = Self.IsFlagged(Ark.Project.FlagAllowUCS2)
 		  ManifestData.Value("map") = Self.MapMask
 		  ManifestData.Value("uwpCompatibilityMode") = CType(Self.UWPMode, Integer)
 		  
@@ -225,7 +225,12 @@ Inherits Beacon.Project
 		    Self.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  End If
 		  
-		  Self.AllowUCS2 = PlainData.FirstValue("allowUcs", "AllowUCS", Self.AllowUCS2).BooleanValue
+		  If PlainData.HasKey("flags") = False Then
+		    If (PlainData.HasKey("allowUcs") And PlainData.Value("allowUcs").BooleanValue = True) Or (PlainData.HasKey("AllowUCS") And PlainData.Value("AllowUCS").BooleanValue = True) Then
+		      Self.Flags = Self.Flags Or Ark.Project.FlagAllowUCS2
+		    End If
+		  End If
+		  
 		  Self.UWPMode = CType(PlainData.FirstValue("uwpCompatibilityMode", "UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
 		  
 		  Self.MapMask = PlainData.FirstValue("map", "Map", "MapPreference", 1)
@@ -238,7 +243,7 @@ Inherits Beacon.Project
 		    Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
 		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
-		    Var ConsoleMode As Boolean = Self.ConsoleSafe
+		    Var ConsoleMode As Boolean = Self.IsFlagged(Beacon.Project.FlagConsoleSafe)
 		    For Each Pack As Beacon.ContentPack In AllPacks
 		      Self.ContentPackEnabled(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
 		    Next
@@ -250,7 +255,7 @@ Inherits Beacon.Project
 		        Self.ContentPackEnabled(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
 		      Next
 		      
-		      Self.ConsoleSafe = True
+		      Self.IsFlagged(Beacon.Project.FlagConsoleSafe) = True
 		    End If
 		  End If
 		End Sub
@@ -305,21 +310,6 @@ Inherits Beacon.Project
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wrong config group subclass for project"
 		    Raise Err
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AllowUCS2() As Boolean
-		  Return Self.mAllowUCS2
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AllowUCS2(Assigns Value As Boolean)
-		  If Self.mAllowUCS2 <> Value Then
-		    Self.mAllowUCS2 = Value
-		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -841,10 +831,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h1
-		Protected mAllowUCS2 As Boolean
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mEmbeddedBlueprints As Dictionary
 	#tag EndProperty
@@ -856,6 +842,10 @@ Inherits Beacon.Project
 	#tag Property, Flags = &h1
 		Protected mUWPMode As Ark.Project.UWPCompatibilityModes
 	#tag EndProperty
+
+
+	#tag Constant, Name = FlagAllowUCS2, Type = Double, Dynamic = False, Default = \"4294967296", Scope = Public
+	#tag EndConstant
 
 
 	#tag Enum, Name = UWPCompatibilityModes, Type = Integer, Flags = &h0

@@ -317,7 +317,7 @@ End
 		  Self.mController.Project.NewIdentifier
 		  Var NewURL As String = Beacon.ProjectURL.TypeCloud + "://" + BeaconAPI.URL("projects/" + Self.mController.Project.ProjectId).Middle(8)
 		  Self.mController.Project.Title = Self.TitleField.Text
-		  Self.mController.Project.KeepLocalBackup = Self.KeepLocalCheck.Value
+		  Self.mController.Project.IsFlagged(Beacon.Project.FlagKeepLocalBackup) = Self.KeepLocalCheck.Value
 		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved
 		  Self.Hide

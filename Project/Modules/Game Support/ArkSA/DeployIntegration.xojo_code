@@ -58,7 +58,7 @@ Inherits Beacon.DeployIntegration
 		  Self.Log("Generating new ini files…")
 		  
 		  Var Format As ArkSA.Rewriter.EncodingFormat
-		  If Self.Project.AllowUCS2 Then
+		  If Self.Project.IsFlagged(ArkSA.Project.FlagAllowUCS2) Then
 		    Format = ArkSA.Rewriter.EncodingFormat.UCS2AndASCII
 		  Else
 		    Format = ArkSA.Rewriter.EncodingFormat.ASCII
