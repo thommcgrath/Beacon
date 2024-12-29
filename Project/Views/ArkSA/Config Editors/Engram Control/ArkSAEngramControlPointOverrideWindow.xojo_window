@@ -277,8 +277,9 @@ End
 		Sub Opening()
 		  Self.SwapButtons()
 		  
+		  Var SinglePlayer As Boolean = Self.mProject.IsFlagged(ArkSA.Project.FlagSinglePlayer)
 		  If Self.mLevels.LastIndex = -1 Then
-		    Var Level As Integer = Max(Self.mConfig.LevelsDefined, ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData.MaxLevel) + 1
+		    Var Level As Integer = Max(Self.mConfig.LevelsDefined, ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData(SinglePlayer).MaxLevel) + 1
 		    Self.LevelField.Text = Level.ToString
 		    Self.PointsField.SetFocus()
 		  ElseIf Self.mLevels.LastIndex = 0 Then
@@ -291,7 +292,7 @@ End
 		    If IsNull(Points) = False Then
 		      Self.PointsField.Text = Points.IntegerValue.ToString
 		    Else
-		      Self.PointsField.Text = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData.PointsForLevel(Level).ToString
+		      Self.PointsField.Text = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData(SinglePlayer).PointsForLevel(Level).ToString
 		    End If
 		    Self.PointsField.SetFocus()
 		  Else

@@ -24,8 +24,9 @@ Inherits ArkSA.ConfigGroup
 		  
 		  Var Values() As ArkSA.ConfigValue
 		  
-		  Var MatchesPlayerDefault As Boolean = Self.MatchesPlayerDefault
-		  Var MatchesDinoDefault As Boolean = Self.MatchesDinoDefault
+		  Var SinglePlayer As Boolean = Project.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		  Var MatchesPlayerDefault As Boolean = Self.MatchesPlayerDefault(SinglePlayer)
+		  Var MatchesDinoDefault As Boolean = Self.MatchesDinoDefault(SinglePlayer)
 		  
 		  If MatchesPlayerDefault And MatchesDinoDefault Then
 		    Return Values
@@ -175,11 +176,11 @@ Inherits ArkSA.ConfigGroup
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
-		  If Self.MatchesPlayerDefault = False Then
+		  If Self.MatchesPlayerDefault(True) = False And Self.MatchesPlayerDefault(False) = False Then
 		    SaveData.Value("Player Levels") = Self.mPlayerLevels
 		  End If
 		  
-		  If Self.MatchesDinoDefault = False Then
+		  If Self.MatchesDinoDefault(True) = False And Self.MatchesDinoDefault(False) = False Then
 		    SaveData.Value("Dino Levels") = Self.mDinoLevels
 		  End If
 		End Sub
@@ -365,11 +366,26 @@ Inherits ArkSA.ConfigGroup
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
-		  If Config.MatchesDefault Then
+		  
+		  Var SinglePlayer As Boolean = ParsedData.Lookup("bUseSingleplayerSettings", False)
+		  If Config.MatchesDefault(SinglePlayer) Then
 		    // Don't bother importing a default config
 		    Return Nil
-		  end if
+		  End If
+		  
 		  Return Config
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasDinoLevels() As Boolean
+		  Return Self.mDinoLevels.Count > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasPlayerLevels() As Boolean
+		  Return Self.mPlayerLevels.Count > 0
 		End Function
 	#tag EndMethod
 
@@ -395,25 +411,34 @@ Inherits ArkSA.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatchesDefault() As Boolean
-		  Return Self.MatchesPlayerDefault() And Self.MatchesDinoDefault()
+		Function MatchesDefault(SinglePlayer As Boolean) As Boolean
+		  Return Self.MatchesPlayerDefault(SinglePlayer) And Self.MatchesDinoDefault(SinglePlayer)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatchesDinoDefault() As Boolean
+		Function MatchesDinoDefault(SinglePlayer As Boolean) As Boolean
 		  If Self.mDinoLevels.Count = 0 Then
 		    Return True
 		  End If
 		  
+		  Var LevelCapKey, ExperienceKey As String
+		  If SinglePlayer Then
+		    LevelCapKey = "Dino Level Cap (Single)"
+		    ExperienceKey = "Dino Default Experience (Single)"
+		  Else
+		    LevelCapKey = "Dino Level Cap"
+		    ExperienceKey = "Dino Default Experience"
+		  End If
+		  
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
-		  Var DinoLevelCap As Integer = DataSource.GetIntegerVariable("Dino Level Cap")
+		  Var DinoLevelCap As Integer = DataSource.GetIntegerVariable(LevelCapKey)
 		  If Self.DinoLevelCap <> DinoLevelCap Then
 		    Return False
 		  End If
 		  
-		  Var DinoExperienceList As String = DataSource.GetStringVariable("Dino Default Experience")
+		  Var DinoExperienceList As String = DataSource.GetStringVariable(ExperienceKey)
 		  Var DinoLevels() As String = DinoExperienceList.Split(",")
 		  For I As Integer = 0 To DinoLevels.LastIndex
 		    Var Experience As UInt64 = UInt64.FromString(DinoLevels(I))
@@ -427,14 +452,14 @@ Inherits ArkSA.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatchesPlayerDefault() As Boolean
+		Function MatchesPlayerDefault(SinglePlayer As Boolean) As Boolean
 		  If Self.mPlayerLevels.Count = 0 Then
 		    Return True
 		  End If
 		  
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		  
-		  Var PlayerLevelData As ArkSA.PlayerLevelData = DataSource.OfficialPlayerLevelData
+		  Var PlayerLevelData As ArkSA.PlayerLevelData = DataSource.OfficialPlayerLevelData(SinglePlayer)
 		  If Self.PlayerLevelCap <> PlayerLevelData.MaxLevel Or Self.PlayerMaxExperience <> PlayerLevelData.ExperienceForLevel(PlayerLevelData.MaxLevel) Then
 		    Return False
 		  End If

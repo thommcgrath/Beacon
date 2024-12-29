@@ -52,6 +52,8 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
+		  #Pragma Unused StatusData
+		  
 		  Var BuildNumber As Integer = App.BuildNumber
 		  
 		  Var InitialChanges As Integer

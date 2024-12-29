@@ -396,6 +396,7 @@ End
 		  Var MergeItems() As Beacon.DocumentMergeItem
 		  Var DesiredArkMask As UInt64
 		  Var UniqueContentPacks As New Dictionary
+		  Var AddedSinglePlayerItem As Boolean
 		  For Each SourceProject As Beacon.Project In SourceProjects
 		    // Config Groups
 		    Var Sets() As Beacon.ConfigSet = SourceProject.ConfigSets
@@ -455,6 +456,12 @@ End
 		      
 		      MergeItems.Add(New Beacon.DocumentMergeProfileItem(Profile))
 		    Next
+		    
+		    // Single player
+		    If AddedSinglePlayerItem = False And SourceProject.IsFlagged(ArkSA.Project.FlagSinglePlayer) And DestinationProject.IsFlagged(ArkSA.Project.FlagSinglePlayer) = False Then
+		      MergeItems.Add(New Beacon.DocumentMergeFlagItem(ArkSA.Project.FlagSinglePlayer, "Enable Single Player Project"))
+		      AddedSinglePlayerItem = True
+		    End If
 		  Next
 		  
 		  Select Case DestinationProject
@@ -964,6 +971,8 @@ End
 		        If (ProfileItem.TokenId.IsEmpty) = False Then
 		          Self.mDestination.ProviderTokenKey(ProfileItem.TokenId) = ProfileItem.TokenKey
 		        End If
+		      Case IsA Beacon.DocumentMergeFlagItem
+		        Self.mDestination.IsFlagged(Beacon.DocumentMergeFlagItem(MergeItem).Flags) = True
 		      End Select
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName)

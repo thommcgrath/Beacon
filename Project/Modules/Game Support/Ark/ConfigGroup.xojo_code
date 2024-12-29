@@ -2,6 +2,15 @@
 Protected Class ConfigGroup
 Inherits Beacon.ConfigGroup
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag Event
+		Sub Migrate(SavedWithVersion As Integer, Project As Beacon.Project)
+		  If Project IsA Ark.Project Then
+		    RaiseEvent Migrate(SavedWithVersion, Ark.Project(Project))
+		  End If
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.ConfigGroup
 		  Return Ark.Configs.CloneInstance(Self)
@@ -60,12 +69,6 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  Return Self.mManagedKeys
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Migrate(SavedWithVersion As Integer, Project As Ark.Project)
-		  RaiseEvent Migrate(SavedWithVersion, Project)
-		End Sub
 	#tag EndMethod
 
 

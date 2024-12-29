@@ -943,6 +943,15 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  
 		  Project.mLoadedUserId = Identity.UserId
 		  Project.Modified = Version < Beacon.Project.SaveDataVersion
+		  Project.mLastSavedVersion = SavedWithVersion // Needs to come after, because Modified = False updates it
+		  
+		  For Each ConfigSetEntry As DictionaryEntry In Project.mConfigSetData
+		    Var ConfigSetData As Dictionary = ConfigSetEntry.Value
+		    For Each GroupEntry As DictionaryEntry In ConfigSetData
+		      Var Group As Beacon.ConfigGroup = GroupEntry.Value
+		      Group.Migrate(SavedWithVersion, Project)
+		    Next
+		  Next
 		  
 		  If Project.PasswordDecrypted = False Then
 		    App.Log("Project " + Project.ProjectId + " did not decrypt password.")
@@ -1153,7 +1162,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function IsFlagged(Flags As UInt64) As Boolean
-		  Return (Self.mFlags And Flags) = Flags
+		  Return (Self.Flags And Flags) = Flags
 		End Function
 	#tag EndMethod
 
@@ -1165,6 +1174,12 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Self.Flags = Self.mFlags And Not Flags
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastSavedVersion() As Integer
+		  Return Self.mLastSavedVersion
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1272,6 +1287,8 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		        Group.Modified = False
 		      Next
 		    Next
+		    
+		    Self.mLastSavedVersion = App.BuildNumber
 		  End If
 		End Sub
 	#tag EndMethod
@@ -2102,6 +2119,10 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 
 	#tag Property, Flags = &h1
 		Protected mHasUnsavedContent As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastSavedVersion As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

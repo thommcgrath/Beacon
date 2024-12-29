@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
+Begin ArkSAConfigEditor ArkSAProjectSettingsEditor Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -115,7 +115,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       HasBorder       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   277
+      Height          =   245
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -233,7 +233,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Windows Store Compatibility:"
@@ -266,7 +266,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       LockTop         =   False
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   6
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpUWPMode"
@@ -296,7 +296,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Compress Project:"
@@ -329,7 +329,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Allow UCS-2 Files:"
@@ -363,7 +363,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   8
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpCompressed"
@@ -393,7 +393,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   10
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpAllowUCS"
@@ -421,7 +421,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Keep Local Project Backup:"
@@ -454,7 +454,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   12
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "#HelpLocalBackup"
@@ -490,7 +490,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -523,7 +523,7 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Project UUID:"
@@ -536,10 +536,77 @@ Begin ArkSAConfigEditor ArkSAProjectSettingsEditor
       Visible         =   True
       Width           =   189
    End
+   Begin DesktopLabel SinglePlayerLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Use Single Player Values:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   "#HelpSinglePlayer"
+      Top             =   352
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   189
+   End
+   Begin SwitchControl SinglePlayerSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   221
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "#HelpSinglePlayer"
+      Top             =   352
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Hidden()
+		  NotificationKit.Ignore(Self, ArkSA.Project.Notification_SinglePlayerChanged)
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub SetupUI()
 		  Self.TitleField.Text = Self.Project.Title
@@ -548,14 +615,16 @@ End
 		  Self.AllowUCSSwitch.Value(False) = Self.Project.IsFlagged(ArkSA.Project.FlagAllowUCS2)
 		  Self.UWPModeMenu.SelectedRowIndex = CType(Self.Project.UWPMode, Integer)
 		  Self.LocalBackupSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagKeepLocalBackup)
+		  Self.SinglePlayerSwitch.Value(False) = Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer)
 		  Self.ProjectIdField.Text = Self.Project.ProjectId
 		  
-		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel, Self.LocalBackupLabel, Self.ProjectIdLabel)
+		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel, Self.LocalBackupLabel, Self.ProjectIdLabel, Self.SinglePlayerLabel)
 		  Var ControlLeft As Integer = Self.TitleLabel.Right + 12
 		  Self.TitleField.Left = ControlLeft
 		  Self.TitleField.Width = Self.Width - (ControlLeft + 20)
 		  Self.DescriptionArea.Left = ControlLeft
 		  Self.DescriptionArea.Width = Self.TitleField.Width
+		  Self.SinglePlayerSwitch.Left = ControlLeft
 		  Self.UWPModeMenu.Left = ControlLeft
 		  Self.CompressedSwitch.Left = ControlLeft
 		  Self.AllowUCSSwitch.Left = ControlLeft
@@ -565,11 +634,35 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+		  #Pragma Unused UserData
+		  #Pragma Unused FireSetupUI
+		  
+		  NotificationKit.Watch(Self, ArkSA.Project.Notification_SinglePlayerChanged)
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return ArkSA.Configs.NameProjectSettings
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case ArkSA.Project.Notification_SinglePlayerChanged
+		    Var UserData As Dictionary = Notification.UserData
+		    If UserData.Value("ProjectId") = Self.Project.ProjectId Then
+		      Var SinglePlayer As Boolean = UserData.Value("NewValue")
+		      Self.SinglePlayerSwitch.Value = SinglePlayer
+		    End If
+		  End Select
+		End Sub
 	#tag EndMethod
 
 
@@ -583,6 +676,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = HelpLocalBackup, Type = String, Dynamic = True, Default = \"When turned on\x2C projects saved to the cloud will also save a backup copy to your computer.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HelpSinglePlayer, Type = String, Dynamic = True, Default = \"Beacon will use Ark\'s single player values for breeding multipliers\x2C experience curve\x2C unlock points\x2C and more.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = HelpUWPMode, Type = String, Dynamic = True, Default = \"Use the [ShooterGameMode_Options] header needed by the Windows Store version of Ark in single player.", Scope = Private
@@ -679,6 +775,20 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Project.IsFlagged(Beacon.Project.FlagKeepLocalBackup) = Me.Value
+		  Self.Modified = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SinglePlayerSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer) = Me.Value
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub

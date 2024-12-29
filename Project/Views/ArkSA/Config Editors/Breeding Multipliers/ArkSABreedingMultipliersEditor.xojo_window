@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ArkSAConfigEditor ArkSABreedingMultipliersEditor
+Begin ArkSAConfigEditor ArkSABreedingMultipliersEditor Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -1599,6 +1599,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Hidden()
+		  NotificationKit.Ignore(Self, ArkSA.Project.Notification_SinglePlayerChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  Self.UpdateBaselineRates()
 		  
@@ -1660,6 +1666,21 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+		  #Pragma Unused UserData
+		  #Pragma Unused FireSetupUI
+		  
+		  NotificationKit.Watch(Self, ArkSA.Project.Notification_SinglePlayerChanged)
+		  
+		  Var IsSinglePlayer As Boolean = Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		  If Self.mComputeSinglePlayer <> IsSinglePlayer Then
+		    Self.mComputeSinglePlayer = IsSinglePlayer
+		    Self.UpdateBaselineRates()
+		  End If
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As ArkSA.Configs.BreedingMultipliers
@@ -1671,6 +1692,21 @@ End
 		Function InternalName() As String
 		  Return ArkSA.Configs.NameBreedingMultipliers
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case ArkSA.Project.Notification_SinglePlayerChanged
+		    Var UserData As Dictionary = Notification.UserData
+		    If UserData.Value("ProjectId") = Self.Project.ProjectId Then
+		      Self.mComputeSinglePlayer = UserData.Value("NewValue").BooleanValue
+		      Self.UpdateBaselineRates()
+		    End If
+		  End Select
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -2170,7 +2206,7 @@ End
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AutoTuneButton", "Auto Imprint", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
-		  Me.Append(OmniBarItem.CreateButton("BaselineButton", "Rates", IconToolbarRates, "Show chart for special modes such as events and single player."))
+		  //Me.Append(OmniBarItem.CreateButton("BaselineButton", "Rates", IconToolbarRates, "Show chart for special modes such as events and single player."))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("ShareLinkButton", "Share", IconToolbarLink, "Generates a link so you can share this breeding chart."))
 		End Sub

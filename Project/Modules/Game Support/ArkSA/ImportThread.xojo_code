@@ -175,6 +175,10 @@ Inherits Beacon.Thread
 		    Project.AddServerProfile(Profile)
 		  End If
 		  
+		  If ParsedData.HasKey("bUseSingleplayerSettings") Then
+		    Project.IsFlagged(ArkSA.Project.FlagSinglePlayer) = ParsedData.Value("bUseSingleplayerSettings").BooleanValue
+		  End If
+		  
 		  Var ConfigNames() As String = ArkSA.Configs.AllNames()
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  Var Configs() As ArkSA.ConfigGroup

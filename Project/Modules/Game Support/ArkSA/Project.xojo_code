@@ -436,19 +436,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConsoleSafe(Assigns Value As Boolean)
-		  #Pragma Unused Value
-		  Super.IsFlagged(Beacon.Project.FlagConsoleSafe) = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMapMask = 1 // Play it safe, do not bother calling ArkSA.Maps here in case database access is fubar
 		  Self.mEmbeddedBlueprints = New Dictionary
@@ -592,7 +579,9 @@ Inherits Beacon.Project
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
 		    Next
 		    
-		    Organizer.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Profile.Name))
+		    Organizer.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderSessionSettings, "SessionName=" + Profile.Name))
+		    Organizer.Remove(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bUseSingleplayerSettings")
+		    Organizer.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bUseSingleplayerSettings=" + If(Self.IsFlagged(ArkSA.Project.FlagSinglePlayer), "True", "False")))
 		    
 		    If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
 		      Organizer.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Profile.MessageOfTheDay.ArkMLValue))
@@ -791,6 +780,30 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Flags() As UInt64
+		  Return Super.Flags And Not Beacon.Project.FlagConsoleSafe
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Flags(Assigns Value As UInt64)
+		  // Make sure console safe is excluded
+		  Value = Value And Not Beacon.Project.FlagConsoleSafe
+		  
+		  // Fire a notification if single player status changes
+		  Var WasSinglePlayer As Boolean = Self.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		  Super.Flags = Value
+		  Var IsSinglePlayer As Boolean = Self.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		  If IsSinglePlayer <> WasSinglePlayer Then
+		    Var UserData As New Dictionary
+		    UserData.Value("ProjectId") = Self.ProjectId
+		    UserData.Value("NewValue") = IsSinglePlayer
+		    NotificationKit.Post(Self.Notification_SinglePlayerChanged, UserData)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ForcedContentPacks() As Beacon.StringList
 		  Var Mods As Beacon.StringList = Super.ForcedContentPacks()
 		  If Mods Is Nil Then
@@ -924,6 +937,12 @@ Inherits Beacon.Project
 
 
 	#tag Constant, Name = FlagAllowUCS2, Type = Double, Dynamic = False, Default = \"4294967296", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagSinglePlayer, Type = Double, Dynamic = False, Default = \"8589934592", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_SinglePlayerChanged, Type = String, Dynamic = False, Default = \"ArkSA.Project.SinglePlayerChanged", Scope = Public
 	#tag EndConstant
 
 
