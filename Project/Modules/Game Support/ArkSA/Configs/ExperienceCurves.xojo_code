@@ -619,7 +619,7 @@ Inherits ArkSA.ConfigGroup
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = MaxSupportedXP, Type = Double, Dynamic = False, Default = \"4294967295", Scope = Public
+	#tag Constant, Name = MaxSupportedXP, Type = Double, Dynamic = False, Default = \"18446744073709551615", Scope = Public
 	#tag EndConstant
 
 
