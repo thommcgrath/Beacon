@@ -6,6 +6,7 @@ Inherits ArkSA.ConfigGroup
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Self.mDaySpeedMultiplier = ArkSA.Configs.DayCycle(Other).mDaySpeedMultiplier
 		  Self.mNightSpeedMultiplier = ArkSA.Configs.DayCycle(Other).mNightSpeedMultiplier
+		  Self.mScaleMultiplier = ArkSA.Configs.DayCycle(Other).mScaleMultiplier
 		End Sub
 	#tag EndEvent
 
@@ -15,7 +16,7 @@ Inherits ArkSA.ConfigGroup
 		  #Pragma Unused Profile
 		  
 		  Var Values() As ArkSA.ConfigValue
-		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DayCycleSpeedScale=1.0"))
+		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DayCycleSpeedScale=" + Self.ScaleMultiplier.PrettyText))
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "DayTimeSpeedScale=" + Self.DaySpeedMultiplier.PrettyText))
 		  Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, "NightTimeSpeedScale=" + Self.NightSpeedMultiplier.PrettyText))
 		  Return Values
@@ -48,6 +49,9 @@ Inherits ArkSA.ConfigGroup
 		  If SaveData.HasKey("Night") Then
 		    Self.mNightSpeedMultiplier = SaveData.Value("Night").DoubleValue
 		  End If
+		  If SaveData.HasKey("Scale") Then
+		    Self.mScaleMultiplier = SaveData.Value("Scale").DoubleValue
+		  End If
 		  If SaveData.HasKey("Map") Then
 		    Self.mPreviewMapIdentifier = SaveData.Value("Map").StringValue
 		  Else
@@ -62,6 +66,7 @@ Inherits ArkSA.ConfigGroup
 		  
 		  SaveData.Value("Day") = Self.mDaySpeedMultiplier
 		  SaveData.Value("Night") = Self.mNightSpeedMultiplier
+		  SaveData.Value("Scale") = Self.mScaleMultiplier
 		  SaveData.Value("Map") = Self.mPreviewMapIdentifier
 		End Sub
 	#tag EndEvent
@@ -71,6 +76,7 @@ Inherits ArkSA.ConfigGroup
 		Sub Constructor()
 		  Self.mDaySpeedMultiplier = 1.0
 		  Self.mNightSpeedMultiplier = 1.0
+		  Self.mScaleMultiplier = 1.0
 		  Self.mPreviewMapIdentifier = "TheIsland"
 		  Super.Constructor()
 		End Sub
@@ -96,8 +102,9 @@ Inherits ArkSA.ConfigGroup
 		  NightSpeedMultiplier = ParsedData.DoubleValue("NightTimeSpeedScale", NightSpeedMultiplier)
 		  
 		  Var Config As New ArkSA.Configs.DayCycle()
-		  Config.DaySpeedMultiplier = DaySpeedMultiplier / (1 / OverallCycleMultiplier)
-		  Config.NightSpeedMultiplier = NightSpeedMultiplier / (1 / OverallCycleMultiplier)
+		  Config.DaySpeedMultiplier = DaySpeedMultiplier
+		  Config.NightSpeedMultiplier = NightSpeedMultiplier
+		  Config.ScaleMultiplier = OverallCycleMultiplier
 		  Return Config
 		End Function
 	#tag EndMethod
@@ -143,6 +150,10 @@ Inherits ArkSA.ConfigGroup
 		Private mPreviewMapIdentifier As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mScaleMultiplier As Double
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -180,6 +191,28 @@ Inherits ArkSA.ConfigGroup
 			End Set
 		#tag EndSetter
 		PreviewMapIdentifier As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mScaleMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  #if AllowZeroMultipliers
+			    Value = Max(Value, 0)
+			  #else
+			    Value = Max(Value, 0.000001)
+			  #endif
+			  If Self.mScaleMultiplier <> Value Then
+			    Self.mScaleMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ScaleMultiplier As Double
 	#tag EndComputedProperty
 
 
@@ -242,6 +275,14 @@ Inherits ArkSA.ConfigGroup
 			Group="Behavior"
 			InitialValue=""
 			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PreviewMapIdentifier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
