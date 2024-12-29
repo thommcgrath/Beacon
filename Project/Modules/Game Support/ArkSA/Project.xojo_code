@@ -743,6 +743,19 @@ Inherits Beacon.Project
 		    UserData.Value("ProjectId") = Self.ProjectId
 		    UserData.Value("NewValue") = IsSinglePlayer
 		    NotificationKit.Post(Self.Notification_SinglePlayerChanged, UserData)
+		    
+		    // Find all the matching settings in all the config sets
+		    Var Option As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bUseSingleplayerSettings")
+		    Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		    For Each Set As Beacon.ConfigSet In Sets
+		      Var Group As Beacon.ConfigGroup = Self.ConfigGroup(ArkSA.Configs.NameGeneralSettings, Set, False)
+		      If (Group Is Nil) = False And Group IsA ArkSA.Configs.OtherSettings Then
+		        Var GeneralSettings As ArkSA.Configs.OtherSettings = ArkSA.Configs.OtherSettings(Group)
+		        If GeneralSettings.Value(Option).IsNull = False Then
+		          GeneralSettings.Value(Option) = IsSinglePlayer
+		        End If
+		      End If
+		    Next
 		  End If
 		End Sub
 	#tag EndMethod
