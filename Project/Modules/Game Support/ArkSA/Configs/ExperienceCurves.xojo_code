@@ -153,7 +153,7 @@ Inherits ArkSA.ConfigGroup
 		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "PlayerLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
 		    End If
 		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
-		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "PlayerLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
+		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "PlayerLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is greater than Beacon's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
 		    End If
 		  Next I
 		  
@@ -165,7 +165,7 @@ Inherits ArkSA.ConfigGroup
 		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "DinoLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
 		    End If
 		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
-		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "DinoLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
+		      Issues.Add(New Beacon.Issue(Location + Beacon.Issue.Separator + "DinoLevels" + Beacon.Issue.Separator + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is greater than Beacon's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
 		    End If
 		  Next I
 		End Sub
@@ -619,7 +619,7 @@ Inherits ArkSA.ConfigGroup
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = MaxSupportedXP, Type = Double, Dynamic = False, Default = \"18446744073709551615", Scope = Public
+	#tag Constant, Name = MaxSupportedXP, Type = Double, Dynamic = False, Default = \"999999999999999", Scope = Public
 	#tag EndConstant
 
 
