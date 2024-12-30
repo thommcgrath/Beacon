@@ -539,7 +539,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  End If
 		  
 		  Var MinVersion As Integer = SaveData.FirstValue("minVersion", "MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
-		  Var SavedWithVersion As Integer = SaveData.FirstValue("savedWith", "SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
+		  Var SavedWithVersion As Integer = SaveData.FirstValue("savedWith", "savedWidth", "SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
 		  Var GameId As String = SaveData.FirstValue("gameId", "Game", Ark.Identifier).StringValue
 		  
 		  Var ProjectId As String = SaveData.FirstValue("projectId", "Identifier", "").StringValue
@@ -1798,7 +1798,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  Manifest.Value("description") = Self.mDescription
 		  Manifest.Value("gameId") = Self.GameId()
 		  Manifest.Value("members") = Members
-		  Manifest.Value("savedWidth") = App.BuildNumber
+		  Manifest.Value("savedWith") = App.BuildNumber
 		  Manifest.Value("timestamp") = DateTime.Now.SecondsFrom1970
 		  Manifest.Value("modSelections") = Self.mContentPacks
 		  Manifest.Value("flags") = Self.mFlags
