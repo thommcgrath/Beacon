@@ -102,9 +102,26 @@ Inherits Beacon.DiscoverIntegration
 		      Try
 		        Var Paths() As String = Setting.NitradoPaths
 		        Value = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, Paths(0))
-		        If Value.IsNull = False Then
-		          CommandLineOptions.Value(Setting.Key) = Value
+		        If Value.IsNull Then
+		          Continue
 		        End If
+		        
+		        If Setting.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Then
+		          Var Map As Dictionary = Setting.Constraint("nitrado.boolean.map")
+		          If (Map Is Nil) = False Then
+		            Var ImportMap As Dictionary = Map.Value("import")
+		            CommandLineOptions.Value(Setting.Key) = ImportMap.Value(Value)
+		            Continue
+		          End If
+		          
+		          Var Reversed As Variant = Setting.Constraint("nitrado.boolean.reversed")
+		          If Reversed.IsNull = False And Reversed.BooleanValue = True Then
+		            CommandLineOptions.Value(Setting.Key) = Not Value.IsTruthy
+		            Continue
+		          End If
+		        End If
+		        
+		        CommandLineOptions.Value(Setting.Key) = Value
 		      Catch Err As RuntimeException
 		        Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
 		        Return Nil
