@@ -2822,6 +2822,14 @@ body.no-navigation {
 	color: $text-blue;
 }
 
+.scriptonly {
+	display: none;
+}
+
+.noscript.loaded {
+	display: none;
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;

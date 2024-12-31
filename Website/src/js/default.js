@@ -193,4 +193,14 @@ class ExplorePopover {
 
 document.addEventListener('DOMContentLoaded', () => {
 	ExplorePopover.init();
+
+	const scriptOnlyElements = document.querySelectorAll('.scriptonly');
+	scriptOnlyElements.forEach((element) => {
+		element.classList.remove('scriptonly');
+	});
+
+	const noscriptElements = document.querySelectorAll('.noscript');
+	noscriptElements.forEach((element) => {
+		element.classList.add('loaded');
+	});
 });
