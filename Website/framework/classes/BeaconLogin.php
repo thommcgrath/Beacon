@@ -286,7 +286,7 @@ class BeaconLogin {
 	}
 
 	public static function OutputNoscriptMessage(): void {
-		?><p class="text-center">You should not be seeing this message. If you are, it means Beacon was unable to load the logic needed to perform a login. This can happen if JavaScript is turned off in your browser or your ad blocker is preventing Beacon from loading all the files it needs.</p>
+		?><p class="text-center">If you are seeing this message, it means Beacon was unable to load the logic needed to perform a login. This can happen if JavaScript is turned off in your browser or your ad blocker is preventing Beacon from loading all the files it needs.</p>
 		<?php if (BeaconCommon::IsBeacon() && BeaconCommon::IsWindows()) { ?><p class="text-center">Beacon uses Edge for its web content, so check your ad blocker and JavaScript settings for Edge.</p><?php }
 	}
 }
