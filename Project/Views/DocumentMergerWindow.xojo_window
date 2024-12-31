@@ -421,6 +421,20 @@ End
 		    Case IsA ArkSA.Project
 		      Var ArkProject As ArkSA.Project = ArkSA.Project(SourceProject)
 		      DesiredArkMask = DesiredArkMask Or ArkProject.MapMask
+		      
+		      // Single player
+		      If AddedSinglePlayerItem = False Then
+		        Var SourceIsSingle As Boolean = SourceProject.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		        Var DestinationIsSingle As Boolean = DestinationProject.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		        
+		        If SourceIsSingle = True And DestinationIsSingle = False Then
+		          MergeItems.Add(New Beacon.DocumentMergeFlagItem("Enable Single Player Project", ArkSA.Project.FlagSinglePlayer, 0))
+		          AddedSinglePlayerItem = True
+		        ElseIf SourceIsSingle = False And DestinationIsSingle = True Then
+		          MergeItems.Add(New Beacon.DocumentMergeFlagItem("Disable Single Player Project", 0, ArkSA.Project.FlagSinglePlayer))
+		          AddedSinglePlayerItem = True
+		        End If
+		      End If
 		    End Select
 		    
 		    // Content Packs
@@ -456,12 +470,6 @@ End
 		      
 		      MergeItems.Add(New Beacon.DocumentMergeProfileItem(Profile))
 		    Next
-		    
-		    // Single player
-		    If AddedSinglePlayerItem = False And SourceProject.IsFlagged(ArkSA.Project.FlagSinglePlayer) And DestinationProject.IsFlagged(ArkSA.Project.FlagSinglePlayer) = False Then
-		      MergeItems.Add(New Beacon.DocumentMergeFlagItem(ArkSA.Project.FlagSinglePlayer, "Enable Single Player Project"))
-		      AddedSinglePlayerItem = True
-		    End If
 		  Next
 		  
 		  Select Case DestinationProject
@@ -972,7 +980,8 @@ End
 		          Self.mDestination.ProviderTokenKey(ProfileItem.TokenId) = ProfileItem.TokenKey
 		        End If
 		      Case IsA Beacon.DocumentMergeFlagItem
-		        Self.mDestination.IsFlagged(Beacon.DocumentMergeFlagItem(MergeItem).Flags) = True
+		        Self.mDestination.IsFlagged(Beacon.DocumentMergeFlagItem(MergeItem).FlagsToSet) = True
+		        Self.mDestination.IsFlagged(Beacon.DocumentMergeFlagItem(MergeItem).FlagsToRemove) = False
 		      End Select
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName)

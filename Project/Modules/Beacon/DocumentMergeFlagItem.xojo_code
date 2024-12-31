@@ -2,21 +2,32 @@
 Protected Class DocumentMergeFlagItem
 Inherits Beacon.DocumentMergeItem
 	#tag Method, Flags = &h0
-		Sub Constructor(Flags As UInt64, Label As String)
+		Sub Constructor(Label As String, FlagsToSet As UInt64, FlagsToRemove As UInt64)
 		  Self.Label = Label
-		  Self.mFlags = Flags
+		  Self.mFlagsToSet = FlagsToSet
+		  Self.mFlagsToRemove = FlagsToRemove
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Flags() As UInt64
-		  Return Self.mFlags
+		Function FlagsToRemove() As UInt64
+		  Return Self.mFlagsToRemove
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FlagsToSet() As UInt64
+		  Return Self.mFlagsToSet
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mFlags As UInt64
+		Private mFlagsToRemove As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFlagsToSet As UInt64
 	#tag EndProperty
 
 
@@ -76,14 +87,6 @@ Inherits Beacon.DocumentMergeItem
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mFlags"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
