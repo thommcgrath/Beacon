@@ -340,9 +340,16 @@ Implements Beacon.GameSetting
 		  Case ValueTypes.TypeBoolean
 		    Var Map As Dictionary = Self.Constraint("nitrado.boolean.map")
 		    If (Map Is Nil) = False Then
-		      Var ExportMap As Dictionary = Map.Value("export")
-		      Var FirstString As String = ExportMap.Value(If(FirstValue.IsTruthy, "true", "false"))
+		      Var FirstString As String = Beacon.VariantToString(FirstValue)
 		      Var SecondString As String = Beacon.VariantToString(SecondValue)
+		      Var ExportMap As Dictionary = Map.Value("export")
+		      
+		      If FirstString = "true" Or FirstString = "false" Then
+		        FirstString = ExportMap.Value(FirstString.Lowercase)
+		      End If
+		      If SecondString = "true" Or SecondString = "false" Then
+		        SecondString = ExportMap.Value(SecondString.Lowercase)
+		      End If
 		      Return FirstString.Compare(SecondString, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
 		    Else
 		      Return FirstValue.IsTruthy = SecondValue.IsTruthy
