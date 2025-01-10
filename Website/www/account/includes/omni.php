@@ -78,24 +78,30 @@ function ShowLicenses() {
 			'View' => '/account/purchase/' . $purchaseId
 		];
 
+		$product = BeaconShop::GetProductById('USD', $productId);
+		$hasRenewal = is_null($product) === false && is_null(BeaconShop::GetProductByTag('USD', $product['GameId'], 'Renewal')) === false;
+
 		if (is_null($expiration)) {
 			$expirationText = 'Forever';
 		} else {
 			$exp = new DateTime($expiration);
 			$expirationText = '<time datetime="' . htmlentities($exp->format('Y-m-d H:i:s.000O')) . '">' . htmlentities($exp->format('F jS Y')) . '</time>';
-			$renew_caption = ($exp->getTimestamp() < time() ? 'Renew' : 'Extend');
-			$actions[$renew_caption] = '/omni/license/' . urlencode($licenseId);
 
-			if ($exp < $now) {
-				// The license has expired
-				$maxBuild = $license->NewestLicensedBuild();
-				$versions = $database->Query('SELECT build_number, build_display FROM public.updates WHERE published IS NOT NULL AND build_number <= $1 ORDER BY build_number DESC LIMIT 1;', $maxBuild);
-				$maxBuild = $versions->Field('build_number');
-				$maxVersion = $versions->Field('build_display');
-				$downloadTokenExpiration = time() + 900;
-				$downloadTokenSecret = BeaconCommon::GetGlobal('Legacy Download Secret');
-				$downloadToken = BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$maxBuild}:{$downloadTokenExpiration}:{$downloadTokenSecret}", true));
-				$actions["Download {$maxVersion}"] = "/download?build={$maxBuild}&token={$downloadToken}&expires={$downloadTokenExpiration}";
+			if ($hasRenewal) {
+				$renew_caption = ($exp->getTimestamp() < time() ? 'Renew' : 'Extend');
+				$actions[$renew_caption] = '/omni/license/' . urlencode($licenseId);
+
+				if ($exp < $now) {
+					// The license has expired
+					$maxBuild = $license->NewestLicensedBuild();
+					$versions = $database->Query('SELECT build_number, build_display FROM public.updates WHERE published IS NOT NULL AND build_number <= $1 ORDER BY build_number DESC LIMIT 1;', $maxBuild);
+					$maxBuild = $versions->Field('build_number');
+					$maxVersion = $versions->Field('build_display');
+					$downloadTokenExpiration = time() + 900;
+					$downloadTokenSecret = BeaconCommon::GetGlobal('Legacy Download Secret');
+					$downloadToken = BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$maxBuild}:{$downloadTokenExpiration}:{$downloadTokenSecret}", true));
+					$actions["Download {$maxVersion}"] = "/download?build={$maxBuild}&token={$downloadToken}&expires={$downloadTokenExpiration}";
+				}
 			}
 		}
 

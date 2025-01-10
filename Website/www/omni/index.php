@@ -13,7 +13,6 @@ BeaconTemplate::SetTitle('Buy Beacon Omni');
 BeaconTemplate::SetCanonicalPath('/omni', str_starts_with($_SERVER['REQUEST_URI'], '/omni/license/') === false);
 
 $gameRows = $database->Query('SELECT game_id, game_name, early_access, beacon_major_version, beacon_minor_version FROM public.games WHERE public = TRUE ORDER BY game_name;');
-$gamesList = [];
 $gameInfo = [];
 while (!$gameRows->EOF()) {
 	$game = [
@@ -21,9 +20,9 @@ while (!$gameRows->EOF()) {
 		'name' => $gameRows->Field('game_name'),
 		'earlyAccess' => $gameRows->Field('early_access'),
 		'majorVersion' => $gameRows->Field('beacon_major_version'),
-		'minorVersion' => $gameRows->Field('beacon_minor_version')
+		'minorVersion' => $gameRows->Field('beacon_minor_version'),
+		'hasOmni' => false, // gets updated below
 	];
-	$gamesList[] = $game;
 	$gameInfo[$game['gameId']] = $game;
 	$gameRows->MoveNext();
 }
@@ -52,9 +51,11 @@ while (!$results->EOF()) {
 
 	$productDetails[$gameId][$tag] = $product;
 	$productIds[$productId] = $product;
+	$gameInfo[$gameId]['hasOmni'] = true;
 
 	$results->MoveNext();
 }
+$gamesList = array_values($gameInfo);
 
 $ark2Enabled = isset($productDetails['Ark2']);
 $arkSAEnabled = isset($productDetails['ArkSA']);
@@ -302,7 +303,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 				foreach ($gamesList as $game) {
 					$gameId = $game['gameId'];
 					$gameName = $game['name'];
-					if ($gameId === 'Ark' || $gameId === 'ArkSA') {
+					if ($gameId === 'Ark' || $gameId === 'ArkSA' || isset($productDetails[$gameId]['Base']) === false) {
 						continue;
 					}
 
@@ -381,8 +382,12 @@ BeaconTemplate::StartModal('checkout-email');
 	</div>
 <?php BeaconTemplate::FinishModal();
 
-function OutputGameHeader(string $titleHtml, string $gameId): void {
-	echo '<div class="omni-game-header"><div class="omni-game-header-title">' . $titleHtml . '</div><div class="omni-game-header-button"><button id="checkout-buy-' . strtolower($gameId) . '-button" class="blue">Buy Now</button></div></div>' . "\n";
+function OutputGameHeader(string $titleHtml, string $gameId, bool $withBuyButton = true): void {
+	echo '<div class="omni-game-header"><div class="omni-game-header-title">' . $titleHtml . '</div>';
+	if ($withBuyButton) {
+		echo '<div class="omni-game-header-button"><button id="checkout-buy-' . strtolower($gameId) . '-button" class="blue">Buy Now</button></div>';
+	}
+	echo '</div>' . "\n";
 }
 
 ?>

@@ -22,7 +22,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 	const ProductIds = checkoutProperties.productIds;
 	const formatCurrency = getCurrencyFormatter(checkoutProperties.currencyCode);
 	const GamesList = checkoutProperties.games;
-	const OtherGamesList = GamesList.filter(item => item.gameId !== 'Ark' && item.gameId !== 'ArkSA');
+	const OtherGamesList = GamesList.filter(item => item.gameId !== 'Ark' && item.gameId !== 'ArkSA' && item.hasOmni === true);
 
 	BeaconPagePanel.init();
 	const gamesPanel = BeaconPagePanel.pagePanels['panel-games'];
