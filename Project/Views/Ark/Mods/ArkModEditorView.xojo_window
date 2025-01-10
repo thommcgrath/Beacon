@@ -805,7 +805,16 @@ End
 		  Var ModIds() As String = Settings.ModIds
 		  Var ArkFolder As FolderItem = Settings.ArkFolder
 		  Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
-		  Self.DiscoveryEngine.Start(ArkFolder, ModIds)
+		  Try
+		    Self.DiscoveryEngine.Start(ArkFolder, ModIds)
+		  Catch Err As RuntimeException
+		    If Err.Message.IsEmpty Then
+		      Var ErrType As Introspection.TypeInfo = Introspection.GetType(Err)
+		      Err.Message = "Unhandled " + ErrType.FullName
+		    End If
+		    Self.ShowAlert("Could not start mod discovery", Err.Message)
+		    Return
+		  End Try
 		End Sub
 	#tag EndMethod
 
