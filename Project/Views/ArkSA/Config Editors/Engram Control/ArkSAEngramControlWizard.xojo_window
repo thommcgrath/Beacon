@@ -541,7 +541,8 @@ End
 		    Next
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexGrantExactPoints
-		    Var PlayerLevelCap As Integer = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData.MaxLevel
+		    Var SinglePlayer As Boolean = Self.mProject.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		    Var PlayerLevelCap As Integer = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData(SinglePlayer).MaxLevel
 		    If Self.mProject.HasConfigGroup(ArkSA.Configs.NameLevelsAndXP) Then
 		      Var ExperienceConfig As ArkSA.Configs.ExperienceCurves = ArkSA.Configs.ExperienceCurves(Self.mProject.ConfigGroup(ArkSA.Configs.NameLevelsAndXP, False))
 		      If ExperienceConfig <> Nil Then

@@ -249,6 +249,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  #endif
 		  
+		  Conversions.Init
+		  
 		  #if DebugBuild And TargetMacOS
 		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_DebugWait)
 		  #endif
@@ -1396,7 +1398,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Function mOpenRecent_OpenFile(Sender As DesktopMenuItem) As Boolean
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents Is Nil) = False Then
 		    Var Project As Beacon.ProjectURL = Sender.Tag
 		    Self.mMainWindow.Documents.OpenProject(Project)
 		    Return True
@@ -1452,6 +1454,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Self.mHasTestedDatabases = True
 		    End If
 		  Case IdentityManager.Notification_IdentityChanged
+		    Var OldUserId As String = Dictionary(Notification.UserData).Value("oldUserId")
+		    Var NewUserId As String = Dictionary(Notification.UserData).Value("newUserId")
+		    If OldUserId = NewUserId Then
+		      // No need to reconnect
+		      Return
+		    End If
+		    
 		    If (Self.mPusher Is Nil) = False Then
 		      Self.mPusher.Stop
 		      Self.mPusher = Nil
@@ -1461,7 +1470,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    If (Self.mIdentityManager Is Nil) = False Then
 		      Var UserId As String = Self.mIdentityManager.CurrentUserId
 		      If UserId.IsEmpty = False Then
-		        Self.mPusher.Start()
+		        Self.mPusher.Start(True)
 		        Self.SubscribeToPusherPublic()
 		        Var UserChannelName As String = Beacon.PusherSocket.UserChannelName(UserId)
 		        Self.mPusher.Listen(UserChannelName, "user-updated", AddressOf Pusher_UserUpdated)

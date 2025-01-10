@@ -197,10 +197,13 @@ Protected Class ProjectURL
 		  // Not suitable for restoring a file, just a visual reference
 		  
 		  If Self.mType = Self.TypeLocal Then
-		    Var File As FolderItem = Self.File
-		    If (File Is Nil) = False Then
-		      Return File.NativePath
-		    End If
+		    Try
+		      Var File As FolderItem = Self.File
+		      If (File Is Nil) = False Then
+		        Return File.NativePath
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
 		    Return "Invalid Path"
 		  Else
 		    Return Self.mPath

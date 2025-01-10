@@ -79,6 +79,8 @@ Implements Beacon.NamedItem
 		    Return "regex"
 		  Case Beacon.TemplateSelector.Languages.JavaScript
 		    Return "javascript"
+		  Case Beacon.TemplateSelector.Languages.Lua
+		    Return "lua"
 		  End Select
 		End Function
 	#tag EndMethod
@@ -102,6 +104,8 @@ Implements Beacon.NamedItem
 		    Return Beacon.TemplateSelector.Languages.RegEx
 		  Case "js", "javascript"
 		    Return Beacon.TemplateSelector.Languages.JavaScript
+		  Case "lua"
+		    Return Beacon.TemplateSelector.Languages.Lua
 		  End Select
 		End Function
 	#tag EndMethod
@@ -141,7 +145,8 @@ Implements Beacon.NamedItem
 
 	#tag Enum, Name = Languages, Type = Integer, Flags = &h0
 		RegEx
-		JavaScript
+		  JavaScript
+		Lua
 	#tag EndEnum
 
 

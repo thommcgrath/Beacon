@@ -757,6 +757,10 @@ End
 		    End If
 		    
 		    Self.UpdateRenewButton()
+		    
+		    If Self.PusherCheckTimer.RunMode <> Timer.RunModes.Multiple Then
+		      Self.PusherCheckTimer.RunMode = Timer.RunModes.Multiple
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1205,7 +1209,7 @@ End
 		    Return
 		  Case "NavPusher"
 		    If (App.Pusher Is Nil) = False And App.Pusher.State <> Beacon.PusherSocket.States.Connected Then
-		      App.Pusher.Start()
+		      App.Pusher.Start(True)
 		    End If
 		    Return
 		  Case "NavRenew"
@@ -1275,7 +1279,6 @@ End
 		  
 		  If Pusher.State = Beacon.PusherSocket.States.Disabled Then
 		    Me.RunMode = Timer.RunModes.Off
-		    Return
 		  ElseIf Pusher.State <> Beacon.PusherSocket.States.Connected Then
 		    Pusher.Start()
 		  End If

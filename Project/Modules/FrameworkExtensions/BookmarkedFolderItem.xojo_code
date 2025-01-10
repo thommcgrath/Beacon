@@ -81,9 +81,7 @@ Inherits FolderItem
 		Shared Function FromSaveInfo(SaveInfo As String) As BookmarkedFolderItem
 		  SaveInfo = Decode(SaveInfo)
 		  
-		  #if TargetiOS
-		    Return Nil
-		  #elseif TargetMacOS
+		  #if TargetMacOS
 		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
 		    Declare Function URLByResolvingBookmarkData Lib "Cocoa" Selector "URLByResolvingBookmarkData:options:relativeToURL:bookmarkDataIsStale:error:" (Target As Ptr, BookmarkData As Ptr, Options As UInt32, RelativeURL As Ptr, IsStale As Boolean, ByRef Error As Ptr) As Ptr
 		    Declare Function DataWithBytes Lib "Cocoa" Selector "initWithBytes:length:" (Target As Ptr, Bytes As Ptr, Length As UInteger) As Ptr
@@ -111,13 +109,20 @@ Inherits FolderItem
 		      Declare Function ErrorDescription Lib "Cocoa" Selector "localizedDescription" (Target As Ptr) As CFStringRef
 		      App.Log("Unable to resolve saveinfo: " + ErrorCode(ErrorRef).ToString(Locale.Raw, "0") + " " + ErrorDescription(ErrorRef))
 		    End If
-		  #else
-		    Var File As FolderItem = FolderItem.FromSaveInfo(SaveInfo)
-		    If File Is Nil Then
-		      Return Nil
-		    End If
-		    Return New BookmarkedFolderItem(File)
+		  #elseif TargetWindows Or TargetLinux
+		    Try
+		      Var File As FolderItem = FolderItem.FromSaveInfo(SaveInfo)
+		      Return New BookmarkedFolderItem(File)
+		    Catch Err As RuntimeException
+		    End Try
 		  #endif
+		  
+		  // Since it's not save info, let's treat it as a path
+		  Try
+		    Var File As New FolderItem(SaveInfo, FolderItem.PathModes.Native)
+		    Return New BookmarkedFolderItem(File)
+		  Catch Err As RuntimeException
+		  End Try
 		End Function
 	#tag EndMethod
 

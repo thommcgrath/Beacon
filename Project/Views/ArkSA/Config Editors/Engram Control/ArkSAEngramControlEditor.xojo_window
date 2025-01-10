@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ArkSAConfigEditor ArkSAEngramControlEditor
+Begin ArkSAConfigEditor ArkSAEngramControlEditor Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -374,6 +374,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Hidden()
+		  NotificationKit.Ignore(Self, ArkSA.Project.Notification_SinglePlayerChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  Self.MinimumWidth = 601
 		End Sub
@@ -445,6 +451,15 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+		  #Pragma Unused UserData
+		  #Pragma Unused FireSetupUI
+		  
+		  NotificationKit.Watch(Self, ArkSA.Project.Notification_SinglePlayerChanged)
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As ArkSA.Configs.EngramControl
@@ -481,6 +496,20 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case ArkSA.Project.Notification_SinglePlayerChanged
+		    Var UserData As Dictionary = Notification.UserData
+		    If UserData.Value("ProjectId") = Self.Project.ProjectId Then
+		      Self.SetupPointsList()
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function PrepareEngramComparison() As Dictionary
 		  Var OldEngramRows As New Dictionary
@@ -504,6 +533,12 @@ End
 		  If SelectEngrams.Count > 0 Then
 		    Self.SetupEngramsList(SelectEngrams)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Reload()
+		  
 		End Sub
 	#tag EndMethod
 
@@ -654,7 +689,8 @@ End
 		    End If
 		  Next
 		  
-		  Var OfficialLevels As ArkSA.PlayerLevelData = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData
+		  Var SinglePlayer As Boolean = Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		  Var OfficialLevels As ArkSA.PlayerLevelData = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData(SinglePlayer)
 		  Var OfficialMaxLevel As Integer = If(OfficialLevels Is Nil, 0, OfficialLevels.MaxLevel)
 		  Self.PointsList.RowCount = Max(Config.LevelsDefined, OfficialMaxLevel)
 		  For Idx As Integer = 0 To Self.PointsList.LastRowIndex

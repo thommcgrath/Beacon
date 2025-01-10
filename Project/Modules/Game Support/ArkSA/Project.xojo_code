@@ -3,28 +3,11 @@ Protected Class Project
 Inherits Beacon.Project
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
-		Sub AddingProfile(Profile As Beacon.ServerProfile)
-		  If Profile.IsConsole Then
-		    Self.ConsoleSafe = True
-		    
-		    Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
-		    Var PackIds() As String = Self.ContentPacks()
-		    For Each PackId As String In PackIds
-		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(PackId)
-		      If Pack Is Nil Or Pack.IsConsoleSafe = False Then
-		        Self.ContentPackEnabled(PackId) = False
-		      End If
-		    Next
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
 		  
-		  ManifestData.Value("allowUcs") = Self.AllowUCS2
+		  ManifestData.Value("allowUcs") = Self.IsFlagged(ArkSA.Project.FlagAllowUCS2)
 		  ManifestData.Value("map") = Self.MapMask
 		  ManifestData.Value("uwpCompatibilityMode") = CType(Self.UWPMode, Integer)
 		  
@@ -231,34 +214,9 @@ Inherits Beacon.Project
 		    Self.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  End If
 		  
-		  Self.AllowUCS2 = PlainData.FirstValue("allowUcs", "AllowUCS", Self.AllowUCS2).BooleanValue
 		  Self.UWPMode = CType(PlainData.FirstValue("uwpCompatibilityMode", "UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, ArkSA.Project.UWPCompatibilityModes)
 		  
 		  Self.MapMask = PlainData.FirstValue("map", "Map", "MapPreference", 1)
-		  
-		  If PlainData.HasKey("modSelections") Or PlainData.HasKey("ModSelections") Then
-		    // Handled by the parent class
-		  ElseIf PlainData.HasKey("Mods") Then
-		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
-		    
-		    Var AllPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks()
-		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
-		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
-		    Var ConsoleMode As Boolean = Self.ConsoleSafe
-		    For Each Pack As Beacon.ContentPack In AllPacks
-		      Self.ContentPackEnabled(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
-		    Next
-		  ElseIf PlainData.HasKey("ConsoleModsOnly") Then
-		    Var ConsolePacksOnly As Boolean = PlainData.Value("ConsoleModsOnly")
-		    If ConsolePacksOnly Then
-		      Var AllPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks()
-		      For Each Pack As Beacon.ContentPack In AllPacks
-		        Self.ContentPackEnabled(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
-		      Next
-		      
-		      Self.ConsoleSafe = True
-		    End If
-		  End If
 		End Sub
 	#tag EndEvent
 
@@ -311,21 +269,6 @@ Inherits Beacon.Project
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wrong config group subclass for project"
 		    Raise Err
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AllowUCS2() As Boolean
-		  Return Self.mAllowUCS2
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AllowUCS2(Assigns Value As Boolean)
-		  If Self.mAllowUCS2 <> Value Then
-		    Self.mAllowUCS2 = Value
-		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -443,19 +386,6 @@ Inherits Beacon.Project
 		Function ConfigGroup(InternalName As String, Create As Boolean = False) As ArkSA.ConfigGroup
 		  Return Self.ConfigGroup(InternalName, Self.ActiveConfigSet, Create)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConsoleSafe(Assigns Value As Boolean)
-		  #Pragma Unused Value
-		  Super.ConsoleSafe = False
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -602,7 +532,9 @@ Inherits Beacon.Project
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
 		    Next
 		    
-		    Organizer.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Profile.Name))
+		    Organizer.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderSessionSettings, "SessionName=" + Profile.Name))
+		    Organizer.Remove(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bUseSingleplayerSettings")
+		    Organizer.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bUseSingleplayerSettings=" + If(Self.IsFlagged(ArkSA.Project.FlagSinglePlayer), "True", "False")))
 		    
 		    If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
 		      Organizer.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Profile.MessageOfTheDay.ArkMLValue))
@@ -801,6 +733,34 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Flags(Assigns Value As UInt64)
+		  // Fire a notification if single player status changes
+		  Var WasSinglePlayer As Boolean = Self.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		  Super.Flags = Value
+		  Var IsSinglePlayer As Boolean = Self.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		  If IsSinglePlayer <> WasSinglePlayer Then
+		    Var UserData As New Dictionary
+		    UserData.Value("ProjectId") = Self.ProjectId
+		    UserData.Value("NewValue") = IsSinglePlayer
+		    NotificationKit.Post(Self.Notification_SinglePlayerChanged, UserData)
+		    
+		    // Find all the matching settings in all the config sets
+		    Var Option As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bUseSingleplayerSettings")
+		    Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		    For Each Set As Beacon.ConfigSet In Sets
+		      Var Group As Beacon.ConfigGroup = Self.ConfigGroup(ArkSA.Configs.NameGeneralSettings, Set, False)
+		      If (Group Is Nil) = False And Group IsA ArkSA.Configs.OtherSettings Then
+		        Var GeneralSettings As ArkSA.Configs.OtherSettings = ArkSA.Configs.OtherSettings(Group)
+		        If GeneralSettings.Value(Option).IsNull = False Then
+		          GeneralSettings.Value(Option) = IsSinglePlayer
+		        End If
+		      End If
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ForcedContentPacks() As Beacon.StringList
 		  Var Mods As Beacon.StringList = Super.ForcedContentPacks()
 		  If Mods Is Nil Then
@@ -819,6 +779,15 @@ Inherits Beacon.Project
 	#tag Method, Flags = &h0
 		Function GameId() As String
 		  Return ArkSA.Identifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function LegacyFlagValues() As JSONItem
+		  Var Flags As JSONItem = Super.LegacyFlagValues
+		  Flags.Value("allowUcs") = Ark.Project.FlagAllowUCS2
+		  Flags.Value("AllowUCS") = Ark.Project.FlagAllowUCS2
+		  Return Flags
 		End Function
 	#tag EndMethod
 
@@ -912,10 +881,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h1
-		Protected mAllowUCS2 As Boolean
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mBlueprintContainer As ArkSA.BlueprintContainer
 	#tag EndProperty
@@ -935,6 +900,16 @@ Inherits Beacon.Project
 	#tag Property, Flags = &h1
 		Protected mUWPMode As ArkSA.Project.UWPCompatibilityModes
 	#tag EndProperty
+
+
+	#tag Constant, Name = FlagAllowUCS2, Type = Double, Dynamic = False, Default = \"4294967296", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagSinglePlayer, Type = Double, Dynamic = False, Default = \"8589934592", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_SinglePlayerChanged, Type = String, Dynamic = False, Default = \"ArkSA.Project.SinglePlayerChanged", Scope = Public
+	#tag EndConstant
 
 
 	#tag Enum, Name = UWPCompatibilityModes, Type = Integer, Flags = &h0

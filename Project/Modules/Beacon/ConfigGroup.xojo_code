@@ -65,6 +65,12 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Migrate(SavedWithVersion As Integer, Project As Beacon.Project)
+		  RaiseEvent Migrate(SavedWithVersion, Project)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
 		End Function
@@ -131,6 +137,10 @@ Implements Beacon.Validateable
 
 	#tag Hook, Flags = &h0
 		Event HasContent() As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Migrate(SavedWithVersion As Integer, Project As Beacon.Project)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

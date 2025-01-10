@@ -346,7 +346,7 @@ Implements Beacon.NamedItem
 		    Blueprint = ArkSA.ResolveLootContainer(Self.mBlueprintId, Self.mPath, Self.mClassString, Packs, Create)
 		  Else
 		    Var Err As New UnsupportedOperationException
-		    Err.Message = "Unknown blueprint reference kind " + Self.mKind
+		    Err.Message = "Unknown blueprint reference kind '" + Self.mKind + "'"
 		    Raise Err
 		  End Select
 		  

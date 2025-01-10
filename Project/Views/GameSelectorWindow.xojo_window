@@ -246,7 +246,7 @@ End
 		    Parent = Parent.TrueWindow
 		  End If
 		  
-		  If AllowedGameIds.Count = 0 Then
+		  If (AllowedGameIds Is Nil) Or AllowedGameIds.Count = 0 Then
 		    Return ""
 		  ElseIf AllowedGameIds.Count = 1 And HideOthers = True Then
 		    Return AllowedGameIds(0)

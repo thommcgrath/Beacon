@@ -12,7 +12,19 @@ BeaconTemplate::AddHeaderLine('<link rel="canonical" href="' . BeaconCommon::Abs
 
 $flowId = $_GET['flow_id'] ?? null;
 $deviceId = $_GET['device_id'] ?? null;
-$email = isset($_GET['email']) ? BeaconCommon::Base64UrlDecode($_GET['email']) : null;
+$email = null;
+if (isset($_GET['email'])) {
+	if (str_contains($_GET['email'], '@')) {
+		// unencoded
+		$email = $_GET['email'];
+	} elseif (str_contains($_GET['email'], '%40')) {
+		// url encoded
+		$email = urldecode($_GET['email']);
+	} else {
+		// base64url encoded
+		$email = BeaconCommon::Base64UrlDecode($_GET['email']);
+	}
+}
 $returnUrl = $_GET['return'] ?? '';
 $verificationCode = $_GET['code'] ?? null;
 $isApp = filter_var($_GET['app'] ?? 'false', FILTER_VALIDATE_BOOL);
@@ -68,11 +80,11 @@ function ExitWithMessage(string $message, string $explanation, string $backUrl =
 function RunEmailVerification(string $email, string $verificationCode, bool $shouldExit): ?EmailVerificationCode {
 	$verification = EmailVerificationCode::Fetch($email, $verificationCode);
 	if (is_null($verification)) {
-		ExitWithMessage('Address Not Verified', 'No verification code was found for email ' . $email . '. Return to the login page and request a new code.', '/account/login?email=' . urlencode($email) . '#create');
+		ExitWithMessage('Address Not Verified', 'No verification code was found for email ' . $email . '. Return to the login page and request a new code.', '/account/login?email=' . BeaconCommon::Base64UrlEncode($email) . '#create');
 	}
-	
+
 	$verification->Verify();
-	
+
 	if ($shouldExit) {
 		ExitWithMessage('Address Confirmed', 'You can now close this window and continue following the instructions inside Beacon.');
 	} else {

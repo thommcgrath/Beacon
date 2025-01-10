@@ -151,6 +151,14 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       Visible         =   True
       Width           =   576
    End
+   Begin Beacon.Thread AscendedConversionThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -193,6 +201,7 @@ End
 		Sub Opening()
 		  Self.AcceptFileDrop(BeaconFileTypes.BeaconPreset)
 		  Self.ViewTitle = "Templates"
+		  Self.AscendedConversionThread.DebugIdentifier = "ListTemplatesComponent.AscendedConversionThread"
 		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
@@ -446,6 +455,11 @@ End
 	#tag EndHook
 
 
+	#tag Property, Flags = &h21
+		Private mConversionTargets() As Ark.LootTemplate
+	#tag EndProperty
+
+
 	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
@@ -453,6 +467,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnType, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ConvertToArkAscended, Type = String, Dynamic = True, Default = \"Convert to Ark: Survival Ascended", Scope = Private
 	#tag EndConstant
 
 
@@ -559,6 +576,63 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
+		  Var RowIdx As Integer = Me.RowFromXY(X, Y)
+		  Var Targets() As Beacon.Template
+		  If RowIdx > -1 Then
+		    If Me.RowSelectedAt(RowIdx) Then
+		      // Take all selected rows
+		      For Idx As Integer = 0 To Me.LastRowIndex
+		        If Me.RowSelectedAt(Idx) Then
+		          Targets.Add(Me.RowTagAt(Idx))
+		        End If
+		      Next
+		    Else
+		      // Take only the clicked row
+		      Targets.Add(Me.RowTagAt(RowIdx))
+		    End If
+		  End If
+		  
+		  Var ConvertItem As New DesktopMenuItem(Self.ConvertToArkAscended, Targets)
+		  ConvertItem.Name = "ConvertToArkAscended"
+		  ConvertItem.Enabled = False
+		  If Self.AscendedConversionThread.ThreadState = Thread.ThreadStates.NotRunning Then
+		    For Each Target As Beacon.Template In Targets
+		      If Target IsA Ark.LootTemplate Then
+		        ConvertItem.Enabled = True
+		        Exit
+		      End If
+		    Next
+		  End If
+		  Base.AddMenu(ConvertItem)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
+		  If HitItem Is Nil Then
+		    Return False
+		  End If
+		  
+		  Select Case HitItem.Name
+		  Case "ConvertToArkAscended"
+		    Var Targets() As Beacon.Template = HitItem.Tag
+		    For Each Target As Beacon.Template In Targets
+		      If Target IsA Ark.LootTemplate Then
+		        Self.mConversionTargets.Add(Ark.LootTemplate(Target))
+		      End If
+		    Next
+		    If Self.mConversionTargets.Count > 0 Then
+		      Self.AscendedConversionThread.Start
+		      Self.Progress = BeaconSubview.ProgressIndeterminate
+		    Else
+		      Self.ShowAlert("Nothing to convert", "None of the selected templates are Ark: Survival Evolved loot templates.")
+		    End If
+		  End Select
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events TemplatesToolbar
 	#tag Event
@@ -584,6 +658,45 @@ End
 		  Case "ExportTemplate"
 		    Self.ExportSelected()
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AscendedConversionThread
+	#tag Event
+		Sub Run()
+		  Var ArkSAData As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
+		  Var CommonData As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
+		  Var ConvertedTemplates() As ArkSA.LootTemplate
+		  For Each SourceTemplate As Ark.LootTemplate In Self.mConversionTargets
+		    Var ConvertedTemplate As ArkSA.LootTemplate = Conversions.EvolvedToAscended(SourceTemplate, ArkSAData, CommonData)
+		    If ConvertedTemplate Is Nil Then
+		      Continue
+		    End If
+		    ConvertedTemplates.Add(ConvertedTemplate)
+		    CommonData.SaveTemplate(ConvertedTemplate, False, False)
+		  Next
+		  
+		  Var Update As New Dictionary
+		  Update.Value("Finished") = True
+		  Update.Value("Templates") = ConvertedTemplates
+		  CommonData.ExportCloudFiles()
+		  Me.AddUserInterfaceUpdate(Update)
+		  Self.mConversionTargets.ResizeTo(-1)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    Var Finished As Boolean = Update.Lookup("Finished", False).BooleanValue
+		    If Finished Then
+		      Self.Progress = BeaconSubview.ProgressNone
+		    End If
+		    
+		    If Update.HasKey("Templates") Then
+		      Var ConvertedTemplates() As ArkSA.LootTemplate = Update.Value("Templates")
+		      Self.UpdateList(ConvertedTemplates)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

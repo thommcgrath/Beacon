@@ -1,7 +1,7 @@
 #tag Class
 Protected Class EngramControl
 Inherits ArkSA.ConfigGroup
-Implements Beacon.BlueprintConsumer, NotificationKit.Receiver
+Implements Beacon.BlueprintConsumer,NotificationKit.Receiver
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
@@ -32,7 +32,7 @@ Implements Beacon.BlueprintConsumer, NotificationKit.Receiver
 		  
 		  Var Values() As ArkSA.ConfigValue
 		  Var Levels As Integer = Self.LevelsDefined
-		  Var OfficialLevels As ArkSA.PlayerLevelData = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData
+		  Var OfficialLevels As ArkSA.PlayerLevelData = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData(Project.IsFlagged(ArkSA.Project.FlagSinglePlayer))
 		  For Level As Integer = 1 To Levels
 		    Var PointsForLevel As NullableDouble = Self.PointsForLevel(Level)
 		    

@@ -87,6 +87,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    If Self.Project.PasswordDecrypted = False Then
 		      Call CallLater.Schedule(1000, AddressOf ShowDecryptionError)
 		    End If
+		    
+		    RaiseEvent FirstShow()
 		    Self.mFirstShow = False
 		  End If
 		End Sub
@@ -434,6 +436,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Self.ViewTitle = Self.mController.Name
 		    Self.Modified = True
 		  Case "Role"
+		    RaiseEvent RoleChanged()
 		    Self.UpdateViewIcon()
 		  End Select
 		End Sub
@@ -663,11 +666,19 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event FirstShow()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event IdentityChanged()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event RoleChanged()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

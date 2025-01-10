@@ -393,9 +393,13 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Var RequiredHashes As New Dictionary
-		  RequiredHashes.Value("mod_data_extractor.exe") = "9aa2226fd8b74f0b6c51f8499be88397"
-		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "cb4eec121a03a28426cd45051d770ea1"
-		  RequiredHashes.Value("mod_data_extractor.pdb") = "8a10e03768b98a883b599047bdeafcf2"
+		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "7f731dd5ab066b9e94357d80aaab8c98"
+		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "331e1ab3c4dd4eef4d8f2d55a800ffd2"
+		  RequiredHashes.Value("CUE4Parse.pdb") = "0f3580ab5458ed47b78fd474afb79ff6"
+		  RequiredHashes.Value("blake3_dotnet.dll") = "a3c084912ba7c8099eda54ed8f56c4ac"
+		  RequiredHashes.Value("libSkiaSharp.dll") = "26d723bd75b5c6591dfde18b71281920"
+		  RequiredHashes.Value("mod_data_extractor.exe") = "fd7bd586401f2c9a2875905f8bce35d7"
+		  RequiredHashes.Value("mod_data_extractor.pdb") = "2c361b4432b89c695f0ca861edb8b054"
 		  Var ExtractorReady As Boolean = True
 		  For Each Entry As DictionaryEntry In RequiredHashes
 		    Var ExtractorFile As FolderItem = ExtractorRoot.Child(Entry.Key.StringValue)
@@ -421,7 +425,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v10.zip")
+		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.1.4.zip")
 		    If DownloadSocket.HTTPStatusCode <> 200 Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Failed to download extractor tool."))
 		      Return
@@ -468,40 +472,6 @@ Protected Class ModDiscoveryEngine2
 		    Archive = Nil
 		  End If
 		  
-		  Var BlacklistLines() As String
-		  BlacklistLines.Add("Engine/")
-		  BlacklistLines.Add("ShooterGame/Plugins/")
-		  BlacklistLines.Add("ShooterGame/AssetRegistry\.bin")
-		  BlacklistLines.Add("ShooterGame/Mods/Forglar/Content/Forglar_All/BigPalm5_SM")
-		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Swamp/Kapok/03/")
-		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Swamp/PondCypress/PondCypress_SM")
-		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Valley/Trees/Rainbow/RainbowGum_01")
-		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Valley/RedMarigold/SM_RedMarigold")
-		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Savannah/Acacia/Acacia_Nyrandil_SM")
-		  BlacklistLines.Add("ShooterGame/Mods/Nyrandil/Content/Environement/Savannah/Baobab/AfricanBaobab_B_Nyrandil_Platform")
-		  BlacklistLines.Add("ShooterGame/Mods/ALTHEMIA/Content/layer_foliage/althemia_BigFrond_Tree_SM")
-		  BlacklistLines.Add("ShooterGame/Mods/ALTHEMIA/Content/Assets/asset_map/Acacia_SM1")
-		  BlacklistLines.Add("ShooterGame/Mods/Enclave/Content/Environment/OriginalAssets/Vegetation/Mangrove")
-		  
-		  Var BlacklistFile As FolderItem = ExtractorRoot.Child("blacklist.txt")
-		  Var CurrentLines() As String
-		  If BlacklistFile.Exists Then
-		    Var InStream As TextInputStream = TextInputStream.Open(BlacklistFile)
-		    CurrentLines = InStream.ReadAll(Encodings.UTF8).ReplaceLineEndings(EndOfLine).Split(EndOfLine)
-		    InStream.Close
-		  End If
-		  
-		  For Each Line As String In BlacklistLines
-		    If CurrentLines.IndexOf(Line) = -1 Then
-		      CurrentLines.Add(Line)
-		    End If
-		  Next
-		  CurrentLines.Sort
-		  
-		  Var BlacklistStream As TextOutputStream = TextOutputStream.Create(BlacklistFile)
-		  BlacklistStream.Write(String.FromArray(CurrentLines, EndOfLine))
-		  BlacklistStream.Close
-		  
 		  Var OutputFolder As FolderItem = ExtractorRoot.Child("Output")
 		  If Not OutputFolder.CheckIsFolder Then
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Could not create extraction output folder."))
@@ -523,7 +493,7 @@ Protected Class ModDiscoveryEngine2
 		  For Each Entry As DictionaryEntry In ModPackageNames
 		    Targets.Add("ShooterGame/Mods/" + Entry.Value.StringValue + "/")
 		  Next
-		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --badfile """ + BlacklistFile.NativePath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """"
+		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """"
 		  Var ExtractorShell As New Shell
 		  ExtractorShell.ExecuteMode = Shell.ExecuteModes.Interactive
 		  ExtractorShell.TimeOut = -1

@@ -12,6 +12,7 @@ if (is_null($session)) {
 	window.location = `/account/login?return=${encodeURIComponent(window.location.href)}`;
 	</script><?php
 	BeaconTemplate::FinishScript();
+	BeaconLogin::OutputNoscriptMessage();
 	exit;
 }
 

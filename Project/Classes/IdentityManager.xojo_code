@@ -91,9 +91,10 @@ Protected Class IdentityManager
 		  
 		  Var Identity As Beacon.Identity = Self.Fetch(UserId)
 		  If SetCurrent Then
+		    Var OldIdentity As Beacon.Identity = Self.mCurrentIdentity
 		    Self.mCurrentIdentity = Identity
+		    Self.NotifyIdentityChange(OldIdentity, Identity)
 		  End If
-		  NotificationKit.Post(Self.Notification_IdentityChanged, Identity)
 		  
 		  Return Identity
 		End Function
@@ -123,9 +124,10 @@ Protected Class IdentityManager
 		    UserCloud.Sync(False)
 		  End If
 		  Self.mDatabase.CommitTransaction
+		  Var OldIdentity As Beacon.Identity = Self.mCurrentIdentity
 		  Self.mCurrentIdentity = Value
 		  
-		  NotificationKit.Post(Self.Notification_IdentityChanged, Value)
+		  Self.NotifyIdentityChange(OldIdentity, Value)
 		End Sub
 	#tag EndMethod
 
@@ -377,6 +379,22 @@ Protected Class IdentityManager
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub NotifyIdentityChange(OldIdentity As Beacon.Identity, NewIdentity As Beacon.Identity)
+		  Var OldUserId As String
+		  If (OldIdentity Is Nil) = False Then
+		    OldUserId = OldIdentity.UserId
+		  End If
+		  
+		  Var NewUserId As String
+		  If (NewIdentity Is Nil) = False Then
+		    NewUserId = NewIdentity.UserId
+		  End If
+		  
+		  NotificationKit.Post(Self.Notification_IdentityChanged, New Dictionary("oldIdentity": OldIdentity, "newIdentity": NewIdentity, "oldUserId": OldUserId, "newUserId": NewUserId))
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Remove(Identity As Beacon.Identity)
 		  If Identity Is Nil Then
@@ -397,16 +415,18 @@ Protected Class IdentityManager
 		    Rows = Self.mDatabase.SelectSQL("SELECT * FROM identities LIMIT 1;")
 		    If Rows.RowCount = 0 Then
 		      Self.mDatabase.CommitTransaction
+		      Var OldIdentity As Beacon.Identity = Self.mCurrentIdentity
 		      Self.mCurrentIdentity = Nil
-		      NotificationKit.Post(Self.Notification_IdentityChanged, Nil)
+		      Self.NotifyIdentityChange(OldIdentity, Nil)
 		      Return
 		    End If
 		    
 		    Var Identity As Beacon.Identity = Beacon.Identity.Load(Rows)
 		    Self.mDatabase.ExecuteSQL("UPDATE identities SET active = TRUE WHERE user_id = ?1;", Identity.UserId)
 		    Self.mDatabase.CommitTransaction
+		    Var OldIdentity As Beacon.Identity = Self.mCurrentIdentity
 		    Self.mCurrentIdentity = Identity
-		    NotificationKit.Post(Self.Notification_IdentityChanged, Identity)
+		    Self.NotifyIdentityChange(OldIdentity, Identity)
 		    Return
 		  End If
 		  

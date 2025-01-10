@@ -68,7 +68,7 @@ Implements ObservationKit.Observer
 		  #Pragma Unused SafeArea
 		  
 		  If Self.Width <> Self.mLastWidth Or Self.Height <> Self.mLastHeight Then
-		    Self.ComputeRects()
+		    Self.ComputeRects(G)
 		    Self.mLastWidth = Self.Width
 		    Self.mLastHeight = Self.Height
 		  End If
@@ -81,26 +81,32 @@ Implements ObservationKit.Observer
 		  G.DrawingColor = SystemColors.SeparatorColor.AtOpacity(0.5)
 		  G.DrawRoundRectangle(0, 0, Self.Width, Self.Height, BorderRadius, BorderRadius)
 		  
-		  Var SelectionStart As Integer = -1
-		  Var SelectionEnd As Integer = -1
 		  Var SelectionRects() As Rect
-		  For Idx As Integer = Self.mSegments.FirstIndex To Self.mSegments.LastIndex
-		    Var CellRect As Rect = Self.mSegmentRects(Idx)
-		    
-		    If Self.mSegments(Idx).Selected Then
-		      SelectionEnd = CellRect.Right
-		      If SelectionStart = -1 Then
-		        SelectionStart = CellRect.Left
+		  For Row As Integer = 1 To Self.mRowCount
+		    Var SelectionStart As Integer = -1
+		    Var SelectionEnd As Integer = -1
+		    Var MatchingTop As Integer = Self.BorderSize + ((Row - 1) * (Self.BorderSize + Self.RowHeight))
+		    For Idx As Integer = Self.mSegments.FirstIndex To Self.mSegments.LastIndex
+		      Var CellRect As Rect = Self.mSegmentRects(Idx)
+		      If CellRect.Top <> MatchingTop Then
+		        Continue
 		      End If
-		    ElseIf SelectionStart <> -1 And SelectionEnd <> -1 Then
-		      SelectionRects.Add(New Rect(SelectionStart, CellRect.Top, SelectionEnd - SelectionStart, CellRect.Height))
-		      SelectionStart = -1
-		      SelectionEnd = -1
+		      
+		      If Self.mSegments(Idx).Selected Then
+		        SelectionEnd = CellRect.Right
+		        If SelectionStart = -1 Then
+		          SelectionStart = CellRect.Left
+		        End If
+		      ElseIf SelectionStart <> -1 And SelectionEnd <> -1 Then
+		        SelectionRects.Add(New Rect(SelectionStart, CellRect.Top, SelectionEnd - SelectionStart, CellRect.Height))
+		        SelectionStart = -1
+		        SelectionEnd = -1
+		      End If
+		    Next Idx
+		    If SelectionStart <> -1 And SelectionEnd <> -1 Then
+		      SelectionRects.Add(New Rect(SelectionStart, MatchingTop, SelectionEnd - SelectionStart, Self.RowHeight))
 		    End If
-		  Next Idx
-		  If SelectionStart <> -1 And SelectionEnd <> -1 Then
-		    SelectionRects.Add(New Rect(SelectionStart, Self.BorderSize, SelectionEnd - SelectionStart, Self.Height - (Self.BorderSize * 2)))
-		  End If
+		  Next
 		  
 		  If Highlighted Then
 		    G.DrawingColor = SystemColors.SelectedContentBackgroundColor
@@ -111,20 +117,17 @@ Implements ObservationKit.Observer
 		    G.FillRoundRectangle(SelRect.Left, SelRect.Top, SelRect.Width, SelRect.Height, CellRadius, CellRadius)
 		  Next SelRect
 		  
-		  Var Baseline As Double
+		  
 		  For Idx As Integer = Self.mSegments.FirstIndex To Self.mSegments.LastIndex
 		    Var Segment As BeaconSegment = Self.mSegments(Idx)
 		    Var CellRect As Rect = Self.mSegmentRects(Idx)
-		    
-		    If Baseline = 0 Then
-		      Baseline = NearestMultiple(CellRect.Top + ((CellRect.Height / 2) + (G.CapHeight / 2)), G.ScaleY)
-		    End If
+		    Var Baseline As Double = NearestMultiple(CellRect.Top + ((CellRect.Height / 2) + (G.CapHeight / 2)), G.ScaleY)
 		    
 		    Var CaptionWidth As Double = Min(G.TextWidth(Segment.Caption), CellRect.Width - 12)
 		    Var CaptionLeft As Double = NearestMultiple(CellRect.Left + ((CellRect.Width - CaptionWidth) / 2), G.ScaleX)
 		    
 		    G.DrawingColor = If(Segment.Selected And Highlighted, SystemColors.AlternateSelectedControlTextColor, SystemColors.ControlTextColor)
-		    G.DrawText(Segment.Caption, CaptionLeft, Baseline, CellRect.Width - 12, True)
+		    G.DrawText(Segment.Caption, CaptionLeft, Baseline)
 		    
 		    If Idx = Self.mPressedIndex Then
 		      G.DrawingColor = &c00000080
@@ -136,37 +139,87 @@ Implements ObservationKit.Observer
 
 
 	#tag Method, Flags = &h0
-		Sub Add(Segment As BeaconSegment)
-		  Self.mSegments.Add(Segment)
-		  Self.mSegmentRects.Add(New Rect(0, 0, 10, 10)) // Just have to add something for now
+		Sub Add(Segments() As BeaconSegment)
+		  For Each Segment As BeaconSegment In Segments
+		    Self.mSegments.Add(Segment)
+		    Self.mSegmentRects.Add(New Rect(0, 0, 10, 10)) // Just have to add something for now
+		    Segment.AddObserver(Self, "Selected", "Caption")
+		  Next
 		  Self.ComputeRects()
-		  Segment.AddObserver(Self, "Selected", "Caption")
 		  Self.Refresh(False)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Add(Segment As BeaconSegment)
+		  Var Segments(0) As BeaconSegment
+		  Segments(0) = Segment
+		  Self.Add(Segments)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Add(Captions() As String)
+		  Var Segments() As BeaconSegment
+		  Segments.ResizeTo(Captions.LastIndex)
+		  For Idx As Integer = 0 To Segments.LastIndex
+		    Segments(Idx) = New BeaconSegment(Captions(Idx), False)
+		  Next
+		  Self.Add(Segments)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Add(Caption As String, Selected As Boolean = False)
-		  Self.Add(New BeaconSegment(Caption, Selected))
+		  Var Segments(0) As BeaconSegment
+		  Segments(0) = New BeaconSegment(Caption, Selected)
+		  Self.Add(Segments)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ComputeRects()
-		  Var BorderPixels As Integer = Self.BorderSize * (Self.mSegments.Count + 1)
-		  Var TotalWidth As Integer = Self.Width - BorderPixels
-		  Var BaseCellSize As Integer = (TotalWidth / Self.mSegments.Count)
-		  Var Remainder As Integer = TotalWidth - (BaseCellSize * Self.mSegments.Count)
+		Private Sub ComputeRects(G As Graphics = Nil)
+		  If G Is Nil Then
+		    Var Pic As New Picture(1, 1)
+		    G = Pic.Graphics
+		  End If
 		  
+		  Var BaseCellSize As Integer = 0
+		  For Each Segment As BeaconSegment In Self.mSegments
+		    Var SegmentWidth As Integer = G.TextWidth(Segment.Caption) + (Self.CellPadding * 2)
+		    BaseCellSize = Max(BaseCellSize, SegmentWidth)
+		  Next
+		  Var Columns As Integer = Min(Floor((Self.Width - Self.BorderSize) / (BaseCellSize + Self.BorderSize)), Self.mSegments.Count)
+		  Var TotalWidth As Integer = Self.Width - (Self.BorderSize + (Self.BorderSize * Columns))
+		  BaseCellSize = Floor(TotalWidth / Columns)
+		  
+		  Var Rows As Integer = Ceiling(Self.mSegments.Count / Columns)
+		  Var Remainder As Integer = TotalWidth - (Columns * BaseCellSize)
+		  
+		  Var Row As Integer = 1
+		  Var Column As Integer = 1
+		  Var RowTop As Integer = Self.BorderSize
 		  Var CellLeft As Integer = Self.BorderSize
-		  Var CellTop As Integer = Self.BorderSize
-		  Var CellHeight As Integer = Self.Height - (Self.BorderSize * 2)
-		  For Idx As Integer = Self.mSegments.FirstIndex To Self.mSegments.LastIndex
-		    Var CellWidth As Integer = BaseCellSize + If(Idx < Remainder, 1, 0)
-		    Var CellRect As New Rect(CellLeft, CellTop, CellWidth, CellHeight)
+		  Var MaxRight As Integer = Self.Width - Self.BorderSize
+		  For Idx As Integer = 0 To Self.mSegments.LastIndex
+		    Var CellWidth As Integer = BaseCellSize + If(Column <= Remainder, 1, 0)
+		    Var CellRect As New Rect(CellLeft, RowTop, CellWidth, Self.RowHeight)
 		    Self.mSegmentRects(Idx) = CellRect
 		    CellLeft = CellRect.Right + Self.BorderSize
-		  Next Idx
+		    Column = Column + 1
+		    If CellLeft >= MaxRight Then
+		      Row = Row + 1
+		      RowTop = RowTop + Self.BorderSize + RowHeight
+		      Column = 1
+		      CellLeft = Self.BorderSize
+		    End If
+		  Next
+		  
+		  If Rows <> Self.mRowCount Then
+		    Self.mRowCount = Rows
+		    RaiseEvent RowCountChanged
+		    Call CallLater.Schedule(1, WeakAddressOf DelayedRefresh)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -175,8 +228,15 @@ Implements ObservationKit.Observer
 		  Self.mOpening = True
 		  Self.mPressedIndex = -1
 		  Self.mMouseDownIndex = -1
+		  Self.mRowCount = 1
 		  Super.Constructor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DelayedRefresh()
+		  Self.Refresh(False)
 		End Sub
 	#tag EndMethod
 
@@ -193,6 +253,12 @@ Implements ObservationKit.Observer
 		  
 		  RaiseEvent Pressed()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IdealHeight() As Integer
+		  Return Self.BorderSize + ((Self.RowHeight + Self.BorderSize) * Self.mRowCount)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -365,6 +431,10 @@ Implements ObservationKit.Observer
 		Event Pressed()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event RowCountChanged()
+	#tag EndHook
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -454,6 +524,10 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRowCount As Integer = 1
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSegmentRects() As Rect
 	#tag EndProperty
 
@@ -463,6 +537,12 @@ Implements ObservationKit.Observer
 
 
 	#tag Constant, Name = BorderSize, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CellPadding, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RowHeight, Type = Double, Dynamic = False, Default = \"18", Scope = Private
 	#tag EndConstant
 
 

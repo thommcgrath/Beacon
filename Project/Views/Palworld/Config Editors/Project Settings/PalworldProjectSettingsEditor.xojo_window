@@ -418,8 +418,8 @@ End
 		Sub SetupUI()
 		  Self.TitleField.Text = Self.Project.Title
 		  Self.DescriptionArea.Text = Self.Project.Description
-		  Self.CompressedSwitch.Value(False) = Self.Project.UseCompression
-		  Self.LocalBackupSwitch.Value(False) = Self.Project.KeepLocalBackup
+		  Self.CompressedSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagUseCompression)
+		  Self.LocalBackupSwitch.Value(False) = Self.Project.IsFlagged(Beacon.Project.FlagKeepLocalBackup)
 		  Self.ProjectIdField.Text = Self.Project.ProjectId
 		  
 		  BeaconUI.SizeToFit(Self.TitleLabel, Self.DescriptionLabel, Self.CompressedLabel, Self.LocalBackupLabel, Self.ProjectIdLabel)
@@ -495,7 +495,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.UseCompression = Me.Value
+		  Self.Project.IsFlagged(Beacon.Project.FlagUseCompression) = Me.Value
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
@@ -509,7 +509,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.KeepLocalBackup = Me.Value
+		  Self.Project.IsFlagged(Beacon.Project.FlagKeepLocalBackup) = Me.Value
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub

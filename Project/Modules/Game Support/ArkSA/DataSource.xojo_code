@@ -108,6 +108,8 @@ Implements ArkSA.BlueprintProvider
 		  Self.mIconCache = New Dictionary
 		  Self.mSpawnLabelCacheDict = New Dictionary
 		  Self.mSpawnLabelCacheMask = 0
+		  Self.mOfficialPlayerLevelData = Nil
+		  Self.mOfficialSinglePlayerLevelData = Nil
 		End Sub
 	#tag EndEvent
 
@@ -2320,11 +2322,18 @@ Implements ArkSA.BlueprintProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OfficialPlayerLevelData() As ArkSA.PlayerLevelData
-		  If Self.mOfficialPlayerLevelData Is Nil Then
-		    Self.mOfficialPlayerLevelData = ArkSA.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))
+		Function OfficialPlayerLevelData(SinglePlayer As Boolean) As ArkSA.PlayerLevelData
+		  If SinglePlayer Then
+		    If Self.mOfficialSinglePlayerLevelData Is Nil Then
+		      Self.mOfficialSinglePlayerLevelData = ArkSA.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling (Single)"))
+		    End If
+		    Return Self.mOfficialSinglePlayerLevelData
+		  Else
+		    If Self.mOfficialPlayerLevelData Is Nil Then
+		      Self.mOfficialPlayerLevelData = ArkSA.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))
+		    End If
+		    Return Self.mOfficialPlayerLevelData
 		  End If
-		  Return Self.mOfficialPlayerLevelData
 		End Function
 	#tag EndMethod
 
@@ -3034,6 +3043,10 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Property, Flags = &h21
 		Private mOfficialPlayerLevelData As ArkSA.PlayerLevelData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOfficialSinglePlayerLevelData As ArkSA.PlayerLevelData
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
