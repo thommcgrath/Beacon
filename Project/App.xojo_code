@@ -1398,7 +1398,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Function mOpenRecent_OpenFile(Sender As DesktopMenuItem) As Boolean
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents Is Nil) = False Then
 		    Var Project As Beacon.ProjectURL = Sender.Tag
 		    Self.mMainWindow.Documents.OpenProject(Project)
 		    Return True
