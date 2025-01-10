@@ -497,8 +497,8 @@ End
 		  End Try
 		  
 		  Content = Content.GuessEncoding("/script/")
-		  Var GameIniPos As Integer = Content.IndexOf(ArkSA.HeaderShooterGame)
-		  Var SettingsIniPos As Integer = Content.IndexOf(ArkSA.HeaderServerSettings)
+		  Var GameIniPos As Integer = Content.IndexOf("[" + ArkSA.HeaderShooterGame + "]")
+		  Var SettingsIniPos As Integer = Content.IndexOf("[" + ArkSA.HeaderServerSettings + "]")
 		  
 		  If GameIniPos > -1 And SettingsIniPos = -1 Then
 		    Return ConfigFileType.GameIni
