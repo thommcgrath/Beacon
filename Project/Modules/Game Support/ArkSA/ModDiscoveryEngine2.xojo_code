@@ -1331,6 +1331,31 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanItem(TraitPath, TraitOptions)
 		    Next
 		  End If
+		  
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalSupplyCrateItemSet'") Then
+		    Var ItemSetAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalSupplyCrateItemSet'")
+		    For Each Entry As DictionaryEntry In ItemSetAssets
+		      Var ItemSetPath As String = Self.NormalizePath(Entry.Key.StringValue)
+		      If Self.ShouldScanPath(ItemSetPath, True) = False Then
+		        Continue
+		      End If
+		      
+		      Var ItemSetProperties As JSONMBS = Self.PropertiesForPath(ItemSetPath)
+		      If ItemSetProperties Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var ItemPaths As JSONMBS = ItemSetProperties.Query("$.ItemSet.ItemEntries[*].Items[*].ObjectPath")
+		      For Idx As Integer = 0 To ItemPaths.LastRowIndex
+		        Var ItemPath As String = Self.NormalizePath(ItemPaths.ValueAt(Idx))
+		        Var ItemOptions As Integer
+		        If Self.mScriptedObjectPaths.HasKey(ItemPath) = False Then
+		          ItemOptions = ItemOptions Or Self.ItemOptionLowConfidence
+		        End If
+		        Self.ScanItem(ItemPath, ItemOptions)
+		      Next
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
