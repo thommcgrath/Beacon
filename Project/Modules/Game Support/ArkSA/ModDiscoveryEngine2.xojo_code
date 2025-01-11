@@ -1319,6 +1319,18 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanInventory(Entry.Key.StringValue)
 		    Next
 		  End If
+		  
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem_ItemTrait'") Then
+		    Var TraitAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem_ItemTrait'")
+		    For Each Entry As DictionaryEntry In TraitAssets
+		      Var TraitPath As String = Entry.Key.StringValue
+		      Var TraitOptions As Integer
+		      If Self.mScriptedObjectPaths.HasKey(TraitPath) = False Then
+		        TraitOptions = TraitOptions Or Self.ItemOptionLowConfidence
+		      End If
+		      Self.ScanItem(TraitPath, TraitOptions)
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1447,6 +1459,15 @@ Protected Class ModDiscoveryEngine2
 		        Next
 		      Next
 		    End If
+		    
+		    #if false
+		      // Singletons - not useful yet
+		      Var Singletons As JSONMBS = AssetContainer.Query("$.ServerExtraWorldSingletonActorClasses[*].ObjectPath")
+		      For Idx As Integer = 0 To Singletons.LastRowIndex
+		        Var SingletonPath As String = Self.NormalizePath(Singletons.ValueAt(Idx))
+		        Break
+		      Next
+		    #endif
 		  Next
 		End Sub
 	#tag EndMethod
