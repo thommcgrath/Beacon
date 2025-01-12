@@ -108,9 +108,8 @@ Inherits Beacon.DiscoverIntegration
 		        
 		        If Setting.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Then
 		          Var Map As Dictionary = Setting.Constraint("nitrado.boolean.map")
-		          If (Map Is Nil) = False Then
-		            Var ImportMap As Dictionary = Map.Value("import")
-		            CommandLineOptions.Value(Setting.Key) = ImportMap.Lookup(Value, "")
+		          If (Map Is Nil) = False And Dictionary(Map.Value("import").ObjectValue).HasKey(Value) Then
+		            CommandLineOptions.Value(Setting.Key) = Dictionary(Map.Value("import").ObjectValue).Value(Value)
 		            Continue
 		          End If
 		          
@@ -119,6 +118,9 @@ Inherits Beacon.DiscoverIntegration
 		            CommandLineOptions.Value(Setting.Key) = Not Value.IsTruthy
 		            Continue
 		          End If
+		          
+		          CommandLineOptions.Value(Setting.Key) = Value.IsTruthy
+		          Continue
 		        End If
 		        
 		        CommandLineOptions.Value(Setting.Key) = Value
