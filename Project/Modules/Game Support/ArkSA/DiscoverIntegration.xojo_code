@@ -110,7 +110,7 @@ Inherits Beacon.DiscoverIntegration
 		          Var Map As Dictionary = Setting.Constraint("nitrado.boolean.map")
 		          If (Map Is Nil) = False Then
 		            Var ImportMap As Dictionary = Map.Value("import")
-		            CommandLineOptions.Value(Setting.Key) = ImportMap.Value(Value)
+		            CommandLineOptions.Value(Setting.Key) = ImportMap.Lookup(Value, "")
 		            Continue
 		          End If
 		          
@@ -124,6 +124,7 @@ Inherits Beacon.DiscoverIntegration
 		        CommandLineOptions.Value(Setting.Key) = Value
 		      Catch Err As RuntimeException
 		        Self.SetError("Failed to get value for setting '" + Setting.Key + "': " + Err.Message)
+		        App.Log(Err, CurrentMethodName, "Parsing Nitrado key " + Setting.Key)
 		        Return Nil
 		      End Try
 		    Next
