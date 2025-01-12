@@ -445,43 +445,6 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub ImportFile(File As FolderItem)
-		  Var GameId As String = Beacon.DetectGame(File)
-		  If GameId.IsEmpty Then
-		    // Show a game selection prompt later
-		    GameId = GameSelectorWindow.Present(Self.TrueWindow)
-		  End If
-		  
-		  Var OtherProjects() As Beacon.Project
-		  Var DocumentEditors() As DocumentEditorView = Self.DocumentEditors
-		  For Each Editor As DocumentEditorView In DocumentEditors
-		    OtherProjects.Add(Editor.Project)
-		  Next Editor
-		  
-		  Select Case GameId
-		  Case Ark.Identifier
-		    Var ImportView As New ArkImportView
-		    Var ImportWindow As New DocumentImportWindow(ImportView, New Ark.Project, OtherProjects)
-		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
-		    ImportWindow.Show()
-		    ImportView.Import(File)
-		  Case SDTD.Identifier
-		    Var ImportView As New SDTDImportView
-		    Var ImportWindow As New DocumentImportWindow(ImportView, New SDTD.Project, OtherProjects)
-		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
-		    ImportWindow.Show()
-		    ImportView.Import(File)
-		  Case ArkSA.Identifier
-		    Var ImportView As New ArkSAImportView
-		    Var ImportWindow As New DocumentImportWindow(ImportView, New ArkSA.Project, OtherProjects)
-		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
-		    ImportWindow.Show()
-		    ImportView.Import(File)
-		  End Select
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub LoadImportedDocuments(Sender As DocumentImportWindow, Projects() As Beacon.Project)
 		  #Pragma Unused Sender

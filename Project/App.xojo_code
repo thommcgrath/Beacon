@@ -1533,8 +1533,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  If File.ExtensionMatches(Beacon.FileExtensionINI) Or File.ExtensionMatches(Beacon.FileExtensionXml) Then
-		    Self.mMainWindow.BringToFront()
-		    Self.mMainWindow.Documents.ImportFile(File)
+		    BeaconUI.ShowAlert("Create a new project to import this type of file.", "Create a new project for the desired game, then use the Import button in the project's toolbar.")
 		    Return
 		  End If
 		  
