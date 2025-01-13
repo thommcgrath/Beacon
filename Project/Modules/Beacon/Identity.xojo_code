@@ -178,6 +178,13 @@ Protected Class Identity
 		    Var StringToSign As String = Beacon.GenerateJson(SignatureParts, False)
 		    Var SignatureValid As Boolean = Crypto.RSAVerifySignature(StringToSign, Signature, BeaconAPI.PublicKey)
 		    
+		    // Don't load Palworld licenses anymore
+		    For Idx As Integer = Licenses.LastIndex DownTo 0
+		      If (Licenses(Idx).Flags And Not Palworld.OmniFlag) = 0 Then
+		        Licenses.RemoveAt(Idx)
+		      End If
+		    Next
+		    
 		    Identity.mIsBanned = Banned
 		    Identity.mCloudKey = CloudKey
 		    Identity.mExpiration = Expiration
