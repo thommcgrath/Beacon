@@ -1819,6 +1819,9 @@ Protected Class ModDiscoveryEngine2
 		        End If
 		        
 		        Var Quantity As Integer = Requirement.Value("BaseResourceRequirement")
+		        If Quantity <= 0 Then
+		          Continue
+		        End If
 		        Var RequireExact As Boolean = Requirement.Value("bCraftingRequireExactResourceType")
 		        Var IngredientPath As String = Self.NormalizePath(Requirement.Child("ResourceItemType").Value("ObjectPath"))
 		        Var IngredientId As String = Self.CreateObjectId(IngredientPath)
