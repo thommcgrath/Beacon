@@ -175,6 +175,10 @@ Inherits Beacon.Thread
 		    Project.AddServerProfile(Profile)
 		  End If
 		  
+		  If ParsedData.HasKey("bUseSingleplayerSettings") Then
+		    Project.IsFlagged(ArkSA.Project.FlagSinglePlayer) = ParsedData.BooleanValue("bUseSingleplayerSettings", False, True)
+		  End If
+		  
 		  Var ConfigNames() As String = ArkSA.Configs.AllNames()
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  Var Configs() As ArkSA.ConfigGroup
@@ -215,6 +219,7 @@ Inherits Beacon.Thread
 		  CustomConfigOrganizer.Remove(ArkSA.ConfigFileGameUserSettings, "ScalabilityGroups")
 		  CustomConfigOrganizer.Remove(ArkSA.ConfigFileGameUserSettings, "ScalabilityGroups.sg")
 		  CustomConfigOrganizer.Remove(ArkSA.ConfigFileGameUserSettings, "Beacon")
+		  CustomConfigOrganizer.Remove(ArkSA.ConfigFileGame, "ShooterGameMode_TEMPOverrides")
 		  CustomConfigOrganizer.Remove(ArkSA.ConfigFileGame, "Beacon")
 		  
 		  Var CustomContent As New ArkSA.Configs.CustomContent
@@ -438,6 +443,10 @@ Inherits Beacon.Thread
 		        Continue
 		      End If
 		      If Value.Type <> Variant.TypeObject Or Value IsA Beacon.KeyValuePair = False Then
+		        Continue
+		      End If
+		      
+		      If CurrentHeader = "ShooterGameMode_TEMPOverrides" Then
 		        Continue
 		      End If
 		      

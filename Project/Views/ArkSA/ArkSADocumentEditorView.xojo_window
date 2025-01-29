@@ -49,7 +49,7 @@ Begin DocumentEditorView ArkSADocumentEditorView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   627
       Begin OmniNoticeBar OmniNoticeBanner
@@ -318,6 +318,12 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub FirstShow()
+		  Self.MigrateSinglePlayer()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Hidden()
 		  Var Panel As ArkSAConfigEditor = Self.CurrentPanel
 		  If (Panel Is Nil) = False Then
@@ -355,6 +361,12 @@ End
 		    Self.ActiveConfigSet = LastConfigSet
 		    Self.CurrentConfigName = LastConfigName
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub RoleChanged()
+		  Self.MigrateSinglePlayer()
 		End Sub
 	#tag EndEvent
 
@@ -896,6 +908,43 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub MigrateSinglePlayer()
+		  If Self.Project.ReadOnly Or Self.mSinglePlayerMigrated = True Then
+		    Return
+		  End If
+		  
+		  Self.mSinglePlayerMigrated = True
+		  
+		  If Self.Project.LastSavedVersion >= 20302000 Then
+		    Return
+		  End If
+		  
+		  Var OtherSettings As Beacon.ConfigGroup = Self.Project.ConfigGroup(ArkSA.Configs.NameGeneralSettings, Beacon.ConfigSet.BaseConfigSet, False)
+		  If (OtherSettings Is Nil) = False And OtherSettings IsA ArkSA.Configs.OtherSettings Then
+		    Var Option As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOption(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "bUseSingleplayerSettings")
+		    If (Option Is Nil) = False Then
+		      Var GeneralSettings As ArkSA.Configs.OtherSettings = ArkSA.Configs.OtherSettings(OtherSettings)
+		      Var Value As Variant = GeneralSettings.Value(Option)
+		      If Value.Type = Variant.TypeBoolean Then
+		        Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer) = Value.BooleanValue
+		        Return
+		      End If
+		    End If
+		  End If
+		  
+		  Call CallLater.Schedule(100, AddressOf MigrateSinglePlayerWitUI)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MigrateSinglePlayerWitUI()
+		  Var Multiplayer As Boolean = Self.ShowConfirm(Self.SinglePlayerMessage, Self.SinglePlayerExplanation, Self.SinglePlayerActionCaption, Self.SinglePlayerCancelCaption)
+		  Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer) = Not Multiplayer
+		  Self.mSinglePlayerMigrated = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mImportWindow_Closing(Sender As DocumentImportWindow)
 		  #Pragma Unused Sender
 		  
@@ -1264,6 +1313,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSinglePlayerMigrated As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUpdateUITag As String
 	#tag EndProperty
 
@@ -1326,6 +1379,18 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PruningFinishedMessage, Type = String, Dynamic = True, Default = \"The process has finished", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SinglePlayerActionCaption, Type = String, Dynamic = True, Default = \"No\x2C Multi Player", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SinglePlayerCancelCaption, Type = String, Dynamic = True, Default = \"Yes\x2C Single Player", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SinglePlayerExplanation, Type = String, Dynamic = True, Default = \"Since you used this project last\x2C Beacon treats single player projects differently and was not able to determine if this is a single player project or not. This can be changed later in Project Settings.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SinglePlayerMessage, Type = String, Dynamic = True, Default = \"Is this a single player project\?", Scope = Private
 	#tag EndConstant
 
 

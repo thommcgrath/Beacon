@@ -13,7 +13,6 @@ Inherits SDTD.ConfigGroup
 
 	#tag Event
 		Function GenerateConfigValues(Project As SDTD.Project, Profile As SDTD.ServerProfile) As SDTD.ConfigValue()
-		  Var ConsoleSafe As Boolean = Project.ConsoleSafe
 		  Var Configs() As SDTD.ConfigValue
 		  Var DataSource As SDTD.DataSource = SDTD.DataSource.Pool.Get(False)
 		  For Each Entry As DictionaryEntry In Self.mSettings
@@ -69,40 +68,6 @@ Inherits SDTD.ConfigGroup
 		          For Each Char As String In Chars
 		            Value = Value.StringValue.Trim(Char)
 		          Next Char
-		        End If
-		      End If
-		      
-		      If ConsoleSafe Then
-		        Var RequiredPlatform As Variant = Key.Constraint("platform")
-		        Var SupportedOnPlatform As Boolean = True
-		        If IsNull(RequiredPlatform) = False Then
-		          Select Case RequiredPlatform.StringValue
-		          Case "pc", "steam", "epic"
-		            SupportedOnPlatform = False
-		          End Select
-		        End If
-		        If SupportedOnPlatform = False Then
-		          Continue
-		        End If
-		      ElseIf Profile.Platform <> Beacon.PlatformUnknown Then
-		        Var RequiredPlatform As Variant = Key.Constraint("platform")
-		        Var SupportedOnPlatform As Boolean = True
-		        If IsNull(RequiredPlatform) = False Then
-		          Select Case RequiredPlatform.StringValue
-		          Case "pc", "steam", "epic"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPC)
-		          Case "xbox"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox)
-		          Case "ps"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformPlayStation)
-		          Case "switch"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformSwitch)
-		          Case "console"
-		            SupportedOnPlatform = (Profile.Platform = Beacon.PlatformXbox Or Profile.Platform = Beacon.PlatformPlayStation)
-		          End Select
-		          If SupportedOnPlatform = False Then
-		            Continue
-		          End If
 		        End If
 		      End If
 		      

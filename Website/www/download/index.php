@@ -4,7 +4,8 @@ header('Cache-Control: no-cache');
 header('Accept-CH: UA-Mobile, UA-Arch, UA-Platform, UA-Bitness');
 BeaconTemplate::SetTitle('Download');
 BeaconTemplate::SetPageDescription('Download Beacon for Windows and macOS');
-BeaconTemplate::SetCanonicalPath('/download');
+
+$canonicalUrl = '/download';
 
 $forceBuild = null;
 if (isset($_GET['build']) && isset($_GET['token']) && isset($_GET['expires'])) {
@@ -17,8 +18,10 @@ if (isset($_GET['build']) && isset($_GET['token']) && isset($_GET['expires'])) {
 	if ($token === $expectedToken && $tokenExpires > time()) {
 		// Show a legacy version
 		$forceBuild = $build;
+		$canonicalUrl .= '?build=' . urlencode($_GET['build']) . '&token=' . urlencode($_GET['token']) . '&expires=' . urlencode($_GET['expires']);
 	}
 }
+BeaconTemplate::SetCanonicalPath($canonicalUrl);
 
 ?><p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
 <div id="stable" class="downloads-table"></div>

@@ -483,7 +483,7 @@ Protected Class ProjectController
 		      Message = Self.ErrorMessageFromResponse(Response)
 		    End If
 		    
-		    If Self.mProject.KeepLocalBackup Then
+		    If Self.mProject.IsFlagged(Beacon.Project.FlagKeepLocalBackup) Then
 		      Var BackupFolder As FolderItem = App.BackupsFolder.Child("Projects")
 		      If BackupFolder.CheckIsFolder Then
 		        Var BackupFile As FolderItem = BackupFolder.Child(Self.mProject.ProjectId + ".beacon")

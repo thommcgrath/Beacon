@@ -374,7 +374,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   True
-      TabIndex        =   22
+      TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "60"
@@ -716,7 +716,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   True
-      TabIndex        =   23
+      TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "60"
@@ -833,7 +833,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   True
-      TabIndex        =   24
+      TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "60"
@@ -931,7 +931,7 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Multiline       =   True
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   25
+      TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "#DisclaimerCaption"
@@ -943,6 +943,47 @@ Begin ArkSAConfigEditor ArkSADayCycleEditor
       Underline       =   False
       Visible         =   True
       Width           =   504
+   End
+   Begin UITweaks.ResizedTextField ScaleMultiplierField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   157
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1.0"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   227
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
    End
 End
 #tag EndDesktopWindow
@@ -1036,16 +1077,17 @@ End
 		  Var Config As ArkSA.Configs.DayCycle = Self.Config(False)
 		  Var DayMultiplier As Double = Config.DaySpeedMultiplier
 		  Var NightMultiplier As Double = Config.NightSpeedMultiplier
+		  Var ScaleMultiplier As Double = Config.ScaleMultiplier
 		  Var Map As ArkSA.Map = Self.MapMenu.SelectedRowTag
 		  
 		  Var OfficialDaySeconds As Double = Map.DayRealtimeSeconds(Self.mDaySecondsPerHour)
 		  Var OfficialNightSeconds As Double = Map.NightRealtimeSeconds(Self.mNightSecondsPerHour)
 		  Var DayLengthSeconds, NightLengthSeconds, FullLengthSeconds As Double
 		  If DayMultiplier > 0 Then
-		    DayLengthSeconds = OfficialDaySeconds / DayMultiplier
+		    DayLengthSeconds = OfficialDaySeconds / (DayMultiplier * ScaleMultiplier)
 		  End If
 		  If NightMultiplier > 0 Then
-		    NightLengthSeconds = OfficialNightSeconds / NightMultiplier
+		    NightLengthSeconds = OfficialNightSeconds / (NightMultiplier * ScaleMultiplier)
 		  End If
 		  If DayMultiplier > 0 And NightMultiplier > 0 Then
 		    FullLengthSeconds = Round(DayLengthSeconds + NightLengthSeconds)
@@ -1056,6 +1098,9 @@ End
 		  End If
 		  If Focus <> Self.NightMultiplierField Then
 		    Self.NightMultiplierField.Text = Config.NightSpeedMultiplier.PrettyText
+		  End If
+		  If Focus <> Self.ScaleMultiplierField Then
+		    Self.ScaleMultiplierField.Text = Config.ScaleMultiplier.PrettyText
 		  End If
 		  If Focus <> Self.DayLengthField Then
 		    Self.DayLengthField.Text = If(DayLengthSeconds > 0, Beacon.SecondsToString(Round(DayLengthSeconds)), "∞")
@@ -1069,10 +1114,10 @@ End
 		  
 		  If Map.Identifier = "Aberration_WP" Then
 		    Var WarmDaySeconds, WarmNightSeconds, WarmCycleSeconds, ColdDaySeconds, ColdNightSeconds, ColdCycleSeconds As Double
-		    WarmDaySeconds = OfficialDaySeconds / (Self.WarmDayMultiplier * DayMultiplier)
-		    WarmNightSeconds = OfficialNightSeconds / (Self.WarmNightMultiplier * NightMultiplier)
-		    ColdDaySeconds = OfficialDaySeconds / (Self.ColdDayMultiplier * DayMultiplier)
-		    ColdNightSeconds = OfficialNightSeconds / (Self.ColdNightMultiplier * NightMultiplier)
+		    WarmDaySeconds = OfficialDaySeconds / (Self.WarmDayMultiplier * DayMultiplier * ScaleMultiplier)
+		    WarmNightSeconds = OfficialNightSeconds / (Self.WarmNightMultiplier * NightMultiplier * ScaleMultiplier)
+		    ColdDaySeconds = OfficialDaySeconds / (Self.ColdDayMultiplier * DayMultiplier * ScaleMultiplier)
+		    ColdNightSeconds = OfficialNightSeconds / (Self.ColdNightMultiplier * NightMultiplier * ScaleMultiplier)
 		    ColdCycleSeconds = Round(ColdDaySeconds + ColdNightSeconds)
 		    WarmCycleSeconds = Round(WarmDaySeconds + WarmNightSeconds)
 		    
@@ -1222,7 +1267,7 @@ End
 		    Return
 		  End If
 		  
-		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour)
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.Config(False).ScaleMultiplier
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
@@ -1244,7 +1289,7 @@ End
 		    Return
 		  End If
 		  
-		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour)
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.Config(False).ScaleMultiplier
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
@@ -1286,7 +1331,7 @@ End
 		    Return
 		  End If
 		  
-		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.WarmDayMultiplier
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour) / (Self.WarmDayMultiplier * Self.Config(False).ScaleMultiplier)
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
@@ -1308,7 +1353,7 @@ End
 		    Return
 		  End If
 		  
-		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.WarmNightMultiplier
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour) / (Self.WarmNightMultiplier * Self.Config(False).ScaleMultiplier)
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
@@ -1330,7 +1375,7 @@ End
 		    Return
 		  End If
 		  
-		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour) / Self.ColdDayMultiplier
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).DayRealtimeSeconds(Self.mDaySecondsPerHour) / (Self.ColdDayMultiplier * Self.Config(False).ScaleMultiplier)
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
@@ -1352,10 +1397,32 @@ End
 		    Return
 		  End If
 		  
-		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour) / Self.ColdNightMultiplier
+		  Var OfficialSeconds As Double = ArkSA.Map(Self.MapMenu.SelectedRowTag).NightRealtimeSeconds(Self.mNightSecondsPerHour) / (Self.ColdNightMultiplier * Self.Config(False).ScaleMultiplier)
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(DesiredInterval, OfficialSeconds)
+		  Self.Modified = True
+		  Self.UpdateCalculations()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ScaleMultiplierField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
+		    Return
+		  End If
+		  
+		  Var DesiredMultiplier As Double
+		  Try
+		    DesiredMultiplier = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).ScaleMultiplier = DesiredMultiplier
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False

@@ -9,6 +9,11 @@ class ProjectMember implements JsonSerializable {
 	public const kRoleEditor = 'Editor';
 	public const kRoleGuest = 'Guest';
 
+	public const kPermissionsOwner = 90;
+	public const kPermissionsAdmin = 80;
+	public const kPermissionsEditor = 70;
+	public const kPermissionsGuest = 10;
+
 	protected string $projectId;
 	protected string $userId;
 	protected string $username;
@@ -107,6 +112,18 @@ class ProjectMember implements JsonSerializable {
 		return $this->fingerprint;
 	}
 
+	public function IsOwner(): bool {
+		return $this->permissions >= self::kPermissionsOwner;
+	}
+
+	public function IsAdmin(): bool {
+		return $this->permissions >= self::kPermissionsAdmin;
+	}
+
+	public function IsEditor(): bool {
+		return $this->permissions >= self::kPermissionsEditor;
+	}
+
 	public function jsonSerialize(): mixed {
 		return [
 			'projectId' => $this->projectId,
@@ -140,6 +157,21 @@ class ProjectMember implements JsonSerializable {
 		];
 
 		return base64_encode(hash('sha3-256', implode('', $pieces), true));
+	}
+
+	public static function PermissionsForRole(string $role): int {
+		switch ($role) {
+		case self::kRoleOwner:
+			return self::kPermissionsOwner;
+		case self::kRoleAdmin:
+			return self::kPermissionsAdmin;
+		case self::kRoleEditor:
+			return self::kPermissionsEditor;
+		case self::kRoleGuest:
+			return self::kPermissionsGuest;
+		default:
+			throw new Exception('Unknown role ' . $role);
+		}
 	}
 }
 

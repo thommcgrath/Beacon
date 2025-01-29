@@ -850,12 +850,9 @@ End
 		            Return True
 		          End If
 		          
-		          Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
 		          Var Config As ArkSA.Configs.SpawnPoints = Self.Config(True)
 		          For Each Override As ArkSA.SpawnPointOverride In Overrides
-		            Var Mutable As New ArkSA.MutableSpawnPointOverride(Override.SpawnPointReference, Override.Mode)
-		            DataSource.LoadDefaults(Mutable)
-		            Config.Add(Mutable)
+		            Config.Add(New ArkSA.SpawnPointOverride(Override.SpawnPoint, Override.Mode, True))
 		          Next
 		          
 		          Self.Modified = Config.Modified

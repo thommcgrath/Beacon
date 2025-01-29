@@ -303,8 +303,8 @@ End
 		    Check.Width = CheckboxWidth
 		    Check.Left = NextLeft
 		    Check.Top = NextTop
-		    Check.Value = Packs(Idx).Required Or Self.ModEnabled(Packs(Idx).ContentPackId)
-		    Check.Enabled = (Packs(Idx).Required = False)
+		    Check.Value = Packs(Idx).Required Or Self.ModEnabled(Packs(Idx).ContentPackId) Or Self.mForcedMods.Contains(Packs(Idx).ContentPackId)
+		    Check.Enabled = (Packs(Idx).Required Or Self.mForcedMods.Contains(Packs(Idx).ContentPackId)) = False
 		    Self.mMap(Idx - StartIndex) = Packs(Idx).ContentPackId
 		    
 		    If (Idx + 1) Mod ColumnCount = 0 Then
@@ -360,14 +360,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(DataSource As Beacon.DataSource, EnabledMods As Beacon.StringList)
-		  Var EmbeddedContentPacks() As Beacon.ContentPack
-		  Self.Constructor(DataSource, EnabledMods, EmbeddedContentPacks)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(DataSource As Beacon.DataSource, EnabledMods As Beacon.StringList, EmbeddedContentPacks() As Beacon.ContentPack)
+		Sub Constructor(DataSource As Beacon.DataSource, EnabledMods As Beacon.StringList, EmbeddedContentPacks() As Beacon.ContentPack, ForcedMods As Beacon.StringList)
+		  If ForcedMods Is Nil Then
+		    ForcedMods = New Beacon.StringList
+		  End If
+		  
 		  Self.mOfficialPacks = DataSource.GetContentPacks(Beacon.ContentPack.TypeOfficial)
 		  Self.mThirdPartyPacks = DataSource.GetContentPacks(Beacon.ContentPack.TypeThirdParty)
 		  
@@ -390,13 +387,21 @@ End
 		  Self.mGameId = DataSource.Identifier
 		  
 		  Self.Constructor()
-		  Self.EnabledMods = EnabledMods
+		  Self.mForcedMods = ForcedMods
+		  Self.EnabledMods = EnabledMods + ForcedMods
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(DataSource As Beacon.DataSource, EnabledMods As Beacon.StringList, ForcedMods As Beacon.StringList)
+		  Var EmbeddedContentPacks() As Beacon.ContentPack
+		  Self.Constructor(DataSource, EnabledMods, EmbeddedContentPacks, ForcedMods)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As Beacon.Project)
-		  Self.Constructor(Project.DataSource(False), Project.ContentPacks, Project.EmbeddedContentPacks)
+		  Self.Constructor(Project.DataSource(False), Project.ContentPacks, Project.EmbeddedContentPacks, Project.ForcedContentPacks)
 		End Sub
 	#tag EndMethod
 
@@ -472,6 +477,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCustomPacks() As Beacon.ContentPack
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mForcedMods As Beacon.StringList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

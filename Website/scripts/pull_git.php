@@ -48,8 +48,19 @@ $commands = [
 	'cd ' . escapeshellarg($root),
 	'git clean -fd',
 	'git pull',
-	'git reset --hard ' . escapeshellarg($desired_hash)
+	'git reset --hard ' . escapeshellarg($desired_hash),
 ];
+
+if (file_exists("{$root}/Website/composer.phar")) {
+	$commands[] = 'php ' . escapeshellarg("Website/composer.phar") . ' self-update --quiet';
+	$commands[] = 'php ' . escapeshellarg("Website/composer.phar") . ' install --no-interaction --prefer-install=source --no-progress --quiet --working-dir=Website';
+} elseif (file_exists("{$root}/Website/composer.json")) {
+	$commands[] = "php -r \"copy('https://getcomposer.org/installer', 'Website/composer-setup.php');\"";
+	$commands[] = 'php ' . escapeshellarg("Website/composer-setup.php") . ' --install-dir=' . escapeshellarg("Website");
+	$commands[] = 'rm ' . escapeshellarg("Website/composer-setup.php");
+	$commands[] = 'php ' . escapeshellarg("Website/composer.phar") . ' install --no-interaction --prefer-install=source --no-progress --quiet --working-dir=Website';
+}
+
 if (is_dir('/etc/nginx')) {
 	$commands[] = 'sudo systemctl reload nginx';
 }

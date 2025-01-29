@@ -58,7 +58,7 @@ Inherits Beacon.DeployIntegration
 		  Self.Log("Generating new ini files…")
 		  
 		  Var Format As ArkSA.Rewriter.EncodingFormat
-		  If Self.Project.AllowUCS2 Then
+		  If Self.Project.IsFlagged(ArkSA.Project.FlagAllowUCS2) Then
 		    Format = ArkSA.Rewriter.EncodingFormat.UCS2AndASCII
 		  Else
 		    Format = ArkSA.Rewriter.EncodingFormat.ASCII
@@ -418,6 +418,12 @@ Inherits Beacon.DeployIntegration
 		          Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigOption.Constraint("nitrado.boolean.reversed"))
 		          If (Reversed Is Nil) = False And Reversed.BooleanValue Then
 		            Value = If(Value = "true", "false", "true")
+		          End If
+		          
+		          Var Map As Dictionary = ConfigOption.Constraint("nitrado.boolean.map")
+		          If (Map Is Nil) = False Then
+		            Var ExportMap As Dictionary = Map.Value("export")
+		            Value = ExportMap.Value(Value)
 		          End If
 		        End If
 		        

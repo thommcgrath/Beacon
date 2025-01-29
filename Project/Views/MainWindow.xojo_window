@@ -333,6 +333,15 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Width           =   1420
       End
    End
+   Begin Timer PusherCheckTimer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   5000
+      RunMode         =   2
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -748,6 +757,10 @@ End
 		    End If
 		    
 		    Self.UpdateRenewButton()
+		    
+		    If Self.PusherCheckTimer.RunMode <> Timer.RunModes.Multiple Then
+		      Self.PusherCheckTimer.RunMode = Timer.RunModes.Multiple
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1196,7 +1209,7 @@ End
 		    Return
 		  Case "NavPusher"
 		    If (App.Pusher Is Nil) = False And App.Pusher.State <> Beacon.PusherSocket.States.Connected Then
-		      App.Pusher.Start()
+		      App.Pusher.Start(True)
 		    End If
 		    Return
 		  Case "NavRenew"
@@ -1253,6 +1266,22 @@ End
 	#tag Event
 		Sub WantsFrontmost()
 		  Self.SwitchView(Self.PageTemplates)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PusherCheckTimer
+	#tag Event
+		Sub Action()
+		  Var Pusher As Beacon.PusherSocket = App.Pusher
+		  If Pusher Is Nil Then
+		    Return
+		  End If
+		  
+		  If Pusher.State = Beacon.PusherSocket.States.Disabled Then
+		    Me.RunMode = Timer.RunModes.Off
+		  ElseIf Pusher.State <> Beacon.PusherSocket.States.Connected Then
+		    Pusher.Start()
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -154,48 +154,48 @@ abstract class BeaconCloudStorage {
 		return 'https://' . $bucket_path . $resource_path . (strpos($resource_path, '?') === false ? '?' : '&') . 'AWSAccessKeyId=' . urlencode(BeaconCommon::GetGlobal('Storage_Username')) . '&Expires=' . urlencode($expiration) . '&Signature=' . urlencode($signature);
 	}
 
-	private static function WarmFile(string $remote_path, ?string $version_id): int|string {
-		$remote_path = static::CleanupRemotePath($remote_path);
+	private static function WarmFile(string $remotePath, ?string $versionId): int|string {
+		$remotePath = static::CleanupRemotePath($remotePath);
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT bucket, hash, size_in_bytes FROM usercloud WHERE remote_path = $1;', $remote_path);
+		$results = $database->Query('SELECT bucket, hash, size_in_bytes FROM usercloud WHERE remote_path = $1;', $remotePath);
 		if ($results->RecordCount() == 0) {
 			return static::FILE_NOT_FOUND;
 		}
-		$bucket_path = $results->Field('bucket');
-		$local_path = static::LocalPath($remote_path, $version_id);
-		if (is_null($version_id) === false) {
-			$remote_path .= '?versionId=' . urlencode($version_id);
+		$bucketPath = $results->Field('bucket');
+		$localPath = static::LocalPath($remotePath, $versionId);
+		if (is_null($versionId) === false) {
+			$remotePath .= '?versionId=' . urlencode($versionId);
 		}
-		$file_id = crc32($remote_path);
+		$fileId = crc32($remotePath);
 		$database->BeginTransaction();
-		$database->Query('SELECT pg_advisory_xact_lock($1);', $file_id);
-		$local_exists = file_exists($local_path);
-		$correct_hash = $results->Field('hash');
-		$correct_filesize = $results->Field('size_in_bytes');
+		$database->Query('SELECT pg_advisory_xact_lock($1);', $fileId);
+		$localExists = file_exists($localPath);
+		$correctHash = $results->Field('hash');
+		$correctFilesize = $results->Field('size_in_bytes');
 		$hostname = gethostname();
-		$results = $database->Query('SELECT cache_id, hash, size_in_bytes FROM usercloud_cache WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname);
-		$is_cached = false;
-		$cache_id = null;
+		$results = $database->Query('SELECT cache_id, hash, size_in_bytes FROM usercloud_cache WHERE remote_path = $1 AND hostname = $2;', $remotePath, $hostname);
+		$isCached = false;
+		$cacheId = null;
 		if ($results->RecordCount() == 1) {
-			$cache_id = $results->Field('cache_id');
-			$cached_hash = $results->Field('hash');
-			$cached_size = $results->Field('size_in_bytes');
-			if ($cached_hash === $correct_hash && $cached_size === $correct_filesize) {
-				$is_cached = true;
+			$cacheId = $results->Field('cache_id');
+			$cachedHash = $results->Field('hash');
+			$cachedSize = $results->Field('size_in_bytes');
+			if ($cachedHash === $correctHash && $cachedSize === $correctFilesize) {
+				$isCached = true;
 			}
 		}
 
-		if ($local_exists === false || $is_cached === false) {
-			static::CleanupLocalCache($correct_filesize);
+		if ($localExists === false || $isCached === false) {
+			static::CleanupLocalCache($correctFilesize);
 
-			$parent = dirname($local_path);
+			$parent = dirname($localPath);
 			static::SetupDir($parent);
 
 			$session = null;
-			$remote_handle = null;
+			$remoteHandle = null;
 
-			// See if the file in question is pending upload somewhere else
-			$results = $database->Query('SELECT hostname FROM usercloud_queue WHERE remote_path = $1 AND request_method = $2 AND hostname != $3;', $remote_path, 'PUT', $hostname);
+			// See if the file in question is pending uploaded somewhere else
+			$results = $database->Query('SELECT hostname FROM usercloud_queue WHERE remote_path = $1 AND request_method = $2 AND hostname != $3;', $remotePath, 'PUT', $hostname);
 			if ($results->RecordCount() > 0) {
 				$session = ssh2_connect($results->Field('hostname'), 22);
 				if ($session === false) {
@@ -203,58 +203,66 @@ abstract class BeaconCloudStorage {
 				}
 				$keyfile = BeaconCommon::FrameworkPath() . '/keys/cacheshare';
 				ssh2_auth_pubkey_file($session, 'cacheshare', $keyfile . '.pub', $keyfile, BeaconCommon::GetGlobal('CacheShare Secret'));
-				$remote_handle = @fopen("ssh2.sftp://$session/beacon-usercloud$remote_path", 'rb');
-				if (empty($remote_handle)) {
+				$remoteHandle = @fopen("ssh2.sftp://$session/beacon-usercloud$remotePath", 'rb');
+				if (empty($remoteHandle)) {
 					$database->Rollback();
 					return static::FAILED_TO_WARM_CACHE;
 				}
 
-				$local_handle = fopen($local_path, 'wb');
-				while (!feof($remote_handle)) {
-					$chunk = fread($remote_handle, 1048576);
-					fwrite($local_handle, $chunk);
+				$localHandle = fopen($localPath, 'wb');
+				while (!feof($remoteHandle)) {
+					$chunk = fread($remoteHandle, 1048576);
+					fwrite($localHandle, $chunk);
 				}
-				fclose($local_handle);
+				fclose($localHandle);
 				unset($session);
 			} else {
-				$url = static::BuildSignedURL($bucket_path, $remote_path, 'GET');
-				$local_handle = fopen($local_path, 'wb');
-				$curl = curl_init($url);
-				curl_setopt($curl, CURLOPT_FILE, $local_handle);
-				curl_exec($curl);
-				$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-				curl_close($curl);
-				fclose($local_handle);
-				if ($http_status !== 200) {
+				$buckets = static::AllBuckets($bucketPath);
+				$fileDownloaded = false;
+				foreach ($buckets as $bucket) {
+					$url = static::BuildSignedURL($bucket, $remotePath, 'GET');
+					$localHandle = fopen($localPath, 'wb');
+					$curl = curl_init($url);
+					curl_setopt($curl, CURLOPT_FILE, $localHandle);
+					curl_exec($curl);
+					$httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+					curl_close($curl);
+					fclose($localHandle);
+					if ($httpStatus === 200) {
+						$fileDownloaded = true;
+						break;
+					}
+				}
+				if (!$fileDownloaded) {
 					$database->Rollback();
 					return static::FAILED_TO_WARM_CACHE;
 				}
 			}
 
-			chmod($local_path, 0640);
-			chgrp($local_path, 'cacheshare');
+			chmod($localPath, 0640);
+			chgrp($localPath, 'cacheshare');
 
-			$cached_size = filesize($local_path);
-			$cached_hash = hash_file('sha256', $local_path);
+			$cachedSize = filesize($localPath);
+			$cachedHash = hash_file('sha256', $localPath);
 
-			if (is_null($version_id) === true && ($cached_size != $correct_filesize || $cached_hash != $correct_hash)) {
-				static::DeleteLocalPath($local_path);
-				if (is_null($cache_id) == false) {
-					$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
+			if (is_null($versionId) === true && ($cachedSize != $correctFilesize || $cachedHash != $correctHash)) {
+				static::DeleteLocalPath($localPath);
+				if (is_null($cacheId) == false) {
+					$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cacheId);
 				}
 				$database->Commit();
 				return static::FAILED_TO_WARM_CACHE;
 			}
 		}
 
-		if (!is_null($cache_id)) {
-			$database->Query('UPDATE usercloud_cache SET size_in_bytes = $2, hash = $3, last_accessed = CURRENT_TIMESTAMP WHERE cache_id = $1;', $cache_id, $cached_size, $cached_hash);
+		if (!is_null($cacheId)) {
+			$database->Query('UPDATE usercloud_cache SET size_in_bytes = $2, hash = $3, last_accessed = CURRENT_TIMESTAMP WHERE cache_id = $1;', $cacheId, $cachedSize, $cachedHash);
 		} else {
-			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4)', $hostname, $remote_path, $cached_size, $cached_hash);
+			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4)', $hostname, $remotePath, $cachedSize, $cachedHash);
 		}
 		$database->Commit();
 
-		return $local_path;
+		return $localPath;
 	}
 
 	public static function DetailsForFile(string $remote_path): array|bool {
@@ -522,7 +530,7 @@ abstract class BeaconCloudStorage {
 		if ($file_exists) {
 			$database->Query('UPDATE usercloud SET content_type = $2, size_in_bytes = $3, hash = $4, modified = CURRENT_TIMESTAMP, deleted = FALSE, header = $5 WHERE remote_path = $1;', $remote_path, $content_type, $filesize, $hash, $header_bytes);
 		} else {
-			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash, modified, header, bucket) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, $5, $6);', $remote_path, $content_type, $filesize, $hash, $header_bytes, BeaconCommon::GetGlobal('Storage_Bucket'));
+			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash, modified, header, bucket) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, $5, $6);', $remote_path, $content_type, $filesize, $hash, $header_bytes, static::PrimaryBucket());
 		}
 		if (is_null($cache_id)) {
 			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4);', $hostname, $remote_path, $filesize, $hash);
@@ -552,18 +560,22 @@ abstract class BeaconCloudStorage {
 		$database->Commit();
 	}
 
-	public static function VersionsForFile(string $remote_path): array|bool {
-		$remote_path = static::CleanupRemotePath($remote_path);
+	public static function VersionsForFile(string $remotePath, ?string $overrideBucketPath = null): array|bool {
+		$remotePath = static::CleanupRemotePath($remotePath);
 
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT bucket FROM usercloud WHERE remote_path = $1;', $remote_path);
-		if ($rows->RecordCount() !== 1) {
-			throw new Exception('File not found');
+		if (is_null($overrideBucketPath)) {
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT bucket FROM usercloud WHERE remote_path = $1;', $remotePath);
+			if ($rows->RecordCount() !== 1) {
+				throw new Exception('File not found');
+			}
+			$bucketPath = $rows->Field('bucket');
+		} else {
+			$bucketPath = $overrideBucketPath;
 		}
-		$bucket_path = $rows->Field('bucket');
 
-		$path = '/?versions&prefix=' . urlencode(substr($remote_path, 1));
-		$url = static::BuildSignedURL($bucket_path, $path, 'GET');
+		$path = '/?versions&prefix=' . urlencode(substr($remotePath, 1));
+		$url = static::BuildSignedURL($bucketPath, $path, 'GET');
 
 		$curl = curl_init();
 		if ($curl === false) {
@@ -574,15 +586,20 @@ abstract class BeaconCloudStorage {
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		$response = curl_exec($curl);
 		$success = false;
-		$http_status = 0;
+		$httpStatus = 0;
 		if ($response !== false) {
-			$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-			$success = $http_status >= 200 && $http_status < 300;
+			$httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+			$success = $httpStatus >= 200 && $httpStatus < 300;
 		}
 		curl_close($curl);
 
 		if ($success === false) {
-			return false;
+			$nextBucket = static::NextBucket($bucketPath);
+			if (is_null($nextBucket) === false) {
+				return static::VersionsForFile($remotePath, $nextBucket);
+			} else {
+				return false;
+			}
 		}
 
 		$xml = simplexml_load_string($response);
@@ -597,17 +614,17 @@ abstract class BeaconCloudStorage {
 
 		$elements = $xml->Version;
 		foreach ($elements as $element) {
-			$is_latest = strval($element->IsLatest[0]) === 'true';
-			$version_id = strval($element->VersionId[0]);
-			if ($version_id === 'null') {
+			$isLatest = strval($element->IsLatest[0]) === 'true';
+			$versionId = strval($element->VersionId[0]);
+			if ($versionId === 'null') {
 				// not sure what this is all about
 				continue;
 			}
 			$date = new DateTime(strval($element->LastModified));
 			$bytes = intval($element->Size);
 			$versions[] = [
-				'latest' => $is_latest,
-				'version_id' => $version_id,
+				'latest' => $isLatest,
+				'version_id' => $versionId,
 				'date' => $date->format('Y-m-d H:i:sO'),
 				'size' => $bytes
 			];
@@ -628,6 +645,34 @@ abstract class BeaconCloudStorage {
 		static::SetupDir(dirname($path));
 		mkdir($path, 0750, false);
 		chgrp($path, 'cacheshare');
+	}
+
+	private static function PrimaryBucket(): string {
+		$buckets = BeaconCommon::GetGlobal('Storage_Buckets');
+		return $buckets[0];
+	}
+
+	private static function AllBuckets(?string $initialBucket = null): array {
+		$buckets = BeaconCommon::GetGlobal('Storage_Buckets');
+		if (is_null($initialBucket)) {
+			return $buckets;
+		}
+
+		$remainingBuckets = array_filter($buckets, function($value) use ($initialBucket) {
+			return $value !== $initialBucket;
+		});
+
+		return array_merge([$initialBucket], $remainingBuckets);
+	}
+
+	private static function NextBucket(string $currentBucket): ?string {
+		$buckets = BeaconCommon::GetGlobal('Storage_Buckets');
+		$lastIndex = count($buckets) - 1;
+		$currentIndex = array_search($currentBucket, $buckets);
+		if ($currentIndex < $lastIndex) {
+			return $buckets[$currentIndex + 1];
+		}
+		return null;
 	}
 }
 

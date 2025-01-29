@@ -18,7 +18,11 @@ Protected Class OmniLicense
 		  Self.mFlags = Source.Lookup("flags", 0).IntegerValue
 		  Self.mLicenseId = Source.Lookup("licenseId", "").StringValue
 		  Self.mProductId = Source.Lookup("productId", "").StringValue
-		  Self.mMaxBuild = Source.Lookup("maxBuild", 999999999).IntegerValue
+		  #if DebugBuild
+		    Self.mMaxBuild = 999999999
+		  #else
+		    Self.mMaxBuild = Source.Lookup("maxBuild", 999999999).IntegerValue
+		  #endif
 		End Sub
 	#tag EndMethod
 

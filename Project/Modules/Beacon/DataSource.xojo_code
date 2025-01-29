@@ -902,6 +902,14 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mOptimizeThread_Run(Sender As Beacon.Thread)
+		  #Pragma Unused Sender
+		  
+		  Self.Optimize()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
@@ -937,7 +945,9 @@ Implements NotificationKit.Receiver
 		  If Self.mAllowWriting Then
 		    Try
 		      Self.SQLExecute("ANALYZE;")
+		      Self.SQLExecute("REINDEX;")
 		      Self.SQLExecute("VACUUM;")
+		      App.Log("Database " + Self.Identifier + " has been optimized.")
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Trying to optimize database")
 		    End Try
@@ -1133,12 +1143,19 @@ Implements NotificationKit.Receiver
 		  If InitialDuration <= ThresholdMicroseconds Then
 		    Return PerformanceResults.NoRepairsNecessary
 		  End If
-		  If AttemptRepair = False Or Self.mAllowWriting = False Then
+		  If AttemptRepair = False Then
+		    Return PerformanceResults.RepairsNecessary
+		  ElseIf Self.mAllowWriting = False Then
+		    If Self.mOptimizeThread Is Nil Or Self.mOptimizeThread.ThreadState = Thread.ThreadStates.NotRunning Then
+		      Self.mOptimizeThread = New Beacon.Thread
+		      Self.mOptimizeThread.DebugIdentifier = Self.Identifier + ".DataSource.mOptimizeThread"
+		      AddHandler mOptimizeThread.Run, WeakAddressOf mOptimizeThread_Run
+		      Self.mOptimizeThread.Start
+		    End If
 		    Return PerformanceResults.RepairsNecessary
 		  End If
 		  
-		  Self.mDatabase.ExecuteSQL("ANALYZE;")
-		  Self.mDatabase.ExecuteSQL("VACUUM;")
+		  Self.Optimize()
 		  
 		  StartTime = System.Microseconds
 		  RaiseEvent TestPerformance()
@@ -1324,6 +1341,10 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mIndexes() As Beacon.DataIndex
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOptimizeThread As Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

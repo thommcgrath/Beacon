@@ -393,9 +393,13 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Var RequiredHashes As New Dictionary
-		  RequiredHashes.Value("mod_data_extractor.exe") = "9aa2226fd8b74f0b6c51f8499be88397"
-		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "cb4eec121a03a28426cd45051d770ea1"
-		  RequiredHashes.Value("mod_data_extractor.pdb") = "8a10e03768b98a883b599047bdeafcf2"
+		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "7f731dd5ab066b9e94357d80aaab8c98"
+		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "331e1ab3c4dd4eef4d8f2d55a800ffd2"
+		  RequiredHashes.Value("CUE4Parse.pdb") = "0f3580ab5458ed47b78fd474afb79ff6"
+		  RequiredHashes.Value("blake3_dotnet.dll") = "a3c084912ba7c8099eda54ed8f56c4ac"
+		  RequiredHashes.Value("libSkiaSharp.dll") = "26d723bd75b5c6591dfde18b71281920"
+		  RequiredHashes.Value("mod_data_extractor.exe") = "fd7bd586401f2c9a2875905f8bce35d7"
+		  RequiredHashes.Value("mod_data_extractor.pdb") = "2c361b4432b89c695f0ca861edb8b054"
 		  Var ExtractorReady As Boolean = True
 		  For Each Entry As DictionaryEntry In RequiredHashes
 		    Var ExtractorFile As FolderItem = ExtractorRoot.Child(Entry.Key.StringValue)
@@ -421,7 +425,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v10.zip")
+		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.1.4.zip")
 		    If DownloadSocket.HTTPStatusCode <> 200 Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Failed to download extractor tool."))
 		      Return
@@ -468,30 +472,6 @@ Protected Class ModDiscoveryEngine2
 		    Archive = Nil
 		  End If
 		  
-		  Var BlacklistLines() As String
-		  BlacklistLines.Add("Engine/")
-		  BlacklistLines.Add("ShooterGame/Plugins/")
-		  BlacklistLines.Add("ShooterGame/AssetRegistry\.bin")
-		  
-		  Var BlacklistFile As FolderItem = ExtractorRoot.Child("blacklist.txt")
-		  Var CurrentLines() As String
-		  If BlacklistFile.Exists Then
-		    Var InStream As TextInputStream = TextInputStream.Open(BlacklistFile)
-		    CurrentLines = InStream.ReadAll(Encodings.UTF8).ReplaceLineEndings(EndOfLine).Split(EndOfLine)
-		    InStream.Close
-		  End If
-		  
-		  For Each Line As String In BlacklistLines
-		    If CurrentLines.IndexOf(Line) = -1 Then
-		      CurrentLines.Add(Line)
-		    End If
-		  Next
-		  CurrentLines.Sort
-		  
-		  Var BlacklistStream As TextOutputStream = TextOutputStream.Create(BlacklistFile)
-		  BlacklistStream.Write(String.FromArray(CurrentLines, EndOfLine))
-		  BlacklistStream.Close
-		  
 		  Var OutputFolder As FolderItem = ExtractorRoot.Child("Output")
 		  If Not OutputFolder.CheckIsFolder Then
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Could not create extraction output folder."))
@@ -513,7 +493,7 @@ Protected Class ModDiscoveryEngine2
 		  For Each Entry As DictionaryEntry In ModPackageNames
 		    Targets.Add("ShooterGame/Mods/" + Entry.Value.StringValue + "/")
 		  Next
-		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --badfile """ + BlacklistFile.NativePath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """"
+		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """"
 		  Var ExtractorShell As New Shell
 		  ExtractorShell.ExecuteMode = Shell.ExecuteModes.Interactive
 		  ExtractorShell.TimeOut = -1
@@ -1339,6 +1319,43 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanInventory(Entry.Key.StringValue)
 		    Next
 		  End If
+		  
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem_ItemTrait'") Then
+		    Var TraitAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalItem_ItemTrait'")
+		    For Each Entry As DictionaryEntry In TraitAssets
+		      Var TraitPath As String = Entry.Key.StringValue
+		      Var TraitOptions As Integer
+		      If Self.mScriptedObjectPaths.HasKey(TraitPath) = False Then
+		        TraitOptions = TraitOptions Or Self.ItemOptionLowConfidence
+		      End If
+		      Self.ScanItem(TraitPath, TraitOptions)
+		    Next
+		  End If
+		  
+		  If NativeParents.HasKey("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalSupplyCrateItemSet'") Then
+		    Var ItemSetAssets As Dictionary = NativeParents.Value("/Script/CoreUObject.Class'/Script/ShooterGame.PrimalSupplyCrateItemSet'")
+		    For Each Entry As DictionaryEntry In ItemSetAssets
+		      Var ItemSetPath As String = Self.NormalizePath(Entry.Key.StringValue)
+		      If Self.ShouldScanPath(ItemSetPath, True) = False Then
+		        Continue
+		      End If
+		      
+		      Var ItemSetProperties As JSONMBS = Self.PropertiesForPath(ItemSetPath)
+		      If ItemSetProperties Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var ItemPaths As JSONMBS = ItemSetProperties.Query("$.ItemSet.ItemEntries[*].Items[*].ObjectPath")
+		      For Idx As Integer = 0 To ItemPaths.LastRowIndex
+		        Var ItemPath As String = Self.NormalizePath(ItemPaths.ValueAt(Idx))
+		        Var ItemOptions As Integer
+		        If Self.mScriptedObjectPaths.HasKey(ItemPath) = False Then
+		          ItemOptions = ItemOptions Or Self.ItemOptionLowConfidence
+		        End If
+		        Self.ScanItem(ItemPath, ItemOptions)
+		      Next
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1467,6 +1484,15 @@ Protected Class ModDiscoveryEngine2
 		        Next
 		      Next
 		    End If
+		    
+		    #if false
+		      // Singletons - not useful yet
+		      Var Singletons As JSONMBS = AssetContainer.Query("$.ServerExtraWorldSingletonActorClasses[*].ObjectPath")
+		      For Idx As Integer = 0 To Singletons.LastRowIndex
+		        Var SingletonPath As String = Self.NormalizePath(Singletons.ValueAt(Idx))
+		        Break
+		      Next
+		    #endif
 		  Next
 		End Sub
 	#tag EndMethod
@@ -1793,6 +1819,9 @@ Protected Class ModDiscoveryEngine2
 		        End If
 		        
 		        Var Quantity As Integer = Requirement.Value("BaseResourceRequirement")
+		        If Quantity <= 0 Then
+		          Continue
+		        End If
 		        Var RequireExact As Boolean = Requirement.Value("bCraftingRequireExactResourceType")
 		        Var IngredientPath As String = Self.NormalizePath(Requirement.Child("ResourceItemType").Value("ObjectPath"))
 		        Var IngredientId As String = Self.CreateObjectId(IngredientPath)

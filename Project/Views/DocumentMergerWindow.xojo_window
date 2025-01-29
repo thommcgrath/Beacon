@@ -396,6 +396,7 @@ End
 		  Var MergeItems() As Beacon.DocumentMergeItem
 		  Var DesiredArkMask As UInt64
 		  Var UniqueContentPacks As New Dictionary
+		  Var AddedSinglePlayerItem As Boolean
 		  For Each SourceProject As Beacon.Project In SourceProjects
 		    // Config Groups
 		    Var Sets() As Beacon.ConfigSet = SourceProject.ConfigSets
@@ -420,6 +421,20 @@ End
 		    Case IsA ArkSA.Project
 		      Var ArkProject As ArkSA.Project = ArkSA.Project(SourceProject)
 		      DesiredArkMask = DesiredArkMask Or ArkProject.MapMask
+		      
+		      // Single player
+		      If AddedSinglePlayerItem = False Then
+		        Var SourceIsSingle As Boolean = SourceProject.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		        Var DestinationIsSingle As Boolean = DestinationProject.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		        
+		        If SourceIsSingle = True And DestinationIsSingle = False Then
+		          MergeItems.Add(New Beacon.DocumentMergeFlagItem("Enable Single Player Project", ArkSA.Project.FlagSinglePlayer, 0))
+		          AddedSinglePlayerItem = True
+		        ElseIf SourceIsSingle = False And DestinationIsSingle = True Then
+		          MergeItems.Add(New Beacon.DocumentMergeFlagItem("Disable Single Player Project", 0, ArkSA.Project.FlagSinglePlayer))
+		          AddedSinglePlayerItem = True
+		        End If
+		      End If
 		    End Select
 		    
 		    // Content Packs
@@ -964,6 +979,9 @@ End
 		        If (ProfileItem.TokenId.IsEmpty) = False Then
 		          Self.mDestination.ProviderTokenKey(ProfileItem.TokenId) = ProfileItem.TokenKey
 		        End If
+		      Case IsA Beacon.DocumentMergeFlagItem
+		        Self.mDestination.IsFlagged(Beacon.DocumentMergeFlagItem(MergeItem).FlagsToSet) = True
+		        Self.mDestination.IsFlagged(Beacon.DocumentMergeFlagItem(MergeItem).FlagsToRemove) = False
 		      End Select
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName)

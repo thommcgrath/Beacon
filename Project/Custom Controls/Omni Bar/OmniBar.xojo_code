@@ -643,13 +643,13 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Self.mMousePoint = New Point(X, Y)
 		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  
-		  If Self.mMouseDownIndex > -1 And Self.mItems(Self.mMouseDownIndex).IsResizer Then
+		  If Self.mMouseDownIndex >= Self.mItems.FirstIndex And Self.mMouseDownIndex <= Self.mItems.LastIndex And Self.mItems(Self.mMouseDownIndex).IsResizer Then
 		    RaiseEvent ResizeFinished(Self.mItems(Self.mMouseDownIndex))
 		  End If
 		  
 		  Var ReleasedOnPressedItem As Boolean = Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex
 		  If ReleasedOnPressedItem Then
-		    If Self.mMouseDownIndex > -1 And Self.mUsedLongAction = False And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
+		    If Self.mMouseDownIndex >= Self.mItems.FirstIndex And Self.mMouseDownIndex <= Self.mItems.LastIndex And Self.mUsedLongAction = False And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
 		      Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
 		      Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
 		      Var FirePressed As Boolean = True

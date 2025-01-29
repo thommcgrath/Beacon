@@ -6,6 +6,11 @@ use BeaconCommon, BeaconDatabase, BeaconUUID, Exception;
 trait MutableDatabaseObject {
 	protected $changedProperties = [];
 
+	// Called at the start of Create so that new objects can needed values
+	protected static function InitializeProperties(array &$properties): void {
+		// By default, do nothing
+	}
+
 	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
 		// By default, do nothing
 		return $value;
@@ -29,6 +34,7 @@ trait MutableDatabaseObject {
 	}
 
 	public static function Create(array $properties): DatabaseObject {
+		static::InitializeProperties($properties);
 		static::Validate($properties);
 
 		$schema = static::DatabaseSchema();

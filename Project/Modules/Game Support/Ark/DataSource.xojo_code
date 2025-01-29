@@ -2372,54 +2372,6 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub LoadDefaults(Container As Ark.MutableLootContainer)
-		  If Container Is Nil Then
-		    Return
-		  End If
-		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT min_item_sets, max_item_sets, prevent_duplicates, contents FROM loot_containers WHERE object_id = ?1;", Container.LootDropId)
-		  If Rows.RowCount = 0 Then
-		    Return
-		  End If
-		  
-		  Container.MinItemSets = Rows.Column("min_item_sets").IntegerValue
-		  Container.MaxItemSets = Rows.Column("max_item_sets").IntegerValue
-		  Container.PreventDuplicates = Rows.Column("prevent_duplicates").BooleanValue
-		  Container.ContentsString = Rows.Column("contents").StringValue
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub LoadDefaults(Override As Ark.MutableLootDropOverride)
-		  If Override Is Nil Then
-		    Return
-		  End If
-		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT min_item_sets, max_item_sets, prevent_duplicates, contents FROM loot_containers WHERE object_id = ?1;", Override.LootDropId)
-		  If Rows.RowCount = 0 Then
-		    Return
-		  End If
-		  
-		  Override.LoadDefaults(Rows.Column("min_item_sets").IntegerValue, Rows.Column("max_item_sets").IntegerValue, False, Rows.Column("prevent_duplicates").BooleanValue, Rows.Column("contents").StringValue)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub LoadDefaults(Override As Ark.MutableSpawnPointOverride)
-		  If Override Is Nil Then
-		    Return
-		  End If
-		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", Override.SpawnPointId)
-		  If Rows.RowCount = 0 Then
-		    Return
-		  End If
-		  
-		  Override.LoadDefaults(Rows.Column("sets").StringValue, Rows.Column("limits").StringValue)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function LoadIngredientsForEngram(Engram As Ark.Engram) As Ark.CraftingCostIngredient()
 		  Var Ingredients() As Ark.CraftingCostIngredient
 		  If (Engram Is Nil) = False Then
@@ -2741,6 +2693,10 @@ Inherits Beacon.DataSource
 		      Source.ContentPackName = Results.Column("content_pack_name").StringValue
 		      Source.TagString = Results.Column("tags").StringValue
 		      Source.IconID = Results.Column("icon").StringValue
+		      Source.MinItemSets = Results.Column("min_item_sets").IntegerValue
+		      Source.MaxItemSets = Results.Column("max_item_sets").IntegerValue
+		      Source.PreventDuplicates = Results.Column("prevent_duplicates").BooleanValue
+		      Source.ContentsString = Results.Column("contents").StringValue
 		      
 		      If Requirements.HasKey("min_item_sets") And IsNull(Requirements.Value("min_item_sets")) = False Then
 		        Source.RequiredItemSetCount = Requirements.Value("min_item_sets")
@@ -2774,6 +2730,8 @@ Inherits Beacon.DataSource
 		      Point.TagString = Results.Column("tags").StringValue
 		      Point.ContentPackId = Results.Column("content_pack_id").StringValue
 		      Point.ContentPackName = Results.Column("content_pack_name").StringValue
+		      Point.LimitsString = Results.Column("limits").StringValue
+		      Point.SetsString = Results.Column("sets").StringValue
 		      Point.Modified = False
 		      Self.mBlueprintCache.Value(SpawnPointId) = Point.ImmutableVersion
 		    End If
@@ -2938,8 +2896,8 @@ Inherits Beacon.DataSource
 		          Next
 		          Columns.Value("stats") = Beacon.GenerateJSON(StatDicts, False)
 		        Case IsA Ark.SpawnPoint
-		          Columns.Value("sets") = Ark.SpawnPoint(Blueprint).SetsString(False)
-		          Columns.Value("limits") = Ark.SpawnPoint(Blueprint).LimitsString(False)
+		          Columns.Value("sets") = Ark.SpawnPoint(Blueprint).SetsString()
+		          Columns.Value("limits") = Ark.SpawnPoint(Blueprint).LimitsString()
 		        Case IsA Ark.Engram
 		          Var Engram As Ark.Engram = Ark.Engram(Blueprint)
 		          Columns.Value("recipe") = Ark.CraftingCostIngredient.ToJSON(Engram.Recipe, False)
@@ -3155,13 +3113,13 @@ Inherits Beacon.DataSource
 	#tag Constant, Name = GameEventSelectSQL, Type = String, Dynamic = False, Default = \"SELECT events.event_id\x2C events.label\x2C events.ark_code\x2C events.colors\x2C events.rates\x2C events.engrams FROM events", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LootContainerSelectSQL, Type = String, Dynamic = False, Default = \"SELECT loot_containers.object_id\x2C loot_containers.path\x2C loot_containers.class_string\x2C loot_containers.label\x2C loot_containers.alternate_label\x2C loot_containers.availability\x2C loot_containers.last_update\x2C loot_containers.tags\x2C loot_containers.multiplier_min\x2C loot_containers.multiplier_max\x2C loot_containers.uicolor\x2C loot_containers.requirements\x2C loot_containers.sort_order\x2C loot_containers.experimental\x2C loot_containers.notes\x2C loot_containers.icon\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM loot_containers INNER JOIN content_packs ON (loot_containers.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
+	#tag Constant, Name = LootContainerSelectSQL, Type = String, Dynamic = False, Default = \"SELECT loot_containers.object_id\x2C loot_containers.path\x2C loot_containers.class_string\x2C loot_containers.label\x2C loot_containers.alternate_label\x2C loot_containers.availability\x2C loot_containers.last_update\x2C loot_containers.tags\x2C loot_containers.multiplier_min\x2C loot_containers.multiplier_max\x2C loot_containers.uicolor\x2C loot_containers.requirements\x2C loot_containers.sort_order\x2C loot_containers.experimental\x2C loot_containers.notes\x2C loot_containers.icon\x2C loot_containers.min_item_sets\x2C loot_containers.max_item_sets\x2C loot_containers.prevent_duplicates\x2C loot_containers.contents\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM loot_containers INNER JOIN content_packs ON (loot_containers.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_EngramsChanged, Type = String, Dynamic = False, Default = \"Engrams Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.last_update\x2C spawn_points.tags\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM spawn_points INNER JOIN content_packs ON (spawn_points.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
+	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.last_update\x2C spawn_points.tags\x2C spawn_points.sets\x2C spawn_points.limits\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM spawn_points INNER JOIN content_packs ON (spawn_points.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
 	#tag EndConstant
 
 

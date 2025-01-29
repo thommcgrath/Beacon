@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ArkSAConfigEditor ArkSAExperienceEditor
+Begin ArkSAConfigEditor ArkSAExperienceEditor Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -154,6 +154,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Hidden()
+		  NotificationKit.Ignore(Self, ArkSA.Project.Notification_SinglePlayerChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  Self.MinimumWidth = 710
 		  Self.MinimumHeight = 368
@@ -190,6 +196,17 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+		  #Pragma Unused UserData
+		  #Pragma Unused FireSetupUI
+		  
+		  NotificationKit.Watch(Self, ArkSA.Project.Notification_SinglePlayerChanged)
+		  
+		  Self.ReloadDefaults()
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As ArkSA.Configs.ExperienceCurves
@@ -204,15 +221,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadDefaultDinoXP()
-		  If Self.Config(False).DinoLevelCap > 1 And Not Self.ShowConfirm("Are you sure you want to replace the current experience values?", "Loading Ark's default dino experience will replace your current values. Would you like to continue?", "Load", "Cancel") Then
+		Private Sub LoadDefaultDinoXP(Force As Boolean = False)
+		  If Self.Config(False).DinoLevelCap > 1 And Force = False And Self.ShowConfirm("Are you sure you want to replace the current experience values?", "Loading Ark's default dino experience will replace your current values. Would you like to continue?", "Load", "Cancel") = False Then
 		    Return
 		  End If
 		  
-		  Var Config As ArkSA.Configs.ExperienceCurves = Self.Config(True)
-		  Config.DinoLevelCap = ArkSA.DataSource.Pool.Get(False).GetIntegerVariable("Dino Level Cap")
+		  Var LevelCapKey, ExperienceKey As String
+		  If Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer) Then
+		    LevelCapKey = "Dino Level Cap (Single)"
+		    ExperienceKey = "Dino Default Experience (Single)"
+		  Else
+		    LevelCapKey = "Dino Level Cap"
+		    ExperienceKey = "Dino Default Experience"
+		  End If
 		  
-		  Var TextList As String = ArkSA.DataSource.Pool.Get(False).GetStringVariable("Dino Default Experience")
+		  Var Config As ArkSA.Configs.ExperienceCurves = Self.Config(True)
+		  Config.DinoLevelCap = ArkSA.DataSource.Pool.Get(False).GetIntegerVariable(LevelCapKey)
+		  
+		  Var TextList As String = ArkSA.DataSource.Pool.Get(False).GetStringVariable(ExperienceKey)
 		  Var List() As String = TextList.Split(",")
 		  For I As Integer = 0 To List.LastIndex
 		    Config.DinoExperience(I) = UInt64.FromString(List(I))
@@ -224,15 +250,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadDefaultPlayerXP()
-		  If Self.Config(False).PlayerLevelCap > 1 And Not Self.ShowConfirm("Are you sure you want to replace the current experience values?", "Loading Ark's default player experience will replace your current values. Would you like to continue?", "Load", "Cancel") Then
+		Private Sub LoadDefaultPlayerXP(Force As Boolean = False)
+		  If Self.Config(False).PlayerLevelCap > 1 And Force = False And Self.ShowConfirm("Are you sure you want to replace the current experience values?", "Loading Ark's default player experience will replace your current values. Would you like to continue?", "Load", "Cancel") = False Then
 		    Return
 		  End If
 		  
 		  Var Config As ArkSA.Configs.ExperienceCurves = Self.Config(True)
 		  Config.PlayerLevelCap = 1
 		  
-		  Var LevelData As ArkSA.PlayerLevelData = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData
+		  Var LevelData As ArkSA.PlayerLevelData = ArkSA.DataSource.Pool.Get(False).OfficialPlayerLevelData(Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer))
 		  Config.PlayerLevelCap = LevelData.MaxLevel
 		  For Level As Integer = 2 To LevelData.MaxLevel
 		    Config.PlayerExperience(Level - 2) = LevelData.ExperienceForLevel(Level)
@@ -240,6 +266,33 @@ End
 		  
 		  Self.UpdateList()
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case ArkSA.Project.Notification_SinglePlayerChanged
+		    Var UserData As Dictionary = Notification.UserData
+		    If UserData.Value("ProjectId") = Self.Project.ProjectId Then
+		      Self.ReloadDefaults()
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ReloadDefaults()
+		  Var Config As ArkSA.Configs.ExperienceCurves = Self.Config(False)
+		  Var IsSinglePlayer As Boolean = Self.Project.IsFlagged(ArkSA.Project.FlagSinglePlayer)
+		  If Config.HasPlayerLevels And Config.MatchesPlayerDefault(Not IsSinglePlayer) Then
+		    Self.LoadDefaultPlayerXP(True)
+		  End If
+		  If Config.HasDinoLevels And Config.MatchesDinoDefault(Not IsSinglePlayer) Then
+		    Self.LoadDefaultDinoXP(True)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -263,7 +316,7 @@ End
 		    Return
 		  End If
 		  
-		  If ArkExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, ArkSA.Configs.ExperienceCurves.MaxSupportedXP) Then
+		  If ArkSAExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, ArkSA.Configs.ExperienceCurves.MaxSupportedXP) Then
 		    Config = Self.Config(True)
 		    If Self.ViewingPlayerStats Then
 		      Config.AppendPlayerExperience(LevelXP)
@@ -293,7 +346,7 @@ End
 		    MinXP = Config.DinoMaxExperience
 		  End If
 		  
-		  Var Levels() As UInt64 = ArkExperienceWizard.Present(Self, Level, MinXP)
+		  Var Levels() As UInt64 = ArkSAExperienceWizard.Present(Self, Level, MinXP)
 		  If Levels.LastIndex = -1 Then
 		    Return
 		  End If
@@ -333,7 +386,7 @@ End
 		    MaxXP = If(Index < CapIndex, Config.DinoExperience(Index + 1), CType(ArkSA.Configs.ExperienceCurves.MaxSupportedXP, UInt64))
 		  End If
 		  
-		  If ArkExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, MaxXP) Then
+		  If ArkSAExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, MaxXP) Then
 		    Config = Self.Config(True)
 		    If Self.ViewingPlayerStats Then
 		      Config.PlayerExperience(Index) = LevelXP
@@ -403,6 +456,13 @@ End
 		    Columns(Self.ColumnTime) = Beacon.SecondsToString(TekBedSeconds)
 		    
 		    Self.List.AddRow(Columns)
+		    Var RowIndex As Integer = Self.List.LastAddedRowIndex
+		    Self.List.CellTagAt(RowIndex, Self.ColumnLevel) = Level
+		    Self.List.CellTagAt(RowIndex, Self.ColumnLevelXP) = LevelXP
+		    Self.List.CellTagAt(RowIndex, Self.ColumnTotalXP) = TotalXP
+		    Self.List.CellTagAt(RowIndex, Self.ColumnAscension) = IsAscensionLevel
+		    Self.List.CellTagAt(RowIndex, Self.ColumnTime) = TekBedSeconds
+		    
 		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = SelectLevels.IndexOf(Level) > -1
 		  Next
 		  
@@ -633,6 +693,28 @@ End
 		  Self.Modified = NewConfig.Modified
 		  Self.UpdateList(AddedLevels)
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Var Value1, Value2 As UInt64
+		  Select Case Column
+		  Case Self.ColumnLevel, Self.ColumnLevelXP, Self.ColumnTotalXP, Self.ColumnTime
+		    Value1 = Me.CellTagAt(Row1, Column)
+		    Value2 = Me.CellTagAt(Row2, Column)
+		  Case Self.ColumnAscension
+		    Value1 = If(Me.CellTagAt(Row1, Column).BooleanValue, 1, 0)
+		    Value2 = If(Me.CellTagAt(Row2, Column).BooleanValue, 1, 0)
+		  End Select
+		  
+		  If Value1 > Value2 Then
+		    Result = 1
+		  ElseIf Value1 < Value2 Then
+		    Result = -1
+		  Else
+		    Result = 0
+		  End If
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar

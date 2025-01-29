@@ -121,7 +121,7 @@ Begin PalworldServerViewContainer PalworldLocalServerView
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "PalWorldSettings.ini File:"
+         Text            =   "PalWorldSettings.ini:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -171,7 +171,7 @@ Begin PalworldServerViewContainer PalworldLocalServerView
          Underline       =   False
          ValidationMask  =   ""
          Visible         =   True
-         Width           =   274
+         Width           =   172
       End
       Begin UITweaks.ResizedPushButton SettingsIniChooseButton
          AllowAutoDeactivate=   True
@@ -187,7 +187,7 @@ Begin PalworldServerViewContainer PalworldLocalServerView
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   490
+         Left            =   388
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -236,6 +236,38 @@ Begin PalworldServerViewContainer PalworldLocalServerView
          Visible         =   True
          Width           =   600
       End
+      Begin UITweaks.ResizedPushButton SettingsIniClearButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Clear"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   490
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   62
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
    End
    Begin OmniBar ControlToolbar
       Alignment       =   0
@@ -276,6 +308,24 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Opening()
+		  BeaconUI.SizeToFit(Self.SettingsIniPathLabel)
+		  BeaconUI.SizeToFit(Self.SettingsIniChooseButton)
+		  BeaconUI.SizeToFit(Self.SettingsIniClearButton)
+		  
+		  Self.SizeUI()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
@@ -292,6 +342,7 @@ End
 		    End Try
 		  End If
 		  
+		  Self.SizeUI()
 		  Self.SettingsView.RefreshUI()
 		End Sub
 	#tag EndEvent
@@ -314,6 +365,23 @@ End
 		  
 		  Return "Unknown"
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SizeUI()
+		  Self.SettingsIniPathField.Left = Self.SettingsIniPathLabel.Right + 12
+		  
+		  Self.SettingsIniClearButton.Visible = Self.SettingsIniPathField.Text.IsEmpty = False
+		  
+		  If Self.SettingsIniClearButton.Visible Then
+		    Self.SettingsIniClearButton.Left = Self.Width - (20 + Self.SettingsIniClearButton.Width)
+		    Self.SettingsIniChooseButton.Left = Self.SettingsIniClearButton.Left - (12 + Self.SettingsIniChooseButton.Width)
+		  Else
+		    Self.SettingsIniChooseButton.Left = Self.Width - (20 + Self.SettingsIniChooseButton.Width)
+		  End If
+		  
+		  Self.SettingsIniPathField.Width = Self.SettingsIniChooseButton.Left - (12 + Self.SettingsIniPathField.Left)
+		End Sub
 	#tag EndMethod
 
 
@@ -355,12 +423,10 @@ End
 		  
 		  Var Bookmark As New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
 		  Self.Profile.SettingsIniPath = Bookmark.SaveInfo()
-		  If Self.Profile.SecondaryName.IsEmpty Then
-		    Self.Profile.SecondaryName = File.PartialPath
-		  End If
-		  
+		  Self.Profile.SecondaryName = File.PartialPath
 		  Self.SettingsIniPathField.Text = File.NativePath
 		  Self.Modified = Self.Profile.Modified
+		  Self.SizeUI()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -379,6 +445,17 @@ End
 		Function GetProject() As Palworld.Project
 		  Return Self.Project
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events SettingsIniClearButton
+	#tag Event
+		Sub Pressed()
+		  Self.Profile.SettingsIniPath = ""
+		  Self.Profile.SecondaryName = ""
+		  Self.SettingsIniPathField.Text = ""
+		  Self.Modified = Self.Profile.Modified
+		  Self.SizeUI()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ControlToolbar

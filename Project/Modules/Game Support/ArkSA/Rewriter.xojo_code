@@ -15,7 +15,7 @@ Inherits Global.Thread
 		  Var LegacyTrustKey As String = Self.mProject.LegacyTrustKey
 		  
 		  Var Format As EncodingFormat = EncodingFormat.ASCII
-		  If Self.mProject.AllowUCS2 Then
+		  If Self.mProject.IsFlagged(ArkSA.Project.FlagAllowUCS2) Then
 		    Format = EncodingFormat.UCS2AndASCII
 		  End If
 		  
@@ -542,6 +542,7 @@ Inherits Global.Thread
 		    
 		    // Remove excess junk that sneaks in from who knows where.
 		    FinalOrganizer.Remove(ArkSA.ConfigFileGameUserSettings, "/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C")
+		    FinalOrganizer.Remove(ArkSA.ConfigFileGame, "ShooterGameMode_TEMPOverrides")
 		    
 		    Return ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
 		  Catch Err As RuntimeException

@@ -128,7 +128,7 @@ Inherits ControlCanvas
 		  Var Changed As Boolean = NewHash <> InitialHash
 		  
 		  If Changed Then
-		    If Thread.Current = Nil Then
+		    If Thread.Current Is Nil Then
 		      RaiseEvent TagsChanged
 		      Self.Refresh
 		    Else
@@ -195,7 +195,7 @@ Inherits ControlCanvas
 		  Var Changed As Boolean = NewHash <> InitialHash
 		  
 		  If Changed Then
-		    If Thread.Current = Nil Then
+		    If Thread.Current Is Nil Then
 		      RaiseEvent TagsChanged
 		      Self.Refresh
 		    Else
@@ -224,7 +224,7 @@ Inherits ControlCanvas
 		  Var Changed As Boolean = NewHash <> InitialHash
 		  
 		  If Changed Then
-		    If Thread.Current = Nil Then
+		    If Thread.Current Is Nil Then
 		      RaiseEvent TagsChanged
 		      Self.Refresh
 		    Else
@@ -338,7 +338,7 @@ Inherits ControlCanvas
 		  Var Changed As Boolean = NewHash <> InitialHash
 		  
 		  If Changed Then
-		    If Thread.Current = Nil Then
+		    If Thread.Current Is Nil Then
 		      RaiseEvent TagsChanged
 		      Self.Refresh
 		    Else
@@ -496,7 +496,7 @@ Inherits ControlCanvas
 		    Next
 		    
 		    If FireChangeEvent Then
-		      If Thread.Current = Nil Then
+		      If Thread.Current Is Nil Then
 		        RaiseEvent TagsChanged
 		      Else
 		        Call CallLater.Schedule(0, AddressOf TriggerChange)
@@ -619,11 +619,24 @@ Inherits ControlCanvas
 		#tag Setter
 			Set
 			  If Value Is Nil Then
-			    Self.mSpec = New Beacon.TagSpec
+			    Var NilValue As New Beacon.TagSpec
+			    If Self.mSpec.Fingerprint = NilValue.Fingerprint Then
+			      Return
+			    End If
+			    Self.mSpec = NilValue
 			  Else
+			    If Self.mSpec.Fingerprint = Value.Fingerprint Then
+			      Return
+			    End If
 			    Self.mSpec = New Beacon.TagSpec(Value)
 			  End If
-			  Self.Refresh
+			  
+			  If Thread.Current Is Nil Then
+			    RaiseEvent TagsChanged
+			    Self.Refresh
+			  Else
+			    Call CallLater.Schedule(0, AddressOf TriggerChange)
+			  End If
 			End Set
 		#tag EndSetter
 		Spec As Beacon.TagSpec
@@ -859,14 +872,6 @@ Inherits ControlCanvas
 			InitialValue="15"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Spec"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RequireTagCaption"

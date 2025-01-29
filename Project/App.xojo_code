@@ -249,6 +249,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  #endif
 		  
+		  Conversions.Init
+		  
+		  #if DebugBuild And TargetMacOS
+		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_DebugWait)
+		  #endif
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckBetaExpiration)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupLogs)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
@@ -319,7 +324,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents(False) Is Nil) = False Then
 		    Self.mMainWindow.Documents(False).NewProject()
 		  End If
 		  Return True
@@ -328,7 +333,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Templates(False) Is Nil) = False Then
 		    Self.mMainWindow.Templates.NewTemplate
 		  End If
 		  Return True
@@ -459,7 +464,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function NewProjectForGameShowGamePicker() As Boolean Handles NewProjectForGameShowGamePicker.Action
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents(False) Is Nil) = False Then
 		    Self.mMainWindow.Documents(False).NewProject("")
 		  End If
 		  Return True
@@ -736,6 +741,55 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function HandleRunTrigger(URL As String) As Boolean
+		  Const Success = True
+		  Const Failed = False
+		  
+		  Var SaveInfo As String = URL.Middle(4)
+		  Var QueryPos As Integer = SaveInfo.IndexOf("?")
+		  Var QueryString As String
+		  If QueryPos > -1 Then
+		    QueryString = SaveInfo.Middle(QueryPos + 1)
+		    SaveInfo = SaveInfo.Left(QueryPos)
+		  End If
+		  Try
+		    SaveInfo = Beacon.Decompress(DecodeBase64URL(SaveInfo))
+		  Catch Err As RuntimeException
+		    Self.Log(Err, CurrentMethodName, "Decoding deploy saveinfo")
+		    Return Failed
+		  End Try
+		  
+		  Var Action As Beacon.ScriptAction = Beacon.ScriptAction.FromQueryString(QueryString)
+		  If Action Is Nil Then
+		    Return Failed
+		  End If
+		  
+		  Var Actions(0) As Beacon.ScriptAction
+		  Actions(0) = Action
+		  
+		  Try
+		    Var ProjectUrl As New Beacon.ProjectUrl(SaveInfo)
+		    Self.mMainWindow.Documents.OpenProject(ProjectUrl, Actions)
+		    Return Success
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Var File As BookmarkedFolderItem
+		  Try
+		    File = BookmarkedFolderItem.FromSaveInfo(SaveInfo)
+		  Catch Err As RuntimeException
+		    Self.Log(Err, CurrentMethodName, "Decoding save info")
+		  End Try
+		  If (File Is Nil) = False And File.Exists Then
+		    Self.mMainWindow.Documents.OpenProject(File, Actions)
+		    Return Success
+		  End If
+		  
+		  Return Failed
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function HandleURL(URL As String, AlreadyConfirmed As Boolean = False) As Boolean
 		  If Self.mMainWindow Is Nil Then
@@ -860,38 +914,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      FrontmostView.SwitchToEditor(ConfigName)
 		    End If
 		  ElseIf URL.Left(4) = "run/" Then
-		    Var SaveInfo As String = URL.Middle(4)
-		    Var QueryPos As Integer = SaveInfo.IndexOf("?")
-		    Var QueryString As String
-		    If QueryPos > -1 Then
-		      QueryString = SaveInfo.Middle(QueryPos + 1)
-		      SaveInfo = SaveInfo.Left(QueryPos)
-		    End If
-		    Try
-		      SaveInfo = Beacon.Decompress(DecodeBase64URL(SaveInfo))
-		    Catch Err As RuntimeException
-		      Self.Log(Err, CurrentMethodName, "Decoding deploy saveinfo")
+		    If Self.HandleRunTrigger(URL) = False Then
+		      // Return true because we handled it, but since it errored, we don't show the main window.
 		      Return True
-		    End Try
-		    
-		    Var Action As Beacon.ScriptAction = Beacon.ScriptAction.FromQueryString(QueryString)
-		    If (Action Is Nil) = False Then
-		      Var Actions(0) As Beacon.ScriptAction
-		      Actions(0) = Action
-		      
-		      If SaveInfo.BeginsWith(Beacon.ProjectURL.TypeCloud + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeLocal + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeWeb + "://") Then
-		        Self.mMainWindow.Documents.OpenProject(SaveInfo, Actions)
-		      Else
-		        Var File As BookmarkedFolderItem
-		        Try
-		          File = BookmarkedFolderItem.FromSaveInfo(SaveInfo)
-		        Catch Err As RuntimeException
-		          Self.Log(Err, CurrentMethodName, "Decoding save info")
-		        End Try
-		        If (File Is Nil) = False And File.Exists Then
-		          Self.mMainWindow.Documents.OpenProject(File, Actions)
-		        End If
-		      End If
 		    End If
 		  Else
 		    Var LegacyURL As String = "thezaz.com/beacon/documents.php/"
@@ -1043,6 +1068,20 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Sub LaunchQueue_CleanupConfigBackups()
 		  Beacon.CleanupConfigBackups()
 		  Self.NextLaunchQueueTask
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_DebugWait()
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Var Primer As New URLConnection
+		    Call Primer.SendSync("GET", "https://local-api.usebeacon.app/")
+		    Self.NextLaunchQueueTask()
+		  Catch Err As RuntimeException
+		    Call CallLater.Schedule(1000, AddressOf NextLaunchQueueTask)
+		  End Try
+		  #Pragma BreakOnExceptions Default
 		End Sub
 	#tag EndMethod
 
@@ -1312,7 +1351,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Function mGameMenu_MenuItemSelected(Sender As DesktopMenuItem) As Boolean
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents(False) Is Nil) = False Then
 		    Self.mMainWindow.Documents(False).NewProject(Sender.Tag.StringValue)
 		  End If
 		  Return True
@@ -1359,7 +1398,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Function mOpenRecent_OpenFile(Sender As DesktopMenuItem) As Boolean
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents(False) Is Nil) = False Then
 		    Var Project As Beacon.ProjectURL = Sender.Tag
 		    Self.mMainWindow.Documents.OpenProject(Project)
 		    Return True
@@ -1415,6 +1454,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Self.mHasTestedDatabases = True
 		    End If
 		  Case IdentityManager.Notification_IdentityChanged
+		    Var OldUserId As String = Dictionary(Notification.UserData).Value("oldUserId")
+		    Var NewUserId As String = Dictionary(Notification.UserData).Value("newUserId")
+		    If OldUserId = NewUserId Then
+		      // No need to reconnect
+		      Return
+		    End If
+		    
 		    If (Self.mPusher Is Nil) = False Then
 		      Self.mPusher.Stop
 		      Self.mPusher = Nil
@@ -1424,7 +1470,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    If (Self.mIdentityManager Is Nil) = False Then
 		      Var UserId As String = Self.mIdentityManager.CurrentUserId
 		      If UserId.IsEmpty = False Then
-		        Self.mPusher.Start()
+		        Self.mPusher.Start(True)
 		        Self.SubscribeToPusherPublic()
 		        Var UserChannelName As String = Beacon.PusherSocket.UserChannelName(UserId)
 		        Self.mPusher.Listen(UserChannelName, "user-updated", AddressOf Pusher_UserUpdated)
@@ -1487,8 +1533,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  If File.ExtensionMatches(Beacon.FileExtensionINI) Or File.ExtensionMatches(Beacon.FileExtensionXml) Then
-		    Self.mMainWindow.BringToFront()
-		    Self.mMainWindow.Documents.ImportFile(File)
+		    BeaconUI.ShowAlert("Create a new project to import this type of file.", "Create a new project for the desired game, then use the Import button in the project's toolbar.")
 		    Return
 		  End If
 		  
