@@ -540,12 +540,6 @@ Protected Class ServerProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function SupportsCustomStopMessage() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event ReadFromDictionary(Dict As Dictionary, Version As Integer)
