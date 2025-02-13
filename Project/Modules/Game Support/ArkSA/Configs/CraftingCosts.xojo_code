@@ -73,7 +73,7 @@ Implements Beacon.BlueprintConsumer
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  If SaveData.HasKey("Costs") Then
@@ -89,7 +89,7 @@ Implements Beacon.BlueprintConsumer
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  Var Costs() As Dictionary

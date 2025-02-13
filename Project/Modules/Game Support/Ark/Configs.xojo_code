@@ -158,58 +158,6 @@ Protected Module Configs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary, EncryptedData As Dictionary) As Ark.ConfigGroup
-		  If EncryptedData Is Nil Then
-		    If SaveData.HasAllKeys("Plain", "Encrypted") Then
-		      EncryptedData = SaveData.Value("Encrypted")
-		      SaveData = SaveData.Value("Plain")
-		    Else
-		      EncryptedData = New Dictionary
-		    End If
-		  End If
-		  
-		  Select Case InternalName
-		  Case NameBreedingMultipliers
-		    Return New Ark.Configs.BreedingMultipliers(SaveData, EncryptedData)
-		  Case NameCraftingCosts
-		    Return New Ark.Configs.CraftingCosts(SaveData, EncryptedData)
-		  Case NameCustomConfig
-		    Return New Ark.Configs.CustomContent(SaveData, EncryptedData)
-		  Case NameDayCycle
-		    Return New Ark.Configs.DayCycle(SaveData, EncryptedData)
-		  Case NameDifficulty
-		    Return New Ark.Configs.Difficulty(SaveData, EncryptedData)
-		  Case NameCreatureAdjustments
-		    Return New Ark.Configs.DinoAdjustments(SaveData, EncryptedData)
-		  Case NameEngramControl
-		    Return New Ark.Configs.EngramControl(SaveData, EncryptedData)
-		  Case NameLevelsAndXP
-		    Return New Ark.Configs.ExperienceCurves(SaveData, EncryptedData)
-		  Case NameHarvestRates
-		    Return New Ark.Configs.HarvestRates(SaveData, EncryptedData)
-		  Case NameLootDrops
-		    Return New Ark.Configs.LootDrops(SaveData, EncryptedData)
-		  Case NameCreatureSpawns
-		    Return New Ark.Configs.SpawnPoints(SaveData, EncryptedData)
-		  Case NameStackSizes
-		    Return New Ark.Configs.StackSizes(SaveData, EncryptedData)
-		  Case NameStatLimits
-		    Return New Ark.Configs.StatLimits(SaveData, EncryptedData)
-		  Case NameStatMultipliers
-		    Return New Ark.Configs.StatMultipliers(SaveData, EncryptedData)
-		  Case NameDecayAndSpoil
-		    Return New Ark.Configs.SpoilTimers(SaveData, EncryptedData)
-		  Case NameGeneralSettings
-		    Return New Ark.Configs.OtherSettings(SaveData, EncryptedData)
-		  Else
-		    Var Err As New FunctionNotFoundException
-		    Err.Message = "Config group """ + InternalName + """ is not known."
-		    Raise Err
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function CreateInstance(InternalName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, Project As Ark.Project) As Ark.ConfigGroup
 		  // Why not just pass the project itself to these methods? Because we don't want it to be possible
 		  // for the creation of an instance to modify the project. MapMask and ContentPacks are immutable,
@@ -250,6 +198,58 @@ Protected Module Configs
 		    Return Ark.Configs.SpoilTimers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameGeneralSettings
 		    Return Ark.Configs.OtherSettings.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Else
+		    Var Err As New FunctionNotFoundException
+		    Err.Message = "Config group """ + InternalName + """ is not known."
+		    Raise Err
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function CreateInstance(InternalName As String, SaveData As JSONItem, EncryptedData As JSONItem) As Ark.ConfigGroup
+		  If EncryptedData Is Nil Then
+		    If SaveData.HasAllKeys("Plain", "Encrypted") Then
+		      EncryptedData = SaveData.Child("Encrypted")
+		      SaveData = SaveData.Child("Plain")
+		    Else
+		      EncryptedData = New JSONItem
+		    End If
+		  End If
+		  
+		  Select Case InternalName
+		  Case NameBreedingMultipliers
+		    Return New Ark.Configs.BreedingMultipliers(SaveData, EncryptedData)
+		  Case NameCraftingCosts
+		    Return New Ark.Configs.CraftingCosts(SaveData, EncryptedData)
+		  Case NameCustomConfig
+		    Return New Ark.Configs.CustomContent(SaveData, EncryptedData)
+		  Case NameDayCycle
+		    Return New Ark.Configs.DayCycle(SaveData, EncryptedData)
+		  Case NameDifficulty
+		    Return New Ark.Configs.Difficulty(SaveData, EncryptedData)
+		  Case NameCreatureAdjustments
+		    Return New Ark.Configs.DinoAdjustments(SaveData, EncryptedData)
+		  Case NameEngramControl
+		    Return New Ark.Configs.EngramControl(SaveData, EncryptedData)
+		  Case NameLevelsAndXP
+		    Return New Ark.Configs.ExperienceCurves(SaveData, EncryptedData)
+		  Case NameHarvestRates
+		    Return New Ark.Configs.HarvestRates(SaveData, EncryptedData)
+		  Case NameLootDrops
+		    Return New Ark.Configs.LootDrops(SaveData, EncryptedData)
+		  Case NameCreatureSpawns
+		    Return New Ark.Configs.SpawnPoints(SaveData, EncryptedData)
+		  Case NameStackSizes
+		    Return New Ark.Configs.StackSizes(SaveData, EncryptedData)
+		  Case NameStatLimits
+		    Return New Ark.Configs.StatLimits(SaveData, EncryptedData)
+		  Case NameStatMultipliers
+		    Return New Ark.Configs.StatMultipliers(SaveData, EncryptedData)
+		  Case NameDecayAndSpoil
+		    Return New Ark.Configs.SpoilTimers(SaveData, EncryptedData)
+		  Case NameGeneralSettings
+		    Return New Ark.Configs.OtherSettings(SaveData, EncryptedData)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."

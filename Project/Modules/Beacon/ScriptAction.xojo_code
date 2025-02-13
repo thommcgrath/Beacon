@@ -15,9 +15,9 @@ Protected Class ScriptAction
 
 	#tag Method, Flags = &h0
 		Shared Function FromJSON(Source As String) As Beacon.ScriptAction
-		  Var Params As Dictionary
+		  Var Params As JSONItem
 		  Try
-		    Params = Beacon.ParseJSON(Source)
+		    Params = New JSONItem(Source)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
@@ -40,7 +40,7 @@ Protected Class ScriptAction
 		  End If
 		  
 		  Var Action As New Beacon.ScriptAction
-		  Action.mParams = Params
+		  Action.mParams = New JSONItem(Params)
 		  Return Action
 		End Function
 	#tag EndMethod
@@ -53,10 +53,7 @@ Protected Class ScriptAction
 
 	#tag Method, Flags = &h0
 		Function Keys() As String()
-		  Var Arr() As String
-		  For Each Entry As DictionaryEntry In Self.mParams
-		    Arr.Add(Entry.Key.StringValue)
-		  Next
+		  Var Arr() As String = Self.mParams.Keys
 		  Arr.Sort
 		  Return Arr
 		End Function
@@ -115,7 +112,7 @@ Protected Class ScriptAction
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mParams As Dictionary
+		Private mParams As JSONItem
 	#tag EndProperty
 
 

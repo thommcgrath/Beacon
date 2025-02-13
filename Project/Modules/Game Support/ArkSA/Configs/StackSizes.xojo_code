@@ -88,40 +88,44 @@ Implements Beacon.BlueprintConsumer
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  Self.mGlobalMultiplier = SaveData.DoubleValue("Global", 1.0)
 		  
-		  If SaveData.HasKey("Sizes") Then
-		    Var Overrides As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(SaveData.Value("Sizes"))
+		  If SaveData.HasChild("Sizes") Then
+		    Var Overrides As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(SaveData.Child("Sizes"))
 		    If (Overrides Is Nil) = False Then
 		      Self.mOverrides = Overrides
 		    End If
-		  ElseIf SaveData.HasKey("Rates") Then
-		    Var Rates As Dictionary = SaveData.DictionaryValue("Rates", New Dictionary)
-		    For Each Entry As DictionaryEntry In Rates
-		      Try
-		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", Entry.Key, "", Nil, True)
-		        Self.mOverrides.Value(Engram, "Stack Size") = Entry.Value.UInt64Value
-		      Catch Err As RuntimeException
-		      End Try
-		    Next
+		  ElseIf SaveData.HasChild("Rates") Then
+		    Var Rates As JSONItem = SaveData.Child("Rates")
+		    If (Rates Is Nil) = False Then
+		      For Each Entry As JSONEntry In Rates.Iterator
+		        Try
+		          Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", Entry.Key, "", Nil, True)
+		          Self.mOverrides.Value(Engram, "Stack Size") = Entry.Value.UInt64Value
+		        Catch Err As RuntimeException
+		        End Try
+		      Next
+		    End If
 		  Else
-		    Var Rates As Dictionary = SaveData.DictionaryValue("Overrides", New Dictionary)
-		    For Each Entry As DictionaryEntry In Rates
-		      Try
-		        Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", Entry.Key, Nil, True)
-		        Self.mOverrides.Value(Engram, "Stack Size") = Entry.Value.UInt64Value
-		      Catch Err As RuntimeException
-		      End Try
-		    Next
+		    Var Rates As JSONItem = SaveData.Child("Overrides")
+		    If (Rates Is Nil) = False Then
+		      For Each Entry As JSONEntry In Rates.Iterator
+		        Try
+		          Var Engram As ArkSA.Engram = ArkSA.ResolveEngram("", "", Entry.Key, Nil, True)
+		          Self.mOverrides.Value(Engram, "Stack Size") = Entry.Value.UInt64Value
+		        Catch Err As RuntimeException
+		        End Try
+		      Next
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  SaveData.Value("Global") = Self.mGlobalMultiplier

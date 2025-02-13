@@ -167,10 +167,9 @@ Inherits Global.Thread
 		    
 		    Var PendingMessage As JSONItem = RaiseEvent GetNextPendingMessage()
 		    If (PendingMessage Is Nil) = False Then
-		      PendingMessage.Compact = True
-		      Call Curl.WebSocketSend(PendingMessage.ToString, 0, 1)
+		      Call Curl.WebSocketSend(PendingMessage.ToString(False), 0, 1)
 		      #if DebugBuild
-		        System.DebugLog("Sent " + PendingMessage.ToString)
+		        System.DebugLog("Sent " + PendingMessage.ToString(True))
 		      #endif
 		    End If
 		    
@@ -264,7 +263,7 @@ Inherits Global.Thread
 		          EventDict.Value("Event") = EventName
 		          EventDict.Value("Channel") = ChannelName
 		          If (Data Is Nil) = False Then
-		            EventDict.Value("Payload") = Data.ToString
+		            EventDict.Value("Payload") = Data.ToString(False)
 		          Else
 		            EventDict.Value("Payload") = Nil
 		          End If
@@ -413,6 +412,18 @@ Inherits Global.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true

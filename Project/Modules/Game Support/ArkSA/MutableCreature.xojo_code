@@ -301,16 +301,17 @@ Implements ArkSA.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Unpack(Dict As Dictionary)
-		  Self.mIncubationTime = Dict.FirstValue("incubationTime", "incubation_time", 0)
-		  Self.mMatureTime = Dict.FirstValue("matureTime", "mature_time", 0)
-		  Self.mStatsMask = Dict.FirstValue("usedStats", "used_stats", 0)
+		Sub Unpack(Dict As JSONItem)
+		  Self.mIncubationTime = Dict.FirstValue(0, "incubationTime", "incubation_time")
+		  Self.mMatureTime = Dict.FirstValue(0, "matureTime", "mature_time")
+		  Self.mStatsMask = Dict.FirstValue(0, "usedStats", "used_stats")
 		  
-		  If Dict.HasKey("stats") And IsNull(Dict.Value("stats")) = False Then
-		    Var Stats() As Dictionary = Dict.Value("stats").DictionaryArrayValue
+		  If Dict.HasChild("stats") Then
+		    Var Stats As JSONItem = Dict.Child("stats")
 		    
 		    Self.mStats = New Dictionary
-		    For Each StatInfo As Dictionary In Stats
+		    For Each StatEntry As JSONEntry In Stats.Iterator
+		      Var StatInfo As JSONItem = StatEntry.Value
 		      Var StatIndex As Integer
 		      Var Base, PerLevelWild, PerLevelTamed, Add, Affinity As Double
 		      

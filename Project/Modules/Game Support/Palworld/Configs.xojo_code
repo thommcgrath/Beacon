@@ -109,7 +109,26 @@ Protected Module Configs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary, EncryptedData As Dictionary) As Palworld.ConfigGroup
+		Protected Function CreateInstance(InternalName As String, ParsedData As Dictionary, Project As Palworld.Project) As Palworld.ConfigGroup
+		  // Why not just pass the project itself to these methods? Because we don't want it to be possible
+		  // for the creation of an instance to modify the project. MapMask and ContentPacks are immutable,
+		  // but the difficulty object is not, so we'll pass the raw value instead.
+		  
+		  Select Case InternalName
+		  Case Palworld.Configs.NameCustomConfig
+		    Return Nil
+		  Case Palworld.Configs.NameGeneralSettings
+		    Return Palworld.Configs.OtherSettings.FromImport(ParsedData, Project.ContentPacks)
+		  Else
+		    Var Err As New FunctionNotFoundException
+		    Err.Message = "Config group """ + InternalName + """ is not known."
+		    Raise Err
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function CreateInstance(InternalName As String, SaveData As JSONItem, EncryptedData As JSONItem) As Palworld.ConfigGroup
 		  If EncryptedData Is Nil Then
 		    If SaveData.HasAllKeys("Plain", "Encrypted") Then
 		      EncryptedData = SaveData.Value("Encrypted")
@@ -124,25 +143,6 @@ Protected Module Configs
 		    Return New Palworld.Configs.CustomContent(SaveData, EncryptedData)
 		  Case NameGeneralSettings
 		    Return New Palworld.Configs.OtherSettings(SaveData, EncryptedData)
-		  Else
-		    Var Err As New FunctionNotFoundException
-		    Err.Message = "Config group """ + InternalName + """ is not known."
-		    Raise Err
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, ParsedData As Dictionary, Project As Palworld.Project) As Palworld.ConfigGroup
-		  // Why not just pass the project itself to these methods? Because we don't want it to be possible
-		  // for the creation of an instance to modify the project. MapMask and ContentPacks are immutable,
-		  // but the difficulty object is not, so we'll pass the raw value instead.
-		  
-		  Select Case InternalName
-		  Case Palworld.Configs.NameCustomConfig
-		    Return Nil
-		  Case Palworld.Configs.NameGeneralSettings
-		    Return Palworld.Configs.OtherSettings.FromImport(ParsedData, Project.ContentPacks)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."

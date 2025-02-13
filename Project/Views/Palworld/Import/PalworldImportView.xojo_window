@@ -719,21 +719,15 @@ End
 		      End Select
 		      
 		      Try
-		        Var SaveData As Dictionary = Group.SaveData
+		        Var SaveData As JSONItem = Group.SaveData
 		        If SaveData Is Nil Then
 		          Continue
 		        End If
 		        
-		        Var EncryptedData As Dictionary
+		        Var EncryptedData As JSONItem
 		        If SaveData.HasAllKeys("Plain", "Encrypted") Then
-		          EncryptedData = SaveData.Value("Encrypted")
-		          SaveData = SaveData.Value("Plain")
-		        End If
-		        
-		        // JSONify the data
-		        SaveData = Beacon.ParseJSON(Beacon.GenerateJSON(SaveData, False))
-		        If (EncryptedData Is Nil) = False Then
-		          EncryptedData = Beacon.ParseJSON(Beacon.GenerateJSON(SaveData, False))
+		          EncryptedData = SaveData.Child("Encrypted")
+		          SaveData = SaveData.Child("Plain")
 		        End If
 		        
 		        Var NewGroup As Palworld.ConfigGroup = Palworld.Configs.CreateInstance(GroupName, SaveData, EncryptedData)

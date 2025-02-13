@@ -114,7 +114,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As ArkSA.CraftingCost
-		  Var ReferenceDict As Dictionary = Dict.FirstValue("engram", "blueprint", "Blueprint", Nil)
+		  Var ReferenceDict As Dictionary = Dict.FirstValue(Nil, "engram", "blueprint", "Blueprint")
 		  Var Reference As ArkSA.BlueprintReference
 		  If (ReferenceDict Is Nil) = False Then
 		    Try
@@ -123,7 +123,7 @@ Implements Beacon.NamedItem
 		    End Try
 		  End If
 		  If Reference Is Nil Then
-		    Var BlueprintId As String = Dict.FirstValue("engramId", "EngramID", "Engram", "")
+		    Var BlueprintId As String = Dict.FirstValue("", "engramId", "EngramID", "Engram")
 		    If BlueprintId.IsEmpty = False Then
 		      If Beacon.UUID.Validate(BlueprintId) Then
 		        Reference = New ArkSA.BlueprintReference(ArkSA.BlueprintReference.KindEngram, BlueprintId, "", "", "", "", "")
@@ -136,7 +136,7 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  Var Cost As New ArkSA.CraftingCost(Reference)
-		  Var Ingredients As Variant = Dict.FirstValue("ingredients", "Ingredients", "Resources", Nil)
+		  Var Ingredients As Variant = Dict.FirstValue(Nil, "ingredients", "Ingredients", "Resources")
 		  If Ingredients.IsNull Or Ingredients.IsArray = False Then
 		    Return Cost
 		  End If

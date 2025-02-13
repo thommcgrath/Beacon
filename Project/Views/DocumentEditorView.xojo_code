@@ -160,7 +160,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  Try
 		    AutosaveFile.Remove
 		  Catch Err As IOException
-		    App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString + ")")
+		    App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString(Locale.Raw, "0") + ")")
 		    
 		    Try
 		      Var Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
@@ -170,7 +170,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		      Destination = Destination.Child(Beacon.UUID.v4.StringValue + ".beacon")
 		      AutosaveFile.MoveTo(Destination)
 		    Catch DeeperError As RuntimeException
-		      App.Log("And unable to move the file to system temp for cleanup later: " + DeeperError.Message + " (code: " + DeeperError.ErrorNumber.ToString + ")")
+		      App.Log("And unable to move the file to system temp for cleanup later: " + DeeperError.Message + " (code: " + DeeperError.ErrorNumber.ToString(Locale.Raw, "0") + ")")
 		    End Try
 		  End Try
 		End Sub

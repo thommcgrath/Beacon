@@ -586,8 +586,8 @@ End
 		    Var Member As New Beacon.ProjectMember(Identity, Role)
 		    Call Member.SetPassword(Self.mProject.Password)
 		    
-		    Var MemberInfo As Dictionary = Member.DictionaryValue
-		    BeaconAPI.Send(New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members/" + EncodeURLComponent(Member.UserId), "PUT", Beacon.GenerateJson(MemberInfo, False), "application/json", AddressOf APICallback_AddUser))
+		    Var MemberInfo As JSONItem = Member.JSONValue
+		    BeaconAPI.Send(New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members/" + EncodeURLComponent(Member.UserId), "PUT", MemberInfo.ToString(False), "application/json", AddressOf APICallback_AddUser))
 		    Self.IncrementRequestCount()
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Parsing user lookup response")

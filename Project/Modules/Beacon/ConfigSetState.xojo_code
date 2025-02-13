@@ -95,10 +95,10 @@ Protected Class ConfigSetState
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function EncodeArray(States() As Beacon.ConfigSetState) As Variant
-		  Var Arr() As Dictionary
+		Shared Function EncodeArray(States() As Beacon.ConfigSetState) As JSONItem
+		  Var Arr As New JSONItem
 		  For Each State As Beacon.ConfigSetState In States
-		    Arr.Add(New Dictionary("ConfigSetId": State.ConfigSetId, "Enabled": State.Enabled))
+		    Arr.Add(State.SaveData)
 		  Next
 		  Return Arr
 		End Function
@@ -152,6 +152,15 @@ Protected Class ConfigSetState
 		  Var MySignature As String = Self.mSetId + ":" + If(Self.mEnabled, "True", "False")
 		  Var OtherSignature As String = Other.mSetId + ":" + If(Other.mEnabled, "True", "False")
 		  Return MySignature.Compare(OtherSignature, ComparisonOptions.CaseInsensitive)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData() As JSONItem
+		  Var Dict As New JSONItem
+		  Dict.Value("ConfigSetId") = Self.mSetId
+		  Dict.Value("Enabled") = Self.mEnabled
+		  Return Dict
 		End Function
 	#tag EndMethod
 

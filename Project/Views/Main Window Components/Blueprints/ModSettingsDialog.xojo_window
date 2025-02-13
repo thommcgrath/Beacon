@@ -265,14 +265,20 @@ Begin DesktopWindow ModSettingsDialog
       Width           =   80
    End
    Begin Beacon.Thread EditThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
+      Type            =   ""
    End
    Begin DesktopProgressWheel Spinner
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowTabStop    =   True
       Enabled         =   True
@@ -285,6 +291,7 @@ Begin DesktopWindow ModSettingsDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -293,6 +300,10 @@ Begin DesktopWindow ModSettingsDialog
       Transparent     =   False
       Visible         =   False
       Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
 #tag EndDesktopWindow
@@ -442,7 +453,7 @@ End
 		    Var Fields As New JSONItem
 		    Fields.Value("name") = Self.mNewName
 		    
-		    Var Request As New BeaconAPI.Request("/contentPacks/" + EncodeURLComponent(Self.mPack.ContentPackId), "PUT", Fields.ToString, "application/json")
+		    Var Request As New BeaconAPI.Request("/contentPacks/" + EncodeURLComponent(Self.mPack.ContentPackId), "PUT", Fields.ToString(False), "application/json")
 		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		    If Response.Success Then
 		      Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Success": True))

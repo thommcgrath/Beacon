@@ -533,7 +533,7 @@ Protected Module Preferences
 		  If Value Is Nil Then
 		    mManager.ClearValue(Key)
 		  Else
-		    mManager.StringValue(Key) = Value.ToString
+		    mManager.StringValue(Key) = Value.ToString()
 		  End If
 		End Sub
 	#tag EndMethod

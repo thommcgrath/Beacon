@@ -167,11 +167,11 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromLegacy(SaveData As Dictionary) As Ark.LootDropOverride
+		Shared Function FromLegacy(SaveData As JSONItem) As Ark.LootDropOverride
 		  Try
 		    Var LootDropRef As Ark.BlueprintReference
 		    If SaveData.HasKey("Reference") Then
-		      LootDropRef = Ark.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
+		      LootDropRef = Ark.BlueprintReference.FromSaveData(SaveData.Child("Reference"))
 		    ElseIf SaveData.HasKey("lootDropId") Then
 		      LootDropRef = New Ark.BlueprintReference(Ark.BlueprintReference.KindLootContainer, SaveData.Value("lootDropId").StringValue, "", "", "", "", "")
 		    ElseIf SaveData.HasKey("SupplyCrateClassString") Then
@@ -182,15 +182,15 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		    End If
 		    
 		    Var Override As New Ark.LootDropOverride(LootDropRef)
-		    Override.mPreventDuplicates = SaveData.FirstValue("preventDuplicates", "PreventDuplicates", "bSetsRandomWithoutReplacement", Override.PreventDuplicates)
-		    Override.mAddToDefaults = SaveData.FirstValue("appendMode", "AppendMode", "bAppendMode", Override.AddToDefaults)
-		    Override.mMinItemSets = SaveData.FirstValue("minItemSets", "MinItemSets", Override.MinItemSets)
-		    Override.mMaxItemSets = SaveData.FirstValue("maxItemSets", "MaxItemSets", Override.MaxItemSets)
+		    Override.mPreventDuplicates = SaveData.FirstValue(Override.PreventDuplicates, "preventDuplicates", "PreventDuplicates", "bSetsRandomWithoutReplacement")
+		    Override.mAddToDefaults = SaveData.FirstValue(Override.AddToDefaults, "appendMode", "AppendMode", "bAppendMode")
+		    Override.mMinItemSets = SaveData.FirstValue(Override.MinItemSets, "minItemSets", "MinItemSets")
+		    Override.mMaxItemSets = SaveData.FirstValue(Override.MaxItemSets, "maxItemSets", "MaxItemSets")
 		    
-		    Var SetSaveData() As Variant = SaveData.FirstValue("itemSets", "ItemSets", Nil)
+		    Var SetSaveData As JSONItem = SaveData.FirstValue(Nil, "itemSets", "ItemSets")
 		    If (SetSaveData Is Nil) = False Then
-		      For Each SetDict As Dictionary In SetSaveData
-		        Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(SetDict)
+		      For Idx As Integer = 0 To SetSaveData.LastRowIndex
+		        Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(SetSaveData.ChildAt(Idx))
 		        If (Set Is Nil) = False Then
 		          Override.Add(Set)
 		        End If
@@ -209,12 +209,12 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary) As Ark.LootDropOverride
+		Shared Function FromSaveData(SaveData As JSONItem) As Ark.LootDropOverride
 		  If SaveData.HasAllKeys("definition", "minItemSets", "maxItemSets", "addToDefaults", "preventDuplicates", "sets") = False Then
 		    Return Nil
 		  End If
 		  
-		  Var Definition As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Value("definition"))
+		  Var Definition As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Child("definition"))
 		  Var Override As New Ark.LootDropOverride(Definition)
 		  Override.mMinItemSets = SaveData.Value("minItemSets").IntegerValue
 		  Override.mMaxItemSets = SaveData.Value("maxItemSets").IntegerValue
@@ -224,13 +224,15 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		  Override.mExperimental = SaveData.Value("experimental").BooleanValue
 		  Override.mSortValue = SaveData.Value("sortOrder").IntegerValue
 		  
-		  Var SetDicts() As Variant = SaveData.Value("sets")
-		  For Each SetDict As Dictionary In SetDicts
-		    Var ItemSet As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(SetDict)
-		    If (ItemSet Is Nil) = False Then
-		      Override.Add(ItemSet)
-		    End If
-		  Next
+		  Var SetDicts As JSONItem = SaveData.Child("sets")
+		  If (SetDicts Is Nil) = False Then
+		    For Idx As Integer = 0 To SetDicts.LastRowIndex
+		      Var ItemSet As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(SetDicts.ChildAt(Idx))
+		      If (ItemSet Is Nil) = False Then
+		        Override.Add(ItemSet)
+		      End If
+		    Next
+		  End If
 		  If Override.Count = 0 Then
 		    Return Nil
 		  End If

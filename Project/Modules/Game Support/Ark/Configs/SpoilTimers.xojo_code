@@ -97,7 +97,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  Self.mAutoDestroyDecayedDinos = SaveData.Value("AutoDestroyDecayedDinos")
@@ -124,7 +124,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  SaveData.Value("AutoDestroyDecayedDinos") = Self.mAutoDestroyDecayedDinos
@@ -868,6 +868,14 @@ Inherits Ark.ConfigGroup
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="PvPStructureDecay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisableDinoDecayClaiming"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

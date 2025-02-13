@@ -73,7 +73,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  Self.mBabyCuddleGracePeriodMultiplier = SaveData.Lookup("BabyCuddleGracePeriodMultiplier", 1.0)
@@ -102,7 +102,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  SaveData.Value("BabyCuddleGracePeriodMultiplier") = Self.mBabyCuddleGracePeriodMultiplier

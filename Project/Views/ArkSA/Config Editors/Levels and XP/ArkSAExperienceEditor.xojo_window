@@ -642,7 +642,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var Levels() As Variant
+		  Var Levels As JSONItem
 		  Try
 		    Levels = Board.GetClipboardData(Self.kClipboardType)
 		  Catch Err As RuntimeException
@@ -657,9 +657,9 @@ End
 		  Var WasValid As Boolean = NewConfig.PlayerLevelCap > 1 And Issues.Count = 0
 		  Var IndexOffset As Integer = If(ViewingPlayerStats, 2, 1)
 		  Var AddedLevels() As Integer
-		  For Idx As Integer = Levels.FirstIndex To Levels.LastIndex
+		  For Idx As Integer = 0 To Levels.LastRowIndex
 		    Try
-		      Var Dict As Dictionary = Levels(Idx)
+		      Var Dict As JSONItem = Levels.ChildAt(Idx)
 		      Var Level As Integer = Dict.Value("Level").IntegerValue
 		      Var XP As UInt64 = Dict.Value("XP").UInt64Value
 		      

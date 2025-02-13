@@ -131,7 +131,7 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary) As Ark.SpawnPointSet
+		Shared Function FromSaveData(SaveData As JSONItem) As Ark.SpawnPointSet
 		  If SaveData Is Nil Then
 		    Return Nil
 		  End If
@@ -140,31 +140,32 @@ Implements Beacon.Countable,Ark.Weighted
 		  
 		  Var SetIdKey As Variant = SaveData.FirstKey("spawnPointSetId", "spawn_point_set_id", "ID")
 		  If SetIdKey.IsNull = False Then
-		    Set.SetId = SaveData.Value(SetIdKey)
+		    Set.SetId = SaveData.Value(SetIdKey.StringValue)
 		  End If
 		  
 		  Var LabelKey As Variant = SaveData.FirstKey("label", "Label")
 		  If LabelKey.IsNull = False Then
-		    Set.Label = SaveData.Value(LabelKey)
+		    Set.Label = SaveData.Value(LabelKey.StringValue)
 		  Else
 		    Return Nil
 		  End If
 		  
 		  Var WeightKey As Variant = SaveData.FirstKey("weight", "Weight")
 		  If WeightKey.IsNull = False Then
-		    Set.RawWeight = SaveData.Value(WeightKey)
+		    Set.RawWeight = SaveData.Value(WeightKey.StringValue)
 		  Else
 		    Return Nil
 		  End If
 		  
 		  Var EntriesKey As Variant = SaveData.FirstKey("entries", "Entries", "creatures")
-		  If EntriesKey.IsNull Or SaveData.Value(EntriesKey).IsNull Then
+		  If EntriesKey.IsNull Or SaveData.Value(EntriesKey.StringValue).IsNull Then
 		    Return Nil
 		  End If
-		  Var Entries() As Variant = SaveData.Value(EntriesKey)
-		  For Each EntrySaveData As Variant In Entries
-		    If EntrySaveData.Type = Variant.TypeObject And EntrySaveData.ObjectValue IsA Dictionary Then
-		      Var Entry As Ark.SpawnPointSetEntry = Ark.SpawnPointSetEntry.FromSaveData(Dictionary(EntrySaveData.ObjectValue))
+		  Var Entries As JSONItem = SaveData.Child(EntriesKey.StringValue)
+		  For Idx As Integer = 0 To Entries.LastRowIndex
+		    Var EntrySaveData As Variant = Entries.ValueAt(Idx)
+		    If EntrySaveData.Type = Variant.TypeObject And EntrySaveData.ObjectValue IsA JSONItem Then
+		      Var Entry As Ark.SpawnPointSetEntry = Ark.SpawnPointSetEntry.FromSaveData(JSONItem(EntrySaveData.ObjectValue))
 		      If (Entry Is Nil) = False Then
 		        Set.Append(Entry)
 		      End If
@@ -184,7 +185,7 @@ Implements Beacon.Countable,Ark.Weighted
 		  
 		  Var SpawnOffsetKey As Variant = SaveData.FirstKey("spawnOffset", "Spawn Offset", "spawn_offset", "GroupOffset")
 		  If SpawnOffsetKey.IsNull = False Then
-		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Dictionary(SaveData.Value(SpawnOffsetKey)))
+		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(SaveData.Child(SpawnOffsetKey.StringValue))
 		    If (SpawnOffset Is Nil) = False Then
 		      Set.GroupOffset = SpawnOffset
 		    End If
@@ -192,37 +193,37 @@ Implements Beacon.Countable,Ark.Weighted
 		  
 		  Var WaterOnlyMinimumHeightKey As Variant = SaveData.FirstKey("waterOnlyMinimumHeight", "Water Only Minimum Height", "water_only_minimum_height", "WaterOnlyMinimumHeight")
 		  If WaterOnlyMinimumHeightKey.IsNull = False Then
-		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value(WaterOnlyMinimumHeightKey))
+		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value(WaterOnlyMinimumHeightKey.StringValue))
 		  End If
 		  
 		  Var MinDistanceFromPlayersMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromPlayersMultiplier", "Min Distance From Players Multiplier", "min_distance_from_players_multiplier", "MinDistanceFromPlayersMultiplier")
 		  If MinDistanceFromPlayersMultiplierKey.IsNull = False Then
-		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromPlayersMultiplierKey))
+		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromPlayersMultiplierKey.StringValue))
 		  End If
 		  
 		  Var MinDistanceFromStructuresMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromStructuresMultiplier", "Min Distance From Structures Multiplier", "min_distance_from_structures_multiplier", "MinDistanceFromStructuresMultiplier")
 		  If MinDistanceFromStructuresMultiplierKey.IsNull = False Then
-		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromStructuresMultiplierKey))
+		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromStructuresMultiplierKey.StringValue))
 		  End If
 		  
 		  Var MinDistanceFromTamedDinosMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromTamedDinosMultiplier", "Min Distance From Tamed Dinos Multiplier", "min_distance_from_tamed_dinos_multiplier", "MinDistanceFromTamedDinosMultiplier")
 		  If MinDistanceFromTamedDinosMultiplierKey.IsNull = False Then
-		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromTamedDinosMultiplierKey))
+		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromTamedDinosMultiplierKey.StringValue))
 		  End If
 		  
 		  Var OffsetBeforeMultiplierKey As Variant = SaveData.FirstKey("offsetBeforeMultiplier", "Offset Before Multiplier", "offset_before_multiplier", "OffsetBeforeMultiplier")
 		  If OffsetBeforeMultiplierKey.IsNull = False Then
-		    Set.LevelOffsetBeforeMultiplier = SaveData.Value(OffsetBeforeMultiplierKey)
+		    Set.LevelOffsetBeforeMultiplier = SaveData.Value(OffsetBeforeMultiplierKey.StringValue)
 		  End If
 		  
 		  Var ColorSetKey As Variant = SaveData.FirstKey("colorSetClass", "color_set", "Color Set Class") // I'm not confident color_set was ever used
 		  If ColorSetKey.IsNull = False Then
-		    Set.ColorSetClass = SaveData.Value(ColorSetKey)
+		    Set.ColorSetClass = SaveData.Value(ColorSetKey.StringValue)
 		  End If
 		  
 		  Var ReplacementsKey As Variant = SaveData.FirstKey("replacements", "Creature Replacements", "Replacements")
 		  If ReplacementsKey.IsNull = False Then
-		    Var ReplacementsData As Variant = SaveData.Value(ReplacementsKey)
+		    Var ReplacementsData As Variant = SaveData.Value(ReplacementsKey.StringValue)
 		    If ReplacementsData.IsNull = False Then
 		      // This could be a bunch of things
 		      

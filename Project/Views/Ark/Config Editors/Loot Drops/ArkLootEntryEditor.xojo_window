@@ -674,7 +674,7 @@ End
 		    Try
 		      Var Defaults As JSONItem = Preferences.ArkLootItemSetEntryDefaults
 		      If (Defaults Is Nil) = False Then
-		        Var DefaultsDict As Dictionary = Beacon.ParseJSON(Defaults.ToString)
+		        Var DefaultsDict As Dictionary = Beacon.ParseJSON(Defaults.ToString(False))
 		        DefaultEntry = Ark.LootItemSetEntry.FromSaveData(DefaultsDict, Ark.LootItemSetEntry.OptionLoadEmpty)
 		      End If
 		    Catch Err As RuntimeException

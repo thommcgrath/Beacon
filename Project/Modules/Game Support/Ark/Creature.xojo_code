@@ -267,7 +267,7 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		Sub Pack(Dict As JSONItem, ForAPI As Boolean)
 		  #Pragma Unused ForAPI
 		  
 		  If Self.mIncubationTime > 0 Then
@@ -283,14 +283,14 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 		  End If
 		  
 		  If (Self.mStats Is Nil) = False And Self.mStats.KeyCount > 0 Then
-		    Var Stats() As Dictionary
+		    Var Stats() As JSONItem
 		    Var Indexes() As Integer
 		    
 		    For Each Entry As DictionaryEntry In Self.mStats
 		      Var StatIndex As Integer = Entry.Key
 		      Var StatInfo As Dictionary = Entry.Value
 		      
-		      Var PackedStats As New Dictionary
+		      Var PackedStats As New JSONItem
 		      PackedStats.Value("stat_index") = StatIndex
 		      PackedStats.Value("base_value") = StatInfo.Lookup(Self.KeyBase, Self.MissingStatValue).DoubleValue
 		      PackedStats.Value("per_level_wild_multiplier") = StatInfo.Lookup(Self.KeyWild, Self.MissingStatValue).DoubleValue
@@ -303,9 +303,9 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 		    Next Entry
 		    
 		    Indexes.SortWith(Stats)
-		    Dict.Value("stats") = Stats
+		    Dict.Child("stats") = CreateJSON(Stats)
 		  Else
-		    Dict.Value("stats") = Nil
+		    Dict.Child("stats") = Nil
 		  End If
 		  
 		  If Self.mStatsMask > 0 Then

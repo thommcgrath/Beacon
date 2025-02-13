@@ -89,7 +89,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Ark.SpawnPointSetEntry
+		Shared Function FromSaveData(Dict As JSONItem) As Ark.SpawnPointSetEntry
 		  If Dict Is Nil Or Dict.HasAnyKey("creature", "Blueprint", "creature_id", "Creature", "creatureId") = False Then
 		    Return Nil
 		  End If
@@ -105,7 +105,7 @@ Implements Beacon.NamedItem
 		    End If
 		    Entry = New Ark.SpawnPointSetEntry(Creature)
 		  ElseIf Dict.HasKey("creature") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("creature"))
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Child("creature"))
 		    If Reference Is Nil Or Reference.IsCreature = False Then
 		      Return Nil
 		    End If
@@ -115,8 +115,8 @@ Implements Beacon.NamedItem
 		      Return Nil
 		    End If
 		    Entry = New Ark.SpawnPointSetEntry(Ark.Creature(Blueprint))
-		  ElseIf Dict.HasKey("Blueprint") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
+		  ElseIf Dict.HasChild("Blueprint") Then
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Child("Blueprint"))
 		    If Reference Is Nil Or Reference.IsCreature = False Then
 		      Return Nil
 		    End If

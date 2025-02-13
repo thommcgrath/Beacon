@@ -104,7 +104,22 @@ Protected Module Configs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary) As SDTD.ConfigGroup
+		Protected Function CreateInstance(InternalName As String, ParsedData As Dictionary, Project As SDTD.Project) As SDTD.ConfigGroup
+		  Select Case InternalName
+		  Case NameGeneralSettings
+		    Return SDTD.Configs.GeneralSettings.FromImport(ParsedData, Project.ContentPacks)
+		  Case NameCustomConfig
+		    Return SDTD.Configs.CustomConfig.FromImport(ParsedData, Project.ContentPacks)
+		  Else
+		    Var Err As New FunctionNotFoundException
+		    Err.Message = "Config group """ + InternalName + """ is not known."
+		    Raise Err
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function CreateInstance(InternalName As String, SaveData As JSONItem) As SDTD.ConfigGroup
 		  Var EncryptedData As Dictionary
 		  If SaveData.HasAllKeys("Plain", "Encrypted") Then
 		    EncryptedData = SaveData.Value("Encrypted")
@@ -117,27 +132,12 @@ Protected Module Configs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary, EncryptedData As Dictionary) As SDTD.ConfigGroup
+		Protected Function CreateInstance(InternalName As String, SaveData As JSONItem, EncryptedData As JSONItem) As SDTD.ConfigGroup
 		  Select Case InternalName
 		  Case NameGeneralSettings
 		    Return New SDTD.Configs.GeneralSettings(SaveData, EncryptedData)
 		  Case NameCustomConfig
 		    Return New SDTD.Configs.CustomConfig(SaveData, EncryptedData)
-		  Else
-		    Var Err As New FunctionNotFoundException
-		    Err.Message = "Config group """ + InternalName + """ is not known."
-		    Raise Err
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, ParsedData As Dictionary, Project As SDTD.Project) As SDTD.ConfigGroup
-		  Select Case InternalName
-		  Case NameGeneralSettings
-		    Return SDTD.Configs.GeneralSettings.FromImport(ParsedData, Project.ContentPacks)
-		  Case NameCustomConfig
-		    Return SDTD.Configs.CustomConfig.FromImport(ParsedData, Project.ContentPacks)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."

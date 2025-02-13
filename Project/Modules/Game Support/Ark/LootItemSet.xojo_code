@@ -51,7 +51,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSet
+		Shared Function FromSaveData(Dict As JSONItem, NewUUID As Boolean = False) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
 		  If NewUUID Then
 		    Set.UUID = Beacon.UUID.v4
@@ -106,7 +106,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    Var Label As String = Dict.FirstValue("label", "Label", "SetName", Set.Label).StringValue.Trim
+		    Var Label As String = Dict.FirstValue(Set.Label, "label", "Label", "SetName").StringValue.Trim
 		    If Label.IsEmpty Then
 		      Label = Set.Label
 		    End If
@@ -115,14 +115,14 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    App.Log(Err, CurrentMethodName, "Reading Label value")
 		  End Try
 		  
-		  Var Children() As Dictionary
+		  Var Children As JSONItem
 		  Try
 		    If Dict.HasKey("entries") And IsNull(Dict.Value("entries")) = False Then
-		      Children = Dict.Value("entries").DictionaryArrayValue
+		      Children = Dict.Child("entries")
 		    ElseIf Dict.HasKey("ItemEntries") And IsNull(Dict.Value("ItemEntries")) = False Then
-		      Children = Dict.Value("ItemEntries").DictionaryArrayValue
+		      Children = Dict.Child("ItemEntries")
 		    ElseIf Dict.HasKey("Items") And IsNull(Dict.Value("Items")) = False Then
-		      Children = Dict.Value("Items").DictionaryArrayValue
+		      Children = Dict.Child("Items")
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Casting ItemEntries to array")
@@ -132,16 +132,18 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  If NewUUID Then
 		    Options = Options Or Ark.LootItemSetEntry.OptionNewId
 		  End If
-		  For Idx As Integer = 0 To Children.LastIndex
-		    Try
-		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), Options)
-		      If (Entry Is Nil) = False Then
-		        Set.Add(Entry)
-		      End If
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reading set entry dictionary #" + Idx.ToString(Locale.Raw, "0"))
-		    End Try
-		  Next
+		  If (Children Is Nil) = False Then
+		    For Idx As Integer = 0 To Children.LastRowIndex
+		      Try
+		        Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Children.ChildAt(Idx), Options)
+		        If (Entry Is Nil) = False Then
+		          Set.Add(Entry)
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Reading set entry dictionary #" + Idx.ToString(Locale.Raw, "0"))
+		      End Try
+		    Next
+		  End If
 		  If Set.Count = 0 Then
 		    Return Nil
 		  End If

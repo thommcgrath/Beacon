@@ -1,7 +1,7 @@
 #tag Class
 Protected Class SpoilTimers
 Inherits ArkSA.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
 		  Var Source As ArkSA.Configs.SpoilTimers = ArkSA.Configs.SpoilTimers(Other)
@@ -104,7 +104,7 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  Self.mAutoDestroyDecayedDinos = SaveData.Value("AutoDestroyDecayedDinos")
@@ -131,7 +131,7 @@ Inherits ArkSA.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  SaveData.Value("AutoDestroyDecayedDinos") = Self.mAutoDestroyDecayedDinos
@@ -875,6 +875,14 @@ Inherits ArkSA.ConfigGroup
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="PvPStructureDecay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisableDinoDecayClaiming"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

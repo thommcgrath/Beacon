@@ -394,8 +394,8 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 	#tag Method, Flags = &h0
 		Sub Requirements(Assigns Dict As Dictionary)
 		  If Dict Is Nil Then
-		    If Self.mRequirements.KeyCount >= 0 Then
-		      Self.mRequirements = New Dictionary
+		    If Self.mRequirements.Count >= 0 Then
+		      Self.mRequirements = New JSONItem
 		      Self.Modified = True
 		    End If
 		    Return
@@ -441,11 +441,11 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Unpack(Dict As Dictionary)
+		Sub Unpack(Dict As JSONItem)
 		  // Part of the ArkSA.MutableBlueprint interface.
 		  
 		  If Dict.HasKey("multipliers") Then
-		    Var Multipliers As Dictionary = Dict.Value("multipliers")
+		    Var Multipliers As JSONItem = Dict.Child("multipliers")
 		    Var MultiplierMin As Double = Multipliers.Value("min")
 		    Var MultiplierMax As Double = Multipliers.Value("max")
 		    Self.mMultipliers = New Beacon.Range(MultiplierMin, MultiplierMax)
@@ -453,17 +453,17 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 		  
 		  Var UIColorKey As Variant = Dict.FirstKey("uiColor", "ui_color")
 		  If UIColorKey.IsNull = False Then
-		    Self.mUIColor = Dict.Value(UIColorKey).StringValue.ToColor
+		    Self.mUIColor = Dict.Value(UIColorKey.StringValue).StringValue.ToColor
 		  End If
 		  
 		  Var IconIdKey As Variant = Dict.FirstKey("iconId", "icon")
 		  If IconIdKey.IsNull = False Then
-		    Self.mIconID = Dict.Value(IconIdKey).StringValue
+		    Self.mIconID = Dict.Value(IconIdKey.StringValue).StringValue
 		  End If
 		  
 		  Var SortKey As Variant = Dict.FirstKey("sortOrder", "sort")
 		  If SortKey.IsNull = False Then
-		    Self.mSortValue = If(Dict.Value(SortKey).IsNull, 9999, Dict.Value(SortKey).IntegerValue)
+		    Self.mSortValue = If(Dict.Value(SortKey.StringValue).IsNull, 9999, Dict.Value(SortKey.StringValue).IntegerValue)
 		  End If
 		  
 		  If Dict.HasKey("experimental") Then
@@ -476,45 +476,44 @@ Implements ArkSA.MutableBlueprint,ArkSA.Prunable
 		  
 		  If Dict.HasKey("requirements") Then
 		    Try
-		      Var Requirements As Dictionary = Beacon.ParseJSON(Dict.Value("requirements").StringValue)
-		      Self.mRequirements = Requirements
+		      Self.mRequirements = New JSONItem(Dict.Value("requirements").StringValue)
 		    Catch Err As RuntimeException
 		    End Try
 		  End If
 		  
 		  Var MinItemSetsKey As Variant = Dict.FirstKey("minItemSets", "min_item_sets")
 		  If MinItemSetsKey.IsNull = False Then
-		    Self.mMinItemSets = Dict.Value(MinItemSetsKey).IntegerValue
+		    Self.mMinItemSets = Dict.Value(MinItemSetsKey.StringValue).IntegerValue
 		  End If
 		  
 		  Var MaxItemSetsKey As Variant = Dict.FirstKey("maxItemSets", "max_item_sets")
 		  If MaxItemSetsKey.IsNull = False Then
-		    Self.mMaxItemSets = Dict.Value(MaxItemSetsKey).IntegerValue
+		    Self.mMaxItemSets = Dict.Value(MaxItemSetsKey.StringValue).IntegerValue
 		  End If
 		  
 		  Var PreventDuplicatesKey As Variant = Dict.FirstKey("preventDuplicates", "prevent_duplicates")
 		  If PreventDuplicatesKey.IsNull = False Then
-		    Self.mPreventDuplicates = Dict.Value(PreventDuplicatesKey)
+		    Self.mPreventDuplicates = Dict.Value(PreventDuplicatesKey.StringValue)
 		  End If
 		  
-		  Var Sets() As Dictionary
-		  If Dict.HasKey("itemSets") And Dict.Value("itemSets").IsNull = False Then
+		  Var Sets As JSONItem
+		  If Dict.HasChild("itemSets") Then
 		    Try
-		      Sets = Dict.Value("itemSets").DictionaryArrayValue
+		      Sets = Dict.Child("itemSets")
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Unpacking item sets")
 		    End Try
-		  ElseIf Dict.HasKey("contents") And Dict.Value("contents").IsNull = False Then
+		  ElseIf Dict.HasChild("contents") Then
 		    Try
-		      Sets = Dict.Value("contents").DictionaryArrayValue
+		      Sets = Dict.Child("contents")
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Unpacking item sets")
 		    End Try
 		  End If
 		  
 		  Self.mItemSets.ResizeTo(-1)
-		  For Each PackedSet As Dictionary In Sets
-		    Var Set As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(PackedSet)
+		  For Each SetEntry As JSONEntry In Sets.Iterator
+		    Var Set As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(JSONItem(SetEntry.Value))
 		    If (Set Is Nil) = False Then
 		      Self.mItemSets.Add(Set)
 		    End If

@@ -11,7 +11,7 @@ Inherits Beacon.Template
 
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Beacon.Template
+		Shared Function FromSaveData(Dict As JSONItem) As Beacon.Template
 		  If Dict Is Nil Then
 		    Return Nil
 		  End If

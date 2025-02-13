@@ -20,7 +20,7 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		Sub AddSaveData(ManifestData As JSONItem, PlainData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
 		  
@@ -56,26 +56,26 @@ Inherits Beacon.Project
 		    Return ""
 		  End If
 		  
-		  Var PackedBlueprints() As Dictionary
+		  Var PackedBlueprints As New JSONItem("[]")
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var Packed As Dictionary = Blueprint.Pack(False)
+		    Var Packed As JSONItem = Blueprint.Pack(False)
 		    If (Packed Is Nil) = False Then
 		      PackedBlueprints.Add(Packed)
 		    End If
 		  Next
 		  
-		  Return Beacon.GenerateJson(PackedBlueprints, False)
+		  Return PackedBlueprints.ToString(False)
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Function LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
+		Function LoadConfigSet(PlainData As JSONItem, EncryptedData As JSONItem) As Dictionary
 		  Var SetDict As New Dictionary
-		  Var ConvertLootScale As Dictionary
-		  For Each Entry As DictionaryEntry In PlainData
+		  Var ConvertLootScale As JSONItem
+		  For Each Entry As JSONEntry In PlainData.Iterator
 		    Try
 		      Var InternalName As String = Entry.Key
-		      Var GroupData As Dictionary = Entry.Value
+		      Var GroupData As JSONItem = Entry.Value
 		      
 		      // Convert old names into new ones
 		      Select Case InternalName
@@ -124,7 +124,7 @@ Inherits Beacon.Project
 		        ConvertLootScale = GroupData
 		      Case Ark.Configs.NameProjectSettings
 		      Else
-		        Var EncryptedGroupData As Dictionary
+		        Var EncryptedGroupData As JSONItem
 		        If EncryptedData.HasKey(InternalName) Then
 		          Try
 		            EncryptedGroupData = EncryptedData.Value(InternalName)
@@ -199,7 +199,7 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
+		Sub ReadSaveData(PlainData As JSONItem, EncryptedData As JSONItem, SaveDataVersion As Integer, SavedWithVersion As Integer)
 		  #Pragma Unused EncryptedData
 		  #Pragma Unused SaveDataVersion
 		  #Pragma Unused SavedWithVersion
@@ -226,9 +226,9 @@ Inherits Beacon.Project
 		    Self.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  End If
 		  
-		  Self.UWPMode = CType(PlainData.FirstValue("uwpCompatibilityMode", "UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
+		  Self.UWPMode = CType(PlainData.FirstValue(CType(Self.UWPMode, Integer), "uwpCompatibilityMode", "UWPCompatibilityMode").IntegerValue, Ark.Project.UWPCompatibilityModes)
 		  
-		  Self.MapMask = PlainData.FirstValue("map", "Map", "MapPreference", 1)
+		  Self.MapMask = PlainData.FirstValue(1, "map", "Map", "MapPreference")
 		  
 		  If PlainData.HasKey("modSelections") Or PlainData.HasKey("ModSelections") Then
 		    // Handled by the parent class
@@ -257,11 +257,11 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Sub SaveConfigSet(SetDict As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		Sub SaveConfigSet(SetDict As Dictionary, PlainData As JSONItem, EncryptedData As JSONItem)
 		  For Each Entry As DictionaryEntry In SetDict
 		    Var Group As Ark.ConfigGroup = Entry.Value
 		    
-		    Var GroupData As Dictionary = Group.SaveData()
+		    Var GroupData As JSONItem = Group.SaveData()
 		    If GroupData Is Nil Then
 		      Continue
 		    End If

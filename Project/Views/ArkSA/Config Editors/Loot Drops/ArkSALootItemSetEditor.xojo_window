@@ -23,6 +23,7 @@ Begin BeaconContainer ArkSALootItemSetEditor
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   Modified        =   False
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -109,6 +110,7 @@ Begin BeaconContainer ArkSALootItemSetEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      ReadOnly        =   False
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -416,9 +418,9 @@ End
 		    
 		    Var QuantityText As String
 		    If Entry.MinQuantity = Entry.MaxQuantity Then
-		      QuantityText = Entry.MinQuantity.ToString
+		      QuantityText = Entry.MinQuantity.ToString(Locale.Raw, "0")
 		    Else
-		      QuantityText = Entry.MinQuantity.ToString + RangeSeparator + Entry.MaxQuantity.ToString
+		      QuantityText = Entry.MinQuantity.ToString(Locale.Raw, "0") + RangeSeparator + Entry.MaxQuantity.ToString(Locale.Raw, "0")
 		    End If
 		    
 		    Var WeightText As String
@@ -1094,6 +1096,14 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ReadOnly"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

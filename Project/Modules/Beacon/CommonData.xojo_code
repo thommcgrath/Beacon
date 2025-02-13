@@ -135,7 +135,7 @@ Inherits Beacon.DataSource
 		        End If
 		        
 		        Var Contents As String = Beacon.Decompress(DecodeBase64(Dict.Value("contents")))
-		        Var Raw As Dictionary = Beacon.ParseJSON(Contents)
+		        Var Raw As New JSONItem(Contents)
 		        
 		        Var Template As Beacon.Template = Beacon.Template.FromSaveData(Raw)
 		        If Template Is Nil Then
@@ -151,7 +151,7 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  If ChangeDict.HasAnyKey("templateSelectors", "template_selectors") Then
-		    Var TemplateSelectors() As Variant = ChangeDict.FirstValue("templateSelectors", "template_selectors")
+		    Var TemplateSelectors() As Variant = ChangeDict.FirstValue("template_selectors", "templateSelectors")
 		    For Each Value As Variant In TemplateSelectors
 		      Try
 		        Var Dict As Dictionary = Value
@@ -160,8 +160,8 @@ Inherits Beacon.DataSource
 		          Continue
 		        End If
 		        
-		        Var SelectorId As String = Dict.FirstValue("templateSelectorId", "id").StringValue
-		        Var GameId As String = Dict.FirstValue("gameId", "game").StringValue
+		        Var SelectorId As String = Dict.FirstValue("id", "templateSelectorId").StringValue
+		        Var GameId As String = Dict.FirstValue("game", "gameId").StringValue
 		        Var Label As String = Dict.Value("label").StringValue
 		        Var Language As Beacon.TemplateSelector.Languages = Beacon.TemplateSelector.StringToLanguage(Dict.Value("language").StringValue)
 		        Var Code As String = Dict.Value("code").StringValue
@@ -214,7 +214,7 @@ Inherits Beacon.DataSource
 		        End If
 		        
 		        Var StringValue As String = Contents
-		        Var Parsed As Dictionary = Beacon.ParseJSON(StringValue.DefineEncoding(Encodings.UTF8))
+		        Var Parsed As New JSONItem(StringValue.DefineEncoding(Encodings.UTF8))
 		        Var Template As Beacon.Template = Beacon.Template.FromSaveData(Parsed)
 		        If (Template Is Nil) = False Then
 		          Self.SaveTemplate(Template, False, False)
@@ -246,14 +246,15 @@ Inherits Beacon.DataSource
 		      End If
 		      
 		      Var StringValue As String = Contents
-		      Var Parsed() As Variant = Beacon.ParseJSON(StringValue.DefineEncoding(Encodings.UTF8))
-		      For Each Dict As Dictionary In Parsed
+		      Var Parsed As New JSONItem(StringValue.DefineEncoding(Encodings.UTF8))
+		      For Idx As Integer = 0 To Parsed.LastRowIndex
+		        Var Dict As JSONItem = Parsed.ChildAt(Idx)
 		        Var TemplateSelector As Beacon.TemplateSelector = Beacon.TemplateSelector.FromSaveData(Dict)
 		        If (TemplateSelector Is Nil) = False Then
 		          Self.SaveTemplateSelector(TemplateSelector, False, False)
 		          RemoveSelectorUUIDs.Remove(TemplateSelector.UUID)
 		        End If
-		      Next Dict
+		      Next
 		      
 		      Exit For FileName
 		    Catch Err As RuntimeException
@@ -847,21 +848,18 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Var Parsed As Variant
+		  Var Parsed As JSONItem
 		  Try
-		    Parsed = Beacon.ParseJSON(Content)
+		    Parsed = New JSONItem(Content)
 		  Catch Err As RuntimeException
 		    Self.mUpdateNewsThread = Nil
 		    Return
 		  End Try
 		  
-		  Var Items() As Dictionary
-		  Try
-		    Items = Parsed.DictionaryArrayValue
-		  Catch Err As RuntimeException
+		  If Parsed.IsArray = False Then
 		    Self.mUpdateNewsThread = Nil
 		    Return
-		  End Try
+		  End If
 		  
 		  Var Instance As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
 		  Instance.BeginTransaction()
@@ -874,8 +872,9 @@ Inherits Beacon.DataSource
 		    Rows.MoveToNextRow
 		  Wend
 		  
-		  For Each Item As Dictionary In Items
+		  For Idx As Integer = 0 To Parsed.LastRowIndex
 		    Try
+		      Var Item As JSONItem = Parsed.ChildAt(Idx)
 		      Var UUID As String = Item.Value("uuid")
 		      Var Title As String = Item.Value("title")
 		      Var Detail As Variant = Item.Value("detail")
@@ -890,9 +889,9 @@ Inherits Beacon.DataSource
 		        MinOSVersion = Item.Value("win_min_os")
 		      #endif
 		      
-		      Var Idx As Integer = ItemsToRemove.IndexOf(UUID)
-		      If Idx > -1 Then
-		        ItemsToRemove.RemoveAt(Idx)
+		      Var ItemIdx As Integer = ItemsToRemove.IndexOf(UUID)
+		      If ItemIdx > -1 Then
+		        ItemsToRemove.RemoveAt(ItemIdx)
 		      Else
 		        Instance.SQLExecute("INSERT INTO news (uuid, title, detail, url, min_version, max_version, moment, min_os_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", UUID, Title, Detail, ItemURL, MinVersion, MaxVersion, Moment, MinOSVersion)
 		        Changed = True

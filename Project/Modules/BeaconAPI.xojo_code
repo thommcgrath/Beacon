@@ -232,7 +232,7 @@ Protected Module BeaconAPI
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path
 		  End If
-		  Return Domain + If(Versioned, "/v" + Version.ToString, "") + Path
+		  Return Domain + If(Versioned, "/v" + Version.ToString(Locale.Raw, "0"), "") + Path
 		End Function
 	#tag EndMethod
 

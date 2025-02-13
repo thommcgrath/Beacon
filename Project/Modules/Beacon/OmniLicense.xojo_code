@@ -13,6 +13,12 @@ Protected Class OmniLicense
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Dictionary)
+		  Self.Constructor(New JSONItem(Source))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Source As JSONItem)
 		  Self.mExpiration = Source.Lookup("expires", "").StringValue
 		  Self.mFirstUsed = Source.Lookup("firstUsed", "").StringValue
 		  Self.mFlags = Source.Lookup("flags", 0).IntegerValue

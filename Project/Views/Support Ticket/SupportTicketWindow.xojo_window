@@ -19,6 +19,7 @@ Begin BeaconWindow SupportTicketWindow
    MenuBarVisible  =   True
    MinimumHeight   =   606
    MinimumWidth    =   800
+   Modified        =   False
    Resizeable      =   True
    Title           =   "New Support Ticket"
    Type            =   0
@@ -183,6 +184,7 @@ Begin BeaconWindow SupportTicketWindow
    End
    Begin Thread SubmitThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -191,6 +193,7 @@ Begin BeaconWindow SupportTicketWindow
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
    Begin Timer SubmitWatcher
       Enabled         =   True
@@ -1169,7 +1172,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Message As String = "Server replied with an HTTP status: " + Socket.LastHTTPStatus.ToString
+		  Var Message As String = "Server replied with an HTTP status: " + Socket.LastHTTPStatus.ToString(Locale.Raw, "0")
 		  Try
 		    Var ErrorDict As Dictionary = Beacon.ParseJSON(Socket.LastString)
 		    If ErrorDict.HasKey("message") Then

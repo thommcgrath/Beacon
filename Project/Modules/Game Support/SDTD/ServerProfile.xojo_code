@@ -3,7 +3,7 @@ Protected Class ServerProfile
 Inherits Beacon.ServerProfile
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
-		Sub ReadFromDictionary(Dict As Dictionary, Version As Integer)
+		Sub ReadFromDictionary(Dict As JSONItem, Version As Integer)
 		  Self.mDescription = Dict.Value("description")
 		  Self.mMap = Dict.Value("map")
 		  Self.mMapSeed = Dict.Lookup("mapSeed", "")
@@ -16,7 +16,7 @@ Inherits Beacon.ServerProfile
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteToDictionary(Dict As Dictionary)
+		Sub WriteToDictionary(Dict As JSONItem)
 		  Dict.Value("description") = Self.mDescription
 		  Dict.Value("map") = Self.mMap
 		  If Self.mMap = "RWG" Then

@@ -196,6 +196,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
    Begin URLConnection Downloader
       AllowCertificateValidation=   False
       Enabled         =   True
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -289,7 +290,7 @@ End
 		  URLField.Enabled = True
 		  
 		  If HTTPStatus <> 200 Then
-		    Self.ShowAlert("Unable to download", "The content was not loaded correctly. HTTP status " + HTTPStatus.ToString)
+		    Self.ShowAlert("Unable to download", "The content was not loaded correctly. HTTP status " + HTTPStatus.ToString(Locale.Raw, "0"))
 		    Return
 		  End If
 		  

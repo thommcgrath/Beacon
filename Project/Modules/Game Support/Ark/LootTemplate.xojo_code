@@ -96,7 +96,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Beacon.Template
+		Shared Function FromSaveData(Dict As JSONItem) As Beacon.Template
 		  If Dict Is Nil Then
 		    Return Nil
 		  End If
@@ -116,16 +116,18 @@ Implements Beacon.Countable,Iterable
 		  Template.mMinEntriesSelected = Dict.Value("Min").IntegerValue
 		  Template.mModifierValues = Dict.Value("Modifiers")
 		  
-		  Var Members() As Variant
+		  Var Members As JSONItem
 		  If Dict.HasKey("ItemSets") Then
-		    Members = Dict.Value("ItemSets")
+		    Members = Dict.Child("ItemSets")
 		  ElseIf Dict.HasKey("Entries") Then
-		    Members = Dict.Value("Entries")
+		    Members = Dict.Child("Entries")
 		  End If
-		  For Each Member As Dictionary In Members
-		    Var Entry As Ark.LootTemplateEntry = Ark.LootTemplateEntry.FromSaveData(Member)
-		    Template.mEntries.Add(Entry)
-		  Next Member
+		  If (Members Is Nil) = False Then
+		    For Idx As Integer = 0 To Members.LastRowIndex
+		      Var Entry As Ark.LootTemplateEntry = Ark.LootTemplateEntry.FromSaveData(Members.ChildAt(Idx))
+		      Template.mEntries.Add(Entry)
+		    Next
+		  End If
 		  
 		  Return Template
 		End Function

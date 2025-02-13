@@ -2952,7 +2952,7 @@ Inherits Beacon.DataSource
 		          For Each Entry As DictionaryEntry In Columns
 		            Var MakeAssignment As Boolean
 		            If Entry.Key = "object_id" Then
-		              WhereClause = "object_id = ?" + NextPlaceholder.ToString
+		              WhereClause = "object_id = ?" + NextPlaceholder.ToString(Locale.Raw, "0")
 		              MakeAssignment = Entry.Value.StringValue <> Blueprint.BlueprintId
 		            Else
 		              MakeAssignment = True

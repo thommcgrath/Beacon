@@ -108,34 +108,26 @@ Protected Class BlueprintAttributeManager
 		    Return Nil
 		  End If
 		  
-		  Var SaveDict As Dictionary = SaveData
-		  Var AttrArray As Variant = SaveDict.Value("Attributes")
+		  Var SaveDict As JSONItem
+		  If SaveData IsA Dictionary Then
+		    SaveDict = New JSONItem(Dictionary(SaveData.ObjectValue))
+		  ElseIf SaveData IsA JSONItem Then
+		    SaveDict = JSONItem(SaveData.ObjectValue)
+		  End If
 		  
 		  Var Manager As New Ark.BlueprintAttributeManager
-		  Var Members() As Dictionary
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(AttrArray)
-		  Select Case Info.FullName
-		  Case "Object()"
-		    Var Temp() As Variant = AttrArray
-		    Var Bound As Integer = Temp.LastIndex
-		    For Idx As Integer = 0 To Bound
-		      If Temp(Idx) IsA Dictionary Then
-		        Members.Add(Dictionary(Temp(Idx)))
-		      End If
-		    Next
-		  Case "Dictionary()"
-		    Members = AttrArray
-		  End Select
 		  
-		  For Each Dict As Dictionary In Members
+		  Var Members As JSONItem = SaveDict.Child("Attributes")
+		  For Idx As Integer = 0 To Members.LastRowIndex
 		    Try
-		      Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
+		      Var Dict As JSONItem = Members.ChildAt(Idx)
+		      Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Child("Blueprint"))
 		      If Reference Is Nil Then
 		        Continue
 		      End If
 		      
 		      Var Attr As New Dictionary
-		      For Each Entry As DictionaryEntry In Dict
+		      For Each Entry As JSONEntry In Dict.Iterator
 		        If Entry.Key = "Blueprint" Then
 		          Continue
 		        End If
@@ -144,7 +136,7 @@ Protected Class BlueprintAttributeManager
 		        If Ark.BlueprintAttributeManager.IsSaveData(Value) Then
 		          Attr.Value(Entry.Key) = Ark.BlueprintAttributeManager.FromSaveData(Value, True)
 		        ElseIf Ark.BlueprintReference.IsSaveData(Value) Then
-		          Attr.Value(Entry.Key) = Ark.BlueprintReference.FromSaveData(Value, True)
+		          Attr.Value(Entry.Key) = Ark.BlueprintReference.FromSaveData(JSONItem(Value.ObjectValue), True)
 		        Else
 		          Attr.Value(Entry.Key) = Entry.Value
 		        End If
@@ -216,21 +208,33 @@ Protected Class BlueprintAttributeManager
 
 	#tag Method, Flags = &h0
 		Shared Function IsSaveData(Value As Variant) As Boolean
-		  If Value.IsNull Or Value.IsArray Or (Value IsA Dictionary) = False Then
+		  If Value.IsNull Or Value.IsArray Then
 		    Return False
 		  End If
 		  
-		  Var Dict As Dictionary = Value
-		  If Dict.HasKey("Version") = False Or Dict.HasKey("Schema") = False Then
+		  Var VersionValue, SchemaValue As Variant
+		  If Value IsA JSONItem Then
+		    Var Dict As JSONItem = Value
+		    If Dict.HasAllKeys("Version", "Schema") = False Then
+		      Return False
+		    End If
+		    VersionValue = Dict.Value("Version")
+		    SchemaValue = Dict.Value("Schema")
+		  ElseIf Value IsA Dictionary Then
+		    Var Dict As Dictionary = Value
+		    If Dict.HasAllKeys("Version", "Schema") = False Then
+		      Return False
+		    End If
+		    VersionValue = Dict.Value("Version")
+		    SchemaValue = Dict.Value("Schema")
+		  Else
 		    Return False
 		  End If
 		  
-		  Var SchemaValue As Variant = Dict.Value("Schema")
 		  If SchemaValue.IsNull Or SchemaValue.Type <> Variant.TypeString Or (SchemaValue.StringValue <> "Ark.BlueprintAttributeManager" And SchemaValue.StringValue <> "Beacon.BlueprintAttributeManager") Then
 		    Return False
 		  End If
 		  
-		  Var VersionValue As Variant = Dict.Value("Version")
 		  If VersionValue.IsNull Or VersionValue.IsNumeric = False Or VersionValue.IntegerValue > Ark.BlueprintAttributeManager.Version Then
 		    Return False
 		  End If
@@ -327,34 +331,34 @@ Protected Class BlueprintAttributeManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
-		  Var Dicts() As Dictionary
+		Function SaveData() As JSONItem
+		  Var Dicts As New JSONItem
 		  
 		  For Each Entry As DictionaryEntry In Self.mAttributes
 		    Var BlueprintId As String = Entry.Key
 		    Var ObjectValues As Dictionary = Entry.Value
 		    Var ObjectRef As Ark.BlueprintReference = Self.mReferences.Value(BlueprintId)
 		    
-		    Var Dict As New Dictionary
-		    Dict.Value("Blueprint") = ObjectRef.SaveData
+		    Var Dict As New JSONItem
+		    Dict.Child("Blueprint") = ObjectRef.SaveData
 		    For Each ValueEntry As DictionaryEntry In ObjectValues
 		      Var Value As Variant = ValueEntry.Value
 		      If Value IsA Ark.BlueprintAttributeManager Then
-		        Dict.Value(ValueEntry.Key) = Ark.BlueprintAttributeManager(Value).SaveData
+		        Dict.Child(ValueEntry.Key.StringValue) = Ark.BlueprintAttributeManager(Value).SaveData
 		      ElseIf Value IsA Ark.BlueprintReference Then
-		        Dict.Value(ValueEntry.Key) = Ark.BlueprintReference(Value).SaveData
+		        Dict.Child(ValueEntry.Key.StringValue) = Ark.BlueprintReference(Value).SaveData
 		      Else
-		        Dict.Value(ValueEntry.Key) = Value
+		        Dict.Value(ValueEntry.Key.StringValue) = Value
 		      End If
 		    Next
 		    
 		    Dicts.Add(Dict)
 		  Next
 		  
-		  Var Schema As New Dictionary
+		  Var Schema As New JSONItem
 		  Schema.Value("Schema") = "Ark.BlueprintAttributeManager"
 		  Schema.Value("Version") = Self.Version
-		  Schema.Value("Attributes") = Dicts
+		  Schema.Child("Attributes") = Dicts
 		  Return Schema
 		End Function
 	#tag EndMethod

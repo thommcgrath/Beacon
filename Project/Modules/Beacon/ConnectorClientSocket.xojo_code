@@ -47,9 +47,9 @@ Inherits TCPSocket
 		      Return
 		    End Try
 		    
-		    Var Dict As Dictionary
+		    Var Dict As JSONItem
 		    Try
-		      Dict = Xojo.ParseJSON(Decrypted)
+		      Dict = New JSONItem(Decrypted)
 		    Catch Err As RuntimeException
 		      If Self.mTimeoutKey <> "" Then
 		        CallLater.Cancel(Self.mTimeoutKey)
@@ -94,7 +94,7 @@ Inherits TCPSocket
 		  Case Self.TimeoutError
 		    Message = "After trying for " + Self.TimeoutSeconds.ToString + " seconds, a connection could not be established. Check the address and try again."
 		  Else
-		    Message = "Unknown error #" + Err.ErrorNumber.ToString
+		    Message = "Unknown error #" + Err.ErrorNumber.ToString(Locale.Raw, "0")
 		    If Err.Message <> "" Then
 		      Message = Message + ": " + Err.Message
 		    End If
@@ -282,7 +282,7 @@ Inherits TCPSocket
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event MessageReceived(Message As Dictionary)
+		Event MessageReceived(Message As JSONItem)
 	#tag EndHook
 
 

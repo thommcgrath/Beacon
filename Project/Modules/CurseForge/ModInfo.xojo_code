@@ -56,8 +56,7 @@ Protected Class ModInfo
 
 	#tag Method, Flags = &h0
 		Function ToString(Pretty As Boolean) As String
-		  Self.mSource.Compact = Not Pretty
-		  Return Self.mSource.ToString
+		  Return Self.mSource.ToString(Pretty)
 		End Function
 	#tag EndMethod
 

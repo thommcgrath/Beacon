@@ -13,7 +13,7 @@ Protected Class ProjectMember
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(UserId As String, Source As Dictionary)
+		Sub Constructor(UserId As String, Source As JSONItem)
 		  // From the api or modern project files (v7 and newer)
 		  
 		  Self.mUserId = UserId.Lowercase
@@ -37,18 +37,6 @@ Protected Class ProjectMember
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DictionaryValue() As Dictionary
-		  Var Dict As New Dictionary
-		  Dict.Value("username") = Self.mUsername
-		  Dict.Value("publicKey") = BeaconEncryption.PEMEncodePublicKey(Self.mPublicKey)
-		  Dict.Value("role") = Self.mRole
-		  Dict.Value("encryptedPassword") = Self.mEncryptedPassword
-		  Dict.Value("fingerprint") = Self.mFingerprint
-		  Return Dict
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function EncryptedPassword() As String
 		  Return Self.mEncryptedPassword
 		End Function
@@ -57,6 +45,18 @@ Protected Class ProjectMember
 	#tag Method, Flags = &h0
 		Function Fingerprint() As String
 		  Return Self.mFingerprint
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function JSONValue() As JSONItem
+		  Var Dict As New JSONItem
+		  Dict.Value("username") = Self.mUsername
+		  Dict.Value("publicKey") = BeaconEncryption.PEMEncodePublicKey(Self.mPublicKey)
+		  Dict.Value("role") = Self.mRole
+		  Dict.Value("encryptedPassword") = Self.mEncryptedPassword
+		  Dict.Value("fingerprint") = Self.mFingerprint
+		  Return Dict
 		End Function
 	#tag EndMethod
 

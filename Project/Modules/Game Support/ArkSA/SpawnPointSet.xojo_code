@@ -191,7 +191,7 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary) As ArkSA.SpawnPointSet
+		Shared Function FromSaveData(SaveData As JSONItem) As ArkSA.SpawnPointSet
 		  If SaveData Is Nil Then
 		    Return Nil
 		  End If
@@ -200,36 +200,36 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		  
 		  Var SetIdKey As Variant = SaveData.FirstKey("spawnPointSetId", "spawn_point_set_id", "ID")
 		  If SetIdKey.IsNull = False Then
-		    Set.SetId = SaveData.Value(SetIdKey)
+		    Set.SetId = SaveData.Value(SetIdKey.StringValue)
 		  End If
 		  
 		  Var LabelKey As Variant = SaveData.FirstKey("label", "Label")
 		  If LabelKey.IsNull = False Then
-		    Set.Label = SaveData.Value(LabelKey)
+		    Set.Label = SaveData.Value(LabelKey.StringValue)
 		  Else
 		    Return Nil
 		  End If
 		  
 		  Var WeightKey As Variant = SaveData.FirstKey("weight", "Weight")
 		  If WeightKey.IsNull = False Then
-		    Set.RawWeight = SaveData.Value(WeightKey)
+		    Set.RawWeight = SaveData.Value(WeightKey.StringValue)
 		  Else
 		    Return Nil
 		  End If
 		  
 		  Var EntriesKey As Variant = SaveData.FirstKey("entries", "Entries", "creatures")
-		  If EntriesKey.IsNull Or SaveData.Value(EntriesKey).IsNull Then
+		  If EntriesKey.IsNull Or SaveData.Value(EntriesKey.StringValue).IsNull Then
 		    Return Nil
 		  End If
-		  Var Entries() As Variant = SaveData.Value(EntriesKey)
-		  For Each EntrySaveData As Variant In Entries
-		    If EntrySaveData.Type = Variant.TypeObject And EntrySaveData.ObjectValue IsA Dictionary Then
-		      Var Entry As ArkSA.SpawnPointSetEntry = ArkSA.SpawnPointSetEntry.FromSaveData(Dictionary(EntrySaveData.ObjectValue))
-		      If (Entry Is Nil) = False Then
-		        Set.Append(Entry)
+		  Var Entries As JSONItem = SaveData.Child(EntriesKey.StringValue)
+		  For Each Entry As JSONEntry In Entries.Iterator
+		    If Entry.Value.Type = Variant.TypeObject And Entry.Value.ObjectValue IsA JSONItem Then
+		      Var SpawnEntry As ArkSA.SpawnPointSetEntry = ArkSA.SpawnPointSetEntry.FromSaveData(JSONItem(Entry.Value))
+		      If (SpawnEntry Is Nil) = False Then
+		        Set.Append(SpawnEntry)
 		      End If
-		    ElseIf EntrySaveData.Type = Variant.TypeString Then
-		      Var CreaturePath As String = EntrySaveData.StringValue
+		    ElseIf Entry.Value.Type = Variant.TypeString Then
+		      Var CreaturePath As String = Entry.Value.StringValue
 		      Var Creature As ArkSA.Creature = ArkSA.ResolveCreature("", CreaturePath, "", Nil, True)
 		      If (Creature Is Nil) = False Then
 		        Set.Append(New ArkSA.SpawnPointSetEntry(Creature))
@@ -239,12 +239,12 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		  
 		  Var SpreadKey As Variant = SaveData.FirstKey("spreadRadius", "Spread Radius", "spread_radius", "SpreadRadius")
 		  If SpreadKey.IsNull = False Then
-		    Set.SpreadRadius = NullableDouble.FromVariant(SaveData.Value(SpreadKey))
+		    Set.SpreadRadius = NullableDouble.FromVariant(SaveData.Value(SpreadKey.StringValue))
 		  End If
 		  
 		  Var SpawnOffsetKey As Variant = SaveData.FirstKey("spawnOffset", "Spawn Offset", "spawn_offset", "GroupOffset")
 		  If SpawnOffsetKey.IsNull = False Then
-		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Dictionary(SaveData.Value(SpawnOffsetKey)))
+		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(JSONItem(SaveData.Child(SpawnOffsetKey.StringValue)))
 		    If (SpawnOffset Is Nil) = False Then
 		      Set.GroupOffset = SpawnOffset
 		    End If
@@ -252,60 +252,60 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		  
 		  Var WaterOnlyMinimumHeightKey As Variant = SaveData.FirstKey("waterOnlyMinimumHeight", "Water Only Minimum Height", "water_only_minimum_height", "WaterOnlyMinimumHeight")
 		  If WaterOnlyMinimumHeightKey.IsNull = False Then
-		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value(WaterOnlyMinimumHeightKey))
+		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value(WaterOnlyMinimumHeightKey.StringValue))
 		  End If
 		  
 		  Var MinDistanceFromPlayersMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromPlayersMultiplier", "Min Distance From Players Multiplier", "min_distance_from_players_multiplier", "MinDistanceFromPlayersMultiplier")
 		  If MinDistanceFromPlayersMultiplierKey.IsNull = False Then
-		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromPlayersMultiplierKey))
+		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromPlayersMultiplierKey.StringValue))
 		  End If
 		  
 		  Var MinDistanceFromStructuresMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromStructuresMultiplier", "Min Distance From Structures Multiplier", "min_distance_from_structures_multiplier", "MinDistanceFromStructuresMultiplier")
 		  If MinDistanceFromStructuresMultiplierKey.IsNull = False Then
-		    Set.MinDistanceFromStructuresMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromStructuresMultiplierKey))
+		    Set.MinDistanceFromStructuresMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromStructuresMultiplierKey.StringValue))
 		  End If
 		  
 		  Var MinDistanceFromTamedDinosMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromTamedDinosMultiplier", "Min Distance From Tamed Dinos Multiplier", "min_distance_from_tamed_dinos_multiplier", "MinDistanceFromTamedDinosMultiplier")
 		  If MinDistanceFromTamedDinosMultiplierKey.IsNull = False Then
-		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromTamedDinosMultiplierKey))
+		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromTamedDinosMultiplierKey.StringValue))
 		  End If
 		  
 		  Var OffsetBeforeMultiplierKey As Variant = SaveData.FirstKey("offsetBeforeMultiplier", "Offset Before Multiplier", "offset_before_multiplier", "OffsetBeforeMultiplier")
 		  If OffsetBeforeMultiplierKey.IsNull = False Then
-		    Set.LevelOffsetBeforeMultiplier = SaveData.Value(OffsetBeforeMultiplierKey)
+		    Set.LevelOffsetBeforeMultiplier = SaveData.Value(OffsetBeforeMultiplierKey.StringValue)
 		  End If
 		  
 		  Var ColorSetKey As Variant = SaveData.FirstKey("colorSetClass", "color_set", "Color Set Class") // I'm not confident color_set was ever used
 		  If ColorSetKey.IsNull = False Then
-		    Set.ColorSetClass = SaveData.Value(ColorSetKey)
+		    Set.ColorSetClass = SaveData.Value(ColorSetKey.StringValue)
 		  End If
 		  
 		  Var ReplacementsKey As Variant = SaveData.FirstKey("replacements", "Creature Replacements", "Replacements")
 		  If ReplacementsKey.IsNull = False Then
-		    Var ReplacementsData As Variant = SaveData.Value(ReplacementsKey)
-		    If ReplacementsData.IsNull = False Then
+		    Var ReplacementsData As JSONItem = SaveData.Child(ReplacementsKey.StringValue)
+		    If (ReplacementsData Is Nil) = False Then
 		      // This could be a bunch of things
 		      
 		      If ReplacementsData.IsArray Then
-		        // It was an array of dictionarys
-		        Var Replacements() As Variant = ReplacementsData
-		        For Each Replacement As Dictionary In Replacements
+		        // It was an array of objects
+		        For Each ReplacementEntry As JSONEntry In ReplacementsData.Iterator
+		          Var Replacement As JSONItem = ReplacementEntry.Value
 		          Var FromCreatureId As String
 		          Var CreatureIdKey As Variant = Replacement.FirstKey("creatureId", "creature", "creature_id")
-		          Var CreatureData As Variant = Replacement.Value(CreatureIdKey)
+		          Var CreatureData As Variant = Replacement.Value(CreatureIdKey.StringValue)
 		          If CreatureData.Type = Variant.TypeString Then
 		            FromCreatureId = CreatureData.StringValue
 		          ElseIf CreatureData.Type = Variant.TypeObject Then
-		            Var CreatureRef As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(Dictionary(CreatureData))
+		            Var CreatureRef As ArkSA.BlueprintReference = ArkSA.BlueprintReference.FromSaveData(JSONItem(CreatureData))
 		            If (CreatureRef Is Nil) = False Then
 		              FromCreatureId = CreatureRef.BlueprintId
 		            End If
 		          End If
 		          
-		          Var Choices As Variant = Replacement.Value("choices")
+		          Var Choices As JSONItem = Replacement.Child("choices")
 		          If Choices.IsArray Then
-		            Var ChoiceDicts() As Variant = Choices
-		            For Each ChoiceDict As Dictionary In ChoiceDicts
+		            For Each ChoiceEntry As JSONEntry In Choices.Iterator
+		              Var ChoiceDict As JSONItem = ChoiceEntry.Value
 		              Var ReplacementWeight As Double = ChoiceDict.Value("weight")
 		              If ChoiceDict.HasKey("creatureId") Then
 		                Var ReplacementCreatureId As String = ChoiceDict.Value("creatureId")
@@ -318,8 +318,7 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		              End If
 		            Next
 		          Else
-		            Var ChoicesDict As Dictionary = Choices
-		            For Each ChoiceEntry As DictionaryEntry In ChoicesDict
+		            For Each ChoiceEntry As JSONEntry In Choices.Iterator
 		              Var ReplacementCreatureId As String = ChoiceEntry.Key
 		              Var ReplacementWeight As Double = ChoiceEntry.Value
 		              Set.CreatureReplacementWeight(FromCreatureId, ReplacementCreatureId) = ReplacementWeight
@@ -345,12 +344,11 @@ Implements Beacon.Countable,ArkSA.Weighted,Beacon.Validateable
 		          Next
 		        Else
 		          // It was a dictionary
-		          Var Replacements As Dictionary = ReplacementsData
-		          For Each Entry As DictionaryEntry In Replacements
+		          For Each Entry As JSONEntry In ReplacementsData.Iterator
 		            Var FromPath As String = Entry.Key
 		            Var FromCreature As ArkSA.Creature = ArkSA.ResolveCreature("", FromPath, "", Nil, True)
-		            Var ToDict As Dictionary = Entry.Value
-		            For Each SubEntry As DictionaryEntry In ToDict
+		            Var ToDict As JSONItem = Entry.Value
+		            For Each SubEntry As JSONEntry In ToDict.Iterator
 		              Var ToPath As String = SubEntry.Key
 		              Var Weight As Double = SubEntry.Value
 		              Var ToCreature As ArkSA.Creature = ArkSA.ResolveCreature("", ToPath, "", Nil, True)

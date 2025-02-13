@@ -79,7 +79,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 		  Self.mLootDropId = Source.mLootDropId
 		  Self.mPath = Source.mPath
 		  Self.mPreventDuplicates = Source.mPreventDuplicates
-		  Self.mRequirements = If(Source.mRequirements Is Nil, Nil, Source.mRequirements.Clone)
+		  Self.mRequirements = If(Source.mRequirements Is Nil, Nil, New JSONItem(Source.mRequirements.ToString(False)))
 		  Self.mSortValue = Source.mSortValue
 		  Self.mIconID = Source.mIconID
 		  Self.mUIColor = Source.mUIColor
@@ -224,7 +224,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary) As Ark.LootContainer
+		Shared Function FromSaveData(SaveData As JSONItem) As Ark.LootContainer
 		  If SaveData Is Nil Then
 		    Return Nil
 		  End If
@@ -241,7 +241,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 		    MaxItemSetsKey = "maxItemSets"
 		    SourceContainer = Ark.ResolveLootContainer(SaveData.Value("lootDropId").StringValue, "", "", Nil)
 		  ElseIf SaveData.HasKey("Reference") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Child("Reference"))
 		    If Reference Is Nil Then
 		      Return Nil
 		    End If
@@ -282,7 +282,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 		    App.Log(Err, CurrentMethodName, "Reading " + AppendModeKey + " value")
 		  End Try
 		  
-		  Var SetDicts() As Variant
+		  Var SetDicts As JSONItem
 		  If SaveData.HasKey("itemSets") Then
 		    Try
 		      SetDicts = SaveData.Value("itemSets")
@@ -295,21 +295,23 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 		    End Try
 		  End If
 		  
-		  For Idx As Integer = 0 To SetDicts.LastIndex
-		    Try
-		      Var SetDict As Variant = SetDicts(Idx)
-		      If IsNull(SetDict) Or SetDict.IsArray = True Or SetDict.Type <> Variant.TypeObject Or (SetDict.ObjectValue IsA Dictionary) = False Then
-		        Continue
-		      End If
-		      
-		      Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dictionary(SetDict))
-		      If (Set Is Nil) = False Then
-		        Container.Add(Set)
-		      End If
-		    Catch IdxErr As RuntimeException
-		      App.Log(IdxErr, CurrentMethodName, "Reading item set member")
-		    End Try
-		  Next
+		  If (SetDicts Is Nil) = False Then
+		    For Idx As Integer = 0 To SetDicts.LastRowIndex
+		      Try
+		        Var SetDict As JSONItem = SetDicts.ChildAt(Idx)
+		        If SetDict Is Nil Or SetDict.IsArray Then
+		          Continue
+		        End If
+		        
+		        Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(SetDict)
+		        If (Set Is Nil) = False Then
+		          Container.Add(Set)
+		        End If
+		      Catch IdxErr As RuntimeException
+		        App.Log(IdxErr, CurrentMethodName, "Reading item set member")
+		      End Try
+		    Next
+		  End If
 		  
 		  Container.Modified = False
 		  Return Container
@@ -488,28 +490,31 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		Sub Pack(Dict As JSONItem, ForAPI As Boolean)
 		  // Part of the Ark.Blueprint interface.
 		  
 		  Self.LoadPendingContents()
 		  
-		  Var Sets() As Dictionary
-		  Sets.ResizeTo(Self.mItemSets.LastIndex)
+		  Var Sets As New JSONItem("[]")
 		  For Idx As Integer = Self.mItemSets.FirstIndex To Self.mItemSets.LastIndex
-		    Sets(Idx) = Self.mItemSets(Idx).Pack(ForAPI)
+		    Sets.Add(Self.mItemSets(Idx).Pack(ForAPI))
 		  Next Idx
 		  
-		  Dict.Value("multipliers") = New Dictionary("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)
+		  Var Multipliers As New JSONItem
+		  Multipliers.Value("min") = Self.mMultipliers.Min
+		  Multipliers.Value("max") = Self.mMultipliers.Max
+		  
+		  Dict.Child("multipliers") = Multipliers
 		  Dict.Value("uiColor") = Self.mUIColor.ToHex
-		  Dict.Value("iconId") = Self.mIconID
+		  Dict.Value("iconId") = Self.mIconId
 		  Dict.Value("sort") = Self.mSortValue
 		  Dict.Value("experimental") = Self.mExperimental
 		  Dict.Value("notes") = Self.mNotes
-		  Dict.Value("requirements") = Beacon.GenerateJSON(Self.mRequirements, False)
+		  Dict.Value("requirements") = Self.mRequirements.ToString(False)
 		  Dict.Value("minItemSets") = Self.mMinItemSets
 		  Dict.Value("maxItemSets") = Self.mMaxItemSets
 		  Dict.Value("preventDuplicates") = Self.mPreventDuplicates
-		  Dict.Value("itemSets") = Sets
+		  Dict.Child("itemSets") = Sets
 		End Sub
 	#tag EndMethod
 
@@ -540,8 +545,8 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Requirements() As Dictionary
-		  Return Self.mRequirements.Clone
+		Function Requirements() As JSONItem
+		  Return New JSONItem(Self.mRequirements.ToString(False))
 		End Function
 	#tag EndMethod
 
@@ -784,7 +789,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.Di
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mRequirements As Dictionary
+		Protected mRequirements As JSONItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

@@ -295,7 +295,7 @@ Protected Module BeaconEncryption
 		    Crypt.ZeroPaddingKey = False
 		  Else
 		    Var Err As New CryptoException
-		    Err.Message = "Unknown symmetric version " + Version.ToString
+		    Err.Message = "Unknown symmetric version " + Version.ToString(Locale.Raw, "0")
 		    Raise Err
 		  End Select
 		  

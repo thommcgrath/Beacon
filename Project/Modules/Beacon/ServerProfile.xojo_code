@@ -30,9 +30,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.ServerProfile
 		  // The project is not necessary since SaveData will always be modern
-		  Var Json As String = Beacon.GenerateJson(Self.SaveData(), False)
-		  Var SaveData As Dictionary = Beacon.ParseJson(Json)
-		  Return Beacon.ServerProfile.FromSaveData(SaveData, Nil)
+		  Return Beacon.ServerProfile.FromSaveData(Self.SaveData(), Nil)
 		End Function
 	#tag EndMethod
 
@@ -75,7 +73,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Constructor(Dict As Dictionary, Project As Beacon.Project, Version As Integer)
+		Protected Sub Constructor(Dict As JSONItem, Project As Beacon.Project, Version As Integer)
 		  // Optional project is needed to correctly restore legacy config set states
 		  
 		  Select Case Version
@@ -150,9 +148,9 @@ Protected Class ServerProfile
 		    If Dict.HasKey("Config Set Priorities") Then
 		      Self.mConfigSetStates = Beacon.ConfigSetState.DecodeArray(Dict.Value("Config Set Priorities"))
 		    ElseIf Dict.HasKey("Config Sets") Then
-		      Var States() As Dictionary
+		      Var States As JSONItem
 		      Try
-		        States = Dict.Value("Config Sets").DictionaryArrayValue
+		        States = Dict.Child("Config Sets")
 		      Catch Err As RuntimeException
 		      End Try
 		      
@@ -166,8 +164,9 @@ Protected Class ServerProfile
 		      Next
 		      
 		      Self.mConfigSetStates.ResizeTo(-1)
-		      For Each State As Dictionary In States
+		      For Idx As Integer = 0 To States.LastRowIndex
 		        Try
+		          Var State As JSONItem = States.ChildAt(Idx)
 		          Var SetName As String = State.Value("Name").StringValue
 		          If SetsMap.HasKey(SetName) = False Then
 		            Continue
@@ -245,7 +244,13 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, Project As Beacon.Project) As Beacon.ServerProfile
+		Attributes( Deprecated = "FromSaveData(JSONItem, Project)" )  Shared Function FromSaveData(Dict As Dictionary, Project As Beacon.Project) As Beacon.ServerProfile
+		  Return FromSaveData(New JSONItem(Dict), Project)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(Dict As JSONItem, Project As Beacon.Project) As Beacon.ServerProfile
 		  // This isn't a great design because the factory needs to know about all its subclasses, but
 		  // there aren't better alternatives. Xojo's dead code stripping prevents a lookup from working.
 		  
@@ -481,8 +486,8 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
-		  Var SaveData As New Dictionary
+		Function SaveData() As JSONItem
+		  Var SaveData As New JSONItem
 		  SaveData.Value("version") = Self.Version
 		  SaveData.Value("gameId") = Self.GameId
 		  SaveData.Value("providerId") = Self.mProviderId
@@ -503,14 +508,16 @@ Protected Class ServerProfile
 		    SaveData.Value("hostConfig") = Self.mHostConfig.SaveData
 		  End If
 		  
-		  Var Dict As New Dictionary
+		  Var Dict As New JSONItem
 		  RaiseEvent WriteToDictionary(Dict)
-		  For Each Entry As DictionaryEntry In Dict
-		    If SaveData.HasKey(Entry.Key) Then
+		  Var Keys() As String = Dict.Keys
+		  For Each Key As String In Keys
+		    If SaveData.HasKey(Key) Then
+		      // Do not override keys that are already present
 		      Continue
 		    End If
 		    
-		    SaveData.Value(Entry.Key) = Entry.Value
+		    SaveData.Value(Key) = Dict.Value(Key)
 		  Next
 		  
 		  Return SaveData
@@ -548,11 +555,11 @@ Protected Class ServerProfile
 
 
 	#tag Hook, Flags = &h0
-		Event ReadFromDictionary(Dict As Dictionary, Version As Integer)
+		Event ReadFromDictionary(Dict As JSONItem, Version As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteToDictionary(Dict As Dictionary)
+		Event WriteToDictionary(Dict As JSONItem)
 	#tag EndHook
 
 

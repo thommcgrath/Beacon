@@ -62,7 +62,7 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Unpack(Dict As Dictionary)
+		Sub Unpack(Dict As JSONItem)
 		  
 		End Sub
 	#tag EndMethod

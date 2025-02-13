@@ -50,7 +50,7 @@ Protected Class ProjectController
 		    Raise Err
 		  End Select
 		  
-		  SaveInfo = EncodeBase64URL(Beacon.Compress(SaveInfo))
+		  SaveInfo = EncodeBase64URLMBS(Beacon.Compress(SaveInfo))
 		  
 		  Var Servers() As String
 		  For Each Profile As Beacon.ServerProfile In Settings.Servers
@@ -141,7 +141,7 @@ Protected Class ProjectController
 		  If (Response.Content Is Nil) = False Then
 		    Try
 		      Message = Response.Content
-		      Var Dict As Dictionary = Beacon.ParseJSON(Message)
+		      Var Dict As New JSONItem(Message)
 		      If Dict.HasKey("message") Then
 		        Message = Dict.Value("message")
 		      ElseIf Dict.HasKey("description") Then
@@ -169,7 +169,7 @@ Protected Class ProjectController
 		  If (Socket.LastContent Is Nil) = False Then
 		    Try
 		      Message = Socket.LastContent
-		      Var Dict As Dictionary = Beacon.ParseJSON(Message)
+		      Var Dict As New JSONItem(Message)
 		      If Dict.HasKey("message") Then
 		        Message = Dict.Value("message")
 		      ElseIf Dict.HasKey("description") Then

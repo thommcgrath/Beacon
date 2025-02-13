@@ -233,7 +233,7 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ItemID() As NullableDouble
+		Function ItemId() As NullableDouble
 		  Return Self.mItemID
 		End Function
 	#tag EndMethod
@@ -295,7 +295,7 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
+		Function ObjectId() As String
 		  // Part of the Ark.Blueprint interface.
 		  
 		  Return Self.mEngramId
@@ -317,7 +317,7 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		Sub Pack(Dict As JSONItem, ForAPI As Boolean)
 		  // Part of the Ark.Blueprint interface.
 		  
 		  If Self.HasUnlockDetails Then
@@ -350,11 +350,11 @@ Implements Ark.Blueprint,Beacon.DisambiguationCandidate
 		  If Self.mIngredients.Count = 0 Then
 		    Dict.Value("recipe") = Nil
 		  Else
-		    Var Ingredients() As Dictionary
+		    Var Ingredients As New JSONItem("[]")
 		    For Each Ingredient As Ark.CraftingCostIngredient In Self.mIngredients
 		      Ingredients.Add(Ingredient.SaveData(ForAPI))
 		    Next
-		    Dict.Value("recipe") = Ingredients
+		    Dict.Child("recipe") = Ingredients
 		  End If
 		End Sub
 	#tag EndMethod

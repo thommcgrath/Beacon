@@ -159,7 +159,56 @@ Protected Module Configs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary, EncryptedData As Dictionary) As ArkSA.ConfigGroup
+		Protected Function CreateInstance(InternalName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, Project As ArkSA.Project) As ArkSA.ConfigGroup
+		  // Why not just pass the project itself to these methods? Because we don't want it to be possible
+		  // for the creation of an instance to modify the project. MapMask and ContentPacks are immutable,
+		  // but the difficulty object is not, so we'll pass the raw value instead.
+		  
+		  Var DifficultyValue As Double = Project.Difficulty.DifficultyValue
+		  
+		  Select Case InternalName
+		  Case ArkSA.Configs.NameBreedingMultipliers
+		    Return ArkSA.Configs.BreedingMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameCraftingCosts
+		    Return ArkSA.Configs.CraftingCosts.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameCustomConfig
+		    Return Nil
+		  Case ArkSA.Configs.NameDayCycle
+		    Return ArkSA.Configs.DayCycle.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameDifficulty
+		    Return Nil
+		  Case ArkSA.Configs.NameCreatureAdjustments
+		    Return ArkSA.Configs.DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameEngramControl
+		    Return ArkSA.Configs.EngramControl.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameLevelsAndXP
+		    Return ArkSA.Configs.ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameHarvestRates
+		    Return ArkSA.Configs.HarvestRates.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameLootDrops
+		    Return ArkSA.Configs.LootDrops.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameCreatureSpawns
+		    Return ArkSA.Configs.SpawnPoints.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameStackSizes
+		    Return ArkSA.Configs.StackSizes.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameStatLimits
+		    Return ArkSA.Configs.StatLimits.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameStatMultipliers
+		    Return ArkSA.Configs.StatMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameDecayAndSpoil
+		    Return ArkSA.Configs.SpoilTimers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case ArkSA.Configs.NameGeneralSettings
+		    Return ArkSA.Configs.OtherSettings.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Else
+		    Var Err As New FunctionNotFoundException
+		    Err.Message = "Config group """ + InternalName + """ is not known."
+		    Raise Err
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function CreateInstance(InternalName As String, SaveData As JSONItem, EncryptedData As JSONItem) As ArkSA.ConfigGroup
 		  If EncryptedData Is Nil Then
 		    If SaveData.HasAllKeys("Plain", "Encrypted") Then
 		      EncryptedData = SaveData.Value("Encrypted")
@@ -202,55 +251,6 @@ Protected Module Configs
 		    Return New ArkSA.Configs.SpoilTimers(SaveData, EncryptedData)
 		  Case NameGeneralSettings
 		    Return New ArkSA.Configs.OtherSettings(SaveData, EncryptedData)
-		  Else
-		    Var Err As New FunctionNotFoundException
-		    Err.Message = "Config group """ + InternalName + """ is not known."
-		    Raise Err
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, Project As ArkSA.Project) As ArkSA.ConfigGroup
-		  // Why not just pass the project itself to these methods? Because we don't want it to be possible
-		  // for the creation of an instance to modify the project. MapMask and ContentPacks are immutable,
-		  // but the difficulty object is not, so we'll pass the raw value instead.
-		  
-		  Var DifficultyValue As Double = Project.Difficulty.DifficultyValue
-		  
-		  Select Case InternalName
-		  Case ArkSA.Configs.NameBreedingMultipliers
-		    Return ArkSA.Configs.BreedingMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameCraftingCosts
-		    Return ArkSA.Configs.CraftingCosts.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameCustomConfig
-		    Return Nil
-		  Case ArkSA.Configs.NameDayCycle
-		    Return ArkSA.Configs.DayCycle.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameDifficulty
-		    Return Nil
-		  Case ArkSA.Configs.NameCreatureAdjustments
-		    Return ArkSA.Configs.DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameEngramControl
-		    Return ArkSA.Configs.EngramControl.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameLevelsAndXP
-		    Return ArkSA.Configs.ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameHarvestRates
-		    Return ArkSA.Configs.HarvestRates.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameLootDrops
-		    Return ArkSA.Configs.LootDrops.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameCreatureSpawns
-		    Return ArkSA.Configs.SpawnPoints.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameStackSizes
-		    Return ArkSA.Configs.StackSizes.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameStatLimits
-		    Return ArkSA.Configs.StatLimits.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameStatMultipliers
-		    Return ArkSA.Configs.StatMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameDecayAndSpoil
-		    Return ArkSA.Configs.SpoilTimers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
-		  Case ArkSA.Configs.NameGeneralSettings
-		    Return ArkSA.Configs.OtherSettings.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."

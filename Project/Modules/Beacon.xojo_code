@@ -27,15 +27,9 @@ Protected Module Beacon
 		  Var Wrapper As New JSONItem
 		  Wrapper.Value("type") = Type
 		  Wrapper.Value("data") = Data
-		  Wrapper.Compact = False
 		  
-		  Var Compact As Boolean = Data.Compact
-		  Data.Compact = True
-		  
-		  Board.Text = Wrapper.ToString
-		  Board.RawData(Type) = Data.ToString
-		  
-		  Data.Compact = Compact
+		  Board.Text = Wrapper.ToString(True)
+		  Board.RawData(Type) = Data.ToString(False)
 		End Sub
 	#tag EndMethod
 
@@ -97,6 +91,38 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function BooleanValue(Extends Dict As Dictionary, Key As Variant, Default As Boolean, AllowArray As Boolean = False) As Boolean
 		  Return GetValueAsType(Dict, Key, "Boolean", Default, AllowArray, AddressOf CoerceToBoolean)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BooleanValue(Extends Dict As JSONItem, Key As String, Default As Boolean, ChooseLastIfArray As Boolean = False) As Boolean
+		  If Dict.HasKey(Key) = False Then
+		    Return Default
+		  End If
+		  
+		  Var Value As Variant = Dict.Value(Key)
+		  If Value.IsNull Then
+		    Return Default
+		  End If
+		  
+		  If Value.Type = Variant.TypeObject Then
+		    If (Value.ObjectValue IsA JSONItem) = False Then
+		      Return Default
+		    End If
+		    
+		    Var SubItem As JSONItem = JSONItem(Value.ObjectValue)
+		    If SubItem.IsArray = False Or ChooseLastIfArray = False Or SubItem.Count = 0 Then
+		      Return Default
+		    End If
+		    
+		    Value = SubItem.ValueAt(SubItem.LastRowIndex)
+		  End If
+		  
+		  Try
+		    Return Value.IsTruthy
+		  Catch Err As TypeMismatchException
+		    Return Default
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -565,7 +591,7 @@ Protected Module Beacon
 		        Results.Add(Members(Idx))
 		      Else
 		        Var Err As New TypeMismatchException
-		        Err.Message = "Value at index " + Idx.ToString + "is not a Dictionary"
+		        Err.Message = "Value at index " + Idx.ToString(Locale.Raw, "0") + "is not a Dictionary"
 		        Raise Err
 		      End If
 		    Next
@@ -581,6 +607,40 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function DictionaryValue(Extends Dict As Dictionary, Key As Variant, Default As Dictionary, AllowArray As Boolean = False) As Dictionary
 		  Return GetValueAsType(Dict, Key, "Dictionary", Default, AllowArray)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DictionaryValue(Extends Dict As JSONItem, Key As String, Default As JSONItem, ChooseLastIfArray As Boolean = False) As JSONItem
+		  If Dict.HasKey(Key) = False Then
+		    Return Default
+		  End If
+		  
+		  Var Value As Variant = Dict.Value(Key)
+		  If Value.IsNull Then
+		    Return Default
+		  End If
+		  
+		  If Value.Type <> Variant.TypeObject Or (Value.ObjectValue IsA JSONItem) = False Then
+		    Return Default
+		  End If
+		  
+		  Var SubItem As JSONItem = JSONItem(Value.ObjectValue)
+		  If SubItem.IsArray = False Then
+		    // Good, we wanted a dictionary
+		    Return SubItem
+		  End If
+		  
+		  If ChooseLastIfArray = False Or SubItem.Count = 0 Then
+		    Return Default
+		  End If
+		  
+		  Var LastItem As Variant = SubItem.ValueAt(SubItem.LastRowIndex)
+		  If LastItem.IsNull = False And LastItem.Type = Variant.TypeObject And LastItem.ObjectValue IsA JSONItem And JSONItem(LastItem).IsArray = False Then
+		    Return JSONItem(LastItem.ObjectValue)
+		  Else
+		    Return Default
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -659,6 +719,38 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DoubleValue(Extends Dict As JSONItem, Key As String, Default As Double, ChooseLastIfArray As Boolean = False) As Double
+		  If Dict.HasKey(Key) = False Then
+		    Return Default
+		  End If
+		  
+		  Var Value As Variant = Dict.Value(Key)
+		  If Value.IsNull Then
+		    Return Default
+		  End If
+		  
+		  If Value.Type = Variant.TypeObject Then
+		    If (Value.ObjectValue IsA JSONItem) = False Then
+		      Return Default
+		    End If
+		    
+		    Var SubItem As JSONItem = JSONItem(Value.ObjectValue)
+		    If SubItem.IsArray = False Or ChooseLastIfArray = False Or SubItem.Count = 0 Then
+		      Return Default
+		    End If
+		    
+		    Value = SubItem.ValueAt(SubItem.LastRowIndex)
+		  End If
+		  
+		  Try
+		    Return Value.DoubleValue
+		  Catch Err As TypeMismatchException
+		    Return Default
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ExceptionsFolder(Extends Target As Beacon.Application, Create As Boolean = True) As FolderItem
 		  Var ErrorsFolder As FolderItem = Target.ApplicationSupport.Child("Errors")
 		  Call ErrorsFolder.CheckIsFolder(Create)
@@ -690,7 +782,7 @@ Protected Module Beacon
 		    End If
 		    
 		    Counter = Counter + 1
-		    TestLabel = DesiredLabel + " " + Counter.ToString
+		    TestLabel = DesiredLabel + " " + Counter.ToString(Locale.Raw, "0")
 		  Loop
 		End Function
 	#tag EndMethod
@@ -733,32 +825,24 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
-		  Const UseMBS = False
+		Attributes( Deprecated = "JSONItem.ToString" ) Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
+		  Var Options As New JSONOptions
+		  Options.Compact = Not Pretty
+		  Return Beacon.GenerateJSON(Source, Options)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Attributes( Deprecated = "JSONItem.ToString" ) Protected Function GenerateJSON(Source As Variant, Options As JSONOptions) As String
+		  If Source.IsNull Then
+		    Return "null"
+		  End If
 		  
-		  #if UseMBS 
-		    Var Temp As JSONMBS = JSONMBS.Convert(Source)
-		    Return Temp.ToString(Pretty)
-		  #else
-		    If Source.Type = Variant.TypeObject And Source.ObjectValue IsA JSONItem Then
-		      Var Item As JSONItem = Source
-		      Var OriginalCompact As Boolean = Item.Compact
-		      Item.Compact = Not Pretty
-		      Var Json As String = Item.ToString()
-		      Item.Compact = OriginalCompact
-		      Return Json
-		    End If
-		    
-		    Var Result As String = Xojo.GenerateJSON(Source, Pretty)
-		    #if TargetARM And XojoVersion < 2022.01
-		      If Pretty Then
-		        // feedback://showreport?report_id=66705
-		        Var Temp As New JSONMBS(Result)
-		        Result = Temp.ToString(True)
-		      End If
-		    #endif
-		    Return Result
-		  #endif
+		  If Source.Type = Variant.TypeObject And Source.ObjectValue IsA JSONItem Then
+		    Return JSONItem(Source.ObjectValue).ToString(Options)
+		  End If
+		  
+		  Return Xojo.GenerateJSON(Source, Options)
 		End Function
 	#tag EndMethod
 
@@ -776,40 +860,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetClipboardData(Extends Board As Clipboard, Type As String) As Variant
-		  If Board.RawDataAvailable(Type) Then
-		    Try
-		      Return Beacon.ParseJson(Board.RawData(Type))
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  End If
-		  
-		  If Board.TextAvailable = False Then
-		    Return Nil
-		  End If
-		  
-		  Try
-		    Var Parsed As Variant = Beacon.ParseJson(Board.Text)
-		    If Parsed.Type <> Variant.TypeObject Or (Parsed.ObjectValue IsA Dictionary) = False Then
-		      Return Nil
-		    End If
-		    
-		    Var Dict As Dictionary = Dictionary(Parsed.ObjectValue)
-		    If Dict.Lookup("type", "").StringValue <> Type Or Dict.HasKey("data") = False Then
-		      Return Nil
-		    End If
-		    
-		    Return Dict.Value("data")
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetClipboardDataAsJSON(Extends Board As Clipboard, Type As String) As JSONItem
+		Function GetClipboardData(Extends Board As Clipboard, Type As String) As JSONItem
 		  If Board.RawDataAvailable(Type) Then
 		    Try
 		      Return New JSONItem(Board.RawData(Type))
@@ -841,7 +892,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
+		Attributes( Deprecated ) Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.LastIndex DownTo 0
 		    Var ValueName As String = NameOfValue(Values(I))
 		    If ValueName = FullName Then
@@ -853,8 +904,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetValueAsType(Dict As Dictionary, Key As Variant, FullName As String, Default As Variant, AllowArray As Boolean = False, Adapter As ValueAdapter = Nil) As Variant
-		  If Dict = Nil Or Dict.HasKey(Key) = False Then
+		Attributes( Deprecated ) Private Function GetValueAsType(Dict As Dictionary, Key As Variant, FullName As String, Default As Variant, ChooseLastIfArray As Boolean = False, Adapter As ValueAdapter = Nil) As Variant
+		  If Dict Is Nil Or Dict.HasKey(Key) = False Then
 		    Return Default
 		  End If
 		  
@@ -867,7 +918,7 @@ Protected Module Beacon
 		  If ValueName.BeginsWith("Unknown") Then
 		    Return Default
 		  End If
-		  If ValueName = "Object()" And AllowArray Then
+		  If ValueName = "Object()" And ChooseLastIfArray Then
 		    Var Arr() As Object = Value
 		    Return GetLastValueAsType(Arr, FullName, Default)
 		  ElseIf ValueName = FullName Then
@@ -1372,7 +1423,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ParseJSON(Source As String) As Variant
+		Attributes( Deprecated = "New JSONItem" ) Protected Function ParseJSON(Source As String) As Variant
 		  If Source.IsEmpty Then
 		    Return Nil
 		  End If
@@ -1694,6 +1745,38 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function StringValue(Extends Dict As Dictionary, Key As Variant, Default As String, AllowArray As Boolean = False) As String
 		  Return GetValueAsType(Dict, Key, "String", Default, AllowArray, AddressOf CoerceToString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StringValue(Extends Dict As JSONItem, Key As String, Default As String, ChooseLastIfArray As Boolean = False) As String
+		  If Dict.HasKey(Key) = False Then
+		    Return Default
+		  End If
+		  
+		  Var Value As Variant = Dict.Value(Key)
+		  If Value.IsNull Then
+		    Return Default
+		  End If
+		  
+		  If Value.Type = Variant.TypeObject Then
+		    If (Value.ObjectValue IsA JSONItem) = False Then
+		      Return Default
+		    End If
+		    
+		    Var SubItem As JSONItem = JSONItem(Value.ObjectValue)
+		    If SubItem.IsArray = False Or ChooseLastIfArray = False Or SubItem.Count = 0 Then
+		      Return Default
+		    End If
+		    
+		    Value = SubItem.ValueAt(SubItem.LastRowIndex)
+		  End If
+		  
+		  Try
+		    Return Value.StringValue
+		  Catch Err As TypeMismatchException
+		    Return Default
+		  End Try
 		End Function
 	#tag EndMethod
 

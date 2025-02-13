@@ -46,12 +46,12 @@ Protected Class CraftingCostIngredient
 		  End If
 		  
 		  Try
-		    Var BlueprintId As String = Dict.FirstValue("engramId", "object_id", "EngramID", "")
-		    Var BlueprintPath As String = Dict.FirstValue("path", "Path", "")
-		    Var BlueprintClass As String = Dict.FirstValue("class", "Class", "")
-		    Var Blueprint As Dictionary = Dict.FirstValue("blueprint", "Blueprint", "engram", "Engram", Nil)
-		    Var Quantity As Double = Dict.FirstValue("quantity", "Quantity", 0.0)
-		    Var Exact As Boolean = Dict.FirstValue("exact", "Exact", False)
+		    Var BlueprintId As String = Dict.FirstValue("", "engramId", "object_id", "EngramID")
+		    Var BlueprintPath As String = Dict.FirstValue("", "path", "Path")
+		    Var BlueprintClass As String = Dict.FirstValue("", "class", "Class")
+		    Var Blueprint As Dictionary = Dict.FirstValue(Nil, "blueprint", "Blueprint", "engram", "Engram")
+		    Var Quantity As Double = Dict.FirstValue(0.0, "quantity", "Quantity")
+		    Var Exact As Boolean = Dict.FirstValue(False, "exact", "Exact")
 		    
 		    Var Reference As ArkSA.BlueprintReference
 		    If (Blueprint Is Nil) = False Then

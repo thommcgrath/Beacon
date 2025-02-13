@@ -168,7 +168,7 @@ Implements NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  If SaveData.HasKey("Whitelist Mode") Then
@@ -267,7 +267,7 @@ Implements NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  If Self.mOverrides.Count > 0 Then
@@ -597,64 +597,42 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Import(Source As Variant) As Boolean
-		  If Source.IsNull Then
+		Function Import(Source As JSONItem) As Boolean
+		  If Source Is Nil Then
 		    Return False
 		  End If
 		  
-		  If Source.Type = Variant.TypeString Then
-		    // Could be JSON
-		    Try
-		      Var Parsed As Variant = Beacon.ParseJSON(Source.StringValue)
-		      Source = Parsed
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Var Dictionaries() As Dictionary
-		  If Source.IsArray = False And Source IsA Dictionary Then
-		    Dictionaries.Add(Source)
-		  ElseIf Source.IsArray Then
-		    Var Items() As Variant
-		    Try
-		      Items = Source
-		    Catch Err As RuntimeException
-		    End Try
-		    For Each Item As Variant In Items
-		      If Item IsA Dictionary Then
-		        Dictionaries.Add(Item)
-		      End If
+		  If Source.IsArray Then
+		    // Array of items
+		    Var ImportedSomething As Boolean
+		    For Idx As Integer = 0 To Source.LastRowIndex
+		      ImportedSomething = Self.Import(Source.ChildAt(Idx)) Or ImportedSomething
 		    Next
+		    Return ImportedSomething
 		  End If
 		  
-		  If Dictionaries.Count = 0 Then
+		  If Source.HasAllKeys("Blueprint", Self.KeyAutoUnlockLevel, Self.KeyEntryString, Self.KeyHidden, Self.KeyPlayerLevel, Self.KeyPlayerLevel, Self.KeyRemovePrerequisites, Self.KeyUnlockPoints) = False Then
 		    Return False
 		  End If
 		  
-		  Var Keys() As String = Self.AllAttributeKeys
-		  For Each Dict As Dictionary In Dictionaries
-		    If Dict.HasAllKeys("Blueprint", Self.KeyAutoUnlockLevel, Self.KeyEntryString, Self.KeyHidden, Self.KeyPlayerLevel, Self.KeyPlayerLevel, Self.KeyRemovePrerequisites, Self.KeyUnlockPoints) = False Then
-		      Continue
-		    End If
-		    
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
-		    If Reference Is Nil Then
-		      Continue
-		    End If
-		    
-		    Call Reference.Resolve
-		    If Reference.IsEngram = False Then
-		      Continue
-		    End If
-		    
-		    Var Engram As Ark.Engram = Ark.Engram(Reference.Resolve) // It's ok, result is cached
-		    If Engram Is Nil Then
-		      Continue
-		    End If
-		    
-		    For Each Key As String In Keys
-		      Self.SetAttributeForEngram(Engram, Key, Dict.Value(Key))
-		    Next
+		  Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Source.Child("Blueprint"))
+		  If Reference Is Nil Then
+		    Return False
+		  End If
+		  
+		  Call Reference.Resolve
+		  If Reference.IsEngram = False Then
+		    Return False
+		  End If
+		  
+		  Var Engram As Ark.Engram = Ark.Engram(Reference.Resolve) // It's ok, result is cached
+		  If Engram Is Nil Then
+		    Return False
+		  End If
+		  
+		  Var Keys() As String = Source.Keys
+		  For Each Key As String In Keys
+		    Self.SetAttributeForEngram(Engram, Key, Source.Value(Key))
 		  Next
 		  
 		  Return True

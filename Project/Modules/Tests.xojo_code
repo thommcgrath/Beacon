@@ -109,7 +109,7 @@ Protected Module Tests
 		    Return
 		  End If
 		  
-		  Var Serialized As Dictionary = Ark.PackBlueprint(SourceBlueprint, False)
+		  Var Serialized As JSONItem = Ark.PackBlueprint(SourceBlueprint, False)
 		  If Not Assert(Serialized <> Nil, "Unable to produce serialized blueprint") Then
 		    Return
 		  End If

@@ -12,17 +12,24 @@ Begin BeaconSubview ArkSASpawnWeightsEditor
    Height          =   508
    Index           =   -2147483648
    InitialParent   =   ""
+   IsFrontmost     =   False
    Left            =   0
    LockBottom      =   True
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Modified        =   False
+   Progress        =   0.0
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewIcon        =   0
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   914
    Begin StatusContainer StatusBar
@@ -445,7 +452,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var PasteData As JSONItem = Board.GetClipboardDataAsJSON(Self.kClipboardType)
+		  Var PasteData As JSONItem = Board.GetClipboardData(Self.kClipboardType)
 		  Var Config As ArkSA.Configs.SpawnPoints
 		  Var SelectNameTags() As String
 		  For Idx As Integer = 0 To PasteData.LastRowIndex

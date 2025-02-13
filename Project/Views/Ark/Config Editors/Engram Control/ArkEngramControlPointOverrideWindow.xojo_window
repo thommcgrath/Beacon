@@ -279,19 +279,19 @@ End
 		  
 		  If Self.mLevels.LastIndex = -1 Then
 		    Var Level As Integer = Max(Self.mConfig.LevelsDefined, Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData.MaxLevel) + 1
-		    Self.LevelField.Text = Level.ToString
+		    Self.LevelField.Text = Level.ToString(Locale.Raw, "0")
 		    Self.PointsField.SetFocus()
 		  ElseIf Self.mLevels.LastIndex = 0 Then
 		    Var Level As Integer = Self.mLevels(0)
-		    Self.LevelField.Text = Level.ToString
+		    Self.LevelField.Text = Level.ToString(Locale.Raw, "0")
 		    Self.LevelField.Enabled = False
 		    Self.LevelLabel.Enabled = False
 		    
 		    Var Points As NullableDouble = Self.mConfig.PointsForLevel(Level)
 		    If IsNull(Points) = False Then
-		      Self.PointsField.Text = Points.IntegerValue.ToString
+		      Self.PointsField.Text = Points.IntegerValue.ToString(Locale.Raw, "0")
 		    Else
-		      Self.PointsField.Text = Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData.PointsForLevel(Level).ToString
+		      Self.PointsField.Text = Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData.PointsForLevel(Level).ToString(Locale.Raw, "0")
 		    End If
 		    Self.PointsField.SetFocus()
 		  Else

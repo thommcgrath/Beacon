@@ -256,7 +256,7 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Unpack(Dict As Dictionary)
+		Sub Unpack(Dict As JSONItem)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
 		  Var EntryString As NullableString
@@ -297,7 +297,7 @@ Implements Ark.MutableBlueprint
 		  End If
 		  Self.mStackSize = StackSize
 		  
-		  If Dict.HasKey("recipe") And IsNull(Dict.Value("recipe")) = False Then
+		  If Dict.HasKey("recipe") Then
 		    Self.mIngredients = Ark.CraftingCostIngredient.FromVariant(Dict.Value("recipe"), Nil)
 		    Self.mHasLoadedIngredients = True
 		  Else

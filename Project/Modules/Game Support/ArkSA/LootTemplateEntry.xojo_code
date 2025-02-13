@@ -77,7 +77,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As ArkSA.LootTemplateEntry
+		Shared Function FromSaveData(Dict As JSONItem) As ArkSA.LootTemplateEntry
 		  Var Entry As New ArkSA.MutableLootTemplateEntry
 		  
 		  Try
@@ -166,23 +166,25 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  If Dict.HasKey("Items") Then
-		    Var Children() As Dictionary
+		    Var Children As JSONItem
 		    Try
-		      Children = Dict.Value("Items").DictionaryArrayValue
+		      Children = Dict.Child("Items")
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Casting Items to array")
 		    End Try
 		    
-		    For Idx As Integer = 0 To Children.LastIndex
-		      Try
-		        Var Option As ArkSA.LootItemSetEntryOption = ArkSA.LootItemSetEntryOption.FromSaveData(Dictionary(Children(Idx)))
-		        If (Option Is Nil) = False Then
-		          Entry.Add(Option)
-		        End If
-		      Catch Err As RuntimeException
-		        App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
-		      End Try
-		    Next
+		    If (Children Is Nil) = False Then
+		      For Idx As Integer = 0 To Children.LastRowIndex
+		        Try
+		          Var Option As ArkSA.LootItemSetEntryOption = ArkSA.LootItemSetEntryOption.FromSaveData(Children.ChildAt(Idx))
+		          If (Option Is Nil) = False Then
+		            Entry.Add(Option)
+		          End If
+		        Catch Err As RuntimeException
+		          App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
+		        End Try
+		      Next
+		    End If
 		  End If
 		  
 		  Try

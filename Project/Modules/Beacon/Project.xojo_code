@@ -524,25 +524,25 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity) As Beacon.Project
-		  Var AdditionalProperties As New Dictionary
+		  Var AdditionalProperties As New JSONItem
 		  Return FromSaveData(SaveData, Identity, AdditionalProperties)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity, AdditionalProperties As Dictionary) As Beacon.Project
-		  Var Version As Integer = SaveData.FirstValue("version", "Version", 0).IntegerValue
+		Shared Function FromSaveData(SaveData As JSONItem, Identity As Beacon.Identity, AdditionalProperties As JSONItem) As Beacon.Project
+		  Var Version As Integer = SaveData.FirstValue(0, "version", "Version").IntegerValue
 		  If Version < 2 Then
 		    Var Err As New Beacon.ProjectLoadException
 		    Err.Message = "This project is too old to be opened with this version of Beacon."
 		    Raise Err
 		  End If
 		  
-		  Var MinVersion As Integer = SaveData.FirstValue("minVersion", "MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
-		  Var SavedWithVersion As Integer = SaveData.FirstValue("savedWith", "savedWidth", "SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
-		  Var GameId As String = SaveData.FirstValue("gameId", "Game", Ark.Identifier).StringValue
+		  Var MinVersion As Integer = SaveData.FirstValue(Beacon.Project.SaveDataVersion, "minVersion", "MinVersion").IntegerValue
+		  Var SavedWithVersion As Integer = SaveData.FirstValue(10501399, "savedWith", "savedWidth", "SavedWith").IntegerValue // Max possible version before the value should exist
+		  Var GameId As String = SaveData.FirstValue(Ark.Identifier, "gameId", "Game").StringValue
 		  
-		  Var ProjectId As String = SaveData.FirstValue("projectId", "Identifier", "").StringValue
+		  Var ProjectId As String = SaveData.FirstValue("", "projectId", "Identifier").StringValue
 		  If Beacon.UUID.Validate(ProjectId) = False Then
 		    ProjectId = Beacon.UUID.v4
 		  End If
@@ -573,12 +573,13 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  Case 2
 		    // It's ok for Ark-specific stuff to be here
 		    Var DifficultyValue As Double = SaveData.Value("DifficultyValue")
-		    Var LootSources() As Variant = SaveData.Value("LootSources")
+		    Var LootSources As JSONItem = SaveData.Value("LootSources")
 		    
 		    Var Loot As New Ark.Configs.LootDrops
-		    For Each Source As Variant In LootSources
+		    For Idx As Integer = 0 To LootSources.LastRowIndex
 		      Try
-		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dictionary(Source))
+		        Var Source As JSONItem = LootSources.ChildAt(Idx)
+		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Source)
 		        If Container Is Nil Then
 		          Continue
 		        End If
@@ -594,14 +595,14 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    
 		    Project.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  Case 3, 4
-		    Var ConfigsDict As Dictionary = SaveData.Value("Configs")
-		    Var MetadataDict As Dictionary = ConfigsDict.Value("Metadata")
+		    Var ConfigsDict As JSONItem = SaveData.Value("Configs")
+		    Var MetadataDict As JSONItem = ConfigsDict.Value("Metadata")
 		    SaveData.Value("description") = MetadataDict.Value("Description")
 		    SaveData.Value("name") = MetadataDict.Value("Title")
 		  Case 5
-		    Var ConfigSetsDict As Dictionary = SaveData.Value("Config Sets")
-		    Var BaseDict As Dictionary = ConfigSetsDict.Value("Base")
-		    Var MetadataDict As Dictionary = BaseDict.Value("Metadata")
+		    Var ConfigSetsDict As JSONItem = SaveData.Value("Config Sets")
+		    Var BaseDict As JSONItem = ConfigSetsDict.Value("Base")
+		    Var MetadataDict As JSONItem = BaseDict.Value("Metadata")
 		    SaveData.Value("description") = MetadataDict.Value("Description")
 		    SaveData.Value("name") = MetadataDict.Value("Title")
 		  End Select
@@ -610,17 +611,17 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  
 		  Var DescriptionKey As Variant = SaveData.FirstKey("description", "Description")
 		  If DescriptionKey.IsNull = False Then
-		    Project.mDescription = SaveData.Value(DescriptionKey)
+		    Project.mDescription = SaveData.Value(DescriptionKey.StringValue)
 		  End If
 		  
 		  Var TitleKey As Variant = SaveData.FirstKey("name", "Title")
 		  If TitleKey.IsNull = False Then
-		    Project.mTitle = SaveData.Value(TitleKey)
+		    Project.mTitle = SaveData.Value(TitleKey.StringValue)
 		  End If
 		  
 		  Var LegacyTrustKey As Variant = SaveData.FirstKey("legacyTrustKey", "LegacyTrustKey", "Trust")
 		  If LegacyTrustKey.IsNull = False Then
-		    Project.mLegacyTrustKey = SaveData.Value(LegacyTrustKey)
+		    Project.mLegacyTrustKey = SaveData.Value(LegacyTrustKey.StringValue)
 		  End If
 		  
 		  If SaveData.HasKey("flags") Then
@@ -638,24 +639,24 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Next
 		  End If
 		  
-		  Var Passwords As Dictionary = SaveData.FirstValue("members", "EncryptionKeys", New Dictionary)
+		  Var Passwords As JSONItem = SaveData.FirstValue(New JSONItem, "members", "EncryptionKeys")
 		  If Version >= 4 And (Passwords Is Nil) = False Then
 		    Var PossibleIdentities(0) As Beacon.Identity
 		    PossibleIdentities(0) = Identity
 		    
-		    Var Temp As New Dictionary
-		    For Each Entry As DictionaryEntry In Passwords
+		    Var Members As New Dictionary
+		    For Each Entry As JSONEntry In Passwords.Iterator
 		      Var UserId As String = Entry.Key
 		      
 		      If Entry.Value.Type = Variant.TypeObject THen
 		        Try
-		          Temp.Value(Entry.Key) = New Beacon.ProjectMember(UserId, Dictionary(Entry.Value))
+		          Members.Value(Entry.Key) = New Beacon.ProjectMember(UserId, JSONItem(Entry.Value))
 		        Catch MemberDecodeError As RuntimeException
 		          Continue
 		        End Try
 		      ElseIf Entry.Value.Type = Variant.TypeString Then
 		        Var Role As String = If(UserId = Identity.UserId, Beacon.ProjectMember.RoleOwner, Beacon.ProjectMember.RoleEditor)
-		        Temp.Value(Entry.Key) = New Beacon.ProjectMember(UserId, Role, Entry.Value.StringValue)
+		        Members.Value(Entry.Key) = New Beacon.ProjectMember(UserId, Role, Entry.Value.StringValue)
 		      End If
 		      
 		      If UserId = Identity.UserId Then
@@ -667,11 +668,10 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		        PossibleIdentities.Add(MergedIdentity)
 		      End If
 		    Next
-		    Passwords = Temp
 		    
 		    For Each PossibleIdentity As Beacon.Identity In PossibleIdentities
 		      Var UserId As String = PossibleIdentity.UserId.Lowercase
-		      If Passwords.HasKey(UserId) = False Then
+		      If Members.HasKey(UserId) = False Then
 		        Continue
 		      End If
 		      
@@ -681,12 +681,12 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		      Project.mRole = Beacon.ProjectMember.RoleGuest
 		      
 		      Try
-		        Var Member As Beacon.ProjectMember = Passwords.Value(UserId)
+		        Var Member As Beacon.ProjectMember = Members.Value(UserId)
 		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64MBS(Member.EncryptedPassword), PossibleIdentity.PrivateKey)
 		        If Member.Fingerprint.IsEmpty Then
 		          Member = New Beacon.ProjectMember(PossibleIdentity, Member.Role)
 		          Member.SetPassword(DocumentPassword)
-		          Passwords.Value(UserId) = Member
+		          Members.Value(UserId) = Member
 		        End If
 		        Project.mProjectPassword = DocumentPassword
 		        Project.mRole = Member.Role
@@ -697,17 +697,17 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		        Break
 		      End Try
 		    Next
+		    Project.mMembers = Members
 		  End If
-		  Project.mMembers = Passwords
 		  
-		  Var SecureDict As Dictionary
+		  Var SecureDict As JSONItem
 		  #Pragma BreakOnExceptions False
 		  If SaveData.HasAnyKey("encryptedData", "EncryptedData") Then
 		    Try
-		      Project.mLastSecureData = SaveData.FirstValue("encryptedData", "EncryptedData", "")
+		      Project.mLastSecureData = SaveData.FirstValue("", "encryptedData", "EncryptedData")
 		      Var Decrypted As String = Project.Decrypt(Project.mLastSecureData)
 		      Project.mLastSecureHash = Beacon.Hash(Decrypted)
-		      SecureDict = Beacon.ParseJSON(Decrypted)
+		      SecureDict = New JSONItem(Decrypted)
 		    Catch Err As RuntimeException
 		      // No secure data
 		    End Try
@@ -735,7 +735,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  If SaveData.HasKey("modSelections") Or SaveData.HasKey("ModSelections") Then
 		    // Newest mod, keys are uuids and values are boolean
 		    Var AllPacks() As Beacon.ContentPack = Project.DataSource(False).GetContentPacks()
-		    Var Selections As Dictionary = SaveData.FirstValue("modSelections", "ModSelections", Nil)
+		    Var Selections As Dictionary = SaveData.FirstValue(Nil, "modSelections", "ModSelections")
 		    For Each Pack As Beacon.ContentPack In AllPacks
 		      If Project.SupportsContentPack(Pack) = False Then
 		        Selections.Value(Pack.ContentPackId) = False
@@ -901,22 +901,22 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Next
 		  End If
 		  
-		  Var ServerDicts() As Variant
+		  Var ServerDicts As JSONItem
 		  If SecureDict.HasKey("servers") And SecureDict.Value("servers").IsArray Then
 		    ServerDicts = SecureDict.Value("servers")
 		  ElseIf SecureDict.HasKey("Servers") And SecureDict.Value("Servers").IsArray Then
 		    ServerDicts = SecureDict.Value("Servers")
 		  End If
-		  For Each ServerDict As Variant In ServerDicts
+		  For Each ServerDictEntry As JSONEntry In ServerDicts.Iterator
 		    Try
-		      Var Dict As Dictionary = ServerDict
-		      Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromSaveData(Dict, Project)
+		      Var ServerDict As JSONItem = ServerDictEntry.Value
+		      Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromSaveData(ServerDict, Project)
 		      If Profile Is Nil Then
 		        Continue
 		      End If
 		      
-		      If Dict.HasKey("External Account") Then
-		        Var ExternalAccountId As String = Dict.Value("External Account")
+		      If ServerDict.HasKey("External Account") Then
+		        Var ExternalAccountId As String = ServerDict.Value("External Account")
 		        If LegacyAccountIdMap.HasKey(ExternalAccountId) Then
 		          Var Token As BeaconApi.ProviderToken = LegacyAccountIdMap.Value(ExternalAccountId)
 		          Var Config As Beacon.HostConfig = Profile.HostConfig
@@ -934,8 +934,8 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion)
 		  
 		  If SaveData.HasKey("otherProperties") And (AdditionalProperties Is Nil) = False Then
-		    Var Dict As Dictionary = SaveData.Value("otherProperties")
-		    For Each Entry As DictionaryEntry In Dict
+		    Var Dict As JSONItem = SaveData.Value("otherProperties")
+		    For Each Entry As JSONEntry In Dict.Iterator
 		      AdditionalProperties.Value(Entry.Key) = Entry.Value
 		    Next
 		  End If
@@ -962,13 +962,13 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As MemoryBlock, Identity As Beacon.Identity) As Beacon.Project
-		  Var AdditionalProperties As New Dictionary
+		  Var AdditionalProperties As New JSONItem
 		  Return FromSaveData(SaveData, Identity, AdditionalProperties)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As MemoryBlock, Identity As Beacon.Identity, AdditionalProperties As Dictionary) As Beacon.Project
+		Shared Function FromSaveData(SaveData As MemoryBlock, Identity As Beacon.Identity, AdditionalProperties As JSONItem) As Beacon.Project
 		  If SaveData Is Nil Or SaveData.Size = 0 Then
 		    Var Err As New Beacon.ProjectLoadException
 		    Err.Message = "File is empty."
@@ -976,14 +976,14 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  End If
 		  
 		  Var UseCompression As Boolean
-		  Var ProjectDict As Dictionary
+		  Var ProjectDict As JSONItem
 		  If SaveData.Size >= 8 And (SaveData.UInt64Value(0) = CType(Beacon.Project.BinaryFormatBEBOM, UInt64) Or SaveData.UInt64Value(0) = CType(Beacon.Project.BinaryFormatLEBOM, UInt64)) Then
 		    SaveData = SaveData.Middle(8, SaveData.Size - 8)
 		    
 		    Var Archive As Beacon.Archive = Beacon.Archive.Open(SaveData)
-		    Var ManifestData As Dictionary = Beacon.ParseJSON(Archive.GetFile("Manifest.json"))
+		    Var ManifestData As New JSONItem(Archive.GetFile("Manifest.json"))
 		    Var Version As Integer = ManifestData.Value("version")
-		    Var ProjectData As Dictionary = Beacon.ParseJSON(Archive.GetFile("v" + Version.ToString(Locale.Raw, "0") + ".json"))
+		    Var ProjectData As New JSONItem(Archive.GetFile("v" + Version.ToString(Locale.Raw, "0") + ".json"))
 		    
 		    If ManifestData.HasKey("additionalFiles") Then
 		      Var AdditionalFiles As New Dictionary
@@ -1002,8 +1002,9 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		      ManifestData.Remove("additionalFiles") // Don't want to replace the loaded files with the list from the manifest
 		    End If
 		    
-		    For Each Entry As DictionaryEntry In ManifestData
-		      ProjectData.Value(Entry.Key) = Entry.Value
+		    Var ManifestKeys() As String = ManifestData.Keys
+		    For Each Key As String In ManifestKeys
+		      ProjectData.Value(Key) = ManifestData.Value(Key)
 		    Next
 		    
 		    ProjectDict = ProjectData
@@ -1021,7 +1022,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		      End If
 		    End If
 		    
-		    ProjectDict = Beacon.ParseJSON(SaveData)
+		    ProjectDict = New JSONItem(SaveData)
 		  End If
 		  
 		  ProjectDict.Value("useCompression") = UseCompression
@@ -1422,21 +1423,21 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Var PackSaveData() As Variant
+		  Var PackSaveData As JSONItem
 		  Try
-		    PackSaveData = Beacon.ParseJSON(ContentPacksJson)
+		    PackSaveData = New JSONItem(ContentPacksJson)
+		    If PackSaveData.IsArray = False Then
+		      Return
+		    End If
 		  Catch Err As RuntimeException
 		    Return
 		  End Try
 		  
 		  Self.mEmbeddedContentPacks = New Dictionary
 		  
-		  For Each SaveData As Variant In PackSaveData
-		    If SaveData.Type <> Variant.TypeObject Or (SaveData.ObjectValue IsA Dictionary) = False Then
-		      Continue
-		    End If
-		    
-		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
+		  For Idx As Integer = 0 To PackSaveData.LastRowIndex
+		    Var SaveData As JSONItem = PackSaveData.ChildAt(Idx)
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(SaveData)
 		    If Pack Is Nil Then
 		      Continue
 		    End If
@@ -1517,7 +1518,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function ReadLegacySecureData(SecureDict As Dictionary, Identity As Beacon.Identity, SkipHashVerification As Boolean = False) As Dictionary
+		Private Shared Function ReadLegacySecureData(SecureDict As Dictionary, Identity As Beacon.Identity, SkipHashVerification As Boolean = False) As JSONItem
 		  If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
 		    Return Nil
 		  End If
@@ -1554,9 +1555,9 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  End If
 		  Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
 		  
-		  Var DecryptedDict As Dictionary
+		  Var DecryptedDict As JSONItem
 		  Try
-		    DecryptedDict = Beacon.ParseJSON(Decrypted)
+		    DecryptedDict = New JSONItem(Decrypted)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
@@ -1572,7 +1573,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SavedDataVersion As Integer, SavedWithVersion As Integer)
+		Protected Sub ReadSaveData(PlainData As JSONItem, EncryptedData As JSONItem, SavedDataVersion As Integer, SavedWithVersion As Integer)
 		  RaiseEvent ReadSaveData(PlainData, EncryptedData, SavedDataVersion, SavedWithVersion)
 		End Sub
 	#tag EndMethod
@@ -1771,23 +1772,23 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(Identity As Beacon.Identity, Compress As Boolean, AdditionalProperties As Dictionary) As MemoryBlock
+		Function SaveData(Identity As Beacon.Identity, Compress As Boolean, AdditionalProperties As JSONItem) As MemoryBlock
 		  If Self.mProjectPassword.IsEmpty Then
 		    App.Log("Project " + Self.mProjectId + " save was aborted because the password is empty.")
 		    Return Nil
 		  End If
 		  
-		  Var Members As New Dictionary
+		  Var Members As New JSONItem
 		  If Self.mMembers.KeyCount = 0 Then
 		    Call Self.AddMember(Identity, Beacon.ProjectMember.RoleOwner)
 		  End If
 		  For Each Entry As DictionaryEntry In Self.mMembers
-		    Members.Value(Entry.Key) = Beacon.ProjectMember(Entry.Value).DictionaryValue()
+		    Members.Value(Entry.Key.StringValue) = Beacon.ProjectMember(Entry.Value).JSONValue()
 		  Next
 		  
-		  Var Manifest, ProjectData As Dictionary = New Dictionary // Intentionally assigning both to the same dictionary
+		  Var Manifest, ProjectData As JSONItem = New JSONItem // Intentionally assigning both to the same object
 		  If Compress Then
-		    ProjectData = New Dictionary
+		    ProjectData = New JSONItem
 		  End If
 		  
 		  Manifest.Value("version") = Self.SaveDataVersion
@@ -1806,32 +1807,32 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Manifest.Value("legacyTrustKey") = Self.mLegacyTrustKey
 		  End If
 		  
-		  Var EncryptedData As New Dictionary
+		  Var EncryptedData As New JSONItem
 		  RaiseEvent AddSaveData(Manifest, ProjectData, EncryptedData)
 		  
 		  Self.SaveEmbeddedContent()
 		  
 		  If Self.mServerProfiles.Count > 0 Then
-		    Var Profiles() As Dictionary
+		    Var Profiles As New JSONItem
 		    For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
 		      Profiles.Add(Profile.SaveData)
 		    Next
 		    EncryptedData.Value("servers") = Profiles
 		  End If
 		  
-		  Var Sets As New Dictionary
-		  Var EncryptedSets As New Dictionary
-		  Var Definitions() As Dictionary
+		  Var Sets As New JSONItem
+		  Var EncryptedSets As New JSONItem
+		  Var Definitions As JSONItem
 		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
 		    Definitions.Add(Set.SaveData)
 		    
 		    Var SetDict As Dictionary = Self.mConfigSetData.Value(Set.ConfigSetId)
-		    Var SetPlainData As New Dictionary
-		    Var SetEncryptedData As New Dictionary
+		    Var SetPlainData As New JSONItem
+		    Var SetEncryptedData As New JSONItem
 		    RaiseEvent SaveConfigSet(SetDict, SetPlainData, SetEncryptedData)
 		    
 		    Sets.Value(Set.ConfigSetId) = SetPlainData
-		    If SetEncryptedData.KeyCount > 0 Then
+		    If SetEncryptedData.Count > 0 Then
 		      EncryptedSets.Value(Set.ConfigSetId) = SetEncryptedData
 		    End If
 		  Next
@@ -1839,20 +1840,20 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		  ProjectData.Value("configSetPriorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetPriorities)
 		  
 		  ProjectData.Value("configSetData") = Sets
-		  If EncryptedSets.KeyCount > 0 Then
+		  If EncryptedSets.Count > 0 Then
 		    EncryptedData.Value("configSetData") = EncryptedSets
 		  End If
 		  
 		  If Self.mProviderTokenKeys.KeyCount > 0 Then
-		    Var KeysDict As New Dictionary
+		    Var KeysDict As New JSONItem
 		    For Each Entry As DictionaryEntry In Self.mProviderTokenKeys
-		      KeysDict.Value(Entry.Key) = EncodeBase64(Entry.Value)
+		      KeysDict.Value(Entry.Key.StringValue) = EncodeBase64(Entry.Value)
 		    Next
 		    EncryptedData.Value("providerTokenKeys") = KeysDict
 		  End If
 		  
-		  If EncryptedData.KeyCount > 0 Then
-		    Var Content As String = Beacon.GenerateJSON(EncryptedData, False)
+		  If EncryptedData.Count > 0 Then
+		    Var Content As String = EncryptedData.ToString(False)
 		    Var Hash As String = Beacon.Hash(Content)
 		    If Hash <> Self.mLastSecureHash Then
 		      Self.mLastSecureData = Self.Encrypt(Content)
@@ -1861,7 +1862,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    ProjectData.Value("encryptedData") = Self.mLastSecureData
 		  End If
 		  
-		  If (AdditionalProperties Is Nil) = False And AdditionalProperties.KeyCount > 0 Then
+		  If (AdditionalProperties Is Nil) = False And AdditionalProperties.Count > 0 Then
 		    ProjectData.Value("otherProperties") = AdditionalProperties
 		  End If
 		  
@@ -1877,21 +1878,21 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		      Archive.AddFile(Filename, Contents)
 		    Next
 		    Manifest.Value("additionalFiles") = AdditionalFiles
-		    Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, True))
-		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", Beacon.GenerateJSON(ProjectData, False))
+		    Archive.AddFile("Manifest.json", Manifest.ToString(True))
+		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", ProjectData.ToString(False))
 		    Var ArchiveData As MemoryBlock = Archive.Finalize
 		    Var BOM As New MemoryBlock(8)
 		    BOM.LittleEndian = ArchiveData.LittleEndian
 		    BOM.UInt64Value(0) = If(ArchiveData.LittleEndian, CType(Beacon.Project.BinaryFormatLEBOM, UInt64), CType(Beacon.Project.BinaryFormatBEBOM, UInt64))
 		    Return BOM + ArchiveData
 		  Else
-		    Var AdditionalFiles As New Dictionary
+		    Var AdditionalFiles As New JSONItem
 		    For Each Entry As DictionaryEntry In Self.mAdditionalFiles
-		      AdditionalFiles.Value(Entry.Key) = EncodeBase64(Beacon.Compress(Entry.Value.StringValue), 0)
+		      AdditionalFiles.Value(Entry.Key.StringValue) = EncodeBase64(Beacon.Compress(Entry.Value.StringValue), 0)
 		    Next
 		    ProjectData.Value("additionalFiles") = AdditionalFiles
 		    
-		    Return Beacon.GenerateJSON(ProjectData, True)
+		    Return ProjectData.ToString(True)
 		  End If
 		End Function
 	#tag EndMethod
@@ -1904,36 +1905,37 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SaveEmbeddedContent()
-		  Var PackSaveData() As Variant
+		  Var PackSaveData As JSONItem
 		  Var PackSaveJson As String = Self.GetFile("Content Packs.json")
 		  If PackSaveJson.IsEmpty = False Then
 		    Try
-		      PackSaveData = Beacon.ParseJSON(PackSaveJson)
+		      PackSaveData = New JSONItem(PackSaveJson)
 		    Catch Err As RuntimeException
 		    End Try
 		  End If
 		  
 		  Var PacksCache As New Dictionary
-		  Var PackSaveDicts As New Dictionary
-		  For Idx As Integer = PackSaveData.LastIndex DownTo 0
-		    If PackSaveData(Idx).Type = Variant.TypeObject And PackSaveData(Idx).ObjectValue IsA Dictionary Then
-		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dictionary(PackSaveData(Idx)))
-		      If Pack Is Nil Then
-		        PackSaveData.RemoveAt(Idx)
-		        Continue
-		      End If
-		      
-		      If Self.ContentPackEnabled(Pack) = False Then
-		        PackSaveData.RemoveAt(Idx)
-		        Self.RemoveFile(Pack.ContentPackId + ".json")
-		        Continue
-		      End If
-		      
-		      PacksCache.Value(Pack.ContentPackId) = Pack
-		      PackSaveDicts.Value(Pack.ContentPackId) = PackSaveData(Idx)
-		    Else
+		  Var PackSaveItems As New JSONItem
+		  For Idx As Integer = PackSaveData.LastRowIndex DownTo 0
+		    If PackSaveData.ValueAt(Idx).Type <> Variant.TypeObject Or (PackSaveData.ValueAt(Idx).ObjectValue IsA JSONItem) = False Then
 		      PackSaveData.RemoveAt(Idx)
+		      Continue
 		    End If
+		    
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(PackSaveData.ChildAt(Idx))
+		    If Pack Is Nil Then
+		      PackSaveData.RemoveAt(Idx)
+		      Continue
+		    End If
+		    
+		    If Self.ContentPackEnabled(Pack) = False Then
+		      PackSaveData.RemoveAt(Idx)
+		      Self.RemoveFile(Pack.ContentPackId + ".json")
+		      Continue
+		    End If
+		    
+		    PacksCache.Value(Pack.ContentPackId) = Pack
+		    PackSaveItems.Child(Pack.ContentPackId) = PackSaveData.ChildAt(Idx)
 		  Next
 		  
 		  Var DataSource As Beacon.DataSource = Self.DataSource(False)
@@ -1950,23 +1952,24 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 		    Var PackContent As String = RaiseEvent ExportContentPack(LocalPack)
 		    If PackContent.IsEmpty = False Then
 		      Self.AddFile(LocalPack.ContentPackId + ".json", PackContent)
-		      PackSaveDicts.Value(LocalPack.ContentPackId) = LocalPack.SaveData
+		      PackSaveItems.Value(LocalPack.ContentPackId) = LocalPack.SaveData
 		    Else
 		      Self.RemoveFile(LocalPack.ContentPackId + ".json")
-		      If PackSaveDicts.HasKey(LocalPack.ContentPackId) Then
-		        PackSaveDicts.Remove(LocalPack.ContentPackId)
+		      If PackSaveItems.HasKey(LocalPack.ContentPackId) Then
+		        PackSaveItems.Remove(LocalPack.ContentPackId)
 		      End If
 		    End If
 		  Next
 		  
-		  If PackSaveDicts.KeyCount = 0 Then
+		  If PackSaveItems.Count = 0 Then
 		    Self.RemoveFile("Content Packs.json")
 		  Else
-		    PackSaveData.ResizeTo(-1)
-		    For Each Entry As DictionaryEntry In PackSaveDicts
-		      PackSaveData.Add(Entry.Value)
+		    PackSaveData.RemoveAll
+		    Var ContentPackIds() As String = PackSaveItems.Keys
+		    For Each ContentPackId As String In ContentPackIds
+		      PackSaveData.Add(PackSaveItems.Child(ContentPackId))
 		    Next
-		    Self.AddFile("Content Packs.json", Beacon.GenerateJSON(PackSaveData, False))
+		    Self.AddFile("Content Packs.json", PackSaveData.ToString(False))
 		  End If
 		End Sub
 	#tag EndMethod
@@ -2065,7 +2068,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		Event AddSaveData(ManifestData As JSONItem, PlainData As JSONItem, EncryptedData As JSONItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -2073,7 +2076,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
+		Event LoadConfigSet(PlainData As JSONItem, EncryptedData As JSONItem) As Dictionary
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -2081,7 +2084,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
+		Event ReadSaveData(PlainData As JSONItem, EncryptedData As JSONItem, SaveDataVersion As Integer, SavedWithVersion As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -2089,7 +2092,7 @@ Implements ObservationKit.Observable,NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event SaveConfigSet(SetDict As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		Event SaveConfigSet(SetDict As Dictionary, PlainData As JSONItem, EncryptedData As JSONItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

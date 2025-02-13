@@ -35,7 +35,7 @@ Implements Beacon.Validateable,Ark.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSetEntryOption
+		Shared Function FromSaveData(Dict As JSONItem, NewUUID As Boolean = False) As Ark.LootItemSetEntryOption
 		  Var UUID As String
 		  If NewUUID Then
 		    UUID = Beacon.UUID.v4
@@ -66,7 +66,7 @@ Implements Beacon.Validateable,Ark.Weighted
 		  
 		  Var Option As Ark.LootItemSetEntryOption
 		  If Dict.HasKey("engram") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("engram"))
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Child("engram"))
 		    If Reference Is Nil Then
 		      Return Nil
 		    End If
@@ -78,7 +78,7 @@ Implements Beacon.Validateable,Ark.Weighted
 		    End If
 		    Option = New Ark.LootItemSetEntryOption(Engram, Weight, UUID)
 		  ElseIf Dict.HasKey("Blueprint") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Child("Blueprint"))
 		    If Reference Is Nil Then
 		      Return Nil
 		    End If

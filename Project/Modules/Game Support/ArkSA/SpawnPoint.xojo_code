@@ -408,17 +408,17 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		Sub Pack(Dict As JSONItem, ForAPI As Boolean)
 		  Self.LoadPendingSets()
 		  Self.LoadPendingLimits()
 		  
-		  Var Sets() As Dictionary
+		  Var Sets As New JSONItem("[]")
 		  For Each Set As ArkSA.SpawnPointSet In Self.mSets
 		    Sets.Add(Set.SaveData(ForAPI))
 		  Next
-		  Dict.Value("sets") = Sets
+		  Dict.Child("sets") = Sets
 		  
-		  Var Limits() As Dictionary
+		  Var Limits As New JSONItem("[]")
 		  Var References() As ArkSA.BlueprintReference = Self.mLimits.References
 		  For Each Reference As ArkSA.BlueprintReference In References
 		    If Reference.IsCreature = False Then
@@ -427,12 +427,12 @@ Implements ArkSA.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		    
 		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
 		    If ForAPI Then
-		      Limits.Add(New Dictionary("creatureId": Reference.BlueprintId, "maxPercentage": Limit))
+		      Limits.Add(CreateJSON("creatureId": Reference.BlueprintId, "maxPercentage": Limit))
 		    Else
-		      Limits.Add(New Dictionary("creature": Reference.SaveData, "maxPercentage": Limit))
+		      Limits.Add(CreateJSON("creature": Reference.SaveData, "maxPercentage": Limit))
 		    End If
 		  Next
-		  Dict.Value("limits") = Limits
+		  Dict.Child("limits") = Limits
 		End Sub
 	#tag EndMethod
 

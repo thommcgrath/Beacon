@@ -16,7 +16,7 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub Constructor(SaveData As JSONItem, EncryptedData As JSONItem)
 		  Self.Constructor()
 		  Try
 		    RaiseEvent ReadSaveData(SaveData, EncryptedData)
@@ -99,16 +99,13 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
-		  Var SaveData As New Dictionary
-		  Var EncryptedData As New Dictionary
+		Function SaveData() As JSONItem
+		  Var SaveData As New JSONItem
+		  Var EncryptedData As New JSONItem
 		  SaveData.Value("Implicit") = Self.mIsImplicit
 		  RaiseEvent WriteSaveData(SaveData, EncryptedData)
-		  If EncryptedData.KeyCount > 0 Then
-		    Var Temp As New Dictionary
-		    Temp.Value("Plain") = SaveData
-		    Temp.Value("Encrypted") = EncryptedData
-		    SaveData = Temp
+		  If EncryptedData.Count > 0 Then
+		    SaveData = CreateJSON("Plain": SaveData, "Encrypted": EncryptedData)
 		  End If
 		  Return SaveData
 		End Function
@@ -148,7 +145,7 @@ Implements Beacon.Validateable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Event ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -156,7 +153,7 @@ Implements Beacon.Validateable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Event WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 	#tag EndHook
 
 

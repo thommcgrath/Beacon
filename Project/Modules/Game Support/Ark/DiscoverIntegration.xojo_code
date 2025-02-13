@@ -41,7 +41,7 @@ Inherits Beacon.DiscoverIntegration
 		    
 		    GatherGameSettings = False
 		    DownloadIniFiles = ExpertMode
-		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "start-param")).ToString) // Weird way to convert JSONItem to Dictionary
+		    Data.CommandLineOptions = Beacon.ParseJSON(JSONItem(Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "start-param")).ToString(False)) // Weird way to convert JSONItem to Dictionary
 		    
 		    If ExpertMode = False Then
 		      Var GuidedOrganizer As New Ark.ConfigOrganizer

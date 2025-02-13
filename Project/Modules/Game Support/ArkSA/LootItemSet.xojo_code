@@ -62,7 +62,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As ArkSA.LootItemSet
+		Shared Function FromSaveData(Dict As JSONItem, NewUUID As Boolean = False) As ArkSA.LootItemSet
 		  Var Set As New ArkSA.MutableLootItemSet
 		  If NewUUID Then
 		    Set.UUID = Beacon.UUID.v4
@@ -117,7 +117,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    Var Label As String = Dict.FirstValue("label", "Label", "SetName", Set.Label).StringValue.Trim
+		    Var Label As String = Dict.FirstValue(Set.Label, "label", "Label", "SetName").StringValue.Trim
 		    If Label.IsEmpty Then
 		      Label = Set.Label
 		    End If
@@ -126,14 +126,14 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		    App.Log(Err, CurrentMethodName, "Reading Label value")
 		  End Try
 		  
-		  Var Children() As Dictionary
+		  Var Children As JSONItem
 		  Try
 		    If Dict.HasKey("entries") And IsNull(Dict.Value("entries")) = False Then
-		      Children = Dict.Value("entries").DictionaryArrayValue
+		      Children = Dict.Child("entries")
 		    ElseIf Dict.HasKey("ItemEntries") And IsNull(Dict.Value("ItemEntries")) = False Then
-		      Children = Dict.Value("ItemEntries").DictionaryArrayValue
+		      Children = Dict.Child("ItemEntries")
 		    ElseIf Dict.HasKey("Items") And IsNull(Dict.Value("Items")) = False Then
-		      Children = Dict.Value("Items").DictionaryArrayValue
+		      Children = Dict.Child("Items")
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Casting ItemEntries to array")
@@ -143,9 +143,9 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  If NewUUID Then
 		    Options = Options Or ArkSA.LootItemSetEntry.OptionNewId
 		  End If
-		  For Idx As Integer = 0 To Children.LastIndex
+		  For Idx As Integer = 0 To Children.LastRowIndex
 		    Try
-		      Var Entry As ArkSA.LootItemSetEntry = ArkSA.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), Options)
+		      Var Entry As ArkSA.LootItemSetEntry = ArkSA.LootItemSetEntry.FromSaveData(Children.ChildAt(Idx), Options)
 		      If (Entry Is Nil) = False Then
 		        Set.Add(Entry)
 		      End If

@@ -2,7 +2,7 @@
 Protected Class Project
 Inherits Beacon.Project
 	#tag Event
-		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		Sub AddSaveData(ManifestData As JSONItem, PlainData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
 		  
@@ -23,13 +23,13 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Function LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
+		Function LoadConfigSet(PlainData As JSONItem, EncryptedData As JSONItem) As Dictionary
 		  Var SetDict As New Dictionary
-		  For Each Entry As DictionaryEntry In PlainData
+		  For Each Entry As JSONEntry In PlainData.Iterator
 		    Try
 		      Var InternalName As String = Entry.Key
-		      Var GroupData As Dictionary = Entry.Value
-		      Var EncryptedGroupData As Dictionary
+		      Var GroupData As JSONItem = Entry.Value
+		      Var EncryptedGroupData As JSONItem
 		      If EncryptedData.HasKey(InternalName) Then
 		        Try
 		          EncryptedGroupData = EncryptedData.Value(InternalName)
@@ -50,11 +50,11 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Sub SaveConfigSet(SetDict As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		Sub SaveConfigSet(SetDict As Dictionary, PlainData As JSONItem, EncryptedData As JSONItem)
 		  For Each Entry As DictionaryEntry In SetDict
 		    Var Group As Palworld.ConfigGroup = Entry.Value
 		    
-		    Var GroupData As Dictionary = Group.SaveData()
+		    Var GroupData As JSONItem = Group.SaveData()
 		    If GroupData Is Nil Then
 		      Continue
 		    End If

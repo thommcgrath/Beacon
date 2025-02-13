@@ -40,7 +40,7 @@ Inherits Palworld.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  Var Rainbow As Dictionary
 		  If EncryptedData.HasKey("Rainbow") Then
 		    Try
@@ -60,7 +60,7 @@ Inherits Palworld.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  Var Rainbow As New Dictionary
 		  SaveData.Value(Palworld.ConfigFileSettings) = Self.WriteContent(Self.mSettingsIniContent, Rainbow)
 		  

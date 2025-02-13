@@ -137,7 +137,7 @@ Protected Class Identity
 		    Var CloudKey As String = DecodeBase64(Row.Column("cloud_key").StringValue)
 		    Var Banned As Boolean = Row.Column("banned").BooleanValue
 		    Var Signature As String = DecodeBase64URLMBS(Row.Column("signature").StringValue)
-		    Var SignatureFields() As Variant = Beacon.ParseJson(Row.Column("signature_fields").StringValue)
+		    Var SignatureFields As New JSONItem(Row.Column("signature_fields").StringValue)
 		    Var Username As String = Row.Column("username").StringValue
 		    Var IsAnonymous As Boolean = Row.Column("anonymous").BooleanValue
 		    Var ExpirationString As String = Row.Column("expiration").StringValue
@@ -147,20 +147,17 @@ Protected Class Identity
 		    End If
 		    
 		    Var Licenses() As Beacon.OmniLicense
-		    Var LicensesJson() As Variant
+		    Var LicensesJson As JSONItem
 		    If Row.Column("licenses").Value.IsNull = False Then
-		      LicensesJson = Beacon.ParseJSON(Row.Column("licenses").StringValue)
+		      LicensesJson = New JSONItem(Row.Column("licenses").StringValue)
 		    End If
-		    For Each Member As Variant In LicensesJson
-		      If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
-		        Continue
-		      End If
-		      
-		      Licenses.Add(New Beacon.OmniLicense(Dictionary(Member)))
+		    For Idx As Integer = 0 To LicensesJson.LastRowIndex
+		      Licenses.Add(New Beacon.OmniLicense(LicensesJson.ChildAt(Idx)))
 		    Next
 		    
 		    Var SignatureParts() As Variant
-		    For Each Field As String In SignatureFields
+		    For Idx As Integer = 0 To SignatureFields.LastRowIndex
+		      Var Field As String = SignatureFields.ValueAt(Idx)
 		      Select Case Field
 		      Case "deviceId"
 		        SignatureParts.Add(Beacon.HardwareId)

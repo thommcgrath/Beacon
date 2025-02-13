@@ -186,13 +186,13 @@ Inherits Ark.BlueprintController
 		  End If
 		  
 		  Var PathComponent As String = Self.PathComponent(Task)
-		  Var Objects() As Dictionary
+		  Var Objects As New JSONItem("[]")
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Objects.Add(Ark.PackBlueprint(Blueprint, True))
 		  Next
 		  
 		  Break
-		  Var Request As New BeaconAPI.Request("ark/" + PathComponent, "POST", Beacon.GenerateJSON(Objects, False), "application/json")
+		  Var Request As New BeaconAPI.Request("ark/" + PathComponent, "POST", Objects.ToString(False), "application/json")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  
 		  If Response.HTTPStatus <> 200 And Response.HTTPStatus <> 201 Then

@@ -38,7 +38,7 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary, ContentPacks As Beacon.StringList) As Ark.CraftingCostIngredient
+		Shared Function FromSaveData(Dict As JSONItem, ContentPacks As Beacon.StringList) As Ark.CraftingCostIngredient
 		  #Pragma Unused ContentPacks
 		  
 		  If Dict Is Nil Then
@@ -46,12 +46,12 @@ Protected Class CraftingCostIngredient
 		  End If
 		  
 		  Try
-		    Var BlueprintId As String = Dict.FirstValue("engramId", "object_id", "EngramID", "")
-		    Var BlueprintPath As String = Dict.FirstValue("path", "Path", "")
-		    Var BlueprintClass As String = Dict.FirstValue("class", "Class", "")
-		    Var Blueprint As Dictionary = Dict.FirstValue("blueprint", "Blueprint", "engram", "Engram", Nil)
-		    Var Quantity As Double = Dict.FirstValue("quantity", "Quantity", 0.0)
-		    Var Exact As Boolean = Dict.FirstValue("exact", "Exact", False)
+		    Var BlueprintId As String = Dict.FirstValue("", "engramId", "object_id", "EngramID")
+		    Var BlueprintPath As String = Dict.FirstValue("", "path", "Path")
+		    Var BlueprintClass As String = Dict.FirstValue("", "class", "Class")
+		    Var Blueprint As JSONItem = Dict.FirstValue(Nil, "blueprint", "Blueprint", "engram", "Engram")
+		    Var Quantity As Double = Dict.FirstValue(0.0, "quantity", "Quantity")
+		    Var Exact As Boolean = Dict.FirstValue(False, "exact", "Exact")
 		    
 		    Var Reference As Ark.BlueprintReference
 		    If (Blueprint Is Nil) = False Then
@@ -78,56 +78,35 @@ Protected Class CraftingCostIngredient
 	#tag Method, Flags = &h0
 		Shared Function FromVariant(Value As Variant, ContentPacks As Beacon.StringList) As Ark.CraftingCostIngredient()
 		  Var Ingredients() As Ark.CraftingCostIngredient
+		  Var Source As JSONItem
 		  
-		  If IsNull(Value) Then
+		  If Value.Type = Variant.TypeString Then
+		    Try
+		      Source = New JSONItem(Value.StringValue)
+		    Catch Err As RuntimeException
+		    End Try
+		  ElseIf Value.Type = Variant.TypeObject And Value.ObjectValue IsA JSONItem Then
+		    Source = JSONItem(Value.ObjectValue)
+		  End If
+		  
+		  If Source Is Nil Then
 		    Return Ingredients
 		  End If
 		  
-		  If Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary Then
-		    // It's just a dictionary
-		    Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Value, ContentPacks)
-		    If (Ingredient Is Nil) = False Then
-		      Ingredients.Add(Ingredient)
-		    End If
-		  ElseIf Value.Type = Variant.TypeString Then
-		    // Treat it as JSON
-		    Try
-		      Var Parsed() As Variant = Beacon.ParseJSON(Value.StringValue)
-		      For Each Dict As Dictionary In Parsed
-		        Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, ContentPacks)
-		        If (Ingredient Is Nil) = False Then
-		          Ingredients.Add(Ingredient)
-		        End If
-		      Next
-		    Catch Err As RuntimeException
-		    End Try
-		  ElseIf Value.IsArray And Value.ArrayElementType = Variant.TypeObject Then
-		    // Array of dictionaries
-		    Var Dicts() As Dictionary
-		    Try
-		      #Pragma BreakOnExceptions False
-		      Dicts = Value
-		      #Pragma BreakOnExceptions Default
-		    Catch Err As RuntimeException
-		      Var Values() As Variant = Value
-		      For Each Obj As Variant In Values
-		        If Obj IsA Dictionary Then
-		          Dicts.Add(Dictionary(Obj))
-		        End If
-		      Next
-		    End Try
-		    
-		    For Each Dict As Dictionary In Dicts
-		      Try
-		        Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, ContentPacks)
-		        If (Ingredient Is Nil) = False Then
-		          Ingredients.Add(Ingredient)
-		        End If
-		      Catch Err As RuntimeException
-		      End Try
+		  If Source.IsArray Then
+		    For Idx As Integer = 0 To Source.LastRowIndex
+		      Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromSaveData(Source.ChildAt(Idx), ContentPacks)
+		      If (Ingredient Is Nil) = False Then
+		        Ingredients.Add(Ingredient)
+		      End If
 		    Next
+		    Return Ingredients
 		  End If
 		  
+		  Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromSaveData(Source, ContentPacks)
+		  If (Ingredient Is Nil) = False Then
+		    Ingredients.Add(Ingredient)
+		  End If
 		  Return Ingredients
 		End Function
 	#tag EndMethod
@@ -179,11 +158,11 @@ Protected Class CraftingCostIngredient
 
 	#tag Method, Flags = &h0
 		Shared Function ToJSON(Ingredients() As Ark.CraftingCostIngredient, Pretty As Boolean = False) As String
-		  Var Dicts() As Dictionary
+		  Var Dicts As New JSONItem
 		  For Each Ingredient As Ark.CraftingCostIngredient In Ingredients
 		    Dicts.Add(Ingredient.SaveData(False))
 		  Next
-		  Return Beacon.GenerateJSON(Dicts, Pretty)
+		  Return Dicts.ToString(Pretty)
 		End Function
 	#tag EndMethod
 

@@ -14,17 +14,24 @@ Begin BeaconPagedSubview DocumentsComponent
    Height          =   570
    Index           =   -2147483648
    InitialParent   =   ""
+   IsFrontmost     =   False
    Left            =   0
    LockBottom      =   True
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Modified        =   False
+   Progress        =   0.0
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewIcon        =   0
+   ViewTitle       =   ""
    Visible         =   True
    Width           =   896
    Begin OmniBar Nav
@@ -514,7 +521,7 @@ End
 		  Var Project As Beacon.Project = Beacon.Project.CreateForGameId(GameId)
 		  
 		  Static NewDocumentNumber As Integer = 1
-		  Project.Title = "Untitled Project " + NewDocumentNumber.ToString
+		  Project.Title = "Untitled Project " + NewDocumentNumber.ToString(Locale.Raw, "0")
 		  Project.Modified = False
 		  NewDocumentNumber = NewDocumentNumber + 1
 		  

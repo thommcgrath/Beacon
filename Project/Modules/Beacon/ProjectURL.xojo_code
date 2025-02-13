@@ -17,19 +17,6 @@ Protected Class ProjectURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Dict As Dictionary)
-		  Self.mGameId = Dict.Value("GameId")
-		  Self.mName = Dict.Value("Name")
-		  Self.mPath = Dict.Value("Path")
-		  Self.mProjectId = Dict.Value("ProjectId")
-		  Self.mSaveInfo = Dict.Value("SaveInfo")
-		  Self.mType = Dict.Value("Type")
-		  
-		  Self.CleanupPath()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(SaveData As JSONItem)
 		  Self.mGameId = SaveData.Value("GameId")
 		  Self.mName = SaveData.Value("Name")
@@ -46,7 +33,7 @@ Protected Class ProjectURL
 		Sub Constructor(Url As String)
 		  If Url.BeginsWith("{") And Url.EndsWith("}") Then
 		    // Newer Json style
-		    Var Dict As Dictionary = Beacon.ParseJson(Url)
+		    Var Dict As New JSONItem(Url)
 		    Self.Constructor(Dict)
 		    Return
 		  End If

@@ -63,11 +63,11 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Ark.CreatureBehavior
+		Shared Function FromDictionary(Dict As JSONItem) As Ark.CreatureBehavior
 		  
 		  Var Behavior As Ark.CreatureBehavior
-		  If Dict.HasKey("Target") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Target"))
+		  If Dict.HasChild("Target") Then
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Child("Target"))
 		    If Reference Is Nil Or Reference.IsCreature = False Then
 		      Return Nil
 		    End If
@@ -84,8 +84,8 @@ Protected Class CreatureBehavior
 		  
 		  If Dict.HasKey("Prohibit Spawning") Then
 		    Behavior.mProhibitSpawning = Dict.Value("Prohibit Spawning")
-		  ElseIf Dict.HasKey("Replacement") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Replacement"))
+		  ElseIf Dict.HasChild("Replacement") Then
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Child("Replacement"))
 		    If (Reference Is Nil) = False And Reference.IsCreature Then
 		      Behavior.mReplacementCreature = Reference
 		    End If

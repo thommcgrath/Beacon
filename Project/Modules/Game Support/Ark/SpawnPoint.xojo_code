@@ -160,13 +160,13 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Ark.SpawnPoint
+		Shared Function FromSaveData(Dict As JSONItem) As Ark.SpawnPoint
 		  Try
 		    Var SpawnPoint As Ark.SpawnPoint
 		    If Dict.HasKey("spawnPointId") Then
 		      SpawnPoint = Ark.ResolveSpawnPoint(Dict.Value("spawnPointId").StringValue, "", "", Nil)
-		    ElseIf Dict.HasKey("Reference") Then
-		      Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Reference"))
+		    ElseIf Dict.HasChild("Reference") Then
+		      Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Child("Reference"))
 		      If Reference Is Nil Then
 		        Return Nil
 		      End If
@@ -178,7 +178,7 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		    SpawnPoint = New Ark.SpawnPoint(SpawnPoint)
 		    SpawnPoint.mSets.ResizeTo(-1)
 		    
-		    Var LimitsVar As Variant = Dict.FirstValue("limits", "Limits", Nil)
+		    Var LimitsVar As Variant = Dict.FirstValue(Nil, "limits", "Limits")
 		    If LimitsVar.IsNull = False Then
 		      Var Manager As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(LimitsVar)
 		      If (Manager Is Nil) = False Then
@@ -460,17 +460,17 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		Sub Pack(Dict As JSONItem, ForAPI As Boolean)
 		  Self.LoadPendingSets()
 		  Self.LoadPendingLimits()
 		  
-		  Var Sets() As Dictionary
+		  Var Sets As New JSONItem("[]")
 		  For Each Set As Ark.SpawnPointSet In Self.mSets
 		    Sets.Add(Set.SaveData(ForAPI))
 		  Next
-		  Dict.Value("sets") = Sets
+		  Dict.Child("sets") = Sets
 		  
-		  Var Limits() As Dictionary
+		  Var Limits As New JSONItem("[]")
 		  Var References() As Ark.BlueprintReference = Self.mLimits.References
 		  For Each Reference As Ark.BlueprintReference In References
 		    If Reference.IsCreature = False Then
@@ -479,12 +479,12 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		    
 		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
 		    If ForAPI Then
-		      Limits.Add(New Dictionary("creatureId": Reference.BlueprintId, "maxPercentage": Limit))
+		      Limits.Add(CreateJSON("creatureId": Reference.BlueprintId, "maxPercentage": Limit))
 		    Else
-		      Limits.Add(New Dictionary("creature": Reference.SaveData, "maxPercentage": Limit))
+		      Limits.Add(CreateJSON("creature": Reference.SaveData, "maxPercentage": Limit))
 		    End If
 		  Next
-		  Dict.Value("limits") = Limits
+		  Dict.Child("limits") = Limits
 		End Sub
 	#tag EndMethod
 
@@ -529,14 +529,14 @@ Implements Ark.Blueprint,Beacon.Countable,Beacon.DisambiguationCandidate
 		    Return Self.mPendingSetsString
 		  End If
 		  
-		  Var Objects() As Variant
+		  Var Objects As New JSONItem("[]")
 		  For Each Set As Ark.SpawnPointSet In Self.mSets
 		    If (Set Is Nil) = False Then
 		      Objects.Add(Set.SaveData(False))
 		    End If
 		  Next
 		  Try
-		    Return Beacon.GenerateJSON(Objects, False)
+		    Return Objects.ToString(False)
 		  Catch Err As RuntimeException
 		    Return ""
 		  End Try

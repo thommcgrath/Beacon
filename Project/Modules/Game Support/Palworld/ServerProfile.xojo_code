@@ -2,7 +2,7 @@
 Protected Class ServerProfile
 Inherits Beacon.ServerProfile
 	#tag Event
-		Sub ReadFromDictionary(Dict As Dictionary, Version As Integer)
+		Sub ReadFromDictionary(Dict As JSONItem, Version As Integer)
 		  Select Case Version
 		  Case 2
 		    If Dict.HasKey("adminPassword") Then
@@ -25,7 +25,7 @@ Inherits Beacon.ServerProfile
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteToDictionary(Dict As Dictionary)
+		Sub WriteToDictionary(Dict As JSONItem)
 		  Dict.Value("adminPassword") = NullableString.ToVariant(Self.mAdminPassword)
 		  Dict.Value("serverPassword") = NullableString.ToVariant(Self.mServerPassword)
 		  Dict.Value("serverDescription") = Self.mServerDescription

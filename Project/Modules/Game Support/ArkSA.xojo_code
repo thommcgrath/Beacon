@@ -1498,7 +1498,7 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(Dict As Dictionary, CreatureIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.Creature
+		Protected Function ResolveCreature(Dict As JSONItem, CreatureIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.Creature
 		  Var CreatureId, Path, ClassString As String
 		  
 		  If CreatureIdKey.IsEmpty = False And Dict.HasKey(CreatureIdKey) Then
@@ -1564,7 +1564,7 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(Dict As Dictionary, EngramIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.Engram
+		Protected Function ResolveEngram(Dict As JSONItem, EngramIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.Engram
 		  Var EngramId, Path, ClassString As String
 		  
 		  If EngramIdKey.IsEmpty = False And Dict.HasKey(EngramIdKey) Then
@@ -1630,7 +1630,7 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveLootContainer(Dict As Dictionary, LootDropIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.LootContainer
+		Protected Function ResolveLootContainer(Dict As JSONItem, LootDropIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList, Create As Boolean) As ArkSA.LootContainer
 		  Var LootDropId, Path, ClassString As String
 		  
 		  If LootDropIdKey.IsEmpty = False And Dict.HasKey(LootDropIdKey) Then

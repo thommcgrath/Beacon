@@ -12,17 +12,24 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
    Height          =   436
    Index           =   -2147483648
    InitialParent   =   ""
+   IsFrontmost     =   False
    Left            =   0
    LockBottom      =   True
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Modified        =   False
+   Progress        =   0.0
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewIcon        =   0
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   702
    Begin FadedSeparator FadedSeparator1
@@ -396,7 +403,7 @@ End
 		  
 		  Var Replace As Boolean = True
 		  If DuplicateContainerCount > 0 Then
-		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateContainerCount, "loot drop", "loot drops") + "?", DuplicateContainerCount.ToString + " of " + Language.NounWithQuantity(TotalNewContainers, " loot drop has already been defined in this project. Would you like to replace it?", " loot drops are already defined in this project. Would you like to replace them?"), "Replace", "Cancel")
+		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateContainerCount, "loot drop", "loot drops") + "?", DuplicateContainerCount.ToString(Locale.Current, "0") + " of " + Language.NounWithQuantity(TotalNewContainers, " loot drop has already been defined in this project. Would you like to replace it?", " loot drops are already defined in this project. Would you like to replace them?"), "Replace", "Cancel")
 		  End If
 		  
 		  Var AddedOverrides() As ArkSA.LootDropOverride

@@ -40,15 +40,22 @@ Protected Module Ark
 		    Return ""
 		  End If
 		  
-		  Var Packs(0) As Dictionary
-		  Packs(0) = ContentPack.SaveData
+		  Var Packs As New JSONItem
+		  Packs.Add(ContentPack.SaveData)
 		  
-		  Var Payloads(0) As Dictionary
-		  Payloads(0) = New Dictionary("gameId": Ark.Identifier, "contentPacks": Packs)
+		  Var PrimaryPayload As New JSONItem
+		  PrimaryPayload.Value("gameId") = Ark.Identifier
+		  PrimaryPayload.Child("contentPacks") = Packs
 		  
-		  Var Engrams(), Creatures(), SpawnPoints(), LootDrops() As Dictionary
+		  Var Payloads As New JSONItem
+		  Payloads.Add(PrimaryPayload)
+		  
+		  Var Engrams As New JSONItem("[]")
+		  Var Creatures As New JSONItem("[]")
+		  Var SpawnPoints As New JSONItem("[]")
+		  Var LootDrops As New JSONItem("[]")
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var Packed As Dictionary = Blueprint.Pack(False)
+		    Var Packed As JSONItem = Blueprint.Pack(False)
 		    If Packed Is Nil Then
 		      Continue
 		    End If
@@ -69,24 +76,27 @@ Protected Module Ark
 		    Return ""
 		  End If
 		  
-		  Var Payload As New Dictionary
+		  Var Payload As New JSONItem
 		  Payload.Value("gameId") = Ark.Identifier
 		  If Creatures.Count > 0 Then
-		    Payload.Value("creatures") = Creatures
+		    Payload.Child("creatures") = Creatures
 		  End If
 		  If Engrams.Count > 0 Then
-		    Payload.Value("engrams") = Engrams
+		    Payload.Child("engrams") = Engrams
 		  End If
 		  If LootDrops.Count > 0 Then
-		    Payload.Value("lootDrops") = LootDrops
+		    Payload.Child("lootDrops") = LootDrops
 		  End If
 		  If SpawnPoints.Count > 0 Then
-		    Payload.Value("spawnPoints") = SpawnPoints
+		    Payload.Child("spawnPoints") = SpawnPoints
 		  End If
 		  Payloads.Add(Payload)
 		  
+		  Var FileContentObject As New JSONItem
+		  FileContentObject.Child("payloads") = Payloads
+		  
 		  Var Filename As String = ContentPack.ContentPackId + ".json"
-		  Var FileContent As String = Beacon.GenerateJson(New Dictionary("payloads": Payloads), False)
+		  Var FileContent As String = FileContentObject.ToString(False)
 		  
 		  Archive.AddFile(Filename, FileContent)
 		  
@@ -269,13 +279,13 @@ Protected Module Ark
 		    Return False
 		  End If
 		  
-		  Var Packed As Dictionary = Source.Pack(False)
+		  Var Packed As JSONItem = Source.Pack(False)
 		  Return Destination.CopyFrom(Packed)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CopyFrom(Extends Destination As Ark.MutableBlueprint, Source As Dictionary) As Boolean
+		Function CopyFrom(Extends Destination As Ark.MutableBlueprint, Source As JSONItem) As Boolean
 		  If Source Is Nil Then
 		    Return False
 		  End If
@@ -338,17 +348,16 @@ Protected Module Ark
 		  End If
 		  
 		  Var Tags() As String
-		  If Source.Value("tags").IsArray Then
-		    If Source.Value("tags").ArrayElementType = Variant.TypeString Then
-		      Tags = Source.Value("tags")
-		    ElseIf Source.Value("tags").ArrayElementType = Variant.TypeObject Then
-		      Var Temp() As Variant = Source.Value("tags")
-		      For Each Tag As Variant In Temp
-		        If Tag.Type = Variant.TypeString Then
-		          Tags.Add(Tag.StringValue)
-		        End If
-		      Next
-		    End If
+		  If Source.HasKey("tags") And Source.Value("tags").Type = Variant.TypeObject And Source.Value("tags").ObjectValue IsA JSONItem And Source.Child("tags").IsArray Then
+		    Var SourceTags As JSONItem = Source.Child("tags")
+		    For Idx As Integer = 0 To SourceTags.LastRowIndex
+		      Var Tag As Variant = SourceTags.ValueAt(Idx)
+		      If Tag.IsNull Then
+		        Continue
+		      ElseIf Tag.Type = Variant.TypeString Then
+		        Tags.Add(Tag.StringValue)
+		      End If
+		    Next
 		  End If
 		  
 		  Destination.Path = Path
@@ -685,14 +694,14 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Pack(Extends Blueprint As Ark.Blueprint, ForAPI As Boolean) As Dictionary
+		Function Pack(Extends Blueprint As Ark.Blueprint, ForAPI As Boolean) As JSONItem
 		  Return PackBlueprint(Blueprint, ForAPI)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PackBlueprint(Blueprint As Ark.Blueprint, ForAPI As Boolean) As Dictionary
-		  Var Dict As New Dictionary
+		Protected Function PackBlueprint(Blueprint As Ark.Blueprint, ForAPI As Boolean) As JSONItem
+		  Var Dict As New JSONItem
 		  Var IdProperty As String
 		  
 		  Select Case Blueprint
@@ -878,7 +887,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(Dict As Dictionary, CreatureIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Creature
+		Protected Function ResolveCreature(Dict As JSONItem, CreatureIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Creature
 		  Var CreatureId, Path, ClassString As String
 		  
 		  If CreatureIdKey.IsEmpty = False And Dict.HasKey(CreatureIdKey) Then
@@ -939,7 +948,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(Dict As Dictionary, EngramIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Engram
+		Protected Function ResolveEngram(Dict As JSONItem, EngramIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Engram
 		  Var EngramId, Path, ClassString As String
 		  
 		  If EngramIdKey.IsEmpty = False And Dict.HasKey(EngramIdKey) Then
@@ -1000,7 +1009,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveLootContainer(Dict As Dictionary, LootDropIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
+		Protected Function ResolveLootContainer(Dict As JSONItem, LootDropIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
 		  Var LootDropId, Path, ClassString As String
 		  
 		  If LootDropIdKey.IsEmpty = False And Dict.HasKey(LootDropIdKey) Then
@@ -1061,7 +1070,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(Dict As Dictionary, SpawnPointIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
+		Protected Function ResolveSpawnPoint(Dict As JSONItem, SpawnPointIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
 		  Var SpawnPointId, Path, ClassString As String
 		  
 		  If SpawnPointIdKey.IsEmpty = False And Dict.HasKey(SpawnPointIdKey) Then
@@ -1255,7 +1264,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function UnpackBlueprint(Dict As Dictionary) As Ark.MutableBlueprint
+		Protected Function UnpackBlueprint(Dict As JSONItem) As Ark.MutableBlueprint
 		  Var Group As String
 		  If Dict.HasKey("engramId") Then
 		    Group = Ark.CategoryEngrams

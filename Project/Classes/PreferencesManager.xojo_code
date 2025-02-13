@@ -3,8 +3,7 @@ Protected Class PreferencesManager
 	#tag Method, Flags = &h0
 		Sub BeginTransaction()
 		  If Self.mTransactionLevel = 0 Then
-		    Self.mSavedValues = New JSONItem(Self.mValues.ToString)
-		    Self.mSavedValues.Compact = False
+		    Self.mSavedValues = New JSONItem(Self.mValues.ToString(False))
 		  End If
 		  
 		  Self.mTransactionLevel = Self.mTransactionLevel + 1
@@ -153,7 +152,6 @@ Protected Class PreferencesManager
 		    Self.mValues = New JSONItem
 		    Self.mValues.Value("Existing User") = False
 		  End If
-		  Self.mValues.Compact = False
 		End Sub
 	#tag EndMethod
 
@@ -220,7 +218,7 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Return New JSONItem(JSONItem(Value.ObjectValue).ToString)
+		  Return New JSONItem(JSONItem(Value.ObjectValue).ToString(False))
 		End Function
 	#tag EndMethod
 
@@ -228,7 +226,7 @@ Protected Class PreferencesManager
 		Sub JSONValue(Key As String, Assigns Value As JSONItem)
 		  Self.BeginTransaction()
 		  If (Value Is Nil) = False Then
-		    Self.mValues.Child(Key) = New JSONItem(Value.ToString)
+		    Self.mValues.Child(Key) = New JSONItem(Value.ToString(False))
 		  Else
 		    Self.mValues.Child(Key) = Nil
 		  End If
@@ -335,7 +333,7 @@ Protected Class PreferencesManager
 	#tag Method, Flags = &h1
 		Protected Sub Write()
 		  Try
-		    Call Self.mFile.Write(Self.mValues.ToString())
+		    Call Self.mFile.Write(Self.mValues.ToString(True))
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub

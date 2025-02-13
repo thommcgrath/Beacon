@@ -165,7 +165,7 @@ Protected Module Language
 		  Case FolderItem.InvalidName
 		    Return "Filename is invalid"
 		  Else
-		    Return "Other error #" + ErrorCode.ToString
+		    Return "Other error #" + ErrorCode.ToString(Locale.Raw, "0")
 		  End Select
 		End Function
 	#tag EndMethod

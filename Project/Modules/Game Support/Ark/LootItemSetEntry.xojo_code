@@ -98,7 +98,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, Options As Integer = 0) As Ark.LootItemSetEntry
+		Shared Function FromSaveData(Dict As JSONItem, Options As Integer = 0) As Ark.LootItemSetEntry
 		  Var Entry As New Ark.MutableLootItemSetEntry
 		  Var NewEntryId As Boolean = (Options And OptionNewId) = OptionNewId
 		  Var LoadEmpty As Boolean = (Options And OptionLoadEmpty) = OptionLoadEmpty
@@ -191,19 +191,19 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    App.Log(Err, CurrentMethodName, "Reading ChangeToBeBlueprintOverride value")
 		  End Try
 		  
-		  Var Children() As Dictionary
+		  Var Children As JSONItem
 		  Try
 		    If Dict.HasKey("options") And Dict.Value("options").IsNull = False Then
-		      Children = Dict.Value("options").DictionaryArrayValue
+		      Children = Dict.Child("options")
 		    ElseIf Dict.HasKey("Items") Then
-		      Children = Dict.Value("Items").DictionaryArrayValue
+		      Children = Dict.Child("Items")
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Casting Items to array")
 		  End Try
-		  For Idx As Integer = 0 To Children.LastIndex
+		  For Idx As Integer = 0 To Children.LastRowIndex
 		    Try
-		      Var Option As Ark.LootItemSetEntryOption = Ark.LootItemSetEntryOption.FromSaveData(Dictionary(Children(Idx)), NewEntryId)
+		      Var Option As Ark.LootItemSetEntryOption = Ark.LootItemSetEntryOption.FromSaveData(Children.ChildAt(Idx), NewEntryId)
 		      If (Option Is Nil) = False Then
 		        Entry.Add(Option)
 		      End If

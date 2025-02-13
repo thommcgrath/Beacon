@@ -19,6 +19,7 @@ Begin BeaconContainer ArkSpawnPointEditor
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   Modified        =   False
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -102,6 +103,7 @@ Begin BeaconContainer ArkSpawnPointEditor
          LockRight       =   True
          LockTop         =   True
          Modified        =   False
+         ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -1085,16 +1087,16 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var Contents As Variant = Board.GetClipboardData(Self.kLimitsClipboardType)
-		  If Contents.IsNull Then
+		  Var Contents As JSONItem = Board.GetClipboardData(Self.kLimitsClipboardType)
+		  If Contents Is Nil Then
 		    Return
 		  End If
 		  
 		  Try
-		    Var Limits() As Variant = Contents
 		    Var SelectCreatures() As Ark.BlueprintReference
-		    For Each LimitDict As Dictionary In Limits
-		      Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(LimitDict.Value("creature"))
+		    For Each LimitEntry As JSONEntry In Contents.Iterator
+		      Var LimitDict As JSONItem = LimitEntry.Value
+		      Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(LimitDict.Child("creature"))
 		      SelectCreatures.Add(CreatureRef)
 		      
 		      Var Limit As Double = LimitDict.Value("maxPercentage")

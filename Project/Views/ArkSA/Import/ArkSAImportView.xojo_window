@@ -1,16 +1,16 @@
 #tag DesktopWindow
 Begin DocumentImportView ArkSAImportView
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
+   AllowAutoDeactivate=   "True"
+   AllowFocus      =   "False"
+   AllowFocusRing  =   "False"
+   AllowTabs       =   "True"
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   Composited      =   False
+   Composited      =   "False"
    DefaultLocation =   2
    DoubleBuffer    =   "False"
-   Enabled         =   True
+   Enabled         =   "True"
    EraseBackground =   "True"
    FullScreen      =   False
    HasBackgroundColor=   False
@@ -20,13 +20,13 @@ Begin DocumentImportView ArkSAImportView
    HasMinimizeButton=   True
    Height          =   480
    ImplicitInstance=   True
-   Index           =   -2147483648
+   Index           =   "-2147483648"
    InitialParent   =   ""
-   Left            =   0
-   LockBottom      =   False
-   LockLeft        =   False
-   LockRight       =   False
-   LockTop         =   False
+   Left            =   "0"
+   LockBottom      =   "False"
+   LockLeft        =   "False"
+   LockRight       =   "False"
+   LockTop         =   "False"
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
@@ -35,13 +35,13 @@ Begin DocumentImportView ArkSAImportView
    MinimumHeight   =   64
    MinimumWidth    =   64
    Resizeable      =   True
-   TabIndex        =   0
-   TabPanelIndex   =   0
-   TabStop         =   True
+   TabIndex        =   "0"
+   TabPanelIndex   =   "0"
+   TabStop         =   "True"
    Title           =   "Untitled"
    Tooltip         =   ""
-   Top             =   0
-   Transparent     =   True
+   Top             =   "0"
+   Transparent     =   "True"
    Type            =   0
    Visible         =   True
    Width           =   720
@@ -747,21 +747,15 @@ End
 		      End Select
 		      
 		      Try
-		        Var SaveData As Dictionary = Group.SaveData
+		        Var SaveData As JSONItem = Group.SaveData
 		        If SaveData Is Nil Then
 		          Continue
 		        End If
 		        
-		        Var EncryptedData As Dictionary
+		        Var EncryptedData As JSONItem
 		        If SaveData.HasAllKeys("Plain", "Encrypted") Then
-		          EncryptedData = SaveData.Value("Encrypted")
-		          SaveData = SaveData.Value("Plain")
-		        End If
-		        
-		        // JSONify the data
-		        SaveData = Beacon.ParseJSON(Beacon.GenerateJSON(SaveData, False))
-		        If (EncryptedData Is Nil) = False Then
-		          EncryptedData = Beacon.ParseJSON(Beacon.GenerateJSON(SaveData, False))
+		          EncryptedData = SaveData.Child("Encrypted")
+		          SaveData = SaveData.Child("Plain")
 		        End If
 		        
 		        Var NewGroup As ArkSA.ConfigGroup = ArkSA.Configs.CreateInstance(GroupName, SaveData, EncryptedData)

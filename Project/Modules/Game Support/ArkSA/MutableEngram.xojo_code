@@ -280,7 +280,7 @@ Implements ArkSA.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Unpack(Dict As Dictionary)
+		Sub Unpack(Dict As JSONItem)
 		  // Part of the ArkSA.MutableBlueprint interface.
 		  
 		  Var EntryString As NullableString
@@ -321,19 +321,19 @@ Implements ArkSA.MutableBlueprint
 		  End If
 		  Self.mStackSize = StackSize
 		  
-		  If Dict.HasKey("recipe") And IsNull(Dict.Value("recipe")) = False Then
-		    Self.mIngredients = ArkSA.CraftingCostIngredient.FromVariant(Dict.Value("recipe"), Nil)
+		  If Dict.HasChild("recipe") Then
+		    Self.mIngredients = ArkSA.CraftingCostIngredient.FromVariant(Dict.Child("recipe"), Nil)
 		    Self.mHasLoadedIngredients = True
 		  Else
 		    Self.mIngredients.ResizeTo(-1)
 		    Self.mHasLoadedIngredients = False
 		  End If
 		  
-		  If Dict.HasKey("stats") And Dict.Value("stats").IsNull = False Then
-		    Var Stats() As Variant = Dict.Value("stats")
-		    Self.mStats.ResizeTo(ArkSA.EngramStat.LastIndex)
-		    For Each StatDict As Dictionary In Stats
-		      Var Stat As ArkSA.EngramStat = ArkSA.EngramStat.FromSaveData(StatDict)
+		  If Dict.HasChild("stats") Then
+		    Var Stats As JSONItem = Dict.Child("stats")
+		    Self.mStats.ResizeTo(-1)
+		    For Each StatEntry As JSONEntry In Stats.Iterator
+		      Var Stat As ArkSA.EngramStat = ArkSA.EngramStat.FromSaveData(JSONItem(StatEntry.Value))
 		      If (Stat Is Nil) = False Then
 		        Self.mStats(Stat.StatIndex) = Stat
 		      End If

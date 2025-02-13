@@ -23,6 +23,7 @@ Begin BeaconContainer ArkCraftingCostEditor
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   Modified        =   False
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -338,16 +339,15 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var Contents As Variant = Board.GetClipboardData(Ark.CraftingCostIngredient.ClipboardType)
-		  If Contents.IsNull Then
+		  Var Contents As JSONItem = Board.GetClipboardData(Ark.CraftingCostIngredient.ClipboardType)
+		  If Contents Is Nil Then
 		    Return
 		  End If
 		  
 		  Try
 		    Var Modified As Boolean
-		    Var Dicts() As Variant = Contents
-		    For Each Dict As Dictionary In Dicts
-		      Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, Nil)
+		    For Each Entry As JSONEntry In Contents.Iterator
+		      Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromSaveData(JSONItem(Entry.Value), Nil)
 		      If Ingredient Is Nil Then
 		        Continue
 		      End If

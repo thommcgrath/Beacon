@@ -91,11 +91,11 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromLegacy(SaveData As Dictionary) As Ark.SpawnPointOverride
+		Shared Function FromLegacy(SaveData As JSONItem) As Ark.SpawnPointOverride
 		  Try
 		    Var SpawnPointRef As Ark.BlueprintReference
 		    If SaveData.HasKey("Reference") Then
-		      SpawnPointRef = Ark.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
+		      SpawnPointRef = Ark.BlueprintReference.FromSaveData(SaveData.Child("Reference"))
 		    ElseIf SaveData.HasKey("spawnPointId") Then
 		      SpawnPointRef = New Ark.BlueprintReference(Ark.BlueprintReference.KindSpawnPoint, SaveData.Value("spawnPointId").StringValue, "", "", "", "")
 		    Else
@@ -116,7 +116,7 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 		    
 		    Var Override As New Ark.SpawnPointOverride(SpawnPointRef, Mode)
 		    
-		    Var LimitsVar As Variant = SaveData.FirstValue("limits", "Limits", Nil)
+		    Var LimitsVar As Variant = SaveData.FirstValue(Nil, "limits", "Limits")
 		    If LimitsVar.IsNull = False Then
 		      Var Manager As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(LimitsVar)
 		      If (Manager Is Nil) = False Then
@@ -155,18 +155,20 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 		      End If
 		    End If
 		    
-		    Var SetSaveData() As Variant
+		    Var SetSaveData As JSONItem
 		    If SaveData.HasKey("sets") Then
-		      SetSaveData = SaveData.Value("sets")
+		      SetSaveData = SaveData.Child("sets")
 		    ElseIf SaveData.HasKey("Sets") Then
-		      SetSaveData = SaveData.Value("Sets")
+		      SetSaveData = SaveData.Child("Sets")
 		    End If
-		    For Each SetDict As Dictionary In SetSaveData
-		      Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(SetDict)
-		      If Set <> Nil Then
-		        Override.mSets.Add(Set)
-		      End If
-		    Next
+		    If (SetSaveData Is Nil) = False Then
+		      For Idx As Integer = 0 To SetSaveData.LastRowIndex
+		        Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(SetSaveData.ChildAt(Idx))
+		        If (Set Is Nil) = False Then
+		          Override.mSets.Add(Set)
+		        End If
+		      Next
+		    End If
 		    
 		    Override.Modified = False
 		    Return Override
@@ -177,12 +179,12 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary) As Ark.SpawnPointOverride
+		Shared Function FromSaveData(SaveData As JSONItem) As Ark.SpawnPointOverride
 		  If SaveData.HasAllKeys("definition", "mode") = False Then
 		    Return Nil
 		  End If
 		  
-		  Var Definition As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Value("definition"))
+		  Var Definition As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Child("definition"))
 		  Var Mode As Integer = SaveData.Value("mode")
 		  Var Override As New Ark.SpawnPointOverride(Definition, Mode)
 		  
@@ -194,13 +196,17 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate
 		  End If
 		  
 		  If SaveData.HasKey("sets") Then
-		    Var SetDicts() As Variant = SaveData.Value("sets")
-		    For Each SetDict As Dictionary In SetDicts
-		      Var SpawnSet As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(SetDict)
-		      If (SpawnSet Is Nil) = False Then
-		        Override.mSets.Add(SpawnSet)
-		      End If
-		    Next
+		    Try
+		      Var SetDicts As JSONItem = SaveData.Child("sets")
+		      For Idx As Integer = 0 To SetDicts.LastRowIndex
+		        Var SpawnSet As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(SetDicts.ChildAt(Idx))
+		        If (SpawnSet Is Nil) = False Then
+		          Override.mSets.Add(SpawnSet)
+		        End If
+		      Next
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Loading spawn sets")
+		    End Try
 		  End If
 		  
 		  Override.mAvailability = SaveData.Value("availability")

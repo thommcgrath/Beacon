@@ -684,7 +684,7 @@ End
 		    If Beacon.AreElementsEqual(RequiredLevels) Then
 		      Var RequiredLevel As NullableDouble = RequiredLevels(0)
 		      If (RequiredLevel Is Nil) = False Then
-		        Self.RequiredLevelField.Text = RequiredLevel.IntegerValue.ToString
+		        Self.RequiredLevelField.Text = RequiredLevel.IntegerValue.ToString(Locale.Raw, "0")
 		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
 		        Self.RequiredLevelField.Text = "0"
 		      Else
@@ -695,7 +695,7 @@ End
 		    If Beacon.AreElementsEqual(RequiredPointses) Then
 		      Var RequiredPoints As NullableDouble = RequiredPointses(0)
 		      If (RequiredPoints Is Nil) = False Then
-		        Self.RequiredPointsField.Text = RequiredPoints.IntegerValue.ToString
+		        Self.RequiredPointsField.Text = RequiredPoints.IntegerValue.ToString(Locale.Raw, "0")
 		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
 		        Self.RequiredPointsField.Text = ""
 		      Else

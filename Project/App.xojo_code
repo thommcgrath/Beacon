@@ -754,7 +754,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    SaveInfo = SaveInfo.Left(QueryPos)
 		  End If
 		  Try
-		    SaveInfo = Beacon.Decompress(DecodeBase64URL(SaveInfo))
+		    SaveInfo = Beacon.Decompress(DecodeBase64URLMBS(SaveInfo))
 		  Catch Err As RuntimeException
 		    Self.Log(Err, CurrentMethodName, "Decoding deploy saveinfo")
 		    Return Failed
@@ -820,7 +820,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "showidentity"
 		      IdentityWindow.Show()
 		    Case "showguide"
-		      System.GotoURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
+		      System.GotoURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString(Locale.Raw, "0")))
 		    Case "checkforupdate"
 		      Self.CheckForUpdates()
 		    Case "checkforengrams"

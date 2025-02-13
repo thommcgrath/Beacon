@@ -1,7 +1,7 @@
 #tag Class
 Protected Class LootDrops
 Inherits ArkSA.ConfigGroup
-Implements Iterable, Beacon.BlueprintConsumer
+Implements Iterable,Beacon.BlueprintConsumer
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As ArkSA.ConfigGroup)
@@ -74,7 +74,7 @@ Implements Iterable, Beacon.BlueprintConsumer
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  If SaveData.HasKey("overrides") = False Then
@@ -133,7 +133,7 @@ Implements Iterable, Beacon.BlueprintConsumer
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  Var OverrideDicts() As Dictionary

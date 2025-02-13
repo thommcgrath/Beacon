@@ -8,7 +8,26 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Beacon.Template
+		Attributes( Deprecated = "FromSaveData(JSONItem)" )  Shared Function FromSaveData(Dict As Dictionary) As Beacon.Template
+		  Return FromSaveData(New JSONItem(Dict))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(File As FolderItem) As Beacon.Template
+		  Var Source As String
+		  Try
+		    Source = File.Read(Encodings.UTF8)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading template file contents")
+		    Return Nil
+		  End Try
+		  Return FromSaveData(Source)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(Dict As JSONItem) As Beacon.Template
 		  If Dict Is Nil Then
 		    Return Nil
 		  End If
@@ -30,29 +49,16 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(File As FolderItem) As Beacon.Template
-		  Var Source As String
-		  Try
-		    Source = File.Read(Encodings.UTF8)
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading template file contents")
-		    Return Nil
-		  End Try
-		  Return FromSaveData(Source)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Source As String) As Beacon.Template
-		  Var JSON As Variant
+		  Var JSON As JSONItem
 		  Try
-		    JSON = Beacon.ParseJSON(Source)
+		    JSON = New JSONItem(Source)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Parsing template JSON")
 		    Return Nil
 		  End Try
-		  If JSON IsA Dictionary Then
-		    Return FromSaveData(Dictionary(JSON))
+		  If JSON.IsArray = False Then
+		    Return FromSaveData(JSON)
 		  Else
 		    App.Log("Parsed template JSON is not a dictionary")
 		    Return Nil

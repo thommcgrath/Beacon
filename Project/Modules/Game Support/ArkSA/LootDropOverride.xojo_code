@@ -182,12 +182,12 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 		    End If
 		    
 		    Var Override As New ArkSA.LootDropOverride(LootDropRef)
-		    Override.mPreventDuplicates = SaveData.FirstValue("preventDuplicates", "PreventDuplicates", "bSetsRandomWithoutReplacement", Override.PreventDuplicates)
-		    Override.mAddToDefaults = SaveData.FirstValue("appendMode", "AppendMode", "bAppendMode", Override.AddToDefaults)
-		    Override.mMinItemSets = SaveData.FirstValue("minItemSets", "MinItemSets", Override.MinItemSets)
-		    Override.mMaxItemSets = SaveData.FirstValue("maxItemSets", "MaxItemSets", Override.MaxItemSets)
+		    Override.mPreventDuplicates = SaveData.FirstValue(Override.PreventDuplicates, "preventDuplicates", "PreventDuplicates", "bSetsRandomWithoutReplacement")
+		    Override.mAddToDefaults = SaveData.FirstValue(Override.AddToDefaults, "appendMode", "AppendMode", "bAppendMode")
+		    Override.mMinItemSets = SaveData.FirstValue(Override.MinItemSets, "minItemSets", "MinItemSets")
+		    Override.mMaxItemSets = SaveData.FirstValue(Override.MaxItemSets, "maxItemSets", "MaxItemSets")
 		    
-		    Var SetSaveData() As Variant = SaveData.FirstValue("itemSets", "ItemSets", Nil)
+		    Var SetSaveData() As Variant = SaveData.FirstValue(Nil, "itemSets", "ItemSets")
 		    If (SetSaveData Is Nil) = False Then
 		      For Each SetDict As Dictionary In SetSaveData
 		        Var Set As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(SetDict)

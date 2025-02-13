@@ -62,14 +62,14 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(SaveData As Dictionary)
+		Private Sub Constructor(SaveData As JSONItem)
 		  If SaveData Is Nil Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "SaveData is Nil"
 		    Raise Err
 		  End If
 		  
-		  Var Version As Integer = SaveData.FirstValue("version", "Version", 0)
+		  Var Version As Integer = SaveData.FirstValue(0, "version", "Version")
 		  If Version < 1 Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Version is too old"
@@ -79,7 +79,7 @@ Implements Beacon.NamedItem
 		  Select Case Version
 		  Case 1
 		    Self.mBlueprintId = SaveData.Value("UUID")
-		    Self.mClassString = SaveData.FirstValue("ClassString", "Class", "")
+		    Self.mClassString = SaveData.FirstValue("", "ClassString", "Class")
 		    Self.mContentPackId = SaveData.Value("ModUUID")
 		    Self.mContentPackName = ""
 		    
@@ -155,7 +155,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromDict(Kind As String, Dict As Dictionary, BlueprintIdKey As String, PathKey As String, ClassStringKey As String, LabelKey As String, ContentPackIdKey As String) As ArkSA.BlueprintReference
+		Shared Function CreateFromDict(Kind As String, Dict As JSONItem, BlueprintIdKey As String, PathKey As String, ClassStringKey As String, LabelKey As String, ContentPackIdKey As String) As ArkSA.BlueprintReference
 		  Var BlueprintId, Path, ClassString, Label, ContentPackId As String
 		  If BlueprintIdKey.IsEmpty = False And Dict.HasKey(BlueprintIdKey) Then
 		    BlueprintId = Dict.Value(BlueprintIdKey)
@@ -177,14 +177,14 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateSaveData(Blueprint As ArkSA.Blueprint) As Dictionary
+		Shared Function CreateSaveData(Blueprint As ArkSA.Blueprint) As JSONItem
 		  Var Ref As New ArkSA.BlueprintReference(Blueprint)
 		  Return Ref.SaveData
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary, AlreadyValidated As Boolean = False) As ArkSA.BlueprintReference
+		Shared Function FromSaveData(Dict As JSONItem, AlreadyValidated As Boolean = False) As ArkSA.BlueprintReference
 		  If AlreadyValidated = False And IsSaveData(Dict) = False Then
 		    Return Nil
 		  End If
@@ -219,13 +219,23 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function IsSaveData(Value As Variant) As Boolean
-		  If Value.IsNull Or Value.IsArray Or (Value IsA Dictionary) = False Then
+		  If Value.IsNull Or Value.IsArray Or Value.Type <> Variant.TypeObject Then
 		    Return False
 		  End If
 		  
-		  Var Dict As Dictionary = Value
+		  Var VersionValue, SchemaValue As Variant
+		  If Value.ObjectValue IsA JSONItem Then
+		    Var Dict As JSONItem = JSONItem(Value.ObjectValue)
+		    VersionValue = Dict.FirstValue(0, "version", "Version")
+		    SchemaValue = Dict.FirstValue("", "schema", "Schema")
+		  ElseIf Value.ObjectValue IsA Dictionary Then
+		    Var Dict As Dictionary = Dictionary(Value.ObjectValue)
+		    VersionValue = Dict.FirstValue(0, "version", "Version")
+		    SchemaValue = Dict.FirstValue("", "schema", "Schema")
+		  Else
+		    Return False
+		  End If
 		  
-		  Var VersionValue As Variant = Dict.FirstValue("version", "Version", 0)
 		  If VersionValue.IsNull Or VersionValue.IsNumeric = False Or VersionValue.IntegerValue > ArkSA.BlueprintReference.Version  Then
 		    Return False
 		  End If
@@ -234,7 +244,6 @@ Implements Beacon.NamedItem
 		    Return False
 		  End If
 		  
-		  Var SchemaValue As Variant = Dict.FirstValue("schema", "Schema", "")
 		  If SchemaValue.IsNull Or SchemaValue.Type <> Variant.TypeString Or (Version = 1 And SchemaValue.StringValue <> "Beacon.BlueprintReference") Or (Version = 2 And SchemaValue.StringValue <> "blueprintReference") Then
 		    Return False
 		  End If
@@ -358,8 +367,8 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
-		  Var Dict As New Dictionary
+		Function SaveData() As JSONItem
+		  Var Dict As New JSONItem
 		  Dict.Value("schema") = "blueprintReference"
 		  Dict.Value("version") = Self.Version
 		  Dict.Value("kind") = Self.mKind

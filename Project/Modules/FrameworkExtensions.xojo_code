@@ -156,6 +156,12 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clone(Extends Source As JSONItem) As JSONItem
+		  Return New JSONItem(Source.ToString(New JSONOptions))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone(Extends Source As MemoryBlock) As MemoryBlock
 		  Var Replica As New MemoryBlock(Source.Size)
 		  Replica.LittleEndian = Source.LittleEndian
@@ -216,10 +222,28 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DecodeBase64URL(Source As String) As String
-		  Source = Source.ReplaceAll("-", "+")
-		  Source = Source.ReplaceAll("_", "/")
-		  Return DecodeBase64(Source)
+		Function CreateJSON(Members() As JSONItem) As JSONItem
+		  Var Created As New JSONItem("[]")
+		  For Each Member As JSONItem In Members
+		    Created.Add(Member)
+		  Next
+		  Return Created
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateJSON(ParamArray Values() As Pair) As JSONItem
+		  Var Created As New JSONItem("{}")
+		  For Each P As Pair In Values
+		    Created.Value(P.Left.StringValue) = P.Right
+		  Next
+		  Return Created
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "DecodeBase64URLMBS" )  Function DecodeBase64URL(Source As String) As String
+		  Return DecodeBase64URLMBS(Source)
 		End Function
 	#tag EndMethod
 
@@ -264,12 +288,8 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EncodeBase64URL(Source As String) As String
-		  Var Encoded As String = EncodeBase64(Source, 0)
-		  Encoded = Encoded.ReplaceAll("+", "-")
-		  Encoded = Encoded.ReplaceAll("/", "_")
-		  Encoded = Encoded.ReplaceAll("=", "")
-		  Return Encoded
+		Attributes( Deprecated = "EncodeBase64URLMBS" )  Function EncodeBase64URL(Source As String) As String
+		  Return EncodeBase64URLMBS(Source)
 		End Function
 	#tag EndMethod
 
@@ -367,26 +387,26 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FirstValue(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Variant
+		Function FirstValue(Extends Dict As Dictionary, DefaultValue As Variant, ParamArray Keys() As Variant) As Variant
 		  // Last element of Keys is the default
-		  For Idx As Integer = 0 To Keys.LastIndex - 1
+		  For Idx As Integer = 0 To Keys.LastIndex
 		    If Dict.HasKey(Keys(Idx)) Then
 		      Return Dict.Value(Keys(Idx))
 		    End If
 		  Next
-		  Return Keys(Keys.LastIndex)
+		  Return DefaultValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FirstValue(Extends Dict As JSONItem, ParamArray Keys() As String) As Variant
+		Function FirstValue(Extends Dict As JSONItem, DefaultValue As Variant, ParamArray Keys() As String) As Variant
 		  // Last element of Keys is the default
-		  For Idx As Integer = 0 To Keys.LastIndex - 1
+		  For Idx As Integer = 0 To Keys.LastIndex
 		    If Dict.HasKey(Keys(Idx)) Then
 		      Return Dict.Value(Keys(Idx))
 		    End If
 		  Next
-		  Return Keys(Keys.LastIndex)
+		  Return DefaultValue
 		End Function
 	#tag EndMethod
 
@@ -431,6 +451,17 @@ Protected Module FrameworkExtensions
 		    End If
 		  Next
 		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasChild(Extends Source As JSONItem, Key As String) As Boolean
+		  If Source.HasKey(Key) = False Then
+		    Return False
+		  End If
+		  
+		  Var Child As Variant = Source.Value(Key)
+		  Return Child.IsNull = False And Child.Type = Variant.TypeObject And Child.ObjectValue IsA JSONItem
 		End Function
 	#tag EndMethod
 
@@ -486,6 +517,26 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function IsWhite(Extends Source As Color) As Boolean
 		  Return Source.Red >= 253 And Source.Green >= 253 And Source.Blue >= 253 And Source.Alpha = 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Iterator(Extends Source As JSONItem) As JSONIterator
+		  Var Entries() As JSONEntry
+		  If Source.IsArray Then
+		    Entries.ResizeTo(Source.LastRowIndex)
+		    For Idx As Integer = 0 To Entries.LastIndex
+		      Entries(Idx) = New JSONEntry(Source.ValueAt(Idx))
+		    Next
+		  Else
+		    Var Keys() As String = Source.Keys
+		    Entries.ResizeTo(Keys.LastIndex)
+		    For Idx As Integer = 0 To Entries.LastIndex
+		      Var Key As String = Keys(Idx)
+		      Entries(Idx) = New JSONEntry(Key, Source.Value(Key))
+		    Next
+		  End If
+		  Return New JSONIterator(Entries)
 		End Function
 	#tag EndMethod
 
@@ -809,6 +860,14 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function ToHex(Extends Source As Color) As String
 		  Return Source.Red.ToHex(2).Lowercase + Source.Green.ToHex(2).Lowercase + Source.Blue.ToHex(2).Lowercase + Source.Alpha.ToHex(2).Lowercase
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToString(Extends Source As JSONItem, Pretty As Boolean) As String
+		  Var Options As New JSONOptions
+		  Options.Compact = Not Pretty
+		  Return Source.ToString(Options)
 		End Function
 	#tag EndMethod
 

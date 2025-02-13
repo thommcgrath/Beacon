@@ -63,7 +63,7 @@ Inherits SDTD.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  Var Rainbow As Dictionary
 		  If (EncryptedData Is Nil) = False Then
 		    If EncryptedData.HasKey("rainbow") Then
@@ -116,7 +116,7 @@ Inherits SDTD.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  Var Rainbow As New Dictionary
 		  Var Files As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mFileContents

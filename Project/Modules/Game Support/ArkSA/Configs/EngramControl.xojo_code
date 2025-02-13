@@ -182,7 +182,7 @@ Implements Beacon.BlueprintConsumer,NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  If SaveData.HasKey("Whitelist Mode") Then
@@ -281,7 +281,7 @@ Implements Beacon.BlueprintConsumer,NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  If Self.mOverrides.Count > 0 Then

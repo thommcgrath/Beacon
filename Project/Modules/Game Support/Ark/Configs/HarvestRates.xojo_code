@@ -65,7 +65,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub ReadSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  // There is a slight performance impact here, since DoubleValue will check HasKey too,
@@ -82,23 +82,25 @@ Inherits Ark.ConfigGroup
 		  Self.mPlayerHarvestingDamageMultiplier = SaveData.DoubleValue("Player Harvesting Damage Multiplier", 1.0)
 		  Self.mDinoHarvestingDamageMultiplier = SaveData.DoubleValue("Dino Harvesting Damage Multiplier", 1.0)
 		  
-		  If SaveData.HasKey("Multipliers") Then
-		    Var Overrides As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(SaveData.Value("Multipliers"))
+		  If SaveData.HasChild("Multipliers") Then
+		    Var Overrides As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(SaveData.Child("Multipliers"))
 		    If (Overrides Is Nil) = False Then
 		      Self.mOverrides = Overrides
 		    End If
-		  ElseIf SaveData.HasKey("Rates") Then
-		    Var Rates As Dictionary = SaveData.DictionaryValue("Rates", New Dictionary)
-		    For Each Entry As DictionaryEntry In Rates
-		      Try
-		        Var Engram As Ark.Engram = Ark.ResolveEngram("", Entry.Key, "", Nil)
-		        Self.mOverrides.Value(Engram, Self.RateAttribute) = Entry.Value.DoubleValue
-		      Catch Err As RuntimeException
-		      End Try
-		    Next
+		  ElseIf SaveData.HasChild("Rates") Then
+		    Var Rates As JSONItem = SaveData.Child("Rates")
+		    If (Rates Is Nil) = False Then
+		      For Each Entry As JSONEntry In Rates.Iterator
+		        Try
+		          Var Engram As Ark.Engram = Ark.ResolveEngram("", Entry.Key, "", Nil)
+		          Self.mOverrides.Value(Engram, Self.RateAttribute) = Entry.Value.DoubleValue
+		        Catch Err As RuntimeException
+		        End Try
+		      Next
+		    End If
 		  Else
-		    Var Rates As Dictionary = SaveData.DictionaryValue("Overrides", New Dictionary)
-		    For Each Entry As DictionaryEntry In Rates
+		    Var Rates As JSONItem = SaveData.Child("Overrides")
+		    For Each Entry As JSONEntry In Rates.Iterator
 		      Try
 		        Var Engram As Ark.Engram = Ark.ResolveEngram("", "", Entry.Key, Nil)
 		        Self.mOverrides.Value(Engram, Self.RateAttribute) = Entry.Value.DoubleValue
@@ -110,7 +112,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		Sub WriteSaveData(SaveData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused EncryptedData
 		  
 		  SaveData.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier

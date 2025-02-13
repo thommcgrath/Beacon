@@ -117,7 +117,7 @@ Implements Beacon.Countable,Beacon.NamedItem,Beacon.DisambiguationCandidate,Beac
 		    
 		    Var Override As New ArkSA.SpawnPointOverride(SpawnPointRef, Mode)
 		    
-		    Var LimitsVar As Variant = SaveData.FirstValue("limits", "Limits", Nil)
+		    Var LimitsVar As Variant = SaveData.FirstValue(Nil, "limits", "Limits")
 		    If LimitsVar.IsNull = False Then
 		      Var Manager As ArkSA.BlueprintAttributeManager = ArkSA.BlueprintAttributeManager.FromSaveData(LimitsVar)
 		      If (Manager Is Nil) = False Then

@@ -2875,12 +2875,13 @@ Implements ArkSA.BlueprintProvider
 		          Var Stats() As ArkSA.EngramStat = Engram.AllStats(True)
 		          If Stats.Count > 0 Then
 		            Var StatsJSON As New JSONItem
-		            StatsJSON.Compact = True
-		            StatsJSON.DecimalFormat = "#.000000"
 		            For Each Stat As ArkSA.EngramStat In Stats
 		              StatsJSON.Add(New JSONItem(Stat.SaveData))
 		            Next
-		            Columns.Value("stats") = StatsJSON.ToString
+		            Var StatOptions As New JSONOptions
+		            StatOptions.Compact = True
+		            StatOptions.DecimalPlaces = 6
+		            Columns.Value("stats") = StatsJSON.ToString(StatOptions)
 		          Else
 		            Columns.Value("stats") = Nil
 		          End If
@@ -2915,7 +2916,7 @@ Implements ArkSA.BlueprintProvider
 		          For Each Entry As DictionaryEntry In Columns
 		            Var MakeAssignment As Boolean
 		            If Entry.Key = "object_id" Then
-		              WhereClause = "object_id = ?" + NextPlaceholder.ToString
+		              WhereClause = "object_id = ?" + NextPlaceholder.ToString(Locale.Raw, "0")
 		              MakeAssignment = Entry.Value.StringValue <> Blueprint.BlueprintId
 		            Else
 		              MakeAssignment = True

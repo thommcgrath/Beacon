@@ -236,7 +236,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary) As ArkSA.LootContainer
+		Shared Function FromSaveData(SaveData As JSONItem) As ArkSA.LootContainer
 		  If SaveData Is Nil Then
 		    Return Nil
 		  End If
@@ -294,27 +294,27 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 		    App.Log(Err, CurrentMethodName, "Reading " + AppendModeKey + " value")
 		  End Try
 		  
-		  Var SetDicts() As Variant
-		  If SaveData.HasKey("itemSets") Then
+		  Var SetDicts As JSONItem
+		  If SaveData.HasChild("itemSets") Then
 		    Try
-		      SetDicts = SaveData.Value("itemSets")
+		      SetDicts = SaveData.Child("itemSets")
 		    Catch Err As RuntimeException
 		    End Try
-		  ElseIf SaveData.HasKey("ItemSets") Then
+		  ElseIf SaveData.HasChild("ItemSets") Then
 		    Try
-		      SetDicts = SaveData.Value("ItemSets")
+		      SetDicts = SaveData.Child("ItemSets")
 		    Catch Err As RuntimeException
 		    End Try
 		  End If
 		  
-		  For Idx As Integer = 0 To SetDicts.LastIndex
+		  For Idx As Integer = 0 To SetDicts.LastRowIndex
 		    Try
-		      Var SetDict As Variant = SetDicts(Idx)
-		      If IsNull(SetDict) Or SetDict.IsArray = True Or SetDict.Type <> Variant.TypeObject Or (SetDict.ObjectValue IsA Dictionary) = False Then
+		      Var SetDict As JSONItem = SetDicts.ChildAt(Idx)
+		      If SetDict Is Nil Or SetDict.IsArray = True Then
 		        Continue
 		      End If
 		      
-		      Var Set As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(Dictionary(SetDict))
+		      Var Set As ArkSA.LootItemSet = ArkSA.LootItemSet.FromSaveData(SetDict)
 		      If (Set Is Nil) = False Then
 		        Container.Add(Set)
 		      End If
@@ -500,24 +500,23 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		Sub Pack(Dict As JSONItem, ForAPI As Boolean)
 		  // Part of the ArkSA.Blueprint interface.
 		  
 		  Self.LoadPendingContents()
 		  
-		  Var Sets() As Dictionary
-		  Sets.ResizeTo(Self.mItemSets.LastIndex)
+		  Var Sets As New JSONItem("[]")
 		  For Idx As Integer = Self.mItemSets.FirstIndex To Self.mItemSets.LastIndex
-		    Sets(Idx) = Self.mItemSets(Idx).Pack(ForAPI)
-		  Next Idx
+		    Sets.Add(Self.mItemSets(Idx).Pack(ForAPI))
+		  Next
 		  
-		  Dict.Value("multipliers") = New Dictionary("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)
+		  Dict.Value("multipliers") = CreateJSON("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)
 		  Dict.Value("uiColor") = Self.mUIColor.ToHex
-		  Dict.Value("iconId") = Self.mIconID
+		  Dict.Value("iconId") = Self.mIconId
 		  Dict.Value("sort") = Self.mSortValue.ToString(Locale.Raw, "000")
 		  Dict.Value("experimental") = Self.mExperimental
 		  Dict.Value("notes") = Self.mNotes
-		  Dict.Value("requirements") = Beacon.GenerateJSON(Self.mRequirements, False)
+		  Dict.Value("requirements") = Self.mRequirements.ToString(False)
 		  Dict.Value("minItemSets") = Self.mMinItemSets
 		  Dict.Value("maxItemSets") = Self.mMaxItemSets
 		  Dict.Value("preventDuplicates") = Self.mPreventDuplicates
@@ -552,28 +551,28 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Requirements() As Dictionary
+		Function Requirements() As JSONItem
 		  Return Self.mRequirements.Clone
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData() As JSONItem
 		  Self.LoadPendingContents()
 		  
-		  Var Children() As Variant
+		  Var Children As New JSONItem("[]")
 		  For Each Set As ArkSA.LootItemSet In Self.mItemSets
 		    Children.Add(Set.SaveData)
 		  Next
 		  
-		  Var Keys As New Dictionary
+		  Var Keys As New JSONItem
 		  Keys.Value("lootDropId") = Self.mLootDropId
 		  Keys.Value("minItemSets") = Self.mMinItemSets
 		  Keys.Value("maxItemSets") = Self.mMaxItemSets
 		  Keys.Value("preventDuplicates") = Self.mPreventDuplicates
 		  Keys.Value("appendMode") = Self.mAppendMode
-		  If Children.LastIndex > -1 Then
-		    Keys.Value("itemSets") = Children
+		  If Children.Count > 0 Then
+		    Keys.Child("itemSets") = Children
 		  End If
 		  Return Keys
 		End Function
@@ -702,7 +701,7 @@ Implements ArkSA.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable,Beacon.
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mRequirements As Dictionary
+		Protected mRequirements As JSONItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

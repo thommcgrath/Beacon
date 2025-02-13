@@ -122,7 +122,7 @@ Protected Module BeaconUI
 		    TestAgainst = ForegroundColor
 		  End If
 		  
-		  Var Key As String = BackgroundColor.ToHex + ":" + ForegroundColor.ToHex + ":" + RequiredContrast.ToString + ":" + ChangeForeground.ToString
+		  Var Key As String = BackgroundColor.ToHex + ":" + ForegroundColor.ToHex + ":" + RequiredContrast.ToString(Locale.Raw, "0.000") + ":" + ChangeForeground.ToString
 		  If mContrastingColors.HasKey(Key) = False Then
 		    Var ComputedColor As Color
 		    
@@ -692,7 +692,7 @@ Protected Module BeaconUI
 		  Var Message As String
 		  If Restore Then
 		    If UseGenericNames Then
-		      Message = "Are you sure you want to restore these " + Names.Count.ToString + " " + PluralNoun + " to their default settings?"
+		      Message = "Are you sure you want to restore these " + Names.Count.ToString(Locale.Current, "0") + " " + PluralNoun + " to their default settings?"
 		    ElseIf Names.LastIndex = 0 Then
 		      Message = "Are you sure you want to restore the " + SingularNoun + " " + UniqueNames(0) + " to its default settings?"
 		    Else
@@ -700,7 +700,7 @@ Protected Module BeaconUI
 		    End If
 		  Else
 		    If UseGenericNames Then
-		      Message = "Are you sure you want to delete these " + Names.Count.ToString + " " + PluralNoun + "?"
+		      Message = "Are you sure you want to delete these " + Names.Count.ToString(Locale.Current, "0") + " " + PluralNoun + "?"
 		    ElseIf Names.LastIndex = 0 Then
 		      Message = "Are you sure you want to delete the " + SingularNoun + " " + UniqueNames(0) + "?"
 		    Else

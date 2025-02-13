@@ -2,7 +2,7 @@
 Protected Class MutableSpawnPoint
 Inherits Ark.SpawnPoint
 Implements Ark.MutableBlueprint
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub AddSet(Set As Ark.SpawnPointSet, Replace As Boolean = False)
 		  Self.LoadPendingSets()
@@ -326,31 +326,32 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Unpack(Dict As Dictionary)
+		Sub Unpack(Dict As JSONItem)
 		  Self.mLimits = New Ark.BlueprintAttributeManager
 		  If Dict.HasKey("limits") Then
 		    Try
-		      Var Limits As Variant = Dict.Value("limits")
-		      If IsNull(Limits) = False And Limits.Type = Variant.TypeObject And Limits.ObjectValue IsA Dictionary Then
-		        Var LimitsDict As Dictionary = Dictionary(Limits.ObjectValue)
-		        For Each Entry As DictionaryEntry In LimitsDict
-		          Var CreatureRef As New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, Entry.Key.StringValue, "", "", "", "")
-		          Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = Entry.Value.DoubleValue
-		        Next
-		      ElseIf IsNull(Limits) = False And Limits.IsArray And Limits.ArrayElementType = Variant.TypeObject Then
-		        Var Members() As Dictionary = Limits.DictionaryArrayValue
-		        For Each Limit As Dictionary In Members
-		          Var MaxPercent As Double = Limit.FirstValue("maxPercentage", "max_percent", 1.0).DoubleValue
-		          Var CreatureRef As Ark.BlueprintReference
-		          If Limit.HasKey("creatureId") Then
-		            CreatureRef = New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, Limit.Value("creatureId").StringValue, "", "", "", "")
-		          ElseIf Limit.HasKey("creature") Then
-		            CreatureRef = Ark.BlueprintReference.FromSaveData(Limit.Value("creature"))
-		          End If
-		          If (CreatureRef Is Nil) = False Then
-		            Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = MaxPercent
-		          End If
-		        Next
+		      Var Limits As JSONItem = Dict.Child("limits")
+		      If (Limits Is Nil) = False Then
+		        If Limits.IsArray = False Then
+		          For Each LimitEntry As JSONEntry In Limits.Iterator
+		            Var CreatureRef As New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, LimitEntry.Key, "", "", "", "")
+		            Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = LimitEntry.Value.DoubleValue
+		          Next
+		        Else
+		          For Each LimitEntry As JSONEntry In Limits.Iterator
+		            Var Limit As JSONItem = LimitEntry.Value
+		            Var MaxPercent As Double = Limit.FirstValue(1.0, "maxPercentage", "max_percent").DoubleValue
+		            Var CreatureRef As Ark.BlueprintReference
+		            If Limit.HasKey("creatureId") Then
+		              CreatureRef = New Ark.BlueprintReference(Ark.BlueprintReference.KindCreature, Limit.Value("creatureId").StringValue, "", "", "", "")
+		            ElseIf Limit.HasKey("creature") Then
+		              CreatureRef = Ark.BlueprintReference.FromSaveData(Limit.Child("creature"))
+		            End If
+		            If (CreatureRef Is Nil) = False Then
+		              Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = MaxPercent
+		            End If
+		          Next
+		        End If
 		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Unpacking limits")
@@ -359,48 +360,51 @@ Implements Ark.MutableBlueprint
 		  
 		  Self.mSets.ResizeTo(-1)
 		  If Dict.HasKey("sets") And Dict.Value("sets").IsNull = False Then
-		    Var Sets() As Dictionary
+		    Var Sets As JSONItem
 		    Try
-		      Sets = Dict.Value("sets").DictionaryArrayValue
+		      Sets = Dict.Child("sets")
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Unpacking spawn point sets value.")
 		    End Try
 		    
-		    For Each PackedSet As Dictionary In Sets
-		      Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(PackedSet)
+		    For Each SetEntry As JSONEntry In Sets.Iterator
+		      Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(JSONItem(SetEntry.Value))
 		      If (Set Is Nil) = False Then
 		        Self.mSets.Add(Set)
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("groups") And Dict.Value("groups").IsNull = False Then
-		    Var SpawnDicts() As Dictionary
+		    Var SpawnDicts As JSONItem
 		    Try
-		      SpawnDicts = Dict.Value("groups").DictionaryArrayValue
+		      SpawnDicts = Dict.Child("groups")
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Unpacking spawn point groups value.")
 		    End Try
 		    
-		    For Each SpawnDict As Dictionary In SpawnDicts
-		      Var Creatures() As String
-		      Var Arr As Variant = SpawnDict.Lookup("creatures", Nil)
-		      If IsNull(Arr) = False And Arr.IsArray Then
-		        Select Case Arr.ArrayElementType
-		        Case Variant.TypeString
-		          Creatures = Arr
-		        Case Variant.TypeObject
-		          Var Temp() As Variant = Arr
-		          For Each Path As String In Temp
-		            Creatures.Add(Path)
-		          Next
-		        End Select
+		    For Each GroupEntry As JSONEntry In SpawnDicts.Iterator
+		      Var SpawnDict As JSONItem = GroupEntry.Value
+		      Var CreaturePaths() As String
+		      If SpawnDict.HasChild("creatures") Then
+		        Var Arr As JSONItem = SpawnDict.Child("creatures")
+		        For Each CreatureEntry As JSONEntry In Arr.Iterator
+		          CreaturePaths.Add(CreatureEntry.Value.StringValue)
+		        Next
 		      End If
 		      
 		      Var Set As New Ark.MutableSpawnPointSet
-		      Set.Label = SpawnDict.Lookup("label", "Untitled Spawn Set").StringValue
-		      Set.SetId = SpawnDict.Lookup("group_id", Beacon.UUID.v4).StringValue
+		      If SpawnDict.HasKey("label") Then
+		        Set.Label = SpawnDict.Value("label").StringValue
+		      Else
+		        Set.Label = "Untitled Spawn Set"
+		      End If
+		      If SpawnDict.HasKey("group_id") Then
+		        Set.SetId = SpawnDict.Value("group_id").StringValue
+		      Else
+		        Set.SetId = Beacon.UUID.v4
+		      End If
 		      Set.RawWeight = SpawnDict.Lookup("weight", 0.1).DoubleValue
-		      For Each Path As String In Creatures
-		        Var Creature As Ark.Creature = Ark.ResolveCreature("", Path, "", Nil)
+		      For Each CreaturePath As String In CreaturePaths
+		        Var Creature As Ark.Creature = Ark.ResolveCreature("", CreaturePath, "", Nil)
 		        Set.Append(New Ark.MutableSpawnPointSetEntry(Creature))
 		      Next
 		      Self.mSets.Add(Set)

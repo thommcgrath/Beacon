@@ -22,7 +22,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Beacon.TemplateSelector
+		Shared Function FromSaveData(Dict As JSONItem) As Beacon.TemplateSelector
 		  Var SelectorUUID As String
 		  If Dict.HasKey("UUID") Then
 		    SelectorUUID = Dict.Value("UUID")

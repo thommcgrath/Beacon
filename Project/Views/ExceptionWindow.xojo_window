@@ -795,7 +795,7 @@ End
 		  End If
 		  
 		  Var Fields As New Dictionary
-		  Fields.Value("build") = App.BuildNumber.ToString
+		  Fields.Value("build") = App.BuildNumber.ToString(Locale.Raw, "0")
 		  Fields.Value("comments") = Comments.Trim.ReplaceLineEndings(EndOfLine.UNIX)
 		  Fields.Value("time") = DateTime.Now.SQLDateTimeWithOffset
 		  If (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
@@ -1066,7 +1066,7 @@ End
 		  If Self.mSolutionURL <> "" Then
 		    System.GotoURL(Self.mSolutionURL)
 		  Else
-		    Var Path As String = "/reportaproblem?build=" + App.BuildNumber.ToString
+		    Var Path As String = "/reportaproblem?build=" + App.BuildNumber.ToString(Locale.Raw, "0")
 		    If Self.mExceptionHash.IsEmpty = False Then
 		      Path = Path + "&exception=" + Self.mExceptionHash
 		    End If

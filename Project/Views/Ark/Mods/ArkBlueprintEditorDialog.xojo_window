@@ -1478,7 +1478,7 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         SelectedRowIndex=   0
+         SelectedRowIndex=   -1
          TabIndex        =   7
          TabPanelIndex   =   5
          TabStop         =   True
@@ -1508,7 +1508,7 @@ Begin BeaconDialog ArkBlueprintEditorDialog
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         SelectedRowIndex=   0
+         SelectedRowIndex=   -1
          TabIndex        =   5
          TabPanelIndex   =   5
          TabStop         =   True
@@ -3307,15 +3307,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var Contents As Variant = Board.GetClipboardData(Ark.CraftingCostIngredient.ClipboardType)
-		  If Contents.IsNull Then
+		  Var Contents As JSONItem = Board.GetClipboardData(Ark.CraftingCostIngredient.ClipboardType)
+		  If Contents Is Nil Then
 		    Return
 		  End If
 		  
 		  Try
-		    Var Dicts() As Variant = Contents
-		    For Each Dict As Dictionary In Dicts
-		      Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, Nil)
+		    For Each Entry As JSONEntry In Contents.Iterator
+		      Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromSaveData(JSONItem(Entry.Value), Nil)
 		      If Ingredient Is Nil Then
 		        Continue
 		      End If
@@ -3323,7 +3322,7 @@ End
 		        If Ark.CraftingCostIngredient(Me.RowTagAt(Idx)).Engram.ObjectId = Ingredient.Engram.ObjectId Then
 		          Self.PutIngredientInList(Ingredient, Idx)
 		          Self.Modified = True
-		          Continue For Dict
+		          Continue For Entry
 		        End If
 		      Next
 		      

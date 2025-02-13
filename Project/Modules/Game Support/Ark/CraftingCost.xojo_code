@@ -113,8 +113,8 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Dictionary) As Ark.CraftingCost
-		  Var ReferenceDict As Dictionary = Dict.FirstValue("engram", "blueprint", "Blueprint", Nil)
+		Shared Function ImportFromBeacon(Dict As JSONItem) As Ark.CraftingCost
+		  Var ReferenceDict As JSONItem = Dict.FirstValue(Nil, "engram", "blueprint", "Blueprint")
 		  Var Reference As Ark.BlueprintReference
 		  If (ReferenceDict Is Nil) = False Then
 		    Try
@@ -123,7 +123,7 @@ Implements Beacon.NamedItem
 		    End Try
 		  End If
 		  If Reference Is Nil Then
-		    Var BlueprintId As String = Dict.FirstValue("engramId", "EngramID", "Engram", "")
+		    Var BlueprintId As String = Dict.FirstValue("", "engramId", "EngramID", "Engram")
 		    If BlueprintId.IsEmpty = False Then
 		      If Beacon.UUID.Validate(BlueprintId) Then
 		        Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindEngram, BlueprintId, "", "", "", "")
@@ -136,14 +136,13 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  Var Cost As New Ark.CraftingCost(Reference)
-		  Var Ingredients As Variant = Dict.FirstValue("ingredients", "Ingredients", "Resources", Nil)
-		  If Ingredients.IsNull Or Ingredients.IsArray = False Then
+		  Var Ingredients As JSONItem = Dict.FirstValue(Nil, "ingredients", "Ingredients", "Resources")
+		  If Ingredients Is Nil Or Ingredients.IsArray = False Then
 		    Return Cost
 		  End If
 		  
-		  Var IngredientDicts() As Dictionary = Ingredients.DictionaryArrayValue
-		  For Each IngredientDict As Dictionary In IngredientDicts
-		    Var Ref As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(IngredientDict, Nil)
+		  For Each IngredientEntry As JSONEntry In Ingredients.Iterator
+		    Var Ref As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromSaveData(JSONItem(IngredientEntry.Value), Nil)
 		    If (Ref Is Nil) = False Then
 		      Cost.mIngredients.Add(Ref)
 		    End If

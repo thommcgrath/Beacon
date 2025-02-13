@@ -222,6 +222,7 @@ Begin BeaconDialog UserMigratorDialog
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   ""
+      Type            =   ""
    End
 End
 #tag EndDesktopWindow
@@ -547,7 +548,7 @@ End
 		      RequestContent.Value("userId") = Identity.UserId
 		      RequestContent.Value("privateKey") = Identity.PrivateKey
 		      
-		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request("/user/merge", "POST", RequestContent.ToString(), "application/json"))
+		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request("/user/merge", "POST", RequestContent.ToString(False), "application/json"))
 		      If Response.Success = False Then
 		        If Response.HTTPStatus = 404 Then
 		          // User doesn't exist, mark it as merged so we don't try again

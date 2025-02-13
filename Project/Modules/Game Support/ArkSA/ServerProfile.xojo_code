@@ -3,7 +3,7 @@ Protected Class ServerProfile
 Inherits Beacon.ServerProfile
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
-		Sub ReadFromDictionary(Dict As Dictionary, Version As Integer)
+		Sub ReadFromDictionary(Dict As JSONItem, Version As Integer)
 		  Select Case Version
 		  Case 2
 		    Self.mMask = Dict.Lookup("map", 0)
@@ -37,7 +37,7 @@ Inherits Beacon.ServerProfile
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteToDictionary(Dict As Dictionary)
+		Sub WriteToDictionary(Dict As JSONItem)
 		  Dict.Value("map") = Self.mMask
 		  
 		  If (Self.mMessageOfTheDay Is Nil) = False And Self.mMessageOfTheDay.IsEmpty = False Then

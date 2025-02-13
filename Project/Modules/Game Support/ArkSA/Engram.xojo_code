@@ -351,7 +351,7 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Pack(Dict As Dictionary, ForAPI As Boolean)
+		Sub Pack(Dict As JSONItem, ForAPI As Boolean)
 		  // Part of the ArkSA.Blueprint interface.
 		  
 		  If Self.HasUnlockDetails Then
@@ -384,21 +384,21 @@ Implements ArkSA.Blueprint,Beacon.DisambiguationCandidate
 		  If Self.mIngredients.Count = 0 Then
 		    Dict.Value("recipe") = Nil
 		  Else
-		    Var Ingredients() As Dictionary
+		    Var Ingredients As New JSONItem("[]")
 		    For Each Ingredient As ArkSA.CraftingCostIngredient In Self.mIngredients
 		      Ingredients.Add(Ingredient.SaveData(ForAPI))
 		    Next
-		    Dict.Value("recipe") = Ingredients
+		    Dict.Child("recipe") = Ingredients
 		  End If
 		  
-		  Var Stats() As Dictionary
+		  Var Stats As New JSONItem("[]")
 		  For Each Stat As ArkSA.EngramStat In Self.mStats
 		    If Stat Is Nil Then
 		      Continue
 		    End If
 		    Stats.Add(Stat.SaveData)
 		  Next
-		  Dict.Value("stats") = Stats
+		  Dict.Child("stats") = Stats
 		End Sub
 	#tag EndMethod
 

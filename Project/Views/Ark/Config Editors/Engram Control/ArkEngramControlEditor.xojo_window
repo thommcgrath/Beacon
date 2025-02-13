@@ -14,17 +14,24 @@ Begin ArkConfigEditor ArkEngramControlEditor
    Height          =   672
    Index           =   -2147483648
    InitialParent   =   ""
+   IsFrontmost     =   False
    Left            =   0
    LockBottom      =   True
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Modified        =   False
+   Progress        =   0.0
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewIcon        =   0
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   982
    Begin FadedSeparator PointsListSeparator
@@ -663,8 +670,8 @@ End
 		      PointsActual = PointsForLevel.IntegerValue
 		    End If
 		    
-		    Self.PointsList.CellTextAt(Idx, 0) = Level.ToString
-		    Self.PointsList.CellTextAt(Idx, 1) = PointsActual.ToString
+		    Self.PointsList.CellTextAt(Idx, 0) = Level.ToString(Locale.Raw, "0")
+		    Self.PointsList.CellTextAt(Idx, 1) = PointsActual.ToString(Locale.Raw, "0")
 		    Self.PointsList.RowSelectedAt(Idx) = Selected.IndexOf(Level) > -1
 		    Self.PointsList.RowTagAt(Idx) = Level
 		  Next

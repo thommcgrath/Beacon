@@ -3,7 +3,7 @@ Protected Class Project
 Inherits Beacon.Project
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
-		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		Sub AddSaveData(ManifestData As JSONItem, PlainData As JSONItem, EncryptedData As JSONItem)
 		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
 		  
@@ -12,17 +12,17 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Function LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
+		Function LoadConfigSet(PlainData As JSONItem, EncryptedData As JSONItem) As Dictionary
 		  Var SetDict As New Dictionary
-		  For Each Entry As DictionaryEntry In PlainData
+		  For Each Entry As JSONEntry In PlainData.Iterator
 		    Try
 		      Var InternalName As String = Entry.Key
-		      Var GroupData As Dictionary = Entry.Value
+		      Var GroupData As JSONItem = Entry.Value
 		      
 		      Select Case InternalName
 		      Case SDTD.Configs.NameProjectSettings
 		      Else
-		        Var EncryptedGroupData As Dictionary
+		        Var EncryptedGroupData As JSONItem
 		        If EncryptedData.HasKey(InternalName) Then
 		          Try
 		            EncryptedGroupData = EncryptedData.Value(InternalName)
@@ -44,7 +44,7 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
+		Sub ReadSaveData(PlainData As JSONItem, EncryptedData As JSONItem, SaveDataVersion As Integer, SavedWithVersion As Integer)
 		  #Pragma Unused EncryptedData
 		  #Pragma Unused SaveDataVersion
 		  #Pragma Unused SavedWithVersion
@@ -54,11 +54,11 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Sub SaveConfigSet(SetDict As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		Sub SaveConfigSet(SetDict As Dictionary, PlainData As JSONItem, EncryptedData As JSONItem)
 		  For Each Entry As DictionaryEntry In SetDict
 		    Var Group As SDTD.ConfigGroup = Entry.Value
 		    
-		    Var GroupData As Dictionary = Group.SaveData()
+		    Var GroupData As JSONItem = Group.SaveData()
 		    If GroupData Is Nil Then
 		      Continue
 		    End If
