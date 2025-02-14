@@ -1069,7 +1069,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Licenses() As Beacon.OmniLicense = Identity.ExpiredLicenses()
+		  Var Licenses() As Beacon.OmniLicense = Identity.ExpiredLicenses(Preferences.IgnoredLicenseIds)
 		  If Licenses.Count = 0 Then
 		    RenewButton.Visible = False
 		  ElseIf Licenses.Count = 1 Then
@@ -1143,6 +1143,21 @@ End
 	#tag Constant, Name = PageTemplates, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = RenewalNoticeActionCaption, Type = String, Dynamic = True, Default = \"Renew Now", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RenewalNoticeCancelCaption, Type = String, Dynamic = True, Default = \"Not Now", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RenewalNoticeExplanation, Type = String, Dynamic = True, Default = \"Although your update plan has expired\x2C you still have full access to the features you have paid for in this version. If you upgrade to a new feature version of Beacon\x2C your \?1 license will not be valid. You can renew your update plan now to continue to gain access to new features.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RenewalNoticeIgnoreCaption, Type = String, Dynamic = True, Default = \"Ignore This License", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RenewalNoticeMessage, Type = String, Dynamic = True, Default = \"Your \?1 update plan expired on \?2", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
@@ -1213,7 +1228,27 @@ End
 		    End If
 		    Return
 		  Case "NavRenew"
-		    System.GotoURL(Beacon.WebURL("/omni"))
+		    Var Licenses() As Beacon.OmniLicense = App.IdentityManager.CurrentIdentity.ExpiredLicenses(Preferences.IgnoredLicenseIds)
+		    If Licenses.Count = 0 Then
+		      Return
+		    End If
+		    
+		    // Only present for one license at a time
+		    Var License As Beacon.OmniLicense = Licenses(0)
+		    Var LicenseName As String = License.Description(False)
+		    Var Message As String = Language.ReplacePlaceholders(Self.RenewalNoticeMessage, LicenseName, License.ExpirationDateTime.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Short) + " UTC")
+		    Var Explanation As String = Language.ReplacePlaceholders(Self.RenewalNoticeExplanation, LicenseName)
+		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, Self.RenewalNoticeActionCaption, Self.RenewalNoticeCancelCaption, Self.RenewalNoticeIgnoreCaption)
+		    Select Case Choice
+		    Case BeaconUI.ConfirmResponses.Action
+		      System.GotoURL(Beacon.WebURL("/omni"))
+		    Case BeaconUI.ConfirmResponses.Alternate
+		      Var IgnoredLicenseIds() As String = Preferences.IgnoredLicenseIds
+		      IgnoredLicenseIds.Add(License.LicenseId)
+		      Preferences.IgnoredLicenseIds = IgnoredLicenseIds
+		      Self.UpdateRenewButton()
+		    End Select
+		    Return
 		  Else
 		    Return
 		  End Select

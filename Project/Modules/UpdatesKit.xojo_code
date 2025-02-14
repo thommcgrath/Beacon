@@ -688,12 +688,13 @@ Protected Module UpdatesKit
 		    Return
 		  End If
 		  
+		  Var IgnoredLicenseIds() As String = Preferences.IgnoredLicenseIds
 		  Var Dict As New Dictionary
 		  For Each License As Beacon.OmniLicense In UpdateLicenses
 		    Dict.Value(License.LicenseId) = License
 		  Next
 		  For Each License As Beacon.OmniLicense In ActiveLicenses
-		    If Dict.HasKey(License.LicenseId) = False Then
+		    If Dict.HasKey(License.LicenseId) = False And IgnoredLicenseIds.IndexOf(License.LicenseId) = -1 Then
 		      mAvailableVersionExpiredLicenses.Add(License)
 		    End If
 		  Next
