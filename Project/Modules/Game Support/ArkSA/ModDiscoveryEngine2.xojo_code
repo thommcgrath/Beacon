@@ -258,15 +258,36 @@ Protected Class ModDiscoveryEngine2
 		    Return
 		  End If
 		  
-		  Var Sh As New Shell
-		  Var RequiredLinks() As String = Array("global.ucas", "global.utoc", "ShooterGame-WindowsServer.pak", "ShooterGame-WindowsServer.ucas", "ShooterGame-WindowsServer.utoc")
-		  For Each Filename As String In RequiredLinks
+		  Var RequiredNames As New Dictionary
+		  For Each File As FolderItem In PaksFolder.Children(False)
+		    If File.Name.EndsWith(".ucas") Or File.Name.EndsWith(".utoc") Or File.Name.EndsWith(".pak") Then
+		      RequiredNames.Value(File.Name) = True
+		    End If
+		  Next
+		  
+		  Var DiscoveryBound As Integer = DiscoveryRoot.Count - 1
+		  For FileIdx As Integer = DiscoveryBound DownTo 0
 		    Try
-		      Var DestinationFile As FolderItem = DiscoveryRoot.Child(Filename)
-		      Var SourceFile As FolderItem = PaksFolder.Child(Filename)
-		      If DestinationFile.Exists Then
+		      Var DestinationFile As FolderItem = DiscoveryRoot.ChildAt(FileIdx)
+		      If RequiredNames.HasKey(DestinationFile.Name) Then
+		        // The destination already has this link
+		        RequiredNames.Remove(DestinationFile.Name)
+		        Continue
+		      End If
+		      If DestinationFile.Name.EndsWith(".ucas") Or DestinationFile.Name.EndsWith(".utoc") Or DestinationFile.Name.EndsWith(".pak") Then
+		        // Destination has a file that is not needed, remove it
 		        DestinationFile.Remove
 		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to delete existing junction")
+		    End Try
+		  Next
+		  
+		  Var Sh As New Shell
+		  For Each Entry As DictionaryEntry In RequiredNames
+		    Try
+		      Var SourceFile As FolderItem = PaksFolder.Child(Entry.Key.StringValue)
+		      Var DestinationFile As FolderItem = DiscoveryRoot.Child(SourceFile.Name)
 		      
 		      #if TargetWindows
 		        Sh.Execute("mklink /H """ + DestinationFile.NativePath + """ """ + SourceFile.NativePath + """")
@@ -685,6 +706,11 @@ Protected Class ModDiscoveryEngine2
 		  Var DefaultPath As String = EntryPoint.Child("ClassDefaultObject").Value("ObjectPath")
 		  Var DefaultIndex As Integer = Integer.FromString(DefaultPath.LastField("."), Locale.Raw)
 		  Var DefaultObject As JSONMBS = Parsed.ChildAt(DefaultIndex)
+		  If DefaultObject.HasChild("Properties") = False Then
+		    Self.mPropertiesCache.Value(Path) = FallbackEntry
+		    Return FallbackEntry
+		  End If
+		  
 		  Var DefaultProperties As JSONMBS = DefaultObject.Child("Properties")
 		  DefaultProperties.Value("X-Beacon-Self") = Self.NormalizePath(DefaultPath)
 		  If EntryPoint.HasChild("Super") Then
