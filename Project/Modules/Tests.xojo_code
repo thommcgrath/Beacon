@@ -740,7 +740,21 @@ Protected Module Tests
 		    Var V As Variant = "ffc93232-2484-4947-8c9a-a691cf938d75"
 		    UUID = V.StringValue
 		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to convert string in variant to UUID")
+		    System.DebugLog("Unable to convert uuidv4 string in variant to UUID")
+		  End Try
+		  
+		  Try
+		    Var V As Variant = "2830c02a-dbf7-5737-bf53-cc11c0315ff1"
+		    UUID = V.StringValue
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to convert uuidv5 string in variant to UUID")
+		  End Try
+		  
+		  Try
+		    Var V As Variant = "01951a05-a90c-7468-8d04-bf3a45b811a7"
+		    UUID = V.StringValue
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to convert uuidv7 string in variant to UUID")
 		  End Try
 		  
 		  Try
