@@ -85,7 +85,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -126,7 +126,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   86
@@ -167,7 +167,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -208,7 +208,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
@@ -249,7 +249,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   188
@@ -282,7 +282,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Stat:"
+      Text            =   "#FieldLabelStat"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -315,7 +315,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Randomizer Range Override:"
+      Text            =   "#FieldLabelRRO"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -348,7 +348,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Randomizer Range Multiplier:"
+      Text            =   "#FieldLabelRRM"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -381,7 +381,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "State Modifier Scale:"
+      Text            =   "#FieldLabelSMS"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -414,7 +414,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Rating Value Multiplier:"
+      Text            =   "#FieldLabelRVM"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -447,7 +447,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Initial Value Constant:"
+      Text            =   "#FieldLabelIVC"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -461,7 +461,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
-      Caption         =   "OK"
+      Caption         =   "#Language.CommonOK"
       Default         =   True
       Enabled         =   True
       FontName        =   "System"
@@ -493,7 +493,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   True
-      Caption         =   "Cancel"
+      Caption         =   "#Language.CommonCancel"
       Default         =   False
       Enabled         =   True
       FontName        =   "System"
@@ -527,6 +527,24 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  Self.StatLabel.Text = Self.FieldLabelStat + ":"
+		  Self.IVCLabel.Text = Self.FieldLabelIVC + ":"
+		  Self.RRMLabel.Text = Self.FieldLabelRRM + ":"
+		  Self.RROLabel.Text = Self.FieldLabelRRO + ":"
+		  Self.RVMLabel.Text = Self.FieldLabelRVM + ":"
+		  Self.SMSLabel.Text = Self.FieldLabelSMS + ":"
+		  BeaconUI.SizeToFit(Self.StatLabel, Self.IVCLabel, Self.RRMLabel, Self.RROLabel, Self.RVMLabel, Self.SMSLabel)
+		  
+		  Var FieldLeft As Integer = Self.StatLabel.Right + 12
+		  Var FieldWidth As Integer = Self.Width - (20 + FieldLeft)
+		  Self.StatMenu.Left = FieldLeft
+		  Self.StatMenu.Width = FieldWidth
+		  Var Fields() As DesktopUIControl = Array(Self.IVCField, Self.RRMField, Self.RROField, Self.RVMField, Self.SMSField)
+		  For Idx As Integer = 0 To Fields.LastIndex
+		    Fields(Idx).Left = FieldLeft
+		    Fields(Idx).Width = FieldWidth
+		  Next
+		  
 		  For StatIndex As Integer = ArkSA.EngramStat.FirstIndex To ArkSA.EngramStat.LastIndex
 		    Var Mask As Integer = ArkSA.EngramStat.MaskForIndex(StatIndex)
 		    If (Mask And Self.mAlreadyUsedStats) > 0 Then
@@ -546,17 +564,6 @@ End
 		    Self.RVMField.Text = Self.mStat.RatingValueMultiplier.PrettyText(True)
 		    Self.SMSField.Text = Self.mStat.StateModifierScale.PrettyText(True)
 		  End If
-		  
-		  BeaconUI.SizeToFit(Self.StatLabel, Self.IVCLabel, Self.RRMLabel, Self.RROLabel, Self.RVMLabel, Self.SMSLabel)
-		  Var FieldLeft As Integer = Self.StatLabel.Right + 12
-		  Var FieldWidth As Integer = Self.Width - (20 + FieldLeft)
-		  Self.StatMenu.Left = FieldLeft
-		  Self.StatMenu.Width = FieldWidth
-		  Var Fields() As DesktopUIControl = Array(Self.IVCField, Self.RRMField, Self.RROField, Self.RVMField, Self.SMSField)
-		  For Idx As Integer = 0 To Fields.LastIndex
-		    Fields(Idx).Left = FieldLeft
-		    Fields(Idx).Width = FieldWidth
-		  Next
 		End Sub
 	#tag EndEvent
 
@@ -577,18 +584,14 @@ End
 		  
 		  Var Win As New ArkSADefineEngramStatDialog(AlreadyUsedStats, Stat)
 		  Win.ShowModal(Parent)
-		  If Win.mCancelled Then
-		    Win.Close
-		    Return Nil
-		  End If
 		  
-		  Var StatIndex As Integer = Win.StatMenu.RowTagAt(Win.StatMenu.SelectedRowIndex)
-		  Var IVC As Double = Double.FromString(Win.IVCField.Text.Trim, Locale.Current)
-		  Var RRM As Double = Double.FromString(Win.RRMField.Text.Trim, Locale.Current)
-		  Var RRO As Double = Double.FromString(Win.RROField.Text.Trim, Locale.Current)
-		  Var RVM As Double = Double.FromString(Win.RVMField.Text.Trim, Locale.Current)
-		  Var SMS As Double = Double.FromString(Win.SMSField.Text.Trim, Locale.Current)
-		  Return New ArkSA.EngramStat(StatIndex, RRO, RRM, SMS, RVM, IVC)
+		  Var NewStat As ArkSA.EngramStat
+		  If Win.mCancelled = False Then
+		    NewStat = Win.mStat
+		  End If
+		  Win.Close
+		  
+		  Return NewStat
 		End Function
 	#tag EndMethod
 
@@ -606,43 +609,93 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = FieldLabelIVC, Type = String, Dynamic = True, Default = \"Initial Value Constant", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = FieldLabelRRM, Type = String, Dynamic = True, Default = \"Randomizer Range Multiplier", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = FieldLabelRRO, Type = String, Dynamic = True, Default = \"Randomizer Range Override", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = FieldLabelRVM, Type = String, Dynamic = True, Default = \"Rating Value Multiplier", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = FieldLabelSMS, Type = String, Dynamic = True, Default = \"State Modifier Scale", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = FieldLabelStat, Type = String, Dynamic = True, Default = \"Stat", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NoStatSelectedExplanation, Type = String, Dynamic = True, Default = \"Use the menu at the top of the window to choose a stat.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NoStatSelectedMessage, Type = String, Dynamic = True, Default = \"Don\'t forget to select a stat", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NumericFormatExplanation, Type = String, Dynamic = True, Default = \"Please make sure all values are completed with numeric values. Check your \"\?1\" field.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NumericFormatMessage, Type = String, Dynamic = True, Default = \"All values must be numeric", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
+#tag Events StatLabel
+#tag EndEvents
+#tag Events RROLabel
+#tag EndEvents
+#tag Events RRMLabel
+#tag EndEvents
+#tag Events SMSLabel
+#tag EndEvents
+#tag Events RVMLabel
+#tag EndEvents
+#tag Events IVCLabel
+#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
 		  If Self.StatMenu.SelectedRowIndex = -1 Then
-		    Self.ShowAlert("Don't forget to select a stat", "Use the menu at the top of the window to choose a stat.")
+		    Self.ShowAlert(Self.NoStatSelectedMessage, Self.NoStatSelectedExplanation)
 		    Return
 		  End If
 		  
-		  Var Fields() As DesktopTextField = Array(Self.IVCField, Self.RRMField, Self.RROField, Self.RVMField, Self.SMSField)
-		  For Each Field As DesktopTextField In Fields
-		    Var Value As String = Field.Text.Trim
-		    If IsNumeric(Value) = False Then
-		      Var FieldLabel As String
-		      Select Case Field
-		      Case Self.IVCField
-		        FieldLabel = "Initial Value Constant"
-		      Case Self.RRMField
-		        FieldLabel = "Randomizer Range Multiplier"
-		      Case Self.RROField
-		        FieldLabel = "Randomizer Range Override"
-		      Case Self.RVMField
-		        FieldLabel = "Raing Value Multiplier"
-		      Case Self.SMSField
-		        FieldLabel = "State Modifier Scale"
-		      End Select
-		      
-		      Self.ShowAlert("All values must be numeric", "Please make sure all values are completed with numeric values. Check your """ + FieldLabel + """ field.")
-		      Return
-		    End If
-		    
-		    If Field.Text <> Value Then
-		      Field.Text = Value
-		    End If
-		  Next
+		  Var StatIndex As Integer = Self.StatMenu.RowTagAt(Self.StatMenu.SelectedRowIndex)
+		  Var IVC, RRM, RRO, RVM, SMS As Double
+		  Try
+		    IVC = Double.FromString(Self.IVCField.Text.Trim, Locale.Current)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert(Self.NumericFormatMessage, Language.ReplacePlaceholders(Self.NumericFormatExplanation, Self.FieldLabelIVC))
+		    Return
+		  End Try
+		  Try
+		    RRM = Double.FromString(Self.RRMField.Text.Trim, Locale.Current)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert(Self.NumericFormatMessage, Language.ReplacePlaceholders(Self.NumericFormatExplanation, Self.FieldLabelRRM))
+		    Return
+		  End Try
+		  Try
+		    RRO = Double.FromString(Self.RROField.Text.Trim, Locale.Current)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert(Self.NumericFormatMessage, Language.ReplacePlaceholders(Self.NumericFormatExplanation, Self.FieldLabelRRO))
+		    Return
+		  End Try
+		  Try
+		    RVM = Double.FromString(Self.RVMField.Text.Trim, Locale.Current)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert(Self.NumericFormatMessage, Language.ReplacePlaceholders(Self.NumericFormatExplanation, Self.FieldLabelRVM))
+		    Return
+		  End Try
+		  Try
+		    SMS = Double.FromString(Self.SMSField.Text.Trim, Locale.Current)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert(Self.NumericFormatMessage, Language.ReplacePlaceholders(Self.NumericFormatExplanation, Self.FieldLabelSMS))
+		    Return
+		  End Try
 		  
+		  Self.mStat = New ArkSA.EngramStat(StatIndex, RRO, RRM, SMS, RVM, IVC)
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
