@@ -514,7 +514,7 @@ Protected Class ModDiscoveryEngine2
 		  For Each Entry As DictionaryEntry In ModPackageNames
 		    Targets.Add("ShooterGame/Mods/" + Entry.Value.StringValue + "/")
 		  Next
-		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """"
+		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """ --version ""GAME_UE5_2"""
 		  Var ExtractorShell As New Shell
 		  ExtractorShell.ExecuteMode = Shell.ExecuteModes.Interactive
 		  ExtractorShell.TimeOut = -1
@@ -1009,8 +1009,16 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  If Properties.HasKey("StructureToBuild") Then
-		    Var StructurePath As String = Self.NormalizePath(Properties.Child("StructureToBuild").Value("AssetPathName"))
-		    Self.ScanItem(StructurePath, Self.ItemOptionNoSync)
+		    Var StructureToBuild As JSONMBS = Properties.Child("StructureToBuild")
+		    Var StructurePath As String
+		    If StructureToBuild.HasKey("AssetPathName") Then
+		      StructurePath = Self.NormalizePath(StructureToBuild.Value("AssetPathName"))
+		    ElseIf StructureToBuild.HasKey("ObjectPath") Then
+		      StructurePath = Self.NormalizePath(StructureToBuild.Value("ObjectPath"))
+		    End If
+		    If StructurePath.IsEmpty = False Then
+		      Self.ScanItem(StructurePath, Self.ItemOptionNoSync)
+		    End If
 		  End If
 		  
 		  If Properties.HasKey("DungeonArenaManagerClass") And Properties.Value("DungeonArenaManagerClass").IsNull = False Then
@@ -1232,10 +1240,33 @@ Protected Class ModDiscoveryEngine2
 
 	#tag Method, Flags = &h21
 		Private Sub ScanMod(PackageName As String)
-		  Var RegistryFile As FolderItem = Self.mRoot.Child("ShooterGame").Child("Mods").Child(PackageName).Child("AssetRegistry.json")
-		  
 		  Var NativeParents As New Dictionary
-		  Var Registry As New JSONMBS(RegistryFile.Read(Encodings.UTF8))
+		  Var RegistryFile As FolderItem = Self.mRoot.Child("ShooterGame").Child("Mods").Child(PackageName).Child("AssetRegistry.json")
+		  If RegistryFile.Exists = False Then
+		    Var ModDir As FolderItem = Self.mRoot.Child("ShooterGame").Child("Mods").Child(PackageName).Child("Content")
+		    Var PrimalGameDataName As String
+		    For Each File As FolderItem In ModDir.Children
+		      If File.Name.BeginsWith("PrimalGameData") = False Then
+		        Continue
+		      End If
+		      
+		      PrimalGameDataName = File.Name.Left(File.Name.Length - 5)
+		      Exit
+		    Next
+		    
+		    If PrimalGameDataName.IsEmpty = False Then
+		      Self.ScanPrimalGameData("/" + PackageName + "/" + PrimalGameDataName + "." + PrimalGameDataName)
+		    End If
+		    Return
+		  End If
+		  
+		  Var Registry As JSONMBS
+		  Try
+		    Registry = New JSONMBS(RegistryFile.Read(Encodings.UTF8))
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading AssetRegistry")
+		    Return
+		  End Try
 		  Var PreallocatedAssetDataBuffers As JSONMBS = Registry.Child("PreallocatedAssetDataBuffers")
 		  For Idx As Integer = 0 To PreallocatedAssetDataBuffers.LastRowIndex
 		    Var Asset As JSONMBS = PreallocatedAssetDataBuffers.ChildAt(Idx)
@@ -1603,9 +1634,11 @@ Protected Class ModDiscoveryEngine2
 		    RequiredLevel = Properties.Lookup("RequiredCharacterLevel", 1).IntegerValue
 		  End If
 		  
-		  Var ItemPath As String = Self.NormalizePath(Properties.Child("BluePrintEntry").Value("ObjectPath"))
-		  Self.mUnlockDetails.Value(ItemPath) = New Dictionary("UnlockString": UnlockString, "RequiredLevel": RequiredLevel, "RequiredPoints": RequiredPoints)
-		  Self.ScanItem(ItemPath, ItemOptions)
+		  If Properties.HasChild("BluePrintEntry") Then
+		    Var ItemPath As String = Self.NormalizePath(Properties.Child("BluePrintEntry").Value("ObjectPath"))
+		    Self.mUnlockDetails.Value(ItemPath) = New Dictionary("UnlockString": UnlockString, "RequiredLevel": RequiredLevel, "RequiredPoints": RequiredPoints)
+		    Self.ScanItem(ItemPath, ItemOptions)
+		  End If
 		End Sub
 	#tag EndMethod
 
