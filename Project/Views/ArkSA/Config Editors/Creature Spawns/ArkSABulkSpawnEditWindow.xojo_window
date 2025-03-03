@@ -629,11 +629,11 @@ Begin BeaconDialog ArkSABulkSpawnEditWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   228
+         Top             =   262
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -660,11 +660,11 @@ Begin BeaconDialog ArkSABulkSpawnEditWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   196
+         Top             =   230
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -694,11 +694,11 @@ Begin BeaconDialog ArkSABulkSpawnEditWindow
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   196
+         Top             =   230
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -724,18 +724,91 @@ Begin BeaconDialog ArkSABulkSpawnEditWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   9
+         TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "No Creature Selected"
          TextAlignment   =   0
          TextColor       =   &c000000
          Tooltip         =   ""
-         Top             =   196
+         Top             =   230
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   152
+      End
+      Begin DesktopCheckBox MultiplyLimitCheckbox
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Multiply Limit:"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "ActionsGroup"
+         Italic          =   False
+         Left            =   366
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   8
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   196
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   128
+      End
+      Begin UITweaks.ResizedTextField LimitMultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ActionsGroup"
+         Italic          =   False
+         Left            =   506
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   196
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   59
       End
    End
    Begin Thread ProcessingThread
@@ -915,7 +988,7 @@ End
 		        Next
 		      End If
 		      
-		      If ChangeThisColorSet Then
+		      If ChangeThisColorSet And MutableSet.ColorSetClass <> Self.mSelectedColorClass Then
 		        MutableSet.ColorSetClass = Self.mSelectedColorClass
 		      End If
 		      
@@ -927,7 +1000,20 @@ End
 		    Else
 		      Point.RemoveAt(SetIdx)
 		    End If
-		  Next SetIdx
+		  Next
+		  
+		  If Self.mChangeLimits Then
+		    For Each Creature As ArkSA.Creature In Self.mCreatures
+		      Var CurrentLimit As Double = Point.Limit(Creature)
+		      If CurrentLimit < 1.0 Then
+		        Point.Limit(Creature) = CurrentLimit * Self.mLimitMultiplier
+		      End If
+		    Next
+		  ElseIf Self.mRemovesCreatures Then
+		    For Each Creature As ArkSA.Creature In Self.mCreatures
+		      Point.Limit(Creature) = 1.0
+		    Next
+		  End If
 		  
 		  Self.mConfig.Add(Point)
 		End Sub
@@ -935,21 +1021,23 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEnabledState()
-		  Var ColorsAllowed, LevelsAllowed, WeightAllowed, ReplaceAllowed, RemoveAllowed As Boolean = True
-		  Var ColorsEnabled, LevelsEnabled, WeightEnabled, ReplaceEnabled As Boolean
+		  Var ColorsAllowed, LevelsAllowed, WeightAllowed, LimitAllowed, ReplaceAllowed, RemoveAllowed As Boolean = True
+		  Var ColorsEnabled, LevelsEnabled, WeightEnabled, LimitEnabled, ReplaceEnabled As Boolean
 		  
 		  If Self.RemoveCreatureCheckbox.Value Then
 		    ColorsAllowed = False
 		    LevelsAllowed = False
 		    WeightAllowed = False
+		    LimitAllowed = False
 		    ReplaceAllowed = False
 		  Else
 		    ReplaceEnabled = Self.ReplaceWithCheckbox.Value
 		    ColorsEnabled = Self.ChangeColorsCheckbox.Value
 		    LevelsEnabled = Self.SetLevelsCheckbox.Value
 		    WeightEnabled = Self.MultiplyWeightCheckbox.Value
+		    LimitEnabled = Self.MultiplyLimitCheckbox.Value
 		    
-		    RemoveAllowed = Not (ColorsEnabled Or LevelsEnabled Or WeightEnabled Or ReplaceEnabled)
+		    RemoveAllowed = Not (ColorsEnabled Or LevelsEnabled Or WeightEnabled Or LimitEnabled Or ReplaceEnabled)
 		  End If
 		  
 		  Self.ChangeColorsCheckbox.Enabled = ColorsAllowed
@@ -962,6 +1050,9 @@ End
 		  
 		  Self.MultiplyWeightCheckbox.Enabled = WeightAllowed
 		  Self.WeightMultiplierField.Enabled = WeightAllowed And WeightEnabled
+		  
+		  Self.MultiplyLimitCheckbox.Enabled = LimitAllowed
+		  Self.LimitMultiplierField.Enabled = LimitAllowed And LimitEnabled
 		  
 		  Self.ReplaceWithCheckbox.Enabled = ReplaceAllowed
 		  Self.ReplacementCreatureField.Enabled = ReplaceAllowed And ReplaceEnabled
@@ -982,6 +1073,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mChangeLevels As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mChangeLimits As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1006,6 +1101,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mLevelOverrides() As ArkSA.SpawnPointLevel
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLimitMultiplier As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1094,9 +1193,9 @@ End
 	#tag Event
 		Sub Pressed()
 		  Var MinLevel, MaxLevel As Integer
-		  Var WeightMultiplier As Double = 1.0
+		  Var WeightMultiplier, LimitMultiplier As Double = 1.0
 		  
-		  If Self.ChangeColorsCheckbox.Value = False And Self.SetLevelsCheckbox.Value = False And Self.MultiplyWeightCheckbox.Value = False And Self.RemoveCreatureCheckbox.Value = False And Self.ReplaceWithCheckbox.Value = False Then
+		  If Self.ChangeColorsCheckbox.Value = False And Self.SetLevelsCheckbox.Value = False And Self.MultiplyWeightCheckbox.Value = False And Self.MultiplyLimitCheckbox.Value = False And Self.RemoveCreatureCheckbox.Value = False And Self.ReplaceWithCheckbox.Value = False Then
 		    Self.ShowAlert("No Change Selected", "You must choose at least one action to perform.")
 		    Return
 		  End If
@@ -1129,6 +1228,13 @@ End
 		      WeightMultiplier = Double.FromString(Self.WeightMultiplierField.Text, Locale.Current)
 		    Catch Err As RuntimeException
 		      Self.ShowAlert("Bad Weight Multiplier", "The weight multiplier must be a number.")
+		    End Try
+		  End If
+		  If Self.MultiplyLimitCheckbox.Value Then
+		    Try
+		      LimitMultiplier = Double.FromString(Self.LimitMultiplierField.Text, Locale.Current)
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("Bad Limit Multiplier", "The limit multiplier must be a number.")
 		    End Try
 		  End If
 		  If Self.ReplaceWithCheckbox.Value And Self.mReplacementCreatureRef Is Nil Then
@@ -1167,6 +1273,11 @@ End
 		  Self.mChangeWeights = Self.MultiplyWeightCheckbox.Value
 		  If Self.mChangeWeights Then
 		    Self.mWeightMultiplier = WeightMultiplier
+		  End If
+		  
+		  Self.mChangeLimits = Self.MultiplyLimitCheckbox.Value
+		  If Self.mChangeLimits Then
+		    Self.mLimitMultiplier = LimitMultiplier
 		  End If
 		  
 		  Self.mChangeLevels = Self.SetLevelsCheckbox.Value
@@ -1256,6 +1367,13 @@ End
 		    Self.ReplacementCreatureField.Text = AddedCreatures(0).Label
 		    Self.ReplacementCreatureField.Italic = False
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MultiplyLimitCheckbox
+	#tag Event
+		Sub ValueChanged()
+		  Self.UpdateEnabledState()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
