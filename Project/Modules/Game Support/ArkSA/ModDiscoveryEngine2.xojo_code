@@ -414,13 +414,13 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Var RequiredHashes As New Dictionary
-		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "7f731dd5ab066b9e94357d80aaab8c98"
-		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "331e1ab3c4dd4eef4d8f2d55a800ffd2"
-		  RequiredHashes.Value("CUE4Parse.pdb") = "0f3580ab5458ed47b78fd474afb79ff6"
-		  RequiredHashes.Value("blake3_dotnet.dll") = "a3c084912ba7c8099eda54ed8f56c4ac"
-		  RequiredHashes.Value("libSkiaSharp.dll") = "26d723bd75b5c6591dfde18b71281920"
-		  RequiredHashes.Value("mod_data_extractor.exe") = "fd7bd586401f2c9a2875905f8bce35d7"
-		  RequiredHashes.Value("mod_data_extractor.pdb") = "2c361b4432b89c695f0ca861edb8b054"
+		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "c95edc51c744681119cb972847885b23"
+		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "7dc9f0894dd48f8c3d7a43ff3982725d"
+		  RequiredHashes.Value("CUE4Parse.pdb") = "c514cc08772b272762f288f503fc686b"
+		  RequiredHashes.Value("blake3_dotnet.dll") = "7ce74ad9c157ec818b45fa1f0b2c1b95"
+		  RequiredHashes.Value("libSkiaSharp.dll") = "ef1fabce43fe32ca83260481253f5476"
+		  RequiredHashes.Value("mod_data_extractor.exe") = "3fbdd0b8ed4752d9ab73f966ed26d571"
+		  RequiredHashes.Value("mod_data_extractor.pdb") = "8d85996707816dfff629cfcec3edf285"
 		  Var ExtractorReady As Boolean = True
 		  For Each Entry As DictionaryEntry In RequiredHashes
 		    Var ExtractorFile As FolderItem = ExtractorRoot.Child(Entry.Key.StringValue)
@@ -446,7 +446,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.1.4.zip")
+		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.1.5.zip")
 		    If DownloadSocket.HTTPStatusCode <> 200 Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Failed to download extractor tool."))
 		      Return
@@ -514,26 +514,48 @@ Protected Class ModDiscoveryEngine2
 		  For Each Entry As DictionaryEntry In ModPackageNames
 		    Targets.Add("ShooterGame/Mods/" + Entry.Value.StringValue + "/")
 		  Next
-		  Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """ --version ""GAME_UE5_2"""
-		  Var ExtractorShell As New Shell
-		  ExtractorShell.ExecuteMode = Shell.ExecuteModes.Interactive
-		  ExtractorShell.TimeOut = -1
-		  ExtractorShell.Execute(Command)
-		  While ExtractorShell.IsRunning
-		    Sender.Sleep(10)
-		  Wend
 		  
-		  Var LogsFolder As FolderItem = App.LogsFolder
-		  If (LogsFolder Is Nil) = False And LogsFolder.CheckIsFolder(True) Then
-		    Var DiscoveryLogsFolder As FolderItem = LogsFolder.Child("Mod Discovery")
-		    If DiscoveryLogsFolder.CheckIsFolder(True) Then
-		      Var Now As New DateTime(Self.mTimestamp)
-		      Var LogFileBackup As FolderItem = DiscoveryLogsFolder.Child(Beacon.SanitizeFilename(Now.SQLDateTimeWithOffset + ".log"))
-		      Var BackupStream As TextOutputStream = TextOutputStream.Create(LogFileBackup)
-		      BackupStream.Write(ExtractorShell.Result)
-		      BackupStream.Close
+		  Var ParseVersions() As String = Array("GAME_ARKSurvivalAscended", "GAME_UE5_2")
+		  Var Now As New DateTime(Self.mTimestamp)
+		  For Each ParseVersion As String In ParseVersions
+		    Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """ --version """ + ParseVersion + """"
+		    Var ExtractorShell As New Shell
+		    ExtractorShell.ExecuteMode = Shell.ExecuteModes.Interactive
+		    ExtractorShell.TimeOut = -1
+		    ExtractorShell.Execute(Command)
+		    While ExtractorShell.IsRunning
+		      Sender.Sleep(10)
+		    Wend
+		    
+		    Var LogsFolder As FolderItem = App.LogsFolder
+		    If (LogsFolder Is Nil) = False And LogsFolder.CheckIsFolder(True) Then
+		      Var DiscoveryLogsFolder As FolderItem = LogsFolder.Child("Mod Discovery")
+		      If DiscoveryLogsFolder.CheckIsFolder(True) Then
+		        Var LogFileBackup As FolderItem = DiscoveryLogsFolder.Child(Beacon.SanitizeFilename(Now.SQLDateTimeWithOffset + ".log"))
+		        Var BackupStream As TextOutputStream = TextOutputStream.Open(LogFileBackup)
+		        BackupStream.Write(ExtractorShell.Result)
+		        BackupStream.Close
+		      End If
 		    End If
-		  End If
+		    
+		    For Each Entry As DictionaryEntry In ModPackageNames
+		      Var PackageName As String = Entry.Value.StringValue
+		      Var RegistryFile As FolderItem = OutputFolder.Child("ShooterGame").Child("Mods").Child(PackageName).Child("AssetRegistry.json")
+		      If RegistryFile.Exists And RegistryFile.ModificationDateTime.SecondsFrom1970 > Now.SecondsFrom1970 Then
+		        // Good
+		        Var Target As String = "ShooterGame/Mods/" + PackageName + "/"
+		        Var TargetIdx As Integer = Targets.IndexOf(Target)
+		        If TargetIdx > -1 Then
+		          Targets.RemoveAt(TargetIdx)
+		        End If
+		      End If
+		    Next
+		    
+		    If Targets.Count = 2 Then
+		      // All the mods processed successfully so no need to run again
+		      Exit
+		    End If
+		  Next
 		  
 		  Self.mRoot = OutputFolder
 		  For Each ModId As String In ModIds
