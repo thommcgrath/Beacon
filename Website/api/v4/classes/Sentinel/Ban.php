@@ -1,16 +1,19 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{APIException, Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
-use BeaconCommon, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
+use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
 class Ban extends DatabaseObject implements JsonSerializable {
+	use MutableDatabaseObject{
+		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
+	}
+
+	const ObjectPermissionFlag = 16;
+
 	protected string $banId;
 	protected string $playerId;
 	protected string $playerName;
-	protected string $parentClass;
-	protected string $parentId;
-	protected string $parentName;
 	protected ?int $expiration;
 	protected string $issuerId;
 	protected string $issuerName;
@@ -18,13 +21,10 @@ class Ban extends DatabaseObject implements JsonSerializable {
 	protected string $issuerComments;
 
 	public function __construct(BeaconRecordSet $row) {
-		$this->banId = $row->Field('source_id');
+		$this->banId = $row->Field('ban_id');
 		$this->playerId = $row->Field('player_id');
 		$this->playerName = $row->Field('player_name');
-		$this->parentClass = $row->Field('parent_class');
-		$this->parentId = $row->Field('parent_id');
-		$this->parentName = $row->Field('parent_name');
-		$this->expiration = is_null($row->Field('expiration')) === false ? intval($row->Field('expiration')) : null;
+		$this->expiration = is_null($row->Field('expiration')) === false ? round($row->Field('expiration')) : null;
 		$this->issuerId = $row->Field('issued_by');
 		$this->issuerName = $row->Field('issuer_name');
 		$this->issuerNameFull = $row->Field('issuer_name_full');
@@ -36,12 +36,9 @@ class Ban extends DatabaseObject implements JsonSerializable {
 			schema: 'sentinel',
 			table: 'bans',
 			definitions: [
-				new DatabaseObjectProperty('banId', ['columnName' => 'source_id', 'primaryKey' => true, 'required' => false]),
+				new DatabaseObjectProperty('banId', ['columnName' => 'ban_id', 'primaryKey' => true, 'required' => false]),
 				new DatabaseObjectProperty('playerId', ['columnName' => 'player_id', 'accessor' => '%%TABLE%%.%%COLUMN%%', 'setter' => "sentinel.get_player_id(%%PLACEHOLDER%%, TRUE)"]),
 				new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
-				new DatabaseObjectProperty('parentClass', ['columnName' => 'parent_class', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "(CASE %%TABLE%%.parent_table WHEN 'services' THEN 'Service' WHEN 'service_groups' THEN 'ServiceGroup' ELSE %%TABLE%%.parent_table END)"]),
-				new DatabaseObjectProperty('parentId', ['columnName' => 'parent_id']),
-				new DatabaseObjectProperty('parentName', ['columnName' => 'parent_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('issuerId', ['columnName' => 'issued_by']),
 				new DatabaseObjectProperty('issuerName', ['columnName' => 'issuer_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
@@ -59,11 +56,11 @@ class Ban extends DatabaseObject implements JsonSerializable {
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$sortDirection = (isset($filters['sortDirection']) && strtolower($filters['sortDirection']) === 'descending') ? 'DESC' : 'ASC';
-		$sortColumn = 'parentName';
+		$sortColumn = 'playerName';
 		if (isset($filters['sortedColumn'])) {
 			switch ($filters['sortedColumn']) {
-			case 'username':
-			case 'parentName':
+			case 'issuerName':
+			case 'playerName':
 			case 'expiration':
 				$sortColumn = $filters['sortedColumn'];
 				break;
@@ -71,19 +68,14 @@ class Ban extends DatabaseObject implements JsonSerializable {
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->AddFromFilter($schema, $filters, 'issuerId');
-		$parameters->AddFromFilter($schema, $filters, 'issuerName', 'LIKE');
-		$parameters->AddFromFilter($schema, $filters, 'issuerNameFull', 'LIKE');
-		$parameters->AddFromFilter($schema, $filters, 'parentId');
-		$parameters->AddFromFilter($schema, $filters, 'parentClass');
-		$parameters->AddFromFilter($schema, $filters, 'parentName');
+		$parameters->AddFromFilter($schema, $filters, 'issuerName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'issuerNameFull', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
-		$parameters->AddFromFilter($schema, $filters, 'playerName', 'LIKE');
+		$parameters->AddFromFilter($schema, $filters, 'playerName', 'ILIKE');
 
 		if (isset($filters['userId'])) {
 			$userIdPlaceholder = '$' . $parameters->AddValue($filters['userId']);
-			$servicePermissionPlaceholder = '$' . $parameters->AddValue(Service::kPermissionControl);
-			$serviceGroupPermissionPlaceholder = '$' . $parameters->AddValue(ServiceGroup::kPermissionUpdate);
-			$parameters->clauses[] = "bans.parent_id IN (SELECT service_id FROM sentinel.service_permissions WHERE user_id = {$userIdPlaceholder} AND (permissions & {$servicePermissionPlaceholder}) = {$servicePermissionPlaceholder} UNION SELECT service_group_id FROM sentinel.service_group_permissions WHERE user_id = {$userIdPlaceholder} AND (permissions & {$serviceGroupPermissionPlaceholder}) = {$serviceGroupPermissionPlaceholder})";
+			$parameters->clauses[] = "bans.ban_id IN (SELECT ban_id FROM sentinel.ban_permissions WHERE user_id = {$userIdPlaceholder})";
 		}
 	}
 
@@ -92,9 +84,6 @@ class Ban extends DatabaseObject implements JsonSerializable {
 			'banId' => $this->banId,
 			'playerId' => $this->playerId,
 			'playerName' => $this->playerName,
-			'parentClass' => $this->parentClass,
-			'parentId' => $this->parentId,
-			'parentName' => $this->parentName,
 			'expiration' => $this->expiration,
 			'issuerId' => $this->issuerId,
 			'issuerName' => $this->issuerName,
@@ -110,6 +99,30 @@ class Ban extends DatabaseObject implements JsonSerializable {
 
 	public static function AuthorizeListRequest(array &$filters): void {
 		$filters['userId'] = Core::UserId();
+	}
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return true;
+	}
+
+	public function GetPermissionsForUser(User $user): int {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT editable FROM sentinel.ban_permissions WHERE ban_id = $1 AND user_id = $2;', $this->banId, $user->UserId());
+		if ($rows->RecordCount() !== 1) {
+			return self::kPermissionNone;
+		}
+
+		$permissions = self::kPermissionRead;
+		if ($rows->Field('editable') === true) {
+			$permissions = $permissions | self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete;
+		}
+
+		return $permissions;
+	}
+
+	protected static function InitializeProperties(array &$properties): void {
+		static::MutableDatabaseObjectInitializeProperties($properties);
+		$properties['issuerId'] = $properties['userId'];
 	}
 }
 
