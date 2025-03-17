@@ -4,17 +4,20 @@ namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
-class ServiceGroup extends DatabaseObject implements JsonSerializable {
+class Group extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
 
-	protected string $serviceGroupId;
+	const GroupPermissionUsage = 1;
+	const GroupPermissionManage = 2;
+
+	protected string $groupId;
 	protected string $userId;
 	protected string $name;
 	protected string $color;
 	protected array $users;
 
 	public function __construct(BeaconRecordSet $row) {
-		$this->serviceGroupId = $row->Field('service_group_id');
+		$this->groupId = $row->Field('group_id');
 		$this->userId = $row->Field('user_id');
 		$this->name = $row->Field('name');
 		$this->color = $row->Field('color');
@@ -27,12 +30,12 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('sentinel', 'service_groups', [
-			new DatabaseObjectProperty('serviceGroupId', ['primaryKey' => true, 'columnName' => 'service_group_id', 'required' => false]),
+		return new DatabaseSchema('sentinel', 'groups', [
+			new DatabaseObjectProperty('groupId', ['primaryKey' => true, 'columnName' => 'group_id', 'required' => false]),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT service_group_permissions.user_id, service_group_permissions.permissions FROM sentinel.service_group_permissions INNER JOIN sentinel.service_groups AS A ON (service_group_permissions.service_group_id = A.service_group_id) WHERE service_group_permissions.service_group_id = service_groups.service_group_id ORDER BY service_groups.name ASC) AS users_template), '[]')"]),
+			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT group_permissions.user_id, group_permissions.permissions FROM sentinel.group_permissions INNER JOIN sentinel.groups AS A ON (group_permissions.group_id = A.group_id) WHERE group_permissions.group_id = groups.group_id ORDER BY groups.name ASC) AS users_template), '[]')"]),
 		]);
 	}
 
@@ -43,13 +46,13 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 
 		if (isset($filters['userId'])) {
 			$placeholder = $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = 'service_groups.service_group_id IN (SELECT service_group_id FROM sentinel.service_group_permissions WHERE user_id = $' . $placeholder . ' AND permissions > 0)';
+			$parameters->clauses[] = 'groups.group_id IN (SELECT group_id FROM sentinel.group_permissions WHERE user_id = $' . $placeholder . ' AND permissions > 0)';
 		}
 	}
 
 	public function jsonSerialize(): mixed {
 		return [
-			'serviceGroupId' => $this->serviceGroupId,
+			'groupId' => $this->groupId,
 			'userId' => $this->userId,
 			'name' => $this->name,
 			'color' => $this->color,
@@ -57,8 +60,8 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 		];
 	}
 
-	public function ServiceGroupId(): string {
-		return $this->serviceGroupId;
+	public function GroupId(): string {
+		return $this->groupId;
 	}
 
 	public function UserId(): string {
@@ -96,7 +99,7 @@ class ServiceGroup extends DatabaseObject implements JsonSerializable {
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.service_group_permissions WHERE service_group_id = $1 AND user_id = $2;', $this->serviceGroupId, $user->UserId());
+		$rows = $database->Query('SELECT permissions FROM sentinel.group_permissions WHERE group_id = $1 AND user_id = $2;', $this->groupId, $user->UserId());
 		if ($rows->RecordCount() === 1) {
 			return $rows->Field('permissions');
 		} else {

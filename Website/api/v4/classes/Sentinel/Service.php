@@ -8,8 +8,11 @@ class Service extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
 		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
 		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
-		Validate as protected MutableDatabaseObjectValidate;
 	}
+
+	const ServicePermissionUsage = 1;
+	const ServicePermissionControl = 2;
+	const ServicePermissionManage = 4;
 
 	const GameArk = 'Ark';
 	const GameArkSA = 'ArkSA';
@@ -65,40 +68,39 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected string $serviceId;
 	protected string $userId;
 	protected string $gameId;
-	protected string $connectionEncryptionKey;
-	protected array $connectionDetails;
-	protected string $connectionHash;
-	protected ?float $lastSuccess;
-	protected ?float $lastError;
-	protected ?float $lastGamelogTimestamp;
-	protected ?float $lastStatus;
-	protected bool $inErrorState;
+	protected string $accessKey;
+	protected string $accessKeyHash;
+	protected bool $isConnected;
+	protected ?int $connectionChangeTime;
 	protected string $name;
 	protected ?string $nickname;
 	protected string $displayName;
 	protected string $color;
 	protected string $platform;
 	protected array $gameSpecific;
+	protected float $gameClock;
+	protected int $currentPlayers;
+	protected int $maxPlayers;
 	protected array $users;
+	protected array $languages;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
 		$this->userId = $row->Field('user_id');
 		$this->gameId = $row->Field('game_id');
-		$this->connectionEncryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($row->Field('connection_encryption_key')));
-		$this->connectionDetails = json_decode(BeaconEncryption::SymmetricDecrypt($this->connectionEncryptionKey, base64_decode($row->Field('connection_details'))), true);
-		$this->connectionHash = $row->Field('connection_hash');
-		$this->lastSuccess = is_null($row->Field('last_success')) ? null : floatval($row->Field('last_success'));
-		$this->lastError = is_null($row->Field('last_error')) ? null : floatval($row->Field('last_error'));
-		$this->lastGamelogTimestamp = is_null($row->Field('last_gamelog_timestamp')) ? null : floatval($row->Field('last_gamelog_timestamp'));
-		$this->lastStatus = is_null($row->Field('last_status')) ? null : floatval($row->Field('last_status'));
-		$this->inErrorState = $row->Field('in_error_state');
+		$this->accessKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($row->Field('access_key')));
+		$this->accessKeyHash = $row->Field('access_key_hash');
+		$this->isConnected = $row->Field('is_connected');
+		$this->connectionChangeTime = is_null($row->Field('connection_change_time')) === false ? round($row->Field('connection_change_time')) : null;
 		$this->name = $row->Field('name');
 		$this->nickname = $row->Field('nickname');
 		$this->displayName = $row->Field('display_name');
 		$this->color = $row->Field('color');
 		$this->platform = $row->Field('platform');
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
+		$this->gameClock = floatval($row->Field('game_clock'));
+		$this->currentPlayers = intval($row->Field('current_players'));
+		$this->maxPlayers = intval($row->Field('max_players'));
 
 		$userList = json_decode($row->Field('users'), true);
 		$this->users = [];
@@ -109,6 +111,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 				'usernameFull' => $user['username'] . '#' . substr($user['user_id'], 0, 8),
 			];
 		}
+
+		$languages = $row->Field('languages');
+		$languages = substr($languages, 1, strlen($languages) - 2);
+		$this->languages = explode(',', $languages);
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -116,21 +122,21 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
-			new DatabaseObjectProperty('connectionEncryptionKey', ['columnName' => 'connection_encryption_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-			new DatabaseObjectProperty('connectionDetails', ['columnName' => 'connection_details', 'dependsOn' => ['connectionEncryptionKey'], 'editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('connectionHash', ['columnName' => 'connection_hash', 'required' => false, 'dependsOn' => ['connectionDetails']]),
-			new DatabaseObjectProperty('lastSuccess', ['columnName' => 'last_success', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
-			new DatabaseObjectProperty('lastError', ['columnName' => 'last_error', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
-			new DatabaseObjectProperty('lastGamelogTimestamp', ['columnName' => 'last_gamelog_timestamp', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false]),
-			new DatabaseObjectProperty('lastStatus', ['columnName' => 'last_status', 'accessor' => 'EXTRACT(EPOCH FROM GREATEST(%%TABLE%%.last_success, %%TABLE%%.last_error))', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('inErrorState', ['columnName' => 'in_error_state', 'accessor' => 'COALESCE(EXTRACT(EPOCH FROM %%TABLE%%.last_error), 0) > COALESCE(EXTRACT(EPOCH FROM %%TABLE%%.last_success), 0)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('accessKey', ['columnName' => 'access_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+			new DatabaseObjectProperty('accessKeyHash', ['columnName' => 'access_key_hash', 'dependsOn' => ['accessKey'], 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+			new DatabaseObjectProperty('isConnected', ['columnName' => 'is_connected', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('connectionChangeTime', ['columnName' => 'connection_change_time', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 			new DatabaseObjectProperty('name'),
 			new DatabaseObjectProperty('nickname', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'COALESCE(%%TABLE%%.nickname, %%TABLE%%.name)']),
 			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('platform'),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
+			new DatabaseObjectProperty('gameClock', ['columnName' => 'game_clock', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('currentPlayers', ['columnName' => 'current_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('maxPlayers', ['columnName' => 'max_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT service_permissions.user_id, service_permissions.permissions, users.username FROM sentinel.service_permissions INNER JOIN sentinel.services AS A ON (service_permissions.service_id = A.service_id) INNER JOIN public.users ON (service_permissions.user_id = users.user_id) WHERE service_permissions.service_id = services.service_id ORDER BY services.name ASC) AS users_template), '[]')"]),
+			new DatabaseObjectProperty('languages', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'ARRAY(SELECT language FROM sentinel.service_languages WHERE service_languages.service_id = services.service_id)']),
 		]);
 	}
 
@@ -148,8 +154,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 			case 'nickname':
 			case 'name':
 			case 'gameId':
-			case 'inErrorState':
-			case 'lastStatus':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
@@ -162,6 +166,12 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
 		$parameters->AddFromFilter($schema, $filters, 'color');
 		$parameters->AddFromFilter($schema, $filters, 'platform');
+
+		if (isset($filters['accessKey'])) {
+			$accessKeyHash = BeaconCommon::Base64UrlEncode(hash('sha3-512', BeaconCommon::Base64UrlDecode($filters['accessKey']), true));
+			$placeholder = $parameters->AddValue($accessKeyHash);
+			$parameters->clauses[] = 'services.access_key_hash = $' . $placeholder;
+		}
 
 		if (isset($filters['userId'])) {
 			$placeholder = $parameters->AddValue($filters['userId']);
@@ -200,8 +210,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 				throw new Exception('Invalid platform.');
 			}
 			break;
-		case 'connection_details':
-			break;
 		}
 	}
 
@@ -210,153 +218,41 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'serviceId' => $this->serviceId,
 			'userId' => $this->userId,
 			'gameId' => $this->gameId,
-			'connectionDetails' => $this->connectionDetails,
-			'displayAddress' => null,
-			'numericAddress' => null,
-			'lastSuccess' => $this->lastSuccess,
-			'lastError' => $this->lastError,
-			'lastGamelogTimestamp' => $this->lastGamelogTimestamp,
-			'lastStatus' => $this->lastStatus,
-			'inErrorState' => $this->inErrorState,
+			'accessKey' => BeaconCommon::Base64UrlEncode($this->accessKey),
+			'accessKeyHash' => $this->accessKeyHash,
+			'isConnected' => $this->isConnected,
+			'connectionChangeTime' => $this->connectionChangeTime,
 			'name' => $this->name,
 			'nickname' => $this->nickname,
 			'displayName' => $this->displayName,
 			'color' => $this->color,
 			'platform' => $this->platform,
 			'gameSpecific' => $this->gameSpecific,
+			'gameClock' => $this->gameClock,
+			'currentPlayers' => $this->currentPlayers,
+			'maxPlayers' => $this->maxPlayers,
+			'languages' => $this->languages,
 			'users' => $this->users,
 		];
-
-		if (isset($this->connectionDetails['ipAddress']) && isset($this->connectionDetails['gamePort'])) {
-			$json['displayAddress'] = $this->connectionDetails['ipAddress'] . ':' . $this->connectionDetails['gamePort'];
-			$json['numericAddress'] = ip2long($this->connectionDetails['ipAddress']) + ($this->connectionDetails['gamePort'] / 100000);
-		} elseif (isset($this->connectionDetails['rconHost']) && isset($this->connectionDetails['rconPort'])) {
-			$json['displayAddress'] = $this->connectionDetails['rconHost'] . ':' . $this->connectionDetails['rconPort'];
-			$numeric = ip2long($this->connectionDetails['rconHost']);
-			if ($numeric === false) {
-				$numeric = BeaconCommon::WordToInt($this->connectionDetails['rconHost']);
-			}
-			$json['numericAddress'] = $numeric + ($this->connectionDetails['rconPort'] / 100000);
-		} elseif (isset($this->connectionDetails['ftpHost']) && isset($this->connectionDetails['rconPort'])) {
-			$json['displayAddress'] = $this->connectionDetails['ftpHost'] . ':' . $this->connectionDetails['rconPort'];
-			$numeric = ip2long($this->connectionDetails['ftpHost']);
-			if ($numeric === false) {
-				$numeric = BeaconCommon::WordToInt($this->connectionDetails['ftpHost']);
-			}
-			$json['numericAddress'] = $numeric + ($this->connectionDetails['rconPort'] / 100000);
-		}
 
 		return $json;
 	}
 
 	protected static function InitializeProperties(array &$properties): void {
 		static::MutableDatabaseObjectInitializeProperties($properties);
-		$properties['connectionEncryptionKey'] = BeaconEncryption::GenerateKey(256);
-		$properties['connectionHash'] = '';
-	}
 
-	protected static function Validate(array $properties): void {
-		static::MutableDatabaseObjectValidate($properties);
-
-		if (array_key_exists('connectionDetails', $properties)) {
-			$details = $properties['connectionDetails'];
-			if (is_null($details)) {
-				throw new Exception('connectionDetails must not be null');
-			}
-			if (is_array($details) === false) {
-				throw new Exception('connectionDetails must be an object');
-			}
-			if (BeaconCommon::HasAllKeys($details, 'type') === false) {
-				throw new Exception('connectionDetails must have a type key');
-			}
-
-			switch ($details['type']) {
-			case 'Nitrado':
-				if (BeaconCommon::HasAllKeys($details, 'serviceId', 'serviceTokenId') === false) {
-					throw new Exception('connectionDetails must have serviceId and serviceTokenId keys for Nitrado connections');
-				}
-				if (filter_var($details['serviceId'], FILTER_VALIDATE_INT) === false) {
-					throw new Exception('connectionDetails.serviceId is not a number');
-				}
-				if (BeaconCommon::IsUUID($details['serviceTokenId']) === false) {
-					throw new Exception('connectionDetails.serviceTokenId is not a UUID');
-				}
-				break;
-			case 'FTP':
-				if (BeaconCommon::HasAllKeys($details, 'ftpHost', 'rconPort', 'ftpPort', 'ftpUsername', 'ftpPassword', 'ftpUsePassiveMode', 'ftpMode') === false) {
-					throw new Exception('connectionDetails must have host, rconPort, ftpPort, ftpUser, ftpPassword, ftpUsePassiveMode, ftpMode, and ftpPath keys for FTP connections');
-				}
-				if (filter_var($details['rconPort'], FILTER_VALIDATE_INT) === false || $details['rconPort'] < 1 || $details['rconPort'] > 65535) {
-					throw new Exception('connectionDetails.rconPort must be a number between 1 and 65535');
-				}
-				if (filter_var($details['ftpPort'], FILTER_VALIDATE_INT) === false || $details['ftpPort'] < 1 || $details['ftpPort'] > 65535) {
-					throw new Exception('connectionDetails.ftpPort must be a number between 1 and 65535');
-				}
-				if (filter_var($details['ftpUsePassiveMode'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) === null) {
-					throw new Exception('connectionDetails.ftpUsePassiveMode must be true or false');
-				}
-				if (in_array($details['ftpMode'], ['ftp', 'ftps', 'ftp+tls', 'ftp-tls', 'sftp']) === false) {
-					throw new Exception('connectionDetails.ftpMode must be one of ftp, ftps, ftp+tls, ftp-tls, or sftp');
-				}
-				if (in_array($details['ftpMode'], ['ftp', 'ftps', 'ftp+tls'])) {
-					if (array_key_exists('ftpValidateCertificates', $details) === false) {
-						throw new Exception('connectionDetails must have a ftpValidateCertificates key when TLS is enabeld');
-					}
-					if (filter_var($details['ftpValidateCertificates'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) === null) {
-						throw new Exception('connectionDetails.ftpValidateCertificates must be true or false');
-					}
-				}
-				if (empty($details['ftpHost'])) {
-					throw new Exception('connectionDetails.host must not be empty');
-				}
-				if (empty($details['ftpUsername'])) {
-					throw new Exception('connectionDetails.ftpUsername must not be empty');
-				}
-				if (empty($details['ftpPassword'])) {
-					throw new Exception('connectionDetails.ftpPassword must not be empty');
-				}
-
-				if (BeaconCommon::HasAnyKeys($details, 'ftpConfigPath', 'ftpLogsPath', 'ftpSavedArksPath')) {
-					$emptyKeys = BeaconCommon::FindEmptyKeys($details, 'ftpConfigPath', 'ftpLogsPath', 'ftpSavedArksPath');
-					if (count($emptyKeys) > 0) {
-						throw new Exception('When using custom paths, connectionDetails must have ' . (count($emptyKeys) === 1 ? 'a value for ' . $emptyKeys[0] : 'values for ' . BeaconCommon::ArrayToEnglish($emptyKeys)) . '.');
-					}
-					if (array_key_exists('ftpSavedPath', $details) || empty($details['ftpSavedPath']) === false) {
-						throw new Exception('connectionDetails.ftpSavedPath should not be included when using custom paths');
-					}
-				} elseif (empty($details['ftpSavedPath'])) {
-					throw new Exception('connectionDetails.ftpSavedPath must not be empty unless using custom paths');
-				}
-
-				break;
-			default:
-				throw new Exception('Connection detail type ' . $details['type'] . ' is not supported');
-			}
-		}
+		$properties['accessKey'] = BeaconEncryption::GenerateKey(256);
+		$properties['accessKeyHash'] = '';
 	}
 
 	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
 		switch ($definition->PropertyName()) {
 		case 'gameSpecific':
 			return json_encode($value);
-		case 'connectionEncryptionKey':
-			return base64_encode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $value));
-		case 'connectionDetails':
-			return base64_encode(BeaconEncryption::SymmetricEncrypt($otherProperties['connectionEncryptionKey'], json_encode($value)));
-		case 'connectionHash':
-			$details = $otherProperties['connectionDetails'];
-			$hashParts = [$details['type']];
-			switch ($details['type']) {
-			case 'Nitrado':
-				$hashParts[] = strtolower($details['serviceId']);
-				break;
-			case 'FTP':
-				$hashParts[] = strtolower($details['rconHost'] ?? $details['ftpHost']);
-				$hashParts[] = intval($details['rconPort']);
-				break;
-			}
-			$hashParts[] = '77345636-9d4c-429c-acc2-e400612e9974';
-			return hash('sha3-256', implode(':', $hashParts));
+		case 'accessKey':
+			return BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $value));
+		case 'accessKeyHash':
+			return BeaconCommon::Base64UrlEncode(hash('sha3-512', $otherProperties['accessKey'], true));
 		default:
 			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value, $otherProperties);
 		}
@@ -364,10 +260,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public function ServiceId(): string {
 		return $this->serviceId;
-	}
-
-	public function SubscriptionId(): string {
-		return $this->subscriptionId;
 	}
 
 	public function UserId(): string {
@@ -380,30 +272,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public function SetGameId(string $gameId): void {
 		$this->SetProperty('gameId', $gameId);
-	}
-
-	public function LastSuccess(): ?float {
-		return $this->lastSuccess;
-	}
-
-	public function SetLastSuccess(float $lastSuccess): void {
-		$this->SetProperty('lastSuccess', $lastSuccess);
-	}
-
-	public function LastError(): ?float {
-		return $this->lastError;
-	}
-
-	public function SetLastError(float $lastError): void {
-		$this->SetProperty('lastError', $lastError);
-	}
-
-	public function LastGamelogTimestamp(): ?float {
-		return $this->lastGamelogTimestamp;
-	}
-
-	public function InErrorState(): bool {
-		return $this->inErrorState;
 	}
 
 	public function Name(): string {
