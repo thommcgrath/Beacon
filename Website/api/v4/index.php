@@ -146,6 +146,9 @@ Core::RegisterRoutes(
 		'/sentinel/subscription' => [
 			'GET' => 'sentinel/subscriptions/get',
 		],
+		'/sentinel/gameCommands' => [
+			'POST' => 'sentinel/gameCommands',
+		],
 	]
 );
 
