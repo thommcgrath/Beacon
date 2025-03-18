@@ -45,7 +45,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			table: 'dinos',
 			definitions: [
 				new DatabaseObjectProperty('dinoId', ['columnName' => 'dino_id', 'primaryKey' => true, 'required' => false]),
-				new DatabaseObjectProperty('dinoNumber', ['columnName' => 'dino_number', 'accessor' => 'dinos.dino_number']),
+				new DatabaseObjectProperty('dinoNumber', ['columnName' => 'dino_number', 'accessor' => 'dinos.visual_dino_number']),
 				new DatabaseObjectProperty('dinoName', ['columnName' => 'dino_name', 'accessor' => 'dinos.name']),
 				new DatabaseObjectProperty('dinoSpecies', ['columnName' => 'dino_species', 'accessor' => 'dinos.species']),
 				new DatabaseObjectProperty('dinoSpeciesPath', ['columnName' => 'dino_species_path', 'accessor' => 'dinos.species_path']),
