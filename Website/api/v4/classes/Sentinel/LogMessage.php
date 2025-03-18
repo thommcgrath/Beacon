@@ -46,37 +46,105 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::AnalyzerStatusAnalyzed
 	];
 
-	protected $messageId = null;
-	protected $serviceId = null;
-	protected $type = null;
-	protected $time = null;
-	protected $message = null;
-	protected $level = null;
-	protected $analyzerStatus = null;
-	protected $metadata = null;
+	const EventCron = 'cron';
+	const EventChat = 'chat';
+	const EventClockTemperingDetected = 'clockTamperingDetected';
+	const EventDinoClaimed = 'dinoClaimed';
+	const EventDinoDied = 'dinoDied';
+	const EventDinoDownloaded = 'dinoDownloaded';
+	const EventDinoFrozen = 'dinoFrozen';
+	const EventDinoMatured = 'dinoMatured';
+	const EventDinoRenamed = 'dinoRenamed';
+	const EventDinoTamed = 'dinoTamed';
+	const EventDinoTribeChanged = 'dinoTribeChanged';
+	const EventDinoUnclaimed = 'dinoUnclaimed';
+	const EventDinoUnfrozen = 'dinoUnfrozen';
+	const EventDinoUploaded = 'dinoUploaded';
+	const EventPlayerJoined = 'playerJoined';
+	const EventPlayerCuffed = 'playerCuffed';
+	const EventPlayerDied = 'playerDied';
+	const EventPlayerLeft = 'playerLeft';
+	const EventPlayerNamed = 'playerRenamed';
+	const EventPlayerSpawned = 'playerSpawned';
+	const EventPlayerTribeChanged = 'playerTribeChanged';
+	const EventPlayerUncuffed = 'playerUncuffed';
+	const EventProblemDetected = 'problemDetected';
+	const EventRollbackDetected = 'rollbackDetected';
+	const EventServerConnected = 'serverConnected';
+	const EventServerDisconnected = 'serverDisconnected';
+	const EventStructureDestroyed = 'structureDestroyed';
+	const EventTribeCreated = 'tribeCreated';
+	const EventTribeDestroyed = 'tribeDestroyed';
+	const EventTribeRenamed = 'tribeRenamed';
+	const Events = [
+		self::EventCron,
+		self::EventChat,
+		self::EventClockTemperingDetected,
+		self::EventDinoClaimed,
+		self::EventDinoDied,
+		self::EventDinoDownloaded,
+		self::EventDinoFrozen,
+		self::EventDinoMatured,
+		self::EventDinoRenamed,
+		self::EventDinoTamed,
+		self::EventDinoTribeChanged,
+		self::EventDinoUnclaimed,
+		self::EventDinoUnfrozen,
+		self::EventDinoUploaded,
+		self::EventPlayerJoined,
+		self::EventPlayerCuffed,
+		self::EventPlayerDied,
+		self::EventPlayerLeft,
+		self::EventPlayerNamed,
+		self::EventPlayerSpawned,
+		self::EventPlayerTribeChanged,
+		self::EventPlayerUncuffed,
+		self::EventProblemDetected,
+		self::EventRollbackDetected,
+		self::EventServerConnected,
+		self::EventServerDisconnected,
+		self::EventStructureDestroyed,
+		self::EventTribeCreated,
+		self::EventTribeDestroyed,
+		self::EventTribeRenamed,
+	];
+
+	protected string $messageId;
+	protected string $serviceId;
+	protected string $type;
+	protected float $time;
+	protected string $level;
+	protected string $analyzerStatus;
+	protected array $metadata;
+	protected array $localizations;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->messageId = $row->Field('message_id');
 		$this->serviceId = $row->Field('service_id');
 		$this->type = $row->Field('type');
 		$this->time = floatval($row->Field('log_time'));
-		$this->message = $row->Field('message');
 		$this->level = $row->Field('level');
 		$this->analyzerStatus = $row->Field('analyzer_status');
 		$this->metadata = json_decode($row->Field('metadata'), true);
+		$this->localizations = json_decode($row->Field('localizations'), true);
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('sentinel', 'service_logs', [
-			new DatabaseObjectProperty('messageId', ['primaryKey' => true, 'columnName' => 'message_id']),
-			new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
-			new DatabaseObjectProperty('type'),
-			new DatabaseObjectProperty('time', ['columnName' => 'log_time', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
-			new DatabaseObjectProperty('message'),
-			new DatabaseObjectProperty('level'),
-			new DatabaseObjectProperty('analyzerStatus', ['columnName' => 'analyzer_status']),
-			new DatabaseObjectProperty('metadata')
-		]);
+		return new DatabaseSchema(
+			schema: 'sentinel',
+			table: 'service_logs',
+			definitions: [
+				new DatabaseObjectProperty('messageId', ['primaryKey' => true, 'columnName' => 'message_id']),
+				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
+				new DatabaseObjectProperty('type'),
+				new DatabaseObjectProperty('time', ['columnName' => 'log_time', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
+				new DatabaseObjectProperty('eventName', ['columnName' => 'event_name']),
+				new DatabaseObjectProperty('level'),
+				new DatabaseObjectProperty('analyzerStatus', ['columnName' => 'analyzer_status']),
+				new DatabaseObjectProperty('metadata'),
+				new DatabaseObjectProperty('localizations', ['accessor' => '(SELECT json_object_agg(language, message) FROM (SELECT language, message FROM sentinel.service_log_messages WHERE service_log_messages.message_id = service_logs.message_id) AS localization_template)']),
+			],
+		);
 	}
 
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
@@ -130,75 +198,6 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function Create(string $message, string $serviceId, ?string $level = null, ?string $type = null): LogMessage {
-		if (is_null($level) === false && in_array($level, self::LogLevels) === false) {
-			throw new Exception('Invalid log level');
-		}
-		if (is_null($type) === false && in_array($type, self::LogTypes) === false) {
-			throw new Exception('Invalid log type');
-		}
-
-		$log = new static();
-		$log->message = $message;
-		$log->serviceId = $serviceId;
-		if (is_null($level) === false) {
-			$log->level = $level;
-		}
-		if (is_null($type) === false) {
-			$log->type = $type;
-		}
-		return $log;
-	}
-
-	protected static function HookConsumeLogLines(string $serviceId, float $last_timestamp, array $lines): array {
-		return [];
-	}
-
-	public static function ConsumeLogFile(string $serviceId, string $file_content): array {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT COALESCE(EXTRACT(EPOCH FROM MAX(log_time)), 0) AS last_timestamp FROM sentinel.service_logs WHERE service_id = $1;', $serviceId);
-		$last_timestamp = floatval($rows->Field('last_timestamp'));
-
-		// normalize line endings
-		$file_content = str_replace("\r\n", "\n", $file_content);
-		$file_content = str_replace("\r", "\n", $file_content);
-
-		// split
-		$lines = explode("\n", $file_content);
-
-		// let the game-specific class do the heavy lifting
-		$messages = static::HookConsumeLogLines($serviceId, $last_timestamp, $lines);
-
-		// save
-		static::SaveLogs($messages);
-
-		// and return
-		return $messages;
-	}
-
-	public static function SaveLogs(array $messages): void {
-		if (count($messages) === 0) {
-			return;
-		}
-
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		try {
-			foreach ($messages as $message) {
-				$metadata = count($message->metadata) > 0 ? json_encode($message->metadata) : '{}';
-				$database->Query('INSERT INTO ' . static::SQLLongTableName() . ' (message_id, service_id, type, log_time, message, level, analyzer_status, metadata) VALUES ($1, $2, $3, to_timestamp($4), $5, $6, $7, $8);', $message->messageId, $message->serviceId, $message->type, $message->time, $message->message, $message->level, $message->analyzerStatus, $metadata);
-			}
-		} catch (Exception $err) {
-			$database->Rollback();
-			throw $err;
-		}
-		$database->Commit();
-	}
-
-	public static function RunAnalyzer(): void {
-
-	}
-
 	public static function GetMessageByID(string $messageId): ?LogMessage {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE message_id = $1;', $messageId);
@@ -231,10 +230,10 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 			'serviceId' => $this->serviceId,
 			'type' => $this->type,
 			'time' => $this->time,
-			'message' => $this->message,
 			'level' => $this->level,
 			'analyzerStatus' => $this->analyzerStatus,
-			'metadata' => $this->metadata
+			'metadata' => $this->metadata,
+			'message' => $this->localizations,
 		];
 	}
 
@@ -252,10 +251,6 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 
 	public function Time(): float {
 		return $this->time;
-	}
-
-	public function Message(): string {
-		return $this->message;
 	}
 
 	public function Level(): string {
@@ -280,20 +275,28 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 
 		$serviceId = $filters['serviceId'];
-		$service = Service::Fetch($serviceId);
-		if (is_null($service) || $service->HasPermission(Core::UserId(), Service::kPermissionRead) === false) {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $serviceId, Core::UserId());
+		if ($rows->RecordCount() === 0 || ($rows->Field('permissions') & Service::ServicePermissionUsage) === 0) {
 			throw new Exception('Service not found');
 		}
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		$servicePermissions = DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\Sentinel\Service', objectId: $this->serviceId, user: $user);
-		return $servicePermissions & DatabaseObject::kPermissionRead;
+		if ($this->userId === $user->UserId()) {
+			return self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
+		}
+
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $user->UserId());
+		if ($rows->RecordCount() === 0) {
+			return self::kPermissionNone;
+		}
+		$permissions = self::kPermissionRead;
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
 		$requiredScopes[] = Application::kScopeSentinelServicesRead;
-		$requiredScopes[] = Application::kScopeSentinelLogsRead;
 	}
 }
 

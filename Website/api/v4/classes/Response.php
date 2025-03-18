@@ -14,7 +14,7 @@ class Response {
 	}
 
 	public static function NewJson(mixed $obj, int $code): static {
-		return new static($code, json_encode($obj, JSON_PRETTY_PRINT), ['Content-Type' => 'application/json']);
+		return new static($code, json_encode($obj, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), ['Content-Type' => 'application/json']);
 	}
 
 	public static function NewJsonError(string $message, mixed $details = null, int $httpStatus = 500, ?string $code = null): static {

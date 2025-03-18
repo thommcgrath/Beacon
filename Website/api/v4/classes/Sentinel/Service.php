@@ -2,12 +2,14 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, User};
-use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
+		SaveChildObjects as protected MutableDatabaseObjectSaveChildObjects;
 		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
 		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
+		Validate as protected MutableDatabaseObjectValidate;
 	}
 
 	const ServicePermissionUsage = 1;
@@ -61,9 +63,68 @@ class Service extends DatabaseObject implements JsonSerializable {
 		self::PlatformUniversal,
 	];
 
-	const kPermissionShare = 16;
-	const kPermissionControl = 32;
-	const kPermissionAll = (self::kPermissionCreate | self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete | self::kPermissionShare | self::kPermissionControl);
+	const LanguageArabic = 'ar';
+	const LanguageArmenian = 'hy';
+	const LanguageBasque = 'eu';
+	const LanguageCatalan = 'ca';
+	const LanguageDanish = 'da';
+	const LanguageDutch = 'nl';
+	const LanguageEnglish = 'en';
+	const LanguageFinnish = 'fi';
+	const LanguageFrench = 'fr';
+	const LanguageGerman = 'de';
+	const LanguageGreek = 'el';
+	const LanguageHindi = 'hi';
+	const LanguageHungarian = 'hu';
+	const LanguageIndonesian = 'id';
+	const LanguageIrish = 'ga';
+	const LanguageItalian = 'it';
+	const LanguageLithuanian = 'lt';
+	const LanguageNepali = 'ne';
+	const LanguageNorwegian = 'no';
+	const LanguagePortuguese = 'pt';
+	const LanguageRomanian = 'ro';
+	const LanguageRussian = 'ru';
+	const LanguageSerbian = 'sr';
+	const LanguageSpanish = 'es';
+	const LanguageSwedish = 'sv';
+	const LanguageTamil = 'ta';
+	const LanguageTurkish = 'tr';
+	const LanguageYiddish = 'yi';
+	const Languages = [
+		self::LanguageArabic,
+		self::LanguageArmenian,
+		self::LanguageBasque,
+		self::LanguageCatalan,
+		self::LanguageDanish,
+		self::LanguageDutch,
+		self::LanguageEnglish,
+		self::LanguageFinnish,
+		self::LanguageFrench,
+		self::LanguageGerman,
+		self::LanguageGreek,
+		self::LanguageHindi,
+		self::LanguageHungarian,
+		self::LanguageIndonesian,
+		self::LanguageIrish,
+		self::LanguageItalian,
+		self::LanguageLithuanian,
+		self::LanguageNepali,
+		self::LanguageNorwegian,
+		self::LanguagePortuguese,
+		self::LanguageRomanian,
+		self::LanguageRussian,
+		self::LanguageSerbian,
+		self::LanguageSpanish,
+		self::LanguageSwedish,
+		self::LanguageTamil,
+		self::LanguageTurkish,
+		self::LanguageYiddish,
+	];
+	// Just because the API supports 28 languages, doesn't mean Sentinel has translations for all of them.
+	const SupportedLanguages = [
+		self::LanguageEnglish,
+	];
 
 	protected string $serviceId;
 	protected string $userId;
@@ -81,7 +142,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected float $gameClock;
 	protected int $currentPlayers;
 	protected int $maxPlayers;
-	protected array $users;
 	protected array $languages;
 
 	public function __construct(BeaconRecordSet $row) {
@@ -102,16 +162,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->currentPlayers = intval($row->Field('current_players'));
 		$this->maxPlayers = intval($row->Field('max_players'));
 
-		$userList = json_decode($row->Field('users'), true);
-		$this->users = [];
-		foreach ($userList as $user) {
-			$this->users[$user['user_id']] = [
-				'permissions' => ($user['permissions'] | self::kPermissionRead) & self::kPermissionAll,
-				'username' => $user['username'],
-				'usernameFull' => $user['username'] . '#' . substr($user['user_id'], 0, 8),
-			];
-		}
-
 		$languages = $row->Field('languages');
 		$languages = substr($languages, 1, strlen($languages) - 2);
 		$this->languages = explode(',', $languages);
@@ -128,14 +178,13 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('connectionChangeTime', ['columnName' => 'connection_change_time', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 			new DatabaseObjectProperty('name'),
 			new DatabaseObjectProperty('nickname', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'COALESCE(%%TABLE%%.nickname, %%TABLE%%.name)']),
+			new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('platform'),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
 			new DatabaseObjectProperty('gameClock', ['columnName' => 'game_clock', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('currentPlayers', ['columnName' => 'current_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('maxPlayers', ['columnName' => 'max_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('users', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(users_template))) FROM (SELECT service_permissions.user_id, service_permissions.permissions, users.username FROM sentinel.service_permissions INNER JOIN sentinel.services AS A ON (service_permissions.service_id = A.service_id) INNER JOIN public.users ON (service_permissions.user_id = users.user_id) WHERE service_permissions.service_id = services.service_id ORDER BY services.name ASC) AS users_template), '[]')"]),
 			new DatabaseObjectProperty('languages', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'ARRAY(SELECT language FROM sentinel.service_languages WHERE service_languages.service_id = services.service_id)']),
 		]);
 	}
@@ -198,6 +247,23 @@ class Service extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
+	protected static function Validate(array $properties): void {
+		static::MutableDatabaseObjectValidate($properties);
+
+		if (isset($properties['languages'])) {
+			$languages = $properties['languages'];
+			if (is_array($languages) === false) {
+				throw new Exception('Languages should be an array of ISO639 2-character language codes.');
+			}
+			foreach ($languages as $code) {
+				if (in_array($code, self::SupportedLanguages) === false) {
+					throw new Exception('Beacon Sentinel does not support language ' . $code . '.');
+				}
+			}
+		}
+	}
+
+	// This function doesn't appear to ever get called
 	protected static function ValidateProperty(string $property, mixed $value): void {
 		switch ($property) {
 		case 'color':
@@ -208,6 +274,16 @@ class Service extends DatabaseObject implements JsonSerializable {
 		case 'platform':
 			if (in_array($value, self::Platforms) === false) {
 				throw new Exception('Invalid platform.');
+			}
+			break;
+		case 'languages':
+			if (is_array($value) === false) {
+				throw new Exception('Languages should be an array of ISO639 2-character language codes.');
+			}
+			foreach ($value as $code) {
+				if (in_array($code, self::SupportedLanguages) === false) {
+					throw new Exception('Beacon Sentinel does not support language ' . $code . '.');
+				}
 			}
 			break;
 		}
@@ -232,7 +308,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'currentPlayers' => $this->currentPlayers,
 			'maxPlayers' => $this->maxPlayers,
 			'languages' => $this->languages,
-			'users' => $this->users,
 		];
 
 		return $json;
@@ -253,8 +328,19 @@ class Service extends DatabaseObject implements JsonSerializable {
 			return BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $value));
 		case 'accessKeyHash':
 			return BeaconCommon::Base64UrlEncode(hash('sha3-512', $otherProperties['accessKey'], true));
+		case 'languages':
+			return '{' . implode(',', $this->languages) . '}';
 		default:
 			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value, $otherProperties);
+		}
+	}
+
+	protected function SaveChildObjects(BeaconDatabase $database): void {
+		$this->MutableDatabaseObjectSaveChildObjects($database);
+
+		$database->Query('DELETE FROM sentinel.service_languages WHERE service_id = $1 AND NOT (language = ANY($2));', $this->serviceId, '{' . implode(',', $this->languages) . '}');
+		foreach ($this->languages as $code) {
+			$database->Query('INSERT INTO sentinel.service_languages (service_id, language) VALUES ($1, $2) ON CONFLICT (service_id, language) DO UPDATE SET language = $2 WHERE service_languages.language != EXCLUDED.language;', $this->serviceId, $code);
 		}
 	}
 

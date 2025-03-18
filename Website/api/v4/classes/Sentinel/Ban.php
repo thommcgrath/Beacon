@@ -4,12 +4,10 @@ namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
-class Ban extends DatabaseObject implements JsonSerializable {
+class Ban extends DatabaseObject implements JsonSerializable, Asset {
 	use MutableDatabaseObject{
 		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
 	}
-
-	const ObjectPermissionFlag = 16;
 
 	protected string $banId;
 	protected string $playerId;
@@ -123,6 +121,22 @@ class Ban extends DatabaseObject implements JsonSerializable {
 	protected static function InitializeProperties(array &$properties): void {
 		static::MutableDatabaseObjectInitializeProperties($properties);
 		$properties['issuerId'] = $properties['userId'];
+	}
+
+	public function AssetId(): string {
+		return $this->banId;
+	}
+
+	public function AssetType(): string {
+		return 'Ban';
+	}
+
+	public function AssetTypeMask(): int {
+		return 4;
+	}
+
+	public function AssetName(): string {
+		return $this->playerName;
 	}
 }
 

@@ -14,6 +14,7 @@ class UserAsset extends DatabaseObject implements JsonSerializable, Asset {
 	protected string $username;
 	protected string $assetId;
 	protected string $assetType;
+	protected int $assetTypeMask;
 	protected string $assetName;
 	protected string $assetOwnerId;
 	protected bool $editable;
@@ -25,6 +26,7 @@ class UserAsset extends DatabaseObject implements JsonSerializable, Asset {
 		$this->username = $row->Field('user_name');
 		$this->assetId = $row->Field('asset_id');
 		$this->assetType = $row->Field('asset_type');
+		$this->assetTypeMask = $row->Field('asset_mask');
 		$this->assetName = $row->Field('asset_name');
 		$this->assetOwnerId = $row->Field('asset_owner_id');
 		$this->editable = $row->Field('editable');
@@ -41,6 +43,7 @@ class UserAsset extends DatabaseObject implements JsonSerializable, Asset {
 				new DatabaseObjectProperty('username', ['columnName' => 'user_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
 				new DatabaseObjectProperty('assetId', ['columnName' => 'asset_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('assetType', ['columnName' => 'asset_type', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_summaries.asset_type']),
+				new DatabaseObjectProperty('assetTypeMask', ['columnName' => 'asset_mask', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'sentinel.mask_for_asset_type(asset_summaries.asset_type)']),
 				new DatabaseObjectProperty('assetName', ['columnName' => 'asset_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_summaries.name']),
 				new DatabaseObjectProperty('assetOwnerId', ['columnName' => 'asset_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_summaries.user_id']),
 				new DatabaseObjectProperty('editable', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
@@ -172,6 +175,18 @@ class UserAsset extends DatabaseObject implements JsonSerializable, Asset {
 
 	public function AssetId(): string {
 		return $this->assetId;
+	}
+
+	public function AssetType(): string {
+		return $this->assetType;
+	}
+
+	public function AssetTypeMask(): int {
+		return $this->assetTypeMask;
+	}
+
+	public function AssetName(): string {
+		return $this->assetName;
 	}
 }
 
