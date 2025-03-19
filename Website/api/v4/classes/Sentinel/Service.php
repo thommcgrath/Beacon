@@ -210,7 +210,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortOrder;
 
 		$parameters->orderBy = $schema->Accessor('name');
-		$parameters->clauses[] = 'services.deleted = FALSE';
 		$parameters->AddFromFilter($schema, $filters, 'serviceTokenId');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
 		$parameters->AddFromFilter($schema, $filters, 'color');
@@ -434,14 +433,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$database->Query('UPDATE sentinel.services SET ' . ($errored ? 'last_error' : 'last_success') . ' = CURRENT_TIMESTAMP WHERE service_id = $1;', $this->serviceId);
 		$database->Commit();
 		$this->inErrorState = $errored;
-	}
-
-	public function Delete(): void {
-		$schema = static::DatabaseSchema();
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET deleted = TRUE WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
-		$database->Commit();
 	}
 
 	public static function GetResourceLimitsForUser(User $user): ?ResourceLimit {
