@@ -36,7 +36,7 @@ class Subscription extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('subscriptionId', ['primaryKey' => true, 'columnName' => 'subscription_id', 'required' => false]),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('productId', ['columnName' => 'product_id']),
-			new DatabaseObjectProperty('usedServices', ['columnName' => 'used_services', 'accessor' => '(SELECT COUNT(service_id) FROM sentinel.services WHERE services.user_id = %%TABLE%%.user_id AND deleted = FALSE)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('usedServices', ['columnName' => 'used_services', 'accessor' => '(SELECT COUNT(service_id) FROM sentinel.services WHERE services.user_id = %%TABLE%%.user_id)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('maxServices', ['columnName' => 'sentinel_max_services', 'accessor' => 'products.sentinel_max_services', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('retentionPeriod', ['columnName' => 'sentinel_retention_period', 'accessor' => 'public.interval_to_iso8601(products.sentinel_retention_period)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('gracePeriod', ['columnName' => 'sentinel_grace_period', 'accessor' => 'public.interval_to_iso8601(products.sentinel_grace_period)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),

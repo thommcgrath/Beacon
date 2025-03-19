@@ -143,6 +143,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected int $currentPlayers;
 	protected int $maxPlayers;
 	protected array $languages;
+	protected string $clusterId;
+	protected bool $allowClusterIdChange;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
@@ -161,6 +163,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->gameClock = floatval($row->Field('game_clock'));
 		$this->currentPlayers = intval($row->Field('current_players'));
 		$this->maxPlayers = intval($row->Field('max_players'));
+		$this->clusterId = $row->Field('cluster_id');
+		$this->allowClusterIdChange = $row->Field('allow_cluster_id_change');
 
 		$languages = $row->Field('languages');
 		$languages = substr($languages, 1, strlen($languages) - 2);
@@ -186,6 +190,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('currentPlayers', ['columnName' => 'current_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('maxPlayers', ['columnName' => 'max_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('languages', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'ARRAY(SELECT language FROM sentinel.service_languages WHERE service_languages.service_id = services.service_id)']),
+			new DatabaseObjectProperty('clusterId', ['columnName' => 'cluster_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('allowClusterIdChange', ['columnName' => 'allow_cluster_id_change', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 		]);
 	}
 
@@ -307,6 +313,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'currentPlayers' => $this->currentPlayers,
 			'maxPlayers' => $this->maxPlayers,
 			'languages' => $this->languages,
+			'clusterId' => $this->clusterId,
+			'allowClusterIdChange' => $this->allowClusterIdChange,
 		];
 
 		return $json;
