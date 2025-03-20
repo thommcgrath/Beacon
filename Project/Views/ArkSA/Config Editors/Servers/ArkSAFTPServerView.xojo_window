@@ -37,7 +37,7 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   3
+      PanelCount      =   4
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -130,73 +130,6 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
          Visible         =   True
          Width           =   600
       End
-      Begin DesktopGroupBox ConnectionGroup
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Connection"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   310
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   15
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   61
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-         Begin FTPSettingsView ConnectionView
-            AllowAutoDeactivate=   True
-            AllowFocus      =   False
-            AllowFocusRing  =   False
-            AllowTabs       =   True
-            Backdrop        =   0
-            BackgroundColor =   &cFFFFFF
-            Composited      =   False
-            Enabled         =   True
-            HasBackgroundColor=   False
-            Height          =   294
-            Host            =   ""
-            Index           =   -2147483648
-            InitialParent   =   "ConnectionGroup"
-            InternalizeKey  =   False
-            Left            =   20
-            LockBottom      =   True
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   True
-            LockTop         =   True
-            Mode            =   ""
-            Modified        =   False
-            Password        =   ""
-            Port            =   0
-            Scope           =   2
-            TabIndex        =   0
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   77
-            Transparent     =   True
-            UsePublicKeyAuth=   False
-            Username        =   ""
-            VerifyTLSCertificate=   False
-            Visible         =   True
-            Width           =   560
-         End
-      End
       Begin DesktopGroupBox PathsGroup
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -216,7 +149,7 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   16
+         TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -253,7 +186,7 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   0
+            TabIndex        =   1
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   ""
@@ -295,7 +228,7 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   1
+            TabIndex        =   3
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   ""
@@ -362,7 +295,7 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   3
+            TabIndex        =   0
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   "Game.ini Path:"
@@ -403,7 +336,7 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   4
+            TabIndex        =   5
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   ""
@@ -437,7 +370,7 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   5
+            TabIndex        =   4
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   "Logs Path:"
@@ -450,6 +383,102 @@ Begin ArkSAServerViewContainer ArkSAFTPServerView
             Visible         =   True
             Width           =   172
          End
+      End
+      Begin DesktopGroupBox ConnectionGroup
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Connection"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   310
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   61
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+         Begin FTPSettingsView ConnectionView
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   False
+            AllowTabs       =   True
+            Backdrop        =   0
+            BackgroundColor =   &cFFFFFF
+            Composited      =   False
+            Enabled         =   True
+            HasBackgroundColor=   False
+            Height          =   294
+            Host            =   ""
+            Index           =   -2147483648
+            InitialParent   =   "ConnectionGroup"
+            InternalizeKey  =   False
+            Left            =   20
+            LockBottom      =   True
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Mode            =   ""
+            Modified        =   False
+            Password        =   ""
+            Port            =   0
+            Scope           =   2
+            TabIndex        =   0
+            TabPanelIndex   =   2
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   77
+            Transparent     =   True
+            UsePublicKeyAuth=   False
+            Username        =   ""
+            VerifyTLSCertificate=   False
+            Visible         =   True
+            Width           =   560
+         End
+      End
+      Begin ArkSACustomServerSettingsView CustomSettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
       End
    End
    Begin OmniBar ControlToolbar
@@ -508,6 +537,7 @@ End
 		  Self.GameIniPathField.Text = Self.Profile.GameIniPath
 		  Self.GameUserSettingsIniPathField.Text = Self.Profile.GameUserSettingsIniPath
 		  Self.LogsPathField.Text = Self.Profile.LogsPath
+		  Self.CustomSettingsView.Content = Self.Profile.CustomGUS
 		  
 		  Var Config As Beacon.HostConfig = Self.Profile.HostConfig
 		  If (Config Is Nil) = False And Config IsA FTP.HostConfig Then
@@ -578,6 +608,30 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events GameIniPathField
+	#tag Event
+		Sub TextChanged()
+		  Self.Profile.GameIniPath = Me.Text
+		  Self.Modified = Self.Profile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GameUserSettingsIniPathField
+	#tag Event
+		Sub TextChanged()
+		  Self.Profile.GameUserSettingsIniPath = Me.Text
+		  Self.Modified = Self.Profile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LogsPathField
+	#tag Event
+		Sub TextChanged()
+		  Self.Profile.LogsPath = Me.Text
+		  Self.Modified = Self.Profile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ConnectionView
 	#tag Event
 		Sub WantsHeightChange(NewDesiredHeight As Integer)
@@ -621,26 +675,10 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events GameIniPathField
+#tag Events CustomSettingsView
 	#tag Event
 		Sub TextChanged()
-		  Self.Profile.GameIniPath = Me.Text
-		  Self.Modified = Self.Profile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GameUserSettingsIniPathField
-	#tag Event
-		Sub TextChanged()
-		  Self.Profile.GameUserSettingsIniPath = Me.Text
-		  Self.Modified = Self.Profile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events LogsPathField
-	#tag Event
-		Sub TextChanged()
-		  Self.Profile.LogsPath = Me.Text
+		  Self.Profile.CustomGUS = Me.Content
 		  Self.Modified = Self.Profile.Modified
 		End Sub
 	#tag EndEvent
@@ -651,6 +689,7 @@ End
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
 		  Me.Append(OmniBarItem.CreateTab("PageConnection", "Connection"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
+		  Me.Append(OmniBarItem.CreateTab("PageCustom", "Custom"))
 		  Me.Item("PageGeneral").Toggled = True
 		End Sub
 	#tag EndEvent
@@ -665,6 +704,8 @@ End
 		    Self.Pages.SelectedPanelIndex = 1
 		  Case "PageNotes"
 		    Self.Pages.SelectedPanelIndex = 2
+		  Case "PageCustom"
+		    Self.Pages.SelectedPanelIndex = 3
 		  End Select
 		End Sub
 	#tag EndEvent

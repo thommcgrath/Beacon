@@ -556,6 +556,21 @@ Inherits Beacon.Project
 		      End If
 		    Next
 		    
+		    // Server custom is prioritized higher than project custom, but lower than guided
+		    Var ServerCustom As New Ark.ConfigOrganizer(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, Profile.CustomGUS)
+		    Var ServerCustomHeaders() As String = ServerCustom.Headers(Ark.ConfigFileGameUserSettings)
+		    Var ServerCustomOptions() As Ark.ConfigOption
+		    For Each Header As String In ServerCustomHeaders
+		      Var Keys() As String = ServerCustom.Keys(Ark.ConfigFileGameUserSettings, Header)
+		      For Each Key As String In Keys
+		        ServerCustomOptions.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Header, Key))
+		        Organizer.Remove(Ark.ConfigFileGameUserSettings, Header, Key)
+		      Next
+		    Next
+		    Organizer.AddManagedKeys(ServerCustomOptions)
+		    Organizer.Remove(ServerCustomOptions)
+		    Organizer.Add(ServerCustom.FilteredValues, False)
+		    
 		    For Each Group As Ark.ConfigGroup In Groups
 		      If Group Is Nil Then
 		        Continue

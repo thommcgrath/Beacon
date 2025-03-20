@@ -37,7 +37,7 @@ Begin ArkServerViewContainer ArkLocalServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   3
+      PanelCount      =   4
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -47,7 +47,7 @@ Begin ArkServerViewContainer ArkLocalServerView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   3
       Visible         =   True
       Width           =   600
       Begin BeaconTextArea AdminNotesField
@@ -118,7 +118,7 @@ Begin ArkServerViewContainer ArkLocalServerView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "GameUserSettings.ini:"
@@ -234,7 +234,7 @@ Begin ArkServerViewContainer ArkLocalServerView
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -270,7 +270,7 @@ Begin ArkServerViewContainer ArkLocalServerView
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -366,7 +366,7 @@ Begin ArkServerViewContainer ArkLocalServerView
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   3
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -407,6 +407,35 @@ Begin ArkServerViewContainer ArkLocalServerView
          Underline       =   False
          Visible         =   True
          Width           =   90
+      End
+      Begin ArkCustomServerSettingsView CustomSettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
       End
    End
    Begin OmniBar ControlToolbar
@@ -470,6 +499,7 @@ End
 		  #Pragma Unused UserData
 		  
 		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
+		  Self.CustomSettingsView.Content = Self.Profile.CustomGUS
 		  
 		  Var GameIniPath As String = Self.Profile.GameIniPath
 		  If GameIniPath.IsEmpty = False Then
@@ -684,12 +714,21 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events CustomSettingsView
+	#tag Event
+		Sub TextChanged()
+		  Self.Profile.CustomGUS = Me.Content
+		  Self.Modified = Self.Profile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
 		  Me.Append(OmniBarItem.CreateTab("PageFiles", "Files"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
+		  Me.Append(OmniBarItem.CreateTab("PageCustom", "Custom"))
 		  Me.Item("PageGeneral").Toggled = True
 		End Sub
 	#tag EndEvent
@@ -704,6 +743,8 @@ End
 		    Self.Pages.SelectedPanelIndex = 1
 		  Case "PageNotes"
 		    Self.Pages.SelectedPanelIndex = 2
+		  Case "PageCustom"
+		    Self.Pages.SelectedPanelIndex = 3
 		  End Select
 		End Sub
 	#tag EndEvent

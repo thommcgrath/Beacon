@@ -37,7 +37,7 @@ Begin ArkSAServerViewContainer ArkSANitradoServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -47,7 +47,7 @@ Begin ArkSAServerViewContainer ArkSANitradoServerView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin FadedSeparator FadedSeparator1
@@ -226,6 +226,35 @@ Begin ArkSAServerViewContainer ArkSANitradoServerView
          Visible         =   True
          Width           =   600
       End
+      Begin ArkSACustomServerSettingsView CustomSettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
    End
    Begin OmniBar ControlToolbar
       Alignment       =   0
@@ -315,6 +344,7 @@ End
 		  End If
 		  
 		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
+		  Self.CustomSettingsView.Content = Self.Profile.CustomGUS
 		  Self.SettingsView.RefreshUI()
 		  Self.UpdateStatusDisplay()
 		End Sub
@@ -527,11 +557,20 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events CustomSettingsView
+	#tag Event
+		Sub TextChanged()
+		  Self.Profile.CustomGUS = Me.Content
+		  Self.Modified = Self.Profile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
+		  Me.Append(OmniBarItem.CreateTab("PageCustom", "Custom"))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("PowerButton", "Stop", IconToolbarPower, "Stop the server", False))
 		  Me.Item("PageGeneral").Toggled = True
@@ -546,10 +585,17 @@ End
 		    Self.Pages.SelectedPanelIndex = 0
 		    Item.Toggled = True
 		    Me.Item("PageNotes").Toggled = False
+		    Me.Item("PageCustom").Toggled = False
 		  Case "PageNotes"
 		    Self.Pages.SelectedPanelIndex = 1
 		    Item.Toggled = True
 		    Me.Item("PageGeneral").Toggled = False
+		    Me.Item("PageCustom").Toggled = False
+		  Case "PageCustom"
+		    Self.Pages.SelectedPanelIndex = 2
+		    Item.Toggled = True
+		    Me.Item("PageGeneral").Toggled = False
+		    Me.Item("PageNotes").Toggled = False
 		  Case "PowerButton"
 		    If ToggleThread.ThreadState <> Thread.ThreadStates.NotRunning Then
 		      Self.ShowAlert("An action is already running", "Wait a moment for the current action to complete.")
