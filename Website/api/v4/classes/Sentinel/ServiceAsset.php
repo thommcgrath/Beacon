@@ -21,6 +21,9 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 	protected int $assetTypeMask;
 	protected string $assetName;
 	protected string $assetOwnerId;
+	protected array $assetDetails;
+	protected bool $assetEditable;
+	protected bool $assetShareable;
 	protected bool $editable;
 	protected bool $shareable;
 
@@ -37,6 +40,9 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 		$this->assetTypeMask = $row->Field('asset_mask');
 		$this->assetName = $row->Field('asset_name');
 		$this->assetOwnerId = $row->Field('asset_owner_id');
+		$this->assetDetails = json_decode($row->Field('asset_details'), true);
+		$this->assetEditable = $row->Field('asset_editable');
+		$this->assetShareable = $row->Field('asset_shareable');
 		$this->editable = $row->Field('editable');
 		$this->shareable = $row->Field('shareable');
 	}
@@ -58,11 +64,15 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 				new DatabaseObjectProperty('assetTypeMask', ['columnName' => 'asset_mask', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'sentinel.mask_for_asset_type(asset_summaries.asset_type)']),
 				new DatabaseObjectProperty('assetName', ['columnName' => 'asset_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_summaries.name']),
 				new DatabaseObjectProperty('assetOwnerId', ['columnName' => 'asset_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_summaries.user_id']),
+				new DatabaseObjectProperty('assetDetails', ['columnName' => 'asset_details', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_summaries.details']),
+				new DatabaseObjectProperty('assetEditable', ['columnName' => 'asset_editable', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_permissions.editable']),
+				new DatabaseObjectProperty('assetShareable', ['columnName' => 'asset_shareable', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_permissions.shareable']),
 				new DatabaseObjectProperty('editable', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('shareable', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
 				'INNER JOIN sentinel.asset_summaries ON (service_assets.asset_id = asset_summaries.asset_id)',
+				'INNER JOIN sentinel.asset_permissions ON (service_assets.asset_id = asset_permissions.asset_id AND asset_permissions.user_id = %%USER_ID%%)',
 				'INNER JOIN sentinel.services ON (service_assets.service_id = services.service_id)',
 			],
 		);
@@ -106,6 +116,9 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 			'assetType' => $this->assetType,
 			'assetName' => $this->assetName,
 			'assetOwnerId' => $this->assetOwnerId,
+			'assetDetails' => $this->assetDetails,
+			'assetEditable' => $this->assetEditable,
+			'assetShareable' => $this->assetShareable,
 			'editable' => $this->editable,
 			'shareable' => $this->shareable,
 		];

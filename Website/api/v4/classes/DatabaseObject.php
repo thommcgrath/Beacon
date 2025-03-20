@@ -50,7 +50,13 @@ abstract class DatabaseObject {
 		try {
 			$schema = static::DatabaseSchema();
 			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';', $uuid);
+			$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';';
+			$values = [$uuid];
+			if (str_contains($sql, '%%USER_ID%%')) {
+				$sql = str_replace('%%USER_ID%%', '$2', $sql);
+				$values[] = Core::UserId();
+			}
+			$rows = $database->Query($sql, $values);
 			if (is_null($rows) || $rows->RecordCount() !== 1) {
 				return null;
 			}
@@ -166,14 +172,28 @@ abstract class DatabaseObject {
 		$totalRowCount = 0;
 		$primaryKey = $schema->PrimarySelector();
 		$from = $schema->FromClause();
+		$clauses = '';
 		$database = BeaconCommon::Database();
 
-		if ($legacyMode === false) {
-			$sql = "SELECT COUNT({$primaryKey}) AS num_results FROM {$from}";
-			if (count($params->clauses) > 0) {
-				$sql .= " WHERE " . implode(' AND ', $params->clauses);
+		$userIdPlaceholder = 0;
+		if (str_contains($from, '%%USER_ID%%')) {
+			$userIdPlaceholder = $params->NextPlaceholder();
+			$from = str_replace('%%USER_ID%%', '$' . $userIdPlaceholder, $from);
+			$params->values[] = Core::UserId();
+		}
+		if (count($params->clauses) > 0) {
+			$clauses = ' WHERE ' . implode(' AND ', $params->clauses);
+			if (str_contains($clauses, '%%USER_ID%%')) {
+				if ($userIdPlaceholder === 0) {
+					$userIdPlaceholder = $params->NextPlaceholder();
+					$params->values[] = Core::UserId();
+				}
+				$clauses = str_replace('%%USER_ID%%', '$' . $userIdPlaceholder, $clauses);
 			}
-			$sql .= ';';
+		}
+
+		if ($legacyMode === false) {
+			$sql = "SELECT COUNT({$primaryKey}) AS num_results FROM {$from}{$clauses};";
 			//echo "{$sql}\n";
 			//print_r($params->values);
 			$totalRows = $database->Query($sql, $params->values);
@@ -184,10 +204,16 @@ abstract class DatabaseObject {
 			}
 		}
 
-		$sql = "SELECT " . $schema->SelectColumns() . " FROM {$from}";
-		if (count($params->clauses) > 0) {
-			$sql .= ' WHERE ' . implode(' AND ', $params->clauses);
+		$columns = $schema->SelectColumns();
+		if (str_contains($columns, '%%USER_ID%%')) {
+			if ($userIdPlaceholder === 0) {
+				$userIdPlaceholder = $params->NextPlaceholder();
+				$params->values[] = Core::UserId();
+			}
+			$columns = str_replace('%%USER_ID%%', '$' . $userIdPlaceholder, $columns);
 		}
+
+		$sql = "SELECT {$columns} FROM {$from}{$clauses}";
 		if (is_null($params->orderBy) === false) {
 			$sql .= " ORDER BY {$params->orderBy}";
 		}

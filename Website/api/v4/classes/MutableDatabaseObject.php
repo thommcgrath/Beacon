@@ -172,7 +172,15 @@ trait MutableDatabaseObject {
 			if (count($assignments) > 0) {
 				$primaryKeyColumn = $schema->PrimaryColumn();
 				$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $primaryKeyColumn->ColumnName() . ' = ' . $schema->PrimarySetter($placeholder++) . ';', $values);
-				$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter(1) . ';', $primaryKey);
+				$from = $schema->FromClause();
+				$columns = $schema->SelectColumns();
+				$selectValues = [$primaryKey];
+				if (str_contains($from, '%%USER_ID%%') || str_contains($columns, '%%USER_ID%%')) {
+					$selectValues[] = Core::UserId();
+					$from = str_replace('%%USER_ID%%', '$2', $from);
+					$columns = str_replace('%%USER_ID%%', '$2', $columns);
+				}
+				$rows = $database->Query('SELECT ' . $columns . ' FROM ' . $from . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter(1) . ';', $selectValues);
 			}
 			$this->SaveChildObjects($database);
 			$database->Commit();

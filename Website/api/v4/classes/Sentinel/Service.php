@@ -145,6 +145,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected array $languages;
 	protected string $clusterId;
 	protected bool $allowClusterIdChange;
+	protected int $permissions;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
@@ -165,6 +166,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->maxPlayers = intval($row->Field('max_players'));
 		$this->clusterId = $row->Field('cluster_id');
 		$this->allowClusterIdChange = $row->Field('allow_cluster_id_change');
+		$this->permissions = $row->Field('permissions');
 
 		$languages = $row->Field('languages');
 		$languages = substr($languages, 1, strlen($languages) - 2);
@@ -172,27 +174,35 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('sentinel', 'services', [
-			new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
-			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
-			new DatabaseObjectProperty('accessKey', ['columnName' => 'access_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-			new DatabaseObjectProperty('accessKeyHash', ['columnName' => 'access_key_hash', 'dependsOn' => ['accessKey'], 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-			new DatabaseObjectProperty('isConnected', ['columnName' => 'is_connected', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('connectionChangeTime', ['columnName' => 'connection_change_time', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
-			new DatabaseObjectProperty('name'),
-			new DatabaseObjectProperty('nickname', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('platform'),
-			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
-			new DatabaseObjectProperty('gameClock', ['columnName' => 'game_clock', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('currentPlayers', ['columnName' => 'current_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('maxPlayers', ['columnName' => 'max_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('languages', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'ARRAY(SELECT language FROM sentinel.service_languages WHERE service_languages.service_id = services.service_id)']),
-			new DatabaseObjectProperty('clusterId', ['columnName' => 'cluster_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('allowClusterIdChange', ['columnName' => 'allow_cluster_id_change', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-		]);
+		return new DatabaseSchema(
+			schema: 'sentinel',
+			table: 'services',
+			definitions: [
+				new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
+				new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
+				new DatabaseObjectProperty('accessKey', ['columnName' => 'access_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('accessKeyHash', ['columnName' => 'access_key_hash', 'dependsOn' => ['accessKey'], 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('isConnected', ['columnName' => 'is_connected', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('connectionChangeTime', ['columnName' => 'connection_change_time', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
+				new DatabaseObjectProperty('name'),
+				new DatabaseObjectProperty('nickname', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('platform'),
+				new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
+				new DatabaseObjectProperty('gameClock', ['columnName' => 'game_clock', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('currentPlayers', ['columnName' => 'current_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('maxPlayers', ['columnName' => 'max_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('languages', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'ARRAY(SELECT language FROM sentinel.service_languages WHERE service_languages.service_id = services.service_id)']),
+				new DatabaseObjectProperty('clusterId', ['columnName' => 'cluster_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('allowClusterIdChange', ['columnName' => 'allow_cluster_id_change', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('permissions', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_permissions.permissions']),
+			],
+			joins: [
+				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
+			],
+		);
 	}
 
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
@@ -214,6 +224,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortOrder;
+		$parameters->allowAll = true;
 
 		$parameters->orderBy = $schema->Accessor('name');
 		$parameters->AddFromFilter($schema, $filters, 'serviceTokenId');
@@ -225,11 +236,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 			$accessKeyHash = BeaconCommon::Base64UrlEncode(hash('sha3-512', BeaconCommon::Base64UrlDecode($filters['accessKey']), true));
 			$placeholder = $parameters->AddValue($accessKeyHash);
 			$parameters->clauses[] = 'services.access_key_hash = $' . $placeholder;
-		}
-
-		if (isset($filters['userId'])) {
-			$placeholder = $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.service_permissions WHERE user_id = $' . $placeholder . ' AND permissions > 0)';
 		}
 
 		if (isset($filters['serviceGroupId'])) {
@@ -315,6 +321,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'languages' => $this->languages,
 			'clusterId' => $this->clusterId,
 			'allowClusterIdChange' => $this->allowClusterIdChange,
+			'permissions' => $this->permissions,
 		];
 
 		return $json;

@@ -17,6 +17,8 @@ class Ban extends DatabaseObject implements JsonSerializable, Asset {
 	protected string $issuerName;
 	protected string $issuerNameFull;
 	protected string $issuerComments;
+	protected bool $editable;
+	protected bool $shareable;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->banId = $row->Field('ban_id');
@@ -27,6 +29,8 @@ class Ban extends DatabaseObject implements JsonSerializable, Asset {
 		$this->issuerName = $row->Field('issuer_name');
 		$this->issuerNameFull = $row->Field('issuer_name_full');
 		$this->issuerComments = $row->Field('issuer_comments');
+		$this->editable = $row->Field('editable');
+		$this->shareable = $row->Field('shareable');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -35,17 +39,20 @@ class Ban extends DatabaseObject implements JsonSerializable, Asset {
 			table: 'bans',
 			definitions: [
 				new DatabaseObjectProperty('banId', ['columnName' => 'ban_id', 'primaryKey' => true, 'required' => false]),
-				new DatabaseObjectProperty('playerId', ['columnName' => 'player_id', 'accessor' => '%%TABLE%%.%%COLUMN%%', 'setter' => "sentinel.get_player_id(%%PLACEHOLDER%%, TRUE)"]),
+				new DatabaseObjectProperty('playerId', ['columnName' => 'player_id']),
 				new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
 				new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('issuerId', ['columnName' => 'issued_by']),
 				new DatabaseObjectProperty('issuerName', ['columnName' => 'issuer_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
 				new DatabaseObjectProperty('issuerNameFull', ['columnName' => 'issuer_name_full', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => "(users.username || '#' || LEFT(users.user_id::TEXT, 8))"]),
-				new DatabaseObjectProperty('issuerComments', ['columnName' => 'issuer_comments']),
+				new DatabaseObjectProperty('issuerComments', ['columnName' => 'issuer_comments', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('editable', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_permissions.editable']),
+				new DatabaseObjectProperty('shareable', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'asset_permissions.shareable']),
 			],
 			joins: [
 				'INNER JOIN public.users ON (bans.issued_by = users.user_id)',
 				'INNER JOIN sentinel.players ON (bans.player_id = players.player_id)',
+				'INNER JOIN sentinel.asset_permissions ON (bans.ban_id = asset_permissions.asset_id AND asset_permissions.user_id = %%USER_ID%%)',
 			],
 			options: DatabaseSchema::OptionDistinct,
 		);
@@ -65,16 +72,12 @@ class Ban extends DatabaseObject implements JsonSerializable, Asset {
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
+		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'issuerId');
 		$parameters->AddFromFilter($schema, $filters, 'issuerName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'issuerNameFull', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
 		$parameters->AddFromFilter($schema, $filters, 'playerName', 'ILIKE');
-
-		if (isset($filters['userId'])) {
-			$userIdPlaceholder = '$' . $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = "bans.ban_id IN (SELECT ban_id FROM sentinel.ban_permissions WHERE user_id = {$userIdPlaceholder})";
-		}
 	}
 
 	public function jsonSerialize(): mixed {
@@ -87,6 +90,8 @@ class Ban extends DatabaseObject implements JsonSerializable, Asset {
 			'issuerName' => $this->issuerName,
 			'issuerNameFull' => $this->issuerNameFull,
 			'issuerComments' => $this->issuerComments,
+			'editable' => $this->editable,
+			'shareable' => $this->shareable,
 		];
 	}
 
@@ -95,17 +100,13 @@ class Ban extends DatabaseObject implements JsonSerializable, Asset {
 		$requiredScopes[] = Application::kScopeUsersRead;
 	}
 
-	public static function AuthorizeListRequest(array &$filters): void {
-		$filters['userId'] = Core::UserId();
-	}
-
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
 		return true;
 	}
 
 	public function GetPermissionsForUser(User $user): int {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT editable FROM sentinel.ban_permissions WHERE ban_id = $1 AND user_id = $2;', $this->banId, $user->UserId());
+		$rows = $database->Query('SELECT editable FROM sentinel.asset_permissions WHERE asset_id = $1 AND user_id = $2;', $this->banId, $user->UserId());
 		if ($rows->RecordCount() !== 1) {
 			return self::kPermissionNone;
 		}

@@ -36,6 +36,10 @@ class DatabaseSearchParameters {
 		$placeholder = $this->placeholder++;
 		return $placeholder;
 	}
+
+	public function NextPlaceholder(): int {
+		return $this->placeholder++;
+	}
 }
 
 ?>
