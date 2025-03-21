@@ -149,6 +149,9 @@ Core::RegisterRoutes(
 		'/sentinel/gameCommands' => [
 			'POST' => 'sentinel/gameCommands',
 		],
+		'/sentinel/services/{serviceId}/bans.txt' => [
+			'GET' => 'sentinel/bans',
+		],
 	]
 );
 

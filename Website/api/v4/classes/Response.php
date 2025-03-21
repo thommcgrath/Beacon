@@ -33,6 +33,10 @@ class Response {
 		return new static(204);
 	}
 
+	public static function NewCustom(string $body, int $code, string $contentType): static {
+		return new static($code, $body, ['Content-Type' => 'application/json']);
+	}
+
 	public static function NewRedirect(string $destination, bool $temporary = true): static {
 		return new static(($temporary ? 302 : 301), "Redirect to {$destination}", ['Location' => $destination]);
 	}

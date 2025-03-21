@@ -78,6 +78,22 @@ class Ban extends DatabaseObject implements JsonSerializable, Asset {
 		$parameters->AddFromFilter($schema, $filters, 'issuerNameFull', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
 		$parameters->AddFromFilter($schema, $filters, 'playerName', 'ILIKE');
+
+		if (isset($filters['expired'])) {
+			if ($filters['expired'] == 'true') {
+				$parameters->clauses[] = '(bans.expiration IS NOT NULL AND bans.expiration < CURRENT_TIMESTAMP)';
+			} else {
+				$parameters->clauses[] = '(bans.expiration IS NULL OR bans.expiration > CURRENT_TIMESTAMP)';
+			}
+		}
+
+		if (isset($filters['shareable'])) {
+			if ($filters['shareable'] == 'true') {
+				$parameters->clauses[] = 'asset_permissions.shareable = TRUE';
+			} else {
+				$parameters->clauses[] = 'asset_permissions.shareable = FALSE';
+			}
+		}
 	}
 
 	public function jsonSerialize(): mixed {
