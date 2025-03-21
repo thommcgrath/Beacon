@@ -14,7 +14,7 @@ function handleRequest(array $context): Response {
 	}
 
 	$database = BeaconCommon::Database();
-	$rows = $database->Query('SELECT DISTINCT player_identifiers.identifier FROM sentinel.service_resolved_assets INNER JOIN sentinel.bans ON (service_resolved_assets.asset_id = bans.ban_id) INNER JOIN sentinel.player_identifiers ON (bans.player_id = player_identifiers.player_id AND player_identifiers.provider = $1) WHERE service_resolved_assets.service_id = $2 AND (bans.expiration IS NULL OR bans.expiration > CURRENT_TIMESTAMP) ORDER BY player_identifiers.identifier;', 'EOS', $serviceId);
+	$rows = $database->Query('SELECT DISTINCT player_identifiers.identifier FROM sentinel.active_bans INNER JOIN sentinel.player_identifiers ON (active_bans.player_id = player_identifiers.player_id AND player_identifiers.provider = $1) WHERE active_bans.service_id = $2 ORDER BY player_identifiers.identifier;', 'EOS', $serviceId);
 	$lines = [];
 	while (!$rows->EOF()) {
 		$lines[] = $rows->Field('identifier');

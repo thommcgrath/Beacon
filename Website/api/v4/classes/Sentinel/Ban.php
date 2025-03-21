@@ -39,7 +39,7 @@ class Ban extends DatabaseObject implements JsonSerializable, Asset {
 			table: 'bans',
 			definitions: [
 				new DatabaseObjectProperty('banId', ['columnName' => 'ban_id', 'primaryKey' => true, 'required' => false]),
-				new DatabaseObjectProperty('playerId', ['columnName' => 'player_id']),
+				new DatabaseObjectProperty('playerId', ['columnName' => 'player_id', 'accessor' => '%%TABLE%%.%%COLUMN%%', 'setter' => 'sentinel.get_player_id(%%PLACEHOLDER%%::CITEXT, TRUE)']),
 				new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
 				new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('issuerId', ['columnName' => 'issued_by']),

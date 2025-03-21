@@ -2,11 +2,13 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCommon, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
 
 class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 	use MutableDatabaseObject {
 		Validate as protected MutableDatabaseObjectValidate;
+		Create as protected MDOCreate;
+		Delete as protected MDODelete;
 	}
 
 	protected string $serviceAssetId;
@@ -162,7 +164,7 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT 1 FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2 AND (permissions & $3) > 0;', $newObjectProperties['serviceId'], $user->UserId(), Service::kPermissionUpdate);
+		$rows = $database->Query('SELECT 1 FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2 AND (permissions & $3) > 0;', $newObjectProperties['serviceId'], $user->UserId(), Service::ServicePermissionControl);
 		if ($rows->RecordCount() !== 1) {
 			return false;
 		}
@@ -172,31 +174,16 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		// The user must have the correct permission on the service and the asset
+		// The user needs control permission on the service
 		$readable = false;
 		$editableService = false;
 		$editableAsset = false;
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $user->UserId());
 		if ($rows->RecordCount() === 1) {
-			$readable = true;
-			$editableService = ($rows->Field('permissions') & Service::kPermissionUpdate) > 0;
+			return self::kPermissionRead | (($rows->Field('permissions') & Service::ServicePermissionControl) > 0 ? self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete : 0);
 		}
-
-		$rows = $database->Query('SELECT shareable FROM sentinel.asset_permissions WHERE asset_id = $1 AND user_id = $2;', $this->assetId, $user->UserId());
-		if ($rows->RecordCount() === 1) {
-			$readable = true;
-			$editableAsset = $rows->Field('shareable');
-		}
-
-		$permissions = self::kPermissionNone;
-		if ($readable) {
-			$permissions = $permissions | self::kPermissionRead;
-			if ($editableAsset && $editableService) {
-				$permissions = $permissions | self::kPermissionUpdate | self::kPermissionDelete;
-			}
-		}
-		return $permissions;
+		return self::kPermissionNone;
 	}
 
 	protected static function Validate(array $properties): void {
@@ -210,6 +197,95 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 		$serviceId = $properties['serviceId'];
 		if (BeaconCommon::IsUUID($assetId) === false || BeaconCommon::IsUUID($serviceId) === false) {
 			throw new Exception('Both assetId and serviceId should be a UUID.');
+		}
+	}
+
+	public static function Create(array $properties): DatabaseObject {
+		// If this is a ban, we need to tell affected servers. But we don't know what we're creating yet.
+		$banId = null;
+		$database = null;
+		if (isset($properties['assetId'])) {
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT 1 FROM sentinel.bans WHERE ban_id = $1;', $properties['assetId']);
+			if ($rows->RecordCount() === 1) {
+				$banId = $properties['assetId'];
+			}
+		}
+		$previousServiceIds = [];
+		if (empty($banId) === false) {
+			$rows = $database->Query('SELECT service_resolved_assets.service_id FROM sentinel.service_resolved_assets WHERE service_resolved_assets.asset_id = $1;', $banId);
+			while (!$rows->EOF()) {
+				$previousServiceIds[] = $rows->Field('service_id');
+				$rows->MoveNext();
+			}
+		}
+
+		$obj = static::MDOCreate($properties);
+
+		try {
+			if (empty($banId) === false) {
+				$rows = $database->Query('SELECT player_identifiers.identifier FROM sentinel.player_identifiers INNER JOIN sentinel.bans ON (bans.player_id = player_identifiers.player_id AND player_identifiers.provider = $1) WHERE bans.ban_id = $2;', 'EOS', $banId);
+				$epicId = $rows->Field('identifier');
+
+				$rows = $database->Query('SELECT service_resolved_assets.service_id FROM sentinel.service_resolved_assets WHERE service_resolved_assets.asset_id = $1;', $banId);
+				while (!$rows->EOF()) {
+					$serviceId =  $rows->Field('service_id');
+					if (in_array($serviceId, $previousServiceIds)) {
+						$rows->MoveNext();
+						continue;
+					}
+
+					$message = [
+						'type' => 'admin',
+						'command' => 'banplayer ' . $epicId,
+					];
+					BeaconRabbitMQ::SendMessage('sentinel_watcher', 'sentinel.services.' . $serviceId . '.gameCommand', json_encode($message));
+
+					$rows->MoveNext();
+				}
+			}
+		} catch (Exception $err) {
+		}
+
+		return $obj;
+	}
+
+	public function Delete(): void {
+		$banId = null;
+		$previousServiceIds = [];
+		$database = null;
+		if ($this->assetType === 'Ban') {
+			$banId = $this->assetId;
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT service_resolved_assets.service_id FROM sentinel.service_resolved_assets WHERE service_resolved_assets.asset_id = $1;', $banId);
+			while (!$rows->EOF()) {
+				$previousServiceIds[] = $rows->Field('service_id');
+				$rows->MoveNext();
+			}
+		}
+
+		$this->MDODelete();
+
+		if (count($previousServiceIds) > 0) {
+			$newServiceIds = [];
+			$rows = $database->Query('SELECT service_resolved_assets.service_id FROM sentinel.service_resolved_assets WHERE service_resolved_assets.asset_id = $1;', $banId);
+			while (!$rows->EOF()) {
+				$newServiceIds[] = $rows->Field('service_id');
+				$rows->MoveNext();
+			}
+
+			$differences = array_diff($previousServiceIds, $newServiceIds);
+			if (count($differences) > 0) {
+				$rows = $database->Query('SELECT player_identifiers.identifier FROM sentinel.player_identifiers INNER JOIN sentinel.bans ON (bans.player_id = player_identifiers.player_id AND player_identifiers.provider = $1) WHERE bans.ban_id = $2;', 'EOS', $banId);
+				$epicId = $rows->Field('identifier');
+				foreach ($differences as $serviceId) {
+					$message = [
+						'type' => 'admin',
+						'command' => 'unbanplayer ' . $epicId,
+					];
+					BeaconRabbitMQ::SendMessage('sentinel_watcher', 'sentinel.services.' . $serviceId . '.gameCommand', json_encode($message));
+				}
+			}
 		}
 	}
 
