@@ -14,6 +14,7 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 	protected string $serviceId;
 	protected string $playerId;
 	protected string $playerName;
+	protected array $playerAccounts;
 	protected ?int $expiration;
 	protected string $comments;
 
@@ -22,6 +23,7 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 		$this->serviceId = $row->Field('service_id');
 		$this->playerId = $row->Field('player_id');
 		$this->playerName = $row->Field('player_name');
+		$this->playerAccounts = json_decode($row->Field('player_accounts'), true);
 		$this->expiration = is_null($row->Field('expiration')) === false ? round($row->Field('expiration')) : null;
 		$this->comments = $row->Field('comments');
 	}
@@ -35,6 +37,7 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
 				new DatabaseObjectProperty('playerId', ['columnName' => 'player_id', 'accessor' => '%%TABLE%%.%%COLUMN%%', 'setter' => 'sentinel.get_player_id(%%PLACEHOLDER%%::CITEXT, TRUE)']),
 				new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
+				new DatabaseObjectProperty('playerAccounts', ['columnName' => 'player_accounts', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(ids_template))) FROM (SELECT player_identifiers.provider, player_identifiers.name, player_identifiers.identifier FROM sentinel.player_identifiers WHERE player_identifiers.player_id = service_bans.player_id) AS ids_template), \'[]\')']),
 				new DatabaseObjectProperty('expiration', ['columnName' => 'expiration', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('comments', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
@@ -76,6 +79,7 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 			'serviceId' => $this->serviceId,
 			'playerId' => $this->playerId,
 			'playerName' => $this->playerName,
+			'playerAccounts' => $this->playerAccounts,
 			'expiration' => $this->expiration,
 			'comments' => $this->comments,
 		];
