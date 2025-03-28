@@ -193,7 +193,7 @@ abstract class DatabaseObject {
 		}
 
 		if ($legacyMode === false) {
-			$sql = "SELECT COUNT({$primaryKey}) AS num_results FROM {$from}{$clauses};";
+			$sql = "SELECT COUNT(*) AS num_results FROM {$from}{$clauses};";
 			//echo "{$sql}\n";
 			//print_r($params->values);
 			$totalRows = $database->Query($sql, $params->values);

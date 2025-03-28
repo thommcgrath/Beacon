@@ -4,7 +4,7 @@ namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
-class Bucket extends DatabaseObject implements JsonSerializable, Asset {
+class Bucket extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
 
 	protected string $bucketId;
@@ -31,6 +31,7 @@ class Bucket extends DatabaseObject implements JsonSerializable, Asset {
 			],
 			joins: [
 				'INNER JOIN public.users ON (buckets.user_id = users.user_id)',
+				'INNER JOIN sentinel.bucket_permissions ON (buckets.bucket_id = bucket_permissions.bucket_id AND bucket_permissions.user_id = %%USER_ID%%)',
 			],
 		);
 	}
@@ -48,13 +49,9 @@ class Bucket extends DatabaseObject implements JsonSerializable, Asset {
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
+		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'name', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'username', 'ILIKE');
-
-		if (isset($filters['userId'])) {
-			$userIdPlaceholder = '$' . $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = "buckets.bucket_id IN (SELECT asset_id FROM sentinel.asset_permissions WHERE user_id = {$userIdPlaceholder})";
-		}
 	}
 
 	public function jsonSerialize(): mixed {
@@ -74,8 +71,10 @@ class Bucket extends DatabaseObject implements JsonSerializable, Asset {
 		}
 	}
 
-	public static function AuthorizeListRequest(array &$filters): void {
-		$filters['userId'] = Core::UserId();
+	protected static function UserHasPermission(string $bucketId, string $userId): bool {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.bucket_permissions WHERE bucket_id = $1 AND user_id = $2;', $bucketId, $userId);
+		return $rows->RecordCount() === 1;
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
@@ -83,33 +82,11 @@ class Bucket extends DatabaseObject implements JsonSerializable, Asset {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT editable FROM sentinel.asset_permissions WHERE asset_id = $1 AND user_id = $2;', $this->bucketId, $user->UserId());
-		if ($rows->RecordCount() !== 1) {
+		if (static::UserHasPermission($bucketId, $user->UserId())) {
+			return self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
+		} else {
 			return self::kPermissionNone;
 		}
-
-		$permissions = self::kPermissionRead;
-		if ($rows->Field('editable') === true) {
-			$permissions = $permissions | self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete;
-		}
-		return $permissions;
-	}
-
-	public function AssetId(): string {
-		return $this->bucketId;
-	}
-
-	public function AssetType(): string {
-		return 'Bucket';
-	}
-
-	public function AssetTypeMask(): int {
-		return 2;
-	}
-
-	public function AssetName(): string {
-		return $this->name;
 	}
 }
 

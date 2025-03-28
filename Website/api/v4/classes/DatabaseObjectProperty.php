@@ -17,6 +17,8 @@ class DatabaseObjectProperty {
 	protected bool $primaryKey = false;
 	protected bool $required = true;
 	protected array $dependsOn = [];
+	protected bool $upsertConflict = false;
+	protected bool $upsertEdit = false;
 
 	public function __construct(string $propertyName, array $options = []) {
 		$this->propertyName = $propertyName;
@@ -54,6 +56,13 @@ class DatabaseObjectProperty {
 
 		if (isset($options['dependsOn'])) {
 			$this->dependsOn = $options['dependsOn'];
+		}
+
+		if (isset($options['upsertConflict'])) {
+			$this->upsertConflict = $options['upsertConflict'];
+		}
+		if (isset($options['upsertEdit'])) {
+			$this->upsertEdit = $options['upsertEdit'];
 		}
 	}
 
@@ -120,6 +129,14 @@ class DatabaseObjectProperty {
 
 	public function DependsOn(): array {
 		return $this->dependsOn;
+	}
+
+	public function UpsertConflict(): bool {
+		return $this->upsertConflict;
+	}
+
+	public function UpsertEdit(): bool {
+		return $this->upsertEdit;
 	}
 }
 

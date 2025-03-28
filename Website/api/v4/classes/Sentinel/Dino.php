@@ -63,6 +63,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			joins: [
 				'INNER JOIN sentinel.services ON (dinos.service_id = services.service_id)',
 				'INNER JOIN sentinel.tribes ON (dinos.tribe_id = tribes.tribe_id)',
+				'INNER JOIN sentinel.service_permissions ON (dinos.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
 			],
 		);
 	}
@@ -76,19 +77,17 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			case 'dinoName':
 			case 'serviceDisplayName':
 			case 'tribeName':
+			case 'dinoNumber':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
+		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'dinoName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'dinoNumber');
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
-
-		if (isset($filters['userId'])) {
-			$userIdPlaceholder = '$' . $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = "dinos.service_id IN (SELECT service_id FROM sentinel.service_permissions WHERE user_id = {$userIdPlaceholder})";
-		}
 	}
 
 	public function jsonSerialize(): mixed {
@@ -116,10 +115,6 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		if ($editable) {
 			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
 		}
-	}
-
-	public static function AuthorizeListRequest(array &$filters): void {
-		$filters['userId'] = Core::UserId();
 	}
 }
 

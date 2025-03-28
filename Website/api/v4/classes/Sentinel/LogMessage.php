@@ -196,6 +196,14 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 				$parameters->clauses[] = $schema->Accessor('level') . ' IN (' . implode(', ', $placeholders) . ')';
 			}
 		}
+
+		$metadataFilters = ['characterId', 'tribeId', 'playerId', 'dinoId'];
+		foreach ($metadataFilters as $filter) {
+			if (isset($filters[$filter]) && BeaconCommon::IsUUID($filters[$filter])) {
+				$placeholder = $parameters->AddValue('%"' . $filters[$filter] . '"%');
+				$parameters->clauses[] = $schema->Accessor('metadata') . '::TEXT ILIKE $' . $placeholder;
+			}
+		}
 	}
 
 	public static function GetMessageByID(string $messageId): ?LogMessage {

@@ -18,7 +18,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 	protected string $serviceDisplayName;
 	protected string $serviceColor;
 	protected string $serviceOwnerId;
-	protected int $permissions;
+	protected int $permissionsMask;
 	protected int $editableAssetsMask;
 	protected int $shareableAssetsMask;
 
@@ -34,7 +34,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$this->serviceDisplayName = $row->Field('service_display_name');
 		$this->serviceColor = $row->Field('service_color');
 		$this->serviceOwnerId = $row->Field('service_owner_id');
-		$this->permissions = $row->Field('permissions');
+		$this->permissionsMask = $row->Field('permissions_mask');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -53,7 +53,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.color']),
 				new DatabaseObjectProperty('serviceOwnerId', ['columnName' => 'service_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.user_id']),
-				new DatabaseObjectProperty('permissions', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('permissionsMask', ['columnName' => 'permissions_mask', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
 				'INNER JOIN sentinel.services ON (group_services.service_id = services.service_id)',
@@ -81,6 +81,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'groupName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'groupOwnerId');
 		$parameters->AddFromFilter($schema, $filters, 'groupColor');
+		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'serviceNickname', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
@@ -101,7 +102,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 			'serviceDisplayName' => $this->serviceDisplayName,
 			'serviceColor' => $this->serviceColor,
 			'serviceOwnerId' => $this->serviceOwnerId,
-			'permissions' => $this->permissions,
+			'permissionsMask' => $this->permissionsMask,
 		];
 	}
 

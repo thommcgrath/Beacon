@@ -49,6 +49,7 @@ class Character extends DatabaseObject implements JsonSerializable {
 				'INNER JOIN sentinel.players ON (characters.player_id = players.player_id)',
 				'INNER JOIN sentinel.tribes ON (characters.tribe_id = tribes.tribe_id)',
 				'INNER JOIN sentinel.services ON (characters.service_id = services.service_id)',
+				'INNER JOIN sentinel.service_permissions ON (characters.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
 			],
 		);
 	}
@@ -63,20 +64,19 @@ class Character extends DatabaseObject implements JsonSerializable {
 			case 'playerName':
 			case 'serviceDisplayName':
 			case 'tribeName':
+			case 'specimenId':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
+		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'characterName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'playerName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
-
-		if (isset($filters['userId'])) {
-			$userIdPlaceholder = '$' . $parameters->AddValue($filters['userId']);
-			$parameters->clauses[] = "characters.service_id IN (SELECT service_id FROM sentinel.service_permissions WHERE user_id = {$userIdPlaceholder})";
-		}
+		$parameters->AddFromFilter($schema, $filters, 'serviceId');
+		$parameters->AddFromFilter($schema, $filters, 'specimenId');
 	}
 
 	public function jsonSerialize(): mixed {
@@ -99,10 +99,6 @@ class Character extends DatabaseObject implements JsonSerializable {
 		if ($editable) {
 			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
 		}
-	}
-
-	public static function AuthorizeListRequest(array &$filters): void {
-		$filters['userId'] = Core::UserId();
 	}
 }
 

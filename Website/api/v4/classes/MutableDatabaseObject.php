@@ -53,6 +53,8 @@ trait MutableDatabaseObject {
 		$placeholder = 2;
 
 		$editableColumns = static::EditableProperties(DatabaseObjectProperty::kEditableAtCreation);
+		$upsertAssignments = [];
+		$upsertConflicts = [];
 		foreach ($editableColumns as $definition) {
 			if ($definition->IsPrimaryKey() || $definition->IsSettable() === false) {
 				continue;
@@ -77,12 +79,26 @@ trait MutableDatabaseObject {
 			$placeholders[] = $valuePlaceholder;
 			$columns[] = $definition->ColumnName();
 			$values[] = $value;
+
+			if ($definition->UpsertConflict()) {
+				$upsertConflicts[] = $definition->ColumnName();
+			}
+			if ($definition->UpsertEdit()) {
+				$upsertAssignments[] = $definition->ColumnName() . ' = ' . $valuePlaceholder;
+			}
 		}
 
 		$database = BeaconCommon::Database();
 		try {
+			$sql = "INSERT INTO " . $schema->WriteableTable() . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+			if (count($upsertConflicts) > 0) {
+				$sql .= ' ON CONFLICT (' . implode(', ', $upsertConflicts) . ') DO UPDATE SET ' . implode(', ', $upsertAssignments);
+			}
+			$sql .= ';';
+			echo $sql;
+
 			$database->BeginTransaction();
-			$database->Query("INSERT INTO " . $schema->WriteableTable() . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ");", $values);
+			$database->Query($sql, $values);
 			$obj = static::Fetch($primaryKey);
 			if (is_null($obj)) {
 				throw new Exception("{$primaryKey} was inserted into database, but could not be fetched. This is an internal error and will need to be fixed by the developer.");
