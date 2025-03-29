@@ -11,12 +11,14 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 	protected string $userId;
 	protected string $username;
 	protected string $name;
+	protected int $permissions;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->bucketId = $row->Field('bucket_id');
 		$this->userId = $row->Field('user_id');
 		$this->username = $row->Field('username');
 		$this->name = $row->Field('name');
+		$this->permissions = $row->Field('permissions');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -28,6 +30,7 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 				new DatabaseObjectProperty('username', ['columnName' => 'username', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
 				new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('permissions', ['editable' => DatabaseObjectProperty::kEditableNever, 'required' => false, 'accessor' => 'bucket_permissions.permissions']),
 			],
 			joins: [
 				'INNER JOIN public.users ON (buckets.user_id = users.user_id)',
@@ -61,6 +64,7 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 			'username' => $this->username,
 			'usernameFull' => $this->username . '#' . substr($this->username, 0, 8),
 			'name' => $this->name,
+			'permissions' => $this->permissions,
 		];
 	}
 
@@ -82,7 +86,7 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		if (static::UserHasPermission($bucketId, $user->UserId())) {
+		if (static::UserHasPermission($this->bucketId, $user->UserId())) {
 			return self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
 		} else {
 			return self::kPermissionNone;

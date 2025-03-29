@@ -2,10 +2,12 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCommon, BeaconPusher, BeaconRecordSet, Exception, JsonSerializable;
 
 class BucketValue extends DatabaseObject implements JsonSerializable {
-	use MutableDatabaseObject;
+	use MutableDatabaseObject {
+		HookModified As MDOHookModified;
+	}
 
 	protected string $bucketValueId;
 	protected string $bucketId;
@@ -36,7 +38,7 @@ class BucketValue extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('playerId', ['columnName' => 'player_id', 'required' => false, 'upsertConflict' => true]),
 				new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
 				new DatabaseObjectProperty('key', ['upsertConflict' => true]),
-				new DatabaseObjectProperty('value', ['upsertEdit' => true]),
+				new DatabaseObjectProperty('value', ['upsertEdit' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
 				'INNER JOIN sentinel.buckets ON (buckets.bucket_id = bucket_values.bucket_id)',
@@ -54,12 +56,14 @@ class BucketValue extends DatabaseObject implements JsonSerializable {
 			case 'key':
 			case 'playerName':
 			case 'bucketName':
+			case 'value':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
-		$parameters->AddFromFilter($schema, $filters, 'key');
+		$parameters->AddFromFilter($schema, $filters, 'key', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'value', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'playerName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
 		$parameters->AddFromFilter($schema, $filters, 'bucketName', 'ILIKE');
@@ -111,11 +115,16 @@ class BucketValue extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		if (static::UserHasPermission($bucketId, $user->UserId())) {
+		if (static::UserHasPermission($this->bucketId, $user->UserId())) {
 			return self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
 		} else {
 			return self::kPermissionNone;
 		}
+	}
+
+	protected function HookModified(): void {
+		$this->MDOHookModified();
+		BeaconPusher::SharedInstance()->TriggerEvent('sentinel.buckets.' . str_replace('-', '', $this->bucketId), 'value-updated', '', BeaconPusher::SocketIdFromHeaders());
 	}
 }
 

@@ -60,6 +60,10 @@ trait MutableDatabaseObject {
 				continue;
 			}
 
+			if ($definition->UpsertConflict()) {
+				$upsertConflicts[] = $definition->ColumnName();
+			}
+
 			$propertyName = $definition->PropertyName();
 			if (isset($properties[$propertyName]) === false) {
 				continue;
@@ -80,9 +84,6 @@ trait MutableDatabaseObject {
 			$columns[] = $definition->ColumnName();
 			$values[] = $value;
 
-			if ($definition->UpsertConflict()) {
-				$upsertConflicts[] = $definition->ColumnName();
-			}
 			if ($definition->UpsertEdit()) {
 				$upsertAssignments[] = $definition->ColumnName() . ' = ' . $valuePlaceholder;
 			}
@@ -94,18 +95,18 @@ trait MutableDatabaseObject {
 			if (count($upsertConflicts) > 0) {
 				$sql .= ' ON CONFLICT (' . implode(', ', $upsertConflicts) . ') DO UPDATE SET ' . implode(', ', $upsertAssignments);
 			}
-			$sql .= ';';
-			echo $sql;
+			$sql .= ' RETURNING ' . $primaryKeyColumn->ColumnName() . ';';
 
 			$database->BeginTransaction();
-			$database->Query($sql, $values);
-			$obj = static::Fetch($primaryKey);
+			$rows = $database->Query($sql, $values);
+			$obj = static::Fetch($rows->Field($primaryKeyColumn->ColumnName()));
 			if (is_null($obj)) {
 				throw new Exception("{$primaryKey} was inserted into database, but could not be fetched. This is an internal error and will need to be fixed by the developer.");
 			}
 			$obj->Edit($properties); // Gets virtual data into the new object so the next method can function
 			$obj->SaveChildObjects($database);
 			$database->Commit();
+			$obj->HookModified();
 			return $obj;
 		} catch (Exception $err) {
 			$database->Rollback();
@@ -213,6 +214,7 @@ trait MutableDatabaseObject {
 			}
 			throw $err;
 		}
+		$this->HookModified();
 	}
 
 	public function Delete(): void {
@@ -221,6 +223,7 @@ trait MutableDatabaseObject {
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
 		$database->Commit();
+		$this->HookModified();
 	}
 
 	protected static function EditableProperties(int $flags): array {
@@ -251,6 +254,10 @@ trait MutableDatabaseObject {
 		} elseif (count($missingProperties) === 1) {
 			throw new Exception('Missing property ' . $missingProperties[0] . '.');
 		}
+	}
+
+	protected function HookModified(): void {
+
 	}
 }
 
