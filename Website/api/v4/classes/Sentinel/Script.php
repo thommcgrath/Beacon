@@ -7,6 +7,7 @@ use BeaconCommon, Exception, BeaconRecordSet, JsonSerializable;
 class Script extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
 		Validate as protected MutableDatabaseObjectValidate;
+		PreparePropertyValue as protected MDOPreparePropertyValue;
 	}
 
 	const LanguageSimple = 'Simple';
@@ -140,6 +141,17 @@ class Script extends DatabaseObject implements JsonSerializable {
 		if (isset($properties['language']) && in_array($properties['language'], static::Languages) === false) {
 			throw new Exception('Language is not a valid value. See the documentation for correct values.');
 		}
+	}
+
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
+		$value = static::MDOPreparePropertyValue($definition, $value, $otherProperties);
+
+		switch ($definition->PropertyName()) {
+		case 'contextParams':
+			return json_encode($value);
+		}
+
+		return $value;
 	}
 }
 

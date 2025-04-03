@@ -156,6 +156,9 @@ Core::RegisterRoutes(
 		'/sentinel/groups/{groupId}/bans.txt' => [
 			'POST' => 'sentinel/bans/import',
 		],
+		'/sentinel/scripts/test' => [
+			'POST' => 'sentinel/scripts/test',
+		],
 	]
 );
 

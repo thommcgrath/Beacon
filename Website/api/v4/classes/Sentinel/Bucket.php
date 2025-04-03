@@ -2,10 +2,12 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconRecordSet, JsonSerializable;
+use BeaconCommon, BeaconPusher, BeaconRecordSet, JsonSerializable;
 
 class Bucket extends DatabaseObject implements JsonSerializable {
-	use MutableDatabaseObject;
+	use MutableDatabaseObject {
+		HookModified As MDOHookModified;
+	}
 
 	protected string $bucketId;
 	protected string $userId;
@@ -90,6 +92,20 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 			return self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
 		} else {
 			return self::kPermissionNone;
+		}
+	}
+
+	protected function HookModified(): void {
+		$this->MDOHookModified();
+
+		$pusher = BeaconPusher::SharedInstance();
+		$socketId = BeaconPusher::SocketIdFromHeaders();
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT user_id FROM sentinel.bucket_permissions WHERE bucket_id = $1;', $this->bucketId);
+		while (!$rows->EOF()) {
+			$channel = 'user-' . str_replace('-', '', $rows->Field('user_id'));
+			$pusher->TriggerEvent($channel, 'buckets-changed', $this->bucketId, $socketId);
+			$rows->MoveNext();
 		}
 	}
 }

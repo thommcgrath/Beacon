@@ -12,7 +12,7 @@ abstract class BeaconRabbitMQ {
 		if (is_null(static::$connection)) {
 			static::$connection = new AMQPStreamConnection(BeaconCommon::GetGlobal('RabbitMQ Host'), BeaconCommon::GetGlobal('RabbitMQ Port'), BeaconCommon::GetGlobal('RabbitMQ User'), BeaconCommon::GetGlobal('RabbitMQ Password'), BeaconCommon::GetGlobal('RabbitMQ Virtual Host'));
 			static::$channel = static::$connection->channel();
-			static::$channel->queue_declare('', false, false, false, true);
+			//static::$channel->queue_declare('', false, false, false, true);
 		}
 		static::$channel->basic_publish(new AMQPMessage($message), $exchange, $routeKey);
 	}

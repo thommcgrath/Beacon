@@ -80,7 +80,7 @@ function handleRequest(array $context): Response {
 	foreach ($approvedCommands as $command) {
 		$serviceId = strtolower($command['serviceId']);
 		unset($command['serviceId']);
-		BeaconRabbitMQ::SendMessage('sentinel_watcher', 'sentinel.services.' . $serviceId . '.gameCommand', json_encode($command));
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $serviceId . '.gameCommand', json_encode($command));
 	}
 
 	return Response::NewNoContent();

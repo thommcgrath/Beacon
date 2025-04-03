@@ -221,9 +221,9 @@ trait MutableDatabaseObject {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
+		$this->HookModified(); // Fire before actually performing any work so the hook still knows what is going on
 		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
 		$database->Commit();
-		$this->HookModified();
 	}
 
 	protected static function EditableProperties(int $flags): array {

@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, User};
-use BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -10,6 +10,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
 		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
 		Validate as protected MutableDatabaseObjectValidate;
+		HookModified As MDOHookModified;
 	}
 
 	const ServicePermissionUsage = 1;
@@ -481,6 +482,20 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public static function AuthorizeListRequest(array &$filters): void {
 		$filters['userId'] = Core::UserId();
+	}
+
+	protected function HookModified(): void {
+		$this->MDOHookModified();
+
+		$pusher = BeaconPusher::SharedInstance();
+		$socketId = BeaconPusher::SocketIdFromHeaders();
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT user_id FROM sentinel.service_permissions WHERE service_id = $1;', $this->serviceId);
+		while (!$rows->EOF()) {
+			$channel = 'user-' . str_replace('-', '', $rows->Field('user_id'));
+			$pusher->TriggerEvent($channel, 'servers-changed', $this->serviceId, $socketId);
+			$rows->MoveNext();
+		}
 	}
 }
 

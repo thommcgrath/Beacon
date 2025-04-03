@@ -239,7 +239,7 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 						'type' => 'admin',
 						'command' => 'banplayer ' . $epicId,
 					];
-					BeaconRabbitMQ::SendMessage('sentinel_watcher', 'sentinel.services.' . $serviceId . '.gameCommand', json_encode($message));
+					BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $serviceId . '.gameCommand', json_encode($message));
 
 					$rows->MoveNext();
 				}
@@ -283,7 +283,7 @@ class ServiceAsset extends DatabaseObject implements JsonSerializable, Asset {
 						'type' => 'admin',
 						'command' => 'unbanplayer ' . $epicId,
 					];
-					BeaconRabbitMQ::SendMessage('sentinel_watcher', 'sentinel.services.' . $serviceId . '.gameCommand', json_encode($message));
+					BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $serviceId . '.gameCommand', json_encode($message));
 				}
 			}
 		}
