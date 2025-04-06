@@ -20,16 +20,16 @@ Protected Class OmniBarColorProfile
 		    Self.Red = SystemColors.SystemRedColor
 		    Self.Yellow = SystemColors.SystemYellowColor
 		    
-		    Self.AccentedText = BeaconUI.FindContrastingColor(EstimatedBackground, SystemColors.ControlAccentColor)
-		    Self.BlueText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Blue)
-		    Self.BrownText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Brown)
-		    Self.GrayText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Gray)
-		    Self.GreenText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Green)
-		    Self.OrangeText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Orange)
-		    Self.PinkText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Pink)
-		    Self.PurpleText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Purple)
-		    Self.RedText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Red)
-		    Self.YellowText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Yellow)
+		    Self.AccentedText = BeaconUI.FindContrastingColors(EstimatedBackground, SystemColors.ControlAccentColor, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.BlueText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Blue, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.BrownText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Brown, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.GrayText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Gray, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.GreenText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Green, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.OrangeText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Orange, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.PinkText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Pink, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.PurpleText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Purple, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.RedText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Red, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
+		    Self.YellowText = BeaconUI.FindContrastingColors(EstimatedBackground, Self.Yellow, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredText).Foreground
 		    
 		    Self.TextColor = SystemColors.ControlTextColor
 		    Self.DisabledTextColor = SystemColors.DisabledControlTextColor

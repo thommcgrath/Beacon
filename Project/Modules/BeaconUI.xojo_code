@@ -108,53 +108,116 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color, ChangeForeground As Boolean = True, RequiredContrast As Double = 4.5) As Color
+		Protected Function FindContrastingColors(BackgroundColor As Color, ForegroundColor As Color, ContrastMode As Integer, RequiredContrast As Double) As ColorPair
 		  If mContrastingColors Is Nil Then
 		    mContrastingColors = New Dictionary
 		  End If
 		  
-		  Var TargetColor, TestAgainst As Color
-		  If ChangeForeground Then
-		    TargetColor = ForegroundColor
-		    TestAgainst = BackgroundColor
-		  Else
-		    TargetColor = BackgroundColor
-		    TestAgainst = ForegroundColor
-		  End If
-		  
-		  Var Key As String = BackgroundColor.ToHex + ":" + ForegroundColor.ToHex + ":" + RequiredContrast.ToString + ":" + ChangeForeground.ToString
+		  Var Colors As ColorPair
+		  Var Key As String = BackgroundColor.ToHex + ":" + ForegroundColor.ToHex + ":" + RequiredContrast.ToString(Locale.Raw, "0.0") + ":" + ContrastMode.ToString(Locale.Raw, "0")
 		  If mContrastingColors.HasKey(Key) = False Then
-		    Var ComputedColor As Color
-		    
-		    Var Computed As Boolean
 		    For Percent As Double = 0.0 To 1.0 Step 0.01
-		      Var Darker As Color = TargetColor.Darker(Percent)
-		      Var Lighter As Color = TargetColor.Lighter(Percent)
-		      If Darker.ContrastAgainst(TestAgainst) >= RequiredContrast Then
-		        ComputedColor = Darker
-		        Computed = True
-		        Exit
-		      ElseIf Lighter.ContrastAgainst(TestAgainst) >= RequiredContrast Then
-		        ComputedColor = Lighter
-		        Computed = True
-		        Exit
-		      End If
+		      Select Case ContrastMode
+		      Case ContrastModeForeground
+		        Var Darker As Color = ForegroundColor.Darker(Percent)
+		        If Darker.ContrastAgainst(BackgroundColor) >= RequiredContrast Then
+		          Colors = New ColorPair(Darker, BackgroundColor)
+		          Exit
+		        End If
+		        
+		        Var Lighter As Color = ForegroundColor.Lighter(Percent)
+		        If Lighter.ContrastAgainst(BackgroundColor) >= RequiredContrast Then
+		          Colors = New ColorPair(Lighter, BackgroundColor)
+		          Exit
+		        End If
+		      Case ContrastModeForeground
+		        Var Darker As Color = BackgroundColor.Darker(Percent)
+		        If Darker.ContrastAgainst(ForegroundColor) >= RequiredContrast Then
+		          Colors = New ColorPair(ForegroundColor, Darker)
+		          Exit
+		        End If
+		        
+		        Var Lighter As Color = BackgroundColor.Lighter(Percent)
+		        If Lighter.ContrastAgainst(ForegroundColor) >= RequiredContrast Then
+		          Colors = New ColorPair(ForegroundColor, Lighter)
+		          Exit
+		        End If
+		      Case ContrastModeBoth
+		        Var DarkerForeground As Color = ForegroundColor.Darker(Percent)
+		        If DarkerForeground.ContrastAgainst(BackgroundColor) >= RequiredContrast Then
+		          Colors = New ColorPair(DarkerForeground, BackgroundColor)
+		          Exit
+		        End If
+		        
+		        Var LighterBackground As Color = BackgroundColor.Lighter(Percent)
+		        If ForegroundColor.ContrastAgainst(LighterBackground) >= RequiredContrast Then
+		          Colors = New ColorPair(ForegroundColor, LighterBackground)
+		          Exit
+		        End If
+		        
+		        If DarkerForeground.ContrastAgainst(LighterBackground) >= RequiredContrast Then
+		          Colors = New ColorPair(DarkerForeground, LighterBackground)
+		          Exit
+		        End If
+		        
+		        Var LighterForeground As Color = ForegroundColor.Lighter(Percent)
+		        If LighterForeground.ContrastAgainst(BackgroundColor) >= RequiredContrast Then
+		          Colors = New ColorPair(LighterForeground, BackgroundColor)
+		          Exit
+		        End If
+		        
+		        Var DarkerBackground As Color = BackgroundColor.Darker(Percent)
+		        If ForegroundColor.ContrastAgainst(DarkerBackground) >= RequiredContrast Then
+		          Colors = New ColorPair(ForegroundColor, DarkerBackground)
+		          Exit
+		        End If
+		        
+		        If LighterForeground.ContrastAgainst(DarkerBackground) >= RequiredContrast Then
+		          Colors = New ColorPair(LighterForeground, DarkerBackground)
+		          Exit
+		        End If
+		      End Select
 		    Next
 		    
-		    If Computed = False Then
-		      Var WhiteContrast As Double = TestAgainst.ContrastAgainst(&cFFFFFF)
-		      Var BlackContrast As Double = TestAgainst.ContrastAgainst(&c000000)
-		      If WhiteContrast > BlackContrast Then
-		        ComputedColor = &cFFFFFF
-		      Else
-		        ComputedColor = &c000000
-		      End If
+		    If Colors Is Nil Then
+		      Select Case ContrastMode
+		      Case ContrastModeForeground
+		        Var WhiteContrast As Double = BackgroundColor.ContrastAgainst(&cFFFFFF)
+		        Var BlackContrast As Double = BackgroundColor.ContrastAgainst(&c000000)
+		        If WhiteContrast > BlackContrast Then
+		          Colors = New ColorPair(&cFFFFFF, BackgroundColor)
+		        Else
+		          Colors = New ColorPair(&c000000, BackgroundColor)
+		        End If
+		      Case ContrastModeBackground
+		        Var WhiteContrast As Double = ForegroundColor.ContrastAgainst(&cFFFFFF)
+		        Var BlackContrast As Double = ForegroundColor.ContrastAgainst(&c000000)
+		        If WhiteContrast > BlackContrast Then
+		          Colors = New ColorPair(ForegroundColor, &cFFFFFF)
+		        Else
+		          Colors = New ColorPair(ForegroundColor, &c000000)
+		        End If
+		      Case ContrastModeBoth
+		        For Percent As Double = 0.0 To 1.0 Step 0.01
+		          Var Darker As Color = BackgroundColor.Darker(Percent)
+		          If Darker.ContrastAgainst(&cFFFFFF) >= RequiredContrast Then
+		            Colors = New ColorPair(&cFFFFFF, Darker)
+		            Exit
+		          End If
+		          
+		          Var Lighter As Color = BackgroundColor.Lighter(Percent)
+		          If Lighter.ContrastAgainst(&c000000) >= RequiredContrast Then
+		            Colors = New ColorPair(&c000000, Lighter)
+		            Exit
+		          End If
+		        Next
+		      End Select
 		    End If
 		    
-		    mContrastingColors.Value(Key) = ComputedColor
+		    mContrastingColors.Value(Key) = Colors
 		  End If
 		  
-		  Return mContrastingColors.Value(Key)
+		  Return ColorPair(mContrastingColors.Value(Key).ObjectValue)
 		End Function
 	#tag EndMethod
 
@@ -863,6 +926,21 @@ Protected Module BeaconUI
 	#tag EndConstant
 
 	#tag Constant, Name = BorderTop, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ContrastModeBackground, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ContrastModeBoth, Type = Double, Dynamic = False, Default = \"3", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ContrastModeForeground, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ContrastRequiredIcons, Type = Double, Dynamic = False, Default = \"3.0", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ContrastRequiredText, Type = Double, Dynamic = False, Default = \"7.0", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = CursorsEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected

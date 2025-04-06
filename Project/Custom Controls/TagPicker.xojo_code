@@ -254,10 +254,9 @@ Inherits ControlCanvas
 		  Var CellHeight As Integer = CapHeight + (VerticalPadding * 2)
 		  Var Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
-		  Var CellTextColor As Color = &cFFFFFF
-		  Var RequiredBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemBlueColor)
-		  Var NeutralBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemGrayColor)
-		  Var ExcludedBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemRedColor)
+		  Var RequiredColors As BeaconUI.ColorPair = BeaconUI.FindContrastingColors(SystemColors.SystemBlueColor, &cFFFFFF, BeaconUI.ContrastModeBoth, BeaconUI.ContrastRequiredText)
+		  Var NeutralColors As BeaconUI.ColorPair = BeaconUI.FindContrastingColors(SystemColors.SystemGrayColor, &cFFFFFF, BeaconUI.ContrastModeBoth, BeaconUI.ContrastRequiredText)
+		  Var ExcludedColors As BeaconUI.ColorPair = BeaconUI.FindContrastingColors(SystemColors.SystemRedColor, &cFFFFFF, BeaconUI.ContrastModeBoth, BeaconUI.ContrastRequiredText)
 		  
 		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Var Tag As String = Self.mTags(I)
@@ -285,17 +284,17 @@ Inherits ControlCanvas
 		    Var CaptionLeft As Integer = CellRect.Left + HorizontalPadding
 		    Var CaptionBottom As Integer = CellRect.Top + VerticalPadding + CapHeight
 		    
-		    Var CellColor As Color
+		    Var CellColors As BeaconUI.ColorPair
 		    If Required Then
-		      CellColor = RequiredBackgroundColor
+		      CellColors = RequiredColors
 		    ElseIf Excluded Then
-		      CellColor = ExcludedBackgroundColor
+		      CellColors = ExcludedColors
 		    Else
-		      CellColor = NeutralBackgroundColor
+		      CellColors = NeutralColors
 		    End If
-		    Clip.DrawingColor = CellColor
+		    Clip.DrawingColor = CellColors.Background
 		    Clip.FillRoundRectangle(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
-		    Clip.DrawingColor = CellTextColor
+		    Clip.DrawingColor = CellColors.Foreground
 		    Clip.DrawText(Tag, CaptionLeft - ContentArea.Left, CaptionBottom - ContentArea.Top, CellWidth - (HorizontalPadding * 2), True)
 		    If Excluded Then
 		      Clip.FillRectangle(CaptionLeft - ContentArea.Left, CellRect.VerticalCenter - ContentArea.Top, CellRect.Width - (HorizontalPadding * 2), 2)

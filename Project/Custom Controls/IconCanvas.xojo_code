@@ -97,7 +97,7 @@ Inherits ControlCanvas
 		    IconColor = Color.RGB(255 * Lum, 255 * Lum, 255 * Lum)
 		  End If
 		  
-		  IconColor = BeaconUI.FindContrastingColor(SystemColors.WindowBackgroundColor, IconColor)
+		  IconColor = BeaconUI.FindContrastingColors(SystemColors.WindowBackgroundColor, IconColor, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredIcons).Foreground
 		  
 		  Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, IconColor, G.ScaleX, G.ScaleX)
 		  G.DrawPicture(Icon, 0, 0)
