@@ -15,8 +15,8 @@ function handleRequest(array $context): Response {
 	}
 
 	$language = $body['language'];
-	if ($language !== 'JavaScript') {
-		return Response::NewJsonError(code: 'notJavaScript', httpStatus: 400, message: 'This endpoint only supports JavaScript scripts.');
+	if ($language !== 'JavaScript' && $language !== 'Simple') {
+		return Response::NewJsonError(code: 'unsupportedLanguage', httpStatus: 400, message: 'The script language is not supported.');
 	}
 
 	$context = $body['context'];
@@ -40,7 +40,7 @@ function handleRequest(array $context): Response {
 		'userId' => Core::UserId(),
 		'context' => $context,
 		'language' => $language,
-		'parameters' => $parameters,
+		'parameters' => (object) $parameters,
 		'code' => $body['code'],
 	];
 	switch ($context) {

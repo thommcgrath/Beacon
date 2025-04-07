@@ -22,7 +22,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 	protected string $usernameFull;
 	protected string $name;
 	protected string $context;
-	protected array $contextParams;
+	protected array $parameters;
 	protected string $code;
 	protected string $language;
 	protected float $dateCreated;
@@ -36,7 +36,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$this->usernameFull = $row->Field('username_full');
 		$this->name = $row->Field('name');
 		$this->context = $row->Field('context');
-		$this->contextParams = json_decode($row->Field('context_params'), true);
+		$this->parameters = json_decode($row->Field('parameters'), true);
 		$this->code = $row->Field('code');
 		$this->language = $row->Field('language');
 		$this->dateCreated = floatval($row->Field('date_created'));
@@ -55,7 +55,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('usernameFull', ['columnName' => 'username_full', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username_full']),
 				new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('context', ['editable' => DatabaseObjectProperty::kEditableAlways]),
-				new DatabaseObjectProperty('contextParams', ['columnName' => 'context_params', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('parameters', ['columnName' => 'parameters', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('code', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('language', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('dateCreated', ['columnName' => 'date_created', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
@@ -88,6 +88,20 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'username', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'userId');
 		$parameters->AddFromFilter($schema, $filters, 'context');
+
+		if (isset($filers['language'])) {
+			$languages = explode(',', $filters['language']);
+			if (count($languages) === 1) {
+				$placeholder = $parameters->AddValue($languages[0]);
+				$parameters->clauses[] = $schema->Accessor('language') . ' = $' . $placeholder;
+			} elseif (count($languages) > 0) {
+				$placeholders = [];
+				foreach ($languages as $language) {
+					$placeholders[] = '$' . $parameters->AddValue($language);
+				}
+				$parameters->clauses[] = $schema->Accessor('language') . ' IN (' . implode(', ', $placeholders) . ')';
+			}
+		}
 	}
 
 	public function jsonSerialize(): mixed {
@@ -97,7 +111,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 			'usernameFull' => $this->usernameFull,
 			'name' => $this->name,
 			'context' => $this->context,
-			'contextParams' => $this->contextParams,
+			'parameters' => $this->parameters,
 			'code' => $this->code,
 			'language' => $this->language,
 			'dateCreated' => $this->dateCreated,
@@ -147,7 +161,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$value = static::MDOPreparePropertyValue($definition, $value, $otherProperties);
 
 		switch ($definition->PropertyName()) {
-		case 'contextParams':
+		case 'parameters':
 			return json_encode($value);
 		}
 

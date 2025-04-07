@@ -5,17 +5,20 @@ use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, D
 use BeaconCommon, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
 
 class ServiceScript extends DatabaseObject implements JsonSerializable {
-	use MutableDatabaseObject;
+	use MutableDatabaseObject {
+		PreparePropertyValue as protected MDOPreparePropertyValue;
+	}
 
-	protected $serviceScriptId;
-	protected $serviceId;
-	protected $serviceDisplayName;
-	protected $serviceColor;
-	protected $serviceOwnerId;
-	protected $scriptId;
-	protected $scriptName;
-	protected $scriptOwnerId;
-	protected $scriptContext;
+	protected string $serviceScriptId;
+	protected string $serviceId;
+	protected string $serviceDisplayName;
+	protected string $serviceColor;
+	protected string $serviceOwnerId;
+	protected string $scriptId;
+	protected string $scriptName;
+	protected string $scriptOwnerId;
+	protected string $scriptContext;
+	protected array $parameterValues;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceScriptId = $row->Field('service_script_id');
@@ -27,6 +30,7 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 		$this->scriptName = $row->Field('script_name');
 		$this->scriptOwnerId = $row->Field('script_owner_id');
 		$this->scriptContext = $row->Field('script_context');
+		$this->parameterValues = json_decode($row->Field('parameter_values'), true);
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -43,6 +47,7 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('scriptName', ['columnName' => 'script_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.name']),
 				new DatabaseObjectProperty('scriptOwnerId', ['columnName' => 'script_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.user_id']),
 				new DatabaseObjectProperty('scriptContext', ['columnName' => 'script_context', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.context']),
+				new DatabaseObjectProperty('parameterValues', ['columnName' => 'parameter_values', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
 				'INNER JOIN sentinel.scripts ON (service_scripts.script_id = scripts.script_id)',
@@ -83,6 +88,7 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 			'scriptName' => $this->scriptName,
 			'scriptOwnerId' => $this->scriptOwnerId,
 			'scriptContext' => $this->scriptContext,
+			'parameterValues' => (object) $this->parameterValues,
 		];
 	}
 
@@ -153,6 +159,17 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 		}
 
 		return self::kPermissionRead | self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete;
+	}
+
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
+		$value = static::MDOPreparePropertyValue($definition, $value, $otherProperties);
+
+		switch ($definition->PropertyName()) {
+		case 'parameterValues':
+			return json_encode((object) $value);
+		}
+
+		return $value;
 	}
 }
 
