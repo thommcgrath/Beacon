@@ -199,6 +199,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Character', 'sentin
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Dino', 'sentinel/dinos', 'dinoId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Group', 'sentinel/groups', 'groupId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupBan', 'sentinel/groupBans', 'groupBanId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupBucket', 'sentinel/groupBuckets', 'groupBucketId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupScript', 'sentinel/groupScripts', 'groupScriptId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupService', 'sentinel/groupServices', 'groupServiceId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupUser', 'sentinel/groupUsers', 'groupUserId');

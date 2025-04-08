@@ -4,52 +4,43 @@ namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
-class GroupService extends DatabaseObject implements JsonSerializable {
+class GroupBucket extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
 
-	protected string $groupServiceId;
+	protected string $groupBucketId;
 	protected string $groupId;
 	protected string $groupName;
 	protected string $groupColor;
-	protected string $groupOwnerId;
-	protected string $serviceId;
-	protected string $serviceDisplayName;
-	protected string $serviceColor;
-	protected string $serviceOwnerId;
+	protected string $bucketId;
+	protected string $bucketName;
 	protected int $permissionsMask;
 
 	public function __construct(BeaconRecordSet $row) {
-		$this->groupServiceId = $row->Field('group_service_id');
+		$this->groupBucketId = $row->Field('group_bucket_id');
 		$this->groupId = $row->Field('group_id');
 		$this->groupName = $row->Field('group_name');
 		$this->groupColor = $row->Field('group_color');
-		$this->groupOwnerId = $row->Field('group_owner_id');
-		$this->serviceId = $row->Field('service_id');
-		$this->serviceDisplayName = $row->Field('service_display_name');
-		$this->serviceColor = $row->Field('service_color');
-		$this->serviceOwnerId = $row->Field('service_owner_id');
+		$this->bucketId = $row->Field('bucket_id');
+		$this->bucketName = $row->Field('bucket_name');
 		$this->permissionsMask = $row->Field('permissions_mask');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema(
 			schema: 'sentinel',
-			table: 'group_services',
+			table: 'group_buckets',
 			definitions: [
-				new DatabaseObjectProperty('groupServiceId', ['columnName' => 'group_service_id', 'primaryKey' => true, 'required' => false]),
+				new DatabaseObjectProperty('groupBucketId', ['columnName' => 'group_bucket_id', 'primaryKey' => true, 'required' => false]),
 				new DatabaseObjectProperty('groupId', ['columnName' => 'group_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('groupName', ['columnName' => 'group_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.name']),
 				new DatabaseObjectProperty('groupColor', ['columnName' => 'group_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.color']),
-				new DatabaseObjectProperty('groupOwnerId', ['columnName' => 'group_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.user_id']),
-				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
-				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.color']),
-				new DatabaseObjectProperty('serviceOwnerId', ['columnName' => 'service_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.user_id']),
+				new DatabaseObjectProperty('bucketId', ['columnName' => 'bucket_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('bucketName', ['columnName' => 'bucket_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'buckets.name']),
 				new DatabaseObjectProperty('permissionsMask', ['columnName' => 'permissions_mask', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
-				'INNER JOIN sentinel.services ON (group_services.service_id = services.service_id)',
-				'INNER JOIN sentinel.groups ON (group_services.group_id = groups.group_id)',
+				'INNER JOIN sentinel.buckets ON (group_buckets.bucket_id = buckets.bucket_id)',
+				'INNER JOIN sentinel.groups ON (group_buckets.group_id = groups.group_id)',
 			],
 		);
 	}
@@ -57,11 +48,11 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$sortDirection = (isset($filters['sortDirection']) && strtolower($filters['sortDirection']) === 'descending') ? 'DESC' : 'ASC';
-		$sortColumn = 'serviceDisplayName';
+		$sortColumn = 'bucketName';
 		if (isset($filters['sortedColumn'])) {
 			switch ($filters['sortedColumn']) {
 			case 'groupName':
-			case 'serviceDisplayName':
+			case 'bucketName':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
@@ -69,25 +60,19 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->AddFromFilter($schema, $filters, 'groupId');
 		$parameters->AddFromFilter($schema, $filters, 'groupName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'groupOwnerId');
 		$parameters->AddFromFilter($schema, $filters, 'groupColor');
-		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'serviceOwnerId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceColor');
+		$parameters->AddFromFilter($schema, $filters, 'bucketId');
+		$parameters->AddFromFilter($schema, $filters, 'bucketName', 'ILIKE');
 	}
 
 	public function jsonSerialize(): mixed {
 		return [
-			'groupServiceId' => $this->groupServiceId,
+			'groupBucketId' => $this->groupBucketId,
 			'groupId' => $this->groupId,
 			'groupName' => $this->groupName,
 			'groupColor' => $this->groupColor,
-			'groupOwnerId' => $this->groupOwnerId,
-			'serviceId' => $this->serviceId,
-			'serviceDisplayName' => $this->serviceDisplayName,
-			'serviceColor' => $this->serviceColor,
-			'serviceOwnerId' => $this->serviceOwnerId,
+			'bucketId' => $this->bucketId,
+			'bucketName' => $this->bucketName,
 			'permissionsMask' => $this->permissionsMask,
 		];
 	}
@@ -109,11 +94,11 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 				throw new Exception('You do not have any permissions on the requested group.');
 			}
 		}
-		if (isset($filters['serviceId'])) {
-			if (Service::TestUserPermissions($filters['serviceId'], $userId)) {
+		if (isset($filters['bucketId'])) {
+			if (Bucket::TestUserPermissions($filters['bucketId'], $userId)) {
 				return;
 			} else {
-				throw new Exception('You do not have any permissions on the requested service.');
+				throw new Exception('You do not have any permissions on the requested bucket.');
 			}
 		}
 
@@ -122,23 +107,23 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
-		if (is_null($newObjectProperties) || isset($newObjectProperties['groupId']) === false || isset($newObjectProperties['serviceId']) === false) {
+		if (is_null($newObjectProperties) || isset($newObjectProperties['groupId']) === false || isset($newObjectProperties['bucketId']) === false) {
 			return false;
 		}
 
-		return Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageServices) && Service::TestUserPermissions($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ShareServices);
+		return Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageBuckets) && Bucket::TestUserPermissions($newObjectProperties['bucketId'], $user->UserId(), PermissionBits::ShareBuckets);
 	}
 
 	public function GetPermissionsForUser(User $user): int {
 		$permissions = 0;
 		$userId = $user->UserId();
 		$groupPermissions = Group::GetUserPermissions($this->groupId, $userId);
-		$servicePermissions = Service::GetUserPermissions($this->serviceId, $userId);
+		$bucketPermissions = Bucket::GetUserPermissions($this->bucketId, $userId);
 
-		if ($groupPermissions > 0 || $servicePermissions > 0) {
+		if ($groupPermissions > 0 || $bucketPermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;
 		}
-		if (($groupPermissions & PermissionBits::ManageServices) > 0 && ($servicePermissions & PermissionBits::ShareServices) > 0) {
+		if (($groupPermissions & PermissionBits::ManageBuckets) > 0 && ($bucketPermissions & PermissionBits::ShareBuckets) > 0) {
 			$permissions = $permissions | self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete;
 		}
 

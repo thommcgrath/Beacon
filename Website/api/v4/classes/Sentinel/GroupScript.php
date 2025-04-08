@@ -115,9 +115,24 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
-		if (isset($filters['groupId']) === false || Group::TestUserPermissions($filters['groupId'], Core::UserId()) === false) {
-			throw new Exception('Forbidden');
+		$userId = Core::UserId();
+		if (isset($filters['groupId'])) {
+			if (Group::TestUserPermissions($filters['groupId'], $userId)) {
+				return;
+			} else {
+				throw new Exception('You do not have any permissions on the requested group.');
+			}
 		}
+		if (isset($filters['scriptId'])) {
+			if (Script::TestUserPermissions($filters['scriptId'], $userId)) {
+				return;
+			} else {
+				throw new Exception('You do not have any permissions on the requested script.');
+			}
+		}
+
+		// There's no way to know what they user wants to do here, so block it.
+		throw new Exception('You must filter on groupId or scriptId.');
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {

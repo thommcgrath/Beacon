@@ -108,6 +108,23 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 			$rows->MoveNext();
 		}
 	}
+
+	public static function GetUserPermissions(string $bucketId, string $userId): int {
+		if (BeaconCommon::IsUUID($bucketId) === false || BeaconCommon::IsUUID($userId) === false) {
+			return 0;
+		}
+
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.bucket_permissions WHERE bucket_id = $1 AND user_id = $2;', $bucketId, $userId);
+		if ($rows->RecordCount() === 0) {
+			return 0;
+		}
+		return $rows->Field('permissions');
+	}
+
+	public static function TestUserPermissions(string $bucketId, string $userId, int $requiredBits = 1): bool {
+		return (static::GetUserPermissions($bucketId, $userId) & $requiredBits) > 0;
+	}
 }
 
 ?>
