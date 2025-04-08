@@ -173,7 +173,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 
 		if (isset($filters['type'])) {
 			$types = explode(',', $filters['type']);
-			if (count($types) === 0) {
+			if (count($types) === 1) {
 				$placeholder = $parameters->AddValue($types[0]);
 				$parameters->clauses[] = $schema->Accessor('type') . ' = $' . $placeholder;
 			} elseif (count($types) > 0) {

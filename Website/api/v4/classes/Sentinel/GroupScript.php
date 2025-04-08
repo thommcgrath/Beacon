@@ -1,54 +1,50 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
 
-class ServiceScript extends DatabaseObject implements JsonSerializable {
+class GroupScript extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
 		PreparePropertyValue as protected MDOPreparePropertyValue;
 	}
 
-	protected string $serviceScriptId;
-	protected string $serviceId;
-	protected string $serviceDisplayName;
-	protected string $serviceColor;
+	protected string $groupScriptId;
+	protected string $groupId;
 	protected string $scriptId;
 	protected string $scriptName;
 	protected string $scriptContext;
 	protected string $scriptLanguage;
+	protected int $permissionsMask;
 	protected array $parameterValues;
 
 	public function __construct(BeaconRecordSet $row) {
-		$this->serviceScriptId = $row->Field('service_script_id');
-		$this->serviceId = $row->Field('service_id');
-		$this->serviceDisplayName = $row->Field('service_display_name');
-		$this->serviceColor = $row->Field('service_color');
+		$this->groupScriptId = $row->Field('group_script_id');
+		$this->groupId = $row->Field('group_id');
 		$this->scriptId = $row->Field('script_id');
 		$this->scriptName = $row->Field('script_name');
 		$this->scriptContext = $row->Field('script_context');
 		$this->scriptLanguage = $row->Field('script_language');
+		$this->permissionsMask = $row->Field('permissions_mask');
 		$this->parameterValues = json_decode($row->Field('parameter_values'), true);
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema(
 			schema: 'sentinel',
-			table: 'service_scripts',
+			table: 'group_scripts',
 			definitions: [
-				new DatabaseObjectProperty('serviceScriptId', ['columnName' => 'service_script_id', 'primaryKey' => true, 'required' => false]),
-				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
-				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.color']),
-				new DatabaseObjectProperty('scriptId', ['columnName' => 'script_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('groupScriptId', ['columnName' => 'group_script_id', 'primaryKey' => true, 'required' => false]),
+				new DatabaseObjectProperty('groupId', ['columnName' => 'group_id']),
+				new DatabaseObjectProperty('scriptId', ['columnName' => 'script_id']),
 				new DatabaseObjectProperty('scriptName', ['columnName' => 'script_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.name']),
 				new DatabaseObjectProperty('scriptContext', ['columnName' => 'script_context', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.context']),
 				new DatabaseObjectProperty('scriptLanguage', ['columnName' => 'script_language', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.language']),
-				new DatabaseObjectProperty('parameterValues', ['columnName' => 'parameter_values', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('permissionsMask', ['columnName' => 'permissions_mask', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('parameterValues', ['columnName' => 'parameter_values', 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
-				'INNER JOIN sentinel.scripts ON (service_scripts.script_id = scripts.script_id)',
-				'INNER JOIN sentinel.services ON (service_scripts.service_id = services.service_id)',
+				'INNER JOIN sentinel.scripts ON (scripts.script_id = group_scripts.script_id)',
 			],
 		);
 	}
@@ -60,14 +56,14 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 		if (isset($filters['sortedColumn'])) {
 			switch ($filters['sortedColumn']) {
 			case 'scriptName':
-			case 'serviceDisplayName':
+			case 'scriptContext':
+			case 'scriptLanguage':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
-		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'groupId');
 		$parameters->AddFromFilter($schema, $filters, 'scriptId');
 		$parameters->AddFromFilter($schema, $filters, 'scriptName', 'ILIKE');
 
@@ -102,14 +98,13 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 
 	public function jsonSerialize(): mixed {
 		return [
-			'serviceScriptId' => $this->serviceScriptId,
-			'serviceId' => $this->serviceId,
-			'serviceDisplayName' => $this->serviceDisplayName,
-			'serviceColor' => $this->serviceColor,
+			'groupScriptId' => $this->groupScriptId,
+			'groupId' => $this->groupId,
 			'scriptId' => $this->scriptId,
 			'scriptName' => $this->scriptName,
 			'scriptContext' => $this->scriptContext,
 			'scriptLanguage' => $this->scriptLanguage,
+			'permissionsMask' => $this->permissionsMask,
 			'parameterValues' => (object) $this->parameterValues,
 		];
 	}
@@ -117,21 +112,17 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
 		$requiredScopes[] = Application::kScopeSentinelServicesRead;
 		$requiredScopes[] = Application::kScopeUsersRead;
-		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
-		}
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
-		if (isset($filters['serviceId']) === false || Service::TestUserPermissions($filters['serviceId'], Core::UserId()) === false) {
+		if (isset($filters['groupId']) === false || Group::TestUserPermissions($filters['groupId'], Core::UserId()) === false) {
 			throw new Exception('Forbidden');
 		}
 	}
 
-	// User must have Edit Services permission on the service, and Share Scripts permission on the script.
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
 		// We don't need to approve, only reject.
-		if (isset($newObjectProperties['serviceId']) === false || isset($newObjectProperties['scriptId']) || Service::TestUserPermissions($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ManageScripts) === false || Script::TestUserPermissions($newObjectProperties['scriptId'], $user->UserId(), PermissionBits::ShareScripts) === false) {
+		if (isset($newObjectProperties['groupId']) === false || isset($newObjectProperties['scriptId']) || Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageScripts) === false || Script::TestUserPermissions($newObjectProperties['scriptId'], $user->UserId(), PermissionBits::ShareScripts) === false) {
 			return false;
 		}
 		return true;
@@ -140,13 +131,13 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 	public function GetPermissionsForUser(User $user): int {
 		$permissions = 0;
 		$userId = $user->UserId();
-		$servicePermissions = Service::GetUserPermissions($this->serviceId, $userId);
+		$groupPermissions = Group::GetUserPermissions($this->groupId, $userId);
 		$scriptPermissions = Script::GetUserPermissions($this->scriptId, $userId);
 
-		if ($servicePermissions > 0 || $scriptPermissions > 0) {
+		if ($groupPermissions > 0 || $scriptPermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;
 		}
-		if (($servicePermissions & PermissionBits::ManageScripts) > 0 && ($scriptPermissions & PermissionBits::ShareScripts) > 0) {
+		if (($groupPermissions & PermissionBits::ManageScripts) > 0 && ($scriptPermissions & PermissionBits::ShareScripts) > 0) {
 			$permissions = $permissions | self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete;
 		}
 

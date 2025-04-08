@@ -13,14 +13,10 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 	protected string $groupColor;
 	protected string $groupOwnerId;
 	protected string $serviceId;
-	protected string $serviceName;
-	protected ?string $serviceNickname;
 	protected string $serviceDisplayName;
 	protected string $serviceColor;
 	protected string $serviceOwnerId;
 	protected int $permissionsMask;
-	protected int $editableAssetsMask;
-	protected int $shareableAssetsMask;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->groupServiceId = $row->Field('group_service_id');
@@ -29,8 +25,6 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$this->groupColor = $row->Field('group_color');
 		$this->groupOwnerId = $row->Field('group_owner_id');
 		$this->serviceId = $row->Field('service_id');
-		$this->serviceName = $row->Field('service_name');
-		$this->serviceNickname = $row->Field('service_nickname');
 		$this->serviceDisplayName = $row->Field('service_display_name');
 		$this->serviceColor = $row->Field('service_color');
 		$this->serviceOwnerId = $row->Field('service_owner_id');
@@ -48,8 +42,6 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('groupColor', ['columnName' => 'group_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.color']),
 				new DatabaseObjectProperty('groupOwnerId', ['columnName' => 'group_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.user_id']),
 				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-				new DatabaseObjectProperty('serviceName', ['columnName' => 'service_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.name']),
-				new DatabaseObjectProperty('serviceNickname', ['columnName' => 'service_nickname', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.nickname']),
 				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.color']),
 				new DatabaseObjectProperty('serviceOwnerId', ['columnName' => 'service_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.user_id']),
@@ -69,8 +61,6 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		if (isset($filters['sortedColumn'])) {
 			switch ($filters['sortedColumn']) {
 			case 'groupName':
-			case 'serviceName':
-			case 'serviceNickname':
 			case 'serviceDisplayName':
 				$sortColumn = $filters['sortedColumn'];
 				break;
@@ -82,8 +72,6 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'groupOwnerId');
 		$parameters->AddFromFilter($schema, $filters, 'groupColor');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'serviceNickname', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'serviceOwnerId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceColor');
@@ -97,8 +85,6 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 			'groupColor' => $this->groupColor,
 			'groupOwnerId' => $this->groupOwnerId,
 			'serviceId' => $this->serviceId,
-			'serviceName' => $this->serviceName,
-			'serviceNickname' => $this->serviceNickname,
 			'serviceDisplayName' => $this->serviceDisplayName,
 			'serviceColor' => $this->serviceColor,
 			'serviceOwnerId' => $this->serviceOwnerId,
@@ -119,7 +105,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		if (isset($filters['groupId'])) {
 			// Ensure that the user is a member of this group before listing all servers for it
 			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT 1 FROM sentinel.group_users WHERE group_id = $1 AND user_id = $2;', $filters['groupId'], $userId);
+			$rows = $database->Query('SELECT 1 FROM sentinel.group_permissions WHERE group_id = $1 AND user_id = $2;', $filters['groupId'], $userId);
 			if ($rows->RecordCount() === 0) {
 				throw new Exception('You do not have any permissions on the requested group.');
 			}
@@ -144,13 +130,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 			return false;
 		}
 
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT 1 FROM sentinel.group_permissions WHERE group_id = $1 AND user_id = $2 AND (permissions & $3) > 0;', $newObjectProperties['groupId'], $user->UserId(), Group::GroupPermissionManage);
-		if ($rows->RecordCount() === 0) {
-			return false;
-		}
-		$rows = $database->Query('SELECT 1 FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2 AND (permissions & $3) > 0;', $newObjectProperties['serviceId'], $user->UserId(), Service::ServicePermissionManage);
-		return $rows->RecordCount() === 1;
+		return Group::TestUserPermission($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageServices) && Service::TestUserPermission($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ShareServices);
 	}
 
 	public function GetPermissionsForUser(User $user): int {
@@ -159,24 +139,20 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$manageGroup = false;
 		$manageService = false;
 
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.group_permissions WHERE group_id = $1 AND user_id = $2;', $this->groupId, $userId);
-		if ($rows->RecordCount() === 1) {
+		$groupPermissions = Group::GetUserPermissions($this->groupId, $userId);
+		if ($groupPermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;
-			if (($rows->Field('permissions') & Group::GroupPermissionManage) > 0) {
-				$manageGroup = true;
-			}
+			$manageGroup = ($groupPermissions & PermissionBits::ManageServices) > 0;
 		}
-		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $userId);
-		if ($rows->RecordCount() === 1) {
+
+		$servicePermissions = Service::GetUserPermissions($this->serviceId, $userId);
+		if ($servicePermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;
-			if (($rows->Field('permissions') & Service::ServicePermissionManage) > 0) {
-				$manageService = true;
-			}
+			$manageService = ($servicePermissions & PermissionBits::ShareServices) > 0;
 		}
 
 		if ($manageGroup && $manageService) {
-			$permissions = $permissions | self::kPermissionUpdate | self::kPermissionDelete;
+			$permissions = $permissions | self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete;
 		}
 
 		return $permissions;

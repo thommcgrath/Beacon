@@ -15,8 +15,6 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 	protected string $userId;
 	protected string $username;
 	protected int $permissions;
-	protected int $editableAssetsMask;
-	protected int $shareableAssetsMask;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->groupUserId = $row->Field('group_user_id');
@@ -27,8 +25,6 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 		$this->userId = $row->Field('user_id');
 		$this->username = $row->Field('username');
 		$this->permissions = $row->Field('permissions');
-		$this->editableAssetsMask = $row->Field('editable_assets');
-		$this->shareableAssetsMask = $row->Field('shareable_assets');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -44,8 +40,6 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('username', ['columnName' => 'username', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
 				new DatabaseObjectProperty('permissions', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-				new DatabaseObjectProperty('editableAssetsMask', ['columnName' => 'editable_assets', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-				new DatabaseObjectProperty('shareableAssetsMask', ['columnName' => 'shareable_assets', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
 				'INNER JOIN public.users ON (group_users.user_id = users.user_id)',
@@ -85,8 +79,6 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 			'username' => $this->username,
 			'usernameFull' => $this->username . '#' . substr($this->userId, 0, 8),
 			'permissions' => $this->permissions,
-			'editableAssetsMask' => $this->editableAssetsMask,
-			'shareableAssetsMask' => $this->shareableAssetsMask,
 		];
 	}
 
@@ -102,15 +94,13 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 		$userId = Core::UserId();
 		if (isset($filters['groupId'])) {
 			// Ensure that the user is a member of this group before listing all users for it
-			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT 1 FROM sentinel.group_users WHERE group_id = $1 AND user_id = $2;', $filters['groupId'], $userId);
-			if ($rows->RecordCount() === 0) {
+			if (Group::TestUserPermissions($filters['groupId'], $userId) === false) {
 				throw new Exception('Forbidden');
 			}
 			return;
 		}
 
-		// Otherwise, force listing their own members
+		// Otherwise, force listing their own memberships
 		$filters['userId'] = $userId;
 	}
 
@@ -119,32 +109,20 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 			return false;
 		}
 
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT 1 FROM sentinel.group_permissions WHERE group_id = $1 AND user_id = $2 AND (permissions & $3) > 0;', $newObjectProperties['groupId'], $user->UserId(), Group::GroupPermissionManage);
-		return $rows->RecordCount() === 1;
+		return Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageUsers);
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		$userId = $user->UserId();
-		if ($this->userId == $userId) {
-			// The user cannot edit themselves, but must be able to remove themselves from the group. Unless they are the group owner.
-			if ($this->groupOwnerId == $userId) {
-				return self::kPermissionRead;
-			} else {
-				return self::kPermissionRead | self::kPermissionDelete;
-			}
-		}
-
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.group_permissions WHERE group_id = $1 AND user_id = $2;', $this->groupId, $userId);
-		if ($rows->RecordCount() === 0) {
+		$permissions = Group::GetUserPermissions($this->groupId, $user->UserId());
+		if ($permissions === 0) {
 			return self::kPermissionNone;
 		}
-		$permissions = self::kPermissionRead;
-		if (($row->Field('permissions') & Group::GroupPermissionManage) > 0) {
-			$permissions = $permissions | self::kPermissionUpdate | self::kPermissionDelete;
+
+		if (($permissions & PermissionBits::ManageUsers) > 0) {
+			return self::kPermissionAll;
+		} else {
+			return self::kPermissionRead;
 		}
-		return $permissions;
 	}
 }
 

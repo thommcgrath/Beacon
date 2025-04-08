@@ -497,6 +497,23 @@ class Service extends DatabaseObject implements JsonSerializable {
 			$rows->MoveNext();
 		}
 	}
+
+	public static function GetUserPermissions(string $serviceId, string $userId): int {
+		if (BeaconCommon::IsUUID($serviceId) === false || BeaconCommon::IsUUID($userId) === false) {
+			return 0;
+		}
+
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $serviceId, $userId);
+		if ($rows->RecordCount() === 0) {
+			return 0;
+		}
+		return $rows->Field('permissions');
+	}
+
+	public static function TestUserPermissions(string $serviceId, string $userId, int $requiredBits = 1): bool {
+		return (static::GetUserPermissions($serviceId, $userId) & $requiredBits) > 0;
+	}
 }
 
 ?>

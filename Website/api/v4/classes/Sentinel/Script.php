@@ -87,9 +87,8 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'name', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'username', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'userId');
-		$parameters->AddFromFilter($schema, $filters, 'context');
 
-		if (isset($filers['language'])) {
+		if (isset($filters['language'])) {
 			$languages = explode(',', $filters['language']);
 			if (count($languages) === 1) {
 				$placeholder = $parameters->AddValue($languages[0]);
@@ -100,6 +99,20 @@ class Script extends DatabaseObject implements JsonSerializable {
 					$placeholders[] = '$' . $parameters->AddValue($language);
 				}
 				$parameters->clauses[] = $schema->Accessor('language') . ' IN (' . implode(', ', $placeholders) . ')';
+			}
+		}
+
+		if (isset($filters['context'])) {
+			$contexts = explode(',', $filters['context']);
+			if (count($contexts) === 1) {
+				$placeholder = $parameters->AddValue($contexts[0]);
+				$parameters->clauses[] = $schema->Accessor('context') . ' = $' . $placeholder;
+			} elseif (count($contexts) > 0) {
+				$placeholders = [];
+				foreach ($contexts as $context) {
+					$placeholders[] = '$' . $parameters->AddValue($context);
+				}
+				$parameters->clauses[] = $schema->Accessor('context') . ' IN (' . implode(', ', $placeholders) . ')';
 			}
 		}
 	}
@@ -166,6 +179,23 @@ class Script extends DatabaseObject implements JsonSerializable {
 		}
 
 		return $value;
+	}
+
+	public static function GetUserPermissions(string $scriptId, string $userId): int {
+		if (BeaconCommon::IsUUID($scriptId) === false || BeaconCommon::IsUUID($userId) === false) {
+			return 0;
+		}
+
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.script_permissions WHERE script_id = $1 AND user_id = $2;', $scriptId, $userId);
+		if ($rows->RecordCount() === 0) {
+			return 0;
+		}
+		return $rows->Field('permissions');
+	}
+
+	public static function TestUserPermissions(string $scriptId, string $userId, int $requiredBits = 1): bool {
+		return (static::GetUserPermissions($scriptId, $userId) & $requiredBits) > 0;
 	}
 }
 
