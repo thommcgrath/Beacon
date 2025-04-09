@@ -113,22 +113,26 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 
 	protected string $messageId;
 	protected string $serviceId;
+	protected string $serviceDisplayName;
+	protected string $eventName;
 	protected string $type;
 	protected float $time;
 	protected string $level;
 	protected string $analyzerStatus;
 	protected array $metadata;
-	protected array $localizations;
+	protected string $message;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->messageId = $row->Field('message_id');
 		$this->serviceId = $row->Field('service_id');
+		$this->serviceDisplayName = $row->Field('service_display_name');
+		$this->eventName = $row->Field('event_name');
 		$this->type = $row->Field('type');
 		$this->time = floatval($row->Field('log_time'));
 		$this->level = $row->Field('level');
 		$this->analyzerStatus = $row->Field('analyzer_status');
 		$this->metadata = json_decode($row->Field('metadata'), true);
-		$this->localizations = json_decode($row->Field('localizations'), true);
+		$this->message = $row->Field('message');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -138,13 +142,19 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 			definitions: [
 				new DatabaseObjectProperty('messageId', ['primaryKey' => true, 'columnName' => 'message_id']),
 				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
+				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
 				new DatabaseObjectProperty('type'),
 				new DatabaseObjectProperty('time', ['columnName' => 'log_time', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 				new DatabaseObjectProperty('eventName', ['columnName' => 'event_name']),
 				new DatabaseObjectProperty('level'),
 				new DatabaseObjectProperty('analyzerStatus', ['columnName' => 'analyzer_status']),
 				new DatabaseObjectProperty('metadata'),
-				new DatabaseObjectProperty('localizations', ['accessor' => '(SELECT json_object_agg(language, message) FROM (SELECT language, message FROM sentinel.service_log_messages WHERE service_log_messages.message_id = service_logs.message_id) AS localization_template)']),
+				new DatabaseObjectProperty('message', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_log_messages.message']),
+			],
+			joins: [
+				'INNER JOIN sentinel.service_log_messages ON (service_log_messages.message_id = service_logs.message_id)',
+				'INNER JOIN sentinel.services ON (services.service_id = service_logs.service_id)',
+				'INNER JOIN sentinel.service_permissions ON (service_logs.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
 			],
 		);
 	}
@@ -162,41 +172,24 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 			$parameters->orderBy = $schema->Accessor('time') . ' ' . $sortDirection;
 		}
 
+		$language = 'en';
+		if (isset($filters['lang']) && strlen($filters['lang']) === 2) {
+			$language = strtolower($filters['lang']);
+		}
+		$langPlaceholder = $parameters->AddValue($language);
+		$parameters->clauses[] = 'service_log_messages.language = $' . $langPlaceholder;
+
+		$parameters->allowAll = true;
+
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'analyzerStatus');
+		$parameters->AddFromFilter($schema, $filters, 'analyzerStatus', 'in');
+		$parameters->AddFromFilter($schema, $filters, 'eventName', 'in');
+		$parameters->AddFromFilter($schema, $filters, 'type', 'in');
+		$parameters->AddFromFilter($schema, $filters, 'level', 'in');
 
 		if (isset($filters['message'])) {
-			$languagePlaceholder = $parameters->AddValue('english');
 			$queryPlaceholder = $parameters->AddValue($filters['message']);
-			$parameters->clauses[] = 'message @@ websearch_to_tsquery($' . $languagePlaceholder . ', $' . $queryPlaceholder . ')';
-		}
-
-		if (isset($filters['type'])) {
-			$types = explode(',', $filters['type']);
-			if (count($types) === 1) {
-				$placeholder = $parameters->AddValue($types[0]);
-				$parameters->clauses[] = $schema->Accessor('type') . ' = $' . $placeholder;
-			} elseif (count($types) > 0) {
-				$placeholders = [];
-				foreach ($types as $type) {
-					$placeholders[] = '$' . $parameters->AddValue($type);
-				}
-				$parameters->clauses[] = $schema->Accessor('type') . ' IN (' . implode(', ', $placeholders) . ')';
-			}
-		}
-
-		if (isset($filters['level'])) {
-			$levels = explode(',', $filters['level']);
-			if (count($levels) === 0) {
-				$placeholder = $parameters->AddValue($levels[0]);
-				$parameters->clauses[] = $schema->Accessor('level') . ' = $' . $placeholder;
-			} elseif (count($levels) > 0) {
-				$placeholders = [];
-				foreach ($levels as $level) {
-					$placeholders[] = '$' . $parameters->AddValue($level);
-				}
-				$parameters->clauses[] = $schema->Accessor('level') . ' IN (' . implode(', ', $placeholders) . ')';
-			}
+			$parameters->clauses[] = 'service_log_messages.vector @@ websearch_to_tsquery(sentinel.language_shortcode_to_regconfig($' . $langPlaceholder . '), $' . $queryPlaceholder . ')';
 		}
 
 		$metadataFilters = ['characterId', 'tribeId', 'playerId', 'dinoId'];
@@ -238,12 +231,14 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		return [
 			'messageId' => $this->messageId,
 			'serviceId' => $this->serviceId,
+			'serviceDisplayName' => $this->serviceDisplayName,
+			'eventName' => $this->eventName,
 			'type' => $this->type,
 			'time' => $this->time,
 			'level' => $this->level,
 			'analyzerStatus' => $this->analyzerStatus,
 			'metadata' => $this->metadata,
-			'message' => $this->localizations,
+			'message' => $this->message,
 		];
 	}
 
@@ -279,30 +274,12 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		return 	in_array($this->level, self::ErrorLogLevels);
 	}
 
-	public static function AuthorizeListRequest(array &$filters): void {
-		if (isset($filters['serviceId']) === false) {
-			throw new Exception('Must include a serviceId');
-		}
-
-		$serviceId = $filters['serviceId'];
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $serviceId, Core::UserId());
-		if ($rows->RecordCount() === 0 || ($rows->Field('permissions') & Service::ServicePermissionUsage) === 0) {
-			throw new Exception('Service not found');
-		}
-	}
-
 	public function GetPermissionsForUser(User $user): int {
-		if ($this->userId === $user->UserId()) {
-			return self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
-		}
-
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $user->UserId());
-		if ($rows->RecordCount() === 0) {
+		if (Service::TestUserPermissions($this->serviceId, $user->UserId())) {
+			return self::kPermissionRead;
+		} else {
 			return self::kPermissionNone;
 		}
-		$permissions = self::kPermissionRead;
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {

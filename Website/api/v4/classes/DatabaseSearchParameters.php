@@ -21,9 +21,23 @@ class DatabaseSearchParameters {
 
 		$propertyName = $property->PropertyName();
 		if (isset($filters[$propertyName])) {
-			$value = $filters[$propertyName];
-			$this->clauses[] = $schema->Comparison($property, $operator, $this->placeholder++, $value); // $value is byref in case the value needs to be tweaked
-			$this->values[] = $value;
+			if ($operator === 'in') {
+				$values = explode(',', $filters[$propertyName]);
+				if (count($values) === 1) {
+					$placeholder = $this->AddValue($values[0]);
+					$this->clauses[] = $schema->Accessor($property) . ' = $' . $placeholder;
+				} elseif (count($values) > 0) {
+					$placeholders = [];
+					foreach ($values as $value) {
+						$placeholders[] = '$' . $this->AddValue($value);
+					}
+					$this->clauses[] = $schema->Accessor($property) . ' IN (' . implode(', ', $placeholders) . ')';
+				}
+			} else {
+				$value = $filters[$propertyName];
+				$this->clauses[] = $schema->Comparison($property, $operator, $this->placeholder++, $value); // $value is byref in case the value needs to be tweaked
+				$this->values[] = $value;
+			}
 		}
 	}
 
