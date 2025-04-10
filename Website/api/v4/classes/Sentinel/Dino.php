@@ -7,6 +7,7 @@ use BeaconCommon, BeaconRecordSet, JsonSerializable;
 class Dino extends DatabaseObject implements JsonSerializable {
 	protected string $dinoId;
 	protected string $dinoNumber;
+	protected string $dinoNumber64;
 	protected string $dinoName;
 	protected string $dinoSpecies;
 	protected string $dinoSpeciesPath;
@@ -23,8 +24,9 @@ class Dino extends DatabaseObject implements JsonSerializable {
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->dinoId = $row->Field('dino_id');
-		$this->dinoNumber = $row->Field('dino_number');
 		$this->dinoName = $row->Field('dino_name');
+		$this->dinoNumber = $row->Field('dino_number');
+		$this->dinoNumber64 = $row->Field('dino_number_64');
 		$this->dinoSpecies = $row->Field('dino_species');
 		$this->dinoSpeciesPath = $row->Field('dino_species_path');
 		$this->dinoLevel = $row->Field('dino_level');
@@ -46,6 +48,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			definitions: [
 				new DatabaseObjectProperty('dinoId', ['columnName' => 'dino_id', 'primaryKey' => true, 'required' => false]),
 				new DatabaseObjectProperty('dinoNumber', ['columnName' => 'dino_number', 'accessor' => 'dinos.visual_dino_number']),
+				new DatabaseObjectProperty('dinoNumber64', ['columnName' => 'dino_number_64', 'accessor' => 'dinos.dino_number']),
 				new DatabaseObjectProperty('dinoName', ['columnName' => 'dino_name', 'accessor' => 'dinos.name']),
 				new DatabaseObjectProperty('dinoSpecies', ['columnName' => 'dino_species', 'accessor' => 'dinos.species']),
 				new DatabaseObjectProperty('dinoSpeciesPath', ['columnName' => 'dino_species_path', 'accessor' => 'dinos.species_path']),
@@ -86,7 +89,9 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'dinoName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'dinoNumber');
+		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'tribeId');
 		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
 	}
 
@@ -115,6 +120,16 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		if ($editable) {
 			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
 		}
+	}
+
+	public function ServiceId(): string {
+		return $this->serviceId;
+	}
+
+	public function DinoNumberParts(): array {
+		$high = bcdiv($this->dinoNumber64, bcpow("2", "32"), 0);
+		$low = bcmod($this->dinoNumber64, bcpow("2", "32"));
+		return [(int)$high, (int)$low];
 	}
 }
 

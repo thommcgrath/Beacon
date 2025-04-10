@@ -159,6 +159,9 @@ Core::RegisterRoutes(
 		'/sentinel/scripts/test' => [
 			'POST' => 'sentinel/scripts/test',
 		],
+		'/sentinel/dinos/{dinoId}/locate' => [
+			'POST' => 'sentinel/dinos/locate',
+		],
 	]
 );
 

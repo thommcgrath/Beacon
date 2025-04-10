@@ -419,6 +419,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 		return 'service-' . strtolower(str_replace('-', '', $this->serviceId));
 	}
 
+	public function IsConnected(): bool {
+		return $this->isConnected;
+	}
+
 	public function GetPermissions(string $userId): int {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $userId);

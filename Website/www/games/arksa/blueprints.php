@@ -14,6 +14,7 @@ $tagHuman = '';
 $tag = trim($_GET['tag'] ?? '');
 $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 $search = strtolower(trim($_GET['search'] ?? ''));
+$autoforward = strtolower(trim($_GET['autoforward'] ?? '')) === 'true' ? 'true' : '';
 
 $filters = [
 	'page' => $page,
@@ -84,6 +85,10 @@ if (is_null($pack)) {
 	$pageDescriptionHtml = "Beacon has built-in support for <a href=\"{$modSteamUrl}\">{$modName}</a>. This means its blueprints are already part of Beacon's database and you can begin using them immediately. We also have a full list of <a href=\"/Games/ArkSA/Mods/{$modSteamId}/Cheats\">spawn codes for {$modName}</a>.";
 }
 
+if (empty($autoforward) === false) {
+	$queryParams['autoforward'] = $autoforward;
+}
+
 BeaconTemplate::SetCanonicalPath(BuildUrl($baseUrl, $currentGroup, $queryParams, $page, false));
 BeaconTemplate::SetTitle($pageTitle);
 BeaconTemplate::SetPageDescription($pageDescriptionPlain);
@@ -137,6 +142,9 @@ $clearSearchUrl = BuildUrl($baseUrl, $currentGroup, array_filter($queryParams, f
 				echo '</p><p class="text-center"><a href="' . htmlentities($clearSearchUrl) . '">Clear Search</a>';
 			}
 			echo '</p>';
+		} elseif ($pageContents['totalResults'] === 1 && isset($_GET['autoforward']) && strtolower($_GET['autoforward']) === 'true') {
+			$result = $pageContents['results'][0];
+			BeaconCommon::Redirect('/Games/ArkSA/Mods/' . $result->ContentPackMarketplaceId() . '/' . urlencode($result->ClassString()), true);
 		} else {
 			echo '<p>Results ' . htmlentities(number_format($rangeStart)) . ' to ' . htmlentities(number_format($rangeEnd)) . ' of ' . htmlentities(number_format($resultCount));
 			if (empty($search) === false) {
