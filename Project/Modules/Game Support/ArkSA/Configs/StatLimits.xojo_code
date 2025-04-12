@@ -26,7 +26,7 @@ Inherits ArkSA.ConfigGroup
 		    
 		    EnableClamping = True
 		    
-		    Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "ItemStatClamps[" + I.ToString + "]=" + Self.mValues(I).DoubleValue.PrettyText, I))
+		    Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "ItemStatClamps[" + I.ToString + "]=" + Min(Self.mValues(I).DoubleValue, ArkSA.EngramStat.MaxStatValue).PrettyText, I))
 		  Next
 		  
 		  Values.Add(New ArkSA.ConfigValue("CommandLineOption", "?", "ClampItemStats=" + If(EnableClamping, "True", "False")))
@@ -59,35 +59,35 @@ Inherits ArkSA.ConfigGroup
 		  #Pragma Unused EncryptedData
 		  
 		  If SaveData.HasKey("Armor") Then
-		    Self.mValues(ArkSA.EngramStat.IndexArmor) = SaveData.Value("Armor").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexArmor) = Min(SaveData.Value("Armor").DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If SaveData.HasKey("Generic") Then
-		    Self.mValues(ArkSA.EngramStat.IndexGenericQuality) = SaveData.Value("Generic").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexGenericQuality) = Min(SaveData.Value("Generic").DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If SaveData.HasKey("Hyper") Then
-		    Self.mValues(ArkSA.EngramStat.IndexHyperthermal) = SaveData.Value("Hyper").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexHyperthermal) = Min(SaveData.Value("Hyper").DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If SaveData.HasKey("Hypo") Then
-		    Self.mValues(ArkSA.EngramStat.IndexHypothermal) = SaveData.Value("Hypo").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexHypothermal) = Min(SaveData.Value("Hypo").DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If SaveData.HasKey("Durability") Then
-		    Self.mValues(ArkSA.EngramStat.IndexMaxDurability) = SaveData.Value("Durability").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexMaxDurability) = Min(SaveData.Value("Durability").DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If SaveData.HasKey("Ammo") Then
-		    Self.mValues(ArkSA.EngramStat.IndexWeaponAmmo) = SaveData.Value("Ammo").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexWeaponAmmo) = Min(SaveData.Value("Ammo").DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If SaveData.HasKey("Damage") Then
-		    Self.mValues(ArkSA.EngramStat.IndexWeaponDamage) = SaveData.Value("Damage").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexWeaponDamage) = Min(SaveData.Value("Damage").DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If SaveData.HasKey("Weight") Then
-		    Self.mValues(ArkSA.EngramStat.IndexWeight) = SaveData.Value("Weight").DoubleValue
+		    Self.mValues(ArkSA.EngramStat.IndexWeight) = Min(SaveData.Value("Weight").DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -97,35 +97,35 @@ Inherits ArkSA.ConfigGroup
 		  #Pragma Unused EncryptedData
 		  
 		  If (Self.mValues(ArkSA.EngramStat.IndexArmor) Is Nil) = False Then
-		    SaveData.Value("Armor") = Self.mValues(ArkSA.EngramStat.IndexArmor).DoubleValue
+		    SaveData.Value("Armor") = Min(Self.mValues(ArkSA.EngramStat.IndexArmor).DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If (Self.mValues(ArkSA.EngramStat.IndexGenericQuality) Is Nil) = False Then
-		    SaveData.Value("Generic") = Self.mValues(ArkSA.EngramStat.IndexGenericQuality).DoubleValue
+		    SaveData.Value("Generic") = Min(Self.mValues(ArkSA.EngramStat.IndexGenericQuality).DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If (Self.mValues(ArkSA.EngramStat.IndexHyperthermal) Is Nil) = False Then
-		    SaveData.Value("Hyper") = Self.mValues(ArkSA.EngramStat.IndexHyperthermal).DoubleValue
+		    SaveData.Value("Hyper") = Min(Self.mValues(ArkSA.EngramStat.IndexHyperthermal).DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If (Self.mValues(ArkSA.EngramStat.IndexHypothermal) Is Nil) = False Then
-		    SaveData.Value("Hypo") = Self.mValues(ArkSA.EngramStat.IndexHypothermal).DoubleValue
+		    SaveData.Value("Hypo") = Min(Self.mValues(ArkSA.EngramStat.IndexHypothermal).DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If (Self.mValues(ArkSA.EngramStat.IndexMaxDurability) Is Nil) = False Then
-		    SaveData.Value("Durability") = Self.mValues(ArkSA.EngramStat.IndexMaxDurability).DoubleValue
+		    SaveData.Value("Durability") = Min(Self.mValues(ArkSA.EngramStat.IndexMaxDurability).DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If (Self.mValues(ArkSA.EngramStat.IndexWeaponAmmo) Is Nil) = False Then
-		    SaveData.Value("Ammo") = Self.mValues(ArkSA.EngramStat.IndexWeaponAmmo).DoubleValue
+		    SaveData.Value("Ammo") = Min(Self.mValues(ArkSA.EngramStat.IndexWeaponAmmo).DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If (Self.mValues(ArkSA.EngramStat.IndexWeaponDamage) Is Nil) = False Then
-		    SaveData.Value("Damage") = Self.mValues(ArkSA.EngramStat.IndexWeaponDamage).DoubleValue
+		    SaveData.Value("Damage") = Min(Self.mValues(ArkSA.EngramStat.IndexWeaponDamage).DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		  
 		  If (Self.mValues(ArkSA.EngramStat.IndexWeight) Is Nil) = False Then
-		    SaveData.Value("Weight") = Self.mValues(ArkSA.EngramStat.IndexWeight).DoubleValue
+		    SaveData.Value("Weight") = Min(Self.mValues(ArkSA.EngramStat.IndexWeight).DoubleValue, ArkSA.EngramStat.MaxStatValue)
 		  End If
 		End Sub
 	#tag EndEvent

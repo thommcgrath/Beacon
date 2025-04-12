@@ -2,7 +2,7 @@
 Protected Class EngramStat
 	#tag Method, Flags = &h0
 		Function ComputeEffectiveLimit(Value As Double) As Double
-		  Return Self.mInitialValueConstant + ((Value * Self.mStateModifierScale) * (Self.mRandomizerRangeMultiplier * Self.mInitialValueConstant))
+		  Return Self.mInitialValueConstant + (Min(Value, Self.MaxStatValue) * Self.mStateModifierScale * Self.mRandomizerRangeMultiplier * Self.mInitialValueConstant)
 		End Function
 	#tag EndMethod
 
@@ -123,7 +123,7 @@ Protected Class EngramStat
 
 	#tag Method, Flags = &h0
 		Function SolveForDesiredLimit(Limit As Double) As Double
-		  Return (Limit - Self.mInitialValueConstant) / (Self.mStateModifierScale * Self.mRandomizerRangeMultiplier * Self.mInitialValueConstant)
+		  Return Min((Limit - Self.mInitialValueConstant) / (Self.mStateModifierScale * Self.mRandomizerRangeMultiplier * Self.mInitialValueConstant), Self.MaxStatValue)
 		End Function
 	#tag EndMethod
 
@@ -196,6 +196,9 @@ Protected Class EngramStat
 	#tag EndConstant
 
 	#tag Constant, Name = LastIndex, Type = Double, Dynamic = False, Default = \"7", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = MaxStatValue, Type = Double, Dynamic = False, Default = \"65535", Scope = Public
 	#tag EndConstant
 
 
