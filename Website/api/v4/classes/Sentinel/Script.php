@@ -8,7 +8,9 @@ class Script extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
 		Validate as protected MutableDatabaseObjectValidate;
 		PreparePropertyValue as protected MDOPreparePropertyValue;
+		InitializeProperties as protected MDOInitializeProperties;
 	}
+	use SentinelObject;
 
 	const LanguageSimple = 'Simple';
 	const LanguageJavaScript = 'JavaScript';
@@ -19,7 +21,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 
 	protected string $scriptId;
 	protected string $userId;
-	protected string $usernameFull;
 	protected string $name;
 	protected string $context;
 	protected array $parameters;
@@ -33,7 +34,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 	public function __construct(BeaconRecordSet $row) {
 		$this->scriptId = $row->Field('script_id');
 		$this->userId = $row->Field('user_id');
-		$this->usernameFull = $row->Field('username_full');
 		$this->name = $row->Field('name');
 		$this->context = $row->Field('context');
 		$this->parameters = json_decode($row->Field('parameters'), true);
@@ -51,8 +51,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 			table: 'scripts',
 			definitions: [
 				new DatabaseObjectProperty('scriptId', ['columnName' => 'script_id', 'primaryKey' => true, 'required' => false]),
-				new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-				new DatabaseObjectProperty('usernameFull', ['columnName' => 'username_full', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username_full']),
+				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 				new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('context', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('parameters', ['columnName' => 'parameters', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
@@ -77,7 +76,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 		if (isset($filters['sortedColumn'])) {
 			switch ($filters['sortedColumn']) {
 			case 'name':
-			case 'username':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
@@ -86,7 +84,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'name', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'username', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'userId');
 
 		if (isset($filters['language'])) {
 			$languages = explode(',', $filters['language']);
@@ -120,8 +117,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'scriptId' => $this->scriptId,
-			'userId' => $this->userId,
-			'usernameFull' => $this->usernameFull,
 			'name' => $this->name,
 			'context' => $this->context,
 			'parameters' => $this->parameters,
@@ -135,10 +130,9 @@ class Script extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
-		$requiredScopes[] = Application::kScopeUsersRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
 
@@ -147,15 +141,27 @@ class Script extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		if (is_null($user) || $this->userId !== $user->UserId() || $this->permissions === 0) {
+		if (is_null($user)) {
 			return self::kPermissionNone;
+		} elseif ($user->UserId() === $this->userId) {
+			$scriptPermissions = $this->permissions;
+		} else {
+			$scriptPermissions = static::GetSentinelPermissions($this->scriptId, $user->UserId());
 		}
 
-		$permissions = self::kPermissionRead;
-		if (($permissions & PermissionBits::EditScripts) === 0) {
+		$permissions = 0;
+		if (($scriptPermissions & PermissionBits::Membership) > 0) {
+			$permissions = $permissions | self::kPermissionRead;
+		}
+		if (($scriptPermissions & PermissionBits::EditScripts) > 0) {
 			$permissions = $permissions | self::kPermissionUpdate | self::kPermissionDelete;
 		}
 		return $permissions;
+	}
+
+	protected static function InitializeProperties(array &$properties): void {
+		static::MDOInitializeProperties($properties);
+		$properties['userId'] = Core::UserId();
 	}
 
 	protected static function Validate(array $properties): void {
@@ -181,21 +187,17 @@ class Script extends DatabaseObject implements JsonSerializable {
 		return $value;
 	}
 
-	public static function GetUserPermissions(string $scriptId, string $userId): int {
-		if (BeaconCommon::IsUUID($scriptId) === false || BeaconCommon::IsUUID($userId) === false) {
+	public static function GetSentinelPermissions(string $objectId, string $userId): int {
+		if (BeaconCommon::IsUUID($objectId) === false || BeaconCommon::IsUUID($userId) === false) {
 			return 0;
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.script_permissions WHERE script_id = $1 AND user_id = $2;', $scriptId, $userId);
+		$rows = $database->Query('SELECT permissions FROM sentinel.script_permissions WHERE script_id = $1 AND user_id = $2;', $objectId, $userId);
 		if ($rows->RecordCount() === 0) {
 			return 0;
 		}
 		return $rows->Field('permissions');
-	}
-
-	public static function TestUserPermissions(string $scriptId, string $userId, int $requiredBits = 1): bool {
-		return (static::GetUserPermissions($scriptId, $userId) & $requiredBits) > 0;
 	}
 }
 

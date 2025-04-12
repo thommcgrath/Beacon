@@ -98,9 +98,9 @@ class PlayerNote extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelPlayersRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelPlayersWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
 

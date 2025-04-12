@@ -4,8 +4,8 @@ use BeaconAPI\v4\{Application, Response, Core};
 use BeaconAPI\v4\Sentinel\{Service, Group};
 
 function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-	$requiredScopes[] = Application::kScopeSentinelSubscriptionRead;
-	$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+	$requiredScopes[] = Application::kScopeSentinelRead;
+	$requiredScopes[] = Application::kScopeSentinelWrite;
 }
 
 function handleRequest(array $context): Response {

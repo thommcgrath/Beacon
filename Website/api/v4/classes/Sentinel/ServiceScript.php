@@ -115,15 +115,14 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
-		$requiredScopes[] = Application::kScopeUsersRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
-		if (isset($filters['serviceId']) === false || Service::TestUserPermissions($filters['serviceId'], Core::UserId()) === false) {
+		if (isset($filters['serviceId']) === false || Service::TestSentinelPermissions($filters['serviceId'], Core::UserId()) === false) {
 			throw new Exception('Forbidden');
 		}
 	}
@@ -131,7 +130,7 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 	// User must have Edit Services permission on the service, and Share Scripts permission on the script.
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
 		// We don't need to approve, only reject.
-		if (isset($newObjectProperties['serviceId']) === false || isset($newObjectProperties['scriptId']) === false || Service::TestUserPermissions($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ManageScripts) === false || Script::TestUserPermissions($newObjectProperties['scriptId'], $user->UserId(), PermissionBits::ShareScripts) === false) {
+		if (isset($newObjectProperties['serviceId']) === false || isset($newObjectProperties['scriptId']) === false || Service::TestSentinelPermissions($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ManageScripts) === false || Script::TestSentinelPermissions($newObjectProperties['scriptId'], $user->UserId(), PermissionBits::ShareScripts) === false) {
 			return false;
 		}
 		return true;
@@ -140,8 +139,8 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 	public function GetPermissionsForUser(User $user): int {
 		$permissions = 0;
 		$userId = $user->UserId();
-		$servicePermissions = Service::GetUserPermissions($this->serviceId, $userId);
-		$scriptPermissions = Script::GetUserPermissions($this->scriptId, $userId);
+		$servicePermissions = Service::GetSentinelPermissions($this->serviceId, $userId);
+		$scriptPermissions = Script::GetSentinelPermissions($this->scriptId, $userId);
 
 		if ($servicePermissions > 0 || $scriptPermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;

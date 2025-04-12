@@ -83,10 +83,10 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		$requiredScopes[] = Application::kScopeUsersRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
 
@@ -94,7 +94,7 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 		$userId = Core::UserId();
 		if (isset($filters['groupId'])) {
 			// Ensure that the user is a member of this group before listing all users for it
-			if (Group::TestUserPermissions($filters['groupId'], $userId) === false) {
+			if (Group::TestSentinelPermissions($filters['groupId'], $userId) === false) {
 				throw new Exception('Forbidden');
 			}
 			return;
@@ -109,11 +109,11 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 			return false;
 		}
 
-		return Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageUsers);
+		return Group::TestSentinelPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageUsers);
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		$permissions = Group::GetUserPermissions($this->groupId, $user->UserId());
+		$permissions = Group::GetSentinelPermissions($this->groupId, $user->UserId());
 		if ($permissions === 0) {
 			return self::kPermissionNone;
 		}

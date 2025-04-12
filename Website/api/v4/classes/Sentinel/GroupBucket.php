@@ -78,24 +78,23 @@ class GroupBucket extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
-		$requiredScopes[] = Application::kScopeUsersRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
 		$userId = Core::UserId();
 		if (isset($filters['groupId'])) {
-			if (Group::TestUserPermissions($filters['groupId'], $userId)) {
+			if (Group::TestSentinelPermissions($filters['groupId'], $userId)) {
 				return;
 			} else {
 				throw new Exception('You do not have any permissions on the requested group.');
 			}
 		}
 		if (isset($filters['bucketId'])) {
-			if (Bucket::TestUserPermissions($filters['bucketId'], $userId)) {
+			if (Bucket::TestSentinelPermissions($filters['bucketId'], $userId)) {
 				return;
 			} else {
 				throw new Exception('You do not have any permissions on the requested bucket.');
@@ -111,14 +110,14 @@ class GroupBucket extends DatabaseObject implements JsonSerializable {
 			return false;
 		}
 
-		return Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageBuckets) && Bucket::TestUserPermissions($newObjectProperties['bucketId'], $user->UserId(), PermissionBits::ShareBuckets);
+		return Group::TestSentinelPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageBuckets) && Bucket::TestSentinelPermissions($newObjectProperties['bucketId'], $user->UserId(), PermissionBits::ShareBuckets);
 	}
 
 	public function GetPermissionsForUser(User $user): int {
 		$permissions = 0;
 		$userId = $user->UserId();
-		$groupPermissions = Group::GetUserPermissions($this->groupId, $userId);
-		$bucketPermissions = Bucket::GetUserPermissions($this->bucketId, $userId);
+		$groupPermissions = Group::GetSentinelPermissions($this->groupId, $userId);
+		$bucketPermissions = Bucket::GetSentinelPermissions($this->bucketId, $userId);
 
 		if ($groupPermissions > 0 || $bucketPermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;

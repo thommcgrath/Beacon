@@ -12,6 +12,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		Validate as protected MutableDatabaseObjectValidate;
 		HookModified As MDOHookModified;
 	}
+	use SentinelObject;
 
 	const ServicePermissionUsage = 1;
 	const ServicePermissionControl = 2;
@@ -128,7 +129,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 	];
 
 	protected string $serviceId;
-	protected string $userId;
 	protected string $gameId;
 	protected string $accessKey;
 	protected string $accessKeyHash;
@@ -150,7 +150,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
-		$this->userId = $row->Field('user_id');
 		$this->gameId = $row->Field('game_id');
 		$this->accessKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($row->Field('access_key')));
 		$this->accessKeyHash = $row->Field('access_key_hash');
@@ -180,7 +179,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 			table: 'services',
 			definitions: [
 				new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
-				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 				new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
 				new DatabaseObjectProperty('accessKey', ['columnName' => 'access_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('accessKeyHash', ['columnName' => 'access_key_hash', 'dependsOn' => ['accessKey'], 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
@@ -304,7 +302,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		$json = [
 			'serviceId' => $this->serviceId,
-			'userId' => $this->userId,
 			'gameId' => $this->gameId,
 			'accessKey' => BeaconCommon::Base64UrlEncode($this->accessKey),
 			'accessKeyHash' => $this->accessKeyHash,
@@ -363,10 +360,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		return $this->serviceId;
 	}
 
-	public function UserId(): string {
-		return $this->userId;
-	}
-
 	public function GameId(): string {
 		return $this->gameId;
 	}
@@ -423,21 +416,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		return $this->isConnected;
 	}
 
-	public function GetPermissions(string $userId): int {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $userId);
-		if ($rows->RecordCount() === 1) {
-			return $rows->Field('permissions');
-		} else {
-			return 0;
-		}
-	}
-
-	public function HasPermission(string $userId, int $desired_permissions): bool {
-		$permissions = $this->GetPermissions($userId);
-		return ($permissions & $desired_permissions) === $desired_permissions;
-	}
-
 	public function Log(string $message, ?string $level = null, ?string $type = null): void {
 		$logMessage = LogMessage::Create($message, $this->serviceId, $level, $type);
 		$logMessage->Save();
@@ -464,9 +442,9 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
 
@@ -484,10 +462,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function AuthorizeListRequest(array &$filters): void {
-		$filters['userId'] = Core::UserId();
-	}
-
 	protected function HookModified(): void {
 		$this->MDOHookModified();
 
@@ -502,21 +476,17 @@ class Service extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function GetUserPermissions(string $serviceId, string $userId): int {
-		if (BeaconCommon::IsUUID($serviceId) === false || BeaconCommon::IsUUID($userId) === false) {
+	public static function GetSentinelPermissions(string $objectId, string $userId): int {
+		if (BeaconCommon::IsUUID($objectId) === false || BeaconCommon::IsUUID($userId) === false) {
 			return 0;
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $serviceId, $userId);
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $objectId, $userId);
 		if ($rows->RecordCount() === 0) {
 			return 0;
 		}
 		return $rows->Field('permissions');
-	}
-
-	public static function TestUserPermissions(string $serviceId, string $userId, int $requiredBits = 1): bool {
-		return (static::GetUserPermissions($serviceId, $userId) & $requiredBits) > 0;
 	}
 }
 

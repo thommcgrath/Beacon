@@ -4,8 +4,8 @@ use BeaconAPI\v4\{Application, Response, Core};
 use BeaconAPI\v4\Sentinel\{Dino, Service};
 
 function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-	$requiredScopes[] = Application::kScopeSentinelSubscriptionRead;
-	$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+	$requiredScopes[] = Application::kScopeSentinelRead;
+	$requiredScopes[] = Application::kScopeSentinelWrite;
 }
 
 function handleRequest(array $context): Response {
@@ -25,7 +25,7 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError(message: 'Dino not found', httpStatus: 404, code: 'notFound');
 	}
 
-	if (Service::TestUserPermissions($serviceId, Core::UserId()) === false) {
+	if (Service::TestSentinelPermissions($serviceId, Core::UserId()) === false) {
 		return Response::NewJsonError(message: 'Dino not found', httpStatus: 404, code: 'notFound');
 	}
 

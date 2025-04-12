@@ -7,7 +7,9 @@ use BeaconCommon, BeaconPusher, BeaconRecordSet, JsonSerializable;
 class Bucket extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
 		HookModified As MDOHookModified;
+		InitializeProperties as protected MDOInitializeProperties;
 	}
+	use SentinelObject;
 
 	protected string $bucketId;
 	protected string $userId;
@@ -62,7 +64,6 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'bucketId' => $this->bucketId,
-			'userId' => $this->userId,
 			'username' => $this->username,
 			'usernameFull' => $this->username . '#' . substr($this->username, 0, 8),
 			'name' => $this->name,
@@ -71,16 +72,10 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
-	}
-
-	protected static function UserHasPermission(string $bucketId, string $userId): bool {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.bucket_permissions WHERE bucket_id = $1 AND user_id = $2;', $bucketId, $userId);
-		return $rows->RecordCount() === 1;
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
@@ -88,11 +83,22 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		if (static::UserHasPermission($this->bucketId, $user->UserId())) {
-			return self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
-		} else {
+		if (is_null($user)) {
 			return self::kPermissionNone;
+		} elseif ($user->UserId() === $this->userId) {
+			$bucketPermissions = $this->permissions;
+		} else {
+			$bucketPermissions = static::GetSentinelPermissions($this->bucketId, $user->UserId());
 		}
+
+		$permissions = 0;
+		if (($bucketPermissions & PermissionBits::Membership) > 0) {
+			$permissions = $permissions | self::kPermissionRead;
+		}
+		if (($bucketPermissions & PermissionBits::EditBuckets) > 0) {
+			$permissions = $permissions | self::kPermissionUpdate | self::kPermissionDelete;
+		}
+		return $permissions;
 	}
 
 	protected function HookModified(): void {
@@ -109,21 +115,22 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function GetUserPermissions(string $bucketId, string $userId): int {
-		if (BeaconCommon::IsUUID($bucketId) === false || BeaconCommon::IsUUID($userId) === false) {
+	public static function GetSentinelPermissions(string $objectId, string $userId): int {
+		if (BeaconCommon::IsUUID($objectId) === false || BeaconCommon::IsUUID($userId) === false) {
 			return 0;
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.bucket_permissions WHERE bucket_id = $1 AND user_id = $2;', $bucketId, $userId);
+		$rows = $database->Query('SELECT permissions FROM sentinel.bucket_permissions WHERE bucket_id = $1 AND user_id = $2;', $objectId, $userId);
 		if ($rows->RecordCount() === 0) {
 			return 0;
 		}
 		return $rows->Field('permissions');
 	}
 
-	public static function TestUserPermissions(string $bucketId, string $userId, int $requiredBits = 1): bool {
-		return (static::GetUserPermissions($bucketId, $userId) & $requiredBits) > 0;
+	protected static function InitializeProperties(array &$properties): void {
+		static::MDOInitializeProperties($properties);
+		$properties['userId'] = Core::UserId();
 	}
 }
 

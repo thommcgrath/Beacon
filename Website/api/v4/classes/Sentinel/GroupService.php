@@ -11,11 +11,9 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 	protected string $groupId;
 	protected string $groupName;
 	protected string $groupColor;
-	protected string $groupOwnerId;
 	protected string $serviceId;
 	protected string $serviceDisplayName;
 	protected string $serviceColor;
-	protected string $serviceOwnerId;
 	protected int $permissionsMask;
 
 	public function __construct(BeaconRecordSet $row) {
@@ -23,11 +21,9 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$this->groupId = $row->Field('group_id');
 		$this->groupName = $row->Field('group_name');
 		$this->groupColor = $row->Field('group_color');
-		$this->groupOwnerId = $row->Field('group_owner_id');
 		$this->serviceId = $row->Field('service_id');
 		$this->serviceDisplayName = $row->Field('service_display_name');
 		$this->serviceColor = $row->Field('service_color');
-		$this->serviceOwnerId = $row->Field('service_owner_id');
 		$this->permissionsMask = $row->Field('permissions_mask');
 	}
 
@@ -40,11 +36,9 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('groupId', ['columnName' => 'group_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('groupName', ['columnName' => 'group_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.name']),
 				new DatabaseObjectProperty('groupColor', ['columnName' => 'group_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.color']),
-				new DatabaseObjectProperty('groupOwnerId', ['columnName' => 'group_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.user_id']),
 				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.color']),
-				new DatabaseObjectProperty('serviceOwnerId', ['columnName' => 'service_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.user_id']),
 				new DatabaseObjectProperty('permissionsMask', ['columnName' => 'permissions_mask', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
@@ -69,11 +63,9 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->AddFromFilter($schema, $filters, 'groupId');
 		$parameters->AddFromFilter($schema, $filters, 'groupName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'groupOwnerId');
 		$parameters->AddFromFilter($schema, $filters, 'groupColor');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'serviceOwnerId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceColor');
 	}
 
@@ -83,34 +75,31 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 			'groupId' => $this->groupId,
 			'groupName' => $this->groupName,
 			'groupColor' => $this->groupColor,
-			'groupOwnerId' => $this->groupOwnerId,
 			'serviceId' => $this->serviceId,
 			'serviceDisplayName' => $this->serviceDisplayName,
 			'serviceColor' => $this->serviceColor,
-			'serviceOwnerId' => $this->serviceOwnerId,
 			'permissionsMask' => $this->permissionsMask,
 		];
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
-		$requiredScopes[] = Application::kScopeUsersRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
 		$userId = Core::UserId();
 		if (isset($filters['groupId'])) {
-			if (Group::TestUserPermissions($filters['groupId'], $userId)) {
+			if (Group::TestSentinelPermissions($filters['groupId'], $userId)) {
 				return;
 			} else {
 				throw new Exception('You do not have any permissions on the requested group.');
 			}
 		}
 		if (isset($filters['serviceId'])) {
-			if (Service::TestUserPermissions($filters['serviceId'], $userId)) {
+			if (Service::TestSentinelPermissions($filters['serviceId'], $userId)) {
 				return;
 			} else {
 				throw new Exception('You do not have any permissions on the requested service.');
@@ -126,14 +115,14 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 			return false;
 		}
 
-		return Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageServices) && Service::TestUserPermissions($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ShareServices);
+		return Group::TestSentinelPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageServices) && Service::TestSentinelPermissions($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ShareServices);
 	}
 
 	public function GetPermissionsForUser(User $user): int {
 		$permissions = 0;
 		$userId = $user->UserId();
-		$groupPermissions = Group::GetUserPermissions($this->groupId, $userId);
-		$servicePermissions = Service::GetUserPermissions($this->serviceId, $userId);
+		$groupPermissions = Group::GetSentinelPermissions($this->groupId, $userId);
+		$servicePermissions = Service::GetSentinelPermissions($this->serviceId, $userId);
 
 		if ($groupPermissions > 0 || $servicePermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;

@@ -86,8 +86,10 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
-		$requiredScopes[] = Application::kScopeUsersRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelWrite;
+		}
 	}
 
 	protected static function CheckServiceOwner(string $serviceId, string $userId): bool {

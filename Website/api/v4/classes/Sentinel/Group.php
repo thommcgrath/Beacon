@@ -6,6 +6,7 @@ use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
 class Group extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject;
+	use SentinelObject;
 
 	const GroupPermissionUsage = 1;
 	const GroupPermissionManage = 2;
@@ -83,14 +84,14 @@ class Group extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		$permissions = static::GetUserPermissions($this->groupId, $user->UserId());
+		$permissions = static::GetSentinelPermissions($this->groupId, $user->UserId());
 		if ($permissions === 0) {
 			return 0;
 		}
@@ -106,21 +107,17 @@ class Group extends DatabaseObject implements JsonSerializable {
 		return true;
 	}
 
-	public static function GetUserPermissions(string $groupId, string $userId): int {
-		if (BeaconCommon::IsUUID($groupId) === false || BeaconCommon::IsUUID($userId) === false) {
+	public static function GetSentinelPermissions(string $objectId, string $userId): int {
+		if (BeaconCommon::IsUUID($objectId) === false || BeaconCommon::IsUUID($userId) === false) {
 			return 0;
 		}
 
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.group_permissions WHERE group_id = $1 AND user_id = $2;', $groupId, $userId);
+		$rows = $database->Query('SELECT permissions FROM sentinel.group_permissions WHERE group_id = $1 AND user_id = $2;', $objectId, $userId);
 		if ($rows->RecordCount() === 0) {
 			return 0;
 		}
 		return $rows->Field('permissions');
-	}
-
-	public static function TestUserPermissions(string $groupId, string $userId, int $requiredBits = 1): bool {
-		return (static::GetUserPermissions($groupId, $userId) & $requiredBits) > 0;
 	}
 }
 

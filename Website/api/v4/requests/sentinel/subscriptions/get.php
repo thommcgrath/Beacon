@@ -4,7 +4,7 @@ use BeaconAPI\v4\{Application, Response, Core};
 use BeaconAPI\v4\Sentinel\{Subscription};
 
 function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-	$requiredScopes[] = Application::kScopeSentinelSubscriptionRead;
+	$requiredScopes[] = Application::kScopeSentinelRead;
 }
 
 function handleRequest(array $context): Response {

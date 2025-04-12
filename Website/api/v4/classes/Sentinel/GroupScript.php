@@ -110,21 +110,23 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
-		$requiredScopes[] = Application::kScopeUsersRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelWrite;
+		}
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
 		$userId = Core::UserId();
 		if (isset($filters['groupId'])) {
-			if (Group::TestUserPermissions($filters['groupId'], $userId)) {
+			if (Group::TestSentinelPermissions($filters['groupId'], $userId)) {
 				return;
 			} else {
 				throw new Exception('You do not have any permissions on the requested group.');
 			}
 		}
 		if (isset($filters['scriptId'])) {
-			if (Script::TestUserPermissions($filters['scriptId'], $userId)) {
+			if (Script::TestSentinelPermissions($filters['scriptId'], $userId)) {
 				return;
 			} else {
 				throw new Exception('You do not have any permissions on the requested script.');
@@ -136,8 +138,7 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
-		// We don't need to approve, only reject.
-		if (isset($newObjectProperties['groupId']) === false || isset($newObjectProperties['scriptId']) || Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageScripts) === false || Script::TestUserPermissions($newObjectProperties['scriptId'], $user->UserId(), PermissionBits::ShareScripts) === false) {
+		if (isset($newObjectProperties['groupId']) === false || isset($newObjectProperties['scriptId']) === false || Group::TestSentinelPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageScripts) === false || Script::TestSentinelPermissions($newObjectProperties['scriptId'], $user->UserId(), PermissionBits::ShareScripts) === false) {
 			return false;
 		}
 		return true;
@@ -146,8 +147,8 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 	public function GetPermissionsForUser(User $user): int {
 		$permissions = 0;
 		$userId = $user->UserId();
-		$groupPermissions = Group::GetUserPermissions($this->groupId, $userId);
-		$scriptPermissions = Script::GetUserPermissions($this->scriptId, $userId);
+		$groupPermissions = Group::GetSentinelPermissions($this->groupId, $userId);
+		$scriptPermissions = Script::GetSentinelPermissions($this->scriptId, $userId);
 
 		if ($groupPermissions > 0 || $scriptPermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;

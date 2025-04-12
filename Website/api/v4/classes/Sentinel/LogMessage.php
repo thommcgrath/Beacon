@@ -275,7 +275,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		if (Service::TestUserPermissions($this->serviceId, $user->UserId())) {
+		if (Service::TestSentinelPermissions($this->serviceId, $user->UserId())) {
 			return self::kPermissionRead;
 		} else {
 			return self::kPermissionNone;
@@ -283,7 +283,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 	}
 }
 

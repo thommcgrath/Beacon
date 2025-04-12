@@ -83,16 +83,10 @@ class BucketValue extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {
-			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
-	}
-
-	protected static function UserHasPermission(string $bucketId, string $userId): bool {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.bucket_permissions WHERE bucket_id = $1 AND user_id = $2;', $bucketId, $userId);
-		return $rows->RecordCount() === 1;
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
@@ -101,25 +95,29 @@ class BucketValue extends DatabaseObject implements JsonSerializable {
 		}
 
 		$bucketId = $filters['bucketId'];
-		if (static::UserHasPermission($bucketId, Core::UserId()) === false) {
+		if (Bucket::TestSentinelPermissions($bucketId, Core::UserId(), PermissionBits::Membership) === false) {
 			throw new Exception('You do not have access to this bucket.');
 		}
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
-		if (isset($newObjectProperties['bucketId'])) {
-			return static::UserHasPermission($newObjectProperties['bucketId'], $user->UserId());
+		if (isset($newObjectProperties['bucketId']) && Bucket::TestSentinelPermissions($newObjectProperties['bucketId'], $user->UserId(), PermissionBits::Membership | PermissionBits::EditBuckets)) {
+			return true;
 		}
 
 		return false;
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		if (static::UserHasPermission($this->bucketId, $user->UserId())) {
-			return self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
-		} else {
-			return self::kPermissionNone;
+		$permissions = 0;
+		$bucketPermissions = Bucket::GetSentinelPermissions($this->bucketId, $user->UserId());
+		if (($bucketPermissions & PermissionBits::Membership) > 0) {
+			$permissions = $permissions | self::kPermissionRead;
 		}
+		if (($bucketPermissions & PermissionBits::EditBuckets) > 0) {
+			$permissions = $permissions | self::kPermissionUpdate | self::kPermissionDelete;
+		}
+		return $permissions;
 	}
 
 	protected function HookModified(): void {

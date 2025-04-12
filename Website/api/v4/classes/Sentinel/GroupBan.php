@@ -105,26 +105,29 @@ class GroupBan extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
-		$requiredScopes[] = Application::kScopeSentinelServicesRead;
+		$requiredScopes[] = Application::kScopeSentinelRead;
 		$requiredScopes[] = Application::kScopeUsersRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelWrite;
+		}
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
-		if (isset($filters['groupId']) === false || Group::TestUserPermissions($filters['groupId'], Core::UserId()) === false) {
+		if (isset($filters['groupId']) === false || Group::TestSentinelPermissions($filters['groupId'], Core::UserId()) === false) {
 			throw new Exception('Forbidden');
 		}
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
 		// We don't need to approve, only reject.
-		if (isset($newObjectProperties['groupId']) === false || Group::TestUserPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageBans) === false) {
+		if (isset($newObjectProperties['groupId']) === false || Group::TestSentinelPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageBans) === false) {
 			return false;
 		}
 		return true;
 	}
 
 	public function GetPermissionsForUser(User $user): int {
-		$permissions = Group::GetUserPermissions($this->groupId, $user->UserId());
+		$permissions = Group::GetSentinelPermissions($this->groupId, $user->UserId());
 		if ($permissions === 0) {
 			return self::kPermissionNone;
 		}

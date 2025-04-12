@@ -27,15 +27,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 	const kScopeUsersUpdate = 'users:update';
 	const kScopeUsersDelete = 'users:delete';
 	const kScopeUsersPrivateKeyRead = 'users.private_key:read';
-	const kScopeSentinelLogsRead = 'sentinel.logs:read';
-	const kScopeSentinelLogsWrite = 'sentinel.logs:write';
-	const kScopeSentinelPlayersRead = 'sentinel.players:read';
-	const kScopeSentinelPlayersWrite = 'sentinel.players:write';
-	const kScopeSentinelServicesRead = 'sentinel.services:read';
-	const kScopeSentinelServicesWrite = 'sentinel.services:write';
-	const kScopeSentinelSubscriptionRead = 'sentinel.subscription:read';
-	const kScopeSentinelScriptsRead = 'sentinel.scripts:read';
-	const kScopeSentinelScriptsWrite = 'sentinel.scripts:write';
+	const kScopeSentinelRead = 'sentinel:read';
+	const kScopeSentinelWrite = 'sentinel:write';
 
 	const kExperienceAppWebView = 1;
 
@@ -52,15 +45,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeUsersUpdate,
 			self::kScopeUsersDelete,
 			self::kScopeUsersPrivateKeyRead,
-			self::kScopeSentinelLogsRead,
-			self::kScopeSentinelLogsWrite,
-			self::kScopeSentinelPlayersRead,
-			self::kScopeSentinelPlayersWrite,
-			self::kScopeSentinelServicesRead,
-			self::kScopeSentinelServicesWrite,
-			self::kScopeSentinelSubscriptionRead,
-			self::kScopeSentinelScriptsRead,
-			self::kScopeSentinelScriptsWrite,
+			self::kScopeSentinelRead,
+			self::kScopeSentinelWrite,
 		];
 	}
 
