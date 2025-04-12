@@ -162,6 +162,9 @@ Core::RegisterRoutes(
 		'/sentinel/dinos/{dinoId}/locate' => [
 			'POST' => 'sentinel/dinos/locate',
 		],
+		'/sentinel/characters/{characterId}/giveItem' => [
+			'POST' => 'sentinel/characters/giveItem',
+		],
 	]
 );
 

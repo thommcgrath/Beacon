@@ -100,6 +100,14 @@ class Character extends DatabaseObject implements JsonSerializable {
 			$requiredScopes[] = Application::kScopeSentinelServicesWrite;
 		}
 	}
+
+	public function SpecimenId(): int {
+		return $this->specimenId;
+	}
+
+	public function ServiceId(): string {
+		return $this->serviceId;
+	}
 }
 
 ?>

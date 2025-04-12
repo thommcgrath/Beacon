@@ -131,7 +131,7 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 	// User must have Edit Services permission on the service, and Share Scripts permission on the script.
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
 		// We don't need to approve, only reject.
-		if (isset($newObjectProperties['serviceId']) === false || isset($newObjectProperties['scriptId']) || Service::TestUserPermissions($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ManageScripts) === false || Script::TestUserPermissions($newObjectProperties['scriptId'], $user->UserId(), PermissionBits::ShareScripts) === false) {
+		if (isset($newObjectProperties['serviceId']) === false || isset($newObjectProperties['scriptId']) === false || Service::TestUserPermissions($newObjectProperties['serviceId'], $user->UserId(), PermissionBits::ManageScripts) === false || Script::TestUserPermissions($newObjectProperties['scriptId'], $user->UserId(), PermissionBits::ShareScripts) === false) {
 			return false;
 		}
 		return true;
