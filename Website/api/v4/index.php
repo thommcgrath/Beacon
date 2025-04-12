@@ -211,6 +211,8 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupService', 'sen
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupUser', 'sentinel/groupUsers', 'groupUserId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\LogMessage', 'sentinel/logMessages', 'messageId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/players', 'playerId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerIdentifier', 'sentinel/playerIdentifiers', 'playerIdentifierId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNameChange', 'sentinel/playerNameChanges', 'historyId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Script', 'sentinel/scripts', 'scriptId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');

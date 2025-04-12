@@ -77,6 +77,7 @@ class Character extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'specimenId');
+		$parameters->AddFromFilter($schema, $filters, 'playerId');
 	}
 
 	public function jsonSerialize(): mixed {
