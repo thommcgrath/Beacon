@@ -165,6 +165,9 @@ Core::RegisterRoutes(
 		'/sentinel/characters/{characterId}/giveItem' => [
 			'POST' => 'sentinel/characters/giveItem',
 		],
+		'/users/{userId}/billingPortal' => [
+			'GET' => 'users/billingUrl',
+		],
 	]
 );
 

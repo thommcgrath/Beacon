@@ -181,8 +181,12 @@ class BeaconLogin {
 						'Juggle buffalo.',
 						'Reach singularity.',
 						'Find the droids you\'re looking for.',
-						'Levitate raccoons with iPads',
-						'Defy gravity',
+						'Levitate bagels with iPads.',
+						'Defy gravity.',
+						'Get that raccoon out of the attic.',
+						'Wish for more wishes.',
+						'Cover for you at work.',
+						'Pickle a lawnchair.',
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);

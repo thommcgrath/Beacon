@@ -1,5 +1,7 @@
 <?php
 
+use BeaconAPI\v4\User;
+
 class BeaconStripeAPI {
 	private $apiSecret = '';
 	private $stripeVersion = '';
@@ -97,6 +99,39 @@ class BeaconStripeAPI {
 
 	public function GetCustomersByEmail(string $customerEmail): ?array {
 		return $this->GetURL('https://api.stripe.com/v1/customers/search?query=' . urlencode("email:'{$customerEmail}'"));
+	}
+
+	public function GetCustomerIdForUser(User|string $user): ?string {
+		if (is_string($user)) {
+			$user = User::Fetch($user);
+			if (is_null($user)) {
+				return null;
+			}
+		}
+
+		$results = $this->GetURL('https://api.stripe.com/v1/customers/search?query=' . urlencode("metadata['beacon-uuid']:'{$user->UserId()}'"));
+		if (count($results['data']) > 0) {
+			return $results['data'][0]['id'];
+		}
+
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT merchant_reference FROM public.purchases INNER JOIN public.users ON (purchases.purchaser_email = users.email_id) WHERE users.user_id = $1 AND purchases.merchant_reference LIKE \'pi_%\' ORDER BY purchase_date DESC LIMIT 1;', $user->UserId());
+		if ($results->RecordCount() === 0) {
+			return null;
+		}
+
+		$intentId = $results->Field('merchant_reference');
+		$intent = $this->GetURL('https://api.stripe.com/v1/payment_intents/' . $intentId);
+		if (is_null($intent)) {
+			return null;
+		}
+		$customerId = $intent['customer'];
+		$this->UpdateCustomer($customerId, [
+			'metadata' => [
+				'beacon-uuid' => $user->UserId(),
+			],
+		]);
+		return $customerId;
 	}
 
 	public function GetBalanceTransactionsForSource(string $sourceId): ?array {
@@ -360,6 +395,19 @@ class BeaconStripeAPI {
 			return null;
 		}
 		return $charges['data'];
+	}
+
+	public function GetBillingPortalUrl(string $customerId, string $returnUrl): ?string {
+		$response = $this->PostURL('https://api.stripe.com/v1/billing_portal/sessions', [
+			'customer' => $customerId,
+			'return_url' => $returnUrl,
+		]);
+
+		if (is_null($response)) {
+			return false;
+		}
+
+		return $response['url'];
 	}
 }
 
