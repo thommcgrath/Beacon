@@ -898,17 +898,17 @@ End
 		  Var UseNewDiscovery As Boolean = Self.UseNewDiscoveryCheck.Visible And Self.UseNewDiscoveryCheck.Value
 		  Var SteamPath As String = Preferences.ArkSADedicatedPath
 		  If UseNewDiscovery Then
-		    Var ContentStoreFile As FolderItem
+		    Var GlobalStoreFile As FolderItem
 		    Try
 		      SteamPath = Self.SteamPathField.Text
 		      If SteamPath.EndsWith(Beacon.PathSeparator) Then
 		        SteamPath = SteamPath.Left(SteamPath.Length - 1)
 		      End If
-		      Var ContentStorePath As String = SteamPath + Beacon.PathSeparator + "ShooterGame" + Beacon.PathSeparator + "Content" + Beacon.PathSeparator + "Paks" + Beacon.PathSeparator + "ShooterGame-WindowsServer.ucas"
-		      ContentStoreFile = New FolderItem(ContentStorePath, FolderItem.PathModes.Native)
+		      Var GlobalStorePath As String = SteamPath + Beacon.PathSeparator + "ShooterGame" + Beacon.PathSeparator + "Content" + Beacon.PathSeparator + "Paks" + Beacon.PathSeparator + "global.ucas"
+		      GlobalStoreFile = New FolderItem(GlobalStorePath, FolderItem.PathModes.Native)
 		    Catch Err As RuntimeException
 		    End Try
-		    If ContentStoreFile Is Nil Or ContentStoreFile.Exists = False Or ContentStoreFile.IsFolder = True Then
+		    If GlobalStoreFile Is Nil Or GlobalStoreFile.Exists = False Or GlobalStoreFile.IsFolder = True Then
 		      Self.ShowAlert("Incorrect Steam path", "The path to the Ark: Survival Ascended Dedicated Server files is incorrect. Please choose the correct path or turn off the """ + Self.UseNewDiscoveryCaption + """ option.")
 		      Return
 		    End If

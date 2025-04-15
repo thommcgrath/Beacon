@@ -32,6 +32,7 @@ Inherits Beacon.ServerProfile
 		    Self.mGameIniPath = Dict.Lookup("gameIniPath", "").StringValue
 		    Self.mGameUserSettingsIniPath = Dict.Lookup("gameUserSettingsIniPath", "").StringValue
 		    Self.mLogsPath = Dict.Lookup("logsPath", "").StringValue
+		    Self.mCustomGUS = Dict.Lookup("customGUS", "").StringValue
 		  Case 1
 		    Self.mMask = Dict.Lookup("Map", 0)
 		    
@@ -133,6 +134,10 @@ Inherits Beacon.ServerProfile
 		  If Self.mLogsPath.IsEmpty = False Then
 		    Dict.Value("logsPath") = Self.mLogsPath
 		  End If
+		  
+		  If Self.mCustomGUS.IsEmpty = False Then
+		    Dict.Value("customGUS") = Self.mCustomGUS
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -198,6 +203,23 @@ Inherits Beacon.ServerProfile
 		  // Making the constructor public
 		  Super.Constructor(Provider, ProfileId, Name, Nickname, SecondaryName)
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CustomGUS() As String
+		  Return Self.mCustomGUS
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CustomGUS(Assigns Value As String)
+		  If Self.mCustomGUS.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Raw) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mCustomGUS = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -397,6 +419,10 @@ Inherits Beacon.ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mBasePath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCustomGUS As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

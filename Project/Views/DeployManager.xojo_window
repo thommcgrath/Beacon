@@ -1036,21 +1036,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Engine As Beacon.DeployIntegration
-		    Select Case Profile
-		    Case IsA Ark.ServerProfile
-		      Engine = New Ark.DeployIntegration(Project, Profile)
-		    Case IsA SDTD.ServerProfile
-		      #if DebugBuild Or SDTD.Enabled = False
-		        #Pragma Warning "Need 7DTD DeployIntegration"
-		      #else
-		        #Pragma Error "Need 7DTD DeployIntegration"
-		      #endif
-		    Case IsA ArkSA.ServerProfile
-		      Engine = New ArkSA.DeployIntegration(Project, Profile)
-		    Case IsA Palworld.ServerProfile
-		      Engine = New Palworld.DeployIntegration(Project, Profile)
-		    End Select
+		    Var Engine As Beacon.DeployIntegration = Self.CreateEngine(Self.Project, Profile)
 		    If Engine Is Nil Then
 		      Self.ShowAlert("The developer messed up.", "There is no DeployIntegration defined for server profile " + Profile.Name + ".")
 		      Continue
@@ -1142,6 +1128,25 @@ End
 		  Self.Settings = Settings
 		  Super.Constructor
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CreateEngine(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.DeployIntegration
+		  Select Case Profile
+		  Case IsA Ark.ServerProfile
+		    Return New Ark.DeployIntegration(Project, Profile)
+		  Case IsA SDTD.ServerProfile
+		    #if DebugBuild Or SDTD.Enabled = False
+		      #Pragma Warning "Need 7DTD DeployIntegration"
+		    #else
+		      #Pragma Error "Need 7DTD DeployIntegration"
+		    #endif
+		  Case IsA ArkSA.ServerProfile
+		    Return New ArkSA.DeployIntegration(Project, Profile)
+		  Case IsA Palworld.ServerProfile
+		    Return New Palworld.DeployIntegration(Project, Profile)
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1697,7 +1702,17 @@ End
 		    
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
 		    Settings.Servers.Add(Profile)
-		    UseStopMessage = UseStopMessage Or Profile.SupportsCustomStopMessage
+		    
+		    Var Engine As Beacon.DeployIntegration = Self.CreateEngine(Self.Project, Profile)
+		    If Engine Is Nil Then
+		      Self.ShowAlert("The developer messed up.", "There is no DeployIntegration defined for server profile " + Profile.Name + ".")
+		      Exit
+		    End If
+		    
+		    If Engine.Provider.SupportsStopMessage Then
+		      UseStopMessage = True
+		      Exit
+		    End If
 		  Next
 		  
 		  If UseStopMessage Then

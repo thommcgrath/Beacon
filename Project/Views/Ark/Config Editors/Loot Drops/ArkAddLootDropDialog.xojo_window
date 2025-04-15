@@ -1179,10 +1179,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
-		  #Pragma Unused BackgroundColor
-		  #Pragma Unused IsHighlighted
-		  #Pragma Unused TextColor
-		  
 		  If Column <> 0 Or Row >= Me.RowCount Then
 		    Return
 		  End If

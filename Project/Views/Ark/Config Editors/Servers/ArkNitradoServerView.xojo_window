@@ -37,7 +37,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -226,6 +226,35 @@ Begin ArkServerViewContainer ArkNitradoServerView
          Visible         =   True
          Width           =   600
       End
+      Begin ArkCustomServerSettingsView CustomServerSettings
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
    End
    Begin OmniBar ControlToolbar
       Alignment       =   0
@@ -263,7 +292,6 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -275,7 +303,6 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -291,7 +318,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Closing()
-		    Self.CancelRefresh()
+		  Self.CancelRefresh()
 		End Sub
 	#tag EndEvent
 
@@ -317,6 +344,7 @@ End
 		  End If
 		  
 		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
+		  Self.CustomServerSettings.Content = Self.Profile.CustomGUS
 		  Self.SettingsView.RefreshUI()
 		  Self.UpdateStatusDisplay()
 		End Sub
@@ -529,11 +557,20 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events CustomServerSettings
+	#tag Event
+		Sub TextChanged()
+		  Self.Profile.CustomGUS = Me.Content
+		  Self.Modified = Self.Profile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
+		  Me.Append(OmniBarItem.CreateTab("PageCustom", "Custom"))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("PowerButton", "Stop", IconToolbarPower, "Stop the server", False))
 		  Me.Item("PageGeneral").Toggled = True
@@ -548,10 +585,17 @@ End
 		    Self.Pages.SelectedPanelIndex = 0
 		    Item.Toggled = True
 		    Me.Item("PageNotes").Toggled = False
+		    Me.Item("PageCustom").Toggled = False
 		  Case "PageNotes"
 		    Self.Pages.SelectedPanelIndex = 1
 		    Item.Toggled = True
 		    Me.Item("PageGeneral").Toggled = False
+		    Me.Item("PageCustom").Toggled = False
+		  Case "PageCustom"
+		    Self.Pages.SelectedPanelIndex = 2
+		    Item.Toggled = True
+		    Me.Item("PageGeneral").Toggled = False
+		    Me.Item("PageNotes").Toggled = False
 		  Case "PowerButton"
 		    If ToggleThread.ThreadState <> Thread.ThreadStates.NotRunning Then
 		      Self.ShowAlert("An action is already running", "Wait a moment for the current action to complete.")

@@ -324,7 +324,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents(False) Is Nil) = False Then
 		    Self.mMainWindow.Documents(False).NewProject()
 		  End If
 		  Return True
@@ -333,7 +333,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Templates(False) Is Nil) = False Then
 		    Self.mMainWindow.Templates.NewTemplate
 		  End If
 		  Return True
@@ -464,7 +464,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function NewProjectForGameShowGamePicker() As Boolean Handles NewProjectForGameShowGamePicker.Action
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents(False) Is Nil) = False Then
 		    Self.mMainWindow.Documents(False).NewProject("")
 		  End If
 		  Return True
@@ -1351,7 +1351,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Function mGameMenu_MenuItemSelected(Sender As DesktopMenuItem) As Boolean
-		  If (Self.mMainWindow Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents(False) Is Nil) = False Then
 		    Self.mMainWindow.Documents(False).NewProject(Sender.Tag.StringValue)
 		  End If
 		  Return True
@@ -1398,7 +1398,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Function mOpenRecent_OpenFile(Sender As DesktopMenuItem) As Boolean
-		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents Is Nil) = False Then
+		  If (Self.mMainWindow Is Nil) = False And (Self.mMainWindow.Documents(False) Is Nil) = False Then
 		    Var Project As Beacon.ProjectURL = Sender.Tag
 		    Self.mMainWindow.Documents.OpenProject(Project)
 		    Return True
@@ -1533,8 +1533,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  If File.ExtensionMatches(Beacon.FileExtensionINI) Or File.ExtensionMatches(Beacon.FileExtensionXml) Then
-		    Self.mMainWindow.BringToFront()
-		    Self.mMainWindow.Documents.ImportFile(File)
+		    BeaconUI.ShowAlert("Create a new project to import this type of file.", "Create a new project for the desired game, then use the Import button in the project's toolbar.")
 		    Return
 		  End If
 		  

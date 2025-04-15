@@ -1857,7 +1857,8 @@ Inherits Beacon.DataSource
 		    Return Self.mIconCache.Value(IconID)
 		  End If
 		  
-		  ForegroundColor = BeaconUI.FindContrastingColor(BackgroundColor, ForegroundColor)
+		  Var Colors As BeaconUI.ColorPair = BeaconUI.FindContrastingColors(BackgroundColor, ForegroundColor, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredIcons)
+		  ForegroundColor = Colors.Foreground
 		  
 		  Var Height As Integer = (SpriteSheet.Height / 2) / 3
 		  Var Width As Integer = (SpriteSheet.Width / 2) / 3

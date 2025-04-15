@@ -251,7 +251,7 @@ Inherits ArkSA.ConfigGroup
 		  End If
 		  
 		  // Encrypt some common passwords
-		  Var ProtectedKeys() As String = Array("CommandLineOption:?:ServerAdminPassword", ArkSA.ConfigFileGameUserSettings + ":ServerSettings:ServerPassword", ArkSA.ConfigFileGameUserSettings + ":AuctionHouse:MarketID")
+		  Var ProtectedKeys() As String = Array("CommandLineOption:?:ServerAdminPassword", ArkSA.ConfigFileGameUserSettings + ":ServerSettings:ServerPassword", ArkSA.ConfigFileGameUserSettings + ":AuctionHouse:MarketID", ArkSA.ConfigFileGameUserSettings + ":BeaconSentinel:AccessKey")
 		  For Each KeyPath As String In ProtectedKeys
 		    Var Pos As Integer = KeyPath.IndexOf(":")
 		    Var File As String = KeyPath.Left(Pos)

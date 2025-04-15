@@ -338,7 +338,7 @@ Implements Beacon.BlueprintConsumer
 		    Var Members(2) As String
 		    Members(0) = "AnEntryName=""" + Set.Label + """"
 		    Members(1) = "EntryWeight=" + Set.RawWeight.PrettyText
-		    Members(2) = "NPCsToSpawn=(" + CreatureClasses.Join(",") + ")"
+		    Members(2) = "NPCsToSpawnStrings=(" + CreatureClasses.Join(",") + ")"
 		    
 		    If IncludeLevels Then
 		      Members.Add("NPCDifficultyLevelRanges=(" + LevelMembers.Join(",") + ")")
@@ -448,7 +448,7 @@ Implements Beacon.BlueprintConsumer
 		        End If
 		        LimitPath = Creature.Path
 		      End If
-		      LimitConfigs.Add("(NPCClass=""" + LimitPath + "_C"",MaxPercentageOfDesiredNumToAllow=" + Limit.PrettyText + ")")
+		      LimitConfigs.Add("(NPCClassString=""" + LimitPath + "_C"",MaxPercentageOfDesiredNumToAllow=" + Limit.PrettyText + ")")
 		    Next
 		    If LimitConfigs.Count > 0 Then
 		      Pieces.Add("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
@@ -571,10 +571,10 @@ Implements Beacon.BlueprintConsumer
 		          
 		          Try
 		            Var Classes() As Variant
-		            If Entry.HasKey("NPCsToSpawn") Then
-		              Classes = Entry.Value("NPCsToSpawn")
-		            ElseIf Entry.HasKey("NPCsToSpawnStrings") Then
+		            If Entry.HasKey("NPCsToSpawnStrings") Then
 		              Classes = Entry.Value("NPCsToSpawnStrings")
+		            ElseIf Entry.HasKey("NPCsToSpawn") Then
+		              Classes = Entry.Value("NPCsToSpawn")
 		            End If
 		            If Classes.LastIndex = -1 Then
 		              Continue
@@ -737,10 +737,10 @@ Implements Beacon.BlueprintConsumer
 		        Var Limits() As Variant = Dict.Value("NPCSpawnLimits")
 		        For Each Limit As Dictionary In Limits
 		          Var LimitClass As String
-		          If Limit.HasKey("NPCClass") Then
-		            LimitClass = Limit.Value("NPCClass")
-		          ElseIf Limit.HasKey("NPCClassString") Then
+		          If Limit.HasKey("NPCClassString") Then
 		            LimitClass = Limit.Value("NPCClassString")
+		          ElseIf Limit.HasKey("NPCClass") Then
+		            LimitClass = Limit.Value("NPCClass")
 		          Else
 		            Continue
 		          End If

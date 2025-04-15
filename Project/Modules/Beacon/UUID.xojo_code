@@ -175,6 +175,20 @@ Protected Class UUID
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function v7() As Beacon.UUID
+		  Var Time As Double = Floor(DateTime.Now.SecondsFrom1970 * 1000)
+		  Var Value As MemoryBlock = Crypto.GenerateRandomBytes(16)
+		  Value.UInt8Value(0) = Bitwise.ShiftRight(Time, 40) And &hFF
+		  Value.UInt8Value(1) = Bitwise.ShiftRight(Time, 32) And &hFF
+		  Value.UInt8Value(2) = Bitwise.ShiftRight(Time, 24) And &hFF
+		  Value.UInt8Value(3) = Bitwise.ShiftRight(Time, 16) And &hFF
+		  Value.UInt8Value(4) = Bitwise.ShiftRight(Time, 8) And &hFF
+		  Value.UInt8Value(5) = CType(Time, UInt64) And &hFF
+		  Return New Beacon.UUID(FormatBytes(Value, 7), 7)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Validate(Input As String) As Boolean
 		  Var Version As Integer
 		  Return Validate(Input, Version)
@@ -191,7 +205,7 @@ Protected Class UUID
 		  Static Validator As RegEx
 		  If IsNull(Validator) Then
 		    Validator = New RegEx
-		    Validator.SearchPattern = "(?mi-Us)\A[[:xdigit:]]{8}-[[:xdigit:]]{4}-([3-5])[[:xdigit:]]{3}-[89AB][[:xdigit:]]{3}-[[:xdigit:]]{12}\z"
+		    Validator.SearchPattern = "(?mi-Us)\A[[:xdigit:]]{8}-[[:xdigit:]]{4}-(\d)[[:xdigit:]]{3}-[89AB][[:xdigit:]]{3}-[[:xdigit:]]{12}\z"
 		  End If
 		  
 		  Var Matches As RegExMatch = Validator.Search(Input)

@@ -28,9 +28,16 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function ExpiredLicenses() As Beacon.OmniLicense()
+		  Var IgnoreLicenseIds() As String
+		  Return Self.ExpiredLicenses(IgnoreLicenseIds)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExpiredLicenses(IgnoreLicenseIds() As String) As Beacon.OmniLicense()
 		  Var Arr() As Beacon.OmniLicense
 		  For Each License As Beacon.OmniLicense In Self.mLicenses
-		    If License.IsExpired Then
+		    If License.IsExpired And IgnoreLicenseIds.IndexOf(License.LicenseId) = -1 Then
 		      Arr.Add(License)
 		    End If
 		  Next

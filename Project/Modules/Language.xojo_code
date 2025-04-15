@@ -31,7 +31,7 @@ Protected Module Language
 		  
 		  If WithExpiration And License.Expiration.IsEmpty = False Then
 		    Var Expiration As DateTime = License.ExpirationDateTime
-		    LicenseText = LicenseText + ", " + ReplacePlaceholders(CommonExpiresOnDate, Expiration.ToString)
+		    LicenseText = LicenseText + ", " + ReplacePlaceholders(If(Expiration.SecondsFrom1970 < DateTime.Now.SecondsFrom1970, CommonExpiredOnDate, CommonExpiresOnDate), Expiration.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Short) + " UTC")
 		  End If
 		  
 		  Return LicenseText
@@ -294,6 +294,9 @@ Protected Module Language
 	#tag EndConstant
 
 	#tag Constant, Name = CommonContinue, Type = String, Dynamic = True, Default = \"Continue", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonExpiredOnDate, Type = String, Dynamic = True, Default = \"expired \?1", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = CommonExpiresOnDate, Type = String, Dynamic = True, Default = \"expires \?1", Scope = Protected
