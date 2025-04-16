@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, Subscription, User};
-use BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -11,6 +11,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		PreparePropertyValue as protected MDOPreparePropertyValue;
 		Validate as protected MDOValidate;
 		HookModified As MDOHookModified;
+		Delete as protected MDODelete;
 	}
 	use SentinelObject;
 
@@ -488,6 +489,14 @@ class Service extends DatabaseObject implements JsonSerializable {
 			return 0;
 		}
 		return $rows->Field('permissions');
+	}
+
+	public function Delete(): void {
+		$this->MDODelete();
+
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $this->serviceId . '.socketCommand', json_encode([
+			'command' => 'kick',
+		]));
 	}
 }
 
