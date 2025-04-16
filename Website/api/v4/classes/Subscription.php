@@ -90,6 +90,10 @@ class Subscription extends DatabaseObject implements JsonSerializable {
 	public function UnitsAllowed(): int {
 		return $this->unitsAllowed;
 	}
+
+	public function UserId(): string {
+		return $this->userId;
+	}
 }
 
 ?>

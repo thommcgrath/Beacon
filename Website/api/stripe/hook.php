@@ -392,7 +392,18 @@ case 'customer.subscription.updated':
 
 	$database->BeginTransaction();
 	$database->Query('UPDATE public.subscriptions SET date_expires = TO_TIMESTAMP($2), product_id = $3, last_purchase_id = $4 WHERE subscription_id = $1;', $subscriptionId, $endDate, $productId, $purchaseId);
+	$rows = $database->Query('SELECT user_id FROM public.user_subscriptions WHERE subscription_id = $1;', $subscriptionId);
 	$database->Commit();
+
+	$user = User::Fetch($rows->Field('user_id'));
+	if (is_null($user) === false) {
+		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+	}
+
+	BeaconRabbitMQ::SendMessage('sentinel_exchange', "sentinel.notifications.{$subscriptionId}", json_encode([
+		'event' => 'subscriptionUpdated',
+		'subscriptionId' => $subscriptionId,
+	]));
 
 	ReportSuccess('Subscription updated');
 	break;
@@ -402,8 +413,19 @@ case 'customer.subscription.deleted':
 	$subscriptionId = BeaconUUID::v5($stripeSubscription);
 
 	$database->BeginTransaction();
+	$rows = $database->Query('SELECT user_id FROM public.user_subscriptions WHERE subscription_id = $1;', $subscriptionId);
 	$database->Query('DELETE FROM public.subscriptions WHERE subscription_id = $1;', $subscriptionId);
 	$database->Commit();
+
+	$user = User::Fetch($rows->Field('user_id'));
+	if (is_null($user) === false) {
+		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+	}
+
+	BeaconRabbitMQ::SendMessage('sentinel_exchange', "sentinel.notifications.{$subscriptionId}", json_encode([
+		'event' => 'subscriptionUpdated',
+		'subscriptionId' => $subscriptionId,
+	]));
 
 	ReportSuccess('Subscription deleted');
 	break;
@@ -422,7 +444,13 @@ case 'customer.subscription.created':
 	$database->BeginTransaction();
 	$database->Query('INSERT INTO public.subscriptions (subscription_id, stripe_id, product_id, date_created, date_expires, last_purchase_id) VALUES ($1, $2, $3, TO_TIMESTAMP($4), TO_TIMESTAMP($5), $6);', $subscriptionId, $stripeSubscription, $productId, $startDate, $endDate, $purchaseId);
 	$database->Query('INSERT INTO public.subscription_purchases (subscription_id, purchase_id) VALUES ($1, $2);', $subscriptionId, $purchaseId);
+	$rows = $database->Query('SELECT user_id FROM public.user_subscriptions WHERE subscription_id = $1;', $subscriptionId); // If the user does not exist, there will be nothing in user_subscriptions for this subscription.
 	$database->Commit();
+
+	$user = User::Fetch($rows->Field('user_id'));
+	if (is_null($user) === false) {
+		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+	}
 
 	ReportSuccess('Subscription created');
 	break;

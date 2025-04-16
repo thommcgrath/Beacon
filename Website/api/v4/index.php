@@ -165,8 +165,8 @@ Core::RegisterRoutes(
 		'/users/{userId}/billingPortal' => [
 			'GET' => 'users/billingUrl',
 		],
-		'/sentinel/pricingTable' => [
-			'POST' => 'sentinel/pricingTable',
+		'/users/{userId}/createCustomerSession' => [
+			'POST' => 'users/createCustomerSession',
 		],
 	]
 );
