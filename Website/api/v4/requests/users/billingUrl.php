@@ -8,8 +8,10 @@ function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $
 
 function handleRequest(array $context): Response {
 	$returnUrl = $_GET['returnUrl'] ?? 'https://usebeacon.app/account';
-	if (preg_match('/^https\:\/\/([^\.]\.)?usebeacon\.app\//i', $returnUrl) === 0) {
-		return Response::NewJsonError(message: 'The return url must belong to a Beacon domain.', httpStatus: 400, code: 'badReturnUrl');
+	if (BeaconCommon::InProduction()) {
+		if (preg_match('/^https\:\/\/([^\.]\.)?usebeacon\.app\//i', $returnUrl) === 0) {
+			return Response::NewJsonError(message: 'The return url must belong to a Beacon domain.', httpStatus: 400, code: 'badReturnUrl');
+		}
 	}
 
 	$userId = $context['pathParameters']['userId'];

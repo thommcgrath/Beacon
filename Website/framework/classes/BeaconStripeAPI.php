@@ -89,6 +89,10 @@ class BeaconStripeAPI {
 		return $this->GetURL('https://api.stripe.com/v1/payment_intents/' . $intentId);
 	}
 
+	public function GetInvoice(string $invoiceId): ?array {
+		return $this->GetURL('https://api.stripe.com/v1/invoices/' . $invoiceId);
+	}
+
 	public function GetLineItems(string $sessionId): ?array {
 		return $this->GetURL('https://api.stripe.com/v1/checkout/sessions/' . $sessionId . '/line_items?expand%5B%5D=data.discounts&expand%5B%5D=data.taxes');
 	}
@@ -109,12 +113,20 @@ class BeaconStripeAPI {
 			}
 		}
 
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT stripe_id FROM public.users WHERE user_id = $1;', $user->UserId());
+		if ($rows->RecordCount() === 1 AND is_null($rows->Field('stripe_id')) === false) {
+			return $rows->Field('stripe_id');
+		}
+
 		$results = $this->GetURL('https://api.stripe.com/v1/customers/search?query=' . urlencode("metadata['beacon-uuid']:'{$user->UserId()}'"));
 		if (count($results['data']) > 0) {
+			$database->BeginTransaction();
+			$database->Query('UPDATE public.users SET stripe_id = $2 WHERE user_id = $1;', $user->UserId(), $results['data'][0]['id']);
+			$database->Commit();
 			return $results['data'][0]['id'];
 		}
 
-		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT merchant_reference FROM public.purchases INNER JOIN public.users ON (purchases.purchaser_email = users.email_id) WHERE users.user_id = $1 AND purchases.merchant_reference LIKE \'pi_%\' ORDER BY purchase_date DESC LIMIT 1;', $user->UserId());
 		if ($results->RecordCount() === 0) {
 			return null;
@@ -126,6 +138,9 @@ class BeaconStripeAPI {
 			return null;
 		}
 		$customerId = $intent['customer'];
+		$database->BeginTransaction();
+		$database->Query('UPDATE public.users SET stripe_id = $2 WHERE user_id = $1;', $user->UserId(), $customerId);
+		$database->Commit();
 		$this->UpdateCustomer($customerId, [
 			'metadata' => [
 				'beacon-uuid' => $user->UserId(),
@@ -145,6 +160,10 @@ class BeaconStripeAPI {
 		} else {
 			return null;
 		}
+	}
+
+	public function GetProduct(string $productId): ?array {
+		return $this->GetURL('https://api.stripe.com/v1/products/' . $productId);
 	}
 
 	public function GetProductPrices(string $productCode, ?string $currency = null): ?array {
@@ -197,7 +216,6 @@ class BeaconStripeAPI {
 			return $address['country'] . ' ' . $address['state'];
 		}
 	}
-
 
 	public function UpdateCustomer(string $customerId, array $fields): bool {
 		$customer = $this->PostURL('https://api.stripe.com/v1/customers/' . $customerId, $fields);
@@ -276,6 +294,10 @@ class BeaconStripeAPI {
 
 	public function CreateCheckoutSession(array $details): ?array {
 		return $this->PostURL('https://api.stripe.com/v1/checkout/sessions', $details);
+	}
+
+	public function CreateCustomerSession(array $details): ?array {
+		return $this->PostUrl('https://api.stripe.com/v1/customer_sessions', $details);
 	}
 
 	public function GetCountrySpec(string $countryCode): ?array {
@@ -408,6 +430,10 @@ class BeaconStripeAPI {
 		}
 
 		return $response['url'];
+	}
+
+	public function GetCharge(string $chargeId): ?array {
+		return $this->GetUrl("https://api.stripe.com/v1/charges/{$chargeId}");
 	}
 }
 

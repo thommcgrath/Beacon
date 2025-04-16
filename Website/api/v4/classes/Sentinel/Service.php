@@ -1,15 +1,15 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, User};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, Subscription, User};
 use BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
-		SaveChildObjects as protected MutableDatabaseObjectSaveChildObjects;
-		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
-		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
-		Validate as protected MutableDatabaseObjectValidate;
+		SaveChildObjects as protected MDOSaveChildObjects;
+		InitializeProperties as protected MDOInitializeProperties;
+		PreparePropertyValue as protected MDOPreparePropertyValue;
+		Validate as protected MDOValidate;
 		HookModified As MDOHookModified;
 	}
 	use SentinelObject;
@@ -129,6 +129,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	];
 
 	protected string $serviceId;
+	protected string $userId;
 	protected string $gameId;
 	protected string $accessKey;
 	protected string $accessKeyHash;
@@ -150,6 +151,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
+		$this->userId = $row->Field('user_id');
 		$this->gameId = $row->Field('game_id');
 		$this->accessKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($row->Field('access_key')));
 		$this->accessKeyHash = $row->Field('access_key_hash');
@@ -179,6 +181,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			table: 'services',
 			definitions: [
 				new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 				new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
 				new DatabaseObjectProperty('accessKey', ['columnName' => 'access_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('accessKeyHash', ['columnName' => 'access_key_hash', 'dependsOn' => ['accessKey'], 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
@@ -258,7 +261,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	protected static function Validate(array $properties): void {
-		static::MutableDatabaseObjectValidate($properties);
+		static::MDOValidate($properties);
 
 		if (isset($properties['languages'])) {
 			$languages = $properties['languages'];
@@ -302,6 +305,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		$json = [
 			'serviceId' => $this->serviceId,
+			'userId' => $this->userId,
 			'gameId' => $this->gameId,
 			'accessKey' => BeaconCommon::Base64UrlEncode($this->accessKey),
 			'accessKeyHash' => $this->accessKeyHash,
@@ -326,29 +330,26 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	protected static function InitializeProperties(array &$properties): void {
-		static::MutableDatabaseObjectInitializeProperties($properties);
+		static::MDOInitializeProperties($properties);
 
-		$properties['accessKey'] = BeaconEncryption::GenerateKey(256);
-		$properties['accessKeyHash'] = '';
+		$accessKey = BeaconEncryption::GenerateKey(256);
+		$properties['accessKey'] = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $accessKey));
+		$properties['accessKeyHash'] = BeaconCommon::Base64UrlEncode(hash('sha3-512', $accessKey, true));
 	}
 
 	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
 		switch ($definition->PropertyName()) {
 		case 'gameSpecific':
 			return json_encode($value);
-		case 'accessKey':
-			return BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $value));
-		case 'accessKeyHash':
-			return BeaconCommon::Base64UrlEncode(hash('sha3-512', $otherProperties['accessKey'], true));
 		case 'languages':
 			return '{' . implode(',', $this->languages) . '}';
 		default:
-			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value, $otherProperties);
+			return static::MDOPreparePropertyValue($definition, $value, $otherProperties);
 		}
 	}
 
 	protected function SaveChildObjects(BeaconDatabase $database): void {
-		$this->MutableDatabaseObjectSaveChildObjects($database);
+		$this->MDOSaveChildObjects($database);
 
 		$database->Query('DELETE FROM sentinel.service_languages WHERE service_id = $1 AND NOT (language = ANY($2));', $this->serviceId, '{' . implode(',', $this->languages) . '}');
 		foreach ($this->languages as $code) {
@@ -435,10 +436,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public static function GetResourceLimitsForUser(User $user): ?ResourceLimit {
 		$subscriptions = Subscription::Search(['userId' => $user->UserId()], true);
-		if (count($subscriptions) !== 1 || $subscriptions[0]->IsSuspended()) {
+		if (count($subscriptions) !== 1 || $subscriptions[0]->IsExpired()) {
 			return new ResourceLimit(0, 0);
 		}
-		return new ResourceLimit($subscriptions[0]->UsedServices(), $subscriptions[0]->MaxServices());
+		return new ResourceLimit($subscriptions[0]->UnitsUsed(), $subscriptions[0]->UnitsAllowed());
 	}
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {

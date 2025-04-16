@@ -103,7 +103,7 @@ trait MutableDatabaseObject {
 			if (is_null($obj)) {
 				throw new Exception("{$primaryKey} was inserted into database, but could not be fetched. This is an internal error and will need to be fixed by the developer.");
 			}
-			$obj->Edit($properties); // Gets virtual data into the new object so the next method can function
+			$obj->SetProperties($properties); // Gets virtual data into the new object so the next method can function
 			$obj->SaveChildObjects($database);
 			$database->Commit();
 			$obj->HookModified();
@@ -131,7 +131,7 @@ trait MutableDatabaseObject {
 		return $this->jsonSerialize();
 	}
 
-	public function Edit(array $properties, bool $restoreDefaults = false): void {
+	public function SetProperties(array $properties): void {
 		$whitelist = static::EditableProperties(DatabaseObjectProperty::kEditableLater);
 		foreach ($whitelist as $definition) {
 			$propertyName = $definition->PropertyName();
@@ -139,6 +139,10 @@ trait MutableDatabaseObject {
 				$this->SetProperty($propertyName, $properties[$propertyName]);
 			}
 		}
+	}
+
+	public function Edit(array $properties, bool $restoreDefaults = false): void {
+		$this->SetProperties($properties);
 		$this->Save($restoreDefaults);
 	}
 
@@ -244,6 +248,7 @@ trait MutableDatabaseObject {
 		$requiredProperties = static::DatabaseSchema()->RequiredColumns();
 		$missingProperties = [];
 		foreach ($requiredProperties as $definition) {
+			//echo "`" . $definition->PropertyName() . "`";
 			if (array_key_exists($definition->PropertyName(), $properties) === false) {
 				$missingProperties[] = $definition->PropertyName();
 			}

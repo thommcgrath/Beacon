@@ -143,9 +143,6 @@ Core::RegisterRoutes(
 			'GET' => 'tokens/list',
 			'POST' => 'tokens/create',
 		],
-		'/sentinel/subscription' => [
-			'GET' => 'sentinel/subscriptions/get',
-		],
 		'/sentinel/gameCommands' => [
 			'POST' => 'sentinel/gameCommands',
 		],
@@ -167,6 +164,9 @@ Core::RegisterRoutes(
 		],
 		'/users/{userId}/billingPortal' => [
 			'GET' => 'users/billingUrl',
+		],
+		'/sentinel/pricingTable' => [
+			'POST' => 'sentinel/pricingTable',
 		],
 	]
 );

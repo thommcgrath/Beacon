@@ -29,6 +29,8 @@ class User extends DatabaseObject implements JsonSerializable {
 	protected ?array $signature = null;
 	protected $userId = '';
 	protected $username = null;
+	protected ?array $subscriptions = null;
+	protected ?string $stripeId = null;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->backupCodes = null;
@@ -48,6 +50,7 @@ class User extends DatabaseObject implements JsonSerializable {
 		$this->signature = null;
 		$this->userId = $row->Field('user_id');
 		$this->username = $row->Field('username') ?? 'Anonymous';
+		$this->stripeId = $row->Field('stripe_id');
 
 		if (is_null($this->username) === false && is_null($this->cloudKey) === true) {
 			$this->cloudKey = bin2hex(BeaconEncryption::RSAEncrypt($this->publicKey, static::GenerateCloudKey()));
@@ -70,7 +73,8 @@ class User extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('cloudKey', ['columnName' => 'usercloud_key', 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('banned'),
 			new DatabaseObjectProperty('enabled'),
-			new DatabaseObjectProperty('requirePasswordChange', ['columnName' => 'require_password_change'])
+			new DatabaseObjectProperty('requirePasswordChange', ['columnName' => 'require_password_change']),
+			new DatabaseObjectProperty('stripeId', ['columnName' => 'stripe_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 		]);
 	}
 
@@ -279,6 +283,11 @@ class User extends DatabaseObject implements JsonSerializable {
 		return $this->licenses;
 	}
 
+	public function Subscriptions(): array {
+		$this->LoadSubscriptions();
+		return $this->subscriptions;
+	}
+
 	public function LicenseForProductId(string $productId): array {
 		$this->LoadLicenses();
 		if (array_key_exists($productId, $this->licenses)) {
@@ -307,6 +316,10 @@ class User extends DatabaseObject implements JsonSerializable {
 	public function CanSignIn(): bool {
 		// Use the methods here so subclasses can override correctly.
 		return $this->IsEnabled() === true && $this->RequiresPasswordChange() === false;
+	}
+
+	public function StripeId(): ?string {
+		return $this->stripeId;
 	}
 
 	/* !Two Factor Authentication */
@@ -532,6 +545,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			'banned' => $this->banned,
 			'signature' => $this->signature,
 			'licenses' => $this->licenses,
+			'subscriptions' => $this->subscriptions,
 		];
 		if (empty($this->expiration) === false) {
 			$json['expiration'] = $this->expiration;
@@ -548,12 +562,21 @@ class User extends DatabaseObject implements JsonSerializable {
 		$this->licensesLoaded = true;
 	}
 
+	public function LoadSubscriptions(): void {
+		if (is_null($this->subscriptions) === false) {
+			return;
+		}
+
+		$this->subscriptions = Subscription::Search(['emailId' => $this->emailId], true);
+	}
+
 	public function PrepareSignatures(string $deviceId): void {
 		if (is_null($this->signature) === false) {
 			return;
 		}
 
 		$this->LoadLicenses();
+		$this->LoadSubscriptions();
 
 		$userId = strtolower($this->UserID());
 		$fieldNames = ['deviceId', 'userId', 'licenses', 'banned'];
