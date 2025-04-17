@@ -146,6 +146,10 @@ BeaconErrors::StartWatching();
 			"https://*.usebeacon.app",
 			"https://api.nitrado.net",
 		],
+		'img-src' => [
+			"'self'",
+			"data:",
+		],
 		'base-uri' => [
 			"'self'"
 		],
