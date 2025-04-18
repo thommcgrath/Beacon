@@ -94,8 +94,7 @@ case 'checkout.session.completed':
 	BeaconShop::IssuePurchases($purchase->PurchaseId());
 	$database->Query('UPDATE public.users SET stripe_id = $2 WHERE email_id = uuid_for_email($1::email, TRUE) AND stripe_id IS DISTINCT FROM $2;', $email, $customerId);
 	if (is_null($purchase->ClientReferenceId()) === false) {
-		$database->Query('UPDATE public.affiliate_tracking SET purchase_id = $1 WHERE client_reference_id = $2;', $purchase->PurchaseId(), $purchase->ClientReferenceId());
-		$database->Query('UPDATE public.subscriptions SET affiliate_id = affiliate_tracking.code FROM public.affiliate_tracking WHERE subscriptions.last_purchase_id = $1 AND subscriptions.affiliate_id IS NULL AND affiliate_tracking.purchase_id = $1;', $purchase->PurchaseId());
+		$database->Query('UPDATE public.affiliate_tracking SET purchase_id = $1 WHERE client_reference_id = $2 AND purchase_id IS NULL;', $purchase->PurchaseId(), $purchase->ClientReferenceId());
 	}
 	$database->Commit();
 
@@ -573,6 +572,16 @@ function SaveSubscription(array $subscription): string {
 	$latestInvoiceId = $subscription['latest_invoice'];
 	$latestPurchaseId = BeaconUUID::v5($latestInvoiceId);
 
+	$database->Query('INSERT INTO public.subscription_purchases (subscription_id, purchase_id) VALUES ($1, $2) ON CONFLICT (subscription_id, purchase_id) DO NOTHING;', $subscriptionId, $latestPurchaseId);
+
+	$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM public.subscriptions WHERE subscription_id = $1) AS exists;', $subscriptionId);
+	if ($rows->Field('exists')) {
+		$database->Query('UPDATE public.subscriptions SET date_expires = TO_TIMESTAMP($2), product_id = $3, last_purchase_id = $4 WHERE subscription_id = $1 AND (date_expires != TO_TIMESTAMP($2) OR product_id != $3 OR last_purchase_id != $4);', $subscriptionId, $endDate, $productId, $latestPurchaseId);
+	} else {
+		$database->Query('INSERT INTO public.subscriptions (subscription_id, stripe_id, product_id, date_created, date_expires, initial_purchase_id, last_purchase_id) VALUES ($1, $2, $3, TO_TIMESTAMP($4), TO_TIMESTAMP($5), $6, $6);', $subscriptionId, $stripeSubscription, $productId, $startDate, $endDate, $latestPurchaseId);
+	}
+
+	$saveInvoice = false;
 	$invoicePurchase = BeaconPurchase::Load($database, $latestPurchaseId);
 	if (is_null($invoicePurchase)) {
 		$invoice = $api->GetInvoice($latestInvoiceId);
@@ -580,27 +589,17 @@ function SaveSubscription(array $subscription): string {
 			throw new Exception("Unable to download invoice {$latestInvoiceId}");
 		}
 		$invoicePurchase = CreatePurchaseFromInvoice($invoice);
-		$invoicePurchase->SaveTo($database);
+		$saveInvoice = true;
 	}
-
-	$database->Query('INSERT INTO public.subscription_purchases (subscription_id, purchase_id) VALUES ($1, $2) ON CONFLICT (subscription_id, purchase_id) DO NOTHING;', $subscriptionId, $latestPurchaseId);
-
-	$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM public.subscriptions WHERE subscription_id = $1) AS exists;', $subscriptionId);
-	if ($rows->Field('exists')) {
-		$database->Query('UPDATE public.subscriptions SET date_expires = TO_TIMESTAMP($2), product_id = $3, last_purchase_id = $4 WHERE subscription_id = $1 AND (date_expires != TO_TIMESTAMP($2) OR product_id != $3 OR last_purchase_id != $4);', $subscriptionId, $endDate, $productId, $latestPurchaseId);
-		return $subscriptionId;
-	}
-	$database->Query('INSERT INTO public.subscriptions (subscription_id, stripe_id, product_id, date_created, date_expires, last_purchase_id) VALUES ($1, $2, $3, TO_TIMESTAMP($4), TO_TIMESTAMP($5), $6);', $subscriptionId, $stripeSubscription, $productId, $startDate, $endDate, $latestPurchaseId);
-	$database->Query('UPDATE public.subscriptions SET affiliate_id = affiliate_tracking.code FROM public.affiliate_tracking WHERE subscriptions.subscription_id = $1 AND subscriptions.affiliate_id IS NULL AND affiliate_tracking.purchase_id = $2;', $subscriptionId, $latestPurchaseId);
-
-	$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM public.purchases WHERE purchase_id = $1) AS invoice_exists;', $latestPurchaseId);
-	if ($rows->Field('invoice_exists') === false) {
-		$invoice = $api->GetInvoice($latestInvoiceId);
-		if (is_null($invoice)) {
-			throw new Exception("Failed to get invoice {$latestInvoiceId}.");
+	if (is_null($invoicePurchase->ClientReferenceId())) {
+		$rows = $database->Query('SELECT client_reference_id FROM public.subscriptions INNER JOIN public.purchases ON (purchases.purchase_id = subscriptions.initial_purchase_id) WHERE subscription_id = $1;', $subscriptionId);
+		if ($rows->RecordCount() === 1 && $invoicePurchase->ClientReferenceId() !== $rows->Field('client_reference_id')) {
+			$invoicePurchase->SetClientReferenceId($rows->Field('client_reference_id'));
+			$saveInvoice = true;
 		}
-		$purchase = CreatePurchaseFromInvoice($invoice);
-		$purchase->SaveTo($database);
+	}
+	if ($saveInvoice) {
+		$invoicePurchase->SaveTo($database);
 	}
 
 	return $subscriptionId;
