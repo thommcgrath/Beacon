@@ -2830,6 +2830,15 @@ body.no-navigation {
 	display: none;
 }
 
+#purchase_confirmed {
+	.confirmed_text {
+		color: $text-blue;
+		border: 1px solid $tag-blue-fill;
+		padding: 0.5rem;
+		border-radius: $border-radius;
+	}
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;

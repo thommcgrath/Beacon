@@ -10,7 +10,7 @@ if (!$has_purchased) {
 	return;
 }
 
-$purchases = $database->Query('SELECT purchase_id, EXTRACT(epoch FROM purchase_date) AS purchase_date, total_paid, currency, refunded FROM purchases WHERE purchaser_email = $1 ORDER BY purchase_date DESC;', $user->EmailID());
+$purchases = $database->Query('SELECT purchase_id, EXTRACT(epoch FROM purchase_date) AS purchase_date, total, currency, refunded FROM purchases WHERE purchaser_email = $1 ORDER BY purchase_date DESC;', $user->EmailID());
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 
@@ -134,7 +134,7 @@ function ShowPurchases() {
 		}
 		$actions_html = implode(' ', $actions_html_members);
 
-		$total = $purchases->Field('total_paid');
+		$total = $purchases->Field('total');
 		$currency = $purchases->Field('currency');
 
 		if ($refunded) {

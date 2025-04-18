@@ -217,11 +217,13 @@ abstract class BeaconShop {
 
 	public static function TrackAffiliateClick(string $code): string {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT code FROM affiliate_links WHERE code = $1;', $code);
+		$rows = $database->Query('SELECT code, destination FROM affiliate_links WHERE code = $1;', $code);
 		$clientReferenceId = BeaconCommon::GenerateUUID();
+		$destination = 'https://{{ BEACON_DOMAIN }}/omni';
 
 		if ($rows->RecordCount() === 1) {
 			$code = $rows->Field('code'); // Just because
+			$destination = $rows->Field('destination');
 
 			$database->BeginTransaction();
 			$database->Query('INSERT INTO affiliate_tracking (code, client_reference_id, click_time) VALUES ($1, $2, CURRENT_TIMESTAMP);', $code, $clientReferenceId);
@@ -233,11 +235,14 @@ abstract class BeaconShop {
 				'domain' => '',
 				'secure' => true,
 				'httponly' => true,
-				'samesite' => 'Lax'
+				'samesite' => 'Lax',
 			]);
 		}
 
-		return $clientReferenceId;
+		$destination = str_replace('{{ CLIENT_REFERENCE_ID }}', urlencode($clientReferenceId), $destination);
+		$destination = str_replace('{{ BEACON_DOMAIN }}', BeaconCommon::Domain(), $destination);
+
+		return $destination;
 	}
 
 	public static function SyncWithStripe(): void {

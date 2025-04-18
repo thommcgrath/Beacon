@@ -19,6 +19,7 @@ class BeaconPurchase {
 	protected int $total = 0;
 	protected int $amountPaid = 0;
 	protected ?array $metadata = null;
+	protected bool $isNew = true;
 
 	public function __construct(string $merchantReference, string $email, int $dateCreated, string $taxLocality, string $currencyCode, float $conversionRate, float $currencyMultiplier) {
 		$this->purchaseId = BeaconUUID::v5($merchantReference);
@@ -49,6 +50,23 @@ class BeaconPurchase {
 		return $this->purchaseId;
 	}
 
+	public function Email(): string {
+		// May be a UUID or actual email
+		return $this->email;
+	}
+
+	public function MerchantReference(): string {
+		return $this->merchantReference;
+	}
+
+	public function ClientReferenceId(): ?string {
+		return $this->clientReferenceId;
+	}
+
+	public function Total(): int {
+		return $this->total;
+	}
+
 	public function SetAmountPaid(int $amountPaid): void {
 		$this->amountPaid = $amountPaid;
 	}
@@ -57,7 +75,7 @@ class BeaconPurchase {
 		$this->notes = $notes;
 	}
 
-	public function SetClientReferenceId(string $clientReferenceId): void {
+	public function SetClientReferenceId(?string $clientReferenceId): void {
 		$this->clientReferenceId = $clientReferenceId;
 	}
 
@@ -119,12 +137,16 @@ class BeaconPurchase {
 		$amountPaidUsd = static::HumanPrice($this->amountPaid, $this->currencyMultiplier, $this->conversionRate);
 		$metadata = is_null($this->metadata) ? null : json_encode((object) $this->metadata);
 
-		$emailSql = 'uuid_for_email($2::email, TRUE)';
-		if (BeaconUUID::Validate($this->email)) {
-			$emailSql = '$2';
-		}
+		if ($this->isNew) {
+			$emailSql = 'uuid_for_email($2::email, TRUE)';
+			if (BeaconUUID::Validate($this->email)) {
+				$emailSql = '$2';
+			}
 
-		$database->Query("INSERT INTO public.purchases (purchase_id, purchaser_email, merchant_reference, client_reference_id, notes, tax_locality, currency, conversion_rate, purchase_date, date_fulfilled, subtotal, discount, tax, total, amount_paid, subtotal_usd, discount_usd, tax_usd, total_usd, amount_paid_usd, metadata) VALUES ($1, {$emailSql}, $3, $4, $5, $6, $7, $8, TO_TIMESTAMP($9), TO_TIMESTAMP($10), $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21);", $this->purchaseId, $this->email, $this->merchantReference, $this->clientReferenceId, $this->notes, $this->taxLocality, $this->currencyCode, $this->conversionRate, $this->dateCreated, $this->dateFulfilled, $subtotal, $discounts, $taxes, $total, $amountPaid, $subtotalUsd, $discountsUsd, $taxesUsd, $totalUsd, $amountPaidUsd, $metadata);
+			$database->Query("INSERT INTO public.purchases (purchase_id, purchaser_email, merchant_reference, client_reference_id, notes, tax_locality, currency, conversion_rate, purchase_date, date_fulfilled, subtotal, discount, tax, total, amount_paid, subtotal_usd, discount_usd, tax_usd, total_usd, amount_paid_usd, metadata) VALUES ($1, {$emailSql}, $3, $4, $5, $6, $7, $8, TO_TIMESTAMP($9), TO_TIMESTAMP($10), $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21);", $this->purchaseId, $this->email, $this->merchantReference, $this->clientReferenceId, $this->notes, $this->taxLocality, $this->currencyCode, $this->conversionRate, $this->dateCreated, $this->dateFulfilled, $subtotal, $discounts, $taxes, $total, $amountPaid, $subtotalUsd, $discountsUsd, $taxesUsd, $totalUsd, $amountPaidUsd, $metadata);
+		} else {
+			$database->Query('UPDATE public.purchases SET amount_paid = $2, amount_paid_usd = $3, notes = $4, client_reference_id = $5, date_fulfilled = TO_TIMESTAMP($6), metadata = $7, currency = $8, conversion_rate = $9, subtotal_usd = $10, discount_usd = $11, tax_usd = $12, total_usd = $13 WHERE purchase_id = $1 AND (amount_paid != $2 OR amount_paid_usd != $3 OR notes != $4 OR client_reference_id IS DISTINCT FROM $5 OR date_fulfilled IS DISTINCT FROM TO_TIMESTAMP($6) OR metadata IS DISTINCT FROM $7 OR currency != $8 OR conversion_rate != $9 OR subtotal_usd != $10 OR discount_usd != $11 OR tax_usd != $12 OR total_usd != $13);', $this->purchaseId, $amountPaid, $amountPaidUsd, $this->notes, $this->clientReferenceId, $this->dateFulfilled, $metadata, $this->currencyCode, $this->conversionRate, $subtotalUsd, $discountsUsd, $taxesUsd, $totalUsd);
+		}
 
 		foreach ($this->lines as $line) {
 			$line->SaveTo($database, $this->purchaseId);
@@ -157,22 +179,8 @@ class BeaconPurchase {
 		$purchase->amountPaid = $rows->Field('amount_paid') * $currencyMultiplier;
 		$purchase->metadata = is_null($rows->Field('metadata')) ? null : json_decode($rows->Field('metadata'), true);
 		$purchase->lines = BeaconLineItem::Load($database, $purchase->purchaseId);
+		$purchase->isNew = false;
 		return $purchase;
-	}
-
-	public function Update(BeaconDatabase $database): void {
-		$amountPaid = static::HumanPrice($this->amountPaid, $this->currencyMultiplier, $this->conversionRate);
-		$subtotalUsd = static::HumanPrice($this->subtotal, $this->currencyMultiplier, $this->conversionRate);
-		$discountsUsd = static::HumanPrice($this->discounts, $this->currencyMultiplier, $this->conversionRate);
-		$taxesUsd = static::HumanPrice($this->taxes, $this->currencyMultiplier, $this->conversionRate);
-		$totalUsd = static::HumanPrice($this->total, $this->currencyMultiplier, $this->conversionRate);
-		$amountPaidUsd = static::HumanPrice($this->amountPaid, $this->currencyMultiplier, $this->conversionRate);
-		$metadata = is_null($this->metadata) ? null : json_encode((object) $this->metadata);
-
-		$database->Query('UPDATE public.purchases SET amount_paid = $2, amount_paid_usd = $3, notes = $4, client_reference_id = $5, date_fulfilled = TO_TIMESTAMP($6), metadata = $7, currency = $8, conversion_rate = $9, subtotal_usd = $10, discount_usd = $11, tax_usd = $12, total_usd = $13 WHERE purchase_id = $1 AND (amount_paid != $2 OR amount_paid_usd != $3 OR notes != $4 OR client_reference_id != $5 OR date_fulfilled IS DISTINCT FROM TO_TIMESTAMP($6) OR metadata IS DISTINCT FROM $7 OR currency != $8 OR conversion_rate != $9 OR subtotal_usd != $10 OR discount_usd != $11 OR tax_usd != $12 OR total_usd != $13);', $this->purchaseId, $amountPaid, $amountPaidUsd, $this->notes, $this->clientReferenceId, $this->dateFulfilled, $metadata, $this->currencyCode, $this->conversionRate, $subtotalUsd, $discountsUsd, $taxesUsd, $totalUsd);
-		foreach ($this->lines as $line) {
-			$line->Update($database);
-		}
 	}
 }
 

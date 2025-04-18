@@ -3,7 +3,7 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
-use BeaconAPI\v4\{Session, User};
+use BeaconAPI\v4\{Affiliate, Session, User};
 
 $session = BeaconCommon::GetSession();
 if (is_null($session)) {
@@ -37,6 +37,13 @@ BeaconTemplate::FinishScript();
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
 
+if ($user->IsAnonymous() === false) {
+	$affiliateCodes = Affiliate::Search(['userId' => $user->UserId()], true);
+	$isAffiliate = count($affiliateCodes) > 0;
+} else {
+	$isAffiliate = false;
+}
+
 ?><div id="account-user-header" class="header-with-subtitle" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>">
 	<h1><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span></h1>
 	<span class="subtitle"><a href="/account/auth/redeem?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span>
@@ -52,6 +59,9 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<li><a href="#sessions" page="sessions">Sessions</a></li>
 			<?php } ?>
 			<li><a href="#services" page="services">Connections</a></li>
+			<?php if ($isAffiliate) { ?>
+			<li><a href="#affiliate" page="affiliate">Affiliate</a></li>
+			<?php } ?>
 		</ul>
 	</div>
 	<div class="page-panel-pages">
@@ -81,6 +91,12 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<h1>Connected Services</h1>
 			<?php include('includes/services.php'); ?>
 		</div>
+		<?php if ($isAffiliate) { ?>
+		<div class="page-panel-page" page="affiliate">
+			<h1>Affiliate Summary</h1>
+			<?php include('includes/affiliate.php'); ?>
+		</div>
+		<?php } ?>
 	</div>
 	<div class="page-panel-footer">&nbsp;</div>
 </div>

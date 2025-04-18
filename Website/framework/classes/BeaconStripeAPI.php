@@ -296,6 +296,10 @@ class BeaconStripeAPI {
 		return $this->PostURL('https://api.stripe.com/v1/checkout/sessions', $details);
 	}
 
+	public function GetCheckoutSession(string $sessionId): ?array {
+		return $this->GetURL("https://api.stripe.com/v1/checkout/sessions/{$sessionId}");
+	}
+
 	public function CreateCustomerSession(array $details): ?array {
 		return $this->PostUrl('https://api.stripe.com/v1/customer_sessions', $details);
 	}
