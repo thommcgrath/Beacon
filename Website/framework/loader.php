@@ -148,6 +148,7 @@ BeaconErrors::StartWatching();
 		],
 		'img-src' => [
 			"'self'",
+			"https://*.usebeacon.app",
 			"data:",
 		],
 		'base-uri' => [
