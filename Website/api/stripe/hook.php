@@ -47,8 +47,6 @@ charge.refunded
 checkout.session.completed
 customer.subscription.created
 customer.subscription.deleted
-customer.subscription.paused
-customer.subscription.resumed
 customer.subscription.updated
 invoice.created
 invoice.paid
@@ -574,6 +572,16 @@ function SaveSubscription(array $subscription): string {
 	$productId = $stripeProduct['metadata']['beacon-uuid'];
 	$latestInvoiceId = $subscription['latest_invoice'];
 	$latestPurchaseId = BeaconUUID::v5($latestInvoiceId);
+
+	$invoicePurchase = BeaconPurchase::Load($database, $latestPurchaseId);
+	if (is_null($invoicePurchase)) {
+		$invoice = $api->GetInvoice($latestInvoiceId);
+		if (is_null($invoice)) {
+			throw new Exception("Unable to download invoice {$latestInvoiceId}");
+		}
+		$invoicePurchase = CreatePurchaseFromInvoice($invoice);
+		$invoicePurchase->SaveTo($database);
+	}
 
 	$database->Query('INSERT INTO public.subscription_purchases (subscription_id, purchase_id) VALUES ($1, $2) ON CONFLICT (subscription_id, purchase_id) DO NOTHING;', $subscriptionId, $latestPurchaseId);
 
