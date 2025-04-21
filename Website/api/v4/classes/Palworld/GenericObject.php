@@ -182,12 +182,12 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $this->contentPackId, user: $user);
 	}
 
-	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
 		if (is_null($newObjectProperties) || isset($newObjectProperties['contentPackId']) === false) {
-			return static::kPermissionRead;
+			return false;
 		}
 
-		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $newObjectProperties['contentPackId'], user: $user, options: DatabaseObjectAuthorizer::kOptionMustExist);
+		return (DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $newObjectProperties['contentPackId'], user: $user, options: DatabaseObjectAuthorizer::kOptionMustExist) & DatabaseObject::kPermissionCreate) === DatabaseObject::kPermissionCreate;
 	}
 
 	public static function LastUpdate(int $min_version = -1): DateTime {

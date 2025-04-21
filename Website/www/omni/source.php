@@ -7,7 +7,7 @@ if (isset($_GET['code'])) {
 	$code = $_GET['code'];
 }
 
-BeaconShop::TrackAffiliateClick($code);
-BeaconCommon::Redirect('/omni');
+$destination = BeaconShop::TrackAffiliateClick($code);
+BeaconCommon::Redirect($destination, true);
 
 ?>

@@ -251,7 +251,11 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function PusherChannelName(): string {
-		return 'project-' . strtolower(str_replace('-', '', $this->projectId));
+		return static::PusherChannelNameForProjectId($this->projectId);
+	}
+
+	public static function PusherChannelNameForProjectId(string $projectId): string {
+		return 'project-' . strtolower(str_replace('-', '', $projectId));
 	}
 
 	public function GameId(): string {

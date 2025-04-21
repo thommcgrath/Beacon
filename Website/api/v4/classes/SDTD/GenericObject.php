@@ -16,9 +16,9 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 	protected string $contentPackMarketplaceId;
 	protected array $tags;
 	protected int $lastUpdate;
-	
+
 	//const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
-	
+
 	protected function __construct(BeaconRecordSet $row) {
 		$tags = substr($row->Field('tags'), 1, -1);
 		if (strlen($tags) > 0) {
@@ -27,7 +27,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			$tags = [];
 		}
 		asort($tags);
-		
+
 		$this->objectId = $row->Field('object_id');
 		$this->objectGroup = $row->Field('object_group');
 		$this->label = $row->Field('label');
@@ -40,11 +40,11 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$this->tags = array_values($tags);
 		$this->lastUpdate = round($row->Field('last_update'));
 	}
-	
+
 	protected static function CustomVariablePrefix(): string {
 		return 'object';
 	}
-	
+
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$prefix = static::CustomVariablePrefix();
 		return new DatabaseSchema('sdtd', 'objects', [
@@ -63,7 +63,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			'INNER JOIN public.content_packs ON (%%TABLE%%.content_pack_id = content_packs.content_pack_id)'
 		]);
 	}
-	
+
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Accessor('label');
@@ -71,7 +71,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		$parameters->AddFromFilter($schema, $filters, 'contentPackMarketplace', '=');
 		$prefix = static::CustomVariablePrefix();
-			
+
 		if (isset($filters['contentPackId'])) {
 			if (is_array($filters['contentPackId'])) {
 				$packs = $filters['contentPackId'];
@@ -84,7 +84,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 					$packIds[] = $pack;
 				}
 			}
-			
+
 			$clauses = [];
 			if (count($packIds) > 1) {
 				$clauses[] = $schema->Accessor('contentPackId') . ' = ANY(' . $schema->Setter('contentPackId', $parameters->placeholder++) . ')';
@@ -97,7 +97,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 				$parameters->clauses[] = '(' . implode(' OR ', $clauses) . ')';
 			}
 		}
-		
+
 		if (isset($filters['contentPackMarketplaceId'])) {
 			if (is_array($filters['contentPackMarketplaceId'])) {
 				$packs = $filters['contentPackMarketplaceId'];
@@ -108,7 +108,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			for ($idx = 0; $idx < count($packs); $idx++) {
 				$packs[$idx] = str_replace(['73f2d6ad-0070-44df-8d9a-c8838da050d2', '{', '}'], ['\\,', '\\{', '\\}'], $packs[$idx]);
 			}
-			
+
 			$clauses = [];
 			if (count($packs) > 1) {
 				$clauses[] = $schema->Accessor('contentPackMarketplaceId') . ' = ANY(' . $schema->Setter('contentPackMarketplaceId', $parameters->placeholder++) . ')';
@@ -121,7 +121,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 				$parameters->clauses[] = '(' . implode(' OR ', $clauses) . ')';
 			}
 		}
-		
+
 		if (isset($filters[$prefix . 'Group'])) {
 			$filterKey = $prefix . 'Group';
 			$filterValue = $filters[$filterKey];
@@ -131,11 +131,11 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			} else {
 				$groups = [$filterValue];
 			}
-			
+
 			for ($idx = 0; $idx < count($groups); $idx++) {
 				$groups[$idx] = trim($groups[$idx]);
 			}
-			
+
 			if (count($groups) > 1) {
 				$parameters->clauses[] = $schema->Accessor($filterKey) . ' = ANY(' . $schema->Setter($filterKey, $parameters->placeholder++) . ')';
 				$parameters->values[] = '{' . implode(',', $groups) . '}';
@@ -145,12 +145,12 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 				$parameters->values[] = $group;
 			}
 		}
-		
+
 		if (isset($filters['tag'])) {
 			$parameters->clauses[] = $schema->Setter('tags', $parameters->placeholder++) . ' = ANY(' . $schema->Accessor('tags') . ')';
 			$parameters->values[] = $filters['tag'];
 		}
-		
+
 		if (isset($filters['tags'])) {
 			$tags = explode(',', $filters['tags']);
 			foreach ($tags as $tag) {
@@ -158,7 +158,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 				$parameters->values[] = $tag;
 			}
 		}
-		
+
 		if (isset($filters['label'])) {
 			if (str_contains($filters['label'], '%')) {
 				$parameters->clauses[] = $schema->Accessor('label') . ' LIKE ' . $schema->Setter('label', $parameters->placeholder++);
@@ -167,7 +167,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			}
 			$parameters->values[] = $filters['label'];
 		}
-		
+
 		if (isset($filters['alternateLabel'])) {
 			if (str_contains($filters['alternateLabel'], '%')) {
 				$parameters->clauses[] = $schema->Accessor('alternateLabel') . ' LIKE ' . $schema->Setter('alternateLabel', $parameters->placeholder++);
@@ -177,7 +177,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			$parameters->values[] = $filters['alternateLabel'];
 		}
 	}
-	
+
 	/*protected static function PreparePropertyValue(string $propertyName, DatabaseObjectProperty $definition, mixed $value, string &$setter): mixed {
 		switch ($propertyName) {
 		case 'tags':
@@ -195,35 +195,35 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			return parent::PreparePropertyValue($propertyName, $definition, $value, $setter);
 		}
 	}*/
-	
+
 	public function GetPermissionsForUser(User $user): int {
 		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $this->contentPackId, user: $user);
 	}
-	
-	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
 		if (is_null($newObjectProperties) || isset($newObjectProperties['contentPackId']) === false) {
-			return static::kPermissionRead;
+			return false;
 		}
-		
-		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $newObjectProperties['contentPackId'], user: $user, options: DatabaseObjectAuthorizer::kOptionMustExist);
+
+		return (DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $newObjectProperties['contentPackId'], user: $user, options: DatabaseObjectAuthorizer::kOptionMustExist) & DatabaseObject::kPermissionCreate) === DatabaseObject::kPermissionCreate;
 	}
-	
+
 	public static function LastUpdate(int $min_version = -1): DateTime {
 		$database = BeaconCommon::Database();
 		$schema = static::SchemaName();
 		$table = static::TableName();
-		
+
 		if ($min_version == -1) {
 			$min_version = BeaconCommon::MinVersion();
 		}
-		
+
 		$results = $database->Query('SELECT MAX(last_update) AS most_recent_change FROM ' . $schema . '.' . $table . ' WHERE min_version <= $1;', $min_version);
 		if ($results->Field('most_recent_change') !== null) {
 			$change_time = new DateTime($results->Field('most_recent_change'));
 		} else {
 			$change_time = new DateTime('2000-01-01');
 		}
-		
+
 		if ($table == self::TableName()) {
 			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM ' . $schema . '.deletions WHERE min_version <= $1;', $min_version);
 		} else {
@@ -236,23 +236,23 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		}
 		return ($change_time >= $delete_time) ? $change_time : $delete_time;
 	}
-	
+
 	public static function Deletions(int $min_version = -1, DateTime $since = null): array {
 		if ($since === null) {
 			$since = new DateTime('2000-01-01');
 		}
-		
+
 		if ($min_version == -1) {
 			$min_version = BeaconCommon::MinVersion();
 		}
-		
+
 		$database = BeaconCommon::Database();
 		$columns = 'object_id, from_table AS from_table, label, min_version, action_time, tag';
 		$mySchema = self::DatabaseSchema();
 		$classSchema = static::DatabaseSchema();
 		$schema = $classSchema->Schema();
 		$table = $classSchema->Table();
-		
+
 		if ($schema === $mySchema->Schema() && $table === $mySchema->Table()) {
 			$results = $database->Query("SELECT {$columns} FROM {$schema}.deletions WHERE min_version <= $1 AND action_time > $2;", $min_version, $since->format('Y-m-d H:i:sO'));
 		} else {
@@ -271,7 +271,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		}
 		return $arr;
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		$prefix = static::CustomVariablePrefix();
 		return [
@@ -288,76 +288,76 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			'lastUpdate' => $this->lastUpdate
 		];
 	}
-	
+
 	public function PrimaryKey(): string {
 		return $this->objectId;
 	}
-	
+
 	public function UUID(): string {
 		return $this->objectId;
 	}
-	
+
 	public function ObjectId(): string {
 		return $this->objectId;
 	}
-	
+
 	public function ObjectGroup(): string {
 		return $this->objectGroup;
 	}
-	
+
 	public function Label(): string {
 		return $this->label;
 	}
-	
+
 	public function SetLabel(string $label): void {
 		$this->label = $label;
 	}
-	
+
 	public function AlternateLabel(): ?string {
 		return $this->alternateLabel;
 	}
-	
+
 	public function SetAlternateLabel(?string $alternateLabel): void {
 		$this->alternateLabel = $alternateLabel;
 	}
-	
+
 	public function MinVersion(): int {
 		return $this->minVersion;
 	}
-	
+
 	public function ContentPackId(): string {
 		return $this->contentPackId;
 	}
-	
+
 	public function ContentPackName(): string {
 		return $this->contentPackName;
 	}
-	
+
 	public function ContentPackMarketplace(): string {
 		return $this->contentPackMarketplace;
 	}
-	
+
 	public function ContentPackMarketplaceId(): string {
 		return $this->contentPackMarketplaceId;
 	}
-	
+
 	public static function NormalizeTag(string $tag): string {
 		$tag = strtolower($tag);
 		$tag = preg_replace('/[^\w]/', '', $tag);
 		return $tag;
 	}
-	
+
 	public function Tags(): array {
 		return $this->tags;
 	}
-	
+
 	public function AddTag(string $tag): void {
 		$tag = self::NormalizeTag($tag);
 		if (!in_array($tag, $this->tags)) {
 			$this->tags[] = $tag;
 		}
 	}
-	
+
 	public function RemoveTag(string $tag): void {
 		$tag = self::NormalizeTag($tag);
 		if (in_array($tag, $this->tags)) {
@@ -370,16 +370,16 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			$this->tags = $arr;
 		}
 	}
-	
+
 	public function IsTagged(string $tag): bool {
 		return in_array(self::NormalizeTag($tag), $this->tags);
 	}
-	
+
 	public static function DeleteObjects(string $object_id, string $user_id): bool {
 		$database = BeaconCommon::Database();
 		$escaped_schema = $database->EscapeIdentifier(static::SchemaName());
 		$escaped_table = $database->EscapeIdentifier(static::TableName());
-		
+
 		$database->BeginTransaction();
 		$results = $database->Query('SELECT content_packs.user_id, ' . $escaped_table . '.object_id FROM ' . $escaped_schema . '.' . $escaped_table . ' INNER JOIN public.content_packs ON (' . $escaped_table . '.content_pack_id = content_packs.content_pack_id) WHERE ' . $escaped_table . '.object_id = ANY($1) FOR UPDATE OF ' . $escaped_table . ';', '{' . $object_id . '}');
 		$objects = array();
@@ -399,7 +399,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$database->Commit();
 		return true;
 	}
-	
+
 	public function GetPropertyValue(string $propertyName): mixed {
 		$prefix = static::CustomVariablePrefix();
 		switch ($propertyName) {

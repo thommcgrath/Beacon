@@ -1059,6 +1059,36 @@ abstract class BeaconCommon {
 		}
 		return $gameId;
 	}
+
+	public static function NounWithQuantity(int $quantity, string $singular, string $plural): string {
+		return number_format($quantity) . ' ' . (($quantity === 1) ? $singular : $plural);
+	}
+
+	public static function FindEmptyKeys(array $arr, ...$keys): array {
+		$results = [];
+		foreach ($keys as $key) {
+			if (empty($arr[$key])) {
+				$results = $key;
+			}
+		}
+		return $results;
+	}
+
+	public static function WordToInt(string $word): int {
+		$len = min(strlen($word), 4);
+		$i = 0;
+		$j = $len - 1;
+		$score = 0;
+
+		while ($i < $len) {
+			$byte = ord($word[$i]);
+			$score += $byte * pow(256, $j);
+			$i++;
+			$j--;
+		}
+
+		return $score;
+	}
 }
 
 ?>

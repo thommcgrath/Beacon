@@ -33,6 +33,9 @@ case 'curator':
 case 'palworld':
 	$product = BeaconShop::GetProductByTag('USD', 'Palworld', 'Base');
 	break;
+case 'sentinel':
+	$product = BeaconShop::GetProductByTag('USD', 'Sentinel', 'Alpha');
+	break;
 default:
 	PostReply('Unknown game_id value.');
 	return;

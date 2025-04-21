@@ -1,0 +1,3 @@
+aus-web-1.json filter=git-crypt-host-aus-web-1 diff=git-crypt-host-aus-web-1
+useast-web-1.json filter=git-crypt-host-useast-web-1 diff=git-crypt-host-useast-web-1
+local.json filter=git-crypt-host-local diff=git-crypt-host-local

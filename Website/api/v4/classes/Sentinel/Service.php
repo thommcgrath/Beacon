@@ -1,19 +1,31 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
-use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, Subscription, User};
+use BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
-	const PermissionView = 1;
-	const PermissionEdit = 2;
-	const PermissionDelete = 4;
-	
+	use MutableDatabaseObject {
+		SaveChildObjects as protected MDOSaveChildObjects;
+		InitializeProperties as protected MDOInitializeProperties;
+		PreparePropertyValue as protected MDOPreparePropertyValue;
+		Validate as protected MDOValidate;
+		HookModified As MDOHookModified;
+		Delete as protected MDODelete;
+	}
+	use SentinelObject;
+
+	const ServicePermissionUsage = 1;
+	const ServicePermissionControl = 2;
+	const ServicePermissionManage = 4;
+
 	const GameArk = 'Ark';
+	const GameArkSA = 'ArkSA';
 	const Games = [
-		self::GameArk
+		self::GameArk,
+		self::GameArkSA,
 	];
-	
+
 	const ColorNone = 'None';
 	const ColorBlue = 'Blue';
 	const ColorBrown = 'Brown';
@@ -40,92 +52,232 @@ class Service extends DatabaseObject implements JsonSerializable {
 		self::ColorTeal,
 		self::ColorYellow
 	];
-	
+
 	const PlatformPC = 'PC';
 	const PlatformXbox = 'Xbox';
 	const PlatformPlayStation = 'PlayStation';
 	const PlatformSwitch = 'Switch';
+	const PlatformUniversal = 'Universal';
 	const Platforms = [
 		self::PlatformPC,
 		self::PlatformXbox,
 		self::PlatformPlayStation,
-		self::PlatformSwitch
+		self::PlatformSwitch,
+		self::PlatformUniversal,
 	];
-	
-	protected $serviceId = null;
-	protected $userId = null;
-	protected $nitradoServiceId = null;
-	protected $gameId = null;
-	protected $lastSuccess = null;
-	protected $lastError = null;
-	protected $inErrorState = null;
-	protected $updateSchedule = null;
-	protected $name = null;
-	protected $nickname = null;
-	protected $ipAddress = null;
-	protected $gamePort = null;
-	protected $slotCount = null;
-	protected $expiration = null;
-	protected $color = null;
-	protected $platform = null;
-	protected $rconPort = null;
-	protected $gameSpecific = null;
-	
+
+	const LanguageArabic = 'ar';
+	const LanguageArmenian = 'hy';
+	const LanguageBasque = 'eu';
+	const LanguageCatalan = 'ca';
+	const LanguageDanish = 'da';
+	const LanguageDutch = 'nl';
+	const LanguageEnglish = 'en';
+	const LanguageFinnish = 'fi';
+	const LanguageFrench = 'fr';
+	const LanguageGerman = 'de';
+	const LanguageGreek = 'el';
+	const LanguageHindi = 'hi';
+	const LanguageHungarian = 'hu';
+	const LanguageIndonesian = 'id';
+	const LanguageIrish = 'ga';
+	const LanguageItalian = 'it';
+	const LanguageLithuanian = 'lt';
+	const LanguageNepali = 'ne';
+	const LanguageNorwegian = 'no';
+	const LanguagePortuguese = 'pt';
+	const LanguageRomanian = 'ro';
+	const LanguageRussian = 'ru';
+	const LanguageSerbian = 'sr';
+	const LanguageSpanish = 'es';
+	const LanguageSwedish = 'sv';
+	const LanguageTamil = 'ta';
+	const LanguageTurkish = 'tr';
+	const LanguageYiddish = 'yi';
+	const Languages = [
+		self::LanguageArabic,
+		self::LanguageArmenian,
+		self::LanguageBasque,
+		self::LanguageCatalan,
+		self::LanguageDanish,
+		self::LanguageDutch,
+		self::LanguageEnglish,
+		self::LanguageFinnish,
+		self::LanguageFrench,
+		self::LanguageGerman,
+		self::LanguageGreek,
+		self::LanguageHindi,
+		self::LanguageHungarian,
+		self::LanguageIndonesian,
+		self::LanguageIrish,
+		self::LanguageItalian,
+		self::LanguageLithuanian,
+		self::LanguageNepali,
+		self::LanguageNorwegian,
+		self::LanguagePortuguese,
+		self::LanguageRomanian,
+		self::LanguageRussian,
+		self::LanguageSerbian,
+		self::LanguageSpanish,
+		self::LanguageSwedish,
+		self::LanguageTamil,
+		self::LanguageTurkish,
+		self::LanguageYiddish,
+	];
+	// Just because the API supports 28 languages, doesn't mean Sentinel has translations for all of them.
+	const SupportedLanguages = [
+		self::LanguageEnglish,
+	];
+
+	protected string $serviceId;
+	protected string $userId;
+	protected string $gameId;
+	protected string $accessKey;
+	protected string $accessKeyHash;
+	protected bool $isConnected;
+	protected ?int $connectionChangeTime;
+	protected string $name;
+	protected ?string $nickname;
+	protected string $displayName;
+	protected string $color;
+	protected string $platform;
+	protected array $gameSpecific;
+	protected float $gameClock;
+	protected int $currentPlayers;
+	protected int $maxPlayers;
+	protected array $languages;
+	protected string $clusterId;
+	protected bool $allowClusterIdChange;
+	protected int $permissions;
+
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
 		$this->userId = $row->Field('user_id');
-		$this->nitradoServiceId = intval($row->Field('nitrado_service_id'));
 		$this->gameId = $row->Field('game_id');
-		$this->lastSuccess = is_null($row->Field('last_success')) ? null : intval($row->Field('last_success'));
-		$this->lastError = is_null($row->Field('last_error')) ? null : intval($row->Field('last_error'));
-		$this->inErrorState = $row->Field('in_error_state');
-		$this->updateSchedule = intval($row->Field('update_schedule'));
+		$this->accessKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($row->Field('access_key')));
+		$this->accessKeyHash = $row->Field('access_key_hash');
+		$this->isConnected = $row->Field('is_connected');
+		$this->connectionChangeTime = is_null($row->Field('connection_change_time')) === false ? round($row->Field('connection_change_time')) : null;
 		$this->name = $row->Field('name');
 		$this->nickname = $row->Field('nickname');
-		$this->ipAddress = $row->Field('ip_address');
-		$this->gamePort = intval($row->Field('game_port'));
-		$this->slotCount = intval($row->Field('slot_count'));
-		$this->expiration = intval($row->Field('expiration'));
+		$this->displayName = $row->Field('display_name');
 		$this->color = $row->Field('color');
 		$this->platform = $row->Field('platform');
-		$this->rconPort = is_null($row->Field('rcon_port')) ? null : intval($row->Field('rcon_port'));
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
+		$this->gameClock = floatval($row->Field('game_clock'));
+		$this->currentPlayers = intval($row->Field('current_players'));
+		$this->maxPlayers = intval($row->Field('max_players'));
+		$this->clusterId = $row->Field('cluster_id');
+		$this->allowClusterIdChange = $row->Field('allow_cluster_id_change');
+		$this->permissions = $row->Field('permissions');
+
+		$languages = $row->Field('languages');
+		$languages = substr($languages, 1, strlen($languages) - 2);
+		$this->languages = explode(',', $languages);
 	}
-	
+
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('sentinel', 'services', [
-			new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id']),
-			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
-			new DatabaseObjectProperty('nitradoServiceId', ['columnName' => 'nitrado_service_id']),
-			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
-			new DatabaseObjectProperty('lastSuccess', ['columnName' => 'last_success']),
-			new DatabaseObjectProperty('lastError', ['columnName' => 'last_error']),
-			new DatabaseObjectProperty('inErrorState', ['columnName' => 'in_error_state']),
-			new DatabaseObjectProperty('updateSchedule', ['columnName' => 'update_schedule']),
-			new DatabaseObjectProperty('name'),
-			new DatabaseObjectProperty('nickname'),
-			new DatabaseObjectProperty('ipAddress', ['columnName' => 'ip_address']),
-			new DatabaseObjectProperty('gamePort', ['columnName' => 'game_port']),
-			new DatabaseObjectProperty('slotCount', ['columnName' => 'slot_count']),
-			new DatabaseObjectProperty('expiration'),
-			new DatabaseObjectProperty('color'),
-			new DatabaseObjectProperty('platform'),
-			new DatabaseObjectProperty('rconPort', ['columnName' => 'rcon_port']),
-			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific'])
-		]);
+		return new DatabaseSchema(
+			schema: 'sentinel',
+			table: 'services',
+			definitions: [
+				new DatabaseObjectProperty('serviceId', ['primaryKey' => true, 'columnName' => 'service_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
+				new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
+				new DatabaseObjectProperty('accessKey', ['columnName' => 'access_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('accessKeyHash', ['columnName' => 'access_key_hash', 'dependsOn' => ['accessKey'], 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
+				new DatabaseObjectProperty('isConnected', ['columnName' => 'is_connected', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('connectionChangeTime', ['columnName' => 'connection_change_time', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
+				new DatabaseObjectProperty('name'),
+				new DatabaseObjectProperty('nickname', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('platform'),
+				new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
+				new DatabaseObjectProperty('gameClock', ['columnName' => 'game_clock', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('currentPlayers', ['columnName' => 'current_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('maxPlayers', ['columnName' => 'max_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('languages', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'ARRAY(SELECT language FROM sentinel.service_languages WHERE service_languages.service_id = services.service_id)']),
+				new DatabaseObjectProperty('clusterId', ['columnName' => 'cluster_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('allowClusterIdChange', ['columnName' => 'allow_cluster_id_change', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('permissions', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_permissions.permissions']),
+			],
+			joins: [
+				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
+			],
+		);
 	}
-	
+
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
+
+		$sortOrder = 'ASC';
+		$sortColumn = 'displayName';
+		if (isset($filters['sortDirection']) && strtolower($filters['sortDirection']) === 'descending') {
+			$sortOrder = 'DESC';
+		}
+		if (isset($filters['sortedColumn'])) {
+			switch ($filters['sortedColumn']) {
+			case 'displayName':
+			case 'nickname':
+			case 'name':
+			case 'gameId':
+				$sortColumn = $filters['sortedColumn'];
+				break;
+			}
+		}
+		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortOrder;
+		$parameters->allowAll = true;
+
 		$parameters->orderBy = $schema->Accessor('name');
-		$parameters->AddFromFilter($schema, $filters, 'userId');
-		$parameters->AddFromFilter($schema, $filters, 'nitradoServiceId');
+		$parameters->AddFromFilter($schema, $filters, 'serviceTokenId');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
-		$parameters->AddFromFilter($schema, $filters, 'ipAddress');
 		$parameters->AddFromFilter($schema, $filters, 'color');
 		$parameters->AddFromFilter($schema, $filters, 'platform');
+
+		if (isset($filters['accessKey'])) {
+			$accessKeyHash = BeaconCommon::Base64UrlEncode(hash('sha3-512', BeaconCommon::Base64UrlDecode($filters['accessKey']), true));
+			$placeholder = $parameters->AddValue($accessKeyHash);
+			$parameters->clauses[] = 'services.access_key_hash = $' . $placeholder;
+		}
+
+		if (isset($filters['serviceGroupId'])) {
+			$placeholder = $parameters->AddValue($filters['serviceGroupId']);
+			$parameters->clauses[] = 'services.service_id IN (SELECT service_id FROM sentinel.service_group_services WHERE group_id = $' . $placeholder . ')';
+		}
+
+		if (isset($filters['searchableName'])) {
+			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['searchableName']) . '%');
+			$parameters->clauses[] = '(services.name ILIKE $' . $placeholder . ' OR services.nickname ILIKE $' . $placeholder . ')';
+		} elseif (isset($filters['displayName'])) {
+			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['displayName']) . '%');
+			$parameters->clauses[] = $schema->Accessor('displayName') . ' ILIKE $' . $placeholder;
+		} elseif (isset($filters['nickname'])) {
+			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['nickname']) . '%');
+			$parameters->clauses[] = $schema->Accessor('nickname') . ' ILIKE $' . $placeholder;
+		} elseif (isset($filters['name'])) {
+			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['name']) . '%');
+			$parameters->clauses[] = $schema->Accessor('name') . ' ILIKE $' . $placeholder;
+		}
 	}
-	
+
+	protected static function Validate(array $properties): void {
+		static::MDOValidate($properties);
+
+		if (isset($properties['languages'])) {
+			$languages = $properties['languages'];
+			if (is_array($languages) === false) {
+				throw new Exception('Languages should be an array of ISO639 2-character language codes.');
+			}
+			foreach ($languages as $code) {
+				if (in_array($code, self::SupportedLanguages) === false) {
+					throw new Exception('Beacon Sentinel does not support language ' . $code . '.');
+				}
+			}
+		}
+	}
+
+	// This function doesn't appear to ever get called
 	protected static function ValidateProperty(string $property, mixed $value): void {
 		switch ($property) {
 		case 'color':
@@ -138,289 +290,143 @@ class Service extends DatabaseObject implements JsonSerializable {
 				throw new Exception('Invalid platform.');
 			}
 			break;
+		case 'languages':
+			if (is_array($value) === false) {
+				throw new Exception('Languages should be an array of ISO639 2-character language codes.');
+			}
+			foreach ($value as $code) {
+				if (in_array($code, self::SupportedLanguages) === false) {
+					throw new Exception('Beacon Sentinel does not support language ' . $code . '.');
+				}
+			}
+			break;
 		}
 	}
-	
+
 	public function jsonSerialize(): mixed {
-		return [
+		$json = [
 			'serviceId' => $this->serviceId,
 			'userId' => $this->userId,
-			'nitradoServiceId' => $this->nitradoServiceId,
 			'gameId' => $this->gameId,
-			'lastSuccess' => $this->lastSuccess,
-			'lastError' => $this->lastError,
-			'inErrorState' => $this->inErrorState,
-			'updateSchedule' => $this->updateSchedule,
+			'accessKey' => BeaconCommon::Base64UrlEncode($this->accessKey),
+			'accessKeyHash' => $this->accessKeyHash,
+			'isConnected' => $this->isConnected,
+			'connectionChangeTime' => $this->connectionChangeTime,
 			'name' => $this->name,
 			'nickname' => $this->nickname,
-			'ipAddress' => $this->ipAddress,
-			'gamePort' => $this->gamePort,
-			'slotCount' => $this->slotCount,
-			'expiration' => $this->expiration,
+			'displayName' => $this->displayName,
 			'color' => $this->color,
 			'platform' => $this->platform,
-			'rconPort' => $this->rconPort,
-			'gameSpecific' => $this->gameSpecific
+			'gameSpecific' => $this->gameSpecific,
+			'gameClock' => $this->gameClock,
+			'currentPlayers' => $this->currentPlayers,
+			'maxPlayers' => $this->maxPlayers,
+			'languages' => $this->languages,
+			'clusterId' => $this->clusterId,
+			'allowClusterIdChange' => $this->allowClusterIdChange,
+			'permissions' => $this->permissions,
 		];
+
+		return $json;
 	}
-	
-	/*protected static function FromRows(BeaconRecordSet $rows): array {
-		$services = [];
-		while (!$rows->EOF()) {
-			$services[] = new static($rows);
-			$rows->MoveNext();
-		}
-		return $services;
+
+	protected static function InitializeProperties(array &$properties): void {
+		static::MDOInitializeProperties($properties);
+
+		$accessKey = BeaconEncryption::GenerateKey(256);
+		$properties['accessKey'] = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $accessKey));
+		$properties['accessKeyHash'] = BeaconCommon::Base64UrlEncode(hash('sha3-512', $accessKey, true));
 	}
-	
-	public static function Create(string $userId, array $properties): Service {
-		if (BeaconCommon::HasAllKeys($properties, 'nitrado_service_id', 'game_id', 'name', 'ip_address', 'slot_count', 'expiration', 'platform') === false) {
-			throw new Exception('Missing required properties.');
-		}
-		if (BeaconCommon::HasAnyKeys($properties, 'last_success', 'last_error', 'in_error_state', 'update_schedule')) {
-			throw new Exception('Some read-only properties have been included when they should not.');
-		}
-		
-		if (isset($properties['service_id'])) {
-			$serviceId = $properties['service_id'];
-			if (BeaconCommon::IsUUID($serviceId) === false) {
-				throw new Exception('Service UUID is not a UUID.');
-			}
-		} else {
-			$serviceId = BeaconCommon::GenerateUUID();
-			$properties['service_id'] = $serviceId;
-		}
-		$properties['user_id'] = $userId;
-		
-		if (is_numeric($properties['expiration'])) {
-			$properties['expiration'] = date('Y-m-d H:i:s', $properties['expiration']);
-		}
-		
-		foreach ($properties as $property => $value) {
-			static::ValidateProperty($property, $value);
-		}
-		
-		$database = BeaconCommon::Database();
-		try {
-			$database->BeginTransaction();
-			$database->Insert('sentinel.services', $properties);
-			$database->Commit();
-			return static::GetByServiceID($serviceId);
-		} catch (Exception $err) {
-			$database->Rollback();
-			throw $err;
-		}
-	}
-	
-	public static function GetByServiceID(string $serviceId): ?Service {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLSchemaName() . '.' . static::SQLTableName() . ' WHERE service_id = $1;', $serviceId);
-		$services = static::FromRows($rows);
-		if (count($services) === 1) {
-			return $services[0];
-		}
-		return null;
-	}
-	
-	public static function GetUserServices(string $userId, bool $include_shared): array {
-		$columns = implode(', ', static::SQLColumns());
-		$table = static::SQLSchemaName() . '.' . static::SQLTableName();
-		$sql = "SELECT $columns FROM $table";
-		if ($include_shared) {
-			$sql .= " WHERE service_id IN (SELECT service_id FROM sentinel.resolved_permissions WHERE user_id = $1 AND (permissions & $2) = $2)";
-		} else {
-			$sql .= " WHERE user_id = $1";
-		}
-		$sql .= " ORDER BY COALESCE(nickname, name);";
-		
-		$database = BeaconCommon::Database();
-		$rows = $database->Query($sql, $userId, static::PermissionView);
-		$services = static::FromRows($rows);
-		return $services;
-	}
-	
-	public static function GetForGroupID(string $group_id): array {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY COALESCE(nickname, name);', $group_id);
-		return static::FromRows($rows);
-	}
-	
-	protected static function HookGetEditableProperties(): array {
-		return ['name', 'nickname', 'color'];
-	}
-	
-	protected function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
-		switch ($property) {
-		case 'last_error':
-		case 'last_success':
-		case 'expiration':
-			$assignments[] = $property . ' = to_timestamp($' . $placeholder++ . ')';
-			$values[] = $this->$property;
-			break;
-		case 'game_specific':
-			$assignments[] = $property . ' = $' . $placeholder++;
-			$values[] = json_encode($this->$property);
-			break;
+
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
+		switch ($definition->PropertyName()) {
+		case 'gameSpecific':
+			return json_encode($value);
+		case 'languages':
+			return '{' . implode(',', $this->languages) . '}';
 		default:
-			parent::HookPrepareColumnWrite($property, $placeholder, $assignments, $values);
+			return static::MDOPreparePropertyValue($definition, $value, $otherProperties);
 		}
-	}*/
-	
+	}
+
+	protected function SaveChildObjects(BeaconDatabase $database): void {
+		$this->MDOSaveChildObjects($database);
+
+		$database->Query('DELETE FROM sentinel.service_languages WHERE service_id = $1 AND NOT (language = ANY($2));', $this->serviceId, '{' . implode(',', $this->languages) . '}');
+		foreach ($this->languages as $code) {
+			$database->Query('INSERT INTO sentinel.service_languages (service_id, language) VALUES ($1, $2) ON CONFLICT (service_id, language) DO UPDATE SET language = $2 WHERE service_languages.language != EXCLUDED.language;', $this->serviceId, $code);
+		}
+	}
+
 	public function ServiceId(): string {
 		return $this->serviceId;
 	}
-	
-	public function UserId(): string {
-		return $this->userId;
-	}
-	
-	public function NitradoServiceId(): int {
-		return $this->nitradoServiceId;
-	}
-	
+
 	public function GameId(): string {
 		return $this->gameId;
 	}
-	
+
 	public function SetGameId(string $gameId): void {
-		$this->SetProperty('game_id', $gameId);
+		$this->SetProperty('gameId', $gameId);
 	}
-	
-	public function LastSuccess(): int {
-		return $this->lastSuccess;
-	}
-	
-	public function SetLastSuccess(int $lastSuccess): void {
-		$this->SetProperty('last_sucess', $lastSuccess);
-	}
-	
-	public function LastError(): int {
-		return $this->lastError;
-	}
-	
-	public function SetLastError(int $lastError): void {
-		$this->SetProperty('last_error', $lastError);
-	}
-	
-	public function InErrorState(): bool {
-		return $this->inErrorState;
-	}
-	
-	public function UpdateSchedule(): int {
-		return $this->updateSchedule;
-	}
-	
+
 	public function Name(): string {
 		return $this->name;
 	}
-	
+
 	public function SetName(string $value): void {
 		$this->SetProperty('name', $value);
 	}
-	
+
 	public function Nickname(): mixed {
 		return $this->nickname;
 	}
-	
+
 	public function SetNickname(mixed $nickname): void {
 		$this->SetProperty('nickname', $nickname);
 	}
-	
-	public function IpAddress(): string {
-		return $this->ipAddress;
-	}
-	
-	public function SetIpAddress(string $ipAddress): void {
-		$this->SetProperty('ip_address', $ipAddress);
-	}
-	
-	public function GamePort(): int {
-		return $this->gamePort;
-	}
-	
-	public function SetGamePort(int $port): void {
-		$this->SetProperty('game_port', $port);
-	}
-	
-	public function SlotCount(): int {
-		return $this->slotCount;
-	}
-	
-	public function SetSlotCount(int $slotCount): void {
-		$this->SetProperty('slot_count', $slotCount);
-	}
-	
-	public function Expiration(): int {
-		return $this->expiration;
-	}
-	
-	public function SetExpiration(int $expiration): void {
-		$this->SetProperty('expiration', $expiration);
-	}
-	
+
 	public function Color(): string {
 		return $this->color;
 	}
-	
+
 	public function SetColor(string $color): void {
 		$this->SetProperty('color', $color);
 	}
-	
+
 	public function Platform(): string {
 		return $this->platform;
 	}
-	
+
 	public function SetPlatform(string $platform): void {
 		$this->SetProperty('platform', $platform);
 	}
-	
-	public function RconPort(): ?int {
-		return $this->rconPort;
-	}
-	
-	public function SetRconPort(?int $port): void {
-		$this->SetProperty('rcon_port', $port);
-	}
-	
+
 	public function GameSpecific(): array {
 		return $this->gameSpecific;
 	}
-	
+
 	public function SetGameSpecific(array $gameSpecific): void {
-		$this->SetProperty('game_specific', $gameSpecific);
+		$this->SetProperty('gameSpecific', $gameSpecific);
 	}
-	
-	public function Delete(): void {
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM ' . static::SQLSchemaName() . '.' . static::SQLTableName() . ' WHERE service_id = $1;', $this->serviceId);
-		$database->Commit();
+
+	public function PusherChannelName(): string {
+		return 'service-' . strtolower(str_replace('-', '', $this->serviceId));
 	}
-	
-	public function GetPermissions(string $userId): int {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT permissions FROM sentinel.resolved_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $userId);
-		if ($rows->RecordCount() === 1) {
-			return $rows->Field('permissions');
-		} else {
-			return 0;
-		}
+
+	public function IsConnected(): bool {
+		return $this->isConnected;
 	}
-	
-	public function HasPermission(string $userId, int $desired_permissions): bool {
-		$permissions = $this->GetPermissions($userId);
-		return ($permissions & $desired_permissions) === $desired_permissions;
-	}
-	
+
 	public function Log(string $message, ?string $level = null, ?string $type = null): void {
 		$logMessage = LogMessage::Create($message, $this->serviceId, $level, $type);
 		$logMessage->Save();
 	}
-	
+
 	protected function LogException(Exception $err): void {
 		echo $err->getMessage();
 	}
-	
+
 	protected function TrackErrorState(bool $errored): void {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -428,231 +434,69 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$database->Commit();
 		$this->inErrorState = $errored;
 	}
-	
-	protected function GetOAuthToken(): OAuth {
-		$token = OAuth::Lookup($this->userId, OAuth::ProviderNitrado);
-		if (is_null($token)) {
-			$err = new Exception('Service owner does not have an OAuth token.');
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
+
+	public static function GetResourceLimitsForUser(User $user): ?ResourceLimit {
+		$subscriptions = Subscription::Search(['userId' => $user->UserId()], true);
+		if (count($subscriptions) !== 1 || $subscriptions[0]->IsExpired()) {
+			return new ResourceLimit(0, 0);
 		}
-		try {
-			$token->Refresh(false);
-		} catch (Exception $err) {
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
-		}
-		
-		return $token;
+		return new ResourceLimit($subscriptions[0]->UnitsUsed(), $subscriptions[0]->UnitsAllowed());
 	}
-	
-	public function RefreshDetails(): void {
-		$token = $this->GetOAuthToken();
-		
-		$curl = curl_init('https://api.nitrado.net/services/' . $this->nitradoServiceId . '/gameservers');
-		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'Authorization: Bearer ' . $token->AccessToken()
-		]);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($curl);
-		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-		if ($status === 200) {
-			$this->TrackErrorState(false);
-		} else {
-			$err = new Exception('Could not get gameserver details: ' . $response);
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
-		}
-		
-		try {
-			$responseJson = json_decode($response, true);
-			$details = $responseJson['data'];
-			$gameserver = $details['gameserver'];
-		} catch (Exception $err) {
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
-		}
-		
-		// Get service details for the expiration
-		$curl = curl_init('https://api.nitrado.net/services/' . $this->nitradoServiceId);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'Authorization: Bearer ' . $token->AccessToken()
-		]);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($curl);
-		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-		if ($status === 200) {
-			$this->TrackErrorState(false);
-		} else {
-			$err = new Exception('Could not get service details: ' . $response);
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
-		}
-		 
-		try {
-			$responseJson = json_decode($response, true);
-			$details = $responseJson['data'];
-			$service = $details['service'];
-		} catch (Exception $err) {
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
-		}
-		
-		try {
-			// Update service record
-			$this->SetIpAddress($gameserver['ip']);
-			$this->SetGamePort($gameserver['port']);
-			$this->SetSlotCount($gameserver['slots']);
-			
-			$suspendDate = new \DateTime($service['suspend_date']);
-			$this->SetExpiration($suspendDate->getTimestamp());
-			
-			if (is_null($this->nickname) && isset($service['comment']) && empty($service['comment']) === false) {
-				$this->SetNickname($service['comment']);
-			}
-			
-			$game = $gameserver['game'];
-			$gameSpecific = [];
-			switch ($game) {
-			case 'arkse':
-				$gameId = self::GameArk;
-				$platform = self::PlatformPC;
-				break;
-			case 'arkxb':
-				$gameId = self::GameArk;
-				$platform = self::PlatformXbox;
-				break;
-			case 'arkps':
-				$gameId = self::GameArk;
-				$platform = self::PlatformPlaystation;
-				break;
-			case 'arkswitch':
-				$gameId = self::GameArk;
-				$platform = self::PlatformSwitch;
-				break;
-			default:
-				throw new Exception('Unsupported game ' . $game);
-			}
-			
-			switch ($gameId) {
-			case self::GameArk:
-				$gameSpecific['path'] = $gameserver['game_specific']['path'];
-				if ($gameserver['game_specific']['features']['has_rcon'] === true) {
-					$this->SetRCONPort($gameserver['rcon_port']);
-				} else {
-					$this->SetRCONPort(null);
-				}
-				$gameSpecific['map'] = $gameserver['query']['map'];
-				$gameSpecific['cluster'] = $gameserver['settings']['general']['clusterid'];
-				$gameSpecific['admin-password'] = $gameserver['settings']['config']['admin-password'];
-				$this->SetName($gameserver['settings']['config']['server-name']);
-				break;
-			}
-			
-			$this->SetGameId($gameId);
-			$this->SetPlatform($platform);
-			$this->SetGameSpecific($gameSpecific);
-			
-			$this->Save();
-		} catch (Exception $err) {
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
+
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelRead;
+		if ($editable) {
+			$requiredScopes[] = Application::kScopeSentinelWrite;
 		}
 	}
-	
-	public function DownloadFile(string $path): string {
-		$token = $this->GetOAuthToken();
-		
-		$curl = curl_init('https://api.nitrado.net/services/' . $this->nitradoServiceId . '/gameservers/file_server/download?file=' . urlencode($path));
-		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'Authorization: Bearer ' . $token->AccessToken()
-		]);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($curl);
-		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-		
-		if ($status === 200) {
-			$this->TrackErrorState(false);
-		} else {
-			$err = new Exception('Could not get file download token for ' . $path . ', HTTP ' . $status . ': ' . $response);
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
-		}
-		
-		try {
-			$responseJson = json_decode($response, true);
-			$downloadToken = $responseJson['data']['token']['token'];
-			$downloadUrl = $responseJson['data']['token']['url'];
-		} catch (Exception $err) {
-			throw $err;
-		}
-		
-		$curl = curl_init($downloadUrl);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'Authorization: Bearer ' . $token->AccessToken()
-		]);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($curl);
-		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-		
-		if ($status === 200) {
-			$this->TrackErrorState(false);
-		} else {
-			$err = new Exception('Could not download file at path ' . $path . ', HTTP ' . $status . ': ' . $response);
-			$this->LogException($err);
-			$this->TrackErrorState(true);
-			throw $err;
-		}
-		
-		return $response;
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return true;
 	}
-	
-	public function DownloadLatestLog(): void {
-		switch ($this->gameId) {
-		case self::GameArk:
-			$root = $this->gameSpecific['path'];
-			
-			$path = $root . 'ShooterGame/Saved/Logs/ShooterGame_Last.log';
-			$contents = $this->DownloadFile($path);
-			ArkLogMessage::ConsumeLogFile($this->serviceId, $contents);
-				
-			$path = $root . 'ShooterGame/Saved/Logs/ShooterGame.log';
-			$contents = $this->DownloadFile($path);
-			ArkLogMessage::ConsumeLogFile($this->serviceId, $contents);
-				
-			/*$rconPort = $this->RCONPort();
-			if (is_null($rconPort) === false) {
-				$rcon_password = $this->gameSpecific['admin-password'];
-				try {
-					$client = new RCONClient($this->ipAddress, $rconPort, $rcon_password);
-					$client->Connect();
-					if ($client->IsAuthorized()) {
-						$recent_logs = $client->SendCommand('GetGameLog');
-						$client->Disconnect();
-						if (is_null($recent_logs) === false) {
-							echo "Logs: $recent_logs\n";
-							ArkLogMessage::ConsumeLogFile($this->serviceId, $recent_logs);
-						}
-					}
-				} catch (Exception $err) {
-					$this->LogException($err);
-				}
-			}*/
-			
-			break;
+
+	public function GetPermissionsForUser(User $user): int {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $this->serviceId, $user->UserId());
+		if ($rows->RecordCount() === 1) {
+			return $rows->Field('permissions');
+		} else {
+			return DatabaseObject::kPermissionNone;
 		}
+	}
+
+	protected function HookModified(): void {
+		$this->MDOHookModified();
+
+		$pusher = BeaconPusher::SharedInstance();
+		$socketId = BeaconPusher::SocketIdFromHeaders();
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT user_id FROM sentinel.service_permissions WHERE service_id = $1;', $this->serviceId);
+		while (!$rows->EOF()) {
+			$channel = 'user-' . str_replace('-', '', $rows->Field('user_id'));
+			$pusher->TriggerEvent($channel, 'servers-changed', $this->serviceId, $socketId);
+			$rows->MoveNext();
+		}
+	}
+
+	public static function GetSentinelPermissions(string $objectId, string $userId): int {
+		if (BeaconCommon::IsUUID($objectId) === false || BeaconCommon::IsUUID($userId) === false) {
+			return 0;
+		}
+
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT permissions FROM sentinel.service_permissions WHERE service_id = $1 AND user_id = $2;', $objectId, $userId);
+		if ($rows->RecordCount() === 0) {
+			return 0;
+		}
+		return $rows->Field('permissions');
+	}
+
+	public function Delete(): void {
+		$this->MDODelete();
+
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $this->serviceId . '.socketCommand', json_encode([
+			'command' => 'kick',
+		]));
 	}
 }
 

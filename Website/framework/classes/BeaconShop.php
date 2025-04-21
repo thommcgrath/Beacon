@@ -63,14 +63,16 @@ abstract class BeaconShop {
 		];
 	}
 
-	public static function IssuePurchases(string $purchaseId, array $bundles): void {
+	public static function IssuePurchases(string $purchaseId): void {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT issued, refunded, purchaser_email, currency FROM public.purchases WHERE purchase_id = $1;', $purchaseId);
-		if ($results->RecordCount() === 0 || $results->Field('issued') === true || $results->Field('refunded') === true) {
+		$results = $database->Query('SELECT issued, refunded, purchaser_email, currency, date_fulfilled, metadata FROM public.purchases WHERE purchase_id = $1;', $purchaseId);
+		if ($results->RecordCount() === 0 || $results->Field('issued') === true || $results->Field('refunded') === true || is_null($results->Field('date_fulfilled')) === true || is_null($results->Field('metadata')) === true) {
 			return;
 		}
 		$emailId = $results->Field('purchaser_email');
 		$currencyCode = $results->Field('currency');
+		$metadata = json_decode($results->Field('metadata'), true);
+		$bundles = $metadata['bundles'] ?? [];
 
 		$database->BeginTransaction();
 
@@ -183,14 +185,6 @@ abstract class BeaconShop {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 
-		if (BeaconCommon::IsUUID($email)) {
-			$emailId = $email;
-		} else {
-			// get a uuid for this address
-			$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
-			$emailId = $results->Field('email_id');
-		}
-
 		$quantities = [];
 		foreach ($bundles as $bundle) {
 			foreach ($bundle['products'] as $productId => $quantity) {
@@ -198,19 +192,22 @@ abstract class BeaconShop {
 			}
 		}
 
-		$subtotal = 0;
-		$purchaseId = BeaconCommon::GenerateUUID();
-		foreach ($quantities as $productId => $quantity) {
-			$price = static::GetProductById('USD', $productId)['Price'];
-			$lineTotal = $price * $quantity;
-			$subtotal += $lineTotal;
-			$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total, conversion_rate, unit_price_usd, subtotal_usd, discount_usd, tax_usd, line_total_usd) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $5, $6, $7, $8, $9);', $purchaseId, $productId, 'USD', $quantity, $price, $lineTotal, $lineTotal, 0, 0, 1.0);
-		}
+		$purchase = new BeaconPurchase(Beacon::GenerateUUID(), $email, time(), 'US CT', 'USD', 1.0, 100);
+		$purchase->SetDateFulfilled(time());
+		$purchase->SetNotes($notes);
+		$purchase->SetMetadata([
+			'bundles' => $bundles,
+		]);
 
-		$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, tax_locality, total_paid, merchant_reference, currency, notes, conversion_rate, subtotal_usd, discount_usd, tax_usd, total_paid_usd) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $3, $4, $5, $7);', $purchaseId, $emailId, $subtotal, $subtotal, 0, 'US CT', 0, $purchaseId, 'USD', $notes, 1.0);
+		foreach ($quantities as $productId => $quantity) {
+			$unitPrice = static::GetProductById('USD', $productId)['Price'] ?? 0;
+			$lineItem = new BeaconLineItem($productId, $unitPrice, $quantity, $unitPrice * $quantity, 0.0, 'USD', 1.0, 100);
+			$purchase->AddLine($lineItem);
+		}
+		$purchaseId = $purchase->SaveTo($database);
 
 		if ($process === true) {
-			self::IssuePurchases($purchaseId, $bundles);
+			self::IssuePurchases($purchaseId);
 		}
 
 		$database->Commit();
@@ -220,11 +217,13 @@ abstract class BeaconShop {
 
 	public static function TrackAffiliateClick(string $code): string {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT code FROM affiliate_links WHERE code = $1;', $code);
+		$rows = $database->Query('SELECT code, destination FROM affiliate_links WHERE code = $1;', $code);
 		$clientReferenceId = BeaconCommon::GenerateUUID();
+		$destination = 'https://{{ BEACON_DOMAIN }}/omni';
 
 		if ($rows->RecordCount() === 1) {
 			$code = $rows->Field('code'); // Just because
+			$destination = $rows->Field('destination');
 
 			$database->BeginTransaction();
 			$database->Query('INSERT INTO affiliate_tracking (code, client_reference_id, click_time) VALUES ($1, $2, CURRENT_TIMESTAMP);', $code, $clientReferenceId);
@@ -236,11 +235,14 @@ abstract class BeaconShop {
 				'domain' => '',
 				'secure' => true,
 				'httponly' => true,
-				'samesite' => 'Lax'
+				'samesite' => 'Lax',
 			]);
 		}
 
-		return $clientReferenceId;
+		$destination = str_replace('{{ CLIENT_REFERENCE_ID }}', urlencode($clientReferenceId), $destination);
+		$destination = str_replace('{{ BEACON_DOMAIN }}', BeaconCommon::Domain(), $destination);
+
+		return $destination;
 	}
 
 	public static function SyncWithStripe(): void {
@@ -263,7 +265,7 @@ abstract class BeaconShop {
 		}
 
 		// Include all products, so that prices can be ready before products are activated
-		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products WHERE retail_price > 0 ORDER BY product_name;');
+		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products WHERE retail_price > 0 AND product_type = \'One-Time\' ORDER BY product_name;');
 		while (!$products->EOF()) {
 			$productId = $products->Field('product_id');
 			$productName = $products->Field('product_name');

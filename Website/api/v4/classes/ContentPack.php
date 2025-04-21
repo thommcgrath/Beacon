@@ -107,8 +107,8 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('name');
 	}
 
-	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
-		return static::kPermissionRead | static::kPermissionCreate;
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return true;
 	}
 
 	public function GetPermissionsForUser(User $user): int {

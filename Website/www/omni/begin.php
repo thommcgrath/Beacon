@@ -52,16 +52,12 @@ if (count($bundles) === 0) {
 }
 
 $database = BeaconCommon::Database();
+$clientReferenceId = null;
 if (isset($_COOKIE['beacon_affiliate'])) {
-	$clientReferenceId = $_COOKIE['beacon_affiliate'];
-
-	$rows = $database->Query('SELECT purchase_id, code FROM affiliate_tracking WHERE client_reference_id = $1;', $clientReferenceId);
-	if ($rows->RecordCount() === 1 && is_null($rows->Field('purchase_id')) === false) {
-		// need a new id
-		$clientReferenceId = BeaconShop::TrackAffiliateClick($rows->Field('code'));
+	$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM public.affiliate_tracking WHERE code = $1) AS valid;', $_COOKIE['beacon_affiliate']);
+	if ($rows->RecordCount() === 1 && $rows->Field('valid') == true) {
+		$clientReferenceId = $_COOKIE['beacon_affiliate'];
 	}
-} else {
-	$clientReferenceId = BeaconCommon::GenerateUUID();
 }
 
 $userIsSuspect = false;
@@ -127,7 +123,7 @@ $payment = [
 	'customer_email' => $email,
 	'payment_method_types' => $paymentMethods,
 	'mode' => 'payment',
-	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/'),
+	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/?session={CHECKOUT_SESSION_ID}'),
 	'cancel_url' => BeaconCommon::AbsoluteURL('/omni#checkout'),
 	'billing_address_collection' => 'required',
 	'automatic_tax' => ['enabled' => 'true'],

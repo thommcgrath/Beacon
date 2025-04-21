@@ -50,7 +50,13 @@ abstract class DatabaseObject {
 		try {
 			$schema = static::DatabaseSchema();
 			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';', $uuid);
+			$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';';
+			$values = [$uuid];
+			if (str_contains($sql, '%%USER_ID%%')) {
+				$sql = str_replace('%%USER_ID%%', '$2', $sql);
+				$values[] = Core::UserId();
+			}
+			$rows = $database->Query($sql, $values);
 			if (is_null($rows) || $rows->RecordCount() !== 1) {
 				return null;
 			}
@@ -58,14 +64,6 @@ abstract class DatabaseObject {
 		} catch (Exception $err) {
 			return null;
 		}
-	}
-
-	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
-		return self::kPermissionRead;
-	}
-
-	public function GetPermissionsForUser(User $user): int {
-		return self::kPermissionRead;
 	}
 
 	public static function GenerateObjectId(array $properties): string {
@@ -174,14 +172,28 @@ abstract class DatabaseObject {
 		$totalRowCount = 0;
 		$primaryKey = $schema->PrimarySelector();
 		$from = $schema->FromClause();
+		$clauses = '';
 		$database = BeaconCommon::Database();
 
-		if ($legacyMode === false) {
-			$sql = "SELECT COUNT({$primaryKey}) AS num_results FROM {$from}";
-			if (count($params->clauses) > 0) {
-				$sql .= " WHERE " . implode(' AND ', $params->clauses);
+		$userIdPlaceholder = 0;
+		if (str_contains($from, '%%USER_ID%%')) {
+			$userIdPlaceholder = $params->NextPlaceholder();
+			$from = str_replace('%%USER_ID%%', '$' . $userIdPlaceholder, $from);
+			$params->values[] = Core::UserId();
+		}
+		if (count($params->clauses) > 0) {
+			$clauses = ' WHERE ' . implode(' AND ', $params->clauses);
+			if (str_contains($clauses, '%%USER_ID%%')) {
+				if ($userIdPlaceholder === 0) {
+					$userIdPlaceholder = $params->NextPlaceholder();
+					$params->values[] = Core::UserId();
+				}
+				$clauses = str_replace('%%USER_ID%%', '$' . $userIdPlaceholder, $clauses);
 			}
-			$sql .= ';';
+		}
+
+		if ($legacyMode === false) {
+			$sql = "SELECT COUNT(*) AS num_results FROM {$from}{$clauses};";
 			//echo "{$sql}\n";
 			//print_r($params->values);
 			$totalRows = $database->Query($sql, $params->values);
@@ -192,10 +204,16 @@ abstract class DatabaseObject {
 			}
 		}
 
-		$sql = "SELECT " . $schema->SelectColumns() . " FROM {$from}";
-		if (count($params->clauses) > 0) {
-			$sql .= ' WHERE ' . implode(' AND ', $params->clauses);
+		$columns = $schema->SelectColumns();
+		if (str_contains($columns, '%%USER_ID%%')) {
+			if ($userIdPlaceholder === 0) {
+				$userIdPlaceholder = $params->NextPlaceholder();
+				$params->values[] = Core::UserId();
+			}
+			$columns = str_replace('%%USER_ID%%', '$' . $userIdPlaceholder, $columns);
 		}
+
+		$sql = "SELECT {$columns} FROM {$from}{$clauses}";
 		if (is_null($params->orderBy) === false) {
 			$sql .= " ORDER BY {$params->orderBy}";
 		}
@@ -238,6 +256,38 @@ abstract class DatabaseObject {
 
 		$propertyName = $property->PropertyName();
 		return $this->$propertyName;
+	}
+
+	// By default, the user cannot create objects. Return kPermissionCreate if
+	// the user should be allowed to create the object based on
+	// $newObjectProperties.
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return false;
+	}
+
+	// Get the permissions the object has for the given user. Logically
+	// OR the allowed permission bits.
+	public function GetPermissionsForUser(User $user): int {
+		return self::kPermissionRead;
+	}
+
+	// Allows the class to throw an exception if something is wrong with the
+	// filters used in a list request, such as not including a required key.
+	public static function AuthorizeListRequest(array &$filters): void {
+
+	}
+
+	// Allows the class to change the scope and authentication for incoming
+	// requests.
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+
+	}
+
+	// Allows the class to limit the number of it that may exist for each user.
+	// Return a ResourceLimit with the currently used number and the maximum
+	// allowed number. Return null for no limit.
+	public static function GetResourceLimitsForUser(User $user): ?ResourceLimit {
+		return null;
 	}
 }
 

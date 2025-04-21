@@ -2,7 +2,9 @@
 
 use BeaconAPI\v4\{Application, Core, Response};
 
-$requiredScopes[] = Application::kScopeAppsUpdate;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeAppsUpdate;
+}
 
 function handleRequest(array $context): Response {
 	$applicationId = $context['pathParameters']['applicationId'];
@@ -10,7 +12,7 @@ function handleRequest(array $context): Response {
 	if (is_null($app) || $app->UserId() !== Core::UserId()) {
 		return Response::NewJsonError('Application not found', null, 404);
 	}
-	
+
 	$obj = Core::BodyAsJson();
 	try {
 		$app->Edit($obj);

@@ -41,168 +41,69 @@ if (is_null($json)) {
 	exit;
 }
 
+/*
+charge.dispute.closed
+charge.refunded
+checkout.session.completed
+customer.subscription.created
+customer.subscription.deleted
+customer.subscription.updated
+invoice.created
+invoice.paid
+*/
+
 $database = BeaconCommon::Database();
+$eventId = BeaconUUID::v5($json['id']);
+$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM public.processed_webhooks WHERE event_id = $1);', $eventId);
+if ($rows->Field('exists')) {
+	http_response_code(200);
+	echo "Notification already handled.\n{$eventId}\n";
+	exit;
+}
+
 $data = $json['data'];
 $type = $json['type'];
 $api = new BeaconStripeAPI($api_secret, '2022-08-01');
 switch ($type) {
 case 'checkout.session.completed':
-	$obj = $data['object'];
-	$intentId = $obj['payment_intent'];
-	$rows = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $intentId);
-	if ($rows->RecordCount() > 0) {
-		http_response_code(200);
-		echo 'Notification already handled.';
+	$session = $data['object'];
+
+	if (isset($session['payment_intent'])) {
+		$sem = sem_get(crc32($session['payment_intent']));
+	} elseif (isset($session['invoice'])) {
+		$sem = sem_get(crc32($session['invoice']));
+	} else {
+		$database->Rollback();
+		http_response_code(500);
+		echo "Unknown session type.\n";
 		exit;
 	}
+	sem_acquire($sem);
 
-	$intent = $api->GetPaymentIntent($intentId);
-	if (is_null($intent)) {
-		http_response_code(400);
-		echo 'Could not get payment intent ' . $intentId;
-		exit;
-	}
-	$purchase_date = $obj['created'];
+	$database->BeginTransaction();
+	$purchase = CreatePurchaseFromCheckoutSession($session);
+	$customerId = $session['customer'];
 
-	$charges = [];
-	if (isset($intent['charges']['data']) && is_array($intent['charges']['data'])) {
-		$charges = $intent['charges']['data'];
-	}
-	$paidCharge = null;
-	foreach ($charges as $charge) {
-		if ($charge['paid'] !== true) {
-			continue;
-		}
-
-		$paidCharge = $charge;
-		break;
-	}
-	$currencyCode = 'USD';
-	$conversionRate = 1.0;
-	if (is_null($paidCharge) === false) {
-		$purchase_date = $paidCharge['created'];
-		if (strtoupper($paidCharge['currency']) !== 'USD') {
-			$transactions = $api->GetBalanceTransactionsForSource($paidCharge['id']);
-			if (is_null($transactions) === false && isset($transactions['data']) && is_array($transactions['data'])) {
-				foreach ($transactions['data'] as $transaction) {
-					$conversionRate = $transaction['exchange_rate'];
-					$currencyCode = strtoupper($paidCharge['currency']);
-					break;
-				}
-			}
-		}
-	}
-	$currencyRows = $database->Query('SELECT stripe_multiplier FROM public.currencies WHERE code = $1;', $currencyCode);
-	if ($currencyRows->RecordCount() !== 1) {
-		echo "Unknown currency code {$currencyCode}.\n";
-		exit;
-	}
-	$currencyMultiplier = $currencyRows->Field('stripe_multiplier');
-	$conversionRate = $conversionRate / (100 / $currencyMultiplier);
-
-	$line_items = $api->GetLineItems($obj['id']);
-	if (is_null($line_items)) {
-		echo 'Unable to retrieve items for checkout session';
-		exit;
-	}
-	$items = $line_items['data'];
-	$purchased_products = [];
-	foreach ($items as $item) {
-		$price_id = $item['price']['id'];
-		$quantity = $item['quantity'];
-		$line_total = $item['amount_total'];
-		$subtotal = $item['amount_subtotal'];
-		$product_price = $subtotal / $quantity;
-		$tax_total = 0;
-		foreach ($item['taxes'] as $tax) {
-			$tax_total += $tax['amount'];
-		}
-		$discount_total = 0;
-		foreach ($item['discounts'] as $discount) {
-			$discount_total += $discount['amount'];
-		}
-
-		$rows = $database->Query('SELECT product_id FROM product_prices WHERE price_id = $1;', $price_id);
-		if ($rows->RecordCount() === 1) {
-			$purchased_products[] = [
-				'product_id' => $rows->Field('product_id'),
-				'quantity' => $quantity,
-				'unit_price' => $product_price / $currencyMultiplier,
-				'subtotal' => $subtotal / $currencyMultiplier,
-				'total_tax' => $tax_total / $currencyMultiplier,
-				'total_discount' => $discount_total / $currencyMultiplier,
-				'total' => $line_total / $currencyMultiplier,
-				'currency' => $currencyCode,
-				'conversion_rate' => $conversionRate,
-				'unit_price_usd' => round(($product_price * $conversionRate) / $currencyMultiplier, 2),
-				'subtotal_usd' => round(($subtotal * $conversionRate) / $currencyMultiplier, 2),
-				'total_tax_usd' => round(($tax_total * $conversionRate) / $currencyMultiplier, 2),
-				'total_discount_usd' => round(($discount_total * $conversionRate) / $currencyMultiplier, 2),
-				'total_usd' => round(($line_total * $conversionRate) / $currencyMultiplier, 2),
-			];
-		}
-	}
-
-	if (count($purchased_products) == 0) {
-		http_response_code(200);
-		echo 'No products to be handled by this hook';
-		exit;
-	}
-
-	$client_reference_id = $obj['client_reference_id'];
-	if (isset($obj['customer_details']['email'])) {
-		$email = $obj['customer_details']['email'];
-	}
-	if (isset($email) === false) {
-		$email = $api->EmailForPaymentIntent($intent);
-		if (is_null($email)) {
-			echo 'Unable to find email address for this payment intent';
-			exit;
-		}
-	}
-	$billing_locality = $api->GetBillingLocality($intent);
-	$purchase_currency = strtoupper($obj['currency']);
-
-	$user = User::Fetch($email);
+	$email = $session['customer_details']['email'];
+	$user = User::Fetch($purchase->Email());
 	if (is_null($user)) {
 		EmailVerificationCode::Create($email);
 	}
 
-	$metadata = $obj['metadata'];
-	$bundles = json_decode(gzdecode(BeaconCommon::Base64UrlDecode($metadata['Beacon Cart'])), true);
-
-	$purchase_subtotal = $obj['amount_subtotal'] / $currencyMultiplier;
-	$purchase_total = $obj['amount_total'] / $currencyMultiplier;
-	$purchase_discount = $obj['total_details']['amount_discount'] / $currencyMultiplier;
-	$purchase_tax = $obj['total_details']['amount_tax'] / $currencyMultiplier;
-	$purchase_subtotal_usd = round(($obj['amount_subtotal'] * $conversionRate) / $currencyMultiplier, 2);
-	$purchase_total_usd = round(($obj['amount_total'] * $conversionRate) / $currencyMultiplier, 2);
-	$purchase_discount_usd = round(($obj['total_details']['amount_discount'] * $conversionRate) / $currencyMultiplier, 2);
-	$purchase_tax_usd = round(($obj['total_details']['amount_tax'] * $conversionRate) / $currencyMultiplier, 2);
-	$purchase_id = BeaconCommon::GenerateUUID();
-
-	$database->BeginTransaction();
-	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality, currency, conversion_rate, subtotal_usd, discount_usd, tax_usd, total_paid_usd, purchase_date) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, TO_TIMESTAMP($16));', $purchase_id, $email, $purchase_subtotal, $purchase_discount, $purchase_tax, $purchase_total, $intentId, $client_reference_id, $billing_locality, $purchase_currency, $conversionRate, $purchase_subtotal_usd, $purchase_discount_usd, $purchase_tax_usd, $purchase_total_usd, $purchase_date);
-	foreach ($purchased_products as $item) {
-		$product_id = $item['product_id'];
-		$unit_price = $item['unit_price'];
-		$quantity = $item['quantity'];
-		$subtotal = $item['subtotal'];
-		$discount = $item['total_discount'];
-		$tax = $item['total_tax'];
-		$line_total = $item['total'];
-		$currency = $item['currency'];
-
-		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total, conversion_rate, unit_price_usd, subtotal_usd, discount_usd, tax_usd, line_total_usd) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);', $purchase_id, $product_id, $currency, $quantity, $unit_price, $subtotal, $discount, $tax, $line_total, $conversionRate, $item['unit_price_usd'], $item['subtotal_usd'], $item['total_discount_usd'], $item['total_tax_usd'], $item['total_usd']);
+	$purchase->SaveTo($database);
+	BeaconShop::IssuePurchases($purchase->PurchaseId());
+	$database->Query('UPDATE public.users SET stripe_id = $2 WHERE email_id = uuid_for_email($1::email, TRUE) AND stripe_id IS DISTINCT FROM $2;', $email, $customerId);
+	if (is_null($purchase->ClientReferenceId()) === false) {
+		$database->Query('UPDATE public.affiliate_tracking SET purchase_id = $1 WHERE client_reference_id = $2 AND purchase_id IS NULL;', $purchase->PurchaseId(), $purchase->ClientReferenceId());
 	}
-	BeaconShop::IssuePurchases($purchase_id, $bundles);
-	$database->Query('UPDATE affiliate_tracking SET purchase_id = $2 WHERE client_reference_id = $1 AND purchase_id IS NULL;', $client_reference_id, $purchase_id);
 	$database->Commit();
+
+	sem_release($sem);
 
 	// Look up gift codes and email them
 	$codes = [];
-	$results = $database->Query('SELECT code FROM public.gift_codes WHERE source_purchase_id = $1;', $purchase_id);
-	$code_count = $results->RecordCount();
+	$results = $database->Query('SELECT code FROM public.gift_codes WHERE source_purchase_id = $1;', $purchase->PurchaseId());
+	$codeCount = $results->RecordCount();
 	while ($results->EOF() === false) {
 		$code = $results->Field('code');
 		$code_products = $database->Query('SELECT products.product_name, gift_code_products.quantity FROM public.gift_code_products INNER JOIN public.products ON (gift_code_products.product_id = products.product_id) WHERE gift_code_products.code = $1;', $code);
@@ -221,61 +122,491 @@ case 'checkout.session.completed':
 		$results->MoveNext();
 	}
 
-	if ($code_count > 0) {
-		$email_body_plain = 'Thanks for purchasing ' . ($code_count > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <https://usebeacon.app/redeem>.';
-		$email_body_html = '<p>Thanks for purchasing ' . ($code_count > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <a href="https://usebeacon.app/redeem">https://usebeacon.app/redeem</a> or by the direct link for a code below.</p>';
+	if ($codeCount > 0) {
+		$emailBodyPlain = 'Thanks for purchasing ' . ($codeCount > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <https://usebeacon.app/redeem>.';
+		$emailBodyHtml = '<p>Thanks for purchasing ' . ($codeCount > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <a href="https://usebeacon.app/redeem">https://usebeacon.app/redeem</a> or by the direct link for a code below.</p>';
 		foreach ($codes as $code => $product_names) {
-			$email_body_plain .= "\n\nCode {$code}:\n    Redeem Link: https://usebeacon.app/redeem/{$code}";
-			$email_body_html .= "\n\n<p>Code {$code}<br />&nbsp;&nbsp;&nbsp;&nbsp;Redeem Link: https://usebeacon.app/redeem/{$code}";
+			$emailBodyPlain .= "\n\nCode {$code}:\n    Redeem Link: https://usebeacon.app/redeem/{$code}";
+			$emailBodyHtml .= "\n\n<p>Code {$code}<br />&nbsp;&nbsp;&nbsp;&nbsp;Redeem Link: https://usebeacon.app/redeem/{$code}";
 
 			foreach ($product_names as $product_name) {
-				$email_body_plain .= "\n    {$product_name}";
-				$email_body_html .= "<br />&nbsp;&nbsp;&nbsp;&nbsp;" . htmlentities($product_name);
+				$emailBodyPlain .= "\n    {$product_name}";
+				$emailBodyHtml .= "<br />&nbsp;&nbsp;&nbsp;&nbsp;" . htmlentities($product_name);
 			}
 
-			$email_body_html .= "</p>";
+			$emailBodyHtml .= "</p>";
 		}
-		$email_body_plain .= "\n\nYou can also view the status of all purchased gift codes at <https://usebeacon.app/account/#omni>.";
-		$email_body_html .= '<p>You can also view the status of all purchased gift codes at <a href="https://usebeacon.app/account/#omni">https://usebeacon.app/account/#omni</a></p>';
+		$emailBodyPlain .= "\n\nYou can also view the status of all purchased gift codes at <https://usebeacon.app/account/#omni>.";
+		$emailBodyHtml .= '<p>You can also view the status of all purchased gift codes at <a href="https://usebeacon.app/account/#omni">https://usebeacon.app/account/#omni</a></p>';
 
-		BeaconEmail::SendMail($email, 'Your Beacon Omni Gift', $email_body_plain, $email_body_html);
+		BeaconEmail::SendMail($email, 'Your Beacon Omni Gift', $emailBodyPlain, $emailBodyHtml);
 	}
 
-	http_response_code(200);
-	echo 'Purchase redeemed successfully';
-	exit;
+	ReportSuccess('Purchase completed');
+	break;
+case 'invoice.created':
+	$invoice = $data['object'];
+	$invoiceId = $invoice['id'];
+
+	$sem = sem_get(crc32($invoiceId));
+	sem_acquire($sem);
+
+	$database->BeginTransaction();
+	$rows = $database->Query('SELECT purchase_id FROM public.purchases WHERE merchant_reference = $1;', $invoiceId);
+	if ($rows->RecordCount() === 1) {
+		$database->Rollback();
+		sem_release($sem);
+		ReportSuccess('Invoice was created by another event.');
+		return;
+	}
+
+	try {
+		$purchase = CreatePurchaseFromInvoice($invoice);
+	} catch (Exception $err) {
+		$database->Rollback();
+		sem_release($sem);
+		http_response_code(500);
+		echo "{$err->getMessage()}\n";
+		exit;
+	}
+
+	$customerId = $invoice['customer'];
+	$email = $invoice['customer_email'];
+	if (!empty($email)) {
+		$database->Query('UPDATE public.users SET stripe_id = $2 WHERE email_id = uuid_for_email($1::email, TRUE) AND stripe_id IS DISTINCT FROM $2;', $email, $customerId);
+	}
+
+	$purchase->SaveTo($database);
+	BeaconShop::IssuePurchases($purchase->PurchaseId());
+	$database->Commit();
+	sem_release($sem);
+
+	ReportSuccess('Invoice created');
+	break;
+case 'invoice.paid':
+	$invoice = $data['object'];
+	$invoiceId = $invoice['id'];
+
+	$sem = sem_get(crc32($invoiceId));
+	sem_acquire($sem);
+
+	$database->BeginTransaction();
+	$purchase = BeaconPurchase::Load($database, $invoiceId);
+	if (is_null($purchase)) {
+		try {
+			$purchase = CreatePurchaseFromInvoice($invoice);
+		} catch (Exception $err) {
+			$database->Rollback();
+			sem_release($sem);
+			http_response_code(500);
+			echo "{$err->getMessage()}\n";
+			exit;
+		}
+	} else {
+		UpdatePurchaseWithInvoice($purchase, $invoice);
+	}
+
+	$customerId = $invoice['customer'];
+	$email = $invoice['customer_email'];
+	if (!empty($email)) {
+		$database->Query('UPDATE public.users SET stripe_id = $2 WHERE email_id = uuid_for_email($1::email, TRUE) AND stripe_id IS DISTINCT FROM $2;', $email, $customerId);
+	}
+
+	$purchase->SaveTo($database);
+	BeaconShop::IssuePurchases($purchase->PurchaseId());
+	$database->Commit();
+	sem_release($sem);
+
+	ReportSuccess('Invoice paid');
 
 	break;
 case 'charge.refunded':
 	$charge_data = $data['object'];
-	$merchant_reference = $charge_data['payment_intent'];
+	$merchantReference = $charge_data['payment_intent'];
 
-	http_response_code(200);
-	if (BeaconShop::RevokePurchases($merchant_reference)) {
-		echo 'Refund processed';
-	} else {
-		BeaconCommon::PostSlackMessage('The refund webhook failed');
-		echo 'Did not process refund';
+	if (BeaconShop::RevokePurchases($merchantReference)) {
+		ReportSuccess('Refund processed');
 	}
+
+	BeaconCommon::PostSlackMessage('The refund webhook failed');
+	echo 'Did not process refund';
 
 	break;
 case 'charge.dispute.created':
 	$dispute = $data['object'];
-	$merchant_reference = $dispute['payment_intent'];
+	$merchantReference = $dispute['payment_intent'];
 
-	http_response_code(200);
-	if (BeaconShop::RevokePurchases($merchant_reference, true)) {
-		echo 'Despite processed';
-	} else {
-		BeaconCommon::PostSlackMessage('The dispute webhook failed');
-		echo 'Did not process dispute';
+	if (BeaconShop::RevokePurchases($merchantReference, true)) {
+		ReportSuccess('Dispute processed');
 	}
 
+	BeaconCommon::PostSlackMessage('The dispute webhook failed');
+	echo 'Did not process dispute';
+
+	break;
+case 'customer.subscription.created':
+case 'customer.subscription.updated':
+	$subscription = $data['object'];
+
+	$invoiceSem = sem_get(crc32($subscription['latest_invoice']));
+	sem_acquire($invoiceSem);
+	$subSem = sem_get(crc32($subscription['id']));
+	sem_acquire($subSem);
+
+	$database->BeginTransaction();
+	try {
+		$subscriptionId = SaveSubscription($subscription);
+	} catch (Exception $err) {
+		$database->Rollback();
+		sem_release($subSem);
+		sem_release($invoiceSem);
+		http_response_code(500);
+		echo "{$err->getMessage()}\n";
+		exit;
+	}
+	$database->Commit();
+	sem_release($subSem);
+	sem_release($invoiceSem);
+
+	$rows = $database->Query('SELECT user_id FROM public.user_subscriptions WHERE subscription_id = $1;', $subscriptionId); // If the user does not exist, there will be nothing in user_subscriptions for this subscription.
+	if ($rows->RecordCount() > 0) {
+		$user = User::Fetch($rows->Field('user_id'));
+		if (is_null($user) === false) {
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+		}
+	}
+
+	if ($type === 'customer.subscription.updated') {
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', "sentinel.notifications.{$subscriptionId}", json_encode([
+			'event' => 'subscriptionUpdated',
+			'subscriptionId' => $subscriptionId,
+		]));
+	}
+
+	ReportSuccess('Subscription saved');
+	break;
+case 'customer.subscription.deleted':
+	$subscription = $data['object'];
+	$stripeSubscription = $subscription['id'];
+	$subscriptionId = BeaconUUID::v5($stripeSubscription);
+
+	$sem = sem_get(crc32($subscriptionId));
+	sem_acquire($sem);
+
+	$database->BeginTransaction();
+	$rows = $database->Query('SELECT user_id FROM public.user_subscriptions WHERE subscription_id = $1;', $subscriptionId);
+	$database->Query('DELETE FROM public.subscriptions WHERE subscription_id = $1;', $subscriptionId);
+	$database->Commit();
+
+	sem_release($sem);
+
+	if ($rows->RecordCount() > 0) {
+		$user = User::Fetch($rows->Field('user_id'));
+		if (is_null($user) === false) {
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+		}
+	}
+
+	BeaconRabbitMQ::SendMessage('sentinel_exchange', "sentinel.notifications.{$subscriptionId}", json_encode([
+		'event' => 'subscriptionUpdated',
+		'subscriptionId' => $subscriptionId,
+	]));
+
+	ReportSuccess('Subscription deleted');
 	break;
 default:
-	http_response_code(200);
-	echo 'Unknown hook type. Just assumed this worked, ok?';
+	http_response_code(400);
+	echo 'Unknown hook type.';
 	exit;
+}
+
+function ReportSuccess(string $message): void {
+	global $eventId, $database;
+
+	$database->BeginTransaction();
+	$database->Query('INSERT INTO public.processed_webhooks (event_id) VALUES ($1);', $eventId);
+	$database->Commit();
+
+	http_response_code(200);
+	echo "{$message}\n";
+	exit;
+}
+
+function CreatePurchaseFromInvoice(array $invoice): BeaconPurchase {
+	global $api, $database;
+
+	$invoiceId = $invoice['id'];
+	$email = $invoice['customer_email'];
+	$customerId = $invoice['customer'];
+	$address = $invoice['customer_address'];
+	$billingLocality = $address['country'];
+	if (isset($address['state'])) {
+		$billingLocality .= ' ' . $address['state'];
+	}
+	$purchaseDate = $invoice['created'];
+
+	$currencyCode = strtoupper($invoice['currency']);
+	$currencyRows = $database->Query('SELECT stripe_multiplier, usd_conversion_rate FROM public.currencies WHERE code = $1;', $currencyCode);
+	if ($currencyRows->RecordCount() !== 1) {
+		throw new Exception("Unknown currency {$currencyCode}");
+	}
+	$currencyMultiplier = $currencyRows->Field('stripe_multiplier');
+	$conversionRate = $currencyRows->Field('usd_conversion_rate'); // This is low accuracy, but it's the best way have.
+
+	$purchase = new BeaconPurchase($invoiceId, $email, $purchaseDate, $billingLocality, $currencyCode, $conversionRate, $currencyMultiplier);
+
+	$lines = $invoice['lines']['data'];
+	foreach ($lines as $line) {
+		$stripeProductId = $line['price']['product'];
+		$stripeProduct = $api->GetProduct($stripeProductId);
+		$productId = $stripeProduct['metadata']['beacon-uuid'];
+
+		$linePrice = $line['amount_excluding_tax'];
+		$quantity = $line['quantity'] ?? 1;
+		$unitPrice = $linePrice / $quantity;
+		$subtotal = $line['amount_excluding_tax'];
+		$taxTotal = 0;
+		foreach ($line['tax_amounts'] as $tax) {
+			$taxTotal += $tax['amount'];
+		}
+		$discountTotal = 0;
+		foreach ($line['discounts'] as $discount) {
+			$discountTotal += $discount['amount'];
+		}
+
+		$lineItem = new BeaconLineItem($productId, $unitPrice, $quantity, $discountTotal, $taxTotal, $currencyCode, $conversionRate, $currencyMultiplier);
+		$purchase->AddLine($lineItem);
+	}
+
+	if ($purchase->LineCount() === 0) {
+		throw new Exception('No products for invoice');
+	}
+
+	$total = $invoice['total'];
+	$subtotal = $invoice['subtotal'];
+
+	$taxTotal = 0;
+	foreach ($invoice['total_tax_amounts'] as $tax) {
+		$taxTotal += $tax['amount'];
+	}
+
+	$discountTotal = 0;
+	foreach ($invoice['total_discount_amounts'] as $discount) {
+		$discountTotal += $discount['amount'];
+	}
+
+	$purchase->SetTotal($total);
+	$purchase->SetSubtotal($subtotal);
+	$purchase->SetTaxes($taxTotal);
+	$purchase->SetDiscounts($discountTotal);
+
+	// Do more work if the invoice is already paid
+	UpdatePurchaseWithInvoice($purchase, $invoice);
+
+	return $purchase;
+}
+
+function UpdatePurchaseWithInvoice(BeaconPurchase $purchase, array $invoice): bool {
+	global $api;
+
+	if ($invoice['paid'] !== true) {
+		return false;
+	}
+
+	$purchase->SetDateFulfilled($invoice['status_transitions']['finalized_at']);
+	$purchase->SetAmountPaid($invoice['amount_paid']);
+
+	$chargeId = $invoice['charge'];
+	if (is_null($chargeId) === false) {
+		$charge = $api->GetCharge($chargeId);
+		if (strtoupper($charge['currency']) !== 'USD') {
+			$transactions = $api->GetBalanceTransactionsForSource($chargeId);
+			if (is_null($transactions) === false && isset($transactions['data']) && is_array($transactions['data'])) {
+				foreach ($transactions['data'] as $transaction) {
+					$purchase->SetConversionRate($transaction['exchange_rate']);
+					$purchase->SetCurrencyCode($charge['currency']);
+					break;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+function CreatePurchaseFromCheckoutSession(array $session): BeaconPurchase {
+	global $api, $database;
+
+	if (isset($session['payment_intent'])) {
+		$intentId = $session['payment_intent'];
+		$intent = $api->GetPaymentIntent($intentId);
+		if (is_null($intent)) {
+			throw new Exception("Could not get payment intent {$intentId}");
+		}
+
+		$purchaseDate = $session['created'];
+		$amountPaid = $intent['amount_received'];
+
+		$purchase = BeaconPurchase::Load($database, $intentId);
+		if (is_null($purchase)) {
+			$email = $session['customer_details']['email'];
+			$billingLocality = $session['customer_details']['address']['country'];
+			if (isset($session['customer_details']['address']['state'])) {
+				$billingLocality .= ' ' . $session['customer_details']['address']['state'];
+			}
+			$currencyCode = strtoupper($session['currency']);
+
+			$charges = [];
+			if (isset($intent['charges']['data']) && is_array($intent['charges']['data'])) {
+				$charges = $intent['charges']['data'];
+			}
+			$paidCharge = null;
+			$datePaid = null;
+			foreach ($charges as $charge) {
+				if ($charge['paid'] !== true) {
+					continue;
+				}
+
+				$paidCharge = $charge;
+				$datePaid = $charge['created'];
+				break;
+			}
+			$conversionRate = 1.0;
+			if (is_null($paidCharge) === false) {
+				if (strtoupper($paidCharge['currency']) !== 'USD') {
+					$transactions = $api->GetBalanceTransactionsForSource($paidCharge['id']);
+					if (is_null($transactions) === false && isset($transactions['data']) && is_array($transactions['data'])) {
+						foreach ($transactions['data'] as $transaction) {
+							$conversionRate = $transaction['exchange_rate'];
+							$currencyCode = strtoupper($paidCharge['currency']);
+							break;
+						}
+					}
+				}
+			}
+			$currencyRows = $database->Query('SELECT stripe_multiplier FROM public.currencies WHERE code = $1;', $currencyCode);
+			if ($currencyRows->RecordCount() !== 1) {
+				throw new Exception("Unknown currency code {$currencyCode}.");
+			}
+			$currencyMultiplier = $currencyRows->Field('stripe_multiplier');
+			$conversionRate = $conversionRate / (100 / $currencyMultiplier);
+
+			$purchase = new BeaconPurchase($intentId, $email, $purchaseDate, $billingLocality, $currencyCode, $conversionRate, $currencyMultiplier);
+			$lineItems = $api->GetLineItems($session['id']);
+			if (is_null($lineItems)) {
+				throw new Exception('Unable to retrieve items for checkout session');
+			}
+			$items = $lineItems['data'];
+			foreach ($items as $item) {
+				$priceId = $item['price']['id'];
+				$quantity = $item['quantity'];
+				$lineTotal = $item['amount_total'];
+				$subtotal = $item['amount_subtotal'];
+				$unitPrice = $subtotal / $quantity;
+				$taxTotal = 0;
+				foreach ($item['taxes'] as $tax) {
+					$taxTotal += $tax['amount'];
+				}
+				$discountTotal = 0;
+				foreach ($item['discounts'] as $discount) {
+					$discountTotal += $discount['amount'];
+				}
+
+				$rows = $database->Query('SELECT product_id FROM product_prices WHERE price_id = $1;', $priceId);
+				if ($rows->RecordCount() === 1) {
+					$item = new BeaconLineItem($rows->Field('product_id'), $unitPrice, $quantity, $discountTotal, $taxTotal, $currencyCode, $conversionRate, $currencyMultiplier);
+					$purchase->AddLine($item);
+				}
+			}
+
+			if ($purchase->LineCount() == 0) {
+				throw new Exception('No products for this checkout session.');
+			}
+		}
+
+		$purchase->SetAmountPaid($amountPaid);
+		if ($amountPaid === $purchase->Total()) {
+			$purchase->SetDateFulfilled($purchaseDate);
+		}
+	} elseif (isset($session['invoice'])) {
+		$invoiceId = $session['invoice'];
+		$invoice = $api->GetInvoice($invoiceId);
+		if (is_null($invoice)) {
+			throw new Exception("Could not get invoice {$invoiceId}");
+		}
+		$purchase = BeaconPurchase::Load($database, $invoiceId);
+		if (is_null($purchase)) {
+			$purchase = CreatePurchaseFromInvoice($invoice);
+		} else {
+			UpdatePurchaseWithInvoice($purchase, $invoice);
+		}
+	} else {
+		ReportSuccess('What is this object?');
+	}
+
+	if (isset($session['client_reference_id'])) {
+		$purchase->SetClientReferenceId($session['client_reference_id']);
+	}
+
+	if (isset($session['metadata']) && isset($session['metadata']['Beacon Cart'])) {
+		$bundles = json_decode(gzdecode(BeaconCommon::Base64UrlDecode($session['metadata']['Beacon Cart'])), true);
+		$purchase->SetMetadata([
+			'bundles' => $bundles,
+		]);
+	}
+
+	return $purchase;
+}
+
+function SaveSubscription(array $subscription): string {
+	global $api, $database;
+
+	$stripeSubscription = $subscription['id'];
+	$subscriptionId = BeaconUUID::v5($stripeSubscription);
+
+	$startDate = $subscription['current_period_start'];
+	$endDate = $subscription['current_period_end'];
+	$stripeProductId = $subscription['plan']['product'];
+	$stripeProduct = $api->GetProduct($stripeProductId);
+	$productId = $stripeProduct['metadata']['beacon-uuid'];
+	$latestInvoiceId = $subscription['latest_invoice'];
+	$latestPurchaseId = BeaconUUID::v5($latestInvoiceId);
+
+	$database->Query('INSERT INTO public.subscription_purchases (subscription_id, purchase_id) VALUES ($1, $2) ON CONFLICT (subscription_id, purchase_id) DO NOTHING;', $subscriptionId, $latestPurchaseId);
+
+	$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM public.subscriptions WHERE subscription_id = $1) AS exists;', $subscriptionId);
+	if ($rows->Field('exists')) {
+		$database->Query('UPDATE public.subscriptions SET date_expires = TO_TIMESTAMP($2), product_id = $3, last_purchase_id = $4 WHERE subscription_id = $1 AND (date_expires != TO_TIMESTAMP($2) OR product_id != $3 OR last_purchase_id != $4);', $subscriptionId, $endDate, $productId, $latestPurchaseId);
+	} else {
+		$database->Query('INSERT INTO public.subscriptions (subscription_id, stripe_id, product_id, date_created, date_expires, initial_purchase_id, last_purchase_id) VALUES ($1, $2, $3, TO_TIMESTAMP($4), TO_TIMESTAMP($5), $6, $6);', $subscriptionId, $stripeSubscription, $productId, $startDate, $endDate, $latestPurchaseId);
+	}
+
+	$saveInvoice = false;
+	$invoicePurchase = BeaconPurchase::Load($database, $latestPurchaseId);
+	if (is_null($invoicePurchase)) {
+		$invoice = $api->GetInvoice($latestInvoiceId);
+		if (is_null($invoice)) {
+			throw new Exception("Unable to download invoice {$latestInvoiceId}");
+		}
+		$invoicePurchase = CreatePurchaseFromInvoice($invoice);
+		$saveInvoice = true;
+	}
+	if (is_null($invoicePurchase->ClientReferenceId())) {
+		$rows = $database->Query('SELECT client_reference_id FROM public.subscriptions INNER JOIN public.purchases ON (purchases.purchase_id = subscriptions.initial_purchase_id) WHERE subscription_id = $1;', $subscriptionId);
+		if ($rows->RecordCount() === 1 && $invoicePurchase->ClientReferenceId() !== $rows->Field('client_reference_id')) {
+			$invoicePurchase->SetClientReferenceId($rows->Field('client_reference_id'));
+			$saveInvoice = true;
+		}
+	}
+	if ($saveInvoice) {
+		$invoicePurchase->SaveTo($database);
+	}
+
+	return $subscriptionId;
+}
+
+function UpdateSubscription(array $subscription): void {
+
 }
 
 ?>

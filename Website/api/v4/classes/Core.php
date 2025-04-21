@@ -23,7 +23,7 @@ class Core {
 	public static function HandleCors(): void {
 		header('Access-Control-Allow-Origin: *');
 		header('Access-Control-Allow-Methods: DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT');
-		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');
+		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization,X-Beacon-Pusher-Id');
 		header('Access-Control-Expose-Headers: Content-Length,Content-Range');
 		header('Vary: Origin');
 
@@ -124,29 +124,13 @@ class Core {
 		return strtoupper($_SERVER['REQUEST_METHOD']);
 	}
 
-	public static function Authorize(string $scheme, string ...$requestedScopes): void {
+	// Auth parameters on failure
+	public static function Authorize(string $scheme, string ...$requestedScopes): ?array {
 		$supportedScopes = [];
 		$requiredScopes = [];
 		switch ($scheme) {
 		case self::kAuthSchemeBearer:
-			$supportedScopes = [
-				Application::kScopeCommon,
-				Application::kScopeAppsCreate,
-				Application::kScopeAppsRead,
-				Application::kScopeAppsUpdate,
-				Application::kScopeAppsDelete,
-				Application::kScopeUsersRead,
-				Application::kScopeUsersUpdate,
-				Application::kScopeUsersDelete,
-				Application::kScopeSentinelLogsRead,
-				Application::kScopeSentinelLogsUpdate,
-				Application::kScopeSentinelPlayersRead,
-				Application::kScopeSentinelPlayersUpdate,
-				Application::kScopeSentinelServicesCreate,
-				Application::kScopeSentinelServicesRead,
-				Application::kScopeSentinelServicesUpdate,
-				Application::kScopeSentinelServicesDelete
-			];
+			$supportedScopes = Application::ValidScopes();
 			$requiredScopes = [
 				Application::kScopeCommon
 			];
@@ -179,7 +163,7 @@ class Core {
 			case self::kAuthSchemeBearer:
 				$authStatus = static::AuthenticateWithBearer($requestedScopes);
 				if ($authStatus === self::kAuthorized) {
-					return;
+					return null;
 				}
 
 				switch ($authStatus) {
@@ -197,18 +181,18 @@ class Core {
 
 				break;
 			case self::kAuthSchemeNone:
-				return;
+				return null;
 			}
 		}
 
-		header('WWW-Authenticate: ' . implode(' ', $authParams));
-
-		static::ManageRateLimit();
-		Response::NewJsonError($message, null, $httpStatus)->Flush();
-		exit;
+		return [
+			'message' => $message,
+			'httpStatus' => $httpStatus,
+			'params' => $authParams
+		];
 	}
 
-	public static function RequestScopes(array ...$scopes): void {
+	public static function RequestScopes(string ...$scopes): void {
 		if (count($scopes) === 0) {
 			throw new Exception('Did not request any scopes to authorize');
 		}
@@ -422,10 +406,12 @@ class Core {
 				return;
 			}
 
-			$requiredScopes = ['common'];
+			$additionalScopes = [];
 			$authScheme = self::kAuthSchemeBearer;
 
 			$handler = $handlers[$requestMethod];
+			$authParametersHandler = null;
+			$anonymousHandler = null;
 			if (is_string($handler)) {
 				$handlerFile = $root . '/' . $handler . '.php';
 				if (file_exists($handlerFile) === false) {
@@ -434,6 +420,8 @@ class Core {
 					return;
 				}
 				$handler = 'handleRequest';
+				$authParametersHandler = 'setupAuthParameters';
+				$anonymousHandler = 'handleAnonymousRequest';
 				try {
 					http_response_code(500); // Set a default. If there is a fatal error, it'll still be set.
 					require($handlerFile);
@@ -442,6 +430,14 @@ class Core {
 					Response::NewJsonError((BeaconCommon::InProduction() ? 'Error loading api source file.' : $err->getMessage()), null, 500)->Flush();
 					return;
 				}
+			} else if (is_array($handler) === true && isset($handler['handleRequest']) && is_callable($handler['handleRequest'])) {
+				if (isset($handler['setupAuthParameters'])) {
+					$authParametersHandler = $handler['setupAuthParameters'];
+				}
+				if (isset($handler['handleAnonymousRequest'])) {
+					$anonymousHandler = $handler['handleAnonymousRequest'];
+				}
+				$handler = $handler['handleRequest'];
 			} else if (is_callable($handler) === true) {
 				// nothing to do
 			} else {
@@ -450,10 +446,27 @@ class Core {
 				return;
 			}
 
-			static::Authorize($authScheme, ...$requiredScopes);
+			$requiredScopes = ['common'];
+			if (is_callable($authParametersHandler)) {
+				$editable = in_array($requestMethod, ['PUT', 'PATCH', 'POST', 'DELETE']);
+				$authParametersHandler($authScheme, $requiredScopes, $editable);
+			}
+
+			$authInfo = static::Authorize($authScheme, ...$requiredScopes);
+			if (is_null($authInfo) === false) {
+				if (is_callable($anonymousHandler)) {
+					$handler = $anonymousHandler;
+				} else {
+					header('WWW-Authenticate: ' . implode(' ', $authInfo['params']));
+
+					static::ManageRateLimit();
+					Response::NewJsonError($authInfo['message'], null, $authInfo['httpStatus'])->Flush();
+					exit;
+				}
+			}
 			static::ManageRateLimit(false); // Check the limit, but don't increment yet
 
-			if ($replaceSessionPlaceholder) {
+			if ($replaceSessionPlaceholder && is_null(static::SessionId()) === false) {
 				$requestRoute = str_replace('603bc7b9-b300-4b0f-bac5-c586a367b47b', static::SessionId(), $requestRoute);
 				$sessionIdKey = array_search('603bc7b9-b300-4b0f-bac5-c586a367b47b', $matches);
 				if ($sessionIdKey) {
@@ -461,7 +474,7 @@ class Core {
 				}
 			}
 
-			if ($replaceUserPlaceholder) {
+			if ($replaceUserPlaceholder && is_null(static::UserId()) === false) {
 				$requestRoute = str_replace('d34c7c10-657f-4bc7-a97b-83fef4476bd7', static::UserId(), $requestRoute);
 				$userIdKey = array_search('d34c7c10-657f-4bc7-a97b-83fef4476bd7', $matches);
 				if ($userIdKey) {

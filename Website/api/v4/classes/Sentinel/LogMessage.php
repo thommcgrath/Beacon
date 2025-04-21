@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
 use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
 
 class LogMessage extends DatabaseObject implements JsonSerializable {
@@ -29,14 +29,14 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::LogLevelAlert,
 		self::LogLevelEmergency
 	];
-	
+
 	const LogTypeService = 'Service';
 	const LogTypeGameplay = 'Gameplay';
 	const LogTypes = [
 		self::LogTypeService,
 		self::LogTypeGameplay
 	];
-	
+
 	const AnalyzerStatusSkipped = 'Skipped';
 	const AnalyzerStatusPending = 'Pending';
 	const AnalyzerStatusAnalyzed = 'Analyzed';
@@ -45,118 +45,162 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::AnalyzerStatusPending,
 		self::AnalyzerStatusAnalyzed
 	];
-	
-	protected $messageId = null;
-	protected $serviceId = null;
-	protected $type = null;
-	protected $time = null;
-	protected $message = null;
-	protected $level = null;
-	protected $analyzerStatus = null;
-	protected $metadata = null;
-	
+
+	const EventCron = 'cron';
+	const EventChat = 'chat';
+	const EventClockTemperingDetected = 'clockTamperingDetected';
+	const EventClusterIdChanged = 'clusterIdChanged';
+	const EventDinoClaimed = 'dinoClaimed';
+	const EventDinoDied = 'dinoDied';
+	const EventDinoDownloaded = 'dinoDownloaded';
+	const EventDinoFrozen = 'dinoFrozen';
+	const EventDinoMatured = 'dinoMatured';
+	const EventDinoRenamed = 'dinoRenamed';
+	const EventDinoTamed = 'dinoTamed';
+	const EventDinoTribeChanged = 'dinoTribeChanged';
+	const EventDinoUnclaimed = 'dinoUnclaimed';
+	const EventDinoUnfrozen = 'dinoUnfrozen';
+	const EventDinoUploaded = 'dinoUploaded';
+	const EventPlayerJoined = 'playerJoined';
+	const EventPlayerCuffed = 'playerCuffed';
+	const EventPlayerDied = 'playerDied';
+	const EventPlayerLeft = 'playerLeft';
+	const EventPlayerNamed = 'playerRenamed';
+	const EventPlayerSpawned = 'playerSpawned';
+	const EventPlayerTribeChanged = 'playerTribeChanged';
+	const EventPlayerUncuffed = 'playerUncuffed';
+	const EventProblemDetected = 'problemDetected';
+	const EventRollbackDetected = 'rollbackDetected';
+	const EventServerConnected = 'serverConnected';
+	const EventServerDisconnected = 'serverDisconnected';
+	const EventStructureDestroyed = 'structureDestroyed';
+	const EventTribeCreated = 'tribeCreated';
+	const EventTribeDestroyed = 'tribeDestroyed';
+	const EventTribeRenamed = 'tribeRenamed';
+	const Events = [
+		self::EventCron,
+		self::EventChat,
+		self::EventClockTemperingDetected,
+		self::EventClusterIdChanged,
+		self::EventDinoClaimed,
+		self::EventDinoDied,
+		self::EventDinoDownloaded,
+		self::EventDinoFrozen,
+		self::EventDinoMatured,
+		self::EventDinoRenamed,
+		self::EventDinoTamed,
+		self::EventDinoTribeChanged,
+		self::EventDinoUnclaimed,
+		self::EventDinoUnfrozen,
+		self::EventDinoUploaded,
+		self::EventPlayerJoined,
+		self::EventPlayerCuffed,
+		self::EventPlayerDied,
+		self::EventPlayerLeft,
+		self::EventPlayerNamed,
+		self::EventPlayerSpawned,
+		self::EventPlayerTribeChanged,
+		self::EventPlayerUncuffed,
+		self::EventProblemDetected,
+		self::EventRollbackDetected,
+		self::EventServerConnected,
+		self::EventServerDisconnected,
+		self::EventStructureDestroyed,
+		self::EventTribeCreated,
+		self::EventTribeDestroyed,
+		self::EventTribeRenamed,
+	];
+
+	protected string $messageId;
+	protected string $serviceId;
+	protected string $serviceDisplayName;
+	protected string $eventName;
+	protected string $type;
+	protected float $time;
+	protected string $level;
+	protected string $analyzerStatus;
+	protected array $metadata;
+	protected string $message;
+
 	public function __construct(BeaconRecordSet $row) {
 		$this->messageId = $row->Field('message_id');
 		$this->serviceId = $row->Field('service_id');
+		$this->serviceDisplayName = $row->Field('service_display_name');
+		$this->eventName = $row->Field('event_name');
 		$this->type = $row->Field('type');
 		$this->time = floatval($row->Field('log_time'));
-		$this->message = $row->Field('message');
 		$this->level = $row->Field('level');
 		$this->analyzerStatus = $row->Field('analyzer_status');
 		$this->metadata = json_decode($row->Field('metadata'), true);
+		$this->message = $row->Field('message');
 	}
-	
+
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('sentinel', 'service_logs', [
-			new DatabaseObjectProperty('messageId', ['primaryKey' => true, 'columnName' => 'message_id']),
-			new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
-			new DatabaseObjectProperty('type'),
-			new DatabaseObjectProperty('time', ['columnName' => 'log_time']),
-			new DatabaseObjectProperty('message'),
-			new DatabaseObjectProperty('level'),
-			new DatabaseObjectProperty('analyzerStatus', ['columnName' => 'analyzer_status']),
-			new DatabaseObjectProperty('metadata')
-		]);	
+		return new DatabaseSchema(
+			schema: 'sentinel',
+			table: 'service_logs',
+			definitions: [
+				new DatabaseObjectProperty('messageId', ['primaryKey' => true, 'columnName' => 'message_id']),
+				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
+				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
+				new DatabaseObjectProperty('type'),
+				new DatabaseObjectProperty('time', ['columnName' => 'log_time', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
+				new DatabaseObjectProperty('eventName', ['columnName' => 'event_name']),
+				new DatabaseObjectProperty('level'),
+				new DatabaseObjectProperty('analyzerStatus', ['columnName' => 'analyzer_status']),
+				new DatabaseObjectProperty('metadata'),
+				new DatabaseObjectProperty('message', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_log_messages.message']),
+			],
+			joins: [
+				'INNER JOIN sentinel.service_log_messages ON (service_log_messages.message_id = service_logs.message_id)',
+				'INNER JOIN sentinel.services ON (services.service_id = service_logs.service_id)',
+				'INNER JOIN sentinel.service_permissions ON (service_logs.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
+			],
+		);
 	}
-	
+
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
-		$parameters->orderBy = $schema->Accessor('time') . ' DESC';
-		$parameters->AddFromFilter($schema, $filters, 'type');
+		if (isset($filters['sortDirection'])) {
+			$sortDirection = (strtolower($filters['sortDirection']) === 'ascending' ? 'ASC' : 'DESC');
+		} else {
+			$sortDirection = 'DESC';
+		}
+		if (isset($filters['sortedColumn']) && $schema->hasProperty($filters['sortedColumn'])) {
+			$parameters->orderBy = $schema->Accessor($filters['sortedColumn']) . ' ' . $sortDirection;
+		} else {
+			$parameters->orderBy = $schema->Accessor('time') . ' ' . $sortDirection;
+		}
+
+		$language = 'en';
+		if (isset($filters['lang']) && strlen($filters['lang']) === 2) {
+			$language = strtolower($filters['lang']);
+		}
+		$langPlaceholder = $parameters->AddValue($language);
+		$parameters->clauses[] = 'service_log_messages.language = $' . $langPlaceholder;
+
+		$parameters->allowAll = true;
+
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'level');
-		$parameters->AddFromFilter($schema, $filters, 'analyzerStatus');
-	}
-	
-	public static function Create(string $message, string $serviceId, ?string $level = null, ?string $type = null): LogMessage {
-		if (is_null($level) === false && in_array($level, self::LogLevels) === false) {
-			throw new Exception('Invalid log level');
+		$parameters->AddFromFilter($schema, $filters, 'analyzerStatus', 'in');
+		$parameters->AddFromFilter($schema, $filters, 'eventName', 'in');
+		$parameters->AddFromFilter($schema, $filters, 'type', 'in');
+		$parameters->AddFromFilter($schema, $filters, 'level', 'in');
+
+		if (isset($filters['message'])) {
+			$queryPlaceholder = $parameters->AddValue($filters['message']);
+			$parameters->clauses[] = 'service_log_messages.vector @@ websearch_to_tsquery(sentinel.language_shortcode_to_regconfig($' . $langPlaceholder . '), $' . $queryPlaceholder . ')';
 		}
-		if (is_null($type) === false && in_array($type, self::LogTypes) === false) {
-			throw new Exception('Invalid log type');
-		}
-		
-		$log = new static();
-		$log->message = $message;
-		$log->serviceId = $serviceId;
-		if (is_null($level) === false) {
-			$log->level = $level;
-		}
-		if (is_null($type) === false) {
-			$log->type = $type;
-		}
-		return $log;
-	}
-	
-	protected static function HookConsumeLogLines(string $serviceId, float $last_timestamp, array $lines): array {
-		return [];
-	}
-	
-	public static function ConsumeLogFile(string $serviceId, string $file_content): array {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT COALESCE(EXTRACT(EPOCH FROM MAX(log_time)), 0) AS last_timestamp FROM sentinel.service_logs WHERE service_id = $1;', $serviceId);
-		$last_timestamp = floatval($rows->Field('last_timestamp'));
-		
-		// normalize line endings
-		$file_content = str_replace("\r\n", "\n", $file_content);
-		$file_content = str_replace("\r", "\n", $file_content);
-		
-		// split
-		$lines = explode("\n", $file_content);
-		
-		// let the game-specific class do the heavy lifting
-		$messages = static::HookConsumeLogLines($serviceId, $last_timestamp, $lines);
-		
-		// save
-		static::SaveLogs($messages);
-		
-		// and return
-		return $messages;
-	}
-	
-	public static function SaveLogs(array $messages): void {
-		if (count($messages) === 0) {
-			return;
-		}
-		
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		try {
-			foreach ($messages as $message) {
-				$metadata = count($message->metadata) > 0 ? json_encode($message->metadata) : '{}';
-				$database->Query('INSERT INTO ' . static::SQLLongTableName() . ' (message_id, service_id, type, log_time, message, level, analyzer_status, metadata) VALUES ($1, $2, $3, to_timestamp($4), $5, $6, $7, $8);', $message->messageId, $message->serviceId, $message->type, $message->time, $message->message, $message->level, $message->analyzerStatus, $metadata);
+
+		$metadataFilters = ['characterId', 'tribeId', 'playerId', 'dinoId'];
+		foreach ($metadataFilters as $filter) {
+			if (isset($filters[$filter]) && BeaconCommon::IsUUID($filters[$filter])) {
+				$placeholder = $parameters->AddValue('%"' . $filters[$filter] . '"%');
+				$parameters->clauses[] = $schema->Accessor('metadata') . '::TEXT ILIKE $' . $placeholder;
 			}
-		} catch (Exception $err) {
-			$database->Rollback();
-			throw $err;
 		}
-		$database->Commit();
 	}
-	
-	public static function RunAnalyzer(): void {
-		
-	}
-	
+
 	public static function GetMessageByID(string $messageId): ?LogMessage {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE message_id = $1;', $messageId);
@@ -165,11 +209,11 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 		return new static($rows);
 	}
-	
+
 	public static function GetMessagesForService(string $serviceId, int $offset = 0, int $limit = 500): array {
 		// Searches for a service or group
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id = $1 OR service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY log_time DESC OFFSET $2 LIMIT $3;', $serviceId, $offset, $limit);
+		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id = $1 OR service_id IN (SELECT service_id FROM sentinel.service_group_services WHERE group_id = $1) ORDER BY log_time DESC OFFSET $2 LIMIT $3;', $serviceId, $offset, $limit);
 		$messages = [];
 		while (!$rows->EOF()) {
 			$messages[] = new static($rows);
@@ -177,136 +221,70 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		}
 		return $messages;
 	}
-	
+
 	public function Save(): void {
 		$messages = [$this];
-		static::SaveLogs($messages);	
+		static::SaveLogs($messages);
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		return [
 			'messageId' => $this->messageId,
 			'serviceId' => $this->serviceId,
+			'serviceDisplayName' => $this->serviceDisplayName,
+			'eventName' => $this->eventName,
 			'type' => $this->type,
 			'time' => $this->time,
-			'message' => $this->message,
 			'level' => $this->level,
 			'analyzerStatus' => $this->analyzerStatus,
-			'metadata' => $this->metadata
+			'metadata' => $this->metadata,
+			'message' => $this->message,
 		];
 	}
-	
+
 	public function MessageId(): string {
 		return $this->messageId;
 	}
-	
+
 	public function ServiceId(): string {
 		return $this->serviceId;
 	}
-	
+
 	public function Type(): string {
 		return $this->type;
 	}
-	
+
 	public function Time(): float {
 		return $this->time;
 	}
-	
-	public function Message(): string {
-		return $this->message;
-	}
-	
+
 	public function Level(): string {
 		return $this->level;
 	}
-	
+
 	public function AnalyzerStatus(): string {
 		return $this->analyzerStatus;
 	}
-	
+
 	public function MetaData(): array {
 		return $this->metadata;
 	}
-	
+
 	public function IsError(): bool {
 		return 	in_array($this->level, self::ErrorLogLevels);
 	}
-	
-	/*public static function Search(string $serviceId, array $filters = [], bool $newest_first = true, int $page_num = 1, int $page_size = 250): array {
-		$page_num = max($page_num, 1);
-		$offset = $page_size * ($page_num - 1);
-		$clauses = ['service_id = $1'];
-		$values = [$serviceId];
-		$placeholder = 2;
-		if (isset($filters['query']) && empty($filters['query']) === false) {
-			$clauses[] = 'message_vector @@ phraseto_tsquery(\'english\', $' . $placeholder++ . ')';
-			$values[] = $filters['query'];
+
+	public function GetPermissionsForUser(User $user): int {
+		if (Service::TestSentinelPermissions($this->serviceId, $user->UserId())) {
+			return self::kPermissionRead;
+		} else {
+			return self::kPermissionNone;
 		}
-		if (isset($filters['message_type']) && empty($filters['message_type']) === false) {
-			$clauses[] = 'type = $' . $placeholder++;
-			$values[] = $filters['message_type'];
-		}
-		if (isset($filters['event_type']) && empty($filters['event_type']) === false) {
-			$clauses[] = 'metadata @> $' . $placeholder++;
-			$values[] = json_encode(['event' => $filters['event_type']]);
-		}
-		if (isset($filters['min_level']) && isset($filters['max_level']) && empty($filters['min_level']) === false && empty($filters['max_level']) === false) {
-			if ($filters['min_level'] === $filters['max_level']) {
-				$clauses[] = 'level = $' . $placeholder++;
-				$values[] = $filters['min_level'];
-			} else {
-				$clauses[] = 'sentinel.log_level_position(level) BETWEEN sentinel.log_level_position($' . $placeholder++ . ') AND sentinel.log_level_position($' . $placeholder++ . ')';
-				$values[] = $filters['min_level'];
-				$values[] = $filters['max_level'];
-			}
-		} else if (isset($filters['min_level']) && empty($filters['min_level']) === false) {
-			$clauses[] = 'sentinel.log_level_position(level) >= sentinel.log_level_position($' . $placeholder++ . ')';
-			$values[] = $filters['min_level'];
-		} else if (isset($filters['max_level']) && empty($filters['max_level']) === false) {
-			$clauses[] = 'sentinel.log_level_position(level) <= sentinel.log_level_position($' . $placeholder++ . ')';
-			$values[] = $filters['max_level'];
-		}
-		if (isset($filters['newer_than']) && isset($filters['older_than']) && is_numeric($filters['newer_than']) && is_numeric($filters['older_than'])) {
-			$clauses[] = 'log_time BETWEEN to_timestamp($' . $placeholder++ . ') AND to_timestamp($' . $placeholder++ . ')';
-			$values[] = floatval($filters['newer_than']);
-			$values[] = floatval($filters['older_than']);
-		} else if (isset($filters['newer_than']) && is_numeric($filters['newer_than'])) {
-			$clauses[] = 'log_time >= to_timestamp($' . $placeholder++ . ')';
-			$values[] = floatval($filters['newer_than']);
-		} else if (isset($filters['older_than']) && is_numeric($filters['older_than'])) {
-			$clauses[] = 'log_time <= to_timestamp($' . $placeholder++ . ')';
-			$values[] = floatval($filters['older_than']);
-		}
-		$main_sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE ' . implode(' AND ', $clauses) . ' ORDER BY log_time';
-		$total_sql = 'SELECT COUNT(message_id) AS num_results FROM ' . static::SQLLongTableName() . ' WHERE ' . implode(' AND ', $clauses);
-		if ($newest_first) {
-			$main_sql .= ' DESC';
-		}
-		$main_sql .= ' OFFSET ' . $offset . ' LIMIT ' . $page_size . ';';
-		$total_sql .= ';';
-		
-		$database = BeaconCommon::Database();
-		$rows = $database->Query($main_sql, $values);
-		$totals = $database->Query($total_sql, $values);
-		$total = intval($totals->Field('num_results'));
-		
-		$results = [
-			'total' => $total,
-			'page' => $page_num,
-			'range' => [
-				'start' => $offset + 1,
-				'end' => min($total, $offset + $page_size)
-			],
-			'params' => [
-				'filters' => $filters,
-				'newest_first' => $newest_first,
-				'page_num' => $page_num,
-				'page_size' => $page_size
-			],
-			'messages' => static::FromRows($rows)
-		];
-		return $results;
-	}*/
+	}
+
+	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+		$requiredScopes[] = Application::kScopeSentinelRead;
+	}
 }
 
 ?>

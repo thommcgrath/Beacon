@@ -6,12 +6,12 @@ use BeaconCommon, BeaconDatabase, BeaconUUID, Exception;
 trait MutableDatabaseObject {
 	protected $changedProperties = [];
 
-	// Called at the start of Create so that new objects can needed values
+	// Called at the start of Create so that new objects can provide needed values
 	protected static function InitializeProperties(array &$properties): void {
 		// By default, do nothing
 	}
 
-	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
 		// By default, do nothing
 		return $value;
 	}
@@ -47,15 +47,21 @@ trait MutableDatabaseObject {
 		}
 
 		$primaryKeyPlaceholder = $primaryKeyColumn->Setter(1);
-		$values = [static::PreparePropertyValue($primaryKeyColumn, $primaryKey)];
+		$values = [static::PreparePropertyValue($primaryKeyColumn, $primaryKey, [])];
 		$placeholders = [$primaryKeyPlaceholder];
 		$columns = [$primaryKeyColumn->ColumnName()];
 		$placeholder = 2;
 
 		$editableColumns = static::EditableProperties(DatabaseObjectProperty::kEditableAtCreation);
+		$upsertAssignments = [];
+		$upsertConflicts = [];
 		foreach ($editableColumns as $definition) {
 			if ($definition->IsPrimaryKey() || $definition->IsSettable() === false) {
 				continue;
+			}
+
+			if ($definition->UpsertConflict()) {
+				$upsertConflicts[] = $definition->ColumnName();
 			}
 
 			$propertyName = $definition->PropertyName();
@@ -63,29 +69,61 @@ trait MutableDatabaseObject {
 				continue;
 			}
 
+			$dependsOn = $definition->DependsOn();
+			$otherProperties = [];
+			foreach ($dependsOn as $neededPropertyName) {
+				if (array_key_exists($neededPropertyName, $properties)) {
+					$otherProperties[$neededPropertyName] = $properties[$neededPropertyName];
+				}
+			}
+
 			$valuePlaceholder = $definition->Setter($placeholder++);
-			$value = static::PreparePropertyValue($definition, $properties[$propertyName]);
+			$value = static::PreparePropertyValue($definition, $properties[$propertyName], $otherProperties);
 
 			$placeholders[] = $valuePlaceholder;
 			$columns[] = $definition->ColumnName();
 			$values[] = $value;
+
+			if ($definition->UpsertEdit()) {
+				$upsertAssignments[] = $definition->ColumnName() . ' = ' . $valuePlaceholder;
+			}
 		}
 
 		$database = BeaconCommon::Database();
 		try {
+			$sql = "INSERT INTO " . $schema->WriteableTable() . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+			if (count($upsertConflicts) > 0) {
+				$sql .= ' ON CONFLICT (' . implode(', ', $upsertConflicts) . ') DO UPDATE SET ' . implode(', ', $upsertAssignments);
+			}
+			$sql .= ' RETURNING ' . $primaryKeyColumn->ColumnName() . ';';
+
 			$database->BeginTransaction();
-			$database->Query("INSERT INTO " . $schema->WriteableTable() . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ");", $values);
-			$obj = static::Fetch($primaryKey);
+			$rows = $database->Query($sql, $values);
+			$obj = static::Fetch($rows->Field($primaryKeyColumn->ColumnName()));
 			if (is_null($obj)) {
 				throw new Exception("{$primaryKey} was inserted into database, but could not be fetched. This is an internal error and will need to be fixed by the developer.");
 			}
-			$obj->Edit($properties); // Gets virtual data into the new object so the next method can function
+			$obj->SetProperties($properties); // Gets virtual data into the new object so the next method can function
 			$obj->SaveChildObjects($database);
 			$database->Commit();
+			$obj->HookModified();
 			return $obj;
 		} catch (Exception $err) {
 			$database->Rollback();
-			throw $err;
+
+			switch ($err->getCode()) {
+			case 23502:
+				// Not null
+				throw new APIException(message: $err->getMessage(), code: 'nullValue', httpStatus: 400);
+			case 23503:
+				// Foreign key
+				throw new APIException(message: $err->getMessage(), code: 'notFound', httpStatus: 400);
+			case 23505:
+				// Unique violation
+				throw new APIException(message: $err->getMessage(), code: 'duplicate', httpStatus: 400);
+			default:
+				throw $err;
+			}
 		}
 	}
 
@@ -93,7 +131,7 @@ trait MutableDatabaseObject {
 		return $this->jsonSerialize();
 	}
 
-	public function Edit(array $properties, bool $restoreDefaults = false): void {
+	public function SetProperties(array $properties): void {
 		$whitelist = static::EditableProperties(DatabaseObjectProperty::kEditableLater);
 		foreach ($whitelist as $definition) {
 			$propertyName = $definition->PropertyName();
@@ -101,6 +139,10 @@ trait MutableDatabaseObject {
 				$this->SetProperty($propertyName, $properties[$propertyName]);
 			}
 		}
+	}
+
+	public function Edit(array $properties, bool $restoreDefaults = false): void {
+		$this->SetProperties($properties);
 		$this->Save($restoreDefaults);
 	}
 
@@ -122,8 +164,14 @@ trait MutableDatabaseObject {
 				continue;
 			}
 
+			$dependsOn = $definition->DependsOn();
+			$otherProperties = [];
+			foreach ($dependsOn as $neededPropertyName) {
+				$otherProperties[$neededPropertyName] = $this->$neededPropertyName;
+			}
+
 			$assignments[] = $definition->ColumnName() . ' = ' . $definition->Setter('$' . $placeholder++);
-			$values[] = static::PreparePropertyValue($definition, $this->$propertyName);
+			$values[] = static::PreparePropertyValue($definition, $this->$propertyName, $otherProperties);
 		}
 		$values[] = $primaryKey;
 
@@ -145,7 +193,15 @@ trait MutableDatabaseObject {
 			if (count($assignments) > 0) {
 				$primaryKeyColumn = $schema->PrimaryColumn();
 				$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $primaryKeyColumn->ColumnName() . ' = ' . $schema->PrimarySetter($placeholder++) . ';', $values);
-				$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter(1) . ';', $primaryKey);
+				$from = $schema->FromClause();
+				$columns = $schema->SelectColumns();
+				$selectValues = [$primaryKey];
+				if (str_contains($from, '%%USER_ID%%') || str_contains($columns, '%%USER_ID%%')) {
+					$selectValues[] = Core::UserId();
+					$from = str_replace('%%USER_ID%%', '$2', $from);
+					$columns = str_replace('%%USER_ID%%', '$2', $columns);
+				}
+				$rows = $database->Query('SELECT ' . $columns . ' FROM ' . $from . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter(1) . ';', $selectValues);
 			}
 			$this->SaveChildObjects($database);
 			$database->Commit();
@@ -162,12 +218,14 @@ trait MutableDatabaseObject {
 			}
 			throw $err;
 		}
+		$this->HookModified();
 	}
 
 	public function Delete(): void {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
+		$this->HookModified(); // Fire before actually performing any work so the hook still knows what is going on
 		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
 		$database->Commit();
 	}
@@ -190,6 +248,7 @@ trait MutableDatabaseObject {
 		$requiredProperties = static::DatabaseSchema()->RequiredColumns();
 		$missingProperties = [];
 		foreach ($requiredProperties as $definition) {
+			//echo "`" . $definition->PropertyName() . "`";
 			if (array_key_exists($definition->PropertyName(), $properties) === false) {
 				$missingProperties[] = $definition->PropertyName();
 			}
@@ -200,6 +259,10 @@ trait MutableDatabaseObject {
 		} elseif (count($missingProperties) === 1) {
 			throw new Exception('Missing property ' . $missingProperties[0] . '.');
 		}
+	}
+
+	protected function HookModified(): void {
+
 	}
 }
 

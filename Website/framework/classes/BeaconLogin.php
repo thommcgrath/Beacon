@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, ApplicationAuthFlow, Session};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, Session, User};
 
 class BeaconLogin {
 	public static function Show(array $params): void {
@@ -181,8 +181,12 @@ class BeaconLogin {
 						'Juggle buffalo.',
 						'Reach singularity.',
 						'Find the droids you\'re looking for.',
-						'Levitate raccoons with iPads',
-						'Defy gravity',
+						'Levitate bagels with iPads.',
+						'Defy gravity.',
+						'Get that raccoon out of the attic.',
+						'Wish for more wishes.',
+						'Cover for you at work.',
+						'Pickle a lawnchair.',
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);
@@ -222,6 +226,7 @@ class BeaconLogin {
 
 		$withRememberMe = $params['withRemember'] ?? true;
 		$withCancel = $params['withCancel'] ?? false;
+		$user = isset($params['userId']) ? User::Fetch($params['userId']) : null;
 
 		?>
 <div id="page_noscript" class="noscript">
@@ -232,7 +237,11 @@ class BeaconLogin {
 </div>
 <div id="page_login" class="scriptonly">
 	<form id="login_form_intro" action="/account/noscript" method="post">
+		<?php if (is_null($user) === false) { ?>
+		<p class="floating-label"><input class="text-field" type="email" name="username" placeholder="Username" id="login_username_field" autocomplete="username" value="<?php echo htmlentities($user->Username(true)); ?>" required readonly><label for="login_username_field">Username</label></p>
+		<?php } else { ?>
 		<p class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email" required><label for="login_email_field">E-Mail Address</label></p>
+		<?php } ?>
 		<p class="floating-label"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></p>
 		<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
 		<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button" class="red">Cancel</button></li><?php } ?></ul>

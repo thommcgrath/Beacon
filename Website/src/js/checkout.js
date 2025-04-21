@@ -1252,7 +1252,6 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 						try {
 							const parsed = JSON.parse(response.body);
 							const url = parsed.url;
-							sessionStorage.setItem('clientReferenceId', parsed.client_reference_id);
 							window.location = url;
 						} catch (err) {
 							console.log(response.body);

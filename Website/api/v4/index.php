@@ -105,13 +105,6 @@ Core::RegisterRoutes(
 		'/pusher' => [
 			'GET' => 'pusher',
 		],
-		'/sentinel/services/{serviceId}/logs' => [
-			'GET' => 'sentinel/service/logs',
-		],
-		'/sentinel/serviceGroups/{serviceGroupId}/members' => [
-			'GET' => 'sentinel/serviceGroups/members/list',
-			'POST' => 'sentinel/serviceGroups/members/edit',
-		],
 		'/sessions/{sessionId}' => [
 			'GET' => 'sessions/get',
 			'DELETE' => 'sessions/delete',
@@ -149,7 +142,32 @@ Core::RegisterRoutes(
 		'/users/{userId}/tokens' => [
 			'GET' => 'tokens/list',
 			'POST' => 'tokens/create',
-		]
+		],
+		'/sentinel/gameCommands' => [
+			'POST' => 'sentinel/gameCommands',
+		],
+		'/sentinel/services/{serviceId}/bans.txt' => [
+			'GET' => 'sentinel/bans/banlist',
+			'POST' => 'sentinel/bans/import',
+		],
+		'/sentinel/groups/{groupId}/bans.txt' => [
+			'POST' => 'sentinel/bans/import',
+		],
+		'/sentinel/scripts/test' => [
+			'POST' => 'sentinel/scripts/test',
+		],
+		'/sentinel/dinos/{dinoId}/locate' => [
+			'POST' => 'sentinel/dinos/locate',
+		],
+		'/sentinel/characters/{characterId}/giveItem' => [
+			'POST' => 'sentinel/characters/giveItem',
+		],
+		'/users/{userId}/billingPortal' => [
+			'GET' => 'users/billingUrl',
+		],
+		'/users/{userId}/createCustomerSession' => [
+			'POST' => 'users/createCustomerSession',
+		],
 	]
 );
 
@@ -179,14 +197,31 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\LootDrop', 'arksa/loot
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\LootDropIcon', 'arksa/lootDropIcons', 'lootDropIconId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Map', 'arksa/maps', 'mapId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\SpawnPoint', 'arksa/spawnPoints', 'spawnPointId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/players', 'playerId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroup', 'sentinel/serviceGroups', 'serviceGroupId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Palworld\ConfigOption', 'palworld/configOptions', 'configOptionId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Palworld\GameVariable', 'palworld/gameVariables', 'key');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\SDTD\ConfigOption', '7dtd/configOptions', 'configOptionId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ProjectInvite', 'projectInvites', 'inviteCode');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Bucket', 'sentinel/buckets', 'bucketId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\BucketValue', 'sentinel/bucketValues', 'bucketValueId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Character', 'sentinel/characters', 'characterId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Dino', 'sentinel/dinos', 'dinoId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Group', 'sentinel/groups', 'groupId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupBan', 'sentinel/groupBans', 'groupBanId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupBucket', 'sentinel/groupBuckets', 'groupBucketId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupScript', 'sentinel/groupScripts', 'groupScriptId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupService', 'sentinel/groupServices', 'groupServiceId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupUser', 'sentinel/groupUsers', 'groupUserId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\LogMessage', 'sentinel/logMessages', 'messageId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/players', 'playerId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerIdentifier', 'sentinel/playerIdentifiers', 'playerIdentifierId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNameChange', 'sentinel/playerNameChanges', 'historyId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Script', 'sentinel/scripts', 'scriptId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceBan', 'sentinel/serviceBans', 'serviceBanId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceScript', 'sentinel/serviceScripts', 'serviceScriptId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceUser', 'sentinel/serviceUsers', 'serviceUserId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Tribe', 'sentinel/tribes', 'tribeId', DatabaseObjectManager::kFeatureReadOnly);
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 

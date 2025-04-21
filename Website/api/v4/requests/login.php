@@ -2,8 +2,10 @@
 
 use BeaconAPI\v4\{Application, ApplicationAuthFlow, Core, Response, Session, User};
 
-$requiredScopes = [];
-$authScheme = Core::kAuthSchemeNone;
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes = [];
+	$authScheme = Core::kAuthSchemeNone;
+}
 
 function handleRequest(array $context): Response {
 	switch ($context['routeKey']) {
@@ -19,7 +21,7 @@ function handleRequest(array $context): Response {
 		$userId = $_GET['user_id'] ?? '';
 		$signature = $_GET['signature'] ?? '';
 		$expiration = $_GET['expiration'] ?? '';
-		$deviceId = $_GET['device_id'] ?? '';
+		$deviceId = $_GET['device_id'] ?? $_GET['deviceId'] ?? '';
 		$application = null;
 
 		if (empty($clientId) || empty($scopes)) {
