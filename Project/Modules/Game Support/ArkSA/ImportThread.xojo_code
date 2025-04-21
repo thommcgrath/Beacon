@@ -222,6 +222,31 @@ Inherits Beacon.Thread
 		  CustomConfigOrganizer.Remove(ArkSA.ConfigFileGame, "ShooterGameMode_TEMPOverrides")
 		  CustomConfigOrganizer.Remove(ArkSA.ConfigFileGame, "Beacon")
 		  
+		  If (Profile Is Nil) = False Then
+		    Var Lines() As String = Profile.CustomGUS.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
+		    Var ServerSpecificKeys() As String = Array("BeaconSentinel:AccessKey", "AsaBotCompanion:ServerId")
+		    For Each KeyPath As String In ServerSpecificKeys
+		      Var Pos As Integer = KeyPath.IndexOf(":")
+		      Var Header As String = KeyPath.Left(Pos)
+		      Var Key As String = KeyPath.Middle(Pos + 1)
+		      Var Values() As ArkSA.ConfigValue = CustomConfigOrganizer.FilteredValues(ArkSA.ConfigFileGameUserSettings, Header, Key)
+		      If Values.Count = 0 Then
+		        Continue
+		      End If
+		      
+		      If Lines.Count > 0 Then
+		        Lines.Add("")
+		      End If
+		      
+		      Lines.Add("[" + Header + "]")
+		      For Each Value As ArkSA.ConfigValue In Values
+		        Lines.Add(Value.Command)
+		      Next
+		      CustomConfigOrganizer.Remove(Values)
+		    Next
+		    Profile.CustomGUS = String.FromArray(Lines, EndOfLine)
+		  End If
+		  
 		  Var CustomContent As New ArkSA.Configs.CustomContent
 		  Try
 		    CustomContent.GameIniContent() = CustomConfigOrganizer
