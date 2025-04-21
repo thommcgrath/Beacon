@@ -22,7 +22,7 @@ if (is_null($session)) {
 $email = $session['customer_details']['email'];
 $user = BeaconAPI\v4\User::Fetch($email);
 if (is_null($user)) {
-	$userMessage = "You will need to create an account with {$email} to use your purchase. A setup link was emailed to already.";
+	$userMessage = "You will need to create an account with {$email} to use your purchase. A setup link was emailed to you already.";
 } else {
 	$userMessage = "Your purchase is ready on your {$user->Username(true)} ({$email}) account.";
 }

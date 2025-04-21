@@ -447,7 +447,7 @@ function CreatePurchaseFromCheckoutSession(array $session): BeaconPurchase {
 		$purchaseDate = $session['created'];
 		$amountPaid = $intent['amount_received'];
 
-		$purchase = BeaconPurchase::Load($intentId);
+		$purchase = BeaconPurchase::Load($database, $intentId);
 		if (is_null($purchase)) {
 			$email = $session['customer_details']['email'];
 			$billingLocality = $session['customer_details']['address']['country'];
