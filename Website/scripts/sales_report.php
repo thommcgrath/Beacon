@@ -8,7 +8,7 @@ while (ob_get_level() > 0) {
 }
 
 define('SQL_DATE_FORMAT', 'Y-m-d H:i:sO');
-$query = "SELECT COALESCE(SUM(purchases.total_paid_usd - purchases.tax_usd), 0) AS total_usd, COUNT(purchases.purchase_id) AS num_sales FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0;";
+$query = "SELECT COALESCE(SUM(purchases.total_usd - purchases.tax_usd), 0) AS total_usd, COUNT(purchases.purchase_id) AS num_sales FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total > 0;";
 $database = BeaconCommon::Database();
 $timezone = new DateTimeZone('America/New_York');
 $today = new DateTime('now', $timezone);
@@ -31,7 +31,7 @@ $rollingDays = 28;
 $rollingStart = clone $today;
 $rollingStart->sub(new DateInterval('P' . $rollingDays . 'D'));
 $rollingEnd = clone $today;
-$rollingRows = $database->Query("SELECT COALESCE(SUM(purchases.total_paid_usd - purchases.tax_usd), 0) AS total_usd FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0;", $rollingStart->format(SQL_DATE_FORMAT), $rollingEnd->format(SQL_DATE_FORMAT));
+$rollingRows = $database->Query("SELECT COALESCE(SUM(purchases.total_usd - purchases.tax_usd), 0) AS total_usd FROM public.purchases WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total > 0;", $rollingStart->format(SQL_DATE_FORMAT), $rollingEnd->format(SQL_DATE_FORMAT));
 $rollingTotal = $rollingRows->Field('total_usd');
 $rollingAverage = $rollingTotal / $rollingDays;
 
@@ -126,7 +126,7 @@ function RunReport(string $label, ?string $gameId, DateTime $periodStart, DateTi
 	if (is_null($gameId)) {
 		$rows = $database->Query($query, $periodStart->format(SQL_DATE_FORMAT), $periodEnd->format(SQL_DATE_FORMAT));
 	} else {
-		$rows = $database->Query("SELECT COALESCE(SUM(purchase_items.line_total_usd - purchase_items.tax_usd), 0) AS total_usd, COUNT(purchase_items.line_id) AS num_sales FROM public.purchase_items INNER JOIN public.purchases ON (purchase_items.purchase_id = purchases.purchase_id) WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total_paid > 0 AND purchase_items.product_id IN (SELECT products.product_id FROM public.products WHERE game_id = $3);", $periodStart->format(SQL_DATE_FORMAT), $periodEnd->format(SQL_DATE_FORMAT), $gameId);
+		$rows = $database->Query("SELECT COALESCE(SUM(purchase_items.line_total_usd - purchase_items.tax_usd), 0) AS total_usd, COUNT(purchase_items.line_id) AS num_sales FROM public.purchase_items INNER JOIN public.purchases ON (purchase_items.purchase_id = purchases.purchase_id) WHERE purchases.purchase_date >= $1 AND purchases.purchase_date < $2 AND purchases.refunded = FALSE AND purchases.total > 0 AND purchase_items.product_id IN (SELECT products.product_id FROM public.products WHERE game_id = $3);", $periodStart->format(SQL_DATE_FORMAT), $periodEnd->format(SQL_DATE_FORMAT), $gameId);
 	}
 
 	$total = $rows->Field('total_usd');

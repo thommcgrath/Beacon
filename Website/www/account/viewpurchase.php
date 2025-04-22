@@ -1,5 +1,5 @@
 <?php
-	
+
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
@@ -13,7 +13,7 @@ if (BeaconCommon::IsUUID($purchase_id) === false) {
 }
 
 $database = BeaconCommon::Database();
-$purchase = $database->Query('SELECT EXTRACT(epoch FROM purchase_date) AS purchase_date, subtotal, discount, tax, total_paid, currency, refunded, notes FROM purchases WHERE purchase_id = $1;', $purchase_id);
+$purchase = $database->Query('SELECT EXTRACT(epoch FROM purchase_date) AS purchase_date, subtotal, discount, tax, total, currency, refunded, notes FROM purchases WHERE purchase_id = $1;', $purchase_id);
 if ($purchase->RecordCount() === 0) {
 	BeaconCommon::Redirect('/account/#omni');
 }
@@ -36,7 +36,7 @@ $purchase_currency = $purchase->Field('currency');
 $purchase_subtotal = $purchase->Field('subtotal');
 $purchase_discount = $purchase->Field('discount');
 $purchase_tax = $purchase->Field('tax');
-$purchase_total = $purchase->Field('total_paid');
+$purchase_total = $purchase->Field('total');
 $purchase_refunded = $purchase->Field('refunded');
 $purchase_notes = $purchase->Field('notes');
 
@@ -63,9 +63,9 @@ while ($items->EOF() === false) {
 	$unit_price = $items->Field('unit_price');
 	$discount = $items->Field('discount');
 	$total = $items->Field('line_total_less_tax');
-	
+
 	echo '<tr><td>' . htmlentities($product_name) . '</td><td class="text-right formatted-price">' . htmlentities($unit_price) . '</td><td class="text-right formatted-price">' . htmlentities($discount) . '</td><td class="text-right formatted-price">' . htmlentities($total) . '</td></tr>';
-	
+
 	$items->MoveNext();
 }
 echo '<thead><tr><th class="w-40">&nbsp;</th><th class="w-20">&nbsp;</th><th class="w-20">&nbsp;</th><th class="w-20">Total</th></tr></thead>';
