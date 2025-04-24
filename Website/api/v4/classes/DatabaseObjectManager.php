@@ -274,31 +274,47 @@ class DatabaseObjectManager {
 			return Response::NewJsonError(code: 'badContentType', message: 'This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', details: $_SERVER['HTTP_CONTENT_TYPE'], httpStatus: 400);
 		}
 
+		$database = BeaconCommon::Database();
+		$inTransaction = false;
 		try {
 			$member = Core::BodyAsJSON();
 			$className = $this->GetClassName($member);
 
 			$user = Core::User();
-			$limits = $className::GetResourceLimitsForUser($user);
-			if (is_null($limits) === false && $limits->UsedResources() + 1 > $limits->AllowedResources()) {
-				return Response::NewJsonError(code: 'tooManyResources', message: 'Cannot create more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', details: $limits, httpStatus: 400);
-			}
-
 			$schema = $className::DatabaseSchema();
 			$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
 			$primaryKey = $context['pathParameters'][$this->varName];
-
 			$member[$primaryKeyProperty] = $primaryKey;
 
+			$database->BeginTransaction();
+			$inTransaction = true;
 			$status = $this->WriteObject($user, $primaryKeyProperty, $member, $replace);
 			if ($status['success'] === true) {
+				if ($status['status'] === 201) {
+					$limits = $className::GetResourceLimitsForUser($user);
+					if (is_null($limits) === false && $limits->UsedResources() + 1 > $limits->AllowedResources()) {
+						$database->Rollback();
+						$inTransaction = false;
+						return Response::NewJsonError(code: 'tooManyResources', message: 'Cannot create more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', details: $limits, httpStatus: 400);
+					}
+				}
+				$database->Commit();
+				$inTransaction = false;
 				return Response::NewJson($status['object'], $status['status']);
 			} else {
+				$database->Rollback();
+				$inTransaction = false;
 				return Response::NewJsonError(code: $status['code'], message: $status['reason'], details: $status['object'], httpStatus: $status['status']);
 			}
 		} catch (APIException $err) {
+			if ($inTransaction) {
+				$database->Rollback();
+			}
 			return Response::NewJsonError(code: $err->getBeaconErrorCode(), message: $err->getMessage(), httpStatus: $err->getHttpStatus());
 		} catch (Exception $err) {
+			if ($inTransaction) {
+				$database->Rollback();
+			}
 			return Response::NewJsonError(code: 'exception', message: $err->getMessage(), httpStatus: 500);
 		}
 	}
@@ -316,20 +332,8 @@ class DatabaseObjectManager {
 			$members = [$members];
 		}
 
-		$objectCounts = [];
-		foreach ($members as $member) {
-			$className = $this->GetClassName($member);
-			$objectCounts[$className] = ($objectCounts[$className] ?? 0) + 1;
-		}
-
 		$user = Core::User();
-		foreach ($objectCounts as $className => $objectCount) {
-			$limits = $className::GetResourceLimitsForUser($user);
-			if (is_null($limits) === false && $limits->SupportsMore($objectCount) === false) {
-				return Response::NewJsonError(code: 'tooManyResources', message: 'Cannot create ' . $objectCount . ' more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', details: $limits, httpStatus: 400);
-			}
-		}
-
+		$newObjectCounts = [];
 		$primaryKeyProperties = [];
 		$newObjects = [];
 		$updatedObjects = [];
@@ -353,6 +357,7 @@ class DatabaseObjectManager {
 				}
 				if ($response['status'] === 201) {
 					$newObjects[] = $response['object'];
+					$newObjectCounts[$className] = ($newObjectCounts[$className] ?? 0) + 1;
 				} else {
 					$updatedObjects[] = $response['object'];
 				}
@@ -362,6 +367,13 @@ class DatabaseObjectManager {
 			} catch (Exception $err) {
 				$database->Rollback();
 				return Response::NewJsonError(code: 'exception', message: $err->getMessage(), details: $member, httpStatus: 500);
+			}
+		}
+		foreach ($newObjectCounts as $className => $objectCount) {
+			$limits = $className::GetResourceLimitsForUser($user);
+			if (is_null($limits) === false && $limits->SupportsMore($objectCount) === false) {
+				$database->Rollback();
+				return Response::NewJsonError(code: 'tooManyResources', message: 'Cannot create ' . $objectCount . ' more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', details: $limits, httpStatus: 400);
 			}
 		}
 		try {
