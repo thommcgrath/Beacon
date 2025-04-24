@@ -29,9 +29,6 @@ class User implements \JsonSerializable {
 	protected $backup_codes_added = [];
 	protected $backup_codes_removed = [];
 
-	private $child_accounts = null;
-	private $has_child_accounts = null;
-
 	public function __construct($source = null) {
 		if ($source instanceof \BeaconRecordSet) {
 			$this->user_id = $source->Field('user_id');
@@ -328,12 +325,6 @@ class User implements \JsonSerializable {
 	public function SetUsercloudKey(string $key, bool $delete_files = true): bool {
 		$this->usercloud_key = $key;
 		$this->usercloud_delete_files = $delete_files;
-
-		$children = $this->ChildAccounts();
-		foreach ($children as $child) {
-			$child->SetUsercloudKey($key);
-		}
-
 		return true;
 	}
 
@@ -349,12 +340,6 @@ class User implements \JsonSerializable {
 		try {
 			$this->usercloud_key = bin2hex(\BeaconEncryption::RSAEncrypt($this->public_key, $key));
 			$this->usercloud_delete_files = $delete_files;
-
-			$children = $this->ChildAccounts();
-			foreach ($children as $child) {
-				$child->SetDecryptedUsercloudKey($key);
-			}
-
 			return true;
 		} catch (\Exception $err) {
 			return false;
@@ -414,15 +399,6 @@ class User implements \JsonSerializable {
 		if ($this->SetDecryptedPrivateKey($password, $private_key)) {
 			$this->SetDecryptedUsercloudKey($usercloud_key);
 			$this->SetRequiresPasswordChange(false);
-
-			$children = $this->ChildAccounts();
-			foreach ($children as $child) {
-				$child_password = \BeaconCommon::GenerateUUID();
-				if ($child->ReplacePassword($child_password, $private_key, $usercloud_key)) {
-					$child->SetRequiresPasswordChange(true);
-				}
-			}
-
 			return true;
 		} else {
 			return false;
@@ -652,7 +628,7 @@ class User implements \JsonSerializable {
 						$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = $1;', $this->email_id);
 					}
 
-					if ($this->IsChildAccount() === false && array_key_exists('usercloud_key', $changes) && $this->usercloud_delete_files === true) {
+					if (array_key_exists('usercloud_key', $changes) && $this->usercloud_delete_files === true) {
 						// The cloud key has been changed, so we need to cleanup the cloud files
 						$cloud_files = \BeaconCloudStorage::ListFiles('/' . $this->UserID() . '/');
 						foreach ($cloud_files as $file) {
