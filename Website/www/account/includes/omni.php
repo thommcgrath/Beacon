@@ -10,8 +10,6 @@ if (!$has_purchased) {
 	return;
 }
 
-$purchases = $database->Query('SELECT purchase_id, EXTRACT(epoch FROM purchase_date) AS purchase_date, total, currency, refunded FROM purchases WHERE purchaser_email = $1 ORDER BY purchase_date DESC;', $user->EmailID());
-
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 
 ?><p>Thanks for purchasing Beacon Omni! Your support means a lot.</p>
@@ -22,7 +20,6 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 
 ShowLicenses();
 ShowGiftCodes();
-ShowPurchases();
 
 function ShowGiftCodes() {
 	global $user;
@@ -106,44 +103,6 @@ function ShowLicenses() {
 		$actionsHtml = implode(' ', $actionHtmlMembers);
 
 		echo '<tr><td class="w-50">' . htmlentities($productName) . '<div class="row-details"><span class="detail">Receives updates through ' . $expirationText . '</span><span class="detail">Actions: ' . $actionsHtml . '</div></td><td class="low-priority w-30 smaller">' . $expirationText . '</td><td class="low-priority w-20 text-center">' . $actionsHtml . '</td></tr>';
-	}
-	echo '</table>';
-	echo '</div>';
-}
-
-function ShowPurchases() {
-	global $user, $purchases;
-
-	if ($purchases->RecordCount() === 0) {
-		return;
-	}
-
-	echo '<div id="section-licenses" class="visual-group">';
-	echo '<h3>All Purchases</h3>';
-	echo '<table class="generic"><thead><tr><th class="w-60">Purchase Date</th><th class="w-20">Total</th><th class="low-priority w-20">Actions</th></thead>';
-	while ($purchases->EOF() === false) {
-		$purchase_id = $purchases->Field('purchase_id');
-		$actions = ['View' => '/account/purchase/' . $purchase_id];
-		$purchase_time = intval($purchases->Field('purchase_date'));
-		$purchase_time_str = '<time datetime="' . date(DATE_ISO8601, $purchase_time) . '">' . htmlentities(date('F jS Y g:i:s A e', $purchase_time)) . '</time>';
-		$refunded = $purchases->Field('refunded');
-
-		$actions_html_members = [];
-		foreach ($actions as $text => $url) {
-			$actions_html_members[] = '<a class="action-link" href="' . htmlentities($url) . '">' . htmlentities($text) . '</a>';
-		}
-		$actions_html = implode(' ', $actions_html_members);
-
-		$total = $purchases->Field('total');
-		$currency = $purchases->Field('currency');
-
-		if ($refunded) {
-			$purchase_time_str = '<span class="redacted text-red">' . $purchase_time_str . '</span> Refunded';
-		}
-
-		echo '<tr><td class="w-60">' . $purchase_time_str . '<div class="row-details"><span class="detail">Actions: ' . $actions_html . '</span></div></td><td class="w-20 text-right nowrap formatted-price" beacon-currency="' . htmlentities($currency) . '">' . htmlentities($total) . '</td><td class="low-priority w-20 text-center">' . $actions_html . '</td>';
-
-		$purchases->MoveNext();
 	}
 	echo '</table>';
 	echo '</div>';

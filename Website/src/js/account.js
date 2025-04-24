@@ -56,7 +56,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			const resourceName = event.target.getAttribute('beacon-resource-name');
 
 			BeaconDialog.confirm('Are you sure you want to delete the project "' + resourceName + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete').then(() => {
-				BeaconWebRequest.delete(resourceUrl, { Authorization: `Bearer ${sessionId}` }).then(() => {
+				BeaconWebRequest.delete(resourceUrl, { 'X-Beacon-Token': sessionId }).then(() => {
 					BeaconDialog.show('Project deleted', '"' + resourceName + '" has been deleted.').then(() => {
 						window.location.reload(true);
 					});
@@ -404,7 +404,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				authenticator.nickname = addAuthenticatorNicknameField.value.trim();
 				authenticator.verificationCode = addAuthenticatorCodeField.value.trim();
 
-				BeaconWebRequest.post(`https://${apiDomain}/v4/authenticators`, authenticator, { Authorization: `Bearer ${sessionId}` }).then(() => {
+				BeaconWebRequest.post(`https://${apiDomain}/v4/authenticators`, authenticator, { 'X-Beacon-Token': sessionId }).then(() => {
 					window.location.reload(true);
 				}).catch((error) => {
 					const errorMessage = (() => {
@@ -469,7 +469,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				}
 
 				BeaconDialog.confirm(confirm.message, confirm.explanation).then(() => {
-					BeaconWebRequest.delete(`https://${apiDomain}/v4/authenticators/${authenticatorId}`, {Authorization: `Bearer ${sessionId}`}).then(() => {
+					BeaconWebRequest.delete(`https://${apiDomain}/v4/authenticators/${authenticatorId}`, {'X-Beacon-Token': sessionId}).then(() => {
 						const row = document.getElementById(`authenticator-${authenticatorId}`);
 						if (row && numAuthenticators > 1) {
 							row.remove();
@@ -501,7 +501,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	if (replaceBackupCodesButton) {
 		replaceBackupCodesButton.addEventListener('click', () => {
 			BeaconDialog.confirm('Replace backup codes?', 'This will replace all of your backup codes with new ones.').then(() => {
-				BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {Authorization: `Bearer ${sessionId}`}).then((response) => {
+				BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {'X-Beacon-Token': sessionId}).then((response) => {
 					try {
 						const backupCodesTable = document.getElementById('backup-codes');
 						const obj = JSON.parse(response.body);
@@ -542,7 +542,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	const revokeAction = (event) => {
 		event.preventDefault();
 
-		BeaconWebRequest.delete(`https://${apiDomain}/v4/sessions/${encodeURIComponent(event.target.getAttribute('sessionHash'))}`, { Authorization: `Bearer ${sessionId}` }).then(() => {
+		BeaconWebRequest.delete(`https://${apiDomain}/v4/sessions/${encodeURIComponent(event.target.getAttribute('sessionHash'))}`, { 'X-Beacon-Token': sessionId }).then(() => {
 			BeaconDialog.show('Session revoked', 'Be aware that any enabled user with a copy of your account\'s private key can start a new session.').then(() => {
 				window.location.reload(true);
 			});
@@ -571,7 +571,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 		event.preventDefault();
 
 		const applicationId = event.currentTarget.getAttribute('beacon-app-id');
-		BeaconWebRequest.get(`https://${apiDomain}/v4/applications/${encodeURIComponent(applicationId)}`, { Authorization: `Bearer ${sessionId}` }).then((response) => {
+		BeaconWebRequest.get(`https://${apiDomain}/v4/applications/${encodeURIComponent(applicationId)}`, { 'X-Beacon-Token': sessionId }).then((response) => {
 			const parsed = JSON.parse(response.body);
 
 		}).catch(() => {
@@ -632,7 +632,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			}
 		} else {
 			BeaconDialog.confirm(`Are you sure you want to remove the service ${tokenName}?`, 'You will be able to connect the service again if you choose to.', 'Delete', 'Cancel').then(() => {
-				BeaconWebRequest.delete(`https://${apiDomain}/v4/tokens/${tokenId}`, { Authorization: `Bearer ${sessionId}` }).then(() => {
+				BeaconWebRequest.delete(`https://${apiDomain}/v4/tokens/${tokenId}`, { 'X-Beacon-Token': sessionId }).then(() => {
 					window.location.reload(true);
 				}).catch(() => {
 					BeaconDialog.show('The service was not deleted.');
@@ -678,7 +678,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				},
 			};
 
-			BeaconWebRequest.post(`https://${apiDomain}/v4/user/tokens`, tokenInfo, { Authorization: `Bearer ${sessionId}` }).then(() => {
+			BeaconWebRequest.post(`https://${apiDomain}/v4/user/tokens`, tokenInfo, { 'X-Beacon-Token': sessionId }).then(() => {
 				window.location.reload(true);
 			}).catch((response) => {
 				try {
@@ -701,5 +701,30 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 		const url = new urlConstructor(window.location);
 		url.search = '';
 		window.history.replaceState(null, document.title, url.toString());
+	}
+
+	/* Billing */
+	const portalButton = document.getElementById('openBillingPortalButton');
+	if (portalButton) {
+		portalButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			portalButton.disabled = true;
+
+			const params = new URLSearchParams();
+			params.append('returnUrl', portalButton.getAttribute('return-url'));
+
+			BeaconWebRequest.get(`https://${apiDomain}/v4/user/billingPortal?${params.toString()}`, {'X-Beacon-Token': sessionId}).then((response) => {
+				portalButton.disabled = false;
+				try {
+					const parsed = JSON.parse(response.body);
+					window.location.href = parsed.portalUrl;
+				} catch {
+					BeaconDialog.show('Could not open your billing portal.', 'There was an unexpected error.');
+				}
+			}).catch(() => {
+				portalButton.disabled = false;
+				BeaconDialog.show('Could not open your billing portal.', 'Sorry about that. This can happen with older logins. Try signing out and signing back in.');
+			});
+		});
 	}
 });

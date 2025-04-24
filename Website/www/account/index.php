@@ -56,6 +56,7 @@ if ($user->IsAnonymous() === false) {
 			<li><a href="#omni" page="omni">Omni</a></li>
 			<li><a href="#profile" page="profile">Profile</a></li>
 			<li><a href="#security" page="security">Security</a></li>
+			<li><a href="#billing" page="billing">Billing</a></li>
 			<li><a href="#sessions" page="sessions">Sessions</a></li>
 			<?php } ?>
 			<li><a href="#services" page="services">Connections</a></li>
@@ -81,6 +82,10 @@ if ($user->IsAnonymous() === false) {
 		<div class="page-panel-page" page="security">
 			<h1>Security</h1>
 			<?php include('includes/security.php'); ?>
+		</div>
+		<div class="page-panel-page" page="billing">
+			<h1>Billing</h1>
+			<?php include('includes/billing.php'); ?>
 		</div>
 		<div class="page-panel-page" page="sessions">
 			<h1>Sessions</h1>

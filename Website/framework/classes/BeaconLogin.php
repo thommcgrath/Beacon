@@ -91,6 +91,7 @@ class BeaconLogin {
 					define('kBitRead', 2);
 					define('kBitUpdate', 4);
 					define('kBitDelete', 8);
+					define('kBitAll', 15);
 
 					$scopes = $flow->Scopes();
 					$features = [];
@@ -98,7 +99,7 @@ class BeaconLogin {
 						$feature = strtok($scope, ':');
 						$permissions = strtok(':');
 						if ($permissions === false) {
-							$features[$feature] = (kBitCreate | kBitRead | kBitUpdate | kBitDelete);
+							$features[$feature] = kBitAll;
 						} else {
 							$bits = 0;
 							switch ($permissions) {
@@ -114,6 +115,9 @@ class BeaconLogin {
 							case 'delete':
 								$bits = kBitDelete;
 								break;
+							case 'write':
+								$bits = kBitAll;
+								break;
 							}
 							$features[$feature] = ($features[$feature] ?? 0) | $bits;
 						}
@@ -121,17 +125,21 @@ class BeaconLogin {
 
 					foreach ($features as $feature => $permissions) {
 						$permissionWords = [];
-						if (($permissions & kBitRead) === kBitRead) {
-							$permissionWords[] = 'view';
-						}
-						if (($permissions & kBitCreate) === kBitCreate) {
-							$permissionWords[] = 'create';
-						}
-						if (($permissions & kBitUpdate) === kBitUpdate) {
-							$permissionWords[] = 'edit';
-						}
-						if (($permissions & kBitDelete) === kBitDelete) {
-							$permissionWords[] = 'delete';
+						if (($permissions & kBitAll) === kBitAll) {
+							$permissionWords[] = 'Full control over';
+						} else {
+							if (($permissions & kBitRead) === kBitRead) {
+								$permissionWords[] = 'view';
+							}
+							if (($permissions & kBitCreate) === kBitCreate) {
+								$permissionWords[] = 'create';
+							}
+							if (($permissions & kBitUpdate) === kBitUpdate) {
+								$permissionWords[] = 'edit';
+							}
+							if (($permissions & kBitDelete) === kBitDelete) {
+								$permissionWords[] = 'delete';
+							}
 						}
 						$permissionPhrase = ucfirst(BeaconCommon::ArrayToEnglish($permissionWords));
 
@@ -147,17 +155,14 @@ class BeaconLogin {
 						case 'apps':
 							$message = "{$permissionPhrase} your apps and their credentials.";
 							break;
-						case 'sentinel_logs':
-							$message = "{$permissionPhrase} your Sentinel logs.";
-							break;
-						case 'sentinel_players':
-							$message = "{$permissionPhrase} your Sentinel player notes.";
-							break;
-						case 'sentinel_services':
-							$message = "{$permissionPhrase} your Sentinel servers and groups.";
+						case 'sentinel':
+							$message = "{$permissionPhrase} your Sentinel data.";
 							break;
 						case 'user':
 							$message = "{$permissionPhrase} your user information.";
+							break;
+						case 'users.billing':
+							$message = "{$permissionPhrase} your billing information.";
 							break;
 						}
 						if (empty($message) === false) {
