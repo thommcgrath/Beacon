@@ -77,10 +77,46 @@ function handleRequest(array $context): Response {
 		}
 	}
 
+	$chatLogTranslations = [
+		'en' => 'Server said: `{message}`',
+	];
+
 	foreach ($approvedCommands as $command) {
 		$serviceId = strtolower($command['serviceId']);
 		unset($command['serviceId']);
+
+		if ($command['type'] === 'chat') {
+			if ($database->InTransaction() === false) {
+				$database->BeginTransaction();
+			}
+
+			$messageId = BeaconUUID::v7();
+			$languageCode = $command['languageCode'] ?? 'en';
+			$senderName = ($command['senderName'] ?? 'Server');
+			$message = $command['message'];
+			$metadata = [
+				'originalMessage' => $message,
+				'originalLanguage' => $languageCode,
+				'senderName' => $senderName,
+				'userId' => $userId,
+			];
+			$database->Query('INSERT INTO sentinel.service_logs (message_id, service_id, log_time, event_name, level, analyzer_status, metadata, type) VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7);', $messageId, $serviceId, 'chat', 'Informational', 'Skipped', json_encode($metadata), 'Gameplay');
+			$database->Query('INSERT INTO sentinel.service_log_messages (message_id, language, message) VALUES ($1, $2, $3);', $messageId, $languageCode, str_replace('{message}', $message, $chatLogTranslations[$languageCode]));
+
+			BeaconPusher::SharedInstance()->TriggerEvent('sentinel.services.' . str_replace('-', '', $serviceId), 'chatMessage', [
+				'originalMessage' => $message,
+				'senderName' => $senderName,
+				'translations' => [
+					$languageCode => $message,
+				],
+				'userId' => $userId,
+			], BeaconPusher::SocketIdFromHeaders());
+		}
+
 		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $serviceId . '.gameCommand', json_encode($command));
+	}
+	if ($database->InTransaction() === true) {
+		$database->Commit();
 	}
 
 	return Response::NewNoContent();

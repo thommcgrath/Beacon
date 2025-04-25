@@ -132,6 +132,18 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		$this->level = $row->Field('level');
 		$this->analyzerStatus = $row->Field('analyzer_status');
 		$this->metadata = json_decode($row->Field('metadata'), true);
+		/*if (is_null($row->Field('character_name')) === false) {
+			$this->metadata['characterName'] = $row->Field('character_name');
+		}
+		if (is_null($row->Field('tribe_name')) === false) {
+			$this->metadata['tribeName'] = $row->Field('tribe_name');
+		}
+		if (is_null($row->Field('player_name')) === false) {
+			$this->metadata['playerName'] = $row->Field('player_name');
+		}
+		if (is_null($row->Field('dino_name')) === false) {
+			$this->metadata['dinoName'] = $row->Field('dino_name');
+		}*/
 		$this->message = $row->Field('message');
 	}
 
@@ -150,11 +162,19 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('analyzerStatus', ['columnName' => 'analyzer_status']),
 				new DatabaseObjectProperty('metadata'),
 				new DatabaseObjectProperty('message', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_log_messages.message']),
+				/*new DatabaseObjectProperty('characterName', ['columnName' => 'character_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'characters.name']),
+				new DatabaseObjectProperty('tribeName', ['columnName' => 'tribe_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'tribes.name']),
+				new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
+				new DatabaseObjectProperty('dinoName', ['columnName' => 'dino_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'dinos.name']),*/
 			],
 			joins: [
 				'INNER JOIN sentinel.service_log_messages ON (service_log_messages.message_id = service_logs.message_id)',
 				'INNER JOIN sentinel.services ON (services.service_id = service_logs.service_id)',
 				'INNER JOIN sentinel.service_permissions ON (service_logs.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
+				/*'LEFT JOIN sentinel.characters ON ((service_logs.metadata->>\'characterId\')::UUID = characters.character_id)',
+				'LEFT JOIN sentinel.tribes ON ((service_logs.metadata->>\'tribeId\')::UUID = tribes.tribe_id)',
+				'LEFT JOIN sentinel.players ON ((service_logs.metadata->>\'playerId\')::UUID = players.player_id)',
+				'LEFT JOIN sentinel.dinos ON ((service_logs.metadata->>\'dinoId\')::UUID = dinos.dino_id)',*/
 			],
 		);
 	}
