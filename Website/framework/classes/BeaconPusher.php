@@ -22,47 +22,59 @@ class BeaconPusher {
 		return static::$instance;
 	}
 
-	public function TriggerEvent(string $channelName, string $eventName, mixed $eventBody, string $senderSocketId = ''): bool {
-		$bodyJson = [
-			'name' => $eventName,
-			'data' => json_encode($eventBody),
-			'channel' => $channelName,
-		];
-		if (empty($senderSocketId) === false) {
-			$bodyJson['socket_id'] = $senderSocketId;
+	public function TriggerEvent(string $channelName, string $eventName, mixed $eventBody, ?string $senderSocketId = null): void {
+		$this->SendEvents([new BeaconChannelEvent(channelName: $channelName, eventName: $eventName, body: $eventBody, socketId: $senderSocketId)]);
+	}
+
+	public function SendEvents(array $events): void {
+		if (count($events) === 0) {
+			return;
 		}
-		$body = json_encode($bodyJson);
 
-		$authTimestamp = time();
-		$authVersion = '1.0';
-		$bodyHash = md5($body);
-		$url = '/apps/' . $this->appId . '/events';
-		$key = $this->appKey;
+		for ($startIndex = 0; $startIndex < count($events); $startIndex += 10) {
+			$batch = [];
+			for ($idx = $startIndex; $idx < min($startIndex + 10, count($events)); $idx++) {
+				$batch[] = $events[$idx];
+			}
 
-		$stringToSign = "POST\n{$url}\nauth_key={$key}&auth_timestamp={$authTimestamp}&auth_version={$authVersion}&body_md5={$bodyHash}";
-		$signature = hash_hmac('sha256', $stringToSign, $this->appSecret);
+			$body = json_encode(['batch' => $batch]);
+			$authTimestamp = time();
+			$authVersion = '1.0';
+			$bodyHash = md5($body);
+			$url = '/apps/' . $this->appId . '/batch_events';
+			$key = $this->appKey;
 
-		$url = 'https://api.pusherapp.com' . $url . '?' . http_build_query([
-			'auth_key' => $key,
-			'auth_signature' => $signature,
-			'auth_timestamp' => $authTimestamp,
-			'auth_version' => $authVersion,
-			'body_md5' => $bodyHash,
-		]);
+			$stringToSign = "POST\n{$url}\nauth_key={$key}&auth_timestamp={$authTimestamp}&auth_version={$authVersion}&body_md5={$bodyHash}";
+			$signature = hash_hmac('sha256', $stringToSign, $this->appSecret);
 
-		$curl = curl_init($url);
-		$headers = [
-			'Content-Type: application/json',
-		];
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_POST, 1);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
-		$response = curl_exec($curl);
-		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
+			$url = 'https://api.pusherapp.com' . $url . '?' . http_build_query([
+				'auth_key' => $key,
+				'auth_signature' => $signature,
+				'auth_timestamp' => $authTimestamp,
+				'auth_version' => $authVersion,
+				'body_md5' => $bodyHash,
+			]);
 
-		return $status === 200;
+			$curl = curl_init($url);
+			$headers = [
+				'Content-Type: application/json',
+			];
+			curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($curl, CURLOPT_POST, 1);
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+			$response = curl_exec($curl);
+			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+			curl_close($curl);
+
+			if ($status !== 200) {
+				throw new Exception($response);
+			}
+		}
+	}
+
+	public function SendEvent(BeaconChannelEvent $event): void {
+		$this->SendEvents([$event]);
 	}
 
 	public static function SocketIdFromHeaders(): string {
