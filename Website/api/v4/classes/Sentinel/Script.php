@@ -1,8 +1,8 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, Exception, BeaconRecordSet, JsonSerializable;
+use BeaconAPI\v4\{APIException, Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
+use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
 class Script extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -117,6 +117,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'scriptId' => $this->scriptId,
+			'userId' => $this->userId,
 			'name' => $this->name,
 			'context' => $this->context,
 			'parameters' => $this->parameters,
@@ -168,11 +169,11 @@ class Script extends DatabaseObject implements JsonSerializable {
 		static::MutableDatabaseObjectValidate($properties);
 
 		if (isset($properties['context']) && in_array($properties['context'], LogMessage::Events) === false) {
-			throw new Exception('Context is not a valid context. See the documentation for correct values.');
+			throw new APIException(message: 'Context is not a valid context. See the documentation for correct values.', code: 'badContext');
 		}
 
 		if (isset($properties['language']) && in_array($properties['language'], static::Languages) === false) {
-			throw new Exception('Language is not a valid value. See the documentation for correct values.');
+			throw new APIException(message: 'Language is not a valid value. See the documentation for correct values.', code: 'badLanguage');
 		}
 	}
 

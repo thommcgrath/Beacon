@@ -64,6 +64,7 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'bucketId' => $this->bucketId,
+			'userId' => $this->userId,
 			'username' => $this->username,
 			'usernameFull' => $this->username . '#' . substr($this->username, 0, 8),
 			'name' => $this->name,

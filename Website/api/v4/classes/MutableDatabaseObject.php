@@ -101,7 +101,7 @@ trait MutableDatabaseObject {
 			$rows = $database->Query($sql, $values);
 			$obj = static::Fetch($rows->Field($primaryKeyColumn->ColumnName()));
 			if (is_null($obj)) {
-				throw new Exception("{$primaryKey} was inserted into database, but could not be fetched. This is an internal error and will need to be fixed by the developer.");
+				throw new APIException(message: "{$primaryKey} was inserted into database, but could not be fetched. This is an internal error and will need to be fixed by the developer.", code: 'badInsert', httpStatus: 500);
 			}
 			$obj->SetProperties($properties); // Gets virtual data into the new object so the next method can function
 			$obj->SaveChildObjects($database);
@@ -255,9 +255,9 @@ trait MutableDatabaseObject {
 		}
 		sort($missingProperties);
 		if (count($missingProperties) > 1) {
-			throw new Exception('Missing properties ' . BeaconCommon::ArrayToEnglish($missingProperties) . '.');
+			throw new APIException(message: 'Missing properties ' . BeaconCommon::ArrayToEnglish($missingProperties) . '.', code: 'missingProperties');
 		} elseif (count($missingProperties) === 1) {
-			throw new Exception('Missing property ' . $missingProperties[0] . '.');
+			throw new APIException(message: 'Missing property ' . $missingProperties[0] . '.', code: 'missingProperties');
 		}
 	}
 
