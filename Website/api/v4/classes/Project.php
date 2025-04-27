@@ -517,6 +517,8 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 							'fingerprint' => $member['fingerprint'],
 						];
 					}
+				} else {
+					throw new APIException(code: 'missingUser', httpStatus: 400, message: "Project is missing encryption key for member {$userId}. Try removing them from the project and adding them again.");
 				}
 
 				$rows->MoveNext();
