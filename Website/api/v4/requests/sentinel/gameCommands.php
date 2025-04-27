@@ -22,13 +22,14 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError(code: 'noObjects', message: 'No objects to delete.', httpStatus: 400);
 	}
 
-	$whitelist = ['admin', 'chat', 'locate', 'renamePlayer', 'giveItem'];
+	$whitelist = ['admin', 'chat', 'locate', 'renamePlayer', 'giveItem', 'destroyWildDinos'];
 	$permissions = [
 		'admin' => PermissionBits::ControlServices,
 		'chat' => PermissionBits::Membership,
 		'locate' => PermissionBits::ControlServices,
 		'renamePlayer' => PermissionBits::ControlServices,
 		'giveItem' => PermissionBits::ControlServices,
+		'destroyWildDinos' => PermissionBits::ControlServices,
 	];
 	$approvedServiceIds = [];
 	$approvedGroupIds = [];

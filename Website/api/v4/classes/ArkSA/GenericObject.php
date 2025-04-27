@@ -159,22 +159,11 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			}
 		}
 
-		if (isset($filters['label'])) {
-			if (str_contains($filters['label'], '%')) {
-				$parameters->clauses[] = $schema->Accessor('label') . ' LIKE ' . $schema->Setter('label', $parameters->placeholder++);
-			} else {
-				$parameters->clauses[] = $schema->Comparison('label', '=', $parameters->placeholder++);
-			}
-			$parameters->values[] = $filters['label'];
-		}
-
-		if (isset($filters['alternateLabel'])) {
-			if (str_contains($filters['alternateLabel'], '%')) {
-				$parameters->clauses[] = $schema->Accessor('alternateLabel') . ' LIKE ' . $schema->Setter('alternateLabel', $parameters->placeholder++);
-			} else {
-				$parameters->clauses[] = $schema->Comparison('alternateLabel', '=', $parameters->placeholder++);
-			}
-			$parameters->values[] = $filters['alternateLabel'];
+		if (isset($filters['label']) || isset($filters['alternateLabel'])) {
+			$table = $schema->Table();
+			$queryPlaceholder = '$' . $parameters->AddValue($filters['label'] ?? $filters['alternateLabel']);
+			$likePlaceholder = '$' . $parameters->AddValue('%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $filters['label'] ?? $filters['alternateLabel']) . '%');
+			$parameters->clauses[] = "({$table}.label_vector @@ websearch_to_tsquery('english', {$queryPlaceholder}) OR {$table}.alternate_label_vector @@ websearch_to_tsquery('english', {$queryPlaceholder}) OR {$table}.path ILIKE {$likePlaceholder})";
 		}
 	}
 
