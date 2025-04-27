@@ -5,6 +5,7 @@ use BeaconAPI\v4\Sentinel\{LogMessage};
 
 function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
 	$requiredScopes[] = Application::kScopeSentinelRead;
+	$requiredScopes[] = Application::kScopeSentinelRead;
 }
 
 function handleRequest(array $context): Response {

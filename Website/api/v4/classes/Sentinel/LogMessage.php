@@ -77,6 +77,10 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventTribeCreated = 'tribeCreated';
 	const EventTribeDestroyed = 'tribeDestroyed';
 	const EventTribeRenamed = 'tribeRenamed';
+	const EventManualCharacterScript = 'characterScriptRun';
+	const EventManualTribeScript = 'tribeScriptRun';
+	const EventManualDinoScript = 'dinoScriptRun';
+	const EventManualServiceScript = 'serviceScriptRun';
 	const Events = [
 		self::EventCron,
 		self::EventChat,
@@ -109,6 +113,10 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventTribeCreated,
 		self::EventTribeDestroyed,
 		self::EventTribeRenamed,
+		self::EventManualCharacterScript,
+		self::EventManualTribeScript,
+		self::EventManualDinoScript,
+		self::EventManualServiceScript,
 	];
 
 	protected string $messageId;
