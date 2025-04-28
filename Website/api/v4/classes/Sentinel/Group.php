@@ -16,6 +16,7 @@ class Group extends DatabaseObject implements JsonSerializable {
 	protected string $name;
 	protected string $color;
 	protected int $permissions;
+	protected bool $enableGroupChat;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->groupId = $row->Field('group_id');
@@ -23,6 +24,7 @@ class Group extends DatabaseObject implements JsonSerializable {
 		$this->name = $row->Field('name');
 		$this->color = $row->Field('color');
 		$this->permissions = $row->Field('permissions');
+		$this->enableGroupChat = $row->Field('enable_group_chat');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -35,6 +37,7 @@ class Group extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('permissions', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'group_permissions.permissions']),
+				new DatabaseObjectProperty('enableGroupChat', ['columnName' => 'enable_group_chat', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
 				'INNER JOIN sentinel.group_permissions ON (groups.group_id = group_permissions.group_id AND group_permissions.user_id = %%USER_ID%%)',
@@ -56,6 +59,7 @@ class Group extends DatabaseObject implements JsonSerializable {
 			'name' => $this->name,
 			'color' => $this->color,
 			'permissions' => $this->permissions,
+			'enableGroupChat' => $this->enableGroupChat,
 		];
 	}
 
