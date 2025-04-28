@@ -1,0 +1,45 @@
+{
+    "database": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "user": "sentinel_watcher",
+        "pass": "2e773bd0-1bea-40b2-af5a-04130b625eb2",
+        "name": "beacon"
+    },
+    "rabbit": {
+	    "host": "127.0.0.1",
+	    "port": 5672,
+	    "user": "sentinel_watcher",
+	    "pass": ".nb8Pfcx3fxx-dBb*m22gFRUdwrRh_EJes2KFdp7RBKEDzjV",
+	    "vhost": "sentinel"
+    },
+    "apiKeys": {
+	    "mistral": "Rhix8xXPetAutTOhlCaRFAzyjNPpN8Q5",
+	    "deepl": "a4bec364-69c7-4a3b-bfce-8fa843b17df3:fx",
+	    "perspective": "AIzaSyAUF3oHNKU4DAlf6qtKQ49-lBBNKUiAZBM"
+    },
+    "socketServer": {
+	    "enabled": false
+    },
+    "mbs": {
+	    "name": "The ZAZ Studios",
+	    "product": "MBS Complete",
+	    "expires": 202506,
+	    "serial": "KRbR3JxIKdu8eG6V9TF/2pJfyIxdS2uf0JkV1fipnUMGWb/bkfR3zvziCygI+u7d"
+    },
+	"pusher": {
+		"channels": {
+			"clusterId": "mt1",
+			"appId": "1654722",
+			"appKey": "8b5dc7ddf06ef4938f32",
+			"appSecret": "7c7383fb6aa339914185"
+		},
+		"beams": {
+			"key": "F628E457FB7848E19996CFDD61AA23A14824C76976074C63E607EAA9CC0FA510",
+			"instanceId": "36d99a25-8b2a-4f62-bdab-97d5069dc433"
+		}
+	},
+	"queue": {
+		"enabled": true
+	}
+}
