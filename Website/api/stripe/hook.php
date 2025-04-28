@@ -353,7 +353,7 @@ function CreatePurchaseFromInvoice(array $invoice): BeaconPurchase {
 	$currencyMultiplier = $currencyRows->Field('stripe_multiplier');
 	$conversionRate = $currencyRows->Field('usd_conversion_rate'); // This is low accuracy, but it's the best way have.
 
-	$purchase = new BeaconPurchase($invoiceId, $email, $purchaseDate, $billingLocality, $currencyCode, $conversionRate, $currencyMultiplier);
+	$purchase = new BeaconPurchase($invoiceId, $email, $purchaseDate, $billingLocality ?? 'US CT', $currencyCode, $conversionRate, $currencyMultiplier);
 
 	$lines = $invoice['lines']['data'];
 	foreach ($lines as $line) {
@@ -491,7 +491,7 @@ function CreatePurchaseFromCheckoutSession(array $session): BeaconPurchase {
 			$currencyMultiplier = $currencyRows->Field('stripe_multiplier');
 			$conversionRate = $conversionRate / (100 / $currencyMultiplier);
 
-			$purchase = new BeaconPurchase($intentId, $email, $purchaseDate, $billingLocality, $currencyCode, $conversionRate, $currencyMultiplier);
+			$purchase = new BeaconPurchase($intentId, $email, $purchaseDate, $billingLocality ?? 'US CT', $currencyCode, $conversionRate, $currencyMultiplier);
 			$lineItems = $api->GetLineItems($session['id']);
 			if (is_null($lineItems)) {
 				throw new Exception('Unable to retrieve items for checkout session');
