@@ -11,6 +11,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 	protected string $groupId;
 	protected string $groupName;
 	protected string $groupColor;
+	protected int $groupPermissions;
 	protected string $serviceId;
 	protected string $serviceDisplayName;
 	protected string $serviceColor;
@@ -21,6 +22,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 		$this->groupId = $row->Field('group_id');
 		$this->groupName = $row->Field('group_name');
 		$this->groupColor = $row->Field('group_color');
+		$this->groupPermissions = $row->Field('group_permissions') ?? 0;
 		$this->serviceId = $row->Field('service_id');
 		$this->serviceDisplayName = $row->Field('service_display_name');
 		$this->serviceColor = $row->Field('service_color');
@@ -36,6 +38,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('groupId', ['columnName' => 'group_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('groupName', ['columnName' => 'group_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.name']),
 				new DatabaseObjectProperty('groupColor', ['columnName' => 'group_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.color']),
+				new DatabaseObjectProperty('groupPermissions', ['columnName' => 'group_permissions', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'group_permissions.permissions']),
 				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.color']),
@@ -44,6 +47,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 			joins: [
 				'INNER JOIN sentinel.services ON (group_services.service_id = services.service_id)',
 				'INNER JOIN sentinel.groups ON (group_services.group_id = groups.group_id)',
+				'LEFT JOIN sentinel.group_permissions ON (group_permissions.group_id = groups.group_id AND group_permissions.user_id = %%USER_ID%%)',
 			],
 		);
 	}
@@ -75,6 +79,7 @@ class GroupService extends DatabaseObject implements JsonSerializable {
 			'groupId' => $this->groupId,
 			'groupName' => $this->groupName,
 			'groupColor' => $this->groupColor,
+			'groupPermissions' => $this->groupPermissions,
 			'serviceId' => $this->serviceId,
 			'serviceDisplayName' => $this->serviceDisplayName,
 			'serviceColor' => $this->serviceColor,

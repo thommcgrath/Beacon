@@ -1,8 +1,8 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconAPI\v4\{APIException, Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
+use BeaconCommon, BeaconRabbitMQ, BeaconRecordSet, JsonSerializable;
 
 class GroupScript extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -17,6 +17,8 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 	protected string $scriptLanguage;
 	protected int $permissionsMask;
 	protected array $parameterValues;
+	protected ?int $revisionNumber;
+	protected int $latestRevision;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->groupScriptId = $row->Field('group_script_id');
@@ -27,6 +29,8 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 		$this->scriptLanguage = $row->Field('script_language');
 		$this->permissionsMask = $row->Field('permissions_mask');
 		$this->parameterValues = json_decode($row->Field('parameter_values'), true);
+		$this->revisionNumber = $row->Field('revision_number');
+		$this->latestRevision = $row->Field('latest_revision');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -42,6 +46,8 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('scriptLanguage', ['columnName' => 'script_language', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.language']),
 				new DatabaseObjectProperty('permissionsMask', ['columnName' => 'permissions_mask', 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('parameterValues', ['columnName' => 'parameter_values', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('revisionNumber', ['columnName' => 'revision_number', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('latestRevision', ['columnName' => 'latest_revision', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.latest_revision']),
 			],
 			joins: [
 				'INNER JOIN sentinel.scripts ON (scripts.script_id = group_scripts.script_id)',
@@ -106,6 +112,8 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 			'scriptLanguage' => $this->scriptLanguage,
 			'permissionsMask' => $this->permissionsMask,
 			'parameterValues' => (object) $this->parameterValues,
+			'revisionNumber' => $this->revisionNumber,
+			'latestRevision' => $this->latestRevision,
 		];
 	}
 
@@ -122,19 +130,19 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 			if (Group::TestSentinelPermissions($filters['groupId'], $userId)) {
 				return;
 			} else {
-				throw new Exception('You do not have any permissions on the requested group.');
+				throw new APIException(message: 'You do not have any permissions on the requested group.', code: 'forbidden', httpStatus: 403);
 			}
 		}
 		if (isset($filters['scriptId'])) {
 			if (Script::TestSentinelPermissions($filters['scriptId'], $userId)) {
 				return;
 			} else {
-				throw new Exception('You do not have any permissions on the requested script.');
+				throw new APIException(message: 'You do not have any permissions on the requested script.', code: 'forbidden', httpStatus: 403);
 			}
 		}
 
 		// There's no way to know what they user wants to do here, so block it.
-		throw new Exception('You must filter on groupId or scriptId.');
+		throw new APIException(message: 'You must filter on groupId or scriptId.', code: 'forbidden', httpStatus: 403);
 	}
 
 	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
@@ -153,8 +161,11 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 		if ($groupPermissions > 0 || $scriptPermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;
 		}
-		if (($groupPermissions & PermissionBits::ManageScripts) > 0 && ($scriptPermissions & PermissionBits::ShareScripts) > 0) {
-			$permissions = $permissions | self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete;
+		if (($groupPermissions & PermissionBits::ManageScripts) > 0) {
+			$permissions = $permissions | self::kPermissionUpdate | self::kPermissionDelete;
+			if (($scriptPermissions & PermissionBits::ShareScripts) > 0) {
+				$permissions = $permissions | self::kPermissionCreate;
+			}
 		}
 
 		return $permissions;

@@ -120,8 +120,8 @@ class BucketValue extends DatabaseObject implements JsonSerializable {
 		return $permissions;
 	}
 
-	protected function HookModified(): void {
-		$this->MDOHookModified();
+	protected function HookModified(int $operation): void {
+		$this->MDOHookModified($operation);
 		BeaconPusher::SharedInstance()->TriggerEvent('sentinel.buckets.' . str_replace('-', '', $this->bucketId), 'value-updated', '', BeaconPusher::SocketIdFromHeaders());
 	}
 }

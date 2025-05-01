@@ -6,6 +6,10 @@ use BeaconCommon, BeaconDatabase, BeaconUUID, Exception;
 trait MutableDatabaseObject {
 	protected $changedProperties = [];
 
+	const OperationInsert = 1;
+	const OperationUpdate = 2;
+	const OperationDelete = 3;
+
 	// Called at the start of Create so that new objects can provide needed values
 	protected static function InitializeProperties(array &$properties): void {
 		// By default, do nothing
@@ -106,7 +110,7 @@ trait MutableDatabaseObject {
 			$obj->SetProperties($properties); // Gets virtual data into the new object so the next method can function
 			$obj->SaveChildObjects($database);
 			$database->Commit();
-			$obj->HookModified();
+			$obj->HookModified(self::OperationInsert);
 			return $obj;
 		} catch (Exception $err) {
 			$database->Rollback();
@@ -218,14 +222,14 @@ trait MutableDatabaseObject {
 			}
 			throw $err;
 		}
-		$this->HookModified();
+		$this->HookModified(self::OperationUpdate);
 	}
 
 	public function Delete(): void {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$this->HookModified(); // Fire before actually performing any work so the hook still knows what is going on
+		$this->HookModified(self::OperationDelete); // Fire before actually performing any work so the hook still knows what is going on
 		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
 		$database->Commit();
 	}
@@ -261,7 +265,7 @@ trait MutableDatabaseObject {
 		}
 	}
 
-	protected function HookModified(): void {
+	protected function HookModified(int $operation): void {
 
 	}
 }

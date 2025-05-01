@@ -9,6 +9,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 		Validate as protected MutableDatabaseObjectValidate;
 		PreparePropertyValue as protected MDOPreparePropertyValue;
 		InitializeProperties as protected MDOInitializeProperties;
+		HookModified as protected MDOHookModified;
 	}
 	use SentinelObject;
 
@@ -30,6 +31,10 @@ class Script extends DatabaseObject implements JsonSerializable {
 	protected float $dateModified;
 	protected bool $enabled;
 	protected int $permissions;
+	protected int $latestRevision;
+	protected string $status;
+	protected string $hash;
+	protected bool $approvalRequestSent;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->scriptId = $row->Field('script_id');
@@ -43,6 +48,10 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$this->dateModified = floatval($row->Field('date_modified'));
 		$this->enabled = $row->Field('enabled');
 		$this->permissions = $row->Field('permissions');
+		$this->latestRevision = $row->Field('latest_revision');
+		$this->status = $row->Field('status');
+		$this->hash = $row->Field('hash');
+		$this->approvalRequestSent = $row->Field('approval_request_sent');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -61,10 +70,16 @@ class Script extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('dateModified', ['columnName' => 'date_modified', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 				new DatabaseObjectProperty('enabled', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('permissions', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_permissions.permissions']),
+				new DatabaseObjectProperty('latestRevision', ['columnName' => 'latest_revision', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('status', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_hashes.status']),
+				new DatabaseObjectProperty('hash', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_hashes.hash']),
+				new DatabaseObjectProperty('approvalRequestSent', ['columnName' => 'approval_request_sent', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_hashes.request_sent']),
 			],
 			joins: [
 				'INNER JOIN public.users ON (scripts.user_id = users.user_id)',
-				'INNER JOIN sentinel.script_permissions ON (scripts.script_id = script_permissions.script_id AND script_permissions.user_id = %%USER_ID%%)'
+				'INNER JOIN sentinel.script_permissions ON (scripts.script_id = script_permissions.script_id AND script_permissions.user_id = %%USER_ID%%)',
+				'INNER JOIN sentinel.script_revisions ON (scripts.script_id = script_revisions.script_id AND scripts.latest_revision = script_revisions.revision_number)',
+				'INNER JOIN sentinel.script_hashes ON (script_revisions.hash = script_hashes.hash)',
 			],
 		);
 	}
@@ -120,13 +135,15 @@ class Script extends DatabaseObject implements JsonSerializable {
 			'userId' => $this->userId,
 			'name' => $this->name,
 			'context' => $this->context,
+			'language' => $this->language,
 			'parameters' => $this->parameters,
 			'code' => $this->code,
-			'language' => $this->language,
 			'dateCreated' => $this->dateCreated,
 			'dateModified' => $this->dateModified,
 			'enabled' => $this->enabled,
 			'permissions' => $this->permissions,
+			'latestRevision' => $this->latestRevision,
+			'status' => $this->status,
 		];
 	}
 
@@ -199,6 +216,73 @@ class Script extends DatabaseObject implements JsonSerializable {
 			return 0;
 		}
 		return $rows->Field('permissions');
+	}
+
+	protected function HookModified(int $operation): void {
+		$this->MDOHookModified($operation);
+
+		if ($operation !== self::OperationDelete && $this->status === 'Needs Review' && $this->approvalRequestSent === false) {
+			$fields = [
+				[
+					'title' => 'Context',
+					'value' => $this->context,
+					'short' => true,
+				],
+			];
+			if (count($this->parameters) > 0) {
+				$fields[] = [
+					'title' => 'Parameters',
+					'value' => json_encode($this->parameters, JSON_PRETTY_PRINT),
+					'short' => false,
+				];
+			}
+			$fields[] = [
+				'title' => 'Code',
+				'value' => $this->code,
+				'short' => false,
+			];
+
+			$attachment = [
+				'title' => 'This script was submitted with the API',
+				'text' => 'This code was flagged during submission because it contains restricted functions.',
+				'fallback' => 'Unable to show response buttons.',
+				'callback_id' => 'sentinel_script:' . $this->hash,
+				'actions' => [
+					[
+						'name' => 'status',
+						'text' => 'Approve',
+						'type' => 'button',
+						'value' => 'Approved',
+						'confirm' => [
+							'text' => 'Are you certain this script is safe to run?',
+							'ok_text' => 'Approve',
+						],
+					],
+					[
+						'name' => 'status',
+						'text' => 'Deny',
+						'type' => 'button',
+						'value' => 'Rejected',
+						'confirm' => [
+							'text' => 'Are you sure you want to block this script?',
+							'ok_text' => 'Block',
+						],
+					],
+				],
+				'fields' => $fields,
+			];
+
+			BeaconCommon::PostSlackRaw(json_encode([
+				'text' => 'A script needs to be reviewed',
+				'attachments' => [$attachment],
+			]));
+
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			$database->Query('UPDATE sentinel.script_hashes SET request_sent = TRUE WHERE hash = $1;', $this->hash);
+			$database->Commit();
+			$this->approvalRequestSent = true;
+		}
 	}
 }
 

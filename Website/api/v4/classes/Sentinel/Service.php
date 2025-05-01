@@ -464,8 +464,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	protected function HookModified(): void {
-		$this->MDOHookModified();
+	protected function HookModified(int $operation): void {
+		$this->MDOHookModified($operation);
 
 		$pusher = BeaconPusher::SharedInstance();
 		$socketId = BeaconPusher::SocketIdFromHeaders();

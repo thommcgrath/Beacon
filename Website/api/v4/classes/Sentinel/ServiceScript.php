@@ -1,8 +1,8 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconAPI\v4\{APIException, Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
+use BeaconCommon, BeaconRabbitMQ, BeaconRecordSet, JsonSerializable;
 
 class ServiceScript extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -18,6 +18,8 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 	protected string $scriptContext;
 	protected string $scriptLanguage;
 	protected array $parameterValues;
+	protected ?int $revisionNumber;
+	protected int $latestRevision;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceScriptId = $row->Field('service_script_id');
@@ -29,6 +31,8 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 		$this->scriptContext = $row->Field('script_context');
 		$this->scriptLanguage = $row->Field('script_language');
 		$this->parameterValues = json_decode($row->Field('parameter_values'), true);
+		$this->revisionNumber = $row->Field('revision_number');
+		$this->latestRevision = $row->Field('latest_revision');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -45,6 +49,8 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('scriptContext', ['columnName' => 'script_context', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.context']),
 				new DatabaseObjectProperty('scriptLanguage', ['columnName' => 'script_language', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.language']),
 				new DatabaseObjectProperty('parameterValues', ['columnName' => 'parameter_values', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('revisionNumber', ['columnName' => 'revision_number', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('latestRevision', ['columnName' => 'latest_revision', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.latest_revision']),
 			],
 			joins: [
 				'INNER JOIN sentinel.scripts ON (service_scripts.script_id = scripts.script_id)',
@@ -111,6 +117,8 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 			'scriptContext' => $this->scriptContext,
 			'scriptLanguage' => $this->scriptLanguage,
 			'parameterValues' => (object) $this->parameterValues,
+			'revisionNumber' => $this->revisionNumber,
+			'latestRevision' => $this->latestRevision,
 		];
 	}
 
@@ -122,9 +130,24 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function AuthorizeListRequest(array &$filters): void {
-		if (isset($filters['serviceId']) === false || Service::TestSentinelPermissions($filters['serviceId'], Core::UserId()) === false) {
-			throw new Exception('Forbidden');
+		$userId = Core::UserId();
+		if (isset($filters['serviceId'])) {
+			if (Service::TestSentinelPermissions($filters['serviceId'], $userId)) {
+				return;
+			} else {
+				throw new APIException(message: 'You do not have any permissions on the requested service.', code: 'forbidden', httpStatus: 403);
+			}
 		}
+		if (isset($filters['scriptId'])) {
+			if (Script::TestSentinelPermissions($filters['scriptId'], $userId)) {
+				return;
+			} else {
+				throw new APIException(message: 'You do not have any permissions on the requested script.', code: 'forbidden', httpStatus: 403);
+			}
+		}
+
+		// There's no way to know what they user wants to do here, so block it.
+		throw new APIException(message: 'You must filter on serviceId or scriptId.', code: 'forbidden', httpStatus: 403);
 	}
 
 	// User must have Edit Services permission on the service, and Share Scripts permission on the script.
@@ -145,8 +168,11 @@ class ServiceScript extends DatabaseObject implements JsonSerializable {
 		if ($servicePermissions > 0 || $scriptPermissions > 0) {
 			$permissions = $permissions | self::kPermissionRead;
 		}
-		if (($servicePermissions & PermissionBits::ManageScripts) > 0 && ($scriptPermissions & PermissionBits::ShareScripts) > 0) {
-			$permissions = $permissions | self::kPermissionCreate | self::kPermissionUpdate | self::kPermissionDelete;
+		if (($servicePermissions & PermissionBits::ManageScripts) > 0) {
+			$permissions = $permissions | self::kPermissionUpdate | self::kPermissionDelete;
+			if (($scriptPermissions & PermissionBits::ShareScripts) > 0) {
+				$permissions = $permissions | self::kPermissionCreate;
+			}
 		}
 
 		return $permissions;

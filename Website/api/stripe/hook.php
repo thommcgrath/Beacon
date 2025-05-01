@@ -339,7 +339,7 @@ function CreatePurchaseFromInvoice(array $invoice): BeaconPurchase {
 	$email = $invoice['customer_email'];
 	$customerId = $invoice['customer'];
 	$address = $invoice['customer_address'];
-	$billingLocality = $address['country'];
+	$billingLocality = $address['country'] ?? '';
 	if (isset($address['state'])) {
 		$billingLocality .= ' ' . $address['state'];
 	}
