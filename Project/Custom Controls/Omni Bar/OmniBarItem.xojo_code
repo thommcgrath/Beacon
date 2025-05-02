@@ -196,7 +196,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawButton(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawButton(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused LocalMousePoint
 		  
 		  Var Compact As Boolean = Self.Compact(G)
@@ -303,13 +303,13 @@ Implements ObservationKit.Observable
 		  
 		  Select Case Self.Type
 		  Case OmniBarItem.Types.Button
-		    Self.DrawButton(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Self.DrawButton(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.Separator
-		    Self.DrawSeparator(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Self.DrawSeparator(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.Title
-		    Self.DrawTitle(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Self.DrawTitle(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.HorizontalResizer, OmniBarItem.Types.VerticalResizer
-		    Self.DrawResizer(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Self.DrawResizer(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -359,7 +359,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawResizer(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawResizer(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused LocalMousePoint
 		  
 		  Var ForeColor, ShadowColor As Color = &c000000FF
@@ -389,7 +389,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawSeparator(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawSeparator(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused MouseDown
 		  #Pragma Unused MouseHover
 		  #Pragma Unused LocalMousePoint
@@ -539,7 +539,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawTitle(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawTitle(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused MouseDown
 		  #Pragma Unused MouseHover
 		  #Pragma Unused LocalMousePoint
