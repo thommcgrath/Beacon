@@ -205,7 +205,6 @@ Begin BeaconDialog ArkLootEntryEditor
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         Spec            =   ""
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
@@ -317,10 +316,10 @@ Begin BeaconDialog ArkLootEntryEditor
          Composited      =   False
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   275
+         Height          =   255
          Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
-         Left            =   422
+         Left            =   432
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -332,10 +331,10 @@ Begin BeaconDialog ArkLootEntryEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   46
+         Top             =   56
          Transparent     =   True
          Visible         =   True
-         Width           =   448
+         Width           =   428
       End
    End
    Begin DesktopGroupBox SimulationGroup
@@ -1025,6 +1024,19 @@ End
 	#tag Event
 		Sub Changed()
 		  Self.UpdateSimulation()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WantsResize(NewSize As Integer)
+		  Me.Top = Self.SettingsGroup.Top + (36 - ArkLootEntryPropertiesEditor.Margins)
+		  Self.SettingsGroup.Height = NewSize + (56 - (ArkLootEntryPropertiesEditor.Margins * 2))
+		  Me.Height = NewSize
+
+		  Me.Left = Self.SettingsGroup.Left + (20 - ArkLootEntryPropertiesEditor.Margins)
+		  Me.Width = Self.SettingsGroup.Width - (40 - (ArkLootEntryPropertiesEditor.Margins * 2))
+
+		  Self.SimulationGroup.Height = Self.SimulationGroup.Bottom - (Self.SettingsGroup.Bottom + 12)
+		  Self.SimulationGroup.Top = Self.SettingsGroup.Bottom + 12
 		End Sub
 	#tag EndEvent
 #tag EndEvents
