@@ -221,7 +221,12 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  G.DrawingColor = ColorProfile.FillColor
 		  G.FillRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
+		  If Self.mHasTopBorder Then
+		    G.FillRectangle(0, 0, G.Width, 1)
+		  End If
+		  If Self.mHasBottomBorder Then
+		    G.FillRectangle(0, G.Height - 1, G.Width, 1)
+		  End If
 		  
 		  Self.mOverflowStopIndex = -1
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
@@ -266,8 +271,8 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      LocalPoint = ItemRect.LocalPoint(Self.mMousePoint)
 		    End If
 		    
-		    Var Clip As Graphics = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
-		    Item.DrawInto(Clip, ColorProfile, MouseDown, MouseHover, LocalPoint, Highlighted)
+		    G.DrawingColor = SystemColors.SeparatorColor
+		    Item.DrawInto(G, ItemRect, ColorProfile, MouseDown, MouseHover, LocalPoint, Highlighted)
 		  Next
 		  
 		  If Not RequiresOverflow Then
@@ -349,6 +354,15 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  RequiresOverflow = False
 		  Var AvailableWidth As Integer = G.Width - (Self.LeftEdgePadding + Self.RightEdgePadding)
+		  
+		  Var CellTop As Integer = 0
+		  If Self.mHasTopBorder Then
+		    CellTop = CellTop + 1
+		  End If
+		  Var CellHeight As Integer = G.Height - CellTop
+		  If Self.mHasBottomBorder Then
+		    CellHeight = CellHeight - 1
+		  End If
 		  
 		  G.Bold = True // Assume all are toggled for the sake of spacing
 		  Var Widths(), Margins() As Integer
@@ -464,7 +478,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Var ItemWidth As Integer = Widths(Idx)
 		    Var LeftMargin As Integer = Margins(Idx)
 		    
-		    Rects(Idx) = New Rect(NextPos + LeftMargin, 0, ItemWidth, G.Height)
+		    Rects(Idx) = New Rect(NextPos + LeftMargin, CellTop, ItemWidth, CellHeight)
 		    If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
 		      NextPos = Rects(Idx).Right
 		    End If
@@ -780,7 +794,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Super.Refresh(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height, Immediately)
+		  Super.Refresh(ItemRect.Left, 0, ItemRect.Width, Self.Height, Immediately)
 		End Sub
 	#tag EndMethod
 
@@ -943,6 +957,40 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mHasBottomBorder
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mHasBottomBorder <> Value Then
+			    Self.mHasBottomBorder = Value
+			    Self.Refresh
+			  End If
+			End Set
+		#tag EndSetter
+		HasBottomBorder As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mHasTopBorder
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mHasTopBorder <> Value Then
+			    Self.mHasTopBorder = Value
+			    Self.Refresh
+			  End If
+			End Set
+		#tag EndSetter
+		HasTopBorder As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mLeftPadding
 			End Get
 		#tag EndGetter
@@ -967,6 +1015,14 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private Shared mColorProfiles As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasBottomBorder As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasTopBorder As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1092,30 +1148,6 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="ContentHeight"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ScrollActive"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ScrollingEnabled"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -1269,6 +1301,30 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AllowFocus"
 			Visible=true
 			Group="Behavior"
@@ -1330,14 +1386,6 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="BackgroundColor"
 			Visible=false
 			Group="Behavior"
@@ -1355,6 +1403,30 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 				"7 - Red"
 				"8 - Yellow"
 			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasTopBorder"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBottomBorder"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

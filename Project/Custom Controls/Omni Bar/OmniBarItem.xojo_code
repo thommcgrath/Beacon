@@ -196,7 +196,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawButton(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawButton(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused LocalMousePoint
 		  
 		  Var Compact As Boolean = Self.Compact(G)
@@ -291,20 +291,25 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DrawInto(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Sub DrawInto(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		  // Tabs need to draw in the full space, so they will clip themselves
+		  If Self.Type = OmniBarItem.Types.Tab Then
+		    Self.DrawTab(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Return
+		  End If
+		  
+		  G = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
 		  Self.SetFont(G)
 		  
 		  Select Case Self.Type
-		  Case OmniBarItem.Types.Tab
-		    Self.DrawTab(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.Button
-		    Self.DrawButton(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Self.DrawButton(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.Separator
-		    Self.DrawSeparator(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Self.DrawSeparator(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.Title
-		    Self.DrawTitle(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Self.DrawTitle(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.HorizontalResizer, OmniBarItem.Types.VerticalResizer
-		    Self.DrawResizer(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		    Self.DrawResizer(G, ItemRect, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -354,7 +359,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawResizer(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawResizer(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused LocalMousePoint
 		  
 		  Var ForeColor, ShadowColor As Color = &c000000FF
@@ -384,14 +389,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawSeparator(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawSeparator(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused MouseDown
 		  #Pragma Unused MouseHover
 		  #Pragma Unused LocalMousePoint
 		  #Pragma Unused Highlighted
 		  
 		  Const Spacing = 10
-		  Var X As Integer = (G.Width - 2) / 2
+		  Var X As Integer = NearestMultiple((G.Width - 2) / 2, G.ScaleX)
 		  
 		  G.DrawingColor = Colors.TextColor.AtOpacity(0.2)
 		  G.DrawLine(X, Spacing, X, G.Height - Spacing)
@@ -401,7 +406,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawTab(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawTab(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  Var HasIcon As Boolean = (Self.Icon Is Nil) = False
 		  Var HasCaption As Boolean = Self.Caption.IsEmpty = False
 		  If HasIcon = False And HasCaption = False Then
@@ -409,31 +414,40 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
+		  Var BarSpace As Graphics
+		  If ItemRect.Top > 0 And ItemRect.Height = G.Height - 1 Then
+		    BarSpace = G.Clip(ItemRect.Left, 0, ItemRect.Width, 2)
+		  Else
+		    BarSpace = G.Clip(ItemRect.Left, G.Height - 2, ItemRect.Width, 2)
+		  End If
+		  G = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
+		  Self.SetFont(G)
+		  
 		  If Self.HasProgressIndicator Then
 		    If Self.Progress = Self.ProgressIndeterminate Then
 		      Const BarMaxPercent = 0.75
 		      
 		      Var Phase As Double = Self.IndeterminatePhase
-		      Var RangeMin As Double = (G.Width * BarMaxPercent) * -1
-		      Var RangeMax As Double = G.Width
-		      Var BarLeft As Double = NearestMultiple(RangeMin + ((RangeMax - RangeMin) * Phase), G.ScaleX)
-		      Var BarWidth As Double = NearestMultiple(G.Width * BarMaxpercent, G.ScaleX)
+		      Var RangeMin As Double = (BarSpace.Width * BarMaxPercent) * -1
+		      Var RangeMax As Double = BarSpace.Width
+		      Var BarLeft As Double = NearestMultiple(RangeMin + ((RangeMax - RangeMin) * Phase), BarSpace.ScaleX)
+		      Var BarWidth As Double = NearestMultiple(BarSpace.Width * BarMaxpercent, BarSpace.ScaleX)
 		      
-		      G.DrawingColor = Self.ActiveColorToColor(Self.ActiveColor, Colors)
-		      G.FillRectangle(BarLeft, G.Height - 2, BarWidth, 2)
+		      BarSpace.DrawingColor = Self.ActiveColorToColor(Self.ActiveColor, Colors)
+		      BarSpace.FillRectangle(BarLeft, 0, BarWidth, 2)
 		    Else
-		      Var BarWidth As Double = NearestMultiple(G.Width * Self.Progress, G.ScaleX)
-		      G.DrawingColor = Self.ActiveColorToColor(Self.ActiveColor, Colors)
-		      G.FillRectangle(0, G.Height - 2, BarWidth, 2)
+		      Var BarWidth As Double = NearestMultiple(BarSpace.Width * Self.Progress, BarSpace.ScaleX)
+		      BarSpace.DrawingColor = Self.ActiveColorToColor(Self.ActiveColor, Colors)
+		      BarSpace.FillRectangle(0, 0, BarWidth, 2)
 		    End If
 		  ElseIf Self.Toggled Then
-		    G.ClearRectangle(0, G.Height - 2, G.Width, 2)
+		    BarSpace.ClearRectangle(0, 0, BarSpace.Width, 2)
 		    If Highlighted Then
-		      G.DrawingColor = Self.ActiveColorToColor(Self.ActiveColor, Colors)
+		      BarSpace.DrawingColor = Self.ActiveColorToColor(Self.ActiveColor, Colors)
 		    Else
-		      G.DrawingColor = Colors.SeparatorColor
+		      BarSpace.DrawingColor = Colors.SeparatorColor
 		    End If
-		    G.DrawRectangle(0, G.Height - 2, G.Width, 2)
+		    BarSpace.DrawRectangle(0, 0, BarSpace.Width, 2)
 		  End If
 		  
 		  // Find the color we'll be using
@@ -525,7 +539,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawTitle(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		Private Sub DrawTitle(G As Graphics, ItemRect As Rect, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused MouseDown
 		  #Pragma Unused MouseHover
 		  #Pragma Unused LocalMousePoint
