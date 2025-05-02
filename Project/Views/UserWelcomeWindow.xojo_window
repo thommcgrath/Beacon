@@ -783,6 +783,8 @@ End
 		    Scopes.Add("users.private_key:read")
 		    Scopes.Add("users:delete")
 		    Scopes.Add("users:update")
+		    Scopes.Add("sentinel:read")
+		    Scopes.Add("sentinel:write")
 		    
 		    Self.mOAuthChallenge = Self.GenerateCodeVerifier()
 		    

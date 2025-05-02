@@ -490,6 +490,58 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub APICallback_FindScript(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Response.Success Then
+		    Try
+		      Var ScriptData As JSONItem = Request.Tag
+		      Var Results As New JSONItem(Response.Content)
+		      If Results.Value("totalResults") = 0 Then
+		        Self.SaveScript(ScriptData, "")
+		        Return
+		      End If
+		      
+		      Var ScriptName As String = ScriptData.Value("name")
+		      Var ShouldReplace As Boolean = BeaconUI.ShowConfirm("Replace script " + ScriptName + "?", "You already have a script named " + ScriptName + ". Would you like to replace that script with this new script?", "Replace", "Keep Both")
+		      If ShouldReplace Then
+		        Self.SaveScript(ScriptData, Results.Child("results").ChildAt(0).Value("scriptId").StringValue)
+		      Else
+		        ScriptData.Value("name") = ScriptName + " " + Beacon.GenerateRandomKey(6)
+		        Self.SaveScript(ScriptData, "")
+		      End If
+		      Return
+		    Catch Err As RuntimeException
+		      ExceptionWindow.Report(Err)
+		    End Try
+		  End If
+		  
+		  System.GotoURL("https://sentinel.usebeacon.app/scripts")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_SaveScript(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Not Response.Success Then
+		    BeaconUI.ShowAlert("Script was not saved", "There was an error saving the script to Beacon Sentinel. Try importing directly to the Sentinel website.")
+		    Return
+		  End If
+		  
+		  Var Report As New JSONItem(Response.Content)
+		  Var ScriptId As String
+		  If Request.Method = "POST" Then
+		    ScriptId = Report.Child("created").ChildAt(0).Value("scriptId")
+		  Else
+		    ScriptId = Report.Value("scriptId")
+		  End If
+		  
+		  If ScriptId.IsEmpty Then
+		    System.GotoURL("https://sentinel.usebeacon.app/scripts")
+		  Else
+		    System.GotoURL("https://sentinel.usebeacon.app/scripts/" + EncodeURLComponent(ScriptId))
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub AppearanceChanged()
 		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
@@ -993,6 +1045,23 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If (Identity Is Nil) = False Then
 		    Self.mIdentityManager.CurrentIdentity = Identity
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportScript(File As FolderItem)
+		  Try
+		    Var FileContent As String = File.Read(Encodings.UTF8)
+		    Var ScriptData As New JSONItem(FileContent)
+		    Var ScriptName As String = ScriptData.Value("name")
+		    
+		    Var Request As New BeaconAPI.Request("/sentinel/scripts?name=" + EncodeURLComponent(ScriptName), "GET", WeakAddressOf APICallback_FindScript)
+		    Request.Tag = ScriptData
+		    
+		    BeaconAPI.Send(Request)
+		  Catch Err As RuntimeException
+		    System.GotoURL("https://sentinel.usebeacon.app/scripts")
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -1549,7 +1618,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  If File.ExtensionMatches(Beacon.FileExtensionScript) Then
-		    System.GotoURL("https://sentinel.usebeacon.app/scripts")
+		    Self.ImportScript(File)
 		    Return
 		  End If
 		  
@@ -1693,6 +1762,26 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  #endif
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveScript(ScriptData As JSONItem, ScriptId As String)
+		  If ScriptData.HasKey("code") = False Then
+		    Var Code As New JSONItem
+		    Code.Value("conditions") = ScriptData.Value("conditions")
+		    Code.Value("actions") = ScriptData.Value("actions")
+		    ScriptData.Remove("conditions")
+		    ScriptData.Remove("actions")
+		  End If
+		  
+		  Var Request As BeaconAPI.Request
+		  If ScriptId.IsEmpty Then
+		    Request = New BeaconAPI.Request("/sentinel/scripts", "POST", ScriptData.ToString, "application/json", WeakAddressOf APICallback_SaveScript)
+		  Else
+		    Request = New BeaconAPI.Request("/sentinel/scripts/" + EncodeURLComponent(ScriptId), "PATCH", ScriptData.ToString, "application/json", WeakAddressOf APICallback_SaveScript)
+		  End If
+		  BeaconAPI.Send(Request)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
