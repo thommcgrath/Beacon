@@ -55,7 +55,7 @@ Begin ArkConfigEditor ArkServersEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   387
+      Height          =   346
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -127,6 +127,8 @@ Begin ArkConfigEditor ArkServersEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -260,6 +262,41 @@ Begin ArkConfigEditor ArkServersEditor
       Visible         =   True
       Width           =   299
    End
+   Begin OmniBar AltToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      BackgroundColor =   ""
+      ContentHeight   =   0
+      Enabled         =   True
+      HasBottomBorder =   False
+      HasTopBorder    =   True
+      Height          =   41
+      Index           =   -2147483648
+      Left            =   0
+      LeftPadding     =   7
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightPadding    =   7
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   428
+      Transparent     =   True
+      Visible         =   True
+      Width           =   299
+   End
 End
 #tag EndDesktopWindow
 
@@ -349,6 +386,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function DeployProfiles() As Ark.ServerProfile()
+		  Var Profiles() As Ark.ServerProfile
+		  Var List As ServersListbox = Self.ServerList
+		  For Idx As Integer = 0 To List.LastRowIndex
+		    If List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    Var Profile As Ark.ServerProfile = List.RowTagAt(Idx)
+		    If Profile.DeployCapable Then
+		      Profiles.Add(Profile)
+		    End If
+		  Next
+		  Return Profiles
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub FinishRefreshingDetails()
 		  Var Profiles() As Beacon.ServerProfile = Self.ServerList.SelectedProfiles
 		  Self.ServerList.SelectedRowIndex = -1
@@ -423,6 +477,23 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ProfilesWithProvider(ProviderId As String) As Ark.ServerProfile()
+		  Var Profiles() As Ark.ServerProfile
+		  Var List As ServersListbox = Self.ServerList
+		  For Idx As Integer = 0 To List.LastRowIndex
+		    If List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    Var Profile As Ark.ServerProfile = List.RowTagAt(Idx)
+		    If Profile.ProviderId = ProviderId Then
+		      Profiles.Add(Profile)
+		    End If
+		  Next
+		  Return Profiles
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub RefreshDetails()
 		  If Self.mRefreshing = True Then
@@ -430,6 +501,24 @@ End
 		  End If
 		  
 		  Self.RefreshThread.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartDeploy()
+		  Var Profiles() As Ark.ServerProfile = Self.DeployProfiles()
+		  Self.StartDeploy(Profiles)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartDeploy(Profiles() As Ark.ServerProfile)
+		  If Profiles.Count = 0 Then
+		    Self.ShowAlert("None of the selected servers are ready for deploy", "Use the Import button in the project toolbar to add deploy-capable server records to this project.")
+		    Return
+		  End If
+		  
+		  RaiseEvent ShouldDeployProfiles(Profiles)
 		End Sub
 	#tag EndMethod
 
@@ -644,24 +733,9 @@ End
 		  Else
 		    DeployItem = New DesktopMenuItem("Deploy This Server…")
 		  End If
-		  Var DeployProfiles() As Beacon.ServerProfile
-		  Var NitradoProfiles() As Ark.ServerProfile
-		  Var LocalProfiles() As Ark.ServerProfile
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.RowSelectedAt(Idx) = False Then
-		      Continue
-		    End If
-		    Var Profile As Ark.ServerProfile = Me.RowTagAt(Idx)
-		    If Profile.DeployCapable Then
-		      DeployProfiles.Add(Profile)
-		    End If
-		    Select Case Profile.ProviderId
-		    Case Nitrado.Identifier
-		      NitradoProfiles.Add(Profile)
-		    Case Local.Identifier
-		      LocalProfiles.Add(Profile)
-		    End Select
-		  Next Idx
+		  Var DeployProfiles() As Beacon.ServerProfile = Self.DeployProfiles
+		  Var NitradoProfiles() As Ark.ServerProfile = Self.ProfilesWithProvider(Nitrado.Identifier)
+		  Var LocalProfiles() As Ark.ServerProfile = Self.ProfilesWithProvider(Local.Identifier)
 		  DeployItem.Enabled = DeployProfiles.Count > 0
 		  DeployItem.Tag = DeployProfiles
 		  Base.AddMenu(DeployItem)
@@ -710,8 +784,8 @@ End
 		    Var Board As New Clipboard
 		    Board.Text = ProfileID
 		  Case "Deploy These Servers…", "Deploy This Server…"
-		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
-		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)
+		    Var SelectedProfiles() As Ark.ServerProfile = HitItem.Tag
+		    Self.StartDeploy(SelectedProfiles)
 		  Case "Open Nitrado Dashboard"
 		    Var NitradoProfiles() As Ark.ServerProfile = HitItem.Tag
 		    For Idx As Integer = 0 To NitradoProfiles.LastIndex
@@ -880,6 +954,23 @@ End
 		      End If
 		    End If
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AltToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateButton("DeployButton", "Deploy", IconToolbarDeploy, "Deploy the selected server or servers.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "DeployButton"
+		    Self.StartDeploy(Self.DeployProfiles)
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

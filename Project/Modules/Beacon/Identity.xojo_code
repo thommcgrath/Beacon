@@ -66,6 +66,16 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasSentinelSubscription() As Boolean
+		  For Each Subscription As Beacon.Subscription In Self.mSubscriptions
+		    If Subscription.ProductGameId = "Sentinel" Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsAnonymous() As Boolean
 		  Return Self.mIsAnonymous
 		End Function
@@ -192,6 +202,14 @@ Protected Class Identity
 		    Identity.mUsername = Username
 		    Identity.mIsAnonymous = IsAnonymous
 		    Identity.mLicenses = Licenses
+		    
+		    If Row.Column("subscriptions").Value.IsNull = False Then
+		      Var SubscriptionsJson As New JSONItem(Row.Column("subscriptions").StringValue)
+		      Identity.mSubscriptions.ResizeTo(SubscriptionsJson.LastRowIndex)
+		      For Idx As Integer = 0 To SubscriptionsJson.LastRowIndex
+		        Identity.mSubscriptions(Idx) = New Beacon.Subscription(SubscriptionsJson.ChildAt(Idx))
+		      Next
+		    End If
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
@@ -258,6 +276,29 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Subscriptions() As Beacon.Subscription()
+		  Var Subscriptions() As Beacon.Subscription
+		  Subscriptions.ResizeTo(Self.mSubscriptions.LastIndex)
+		  For Idx As Integer = 0 To Subscriptions.LastIndex
+		    Subscriptions(Idx) = Self.mSubscriptions(Idx)
+		  Next
+		  Return Subscriptions
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Subscriptions(ForGameId As String) As Beacon.Subscription()
+		  Var Subscriptions() As Beacon.Subscription
+		  For Each Subscription As Beacon.Subscription In Self.mSubscriptions
+		    If Subscription.ProductGameId = ForGameId Then
+		      Subscriptions.Add(Subscription)
+		    End If
+		  Next
+		  Return Subscriptions
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UserCloudKey() As String
 		  Return Self.mCloudKey
 		End Function
@@ -310,6 +351,10 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mPublicKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSubscriptions() As Beacon.Subscription
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

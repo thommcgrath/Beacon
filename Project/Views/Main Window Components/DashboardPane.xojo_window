@@ -297,6 +297,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Closing()
+		  RaiseEvent Closing
+		  
 		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
@@ -314,6 +316,8 @@ End
 		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped, IdentityManager.Notification_IdentityChanged)
 		  
 		  Self.UpdateEngramStatus
+		  
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
@@ -394,7 +398,15 @@ End
 
 
 	#tag Hook, Flags = &h0
+		Event Closing()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event NewDocument()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Opening()
 	#tag EndHook
 
 

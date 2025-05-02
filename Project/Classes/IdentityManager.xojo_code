@@ -32,6 +32,19 @@ Protected Class IdentityManager
 		    Try
 		      Database.Connect
 		      Self.mDatabase = Database
+		      
+		      Var Columns As RowSet = Database.TableColumns("identities")
+		      Var HasSubscriptionsColumn As Boolean
+		      For Each Row As DatabaseRow In Columns
+		        If Row.Column("ColumnName").StringValue = "subscriptions" Then
+		          HasSubscriptionsColumn = True
+		          Exit
+		        End If
+		      Next
+		      If Not HasSubscriptionsColumn Then
+		        Database.ExecuteSQL("ALTER TABLE identities ADD COLUMN subscriptions TEXT NOT NULL DEFAULT '[]';")
+		      End If
+		      
 		      Return
 		    Catch Err As RuntimeException
 		    End Try
@@ -44,7 +57,7 @@ Protected Class IdentityManager
 		    Database.EncryptionKey = Self.GenerateKey
 		  #endif
 		  Database.CreateDatabase
-		  Database.ExecuteSQL("CREATE TABLE identities (user_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, public_key TEXT COLLATE NOCASE NOT NULL, private_key TEXT COLLATE NOCASE NOT NULL, cloud_key TEXT NOT NULL DEFAULT '', licenses TEXT NOT NULL DEFAULT '[]', username TEXT COLLATE NOCASE NOT NULL DEFAULT '', anonymous BOOLEAN NOT NULL DEFAULT TRUE, banned BOOLEAN NOT NULL DEFAULT FALSE, signature TEXT NOT NULL DEFAULT '', signature_fields TEXT NOT NULL DEFAULT '[]', expiration TEXT NOT NULL DEFAULT '', active BOOLEAN NOT NULL DEFAULT FALSE, merged BOOLEAN NOT NULL DEFAULT FALSE);")
+		  Database.ExecuteSQL("CREATE TABLE identities (user_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, public_key TEXT COLLATE NOCASE NOT NULL, private_key TEXT COLLATE NOCASE NOT NULL, cloud_key TEXT NOT NULL DEFAULT '', licenses TEXT NOT NULL DEFAULT '[]', username TEXT COLLATE NOCASE NOT NULL DEFAULT '', anonymous BOOLEAN NOT NULL DEFAULT TRUE, banned BOOLEAN NOT NULL DEFAULT FALSE, signature TEXT NOT NULL DEFAULT '', signature_fields TEXT NOT NULL DEFAULT '[]', expiration TEXT NOT NULL DEFAULT '', active BOOLEAN NOT NULL DEFAULT FALSE, merged BOOLEAN NOT NULL DEFAULT FALSE, subscriptions TEXT NOT NULL DEFAULT '[]');")
 		  Self.mDatabase = Database
 		  
 		  Var MergedFolder As FolderItem = AppSupport.Child("Merged Identities")
@@ -187,6 +200,7 @@ Protected Class IdentityManager
 		    Var Signature As String = SignatureDetails.Value("signed")
 		    Var SignatureFields As String = Beacon.GenerateJson(SignatureDetails.Value("fields"), False)
 		    Var Licenses As String = Beacon.GenerateJSON(Dict.Value("licenses"), False)
+		    Var Subscriptions As String = Beacon.GenerateJSON(Dict.Value("subscriptions"), False)
 		    
 		    Var PrivateKey, CloudKey As String
 		    If Dict.HasKey("privateKey") Then
@@ -226,9 +240,9 @@ Protected Class IdentityManager
 		    Self.mDatabase.BeginTransaction
 		    Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT user_id FROM identities WHERE user_id = ?1;", UserId)
 		    If Rows.RowCount = 0 Then
-		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_fields, expiration) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration)
+		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_fields, expiration, subscriptions) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration, Subscriptions)
 		    Else
-		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_fields = ?10, expiration = ?11 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration)
+		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_fields = ?10, expiration = ?11, subscriptions = ?12 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration, Subscriptions)
 		    End If
 		    Self.mDatabase.CommitTransaction
 		    
@@ -340,9 +354,9 @@ Protected Class IdentityManager
 		    Self.mDatabase.BeginTransaction
 		    Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT user_id FROM identities WHERE user_id = ?1;", UserId)
 		    If Rows.RowCount = 0 Then
-		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_fields, expiration) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);", UserId, PublicKey, PrivateKey, CloudKey, "[]", Username, IsAnonymous, Banned, "", "[]", Expiration)
+		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_fields, expiration, subscriptions) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12);", UserId, PublicKey, PrivateKey, CloudKey, "[]", Username, IsAnonymous, Banned, "", "[]", Expiration, "[]")
 		    Else
-		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_fields = ?10, expiration = ?11 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, "[]", Username, IsAnonymous, Banned, "", "[]", Expiration)
+		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_fields = ?10, expiration = ?11, subscriptions = ?12 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, "[]", Username, IsAnonymous, Banned, "", "[]", Expiration, "[]")
 		    End If
 		    Self.mDatabase.CommitTransaction
 		    

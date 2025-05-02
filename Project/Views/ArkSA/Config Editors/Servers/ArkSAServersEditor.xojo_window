@@ -53,7 +53,7 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   387
+      Height          =   346
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -125,6 +125,8 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -258,6 +260,41 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       Visible         =   True
       Width           =   299
    End
+   Begin OmniBar AltToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      BackgroundColor =   ""
+      ContentHeight   =   0
+      Enabled         =   True
+      HasBottomBorder =   False
+      HasTopBorder    =   True
+      Height          =   41
+      Index           =   -2147483648
+      Left            =   0
+      LeftPadding     =   7
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightPadding    =   7
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   428
+      Transparent     =   True
+      Visible         =   True
+      Width           =   299
+   End
 End
 #tag EndDesktopWindow
 
@@ -339,11 +376,178 @@ End
 	#tag EndMenuHandler
 
 
+	#tag Method, Flags = &h21
+		Private Sub AddToSentinel(Profiles() As ArkSA.ServerProfile)
+		  Var RequestBody As New JSONItem("[]")
+		  For Each Profile As ArkSA.ServerProfile In Profiles
+		    Var Server As New JSONItem("{}")
+		    Server.Value("serviceId") = Profile.ProfileId
+		    Server.Value("name") = ""
+		    If Profile.Nickname.IsEmpty = False Then
+		      Server.Value("nickname") = Profile.Nickname
+		    Else
+		      Server.Value("nickname") = Profile.Name
+		    End If
+		    Server.Value("gameId") = ArkSA.Identifier
+		    Server.Value("gameSpecific") = New JSONItem("{}")
+		    Server.Value("platform") = "Universal"
+		    Server.Value("languages") = New JSONItem("[""en""]")
+		    
+		    Var ProfileColor As Variant
+		    Select Case Profile.ProfileColor
+		    Case Beacon.ServerProfile.Colors.Blue
+		      ProfileColor = "Blue"
+		    Case Beacon.ServerProfile.Colors.Brown
+		      ProfileColor = "Brown"
+		    Case Beacon.ServerProfile.Colors.Green
+		      ProfileColor = "Green"
+		    Case Beacon.ServerProfile.Colors.Grey
+		      ProfileColor = "Grey"
+		    Case Beacon.ServerProfile.Colors.Indigo
+		      ProfileColor = "Indigo"
+		    Case Beacon.ServerProfile.Colors.None
+		      ProfileColor = "None"
+		    Case Beacon.ServerProfile.Colors.Orange
+		      ProfileColor = "Organge"
+		    Case Beacon.ServerProfile.Colors.Pink
+		      ProfileColor = "Pink"
+		    Case Beacon.ServerProfile.Colors.Purple
+		      ProfileColor = "Purple"
+		    Case Beacon.ServerProfile.Colors.Red
+		      ProfileColor = "Red"
+		    Case Beacon.ServerProfile.Colors.Teal
+		      ProfileColor = "Teal"
+		    Case Beacon.ServerProfile.Colors.Yellow
+		      ProfileColor = "Yellow"
+		    End Select
+		    Server.Value("color") = ProfileColor
+		    
+		    RequestBody.Add(Server)
+		  Next
+		  
+		  Var Request As New BeaconAPI.Request("/sentinel/services", "POST", RequestBody.ToString, "application/json", WeakAddressOf APICallback_AddSentinelServers)
+		  Request.Tag = Profiles
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_AddSentinelServers(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Not Response.Success Then
+		    // Data could be stale
+		    Try
+		      Var Parsed As New JSONItem(Response.Content)
+		      If Parsed.Lookup("type", "").StringValue = "beacon.error" Then
+		        Select Case Parsed.Lookup("code", "").StringValue
+		        Case "tooManyResources"
+		          Self.ShowAlert("Could not add server to Beacon Sentinel", "This would put you over your plan limit. If you need more servers, consider upgrading your plan.")
+		          Return
+		        End Select
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Self.ShowAlert("Could not add server to Beacon Sentinel", "The server said '" + Response.Message + "'")
+		    Return
+		  End If
+		  
+		  Var Map As New Dictionary
+		  Try
+		    Var Parsed As New JSONItem(Response.Content)
+		    Var Created As JSONItem = Parsed.Child("created")
+		    For Idx As Integer = 0 To Created.LastRowIndex
+		      Var Child As JSONItem = Created.ChildAt(Idx)
+		      Map.Value(Child.Value("serviceId")) = Child
+		    Next
+		    Var Updated As JSONItem = Parsed.Child("updated")
+		    For Idx As Integer = 0 To Updated.LastRowIndex
+		      Var Child As JSONItem = Updated.ChildAt(Idx)
+		      Map.Value(Child.Value("serviceId")) = Child
+		    Next
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("There was an unexpected response from Beacon", "It is unknown if any server was added to Beacon Sentinel. Check the Sentinel website to determine what changes were made.")
+		    Return
+		  End Try
+		  
+		  Var Key As ArkSA.ConfigOption = ArkSA.DataSource.Pool.Get(False).GetConfigOption("6cbb5deb-e6da-54a9-91e2-b6efabec12b8")
+		  If Key Is Nil Then
+		    Key = New ArkSA.ConfigOption(ArkSA.ConfigFileGameUserSettings, "BeaconSentinel", "AccessKey")
+		  End If
+		  Var Profiles() As ArkSA.ServerProfile = Request.Tag
+		  For Each Profile As ArkSA.ServerProfile In Profiles
+		    If Map.HasKey(Profile.ProfileId) = False Then
+		      Continue
+		    End If
+		    
+		    Var ServiceInfo As JSONItem = Map.Value(Profile.ProfileId)
+		    Var Organizer As New ArkSA.ConfigOrganizer(ArkSA.ConfigFileGameUserSettings, ArkSA.HeaderServerSettings, Profile.CustomGUS)
+		    Var Value As New ArkSA.ConfigValue(Key, "AccessKey=" + ServiceInfo.Value("accessKey").StringValue)
+		    Organizer.Add(Value, False)
+		    Profile.CustomGUS = Organizer.Build(ArkSA.ConfigFileGameUserSettings)
+		  Next
+		  
+		  // Force the view to refresh
+		  Var CurrentProfileId As String = Self.CurrentProfileId
+		  Self.CurrentProfileId = ""
+		  Self.CurrentProfileId = CurrentProfileId
+		  
+		  Var Summary As String
+		  If Profiles.Count > 1 Then
+		    Summary = "The servers have been added to Beacon Sentinel"
+		  Else
+		    Summary = "The server has been added to Beacon Sentinel"
+		  End If
+		  Self.ShowAlert(Summary, "Don't forget to install mod 1193015 and deploy the new config to complete the job.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_FindSentinelService(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Not Response.Success Then
+		    // Api failure
+		    Self.ShowAlert("Unable to find server", "There was an error locating the server in Sentinel.")
+		    Return
+		  End If
+		  
+		  Try
+		    Var JsonResponse As New JSONItem(Response.Content)
+		    If JsonResponse.Value("totalResults") = 0 Then
+		      // No match
+		      Self.ShowAlert("Unable to find server", "Your Sentinel access key was found, but Sentinel couldn't match it to any server.")
+		      Return
+		    End If
+		    
+		    Var Server As JSONItem = JsonResponse.Child("results").ChildAt(0)
+		    System.GotoURL("https://sentinel.usebeacon.app/servers/" + Server.Value("serviceId").StringValue)
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As ArkSA.Project)
 		  Self.mViews = New Dictionary
 		  Super.Constructor(Project)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function DeployProfiles() As ArkSA.ServerProfile()
+		  Var Profiles() As ArkSA.ServerProfile
+		  Var List As ServersListbox = Self.ServerList
+		  For Idx As Integer = 0 To List.LastRowIndex
+		    If List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    Var Profile As ArkSA.ServerProfile = List.RowTagAt(Idx)
+		    If Profile.DeployCapable Then
+		      Profiles.Add(Profile)
+		    End If
+		  Next
+		  Return Profiles
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -367,6 +571,62 @@ End
 		    Explanation = Explanation + " Don't forget to save your project."
 		  End If 
 		  Self.ShowAlert("Server Refresh Finished", Explanation)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub HandleSentinelMenu(ItemRect As Rect)
+		  If App.IdentityManager.CurrentIdentity Is Nil Or App.IdentityManager.CurrentIdentity.HasSentinelSubscription = False Then
+		    Var Choice As BeaconUI.ConfirmResponses = BeaconUI.ShowConfirm("Would you like to learn more about Beacon Sentinel?", "Beacon Sentinel is a monitoring and moderation service for Ark: Survival Ascended. You do not have a Beacon Sentinel subscription in your account. If this is not correct, choose the refresh option to have Beacon load your latest subscription information.", "Learn More", "Cancel", "Refresh")
+		    Select Case Choice
+		    Case BeaconUI.ConfirmResponses.Action
+		      System.GotoURL("https://sentinel.usebeacon.app/")
+		    Case BeaconUI.ConfirmResponses.Alternate
+		      Call App.HandleURL("beacon://action/refreshuser?silent=false")
+		    End Select
+		    Return
+		  End If
+		  
+		  Var Base As New DesktopMenuItem
+		  Var List As ServersListbox = Self.ServerList
+		  Var UnaddedProfiles() As ArkSA.ServerProfile
+		  Var AddedProfiles() As ArkSA.ServerProfile
+		  For Idx As Integer = 0 To List.LastRowIndex
+		    If List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Var Profile As ArkSA.ServerProfile = List.RowTagAt(Idx)
+		    Var CustomGUS As String = Profile.CustomGUS
+		    If CustomGUS.Contains("[BeaconSentinel]") And CustomGUS.Contains("AccessKey=") Then
+		      AddedProfiles.Add(Profile)
+		    Else
+		      UnaddedProfiles.Add(Profile)
+		    End If
+		  Next
+		  
+		  Var AddToItem As New DesktopMenuItem("Add to Sentinel", "addto")
+		  AddToItem.Enabled = UnaddedProfiles.Count > 0
+		  Base.AddMenu(AddToItem)
+		  
+		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
+		  
+		  Var ShowItem As New DesktopMenuItem("Show Game Events", "show")
+		  ShowItem.Enabled = AddedProfiles.Count = 1
+		  Base.AddMenu(ShowItem)
+		  
+		  Var Position As Point = Self.AltToolbar.GlobalPosition
+		  Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		  If Choice Is Nil Then
+		    Return
+		  End If
+		  
+		  Select Case Choice.Tag
+		  Case "addto"
+		    Self.AddToSentinel(UnaddedProfiles)
+		  Case "show"
+		    Self.ShowInSentinel(AddedProfiles(0))
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -421,6 +681,23 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ProfilesWithProvider(ProviderId As String) As ArkSA.ServerProfile()
+		  Var Profiles() As ArkSA.ServerProfile
+		  Var List As ServersListbox = Self.ServerList
+		  For Idx As Integer = 0 To List.LastRowIndex
+		    If List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    Var Profile As ArkSA.ServerProfile = List.RowTagAt(Idx)
+		    If Profile.ProviderId = ProviderId Then
+		      Profiles.Add(Profile)
+		    End If
+		  Next
+		  Return Profiles
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub RefreshDetails()
 		  If Self.mRefreshing = True Then
@@ -428,6 +705,50 @@ End
 		  End If
 		  
 		  Self.RefreshThread.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowInSentinel(Profile As ArkSA.ServerProfile)
+		  Var Lines() As String = Profile.CustomGUS.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
+		  Var FoundSection As Boolean
+		  Var AccessKey As String
+		  For Each Line As String In Lines
+		    If Line = "[BeaconSentinel]" Then
+		      FoundSection = True
+		    ElseIf FoundSection And Line.BeginsWith("[") And Line.EndsWith("]") Then
+		      FoundSection = False
+		    ElseIf FoundSection And Line.BeginsWith("AccessKey=") Then
+		      AccessKey = Line.Middle(10).Trim
+		      Exit
+		    End If
+		  Next
+		  
+		  If AccessKey.IsEmpty Then
+		    BeaconUI.ShowAlert("Could not find the Sentinel access key", "Beacon is looking for an AccessKey line in the [BeaconSentinel] section of the 'Custom' tab of the server.")
+		    Return
+		  End If
+		  
+		  Var Request As New BeaconAPI.Request("/sentinel/services?accessKey=" + AccessKey, "GET", WeakAddressOf APICallback_FindSentinelService)
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartDeploy()
+		  Var Profiles() As ArkSA.ServerProfile = Self.DeployProfiles()
+		  Self.StartDeploy(Profiles)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartDeploy(Profiles() As ArkSA.ServerProfile)
+		  If Profiles.Count = 0 Then
+		    Self.ShowAlert("None of the selected servers are ready for deploy", "Use the Import button in the project toolbar to add deploy-capable server records to this project.")
+		    Return
+		  End If
+		  
+		  RaiseEvent ShouldDeployProfiles(Profiles)
 		End Sub
 	#tag EndMethod
 
@@ -532,7 +853,18 @@ End
 		Sub SelectionChanged()
 		  Self.UpdateStatus
 		  
-		  Select Case Me.SelectedRowCount
+		  Var SelectedRowCount As Integer = Me.SelectedRowCount
+		  
+		  Var DeployButton As OmniBarItem = Self.AltToolbar.Item("DeployButton")
+		  If (DeployButton Is Nil) = False Then
+		    DeployButton.Enabled = SelectedRowCount > 0
+		  End If
+		  Var SentinelButton As OmniBarItem = Self.AltToolbar.Item("SentinelButton")
+		  If (SentinelButton Is Nil) = False Then
+		    SentinelButton.Enabled = SelectedRowCount > 0
+		  End If
+		  
+		  Select Case SelectedRowCount
 		  Case 0
 		    Self.CurrentProfileID = ""
 		    Return
@@ -642,24 +974,9 @@ End
 		  Else
 		    DeployItem = New DesktopMenuItem("Deploy This Server…")
 		  End If
-		  Var DeployProfiles() As Beacon.ServerProfile
-		  Var NitradoProfiles() As ArkSA.ServerProfile
-		  Var LocalProfiles() As ArkSA.ServerProfile
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.RowSelectedAt(Idx) = False Then
-		      Continue
-		    End If
-		    Var Profile As ArkSA.ServerProfile = Me.RowTagAt(Idx)
-		    If Profile.DeployCapable Then
-		      DeployProfiles.Add(Profile)
-		    End If
-		    Select Case Profile.ProviderId
-		    Case Nitrado.Identifier
-		      NitradoProfiles.Add(Profile)
-		    Case Local.Identifier
-		      LocalProfiles.Add(Profile)
-		    End Select
-		  Next Idx
+		  Var DeployProfiles() As Beacon.ServerProfile = Self.DeployProfiles
+		  Var NitradoProfiles() As ArkSA.ServerProfile = Self.ProfilesWithProvider(Nitrado.Identifier)
+		  Var LocalProfiles() As ArkSA.ServerProfile = Self.ProfilesWithProvider(Local.Identifier)
 		  DeployItem.Enabled = DeployProfiles.Count > 0
 		  DeployItem.Tag = DeployProfiles
 		  Base.AddMenu(DeployItem)
@@ -708,8 +1025,8 @@ End
 		    Var Board As New Clipboard
 		    Board.Text = ProfileID
 		  Case "Deploy These Servers…", "Deploy This Server…"
-		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
-		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)
+		    Var SelectedProfiles() As ArkSA.ServerProfile = HitItem.Tag
+		    Self.StartDeploy(SelectedProfiles)
 		  Case "Open Nitrado Dashboard"
 		    Var NitradoProfiles() As ArkSA.ServerProfile = HitItem.Tag
 		    For Idx As Integer = 0 To NitradoProfiles.LastIndex
@@ -880,6 +1197,32 @@ End
 		    End If
 		  Next
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AltToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateButton("DeployButton", "Deploy", IconToolbarDeploy, "Deploy the selected server or servers.", False))
+		  Me.Append(OmniBarItem.CreateButton("SentinelButton", "Sentinel", IconToolbarSentinel, "Add the selected server to Beacon Sentinel.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "DeployButton"
+		    Self.StartDeploy(Self.DeployProfiles)
+		  Case "SentinelButton"
+		    Self.HandleSentinelMenu(ItemRect)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
+		  Select Case Item.Name
+		  Case "SentinelButton"
+		    Self.HandleSentinelMenu(ItemRect)
+		  End Select
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

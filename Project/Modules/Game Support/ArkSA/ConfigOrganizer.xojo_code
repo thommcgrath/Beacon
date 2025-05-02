@@ -163,6 +163,11 @@ Protected Class ConfigOrganizer
 		      Lines.Add(Value.Command)
 		    Next
 		    
+		    If Lines.Count = 1 Then
+		      // Nothing added
+		      Continue
+		    End If
+		    
 		    Sections.Add(Lines.Join(EOL))
 		  Next
 		  

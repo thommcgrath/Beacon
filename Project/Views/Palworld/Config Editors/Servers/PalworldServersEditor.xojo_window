@@ -53,7 +53,7 @@ Begin PalworldConfigEditor PalworldServersEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   418
+      Height          =   346
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -125,6 +125,8 @@ Begin PalworldConfigEditor PalworldServersEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -226,6 +228,73 @@ Begin PalworldConfigEditor PalworldServersEditor
       ThreadID        =   0
       ThreadState     =   0
    End
+   Begin OmniBar AltToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      BackgroundColor =   ""
+      ContentHeight   =   0
+      Enabled         =   True
+      HasBottomBorder =   False
+      HasTopBorder    =   True
+      Height          =   41
+      Index           =   -2147483648
+      Left            =   0
+      LeftPadding     =   7
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightPadding    =   7
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   428
+      Transparent     =   True
+      Visible         =   True
+      Width           =   299
+   End
+   Begin StatusContainer Status
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF
+      CenterCaption   =   ""
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   31
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftCaption     =   ""
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      RightCaption    =   ""
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   469
+      Transparent     =   True
+      Visible         =   True
+      Width           =   299
+   End
 End
 #tag EndDesktopWindow
 
@@ -269,6 +338,23 @@ End
 		  Self.mViews = New Dictionary
 		  Super.Constructor(Project)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function DeployProfiles() As Palworld.ServerProfile()
+		  Var Profiles() As Palworld.ServerProfile
+		  Var List As ServersListbox = Self.ServerList
+		  For Idx As Integer = 0 To List.LastRowIndex
+		    If List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    Var Profile As Palworld.ServerProfile = List.RowTagAt(Idx)
+		    If Profile.DeployCapable Then
+		      Profiles.Add(Profile)
+		    End If
+		  Next
+		  Return Profiles
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -346,6 +432,23 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ProfilesWithProvider(ProviderId As String) As Palworld.ServerProfile()
+		  Var Profiles() As Palworld.ServerProfile
+		  Var List As ServersListbox = Self.ServerList
+		  For Idx As Integer = 0 To List.LastRowIndex
+		    If List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    Var Profile As Palworld.ServerProfile = List.RowTagAt(Idx)
+		    If Profile.ProviderId = ProviderId Then
+		      Profiles.Add(Profile)
+		    End If
+		  Next
+		  Return Profiles
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub RefreshDetails()
 		  If Self.mRefreshing = True Then
@@ -353,6 +456,24 @@ End
 		  End If
 		  
 		  Self.RefreshThread.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartDeploy()
+		  Var Profiles() As Palworld.ServerProfile = Self.DeployProfiles()
+		  Self.StartDeploy(Profiles)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartDeploy(Profiles() As Palworld.ServerProfile)
+		  If Profiles.Count = 0 Then
+		    Self.ShowAlert("None of the selected servers are ready for deploy", "Use the Import button in the project toolbar to add deploy-capable server records to this project.")
+		    Return
+		  End If
+		  
+		  RaiseEvent ShouldDeployProfiles(Profiles)
 		End Sub
 	#tag EndMethod
 
@@ -372,6 +493,12 @@ End
 		  RefreshButton.ActiveColor = If(Self.mRefreshing, OmniBarItem.ActiveColors.Blue, OmniBarItem.ActiveColors.Accent)
 		  RefreshButton.AlwaysUseActiveColor = Self.mRefreshing
 		  RefreshButton.Enabled = Self.mRefreshing = False And Self.Project.ServerProfileCount > 0
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Self.Status.CenterCaption = Self.ServerList.StatusMessage("Server", "Servers")
 		End Sub
 	#tag EndMethod
 
@@ -449,6 +576,8 @@ End
 #tag Events ServerList
 	#tag Event
 		Sub SelectionChanged()
+		  Self.UpdateStatus
+		  
 		  Select Case Me.SelectedRowCount
 		  Case 0
 		    Self.CurrentProfileID = ""
@@ -541,6 +670,7 @@ End
 		  Next
 		  
 		  Self.UpdateRefreshButton()
+		  Self.UpdateStatus
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -558,24 +688,9 @@ End
 		  Else
 		    DeployItem = New DesktopMenuItem("Deploy This Server…")
 		  End If
-		  Var DeployProfiles() As Beacon.ServerProfile
-		  Var NitradoProfiles() As Palworld.ServerProfile
-		  Var LocalProfiles() As Palworld.ServerProfile
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.RowSelectedAt(Idx) = False Then
-		      Continue
-		    End If
-		    Var Profile As Palworld.ServerProfile = Me.RowTagAt(Idx)
-		    If Profile.DeployCapable Then
-		      DeployProfiles.Add(Profile)
-		    End If
-		    Select Case Profile.ProviderId
-		    Case Nitrado.Identifier
-		      NitradoProfiles.Add(Profile)
-		    Case Local.Identifier
-		      LocalProfiles.Add(Profile)
-		    End Select
-		  Next Idx
+		  Var DeployProfiles() As Beacon.ServerProfile = Self.DeployProfiles
+		  Var NitradoProfiles() As Palworld.ServerProfile = Self.ProfilesWithProvider(Nitrado.Identifier)
+		  Var LocalProfiles() As Palworld.ServerProfile = Self.ProfilesWithProvider(Local.Identifier)
 		  DeployItem.Enabled = DeployProfiles.Count > 0
 		  DeployItem.Tag = DeployProfiles
 		  Base.AddMenu(DeployItem)
@@ -624,8 +739,8 @@ End
 		    Var Board As New Clipboard
 		    Board.Text = ProfileID
 		  Case "Deploy These Servers…", "Deploy This Server…"
-		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
-		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)
+		    Var SelectedProfiles() As Palworld.ServerProfile = HitItem.Tag
+		    Self.StartDeploy(SelectedProfiles)
 		  Case "Open Nitrado Dashboard"
 		    Var NitradoProfiles() As Palworld.ServerProfile = HitItem.Tag
 		    For Idx As Integer = 0 To NitradoProfiles.LastIndex
@@ -648,6 +763,11 @@ End
 		Function GetProject() As Beacon.Project
 		  Return Self.Project
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ListUpdated()
+		  Self.UpdateStatus
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
@@ -787,6 +907,23 @@ End
 		      End If
 		    End If
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AltToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateButton("DeployButton", "Deploy", IconToolbarDeploy, "Deploy the selected server or servers.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "DeployButton"
+		    Self.StartDeploy(Self.DeployProfiles)
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
