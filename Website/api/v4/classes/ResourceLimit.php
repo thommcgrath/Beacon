@@ -34,6 +34,10 @@ class ResourceLimit implements JsonSerializable {
 	public function SupportsTotal(int $quantity): bool {
 		return $quantity <= $this->allowedResources;
 	}
+
+	public function IsOverLimit(): bool {
+		return $this->usedResources > $this->allowedResources;
+	}
 }
 
 ?>
