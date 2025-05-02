@@ -292,7 +292,7 @@ class DatabaseObjectManager {
 			if ($status['success'] === true) {
 				if ($status['status'] === 201) {
 					$limits = $className::GetResourceLimitsForUser($user);
-					if (is_null($limits) === false && $limits->UsedResources() + 1 > $limits->AllowedResources()) {
+					if (is_null($limits) === false && $limits->IsOverLimit()) {
 						$database->Rollback();
 						$inTransaction = false;
 						return Response::NewJsonError(code: 'tooManyResources', message: 'Cannot create more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', details: $limits, httpStatus: 400);
@@ -371,7 +371,7 @@ class DatabaseObjectManager {
 		}
 		foreach ($newObjectCounts as $className => $objectCount) {
 			$limits = $className::GetResourceLimitsForUser($user);
-			if (is_null($limits) === false && $limits->SupportsMore($objectCount) === false) {
+			if (is_null($limits) === false && $limits->IsOverLimit()) {
 				$database->Rollback();
 				return Response::NewJsonError(code: 'tooManyResources', message: 'Cannot create ' . $objectCount . ' more of this resource. ' . $limits->UsedResources() . ' used of ' . $limits->AllowedResources() . ' allowed.', details: $limits, httpStatus: 400);
 			}

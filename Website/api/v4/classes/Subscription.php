@@ -94,6 +94,10 @@ class Subscription extends DatabaseObject implements JsonSerializable {
 	public function UserId(): string {
 		return $this->userId;
 	}
+
+	public function IsOverLimit(): bool {
+		return $this->unitsUsed > $this->unitsAllowed;
+	}
 }
 
 ?>
