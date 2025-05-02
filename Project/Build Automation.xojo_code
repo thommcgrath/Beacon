@@ -44,6 +44,7 @@
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.2.UTTypeIcons -json '{""UTTypeIconText"":""Preset"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.3.UTTypeIcons -json '{""UTTypeIconText"":""Auth"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.4.UTTypeIcons -json '{""UTTypeIconText"":""Data"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.5.UTTypeIcons -json '{""UTTypeIconText"":""Script"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.0.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.2.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.3.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
@@ -142,6 +143,13 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vLi4vRm9udHMv
+					FolderItem = Li4vLi4vQXJ0d29yay9BcHAuaWNv
+					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25BdXRoLmljbw==
+					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25EYXRhLmljbw==
+					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25Eb2N1bWVudC5pY28=
+					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25JZGVudGl0eS5pY28=
+					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25QcmVzZXQuaWNv
+					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25TY3JpcHQuaWNv
 				End
 				Begin CopyFilesBuildStep CopyDebugResourcesWindows
 					AppliesTo = 1

@@ -1548,6 +1548,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
+		  If File.ExtensionMatches(Beacon.FileExtensionScript) Then
+		    System.GotoURL("https://sentinel.usebeacon.app/scripts")
+		    Return
+		  End If
+		  
 		  BeaconUI.ShowAlert("Unable to open file", "Beacon doesn't know what to do with the file " + File.Name)
 		End Sub
 	#tag EndMethod

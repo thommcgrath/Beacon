@@ -1831,6 +1831,9 @@ Protected Module Beacon
 	#tag Constant, Name = FileExtensionProject, Type = String, Dynamic = False, Default = \".beacon", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = FileExtensionScript, Type = String, Dynamic = False, Default = \".beaconscript", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = FileExtensionTemplate, Type = String, Dynamic = False, Default = \".beacontemplate", Scope = Protected
 	#tag EndConstant
 

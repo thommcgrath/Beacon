@@ -128,6 +128,11 @@ Root: HKA; Subkey: "Software\Classes\BeaconData"; ValueData: "{#MyAppName} Prese
 Root: HKA; Subkey: "Software\Classes\BeaconData\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconData.ico,0"; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconData\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
+Root: HKA; Subkey: "Software\Classes\.beaconscript"; ValueData: "BeaconScript"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconScript"; ValueData: "{#MyAppName} Preset"; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconScript\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconScript.ico,0"; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconScript\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+
 Root: HKA; Subkey: "Software\Classes\beacon"; ValueType: "string"; ValueData: "URL:Beacon"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\beacon"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
 Root: HKA; Subkey: "Software\Classes\beacon\DefaultIcon"; ValueType: "string"; ValueData: "{app}\{#MyAppExeName},0"
