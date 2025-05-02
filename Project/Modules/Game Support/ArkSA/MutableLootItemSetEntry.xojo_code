@@ -1,10 +1,21 @@
 #tag Class
 Protected Class MutableLootItemSetEntry
 Inherits ArkSA.LootItemSetEntry
-Implements ArkSA.Prunable, Beacon.BlueprintConsumer
+Implements ArkSA.Prunable,Beacon.BlueprintConsumer
 	#tag Method, Flags = &h0
 		Sub Add(Option As ArkSA.LootItemSetEntryOption)
 		  Self.mOptions.Add(Option)
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AdjustQualities(Assigns Value As Boolean)
+		  If Self.mAdjustQualities = Value Then
+		    Return
+		  End If
+		  
+		  Self.mAdjustQualities = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -56,6 +67,17 @@ Implements ArkSA.Prunable, Beacon.BlueprintConsumer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub MaxQualityOverride(Assigns Value As NullableDouble)
+		  If Self.mMaxQualityOverride = Value Then
+		    Return
+		  End If
+		  
+		  Self.mMaxQualityOverride = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub MaxQuantity(Assigns Value As Integer)
 		  Value = Max(Value, 0)
 		  If Self.mMaxQuantity = Value Then
@@ -93,6 +115,17 @@ Implements ArkSA.Prunable, Beacon.BlueprintConsumer
 		  End If
 		  
 		  Self.mMinQuality = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MinQualityOverride(Assigns Value As NullableDouble)
+		  If Self.mMinQualityOverride = Value Then
+		    Return
+		  End If
+		  
+		  Self.mMinQualityOverride = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -192,6 +225,17 @@ Implements ArkSA.Prunable, Beacon.BlueprintConsumer
 		  End If
 		  
 		  Self.mStatClampMultiplier = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UseCustomQualities(Assigns Value As Boolean)
+		  If Self.mUseCustomQualities = Value Then
+		    Return
+		  End If
+		  
+		  Self.mUseCustomQualities = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

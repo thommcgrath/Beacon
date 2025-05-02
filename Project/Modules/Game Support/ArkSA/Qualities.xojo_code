@@ -48,14 +48,7 @@ Protected Module Qualities
 
 	#tag Method, Flags = &h1
 		Protected Function ForValue(Value As Double, CrateQualityMultiplier As Double, BaseArbitraryQuality As Double) As ArkSA.Quality
-		  Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Var Multiplier As Double = CrateArbitraryQuality * BaseArbitraryQuality
-		  Var Quality As Double = Value * Multiplier
-		  
-		  // Thanks to math, we can get the quality as 15.99999 instead of 16. So rounding it is.
-		  Quality = Round(Quality * 10000) / 10000
-		  
-		  Return ForBaseValue(Quality)
+		  Return ForBaseValue(ArkSA.Quality.BaseValueForConfig(Value, CrateQualityMultiplier, BaseArbitraryQuality))
 		End Function
 	#tag EndMethod
 
