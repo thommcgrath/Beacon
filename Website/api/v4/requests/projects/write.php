@@ -56,8 +56,10 @@ function handleRequest(array $context): Response {
 		if (isset($_SERVER['HTTP_X_BEACON_DEVICE_ID'])) {
 			$eventBody['deviceId'] = $_SERVER['HTTP_X_BEACON_DEVICE_ID'];
 		}
-
-		BeaconPusher::SharedInstance()->TriggerEvent($project->PusherChannelName(), 'project-saved', $eventBody, $pusherSocketId);
+		BeaconPusher::SharedInstance()->SendEvents([
+			new BeaconChannelEvent(channelName: BeaconPusher::ProjectChannelName($project->ProjectId()), eventName: 'project-saved', body: $eventBody, socketId: $pusherSocketId),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateProjectChannelName($project->ProjectId()), eventName: 'projectSaved', body: $eventBody, socketId: $pusherSocketId),
+		]);
 	} catch (Exception $err) {
 		$database->Rollback();
 		return Response::NewJsonError($err->getMessage(), null, $err->getCode());

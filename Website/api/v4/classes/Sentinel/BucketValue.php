@@ -122,7 +122,7 @@ class BucketValue extends DatabaseObject implements JsonSerializable {
 
 	protected function HookModified(int $operation): void {
 		$this->MDOHookModified($operation);
-		BeaconPusher::SharedInstance()->TriggerEvent('sentinel.buckets.' . str_replace('-', '', $this->bucketId), 'value-updated', '', BeaconPusher::SocketIdFromHeaders());
+		BeaconPusher::SharedInstance()->TriggerEvent(BeaconPusher::SentinelChannelName('buckets', $this->bucketId), 'valueUpdated', '', BeaconPusher::SocketIdFromHeaders());
 	}
 }
 

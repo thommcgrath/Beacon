@@ -272,7 +272,11 @@ case 'customer.subscription.updated':
 	if ($rows->RecordCount() > 0) {
 		$user = User::Fetch($rows->Field('user_id'));
 		if (is_null($user) === false) {
-			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+			$events = [
+				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($user->UserId()), eventName: 'user-updated', body: ''),
+				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelname($user->UserId()), eventName: 'userUpdated', body: ''),
+			];
+			BeaconPusher::SharedInstance()->SendEvents($events);
 		}
 	}
 
@@ -303,7 +307,11 @@ case 'customer.subscription.deleted':
 	if ($rows->RecordCount() > 0) {
 		$user = User::Fetch($rows->Field('user_id'));
 		if (is_null($user) === false) {
-			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+			$events = [
+				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($user->UserId()), eventName: 'user-updated', body: ''),
+				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelname($user->UserId()), eventName: 'userUpdated', body: ''),
+			];
+			BeaconPusher::SharedInstance()->SendEvents($events);
 		}
 	}
 

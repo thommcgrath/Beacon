@@ -87,7 +87,11 @@ function RedeemCode(string $code, bool $confirmed): void {
 		}
 		$database->Commit();
 
-		BeaconPusher::SharedInstance()->TriggerEvent($project->PusherChannelName(), 'members-updated', $member);
+		$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
+		BeaconPusher::SharedInstance()->SendEvents([
+			new BeaconChannelEvent(channelName: BeaconPusher::ProjectChannelName($project->ProjectId()), eventName: 'members-updated', body: $member, socketId: $pusherSocketId),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateProjectChannelName($project->ProjectId()), eventName: 'membersUpdated', body: $member, socketId: $pusherSocketId),
+		]);
 
 		echo '<p class="text-center"><span class="text-blue">Project invite accepted!</span><br>You are now a member of the project.</p>';
 	} else {

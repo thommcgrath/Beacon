@@ -48,7 +48,10 @@ function handleRequest(array $context): ?Response {
 			}
 
 			$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
-			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', $eventBody, $pusherSocketId);
+			BeaconPusher::SharedInstance()->SendEvents([
+				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($user->UserId()), eventName: 'cloud-updated', body: $eventBody, socketId: $pusherSocketId),
+				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($user->UserId()), eventName: 'cloudUpdated', body: $eventBody, socketId: $pusherSocketId),
+			]);
 
 			return Response::NewJson($details, 200);
 		} else {
@@ -63,7 +66,10 @@ function handleRequest(array $context): ?Response {
 		}
 
 		$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
-		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', $eventBody, $pusherSocketId);
+		BeaconPusher::SharedInstance()->SendEvents([
+			new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($user->UserId()), eventName: 'cloud-updated', body: $eventBody, socketId: $pusherSocketId),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($user->UserId()), eventName: 'cloudUpdated', body: $eventBody, socketId: $pusherSocketId),
+		]);
 
 		return Response::NewNoContent();
 	}

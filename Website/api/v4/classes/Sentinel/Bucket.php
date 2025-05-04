@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconPusher, BeaconRecordSet, JsonSerializable;
+use BeaconChannelEvent, BeaconCommon, BeaconPusher, BeaconRecordSet, JsonSerializable;
 
 class Bucket extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -105,15 +105,15 @@ class Bucket extends DatabaseObject implements JsonSerializable {
 	protected function HookModified(int $operation): void {
 		$this->MDOHookModified($operation);
 
-		$pusher = BeaconPusher::SharedInstance();
 		$socketId = BeaconPusher::SocketIdFromHeaders();
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT user_id FROM sentinel.bucket_permissions WHERE bucket_id = $1;', $this->bucketId);
+		$events = [];
 		while (!$rows->EOF()) {
-			$channel = 'user-' . str_replace('-', '', $rows->Field('user_id'));
-			$pusher->TriggerEvent($channel, 'buckets-changed', $this->bucketId, $socketId);
+			$events[] = new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($rows->Field('user_id')), eventName: 'bucketsUpdated', body: $this->bucketId, socketId: $socketId);
 			$rows->MoveNext();
 		}
+		BeaconPusher::SharedInstance()->SendEvents($events);
 	}
 
 	public static function GetSentinelPermissions(string $objectId, string $userId): int {

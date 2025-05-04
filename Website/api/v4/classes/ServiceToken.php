@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconEncryption, BeaconPusher, BeaconRabbitMQ, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
+use BeaconChannelEvent, BeaconCommon, BeaconEncryption, BeaconPusher, BeaconRabbitMQ, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
 
 class ServiceToken implements JsonSerializable {
 	final const ProviderNitrado = 'Nitrado';
@@ -138,7 +138,10 @@ class ServiceToken implements JsonSerializable {
 			$database->Query("INSERT INTO public.service_tokens (token_id, user_id, provider, type, access_token, refresh_token, access_token_expiration, refresh_token_expiration, provider_specific, encryption_key) VALUES ($1, $2, $3, $4, $5, $6, TO_TIMESTAMP($7), TO_TIMESTAMP($8), $9, $10);", $tokenId, $userId, $provider, 'OAuth', $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific), $encryptedEncryptionKey);
 		}
 		$database->Commit();
-		BeaconPusher::SharedInstance()->TriggerEvent(User::PusherChannelNameForUserId($userId), 'service-tokens-updated', null);
+		BeaconPusher::SharedInstance()->SendEvents([
+			new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($userId), eventName: 'service-tokens-updated', body: null),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($userId), eventName: 'serviceTokensUpdated', body: null),
+		]);
 
 		return static::Fetch($tokenId);
 	}
@@ -168,7 +171,10 @@ class ServiceToken implements JsonSerializable {
 			$database->Query("INSERT INTO public.service_tokens (token_id, user_id, provider, type, access_token, provider_specific, encryption_key) VALUES ($1, $2, $3, $4, $5, $6, $7);", $tokenId, $userId, $provider, 'Static', $accessTokenEncrypted, json_encode($providerSpecific), $encryptedEncryptionKey);
 		}
 		$database->Commit();
-		BeaconPusher::SharedInstance()->TriggerEvent(User::PusherChannelNameForUserId($userId), 'service-tokens-updated', null);
+		BeaconPusher::SharedInstance()->SendEvents([
+			new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($userId), eventName: 'service-tokens-updated', body: null),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($userId), eventName: 'serviceTokensUpdated', body: null),
+		]);
 
 		return static::Fetch($tokenId);
 	}
@@ -340,8 +346,13 @@ class ServiceToken implements JsonSerializable {
 			$database->Query('UPDATE public.service_token_aliases SET new_service_token_id = $2 WHERE old_service_token_id = $1;', $this->tokenId, $newTokenId);
 		}
 		$database->Commit();
-		BeaconPusher::SharedInstance()->TriggerEvent(User::PusherChannelNameForUserId($this->userId), 'service-tokens-updated', null);
-		BeaconPusher::SharedInstance()->TriggerEvent(User::PusherChannelNameForUserId($userId), 'service-tokens-updated', null);
+
+		BeaconPusher::SharedInstance()->SendEvents([
+			new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($this->userId), eventName: 'service-tokens-updated', body: null),
+			new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($userId), eventName: 'service-tokens-updated', body: null),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($this->userId), eventName: 'serviceTokensUpdated', body: null),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($user), eventName: 'serviceTokensUpdated', body: null),
+		]);
 
 		$this->tokenId = $newTokenId;
 		$this->userId = $userId;
@@ -417,7 +428,10 @@ class ServiceToken implements JsonSerializable {
 		$database->BeginTransaction();
 		$database->Query('UPDATE public.service_tokens SET needs_replacing = TRUE WHERE token_id = $1;', $this->tokenId);
 		$database->Commit();
-		BeaconPusher::SharedInstance()->TriggerEvent(User::PusherChannelNameForUserId($this->userId), 'service-tokens-updated', null);
+		BeaconPusher::SharedInstance()->SendEvents([
+			new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($this->userId), eventName: 'service-tokens-updated', body: null),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($this->userId), eventName: 'serviceTokensUpdated', body: null),
+		]);
 
 		$this->needsReplacing = true;
 	}
@@ -523,7 +537,10 @@ class ServiceToken implements JsonSerializable {
 			$database->BeginTransaction();
 			$database->Query('DELETE FROM public.service_tokens WHERE token_id = $1;', $this->tokenId);
 			$database->Commit();
-			BeaconPusher::SharedInstance()->TriggerEvent(User::PusherChannelNameForUserId($this->userId), 'service-tokens-updated', null);
+			BeaconPusher::SharedInstance()->SendEvents([
+				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($this->userId), eventName: 'service-tokens-updated', body: null),
+				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($this->userId), eventName: 'serviceTokensUpdated', body: null),
+			]);
 
 			return true;
 		}

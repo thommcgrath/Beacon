@@ -34,6 +34,7 @@ case 'publish_document':
 	$database->Commit();
 
 	echo json_encode(array('text' => 'Request to publish document `' . $title . '` has been ' . $new_status . '.'));
+	BeaconPusher::SharedInstance()->TriggerEvent(channelName: BeaconPusher::PrivateProjectChannelName($document_id), eventName: 'publishStatusUpdated', eventBody: $new_status);
 
 	break;
 case 'sentinel_script':

@@ -26,6 +26,7 @@ function handleRequest(array $context): Response {
 	$permissions = [
 		'admin' => PermissionBits::ControlServices,
 		'chat' => PermissionBits::Membership,
+		'broadcast' => PermissionBits::Membership,
 		'locate' => PermissionBits::ControlServices,
 		'renamePlayer' => PermissionBits::ControlServices,
 		'giveItem' => PermissionBits::ControlServices,
@@ -121,7 +122,7 @@ function handleRequest(array $context): Response {
 				],
 				'userId' => $userId,
 			];
-			$event = new BeaconChannelEvent(channelName: 'sentinel.services.' . str_replace('-', '', $serviceId), eventName: 'chatMessage', body: $eventBody, socketId: $socketId);
+			$event = new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName('services', $serviceId), eventName: 'chatMessage', body: $eventBody, socketId: $socketId);
 			$eventSignature = $event->Signature();
 			if (array_key_exists($eventSignature, $events) === false) {
 				$events[$eventSignature] = $event;
@@ -131,7 +132,7 @@ function handleRequest(array $context): Response {
 			while (!$rows->EOF()) {
 				$groupId = $rows->Field('group_id');
 
-				$event = new BeaconChannelEvent(channelName: 'sentinel.groups.' . str_replace('-', '', $groupId), eventName: 'chatMessage', body: $eventBody, socketId: $socketId);
+				$event = new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName('groups', $groupId), eventName: 'chatMessage', body: $eventBody, socketId: $socketId);
 				$eventSignature = $event->Signature();
 				if (array_key_exists($eventSignature, $events) === false) {
 					$events[$eventSignature] = $event;

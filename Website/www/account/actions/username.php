@@ -28,11 +28,14 @@ $old_username = $user->Username();
 
 try {
 	$user->Edit(['username' => $_POST['username']]);
-	
+
 	http_response_code(200);
 	echo json_encode(array('username' => $user->Username(), 'old_username' => $old_username, 'message' => ''), JSON_PRETTY_PRINT);
-	
-	BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+
+	BeaconPusher::SharedInstance()->SendEvents([
+		new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($user->UserId()), eventName: 'user-updated', body: ''),
+		new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($user->UserId()), eventName: 'userUpdated', body: ''),
+	]);
 } catch (Exception $err) {
 	http_response_code(ERR_USERNAME_TAKEN);
 	echo json_encode(array('username' => $user->Username(), 'old_username' => $old_username, 'message' => $err->getMessage()), JSON_PRETTY_PRINT);

@@ -1,11 +1,12 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCommon, BeaconEncryption, BeaconPusher, BeaconRecordSet, Exception, JsonSerializable;
 
 class ProjectInvite extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
 		InitializeProperties as protected MutableDatabaseObjectInitializeProperties;
+		HookModified as protected MDOHookModified;
 	}
 
 	protected string $inviteCode;
@@ -63,8 +64,8 @@ class ProjectInvite extends DatabaseObject implements JsonSerializable {
 		static::MutableDatabaseObjectInitializeProperties($properties);
 		$properties['inviteCode'] = BeaconCommon::GenerateRandomKey(8, '23456789ABCDEFGHJKMNPRSTUVWXYZ');
 		$properties['creatorId'] = $properties['userId'];
-		$properties['creationDate'] = time();
-		$properties['expirationDate'] = time() + 86400;
+		$properties['creationDate'] = microtime(true);
+		$properties['expirationDate'] = $properties['creationDate'] + 604800;
 
 		if (isset($properties['projectPassword'])) {
 			$properties['projectPassword'] = base64_encode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), base64_decode($properties['projectPassword'])));
@@ -149,6 +150,12 @@ class ProjectInvite extends DatabaseObject implements JsonSerializable {
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM public.project_invites WHERE expiration_date < CURRENT_TIMESTAMP;');
 		$database->Commit();
+	}
+
+	protected function HookModified(int $operation): void {
+		$this->MDOHookModified($operation);
+
+		BeaconPusher::SharedInstance()->TriggerEvent(channelName: BeaconPusher::PrivateProjectChannelName($this->projectId), eventName: 'invitesUpdated', eventBody: $this, senderSocketId: BeaconPusher::SocketIdFromHeaders());
 	}
 }
 

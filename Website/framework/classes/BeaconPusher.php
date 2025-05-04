@@ -88,6 +88,18 @@ class BeaconPusher {
 	public static function ProjectChannelName(string $projectId): string {
 		return 'project-' . str_replace('-', '', $projectId);
 	}
+
+	public static function PrivateUserChannelName(string $userId): string {
+		return 'private-users.' . strtolower($userId);
+	}
+
+	public static function PrivateProjectChannelName(string $projectId): string {
+		return 'private-projects.' . strtolower($projectId);
+	}
+
+	public static function SentinelChannelName(string $prefix, string $id): string {
+		return 'private-sentinel.' . $prefix . '.' . $id;
+	}
 }
 
 ?>

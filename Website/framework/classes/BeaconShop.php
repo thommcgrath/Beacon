@@ -125,7 +125,10 @@ abstract class BeaconShop {
 		// Notify the user
 		$user = BeaconAPI\v4\User::Fetch($emailId);
 		if (is_null($user) === false) {
-			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+			BeaconPusher::SharedInstance()->SendEvents([
+				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($user->UserId()), eventName: 'user-updated', body: ''),
+				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($user->UserId()), eventName: 'userUpdated', body: ''),
+			]);
 		}
 	}
 
@@ -171,7 +174,10 @@ abstract class BeaconShop {
 		// Notify the user
 		$user = BeaconAPI\v4\User::Fetch($emailId);
 		if (is_null($user) === false) {
-			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+			BeaconPusher::SharedInstance()->SendEvents([
+				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($user->UserId()), eventName: 'user-updated', body: ''),
+				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($user->UserId()), eventName: 'userUpdated', body: ''),
+			]);
 		}
 
 		return true;

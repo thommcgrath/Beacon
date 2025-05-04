@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, Subscription, User};
-use BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconChannelEvent, BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -193,7 +193,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('platform'),
-				new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
+				new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('gameClock', ['columnName' => 'game_clock', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('currentPlayers', ['columnName' => 'current_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('maxPlayers', ['columnName' => 'max_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
@@ -317,7 +317,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'displayName' => $this->displayName,
 			'color' => $this->color,
 			'platform' => $this->platform,
-			'gameSpecific' => $this->gameSpecific,
+			'gameSpecific' => (object) $this->gameSpecific,
 			'gameClock' => $this->gameClock,
 			'currentPlayers' => $this->currentPlayers,
 			'maxPlayers' => $this->maxPlayers,
@@ -410,10 +410,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->SetProperty('gameSpecific', $gameSpecific);
 	}
 
-	public function PusherChannelName(): string {
-		return 'service-' . strtolower(str_replace('-', '', $this->serviceId));
-	}
-
 	public function IsConnected(): bool {
 		return $this->isConnected;
 	}
@@ -467,15 +463,19 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected function HookModified(int $operation): void {
 		$this->MDOHookModified($operation);
 
-		$pusher = BeaconPusher::SharedInstance();
 		$socketId = BeaconPusher::SocketIdFromHeaders();
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT user_id FROM sentinel.service_permissions WHERE service_id = $1;', $this->serviceId);
+		$events = [];
 		while (!$rows->EOF()) {
-			$channel = 'user-' . str_replace('-', '', $rows->Field('user_id'));
-			$pusher->TriggerEvent($channel, 'servers-changed', $this->serviceId, $socketId);
+			$events[] = new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($rows->Field('user_id')), eventName: 'serversUpdated', body: $this->serviceId, socketId: $socketId);
 			$rows->MoveNext();
 		}
+		BeaconPusher::SharedInstance()->SendEvents($events);
+
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $this->serviceId . '.gameCommand', json_encode(array_merge($this->gameSpecific, [
+			'type' => 'configUpdated',
+		])));
 	}
 
 	public static function GetSentinelPermissions(string $objectId, string $userId): int {

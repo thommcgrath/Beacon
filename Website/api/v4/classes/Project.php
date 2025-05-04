@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCloudStorage, BeaconCommon, BeaconRecordSet, BeaconSearch, BeaconUUID, DateTime, Exception, JsonSerializable, PharData;
+use BeaconCloudStorage, BeaconCommon, BeaconPusher, BeaconRecordSet, BeaconSearch, BeaconUUID, DateTime, Exception, JsonSerializable, PharData;
 
 abstract class Project extends DatabaseObject implements JsonSerializable {
 	public const kPublishStatusPrivate = 'Private';
@@ -250,14 +250,6 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		return $this->projectId;
 	}
 
-	public function PusherChannelName(): string {
-		return static::PusherChannelNameForProjectId($this->projectId);
-	}
-
-	public static function PusherChannelNameForProjectId(string $projectId): string {
-		return 'project-' . strtolower(str_replace('-', '', $projectId));
-	}
-
 	public function GameId(): string {
 		return $this->gameId;
 	}
@@ -415,6 +407,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$database->BeginTransaction();
 			$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET published = $2 WHERE project_id = $1;', $this->projectId, $new_status);
 			$database->Commit();
+			BeaconPusher::SharedInstance()->TriggerEvent(channelName: BeaconPusher::PrivateProjectChannelName($this->projectId), eventName: 'publishStatusUpdated', eventBody: $new_status, senderSocketId: BeaconPusher::SocketIdFromHeaders());
 		}
 		$this->communityStatus = $new_status;
 	}

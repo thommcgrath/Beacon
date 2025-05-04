@@ -103,7 +103,10 @@ Core::RegisterRoutes(
 			'GET' => 'projects/get',
 		],
 		'/pusher' => [
-			'GET' => 'pusher',
+			'GET' => 'pusher/details',
+		],
+		'/pusher/channelAuth' => [
+			'POST' => 'pusher/channelAuth',
 		],
 		'/sessions/{sessionId}' => [
 			'GET' => 'sessions/get',
