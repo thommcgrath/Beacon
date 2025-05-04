@@ -146,8 +146,6 @@ Inherits Global.Thread
 		  
 		  Curl.OptionTimeOut = 2
 		  
-		  RaiseEvent Connected()
-		  
 		  Var LastExchangeTime As Double
 		  Var SentPing As Boolean
 		  Var ActivityTimeout As Integer = 120
@@ -250,6 +248,7 @@ Inherits Global.Thread
 		        #if DebugBuild
 		          System.DebugLog("Connected, socket is " + Self.mSocketId)
 		        #endif
+		        RaiseEvent Connected()
 		      Case "pusher:error"
 		        Var ErrorCode As Integer = Data.Value("code")
 		        Var ErrorMessage As String = Data.Value("message")

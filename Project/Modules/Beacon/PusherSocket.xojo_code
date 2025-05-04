@@ -1,5 +1,29 @@
 #tag Class
 Protected Class PusherSocket
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ChannelAuth(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  Var Message As JSONItem = Request.Tag
+		  
+		  If Not Response.Success Then
+		    App.Log("Authorization failed for pusher channel " + Message.Child("data").Value("channel"))
+		    App.Log("Server returned " + Response.HTTPStatus.ToString(Locale.Raw, "0") + ": " + EncodeBase64(Response.Content))
+		    Return
+		  End If
+		  
+		  Try
+		    Var AuthData As New JSONItem(Response.Content)
+		    Var Auth As String = AuthData.Value("auth")
+		    Message.Child("data").Value("auth") = Auth
+		    
+		    Self.mLock.Enter
+		    Self.mPendingMessages.Add(Message)
+		    Self.mLock.Leave
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Got successful auth, but failed to schedule message")
+		  End Try
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mLock = New CriticalSection
@@ -80,7 +104,18 @@ Protected Class PusherSocket
 		    Message.Value("event") = "pusher:subscribe"
 		    Message.Value("data") = MessageData
 		    
-		    Self.mPendingMessages.Add(Message)
+		    If Channel.BeginsWith("private-") Then
+		      // Need to request auth from the API
+		      Var FormData As New Dictionary
+		      FormData.Value("socket_id") = Self.SocketId()
+		      FormData.Value("channel_name") = Channel
+		      
+		      Var Request As New BeaconAPI.Request("/pusher/channelAuth", "POST", FormData, WeakAddressOf APICallback_ChannelAuth)
+		      Request.Tag = Message
+		      BeaconAPI.Send(Request)
+		    Else
+		      Self.mPendingMessages.Add(Message)
+		    End If
 		  Next
 		  Self.mLock.Leave
 		End Sub
@@ -218,7 +253,7 @@ Protected Class PusherSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Subscribe(Channel As String)
+		Sub Subscribe(Channel As String, Auth As String = "")
 		  Self.mLock.Enter
 		  If Self.IsSubscribed(Channel) Then
 		    Self.mLock.Leave
@@ -230,12 +265,26 @@ Protected Class PusherSocket
 		  If (Self.mActiveThread Is Nil) = False And Self.mActiveThread.IsConnected Then
 		    Var MessageData As New JSONItem
 		    MessageData.Value("channel") = Channel
+		    If Auth.IsEmpty = False Then
+		      MessageData.Value("auth") = Auth
+		    End If
 		    
 		    Var Message As New JSONItem
 		    Message.Value("event") = "pusher:subscribe"
 		    Message.Value("data") = MessageData
 		    
-		    Self.mPendingMessages.Add(Message)
+		    If Channel.BeginsWith("private-") And Auth.IsEmpty Then
+		      // Need to request auth from the API
+		      Var FormData As New Dictionary
+		      FormData.Value("socket_id") = Self.SocketId()
+		      FormData.Value("channel_name") = Channel
+		      
+		      Var Request As New BeaconAPI.Request("/pusher/channelAuth", "POST", FormData, WeakAddressOf APICallback_ChannelAuth)
+		      Request.Tag = Message
+		      BeaconAPI.Send(Request)
+		    Else
+		      Self.mPendingMessages.Add(Message)
+		    End If
 		  End If
 		  Self.mLock.Leave
 		End Sub
@@ -265,7 +314,7 @@ Protected Class PusherSocket
 
 	#tag Method, Flags = &h0
 		Shared Function UserChannelName(UserId As String) As String
-		  Return "user-" + UserId.ReplaceAll("-", "").Lowercase
+		  Return "private-users." + UserId.Lowercase
 		End Function
 	#tag EndMethod
 

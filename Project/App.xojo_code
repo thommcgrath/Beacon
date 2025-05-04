@@ -1542,8 +1542,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		        Self.mPusher.Start(True)
 		        Self.SubscribeToPusherPublic()
 		        Var UserChannelName As String = Beacon.PusherSocket.UserChannelName(UserId)
-		        Self.mPusher.Listen(UserChannelName, "user-updated", AddressOf Pusher_UserUpdated)
-		        Self.mPusher.Listen(UserChannelName, "cloud-updated", AddressOf Pusher_CloudUpdated)
+		        Self.mPusher.Listen(UserChannelName, "userUpdated", AddressOf Pusher_UserUpdated)
+		        Self.mPusher.Listen(UserChannelName, "cloudUpdated", AddressOf Pusher_CloudUpdated)
 		      End If
 		    End If
 		    

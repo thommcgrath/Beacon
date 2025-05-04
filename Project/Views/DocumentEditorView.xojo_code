@@ -452,7 +452,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		Private Function ProjectChannel() As String
 		  Var Project As Beacon.Project = Self.Project
 		  If (Project Is Nil) = False Then
-		    Return "project-" + Project.ProjectId.ReplaceAll("-", "").Lowercase
+		    Return "private-projects." + Project.ProjectId.Lowercase
 		  End If
 		End Function
 	#tag EndMethod
@@ -595,8 +595,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Var ProjectChannel As String = Self.ProjectChannel
 		    If ProjectChannel.IsEmpty = False Then
 		      App.Pusher.Subscribe(ProjectChannel)
-		      App.Pusher.Listen(ProjectChannel, "project-saved", WeakAddressOf Pusher_ProjectSaved)
-		      App.Pusher.Listen(ProjectChannel, "members-updated", WeakAddressOf Pusher_MembersUpdated)
+		      App.Pusher.Listen(ProjectChannel, "projectSaved", WeakAddressOf Pusher_ProjectSaved)
+		      App.Pusher.Listen(ProjectChannel, "membersUpdated", WeakAddressOf Pusher_MembersUpdated)
 		      Self.mSubscribedToProjectChannel = True
 		    End If
 		  End Select
