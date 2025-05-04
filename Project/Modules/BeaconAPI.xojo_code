@@ -90,6 +90,15 @@ Protected Module BeaconAPI
 		  If mSharedSocket Is Nil Then
 		    mSharedSocket = New BeaconAPI.Socket
 		  End If
+		  
+		  Var Pusher As Beacon.PusherSocket = App.Pusher
+		  If (Pusher Is Nil) = False And Pusher.State = Beacon.PusherSocket.States.Connected And Request.HasRequestHeader("X-Beacon-Pusher-Id") = False Then
+		    Var SocketId As String = Pusher.SocketId
+		    If SocketId.IsEmpty = False Then
+		      Request.RequestHeader("X-Beacon-Pusher-Id") = SocketId
+		    End If
+		  End If
+		  
 		  mSharedSocket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -151,6 +160,14 @@ Protected Module BeaconAPI
 		      End If
 		      
 		      mTokenLock.Leave
+		    End If
+		  End If
+		  
+		  Var Pusher As Beacon.PusherSocket = App.Pusher
+		  If (Pusher Is Nil) = False And Pusher.State = Beacon.PusherSocket.States.Connected And Request.HasRequestHeader("X-Beacon-Pusher-Id") = False Then
+		    Var SocketId As String = Pusher.SocketId
+		    If SocketId.IsEmpty = False Then
+		      Request.RequestHeader("X-Beacon-Pusher-Id") = SocketId
 		    End If
 		  End If
 		  

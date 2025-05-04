@@ -1541,9 +1541,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      If UserId.IsEmpty = False Then
 		        Self.mPusher.Start(True)
 		        Self.SubscribeToPusherPublic()
-		        Var UserChannelName As String = Beacon.PusherSocket.UserChannelName(UserId)
-		        Self.mPusher.Listen(UserChannelName, "userUpdated", AddressOf Pusher_UserUpdated)
-		        Self.mPusher.Listen(UserChannelName, "cloudUpdated", AddressOf Pusher_CloudUpdated)
+		        Self.mPusher.Subscribe(Beacon.PusherSocket.UserChannelName(UserId))
+		        Self.mPusher.Bind("userUpdated", AddressOf Pusher_UserUpdated)
+		        Self.mPusher.Bind("cloudUpdated", AddressOf Pusher_CloudUpdated)
 		      End If
 		    End If
 		    
@@ -1823,7 +1823,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub SubscribeToPusherPublic()
 		  Self.mPusher.Subscribe("beacon-public")
-		  Self.mPusher.Listen("beacon-public", "update-blueprints", AddressOf Pusher_UpdateBlueprints)
+		  Self.mPusher.Bind("update-blueprints", AddressOf Pusher_UpdateBlueprints)
 		End Sub
 	#tag EndMethod
 

@@ -25,6 +25,25 @@ Protected Class PusherSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Bind(EventName As String, Callback As Beacon.PusherSocket.EventHandler)
+		  Self.mLock.Enter
+		  If Self.mCallbacks Is Nil Then
+		    Self.mLock.Leave
+		    Return
+		  End If
+		  
+		  Var CallbackKey As String = EventName.Lowercase
+		  Var Callbacks() As EventHandler
+		  If Self.mCallbacks.HasKey(CallbackKey) Then
+		    Callbacks = Self.mCallbacks.Value(CallbackKey)
+		  End If
+		  Callbacks.Add(Callback)
+		  Self.mCallbacks.Value(CallbackKey) = Callbacks
+		  Self.mLock.Leave
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mLock = New CriticalSection
 		End Sub
@@ -35,33 +54,6 @@ Protected Class PusherSocket
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
-		Sub Ignore(ChannelName As String, EventName As String, Callback As Beacon.PusherSocket.EventHandler)
-		  Self.mLock.Enter
-		  If Self.mCallbacks Is Nil Then
-		    Self.mLock.Leave
-		    Return
-		  End If
-		  
-		  Var CallbackKey As String = ChannelName.Lowercase + "+" + EventName.Lowercase
-		  
-		  If Self.mCallbacks.HasKey(CallbackKey) = False Then
-		    Self.mLock.Leave
-		    Return
-		  End If
-		  
-		  Var Callbacks() As EventHandler = Self.mCallbacks.Value(CallbackKey)
-		  For Idx As Integer = Callbacks.LastIndex DownTo 0
-		    If Callbacks(Idx) = Callback Then
-		      Callbacks.RemoveAt(Idx)
-		    End If
-		  Next
-		  
-		  Self.mCallbacks.Value(CallbackKey) = Callbacks
-		  Self.mLock.Leave
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IsSubscribed(Channel As String) As Boolean
 		  Var Subscribed As Boolean
 		  Self.mLock.Enter
@@ -69,25 +61,6 @@ Protected Class PusherSocket
 		  Self.mLock.Leave
 		  Return Subscribed
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Listen(ChannelName As String, EventName As String, Callback As Beacon.PusherSocket.EventHandler)
-		  Self.mLock.Enter
-		  If Self.mCallbacks Is Nil Then
-		    Self.mLock.Leave
-		    Return
-		  End If
-		  
-		  Var CallbackKey As String = ChannelName.Lowercase + "+" + EventName.Lowercase
-		  Var Callbacks() As EventHandler
-		  If Self.mCallbacks.HasKey(CallbackKey) Then
-		    Callbacks = Self.mCallbacks.Value(CallbackKey)
-		  End If
-		  Callbacks.Add(Callback)
-		  Self.mCallbacks.Value(CallbackKey) = Callbacks
-		  Self.mLock.Leave
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -125,7 +98,7 @@ Protected Class PusherSocket
 		Private Sub mActiveThread_EventReceived(Sender As Beacon.PusherThread, ChannelName As String, EventName As String, Payload As String)
 		  #Pragma Unused Sender
 		  
-		  Var CallbackKey As String = ChannelName.Lowercase + "+" + EventName.Lowercase
+		  Var CallbackKey As String = EventName.Lowercase
 		  Self.mLock.Enter
 		  If Self.mCallbacks.HasKey(CallbackKey) = False Then
 		    Self.mLock.Leave
@@ -286,6 +259,51 @@ Protected Class PusherSocket
 		      Self.mPendingMessages.Add(Message)
 		    End If
 		  End If
+		  Self.mLock.Leave
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Unbind(EventName As String)
+		  Self.mLock.Enter
+		  If Self.mCallbacks Is Nil Then
+		    Self.mLock.Leave
+		    Return
+		  End If
+		  
+		  Var CallbackKey As String = EventName.Lowercase
+		  If Self.mCallbacks.HasKey(CallbackKey) = False Then
+		    Self.mLock.Leave
+		    Return
+		  End If
+		  
+		  Self.mCallbacks.Remove(CallbackKey)
+		  Self.mLock.Leave
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Unbind(EventName As String, Callback As Beacon.PusherSocket.EventHandler)
+		  Self.mLock.Enter
+		  If Self.mCallbacks Is Nil Then
+		    Self.mLock.Leave
+		    Return
+		  End If
+		  
+		  Var CallbackKey As String = EventName.Lowercase
+		  If Self.mCallbacks.HasKey(CallbackKey) = False Then
+		    Self.mLock.Leave
+		    Return
+		  End If
+		  
+		  Var Callbacks() As EventHandler = Self.mCallbacks.Value(CallbackKey)
+		  For Idx As Integer = Callbacks.LastIndex DownTo 0
+		    If Callbacks(Idx) = Callback Then
+		      Callbacks.RemoveAt(Idx)
+		    End If
+		  Next
+		  
+		  Self.mCallbacks.Value(CallbackKey) = Callbacks
 		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod

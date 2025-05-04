@@ -595,8 +595,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Var ProjectChannel As String = Self.ProjectChannel
 		    If ProjectChannel.IsEmpty = False Then
 		      App.Pusher.Subscribe(ProjectChannel)
-		      App.Pusher.Listen(ProjectChannel, "projectSaved", WeakAddressOf Pusher_ProjectSaved)
-		      App.Pusher.Listen(ProjectChannel, "membersUpdated", WeakAddressOf Pusher_MembersUpdated)
+		      App.Pusher.Bind("projectSaved", WeakAddressOf Pusher_ProjectSaved)
+		      App.Pusher.Bind("membersUpdated", WeakAddressOf Pusher_MembersUpdated)
 		      Self.mSubscribedToProjectChannel = True
 		    End If
 		  End Select
@@ -616,8 +616,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  End If
 		  
 		  App.Pusher.Unsubscribe(Self.ProjectChannel)
-		  App.Pusher.Ignore(ProjectChannel, "project-saved", WeakAddressOf Pusher_ProjectSaved)
-		  App.Pusher.Ignore(ProjectChannel, "members-updated", WeakAddressOf Pusher_MembersUpdated)
+		  App.Pusher.Unbind("project-saved", WeakAddressOf Pusher_ProjectSaved)
+		  App.Pusher.Unbind("members-updated", WeakAddressOf Pusher_MembersUpdated)
 		  Self.mSubscribedToProjectChannel = False
 		End Sub
 	#tag EndMethod

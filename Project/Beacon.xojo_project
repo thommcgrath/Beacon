@@ -969,6 +969,7 @@ Class=DocumentMergeFlagItem;Modules/Beacon/DocumentMergeFlagItem.xojo_code;&h000
 Class=ColorPair;Modules/BeaconUI/ColorPair.xojo_code;&h000000006D6C87FF;&h0000000012A7B7FF;false
 MultiImage=IconToolbarSentinel;Icons/IconToolbarSentinel.xojo_image;&h0000000003AEBFFF;&h0000000007F977FF;false
 Class=Subscription;Modules/Beacon/Subscription.xojo_code;&h000000003131E7FF;&h0000000055ADDFFF;false
+Class=ProjectInvite;Modules/Beacon/ProjectInvite.xojo_code;&h0000000076BDDFFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=3

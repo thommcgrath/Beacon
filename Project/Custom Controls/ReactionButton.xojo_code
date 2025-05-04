@@ -9,6 +9,7 @@ Inherits UITweaks.ResizedPushButton
 		    Return
 		  End If
 		  Self.Enabled = False
+		  Self.mIsReacted = True
 		  Self.mCallbackKey = CallLater.Schedule(2000, WeakAddressOf RestoreCallback)
 		End Sub
 	#tag EndEvent
@@ -28,9 +29,16 @@ Inherits UITweaks.ResizedPushButton
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsReacted() As Boolean
+		  Return Self.mIsReacted
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Restore()
 		  Self.Cancel()
 		  Self.Enabled = True
+		  Self.mIsReacted = False
 		  Self.Caption = Self.mOriginalCaption
 		End Sub
 	#tag EndMethod
@@ -38,6 +46,7 @@ Inherits UITweaks.ResizedPushButton
 	#tag Method, Flags = &h21
 		Private Sub RestoreCallback()
 		  Self.Enabled = True
+		  Self.mIsReacted = False
 		  Self.Caption = Self.mOriginalCaption
 		  Self.mCallbackKey = ""
 		End Sub
@@ -51,6 +60,10 @@ Inherits UITweaks.ResizedPushButton
 
 	#tag Property, Flags = &h21
 		Private mCallbackKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsReacted As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -228,6 +228,7 @@ Inherits Global.Thread
 		      Var Data As JsonItem
 		      Try
 		        If Json.HasKey("data") Then
+		          #Pragma BreakOnExceptions Off
 		          Var Payload As Variant = Json.Value("data")
 		          Select Case Payload.Type
 		          Case Variant.TypeString
@@ -235,6 +236,7 @@ Inherits Global.Thread
 		          Case Variant.TypeObject
 		            Data = JsonItem(Payload.ObjectValue)
 		          End Select
+		          #Pragma BreakOnExceptions Default
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -262,11 +264,7 @@ Inherits Global.Thread
 		          Var EventDict As New Dictionary
 		          EventDict.Value("Event") = EventName
 		          EventDict.Value("Channel") = ChannelName
-		          If (Data Is Nil) = False Then
-		            EventDict.Value("Payload") = Data.ToString
-		          Else
-		            EventDict.Value("Payload") = Nil
-		          End If
+		          EventDict.Value("Payload") = Json.Lookup("data", "")
 		          Self.AddUserInterfaceUpdate(EventDict)
 		        End If
 		      End Select

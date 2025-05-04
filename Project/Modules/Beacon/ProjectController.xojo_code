@@ -474,9 +474,6 @@ Protected Class ProjectController
 		    
 		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
 		      Var Request As New BeaconAPI.Request("/projects", "POST", SaveData, "application/x-beacon-project")
-		      If App.Pusher.SocketId.IsEmpty = False Then
-		        Request.RequestHeader("X-Beacon-Pusher-Id") = App.Pusher.SocketId
-		      End If
 		      Request.RequestHeader("X-Beacon-Device-Id") = Beacon.HardwareId
 		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		      Saved = Response.HTTPStatus = 200 Or Response.HTTPStatus = 201

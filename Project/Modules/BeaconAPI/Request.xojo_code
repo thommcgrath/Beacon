@@ -74,6 +74,16 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasRequestHeader(Header As String) As Boolean
+		  If Self.mRequestHeaders = Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.mRequestHeaders.HasKey(Header)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub InvokeCallback(Response As BeaconAPI.Response)
 		  If Beacon.SafeToInvoke(Self.mCallback) Then
 		    Self.mCallback.Invoke(Self, Response)

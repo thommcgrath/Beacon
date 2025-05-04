@@ -1169,6 +1169,10 @@ Implements ObservationKit.Observable
 		Progress As Double
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h0
+		Tag As Variant
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
