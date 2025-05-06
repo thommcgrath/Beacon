@@ -163,8 +163,23 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = Margins, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
+#tag Events Editor
+	#tag Event
+		Sub WantsResize(NewSize As Integer)
+		  Me.Left = Self.Margins - ArkLootEntryPropertiesEditor.Margins
+		  Me.Top = Self.Margins - ArkLootEntryPropertiesEditor.Margins
+		  Me.Width = Self.Width - ((Self.Margins - ArkLootEntryPropertiesEditor.Margins) * 2)
+		  Me.Height = NewSize
+		  Self.Height = (NewSize - (ArkLootEntryPropertiesEditor.Margins * 2)) + (Self.Margins * 3) + Self.ActionButton.Height
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()

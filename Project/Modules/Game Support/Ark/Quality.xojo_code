@@ -7,6 +7,25 @@ Protected Class Quality
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function BaseValueForConfig(ConfigValue as Double, CrateQualityMultiplier as Double, BaseArbitraryQuality as Double) As Double
+		  Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
+		  Var BaseValue As Double = ConfigValue * (BaseArbitraryQuality * CrateArbitraryQuality)
+
+		  // Thanks to math, we can get the quality as 15.99999 instead of 16. So rounding it is.
+		  BaseValue = Round(BaseValue * 10000) / 10000
+
+		  Return BaseValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ConfigValueForBase(BaseValue as Double, CrateQualityMultiplier as Double, BaseArbitraryQuality as Double) As Double
+		  Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
+		  Return BaseValue / (BaseArbitraryQuality * CrateArbitraryQuality)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(BaseValue As Double, Key As String)
 		  Self.mKey = Key
 		  Self.mBaseValue = BaseValue
@@ -68,8 +87,7 @@ Protected Class Quality
 
 	#tag Method, Flags = &h0
 		Function Value(CrateQualityMultiplier as Double, BaseArbitraryQuality as Double) As Double
-		  Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Return Self.mBaseValue / (BaseArbitraryQuality * CrateArbitraryQuality)
+		  Return Self.ConfigValueForBase(Self.mBaseValue, CrateQualityMultiplier, BaseArbitraryQuality)
 		End Function
 	#tag EndMethod
 

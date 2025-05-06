@@ -2,6 +2,12 @@
 Protected Class LootItemSetEntry
 Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
+		Function AdjustQualities() As Boolean
+		  Return Self.mAdjustQualities
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CanBeBlueprint() As Boolean
 		  // This could be a new entry
 		  If Self.mOptions.Count = 0 Then
@@ -76,6 +82,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
 		  Self.mLastSaveTime = Source.mLastSaveTime
 		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
+		  Self.mUseCustomQualities = Source.mUseCustomQualities
+		  Self.mAdjustQualities = Source.mAdjustQualities
+		  Self.mMinQualityOverride = Source.mMinQualityOverride
+		  Self.mMaxQualityOverride = Source.mMaxQualityOverride
 		  
 		  For I As Integer = 0 To Source.mOptions.LastIndex
 		    Self.mOptions(I) = New ArkSA.LootItemSetEntryOption(Source.mOptions(I))
@@ -142,27 +152,36 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("minQuality") Then
-		      Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("minQuality"))
-		    ElseIf Dict.HasKey("min_quality") Then
-		      Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("min_quality"))
-		    ElseIf Dict.HasKey("MinQuality") Then
-		      Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("MinQuality"))
+		    If Dict.HasKey("useCustomQualities") Then
+		      Entry.UseCustomQualities = Dict.Value("useCustomQualities").BooleanValue
+		      Entry.AdjustQualities = Dict.Value("adjustQualities").BooleanValue
+		      Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("minQuality").StringValue)
+		      Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("maxQuality").StringValue)
+		      If Dict.HasKey("minQualityOverride") Then
+		        Entry.MinQualityOverride = NullableDouble.FromVariant(Dict.Value("minQualityOverride"))
+		      End If
+		      If Dict.HasKey("maxQualityOverride") Then
+		        Entry.MaxQualityOverride = NullableDouble.FromVariant(Dict.Value("maxQualityOverride"))
+		      End If
+		    Else
+		      If Dict.HasKey("minQuality") Then
+		        Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("minQuality"))
+		      ElseIf Dict.HasKey("min_quality") Then
+		        Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("min_quality"))
+		      ElseIf Dict.HasKey("MinQuality") Then
+		        Entry.MinQuality = ArkSA.Qualities.ForKey(Dict.Value("MinQuality"))
+		      End If
+		      
+		      If Dict.HasKey("maxQuality") Then
+		        Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("maxQuality"))
+		      ElseIf Dict.HasKey("max_quality") Then
+		        Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("max_quality"))
+		      ElseIf Dict.HasKey("MaxQuality") Then
+		        Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("MaxQuality"))
+		      End If
 		    End If
 		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading MinQuality value")
-		  End Try
-		  
-		  Try
-		    If Dict.HasKey("maxQuality") Then
-		      Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("maxQuality"))
-		    ElseIf Dict.HasKey("max_quality") Then
-		      Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("max_quality"))
-		    ElseIf Dict.HasKey("MaxQuality") Then
-		      Entry.MaxQuality = ArkSA.Qualities.ForKey(Dict.Value("MaxQuality"))
-		    End If
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading MaxQuality value")
+		    App.Log(Err, CurrentMethodName, "Reading quality values")
 		  End Try
 		  
 		  Try
@@ -325,11 +344,36 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  
 		  Var BaseArbitraryQuality As Double = ArkSA.Configs.Difficulty.BaseArbitraryQuality(Difficulty)
 		  
-		  If Dict.HasKey("MinQuality") Then
-		    Entry.MinQuality = ArkSA.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, BaseArbitraryQuality)
+		  Var CustomData As JSONItem
+		  If Dict.HasKey("ItemEntryName") Then
+		    Try
+		      Var Mem As MemoryBlock = Beacon.Decompress(DecodeBase64URLMBS(Dict.Value("ItemEntryName").StringValue))
+		      If Mem.UInt32Value(0) = PrefixNum Then
+		        CustomData = New JSONItem(Mem.StringValue(4, Mem.Size - 4))
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
-		  If Dict.HasKey("MaxQuality") Then
-		    Entry.MaxQuality = ArkSA.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, BaseArbitraryQuality)
+		  If CustomData Is Nil Then
+		    CustomData = New JSONItem("{}")
+		  End If
+		  
+		  If CustomData.HasKey("useCustomQualities") And CustomData.Value("useCustomQualities").BooleanValue Then
+		    Entry.UseCustomQualities = True
+		    Entry.AdjustQualities = CustomData.Value("adjustQualities").BooleanValue
+		    Entry.MinQualityOverride = CustomData.Value("minQualityOverride").DoubleValue
+		    Entry.MaxQualityOverride = CustomData.Value("maxQualityOverride").DoubleValue
+		    Entry.MinQuality = ArkSA.Qualities.ForBaseValue(Entry.MinQualityOverride.DoubleValue)
+		    Entry.MaxQuality = ArkSA.Qualities.ForBaseValue(Entry.MaxQualityOverride.DoubleValue)
+		  Else
+		    Entry.UseCustomQualities = False
+		    Entry.AdjustQualities = True
+		    If Dict.HasKey("MinQuality") Then
+		      Entry.MinQuality = ArkSA.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, BaseArbitraryQuality)
+		    End If
+		    If Dict.HasKey("MaxQuality") Then
+		      Entry.MaxQuality = ArkSA.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, BaseArbitraryQuality)
+		    End If
 		  End If
 		  If Dict.HasKey("MinQuantity") Then
 		    Entry.MinQuantity = Dict.Value("MinQuantity")
@@ -482,6 +526,12 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MaxQualityOverride() As NullableDouble
+		  Return Self.mMaxQualityOverride
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MaxQuantity() As Integer
 		  Return Self.mMaxQuantity
 		End Function
@@ -563,6 +613,12 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function MinQuality() As ArkSA.Quality
 		  Return Self.mMinQuality
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinQualityOverride() As NullableDouble
+		  Return Self.mMinQualityOverride
 		End Function
 	#tag EndMethod
 
@@ -720,8 +776,17 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  End If
 		  Keys.Value("minQuantity") = Self.MinQuantity
 		  Keys.Value("maxQuantity") = Self.MaxQuantity
-		  Keys.Value("minQuality") = Self.MinQuality.Key
-		  Keys.Value("maxQuality") = Self.MaxQuality.Key
+		  Keys.Value("useCustomQualities") = Self.UseCustomQualities
+		  Keys.Value("adjustQualities") = Self.AdjustQualities
+		  If Self.UseCustomQualities And (Self.MinQualityOverride Is Nil) = False And (Self.MaxQualityOverride Is Nil) = False Then
+		    Keys.Value("minQualityOverride") = Self.MinQualityOverride.DoubleValue
+		    Keys.Value("maxQualityOverride") = Self.MaxQualityOverride.DoubleValue
+		    Keys.Value("minQuality") = ArkSA.Qualities.ForBaseValue(Self.MinQualityOverride.DoubleValue).Key
+		    Keys.Value("maxQuality") = ArkSA.Qualities.ForBaseValue(Self.MaxQualityOverride.DoubleValue).Key
+		  Else
+		    Keys.Value("minQuality") = Self.MinQuality.Key
+		    Keys.Value("maxQuality") = Self.MaxQuality.Key
+		  End If
 		  Keys.Value("blueprintChance") = Self.ChanceToBeBlueprint
 		  If ForPreferences = False Then
 		    Keys.Value("weight") = Self.RawWeight
@@ -832,6 +897,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		    Return ""
 		  End If
 		  
+		  Var CustomData As New JSONItem("{}")
 		  Var Paths(), Weights(), Classes() As String
 		  Paths.ResizeTo(Self.mOptions.LastIndex)
 		  Weights.ResizeTo(Self.mOptions.LastIndex)
@@ -842,9 +908,26 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		    Weights(I) = Beacon.PrettyText(Self.mOptions(I).RawWeight * 100)
 		  Next
 		  
-		  Var BaseArbitraryQuality As Double = ArkSA.Configs.Difficulty.BaseArbitraryQuality(Difficulty)
-		  Var MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, BaseArbitraryQuality)
-		  Var MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, BaseArbitraryQuality)
+		  Var MinQuality, MaxQuality As Double
+		  Var AdjustQualities As Boolean
+		  If Self.mUseCustomQualities And (Self.mMinQualityOverride Is Nil) = False And (Self.mMaxQualityOverride Is Nil) = False Then
+		    AdjustQualities = Self.mAdjustQualities
+		    MinQuality = Self.mMinQualityOverride.DoubleValue
+		    MaxQuality = Self.mMaxQualityOverride.DoubleValue
+		    CustomData.Value("useCustomQualities") = Self.mUseCustomQualities
+		    CustomData.Value("adjustQualities") = Self.mAdjustQualities
+		    CustomData.Value("minQualityOverride") = MinQuality
+		    CustomData.Value("maxQualityOverride") = MaxQuality
+		  Else
+		    AdjustQualities = True
+		    MinQuality = Self.mMinQuality.BaseValue
+		    MaxQuality = Self.mMaxQuality.BaseValue
+		  End If
+		  If AdjustQualities Then
+		    Var BaseArbitraryQuality As Double = ArkSA.Configs.Difficulty.BaseArbitraryQuality(Difficulty)
+		    MinQuality = ArkSA.Quality.ConfigValueForBase(MinQuality, Multipliers.Min, BaseArbitraryQuality)
+		    MaxQuality = ArkSA.Quality.ConfigValueForBase(MaxQuality, Multipliers.Min, BaseArbitraryQuality)
+		  End If
 		  If MinQuality > MaxQuality Then
 		    // This probably isn't a good thing. Use the min for both values.
 		    MaxQuality = MinQuality
@@ -894,7 +977,34 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		    Values.Add("ItemStatClampsMultiplier=" + Self.StatClampMultiplier.PrettyText)
 		  End If
 		  
+		  If CustomData.Count > 0 Then
+		    Var CustomDataString As String
+		    #if XojoVersion >= 2025.01
+		      Var Options As New JSONOptions
+		      Options.DecimalPlaces = 6
+		      Options.Compact = True
+		      CustomDataString = CustomData.ToString(Options)
+		    #else
+		      CustomData.DecimalFormat = "#.000000"
+		      CustomData.Compact = True
+		      CustomDataString = CustomData.ToString()
+		    #endif
+		    
+		    Var Mem As New MemoryBlock(4 + CustomDataString.Bytes)
+		    Mem.UInt32Value(0) = Self.PrefixNum
+		    Mem.StringValue(4, CustomDataString.Bytes) = CustomDataString
+		    
+		    Var Compressed As String = Beacon.Compress(Mem)
+		    Values.Add("ItemEntryName=""" + EncodeBase64URLMBS(Compressed) + """")
+		  End If
+		  
 		  Return "(" + Values.Join(",") + ")"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UseCustomQualities() As Boolean
+		  Return Self.mUseCustomQualities
 		End Function
 	#tag EndMethod
 
@@ -910,6 +1020,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h1
+		Protected mAdjustQualities As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mChanceToBeBlueprint As Double = 1.0
@@ -940,11 +1054,19 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mMaxQualityOverride As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mMaxQuantity As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mMinQuality As ArkSA.Quality
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMinQualityOverride As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -968,6 +1090,10 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mUseCustomQualities As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mWeight As Double
 	#tag EndProperty
 
@@ -976,6 +1102,9 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndConstant
 
 	#tag Constant, Name = OptionNewId, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PrefixNum, Type = Double, Dynamic = False, Default = \"3049107078", Scope = Protected
 	#tag EndConstant
 
 
