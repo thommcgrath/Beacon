@@ -61,6 +61,29 @@ Protected Module SimpleHTTP
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ParseFormData(QueryString As String) As Dictionary
+		  If QueryString.BeginsWith("?") Then
+		    QueryString = QueryString.Middle(1)
+		  End If
+		  
+		  Var FormData As New Dictionary
+		  Var Parts() As String = QueryString.Split("&")
+		  For Each Part As String In Parts
+		    Var Pos As Integer = Part.IndexOf("=")
+		    If Pos = -1 Then
+		      FormData.Value(Part) = True
+		      Continue
+		    End If
+		    
+		    Var Key As String = Part.Left(Pos)
+		    Var Value As String = Part.Middle(Pos + 1)
+		    FormData.Value(Key) = Value
+		  Next
+		  Return FormData
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub Post(URL As String, Fields As Dictionary, Handler As SimpleHTTP.ResponseCallback, Tag As Variant, Headers As Dictionary = Nil)
 		  Post(URL, "application/x-www-form-urlencoded", BuildFormData(Fields), Handler, Tag, Headers)
 		End Sub

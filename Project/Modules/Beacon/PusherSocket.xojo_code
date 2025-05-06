@@ -2,15 +2,27 @@
 Protected Class PusherSocket
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ChannelAuth(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  Var Message As JSONItem = Request.Tag
-		  
-		  If Not Response.Success Then
-		    App.Log("Authorization failed for pusher channel " + Message.Child("data").Value("channel"))
-		    App.Log("Server returned " + Response.HTTPStatus.ToString(Locale.Raw, "0") + ": " + EncodeBase64(Response.Content))
-		    Return
-		  End If
-		  
 		  Try
+		    Var Message As JSONItem = Request.Tag
+		    Var FormData As Dictionary = SimpleHTTP.ParseFormData(Request.Payload)
+		    
+		    If Self.mActiveThread Is Nil Or Self.mActiveThread.IsConnected = False Then
+		      App.Log("Got channel auth response, but pusher is not connected.")
+		      Return
+		    End If
+		    
+		    If FormData.Value("socket_id").StringValue <> Self.mActiveThread.SocketId Then
+		      App.Log("Channel auth response is for a socket that is no longer connected. Authorized " + FormData.Value("socket_id").StringValue + ", but current socket is " + Self.mActiveThread.SocketId)
+		      Return
+		    End If
+		    
+		    If Not Response.Success Then
+		      App.Log("Authorization failed for pusher channel " + Message.Child("data").Value("channel"))
+		      App.Log("Server returned " + Response.HTTPStatus.ToString(Locale.Raw, "0") + ": " + EncodeBase64(Response.Content))
+		      Return
+		    End If
+		    
+		    
 		    Var AuthData As New JSONItem(Response.Content)
 		    Var Auth As String = AuthData.Value("auth")
 		    Message.Child("data").Value("auth") = Auth
@@ -19,7 +31,7 @@ Protected Class PusherSocket
 		    Self.mPendingMessages.Add(Message)
 		    Self.mLock.Leave
 		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Got successful auth, but failed to schedule message")
+		    App.Log(Err, CurrentMethodName, "Failed to handle auth response")
 		  End Try
 		End Sub
 	#tag EndMethod

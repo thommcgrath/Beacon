@@ -152,6 +152,7 @@ Inherits Global.Thread
 		  Var PongWaitTime As Integer = 30
 		  Var ShouldReconnect As Boolean
 		  Self.State = Beacon.PusherSocket.States.Connected
+		  Var ConnectionEstablished As Boolean
 		  While True
 		    Self.mLock.Enter
 		    If Self.mKeepRunning = False Then
@@ -163,13 +164,15 @@ Inherits Global.Thread
 		    
 		    ShouldReconnect = False
 		    
-		    Var PendingMessage As JSONItem = RaiseEvent GetNextPendingMessage()
-		    If (PendingMessage Is Nil) = False Then
-		      PendingMessage.Compact = True
-		      Call Curl.WebSocketSend(PendingMessage.ToString, 0, 1)
-		      #if DebugBuild
-		        System.DebugLog("Sent " + PendingMessage.ToString)
-		      #endif
+		    If ConnectionEstablished Then
+		      Var PendingMessage As JSONItem = RaiseEvent GetNextPendingMessage()
+		      If (PendingMessage Is Nil) = False Then
+		        PendingMessage.Compact = True
+		        Call Curl.WebSocketSend(PendingMessage.ToString, 0, 1)
+		        #if DebugBuild
+		          System.DebugLog("Sent " + PendingMessage.ToString)
+		        #endif
+		      End If
 		    End If
 		    
 		    Var Now As Double = DateTime.Now.SecondsFrom1970
@@ -244,18 +247,19 @@ Inherits Global.Thread
 		      Select Case EventName
 		      Case "pusher:connection_established"
 		        Self.mLock.Enter
-		        Self.mSocketId = Data.Value("socket_id")
+		        Self.mSocketId = Data.Value("socket_id").StringValue
 		        Self.mLock.Leave
 		        ActivityTimeout = Data.Lookup("activity_timeout", ActivityTimeout)
 		        #if DebugBuild
 		          System.DebugLog("Connected, socket is " + Self.mSocketId)
 		        #endif
+		        ConnectionEstablished = True
 		        RaiseEvent Connected()
 		      Case "pusher:error"
 		        Var ErrorCode As Integer = Data.Value("code")
 		        Var ErrorMessage As String = Data.Value("message")
 		        App.Log("Pusher error #" + ErrorCode.ToString(Locale.Raw, "0") + ": " + ErrorMessage)
-		        ShouldReconnect = True
+		        ShouldReconnect = ErrorMessage.BeginsWith("Invalid signature: ") = False // To prevent cascading nonsense, don't try to reconnect for a signature problem.
 		      Case "reconnect"
 		        ShouldReconnect = True
 		      Else
