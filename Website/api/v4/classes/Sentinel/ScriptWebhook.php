@@ -13,6 +13,7 @@ class ScriptWebhook extends DatabaseObject implements JsonSerializable {
 	protected string $scriptId;
 	protected string $scriptName;
 	protected string $scriptContext;
+	protected array $scriptParameters;
 	protected string $userId;
 	protected string $purpose;
 	protected string $accessKey;
@@ -23,6 +24,7 @@ class ScriptWebhook extends DatabaseObject implements JsonSerializable {
 		$this->scriptId = $row->Field('script_id');
 		$this->scriptName = $row->Field('script_name');
 		$this->scriptContext = $row->Field('script_context');
+		$this->scriptParameters = json_decode($row->Field('script_parameters'), true);
 		$this->userId = $row->Field('user_id');
 		$this->purpose = $row->Field('purpose');
 		$this->accessKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($row->Field('access_key')));
@@ -38,6 +40,7 @@ class ScriptWebhook extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('scriptId', ['columnName' => 'script_id']),
 				new DatabaseObjectProperty('scriptName', ['columnName' => 'script_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.name']),
 				new DatabaseObjectProperty('scriptContext', ['columnName' => 'script_context', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.context']),
+				new DatabaseObjectProperty('scriptParameters', ['columnName' => 'script_parameters', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.parameters']),
 				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 				new DatabaseObjectProperty('purpose', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('accessKey', ['columnName' => 'access_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
@@ -79,6 +82,7 @@ class ScriptWebhook extends DatabaseObject implements JsonSerializable {
 			'scriptId' => $this->scriptId,
 			'scriptName' => $this->scriptName,
 			'scriptContext' => $this->scriptContext,
+			'scriptParameters' => $this->scriptParameters,
 			'userId' => $this->userId,
 			'purpose' => $this->purpose,
 			'accessKey' => BeaconCommon::Base64UrlEncode($this->accessKey),
