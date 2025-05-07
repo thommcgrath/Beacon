@@ -11,7 +11,7 @@ function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $
 function handleRequest(array $context): Response {
 	$scriptWebhookId = $context['pathParameters']['scriptWebhookId'];
 	$database = BeaconCommon::Database();
-	$rows = $database->Query('SELECT script_webhooks.script_id, script_webhooks.user_id, script_webhooks.access_key, scripts.context FROM sentinel.script_webhooks INNER JOIN sentinel.scripts ON (script_webhooks.script_id = scripts.script_id) WHERE script_webhooks.webhook_id = $1;', $scriptWebhookId);
+	$rows = $database->Query('SELECT script_webhooks.script_id, script_webhooks.user_id, script_webhooks.access_key, scripts.context, scripts.name FROM sentinel.script_webhooks INNER JOIN sentinel.scripts ON (script_webhooks.script_id = scripts.script_id) WHERE script_webhooks.webhook_id = $1;', $scriptWebhookId);
 	if ($rows->RecordCount() === 0) {
 		return Response::NewJsonError(message: 'Webhook not found', httpStatus: 404, code: 'notFound', details: ['scriptWebhookId' => $scriptWebhookId]);
 	}
@@ -46,11 +46,15 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError(message: 'Missing parameters', httpStatus: 400, code: 'missingParameters');
 	}
 
+	$context = $rows->Field('context');
+	$scriptName = $rows->Field('name');
 	$now = new DateTimeImmutable('now', new DateTimeZone('GMT'));
 	$eventData = [
 		'scriptId' => $rows->Field('script_id'),
 		'timestamp' => $now->format('Y-m-d H:i:s.v'),
 		'parameters' => [],
+		'event' => $context,
+		'scriptName' => $scriptName,
 	];
 	foreach ($body['parameters'] as $key => $value) {
 		if (is_string($value) === false || empty($value) === false) {
@@ -58,7 +62,6 @@ function handleRequest(array $context): Response {
 		}
 	}
 
-	$context = $rows->Field('context');
 	switch ($context) {
 	case 'serviceScriptRun':
 		if (!isset($body['serviceId'])) {
