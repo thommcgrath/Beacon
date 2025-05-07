@@ -16,10 +16,10 @@ function handleRequest(array $context): Response {
 	} elseif (is_array($command)) {
 		$commands = $command;
 	} else {
-		return Response::NewJsonError(code: 'badRequest', message: 'Must send a JSON object or array of objects.', details: $command, httpStatus: 400);
+		return Response::NewJsonError(code: 'notObjectOrArray', message: 'Must send a JSON object or array of objects.', details: $command, httpStatus: 400);
 	}
 	if (count($commands) === 0) {
-		return Response::NewJsonError(code: 'noObjects', message: 'No objects to delete.', httpStatus: 400);
+		return Response::NewJsonError(code: 'noObjects', message: 'No objects to send.', httpStatus: 400);
 	}
 
 	$whitelist = ['admin', 'chat', 'locate', 'renamePlayer', 'giveItem', 'destroyWildDinos'];
@@ -39,19 +39,19 @@ function handleRequest(array $context): Response {
 	$userId = Core::UserId();
 	foreach ($commands as $command) {
 		if (BeaconCommon::IsAssoc($command) === false) {
-			return Response::NewJsonError(code: 'badRequest', message: 'Array member is not a JSON object.', details: $command, httpStatus: 400);
+			return Response::NewJsonError(code: 'nonObjectMember', message: 'Array member is not a JSON object.', details: $command, httpStatus: 400);
 		}
 
 		if (BeaconCommon::HasAnyKeys($command, 'serviceId', 'groupId') === false) {
-			return Response::NewJsonError(code: 'badRequest', message: 'Command must include serviceId or groupId.', details: $command, httpStatus: 400);
+			return Response::NewJsonError(code: 'missingTargetId', message: 'Command must include serviceId or groupId.', details: $command, httpStatus: 400);
 		}
 
 		if (BeaconCommon::HasAllKeys($command, 'type') === false) {
-			return Response::NewJsonError(code: 'badRequest', message: 'Command must include a type key.', details: $command, httpStatus: 400);
+			return Response::NewJsonError(code: 'missingType', message: 'Command must include a type key.', details: $command, httpStatus: 400);
 		}
 
 		if (array_key_exists($command['type'], $permissions) === false) {
-			return Response::NewJsonError(code: 'badRequest', message: 'Command type is not valid.', details: $command, httpStatus: 400);
+			return Response::NewJsonError(code: 'badType', message: 'Command type is not valid.', details: $command, httpStatus: 400);
 		}
 
 		if (array_key_exists('serviceId', $command)) {
