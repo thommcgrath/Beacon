@@ -351,7 +351,7 @@ class ServiceToken implements JsonSerializable {
 			new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($this->userId), eventName: 'service-tokens-updated', body: null),
 			new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($userId), eventName: 'service-tokens-updated', body: null),
 			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($this->userId), eventName: 'serviceTokensUpdated', body: null),
-			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($user), eventName: 'serviceTokensUpdated', body: null),
+			new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($userId), eventName: 'serviceTokensUpdated', body: null),
 		]);
 
 		$this->tokenId = $newTokenId;
