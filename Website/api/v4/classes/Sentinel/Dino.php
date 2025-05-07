@@ -93,6 +93,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'tribeId');
 		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'dinoIsDead');
 	}
 
 	public function jsonSerialize(): mixed {
