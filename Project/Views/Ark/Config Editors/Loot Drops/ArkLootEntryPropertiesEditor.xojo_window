@@ -1004,6 +1004,7 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF
       Bold            =   False
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1045,6 +1046,7 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF
       Bold            =   False
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1153,7 +1155,7 @@ End
 		    CustomMinQuality = Self.CustomMinQualityField.DoubleValue
 		    CustomMaxQuality = Self.CustomMaxQualityField.DoubleValue
 		  End If
-
+		  
 		  Var BlueprintChance As Double = ChanceSlider.Value / 100
 		  Var Weight As Double = WeightField.DoubleValue
 		  Var StatClampMultiplier As Double = StatClampMultiplierField.DoubleValue
@@ -1217,7 +1219,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ResizeUI()
 		  BeaconUI.SizeToFit(Self.ChanceLabel, Self.MaxQualityLabel, Self.MaxQuantityLabel, Self.MinQualityLabel, Self.MinQuantityLabel, Self.QualityModeLabel, Self.StatClampMultiplierLabel, Self.WeightLabel)
-
+		  
 		  Var FieldsLeft As Integer = Self.ChanceLabel.Width + (Margins + Gap)
 		  Var EditsLeft, FieldsWidth As Integer
 		  If Self.EditMinQuantityCheck.Visible Then
@@ -1227,28 +1229,28 @@ End
 		    EditsLeft = Self.Width
 		    FieldsWidth = Self.Width - (FieldsLeft + Margins)
 		  End If
-
+		  
 		  Self.MinQuantityLabel.Left = Margins
 		  Self.MinQuantityLabel.Top = Margins
 		  Self.MinQuantityField.Left = FieldsLeft
 		  Self.MinQuantityField.Top = Self.MinQuantityLabel.Top
 		  Self.EditMinQuantityCheck.Left = EditsLeft
 		  Self.EditMinQuantityCheck.Top = Self.MinQuantityLabel.Top
-
+		  
 		  Self.MaxQuantityLabel.Left = Margins
 		  Self.MaxQuantityLabel.Top = Self.MinQuantityLabel.Bottom + Gap
 		  Self.MaxQuantityField.Left = FieldsLeft
 		  Self.MaxQuantityField.Top = Self.MaxQuantityLabel.Top
 		  Self.EditMaxQuantityCheck.Left = EditsLeft
 		  Self.EditMaxQuantityCheck.Top = Self.MaxQuantityLabel.Top
-
+		  
 		  Self.QualityModeLabel.Left = Margins
 		  Self.QualityModeLabel.Top = Self.MaxQuantityLabel.Bottom + Gap
 		  Self.QualityModeMenu.Left = FieldsLeft
 		  Self.QualityModeMenu.Top = Self.QualityModeLabel.Top
 		  Self.EditQualityModeCheck.Left = EditsLeft
 		  Self.EditQualityModeCheck.Top = Self.QualityModeLabel.Top
-
+		  
 		  Self.MinQualityLabel.Left = Margins
 		  Self.MinQualityLabel.Top = Self.QualityModeLabel.Bottom + Gap
 		  Self.MinQualityLabel.Height = If(Self.mUseCustomQualities, Self.CustomMinQualityField.Height, Self.MinQualityMenu.Height)
@@ -1262,7 +1264,7 @@ End
 		  Self.EditMinQualityCheck.Top = Self.MinQualityLabel.Top
 		  Self.EditMinQualityCheck.Left = EditsLeft
 		  Self.EditMinQualityCheck.Height = Self.MinQualityLabel.Height
-
+		  
 		  Self.MaxQualityLabel.Left = Margins
 		  Self.MaxQualityLabel.Top = Self.MinQualityLabel.Bottom + Gap
 		  Self.MaxQualityLabel.Height = If(Self.mUseCustomQualities, Self.CustomMaxQualityField.Height, Self.MaxQualityMenu.Height)
@@ -1276,7 +1278,7 @@ End
 		  Self.EditMaxQualityCheck.Top = Self.MaxQualityLabel.Top
 		  Self.EditMaxQualityCheck.Left = EditsLeft
 		  Self.EditMaxQualityCheck.Height = Self.MaxQualityLabel.Height
-
+		  
 		  Self.ChanceLabel.Left = Margins
 		  Self.ChanceLabel.Top = Self.MaxQualityLabel.Bottom + Gap
 		  Self.ChanceSlider.Left = FieldsLeft
@@ -1288,7 +1290,7 @@ End
 		  Self.ChancePercentLabel.Top = Self.ChanceLabel.Top
 		  Self.EditChanceCheck.Left = EditsLeft
 		  Self.EditChanceCheck.Top = Self.ChanceField.Top
-
+		  
 		  Self.WeightLabel.Left = Margins
 		  Self.WeightLabel.Top = Self.ChanceLabel.Bottom + Gap
 		  Self.WeightSlider.Left = FieldsLeft
@@ -1298,15 +1300,21 @@ End
 		  Self.WeightField.Top = Self.WeightLabel.Top
 		  Self.EditWeightCheck.Left = EditsLeft
 		  Self.EditWeightCheck.Top = Self.WeightLabel.Top
-
+		  
 		  Self.StatClampMultiplierLabel.Left = Margins
 		  Self.StatClampMultiplierLabel.Top = Self.WeightLabel.Bottom + Gap
 		  Self.StatClampMultiplierField.Left = FieldsLeft
 		  Self.StatClampMultiplierField.Top = Self.StatClampMultiplierLabel.Top
 		  Self.EditStatClampMultiplierCheck.Left = EditsLeft
 		  Self.EditStatClampMultiplierCheck.Top = Self.StatClampMultiplierLabel.Top
-
-		  Var PerfectHeight As Integer = Self.StatClampMultiplierLabel.Bottom + Margins
+		  
+		  Self.PreventGrindingCheck.Left = FieldsLeft
+		  Self.PreventGrindingCheck.Top = Self.StatClampMultiplierLabel.Bottom + Gap
+		  Self.PreventGrindingCheck.Width = FieldsWidth
+		  Self.EditPreventGrindingCheck.Left = EditsLeft
+		  Self.EditPreventGrindingCheck.Top = Self.PreventGrindingCheck.Top
+		  
+		  Var PerfectHeight As Integer = Self.PreventGrindingCheck.Bottom + Margins
 		  If Self.Height <> PerfectHeight Then
 		    RaiseEvent WantsResize(PerfectHeight)
 		  End If
