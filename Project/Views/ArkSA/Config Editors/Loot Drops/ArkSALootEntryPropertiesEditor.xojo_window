@@ -1004,6 +1004,7 @@ Begin BeaconContainer ArkSALootEntryPropertiesEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF
       Bold            =   False
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1045,6 +1046,7 @@ Begin BeaconContainer ArkSALootEntryPropertiesEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF
       Bold            =   False
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1306,7 +1308,13 @@ End
 		  Self.EditStatClampMultiplierCheck.Left = EditsLeft
 		  Self.EditStatClampMultiplierCheck.Top = Self.StatClampMultiplierLabel.Top
 		  
-		  Var PerfectHeight As Integer = Self.StatClampMultiplierLabel.Bottom + Margins
+		  Self.PreventGrindingCheck.Left = FieldsLeft
+		  Self.PreventGrindingCheck.Top = Self.StatClampMultiplierLabel.Bottom + Gap
+		  Self.PreventGrindingCheck.Width = FieldsWidth
+		  Self.EditPreventGrindingCheck.Left = EditsLeft
+		  Self.EditPreventGrindingCheck.Top = Self.PreventGrindingCheck.Top
+		  
+		  Var PerfectHeight As Integer = Self.PreventGrindingCheck.Bottom + Margins
 		  If Self.Height <> PerfectHeight Then
 		    RaiseEvent WantsResize(PerfectHeight)
 		  End If
