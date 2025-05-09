@@ -110,6 +110,10 @@ class Character extends DatabaseObject implements JsonSerializable {
 	public function ServiceId(): string {
 		return $this->serviceId;
 	}
+
+	public function Name(): string {
+		return $this->characterName;
+	}
 }
 
 ?>

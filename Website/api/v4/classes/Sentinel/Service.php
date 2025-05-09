@@ -341,7 +341,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
 		switch ($definition->PropertyName()) {
 		case 'gameSpecific':
-			return json_encode($value);
+			return json_encode((object) $value);
 		case 'languages':
 			return '{' . implode(',', $this->languages) . '}';
 		default:
@@ -412,6 +412,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 	public function IsConnected(): bool {
 		return $this->isConnected;
+	}
+
+	public function Languages(): array {
+		return $this->languages;
 	}
 
 	public function Log(string $message, ?string $level = null, ?string $type = null): void {

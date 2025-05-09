@@ -22,16 +22,15 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError(code: 'noObjects', message: 'No objects to send.', httpStatus: 400);
 	}
 
-	$whitelist = ['admin', 'chat', 'locate', 'renamePlayer', 'giveItem', 'destroyWildDinos'];
 	$permissions = [
 		'admin' => PermissionBits::ControlServices,
 		'chat' => PermissionBits::Membership,
 		'broadcast' => PermissionBits::Membership,
 		'locate' => PermissionBits::ControlServices,
 		'renamePlayer' => PermissionBits::ControlServices,
-		'giveItem' => PermissionBits::ControlServices,
 		'destroyWildDinos' => PermissionBits::ControlServices,
 	];
+	$whitelist = array_keys($permissions);
 	$approvedServiceIds = [];
 	$approvedGroupIds = [];
 	$approvedCommands = [];
@@ -89,6 +88,9 @@ function handleRequest(array $context): Response {
 	$chatLogTranslations = [
 		'en' => 'Server said: `{message}`',
 	];
+	$adminTranslations = [
+		'en' => 'Executed `{command}`',
+	];
 
 	$events = [];
 	$socketId = BeaconPusher::SocketIdFromHeaders();
@@ -96,6 +98,7 @@ function handleRequest(array $context): Response {
 		$serviceId = strtolower($command['serviceId']);
 		unset($command['serviceId']);
 
+		// This whole block of code needs to be better
 		if ($command['type'] === 'chat') {
 			if ($database->InTransaction() === false) {
 				$database->BeginTransaction();
@@ -133,6 +136,39 @@ function handleRequest(array $context): Response {
 				$groupId = $rows->Field('group_id');
 
 				$event = new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName('groups', $groupId), eventName: 'chatMessage', body: $eventBody, socketId: $socketId);
+				$eventSignature = $event->Signature();
+				if (array_key_exists($eventSignature, $events) === false) {
+					$events[$eventSignature] = $event;
+				}
+
+				$rows->MoveNext();
+			}
+		} elseif ($command['type'] === 'admin') {
+			if ($database->InTransaction() === false) {
+				$database->BeginTransaction();
+			}
+
+			$messageId = BeaconUUID::v7();
+			$languageCode = $command['languageCode'] ?? 'en';
+			$adminCommand = $command['command'];
+			$metadata = [
+				'command' => $adminCommand,
+			];
+			$database->Query('INSERT INTO sentinel.service_logs (message_id, service_id, log_time, event_name, level, analyzer_status, metadata, type) VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7);', $messageId, $serviceId, 'adminCommand', 'Informational', 'Skipped', json_encode($metadata), 'Gameplay');
+			$database->Query('INSERT INTO sentinel.service_log_messages (message_id, language, message) VALUES ($1, $2, $3);', $messageId, $languageCode, str_replace('{command}', $adminCommand, $adminTranslations[$languageCode]));
+
+			$eventBody = '';
+			$event = new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName('services', $serviceId), eventName: 'logsUpdated', body: $eventBody, socketId: $socketId);
+			$eventSignature = $event->Signature();
+			if (array_key_exists($eventSignature, $events) === false) {
+				$events[$eventSignature] = $event;
+			}
+
+			$rows = $database->Query('SELECT group_id FROM sentinel.group_services WHERE service_id = $1;', $serviceId);
+			while (!$rows->EOF()) {
+				$groupId = $rows->Field('group_id');
+
+				$event = new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName('groups', $groupId), eventName: 'logsUpdated', body: $eventBody, socketId: $socketId);
 				$eventSignature = $event->Signature();
 				if (array_key_exists($eventSignature, $events) === false) {
 					$events[$eventSignature] = $event;

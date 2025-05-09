@@ -542,7 +542,10 @@ class Core {
 
 		if ($exceeded) {
 			header('Retry-After: 10');
-			Response::NewJsonError('Rate limit exceeded', null, 429)->Flush();
+			Response::NewJsonError('Rate limit exceeded', [
+				'limit' => $rateLimitCeiling,
+				'remaining' => $rateLimitRemaining,
+			], 429)->Flush();
 			exit;
 		}
 	}
