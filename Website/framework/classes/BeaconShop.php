@@ -198,7 +198,7 @@ abstract class BeaconShop {
 			}
 		}
 
-		$purchase = new BeaconPurchase(Beacon::GenerateUUID(), $email, time(), 'US CT', 'USD', 1.0, 100);
+		$purchase = new BeaconPurchase(BeaconCommon::GenerateUUID(), $email, time(), 'US CT', 'USD', 1.0, 100);
 		$purchase->SetDateFulfilled(time());
 		$purchase->SetNotes($notes);
 		$purchase->SetMetadata([
