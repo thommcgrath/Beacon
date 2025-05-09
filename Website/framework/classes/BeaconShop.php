@@ -210,7 +210,8 @@ abstract class BeaconShop {
 			$lineItem = new BeaconLineItem($productId, $unitPrice, $quantity, $unitPrice * $quantity, 0.0, 'USD', 1.0, 100);
 			$purchase->AddLine($lineItem);
 		}
-		$purchaseId = $purchase->SaveTo($database);
+		$purchaseId = $purchase->PurchaseId();
+		$purchase->SaveTo($database);
 
 		if ($process === true) {
 			self::IssuePurchases($purchaseId);
