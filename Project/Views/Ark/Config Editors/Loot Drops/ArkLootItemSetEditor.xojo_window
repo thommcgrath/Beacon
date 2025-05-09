@@ -109,6 +109,7 @@ Begin BeaconContainer ArkLootItemSetEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      ReadOnly        =   False
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -129,6 +130,8 @@ Begin BeaconContainer ArkLootItemSetEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -408,10 +411,18 @@ End
 		    End If
 		    
 		    Var QualityText As String
-		    If Entry.MinQuality = Entry.MaxQuality Then
-		      QualityText = Entry.MinQuality.Label
+		    If Entry.UseCustomQualities And (Entry.MinQualityOverride Is Nil) = False And (Entry.MaxQualityOverride Is Nil) = False Then
+		      If Entry.MinQualityOverride = Entry.MaxQualityOverride Then
+		        QualityText = Entry.MinQualityOverride.DoubleValue.PrettyText(2, True)
+		      Else
+		        QualityText = Entry.MinQualityOverride.DoubleValue.PrettyText(2, True) + RangeSeparator + Entry.MaxQualityOverride.DoubleValue.PrettyText(2, True)
+		      End If
 		    Else
-		      QualityText = Entry.MinQuality.Label(False) + RangeSeparator + Entry.MaxQuality.Label(False)
+		      If Entry.MinQuality = Entry.MaxQuality Then
+		        QualityText = Entry.MinQuality.Label
+		      Else
+		        QualityText = Entry.MinQuality.Label(False) + RangeSeparator + Entry.MaxQuality.Label(False)
+		      End If
 		    End If
 		    
 		    Var QuantityText As String
