@@ -149,6 +149,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected string $clusterId;
 	protected bool $allowClusterIdChange;
 	protected int $permissions;
+	protected bool $rconConnected;
+	protected string $ipAddress;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
@@ -170,6 +172,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->clusterId = $row->Field('cluster_id');
 		$this->allowClusterIdChange = $row->Field('allow_cluster_id_change');
 		$this->permissions = $row->Field('permissions');
+		$this->rconConnected = $row->Field('rcon_connected');
+		$this->ipAddress = $row->Field('ip_address') ?? '';
 
 		$languages = $row->Field('languages');
 		$languages = substr($languages, 1, strlen($languages) - 2);
@@ -201,6 +205,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('clusterId', ['columnName' => 'cluster_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('allowClusterIdChange', ['columnName' => 'allow_cluster_id_change', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('permissions', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_permissions.permissions']),
+				new DatabaseObjectProperty('rconConnected', ['columnName' => 'rcon_connected', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('ipAddress', ['columnName' => 'ip_address', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			],
 			joins: [
 				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
@@ -325,6 +331,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'clusterId' => $this->clusterId,
 			'allowClusterIdChange' => $this->allowClusterIdChange,
 			'permissions' => $this->permissions,
+			'rconConnected' => $this->rconConnected,
+			'ipAddress' => $this->ipAddress,
 		];
 
 		return $json;
