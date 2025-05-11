@@ -78,7 +78,11 @@ class Character extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'specimenId');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
-		$parameters->AddFromFilter($schema, $filters, 'tribeId');
+
+		if (isset($filters['tribeId'])) {
+			$placeholder = $parameters->AddValue($filters['tribeId']);
+			$parameters->clauses[] = '(' . $schema->Accessor('tribeId') . ' = $' . $placeholder . ' OR ' . $schema->Accessor('characterId') . ' IN (SELECT character_id FROM sentinel.tribe_characters WHERE tribe_id = $' . $placeholder . '))';
+		}
 	}
 
 	public function jsonSerialize(): mixed {

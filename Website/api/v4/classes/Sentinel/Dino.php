@@ -91,9 +91,13 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'dinoNumber');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'tribeId');
 		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'dinoIsDead');
+
+		if (isset($filters['tribeId'])) {
+			$placeholder = $parameters->AddValue($filters['tribeId']);
+			$parameters->clauses[] = '(' . $schema->Accessor('tribeId') . ' = $' . $placeholder . ' OR ' . $schema->Accessor('dinoId') . ' IN (SELECT dino_id FROM sentinel.tribe_dinos WHERE tribe_id = $' . $placeholder . '))';
+		}
 	}
 
 	public function jsonSerialize(): mixed {
