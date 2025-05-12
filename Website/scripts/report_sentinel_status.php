@@ -18,7 +18,7 @@ $waitingEventCount = $rows->Field('event_count');
 $metrics = [
 	'queued_events' => [
 		[
-			'y' => $waitingEventCount,
+			'y' => intval($waitingEventCount),
 		],
 	],
 ];
@@ -43,6 +43,12 @@ $response = curl_exec($curl);
 $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 curl_close($curl);
 
+if ($status === 200) {
+	echo "webhook successful\n";
+} else {
+	echo "{$status}\n{$response}\n";
+}
+
 // Send the metrics, because this couldn't be done in one request for some dumb reason
 $curl = curl_init('https://status.usebeacon.app/state_webhook/metrics/68217390386fb3052b0d8fd7');
 curl_setopt($curl, CURLOPT_HTTPHEADER, [
@@ -55,5 +61,12 @@ curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(['metrics' => $metrics]));
 $response = curl_exec($curl);
 $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 curl_close($curl);
+
+if ($status === 204) {
+	echo "metrics successful\n";
+	echo json_encode($metrics, JSON_PRETTY_PRINT) . "\n";
+} else {
+	echo "{$status}\n{$response}\n";
+}
 
 ?>
