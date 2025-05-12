@@ -13,15 +13,16 @@ define('STATUS_OPERATIONAL', 1);
 
 $status = STATUS_OPERATIONAL;
 $database = BeaconCommon::Database();
-$rows = $database->Query('SELECT COUNT(*) FROM sentinel.service_event_queue WHERE status = $1;', 'Waiting');
+$rows = $database->Query('SELECT COUNT(*) AS event_count FROM sentinel.service_event_queue WHERE status = $1;', 'Waiting');
+$waitingEventCount = $rows->Field('event_count');
 $metrics = [
 	'queued_events' => [
 		[
-			'y' => $rows->RecordCount(),
+			'y' => $waitingEventCount,
 		],
 	],
 ];
-if ($rows->RecordCount() >= 10) {
+if ($waitingEventCount >= 10) {
 	$status = STATUS_DEGRADED;
 }
 
