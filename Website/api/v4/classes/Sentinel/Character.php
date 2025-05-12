@@ -118,6 +118,14 @@ class Character extends DatabaseObject implements JsonSerializable {
 	public function Name(): string {
 		return $this->characterName;
 	}
+
+	public function PlayerId(): string {
+		return $this->playerId;
+	}
+
+	public function TribeId(): string {
+		return $this->tribeId;
+	}
 }
 
 ?>

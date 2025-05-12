@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
-use BeaconCommon, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconChannelEvent, BeaconCommon, BeaconPusher, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
 
 class LogMessage extends DatabaseObject implements JsonSerializable {
 	const LogLevelDebug = 'Debug';
@@ -56,6 +56,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventDinoFrozen = 'dinoFrozen';
 	const EventDinoMatured = 'dinoMatured';
 	const EventDinoRenamed = 'dinoRenamed';
+	const EventDinoRestored = 'dinoRestored';
 	const EventDinoTamed = 'dinoTamed';
 	const EventDinoTribeChanged = 'dinoTribeChanged';
 	const EventDinoUnclaimed = 'dinoUnclaimed';
@@ -92,6 +93,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventDinoFrozen,
 		self::EventDinoMatured,
 		self::EventDinoRenamed,
+		self::EventDinoRestored,
 		self::EventDinoTamed,
 		self::EventDinoTribeChanged,
 		self::EventDinoUnclaimed,
@@ -312,6 +314,48 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
 		$requiredScopes[] = Application::kScopeSentinelRead;
+	}
+
+	public static function Create(string $serviceId, string $eventName, string $type, string $level, array $messages, array $metadata, bool $sendPusherEvents = true): static {
+		if (BeaconCommon::IsAssoc($messages) === false || BeaconCommon::IsAssoc($metadata) === false) {
+			throw new Exception('Messages and metadata must be an associative array');
+		}
+
+		$now = microtime(true);
+		$messageId = BeaconUUID::v7($now * 1000);
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('INSERT INTO sentinel.service_logs (message_id, service_id, type, log_time, event_name, level, metadata) VALUES ($1, $2, $3, TO_TIMESTAMP($4), $5, $6, $7);', $messageId, $serviceId, $type, $now, $eventName, $level, json_encode((object) $metadata));
+		foreach ($messages as $language => $message) {
+			$database->Query('INSERT INTO sentinel.service_log_messages (message_id, language, message) VALUES ($1, $2, $3);', $messageId, $language, $message);
+		}
+		$database->Commit();
+
+		if ($sendPusherEvents) {
+			$senderSocketId = BeaconPusher::SocketIdFromHeaders();
+			$events = [new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName('services', $serviceId), eventName: 'logsUpdated', body: '', socketId: $senderSocketId)];
+			$channelCandidates = [
+				'players' => 'playerId',
+				'characters' => 'characterId',
+				'tribes' => 'tribeId',
+				'dinos' => 'dinoId',
+			];
+			foreach ($channelCandidates as $group => $key) {
+				if (isset($metadata[$key])) {
+					$events[] = new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName($group, $key), eventName: 'logsUpdated', body: '', socketId: $senderSocketId);
+				}
+			}
+			BeaconPusher::SharedInstance()->SendEvents($events);
+		}
+
+		return static::Fetch($messageId);
+	}
+
+	public static function ReplacePlaceholders(string $template, array $placeholders): string {
+		foreach ($placeholders as $placeholder => $value) {
+			$template = str_replace('{' . $placeholder . '}', $value, $template);
+		}
+		return $template;
 	}
 }
 

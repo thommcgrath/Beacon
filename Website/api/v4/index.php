@@ -168,6 +168,9 @@ Core::RegisterRoutes(
 		'/sentinel/dinos/{dinoId}/locate' => [
 			'POST' => 'sentinel/dinos/locate',
 		],
+		'/sentinel/dinos/{dinoId}/restore' => [
+			'POST' => 'sentinel/dinos/restore',
+		],
 		'/sentinel/dinos/{dinoId}/edit' => [
 			'POST' => 'sentinel/dinos/edit',
 		],

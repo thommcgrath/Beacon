@@ -21,6 +21,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 	protected string $serviceColor;
 	protected string $tribeId;
 	protected string $tribeName;
+	protected ?string $cryopodData;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->dinoId = $row->Field('dino_id');
@@ -39,6 +40,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		$this->serviceId = $row->Field('service_id');
 		$this->serviceDisplayName = $row->Field('service_display_name');
 		$this->serviceColor = $row->Field('service_color');
+		$this->cryopodData = $row->Field('cryopod_data');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -62,6 +64,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'accessor' => 'services.color']),
 				new DatabaseObjectProperty('tribeId', ['columnName' => 'tribe_id', 'accessor' => 'tribes.tribe_id']),
 				new DatabaseObjectProperty('tribeName', ['columnName' => 'tribe_name', 'accessor' => 'tribes.name']),
+				new DatabaseObjectProperty('cryopodData', ['columnName' => 'cryopod_data', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			],
 			joins: [
 				'INNER JOIN sentinel.services ON (dinos.service_id = services.service_id)',
@@ -112,6 +115,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			'dinoIsDead' => $this->dinoIsDead,
 			'dinoIsFrozen' => $this->dinoIsFrozen,
 			'dinoIsUploaded' => $this->dinoIsUploaded,
+			'dinoRestoreEligible' => $this->RestoreEligible(),
 			'serviceId' => $this->serviceId,
 			'serviceDisplayName' => $this->serviceDisplayName,
 			'serviceColor' => $this->serviceColor,
@@ -135,6 +139,25 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		$high = bcdiv($this->dinoNumber64, bcpow("2", "32"), 0);
 		$low = bcmod($this->dinoNumber64, bcpow("2", "32"));
 		return [(int)$high, (int)$low];
+	}
+
+	public function RestoreEligible(): bool {
+		return $this->dinoIsDead && is_null($this->cryopodData) === false;
+	}
+
+	public function CryopodData(): ?array {
+		if (is_null($this->cryopodData)) {
+			return null;
+		}
+		return json_decode(gzdecode($this->cryopodData), true);
+	}
+
+	public function DescriptiveName(): string {
+		if (empty($this->dinoName)) {
+			return "{$this->dinoSpecies} - Level {$this->dinoLevel}";
+		} else {
+			return $this->dinoName;
+		}
 	}
 }
 
