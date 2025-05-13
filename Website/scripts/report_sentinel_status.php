@@ -22,14 +22,15 @@ $metrics = [
 		],
 	],
 ];
-if ($waitingEventCount >= 10) {
-	$status = STATUS_DEGRADED;
-}
 
 // Find the age of the oldest queue item
 $rows = $database->Query('SELECT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) - EXTRACT(EPOCH FROM queue_time) AS age FROM sentinel.service_event_queue WHERE status = $1 ORDER BY queue_time ASC LIMIT 1;', 'Waiting');
-if ($rows->RecordCount() > 0 && $rows->Field('age') >= 60) {
-	$status = STATUS_OUTAGE;
+if ($rows->RecordCount() > 0) {
+	if ($rows->Field('age') >= 60) {
+		$status = STATUS_OUTAGE;
+	} elseif ($rows->Field('age') >= 10) {
+		$status = STATUS_DEGRADED;
+	}
 }
 
 $curl = curl_init('https://status.usebeacon.app/state_webhook/watchdog/68217390386fb3052b0d8fcf');
