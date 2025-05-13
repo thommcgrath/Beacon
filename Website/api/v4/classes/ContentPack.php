@@ -92,6 +92,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'marketplace', '=');
 		$parameters->AddFromFilter($schema, $filters, 'marketplaceId', '=');
 		$parameters->AddFromFilter($schema, $filters, 'gameId', '=');
+		$parameters->AddFromFilter($schema, $filters, 'name', 'SEARCH');
 
 		if (isset($filters['contentPackId']) && BeaconCommon::IsUUID($filters['contentPackId']) === true) {
 			$parameters->clauses[] = $schema->Comparison('contentPackId', '=', $parameters->placeholder++);

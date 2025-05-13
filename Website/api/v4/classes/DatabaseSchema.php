@@ -147,6 +147,8 @@ class DatabaseSchema {
 		} elseif ($operator === 'LIKE') {
 			$value = '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $value ?? '') . '%';
 			return $column->Accessor($this->table) . ' LIKE ' . $placeholder;
+		} elseif ($operator === 'SEARCH') {
+			return 'to_tsvector(\'english\', ' . $column->Accessor($this->table) . ') @@ websearch_to_tsquery(\'english\', ' . $placeholder . ')';
 		} else {
 			return $column->Accessor($this->table) . ' ' . $operator . ' ' . $placeholder;
 		}
