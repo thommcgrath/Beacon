@@ -57,6 +57,21 @@ function handleRequest(array $context): Response {
 		break;
 	}
 
+	$database = BeaconCommon::Database();
+	$inTransaction = false;
+	try {
+		$database->BeginTransaction();
+		$inTransaction = true;
+		$database->Query('INSERT INTO sentinel.script_tests (request_id, script_data, user_id) VALUES ($1, $2, $3);', $requestId, json_encode($obj), Core::UserId());
+		$database->Commit();
+		$inTransaction = false;
+	} catch (Exception $err) {
+		if ($inTransaction) {
+			$database->Rollback();
+		}
+		return Response::NewJsonError(message: $err->getMessage(), details: $obj, httpStatus: 412, code: 'testAlreadyRunning');
+	}
+
 	BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.queue.testScript', json_encode($obj));
 
 	return Response::NewJson(['requestId' => $requestId], 200);
