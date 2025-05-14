@@ -150,11 +150,22 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			$parameters->clauses[] = $schema->Setter('tags', $parameters->placeholder++) . ' = ANY(' . $schema->Accessor('tags') . ')';
 			$parameters->values[] = $filters['tag'];
 		}
+		if (isset($filters['!tag'])) {
+			$parameters->clauses[] = 'NOT (' . $schema->Setter('tags', $parameters->placeholder++) . ' = ANY(' . $schema->Accessor('tags') . '))';
+			$parameters->values[] = $filters['!tag'];
+		}
 
 		if (isset($filters['tags'])) {
 			$tags = explode(',', $filters['tags']);
 			foreach ($tags as $tag) {
 				$parameters->clauses[] = $schema->Setter('tags', $parameters->placeholder++) . ' = ANY(' . $schema->Accessor('tags') . ')';
+				$parameters->values[] = $tag;
+			}
+		}
+		if (isset($filters['!tags'])) {
+			$tags = explode(',', $filters['!tags']);
+			foreach ($tags as $tag) {
+				$parameters->clauses[] = 'NOT (' . $schema->Setter('tags', $parameters->placeholder++) . ' = ANY(' . $schema->Accessor('tags') . '))';
 				$parameters->values[] = $tag;
 			}
 		}
