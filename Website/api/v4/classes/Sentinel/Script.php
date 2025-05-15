@@ -35,6 +35,8 @@ class Script extends DatabaseObject implements JsonSerializable {
 	protected string $status;
 	protected string $hash;
 	protected bool $approvalRequestSent;
+	protected ?string $commandKeyword;
+	protected ?array $commandArguments;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->scriptId = $row->Field('script_id');
@@ -52,6 +54,8 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$this->status = $row->Field('status');
 		$this->hash = $row->Field('hash');
 		$this->approvalRequestSent = $row->Field('approval_request_sent');
+		$this->commandKeyword = $row->Field('command_keyword');
+		$this->commandArguments = is_null($row->Field('command_arguments')) === false ? json_decode($row->Field('command_arguments')) : null;
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -74,6 +78,8 @@ class Script extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('status', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_hashes.status']),
 				new DatabaseObjectProperty('hash', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_hashes.hash']),
 				new DatabaseObjectProperty('approvalRequestSent', ['columnName' => 'approval_request_sent', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_hashes.request_sent']),
+				new DatabaseObjectProperty('commandKeyword', ['columnName' => 'command_keyword', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('commandArguments', ['columnName' => 'command_arguments', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
 				'INNER JOIN public.users ON (scripts.user_id = users.user_id)',
@@ -144,6 +150,8 @@ class Script extends DatabaseObject implements JsonSerializable {
 			'permissions' => $this->permissions,
 			'latestRevision' => $this->latestRevision,
 			'status' => $this->status,
+			'commandKeyword' => $this->commandKeyword,
+			'commandArguments' => $this->commandArguments,
 		];
 	}
 
@@ -192,6 +200,20 @@ class Script extends DatabaseObject implements JsonSerializable {
 		if (isset($properties['language']) && in_array($properties['language'], static::Languages) === false) {
 			throw new APIException(message: 'Language is not a valid value. See the documentation for correct values.', code: 'badLanguage');
 		}
+
+		if (isset($properties['commandArguments']) && is_array($properties['commandArguments'])) {
+			$map = [];
+			if (isset($properties['parameters']) && is_array($properties['parameters'])) {
+				foreach ($properties['parameters'] as $definition) {
+					$map[$definition['name']] = $definition;
+				}
+			}
+			foreach ($properties['commandArguments'] as $parameterName) {
+				if (array_key_exists($parameterName, $map) === false) {
+					throw new APIException(message: "Command argument {$parameterName} is not present in parameters.", code: 'badCommandArguments', httpStatus: 400);
+				}
+			}
+		}
 	}
 
 	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
@@ -199,6 +221,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 
 		switch ($definition->PropertyName()) {
 		case 'parameters':
+		case 'commandArguments':
 			return json_encode($value);
 		}
 
