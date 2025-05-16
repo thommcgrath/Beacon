@@ -40,6 +40,14 @@ class BeaconLogin {
 		if (is_null($session) === false) {
 			if (is_null($flow)) {
 				// We're not authorizing an app, so there's nothing to do here.
+				if (str_contains($params['return'], '{auth}')) {
+					$domain = parse_url($params['return'], PHP_URL_HOST);
+					$token = '';
+					if ($domain == 'usebeacon.app' || str_ends_with($domain, '.usebeacon.app')) {
+						$token = $session->AccessToken(true);
+					}
+					$params['return'] = str_replace('{auth}', urlencode($token), $params['return']);
+				}
 				BeaconCommon::Redirect($params['return']);
 				return;
 			}
