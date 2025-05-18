@@ -235,7 +235,6 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortOrder;
 		$parameters->allowAll = true;
 
-		$parameters->orderBy = $schema->Accessor('name');
 		$parameters->AddFromFilter($schema, $filters, 'serviceTokenId');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
 		$parameters->AddFromFilter($schema, $filters, 'color');
@@ -479,8 +478,18 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT user_id FROM sentinel.service_permissions WHERE service_id = $1;', $this->serviceId);
 		$events = [];
+		$subscriptionUsageChanged = false;
+		if ($operation === static::OperationUpdate) {
+			$events[] = new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName('services', $this->serviceId), eventName: 'serviceUpdated', body: json_encode($this), socketId: $socketId);
+		} else {
+			$subscriptionUsageChanged = true;
+		}
 		while (!$rows->EOF()) {
-			$events[] = new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($rows->Field('user_id')), eventName: 'serversUpdated', body: $this->serviceId, socketId: $socketId);
+			$userChannelName = BeaconPusher::PrivateUserChannelName($rows->Field('user_id'));
+			$events[] = new BeaconChannelEvent(channelName: $userChannelName, eventName: 'servicesUpdated', body: '', socketId: $socketId);
+			if ($subscriptionUsageChanged) {
+				$events[] = new BeaconChannelEvent(channelName: $userChannelName, eventName: 'userUpdated', body: '', socketId: $socketId);
+			}
 			$rows->MoveNext();
 		}
 		BeaconPusher::SharedInstance()->SendEvents($events);
