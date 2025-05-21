@@ -5,42 +5,49 @@ use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, Dat
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
 class Dino extends DatabaseObject implements JsonSerializable {
+	use MutableDatabaseObject;
+
+	const StatusDeployed = 'Deployed';
+	const StatusDead = 'Dead';
+	const StatusFrozen = 'Frozen';
+	const StatusUploaded = 'Uploaded';
+
 	protected string $dinoId;
 	protected string $dinoNumber;
 	protected string $dinoNumber64;
 	protected string $dinoName;
+	protected string $dinoDisplayName;
 	protected string $dinoSpecies;
 	protected string $dinoSpeciesPath;
 	protected int $dinoLevel;
 	protected float $dinoAge;
-	protected bool $dinoIsDead;
-	protected bool $dinoIsFrozen;
-	protected bool $dinoIsUploaded;
+	protected string $dinoStatus;
 	protected string $serviceId;
 	protected string $serviceDisplayName;
 	protected string $serviceColor;
 	protected string $tribeId;
 	protected string $tribeName;
 	protected ?string $cryopodData;
+	protected int $permissions;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->dinoId = $row->Field('dino_id');
 		$this->dinoName = $row->Field('dino_name');
+		$this->dinoDisplayName = $row->Field('display_name');
 		$this->dinoNumber = $row->Field('dino_number');
 		$this->dinoNumber64 = $row->Field('dino_number_64');
 		$this->dinoSpecies = $row->Field('dino_species');
 		$this->dinoSpeciesPath = $row->Field('dino_species_path');
 		$this->dinoLevel = $row->Field('dino_level');
 		$this->dinoAge = $row->Field('dino_age');
-		$this->dinoIsDead = $row->Field('dino_is_dead');
-		$this->dinoIsFrozen = $row->Field('dino_is_frozen');
-		$this->dinoIsUploaded = $row->Field('dino_is_uploaded');
+		$this->dinoStatus = $row->Field('status');
 		$this->tribeId = $row->Field('tribe_id');
 		$this->tribeName = $row->Field('tribe_name');
 		$this->serviceId = $row->Field('service_id');
 		$this->serviceDisplayName = $row->Field('service_display_name');
 		$this->serviceColor = $row->Field('service_color');
 		$this->cryopodData = $row->Field('cryopod_data');
+		$this->permissions = $row->Field('permissions');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -52,19 +59,19 @@ class Dino extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('dinoNumber', ['columnName' => 'dino_number', 'accessor' => 'dinos.visual_dino_number']),
 				new DatabaseObjectProperty('dinoNumber64', ['columnName' => 'dino_number_64', 'accessor' => 'dinos.dino_number']),
 				new DatabaseObjectProperty('dinoName', ['columnName' => 'dino_name', 'accessor' => 'dinos.name']),
+				new DatabaseObjectProperty('dinoDisplayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('dinoSpecies', ['columnName' => 'dino_species', 'accessor' => 'dinos.species']),
 				new DatabaseObjectProperty('dinoSpeciesPath', ['columnName' => 'dino_species_path', 'accessor' => 'dinos.species_path']),
 				new DatabaseObjectProperty('dinoLevel', ['columnName' => 'dino_level', 'accessor' => 'dinos.level']),
 				new DatabaseObjectProperty('dinoAge', ['columnName' => 'dino_age', 'accessor' => 'dinos.age']),
-				new DatabaseObjectProperty('dinoIsDead', ['columnName' => 'dino_is_dead', 'accessor' => 'dinos.is_dead']),
-				new DatabaseObjectProperty('dinoIsFrozen', ['columnName' => 'dino_is_frozen', 'accessor' => 'dinos.is_frozen']),
-				new DatabaseObjectProperty('dinoIsUploaded', ['columnName' => 'dino_is_uploaded', 'accessor' => 'dinos.is_uploaded']),
+				new DatabaseObjectProperty('dinoStatus', ['columnName' => 'status', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id', 'accessor' => 'services.service_id']),
 				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'accessor' => 'services.display_name']),
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'accessor' => 'services.color']),
 				new DatabaseObjectProperty('tribeId', ['columnName' => 'tribe_id', 'accessor' => 'tribes.tribe_id']),
 				new DatabaseObjectProperty('tribeName', ['columnName' => 'tribe_name', 'accessor' => 'tribes.name']),
 				new DatabaseObjectProperty('cryopodData', ['columnName' => 'cryopod_data', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('permissions', ['columnName' => 'permissions', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_permissions.permissions']),
 			],
 			joins: [
 				'INNER JOIN sentinel.services ON (dinos.service_id = services.service_id)',
@@ -77,25 +84,47 @@ class Dino extends DatabaseObject implements JsonSerializable {
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$sortDirection = (isset($filters['sortDirection']) && strtolower($filters['sortDirection']) === 'descending') ? 'DESC' : 'ASC';
-		$sortColumn = 'dinoName';
+		$sortColumn = 'dinoDisplayName';
 		if (isset($filters['sortedColumn'])) {
 			switch ($filters['sortedColumn']) {
 			case 'dinoName':
+			case 'dinoDisplayName':
+				$sortColumn = $schema->Accessor('dinoDisplayName');
+				break;
 			case 'serviceDisplayName':
 			case 'tribeName':
 			case 'dinoNumber':
-				$sortColumn = $filters['sortedColumn'];
+				$sortColumn = $schema->Accessor($filters['sortedColumn']);
 				break;
 			}
 		}
-		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
+		$parameters->orderBy = "{$sortColumn} {$sortDirection}, dinos.level {$sortDirection}, dinos.species {$sortDirection}";
 		$parameters->allowAll = true;
-		$parameters->AddFromFilter($schema, $filters, 'dinoName', 'ILIKE');
+
 		$parameters->AddFromFilter($schema, $filters, 'dinoNumber');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'dinoIsDead');
+		$parameters->AddFromFilter($schema, $filters, 'dinoStatus', 'IN');
+		$parameters->AddFromFilter($schema, $filters, 'dinoSpecies', 'ILIKE');
+
+		if (isset($filters['dinoName']) && !isset($filters['dinoDisplayName'])) {
+			$filters['dinoDisplayName'] = $filters['dinoName'];
+		}
+		if (isset($filters['dinoDisplayName'])) {
+			$vectorPlaceholder = $parameters->AddValue($filters['dinoDisplayName']);
+			$likePlaceholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['dinoDisplayName']) . '%');
+			$parameters->clauses[] = "(dinos.name_vector @@ websearch_to_tsquery('english', \${$vectorPlaceholder}) OR dinos.display_name ILIKE \${$likePlaceholder})";
+		}
+
+		if (isset($filters['dinoIsDead'])) {
+			$placeholder = $parameters->AddValue(static::StatusDead);
+			if ($filters['dinoIsDead'] == 'true') {
+				$parameters->clauses[] = $schema->Accessor('dinoStatus') . ' = $' . $placeholder;
+			} else {
+				$parameters->clauses[] = $schema->Accessor('dinoStatus') . ' != $' . $placeholder;
+			}
+		}
 
 		if (isset($filters['tribeId'])) {
 			$placeholder = $parameters->AddValue($filters['tribeId']);
@@ -107,15 +136,19 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		return [
 			'dinoId' => $this->dinoId,
 			'dinoNumber' => $this->dinoNumber,
+			'dinoNumber64' => $this->dinoNumber64,
 			'dinoName' => $this->dinoName,
+			'dinoDisplayName' => $this->dinoDisplayName,
 			'dinoSpecies' => $this->dinoSpecies,
 			'dinoSpeciesPath' => $this->dinoSpeciesPath,
 			'dinoLevel' => $this->dinoLevel,
 			'dinoAge' => $this->dinoAge,
-			'dinoIsDead' => $this->dinoIsDead,
-			'dinoIsFrozen' => $this->dinoIsFrozen,
-			'dinoIsUploaded' => $this->dinoIsUploaded,
+			'dinoIsDead' => $this->dinoStatus === static::StatusDead,
+			'dinoIsFrozen' => $this->dinoStatus === static::StatusFrozen,
+			'dinoIsUploaded' => $this->dinoStatus === static::StatusUploaded,
 			'dinoRestoreEligible' => $this->RestoreEligible(),
+			'dinoStatus' => $this->dinoStatus,
+			'permissions' => $this->permissions,
 			'serviceId' => $this->serviceId,
 			'serviceDisplayName' => $this->serviceDisplayName,
 			'serviceColor' => $this->serviceColor,
@@ -142,7 +175,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function RestoreEligible(): bool {
-		return $this->dinoIsDead && is_null($this->cryopodData) === false;
+		return $this->dinoStatus === static::StatusDead && is_null($this->cryopodData) === false;
 	}
 
 	public function CryopodData(): ?array {
@@ -158,6 +191,21 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		} else {
 			return $this->dinoName;
 		}
+	}
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return false;
+	}
+
+	public function GetPermissionsForUser(User $user): int {
+		$permissions = DatabaseObject::kPermissionNone;
+		if (($this->permissions & PermissionBits::Membership) === PermissionBits::Membership) {
+			$permissions = $permissions | DatabaseObject::kPermissionRead;
+		}
+		if (($this->permissions & PermissionBits::ControlServices) === PermissionBits::ControlServices) {
+			$permissions = $permissions | DatabaseObject::kPermissionUpdate | DatabaseObject::kPermissionDelete;
+		}
+		return $permissions;
 	}
 }
 

@@ -21,7 +21,7 @@ class DatabaseSearchParameters {
 
 		$propertyName = $property->PropertyName();
 		if (isset($filters[$propertyName])) {
-			if ($operator === 'in') {
+			if (strtolower($operator) === 'in') {
 				$values = explode(',', $filters[$propertyName]);
 				if (count($values) === 1) {
 					$placeholder = $this->AddValue($values[0]);
