@@ -97,7 +97,7 @@ function handleRequest(array $context): Response {
 
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
-	$database->Query('UPDATE sentinel.dinos SET is_dead = FALSE, is_frozen = TRUE WHERE dino_id = $1;', $dinoId);
+	$database->Query('UPDATE sentinel.dinos SET status = $2 WHERE dino_id = $1;', $dinoId, Dino::StatusFrozen);
 	LogMessage::Create(serviceId: $serviceId, eventName: LogMessage::EventDinoRestored, type: LogMessage::LogTypeGameplay, level: LogMessage::LogLevelInfo, messages: $messages, metadata: $metadata);
 	$database->Commit();
 
