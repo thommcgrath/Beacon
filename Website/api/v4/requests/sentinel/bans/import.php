@@ -115,7 +115,7 @@ function handleRequest(array $context): Response {
 			if ($isService) {
 				$database->Query('INSERT INTO sentinel.service_bans (service_id, player_id, expiration, comments) VALUES ($1, sentinel.get_player_id($2, TRUE), TO_TIMESTAMP($3), $4) ON CONFLICT (service_id, player_id) DO NOTHING;', $serviceId, $ban['playerId'], $ban['expiration'], $ban['comments']);
 			} else {
-				$database->Query('INSERT INTO sentinel.group_bans (group_id, player_id, expiration, issued_by, issuer_comments) VALUES ($1, sentinel.get_player_id($2, TRUE), TO_TIMESTAMP($3), $4, $5) ON CONFLICT (group_id, player_id) DO NOTHING;', $groupId, $ban['playerId'], $ban['expiration'], $userId, $ban['comments']);
+				$database->Query('INSERT INTO sentinel.group_bans (group_id, player_id, expiration, issuer_id, comments) VALUES ($1, sentinel.get_player_id($2, TRUE), TO_TIMESTAMP($3), $4, $5) ON CONFLICT (group_id, player_id) DO NOTHING;', $groupId, $ban['playerId'], $ban['expiration'], $userId, $ban['comments']);
 			}
 		}
 	} catch (Exception $err) {
