@@ -211,7 +211,12 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 
 		$parameters->allowAll = true;
 
-		$parameters->AddFromFilter($schema, $filters, 'serviceId');
+		if (isset($filters['groupId'])) {
+			$groupIdParameter = $parameters->AddValue($filters['groupId']);
+			$parameters->clauses[] = 'service_logs.service_id IN (SELECT service_id FROM sentinel.group_services WHERE group_id = $' . $groupIdParameter . ')';
+		} else {
+			$parameters->AddFromFilter($schema, $filters, 'serviceId');
+		}
 		$parameters->AddFromFilter($schema, $filters, 'analyzerStatus', 'in');
 		$parameters->AddFromFilter($schema, $filters, 'eventName', 'in');
 		$parameters->AddFromFilter($schema, $filters, 'type', 'in');
