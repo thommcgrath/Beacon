@@ -5,6 +5,8 @@ use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, Dat
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
 class Character extends DatabaseObject implements JsonSerializable {
+	use MutableDatabaseObject;
+
 	protected string $characterId;
 	protected string $characterName;
 	protected int $specimenId;
@@ -15,6 +17,7 @@ class Character extends DatabaseObject implements JsonSerializable {
 	protected string $serviceColor;
 	protected string $tribeId;
 	protected string $tribeName;
+	protected int $permissions;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->characterId = $row->Field('character_id');
@@ -27,6 +30,7 @@ class Character extends DatabaseObject implements JsonSerializable {
 		$this->serviceColor = $row->Field('service_color');
 		$this->tribeId = $row->Field('tribe_id');
 		$this->tribeName = $row->Field('tribe_name');
+		$this->permissions = $row->Field('permissions');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -44,6 +48,7 @@ class Character extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'accessor' => 'services.color']),
 				new DatabaseObjectProperty('tribeId', ['columnName' => 'tribe_id', 'accessor' => 'tribes.tribe_id']),
 				new DatabaseObjectProperty('tribeName', ['columnName' => 'tribe_name', 'accessor' => 'tribes.name']),
+				new DatabaseObjectProperty('permissions', ['columnName' => 'permissions', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_permissions.permissions']),
 			],
 			joins: [
 				'INNER JOIN sentinel.players ON (characters.player_id = players.player_id)',
@@ -71,10 +76,10 @@ class Character extends DatabaseObject implements JsonSerializable {
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->allowAll = true;
-		$parameters->AddFromFilter($schema, $filters, 'characterName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'playerName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'characterName', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'playerName', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'SEARCH');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'specimenId');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');
@@ -97,6 +102,7 @@ class Character extends DatabaseObject implements JsonSerializable {
 			'serviceColor' => $this->serviceColor,
 			'tribeId' => $this->tribeId,
 			'tribeName' => $this->tribeName,
+			'permissions' => $this->permissions,
 		];
 	}
 
@@ -125,6 +131,21 @@ class Character extends DatabaseObject implements JsonSerializable {
 
 	public function TribeId(): string {
 		return $this->tribeId;
+	}
+
+	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+		return false;
+	}
+
+	public function GetPermissionsForUser(User $user): int {
+		$permissions = DatabaseObject::kPermissionNone;
+		if (($this->permissions & PermissionBits::Membership) === PermissionBits::Membership) {
+			$permissions = $permissions | DatabaseObject::kPermissionRead;
+		}
+		if (($this->permissions & PermissionBits::ControlServices) === PermissionBits::ControlServices) {
+			$permissions = $permissions | DatabaseObject::kPermissionUpdate | DatabaseObject::kPermissionDelete;
+		}
+		return $permissions;
 	}
 }
 

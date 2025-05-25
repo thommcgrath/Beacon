@@ -148,7 +148,7 @@ class DatabaseSchema {
 			$value = '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $value ?? '') . '%';
 			return $column->Accessor($this->table) . ' LIKE ' . $placeholder;
 		} elseif ($operator === 'SEARCH') {
-			return 'to_tsvector(\'english\', ' . $column->Accessor($this->table) . ') @@ websearch_to_tsquery(\'english\', ' . $placeholder . ')';
+			return 'public.websearch(' . $column->Accessor($this->table) . ', ' . $placeholder . ')';
 		} else {
 			return $column->Accessor($this->table) . ' ' . $operator . ' ' . $placeholder;
 		}

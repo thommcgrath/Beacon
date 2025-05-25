@@ -124,6 +124,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	protected string $messageId;
 	protected string $serviceId;
 	protected string $serviceDisplayName;
+	protected string $serviceMiniDisplayName;
 	protected string $eventName;
 	protected string $type;
 	protected float $time;
@@ -136,6 +137,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		$this->messageId = $row->Field('message_id');
 		$this->serviceId = $row->Field('service_id');
 		$this->serviceDisplayName = $row->Field('service_display_name');
+		$this->serviceMiniDisplayName = $row->Field('service_mini_display_name');
 		$this->eventName = $row->Field('event_name');
 		$this->type = $row->Field('type');
 		$this->time = floatval($row->Field('log_time'));
@@ -165,6 +167,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('messageId', ['primaryKey' => true, 'columnName' => 'message_id']),
 				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id']),
 				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.display_name']),
+				new DatabaseObjectProperty('serviceMiniDisplayName', ['columnName' => 'service_mini_display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'services.mini_name_display']),
 				new DatabaseObjectProperty('type'),
 				new DatabaseObjectProperty('time', ['columnName' => 'log_time', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 				new DatabaseObjectProperty('eventName', ['columnName' => 'event_name']),
@@ -267,6 +270,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 			'messageId' => $this->messageId,
 			'serviceId' => $this->serviceId,
 			'serviceDisplayName' => $this->serviceDisplayName,
+			'serviceMiniDisplayName' => $this->serviceMiniDisplayName,
 			'eventName' => $this->eventName,
 			'type' => $this->type,
 			'time' => $this->time,

@@ -218,7 +218,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\SDTD\ConfigOption', '7dtd/co
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ProjectInvite', 'projectInvites', 'inviteCode');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Bucket', 'sentinel/buckets', 'bucketId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\BucketValue', 'sentinel/bucketValues', 'bucketValueId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Character', 'sentinel/characters', 'characterId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Character', 'sentinel/characters', 'characterId', DatabaseObjectManager::kFeatureAll & ~DatabaseObjectManager::kFeatureCreate);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Dino', 'sentinel/dinos', 'dinoId', DatabaseObjectManager::kFeatureAll & ~DatabaseObjectManager::kFeatureCreate);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Group', 'sentinel/groups', 'groupId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupBan', 'sentinel/groupBans', 'groupBanId');
@@ -237,7 +237,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceBan', 'sentinel/serviceBans', 'serviceBanId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceScript', 'sentinel/serviceScripts', 'serviceScriptId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceUser', 'sentinel/serviceUsers', 'serviceUserId', DatabaseObjectManager::kFeatureReadOnly);
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Tribe', 'sentinel/tribes', 'tribeId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Tribe', 'sentinel/tribes', 'tribeId', DatabaseObjectManager::kFeatureAll & ~DatabaseObjectManager::kFeatureCreate);
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 

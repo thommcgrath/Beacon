@@ -49,7 +49,9 @@ class Group extends DatabaseObject implements JsonSerializable {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Accessor('name');
 		$parameters->allowAll = true;
+
 		$parameters->AddFromFilter($schema, $filters, 'color');
+		$parameters->AddFromFilter($schema, $filters, 'name', 'SEARCH');
 	}
 
 	public function jsonSerialize(): mixed {

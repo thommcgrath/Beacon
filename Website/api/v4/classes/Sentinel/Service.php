@@ -139,6 +139,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected string $name;
 	protected ?string $nickname;
 	protected string $displayName;
+	protected ?string $miniName;
+	protected string $miniDisplayName;
 	protected string $color;
 	protected string $platform;
 	protected array $gameSpecific;
@@ -163,6 +165,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->name = $row->Field('name');
 		$this->nickname = $row->Field('nickname');
 		$this->displayName = $row->Field('display_name');
+		$this->miniName = $row->Field('mini_name');
+		$this->miniDisplayName = $row->Field('mini_name_display');
 		$this->color = $row->Field('color');
 		$this->platform = $row->Field('platform');
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
@@ -195,6 +199,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('name'),
 				new DatabaseObjectProperty('nickname', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('displayName', ['columnName' => 'display_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('miniName', ['columnName' => 'mini_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('miniDisplayName', ['columnName' => 'mini_name_display', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('color', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('platform'),
 				new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
@@ -228,6 +234,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 			case 'nickname':
 			case 'name':
 			case 'gameId':
+			case 'miniName':
+			case 'miniDisplayName':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
@@ -252,17 +260,14 @@ class Service extends DatabaseObject implements JsonSerializable {
 		}
 
 		if (isset($filters['searchableName'])) {
-			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['searchableName']) . '%');
-			$parameters->clauses[] = '(services.name ILIKE $' . $placeholder . ' OR services.nickname ILIKE $' . $placeholder . ')';
-		} elseif (isset($filters['displayName'])) {
-			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['displayName']) . '%');
-			$parameters->clauses[] = $schema->Accessor('displayName') . ' ILIKE $' . $placeholder;
-		} elseif (isset($filters['nickname'])) {
-			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['nickname']) . '%');
-			$parameters->clauses[] = $schema->Accessor('nickname') . ' ILIKE $' . $placeholder;
-		} elseif (isset($filters['name'])) {
-			$placeholder = $parameters->AddValue('%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $filters['name']) . '%');
-			$parameters->clauses[] = $schema->Accessor('name') . ' ILIKE $' . $placeholder;
+			$placeholder = $parameters->AddValue($filters['searchableName']);
+			$parameters->clauses[] = '(public.websearch(services.name, $' . $placeholder . ') OR public.websearch(services.nickname, $' . $placeholder . ') OR public.websearch(services.mini_name, $' . $placeholder . '))';
+		} else {
+			$parameters->AddFromFilter($schema, $filters, 'displayName', 'SEARCH');
+			$parameters->AddFromFilter($schema, $filters, 'miniDisplayName', 'SEARCH');
+			$parameters->AddFromFilter($schema, $filters, 'nickname', 'SEARCH');
+			$parameters->AddFromFilter($schema, $filters, 'miniName', 'SEARCH');
+			$parameters->AddFromFilter($schema, $filters, 'name', 'SEARCH');
 		}
 	}
 
@@ -320,6 +325,8 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'name' => $this->name,
 			'nickname' => $this->nickname,
 			'displayName' => $this->displayName,
+			'miniName' => $this->miniName,
+			'miniDisplayName' => $this->miniDisplayName,
 			'color' => $this->color,
 			'platform' => $this->platform,
 			'gameSpecific' => (object) $this->gameSpecific,

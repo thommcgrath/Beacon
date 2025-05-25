@@ -14,6 +14,7 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 	protected string $groupOwnerId;
 	protected string $userId;
 	protected string $username;
+	protected string $usernameFull;
 	protected int $permissions;
 
 	public function __construct(BeaconRecordSet $row) {
@@ -24,6 +25,7 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 		$this->groupOwnerId = $row->Field('group_owner_id');
 		$this->userId = $row->Field('user_id');
 		$this->username = $row->Field('username');
+		$this->usernameFull = $row->Field('username_full');
 		$this->permissions = $row->Field('permissions');
 	}
 
@@ -39,6 +41,7 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('groupOwnerId', ['columnName' => 'group_owner_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'groups.user_id']),
 				new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'required' => true, 'editable' => DatabaseObjectProperty::kEditableAtCreation]),
 				new DatabaseObjectProperty('username', ['columnName' => 'username', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username']),
+				new DatabaseObjectProperty('usernameFull', ['columnName' => 'username_full', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'users.username_full']),
 				new DatabaseObjectProperty('permissions', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
@@ -56,16 +59,18 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 			switch ($filters['sortedColumn']) {
 			case 'groupName':
 			case 'username':
+			case 'usernameFull':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->AddFromFilter($schema, $filters, 'groupId');
-		$parameters->AddFromFilter($schema, $filters, 'groupName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'groupName', 'SEARCH');
 		$parameters->AddFromFilter($schema, $filters, 'groupOwnerId');
 		$parameters->AddFromFilter($schema, $filters, 'userId');
-		$parameters->AddFromFilter($schema, $filters, 'username', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'username', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'usernameFull', 'SEARCH');
 	}
 
 	public function jsonSerialize(): mixed {
@@ -77,7 +82,7 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 			'groupOwnerId' => $this->groupOwnerId,
 			'userId' => $this->userId,
 			'username' => $this->username,
-			'usernameFull' => $this->username . '#' . substr($this->userId, 0, 8),
+			'usernameFull' => $this->usernameFull,
 			'permissions' => $this->permissions,
 		];
 	}
