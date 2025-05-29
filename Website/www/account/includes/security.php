@@ -8,7 +8,7 @@ $has_authenticators = count($authenticators) > 0;
 
 ?><div class="visual-group">
 	<h3>Change Password</h3>
-	<p class="notice-block notice-warning"><strong>Important</strong>: Do not give any user access to your Beacon account for any reason. The only way to forcefully remove somebody from your account is to replace your private key. See below for why you don't want to do this. To safely share access to one or more of your Beacon documents, please follow <a href="/help/sharing_beacon_documents">these instructions</a>.</p>
+	<p class="notice-block notice-warning"><strong>Important</strong>: Never give any user access to your Beacon account, under any circumstances. The only way for someone to be forcefully removed from your account is for your private key to be replaced. See below for reasons why you should avoid doing this. To safely share access to one or more of your Beacon documents, follow <a href="/help/sharing_beacon_documents">these instructions</a>.</p>
 	<form id="change_password_form" action="" method="post">
 		<div class="floating-label">
 			<input type="password" class="text-field" id="password_current_field" placeholder="Current Password">
@@ -22,15 +22,21 @@ $has_authenticators = count($authenticators) > 0;
 			<input type="password" class="text-field" id="password_confirm_field" placeholder="Confirm New Password" minlength="8">
 			<label for="password_confirm_field">Confirm New Password</label>
 		</div>
+		<?php if ($user->Is2FAProtected()) { ?>
+		<div class="floating-label">
+			<input type="text" class="text-field" id="password_auth_field" placeholder="Two Step Code">
+			<label for="password_auth_field">Two Step Code</label>
+		</div>
+		<?php } ?>
 		<div class="subsection">
 			<p><label class="checkbox"><input type="checkbox" id="password_regenerate_check" value="true"><span></span>Replace private key</label></p>
 			<p class="text-red bold uppercase text-center">Read this carefully!</p>
-			<p class="smaller">If there is somebody with access to your account that you need to force out, you will need a new private key. With this option turned on, the following will happen:</p>
+			<p class="smaller">If you need to force someone with access to your account out, you will need a new private key. When this option is turned on, the following will happen:</p>
 			<ol class="smaller">
-				<li><strong class="text-red">Any encrypted data inside your projects will be lost</strong>, which includes everything inside the <em>Servers</em> section.</li>
-				<li>Shared cloud projects will need to be re-shared</li>
+				<li class="text-red bold">Any encrypted data in your projects, including everything in the <em>Servers</em> section, will be lost.</li>
+				<li>Any shared cloud projects will need to be shared again.</li>
 				<li>All other devices will be signed out.</li>
-				<?php if ($user->Is2FAProtected()) { ?><li>All devices will require two step verification on next log in.</li><?php } ?>
+				<?php if ($user->Is2FAProtected()) { ?><li>Two-step verification will be required for all devices on the next login.</li><?php } ?>
 			</ol>
 		</div>
 		<p class="text-right"><input type="submit" id="password_action_button" value="Save Password" disabled></p>
@@ -38,11 +44,11 @@ $has_authenticators = count($authenticators) > 0;
 </div>
 <?php if ($has_authenticators || $two_factor_enabled) { ?>
 <div class="visual-group">
-	<h3>Authenticators</h3>
+	<h3>Two Step Authentication</h3>
 	<?php
-	
+
 	if ($has_authenticators) {
-		echo '<p>Two step authentication is <strong>enabled</strong> for your account. An authenticator code is required to sign in on an untrusted device, and to change or reset your password.</p>';
+		echo '<p>Two step authentication is <strong>enabled</strong> for your account. You will need an authenticator code to sign in on an untrusted device or to change or reset your password.</p>';
 		echo '<table class="generic" id="authenticators-table"><thead><tr><th>Nickname</th><th class="low-priority">Date Added (<span id="authenticators_time_zone_name">UTC</span>)</th><th class="min-width">Actions</th></tr></thead><tbody>';
 		foreach ($authenticators as $authenticator) {
 			echo '<tr id="authenticator-' . htmlentities($authenticator->AuthenticatorId()) . '"><td>' . htmlentities($authenticator->Nickname()) . '<div class="row-details">Date Added: <time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></div></td><td class="low-priority"><time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></td><td class="min-width"><button beacon-authenticator-id="' . htmlentities($authenticator->AuthenticatorId()) . '" beacon-authenticator-name="' . html_entity_decode($authenticator->Nickname()) . '" class="delete_authenticator_button destructive red">Delete</a></td></tr>';
@@ -51,7 +57,7 @@ $has_authenticators = count($authenticators) > 0;
 	} else {
 		echo '<p>Two step authentication is <strong>disabled</strong> for your account. Add an authenticator to get started.</p>';
 	}
-	
+
 	?>
 	<p class="text-right"><button id="add-authenticator-button">Add Authenticator</button></p>
 </div>
@@ -67,6 +73,7 @@ $has_authenticators = count($authenticators) > 0;
 		}
 		echo '</div>';
 	?>
+	<p>Backup codes cannot be used to add or remove authenticators, or to change the account password.</p>
 	<p class="text-right"><button id="replace-backup-codes-button" class="yellow">Replace Backup Codes</button></p>
 </div>
 <?php } ?>
@@ -77,6 +84,18 @@ $has_authenticators = count($authenticators) > 0;
 		<div id="add-authenticator-content-left"><img id="add-authenticator-qrcode" src=""></img></div>
 		<div id="add-authenticator-content-right">
 			<p>Scan this code with your authenticator app, then enter the code it generates.</p>
+			<p class="notice-block notice-warning hidden" id="add-authenticator-error-message"></p>
+			<?php if ($user->Is2FAProtected()) { ?>
+			<div class="floating-label">
+				<input type="text" class="text-field" id="add-authenticator-password-field" placeholder="Other Authenticator Code" value="">
+				<label for="add-authenticator-password-field">Other Authenticator Code</label>
+			</div>
+			<?php } else { ?>
+			<div class="floating-label">
+				<input type="password" class="text-field" id="add-authenticator-password-field" placeholder="Account Password" value="">
+				<label for="add-authenticator-password-field">Account Password</label>
+			</div>
+			<?php } ?>
 			<div class="floating-label">
 				<input type="text" class="text-field" id="add-authenticator-code-field" placeholder="Verification Code">
 				<label for="add-authenticator-code-field">Verification Code</label>

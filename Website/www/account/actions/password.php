@@ -34,6 +34,15 @@ if (!User::ValidatePassword($password)) {
 	exit;
 }
 
+$user = $activeSession->User();
+if ($user->Is2FAProtected()) {
+	$authCode = $_POST['auth_code'] ?? '';
+	if ($user->Verify2FACode($authCode, true, User::VerifyWithAuthenticators) === false) {
+		Response::NewJsonError(message: 'The provided code is not correct for any of your authenticators.', code: 'invalidAuthCode', httpStatus: 403)->Flush();
+		exit;
+	}
+}
+
 if ($allowVulnerable == false) {
 	$hash = strtolower(sha1($password));
 	$prefix = substr($hash, 0, 5);
@@ -51,7 +60,6 @@ if ($allowVulnerable == false) {
 	}
 }
 
-$user = $activeSession->User();
 try {
 	UserGenerator::ChangePassword($user, $currentPassword, $password, $activeSession, $regenerateKey);
 	Response::NewJson([

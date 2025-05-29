@@ -63,6 +63,7 @@ if ($user->IsAnonymous() === false) {
 			<?php if ($isAffiliate) { ?>
 			<li><a href="#affiliate" page="affiliate">Affiliate</a></li>
 			<?php } ?>
+			<li><a href="#apps" page="apps">API Keys</a></li>
 		</ul>
 	</div>
 	<div class="page-panel-pages">
@@ -102,6 +103,10 @@ if ($user->IsAnonymous() === false) {
 			<?php include('includes/affiliate.php'); ?>
 		</div>
 		<?php } ?>
+		<div class="page-panel-page" page="apps">
+			<h1>API Keys</h1>
+			<?php include('includes/apps.php'); ?>
+		</div>
 	</div>
 	<div class="page-panel-footer">&nbsp;</div>
 </div>

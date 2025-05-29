@@ -15,7 +15,12 @@ function handleRequest(array $context): Response {
 	$obj['userId'] = Core::UserId();
 	try {
 		$app = Application::Create($obj);
-		return Response::NewJson($app, 201);
+		$secret = $app->Secret();
+		$json = $app->jsonSerialize();
+		if (is_null($secret) === false) {
+			$json['secret'] = $secret;
+		}
+		return Response::NewJson($json, 201);
 	} catch (Exception $err) {
 		return Response::NewJsonError($err->getMessage(), $obj, 400);
 	}

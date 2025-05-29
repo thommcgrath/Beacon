@@ -1,9 +1,9 @@
 "use strict";
 
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
-import { BeaconDialog } from "./classes/BeaconDialog.js";
+import { BeaconDialog, SecureOptionAnyAuthenticator } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
-import { formatDates, randomUUID } from "./common.js";
+import { formatDates, randomUUID, readFile } from "./common.js";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	let knownVulnerablePassword = '';
@@ -244,12 +244,15 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	const currentPasswordField = document.getElementById('password_current_field');
 	const newPasswordField = document.getElementById('password_initial_field');
 	const confirmPasswordField = document.getElementById('password_confirm_field');
+	const passwordAuthField = document.getElementById('password_auth_field');
 	const addAuthenticatorButton = document.getElementById('add-authenticator-button');
 	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
+	const addAuthenticatorPasswordField = document.getElementById('add-authenticator-password-field');
 	const addAuthenticatorNicknameField = document.getElementById('add-authenticator-nickname-field');
 	const addAuthenticatorActionButton = document.getElementById('add-authenticator-action-button');
 	const addAuthenticatorCancelButton = document.getElementById('add-authenticator-cancel-button');
 	const addAuthenticatorQRCode = document.getElementById('add-authenticator-qrcode');
+	const addAuthenticatorErrorMessage = document.getElementById('add-authenticator-error-message');
 	const timeZoneName = document.getElementById('authenticators_time_zone_name');
 	const replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
 
@@ -282,6 +285,9 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			}
 			if (regenerateKey) {
 				body.append('regenerate_key', true);
+			}
+			if (passwordAuthField) {
+				body.append('auth_code', passwordAuthField.value);
 			}
 
 			BeaconWebRequest.post('/account/actions/password', body).then(() => {
@@ -354,7 +360,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 		confirmPasswordField.addEventListener('input', passwordConfirmCheck);
 	}
 
-	if (addAuthenticatorButton && addAuthenticatorCodeField && addAuthenticatorNicknameField && addAuthenticatorActionButton && addAuthenticatorCancelButton) {
+	if (addAuthenticatorButton && addAuthenticatorPasswordField && addAuthenticatorCodeField && addAuthenticatorNicknameField && addAuthenticatorActionButton && addAuthenticatorCancelButton) {
 		try {
 			const generateSecret = () => {
 				const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -378,9 +384,13 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				},
 			};
 
-			addAuthenticatorCodeField.addEventListener('input', (ev) => {
-				addAuthenticatorActionButton.disabled = ev.target.value.trim() === '';
-			});
+			const updateAddAuthenticatorButton = () => {
+				addAuthenticatorActionButton.disabled = addAuthenticatorCodeField.value.trim() === '' || addAuthenticatorPasswordField.value === '' || addAuthenticatorNicknameField.value === '';
+			};
+
+			addAuthenticatorCodeField.addEventListener('input', updateAddAuthenticatorButton);
+			addAuthenticatorPasswordField.addEventListener('input', updateAddAuthenticatorButton);
+			addAuthenticatorNicknameField.addEventListener('input', updateAddAuthenticatorButton);
 
 			addAuthenticatorButton.addEventListener('click', () => {
 				authenticator.metadata.secret = generateSecret();
@@ -401,38 +411,25 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			});
 
 			addAuthenticatorActionButton.addEventListener('click', () => {
+				addAuthenticatorErrorMessage.innerText = '';
+				addAuthenticatorErrorMessage.classList.add('hidden');
 				authenticator.nickname = addAuthenticatorNicknameField.value.trim();
 				authenticator.verificationCode = addAuthenticatorCodeField.value.trim();
+				authenticator.password = addAuthenticatorPasswordField.value;
 
 				BeaconWebRequest.post(`https://${apiDomain}/v4/authenticators`, authenticator, { 'X-Beacon-Token': sessionId }).then(() => {
 					window.location.reload(true);
 				}).catch((error) => {
-					const errorMessage = (() => {
+					const errorMessage = () => {
 						try {
 							return JSON.parse(error.body).message;
 						} catch (e) {
 							return 'Incorrect verification code';
 						}
-					})();
+					};
 
-					addAuthenticatorCodeField.classList.add('invalid');
-
-					const label = document.querySelector(`label[for="${addAuthenticatorCodeField.id}"]`);
-					if (label) {
-						label.classList.add('invalid');
-						label.innerText = errorMessage;
-					}
-
-					setTimeout(() => {
-						if (label) {
-							label.classList.remove('invalid');
-							label.innerText = 'Verification Code';
-						}
-
-						if (addAuthenticatorCodeField) {
-							addAuthenticatorCodeField.classList.remove('invalid');
-						}
-					}, 3000);
+					addAuthenticatorErrorMessage.innerText = errorMessage();
+					addAuthenticatorErrorMessage.classList.remove('hidden');
 				});
 			});
 		} catch (e) {
@@ -467,9 +464,16 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				} else {
 					confirm.explanation = 'This is your only authenticator. Deleting it will disable two factor authentication for your account. You will be able to add a new authenticator to enable two factor authentication again.';
 				}
+				confirm.explanation += ' To delete this authenticator, please use it to generate a code';
 
-				BeaconDialog.confirm(confirm.message, confirm.explanation).then(() => {
-					BeaconWebRequest.delete(`https://${apiDomain}/v4/authenticators/${authenticatorId}`, {'X-Beacon-Token': sessionId}).then(() => {
+				BeaconDialog.secureConfirm(SecureOptionAnyAuthenticator, confirm.message, confirm.explanation).then((authCode) => {
+					BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/authenticators`, JSON.stringify({
+						authenticatorId: authenticatorId,
+						authCode: authCode,
+					}), {
+						'X-Beacon-Token': sessionId,
+						'Content-Type': 'application/json',
+					}).then(() => {
 						const row = document.getElementById(`authenticator-${authenticatorId}`);
 						if (row && numAuthenticators > 1) {
 							row.remove();
@@ -488,6 +492,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 								reason.explanation = obj.message;
 							}
 						} catch (e) {
+							//
 						}
 						BeaconDialog.show(reason.message, reason.explanation);
 					});
@@ -566,22 +571,227 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	}
 
 	/* ! Apps */
+	const appCreateButton = document.getElementById('apps-create-button');
+	const appCancelButton = document.getElementById('app-editor-cancel-button');
+	const appActionButton = document.getElementById('app-editor-action-button');
+	const appChooseIconButton = document.getElementById('app-editor-icon-choose-button');
+	const appIconChooser = document.getElementById('app-editor-icon-chooser');
+	const appIconCell = document.getElementById('app-editor-icon-cell');
+	const appIconDisclaimer = document.getElementById('app-editor-icon-disclaimer');
+	const appNameField = document.getElementById('app-editor-name-field');
+	const appWebsiteField = document.getElementById('app-editor-website-field');
+	const appSecurityGroup = document.getElementById('app-editor-security-group');
+	const appConfidentialCheck = document.getElementById('app-editor-confidential-check');
+	const appScopeChecks = Array.from(document.querySelectorAll('.app-scope-checkbox'));
+	const appSecretHint = document.getElementById('app-editor-secret-hint');
+	const appCallbacksField = document.getElementById('app-editor-callbacks-field');
 
-	const editAppAction = (event) => {
-		event.preventDefault();
+	if (appCreateButton && appCancelButton && appActionButton && appChooseIconButton && appIconChooser && appIconCell && appNameField && appWebsiteField && appSecurityGroup && appConfidentialCheck) {
+		let applicationId;
+		let ancillaryScopes;
+		let appIsNew;
 
-		const applicationId = event.currentTarget.getAttribute('beacon-app-id');
-		BeaconWebRequest.get(`https://${apiDomain}/v4/applications/${encodeURIComponent(applicationId)}`, { 'X-Beacon-Token': sessionId }).then((response) => {
-			const parsed = JSON.parse(response.body);
+		const showAppEditor = (appInfo) => {
+			appIsNew = !Object.hasOwn(appInfo, 'applicationId');
+			applicationId = appInfo.applicationId ?? randomUUID();
+			appNameField.value = appInfo.name ?? '';
+			appWebsiteField.value = appInfo.website ?? '';
+			if (appInfo.applicationId) {
+				appSecurityGroup.classList.add('hidden');
+			} else {
+				appSecurityGroup.classList.remove('hidden');
+			}
+			appConfidentialCheck.checked = false;
+			for (const appScopeCheck of appScopeChecks) {
+				appScopeCheck.checked = appInfo.scopes?.includes(appScopeCheck.value);
+			}
+			if (appInfo.iconUrls) {
+				appIconCell.setAttribute('src', appInfo.iconUrls['64']);
+				appIconCell.setAttribute('srcset', `${appInfo.iconUrls['64']}, ${appInfo.iconUrls['128']} 2x, ${appInfo.iconUrls['256']} 3x`);
+			} else {
+				appIconCell.setAttribute('src', 'https://assets.usebeacon.app/images/avatars/default/64px.png');
+				appIconCell.setAttribute('srcset', 'https://assets.usebeacon.app/images/avatars/default/64px.png, https://assets.usebeacon.app/images/avatars/default/128px.png 2x, https://assets.usebeacon.app/images/avatars/default/256px.png 3x');
+			}
+			appIconChooser.value = null;
+			if (appInfo.scopes) {
+				// Include everything except the ones we have checkboxes for
+				ancillaryScopes = appInfo.scopes.filter((scope) => {
+					return !appScopeChecks.some((appScopeCheck) => {
+						return appScopeCheck.value === scope;
+					});
+				});
+			} else {
+				ancillaryScopes = [];
+			}
+			appCallbacksField.value = appInfo.callbacks?.join("\n") ?? '';
+			if (appIconDisclaimer) {
+				appIconDisclaimer.classList.add('hidden');
+			}
+			appActionButton.innerText = appIsNew ? 'Add' : 'Update';
 
-		}).catch(() => {
-			BeaconDialog.show('Could not retrieve application info');
+			BeaconDialog.showModal('app-editor-modal');
+		};
+
+		const editAppAction = (event) => {
+			event.preventDefault();
+
+			const applicationId = event.currentTarget.getAttribute('beacon-app-id');
+			BeaconWebRequest.get(`https://${apiDomain}/v4/applications/${encodeURIComponent(applicationId)}`, { 'X-Beacon-Token': sessionId }).then((response) => {
+				const parsed = JSON.parse(response.body);
+				showAppEditor(parsed);
+			}).catch(() => {
+				BeaconDialog.show('Could not retrieve application info');
+			});
+		};
+
+		const deleteAppAction = (event) => {
+			event.preventDefault();
+
+			const applicationId = event.currentTarget.getAttribute('beacon-app-id');
+			BeaconDialog.secureConfirm(SecureOptionAnyAuthenticator, 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.').then((authCode) => {
+				BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/applications`, JSON.stringify({
+					applicationId: applicationId,
+					authCode: authCode,
+				}), {
+					'X-Beacon-Token': sessionId,
+					'Content-Type': 'application/json',
+				}).then(() => {
+					BeaconDialog.show('The application has been deleted').then(() => {
+						location.reload();
+					});
+				}).catch((response) => {
+					const err = JSON.parse(response.body);
+					let message = err.message;
+					if (err.code === 'invalidAuthCode') {
+						message = 'The authenticator code is not correct. Please provide a code from any of your authenticator apps, not a backup code.';
+					}
+					BeaconDialog.show('The application could not be deleted', message);
+				});
+			}).catch(() => {
+				console.log('App delete was cancelled');
+			});
+		};
+
+		const editAppButtons = document.querySelectorAll('#panel-account div[page="apps"] button.apps-edit-button');
+		editAppButtons.forEach((button) => {
+			button.addEventListener('click', editAppAction);
 		});
-	};
 
-	const editAppButtons = document.querySelectorAll('#panel-account div[page="apps"] button.apps-edit-button');
-	for (const button of editAppButtons) {
-		button.addEventListener('click', editAppAction);
+		const deleteAppButtons = document.querySelectorAll('#panel-account div[page="apps"] button.apps-delete-button');
+		deleteAppButtons.forEach((button) => {
+			button.addEventListener('click', deleteAppAction);
+		});
+
+		appCreateButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			showAppEditor({});
+		});
+
+		appActionButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			ev.target.disabled = true;
+			appCancelButton.disabled = true;
+
+			const newAppInfo = {
+				applicationId: applicationId,
+				name: appNameField.value,
+				website: appWebsiteField.value,
+				scopes: [... ancillaryScopes, ...appScopeChecks.filter((appScopeCheck) => {
+					return appScopeCheck.checked;
+				}).map((appScopeCheck) => {
+					return appScopeCheck.value;
+				})].sort(),
+				callbacks: appCallbacksField.value.replace(/(\r\n)|\r|\n/g, "\n").split("\n"),
+			};
+			if (appIsNew && appConfidentialCheck.value) {
+				newAppInfo.secret = 'plink'; // The server treats any value as a request for a secret, so we just need to include anything
+			}
+
+			const submitApp = () => {
+				const headers = {
+					'X-Beacon-Token': sessionId,
+					'Content-Type': 'application/json',
+				};
+
+				const appSaved = (response) => {
+					const appInfo = JSON.parse(response.body);
+					if (appInfo.secret) {
+						BeaconDialog.hideModal().then(() => {
+							BeaconDialog.show('Your application has been registered.', `Your secret is below. You will not be shown this secret again.\n\n${appInfo.secret}`).then(() => {
+								location.reload();
+							});
+						});
+					} else {
+						location.reload();
+					}
+				};
+
+				const appSaveErrored = (response) => {
+					const err = JSON.parse(response.body);
+					BeaconDialog.hideModal().then(() => {
+						BeaconDialog.show('Your application could not be saved', err.message).then(() => {
+							appActionButton.disabled = false;
+							appCancelButton.disabled = false;
+							BeaconDialog.showModal('app-editor-modal');
+						});
+					});
+				};
+
+				if (appIsNew) {
+					BeaconWebRequest.post(`https://${apiDomain}/v4/applications`, JSON.stringify(newAppInfo), headers).then(appSaved).catch(appSaveErrored);
+				} else {
+					BeaconWebRequest.start('PATCH', `https://${apiDomain}/v4/applications/${newAppInfo.applicationId}`, JSON.stringify(newAppInfo), headers).then(appSaved).catch(appSaveErrored);
+				}
+			};
+
+			if (appIconChooser && appIconChooser.files.length === 1) {
+				readFile(appIconChooser.files[0]).then((iconData) => {
+					newAppInfo.iconData = btoa(iconData);
+					submitApp();
+				}).catch((err) => {
+					BeaconDialog.show('Unable to read icon data', err.message);
+				});
+			} else {
+				submitApp();
+			}
+		});
+
+		appCancelButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			BeaconDialog.hideModal();
+		});
+
+		if (appSecretHint) {
+			appConfidentialCheck.addEventListener('change', () => {
+				if (appConfidentialCheck.checked) {
+					appSecretHint.classList.remove('hidden');
+				} else {
+					appSecretHint.classList.add('hidden');
+				}
+			});
+		}
+
+		appChooseIconButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			appIconChooser.click();
+		});
+
+		appIconChooser.addEventListener('change', () => {
+			if (appIconChooser.files.length !== 1) {
+				appIconCell.setAttribute('src', 'https://assets.usebeacon.app/images/avatars/default/64px.png');
+				appIconCell.setAttribute('srcset', 'https://assets.usebeacon.app/images/avatars/default/64px.png, https://assets.usebeacon.app/images/avatars/default/128px.png 2x, https://assets.usebeacon.app/images/avatars/default/256px.png 3x');
+				if (appIconDisclaimer) {
+					appIconDisclaimer.classList.add('hidden');
+				}
+				return;
+			}
+
+			appIconCell.setAttribute('src', URL.createObjectURL(appIconChooser.files[0]));
+			appIconCell.removeAttribute('srcset');
+			if (appIconDisclaimer) {
+				appIconDisclaimer.classList.remove('hidden');
+			}
+		});
 	}
 
 	/* ! Services */

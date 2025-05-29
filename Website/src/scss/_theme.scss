@@ -2839,6 +2839,51 @@ body.no-navigation {
 	}
 }
 
+.app-avatar-picker {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+
+	div:nth-child(2) {
+		white-space: nowrap;
+	}
+
+	div:nth-child(3) {
+		font-size: $font-size-sm;
+		font-style: italic;
+		flex: 1 1 auto;
+	}
+}
+
+.app-editor-scopes-picker {
+	list-style: none;
+	padding-left: 0px;
+
+	.tag {
+		margin-left: 0.5rem;
+	}
+
+	.app-editor-feature-description {
+		margin-left: 1rem;
+		display: block;
+		margin-top: 0.25rem;
+		font-size: 0.9rem;
+	}
+
+	li {
+		border-top: 1px solid $separator-color;
+		padding: 0.75rem 0;
+	}
+
+	li:last-child {
+		border-bottom: 1px solid $separator-color;
+	}
+}
+
+#app-editor-callbacks-field {
+	height: 10em;
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;

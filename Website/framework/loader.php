@@ -150,6 +150,7 @@ BeaconErrors::StartWatching();
 			"'self'",
 			"https://*.usebeacon.app",
 			"data:",
+			"blob:",
 		],
 		'base-uri' => [
 			"'self'"

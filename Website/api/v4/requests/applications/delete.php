@@ -1,16 +1,23 @@
 <?php
 
-use BeaconAPI\v4\{Response, Application, Core};
+use BeaconAPI\v4\{Application, Core, Response, User};
 
 function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
 	$requiredScopes[] = Application::kScopeAppsDelete;
 }
 
 function handleRequest(array $context): Response {
-	$applicationId = $context['pathParameters']['applicationId'];
+	$user = Core::User();
+	$body = Core::BodyAsJson();
+	$applicationId = $body['applicationId'];
+	$authCode = $body['authCode'];
 	$app = Application::Fetch($applicationId);
-	if (is_null($app) || $app->UserId() !== Core::UserId()) {
+	if (is_null($app) || $app->UserId() !== $user->UserId()) {
 		return Response::NewJsonError('Application not found', null, 404);
+	}
+
+	if ($user->Verify2FACode($authCode, true, User::VerifyWithAuthenticators) === false) {
+		return Response::NewJsonError(message: 'The provided code is not correct for any of your authenticators.', code: 'invalidAuthCode', httpStatus: 403);
 	}
 
 	try {

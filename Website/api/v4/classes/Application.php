@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCDN, BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, Imagick, JsonSerializable;
 
 class Application extends DatabaseObject implements JsonSerializable {
 	protected string $applicationId = '';
@@ -15,6 +15,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 	protected int $rateLimit = 50;
 	protected bool $isOfficial = false;
 	protected int $experience = 0;
+	protected bool $secretIsDecrypted = false;
 
 	const kScopeCommon = 'common';
 	const kScopeAppsCreate = 'apps:create';
@@ -32,6 +33,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 	const kScopeUsersBilling = 'users.billing';
 
 	const kExperienceAppWebView = 1;
+
+	const SecretLength = 48;
 
 	public static function ValidScopes(): array {
 		return [
@@ -71,7 +74,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$this->applicationId = $row->Field('application_id');
 		$this->userId = $row->Field('user_id');
 		if (is_null($row->Field('secret')) === false) {
-			$this->secret = BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), base64_decode($row->Field('secret')));
+			$this->secret = $row->Field('secret');
 		}
 		$this->name = $row->Field('name');
 		$this->website = $row->Field('website');
@@ -110,9 +113,9 @@ class Application extends DatabaseObject implements JsonSerializable {
 			throw new Exception('Missing required properties');
 		}
 
-		$applicationId = BeaconCommon::GenerateUUID();
+		$applicationId = $properties['applicationId'] ?? BeaconCommon::GenerateUUID();
 		if ($generateSecret) {
-			$secret = BeaconCommon::GenerateUUID();
+			$secret = BeaconCommon::GenerateRandomKey(self::SecretLength);
 			$secretEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), $secret));
 		} else {
 			$secret = null;
@@ -144,7 +147,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 
 		foreach ($callbacks as $url) {
 			if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-				throw new Exception("Invalid url '{$url}'");
+				throw new Exception("Invalid callback url '{$url}'");
 			}
 			if (str_starts_with($url, 'https://') === false) {
 				throw new Exception("Url '{$url}' must use HTTPS");
@@ -152,15 +155,18 @@ class Application extends DatabaseObject implements JsonSerializable {
 		}
 
 		if (filter_var($website, FILTER_VALIDATE_URL) === false) {
-			throw new Exception("Invalid url '{$website}'");
+			throw new Exception("Invalid website url '{$website}'");
 		}
 		if (str_starts_with($website, 'https://') === false) {
 			throw new Exception("Url '{$website}' must use HTTPS");
 		}
 
+		// Since this uploads images, only do it after all other checks have passed
+		$iconFilename = static::SaveIconData($applicationId, $properties['iconData'] ?? '');
+
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.applications (application_id, secret, name, website, user_id, scopes) VALUES ($1, $2, $3, $4, $5, $6);", $applicationId, $secretEncrypted, $name, $website, $userId, implode(' ', $scopes));
+		$database->Query("INSERT INTO public.applications (application_id, secret, name, website, user_id, scopes, is_official, icon_filename) VALUES ($1, $2, $3, $4, $5, $6, FALSE, $7);", $applicationId, $secretEncrypted, $name, $website, $userId, implode(' ', $scopes), $iconFilename);
 		foreach ($callbacks as $url) {
 			$database->Query("INSERT INTO public.application_callbacks (application_id, url) VALUES ($1, $2);", $applicationId, $url);
 		}
@@ -195,13 +201,13 @@ class Application extends DatabaseObject implements JsonSerializable {
 			$values[] = $website;
 		}
 
-		if (isset($properties['secret']) && $properties['secret'] !== $this->secret) {
+		if (isset($properties['secret']) && $properties['secret'] !== $this->Secret()) {
 			if (is_null($properties['secret'])) {
 				$secret = null;
 				$secretEncrypted = null;
 			} else {
 				// Including any non-null value will generate a new secret. Don't accept the provided secret.
-				$secret = BeaconCommon::GenerateUUID();
+				$secret = BeaconCommon::GenerateRandomKey(self::SecretLength);
 				$secretEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), $secret));
 			}
 			$assignments[] = 'secret = $' . $placeholder++;
@@ -262,6 +268,11 @@ class Application extends DatabaseObject implements JsonSerializable {
 			$callbacksToRemove = array_diff($this->callbacks, $callbacks);
 		}
 
+		if (isset($properties['iconData'])) {
+			$values[] = static::SaveIconData($this->applicationId, $properties['iconData']);
+			$assignments[] = 'icon_filename = $' . $placeholder++;
+		}
+
 		if (count($assignments) === 0 && count($scopesToRemove) === 0 && count($callbacksToAdd) === 0 && count($callbacksToRemove) === 0) {
 			return;
 		}
@@ -299,6 +310,75 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$this->__construct($rows);
 	}
 
+	public function Delete(): void {
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM public.applications WHERE application_id = $1;', $this->applicationId);
+		$database->Commit();
+
+		if ($this->iconFilename === '{{applicationId}}/{{size}}.png') {
+			try {
+				$cdn = BeaconCDN::AssetsZone();
+				$cdn->DeleteFile("/images/avatars/{$this->applicationId}/");
+			} catch (Exception $err) {
+			}
+		}
+	}
+
+	protected static function SaveIconData(string $applicationId, string $base64IconData): string {
+		try {
+			$iconData = base64_decode($base64IconData);
+			if ($iconData === false) {
+				throw new Exception('Bad base64 data');
+			}
+
+			$sizes = [32, 64, 128, 256, 512, 1024];
+			$source = new Imagick();
+			$source->readImageBlob($iconData);
+			$imageInfo = $source->identifyImage();
+			switch ($imageInfo['mimetype']) {
+			case 'image/png':
+				$extension = 'png';
+				break;
+			case 'image/x-psd':
+				$extension = 'psd';
+				break;
+			case 'image/jpeg':
+				$extension = 'jpg';
+				break;
+			case 'image/tiff':
+				$extension = 'tiff';
+				break;
+			case 'image/x-webp':
+				$extension = 'webp';
+				break;
+			case 'image/gif':
+				$extension = 'gif';
+				break;
+			default:
+				throw new Exception('Unknown mime type ' . $imageInfo['mimetype']);
+				break;
+			}
+			$cdn = BeaconCDN::AssetsZone();
+
+			foreach ($sizes as $size) {
+				$image = clone $source;
+				$image->setImageFormat('png');
+				$image->setBackgroundColor('#ffffff');
+				$image->thumbnailImage($size, $size, true, true);
+
+				$cdn->PutFile("/images/avatars/{$applicationId}/{$size}px.png", $image->getImageBlob());
+
+				$image->destroy();
+			}
+
+			$cdn->PutFile("images/avatars/{$applicationId}/original.{$extension}", $iconData);
+			return "{{applicationId}}/{{size}}.png";
+		} catch (Exception $err) {
+			return "default/{{size}}.png";
+		}
+	}
+
 	public function ApplicationId(): string {
 		return $this->applicationId;
 	}
@@ -308,6 +388,18 @@ class Application extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function Secret(): ?string {
+		if (is_null($this->secret)) {
+			return null;
+		}
+		if ($this->secretIsDecrypted) {
+			return $this->secret;
+		}
+
+		try {
+			$this->secret = BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), base64_decode($this->secret));
+			$this->secretIsDecrypted = true;
+		} catch (Exception $err) {
+		}
 		return $this->secret;
 	}
 
@@ -403,8 +495,15 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return [
 			'applicationId' => $this->applicationId,
 			'name' => $this->name,
-			'secret' => $this->secret,
 			'iconUrl' => $this->IconUrl(),
+			'iconUrls' => [
+				'32' => $this->IconUrl(32),
+				'64' => $this->IconUrl(64),
+				'128' => $this->IconUrl(128),
+				'256' => $this->IconUrl(256),
+				'512' => $this->IconUrl(512),
+				'1024' => $this->IconUrl(1024),
+			],
 			'website' => $this->website,
 			'scopes' => $this->scopes,
 			'callbacks' => $this->callbacks,

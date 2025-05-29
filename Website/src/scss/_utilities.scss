@@ -52,6 +52,10 @@
 	width: 100%;
 }
 
+.w-fit {
+	width: fit-content;
+}
+
 $spacing: (
 	0: 0px,
 	1: 0.25rem,
@@ -179,7 +183,7 @@ $paddings: (
 	$class: map.get($map, "class");
 	$properties: map.get($map, "property");
 	$values: map.get($map, "values");
-	
+
 	@each $suffix, $value in $values {
 		.#{$class}-#{$suffix} {
 			@each $property in $properties {

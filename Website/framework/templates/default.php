@@ -122,6 +122,7 @@ $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 			<div id="dialog_inner">
 				<p id="dialog_message">Message</p>
 				<p id="dialog_explanation">Explanation</p>
+				<div id="dialog_slot"></div>
 				<p id="dialog_buttons"><button id="dialog_cancel_button">Cancel</button><button id="dialog_action_button" class="default">Ok</button></p>
 			</div>
 		</div>

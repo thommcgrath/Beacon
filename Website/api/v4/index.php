@@ -9,14 +9,11 @@ Core::RegisterRoutes(
 		'/applications' => [
 			'GET' => 'applications/list',
 			'POST' => 'applications/create',
+			'DELETE' => 'applications/delete',
 		],
 		'/applications/{applicationId}' => [
 			'GET' => 'applications/get',
 			'PATCH' => 'applications/edit',
-			'DELETE' => 'applications/delete',
-		],
-		'/applications/{applicationId}/avatar' => [
-			'PUT' => 'applications/avatar',
 		],
 		'/ark/projects/{projectId}/Game.ini' => [
 			'GET' => 'ark/generate',
@@ -29,11 +26,11 @@ Core::RegisterRoutes(
 		'/authenticators' => [
 			'POST' => 'authenticators/create',
 			'GET' => 'authenticators/list',
+			'DELETE' => 'authenticators/delete',
 		],
 		'/authenticators/{authenticatorId}' => [
 			'POST' => 'authenticators/edit',
 			'GET' => 'authenticators/get',
-			'DELETE' => 'authenticators/delete',
 		],
 		'/contentPacks/{contentPackId}/confirm' => [
 			'GET' => 'contentPacks/confirm',
