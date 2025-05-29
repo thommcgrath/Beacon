@@ -15,7 +15,7 @@ If you are already familiar with OAuth, here are the key details:
 | Authorization URL | https://api.usebeacon.app/v4/login |
 | Token URL | https://api.usebeacon.app/v4/login |
 
-## Starting a login request
+## Starting A Login Request
 
 To request a login, generate two random values: A `state` and a `code_verifier.` Store these values temporarily in the user's browser. A session cookie or session storage is best for this purpose. After the login is complete, the state will be relayed back, which you should verify before continuing. This protects against cross-site request forgery. The code verifier will defend against man-in-the-middle attacks, which may occur if the user's router or other security parameters have been tampered with. See the "Challenge" section below for more details.
 
@@ -121,7 +121,7 @@ Location: https://usebeacon.app/account/login
 
 ```
 
-## Completing a login request
+## Completing A Login Request
 
 Once the user has completed their login, the user will be redirected back to your `redirect_uri` with some additional query parameters.
 
@@ -251,3 +251,51 @@ To refresh a token, POST a JSON object to `https://api.usebeacon.app/v4/login`. 
 | scope | Space-separated list of scopes. This must match the originally requested scopes. |
 
 The response will match that of the access token response.
+
+## Sign Out
+
+To terminate an access token, make a DELETE request to `https://api.usebeacon.app/v4/sessions/{accessToken}`. The server will respond with a 204 status if successful.
+
+### Sample Code
+
+#### Raw HTTP
+
+```http
+DELETE /v4/sessions/4Il6iHU68VuZc3e7VrqksTu0UIC_8haalgYelsOn-Og HTTP/1.1
+Host: api.usebeacon.app
+
+```
+
+#### JavaScript
+
+```javascript
+fetch("https://api.usebeacon.app/v4/sessions/4Il6iHU68VuZc3e7VrqksTu0UIC_8haalgYelsOn-Og", {
+      "method": "DELETE",
+      "headers": {}
+})
+.then((res) => res.text())
+.then(console.log.bind(console))
+.catch(console.error.bind(console));
+```
+
+#### Python
+
+```python
+try:
+    response = requests.delete(
+        url="https://api.usebeacon.app/v4/sessions/4Il6iHU68VuZc3e7VrqksTu0UIC_8haalgYelsOn-Og",
+    )
+    print('Response HTTP Status Code: {status_code}'.format(
+        status_code=response.status_code))
+    print('Response HTTP Response Body: {content}'.format(
+        content=response.content))
+except requests.exceptions.RequestException:
+    print('HTTP Request failed')
+```
+
+### Sample Response
+
+```http
+HTTP/1.1 204 No Content
+
+```
