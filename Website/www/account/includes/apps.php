@@ -9,7 +9,7 @@ if ($user->Is2FAProtected() === false) {
 
 ?><div class="visual-group">
 	<h3>Beacon Applications</h3>
-	<p>Developers, register for Beacon API access here.</p>
+	<p>Developers, register for Beacon API access here. Documentation can be found in the <a href="https://help.usebeacon.app/api/v4">Beacon Help Center</a>.</p>
 	<?php
 
 	$apps = Application::Search(['userId' => $user->UserId()], true);
