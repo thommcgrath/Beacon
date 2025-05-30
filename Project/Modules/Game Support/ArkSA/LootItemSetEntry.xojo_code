@@ -926,7 +926,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  If AdjustQualities Then
 		    Var BaseArbitraryQuality As Double = ArkSA.Configs.Difficulty.BaseArbitraryQuality(Difficulty)
 		    MinQuality = ArkSA.Quality.ConfigValueForBase(MinQuality, Multipliers.Min, BaseArbitraryQuality)
-		    MaxQuality = ArkSA.Quality.ConfigValueForBase(MaxQuality, Multipliers.Min, BaseArbitraryQuality)
+		    MaxQuality = ArkSA.Quality.ConfigValueForBase(MaxQuality, Multipliers.Max, BaseArbitraryQuality)
 		  End If
 		  If MinQuality > MaxQuality Then
 		    // This probably isn't a good thing. Use the min for both values.
