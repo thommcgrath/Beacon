@@ -237,7 +237,7 @@ These statuses mean the request cannot be completed due to some fault of your re
 | 403 | Authentication has been provided, but is either incorrect or is not sufficient for the requested action. |
 | 404 | Not found. However, the API will lie to in some cases. If you request an instance that you do not have permission to access, the API will often respond with a 404 to avoid confirming the instance's existence. |
 | 405 | Cannot perform the request method for the path. |
-| 412 | A condition has not been met. |
+| 412 | A condition has not been met. For example, attempting to start a Sentinel dino locate request to a server that is not connected. |
 | 429 | Rate limit has been exceeded. |
 
 ### Server Error Responses
