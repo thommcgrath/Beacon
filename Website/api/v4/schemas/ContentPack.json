@@ -1,0 +1,100 @@
+{
+  "type": "object",
+  "properties": {
+	"contentPackId": {
+	  "type": "string",
+	  "pattern": "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$",
+	  "description": "The unique Beacon id of this content pack."
+	},
+	"gameId": {
+	  "type": "string",
+	  "enum": [
+		"Ark",
+		"ArkSA",
+		"Palworld"
+	  ],
+	  "description": "Which game this content pack belongs to."
+	},
+	"marketplace": {
+	  "type": "string",
+	  "enum": [
+		"Steam",
+		"Steam Workshop",
+		"CurseForge"
+	  ],
+	  "description": "Which marketplace hosts this content pack."
+	},
+	"marketplaceId": {
+	  "type": "string",
+	  "description": "The unique id of the content pack at its marketplace."
+	},
+	"marketplaceUrl": {
+	  "type": "string",
+	  "description": "The url to the content pack at its marketplace."
+	},
+	"userId": {
+	  "type": "string",
+	  "pattern": "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$",
+	  "description": "The UUID of the user who owns the content pack."
+	},
+	"name": {
+	  "type": "string",
+	  "description": "The name of the content pack."
+	},
+	"isConfirmed": {
+	  "type": "boolean",
+	  "description": "If true, the confirmation process has been completed."
+	},
+	"confirmationCode": {
+	  "type": "string",
+	  "description": "The confirmation code that should be found on the marketplace page."
+	},
+	"isConsoleSafe": {
+	  "type": "boolean",
+	  "description": "If true, the content pack is safe for consoles."
+	},
+	"isDefaultEnabled": {
+	  "type": "boolean",
+	  "description": "If true, the content pack will be enabled by default for new Beacon projects."
+	},
+	"minVersion": {
+	  "type": "integer",
+	  "description": "Minimum Beacon app version that can support this content pack."
+	},
+	"lastUpdate": {
+	  "type": "number",
+	  "description": "Time of last update as a unix timestamp."
+	},
+	"isOfficial": {
+	  "type": "boolean",
+	  "description": "If true, this content pack is provided by the official game developers."
+	},
+	"isIncludedInDeltas": {
+	  "type": "boolean",
+	  "description": "If true, this content pack will be included in delta updates designed for the Beacon app."
+	},
+	"gameSpecific": {
+	  "type": "object",
+	  "description": "Additional game-specific data that does not fit into general-purpose properties."
+	},
+	"slug": {
+	  "type": [
+		"string",
+		"null"
+	  ],
+	  "description": "If applicable, the url \"slug\" for the content pack. Not all marketplaces use url slugs."
+	},
+	"required": {
+	  "type": "boolean",
+	  "description": "If true, the content pack is cannot be turned off in the Beacon app."
+	}
+  },
+  "required": [
+	"contentPackId",
+	"gameId",
+	"marketplace",
+	"marketplaceId",
+	"userId",
+	"name"
+  ]
+}

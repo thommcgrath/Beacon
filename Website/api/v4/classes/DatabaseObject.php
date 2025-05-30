@@ -25,6 +25,15 @@ abstract class DatabaseObject {
 		return static::$schema[$calledClass];
 	}
 
+	public static function JSONSchema(): ?array {
+		$className = str_replace('\\', '/', substr(get_called_class(), 13));
+		$file = API_ROOT . '/schemas/' . $className . '.json';
+		if (file_exists($file)) {
+			return json_decode(file_get_contents($file), true);
+		}
+		return null;
+	}
+
 	// Seems odd, but allows subclasses to implement as a factory
 	protected static function NewInstance(BeaconRecordSet $rows): DatabaseObject {
 		return new static($rows);

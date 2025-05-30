@@ -6,13 +6,13 @@ use Exception;
 class DatabaseSchema {
 	const OptionDistinct = 1;
 
-	protected $schema = 'public';
-	protected $table = '';
-	protected $writeableTable = '';
-	protected $primaryColumn = null;
-	protected $columns = [];
-	protected $properties = [];
-	protected $joins = [];
+	protected string $schema = 'public';
+	protected string $table = '';
+	protected string $writeableTable = '';
+	protected ?DatabaseObjectProperty $primaryColumn = null;
+	protected array $columns = [];
+	protected array $properties = [];
+	protected array $joins = [];
 	protected bool $distinct = false;
 
 	public function __construct(string $schema, string $table, array $definitions, array $joins = [], int $options = 0) {
@@ -238,6 +238,14 @@ class DatabaseSchema {
 			if ($definition->IsRequired()) {
 				$columns[] = $definition;
 			}
+		}
+		return $columns;
+	}
+
+	public function Properties(): array {
+		$columns = [];
+		foreach ($this->columns as $columnName => $definition) {
+			$columns[] = $definition;
 		}
 		return $columns;
 	}

@@ -20,10 +20,6 @@ Every class also has an identifier property. For example, `Project` has `project
 
 For example, `Project`'s **class path**{:.ui-keyword} is `/v4/projects`, so the **instance path**{:.ui-keyword} for a project with `projectId = 33b7e39c-77d4-494e-afb8-53aa7d8a5494` is `/v4/projects/33b7e39c-77d4-494e-afb8-53aa7d8a5494`.
 
-## Getting Class Schema
-
-You may request the JSON schema for any class by injecting the `schemas` path component immediately after the version. So for a **class path**{:.ui-keyword} of `/v4/arksa/engrams`, the schema can be requested with `GET /v4/schemas/arksa/engrams`.
-
 ## Listing Objects
 
 Listing objects is always done with a `GET` request to the **class path**{:.ui-keyword}. The request may contain query parameters for filtering, ordering, and paginating results. Results are always paginated.

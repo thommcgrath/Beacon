@@ -2,7 +2,8 @@
 
 namespace BeaconAPI\v4;
 
-require(dirname(__FILE__) . '/loader.php');
+define('API_ROOT', dirname(__FILE__));
+require(API_ROOT . '/loader.php');
 
 Core::RegisterRoutes(
 	[
@@ -236,6 +237,6 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceScript', 'se
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceUser', 'sentinel/serviceUsers', 'serviceUserId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Tribe', 'sentinel/tribes', 'tribeId', DatabaseObjectManager::kFeatureAll & ~DatabaseObjectManager::kFeatureCreate);
 
-Core::HandleRequest(dirname(__FILE__) . '/requests');
+Core::HandleRequest(API_ROOT . '/requests');
 
 ?>

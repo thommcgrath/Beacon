@@ -55,6 +55,13 @@ class DatabaseObjectManager {
 		$bulk = ($this->features & self::kFeatureBulk) === self::kFeatureBulk;
 		$single = ($this->features & self::kFeatureSingle) === self::kFeatureSingle;
 
+		// Include schema route
+		Core::RegisterRoutes(["/schemas/{$this->path}" => [
+			"GET" => [
+				'handleRequest' => [$this, 'HandleSchemaRequest'],
+			],
+		]]);
+
 		if ($bulk) {
 			$methods = [];
 
@@ -506,6 +513,14 @@ class DatabaseObjectManager {
 		}
 
 		return Response::NewNoContent();
+	}
+
+	public function HandleSchemaRequest(array $context): Response {
+		$schema = $this->className::JSONSchema();
+		if (is_null($schema)) {
+			return Response::NewJsonError(code: 'schemaNotFound', message: 'Sorry, a schema for this class is not ready yet.', httpStatus: 404);
+		}
+		return Response::NewJson($schema, 200);
 	}
 }
 
