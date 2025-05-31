@@ -62,6 +62,40 @@ class DatabaseObjectManager {
 			],
 		]]);
 
+		$collectFrontMatter = isset($_SERVER['DBOMFrontMatter']);
+		if ($collectFrontMatter) {
+			$className = substr($this->className, 13);
+			if (str_contains($className, '\\')) {
+				$classParts = explode('\\', $className);
+				$classTitle = $classParts[count($classParts) - 1];
+				$classParent = $classParts[count($classParts) - 2];
+				if (count($classParts) > 2) {
+					$classGrandParent = $classParts[count($classParts) - 3];
+				} else {
+					$classGrandParent = 'Classes';
+				}
+				$location = strtolower(implode('/', array_slice($classParts, 0, count($classParts) - 1))) . '/' . strtolower($classTitle);
+			} else {
+				$classTitle = $className;
+				$classParent = 'Classes';
+				$classGrandParent = 'Version ' . Core::ApiVersionNumber();
+				$location = strtolower($classTitle);
+			}
+
+			$frontMatter = [
+				'title' => $classTitle,
+				'parent' => $classParent,
+				'grand_parent' => $classGrandParent,
+				'has_children' => false,
+				'apiVersion' => Core::ApiVersionNumber(),
+				'classPath' => $this->path,
+				'identifierProperty' => $this->varName,
+				'supportedClassMethods' => [],
+				'supportedInstanceMethods' => [],
+			];
+			$fileLocation = dirname(API_ROOT, 2) . '/docs/api/v' . Core::ApiVersionNumber() . '/classes/' . $location;
+		}
+
 		if ($bulk) {
 			$methods = [];
 
@@ -90,6 +124,9 @@ class DatabaseObjectManager {
 				];
 			}
 
+			if ($collectFrontMatter) {
+				$frontMatter['supportedClassMethods'] = array_keys($methods);
+			}
 			Core::RegisterRoutes(["/{$this->path}" => $methods]);
 		}
 		if ($single) {
@@ -120,7 +157,14 @@ class DatabaseObjectManager {
 				];
 			}
 
+			if ($collectFrontMatter) {
+				$frontMatter['supportedInstanceMethods'] = array_keys($methods);
+			}
 			Core::RegisterRoutes(["/{$this->path}/{{$this->varName}}" => $methods]);
+		}
+
+		if ($collectFrontMatter) {
+			$_SERVER['DBOMFrontMatter'][$fileLocation] = $frontMatter;
 		}
 	}
 
