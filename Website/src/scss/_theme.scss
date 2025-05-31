@@ -1,6 +1,9 @@
 @charset 'UTF-8';
 @use "sass:color";
 @use 'sass:math';
+@use 'sass:list';
+@use 'sass:meta';
+@use 'sass:string';
 @forward "normalize";
 @forward "fonts";
 @forward "utilities";
@@ -23,11 +26,11 @@ $button-yellow: #ffc107 !default;
 }
 
 @mixin transition($transition...) {
-	@if length($transition) == 0 {
+	@if list.length($transition) == 0 {
 		$transition: all .2s ease-in-out;
 	}
 
-	@if length($transition) > 1 {
+	@if list.length($transition) > 1 {
 		@each $value in $transition {
 			@if $value == null or $value == none {
 				@warn "The keyword 'none' or 'null' must be used as a single argument.";
@@ -36,11 +39,11 @@ $button-yellow: #ffc107 !default;
 	}
 
 	@if $enable-transitions {
-		@if nth($transition, 1) != null {
+		@if list.nth($transition, 1) != null {
 			transition: $transition;
 		}
 
-		@if $enable-reduced-motion and nth($transition, 1) != null and nth($transition, 1) != none {
+		@if $enable-reduced-motion and list.nth($transition, 1) != null and list.nth($transition, 1) != none {
 			@media (prefers-reduced-motion: reduce) {
 				transition: none;
 			}
@@ -51,10 +54,10 @@ $button-yellow: #ffc107 !default;
 @function valid-radius($radius) {
 	$return: ();
 	@each $value in $radius {
-		@if type-of($value) == number {
-			$return: append($return, max($value, 0));
+		@if meta.type-of($value) == number {
+			$return: list.append($return, max($value, 0));
 		} @else {
-			$return: append($return, $value);
+			$return: list.append($return, $value);
 		}
 	}
 	@return $return;
@@ -122,9 +125,9 @@ $button-yellow: #ffc107 !default;
 }
 
 @function luminance($color) {
-	$red: calc(color.red($color) / 255);
-	$green: calc(color.green($color) / 255);
-	$blue: calc(color.blue($color) / 255);
+	$red: calc(color.channel($color, "red", $space: rgb) / 255);
+	$green: calc(color.channel($color, "green", $space: rgb) / 255);
+	$blue: calc(color.channel($color, "blue", $space: rgb) / 255);
 
 	$red: if($red <= 0.03928, calc($red / 12.92), math.pow(calc(($red + 0.055) / 1.055), 2.4));
 	$green: if($green <= 0.03928, calc($green / 12.92), math.pow(calc(($green + 0.055) / 1.055), 2.4));
@@ -911,8 +914,10 @@ table.generic {
 		$contrasted-text-color: contrasting-color($contrasted-button-color, $button-text-color);
 	}
 
-	background-color: $contrasted-button-color;
-	color: $contrasted-text-color;
+	& {
+		background-color: $contrasted-button-color;
+		color: $contrasted-text-color;
+	}
 
 	.spinner:after {
 		border-color: $contrasted-text-color transparent $contrasted-text-color transparent;
@@ -1039,6 +1044,8 @@ input[type="submit"], button.default, a.button.default {
 	width: 100%;
 	line-height: 1.0rem;
 	background-clip: padding-box;
+	background-color: $background-color;
+	color: $foreground-color;
 
 	&::placeholder {
 		line-height: 1.0rem;
@@ -1047,9 +1054,6 @@ input[type="submit"], button.default, a.button.default {
 		color: $foreground-color;
 		opacity: $input-placeholder-opacity;
 	}
-
-	background-color: $background-color;
-	color: $foreground-color;
 
 	&:focus {
 		border-color: #86b7fe;
@@ -1123,9 +1127,9 @@ textarea {
 		pointer-events: none;
 		border: 1px solid transparent;
 		transform-origin: 0 0;
-		@include transition(opacity .1s ease-in-out, transform .1s ease-in-out);
 		box-sizing: border-box;
 		opacity: $input-placeholder-opacity;
+		@include transition(opacity .1s ease-in-out, transform .1s ease-in-out);
 	}
 
 	& > div.select+label {
@@ -1277,7 +1281,7 @@ label.checkbox {
 
 	& :active {
 		+span {
-			background-color: darken($background-color, 20%);
+			background-color: color.adjust($background-color, $lightness: -20%);
 			border-color: $pressed-accent-color;
 		}
 
@@ -1333,7 +1337,7 @@ label.checkbox :checked + span:after {
 	input {
 		-webkit-appearance: none;
 		appearance: none;
-		border: 1px solid mix($foreground-color, $background-color, 50%);
+		border: 1px solid color.mix($foreground-color, $background-color, 50%);
 		background-color: $background-color;
 		width: $radio-size;
 		height: $radio-size;
@@ -2299,8 +2303,8 @@ img.avatar {
 		border-radius: 6px;
 		text-align: center;
 		white-space: nowrap;
-		border-color: mix($foreground-color, $background-color, 5%);
-		background-color: mix($foreground-color, $background-color, 2%);
+		border-color: color.mix($foreground-color, $background-color, 5%);
+		background-color: color.mix($foreground-color, $background-color, 2%);
 		text-decoration: none;
 	}
 
@@ -2603,7 +2607,7 @@ input.no-stepper {
 		.bundle {
 			$gift-color: #87ceeb;
 			$gift-background-color: color.mix($gift-color, $background-color, 10%);
-			$gift-text-color: contrasting-color($gift-background-color, mix($gift-color, $foreground-color, 50%));
+			$gift-text-color: contrasting-color($gift-background-color, color.mix($gift-color, $foreground-color, 50%));
 			$gift-notice-color: contrasting-color($gift-background-color, $gift-color);
 
 			border: 1px solid $separator-color;
@@ -2806,7 +2810,7 @@ body.no-navigation {
 	.divider {
 		$arrow-color: color.mix($foreground-color, $breadcrumb-track-color, 30%);
 		display: inline-block;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23#{str-slice(#{$arrow-color}, 2)}' class='bi bi-chevron-right' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23#{string.slice(#{$arrow-color}, 2)}' class='bi bi-chevron-right' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: 16px 16px;
