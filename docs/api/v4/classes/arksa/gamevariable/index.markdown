@@ -1,11 +1,11 @@
 ---
-title: "Service"
-parent: "Sentinel"
+title: "GameVariable"
+parent: "Ark: Survival Ascended"
 grand_parent: "Classes"
 has_children: false
 apiVersion: 4
-classPath: "sentinel/services"
-identifierProperty: "serviceId"
+classPath: "arksa/gameVariables"
+identifierProperty: "key"
 supportedClassMethods:
   - POST
   - GET

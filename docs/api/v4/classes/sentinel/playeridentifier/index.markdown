@@ -1,14 +1,15 @@
 ---
-title: "Session"
-parent: "Classes"
-grand_parent: "Version 4"
+title: "PlayerIdentifier"
+parent: "Sentinel"
+grand_parent: "Classes"
 has_children: false
 apiVersion: 4
-classPath: "sessions"
-identifierProperty: "sessionId"
+classPath: "sentinel/playerIdentifiers"
+identifierProperty: "playerIdentifierId"
+supportedClassMethods:
+  - GET
 supportedInstanceMethods:
   - GET
-  - DELETE
 ---
 # {{page.title}}
 

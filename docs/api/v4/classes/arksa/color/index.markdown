@@ -1,14 +1,15 @@
 ---
-title: "Session"
-parent: "Classes"
-grand_parent: "Version 4"
+title: "Color"
+parent: "Ark: Survival Ascended"
+grand_parent: "Classes"
 has_children: false
 apiVersion: 4
-classPath: "sessions"
-identifierProperty: "sessionId"
+classPath: "arksa/colors"
+identifierProperty: "colorId"
+supportedClassMethods:
+  - GET
 supportedInstanceMethods:
   - GET
-  - DELETE
 ---
 # {{page.title}}
 

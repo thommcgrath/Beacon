@@ -204,3 +204,22 @@ h1.editor-title {
 	color: contrasting-color($body-background-color, $beacon-purple);
 	font-weight: bold;
 }
+
+.table-wrapper {
+	box-shadow: none;
+	border: 1px solid $border-color;
+
+	table {
+		border-spacing: 0px;
+	}
+}
+
+table.classdefinition {
+	tr {
+		td:nth-child(1) {
+			width: 1rem;
+			white-space: nowrap;
+			background-color: mix($table-background-color, $body-text-color, 98%);
+		}
+	}
+}

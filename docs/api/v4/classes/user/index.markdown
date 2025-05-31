@@ -1,13 +1,14 @@
 ---
-title: "Session"
+title: "User"
 parent: "Classes"
 grand_parent: "Version 4"
 has_children: false
 apiVersion: 4
-classPath: "sessions"
-identifierProperty: "sessionId"
+classPath: "users"
+identifierProperty: "userId"
 supportedInstanceMethods:
   - GET
+  - PATCH
   - DELETE
 ---
 # {{page.title}}

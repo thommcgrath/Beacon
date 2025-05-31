@@ -1,14 +1,13 @@
 ---
-title: "Session"
-parent: "Classes"
-grand_parent: "Version 4"
+title: "GameCommand"
+parent: "Sentinel"
+grand_parent: "Classes"
 has_children: false
 apiVersion: 4
-classPath: "sessions"
-identifierProperty: "sessionId"
-supportedInstanceMethods:
-  - GET
-  - DELETE
+classPath: "sentinel/gameCommands"
+identifierProperty: "gameCommandId"
+supportedClassMethods:
+  - POST
 ---
 # {{page.title}}
 

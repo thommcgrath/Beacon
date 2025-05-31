@@ -1,14 +1,19 @@
 ---
-title: "Session"
+title: "Project"
 parent: "Classes"
 grand_parent: "Version 4"
 has_children: false
 apiVersion: 4
-classPath: "sessions"
-identifierProperty: "sessionId"
+classPath: "projects"
+identifierProperty: "projectId"
+supportedClassMethods:
+  - POST
+  - GET
+  - DELETE
 supportedInstanceMethods:
   - GET
   - DELETE
+  - HEAD
 ---
 # {{page.title}}
 

@@ -1,11 +1,11 @@
 ---
-title: "Service"
-parent: "Sentinel"
+title: "LootDrop"
+parent: "Ark: Survival Evolved"
 grand_parent: "Classes"
 has_children: false
 apiVersion: 4
-classPath: "sentinel/services"
-identifierProperty: "serviceId"
+classPath: "ark/lootDrops"
+identifierProperty: "lootDropId"
 supportedClassMethods:
   - POST
   - GET

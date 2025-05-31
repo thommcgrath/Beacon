@@ -1,11 +1,11 @@
 ---
-title: "Service"
-parent: "Sentinel"
+title: "ConfigOption"
+parent: "Ark: Survival Evolved"
 grand_parent: "Classes"
 has_children: false
 apiVersion: 4
-classPath: "sentinel/services"
-identifierProperty: "serviceId"
+classPath: "ark/configOptions"
+identifierProperty: "configOptionId"
 supportedClassMethods:
   - POST
   - GET

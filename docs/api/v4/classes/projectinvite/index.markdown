@@ -1,13 +1,20 @@
 ---
-title: "Session"
+title: "ProjectInvite"
 parent: "Classes"
 grand_parent: "Version 4"
 has_children: false
 apiVersion: 4
-classPath: "sessions"
-identifierProperty: "sessionId"
-supportedInstanceMethods:
+classPath: "projectInvites"
+identifierProperty: "inviteCode"
+supportedClassMethods:
+  - POST
   - GET
+  - PATCH
+  - DELETE
+supportedInstanceMethods:
+  - PUT
+  - GET
+  - PATCH
   - DELETE
 ---
 # {{page.title}}

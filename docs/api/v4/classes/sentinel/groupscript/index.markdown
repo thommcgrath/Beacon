@@ -1,11 +1,11 @@
 ---
-title: "Service"
+title: "GroupScript"
 parent: "Sentinel"
 grand_parent: "Classes"
 has_children: false
 apiVersion: 4
-classPath: "sentinel/services"
-identifierProperty: "serviceId"
+classPath: "sentinel/groupScripts"
+identifierProperty: "groupScriptId"
 supportedClassMethods:
   - POST
   - GET

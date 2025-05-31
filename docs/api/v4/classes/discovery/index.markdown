@@ -1,14 +1,17 @@
 ---
-title: "Session"
+title: "DiscoveryResult"
 parent: "Classes"
 grand_parent: "Version 4"
 has_children: false
 apiVersion: 4
-classPath: "sessions"
-identifierProperty: "sessionId"
-supportedInstanceMethods:
+classPath: "discovery"
+identifierProperty: "contentPackId"
+supportedClassMethods:
   - GET
-  - DELETE
+supportedInstanceMethods:
+  - PUT
+  - GET
+  - HEAD
 ---
 # {{page.title}}
 

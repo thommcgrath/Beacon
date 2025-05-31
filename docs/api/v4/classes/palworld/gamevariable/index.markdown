@@ -1,13 +1,20 @@
 ---
-title: "Session"
-parent: "Classes"
-grand_parent: "Version 4"
+title: "GameVariable"
+parent: "Palworld"
+grand_parent: "Classes"
 has_children: false
 apiVersion: 4
-classPath: "sessions"
-identifierProperty: "sessionId"
-supportedInstanceMethods:
+classPath: "palworld/gameVariables"
+identifierProperty: "key"
+supportedClassMethods:
+  - POST
   - GET
+  - PATCH
+  - DELETE
+supportedInstanceMethods:
+  - PUT
+  - GET
+  - PATCH
   - DELETE
 ---
 # {{page.title}}

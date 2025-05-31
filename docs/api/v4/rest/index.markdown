@@ -8,7 +8,7 @@ nav_order: 2
 
 The Beacon API is a REST API. With minimal exceptions, every request to the API is to perform one of the CRUD (Create, Read, Update, Delete) actions on an object. Just like most programming languages, each object is represented by a class.
 
-Except where otherwise noted, working with this API is done by making a predictable request to a class endpoint. For example, if you wanted to learn how to list projects for a user, start by understanding the "Listing Objects" section of this guide, then read about the [Project](/api/v4/classes/project) class.
+Except where otherwise noted, working with this API is done by making a predictable request to a class endpoint. For example, if you wanted to learn how to list projects for a user, start by understanding the "Listing Instances" section of this guide, then read about the [Project](/api/v4/classes/project) class.
 
 ## Classes vs Instances
 
@@ -20,9 +20,9 @@ Every class also has an identifier property. For example, `Project` has `project
 
 For example, `Project`'s **class path**{:.ui-keyword} is `/v4/projects`, so the **instance path**{:.ui-keyword} for a project with `projectId = 33b7e39c-77d4-494e-afb8-53aa7d8a5494` is `/v4/projects/33b7e39c-77d4-494e-afb8-53aa7d8a5494`.
 
-## Listing Objects
+## Listing Instances
 
-Listing objects is always done with a `GET` request to the **class path**{:.ui-keyword}. The request may contain query parameters for filtering, ordering, and paginating results. Results are always paginated.
+Listing instances is always done with a `GET` request to the **class path**{:.ui-keyword}. The request may contain query parameters for filtering, ordering, and paginating results. Results are always paginated.
 
 ### Sorting
 

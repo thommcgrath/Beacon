@@ -1,5 +1,5 @@
 ---
-title: "Sentinel"
+title: "Ark: Survival Evolved"
 parent: "Classes"
 grand_parent: "Version 4"
 has_children: true
