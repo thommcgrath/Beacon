@@ -15,41 +15,41 @@ sortableProperties:
   - playerName
   - serviceDisplayName
 filters:
-  - playerId:
-      mode: exact
-  - serviceId:
-      mode: exact
-  - groupId:
-      mode: exact
-      notes: "Though not a true property, will find sessions for any service in the specified group."
-  - playerName:
-      mode: contains
-  - serviceDisplayName:
-      mode: contains
-  - isConnected
-      mode: exact
+  - key: playerId
+    mode: exact
+  - key: serviceId
+    mode: exact
+  - key: groupId
+    mode: exact
+    notes: "Though not a true property, will find sessions for any service in the specified group."
+  - key: playerName
+    mode: contains
+  - key: serviceDisplayName
+    mode: contains
+  - key: isConnected
+    mode: exact
 properties:
-  - playerSessionId:
-      type: UUID
-  - playerId:
-      type: UUID
-  - playerName:
-      type: String
-  - serviceId:
-      type: UUID
-  - serviceDisplayName:
-      type: String
-  - connectTime:
-      type: Timestamp
-  - disconnectTime:
-      type: Timestamp
-      notes: "Is null when the player is currently playing on a server."
-  - playTime:
-      type: Float
-      notes: "If the player is currently playing on a server, this value is the number of seconds since they started playing. Otherwise, it is the number of seconds they were playing."
-  - isConnected:
-      type: Boolean
-      notes: "True when the player is currently playing on a server."
+  - key: playerSessionId
+    type: UUID
+  - key: playerId
+    type: UUID
+  - key: playerName
+    type: String
+  - key: serviceId
+    type: UUID
+  - key: serviceDisplayName
+    type: String
+  - key: connectTime
+    type: Timestamp
+  - key: disconnectTime
+    type: Timestamp
+    notes: "Is null when the player is currently playing on a server."
+  - key: playTime
+    type: Float
+    notes: "If the player is currently playing on a server, this value is the number of seconds since they started playing. Otherwise, it is the number of seconds they were playing."
+  - key: isConnected
+    type: Boolean
+    notes: "True when the player is currently playing on a server."
 ---
 # {{page.title}}
 

@@ -18,8 +18,8 @@
 ## Properties
 
 | Property | Type | Notes |
-| - | - | - |{% for property in page.properties %}{% assign propertyKey = property.first.first %}
-| {{propertyKey}} | {{property[propertyKey].type}} | {{property[propertyKey].notes}} |{% endfor %}
+| - | - | - |{% for property in page.properties %}
+| {{property.key}} | {{property.type}} | {{property.notes}} |{% endfor %}
 {:.classdefinition}
 {% endif %}
 {% if page.sortableProperties %}
@@ -34,6 +34,6 @@
 
 | Query Parameter | Match Mode | Notes |
 | - | - | - |{% for filter in page.filters %}
-| {{filter.first.first}} | {{filter[filter.first.first].mode}} | {{filter[filter.first.first].notes}} |{% endfor %}
+| {{filter.key}} | {{filter.mode}} | {{filter.notes}} |{% endfor %}
 {:.classdefinition}
 {% endif %}
