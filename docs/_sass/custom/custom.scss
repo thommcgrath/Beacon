@@ -216,7 +216,7 @@ h1.editor-title {
 
 table.classdefinition {
 	tr {
-		td:nth-child(1) {
+		td:nth-child(1), th:nth-child(1) {
 			width: 1rem;
 			white-space: nowrap;
 			background-color: mix($table-background-color, $body-text-color, 98%);
