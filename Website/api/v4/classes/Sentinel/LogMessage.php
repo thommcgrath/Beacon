@@ -45,11 +45,15 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::AnalyzerStatusPending,
 		self::AnalyzerStatusAnalyzed
 	];
-
-	const EventCron = 'cron';
+	
+	const EventAdminCommand = 'adminCommand';
+	const EventBroadcast = 'broadcasted';
+	const EventManualCharacterScript = 'characterScriptRun';
 	const EventChat = 'chat';
 	const EventClockTemperingDetected = 'clockTamperingDetected';
 	const EventClusterIdChanged = 'clusterIdChanged';
+	const EventCron = 'cron';
+	const EventCustomMessage = 'customMessage';
 	const EventDinoClaimed = 'dinoClaimed';
 	const EventDinoDied = 'dinoDied';
 	const EventDinoDownloaded = 'dinoDownloaded';
@@ -57,14 +61,19 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventDinoMatured = 'dinoMatured';
 	const EventDinoRenamed = 'dinoRenamed';
 	const EventDinoRestored = 'dinoRestored';
+	const EventManualDinoScript = 'dinoScriptRun';
+	const EventDinoSterilized = 'dinoSterilized';
 	const EventDinoTamed = 'dinoTamed';
 	const EventDinoTribeChanged = 'dinoTribeChanged';
 	const EventDinoUnclaimed = 'dinoUnclaimed';
 	const EventDinoUnfrozen = 'dinoUnfrozen';
+	const EventDinoUnsterilized = 'dinoUnsterilized';
 	const EventDinoUploaded = 'dinoUploaded';
-	const EventPlayerJoined = 'playerJoined';
+	const EventItemGiven = 'itemGiven';
+	const EventNoClusterId = 'noClusterId';
 	const EventPlayerCuffed = 'playerCuffed';
 	const EventPlayerDied = 'playerDied';
+	const EventPlayerJoined = 'playerJoined';
 	const EventPlayerLeft = 'playerLeft';
 	const EventPlayerNamed = 'playerRenamed';
 	const EventPlayerSpawned = 'playerSpawned';
@@ -74,19 +83,21 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventRollbackDetected = 'rollbackDetected';
 	const EventServerConnected = 'serverConnected';
 	const EventServerDisconnected = 'serverDisconnected';
+	const EventManualServiceScript = 'serviceScriptRun';
 	const EventStructureDestroyed = 'structureDestroyed';
 	const EventTribeCreated = 'tribeCreated';
 	const EventTribeDestroyed = 'tribeDestroyed';
 	const EventTribeRenamed = 'tribeRenamed';
-	const EventManualCharacterScript = 'characterScriptRun';
 	const EventManualTribeScript = 'tribeScriptRun';
-	const EventManualDinoScript = 'dinoScriptRun';
-	const EventManualServiceScript = 'serviceScriptRun';
 	const Events = [
-		self::EventCron,
+		self::EventAdminCommand,
+		self::EventBroadcast,
+		self::EventManualCharacterScript,
 		self::EventChat,
 		self::EventClockTemperingDetected,
 		self::EventClusterIdChanged,
+		self::EventCron,
+		self::EventCustomMessage,
 		self::EventDinoClaimed,
 		self::EventDinoDied,
 		self::EventDinoDownloaded,
@@ -94,14 +105,19 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventDinoMatured,
 		self::EventDinoRenamed,
 		self::EventDinoRestored,
+		self::EventManualDinoScript,
+		self::EventDinoSterilized,
 		self::EventDinoTamed,
 		self::EventDinoTribeChanged,
 		self::EventDinoUnclaimed,
 		self::EventDinoUnfrozen,
+		self::EventDinoUnsterilized,
 		self::EventDinoUploaded,
-		self::EventPlayerJoined,
+		self::EventItemGiven,
+		self::EventNoClusterId,
 		self::EventPlayerCuffed,
 		self::EventPlayerDied,
+		self::EventPlayerJoined,
 		self::EventPlayerLeft,
 		self::EventPlayerNamed,
 		self::EventPlayerSpawned,
@@ -111,14 +127,12 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventRollbackDetected,
 		self::EventServerConnected,
 		self::EventServerDisconnected,
+		self::EventManualServiceScript,
 		self::EventStructureDestroyed,
 		self::EventTribeCreated,
 		self::EventTribeDestroyed,
 		self::EventTribeRenamed,
-		self::EventManualCharacterScript,
 		self::EventManualTribeScript,
-		self::EventManualDinoScript,
-		self::EventManualServiceScript,
 	];
 
 	protected string $messageId;
