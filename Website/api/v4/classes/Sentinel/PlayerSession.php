@@ -42,6 +42,7 @@ class PlayerSession extends DatabaseObject implements JsonSerializable {
 			joins: [
 				'INNER JOIN sentinel.players ON (player_sessions.player_id = players.player_id)',
 				'INNER JOIN sentinel.services ON (player_sessions.service_id = services.service_id)',
+				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
 			],
 		);
 	}
