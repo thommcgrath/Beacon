@@ -701,9 +701,11 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				}).map((appScopeCheck) => {
 					return appScopeCheck.value;
 				})].sort(),
-				callbacks: appCallbacksField.value.replace(/(\r\n)|\r|\n/g, "\n").split("\n"),
+				callbacks: appCallbacksField.value.replace(/(\r\n)|\r|\n/g, "\n").split("\n").filter((url) => {
+					return url !== '';
+				}),
 			};
-			if (appIsNew && appConfidentialCheck.value) {
+			if (appIsNew && appConfidentialCheck.checked === true) {
 				newAppInfo.secret = 'plink'; // The server treats any value as a request for a secret, so we just need to include anything
 			}
 

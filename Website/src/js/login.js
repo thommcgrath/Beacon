@@ -4,6 +4,84 @@ import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
 
 document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
+	if (loginParams.needsDeviceCode) {
+		const characterWhitelist = '23456789ABCDEFGHJKLMNPRSTUVWXYZabcdefghjklmnprstuvwxyz'.split('');
+
+		const submitDeviceCode = (deviceCode) => {
+			codeFields.forEach((codeField) => {
+				codeField.disabled = true;
+			});
+
+			BeaconWebRequest.get(`/account/auth/check_device?code=${encodeURIComponent(deviceCode)}`).then((response) => {
+				const body = JSON.parse(response.body);
+				window.location = `/account/login?flow_id=${body.flowId}`;
+			}).catch((err) => {
+				codeFields.forEach((codeField) => {
+					codeField.disabled = false;
+				});
+
+				BeaconDialog.show('Code is not valid', 'The code has probably expired. Return to your app and start your login again.');
+			});
+		};
+
+		const codeFieldInput = (ev, fieldNum) => {
+			if (ev.metaKey || ev.ctrlKey) {
+				return;
+			}
+
+			ev.preventDefault();
+
+			const field = ev.target;
+			if (ev.key === 'Backspace') {
+				if (field.value) {
+					field.value = '';
+				} else if (fieldNum > 0) {
+					codeFields[fieldNum - 1].focus();
+				}
+				return false;
+			}
+
+			if (characterWhitelist.includes(ev.key) === false) {
+				return false;
+			}
+
+			field.value = ev.key.toUpperCase();
+			if (fieldNum < codeFields.length - 1) {
+				codeFields[fieldNum + 1].focus();
+			} else {
+				const characters = [];
+				codeFields.forEach((codeField) => {
+					characters.push(codeField.value);
+				});
+				const deviceCode = characters.reduce((prev, character) => {
+					if (prev.length === 4) {
+						prev = prev + '-';
+					}
+					return prev = prev + character;
+				}, '');
+
+				submitDeviceCode(deviceCode);
+			}
+			return false;
+		};
+
+		const codeFieldPaste = (ev) => {
+			ev.preventDefault();
+			submitDeviceCode(ev.clipboardData.getData('text'));
+		};
+
+		const codeFields = document.querySelectorAll('input.device-code-field');
+		codeFields.forEach((field) => {
+			const fieldNum = parseInt(field.getAttribute('beacon-character-num'));
+			field.addEventListener('keydown', (ev) => {
+				codeFieldInput(ev, fieldNum);
+			});
+			field.addEventListener('paste', codeFieldPaste);
+		});
+
+		return;
+	}
+
 	let currentPage = '';
 	const pages = ['login', 'totp', 'recover', 'verify', 'password', 'loading', 'authorize'];
 	pages.forEach((pageName) => {

@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, ApplicationAuthFlow, Session, User};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, DeviceAuthFlow, Session, User};
 
 class BeaconLogin {
 	public static function Show(array $params): void {
@@ -8,19 +8,19 @@ class BeaconLogin {
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
 
 		$deviceId = BeaconCommon::DeviceId();
+		$session = BeaconCommon::GetSession();
+		$flowId = $params['flowId'] ?? null;
+
 		$params['apiDomain'] = BeaconCommon::APIDomain();
 		$params['deviceId'] = $deviceId;
 		$params['flowRequiresPassword'] = false;
-
-		$session = BeaconCommon::GetSession();
-		$flowId = $params['flowId'] ?? null;
 		$params['challengeExpiration'] = time() + 300;
 		$params['useAppCancelBehavior'] = false;
 
 		$flow = null;
 		$app = null;
 		if (is_null($flowId) === false) {
-			$flow = ApplicationAuthFlow::Fetch($flowId);
+			$flow = ApplicationAuthFlow::Fetch($flowId) ?? DeviceAuthFlow::Fetch($flowId);
 			if (is_null($flow) || $flow->IsCompleted()) {
 				// Show an error
 				echo '<h1>Expired Login Request</h1>';
@@ -70,7 +70,22 @@ class BeaconLogin {
 		</script><?php
 		BeaconTemplate::FinishScript();
 
-		if (is_null($session) === false && is_null($flow) === false) {
+		if (isset($params['needsDeviceCode']) && $params['needsDeviceCode'] === true) {
+			?><p>To continue, enter the code from the your other device. If you are not already logged into this browser, you will be asked to log in the next step.</p>
+			<div class="device-code-input">
+				<div class="device-code-character"><input type="text" class="device-code-field" beacon-character-num="0" autofocus /></div>
+				<div class="device-code-character"><input type="text" class="device-code-field" beacon-character-num="1" /></div>
+				<div class="device-code-character"><input type="text" class="device-code-field" beacon-character-num="2" /></div>
+				<div class="device-code-character"><input type="text" class="device-code-field" beacon-character-num="3" /></div>
+				<div class="device_code-hyphen">-</div>
+				<div class="device-code-character"><input type="text" class="device-code-field" beacon-character-num="4" /></div>
+				<div class="device-code-character"><input type="text" class="device-code-field" beacon-character-num="5" /></div>
+				<div class="device-code-character"><input type="text" class="device-code-field" beacon-character-num="6" /></div>
+				<div class="device-code-character"><input type="text" class="device-code-field" beacon-character-num="7" /></div>
+			</div>
+			<?php
+			return;
+		} elseif (is_null($session) === false && is_null($flow) === false) {
 			$user = $session->User();
 			?><div id="page_authorize">
 				<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services as <?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span>?</h3>
@@ -192,6 +207,9 @@ class BeaconLogin {
 						'Wish for more wishes.',
 						'Cover for you at work.',
 						'Pickle a lawnchair.',
+						'Divide by zero.',
+						'Sneeze.',
+						'Stop the army of cloned grandmothers threatening Norway.',
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);

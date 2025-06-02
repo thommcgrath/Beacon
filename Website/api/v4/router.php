@@ -42,6 +42,9 @@ Core::RegisterRoutes(
 		'/deltas/{version}' => [
 			'GET' => 'deltas',
 		],
+		'/device' => [
+			'POST' => 'login',
+		],
 		'/discovery' => [
 			'GET' => 'discovery/list',
 		],

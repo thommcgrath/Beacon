@@ -108,12 +108,13 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('name');
 	}
 
-	public static function Create(array $properties, bool $generateSecret = true): static {
+	public static function Create(array $properties): static {
 		if (BeaconCommon::HasAllKeys($properties, 'name', 'website', 'scopes', 'callbacks', 'userId') === false) {
 			throw new Exception('Missing required properties');
 		}
 
 		$applicationId = $properties['applicationId'] ?? BeaconCommon::GenerateUUID();
+		$generateSecret = isset($properties['secret']);
 		if ($generateSecret) {
 			$secret = BeaconCommon::GenerateRandomKey(self::SecretLength);
 			$secretEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), $secret));

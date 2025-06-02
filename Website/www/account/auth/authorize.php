@@ -4,7 +4,7 @@ require(dirname(__FILE__, 4) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 header('Content-Type: application/json');
 
-use BeaconAPI\v4\{Application, ApplicationAuthFlow, Response, Core, Session, User};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, DeviceAuthFlow, Response, Core, Session, User};
 
 $session = BeaconCommon::GetSession();
 if (is_null($session)) {
@@ -19,7 +19,7 @@ $challenge = $obj['challenge'] ?? null;
 $challengeExpiration = $obj['challengeExpiration'] ?? 0;
 $userPassword = $obj['password'] ?? null;
 
-if (empty($flowId) || is_null($flow = ApplicationAuthFlow::Fetch($flowId)) || $flow->IsCompleted()) {
+if (empty($flowId) || is_null($flow = ApplicationAuthFlow::Fetch($flowId) ?? DeviceAuthFlow::Fetch($flowId)) || $flow->IsCompleted()) {
 	Response::NewJsonError('This authentication flow has already been completed', ['code' => 'COMPLETED'], 400)->Flush();
 	exit;
 }

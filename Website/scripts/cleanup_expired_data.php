@@ -8,6 +8,7 @@ $clauses = [
 	'public.access_tokens' => 'refresh_token_expiration < CURRENT_TIMESTAMP',
 	'public.application_auth_flows' => 'expiration < CURRENT_TIMESTAMP',
 	'public.oauth_requests' => 'expiration < CURRENT_TIMESTAMP',
+	'public.device_auth_flows' => 'expiration < CURRENT_TIMESTAMP',
 ];
 $cleaningNeeded = [];
 foreach ($clauses as $table => $clause) {

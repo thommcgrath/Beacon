@@ -4,6 +4,8 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconEncryption, BeaconRecordSet, DateTime, Exception, JsonSerializable;
 
 class ApplicationAuthFlow extends DatabaseObject {
+	use AuthFlow;
+
 	protected string $flowId;
 	protected string $applicationId;
 	protected ?Application $application = null;
@@ -175,10 +177,8 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return is_null($this->codeHash) === false && is_null($this->userId) === false;
 	}
 
-	public function NewChallenge(string $deviceId, User $user, int $expiration): string {
-		$challengeSecret = $this->Application()->Secret() ?? '';
-		$challengeRaw = $deviceId . $expiration . $challengeSecret . $this->flowId . $user->UserId();
-		return BeaconCommon::Base64UrlEncode(hash('sha3-512', $challengeRaw, true));
+	public function IsExpired(): bool {
+		return $this->expired;
 	}
 
 	public function Authorize(string $deviceId, string $challenge, int $expiration, User $user, ?string $userPassword = null): string {

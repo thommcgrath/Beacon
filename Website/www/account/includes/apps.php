@@ -55,12 +55,6 @@ if ($user->Is2FAProtected() === false) {
 				<div id="app-editor-icon-disclaimer" class="hidden">This is just a preview. The final image will receive additional processing once saved.</div>
 			</div>
 		</div>
-		<div class="visual-group" id="app-editor-security-group">
-			<h3>Security Level</h3>
-			<p>To increase security, you can require your application to use a secret. This is known as an <a href="https://oauth.net/2/client-types/" target="_blank">OAuth confidential client</a>. Examples of confidential clients include closed-source server-generated websites and Discord bots. However, mobile apps, desktop apps, open source projects, and client-side or single-page websites are not confidential clients because the secret would need to be included in the code that is shipped to end users. The Beacon app and the Beacon Sentinel website, for example, are not confidential clients.</p>
-			<p><label class="checkbox"><input type="checkbox" name="confidential" value="true" id="app-editor-confidential-check"><span></span>This application is a confidential client</label></p>
-			<p id="app-editor-secret-hint" class="italic hidden">Once this application is registered, your secret will be generated and provided. This secret cannot be retrieved in the future, so be prepared to store it securely, such as in a password manager.</p>
-		</div>
 		<div class="visual-group">
 			<h3>Features</h3>
 			<p>These switches determine which Beacon API features your application will have access to. Respect the principle of least privilege; an application should only request access to the features it needs. These features are displayed to users when they approve a login request. You can modify these features after registering your application. However, adding new features requires users to log in again before the new features become active for them.</p>
@@ -74,10 +68,17 @@ if ($user->Is2FAProtected() === false) {
 			</ul>
 			<p><span class="tag yellow mr-1">Restricted</span>features require approval. If you need these features, save your application without them, then contact customer service.</p>
 		</div>
+		<div class="visual-group" id="app-editor-security-group">
+			<h3>Security Level</h3>
+			<p>To increase security, you can require your application to use a secret. This is known as an <a href="https://oauth.net/2/client-types/" target="_blank">OAuth confidential client</a>. Examples of confidential clients include closed-source server-generated websites and Discord bots. However, mobile apps, desktop apps, open source projects, and client-side or single-page websites are not confidential clients because the secret would need to be included in the code that is shipped to end users. The Beacon app and the Beacon Sentinel website, for example, are not confidential clients.</p>
+			<p><label class="checkbox"><input type="checkbox" name="confidential" value="true" id="app-editor-confidential-check"><span></span>This application is a confidential client</label></p>
+			<p id="app-editor-secret-hint" class="italic hidden">Once this application is registered, your secret will be generated and provided. This secret cannot be retrieved in the future, so be prepared to store it securely, such as in a password manager.</p>
+		</div>
 		<div class="visual-group">
 			<h3>Callback URLs</h3>
-			<p>The user will be directed to a URL under your control to deliver authentication information. List one or more URLs here, separated by newlines or returns. When initiating a login request, your code will specify one of these URLs. All URLs must start with &apos;https://&apos;.</p>
+			<p>For browser login requests, the user will be directed to a URL under your control to deliver authentication information. List one or more URLs here, separated by newlines or returns. When initiating a login request, your code will specify one of these URLs. All URLs must start with &apos;https://&apos;.</p>
 			<div class="floating-label"><textarea id="app-editor-callbacks-field" class="text-field" placeholder="Callback URLs" rows="4"></textarea><label for="app-editor-callbacks-field">Callback URLs</label></div>
+			<p>If your application will use only device login requests, such as from a console or Discord bot, no callback URLs are necessary.</p>
 		</div>
 	</div>
 	<div class="button-bar">

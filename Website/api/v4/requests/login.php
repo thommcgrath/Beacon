@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, ApplicationAuthFlow, Core, Response, Session, User};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, Core, DeviceAuthFlow, Response, Session, User};
 
 function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
 	$requiredScopes = [];
@@ -10,6 +10,7 @@ function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $
 function handleRequest(array $context): Response {
 	switch ($context['routeKey']) {
 	case 'GET /login':
+		// Start an authorization flow
 		$clientId = $_GET['client_id'] ?? '';
 		$scopes = empty($_GET['scope']) ? [] : explode(' ', $_GET['scope']);
 		$redirectUri = $_GET['redirect_uri'] ?? '';
@@ -83,6 +84,7 @@ function handleRequest(array $context): Response {
 			return Response::NewRedirect($loginUrl);
 		}
 	case 'POST /login':
+		// Redeem an authorization or device flow
 		if (Core::IsJsonContentType()) {
 			$obj = Core::BodyAsJson();
 		} else {
@@ -116,6 +118,31 @@ function handleRequest(array $context): Response {
 			} catch (Exception $err) {
 				return Response::NewJsonError($err->getMessage() ?: 'Unhandled exception redeeming auth flow', ['code' => 'INVALID_CODE'], 400);
 			}
+		case 'device_code':
+		case 'urn:ietf:params:oauth:grant-type:device_code':
+			try {
+				$deviceCode = $obj['device_code'] ?? '';
+				$flow = DeviceAuthFlow::Fetch($deviceCode);
+				if (is_null($flow)) {
+					return Response::NewJsonError(message: 'Authorization flow not found.', code: 'flowNotFound', httpStatus: 404);
+				}
+
+				if ($flow->IsCompleted() === false) {
+					return Response::NewJson([
+						'error' => 'authorization_pending',
+					], 400);
+				}
+
+				$session = $flow->Redeem();
+				Core::SetSession($session);
+				return Response::NewJson($session->OAuthResponse(), 201);
+			} catch (Exception $err) {
+				if ($err instanceof APIException) {
+					return Response::NewJsonError(message: $err->getMessage(), code: $err->getBeaconErrorCode(), httpStatus: $err->getHttpStatus());
+				} else {
+					return Response::NewJSONError(message: $err->getMessage(), code: 'exception', httpStatus: 400);
+				}
+			}
 		case 'refresh_token':
 			$refreshToken = $obj['refresh_token'] ?? null;
 			$scopes = explode(' ', $obj['scope']) ?? null;
@@ -137,10 +164,51 @@ function handleRequest(array $context): Response {
 			$newSession = $session->Renew(true);
 			Core::SetSession($newSession);
 			return Response::NewJson($newSession->OAuthResponse(), 201);
-			break;
 		default:
 			return Response::NewJsonError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
 		}
+	case 'POST /device':
+		// Start a device flow
+		$clientId = $_POST['client_id'] ?? '';
+		$scopes = empty($_POST['scope']) ? [] : explode(' ', $_POST['scope']);
+		$publicKey = $_POST['public_key'] ?? null;
+
+		if (empty($clientId) || empty($scopes)) {
+			return Response::NewJsonError(message: 'Missing parameters', code: 'missingParameters', httpStatus: 400);
+		}
+
+		$application = Application::Fetch($clientId);
+		if (is_null($application)) {
+			return Response::NewJsonError(message: 'Invalid client id', code: 'invalidClientId', httpStatus: 400);
+		}
+
+		$deviceCode = DeviceAuthFlow::CreateDeviceCode();
+		$flow = null;
+		try {
+			if (is_null($publicKey) === false) {
+				$publicKey = BeaconEncryption::PublicKeyToPEM($publicKey);
+			}
+
+			$flow = DeviceAuthFlow::Create($deviceCode, $application, $scopes, $publicKey);
+		} catch (Exception $err) {
+			if ($err instanceof APIException) {
+				return Response::NewJsonError(message: $err->getMessage(), code: $err->getBeaconErrorCode(), httpStatus: $err->getHttpStatus());
+			} else {
+				return Response::NewJSONError(message: $err->getMessage(), code: 'exception', httpStatus: 400);
+			}
+		}
+		if (is_null($flow)) {
+			return Response::NewJsonError(message: 'Invalid scope', code: 'invalidScope', httpStatus: 400);
+		}
+
+		return Response::NewJson([
+			'device_code' => $flow->FlowId(),
+			'user_code' => $deviceCode,
+			'verification_uri' => BeaconCommon::AbsoluteUrl('/device'),
+			'verification_uri_complete' => BeaconCommon::AbsoluteUrl('/device?code=' . urlencode($deviceCode)),
+			'interval' => 5,
+			'expires_in' => $flow->ExpiresIn(),
+		], 201);
 	default:
 		return Response::NewJsonError('Unknown route', null, 500);
 	}

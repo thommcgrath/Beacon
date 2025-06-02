@@ -200,3 +200,21 @@ h1 span.tag {
 	height: 100px;
 	resize: none;
 }
+
+.device-code-input {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	margin-left: auto;
+	margin-right: auto;
+	justify-content: center;
+
+	.device-code-character {
+		width: 3rem;
+
+		.device-code-field {
+			text-align: center;
+			font-size: 1.5rem;
+		}
+	}
+}
