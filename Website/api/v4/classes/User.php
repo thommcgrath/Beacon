@@ -477,6 +477,10 @@ class User extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function TestPassword(string $password): bool {
+		if ($this->enabled !== true) {
+			return false;
+		}
+
 		try {
 			$this->DecryptPrivateKey($password);
 			return true;

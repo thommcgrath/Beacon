@@ -69,7 +69,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return $flow;
 	}
 
-	public static function Create(Application $app, array $scopes, string $callback, string $state, ?string $codeVerifierHash, ?string $codeVerifierMethod, ?string $publicKey): static {
+	public static function Create(Application $app, array $scopes, string $callback, string $state, string $codeVerifierHash, string $codeVerifierMethod, ?string $publicKey): static {
 		if ($app->CallbackAllowed($callback) === false) {
 			throw new Exception('Redirect uri is not whitelisted.');
 		}
@@ -82,17 +82,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		}
 		sort($scopes);
 
-		if (is_null($codeVerifierHash) === false || is_null($codeVerifierMethod) === false) {
-			if (is_null($codeVerifierMethod) || $codeVerifierMethod !== 'S256') {
-				throw new Exception('Unsupported code verifier has method.');
-			}
-			if (is_null($codeVerifierHash) || strlen($codeVerifierHash) !== 43) {
-				throw new Exception('Verifier hash should be 43 base64url characters.');
-			}
-			if ($codeVerifierHash === '47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU') {
-				throw new Exception('Your challenge is built from an empty sha256 hash. This indicates a problem with your verifier generation or hashing code.');
-			}
-		}
+		static::ValidateCodeVerifier($codeVerifierHash, $codeVerifierMethod);
 
 		if (in_array(Application::kScopeUsersPrivateKeyRead, $scopes)) {
 			if (is_null($publicKey)) {
@@ -181,6 +171,14 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return $this->expired;
 	}
 
+	public function CodeVerifierHash(): string {
+		return $this->codeVerifierHash;
+	}
+
+	public function CodeVerifierMethod(): string {
+		return $this->codeVerifierMethod;
+	}
+
 	public function Authorize(string $deviceId, string $challenge, int $expiration, User $user, ?string $userPassword = null): string {
 		if ($this->IsCompleted()) {
 			throw new Exception('This authorization has already been completed. Start a new login process to try again.');
@@ -229,7 +227,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		if (is_null($app)) {
 			throw new Exception('Invalid client id.');
 		}
-		if (is_null($applicationSecret) && $app->IsConfidential()) {
+		if ($app->IsConfidential() && (is_null($applicationSecret) || $app->CheckSecret($applicationSecret))) {
 			throw new Exception('Invalid client secret.');
 		} else if (is_null($applicationSecret) === false && $app->IsConfidential() === false) {
 			// Ignore a secret if provided
@@ -263,20 +261,6 @@ class ApplicationAuthFlow extends DatabaseObject {
 			$applicationId = "{$applicationId}.{$applicationSecret}";
 		}
 		return BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$applicationId}.{$redirectUri}.{$code}", true));
-	}
-
-	protected function CheckCodeVerifier(string $codeVerifier): bool {
-		if (empty($codeVerifier)) {
-			return false;
-		}
-
-		switch ($this->codeVerifierMethod) {
-		case 'S256':
-			return $this->codeVerifierHash === BeaconCommon::Base64UrlEncode(hash('sha256', $codeVerifier, true));
-			break;
-		default:
-			return false;
-		}
 	}
 }
 

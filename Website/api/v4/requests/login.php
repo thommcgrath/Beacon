@@ -122,9 +122,15 @@ function handleRequest(array $context): Response {
 		case 'urn:ietf:params:oauth:grant-type:device_code':
 			try {
 				$deviceCode = $obj['device_code'] ?? '';
+				$codeVerifier = $obj['code_verifier'] ?? '';
+
 				$flow = DeviceAuthFlow::Fetch($deviceCode);
 				if (is_null($flow)) {
 					return Response::NewJsonError(message: 'Authorization flow not found.', code: 'flowNotFound', httpStatus: 404);
+				}
+
+				if ($flow->ApplicationId() !== $clientId) {
+					return Response::NewJsonError(message: 'Incorrect client id.', code: 'invalidClientId', httpStatus: 400);
 				}
 
 				if ($flow->IsCompleted() === false) {
@@ -133,7 +139,7 @@ function handleRequest(array $context): Response {
 					], 400);
 				}
 
-				$session = $flow->Redeem();
+				$session = $flow->Redeem($codeVerifier, $clientSecret);
 				Core::SetSession($session);
 				return Response::NewJson($session->OAuthResponse(), 201);
 			} catch (Exception $err) {
@@ -169,17 +175,36 @@ function handleRequest(array $context): Response {
 		}
 	case 'POST /device':
 		// Start a device flow
-		$clientId = $_POST['client_id'] ?? '';
-		$scopes = empty($_POST['scope']) ? [] : explode(' ', $_POST['scope']);
-		$publicKey = $_POST['public_key'] ?? null;
+		if (Core::IsJsonContentType()) {
+			$obj = Core::BodyAsJson();
+		} else {
+			$obj = $_POST;
+		}
+
+		$clientId = $obj['client_id'] ?? '';
+		$clientSecret = $obj['client_secret'] ?? null;
+		$scopes = empty($obj['scope']) ? [] : explode(' ', $obj['scope']);
+		$publicKey = $obj['public_key'] ?? null;
+		$codeVerifierHash = $obj['code_challenge'] ?? '';
+		$codeVerifierMethod = $obj['code_challenge_method'] ?? '';
 
 		if (empty($clientId) || empty($scopes)) {
 			return Response::NewJsonError(message: 'Missing parameters', code: 'missingParameters', httpStatus: 400);
 		}
 
+		if ($codeVerifierMethod !== 'S256') {
+			return Response::NewJsonError('This API does not support the supplied code challenge method', null, 400);
+		}
+		if (strlen($codeVerifierHash) !== 43) {
+			return Response::NewJsonError('The code challenge should be exactly 43 characters when Base64URL encoded', null, 400);
+		}
+
 		$application = Application::Fetch($clientId);
 		if (is_null($application)) {
 			return Response::NewJsonError(message: 'Invalid client id', code: 'invalidClientId', httpStatus: 400);
+		}
+		if ($app->IsConfidential() && $app->CheckSecret($clientSecret) === false) {
+			return Response::NewJsonError(message: 'Incorrect client secret', code: 'invalidClientSecret', httpStatus: 403);
 		}
 
 		$deviceCode = DeviceAuthFlow::CreateDeviceCode();
@@ -189,7 +214,7 @@ function handleRequest(array $context): Response {
 				$publicKey = BeaconEncryption::PublicKeyToPEM($publicKey);
 			}
 
-			$flow = DeviceAuthFlow::Create($deviceCode, $application, $scopes, $publicKey);
+			$flow = DeviceAuthFlow::Create($deviceCode, $application, $scopes, $codeVerifierHash, $codeVerifierMethod, $publicKey);
 		} catch (Exception $err) {
 			if ($err instanceof APIException) {
 				return Response::NewJsonError(message: $err->getMessage(), code: $err->getBeaconErrorCode(), httpStatus: $err->getHttpStatus());

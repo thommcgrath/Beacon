@@ -9,6 +9,8 @@ class DeviceAuthFlow extends DatabaseObject {
 	protected string $deviceCode;
 	protected string $applicationId;
 	protected array $scopes;
+	protected string $codeVerifierHash;
+	protected string $codeVerifierMethod;
 	protected float $expiration;
 	protected float $expiresIn;
 	protected ?string $publicKey;
@@ -23,6 +25,8 @@ class DeviceAuthFlow extends DatabaseObject {
 		$this->deviceCode = $row->Field('device_code');
 		$this->applicationId = $row->Field('application_id');
 		$this->scopes = explode(' ', $row->Field('scopes'));
+		$this->codeVerifierHash = $row->Field('verifier_hash');
+		$this->codeVerifierMethod = $row->Field('verifier_hash_algorithm');
 		$this->expiration = floatval($row->Field('expiration'));
 		$this->expiresIn = floatval($row->Field('expires_in'));
 		$this->publicKey = $row->Field('public_key');
@@ -38,6 +42,8 @@ class DeviceAuthFlow extends DatabaseObject {
 				new DatabaseObjectProperty('deviceCode', ['primaryKey' => true, 'columnName' => 'device_code']),
 				new DatabaseObjectProperty('applicationId', ['columnName' => 'application_id']),
 				new DatabaseObjectProperty('scopes'),
+				new DatabaseObjectProperty('codeVerifierHash', ['columnName' => 'verifier_hash']),
+				new DatabaseObjectProperty('codeVerifierMethod', ['columnName' => 'verifier_hash_algorithm']),
 				new DatabaseObjectProperty('expiration', ['accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 				new DatabaseObjectProperty('expiresIn', ['columnName' => 'expires_in', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.expiration - CURRENT_TIMESTAMP)']),
 				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
@@ -78,7 +84,7 @@ class DeviceAuthFlow extends DatabaseObject {
 		return BeaconUUID::v5(strtolower($deviceCode), '024273a1-a96d-40ef-ba29-58c7690480dc');
 	}
 
-	public static function Create(string $rawDeviceCode, Application $app, array $scopes, ?string $publicKey): static {
+	public static function Create(string $rawDeviceCode, Application $app, array $scopes, string $codeVerifierHash, string $codeVerifierMethod, ?string $publicKey): static {
 		$hashedDeviceCode = static::HashDeviceCode($rawDeviceCode);
 
 		if (in_array(Application::kScopeCommon, $scopes) === false) {
@@ -88,6 +94,8 @@ class DeviceAuthFlow extends DatabaseObject {
 			throw new APIException(message: 'Application is not authorized for all requested scopes.', code: 'invalidScope', httpStatus: 400);
 		}
 		sort($scopes);
+
+		static::ValidateCodeVerifier($codeVerifierHash, $codeVerifierMethod);
 
 		if (in_array(Application::kScopeUsersPrivateKeyRead, $scopes)) {
 			if (is_null($publicKey)) {
@@ -108,7 +116,7 @@ class DeviceAuthFlow extends DatabaseObject {
 		$scopesString = implode(' ', $scopes);
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.device_auth_flows (device_code, application_id, scopes, public_key) VALUES ($1, $2, $3, $4);", $hashedDeviceCode, $app->ApplicationId(), $scopesString, $publicKey);
+		$database->Query("INSERT INTO public.device_auth_flows (device_code, application_id, scopes, public_key, verifier_hash, verifier_hash_algorithm) VALUES ($1, $2, $3, $4, $5, $6);", $hashedDeviceCode, $app->ApplicationId(), $scopesString, $publicKey, $codeVerifierHash, $codeVerifierMethod);
 		$database->Commit();
 		return static::Fetch($hashedDeviceCode);
 	}
@@ -159,6 +167,14 @@ class DeviceAuthFlow extends DatabaseObject {
 		return is_null($this->userId) === false;
 	}
 
+	public function CodeVerifierHash(): string {
+		return $this->codeVerifierHash;
+	}
+
+	public function CodeVerifierMethod(): string {
+		return $this->codeVerifierMethod;
+	}
+
 	public function Authorize(string $deviceId, string $challenge, int $expiration, User $user, ?string $userPassword = null): string {
 		if ($this->IsCompleted()) {
 			throw new APIException(message: 'This authorization has already been completed. Start a new login process to try again.', code: 'flowCompleted', httpStatus: 400);
@@ -200,9 +216,21 @@ class DeviceAuthFlow extends DatabaseObject {
 		return BeaconCommon::AbsoluteUrl('/device?complete&appId=' . urlencode($this->applicationId));
 	}
 
-	public function Redeem(): Session {
+	public function Redeem(string $codeVerifier, ?string $applicationSecret): Session {
 		if ($this->IsCompleted() === false) {
 			throw new APIException(message: 'This authorization is not completed.', code: 'authorizationPending', httpStatus: 412);
+		}
+
+		if ($this->CheckCodeVerifier($codeVerifier) !== true) {
+			throw new APIException(message: 'Invalid code verifier.', code: 'invalidCodeVerifier', httpStatus: 400);
+		}
+
+		$app = $this->Application();
+		if (!$app) {
+			throw new APIException(message: 'Invalid client id.', code: 'invalidClientId', httpStatus: 400);
+		}
+		if ($app->IsConfidential() && (is_null($applicationSecret) || $app->CheckSecret($applicationSecret))) {
+			throw new APIException(message: 'Invalid client secret.', code: 'invalidClientSecret', httpStatus: 400);
 		}
 
 		$database = BeaconCommon::Database();

@@ -404,6 +404,10 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return $this->secret;
 	}
 
+	public function CheckSecret(?string $secret): bool {
+		return is_null($secret) === false && $this-Secret() === $secret;
+	}
+
 	public function Name(): string {
 		return $this->name;
 	}
