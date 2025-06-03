@@ -76,7 +76,7 @@ class BeaconCDN {
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'AccessKey: ' . BeaconCommon::GetGlobal('BunnyCDN API Key')
+			'AccessKey: ' . BeaconCommon::GetGlobal('BunnyCDN_API_Key')
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -129,7 +129,7 @@ class BeaconCDN {
 		$endpoint = 'ny.storage.bunnycdn.com';
 		$zoneName = 'beacon-assets';
 		$zoneDomain = 'assets.usebeacon.app';
-		$apiKey = BeaconCommon::GetGlobal('BunnyCDN Assets Zone Key');
+		$apiKey = BeaconCommon::GetGlobal('BunnyCDN_Assets_Zone_Key');
 		return new BeaconCDN($endpoint, $zoneName, $zoneDomain, $apiKey);
 	}
 
