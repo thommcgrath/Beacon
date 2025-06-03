@@ -369,9 +369,16 @@ function CreatePurchaseFromInvoice(array $invoice): BeaconPurchase {
 		$stripeProduct = $api->GetProduct($stripeProductId);
 		$productId = $stripeProduct['metadata']['beacon-uuid'];
 
+
+		echo json_encode($line, JSON_PRETTY_PRINT);
 		$linePrice = $line['amount_excluding_tax'];
 		$quantity = $line['quantity'] ?? 1;
-		$unitPrice = $linePrice / $quantity;
+		if ($quantity === 0) {
+			// it's a fee item
+			$unitPrice = $linePrice;
+		} else {
+			$unitPrice = $linePrice / $quantity;
+		}
 		$subtotal = $line['amount_excluding_tax'];
 		$taxTotal = 0;
 		foreach ($line['tax_amounts'] as $tax) {
@@ -579,14 +586,15 @@ function SaveSubscription(array $subscription): string {
 	$productId = $stripeProduct['metadata']['beacon-uuid'];
 	$latestInvoiceId = $subscription['latest_invoice'];
 	$latestPurchaseId = BeaconUUID::v5($latestInvoiceId);
+	$planQuantity = $subscription['quantity'];
 
 	$database->Query('INSERT INTO public.subscription_purchases (subscription_id, purchase_id) VALUES ($1, $2) ON CONFLICT (subscription_id, purchase_id) DO NOTHING;', $subscriptionId, $latestPurchaseId);
 
 	$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM public.subscriptions WHERE subscription_id = $1) AS exists;', $subscriptionId);
 	if ($rows->Field('exists')) {
-		$database->Query('UPDATE public.subscriptions SET date_expires = TO_TIMESTAMP($2), product_id = $3, last_purchase_id = $4 WHERE subscription_id = $1 AND (date_expires != TO_TIMESTAMP($2) OR product_id != $3 OR last_purchase_id != $4);', $subscriptionId, $endDate, $productId, $latestPurchaseId);
+		$database->Query('UPDATE public.subscriptions SET date_expires = TO_TIMESTAMP($2), product_id = $3, last_purchase_id = $4, product_quantity = $5 WHERE subscription_id = $1 AND (date_expires != TO_TIMESTAMP($2) OR product_id != $3 OR last_purchase_id != $4 OR product_quantity != $5);', $subscriptionId, $endDate, $productId, $latestPurchaseId, $planQuantity);
 	} else {
-		$database->Query('INSERT INTO public.subscriptions (subscription_id, stripe_id, product_id, date_created, date_expires, initial_purchase_id, last_purchase_id) VALUES ($1, $2, $3, TO_TIMESTAMP($4), TO_TIMESTAMP($5), $6, $6);', $subscriptionId, $stripeSubscription, $productId, $startDate, $endDate, $latestPurchaseId);
+		$database->Query('INSERT INTO public.subscriptions (subscription_id, stripe_id, product_id, date_created, date_expires, initial_purchase_id, last_purchase_id, product_quantity) VALUES ($1, $2, $3, TO_TIMESTAMP($4), TO_TIMESTAMP($5), $6, $6, $7);', $subscriptionId, $stripeSubscription, $productId, $startDate, $endDate, $latestPurchaseId, $planQuantity);
 	}
 
 	$saveInvoice = false;
