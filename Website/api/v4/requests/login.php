@@ -203,7 +203,7 @@ function handleRequest(array $context): Response {
 		if (is_null($application)) {
 			return Response::NewJsonError(message: 'Invalid client id', code: 'invalidClientId', httpStatus: 400);
 		}
-		if ($app->IsConfidential() && $app->CheckSecret($clientSecret) === false) {
+		if ($application->IsConfidential() && $application->CheckSecret($clientSecret) === false) {
 			return Response::NewJsonError(message: 'Incorrect client secret', code: 'invalidClientSecret', httpStatus: 403);
 		}
 
