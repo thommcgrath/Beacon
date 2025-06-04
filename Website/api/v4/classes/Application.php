@@ -405,7 +405,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function CheckSecret(?string $secret): bool {
-		return is_null($secret) === false && $this-Secret() === $secret;
+		return is_null($secret) === false && $this->Secret() === $secret;
 	}
 
 	public function Name(): string {
