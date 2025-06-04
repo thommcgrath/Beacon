@@ -12,6 +12,10 @@ class Dino extends DatabaseObject implements JsonSerializable {
 	const StatusFrozen = 'Frozen';
 	const StatusUploaded = 'Uploaded';
 
+	const GenderNone = 'None';
+	const GenderFemale = 'Female';
+	const GenderMale = 'Male';
+
 	protected string $dinoId;
 	protected string $dinoNumber;
 	protected string $dinoNumber64;
@@ -22,6 +26,8 @@ class Dino extends DatabaseObject implements JsonSerializable {
 	protected int $dinoLevel;
 	protected float $dinoAge;
 	protected string $dinoStatus;
+	protected string $dinoNameTag;
+	protected string $dinoGender;
 	protected string $serviceId;
 	protected string $serviceDisplayName;
 	protected string $serviceColor;
@@ -41,6 +47,8 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		$this->dinoLevel = $row->Field('dino_level');
 		$this->dinoAge = $row->Field('dino_age');
 		$this->dinoStatus = $row->Field('status');
+		$this->dinoNameTag = $row->Field('name_tag');
+		$this->dinoGender = $row->Field('gender');
 		$this->tribeId = $row->Field('tribe_id');
 		$this->tribeName = $row->Field('tribe_name');
 		$this->serviceId = $row->Field('service_id');
@@ -65,6 +73,8 @@ class Dino extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('dinoLevel', ['columnName' => 'dino_level', 'accessor' => 'dinos.level']),
 				new DatabaseObjectProperty('dinoAge', ['columnName' => 'dino_age', 'accessor' => 'dinos.age']),
 				new DatabaseObjectProperty('dinoStatus', ['columnName' => 'status', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('dinoNameTag', ['columnName' => 'name_tag', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('dinoGender', ['columnName' => 'gender', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('serviceId', ['columnName' => 'service_id', 'accessor' => 'services.service_id']),
 				new DatabaseObjectProperty('serviceDisplayName', ['columnName' => 'service_display_name', 'accessor' => 'services.display_name']),
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'accessor' => 'services.color']),
@@ -89,24 +99,26 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			switch ($filters['sortedColumn']) {
 			case 'dinoName':
 			case 'dinoDisplayName':
-				$sortColumn = $schema->Accessor('dinoDisplayName');
+				$sortColumn = 'dinoDisplayName';
 				break;
 			case 'serviceDisplayName':
 			case 'tribeName':
 			case 'dinoNumber':
-				$sortColumn = $schema->Accessor($filters['sortedColumn']);
+				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
 		}
+		$sortColumn = $schema->Accessor($sortColumn);
 		$parameters->orderBy = "{$sortColumn} {$sortDirection}, dinos.level {$sortDirection}, dinos.species {$sortDirection}";
 		$parameters->allowAll = true;
 
 		$parameters->AddFromFilter($schema, $filters, 'dinoNumber');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
-		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'SEARCH');
 		$parameters->AddFromFilter($schema, $filters, 'dinoStatus', 'IN');
-		$parameters->AddFromFilter($schema, $filters, 'dinoSpecies', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'dinoSpecies', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'dinoNameTag');
 
 		if (isset($filters['dinoName']) && !isset($filters['dinoDisplayName'])) {
 			$filters['dinoDisplayName'] = $filters['dinoName'];
@@ -138,6 +150,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			'dinoNumber' => $this->dinoNumber,
 			'dinoNumber64' => $this->dinoNumber64,
 			'dinoName' => $this->dinoName,
+			'dinoNameTag' => $this->dinoNameTag,
 			'dinoDisplayName' => $this->dinoDisplayName,
 			'dinoSpecies' => $this->dinoSpecies,
 			'dinoSpeciesPath' => $this->dinoSpeciesPath,
@@ -148,6 +161,9 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			'dinoIsUploaded' => $this->dinoStatus === static::StatusUploaded,
 			'dinoRestoreEligible' => $this->RestoreEligible(),
 			'dinoStatus' => $this->dinoStatus,
+			'dinoGender' => $this->dinoGender,
+			'dinoHasGender' => $this->dinoGender !== static::GenderNone,
+			'dinoIsFemale' => $this->dinoGender === static::GenderFemale,
 			'permissions' => $this->permissions,
 			'serviceId' => $this->serviceId,
 			'serviceDisplayName' => $this->serviceDisplayName,
