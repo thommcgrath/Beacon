@@ -159,6 +159,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Self.Log(Self.UserAgent)
 		  
+		  #if TargetMacOS
+		    DesktopWKWebViewControlMBS.SetUsePrivateBrowsing(True)
+		  #endif
+		  
 		  #if TargetWindows
 		    Var CommandLine As String = System.CommandLine
 		    Var SkipSetupCheck As Boolean = CommandLine.EndsWith("/NOSETUPCHECK") Or CommandLine.IndexOf(" /NOSETUPCHECK ") > -1

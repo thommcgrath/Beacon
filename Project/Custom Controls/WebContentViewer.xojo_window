@@ -45,6 +45,8 @@ End
 		Function CanGoBack() As Boolean
 		  #if TargetWindows
 		    Return DesktopWebView2ControlMBS(Self.mViewer).CanGoBack
+		  #elseif TargetMacOS
+		    Return DesktopWKWebViewControlMBS(Self.mViewer).CanGoBack
 		  #else
 		    Return DesktopHTMLViewer(Self.mViewer).CanGoBack
 		  #endif
@@ -55,6 +57,8 @@ End
 		Function CanGoForward() As Boolean
 		  #if TargetWindows
 		    Return DesktopWebView2ControlMBS(Self.mViewer).CanGoForward
+		  #elseif TargetMacOS
+		    Return DesktopWKWebViewControlMBS(Self.mViewer).CanGoForward
 		  #else
 		    Return DesktopHTMLViewer(Self.mViewer).CanGoForward
 		  #endif
@@ -76,13 +80,39 @@ End
 		    Viewer.Visible = True
 		    Viewer.Enabled = True
 		    Viewer.UserAgent = App.UserAgent
-		    Viewer.UserDataFolder = App.ApplicationSupport.NativePath
+		    Viewer.UserDataFolder = SpecialFolder.Temporary.Child(Beacon.UUID.v4).NativePath
+		    Viewer.IsPasswordAutosaveEnabled = False
+		    #if MBS.VersionNumber >= 24.5
+		      Viewer.AreBrowserExtensionsEnabled = False
+		    #endif
 		    Self.AddControl(Viewer)
 		    
 		    AddHandler Viewer.DocumentTitleChanged, WeakAddressOf WebView2_DocumentTitleChanged
 		    AddHandler Viewer.NavigationStarting, WeakAddressOf WebView2_NavigationStarting
 		    AddHandler Viewer.NavigationCompleted, WeakAddressOf WebView2_NavigationCompleted
 		    AddHandler Viewer.NewWindowRequested, WeakAddressOf WebView2_NewWindowRequested
+		    
+		    Self.mViewer = Viewer
+		  #elseif TargetMacOS
+		    Var Viewer As New DesktopWKWebViewControlMBS
+		    Viewer.Left = 0
+		    Viewer.Top = 0
+		    Viewer.Width = Self.Width
+		    Viewer.Height = Self.Height
+		    Viewer.LockLeft = True
+		    Viewer.LockTop = True
+		    Viewer.LockRight = True
+		    Viewer.LockBottom = True
+		    Viewer.Visible = True
+		    Viewer.Enabled = True
+		    Viewer.CustomUserAgent = App.UserAgent
+		    Self.AddControl(Viewer)
+		    
+		    AddHandler Viewer.CreateWebView, WeakAddressOf WKWebView_CreateWebView
+		    AddHandler Viewer.DecidePolicyForNavigationAction, WeakAddressOf WKWebView_DecidePolicyForNavigationAction
+		    AddHandler Viewer.DidFinishNavigation, WeakAddressOf WKWebView_DidFinishNavigation
+		    AddHandler Viewer.EstimatedProgressChanged, WeakAddressOf WKWebView_EstimatedProgressChanged
+		    AddHandler Viewer.TitleChanged, WeakAddressOf WKWebView_TitleChanged
 		    
 		    Self.mViewer = Viewer
 		  #else
@@ -119,7 +149,7 @@ End
 		Private Function DesktopViewer_CancelLoad(Sender As DesktopHTMLViewer, URL As String) As Boolean
 		  #Pragma Unused Sender
 		  
-		  #if TargetWindows
+		  #if TargetWindows Or TargetMacOS
 		    #Pragma Unused URL
 		  #else
 		    Return RaiseEvent CancelLoad(URL)
@@ -131,7 +161,7 @@ End
 		Private Sub DesktopViewer_DocumentBegin(Sender As DesktopHTMLViewer, URL As String)
 		  #Pragma Unused Sender
 		  
-		  #if TargetWindows
+		  #if TargetWindows Or TargetMacOS
 		    #Pragma Unused URL
 		  #else
 		    RaiseEvent DocumentBegin(URL)
@@ -143,7 +173,7 @@ End
 		Private Sub DesktopViewer_DocumentComplete(Sender As DesktopHTMLViewer, URL As String)
 		  #Pragma Unused Sender
 		  
-		  #if TargetWindows
+		  #if TargetWindows Or TargetMacOS
 		    #Pragma Unused URL
 		  #else
 		    RaiseEvent DocumentComplete(URL)
@@ -155,7 +185,7 @@ End
 		Private Sub DesktopViewer_DocumentProgressChanged(Sender As DesktopHTMLViewer, URL As String, PercentageComplete As Integer)
 		  #Pragma Unused Sender
 		  
-		  #if TargetWindows
+		  #if TargetWindows Or TargetMacOS
 		    #Pragma Unused URL
 		    #Pragma Unused PercentageComplete
 		  #else
@@ -168,7 +198,7 @@ End
 		Private Sub DesktopViewer_Error(Sender As DesktopHTMLViewer, Error As RuntimeException)
 		  #Pragma Unused Sender
 		  
-		  #if TargetWindows
+		  #if TargetWindows Or TargetMacOS
 		    #Pragma Unused Error
 		  #else
 		    RaiseEvent Error(Error)
@@ -180,7 +210,7 @@ End
 		Private Function DesktopViewer_JavaScriptRequest(Sender As DesktopHTMLViewer, Method As String, Parameters() As Variant) As String
 		  #Pragma Unused Sender
 		  
-		  #if TargetWindows
+		  #if TargetWindows Or TargetMacOS
 		    #Pragma Unused Method
 		    #Pragma Unused Parameters
 		  #else
@@ -193,7 +223,7 @@ End
 		Private Function DesktopViewer_NewWindow(Sender As DesktopHTMLViewer, URL As String) As DesktopHTMLViewer
 		  #Pragma Unused Sender
 		  
-		  #if TargetWindows
+		  #if TargetWindows Or TargetMacOS
 		    #Pragma Unused URL
 		  #else
 		    Var NewViewer As WebContentViewer = RaiseEvent NewWindow(URL)
@@ -208,7 +238,7 @@ End
 		Private Sub DesktopViewer_TitleChanged(Sender As DesktopHTMLViewer, NewTitle As String)
 		  #Pragma Unused Sender
 		  
-		  #if TargetWindows
+		  #if TargetWindows Or TargetMacOS
 		    #Pragma Unused NewTitle
 		  #else
 		    RaiseEvent TitleChanged(NewTitle)
@@ -220,6 +250,8 @@ End
 		Sub ExecuteJavaScript(Source As String)
 		  #if TargetWindows
 		    DesktopWebView2ControlMBS(Self.mViewer).ExecuteScript(Source)
+		  #elseif TargetMacOS
+		    DesktopWKWebViewControlMBS(Self.mViewer).EvaluateJavaScript(Source)
 		  #else
 		    DesktopHTMLViewer(Self.mViewer).ExecuteJavaScript(Source)
 		  #endif
@@ -230,6 +262,8 @@ End
 		Sub GoBack()
 		  #if TargetWindows
 		    DesktopWebView2ControlMBS(Self.mViewer).GoBack
+		  #elseif TargetMacOS
+		    DesktopWKWebViewControlMBS(Self.mViewer).GoBack
 		  #else
 		    DesktopHTMLViewer(Self.mViewer).GoBack
 		  #endif
@@ -240,6 +274,8 @@ End
 		Sub GoForward()
 		  #if TargetWindows
 		    DesktopWebView2ControlMBS(Self.mViewer).GoForward
+		  #elseif TargetMacOS
+		    DesktopWKWebViewControlMBS(Self.mViewer).GoForward
 		  #else
 		    DesktopHTMLViewer(Self.mViewer).GoForward
 		  #endif
@@ -250,6 +286,8 @@ End
 		Sub LoadHTML(Source As String)
 		  #if TargetWindows
 		    DesktopWebView2ControlMBS(Self.mViewer).LoadHTML(Source)
+		  #elseif TargetMacOS
+		    DesktopWKWebViewControlMBS(Self.mViewer).LoadHTML(Source)
 		  #else
 		    DesktopHTMLViewer(Self.mViewer).LoadPage(Source, Nil)
 		  #endif
@@ -267,6 +305,8 @@ End
 		  
 		  #if TargetWindows
 		    DesktopWebView2ControlMBS(Self.mViewer).LoadURL(URL)
+		  #elseif TargetMacOS
+		    DesktopWKWebViewControlMBS(Self.mViewer).LoadURL(URL)
 		  #else
 		    DesktopHTMLViewer(Self.mViewer).LoadURL(URL)
 		  #endif
@@ -277,6 +317,8 @@ End
 		Function UserAgent() As String
 		  #if TargetWindows
 		    Return DesktopWebView2ControlMBS(Self.mViewer).UserAgent
+		  #elseif TargetMacOS
+		    Return DesktopWKWebViewControlMBS(Self.mViewer).CustomUserAgent
 		  #else
 		    Return DesktopHTMLViewer(Self.mViewer).UserAgent
 		  #endif
@@ -287,6 +329,8 @@ End
 		Sub UserAgent(Assigns Agent As String)
 		  #if TargetWindows
 		    DesktopWebView2ControlMBS(Self.mViewer).UserAgent = Agent
+		  #elseif TargetMacOS
+		    DesktopWKWebViewControlMBS(Self.mViewer).CustomUserAgent = Agent
 		  #else
 		    DesktopHTMLViewer(Self.mViewer).UserAgent = Agent
 		  #endif
@@ -364,6 +408,80 @@ End
 		    RaiseEvent Error(Err)
 		  #else
 		    #Pragma Unused ProcessFailedKind
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function WKWebView_CreateWebView(Sender As DesktopWKWebViewControlMBS, URL As String, Request As NSURLRequestMBS) As Variant
+		  #Pragma Unused Sender
+		  #Pragma Unused Request
+		  
+		  #if TargetMacOS
+		    Var NewViewer As WebContentViewer = RaiseEvent NewWindow(URL)
+		    If (NewViewer Is Nil) = False Then
+		      Return DesktopWKWebViewControlMBS(NewViewer.mViewer)
+		    End If
+		  #else
+		    #Pragma Unused URL
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub WKWebView_DecidePolicyForNavigationAction(Sender as DesktopWKWebViewControlMBS, NavigationAction as WKNavigationActionMBS, DecisionHandler as WKPolicyForNavigationActionDecisionHandlerMBS)
+		  #Pragma Unused Sender
+		  
+		  #if TargetMacOS
+		    Var URL As String = NavigationAction.Request.URL
+		    If RaiseEvent CancelLoad(URL) Then
+		      DecisionHandler.Cancel
+		      Return
+		    End If
+		    
+		    RaiseEvent DocumentBegin(URL)
+		    DecisionHandler.Allow()
+		  #else
+		    #Pragma Unused NavigationAction
+		    #Pragma Unused DecisionHandler
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub WKWebView_DidFinishNavigation(Sender as DesktopWKWebViewControlMBS, Navigation as WKNavigationMBS)
+		  #Pragma Unused Sender
+		  
+		  #if TargetMacOS
+		    RaiseEvent DocumentComplete(Navigation.Request.URL)
+		  #else
+		    #Pragma Unused Navigation
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub WKWebView_EstimatedProgressChanged(Sender As DesktopWKWebViewControlMBS, EstimatedProgress As Double, OldEstimatedProgress As Double)
+		  #Pragma Unused Sender
+		  #Pragma Unused OldEstimatedProgress
+		  
+		  #if TargetMacOS
+		    RaiseEvent DocumentProgressChanged("", EstimatedProgress)
+		  #else
+		    #Pragma Unused EstimatedProgress
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub WKWebView_TitleChanged(Sender As DesktopWKWebViewControlMBS, NewTitle As String, OldTitle As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused OldTitle
+		  
+		  #if TargetMacOS
+		    RaiseEvent TitleChanged(NewTitle)
+		  #else
+		    #Pragma Unused NewTitle
 		  #endif
 		End Sub
 	#tag EndMethod
