@@ -229,7 +229,7 @@ class DeviceAuthFlow extends DatabaseObject {
 		if (!$app) {
 			throw new APIException(message: 'Invalid client id.', code: 'invalidClientId', httpStatus: 400);
 		}
-		if ($app->IsConfidential() && (is_null($applicationSecret) || $app->CheckSecret($applicationSecret))) {
+		if ($app->IsConfidential() && (is_null($applicationSecret) || $app->CheckSecret($applicationSecret) === false)) {
 			throw new APIException(message: 'Invalid client secret.', code: 'invalidClientSecret', httpStatus: 400);
 		}
 
