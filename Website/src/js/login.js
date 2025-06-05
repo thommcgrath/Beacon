@@ -707,7 +707,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			};
 
 			let authPromise = null;
-			if (loginParams.userPassword) {
+			if (loginParams.flowRequiresPassword === false || loginParams.userPassword) {
 				authorizationBody.password = loginParams.userPassword;
 				authPromise = new Promise((resolve) => {
 					resolve();

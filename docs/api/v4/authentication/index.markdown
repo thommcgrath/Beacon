@@ -410,24 +410,27 @@ The response will match that of the access token response.
 
 ## Sign Out
 
-To terminate an access token, make a `DELETE` request to `https://api.usebeacon.app/v4/sessions/{accessToken}`. The server will respond with a 204 status if successful.
+To terminate an access token, make a `DELETE` request to `https://api.usebeacon.app/v4/session`. The server will respond with a 204 status if successful.
 
 ### Sample Code
 
 #### Raw HTTP
 
 ```http
-DELETE /v4/sessions/{{page.sampleAccessToken}} HTTP/1.1
+DELETE /v4/session HTTP/1.1
 Host: api.usebeacon.app
+Authorization: Bearer {{page.sampleAccessToken}}
 
 ```
 
 #### JavaScript
 
 ```javascript
-fetch("https://api.usebeacon.app/v4/sessions/{{page.sampleAccessToken}}", {
-      "method": "DELETE",
-      "headers": {}
+fetch("https://api.usebeacon.app/v4/session", {
+  "method": "DELETE",
+  "headers": {
+    "Authorization": "Bearer {{page.sampleAccessToken}}"
+  }
 })
 .then((res) => res.text())
 .then(console.log.bind(console))
@@ -439,7 +442,10 @@ fetch("https://api.usebeacon.app/v4/sessions/{{page.sampleAccessToken}}", {
 ```python
 try:
     response = requests.delete(
-        url="https://api.usebeacon.app/v4/sessions/{{page.sampleAccessToken}}",
+        url="https://api.usebeacon.app/v4/session",
+		headers={
+			"Authorization": "Bearer {{page.sampleAccessToken}}",
+		},
     )
     print('Response HTTP Status Code: {status_code}'.format(
         status_code=response.status_code))
