@@ -1656,7 +1656,7 @@ Protected Class ModDiscoveryEngine2
 		    RequiredLevel = Properties.Lookup("RequiredCharacterLevel", 1).IntegerValue
 		  End If
 		  
-		  If Properties.HasChild("BluePrintEntry") Then
+		  If Properties.HasChild("BluePrintEntry") And (Properties.Child("BluePrintEntry") Is Nil) = False And Properties.Child("BluePrintEntry").HasKey("ObjectPath") Then
 		    Var ItemPath As String = Self.NormalizePath(Properties.Child("BluePrintEntry").Value("ObjectPath"))
 		    Self.mUnlockDetails.Value(ItemPath) = New Dictionary("UnlockString": UnlockString, "RequiredLevel": RequiredLevel, "RequiredPoints": RequiredPoints)
 		    Self.ScanItem(ItemPath, ItemOptions)
