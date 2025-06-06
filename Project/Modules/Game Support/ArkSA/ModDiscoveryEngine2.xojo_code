@@ -325,7 +325,7 @@ Protected Class ModDiscoveryEngine2
 		      Var InfoFile As FolderItem = ModFolder.Child("Mod.json")
 		      If InfoFile.Exists Then
 		        Var StoredInfo As New CurseForge.ModInfo(InfoFile)
-		        If StoredInfo.LastUpdateString = ModInfo.LastUpdateString Then
+		        If StoredInfo.MainFileId = ModInfo.MainFileId Then
 		          // We already have this mod downloaded and it does not need updating
 		          DownloadRequired = False
 		        End If

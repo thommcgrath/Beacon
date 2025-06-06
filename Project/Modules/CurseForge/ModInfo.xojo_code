@@ -15,6 +15,7 @@ Protected Class ModInfo
 		  Self.mModId = Source.Value("id")
 		  Self.mModName = Source.Value("name")
 		  Self.mSlug = Source.Value("slug")
+		  Self.mMainFileId = Source.Value("mainFileId")
 		End Sub
 	#tag EndMethod
 
@@ -33,6 +34,12 @@ Protected Class ModInfo
 	#tag Method, Flags = &h0
 		Function LastUpdateString() As String
 		  Return Self.mLastUpdateString
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MainFileId() As Integer
+		  Return Self.mMainFileId
 		End Function
 	#tag EndMethod
 
@@ -68,6 +75,10 @@ Protected Class ModInfo
 
 	#tag Property, Flags = &h21
 		Private mLastUpdateString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMainFileId As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

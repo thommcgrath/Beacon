@@ -555,7 +555,7 @@ Protected Module ArkSA
 		      Return Nil
 		    End If
 		    
-		    Var MainFileId As Integer = RawInfo.Value("mainFileId")
+		    Var MainFileId As Integer = ModInfo.MainFileId
 		    Var LatestFile As JSONItem
 		    For Idx As Integer = 0 To LatestFiles.Count - 1
 		      Var File As JSONItem = LatestFiles.ChildAt(Idx)
