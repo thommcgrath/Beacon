@@ -414,13 +414,13 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Var RequiredHashes As New Dictionary
-		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "c95edc51c744681119cb972847885b23"
-		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "7dc9f0894dd48f8c3d7a43ff3982725d"
-		  RequiredHashes.Value("CUE4Parse.pdb") = "c514cc08772b272762f288f503fc686b"
+		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "ed9d129a65450e826fde8c93cc7c5d27"
+		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "2e9cae68f2cda0c89d5d8ed38a4c4a6a"
+		  RequiredHashes.Value("CUE4Parse.pdb") = "054ce6b3df874b93187a736bd89243b2"
 		  RequiredHashes.Value("blake3_dotnet.dll") = "7ce74ad9c157ec818b45fa1f0b2c1b95"
 		  RequiredHashes.Value("libSkiaSharp.dll") = "ef1fabce43fe32ca83260481253f5476"
-		  RequiredHashes.Value("mod_data_extractor.exe") = "3fbdd0b8ed4752d9ab73f966ed26d571"
-		  RequiredHashes.Value("mod_data_extractor.pdb") = "8d85996707816dfff629cfcec3edf285"
+		  RequiredHashes.Value("mod_data_extractor.exe") = "c89763e721098d9a267736ae47dd7a29"
+		  RequiredHashes.Value("mod_data_extractor.pdb") = "8829689afc74657216133e355a64dbca"
 		  Var ExtractorReady As Boolean = True
 		  For Each Entry As DictionaryEntry In RequiredHashes
 		    Var ExtractorFile As FolderItem = ExtractorRoot.Child(Entry.Key.StringValue)
@@ -446,7 +446,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.1.5.zip")
+		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.1.8.zip")
 		    If DownloadSocket.HTTPStatusCode <> 200 Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Failed to download extractor tool."))
 		      Return
@@ -515,7 +515,7 @@ Protected Class ModDiscoveryEngine2
 		    Targets.Add("ShooterGame/Mods/" + Entry.Value.StringValue + "/")
 		  Next
 		  
-		  Var ParseVersions() As String = Array("GAME_ARKSurvivalAscended", "GAME_UE5_2")
+		  Var ParseVersions() As String = Array("GAME_ARKSurvivalAscended")
 		  Var Now As New DateTime(Self.mTimestamp)
 		  For Each ParseVersion As String In ParseVersions
 		    Var Command As String = "cd /d """ + ExtractorRoot.NativePath + """ && .\mod_data_extractor.exe --debug --input """ + InputPath + """ --output """ + OutputPath + """ --file-types ""uasset"" ""umap"" ""bin"" --targets """ + String.FromArray(Targets, """ """) + """ --version """ + ParseVersion + """"
