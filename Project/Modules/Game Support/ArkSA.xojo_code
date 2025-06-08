@@ -620,9 +620,7 @@ Protected Module ArkSA
 		      End If
 		    Next
 		    
-		    Var FileSize As Double = FileInfo.Value("fileLength")
 		    Var FileName As String = FileInfo.Value("fileName")
-		    
 		    Var DownloadUrl As String
 		    If FileInfo.HasKey("downloadUrl") And FileInfo.Value("downloadUrl").IsNull = False Then
 		      DownloadUrl = FileInfo.Value("downloadUrl")
@@ -642,22 +640,19 @@ Protected Module ArkSA
 		      App.Log("Mod " + ModId + " was looked up, but the archive '" + FileName + "' could not be downloaded: HTTP #" + DownloadSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
 		      Return Nil
 		    End If
-		    
-		    Var DownloadedBytes As Double
-		    If (DownloadSocket.LastContent Is Nil) = False Then
-		      DownloadedBytes = DownloadSocket.LastContent.Size
+		    If FileHash.IsEmpty Then
+		      App.Log("Could not find a valid hash for mod " + ModId + ".")
+		      Return Nil
 		    End If
-		    If DownloadedBytes <> FileSize Then
-		      App.Log("Mod " + ModId + " downloaded " + Beacon.BytesToString(DownloadedBytes) + " of '" + FileName + "' but should have downloaded " + Beacon.BytesToString(FileSize) + ".")
+		    If DownloadSocket.LastContent Is Nil Or DownloadSocket.LastContent.Size = 0 Then
+		      App.Log("Mod " + ModId + " did not download any bytes.")
 		      Return Nil
 		    End If
 		    
-		    If FileHash.IsEmpty = False And (DownloadSocket.LastContent Is Nil) = False Then
-		      Var ComputedHash As String = EncodeHex(Crypto.SHA1(DownloadSocket.LastContent))
-		      If ComputedHash <> FileHash Then
-		        App.Log("Mod " + ModId + " downloaded '" + FileName + "' but checksum does not match. Expected " + FileHash.Lowercase + ", computed " + ComputedHash.Lowercase)
-		        Return Nil
-		      End If
+		    Var ComputedHash As String = EncodeHex(Crypto.SHA1(DownloadSocket.LastContent))
+		    If ComputedHash <> FileHash Then
+		      App.Log("Mod " + ModId + " downloaded '" + FileName + "' but checksum does not match. Expected " + FileHash.Lowercase + ", computed " + ComputedHash.Lowercase)
+		      Return Nil
 		    End If
 		    
 		    Var Reader As New ArchiveReaderMBS
