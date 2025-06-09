@@ -65,10 +65,14 @@ class BeaconPusher {
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
 			$response = curl_exec($curl);
 			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+			$errorNumber = curl_errno($curl);
+			$errorMessage = curl_error($curl);
 			curl_close($curl);
 
-			if ($status !== 200) {
-				throw new Exception($response);
+			if ($response === false) {
+				throw new Exception("CURL Error {$errorNumber}: {$errorMessage}");
+			} elseif ($status !== 200) {
+				throw new Exception("Unexpected HTTP {$status} response: {$response}");
 			}
 		}
 	}
