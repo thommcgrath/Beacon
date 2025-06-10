@@ -1,0 +1,26 @@
+{
+  "fill" : {
+    "automatic-gradient" : "srgb:0.61176,0.05882,0.69020,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "AvatarTransparentWhite.svg",
+          "name" : "AvatarTransparentWhite"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}
