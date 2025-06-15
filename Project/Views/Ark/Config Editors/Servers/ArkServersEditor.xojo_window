@@ -221,6 +221,7 @@ Begin ArkConfigEditor ArkServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -723,10 +724,6 @@ End
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var CopyProfileMenuItem As New DesktopMenuItem("Copy Profile ID")
-		  CopyProfileMenuItem.Enabled = False
-		  Base.AddMenu(CopyProfileMenuItem)
-		  
 		  Var DeployItem As DesktopMenuItem
 		  If Me.SelectedRowCount > 1 Then
 		    DeployItem = New DesktopMenuItem("Deploy These Servers…")
@@ -756,9 +753,6 @@ End
 		  
 		  If Me.SelectedRowCount = 1 Then
 		    Var Profile As Ark.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
-		    CopyProfileMenuItem.Tag = Profile.ProfileID.Left(8)
-		    CopyProfileMenuItem.Enabled = True
-		    
 		    BackupsItem.Tag = App.BackupsFolder.Child(Profile.BackupFolderName)
 		  Else
 		    BackupsItem.Tag = App.BackupsFolder
@@ -779,10 +773,6 @@ End
 		      Folder.CreateFolder
 		    End If
 		    Folder.Open
-		  Case "Copy Profile ID"
-		    Var ProfileID As String = HitItem.Tag
-		    Var Board As New Clipboard
-		    Board.Text = ProfileID
 		  Case "Deploy These Servers…", "Deploy This Server…"
 		    Var SelectedProfiles() As Ark.ServerProfile = HitItem.Tag
 		    Self.StartDeploy(SelectedProfiles)

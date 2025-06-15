@@ -35,6 +35,8 @@ Begin SDTDConfigEditor SDTDServersEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       Left            =   0
@@ -597,10 +599,6 @@ End
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var CopyProfileMenuItem As New DesktopMenuItem("Copy Profile ID")
-		  CopyProfileMenuItem.Enabled = False
-		  Base.AddMenu(CopyProfileMenuItem)
-		  
 		  Var DeployItem As DesktopMenuItem
 		  If Me.SelectedRowCount > 1 Then
 		    DeployItem = New DesktopMenuItem("Deploy These Servers…")
@@ -645,9 +643,6 @@ End
 		  
 		  If Me.SelectedRowCount = 1 Then
 		    Var Profile As SDTD.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
-		    CopyProfileMenuItem.Tag = Profile.ProfileId.Left(8)
-		    CopyProfileMenuItem.Enabled = True
-		    
 		    BackupsItem.Tag = App.BackupsFolder.Child(Profile.BackupFolderName)
 		  Else
 		    BackupsItem.Tag = App.BackupsFolder
@@ -668,10 +663,6 @@ End
 		      Folder.CreateFolder
 		    End If
 		    Folder.Open
-		  Case "Copy Profile ID"
-		    Var ProfileId As String = HitItem.Tag
-		    Var Board As New Clipboard
-		    Board.Text = ProfileId
 		  Case "Deploy These Servers…", "Deploy This Server…"
 		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
 		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)

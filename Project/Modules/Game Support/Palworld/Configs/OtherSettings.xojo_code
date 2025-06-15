@@ -13,6 +13,8 @@ Inherits Palworld.ConfigGroup
 
 	#tag Event
 		Function GenerateConfigValues(Project As Palworld.Project, Profile As Palworld.ServerProfile) As Palworld.ConfigValue()
+		  #Pragma Unused Profile
+		  
 		  Var Configs() As Palworld.ConfigValue
 		  Var DataSource As Palworld.DataSource = Palworld.DataSource.Pool.Get(False)
 		  For Each Entry As DictionaryEntry In Self.mSettings

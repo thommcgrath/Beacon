@@ -19,6 +19,8 @@ Inherits SDTD.ConfigGroup
 
 	#tag Event
 		Function GenerateConfigValues(Project As SDTD.Project, Profile As SDTD.ServerProfile) As SDTD.ConfigValue()
+		  #Pragma Unused Profile
+		  
 		  Var DataSource As SDTD.DataSource = SDTD.DataSource.Pool.Get(False)
 		  Var Values() As SDTD.ConfigValue
 		  

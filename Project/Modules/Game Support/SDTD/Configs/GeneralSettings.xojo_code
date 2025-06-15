@@ -13,6 +13,8 @@ Inherits SDTD.ConfigGroup
 
 	#tag Event
 		Function GenerateConfigValues(Project As SDTD.Project, Profile As SDTD.ServerProfile) As SDTD.ConfigValue()
+		  #Pragma Unused Profile
+		  
 		  Var Configs() As SDTD.ConfigValue
 		  Var DataSource As SDTD.DataSource = SDTD.DataSource.Pool.Get(False)
 		  For Each Entry As DictionaryEntry In Self.mSettings

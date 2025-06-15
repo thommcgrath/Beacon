@@ -69,73 +69,29 @@ This works with all the launch options listed in the [Ark Config File Reference]
 
 ## Per-Server Config Design
 
-> In Beacon 1.5 and later, [config sets](/core/configsets) are an easier way to achieve server-specific values. The features described below still work though.
+In the [Servers editor](/configs/arksa/servers/), select a server, and you will see a **Custom**{:.ui-keyword} tab. This is a miniature Custom Config section that will get merged into `GameUserSettings.ini` only for that specific server. This is most useful for mod configs with server-specific identifiers, such as monitoring tools. Keys in this section take precedence over the same keys in the project's Custom Config editor. If no section header is specified, keys will be placed in `[ServerSettings]`.
 
-The _Custom Config_ editor allows admins to create content that is placed on only certain servers. This is an advanced feature that requires using the automated deployment options.
-
-The editor supports blocks surrounded in `#Server` and `#End` tags. For example
+For example, if your project Custom Config has the following lines:
 
 ```ini
-StructureResistanceMultiplier=0.0
-
-#Server abcd1234
-ServerCrosshair=True
-#End
+[MyDiscordBot]
+TagEveryone=True
+ServerKey=DefaultPassword
 ```
 
-Would place the `StructureResistanceMultiplier` on all servers, but `ServerCrosshair` would only be included for server `abcd1234`.
-
-To find a server's identifier, switch to the [Servers editor](/configs/deployments/) in Beacon. Underneath each server name in the list will be both the server identifier and its address. Right-click a server and choose _Copy Profile ID_ to quickly copy the identifier to be used in your custom config content.
-
-### Getting Advanced
-
-It's possible to specify multiple servers at the same time by separating the identifiers with commas:
+And a server's Custom tab has
 
 ```ini
-#Server abcd1234, 1234abcd
-ServerCrosshair=True
-#End
+[MyDiscordBot]
+ServerKey=ThisIsAPassword
 ```
 
-The space after the comma is optional. To make life a little easier, a `#Servers` command can be used instead. Both `#Server` and `#Servers` are fully interchangeable, the two commands exist just to assist with user memory.
-
-Speaking of user memory, remembering which server is which can be hard. So the editor now supports comments:
+The server's `GameUserSettings.ini` will receive
 
 ```ini
-// This comment isn't particularly helpful
-#Servers abcd1234, 1234abcd
-ServerCrosshair=True
-#End
-```
-
-And it's even possible to nest code blocks, and indent if desired:
-
-```ini
-#Servers abcd1234, 1234abcd
-  ServerCrosshair=True
-  #Server 1234abcd
-    StructureResistanceMultiplier=0.0
-  #End
-#End
-```
-
-### Group Inheritance
-
-A code block will inherit the active group from its parent, but will not change the parent group if a new group is used inside.
-
-```ini
-[ServerSettings]
-// Group is now ServerSettings
-ServerCrosshair=True
-
-#Server abcd1234
-  // Group is still ServerSettings
-  [SessionSettings]
-  // Group is now SessionSettings
-  SessionName=This is the name of my server
-#Server
-
-// Group is back to ServerSettings
+[MyDiscordBot]
+TagEveryone=True
+ServerKey=ThisIsAPassword
 ```
 
 {% include affectedkeys.html %}
