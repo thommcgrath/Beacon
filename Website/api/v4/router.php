@@ -181,6 +181,9 @@ Core::RegisterRoutes(
 		'/users/{userId}/createCustomerSession' => [
 			'POST' => 'users/createCustomerSession',
 		],
+		'/beginCheckout' => [
+			'POST' => 'beginCheckout',
+		],
 	]
 );
 

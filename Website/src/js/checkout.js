@@ -1248,7 +1248,14 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 
 					this.checkoutButton.disabled = true;
 
-					BeaconWebRequest.post('/omni/begin', {...cart.toJSON(), refundPolicyAgreed}).then((response) => {
+					BeaconWebRequest.post(`https://${checkoutProperties.apiDomain}/v4/beginCheckout`, {
+						...cart.toJSON(),
+						refundPolicyAgreed,
+						successUrl: checkoutProperties.successUrl,
+						cancelUrl: checkoutProperties.cancelUrl,
+						currencyCode: checkoutProperties.currencyCode,
+						affiliateId: checkoutProperties.affiliateId,
+					}).then((response) => {
 						try {
 							const parsed = JSON.parse(response.body);
 							const url = parsed.url;

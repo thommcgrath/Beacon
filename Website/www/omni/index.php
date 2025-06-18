@@ -148,6 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		'productIds' => $productIds,
 		'forceEmail' => $forceEmail,
 		'games' => $gamesList,
+		'apiDomain' => BeaconCommon::APIDomain(),
+		'successUrl' => BeaconCommon::AbsoluteURL('/omni/welcome/?session={CHECKOUT_SESSION_ID}'),
+		'cancelUrl' => BeaconCommon::AbsoluteURL('/omni#checkout'),
+		'affiliateId' => ($_COOKIE['beacon_affiliate'] ?? null),
 	]); ?>;
 	document.dispatchEvent(event);
 });

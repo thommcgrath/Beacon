@@ -300,6 +300,23 @@ class BeaconStripeAPI {
 		return $this->GetURL("https://api.stripe.com/v1/checkout/sessions/{$sessionId}");
 	}
 
+	public function FindCheckoutSession(string $id): ?array {
+		list($prefix) = explode('_', $id);
+		switch ($prefix) {
+		case 'sub':
+			$results = $this->GetURL("https://api.stripe.com/v1/checkout/sessions?subscription={$id}");
+			break;
+		default:
+			return null;
+		}
+
+		if (is_null($results) || count($results['data']) === 0) {
+			return null;
+		}
+
+		return $results['data'][0];
+	}
+
 	public function CreateCustomerSession(array $details): ?array {
 		return $this->PostUrl('https://api.stripe.com/v1/customer_sessions', $details);
 	}

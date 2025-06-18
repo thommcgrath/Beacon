@@ -181,6 +181,7 @@ abstract class BeaconCommon {
 
 	public static function Redirect(string $destination, bool $temp = true): void {
 		header('Location: ' . $destination);
+		ob_clean();
 		if ($temp === true) {
 			http_response_code(302);
 			echo '<p>Please relocate to <a href="' . $destination . '">' . htmlentities($destination, ENT_COMPAT, 'UTF-8') . '</a>.</p>';
@@ -201,6 +202,13 @@ abstract class BeaconCommon {
 
 	public static function AbsoluteURL(string $path): string {
 		return 'https://' . self::Domain() . $path;
+	}
+
+	public static function SentinelUrl(string $path): string {
+		if (str_starts_with($path, '/') === false) {
+			$path = '/' . $path;
+		}
+		return self::GetGlobal('Sentinel Host', '') . $path;
 	}
 
 	public static function HasAllKeys(array $arr, ...$keys): bool {
@@ -1088,6 +1096,20 @@ abstract class BeaconCommon {
 		}
 
 		return $score;
+	}
+
+	public static function IsOriginBeacon(string $url): bool {
+		if (static::InDevelopment()) {
+			return true;
+		}
+
+		$parts = parse_url($url);
+		$scheme = strtolower($parts['scheme'] ?? '');
+		$host = strtolower($parts['host'] ?? '');
+		if ($scheme !== 'https' || ($host !== 'usebeacon.app' && str_ends_with($host, '.usebeacon.app') === false) || isset($parts['port'])) {
+			return false;
+		}
+		return true;
 	}
 }
 

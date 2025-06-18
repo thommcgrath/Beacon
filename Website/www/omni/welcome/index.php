@@ -19,6 +19,16 @@ if (is_null($session)) {
 	exit;
 }
 
+$metadata = $session['metadata'];
+$hasProductMetadata = BeaconCommon::HasAnyKeys($metadata, 'beacon-has-sentinel', 'beacon-has-omni');
+if ($hasProductMetadata) {
+	$hasOmni = filter_var($metadata['beacon-has-omni'] ?? '', FILTER_VALIDATE_BOOLEAN);
+	$hasSentinel = filter_var($metadata['beacon-has-sentinel'] ?? '', FILTER_VALIDATE_BOOLEAN);
+} else {
+	$hasOmni = true;
+	$hasSentinel = false;
+}
+
 $email = $session['customer_details']['email'];
 $user = BeaconAPI\v4\User::Fetch($email);
 if (is_null($user)) {
@@ -27,11 +37,39 @@ if (is_null($user)) {
 	$userMessage = "Your purchase is ready on your {$user->Username(true)} ({$email}) account.";
 }
 
+$buttons = [];
+if ($hasOmni) {
+	$buttons['Launch Beacon'] = 'beacon://action/refreshuser?silent=false';
+}
+if ($hasSentinel) {
+	$sentinelUrl = '/welcome?email=' . urlencode($email);
+	if (is_null($user) === false) {
+		$sentinelUrl .= '&user_id=' . urlencode($user->UserId()) . '&username=' . urlencode($user->Username(true));
+	}
+	$sentinelUrl = BeaconCommon::SentinelUrl($sentinelUrl);
+	if ($hasOmni === false) {
+		// No good reason to show the buttons
+		BeaconCommon::Redirect($sentinelUrl);
+	}
+	$buttons['Go To Sentinel'] = $sentinelUrl;
+}
+
 ?><div id="purchase_confirmed" class="welcome_content">
 	<p class="confirmed_text"><?php echo htmlentities($userMessage); ?></p>
 	<p>You will need to sign into your account using the instructions below if you are not already signed in. If you made a mistake with your purchase, please do not purchase again. <a href="/help/contact">Open a support ticket</a> so the mistake can be corrected.</p>
 </div>
+<?php
+if (count($buttons) > 0) {
+	echo '<p class="text-center">';
+	foreach ($buttons as $caption => $url) {
+		echo '<a href="' . htmlentities($url) . '" class="button default">' . htmlentities($caption) . '</a>';
+	}
+	echo '</p>';
+}
+if ($hasOmni) { ?>
 <div id="signin_instructions" class="welcome_content">
 	<h3>How to sign into Beacon</h3>
 	<?php include('instructions.php'); ?>
 </div>
+<?php } ?>
+
