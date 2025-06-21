@@ -51,7 +51,7 @@ function handleRequest(array $context): Response {
 		$user = User::Fetch($email);
 		if (is_null($user) === false) {
 			if ($user->IsBanned()) {
-				return Response::NewJsonError(message: 'Stripe was unable to start the checkout session.', code: 'cartCreationFailed', httpStatus: 400);
+				return Response::NewJsonError(message: 'Stripe was unable to start the checkout session.', code: 'checkoutSessionFailed', httpStatus: 400);
 			}
 		}
 	} catch (Exception $err) {
