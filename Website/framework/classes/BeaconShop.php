@@ -94,6 +94,9 @@ abstract class BeaconShop {
 
 			foreach ($purchasedProducts as $productId => $quantity) {
 				$product = static::GetProductById($currencyCode, $productId);
+				if (is_null($product)) {
+					continue;
+				}
 
 				// Renewals and upgrades need to use the base product id. Keep $product pointing to the correct product,
 				// in case the upgrade or renewal has a special behavior such as length.

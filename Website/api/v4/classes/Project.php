@@ -412,28 +412,28 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$this->communityStatus = $new_status;
 	}
 
-	public function PreloadContent($version_id = null): string {
-		$content_key = (is_null($version_id) === true ? '' : $version_id);
-		if (array_key_exists($content_key, $this->content) === true) {
-			return $content_key;
+	public function PreloadContent($versionId = null): string {
+		$contentKey = (is_null($versionId) === true ? '' : $versionId);
+		if (array_key_exists($contentKey, $this->content) === true) {
+			return $contentKey;
 		}
 
-		$this->content[$content_key] = BeaconCloudStorage::GetFile($this->CloudStoragePath(), true, $version_id);
-		return $content_key;
+		$this->content[$contentKey] = BeaconCloudStorage::GetFile($this->CloudStoragePath(), true, $versionId);
+		return $contentKey;
 	}
 
 	public static function IsBinaryProjectFormat(string $content): bool {
 		return bin2hex(substr($content, 0, 8)) === '3029a1c4fab67728';
 	}
 
-	public function Content(bool $compressOutput = false, bool $parsed = true, $version_id = null): string|array {
+	public function Content(bool $compressOutput = false, bool $parsed = true, ?string $versionId = null): string|array {
 		try {
-			$content_key = $this->PreloadContent($version_id);
+			$contentKey = $this->PreloadContent($versionId);
 		} catch (Exception $err) {
 			return '';
 		}
 
-		$content = $this->content[$content_key];
+		$content = $this->content[$contentKey];
 		$compressOutput = $compressOutput && ($parsed === false);
 		if (static::IsBinaryProjectFormat($content)) {
 			// v7+ project

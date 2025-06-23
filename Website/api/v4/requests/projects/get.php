@@ -1,20 +1,20 @@
 <?php
 
-use BeaconAPI\v4\{Response, Core, Project, User};
+use BeaconAPI\v4\{Core, Project, ProjectMember, Response, User};
 
 if (Core::HasAuthenticationHeader() === false) {
 	$authScheme = Core::kAuthSchemeNone;
 	$requiredScopes = [];
 }
-	
+
 function handleRequest(array $context): Response {
 	$projectId = $context['pathParameters']['projectId'];
 	$authorizedUserId = Core::UserId();
-	
+
 	if (!BeaconCommon::IsUUID($projectId)) {
 		return Response::NewJsonError('Must use a v4 UUID', $projectId, 400);
 	}
-	
+
 	$project = null;
 	if ($authorizedUserId) {
 		$project = Project::FetchForUser($projectId, $authorizedUserId);
@@ -25,7 +25,7 @@ function handleRequest(array $context): Response {
 			return Response::NewJsonError('Project not found', $projectId, 404);
 		}
 	}
-	
+
 	switch ($context['routeKey']) {
 	case 'GET /projects/{projectId}/metadata':
 		return Response::NewJson($project, 200);
@@ -58,14 +58,14 @@ function HandleDocumentDataRequest(Project $project, $versionId = null): Respons
 				list($option, $quality) = explode(';', $piece, 2);
 				$quality = substr($quality, 2);
 			}
-			
+
 			if ($quality > $bestQuality && in_array($option, $supported)) {
 				$bestOption = $option;
 				$bestQuality = $quality;
 			}
 		}
 	}
-	
+
 	try {
 		$project->PreloadContent($versionId); // If there is an error, this one will fire the exception
 		$compressOutput = ($bestOption == 'gzip');
@@ -79,7 +79,7 @@ function HandleDocumentDataRequest(Project $project, $versionId = null): Respons
 		if ($compressed) {
 			$headers['Content-Encoding'] = 'gzip';
 		}
-		
+
 		return new Response(200, $content, $headers);
 	} catch (Exception $err) {
 		return Response::NewJsonError('Unhandled exception: ' . $err->getMessage(), null, 500);

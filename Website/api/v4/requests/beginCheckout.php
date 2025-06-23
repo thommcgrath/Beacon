@@ -115,20 +115,6 @@ function handleRequest(array $context): Response {
 	if (is_null($user) === false) {
 		$payment['metadata']['Beacon User UUID'] = $user->UserId();
 	}
-	if ($subscriptionMode) {
-		$payment['mode'] = 'subscription';
-		$payment['payment_method_collection'] = 'if_required';
-		if ($trialDays > 1) {
-			$payment['subscription_data'] = [
-				'trial_period_days' => $trialDays,
-				'trial_settings' => [
-					'end_behavior' => [
-						'missing_payment_method' => 'cancel',
-					],
-				],
-			];
-		}
-	}
 
 	try {
 		$customers = $api->GetCustomersByEmail($email);
@@ -191,6 +177,14 @@ function handleRequest(array $context): Response {
 
 					// Nothing logical to do here, so throw an error
 					return Response::NewJsonError(message: 'User already has an active subscription.', code: 'duplicateSubscription', httpStatus: 400, details: $rows->Field('stripe_id'));
+				}
+
+				// Verify that the user is eligible for a trial.
+				if (isset($payment['subscription_data']['trial_period_days'])) {
+					$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM public.subscriptions INNER JOIN public.purchases ON (subscriptions.last_purchase_id = purchases.purchase_id) WHERE subscriptions.product_id = $1 AND purchases.purchaser_email = $2) AS subscription_exists;', $productId, $emailId);
+					if ($rows->Field('subscription_exists')) {
+						$trialDays = 1;
+					}
 				}
 			}
 
@@ -341,7 +335,6 @@ function handleRequest(array $context): Response {
 		}
 	}
 
-
 	foreach ($lines as $priceId => $quantity) {
 		$payment['line_items'][] = [
 			'price' => $priceId,
@@ -350,6 +343,21 @@ function handleRequest(array $context): Response {
 	}
 	if (count($payment['line_items']) === 0) {
 		return Response::NewJsonError(message: 'The cart does not contain any products that are valid for email ' . $email . '.', code: 'emptyCart', httpStatus: 400);
+	}
+
+	if ($subscriptionMode) {
+		$payment['mode'] = 'subscription';
+		$payment['payment_method_collection'] = 'if_required';
+		if ($trialDays > 1) {
+			$payment['subscription_data'] = [
+				'trial_period_days' => $trialDays,
+				'trial_settings' => [
+					'end_behavior' => [
+						'missing_payment_method' => 'cancel',
+					],
+				],
+			];
+		}
 	}
 
 	$encodedCart = BeaconCommon::Base64UrlEncode(gzencode(json_encode($bundles)));

@@ -299,7 +299,7 @@ case 'customer.subscription.deleted':
 
 	$database->BeginTransaction();
 	$rows = $database->Query('SELECT user_id FROM public.user_subscriptions WHERE subscription_id = $1;', $subscriptionId);
-	$database->Query('DELETE FROM public.subscriptions WHERE subscription_id = $1;', $subscriptionId);
+	$database->Query('UPDATE public.subscriptions SET date_expires = CURRENT_TIMESTAMP(0) WHERE subscription_id = $1;', $subscriptionId);
 	$database->Commit();
 
 	sem_release($sem);
