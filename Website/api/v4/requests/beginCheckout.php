@@ -105,6 +105,7 @@ function handleRequest(array $context): Response {
 		'client_reference_id' => $clientReferenceId,
 		'customer_email' => $email,
 		'payment_method_types' => $paymentMethods,
+		'currency' => $currency,
 		'mode' => 'payment',
 		'success_url' => $successUrl,
 		'cancel_url' => $cancelUrl,
