@@ -1,7 +1,6 @@
 ---
 title: Scripting
 parent: Sentinel
-nav_order: 0
 ---
 # {{page.title}}
 {: .no_toc }
