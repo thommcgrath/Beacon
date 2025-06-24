@@ -1,5 +1,5 @@
 ---
-title: Scripting
+title: Scripts
 parent: Sentinel
 ---
 # {{page.title}}

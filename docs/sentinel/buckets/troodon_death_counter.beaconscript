@@ -1,0 +1,15 @@
+{
+  "name": "Troodon Death Counter",
+  "language": "JavaScript",
+  "context": "playerDied",
+  "parameters": [
+    {
+      "name": "bucketId",
+      "type": "String",
+      "default": "",
+      "required": false
+    }
+  ],
+  "version": 1,
+  "code": "// Make sure this is a wild troodon\nif (beacon.eventData.attacker.kind !== 'wildDino' || beacon.eventData.attacker.nameTag !== 'Troodon') {\n  return;\n}\n\n// Define some constants\nconst bucketId = beacon.params.bucketId;\nconst bucketKey = `${beacon.eventData.attacker.nameTag} Deaths`;\n\n// Get the current counters from the bucket\nlet totalDeathCount = parseInt(beacon.getBucketValue(bucketId, bucketKey) ?? '0');\nlet playerDeathCount = parseInto(beacon.getBucketValue(bucketId, bucketKey, beacon.eventData.playerId) ?? '0');\n\n// Increment the counters\ntotalDeathCount = totalDeathCount + 1;\nplayerDeathCount = playerDeathCount + 1;\n\n// Store the new counters in the bucket\nbeacon.setBucketValue(bucketId, bucketKey, totalDeathCount);\nbeacon.setBucketValue(bucketId, bucketKey, beacon.eventData.playerId, playerDeathCount);\n\n// Fetch the survivor info and send a message to chat\nconst character = beacon.fetchCharacter(beacon.eventData.characterId);\nbeacon.sendChat(`${character.name} just died to a troodon! ${totalDeathCount} survivors have died to those glowing-eyed freaks, and ${character.name}'s personal score is ${playerDeathCount}.`, 'Announcer');"
+}
