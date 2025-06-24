@@ -85,7 +85,7 @@ The property type is either String (words, emoji, and other text), a Number, or 
 
 The default value is what the value the parameter should use if no other value is provided. It is perfectly acceptable to include other parameters or context fields in the default value.
 
-In the case of the player renaming script example, you might create a parameter called "newName" whose type is String and default value is `{{generateRandomUsername}}`. We'll get to that weird value in the very next section...
+In the case of the player renaming script example, you might create a parameter called "newName" whose type is String and default value is `{{generateRandomUsername}}`. We'll get to that weird value in the very next section…
 
 ## The "Actions" Language
 
@@ -167,7 +167,7 @@ Simple usage of a restricted function will require approval as soon as the scrip
 const response = beacon.httpRequest('GET', 'https://google.com');
 ```
 
-**Don't try to be clever an obscure your intention.**. The following code will **pass** the initial detection, but the script will be terminated and sent for review as soon as the function is actually called:
+**Don't try to be clever and obscure your intention**. The following code will **pass** the initial detection, but the script will be terminated and sent for review as soon as the function is actually called:
 
 ```javascript
 const response = beacon['httpRequest']('GET', 'https://google.com');
@@ -181,7 +181,7 @@ Each time a script is saved, a new revision is saved. This allows you to update 
 
 Once a script has been created, nothing actually happens with it until the script is attached to a server or group.
 
-Attaching a script to a group works exactly the same as attaching to a server. The key difference is that group scripts will affect all servers in the group. You _can_ attach the same script to a server and a group that server belongs to... but you shouldn't.
+Attaching a script to a group works exactly the same as attaching to a server. The key difference is that group scripts will affect all servers in the group. You _can_ attach the same script to a server and a group that server belongs to… but you shouldn't.
 
 Once a script has been saved, head to a server or group page, and choose the **Scripts**{:.ui-keyword} tab. Then press the **Attach Script**{:.ui-keyword} button. You will be shown a list of all scripts you have access to. These could be scripts you have created yourself, or they may belong to a group you belong to. Choose a script with the circular button to the left of the script name.
 
