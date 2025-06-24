@@ -1,6 +1,6 @@
 ---
-title: Developers
+title: Mod Developers
 has_children: true
-nav_order: 9
+nav_order: 10
 ---
 # {{page.title}}
