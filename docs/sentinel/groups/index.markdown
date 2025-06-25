@@ -6,7 +6,7 @@ parent: Sentinel
 
 Sentinel groups are a collection of servers, users, scripts, and buckets. They can be used to share access to these resources to additional users, as well as reuse resources on multiple servers. You may create as many groups as you need to achieve your organizational goals, and all resources can belong to multiple groups.
 
-## Creating A Group
+## Creating a Group
 
 Most users running a cluster of servers will want to create a group for their cluster. So the first step is to use the **New Group**{:.ui-keyword} button on the **Groups**{:.ui-keyword} page to create a group. You can name it whatever you feel is appropriate. If you like, you can also assign a color to help organize.
 

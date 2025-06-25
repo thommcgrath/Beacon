@@ -103,6 +103,9 @@ if ($extracted) {
 unlink($archivePath);
 unlink($lockFile);
 
+// Just to make sure everything is cleaned up
+sleep(1);
+
 exec(escapeshellarg("{$installPath}/startwatcher.sh"));
 
 ?>
