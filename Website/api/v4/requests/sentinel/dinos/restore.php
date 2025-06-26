@@ -64,12 +64,19 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError(message: 'Service not connected', httpStatus: 412, code: 'serviceNotConnected');
 	}
 
+	$gameSpecific = $service->GameSpecific();
+	if (isset($gameSpecific['cryopodPath'])) {
+		$cryopodPath = $gameSpecific['cryopodPath'];
+	} else {
+		$cryopodPath = '/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponEmptyCryopod.PrimalItem_WeaponEmptyCryopod';
+	}
+
 	$requestId = BeaconUUID::v4();
 	$payload = [
 		'requestId' => $requestId,
 		'type' => 'giveItem',
 		'specimenId' => $character->SpecimenId(),
-		'itemPath' => '/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponEmptyCryopod.PrimalItem_WeaponEmptyCryopod',
+		'itemPath' => $cryopodPath,
 		'quantity' => 1,
 		'customItemData' => $dino->CryopodData(),
 	];
