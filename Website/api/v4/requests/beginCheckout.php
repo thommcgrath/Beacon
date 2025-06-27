@@ -354,7 +354,7 @@ function handleRequest(array $context): Response {
 				'trial_period_days' => $trialDays,
 				'trial_settings' => [
 					'end_behavior' => [
-						'missing_payment_method' => 'cancel',
+						'missing_payment_method' => 'create_invoice',
 					],
 				],
 			];
