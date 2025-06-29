@@ -348,7 +348,7 @@ function handleRequest(array $context): Response {
 
 	if ($subscriptionMode) {
 		$payment['mode'] = 'subscription';
-		$payment['payment_method_collection'] = 'if_required';
+		$payment['payment_method_collection'] = 'always';
 		if ($trialDays > 1) {
 			$payment['subscription_data'] = [
 				'trial_period_days' => $trialDays,

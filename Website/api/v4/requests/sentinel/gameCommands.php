@@ -29,6 +29,8 @@ function handleRequest(array $context): Response {
 		'locate' => PermissionBits::ControlServices,
 		'renamePlayer' => PermissionBits::ControlServices,
 		'destroyWildDinos' => PermissionBits::ControlServices,
+		'teleportDino' => PermissionBits::ControlServices,
+		'teleportCharacter' => PermissionBits::ControlServices,
 	];
 	$whitelist = array_keys($permissions);
 	$approvedServiceIds = [];
