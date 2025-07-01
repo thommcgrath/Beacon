@@ -116,6 +116,7 @@ function handleRequest(array $context): Response {
 				'originalLanguage' => $languageCode,
 				'senderName' => $senderName,
 				'userId' => $userId,
+				'source' => 'web',
 			];
 			$groupingKey = $command['groupingKey'] ?? null;
 			$database->Query('INSERT INTO sentinel.service_logs (message_id, service_id, log_time, event_name, level, analyzer_status, metadata, type, grouping_key) VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7, $8);', $messageId, $serviceId, 'chat', 'Informational', 'Skipped', json_encode($metadata), 'Gameplay', $groupingKey);
@@ -128,6 +129,7 @@ function handleRequest(array $context): Response {
 					$languageCode => $message,
 				],
 				'userId' => $userId,
+				'source' => 'web',
 			];
 			$event = new BeaconChannelEvent(channelName: BeaconPusher::SentinelChannelName('services', $serviceId), eventName: 'chatMessage', body: $eventBody, socketId: $socketId);
 			$eventSignature = $event->Signature();
