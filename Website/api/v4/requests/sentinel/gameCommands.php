@@ -72,6 +72,7 @@ function handleRequest(array $context): Response {
 				$database = BeaconCommon::Database();
 			}
 
+			$command['groupingKey'] = BeaconUUID::v4();
 			$rows = $database->Query('SELECT services.service_id FROM sentinel.group_services INNER JOIN sentinel.services ON (group_services.service_id = services.service_id) WHERE group_services.group_id = $1;', $groupId);
 			while (!$rows->EOF()) {
 				$serviceId = $rows->Field('service_id');
@@ -116,7 +117,8 @@ function handleRequest(array $context): Response {
 				'senderName' => $senderName,
 				'userId' => $userId,
 			];
-			$database->Query('INSERT INTO sentinel.service_logs (message_id, service_id, log_time, event_name, level, analyzer_status, metadata, type) VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7);', $messageId, $serviceId, 'chat', 'Informational', 'Skipped', json_encode($metadata), 'Gameplay');
+			$groupingKey = $command['groupingKey'] ?? null;
+			$database->Query('INSERT INTO sentinel.service_logs (message_id, service_id, log_time, event_name, level, analyzer_status, metadata, type, grouping_key) VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7, $8);', $messageId, $serviceId, 'chat', 'Informational', 'Skipped', json_encode($metadata), 'Gameplay', $groupingKey);
 			$database->Query('INSERT INTO sentinel.service_log_messages (message_id, language, message) VALUES ($1, $2, $3);', $messageId, $languageCode, str_replace('{message}', $message, $chatLogTranslations[$languageCode]));
 
 			$eventBody = [

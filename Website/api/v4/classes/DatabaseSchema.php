@@ -4,8 +4,6 @@ namespace BeaconAPI\v4;
 use Exception;
 
 class DatabaseSchema {
-	const OptionDistinct = 1;
-
 	protected string $schema = 'public';
 	protected string $table = '';
 	protected string $writeableTable = '';
@@ -13,9 +11,9 @@ class DatabaseSchema {
 	protected array $columns = [];
 	protected array $properties = [];
 	protected array $joins = [];
-	protected bool $distinct = false;
+	protected bool|array $distinct = false;
 
-	public function __construct(string $schema, string $table, array $definitions, array $joins = [], int $options = 0) {
+	public function __construct(string $schema, string $table, array $definitions, array $joins = [], bool|string|array $distinct = false) {
 		$this->schema = $schema;
 		$this->table = $table;
 		$this->writeableTable = $table;
@@ -23,7 +21,7 @@ class DatabaseSchema {
 			$this->AddColumn($definition);
 		}
 		$this->joins = $joins;
-		$this->distinct = ($options & self::OptionDistinct) === self::OptionDistinct;
+		$this->SetDistinct($distinct);
 	}
 
 	public function Schema(): string {
@@ -71,11 +69,32 @@ class DatabaseSchema {
 		$this->AddColumn($column);
 	}
 
-	public function Distinct(): bool {
+	public function Distinct(): bool|array {
 		return $this->distinct;
 	}
 
-	public function SetDistinct(bool $distinct): void {
+	public function UsesDistinct(): bool {
+		return $this->distinct !== false;
+	}
+
+	public function UsesDistinctOn(): bool {
+		return is_array($this->distinct);
+	}
+
+	public function SetDistinct(bool|string|array $distinct): void {
+		if (is_array($distinct)) {
+			if (count($distinct) === 0) {
+				$distinct = false;
+			} else {
+				foreach ($distinct as $column) {
+					if (is_string($column) === false) {
+						throw new Exception('Distinct array members must be strings');
+					}
+				}
+			}
+		} elseif (is_string($distinct)) {
+			$distinct = [$distinct];
+		}
 		$this->distinct = $distinct;
 	}
 
@@ -219,7 +238,44 @@ class DatabaseSchema {
 		foreach ($this->columns as $definition) {
 			$selectors[] = $definition->Selector($this->table);
 		}
-		return ($this->distinct ? 'DISTINCT ' : '') . implode(', ', $selectors);
+		return implode(', ', $selectors);
+	}
+
+	public function DistinctClause(string|null $orderBy = null): string|null {
+		if (is_bool($this->distinct)) {
+			if ($this->distinct === true) {
+				return 'DISTINCT';
+			}
+			return null;
+		}
+		if (is_array($this->distinct) === false) {
+			return null;
+		}
+
+		$members = [];
+		if (is_null($orderBy) === false) {
+			$orderByParts = explode(',', $orderBy);
+			foreach ($orderByParts as $orderByPart) {
+				if (str_contains($orderByPart, ' ')) {
+					$chunks = explode(' ', $orderByPart);
+					$lastChunk = strtoupper($chunks[count($chunks) - 1]);
+					if ($lastChunk === 'DESC' || $lastChunk === 'ASC') {
+						array_pop($chunks);
+					}
+					$members[] = implode(' ', $chunks);
+				} else {
+					$members[] = $orderByPart;
+				}
+			}
+		}
+
+		foreach ($this->distinct as $column) {
+			$column = str_replace('%%TABLE%%', $this->table, $column);
+			if (in_array($column, $members) === false) {
+				$members[] = $column;
+			}
+		}
+		return 'DISTINCT ON (' . implode(', ', $members) . ')';
 	}
 
 	public function EditableColumns(int $flags): array {

@@ -45,7 +45,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::AnalyzerStatusPending,
 		self::AnalyzerStatusAnalyzed
 	];
-	
+
 	const EventAdminCommand = 'adminCommand';
 	const EventBroadcast = 'broadcasted';
 	const EventManualCharacterScript = 'characterScriptRun';
@@ -189,6 +189,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('analyzerStatus', ['columnName' => 'analyzer_status']),
 				new DatabaseObjectProperty('metadata'),
 				new DatabaseObjectProperty('message', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_log_messages.message']),
+				new DatabaseObjectProperty('groupingKey', ['columnName' => 'grouping_key', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				/*new DatabaseObjectProperty('characterName', ['columnName' => 'character_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'characters.name']),
 				new DatabaseObjectProperty('tribeName', ['columnName' => 'tribe_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'tribes.name']),
 				new DatabaseObjectProperty('playerName', ['columnName' => 'player_name', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'players.name']),
@@ -203,6 +204,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 				'LEFT JOIN sentinel.players ON ((service_logs.metadata->>\'playerId\')::UUID = players.player_id)',
 				'LEFT JOIN sentinel.dinos ON ((service_logs.metadata->>\'dinoId\')::UUID = dinos.dino_id)',*/
 			],
+			distinct: 'COALESCE(%%TABLE%%.grouping_key, %%TABLE%%.message_id::TEXT)',
 		);
 	}
 

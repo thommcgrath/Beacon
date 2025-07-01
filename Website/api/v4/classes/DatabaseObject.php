@@ -202,8 +202,14 @@ abstract class DatabaseObject {
 			}
 		}
 
+		$distinctClause = $schema->DistinctClause();
 		if ($legacyMode === false) {
-			$sql = "SELECT COUNT(*) AS num_results FROM {$from}{$clauses};";
+			$sql = 'SELECT COUNT(*) AS num_results FROM ';
+			if (is_null($distinctClause) === false) {
+				$sql .= "(SELECT {$distinctClause} {$schema->PrimaryAccessor()} FROM {$from}{$clauses}) AS subquery;";
+			} else {
+				$sql .= "{$from}{$clauses}";
+			}
 			//echo "{$sql}\n";
 			//print_r($params->values);
 			$totalRows = $database->Query($sql, $params->values);
@@ -223,7 +229,8 @@ abstract class DatabaseObject {
 			$columns = str_replace('%%USER_ID%%', '$' . $userIdPlaceholder, $columns);
 		}
 
-		$sql = "SELECT {$columns} FROM {$from}{$clauses}";
+		$distinctClause = $schema->DistinctClause($params->orderBy) ?? '';
+		$sql = "SELECT {$distinctClause} {$columns} FROM {$from}{$clauses}";
 		if (is_null($params->orderBy) === false) {
 			$sql .= " ORDER BY {$params->orderBy}";
 		}
