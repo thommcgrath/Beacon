@@ -1658,7 +1658,9 @@ Protected Class ModDiscoveryEngine2
 		  
 		  If Properties.HasChild("BluePrintEntry") And (Properties.Child("BluePrintEntry") Is Nil) = False And Properties.Child("BluePrintEntry").HasKey("ObjectPath") Then
 		    Var ItemPath As String = Self.NormalizePath(Properties.Child("BluePrintEntry").Value("ObjectPath"))
-		    Self.mUnlockDetails.Value(ItemPath) = New Dictionary("UnlockString": UnlockString, "RequiredLevel": RequiredLevel, "RequiredPoints": RequiredPoints)
+		    If Self.mUnlockDetails.HasKey(ItemPath) = False Or LowConfidence = False Then
+		      Self.mUnlockDetails.Value(ItemPath) = New Dictionary("UnlockString": UnlockString, "RequiredLevel": RequiredLevel, "RequiredPoints": RequiredPoints)
+		    End If
 		    Self.ScanItem(ItemPath, ItemOptions)
 		  End If
 		End Sub
