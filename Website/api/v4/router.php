@@ -208,6 +208,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Creature', 'arksa/crea
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Engram', 'arksa/engrams', 'engramId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Event', 'arksa/events', 'eventId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\GameVariable', 'arksa/gameVariables', 'key', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\GeneTrait', 'arksa/geneTraits', 'geneTraitId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\LootDrop', 'arksa/lootDrops', 'lootDropId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\LootDropIcon', 'arksa/lootDropIcons', 'lootDropIconId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ArkSA\Map', 'arksa/maps', 'mapId', DatabaseObjectManager::kFeatureReadOnly);

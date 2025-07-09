@@ -284,7 +284,8 @@ function BuildFile(array $settings): void {
 			'lootDrops' => ArkSA\LootDrop::Search($filters, true),
 			'lootDropIcons' => ArkSA\LootDropIcon::Search($filters, true),
 			'maps' => ArkSA\Map::Search($filters, true),
-			'spawnPoints' => ArkSA\SpawnPoint::Search($filters, true)
+			'spawnPoints' => ArkSA\SpawnPoint::Search($filters, true),
+			'traits' => ArkSA\GeneTrait::Search($filters, true),
 		];
 
 		$localName = "{$pack->ContentPackId()}.json";
