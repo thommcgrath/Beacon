@@ -38,14 +38,10 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError(message: 'Service not connected', httpStatus: 412, code: 'serviceNotConnected');
 	}
 
-	$requestId = BeaconUUID::v4();
-	$specimenId = $character->SpecimenId();
-	$payload = [
-		'requestId' => $requestId,
-		'type' => 'giveItem',
-		'specimenId' => $specimenId,
-	];
-	$metadata = [
+	$now = new DateTimeImmutable();
+	$event = [
+		'event' => 'itemGiven',
+		'timestamp' => $now->format('Y-m-d H:i:s.v'),
 		'characterId' => $characterId,
 	];
 
@@ -86,8 +82,7 @@ function handleRequest(array $context): Response {
 			break;
 		}
 
-		$metadata[$key] = $body[$key];
-		$payload[$key] = $body[$key];
+		$event[$key] = $body[$key];
 	}
 
 	$whitelist = [
@@ -116,9 +111,18 @@ function handleRequest(array $context): Response {
 		];
 	}
 	if (count($stats) > 0) {
-		$payload['stats'] = $stats;
-		$metadata['stats'] = $stats;
+		$event['stats'] = $stats;
 	}
+
+	// Add it to the event queue
+	$database = BeaconCommon::Database();
+	$database->BeginTransaction();
+	$rows = $database->Query('INSERT INTO sentinel.service_event_queue (service_id, version, event_data) VALUES ($1, $2, $3) RETURNING queue_id;', $serviceId, 1, json_encode($event, JSON_UNESCAPED_SLASHES));
+	$database->Commit();
+
+	return Response::NewJson([
+		'requestId' => $rows->Field('queue_id'),
+	], 200);
 
 	$messageTime = microtime(true);
 	$messageId = BeaconUUID::v7($messageTime * 1000);

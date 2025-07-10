@@ -13,6 +13,8 @@ $rows = $database->Query("DELETE FROM sentinel.service_logs WHERE message_id IN 
 echo "Deleted {$rows->RecordCount()} log messages.\n";
 $rows = $database->Query("DELETE FROM sentinel.dinos WHERE dino_id IN (SELECT DISTINCT dino_id FROM sentinel.dinos INNER JOIN sentinel.services ON (dinos.service_id = services.service_id) INNER JOIN public.user_subscriptions ON (services.user_id = user_subscriptions.user_id AND user_subscriptions.game_id = 'Sentinel') WHERE dinos.status = $1 AND dinos.last_update < CURRENT_TIMESTAMP - (user_subscriptions.metadata->>'retentionDays' || ' days')::INTERVAL) RETURNING dino_id;", Dino::StatusFrozen);
 echo "Deleted {$rows->RecordCount()} dead dinos.\n";
+$rows = $database->Query("DELETE FROM sentinel.watcher_logs WHERE message_time < CURRENT_TIMESTAMP - '30 days'::INTERVAL RETURNING message_id;");
+echo "Deleted {$rows->RecordCount()} watcher messages.\n";
 $database->Commit();
 echo "Sentinel data cleaned\n";
 

@@ -432,6 +432,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 		return $this->languages;
 	}
 
+	public function ClusterId(): array {
+		return $this->clusterId;
+	}
+
 	public function Log(string $message, ?string $level = null, ?string $type = null): void {
 		$logMessage = LogMessage::Create($message, $this->serviceId, $level, $type);
 		$logMessage->Save();
