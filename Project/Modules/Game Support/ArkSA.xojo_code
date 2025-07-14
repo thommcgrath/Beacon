@@ -904,6 +904,12 @@ Protected Module ArkSA
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsCommentLine(Extends Source As String) As Boolean
+		  Return Source.BeginsWith("//") Or Source.BeginsWith(";") Or Source.BeginsWith("#")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label(Extends Maps() As ArkSA.Map) As String
 		  Var Names() As String
 		  Names.ResizeTo(Maps.LastIndex)

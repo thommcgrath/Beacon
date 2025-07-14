@@ -65,7 +65,7 @@ Protected Class ConfigOrganizer
 		  Var KeyCounts As New Dictionary
 		  For LineIdx As Integer = 0 To Lines.LastIndex
 		    Var Line As String = Lines(LineIdx).Trim
-		    If Line.IsEmpty Then
+		    If Line.IsEmpty Or Line.IsCommentLine Then
 		      Continue
 		    End If
 		    
