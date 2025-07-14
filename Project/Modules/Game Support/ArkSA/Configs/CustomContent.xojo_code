@@ -137,12 +137,6 @@ Inherits ArkSA.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DefaultImported() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GameIniContent() As String
 		  Return Self.mGameIniContent
 		End Function
@@ -235,12 +229,6 @@ Inherits ArkSA.ConfigGroup
 	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return ArkSA.Configs.NameCustomConfig
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsDefaultImported() As Boolean
-		  Return False
 		End Function
 	#tag EndMethod
 

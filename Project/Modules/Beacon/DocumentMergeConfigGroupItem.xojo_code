@@ -12,12 +12,6 @@ Inherits Beacon.DocumentMergeItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DefaultImported() As Boolean
-		  Return Self.Group.IsDefaultImported
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function OrganizationKey() As String
 		  Return Self.DestinationConfigSet.ConfigSetId + ":" + Self.Group.InternalName
 		End Function
