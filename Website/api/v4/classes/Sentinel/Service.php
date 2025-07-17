@@ -153,6 +153,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected int $permissions;
 	protected bool $rconConnected;
 	protected string $ipAddress;
+	protected float $difficulty;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
@@ -178,6 +179,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->permissions = $row->Field('permissions');
 		$this->rconConnected = $row->Field('rcon_connected');
 		$this->ipAddress = $row->Field('ip_address') ?? '';
+		$this->difficulty = $row->Field('difficulty');
 
 		$languages = $row->Field('languages');
 		$languages = substr($languages, 1, strlen($languages) - 2);
@@ -213,6 +215,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('permissions', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_permissions.permissions']),
 				new DatabaseObjectProperty('rconConnected', ['columnName' => 'rcon_connected', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('ipAddress', ['columnName' => 'ip_address', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('difficulty', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			],
 			joins: [
 				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
@@ -339,6 +342,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'permissions' => $this->permissions,
 			'rconConnected' => $this->rconConnected,
 			'ipAddress' => $this->ipAddress,
+			'difficulty' => $this->difficulty,
 		];
 
 		return $json;

@@ -12,6 +12,8 @@ class Creature extends MutableBlueprint {
 	protected ?int $minMatingInterval;
 	protected ?int $maxMatingInterval;
 	protected ?string $dinoNameTag;
+	protected int $minBaseLevel;
+	protected int $maxBaseLevel;
 
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
@@ -23,6 +25,8 @@ class Creature extends MutableBlueprint {
 		$this->maxMatingInterval = filter_var($row->Field('mating_interval_max'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->usedStats = filter_var($row->Field('used_stats'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->dinoNameTag = $row->Field('tag');
+		$this->minBaseLevel = $row->Field('min_base_level');
+		$this->maxBaseLevel = $row->Field('max_base_level');
 	}
 
 	protected static function CustomVariablePrefix(): string {
@@ -40,6 +44,8 @@ class Creature extends MutableBlueprint {
 			new DatabaseObjectProperty('maxMatingInterval', ['columnName' => 'mating_interval_max', 'accessor' => 'ROUND(EXTRACT(epoch FROM %%TABLE%%.%%COLUMN%%))', 'setter' => '%%PLACEHOLDER%%::INTERVAL', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('usedStats', ['columnName' => 'used_stats', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('dinoNameTag', ['columnName' => 'tag', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('minBaseLevel', ['columnName' => 'min_base_level', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('maxBaseLevel', ['columnName' => 'max_base_level', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 		]);
 		return $schema;
 	}
@@ -54,6 +60,8 @@ class Creature extends MutableBlueprint {
 		$json['minMatingInterval'] = $this->minMatingInterval;
 		$json['maxMatingInterval'] = $this->maxMatingInterval;
 		$json['dinoNameTag'] = $this->dinoNameTag;
+		$json['minBaseLevel'] = $this->minBaseLevel;
+		$json['maxBaseLevel'] = $this->maxBaseLevel;
 		$json['relatedObjectIds'] = $this->RelatedObjectIDs();
 		return $json;
 	}
@@ -95,6 +103,14 @@ class Creature extends MutableBlueprint {
 
 	public function DinoNameTag(): ?string {
 		return $this->dinoNameTag;
+	}
+
+	public function MinBaseLevel(): int {
+		return $this->minBaseLevel;
+	}
+
+	public function MaxBaseLevel(): int {
+		return $this->maxBaseLevel;
 	}
 
 	protected static function ValuesEqual(DatabaseObjectProperty $definition, mixed $valueOne, mixed $valueTwo): bool {
