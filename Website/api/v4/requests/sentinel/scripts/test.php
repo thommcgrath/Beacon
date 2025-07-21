@@ -46,6 +46,9 @@ function handleRequest(array $context): Response {
 	switch ($context) {
 	case 'chat':
 		$obj['chatType'] = $body['chatType'] ?? 'normal';
+		if (isset($body['chatMessage']) && $obj['chatType'] === 'custom') {
+			$obj['chatMessage'] = $body['chatMessage'];
+		}
 		break;
 	case 'playerJoined':
 		$obj['connectionType'] = $body['connectionType'] ?? 'normal';
