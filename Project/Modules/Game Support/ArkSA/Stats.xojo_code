@@ -23,7 +23,7 @@ Protected Module Stats
 		Protected Function CraftingSpeed() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Crafting", "CraftingSpeed", 11, True, 100, True, 10, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Crafting", "CraftingSpeed", 11, True, 100, True, 10, True, 1.0, 1.0, 1.0, 1.0) // 2048
 		  End If
 		  Return Stat
 		End Function
@@ -33,7 +33,7 @@ Protected Module Stats
 		Protected Function Food() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Food", "Food", 4, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Food", "Food", 4, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0) // 16
 		  End If
 		  Return Stat
 		End Function
@@ -56,7 +56,7 @@ Protected Module Stats
 		Protected Function Fortitude() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Fortitude", "Fortitude", 10, False, 0, True, 2, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Fortitude", "Fortitude", 10, False, 0, True, 2, True, 1.0, 1.0, 1.0, 1.0) // 1024
 		  End If
 		  Return Stat
 		End Function
@@ -66,7 +66,7 @@ Protected Module Stats
 		Protected Function Health() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Health", "Health", 0, False, 100, False, 10, True, 1.0, 0.2, 0.14, 0.44)
+		    Stat = New ArkSA.Stat("Health", "Health", 0, False, 100, False, 10, True, 1.0, 0.2, 0.14, 0.44) // 1
 		  End If
 		  Return Stat
 		End Function
@@ -76,7 +76,7 @@ Protected Module Stats
 		Protected Function Melee() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Melee", "Melee", 8, True, 100, True, 5, True, 1.0, 0.17, 0.14, 0.44)
+		    Stat = New ArkSA.Stat("Melee", "Melee", 8, True, 100, True, 5, True, 1.0, 0.17, 0.14, 0.44) // 256
 		  End If
 		  Return Stat
 		End Function
@@ -97,7 +97,7 @@ Protected Module Stats
 		Protected Function Oxygen() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Oxygen", "Oxygen", 3, False, 100, False, 20, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Oxygen", "Oxygen", 3, False, 100, False, 20, True, 1.0, 1.0, 1.0, 1.0) // 8
 		  End If
 		  Return Stat
 		End Function
@@ -107,7 +107,7 @@ Protected Module Stats
 		Protected Function Speed() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Speed", "Speed", 9, True, 100, True, 1.5, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Speed", "Speed", 9, True, 100, True, 1.5, True, 1.0, 1.0, 1.0, 1.0) // 512
 		  End If
 		  Return Stat
 		End Function
@@ -117,7 +117,7 @@ Protected Module Stats
 		Protected Function Stamina() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Stamina", "Stamina", 1, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Stamina", "Stamina", 1, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0) // 2
 		  End If
 		  Return Stat
 		End Function
@@ -127,7 +127,7 @@ Protected Module Stats
 		Protected Function Temperature() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Temperature", "Temperature", 6, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Temperature", "Temperature", 6, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0) // 64
 		  End If
 		  Return Stat
 		End Function
@@ -137,7 +137,7 @@ Protected Module Stats
 		Protected Function Torpor() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Torpor", "Torpor", 2, False, 200, False, 0, False, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Torpor", "Torpor", 2, False, 200, False, 0, False, 1.0, 1.0, 1.0, 1.0) // 4
 		  End If
 		  Return Stat
 		End Function
@@ -147,7 +147,7 @@ Protected Module Stats
 		Protected Function Water() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Water", "Water", 5, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Water", "Water", 5, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0) // 32
 		  End If
 		  Return Stat
 		End Function
@@ -157,7 +157,7 @@ Protected Module Stats
 		Protected Function Weight() As ArkSA.Stat
 		  Static Stat As ArkSA.Stat
 		  If Stat = Nil Then
-		    Stat = New ArkSA.Stat("Weight", "Weight", 7, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New ArkSA.Stat("Weight", "Weight", 7, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0) // 128
 		  End If
 		  Return Stat
 		End Function
