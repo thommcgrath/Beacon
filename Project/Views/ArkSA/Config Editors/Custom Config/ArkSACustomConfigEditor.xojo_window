@@ -61,6 +61,8 @@ Begin ArkSAConfigEditor ArkSACustomConfigEditor Implements NotificationKit.Recei
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -281,7 +283,7 @@ End
 		Private Function SelectionIsCommented() As Boolean
 		  Var FirstLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionStart)
 		  Var FirstLine As String = Self.ConfigArea.Line(FirstLineNum)
-		  Return FirstLine.BeginsWith("//")
+		  Return FirstLine.IsCommentLine
 		End Function
 	#tag EndMethod
 
@@ -345,9 +347,9 @@ End
 		  Var NewLines() As String
 		  For LineNum As Integer = FirstLineNum To LastLineNum
 		    Var Line As String = Self.ConfigArea.Line(LineNum)
-		    If Line.BeginsWith("//") = True And AddComment = False Then
+		    If Line.IsCommentLine = True And AddComment = False Then
 		      Line = Line.Middle(2).Trim
-		    ElseIf Line.BeginsWith("//") = False And AddComment = True Then
+		    ElseIf Line.IsCommentLine = False And AddComment = True Then
 		      Line = "// " + Line.Trim
 		    Else
 		      Line = Line.Trim

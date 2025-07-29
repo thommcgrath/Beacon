@@ -154,6 +154,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	protected bool $rconConnected;
 	protected string $ipAddress;
 	protected bool $usesGroupChat;
+	protected float $difficulty;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->serviceId = $row->Field('service_id');
@@ -180,6 +181,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		$this->rconConnected = $row->Field('rcon_connected');
 		$this->ipAddress = $row->Field('ip_address') ?? '';
 		$this->usesGroupChat = $row->Field('uses_group_chat');
+		$this->difficulty = $row->Field('difficulty');
 
 		$languages = $row->Field('languages');
 		$languages = substr($languages, 1, strlen($languages) - 2);
@@ -216,6 +218,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('rconConnected', ['columnName' => 'rcon_connected', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('ipAddress', ['columnName' => 'ip_address', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('usesGroupChat', ['columnName' => 'uses_group_chat', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXISTS(SELECT * FROM sentinel.group_services INNER JOIN sentinel.groups ON (group_services.group_id = groups.group_id) WHERE group_services.service_id = services.service_id AND groups.enable_group_chat)']),
+				new DatabaseObjectProperty('difficulty', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 			],
 			joins: [
 				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
@@ -343,6 +346,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			'rconConnected' => $this->rconConnected,
 			'ipAddress' => $this->ipAddress,
 			'usesGroupChat' => $this->usesGroupChat,
+			'difficulty' => $this->difficulty,
 		];
 
 		return $json;

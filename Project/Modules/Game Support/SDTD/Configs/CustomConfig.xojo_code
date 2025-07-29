@@ -178,12 +178,6 @@ Inherits SDTD.ConfigGroup
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function DefaultImported() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Function EncodeContent(Input As String, Rainbow As Dictionary) As String
 		  Var StartLen As Integer = Self.EncryptedTag.Length + 2

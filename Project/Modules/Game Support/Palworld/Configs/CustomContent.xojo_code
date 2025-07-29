@@ -106,12 +106,6 @@ Inherits Palworld.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DefaultImported() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return Palworld.Configs.NameCustomConfig
 		End Function

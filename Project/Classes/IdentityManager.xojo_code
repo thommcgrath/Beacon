@@ -47,9 +47,16 @@ Protected Class IdentityManager
 		      
 		      Return
 		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to connect to identity database")
 		    End Try
 		    
-		    DatabaseFile.Remove
+		    Try
+		      DatabaseFile.Remove
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to remove bad database file")
+		      // This is a constructor. There's really nothing more we can do here, so raise the exception again.
+		      Raise Err
+		    End Try
 		  End If
 		  
 		  Preferences.HardwareIdVersion = 6

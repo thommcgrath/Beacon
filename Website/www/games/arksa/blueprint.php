@@ -205,6 +205,8 @@ function PrepareCreatureTable(Creature $creature, array &$properties) {
 	if (is_null($creature->DinoNameTag()) === false) {
 		$properties['Name Tag'] = $creature->DinoNameTag();
 	}
+
+	$properties['Level Range'] = number_format($creature->MinBaseLevel()) . ' to ' . number_format($creature->MaxBaseLevel()) . ' (' . number_format($creature->MinBaseLevel() * 5) . ' to ' . number_format($creature->MaxBaseLevel() * 5) . ' at 5.0 difficulty)';
 }
 
 function PrepareEngramTable(Engram $engram, array &$properties) {

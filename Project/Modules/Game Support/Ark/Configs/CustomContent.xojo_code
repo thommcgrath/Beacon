@@ -137,12 +137,6 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DefaultImported() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GameIniContent() As String
 		  Return Self.mGameIniContent
 		End Function

@@ -1,12 +1,6 @@
 #tag Class
 Protected Class DocumentMergeItem
 	#tag Method, Flags = &h0
-		Function DefaultImported() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IsImported() As Boolean
 		  Return Self.Mode > Self.ModeSkip
 		End Function

@@ -63,39 +63,40 @@ function handleRequest(array $context): Response {
 			continue;
 		}
 
+		$value = $body[$key];
 		switch ($key) {
 		case 'name':
-			if (is_string($body[$key]) === false) {
+			if (is_string($value) === false) {
 				return Response::NewJsonError(message: 'Name must be a string', httpStatus: 400, code: 'invalidName');
 			}
 			break;
 		case 'level':
-			if ($body[$key] < 1) {
+			if ($value < 1) {
 				return Response::NewJsonError(message: 'Valid level must be greater than 1', httpStatus: 400, code: 'invalidLevel');
 			}
 			break;
 		case 'age':
-			if ($body[$key] < 0 || $body[$key] > 1) {
+			if ($value < 0 || $value > 1) {
 				return Response::NewJsonError(message: 'Valid age range is 0-1', httpStatus: 400, code: 'invalidAge');
 			}
 			break;
 		case 'imprint':
-			if ($body[$key] < 0 || $body[$key] > 1) {
+			if ($value < 0 || $value > 1) {
 				return Response::NewJsonError(message: 'Valid imprint range is 0-1', httpStatus: 400, code: 'invalidImprint');
 			}
 			break;
 		case 'isFemale':
-			if ($body[$key] !== true && $body[$key] !== false) {
+			if ($value !== true && $value !== false) {
 				return Response::NewJsonError(message: 'isFemale must be a boolean', httpStatus: 400, code: 'invalidGender');
 			}
 			break;
 		case 'isSterilized':
-			if ($body[$key] !== true && $body[$key] !== false) {
+			if ($value !== true && $value !== false) {
 				return Response::NewJsonError(message: 'isSterilized must be a boolean', httpStatus: 400, code: 'invalidSterilized');
 			}
 			break;
 		case 'colors':
-			$colors = $body[$key];
+			$colors = $value;
 			if (is_array($colors) === false || count($colors) !== 6) {
 				return Response::NewJsonError(message: 'colors expects an array of 6 color numbers', httpStatus: 400, code: 'invalidColors');
 			}
@@ -106,7 +107,7 @@ function handleRequest(array $context): Response {
 			}
 			break;
 		case 'traits':
-			$traits = $body[$key];
+			$traits = $value;
 			if (is_array($traits) === false) {
 				return Response::NewJsonError(message: 'traits expects an array of trait names', httpStatus: 400, code: 'invalidTraits');
 			}
@@ -117,7 +118,7 @@ function handleRequest(array $context): Response {
 			}
 			break;
 		case 'stats':
-			$stats = $body[$key];
+			$stats = $value;
 			if (is_array($stats) === false) {
 				return Response::NewJsonError(message: 'stats expects an object of with keys 0-11 and values 0-255', httpStatus: 400, code: 'invalidStats');
 			}
@@ -127,10 +128,11 @@ function handleRequest(array $context): Response {
 					return Response::NewJsonError(message: 'stats expects an object of with keys 0-11 and values 0-255', httpStatus: 400, code: 'invalidStats');
 				}
 			}
+			$value = (object) $value;
 			break;
 		}
 
-		$event[$key] = $body[$key];
+		$event[$key] = $value;
 	}
 
 	// Add it to the event queue

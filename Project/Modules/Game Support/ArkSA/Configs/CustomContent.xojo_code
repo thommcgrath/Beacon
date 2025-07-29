@@ -114,7 +114,7 @@ Inherits ArkSA.ConfigGroup
 		    Var Lines() As String = Content.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
 		    For Idx As Integer = Lines.LastIndex DownTo 0
 		      Lines(Idx) = Lines(Idx).Trim
-		      If Lines(Idx).IsEmpty Or Lines(Idx).BeginsWith("//") Then
+		      If Lines(Idx).IsEmpty Or Lines(Idx).IsCommentLine Then
 		        Lines.RemoveAt(Idx)
 		      End If
 		    Next
@@ -134,12 +134,6 @@ Inherits ArkSA.ConfigGroup
 		  
 		  Super.Constructor()
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DefaultImported() As Boolean
-		  Return False
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -235,12 +229,6 @@ Inherits ArkSA.ConfigGroup
 	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return ArkSA.Configs.NameCustomConfig
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsDefaultImported() As Boolean
-		  Return False
 		End Function
 	#tag EndMethod
 
