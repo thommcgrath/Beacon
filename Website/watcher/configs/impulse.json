@@ -42,4 +42,9 @@
 	"queue": {
 		"enabled": true
 	}
+	"discord": {
+		"enabled": true,
+		"encryptionKey": "Fr9vOva8fGw9we0BlkFjxFe5tC8LWuZ/LLRM01zkpKs=",
+		"instanceKey": "e3f6b212-739b-4fb0-ab76-598c113f8c7d"
+	}
 }
