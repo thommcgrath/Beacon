@@ -119,6 +119,10 @@ class Group extends DatabaseObject implements JsonSerializable {
 		$this->SetProperty('color', $color);
 	}
 
+	public function DiscordGuildId(): ?string {
+		return $this->discordGuildId;
+	}
+
 	public static function SetupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
 		$requiredScopes[] = Application::kScopeSentinelRead;
 		if ($editable) {

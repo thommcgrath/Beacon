@@ -181,6 +181,9 @@ Core::RegisterRoutes(
 		'/sentinel/characters/{characterId}/giveDino' => [
 			'POST' => 'sentinel/characters/giveDino',
 		],
+		'/sentinel/groups/{groupId}/discordChatChannels' => [
+			'GET' => 'sentinel/groups/discordChatChannels',
+		],
 		'/users/{userId}/billingPortal' => [
 			'GET' => 'users/billingUrl',
 		],
