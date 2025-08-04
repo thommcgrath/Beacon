@@ -36,7 +36,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
       ThreadID        =   0
       ThreadState     =   0
    End
-   Begin DesktopButton TokensRefreshButton
+   Begin UITweaks.ResizedPushButton TokensRefreshButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
