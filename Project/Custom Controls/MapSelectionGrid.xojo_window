@@ -37,7 +37,7 @@ Begin DesktopContainer MapSelectionGrid
       Index           =   0
       InitialParent   =   ""
       Italic          =   False
-      Left            =   6
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -48,7 +48,7 @@ Begin DesktopContainer MapSelectionGrid
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   6
+      Top             =   20
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -177,7 +177,7 @@ End
 		  End If
 		  
 		  Self.mDesiredHeight = Max(LeftGroup.Height, MiddleGroup.Height, RightGroup.Height) + (Self.EdgeSpacing * 2)
-		  Self.mDesiredWidth = Widths.Sum + ((Widths.Count - 1) * Self.CellSpacing)
+		  Self.mDesiredWidth = Widths.Sum + ((Widths.Count - 1) * Self.CellSpacing) + (Self.EdgeSpacing * 2)
 		  
 		  Self.Height = Self.mDesiredHeight
 		  Self.Width = Self.mDesiredWidth
@@ -338,7 +338,7 @@ End
 	#tag Constant, Name = CellSpacing, Type = Double, Dynamic = False, Default = \"12", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = EdgeSpacing, Type = Double, Dynamic = False, Default = \"6", Scope = Public
+	#tag Constant, Name = EdgeSpacing, Type = Double, Dynamic = False, Default = \"20", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = RowHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Public

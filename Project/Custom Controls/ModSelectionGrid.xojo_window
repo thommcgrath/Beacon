@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
+Begin DesktopContainer ModSelectionGrid
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -37,7 +37,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       Index           =   0
       InitialParent   =   ""
       Italic          =   False
-      Left            =   10
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -68,7 +68,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       Hint            =   "Filter Mods"
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   302
+      Left            =   312
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -83,10 +83,10 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
-      Top             =   11
+      Top             =   20
       Transparent     =   False
       Visible         =   True
-      Width           =   200
+      Width           =   180
       _mIndex         =   0
       _mInitialParent =   ""
       _mName          =   ""
@@ -106,7 +106,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   273
+      Left            =   263
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -118,7 +118,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   250
+      Top             =   240
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -138,7 +138,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   179
+      Left            =   169
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -150,7 +150,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   250
+      Top             =   240
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -193,6 +193,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
+      AllowMultipleRows=   False
       AllowMultipleSelection=   False
       AllowTabs       =   False
       Backdrop        =   0
@@ -202,7 +203,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Universal	Steam Only	Custom"
-      Left            =   10
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -216,7 +217,7 @@ Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   11
+      Top             =   20
       Transparent     =   True
       Visible         =   True
       Width           =   280
@@ -232,12 +233,23 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Paint(g As Graphics, areas() As Rect)
+		  // #Pragma Unused Areas
+		  // 
+		  // #if DebugBuild
+		  // G.DrawingColor = &cFF0000
+		  // G.FillRectangle(0, 0, G.Width, G.Height)
+		  // #endif
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub BuildCheckboxes()
 		  Self.mSettingUp = True
 		  
-		  Const MinWidth = 532
+		  Const MinWidth = 580
 		  Const MinColumns = 2
 		  Const MaxColumnWidth = 300
 		  Const MaxWidth = MaxColumnWidth * MinColumns
@@ -247,8 +259,7 @@ End
 		  Const PageSteam = 1
 		  Const PageLocal = 2
 		  
-		  Var PaddingLeft, PaddingTop, PaddingRight, PaddingBottom As Integer
-		  Self.GetPadding(PaddingLeft, PaddingTop, PaddingRight, PaddingBottom)
+		  Var PaddingLeft, PaddingTop, PaddingRight, PaddingBottom As Integer = 20
 		  Var HeaderHeight As Integer = PaddingTop + Max(Self.ViewSelector.Height, Self.FilterField.Height) + InnerSpacing
 		  
 		  Var PacksArray() As Beacon.ContentPack
@@ -439,17 +450,6 @@ End
 		  For Each ModID As String In List
 		    Self.mModStates.Value(ModID) = True
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GetPadding(ByRef PaddingLeft As Integer, ByRef PaddingTop As Integer, ByRef PaddingRight As Integer, ByRef PaddingBottom As Integer)
-		  // Part of the PopoverContainer interface.
-		  
-		  PaddingLeft = 10
-		  PaddingTop = 10
-		  PaddingRight = 10
-		  PaddingBottom = 10
 		End Sub
 	#tag EndMethod
 

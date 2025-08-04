@@ -108,16 +108,31 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Embed(Container As DesktopContainer, PaddingX As Integer, PaddingY As Integer)
-		  Container.EmbedWithin(Self, PaddingX, PaddingY, Container.Width, Container.Height)
+		Sub Embed(Container As DesktopContainer)
+		  Container.EmbedWithin(Self, 0, 0, Container.Width, Container.Height)
+		  Self.UpdateSize(Container.Width, Container.Height, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateSize(ContainerWidth As Integer, ContainerHeight As Integer, Reposition As Boolean)
+		  Var CurrentWidth As Integer = Self.Width
+		  Var CurrentHeight As Integer = Self.Height
 		  
-		  Var PopoverWidth As Integer = Container.Width + (PaddingX * 2)
-		  #if Not TargetMacOS
-		    PopoverWidth = Max(PopoverWidth, 52 + Self.ActionButton.Width + Self.CancelButton.Width)
-		  #endif
+		  Var TargetWidth As Integer = Max(ContainerWidth, 52 + Self.ActionButton.Width + Self.CancelButton.Width)
+		  Var TargetHeight As Integer = ContainerHeight + Max(Self.ActionButton.Height, Self.CancelButton.Height) + 20
 		  
-		  Self.Width = PopoverWidth
-		  Self.Height = Container.Height + (PaddingY * 2) + 40
+		  Self.MaximumWidth = TargetWidth
+		  Self.MaximumHeight = TargetHeight
+		  Self.Width = TargetWidth
+		  Self.Height = TargetHeight
+		  Self.MinimumWidth = TargetWidth
+		  Self.MinimumHeight = TargetHeight
+		  
+		  If Reposition Then
+		    Var DeltaX As Integer = CurrentWidth - TargetWidth
+		    Self.Left = Self.Left + Floor(DeltaX / 2)
+		  End If
 		End Sub
 	#tag EndMethod
 

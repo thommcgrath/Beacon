@@ -4,42 +4,10 @@ Protected Class PopoverController
 		Sub Constructor(Title As String, Container As DesktopContainer)
 		  Self.mContainer = Container
 		  
-		  If Container IsA PopoverContainer Then
-		    Var L, R, T, B As Integer
-		    PopoverContainer(Container).GetPadding(L, T, R, B)
-		    Self.mPaddingLeft = 20 - L
-		    Self.mPaddingTop = 20 - T
-		    Self.mPaddingRight = 20 - R
-		    Self.mPaddingBottom = 20 - B
-		  Else
-		    Var MinX, MinY As Integer
-		    Var ContainerBound As Integer = Container.ControlCount - 1
-		    Var Initial As Boolean = True
-		    For Idx As Integer = 0 To ContainerBound
-		      If (Container.ControlAt(Idx) IsA DesktopUIControl) = False Then
-		        Continue
-		      End If
-		      
-		      Var Ctl As DesktopUIControl = DesktopUIControl(Container.ControlAt(Idx))
-		      If Initial Then
-		        MinX = Ctl.Left
-		        MinY = Ctl.Top
-		        Initial = False
-		      Else
-		        MinX = Min(MinX, Ctl.Left)
-		        MinY = Min(MinY, Ctl.Top)
-		      End If
-		    Next
-		    Self.mPaddingLeft = 20 - MinX
-		    Self.mPaddingTop = 20 - MinY
-		    Self.mPaddingRight = Self.mPaddingLeft
-		    Self.mPaddingBottom = Self.mPaddingTop
-		  End If
-		  
 		  Self.mDialog = New PopoverDialog(Self)
 		  Self.mDialog.Visible = False
 		  Self.mDialog.Title = Title
-		  Self.mDialog.Embed(Container, Self.mPaddingLeft, Self.mPaddingTop)
+		  Self.mDialog.Embed(Container)
 		  
 		  If Container IsA BeaconSubview Then
 		    Try
@@ -58,11 +26,11 @@ Protected Class PopoverController
 		    If NSPopoverMBS.Available Then
 		      Var ViewController As New NSViewControllerMBS
 		      ViewController.View = Container.NSViewMBS
-		      ViewController.View.SetBoundsOrigin(New NSPointMBS(Self.mPaddingLeft * -1, Self.mPaddingBottom)) // No idea why the X should be negative here
+		      ViewController.View.SetBoundsOrigin(New NSPointMBS(0, 0)) // No idea why the X should be negative here
 		      
 		      Self.mPopover = New BeaconPopover
 		      Self.mPopover.ContentViewController = ViewController
-		      Self.mPopover.ContentSize = New NSSizeMBS(Container.Width + (Self.mPaddingLeft + Self.mPaddingRight), Container.Height + (Self.mPaddingTop + Self.mPaddingBottom))
+		      Self.mPopover.ContentSize = New NSSizeMBS(Container.Width, Container.Height)
 		      Self.mPopover.Animates = True
 		      Self.mPopover.Behavior = NSPopoverMBS.NSPopoverBehaviorSemitransient
 		      
@@ -80,30 +48,13 @@ Protected Class PopoverController
 
 	#tag Method, Flags = &h21
 		Private Sub Container_Resize(Sender As DesktopContainer)
-		  Var CurrentWidth As Integer = Self.mDialog.Width
-		  Var TargetWidth As Integer = Sender.Width + Self.mPaddingLeft + Self.mPaddingRight
-		  Var TargetHeight As Integer = Sender.Height + Self.mPaddingTop + Self.mPaddingBottom + 40
-		  Var DeltaX As Integer = CurrentWidth - TargetWidth
-		  
-		  Self.mDialog.MaximumWidth = TargetWidth
-		  Self.mDialog.MaximumHeight = TargetHeight
-		  Self.mDialog.Width = TargetWidth
-		  Self.mDialog.Height = TargetHeight
-		  Self.mDialog.MinimumWidth = TargetWidth
-		  Self.mDialog.MinimumHeight = TargetHeight
-		  
-		  Self.mDialog.Left = Self.mDialog.Left + Floor(DeltaX / 2)
-		  #if Not TargetMacOS
-		    Var CurrentHeight As Integer = Self.mDialog.Height
-		    Var DeltaY As Integer = CurrentHeight - TargetHeight
-		    Self.mDialog.Top = Self.mDialog.Top + Floor(DeltaY / 2)
-		  #endif
-		  
 		  If (Self.mPopover Is Nil) = False Then
 		    Self.mPopover.Animates = False
 		    Self.mPopover.ContentViewController.View.SetBoundsOrigin(New NSPointMBS(0, 0))
-		    Self.mPopover.ContentSize = New NSSizeMBS(Sender.Width + Self.mPaddingLeft + Self.mPaddingRight, Sender.Height + Self.mPaddingTop + Self.mPaddingBottom)
+		    Self.mPopover.ContentSize = New NSSizeMBS(Sender.Width, Sender.Height)
 		    Self.mPopover.Animates = True
+		  Else
+		    Self.mDialog.UpdateSize(Sender.Width, Sender.Height, True)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -217,22 +168,6 @@ Protected Class PopoverController
 
 	#tag Property, Flags = &h21
 		Private mDialog As PopoverDialog
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPaddingBottom As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPaddingLeft As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPaddingRight As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPaddingTop As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

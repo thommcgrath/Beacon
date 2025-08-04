@@ -9,7 +9,7 @@ Begin DesktopContainer ModFilterView
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   248
+   Height          =   268
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -24,7 +24,7 @@ Begin DesktopContainer ModFilterView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   320
    Begin DesktopGroupBox TypesGroup
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -36,7 +36,7 @@ Begin DesktopContainer ModFilterView
       Height          =   140
       Index           =   -2147483648
       Italic          =   False
-      Left            =   10
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -47,7 +47,7 @@ Begin DesktopContainer ModFilterView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   10
+      Top             =   20
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -64,7 +64,7 @@ Begin DesktopContainer ModFilterView
          Index           =   -2147483648
          InitialParent   =   "TypesGroup"
          Italic          =   False
-         Left            =   30
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -75,7 +75,7 @@ Begin DesktopContainer ModFilterView
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   "#CheckboxTooltipLocal"
-         Top             =   46
+         Top             =   56
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -95,7 +95,7 @@ Begin DesktopContainer ModFilterView
          Index           =   -2147483648
          InitialParent   =   "TypesGroup"
          Italic          =   False
-         Left            =   30
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -106,7 +106,7 @@ Begin DesktopContainer ModFilterView
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   "#CheckboxTooltipLocal"
-         Top             =   78
+         Top             =   88
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -126,7 +126,7 @@ Begin DesktopContainer ModFilterView
          Index           =   -2147483648
          InitialParent   =   "TypesGroup"
          Italic          =   False
-         Left            =   30
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -137,7 +137,7 @@ Begin DesktopContainer ModFilterView
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   "#CheckboxTooltipRemote"
-         Top             =   110
+         Top             =   120
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -157,18 +157,18 @@ Begin DesktopContainer ModFilterView
       Height          =   76
       Index           =   -2147483648
       Italic          =   False
-      Left            =   10
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   162
+      Top             =   172
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -185,7 +185,7 @@ Begin DesktopContainer ModFilterView
          Index           =   0
          InitialParent   =   "GamesGroup"
          Italic          =   False
-         Left            =   30
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -196,7 +196,7 @@ Begin DesktopContainer ModFilterView
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   198
+         Top             =   208
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -229,7 +229,7 @@ End
 		  Next
 		  
 		  Self.GamesGroup.Height = (Games.Count * 20) + ((Games.Count - 1) * 12) + 56
-		  Self.Height = 32 + Self.TypesGroup.Height + Self.GamesGroup.Height
+		  Self.Height = 52 + Self.TypesGroup.Height + Self.GamesGroup.Height
 		  
 		  Self.TypeLocalCheck.Value = Self.mSettings.Enabled(CType(ModsListView.ViewModes.Local, Integer))
 		  Self.TypeLocalReadOnlyCheck.Value = Self.mSettings.Enabled(CType(ModsListView.ViewModes.LocalReadOnly, Integer))
