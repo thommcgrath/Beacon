@@ -859,7 +859,7 @@ End
 #tag EndEvents
 #tag Events AccountMenuLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.SizeToFit
 		  Self.AccountMenu.Left = Me.Right + 12
 		End Sub

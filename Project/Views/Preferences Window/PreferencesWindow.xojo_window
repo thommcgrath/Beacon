@@ -901,11 +901,6 @@ End
 #tag EndEvents
 #tag Events MaxConnectionsField
 	#tag Event
-		Sub Open()
-		  Me.Text = Preferences.MaxConnections.ToString(Locale.Raw, "0")
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub TextChanged()
 		  If Self.mSettingUp Then
 		    Return
@@ -918,10 +913,15 @@ End
 		  Preferences.MaxConnections = Max(1, CDbl(Me.Text))
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Text = Preferences.MaxConnections.ToString(Locale.Raw, "0")
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events MaxConnectionsLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.SizeToFit
 		  Self.MaxConnectionsField.Left = Me.Right + 12
 		  Self.MaxConnectionsField.Width = Self.ConnectionsGroup.Width - (Me.Width + 52)

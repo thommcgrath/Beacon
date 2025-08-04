@@ -481,7 +481,7 @@ End
 #tag EndEvents
 #tag Events PercentageField
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If Self.mLimit <> Nil Then
 		    Var Limit As Double = Self.mLimit * 100
 		    Me.Text = Limit.PrettyText(True) + "%"

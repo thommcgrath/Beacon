@@ -10,13 +10,13 @@ Inherits DesktopTextField
 		    Self.Height = Self.Height + Self.HeightDelta
 		  End If
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
