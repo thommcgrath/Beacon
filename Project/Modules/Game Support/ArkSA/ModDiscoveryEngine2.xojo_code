@@ -221,6 +221,48 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Sub Merge(Destination As JSONMBS, Source As JSONMBS)
+		  // As of MBS 24.2, this method is no longer necessary
+		  
+		  If Destination.IsArray <> Source.IsArray Then
+		    Var Err As New RuntimeException
+		    Err.Message = "Cannot merge arrays and objects"
+		    Raise Err
+		  End If
+		  
+		  If Destination.IsArray Then
+		    Var Values() As Variant = Source.Values
+		    For Each Value As Variant In Values
+		      Var Node As JSONMBS = JSONMBS.Convert(Value)
+		      If Destination.FindValueInArray(Node) > -1 Then
+		        Continue
+		      End If
+		      
+		      Destination.Add(Value)
+		    Next
+		  Else
+		    Var Keys() As String = Source.Keys
+		    For Each Key As String In Keys
+		      If Destination.HasKey(Key) = False Then
+		        Destination.Value(Key) = Source.Value(Key)
+		        Continue
+		      End If
+		      
+		      Var DestinationValue As Variant = Destination.Value(Key)
+		      Var SourceValue As Variant = Source.Value(Key)
+		      
+		      If SourceValue.Type <> Variant.TypeObject Or DestinationValue.Type <> Variant.TypeObject Then
+		        Destination.Value(Key) = SourceValue
+		        Continue
+		      End If
+		      
+		      Merge(JSONMBS(DestinationValue.ObjectValue), JSONMBS(SourceValue.ObjectValue))
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mThread_Run(Sender As Beacon.Thread)
 		  Self.mSuccess = False
 		  Self.mTimestamp = Round(DateTime.Now.SecondsFrom1970)
@@ -738,6 +780,14 @@ Protected Class ModDiscoveryEngine2
 		  If EntryPoint.HasChild("Super") Then
 		    Var SuperPath As String = Self.NormalizePath(EntryPoint.Child("Super").Value("ObjectPath"))
 		    DefaultProperties.Value("X-Beacon-Super") = SuperPath
+		  End If
+		  
+		  If DefaultObject.HasKey("SerializedSparseClassData") Then
+		    #if MBS.VersionNumber >= 24.2
+		      DefaultProperties.Merge()
+		    #else
+		      Self.Merge(DefaultProperties, DefaultObject.Child("SerializedSparseClassData"))
+		    #endif
 		  End If
 		  
 		  Var ChildPaths As JSONMBS = EntryPoint.Query("$.ChildProperties[*].PropertyClass.ObjectPath")
@@ -1577,12 +1627,6 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ScanSpawnContainer(Path As String, Options As Integer, ParamArray AdditionalTags() As String)
-		  Self.ScanSpawnContainer(Path, Options, AdditionalTags)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ScanSpawnContainer(Path As String, Options As Integer, AdditionalTags() As String)
 		  Self.AddTagsToPath(Path, AdditionalTags)
 		  
@@ -1610,6 +1654,12 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanCreature(CreaturePath)
 		    Next
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScanSpawnContainer(Path As String, Options As Integer, ParamArray AdditionalTags() As String)
+		  Self.ScanSpawnContainer(Path, Options, AdditionalTags)
 		End Sub
 	#tag EndMethod
 

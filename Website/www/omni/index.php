@@ -69,10 +69,10 @@ while (!$paymentMethodRows->EOF()) {
 			'label' => 'Apple Pay',
 			'iconUrl' => BeaconCommon::AssetURI('paymethod_apple.svg'),
 		];
-		$paymentMethodInfo[] = [
+		/*$paymentMethodInfo[] = [
 			'label' => 'Google Pay',
 			'iconUrl' => BeaconCommon::AssetURI('paymethod_google.svg'),
-		];
+		];*/
 		$paymentMethodInfo[] = [
 			'label' => 'Mastercard',
 			'iconUrl' => BeaconCommon::AssetURI('paymethod_mastercard.svg'),

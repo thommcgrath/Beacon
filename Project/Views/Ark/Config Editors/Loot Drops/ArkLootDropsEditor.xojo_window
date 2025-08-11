@@ -243,6 +243,8 @@ Begin ArkConfigEditor ArkLootDropsEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -702,6 +704,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateContainerList()
 		  // Maintain selection
+		  
+		  If Self.List Is Nil Then
+		    Return
+		  End If
 		  
 		  Var LootDropIds() As String
 		  For Idx As Integer = 0 To Self.List.LastRowIndex

@@ -127,7 +127,7 @@ Implements ObservationKit.Observer
 		    Var CaptionLeft As Double = NearestMultiple(CellRect.Left + ((CellRect.Width - CaptionWidth) / 2), G.ScaleX)
 		    
 		    G.DrawingColor = If(Segment.Selected And Highlighted, SystemColors.AlternateSelectedControlTextColor, SystemColors.ControlTextColor)
-		    G.DrawText(Segment.Caption, CaptionLeft, Baseline)
+		    G.DrawText(Segment.Caption, CaptionLeft, Baseline, Ceiling(CaptionWidth), True)
 		    
 		    If Idx = Self.mPressedIndex Then
 		      G.DrawingColor = &c00000080
@@ -189,7 +189,12 @@ Implements ObservationKit.Observer
 		    Var SegmentWidth As Integer = G.TextWidth(Segment.Caption) + (Self.CellPadding * 2)
 		    BaseCellSize = Max(BaseCellSize, SegmentWidth)
 		  Next
-		  Var Columns As Integer = Min(Floor((Self.Width - Self.BorderSize) / (BaseCellSize + Self.BorderSize)), Self.mSegments.Count)
+		  Var Columns As Integer
+		  If Self.mAllowMultipleRows Then
+		    Columns = Min(Floor((Self.Width - Self.BorderSize) / (BaseCellSize + Self.BorderSize)), Self.mSegments.Count)
+		  Else
+		    Columns = Self.mSegments.Count
+		  End If
 		  Var TotalWidth As Integer = Self.Width - (Self.BorderSize + (Self.BorderSize * Columns))
 		  BaseCellSize = Floor(TotalWidth / Columns)
 		  
@@ -439,6 +444,26 @@ Implements ObservationKit.Observer
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mAllowMultipleRows
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mAllowMultipleRows = Value Then
+			    Return
+			  End If
+			  
+			  Self.mAllowMultipleRows = Value
+			  Self.ComputeRects()
+			  Self.Refresh(False)
+			End Set
+		#tag EndSetter
+		AllowMultipleRows As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mAllowMultipleSelection
 			End Get
 		#tag EndGetter
@@ -490,6 +515,10 @@ Implements ObservationKit.Observer
 		#tag EndSetter
 		InitialValue As String
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAllowMultipleRows As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mAllowMultipleSelection As Boolean
@@ -770,6 +799,14 @@ Implements ObservationKit.Observer
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowMultipleRows"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabPanelIndex"

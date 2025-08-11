@@ -36,7 +36,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
       ThreadID        =   0
       ThreadState     =   0
    End
-   Begin DesktopButton TokensRefreshButton
+   Begin UITweaks.ResizedPushButton TokensRefreshButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -859,7 +859,7 @@ End
 #tag EndEvents
 #tag Events AccountMenuLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.SizeToFit
 		  Self.AccountMenu.Left = Me.Right + 12
 		End Sub
