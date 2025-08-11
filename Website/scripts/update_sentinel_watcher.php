@@ -79,7 +79,18 @@ if ($downloadStatus !== 200) {
 }
 
 $lockFile = $installPath . '/lock';
-exec('killall sentinelwatcher');
+if (WatcherIsRunning()) {
+	$killTime = microtime(true);
+	exec('killall sentinelwatcher');
+	while (WatcherIsRunning()) {
+		if (microtime(true) - $killTime > 15) {
+			// Taking too long
+			exec('killall -s 9 sentinelwatcher');
+			break;
+		}
+		sleep(1);
+	}
+}
 exec('cd ' . escapeshellarg($watcherRoot) . ';rm -rf bin;mkdir bin;chmod 0755 bin;touch bin/lock');
 
 $configPrefix = BeaconCommon::GetGlobal('Config Prefix');
@@ -103,9 +114,12 @@ if ($extracted) {
 unlink($archivePath);
 unlink($lockFile);
 
-// Just to make sure everything is cleaned up
-sleep(1);
-
 exec(escapeshellarg("{$installPath}/startwatcher.sh"));
+
+function WatcherIsRunning(): bool {
+	$status = null;
+	exec(command: 'pidof -q sentinelwatcher', result_code: $status);
+	return $status === 0;
+}
 
 ?>
