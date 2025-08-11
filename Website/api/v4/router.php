@@ -196,6 +196,9 @@ Core::RegisterRoutes(
 		'/beginCheckout' => [
 			'POST' => 'beginCheckout',
 		],
+		'/discordBotStatus/{botId}' => [
+			'GET' => 'discord/botStatus',
+		],
 	]
 );
 
