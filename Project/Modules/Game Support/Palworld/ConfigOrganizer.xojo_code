@@ -60,16 +60,7 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Sub Add(File As String, Header As String, Struct As NullableString, Key As String, Value As Variant, Options As Integer = 0)
-		  Var StringValue As String
-		  Select Case Value.Type
-		  Case Variant.TypeBoolean
-		    StringValue = If(Value.BooleanValue, "True", "False")
-		  Case Variant.TypeInt32, Variant.TypeInt64, Variant.TypeDouble, Variant.TypeSingle, Variant.TypeCurrency
-		    StringValue = Value.DoubleValue.PrettyText
-		  Else
-		    StringValue = """" + Value.StringValue.ReplaceAll("""", "\""") + """"
-		  End Select
-		  
+		  Var StringValue As String = Self.ValueToString(Value)
 		  Self.Add(New Palworld.ConfigValue(File, Header, Struct, Key + "=" + StringValue), Options)
 		End Sub
 	#tag EndMethod
@@ -113,23 +104,19 @@ Protected Class ConfigOrganizer
 		      Var Struct As String = AttributedKey
 		      Var StructData As Dictionary = Result.Value
 		      For Each Entry As DictionaryEntry In StructData
-		        Var Key As String = Entry.Key
-		        Var Command As String
-		        Select Case Entry.Value.Type
-		        Case Variant.TypeBoolean
-		          Command = Key + "=" + If(Entry.Value.BooleanValue, "True", "False")
-		        Case Variant.TypeDouble, Variant.TypeSingle, Variant.TypeInt32, Variant.TypeInt64, Variant.TypeCurrency
-		          Command = Key + "=" + Entry.Value.DoubleValue.PrettyText
-		        Else
-		          Command = Key + "=""" + Entry.Value.StringValue + """"
-		        End Select
-		        
-		        Values.Add(New Palworld.ConfigValue(File, Header, Struct, Command))
+		        Try
+		          Var Key As String = Entry.Key
+		          Var Command As String = Key + "=" + Self.ValueToString(Entry.Value)
+		          Values.Add(New Palworld.ConfigValue(File, Header, Struct, Command))
+		        Catch Err As RuntimeException
+		          App.Log(Err, CurrentMethodName, "Parsing config line")
+		        End Try
 		      Next
 		      Continue
 		    End If
 		    
 		    Values.Add(New Palworld.ConfigValue(File, Header, Nil, Line, KeyIndex))
+		    
 		  Next
 		  Tracker.Log("Took %elapsed% to parse " + Content.Length.ToString + " characters of content.")
 		  Self.Add(Values)
@@ -637,6 +624,44 @@ Protected Class ConfigOrganizer
 		  Next Value
 		  Self.Add(Replacements)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ValueToString(Value As Variant) As String
+		  Try
+		    Select Case Value.Type
+		    Case Variant.TypeBoolean
+		      Return If(Value.BooleanValue, "True", "False")
+		    Case Variant.TypeDouble, Variant.TypeSingle, Variant.TypeInt32, Variant.TypeInt64, Variant.TypeCurrency
+		      Return Value.DoubleValue.PrettyText
+		    Case (Variant.TypeObject Or Variant.TypeArray)
+		      Var Parts() As String
+		      Var Objs() As Object = Value
+		      For Each Obj As Variant In Objs
+		        Parts.Add(ValueToString(Obj))
+		      Next
+		      Return "(" + String.FromArray(Parts, ",") + ")"
+		    Case Variant.TypeObject
+		      Var Parts() As String
+		      Var Dict As Dictionary = Value
+		      For Each Entry As DictionaryEntry In Dict
+		        Parts.Add(Entry.Key.StringValue + "=" + ValueToString(Entry.Value))
+		      Next
+		      Return "(" + String.FromArray(Parts, ",") + ")"
+		    Case (Variant.TypeString Or Variant.TypeArray)
+		      Var Parts() As String
+		      Var Members() As String = Value
+		      For Each Member As String In Members
+		        Parts.Add("""" + Member + """")
+		      Next
+		      Return "(" + String.FromArray(Parts, ",") + ")"
+		    Else
+		      Return """" + Value.StringValue + """"
+		    End Select
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading config value")
+		  End Try
+		End Function
 	#tag EndMethod
 
 

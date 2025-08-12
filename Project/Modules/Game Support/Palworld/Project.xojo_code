@@ -217,6 +217,21 @@ Inherits Beacon.Project
 		      Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "ServerPassword", Profile.ServerPassword.StringValue, Palworld.ConfigOrganizer.OptionValueIsManaged)
 		    End If
 		    
+		    Var CrossplayPlatforms() As String
+		    If Profile.Crossplay(Palworld.ServerProfile.CrossplaySteam) Then
+		      CrossplayPlatforms.Add("Steam")
+		    End If
+		    If Profile.Crossplay(Palworld.ServerProfile.CrossplayXbox) Then
+		      CrossplayPlatforms.Add("Xbox")
+		    End If
+		    If Profile.Crossplay(Palworld.ServerProfile.CrossplayPlaystation) Then
+		      CrossplayPlatforms.Add("PS5")
+		    End If
+		    If Profile.Crossplay(Palworld.ServerProfile.CrossplayMac) Then
+		      CrossplayPlatforms.Add("Mac")
+		    End If
+		    Organizer.Add(Palworld.ConfigFileSettings, Palworld.HeaderPalworldSettings, "OptionSettings", "CrossplayPlatforms", CrossplayPlatforms, Palworld.ConfigOrganizer.OptionValueIsManaged)
+		    
 		    Return Organizer
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Generating a config organizer")

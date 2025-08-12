@@ -97,6 +97,29 @@ Inherits Beacon.Thread
 		    Profile.ServerDescription = OptionSettings.StringValue("ServerDescription", "")
 		    Profile.AdminPassword = OptionSettings.StringValue("AdminPassword", "")
 		    Profile.ServerPassword = OptionSettings.StringValue("ServerPassword", "")
+		    
+		    Try
+		      Var CrossplayPlatforms() As Object = OptionSettings.Lookup("CrossplayPlatforms", Nil)
+		      If (CrossplayPlatforms Is Nil) = False Then
+		        Var Mask As Integer
+		        For Each Platform As Variant In CrossplayPlatforms
+		          Select Case Platform
+		          Case "Steam"
+		            Mask = Mask Or Palworld.ServerProfile.CrossplaySteam
+		          Case "Xbox"
+		            Mask = Mask Or Palworld.ServerProfile.CrossplayXbox
+		          Case "PS5"
+		            Mask = Mask Or Palworld.ServerProfile.CrossplayPlaystation
+		          Case "Mac"
+		            Mask = Mask Or Palworld.ServerProfile.CrossplayMac
+		          End Select
+		        Next
+		        Profile.Crossplay = Mask
+		      End If
+		    Catch Err As RuntimeException
+		      Profile.Crossplay = Palworld.ServerProfile.CrossplayAll
+		    End Try
+		    
 		    Project.AddServerProfile(Profile)
 		  End If
 		  

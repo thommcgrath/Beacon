@@ -619,6 +619,282 @@ Begin BeaconContainer PalworldCommonServerSettingsView
       Visible         =   True
       Width           =   40
    End
+   Begin SwitchControl PlatformsSteamSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   298
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin UITweaks.ResizedLabel PlatformsLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Allowed Platforms:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   298
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   136
+   End
+   Begin UITweaks.ResizedLabel PlatformsSteamLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   220
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Steam"
+      TextAlignment   =   1
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   298
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   116
+   End
+   Begin SwitchControl PlatformsXboxSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   330
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin UITweaks.ResizedLabel PlatformsXboxLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   220
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   21
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Xbox"
+      TextAlignment   =   1
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   330
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   116
+   End
+   Begin SwitchControl PlatformsPlaystationSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   362
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin UITweaks.ResizedLabel PlatformsPlaystationLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   220
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "PlayStation"
+      TextAlignment   =   1
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   362
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   116
+   End
+   Begin SwitchControl PlatformsMacSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   394
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin UITweaks.ResizedLabel PlatformsMacLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   220
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   25
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Mac"
+      TextAlignment   =   1
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   394
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   116
+   End
 End
 #tag EndDesktopWindow
 
@@ -699,6 +975,11 @@ End
 		    Self.ServerPasswordSwitch.Value(False) = True
 		    Self.ServerPasswordField.Text = Profile.ServerPassword.StringValue
 		  End If
+		  
+		  Self.PlatformsMacSwitch.Value(False) = Profile.Crossplay(Palworld.ServerProfile.CrossplayMac)
+		  Self.PlatformsPlaystationSwitch.Value(False) = Profile.Crossplay(Palworld.ServerProfile.CrossplayPlaystation)
+		  Self.PlatformsSteamSwitch.Value(False) = Profile.Crossplay(Palworld.ServerProfile.CrossplaySteam)
+		  Self.PlatformsXboxSwitch.Value(False) = Profile.Crossplay(Palworld.ServerProfile.CrossplayXbox)
 		  
 		  Self.UpdateConfigSetUI()
 		  Self.Resize(True)
@@ -896,6 +1177,62 @@ End
 		    Else
 		      Profile.ServerPassword = Nil
 		    End If
+		  Next
+		  Self.Modified = Self.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PlatformsSteamSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Palworld.ServerProfile In Self.mProfiles
+		    Profile.Crossplay(Palworld.ServerProfile.CrossplaySteam) = Me.Value
+		  Next
+		  Self.Modified = Self.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PlatformsXboxSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Palworld.ServerProfile In Self.mProfiles
+		    Profile.Crossplay(Palworld.ServerProfile.CrossplayXbox) = Me.Value
+		  Next
+		  Self.Modified = Self.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PlatformsPlaystationSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Palworld.ServerProfile In Self.mProfiles
+		    Profile.Crossplay(Palworld.ServerProfile.CrossplayPlaystation) = Me.Value
+		  Next
+		  Self.Modified = Self.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PlatformsMacSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Palworld.ServerProfile In Self.mProfiles
+		    Profile.Crossplay(Palworld.ServerProfile.CrossplayMac) = Me.Value
 		  Next
 		  Self.Modified = Self.Modified
 		End Sub

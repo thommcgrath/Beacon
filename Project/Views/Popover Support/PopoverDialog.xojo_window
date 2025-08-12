@@ -117,7 +117,6 @@ End
 	#tag Method, Flags = &h0
 		Sub UpdateSize(ContainerWidth As Integer, ContainerHeight As Integer, Reposition As Boolean)
 		  Var CurrentWidth As Integer = Self.Width
-		  Var CurrentHeight As Integer = Self.Height
 		  
 		  Var TargetWidth As Integer = Max(ContainerWidth, 52 + Self.ActionButton.Width + Self.CancelButton.Width)
 		  Var TargetHeight As Integer = ContainerHeight + Max(Self.ActionButton.Height, Self.CancelButton.Height) + 20

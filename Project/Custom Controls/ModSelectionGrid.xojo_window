@@ -233,17 +233,6 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Paint(g As Graphics, areas() As Rect)
-		  // #Pragma Unused Areas
-		  // 
-		  // #if DebugBuild
-		  // G.DrawingColor = &cFF0000
-		  // G.FillRectangle(0, 0, G.Width, G.Height)
-		  // #endif
-		End Sub
-	#tag EndEvent
-
 
 	#tag Method, Flags = &h21
 		Private Sub BuildCheckboxes()

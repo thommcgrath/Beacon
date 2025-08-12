@@ -20,6 +20,7 @@ Inherits Beacon.ServerProfile
 		    Self.mBasePath = Dict.Lookup("basePath", "").StringValue
 		    Self.mSettingsIniPath = Dict.Lookup("palWorldSettingsIniPath", "").StringValue
 		    Self.mLogsPath = Dict.Lookup("logsPath", "").StringValue
+		    Self.mCrossplay = Dict.Lookup("crossplay", Self.CrossplayAll).IntegerValue
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -29,6 +30,7 @@ Inherits Beacon.ServerProfile
 		  Dict.Value("adminPassword") = NullableString.ToVariant(Self.mAdminPassword)
 		  Dict.Value("serverPassword") = NullableString.ToVariant(Self.mServerPassword)
 		  Dict.Value("serverDescription") = Self.mServerDescription
+		  Dict.Value("crossplay") = Self.mCrossplay
 		  
 		  If Self.mBasePath.IsEmpty = False Then
 		    Dict.Value("basePath") = Self.mBasePath
@@ -97,6 +99,7 @@ Inherits Beacon.ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor(Provider As String, Name As String)
 		  // Making the constructor public
+		  Self.mCrossplay = Self.CrossplayAll
 		  Super.Constructor(Provider, Name)
 		End Sub
 	#tag EndMethod
@@ -104,8 +107,53 @@ Inherits Beacon.ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor(Provider As String, ProfileId As String, Name As String, Nickname As String, SecondaryName As String)
 		  // Making the constructor public
+		  Self.mCrossplay = Self.CrossplayAll
 		  Super.Constructor(Provider, ProfileId, Name, Nickname, SecondaryName)
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Crossplay() As Integer
+		  Return Self.mCrossplay
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Crossplay(Assigns Value As Integer)
+		  Value = Value And Self.CrossplayAll
+		  If Self.mCrossplay = Value Then
+		    Return
+		  End If
+		  
+		  Self.mCrossplay = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Crossplay(Mask As Integer) As Boolean
+		  Return (Self.mCrossplay And Mask) = Mask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Crossplay(Mask As Integer, Assigns Value As Boolean)
+		  Mask = Mask And Self.CrossplayAll
+		  
+		  Var NewMask As Integer
+		  If Value Then
+		    NewMask = Self.mCrossplay Or Mask
+		  Else
+		    NewMask = Self.mCrossplay And Not Mask
+		  End If
+		  
+		  If Self.mCrossplay = NewMask Then
+		    Return
+		  End If
+		  
+		  Self.mCrossplay = NewMask
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -244,6 +292,10 @@ Inherits Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCrossplay As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLogsPath As String
 	#tag EndProperty
 
@@ -258,6 +310,22 @@ Inherits Beacon.ServerProfile
 	#tag Property, Flags = &h21
 		Private mSettingsIniPath As String
 	#tag EndProperty
+
+
+	#tag Constant, Name = CrossplayAll, Type = Double, Dynamic = False, Default = \"15", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = CrossplayMac, Type = Double, Dynamic = False, Default = \"8", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = CrossplayPlaystation, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = CrossplaySteam, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = CrossplayXbox, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
