@@ -84,6 +84,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventServerConnected = 'serverConnected';
 	const EventServerDisconnected = 'serverDisconnected';
 	const EventManualServiceScript = 'serviceScriptRun';
+	const EventSlashCommand = 'slashCommand';
 	const EventStructureDestroyed = 'structureDestroyed';
 	const EventTribeCreated = 'tribeCreated';
 	const EventTribeDestroyed = 'tribeDestroyed';
@@ -128,6 +129,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventServerConnected,
 		self::EventServerDisconnected,
 		self::EventManualServiceScript,
+		self::EventSlashCommand,
 		self::EventStructureDestroyed,
 		self::EventTribeCreated,
 		self::EventTribeDestroyed,
