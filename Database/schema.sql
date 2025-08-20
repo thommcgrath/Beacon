@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.12 (Ubuntu 14.12-0ubuntu0.22.04.1)
--- Dumped by pg_dump version 14.12 (Ubuntu 14.12-0ubuntu0.22.04.1)
+-- Dumped from database version 17.4 (Ubuntu 17.4-1.pgdg22.04+2)
+-- Dumped by pg_dump version 17.4 (Ubuntu 17.4-1.pgdg22.04+2)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -44,6 +45,15 @@ CREATE SCHEMA palworld;
 ALTER SCHEMA palworld OWNER TO thommcgrath;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO postgres;
+
+--
 -- Name: sdtd; Type: SCHEMA; Schema: -; Owner: thommcgrath
 --
 
@@ -51,6 +61,15 @@ CREATE SCHEMA sdtd;
 
 
 ALTER SCHEMA sdtd OWNER TO thommcgrath;
+
+--
+-- Name: sentinel; Type: SCHEMA; Schema: -; Owner: thommcgrath
+--
+
+CREATE SCHEMA sentinel;
+
+
+ALTER SCHEMA sentinel OWNER TO thommcgrath;
 
 --
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
@@ -78,6 +97,20 @@ CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
 
 
 --
@@ -209,6 +242,28 @@ CREATE TYPE public.authenticator_type AS ENUM (
 
 
 ALTER TYPE public.authenticator_type OWNER TO thommcgrath;
+
+--
+-- Name: color; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.color AS ENUM (
+    'None',
+    'Blue',
+    'Brown',
+    'Grey',
+    'Green',
+    'Indigo',
+    'Orange',
+    'Pink',
+    'Purple',
+    'Red',
+    'Teal',
+    'Yellow'
+);
+
+
+ALTER TYPE public.color OWNER TO thommcgrath;
 
 --
 -- Name: download_platform; Type: TYPE; Schema: public; Owner: thommcgrath
@@ -375,6 +430,18 @@ CREATE TYPE public.point3d AS (
 ALTER TYPE public.point3d OWNER TO thommcgrath;
 
 --
+-- Name: product_type; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.product_type AS ENUM (
+    'One-Time',
+    'Subscription'
+);
+
+
+ALTER TYPE public.product_type OWNER TO thommcgrath;
+
+--
 -- Name: project_role; Type: TYPE; Schema: public; Owner: thommcgrath
 --
 
@@ -442,6 +509,24 @@ CREATE TYPE public.token_type AS ENUM (
 ALTER TYPE public.token_type OWNER TO thommcgrath;
 
 --
+-- Name: ui_color; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.ui_color AS ENUM (
+    'White',
+    'Green',
+    'Blue',
+    'Purple',
+    'Yellow',
+    'Red',
+    'Cyan',
+    'Orange'
+);
+
+
+ALTER TYPE public.ui_color OWNER TO thommcgrath;
+
+--
 -- Name: update_file_type; Type: TYPE; Schema: public; Owner: thommcgrath
 --
 
@@ -491,6 +576,264 @@ CREATE TYPE sdtd.config_option_value_type AS ENUM (
 
 
 ALTER TYPE sdtd.config_option_value_type OWNER TO thommcgrath;
+
+--
+-- Name: chat_message_origin; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.chat_message_origin AS ENUM (
+    'Game',
+    'WebGroup',
+    'WebService',
+    'Discord',
+    'Script'
+);
+
+
+ALTER TYPE sentinel.chat_message_origin OWNER TO thommcgrath;
+
+--
+-- Name: chat_message_scope; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.chat_message_scope AS ENUM (
+    'Global',
+    'Local',
+    'Tribe',
+    'Radio',
+    'Alliance'
+);
+
+
+ALTER TYPE sentinel.chat_message_scope OWNER TO thommcgrath;
+
+--
+-- Name: dino_gender; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.dino_gender AS ENUM (
+    'None',
+    'Female',
+    'Male'
+);
+
+
+ALTER TYPE sentinel.dino_gender OWNER TO thommcgrath;
+
+--
+-- Name: dino_status; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.dino_status AS ENUM (
+    'Deployed',
+    'Dead',
+    'Frozen',
+    'Uploaded'
+);
+
+
+ALTER TYPE sentinel.dino_status OWNER TO thommcgrath;
+
+--
+-- Name: event_name; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.event_name AS ENUM (
+    'characterScriptRun',
+    'chat',
+    'clockTamperingDetected',
+    'clusterIdChanged',
+    'adminCommand',
+    'broadcasted',
+    'cron',
+    'customMessage',
+    'dinoClaimed',
+    'dinoCreated',
+    'dinoDied',
+    'dinoDownloaded',
+    'dinoFrozen',
+    'dinoMatured',
+    'dinoRenamed',
+    'dinoRestored',
+    'dinoScriptRun',
+    'dinoSterilized',
+    'dinoTamed',
+    'dinoTribeChanged',
+    'dinoUnclaimed',
+    'dinoUnfrozen',
+    'dinoUnsterilized',
+    'dinoUploaded',
+    'itemGiven',
+    'noClusterId',
+    'playerCuffed',
+    'playerDied',
+    'playerJoined',
+    'playerLeft',
+    'playerRenamed',
+    'playerSpawned',
+    'playerTribeChanged',
+    'playerUncuffed',
+    'problemDetected',
+    'rollbackDetected',
+    'serverConnected',
+    'serverDisconnected',
+    'serviceScriptRun',
+    'slashCommand',
+    'structureDestroyed',
+    'tribeCreated',
+    'tribeDestroyed',
+    'tribeRenamed',
+    'tribeScriptRun'
+);
+
+
+ALTER TYPE sentinel.event_name OWNER TO thommcgrath;
+
+--
+-- Name: event_queue_status; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.event_queue_status AS ENUM (
+    'Waiting',
+    'Errored'
+);
+
+
+ALTER TYPE sentinel.event_queue_status OWNER TO thommcgrath;
+
+--
+-- Name: game_platform; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.game_platform AS ENUM (
+    'PC',
+    'Xbox',
+    'PlayStation',
+    'Switch',
+    'Universal'
+);
+
+
+ALTER TYPE sentinel.game_platform OWNER TO thommcgrath;
+
+--
+-- Name: lang_shortcode; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.lang_shortcode AS ENUM (
+    'ar',
+    'hy',
+    'eu',
+    'ca',
+    'da',
+    'nl',
+    'en',
+    'fi',
+    'fr',
+    'de',
+    'el',
+    'hi',
+    'hu',
+    'id',
+    'ga',
+    'it',
+    'lt',
+    'ne',
+    'no',
+    'pt',
+    'ro',
+    'ru',
+    'sr',
+    'es',
+    'sv',
+    'ta',
+    'tr',
+    'yi'
+);
+
+
+ALTER TYPE sentinel.lang_shortcode OWNER TO thommcgrath;
+
+--
+-- Name: log_analyzer_status; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.log_analyzer_status AS ENUM (
+    'Skipped',
+    'Pending',
+    'Analyzed'
+);
+
+
+ALTER TYPE sentinel.log_analyzer_status OWNER TO thommcgrath;
+
+--
+-- Name: log_level; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.log_level AS ENUM (
+    'Emergency',
+    'Alert',
+    'Critical',
+    'Error',
+    'Warning',
+    'Notice',
+    'Informational',
+    'Debug'
+);
+
+
+ALTER TYPE sentinel.log_level OWNER TO thommcgrath;
+
+--
+-- Name: log_type; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.log_type AS ENUM (
+    'Service',
+    'Gameplay'
+);
+
+
+ALTER TYPE sentinel.log_type OWNER TO thommcgrath;
+
+--
+-- Name: moderation_platform; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.moderation_platform AS ENUM (
+    'Mistral',
+    'Perspective'
+);
+
+
+ALTER TYPE sentinel.moderation_platform OWNER TO thommcgrath;
+
+--
+-- Name: script_approval_status; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.script_approval_status AS ENUM (
+    'Probation',
+    'Needs Review',
+    'Approved',
+    'Rejected'
+);
+
+
+ALTER TYPE sentinel.script_approval_status OWNER TO thommcgrath;
+
+--
+-- Name: script_language; Type: TYPE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TYPE sentinel.script_language AS ENUM (
+    'Simple',
+    'JavaScript'
+);
+
+
+ALTER TYPE sentinel.script_language OWNER TO thommcgrath;
 
 --
 -- Name: break_mod_relationships(uuid[]); Type: FUNCTION; Schema: ark; Owner: thommcgrath
@@ -2241,6 +2584,27 @@ $$;
 
 ALTER FUNCTION public.enforce_content_pack_owner() OWNER TO thommcgrath;
 
+--
+-- Name: escape_like_value(text, text); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.escape_like_value(p_value text, p_escape text DEFAULT '\'::text) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+DECLARE
+	v_like_value TEXT;
+BEGIN
+	v_like_value := REPLACE(p_value, p_escape, p_escape || p_escape);
+	v_like_value := REPLACE(v_like_value, '_', p_escape || '_');
+	v_like_value := REPLACE(v_like_value, '%', p_escape || '%');
+	v_like_value := '%' || v_like_value || '%';
+	RETURN v_like_value;
+END;
+$$;
+
+
+ALTER FUNCTION public.escape_like_value(p_value text, p_escape text) OWNER TO thommcgrath;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -2256,24 +2620,25 @@ CREATE TABLE public.payment_methods (
     valid_until timestamp with time zone,
     enabled boolean NOT NULL,
     supports_radar boolean NOT NULL,
-    sort_order integer DEFAULT 100 NOT NULL
+    sort_order integer DEFAULT 100 NOT NULL,
+    supports_subscriptions boolean DEFAULT false NOT NULL
 );
 
 
 ALTER TABLE public.payment_methods OWNER TO thommcgrath;
 
 --
--- Name: find_payment_methods(public.citext, boolean); Type: FUNCTION; Schema: public; Owner: thommcgrath
+-- Name: find_payment_methods(public.citext, boolean, boolean); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
-CREATE FUNCTION public.find_payment_methods(p_currency_code public.citext, p_is_suspect boolean) RETURNS SETOF public.payment_methods
+CREATE FUNCTION public.find_payment_methods(p_currency_code public.citext, p_is_suspect boolean, p_subscription boolean DEFAULT false) RETURNS SETOF public.payment_methods
     LANGUAGE sql
     AS $$
-	SELECT payment_methods.* FROM public.payment_methods INNER JOIN public.payment_method_currencies ON (payment_method_currencies.payment_method_code = payment_methods.code) WHERE payment_method_currencies.currency_code = p_currency_code AND payment_methods.enabled = TRUE AND (payment_methods.valid_from IS NULL OR payment_methods.valid_from >= CURRENT_TIMESTAMP) AND (payment_methods.valid_until IS NULL OR payment_methods.valid_until <= CURRENT_TIMESTAMP) AND (p_is_suspect = FALSE OR payment_methods.supports_radar = TRUE) ORDER BY sort_order, label;
+	SELECT payment_methods.* FROM public.payment_methods INNER JOIN public.payment_method_currencies ON (payment_method_currencies.payment_method_code = payment_methods.code) WHERE (supports_subscriptions = TRUE OR supports_subscriptions = p_subscription) AND payment_method_currencies.currency_code = p_currency_code AND payment_methods.enabled = TRUE AND (payment_methods.valid_from IS NULL OR payment_methods.valid_from >= CURRENT_TIMESTAMP) AND (payment_methods.valid_until IS NULL OR payment_methods.valid_until <= CURRENT_TIMESTAMP) AND (p_is_suspect = FALSE OR payment_methods.supports_radar = TRUE) ORDER BY sort_order, label;
 $$;
 
 
-ALTER FUNCTION public.find_payment_methods(p_currency_code public.citext, p_is_suspect boolean) OWNER TO thommcgrath;
+ALTER FUNCTION public.find_payment_methods(p_currency_code public.citext, p_is_suspect boolean, p_subscription boolean) OWNER TO thommcgrath;
 
 --
 -- Name: generate_username(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -2392,6 +2757,62 @@ $_$;
 ALTER FUNCTION public.group_key_for_email(p_address public.email, p_precision integer, p_alg text) OWNER TO thommcgrath;
 
 --
+-- Name: hex_to_ui_color(text); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.hex_to_ui_color(p_hex text) RETURNS public.ui_color
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	CASE UPPER(p_hex)
+	WHEN 'FFFFFF00' THEN
+		RETURN 'White';
+	WHEN '00FF0000' THEN
+		RETURN 'Green';
+	WHEN '88C8FF00' THEN
+		RETURN 'Blue';
+	WHEN 'E6BAFF00' THEN
+		RETURN 'Purple';
+	WHEN 'FFF02A00' THEN
+		RETURN 'Yellow';
+	WHEN 'FFBABA00' THEN
+		RETURN 'Red';
+	WHEN '00FFFF00' THEN
+		RETURN 'Cyan';
+	WHEN 'FFA50000' THEN
+		RETURN 'Orange';
+	ELSE
+		RETURN 'White';
+	END CASE;
+END
+$$;
+
+
+ALTER FUNCTION public.hex_to_ui_color(p_hex text) OWNER TO thommcgrath;
+
+--
+-- Name: interval_to_iso8601(interval); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.interval_to_iso8601(p_interval interval) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	RETURN TO_CHAR(p_interval, 'PYYYY"Y"MM"M"DD"DT"HH24"H"MI"M"SS"S"');
+END;
+$$;
+
+
+ALTER FUNCTION public.interval_to_iso8601(p_interval interval) OWNER TO thommcgrath;
+
+--
+-- Name: FUNCTION interval_to_iso8601(p_interval interval); Type: COMMENT; Schema: public; Owner: thommcgrath
+--
+
+COMMENT ON FUNCTION public.interval_to_iso8601(p_interval interval) IS 'Converts a PG interval into a PHP interval.';
+
+
+--
 -- Name: legacy_session_delete(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -2463,6 +2884,43 @@ END; $_$;
 
 
 ALTER FUNCTION public.os_version_as_integer(p_version public.os_version) OWNER TO thommcgrath;
+
+--
+-- Name: policies_after_write(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.policies_after_write() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO public.policy_revisions (policy_id, revision_number, revision_date, content) VALUES (NEW.policy_id, NEW.current_revision, NEW.last_updated, NEW.content);
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.policies_after_write() OWNER TO thommcgrath;
+
+--
+-- Name: policies_before_write(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.policies_before_write() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		NEW.current_revision = 1;
+	ELSE
+		NEW.current_revision = OLD.current_revision + 1;
+	END IF;
+	NEW.last_updated = CURRENT_TIMESTAMP;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.policies_before_write() OWNER TO thommcgrath;
 
 --
 -- Name: project_role_permissions(public.project_role); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -2700,6 +3158,40 @@ $$;
 ALTER FUNCTION public.support_videos_search_sync() OWNER TO thommcgrath;
 
 --
+-- Name: ui_color_to_hex(public.ui_color); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.ui_color_to_hex(p_ui_color public.ui_color) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	CASE p_ui_color
+	WHEN 'White' THEN
+		RETURN 'FFFFFF00';
+	WHEN 'Green' THEN
+		RETURN '00FF0000';
+	WHEN 'Blue' THEN
+		RETURN '88C8FF00';
+	WHEN 'Purple' THEN
+		RETURN 'E6BAFF00';
+	WHEN 'Yellow' THEN
+		RETURN 'FFF02A00';
+	WHEN 'Red' THEN
+		RETURN 'FFBABA00';
+	WHEN 'Cyan' THEN
+		RETURN '00FFFF00';
+	WHEN 'Orange' THEN
+		RETURN 'FFA50000';
+	ELSE
+		RETURN 'FFFFFF00';
+	END CASE;
+END
+$$;
+
+
+ALTER FUNCTION public.ui_color_to_hex(p_ui_color public.ui_color) OWNER TO thommcgrath;
+
+--
 -- Name: update_blog_article_hash(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -2854,6 +3346,21 @@ $$;
 ALTER FUNCTION public.uuidv5_for_email(p_address public.email) OWNER TO thommcgrath;
 
 --
+-- Name: websearch(text, text); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.websearch(p_field text, p_value text) RETURNS boolean
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	RETURN to_tsvector('english', p_field) @@ websearch_to_tsquery('english', p_value) OR p_field ILIKE public.escape_like_value(p_value);
+END;
+$$;
+
+
+ALTER FUNCTION public.websearch(p_field text, p_value text) OWNER TO thommcgrath;
+
+--
 -- Name: object_delete_trigger(); Type: FUNCTION; Schema: sdtd; Owner: thommcgrath
 --
 
@@ -2916,6 +3423,571 @@ $$;
 
 
 ALTER FUNCTION sdtd.version_to_int(p_major integer, p_minor integer, p_bug integer, p_build integer) OWNER TO thommcgrath;
+
+--
+-- Name: before_script_insert(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.before_script_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_hash TEXT;
+BEGIN
+	INSERT INTO sentinel.script_revisions (script_id, revision_number, code, parameters) VALUES (NEW.script_id, 1, NEW.code, NEW.parameters) RETURNING hash INTO v_hash;
+	INSERT INTO sentinel.script_hashes (hash, status) VALUES (v_hash, sentinel.get_script_approval_status(NEW.language, NEW.code)) ON CONFLICT (hash) DO NOTHING;
+	NEW.latest_revision = 1;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.before_script_insert() OWNER TO thommcgrath;
+
+--
+-- Name: before_script_update(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.before_script_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_hash TEXT;
+	v_next_revision INTEGER;
+BEGIN
+	NEW.date_modified = CURRENT_TIMESTAMP;
+	-- If the code has not changed, do not create a new revision and make sure the latest revision number isn't changed.
+	IF NEW.code = OLD.code AND NEW.parameters = OLD.parameters THEN
+		NEW.latest_revision = OLD.latest_revision;
+		RETURN NEW;
+	END IF;
+	SELECT MAX(revision_number) + 1 INTO v_next_revision FROM sentinel.script_revisions WHERE script_id = NEW.script_id GROUP BY script_id;
+	INSERT INTO sentinel.script_revisions (script_id, revision_number, code, parameters) VALUES (NEW.script_id, v_next_revision, NEW.code, NEW.parameters) RETURNING hash INTO v_hash;
+	INSERT INTO sentinel.script_hashes (hash, status) VALUES (v_hash, sentinel.get_script_approval_status(NEW.language, NEW.code)) ON CONFLICT (hash) DO NOTHING;
+	NEW.latest_revision = v_next_revision;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.before_script_update() OWNER TO thommcgrath;
+
+--
+-- Name: check_cluster_groups(uuid); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.check_cluster_groups(p_service_id uuid) RETURNS void
+    LANGUAGE plpgsql STABLE
+    AS $$
+DECLARE
+	v_cluster_group_count INTEGER;
+BEGIN
+	SELECT COUNT(*) INTO v_cluster_group_count FROM sentinel.group_services INNER JOIN sentinel.groups ON (groups.group_id = group_services.group_id) WHERE group_services.service_id = p_service_id AND groups.is_cluster_group;
+	IF v_cluster_group_count > 1 THEN
+		RAISE EXCEPTION 'Too many cluster groups for service %.', p_service_id USING HINT = 'A service may only belong to a single group that has cluster features enabled.';
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.check_cluster_groups(p_service_id uuid) OWNER TO thommcgrath;
+
+--
+-- Name: check_script_test(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.check_script_test() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_completed_time TIMESTAMP WITH TIME ZONE;
+	v_queue_time TIMESTAMP WITH TIME ZONE;
+BEGIN
+	SELECT completed_time, queue_time INTO v_completed_time, v_queue_time FROM sentinel.script_tests WHERE user_id = NEW.user_id;
+	IF FOUND THEN
+		IF v_completed_time IS NULL AND v_queue_time > CURRENT_TIMESTAMP - '60 seconds'::INTERVAL THEN
+			RAISE EXCEPTION 'User % already has a test running.', NEW.user_id USING HINT = 'Each user may only run one test may be running at a time.';
+		END IF;
+		
+		NEW.queue_time = GREATEST(v_completed_time + '2 seconds'::INTERVAL, CURRENT_TIMESTAMP);
+		DELETE FROM sentinel.script_tests WHERE user_id = NEW.user_id;
+	END IF;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.check_script_test() OWNER TO thommcgrath;
+
+--
+-- Name: dino_update_trigger(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.dino_update_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.last_update = CURRENT_TIMESTAMP;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.dino_update_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: get_player_id(public.citext); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.get_player_id(p_identifier public.citext) RETURNS uuid
+    LANGUAGE plpgsql STABLE
+    AS $$
+DECLARE
+	v_player_id UUID;
+	v_provider CITEXT;
+BEGIN
+	v_provider := sentinel.provider_for_identifier(p_identifier);
+	
+	IF v_provider IS NOT NULL THEN
+		SELECT player_id INTO v_player_id FROM sentinel.player_identifiers WHERE identifier = p_identifier AND provider = v_provider;
+		RETURN v_player_id;
+	ELSE
+		BEGIN
+			SELECT player_id INTO v_player_id FROM sentinel.players WHERE player_id = p_identifier::UUID;
+			RETURN v_player_id;
+		EXCEPTION WHEN OTHERS THEN
+			RETURN NULL;
+		END;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.get_player_id(p_identifier public.citext) OWNER TO thommcgrath;
+
+--
+-- Name: get_player_id(public.citext, boolean); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.get_player_id(p_identifier public.citext, p_create boolean) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_player_id UUID;
+	v_provider CITEXT;
+	v_player_name CITEXT;
+BEGIN
+	-- We need to know what kind of identifier this is first
+	v_provider := sentinel.provider_for_identifier(p_identifier);
+	
+	CASE v_provider
+	WHEN 'EOS' THEN
+		SELECT player_id INTO v_player_id FROM sentinel.player_identifiers WHERE identifier = p_identifier AND provider = v_provider;
+		IF FOUND THEN
+			RETURN v_player_id;
+		END IF;
+	ELSE
+		-- Assume this is a Sentinel player id
+		BEGIN
+			SELECT player_id INTO v_player_id FROM sentinel.players WHERE player_id = p_identifier::UUID;
+			IF FOUND THEN
+				RETURN v_player_id;
+			END IF;
+		EXCEPTION WHEN OTHERS THEN
+			-- No need to do anything here
+		END;
+		RETURN NULL;
+	END CASE;
+	
+	-- Return null if we should not remember it.
+	IF NOT p_create THEN
+		RETURN NULL;
+	END IF;
+	
+	-- Create it.
+	v_player_id := gen_random_uuid();
+	v_player_name := public.generate_username() || ' (Unseen Player)';
+	INSERT INTO sentinel.players (player_id, name) VALUES (v_player_id, v_player_name);
+	INSERT INTO sentinel.player_identifiers (player_id, provider, identifier, name) VALUES (v_player_id, v_provider, p_identifier, v_player_name);
+	RETURN v_player_id;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.get_player_id(p_identifier public.citext, p_create boolean) OWNER TO thommcgrath;
+
+--
+-- Name: get_script_approval_status(sentinel.script_language, text); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.get_script_approval_status(p_language sentinel.script_language, p_code text) RETURNS sentinel.script_approval_status
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	IF p_language = 'Simple' THEN
+		RETURN 'Approved';
+	ELSIF p_code ILIKE ANY('{%beacon.generateRandomBytes%,%beacon.generateUuidV4%,%beacon.generateUuidV5%,%beacon.generateUuidV7%,%beacon.hash%,%beacon.hmac%,%beacon.httpRequest%}') THEN
+		RETURN 'Needs Review';
+	ELSE
+		RETURN 'Probation';
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.get_script_approval_status(p_language sentinel.script_language, p_code text) OWNER TO thommcgrath;
+
+--
+-- Name: group_services_after_edit(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.group_services_after_edit() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_cluster_count INTEGER;
+BEGIN
+	PERFORM sentinel.check_cluster_groups(NEW.service_id);
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.group_services_after_edit() OWNER TO thommcgrath;
+
+--
+-- Name: groups_after_edit(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.groups_after_edit() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_group_service RECORD;
+BEGIN
+	IF NEW.discord_link_code IS NOT NULL AND NEW.discord_guild_id IS NOT NULL THEN
+		RAISE EXCEPTION 'One or both of discord_link_code and discord_guild_id must be NULL.';
+	END IF;
+	IF NEW.discord_guild_id IS NULL AND NEW.discord_chat_channel_id IS NOT NULL THEN
+		RAISE EXCEPTION 'discord_chat_channel_id must be NULL if discord_guild_id is NULL.';
+	END IF;
+	IF NEW.discord_chat_channel_id IS NOT NULL AND NEW.enable_group_chat = FALSE THEN
+		RAISE EXCEPTION 'discord_chat_channel_id must be NULL if enable_group_chat is FALSE.';
+	END IF;
+	
+	IF NOT NEW.is_cluster_group THEN
+		RETURN NEW;
+	END IF;
+	
+	FOR v_group_service IN SELECT service_id FROM sentinel.group_services WHERE group_id = NEW.group_id LOOP
+		PERFORM sentinel.check_cluster_groups(v_group_service.service_id);
+	END LOOP;
+	
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.groups_after_edit() OWNER TO thommcgrath;
+
+--
+-- Name: language_shortcode_to_regconfig(text); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.language_shortcode_to_regconfig(p_shortcode text) RETURNS regconfig
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	CASE p_shortcode
+	WHEN 'ar' THEN
+		RETURN 'arabic';
+	WHEN 'hy' THEN
+		RETURN 'armenian';
+	WHEN 'eu' THEN
+		RETURN 'basque';
+	WHEN 'ca' THEN
+		RETURN 'catalan';
+	WHEN 'da' THEN
+		RETURN 'danish';
+	WHEN 'nl' THEN
+		RETURN 'dutch';
+	WHEN 'fi' THEN
+		RETURN 'finnish';
+	WHEN 'fr' THEN
+		RETURN 'french';
+	WHEN 'de' THEN
+		RETURN 'german';
+	WHEN 'el' THEN
+		RETURN 'greek';
+	WHEN 'hi' THEN
+		RETURN 'hindi';
+	WHEN 'hu' THEN
+		RETURN 'hungarian';
+	WHEN 'id' THEN
+		RETURN 'indonesian';
+	WHEN 'ga' THEN
+		RETURN 'irish';
+	WHEN 'it' THEN
+		RETURN 'italian';
+	WHEN 'lt' THEN
+		RETURN 'lithuanian';
+	WHEN 'ne' THEN
+		RETURN 'nepali';
+	WHEN 'no' THEN
+		RETURN 'norwegian';
+	WHEN 'pt' THEN
+		RETURN 'portuguese';
+	WHEN 'ro' THEN
+		RETURN 'romanian';
+	WHEN 'ru' THEN
+		RETURN 'russian';
+	WHEN 'sr' THEN
+		RETURN 'serbian';
+	WHEN 'es' THEN
+		RETURN 'spanish';
+	WHEN 'sv' THEN
+		RETURN 'swedish';
+	WHEN 'ta' THEN
+		RETURN 'tamil';
+	WHEN 'tr' THEN
+		RETURN 'turkish';
+	WHEN 'yi' THEN
+		RETURN 'yiddish';
+	ELSE
+		RETURN 'english';
+	END CASE;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.language_shortcode_to_regconfig(p_shortcode text) OWNER TO thommcgrath;
+
+--
+-- Name: FUNCTION language_shortcode_to_regconfig(p_shortcode text); Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON FUNCTION sentinel.language_shortcode_to_regconfig(p_shortcode text) IS 'Converts a two-character language code into something PG'' full text search supports.';
+
+
+--
+-- Name: log_level_position(sentinel.log_level); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.log_level_position(p_log_level sentinel.log_level) RETURNS integer
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	CASE p_log_level
+	WHEN 'Debug' THEN
+		RETURN 0;
+	WHEN 'Informational' THEN
+		RETURN 1;
+	WHEN 'Notice' THEN
+		RETURN 2;
+	WHEN 'Warning' THEN
+		RETURN 3;
+	WHEN 'Error' THEN
+		RETURN 4;
+	WHEN 'Critical' THEN
+		RETURN 5;
+	WHEN 'Alert' THEN
+		RETURN 6;
+	WHEN 'Emergency' THEN
+		RETURN 7;
+	ELSE
+		RAISE EXCEPTION 'Unknown log level';
+	END CASE;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.log_level_position(p_log_level sentinel.log_level) OWNER TO thommcgrath;
+
+--
+-- Name: FUNCTION log_level_position(p_log_level sentinel.log_level); Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON FUNCTION sentinel.log_level_position(p_log_level sentinel.log_level) IS 'Provides sorting information for log levels.';
+
+
+--
+-- Name: notify_chat_trigger(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.notify_chat_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF NEW.event_name = 'chat' AND ((TG_OP = 'INSERT' AND NEW.analyzer_status = 'Pending') OR (TG_OP = 'UPDATE' AND NEW.analyzer_status = 'Pending' AND OLD.analyzer_status != 'Pending')) THEN
+		PERFORM pg_notify('wakeChatProcessor', NULL);
+	END IF;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.notify_chat_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: FUNCTION notify_chat_trigger(); Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON FUNCTION sentinel.notify_chat_trigger() IS 'Sends a notification to wake up the chat analyzer when a message is posted.';
+
+
+--
+-- Name: provider_for_identifier(public.citext); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.provider_for_identifier(p_identifier public.citext) RETURNS public.citext
+    LANGUAGE plpgsql IMMUTABLE
+    AS $_$
+BEGIN
+	IF p_identifier ~* '^0002[0-9A-F]{28}$' THEN
+		RETURN 'EOS';
+	ELSE
+		RETURN NULL;
+	END IF;
+END;
+$_$;
+
+
+ALTER FUNCTION sentinel.provider_for_identifier(p_identifier public.citext) OWNER TO thommcgrath;
+
+--
+-- Name: purge_service_data(uuid); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.purge_service_data(p_service_id uuid) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM sentinel.characters WHERE service_id = p_service_id;
+	DELETE FROM sentinel.dinos WHERE service_id = p_service_id;
+	DELETE FROM sentinel.service_event_queue WHERE service_id = p_service_id;
+	DELETE FROM sentinel.service_logs WHERE service_id = p_service_id;
+	DELETE FROM sentinel.tribes WHERE service_id = p_service_id;
+END
+$$;
+
+
+ALTER FUNCTION sentinel.purge_service_data(p_service_id uuid) OWNER TO thommcgrath;
+
+--
+-- Name: save_player_note_history(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.save_player_note_history() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF NEW.content != OLD.content THEN
+		INSERT INTO sentinel.player_note_edits (note_id, previous_timestamp, previous_content) VALUES (OLD.note_id, OLD.date_modified, OLD.content);
+		NEW.date_modified = CURRENT_TIMESTAMP;
+	END IF;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.save_player_note_history() OWNER TO thommcgrath;
+
+--
+-- Name: FUNCTION save_player_note_history(); Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON FUNCTION sentinel.save_player_note_history() IS 'Stores player note edits.';
+
+
+--
+-- Name: set_player_connect_time(uuid, uuid, timestamp with time zone); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.set_player_connect_time(p_player_id uuid, p_service_id uuid, p_connect_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_session_id UUID;
+BEGIN
+	PERFORM sentinel.set_player_disconnect_time(p_player_id, p_connect_time);
+	INSERT INTO sentinel.player_sessions (player_id, service_id, active_times) VALUES (p_player_id, p_service_id, TSTZRANGE(p_connect_time, NULL, '[)')) RETURNING player_session_id INTO v_session_id;
+	RETURN v_session_id;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.set_player_connect_time(p_player_id uuid, p_service_id uuid, p_connect_time timestamp with time zone) OWNER TO thommcgrath;
+
+--
+-- Name: set_player_disconnect_time(uuid, timestamp with time zone); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.set_player_disconnect_time(p_player_id uuid, p_disconnect_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_session_id UUID;
+BEGIN
+	SELECT player_session_id INTO v_session_id FROM sentinel.player_sessions WHERE player_id = p_player_id AND UPPER_INF(active_times) = TRUE;
+	IF FOUND THEN
+		UPDATE sentinel.player_sessions SET active_times = TSTZRANGE(LOWER(active_times), p_disconnect_time, '[)') WHERE player_session_id = v_session_id;
+		UPDATE sentinel.characters SET is_active = FALSE WHERE player_id = p_player_id AND is_active = TRUE;
+		RETURN v_session_id;
+	END IF;
+	RETURN NULL;
+END;
+$$;
+
+
+ALTER FUNCTION sentinel.set_player_disconnect_time(p_player_id uuid, p_disconnect_time timestamp with time zone) OWNER TO thommcgrath;
+
+--
+-- Name: track_player_name(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.track_player_name() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND OLD.name != NEW.name) THEN
+ 		INSERT INTO sentinel.player_name_history (player_id, name, change_time) VALUES (NEW.player_id, NEW.name, CURRENT_TIMESTAMP);
+ 	END IF;
+	RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION sentinel.track_player_name() OWNER TO thommcgrath;
+
+--
+-- Name: FUNCTION track_player_name(); Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON FUNCTION sentinel.track_player_name() IS 'Stores player name changes.';
+
+
+--
+-- Name: update_date_modified(); Type: FUNCTION; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE FUNCTION sentinel.update_date_modified() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.date_modified = CURRENT_TIMESTAMP;
+	RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION sentinel.update_date_modified() OWNER TO thommcgrath;
+
+--
+-- Name: FUNCTION update_date_modified(); Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON FUNCTION sentinel.update_date_modified() IS 'Updates the date_modified value of the attached table.';
+
 
 --
 -- Name: objects; Type: TABLE; Schema: ark; Owner: thommcgrath
@@ -2998,7 +4070,6 @@ CREATE TABLE ark.loot_sources (
     availability integer NOT NULL,
     multiplier_min numeric(6,4) DEFAULT 1.0 NOT NULL,
     multiplier_max numeric(6,4) DEFAULT 1.0 NOT NULL,
-    uicolor text NOT NULL,
     icon uuid NOT NULL,
     sort integer,
     experimental boolean DEFAULT false NOT NULL,
@@ -3009,10 +4080,10 @@ CREATE TABLE ark.loot_sources (
     min_item_sets integer NOT NULL,
     max_item_sets integer NOT NULL,
     prevent_duplicates boolean NOT NULL,
+    icon_color public.ui_color DEFAULT 'White'::public.ui_color NOT NULL,
     CONSTRAINT loot_sources_check CHECK ((((sort IS NULL) AND (min_version >= 10303300) AND (modern_sort IS NOT NULL)) OR (sort IS NOT NULL))),
     CONSTRAINT loot_sources_check1 CHECK (((experimental = false) OR (min_version >= 10100202))),
-    CONSTRAINT loot_sources_class_string_check1 CHECK ((class_string OPERATOR(public.~~) '%_C'::public.citext)),
-    CONSTRAINT loot_sources_uicolor_check1 CHECK ((uicolor ~* '^[0-9a-fA-F]{8}$'::text))
+    CONSTRAINT loot_sources_class_string_check1 CHECK ((class_string OPERATOR(public.~~) '%_C'::public.citext))
 )
 INHERITS (ark.objects);
 
@@ -3099,7 +4170,7 @@ UNION
    FROM ark.spawn_points;
 
 
-ALTER TABLE ark.blueprints OWNER TO thommcgrath;
+ALTER VIEW ark.blueprints OWNER TO thommcgrath;
 
 --
 -- Name: color_sets; Type: TABLE; Schema: ark; Owner: thommcgrath
@@ -3198,17 +4269,17 @@ ALTER TABLE public.deletions OWNER TO thommcgrath;
 --
 
 CREATE VIEW ark.deletions AS
- SELECT deletions.object_id,
-    deletions.from_table,
-    deletions.label,
-    deletions.min_version,
-    deletions.action_time,
-    deletions.tag
+ SELECT object_id,
+    from_table,
+    label,
+    min_version,
+    action_time,
+    tag
    FROM public.deletions
-  WHERE (deletions.game_id = 'Ark'::public.game_identifier);
+  WHERE (game_id = 'Ark'::public.game_identifier);
 
 
-ALTER TABLE ark.deletions OWNER TO thommcgrath;
+ALTER VIEW ark.deletions OWNER TO thommcgrath;
 
 --
 -- Name: diet_contents; Type: TABLE; Schema: ark; Owner: thommcgrath
@@ -3462,29 +4533,29 @@ ALTER TABLE public.content_packs OWNER TO thommcgrath;
 --
 
 CREATE VIEW ark.mods AS
- SELECT content_packs.content_pack_id AS mod_id,
-    (content_packs.marketplace_id)::bigint AS workshop_id,
-    content_packs.user_id,
-    content_packs.name,
-    content_packs.confirmed,
-    content_packs.confirmation_code,
+ SELECT content_pack_id AS mod_id,
+    (marketplace_id)::bigint AS workshop_id,
+    user_id,
+    name,
+    confirmed,
+    confirmation_code,
     NULL::text AS pull_url,
     NULL::text AS last_pull_hash,
-    content_packs.console_safe,
-    content_packs.default_enabled,
-    content_packs.last_update,
-    content_packs.min_version,
-    content_packs.include_in_deltas,
-    (content_packs.game_specific ->> 'tag'::text) AS tag,
-    (content_packs.game_specific ->> 'prefix'::text) AS prefix,
-    (content_packs.game_specific ->> 'map_folder'::text) AS map_folder,
-    content_packs.is_official,
-    (content_packs.marketplace = 'Steam'::public.marketplace) AS is_app
+    console_safe,
+    default_enabled,
+    last_update,
+    min_version,
+    include_in_deltas,
+    (game_specific ->> 'tag'::text) AS tag,
+    (game_specific ->> 'prefix'::text) AS prefix,
+    (game_specific ->> 'map_folder'::text) AS map_folder,
+    is_official,
+    (marketplace = 'Steam'::public.marketplace) AS is_app
    FROM public.content_packs
-  WHERE (content_packs.game_id = 'Ark'::public.game_identifier);
+  WHERE (game_id = 'Ark'::public.game_identifier);
 
 
-ALTER TABLE ark.mods OWNER TO thommcgrath;
+ALTER VIEW ark.mods OWNER TO thommcgrath;
 
 --
 -- Name: mods_legacy; Type: TABLE; Schema: ark; Owner: thommcgrath
@@ -3650,7 +4721,9 @@ CREATE TABLE arksa.objects (
     min_version integer DEFAULT 20000000 NOT NULL,
     last_update timestamp with time zone DEFAULT ('now'::text)::timestamp(0) with time zone NOT NULL,
     content_pack_id uuid DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid NOT NULL,
-    tags public.citext[] DEFAULT '{}'::public.citext[]
+    tags public.citext[] DEFAULT '{}'::public.citext[],
+    label_vector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, (label)::text)) STORED,
+    alternate_label_vector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, (alternate_label)::text)) STORED
 );
 
 
@@ -3671,6 +4744,8 @@ CREATE TABLE arksa.creatures (
     mating_interval_max interval,
     used_stats integer,
     tag public.citext,
+    min_base_level integer DEFAULT 1 NOT NULL,
+    max_base_level integer DEFAULT 30 NOT NULL,
     CONSTRAINT creatures_check CHECK ((((mating_interval_min IS NULL) AND (mating_interval_max IS NULL)) OR ((mating_interval_min IS NOT NULL) AND (mating_interval_max IS NOT NULL)))),
     CONSTRAINT creatures_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
@@ -3693,7 +4768,7 @@ CREATE TABLE arksa.engrams (
     stack_size integer,
     item_id integer,
     gfi text,
-    CONSTRAINT engrams_check CHECK ((((entry_string IS NULL) AND (required_points IS NULL) AND (required_level IS NULL)) OR (entry_string IS NOT NULL))),
+    CONSTRAINT engrams_check CHECK ((((entry_string IS NULL) AND (required_points IS NULL) AND (required_level IS NULL)) OR ((entry_string IS NOT NULL) AND (required_points IS DISTINCT FROM 999) AND (required_level IS DISTINCT FROM 999)))),
     CONSTRAINT engrams_entry_string_check CHECK ((entry_string OPERATOR(public.~) '_C$'::public.citext)),
     CONSTRAINT engrams_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
@@ -3712,7 +4787,6 @@ CREATE TABLE arksa.loot_drops (
     availability integer NOT NULL,
     multiplier_min numeric(6,4) DEFAULT 1.0 NOT NULL,
     multiplier_max numeric(6,4) DEFAULT 1.0 NOT NULL,
-    uicolor text NOT NULL,
     icon uuid NOT NULL,
     sort_order public.citext NOT NULL,
     experimental boolean DEFAULT false NOT NULL,
@@ -3722,9 +4796,9 @@ CREATE TABLE arksa.loot_drops (
     min_item_sets integer NOT NULL,
     max_item_sets integer NOT NULL,
     prevent_duplicates boolean NOT NULL,
+    icon_color public.ui_color DEFAULT 'White'::public.ui_color NOT NULL,
     CONSTRAINT loot_drops_class_string_check CHECK ((class_string OPERATOR(public.~~) '%_C'::public.citext)),
-    CONSTRAINT loot_drops_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext)),
-    CONSTRAINT loot_drops_uicolor_check CHECK ((uicolor ~* '^[0-9a-fA-F]{8}$'::text))
+    CONSTRAINT loot_drops_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
 INHERITS (arksa.objects);
 
@@ -3760,7 +4834,9 @@ ALTER TABLE arksa.spawn_points OWNER TO thommcgrath;
 CREATE VIEW arksa.blueprints AS
  SELECT creatures.object_id,
     creatures.label,
+    creatures.label_vector,
     creatures.alternate_label,
+    creatures.alternate_label_vector,
     creatures.tableoid,
     creatures.min_version,
     creatures.last_update,
@@ -3773,7 +4849,9 @@ CREATE VIEW arksa.blueprints AS
 UNION
  SELECT engrams.object_id,
     engrams.label,
+    engrams.label_vector,
     engrams.alternate_label,
+    engrams.alternate_label_vector,
     engrams.tableoid,
     engrams.min_version,
     engrams.last_update,
@@ -3786,7 +4864,9 @@ UNION
 UNION
  SELECT loot_drops.object_id,
     loot_drops.label,
+    loot_drops.label_vector,
     loot_drops.alternate_label,
+    loot_drops.alternate_label_vector,
     loot_drops.tableoid,
     loot_drops.min_version,
     loot_drops.last_update,
@@ -3799,7 +4879,9 @@ UNION
 UNION
  SELECT spawn_points.object_id,
     spawn_points.label,
+    spawn_points.label_vector,
     spawn_points.alternate_label,
+    spawn_points.alternate_label_vector,
     spawn_points.tableoid,
     spawn_points.min_version,
     spawn_points.last_update,
@@ -3811,7 +4893,7 @@ UNION
    FROM arksa.spawn_points;
 
 
-ALTER TABLE arksa.blueprints OWNER TO thommcgrath;
+ALTER VIEW arksa.blueprints OWNER TO thommcgrath;
 
 --
 -- Name: color_sets; Type: TABLE; Schema: arksa; Owner: thommcgrath
@@ -3835,7 +4917,8 @@ CREATE TABLE arksa.colors (
     color_id integer NOT NULL,
     color_name public.citext NOT NULL,
     color_code public.hex NOT NULL,
-    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    color_label public.citext NOT NULL
 );
 
 
@@ -3859,23 +4942,23 @@ ALTER TABLE arksa.content_pack_relationships OWNER TO thommcgrath;
 --
 
 CREATE VIEW arksa.content_packs AS
- SELECT content_packs.content_pack_id,
-    content_packs.marketplace_id,
-    content_packs.user_id,
-    content_packs.name,
-    content_packs.confirmed,
-    content_packs.confirmation_code,
-    content_packs.console_safe,
-    content_packs.default_enabled,
-    content_packs.last_update,
-    content_packs.min_version,
-    content_packs.include_in_deltas,
-    content_packs.is_official
+ SELECT content_pack_id,
+    marketplace_id,
+    user_id,
+    name,
+    confirmed,
+    confirmation_code,
+    console_safe,
+    default_enabled,
+    last_update,
+    min_version,
+    include_in_deltas,
+    is_official
    FROM public.content_packs
-  WHERE (content_packs.game_id = 'ArkSA'::public.game_identifier);
+  WHERE (game_id = 'ArkSA'::public.game_identifier);
 
 
-ALTER TABLE arksa.content_packs OWNER TO thommcgrath;
+ALTER VIEW arksa.content_packs OWNER TO thommcgrath;
 
 --
 -- Name: crafting_costs; Type: TABLE; Schema: arksa; Owner: thommcgrath
@@ -3929,17 +5012,17 @@ ALTER TABLE arksa.creature_stats OWNER TO thommcgrath;
 --
 
 CREATE VIEW arksa.deletions AS
- SELECT deletions.object_id,
-    deletions.from_table,
-    deletions.label,
-    deletions.min_version,
-    deletions.action_time,
-    deletions.tag
+ SELECT object_id,
+    from_table,
+    label,
+    min_version,
+    action_time,
+    tag
    FROM public.deletions
-  WHERE (deletions.game_id = 'ArkSA'::public.game_identifier);
+  WHERE (game_id = 'ArkSA'::public.game_identifier);
 
 
-ALTER TABLE arksa.deletions OWNER TO thommcgrath;
+ALTER VIEW arksa.deletions OWNER TO thommcgrath;
 
 --
 -- Name: engram_stats; Type: TABLE; Schema: arksa; Owner: thommcgrath
@@ -4128,7 +5211,6 @@ CREATE TABLE arksa.maps (
     map_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     content_pack_id uuid NOT NULL,
     label public.citext NOT NULL,
-    ark_identifier text NOT NULL,
     difficulty_scale numeric(8,4) NOT NULL,
     mask bigint NOT NULL,
     sort integer NOT NULL,
@@ -4136,11 +5218,25 @@ CREATE TABLE arksa.maps (
     type arksa.map_type NOT NULL,
     official boolean GENERATED ALWAYS AS ((type = 'Official Canon'::arksa.map_type)) STORED,
     engram_groups integer DEFAULT 10 NOT NULL,
+    cycle_scale_multiplier numeric(8,4) DEFAULT 1.0 NOT NULL,
+    day_scale_multiplier numeric(8,4) DEFAULT 1.0 NOT NULL,
+    night_scale_multiplier numeric(8,4) DEFAULT 1.0 NOT NULL,
+    day_start_time integer DEFAULT 18900 NOT NULL,
+    day_end_time integer DEFAULT 73400 NOT NULL,
+    world_name public.citext NOT NULL,
+    ark_identifier text GENERATED ALWAYS AS (public.regexp_replace(world_name, '_WP$'::public.citext, ''::text)) STORED,
     CONSTRAINT maps_mask_check CHECK ((ceiling(log((2)::numeric, (mask)::numeric)) = floor(log((2)::numeric, (mask)::numeric))))
 );
 
 
 ALTER TABLE arksa.maps OWNER TO thommcgrath;
+
+--
+-- Name: COLUMN maps.ark_identifier; Type: COMMENT; Schema: arksa; Owner: thommcgrath
+--
+
+COMMENT ON COLUMN arksa.maps.ark_identifier IS 'This is a legacy column needed by Beacon 2.0.0 through 2.3.0';
+
 
 --
 -- Name: spawn_point_limits; Type: TABLE; Schema: arksa; Owner: thommcgrath
@@ -4268,44 +5364,59 @@ INHERITS (arksa.objects);
 ALTER TABLE arksa.templates OWNER TO thommcgrath;
 
 --
+-- Name: traits; Type: TABLE; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TABLE arksa.traits (
+    path public.citext NOT NULL,
+    max_allowed integer NOT NULL,
+    description public.citext NOT NULL,
+    name text NOT NULL
+)
+INHERITS (arksa.objects);
+
+
+ALTER TABLE arksa.traits OWNER TO thommcgrath;
+
+--
 -- Name: content_packs; Type: VIEW; Schema: palworld; Owner: thommcgrath
 --
 
 CREATE VIEW palworld.content_packs AS
- SELECT content_packs.content_pack_id,
-    content_packs.marketplace_id,
-    content_packs.user_id,
-    content_packs.name,
-    content_packs.confirmed,
-    content_packs.confirmation_code,
-    content_packs.console_safe,
-    content_packs.default_enabled,
-    content_packs.last_update,
-    content_packs.min_version,
-    content_packs.include_in_deltas,
-    content_packs.is_official
+ SELECT content_pack_id,
+    marketplace_id,
+    user_id,
+    name,
+    confirmed,
+    confirmation_code,
+    console_safe,
+    default_enabled,
+    last_update,
+    min_version,
+    include_in_deltas,
+    is_official
    FROM public.content_packs
-  WHERE (content_packs.game_id = 'Palworld'::public.game_identifier);
+  WHERE (game_id = 'Palworld'::public.game_identifier);
 
 
-ALTER TABLE palworld.content_packs OWNER TO thommcgrath;
+ALTER VIEW palworld.content_packs OWNER TO thommcgrath;
 
 --
 -- Name: deletions; Type: VIEW; Schema: palworld; Owner: thommcgrath
 --
 
 CREATE VIEW palworld.deletions AS
- SELECT deletions.object_id,
-    deletions.from_table,
-    deletions.label,
-    deletions.min_version,
-    deletions.action_time,
-    deletions.tag
+ SELECT object_id,
+    from_table,
+    label,
+    min_version,
+    action_time,
+    tag
    FROM public.deletions
-  WHERE (deletions.game_id = 'Palworld'::public.game_identifier);
+  WHERE (game_id = 'Palworld'::public.game_identifier);
 
 
-ALTER TABLE palworld.deletions OWNER TO thommcgrath;
+ALTER VIEW palworld.deletions OWNER TO thommcgrath;
 
 --
 -- Name: game_variables; Type: TABLE; Schema: palworld; Owner: thommcgrath
@@ -4394,11 +5505,29 @@ ALTER TABLE public.access_tokens OWNER TO thommcgrath;
 
 CREATE TABLE public.affiliate_links (
     code public.citext NOT NULL,
-    user_id uuid NOT NULL
+    user_id uuid NOT NULL,
+    description text NOT NULL,
+    destination text NOT NULL,
+    revenue_share numeric(4,3) NOT NULL,
+    start_date timestamp with time zone NOT NULL,
+    end_date timestamp with time zone NOT NULL,
+    CONSTRAINT affiliate_links_revenue_share_check CHECK (((revenue_share >= (0)::numeric) AND (revenue_share <= (1)::numeric)))
 );
 
 
 ALTER TABLE public.affiliate_links OWNER TO thommcgrath;
+
+--
+-- Name: affiliate_products; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.affiliate_products (
+    affiliate_id public.citext NOT NULL,
+    product_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.affiliate_products OWNER TO thommcgrath;
 
 --
 -- Name: affiliate_tracking; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -4407,13 +5536,66 @@ ALTER TABLE public.affiliate_links OWNER TO thommcgrath;
 CREATE TABLE public.affiliate_tracking (
     track_id uuid DEFAULT gen_random_uuid() NOT NULL,
     code public.citext NOT NULL,
-    client_reference_id uuid NOT NULL,
+    client_reference_id text NOT NULL,
     click_time timestamp with time zone NOT NULL,
     purchase_id uuid
 );
 
 
 ALTER TABLE public.affiliate_tracking OWNER TO thommcgrath;
+
+--
+-- Name: purchases; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.purchases (
+    purchase_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    purchaser_email uuid NOT NULL,
+    purchase_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    subtotal numeric(12,2) NOT NULL,
+    discount numeric(12,2) NOT NULL,
+    tax numeric(12,2) NOT NULL,
+    total numeric(12,2) NOT NULL,
+    merchant_reference public.citext NOT NULL,
+    client_reference_id text,
+    refunded boolean DEFAULT false NOT NULL,
+    tax_locality text,
+    currency public.citext NOT NULL,
+    issued boolean DEFAULT false NOT NULL,
+    notes text,
+    first_used timestamp with time zone,
+    conversion_rate numeric(25,15),
+    subtotal_usd numeric(12,2),
+    discount_usd numeric(12,2),
+    tax_usd numeric(12,2),
+    total_usd numeric(12,2),
+    amount_paid numeric(12,2) NOT NULL,
+    amount_paid_usd numeric(12,2),
+    date_fulfilled timestamp with time zone,
+    metadata jsonb,
+    CONSTRAINT purchases_check CHECK ((((conversion_rate IS NULL) AND (subtotal_usd IS NULL) AND (discount_usd IS NULL) AND (tax_usd IS NULL) AND (total_usd IS NULL) AND (amount_paid_usd IS NULL)) OR ((conversion_rate IS NOT NULL) AND (subtotal_usd IS NOT NULL) AND (discount_usd IS NOT NULL) AND (tax_usd IS NOT NULL) AND (total_usd IS NOT NULL) AND (amount_paid_usd IS NOT NULL)))),
+    CONSTRAINT purchases_currency_check CHECK ((length((currency)::text) = 3))
+);
+
+
+ALTER TABLE public.purchases OWNER TO thommcgrath;
+
+--
+-- Name: affiliate_purchases; Type: VIEW; Schema: public; Owner: thommcgrath
+--
+
+CREATE VIEW public.affiliate_purchases AS
+ SELECT affiliate_links.code AS affiliate_id,
+    purchases.purchase_id,
+    purchases.purchase_date,
+    purchases.total,
+    ((purchases.total * affiliate_links.revenue_share))::numeric(12,2) AS commission
+   FROM ((public.purchases
+     JOIN public.affiliate_tracking ON ((purchases.client_reference_id = affiliate_tracking.client_reference_id)))
+     JOIN public.affiliate_links ON ((affiliate_tracking.code OPERATOR(public.=) affiliate_links.code)));
+
+
+ALTER VIEW public.affiliate_purchases OWNER TO thommcgrath;
 
 --
 -- Name: application_auth_flows; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -4560,19 +5742,19 @@ CREATE VIEW public.content_packs_combined AS
            FROM public.content_pack_discovery_results
           WHERE (content_pack_discovery_results.deleted = false)
         )
- SELECT DISTINCT ON ((combined_packs.marketplace || combined_packs.marketplace_id)) combined_packs.content_pack_id,
-    combined_packs.game_id,
-    combined_packs.marketplace,
-    combined_packs.marketplace_id,
-    combined_packs.name,
-    combined_packs.last_update,
-    combined_packs.type,
-    combined_packs.slug
+ SELECT DISTINCT ON ((marketplace || marketplace_id)) content_pack_id,
+    game_id,
+    marketplace,
+    marketplace_id,
+    name,
+    last_update,
+    type,
+    slug
    FROM combined_packs
-  ORDER BY (combined_packs.marketplace || combined_packs.marketplace_id), combined_packs.type;
+  ORDER BY (marketplace || marketplace_id), type;
 
 
-ALTER TABLE public.content_packs_combined OWNER TO thommcgrath;
+ALTER VIEW public.content_packs_combined OWNER TO thommcgrath;
 
 --
 -- Name: rcon_commands; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -4710,7 +5892,7 @@ UNION
    FROM public.rcon_commands;
 
 
-ALTER TABLE public.content_update_times OWNER TO thommcgrath;
+ALTER VIEW public.content_update_times OWNER TO thommcgrath;
 
 --
 -- Name: corrupt_files; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -4739,6 +5921,69 @@ CREATE TABLE public.currencies (
 
 
 ALTER TABLE public.currencies OWNER TO thommcgrath;
+
+--
+-- Name: device_auth_flows; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.device_auth_flows (
+    device_code uuid NOT NULL,
+    application_id uuid NOT NULL,
+    scopes text NOT NULL,
+    verifier_hash text NOT NULL,
+    verifier_hash_algorithm text NOT NULL,
+    expiration timestamp with time zone DEFAULT (CURRENT_TIMESTAMP + '00:10:00'::interval) NOT NULL,
+    public_key text,
+    user_id uuid,
+    private_key_encrypted jsonb,
+    CONSTRAINT device_auth_flows_check CHECK ((((user_id IS NULL) AND (private_key_encrypted IS NULL)) OR ((user_id IS NOT NULL) AND (public_key IS NULL) AND (private_key_encrypted IS NULL)) OR ((user_id IS NOT NULL) AND (public_key IS NOT NULL) AND (private_key_encrypted IS NOT NULL))))
+);
+
+
+ALTER TABLE public.device_auth_flows OWNER TO thommcgrath;
+
+--
+-- Name: discord_bots; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.discord_bots (
+    bot_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    token bytea NOT NULL,
+    instance_key text NOT NULL,
+    shards integer DEFAULT 1 NOT NULL,
+    shards_connected integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.discord_bots OWNER TO thommcgrath;
+
+--
+-- Name: discord_channels; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.discord_channels (
+    channel_id text NOT NULL,
+    guild_id text NOT NULL,
+    channel_name public.citext NOT NULL,
+    channel_type integer NOT NULL,
+    channel_parent_id text
+);
+
+
+ALTER TABLE public.discord_channels OWNER TO thommcgrath;
+
+--
+-- Name: discord_guilds; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.discord_guilds (
+    guild_id text NOT NULL,
+    guild_name public.citext NOT NULL,
+    bot_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.discord_guilds OWNER TO thommcgrath;
 
 --
 -- Name: download_signatures; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -5077,7 +6322,7 @@ UNION
   WHERE (updates.published IS NOT NULL);
 
 
-ALTER TABLE public.news OWNER TO thommcgrath;
+ALTER VIEW public.news OWNER TO thommcgrath;
 
 --
 -- Name: oauth_requests; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -5120,6 +6365,80 @@ CREATE TABLE public.payment_method_currencies (
 ALTER TABLE public.payment_method_currencies OWNER TO thommcgrath;
 
 --
+-- Name: policies; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.policies (
+    policy_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    lookup_key public.citext NOT NULL,
+    title public.citext NOT NULL,
+    last_updated timestamp with time zone NOT NULL,
+    content text NOT NULL,
+    current_revision integer NOT NULL
+);
+
+
+ALTER TABLE public.policies OWNER TO thommcgrath;
+
+--
+-- Name: policy_revisions; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.policy_revisions (
+    revision_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    policy_id uuid NOT NULL,
+    revision_number integer NOT NULL,
+    revision_date timestamp with time zone NOT NULL,
+    content text NOT NULL
+);
+
+
+ALTER TABLE public.policy_revisions OWNER TO thommcgrath;
+
+--
+-- Name: policy_signatures; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.policy_signatures (
+    signature_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    policy_id uuid NOT NULL,
+    revision_number integer NOT NULL,
+    signature_date timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.policy_signatures OWNER TO thommcgrath;
+
+--
+-- Name: policy_signing_requests; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.policy_signing_requests (
+    policy_signing_request_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    policy_id uuid NOT NULL,
+    expiration timestamp with time zone DEFAULT (CURRENT_TIMESTAMP + '01:00:00'::interval) NOT NULL,
+    return_url text NOT NULL,
+    challenge text NOT NULL
+);
+
+
+ALTER TABLE public.policy_signing_requests OWNER TO thommcgrath;
+
+--
+-- Name: processed_webhooks; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.processed_webhooks (
+    event_id uuid NOT NULL,
+    date_processed timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.processed_webhooks OWNER TO thommcgrath;
+
+--
 -- Name: product_prices; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -5127,7 +6446,7 @@ CREATE TABLE public.product_prices (
     price_id text NOT NULL,
     product_id uuid NOT NULL,
     currency public.citext NOT NULL,
-    price numeric(6,2) NOT NULL,
+    price numeric(12,2) NOT NULL,
     CONSTRAINT product_prices_currency_check CHECK ((length((currency)::text) = 3))
 );
 
@@ -5141,7 +6460,7 @@ ALTER TABLE public.product_prices OWNER TO thommcgrath;
 CREATE TABLE public.products (
     product_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     product_name text NOT NULL,
-    retail_price numeric(6,2) NOT NULL,
+    retail_price numeric(12,2) NOT NULL,
     child_seat_count integer DEFAULT 0 NOT NULL,
     updates_length interval,
     flags integer,
@@ -5149,11 +6468,33 @@ CREATE TABLE public.products (
     game_id public.citext NOT NULL,
     tag public.citext NOT NULL,
     active boolean DEFAULT false NOT NULL,
-    hidden boolean DEFAULT false NOT NULL
+    hidden boolean DEFAULT false NOT NULL,
+    product_type public.product_type NOT NULL,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    monthly_price_id text,
+    yearly_price_id text,
+    CONSTRAINT products_check CHECK ((((product_type = 'One-Time'::public.product_type) AND (monthly_price_id IS NULL) AND (yearly_price_id IS NULL)) OR ((product_type = 'Subscription'::public.product_type) AND (monthly_price_id IS NOT NULL) AND (yearly_price_id IS NOT NULL)) OR (active = false)))
 );
 
 
 ALTER TABLE public.products OWNER TO thommcgrath;
+
+--
+-- Name: project_invites; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.project_invites (
+    invite_code public.citext NOT NULL,
+    project_id uuid NOT NULL,
+    project_password text NOT NULL,
+    role public.project_role NOT NULL,
+    creator_id uuid NOT NULL,
+    creation_date timestamp with time zone NOT NULL,
+    expiration_date timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.project_invites OWNER TO thommcgrath;
 
 --
 -- Name: project_members; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -5203,17 +6544,17 @@ CREATE TABLE public.purchase_items (
     product_id uuid NOT NULL,
     currency public.citext NOT NULL,
     quantity integer NOT NULL,
-    unit_price numeric(6,2) NOT NULL,
-    subtotal numeric(6,2) NOT NULL,
-    discount numeric(6,2) NOT NULL,
-    tax numeric(6,2) NOT NULL,
-    line_total numeric(6,2) NOT NULL,
+    unit_price numeric(12,2) NOT NULL,
+    subtotal numeric(12,2) NOT NULL,
+    discount numeric(12,2) NOT NULL,
+    tax numeric(12,2) NOT NULL,
+    line_total numeric(12,2) NOT NULL,
     conversion_rate numeric(25,15),
-    unit_price_usd numeric(6,2),
-    subtotal_usd numeric(6,2),
-    discount_usd numeric(6,2),
-    tax_usd numeric(6,2),
-    line_total_usd numeric(6,2),
+    unit_price_usd numeric(12,2),
+    subtotal_usd numeric(12,2),
+    discount_usd numeric(12,2),
+    tax_usd numeric(12,2),
+    line_total_usd numeric(12,2),
     CONSTRAINT purchase_items_check CHECK ((subtotal = (unit_price * (quantity)::numeric))),
     CONSTRAINT purchase_items_check1 CHECK ((line_total = ((subtotal + tax) - discount))),
     CONSTRAINT purchase_items_check2 CHECK ((((conversion_rate IS NULL) AND (unit_price_usd IS NULL) AND (subtotal_usd IS NULL) AND (discount_usd IS NULL) AND (tax_usd IS NULL) AND (line_total_usd IS NULL)) OR ((conversion_rate IS NOT NULL) AND (unit_price_usd IS NOT NULL) AND (subtotal_usd IS NOT NULL) AND (discount_usd IS NOT NULL) AND (tax_usd IS NOT NULL) AND (line_total_usd IS NOT NULL)))),
@@ -5243,38 +6584,6 @@ CREATE TABLE public.purchase_items_old (
 ALTER TABLE public.purchase_items_old OWNER TO thommcgrath;
 
 --
--- Name: purchases; Type: TABLE; Schema: public; Owner: thommcgrath
---
-
-CREATE TABLE public.purchases (
-    purchase_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    purchaser_email uuid NOT NULL,
-    purchase_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    subtotal numeric(6,2) NOT NULL,
-    discount numeric(6,2) NOT NULL,
-    tax numeric(6,2) NOT NULL,
-    total_paid numeric(6,2) NOT NULL,
-    merchant_reference public.citext NOT NULL,
-    client_reference_id text,
-    refunded boolean DEFAULT false NOT NULL,
-    tax_locality text,
-    currency public.citext NOT NULL,
-    issued boolean DEFAULT false NOT NULL,
-    notes text,
-    first_used timestamp with time zone,
-    conversion_rate numeric(25,15),
-    subtotal_usd numeric(6,2),
-    discount_usd numeric(6,2),
-    tax_usd numeric(6,2),
-    total_paid_usd numeric(6,2),
-    CONSTRAINT purchases_check CHECK ((((conversion_rate IS NULL) AND (subtotal_usd IS NULL) AND (discount_usd IS NULL) AND (tax_usd IS NULL) AND (total_paid_usd IS NULL)) OR ((conversion_rate IS NOT NULL) AND (subtotal_usd IS NOT NULL) AND (discount_usd IS NOT NULL) AND (tax_usd IS NOT NULL) AND (total_paid_usd IS NOT NULL)))),
-    CONSTRAINT purchases_currency_check CHECK ((length((currency)::text) = 3))
-);
-
-
-ALTER TABLE public.purchases OWNER TO thommcgrath;
-
---
 -- Name: purchased_products; Type: VIEW; Schema: public; Owner: thommcgrath
 --
 
@@ -5293,7 +6602,7 @@ CREATE VIEW public.purchased_products AS
   WHERE (purchases.refunded <> true);
 
 
-ALTER TABLE public.purchased_products OWNER TO thommcgrath;
+ALTER VIEW public.purchased_products OWNER TO thommcgrath;
 
 --
 -- Name: VIEW purchased_products; Type: COMMENT; Schema: public; Owner: thommcgrath
@@ -5455,7 +6764,7 @@ UNION
   WHERE (content_packs.confirmed = true);
 
 
-ALTER TABLE public.search_contents OWNER TO thommcgrath;
+ALTER VIEW public.search_contents OWNER TO thommcgrath;
 
 --
 -- Name: search_sync; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -5470,6 +6779,18 @@ CREATE TABLE public.search_sync (
 
 
 ALTER TABLE public.search_sync OWNER TO thommcgrath;
+
+--
+-- Name: service_token_aliases; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.service_token_aliases (
+    old_service_token_id uuid NOT NULL,
+    new_service_token_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.service_token_aliases OWNER TO thommcgrath;
 
 --
 -- Name: service_tokens; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -5499,16 +6820,16 @@ ALTER TABLE public.service_tokens OWNER TO thommcgrath;
 --
 
 CREATE VIEW public.sessions AS
- SELECT access_tokens.access_token_hash AS session_id,
-    access_tokens.user_id,
-    access_tokens.access_token_expiration AS valid_until,
-    access_tokens.remote_ip,
-    access_tokens.remote_country,
-    access_tokens.remote_agent
+ SELECT access_token_hash AS session_id,
+    user_id,
+    access_token_expiration AS valid_until,
+    remote_ip,
+    remote_country,
+    remote_agent
    FROM public.access_tokens;
 
 
-ALTER TABLE public.sessions OWNER TO thommcgrath;
+ALTER VIEW public.sessions OWNER TO thommcgrath;
 
 --
 -- Name: stw_applicants; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -5539,6 +6860,37 @@ CREATE TABLE public.stw_purchases (
 
 
 ALTER TABLE public.stw_purchases OWNER TO thommcgrath;
+
+--
+-- Name: subscription_purchases; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.subscription_purchases (
+    subscription_purchase_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    subscription_id uuid NOT NULL,
+    purchase_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.subscription_purchases OWNER TO thommcgrath;
+
+--
+-- Name: subscriptions; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.subscriptions (
+    subscription_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    stripe_id text NOT NULL,
+    product_id uuid NOT NULL,
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    date_expires timestamp with time zone NOT NULL,
+    initial_purchase_id uuid NOT NULL,
+    last_purchase_id uuid NOT NULL,
+    product_quantity integer NOT NULL
+);
+
+
+ALTER TABLE public.subscriptions OWNER TO thommcgrath;
 
 --
 -- Name: support_article_groups; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -5610,10 +6962,19 @@ CREATE VIEW public.template_selectors AS
     'Ark'::text AS game_id,
     preset_modifiers.language,
     preset_modifiers.pattern AS code
-   FROM ark.preset_modifiers;
+   FROM ark.preset_modifiers
+UNION
+ SELECT template_selectors.object_id,
+    template_selectors.label,
+    GREATEST(template_selectors.min_version, 20000000) AS min_version,
+    template_selectors.last_update,
+    'ArkSA'::text AS game_id,
+    template_selectors.language,
+    template_selectors.pattern AS code
+   FROM arksa.template_selectors;
 
 
-ALTER TABLE public.template_selectors OWNER TO thommcgrath;
+ALTER VIEW public.template_selectors OWNER TO thommcgrath;
 
 --
 -- Name: templates; Type: VIEW; Schema: public; Owner: thommcgrath
@@ -5626,10 +6987,18 @@ CREATE VIEW public.templates AS
     presets.last_update,
     'Ark'::text AS game_id,
     presets.contents
-   FROM ark.presets;
+   FROM ark.presets
+UNION
+ SELECT templates.object_id,
+    templates.label,
+    GREATEST(templates.min_version, 20000000) AS min_version,
+    templates.last_update,
+    'ArkSA'::text AS game_id,
+    templates.contents
+   FROM arksa.templates;
 
 
-ALTER TABLE public.templates OWNER TO thommcgrath;
+ALTER VIEW public.templates OWNER TO thommcgrath;
 
 --
 -- Name: trusted_devices; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -5700,6 +7069,115 @@ CREATE TABLE public.user_challenges (
 ALTER TABLE public.user_challenges OWNER TO thommcgrath;
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.users (
+    user_id uuid NOT NULL,
+    public_key text NOT NULL,
+    private_key public.hex,
+    private_key_salt public.hex,
+    private_key_iterations integer,
+    email_id uuid,
+    username public.citext,
+    usercloud_key public.hex,
+    banned boolean DEFAULT false NOT NULL,
+    parent_account_id uuid,
+    enabled boolean DEFAULT true NOT NULL,
+    require_password_change boolean DEFAULT false NOT NULL,
+    two_factor_key text,
+    username_full public.citext GENERATED ALWAYS AS (
+CASE
+    WHEN (username IS NULL) THEN NULL::text
+    ELSE (((username)::text || '#'::text) || "left"((user_id)::text, 8))
+END) STORED,
+    stripe_id text,
+    CONSTRAINT users_check CHECK ((((email_id IS NULL) AND (username IS NULL) AND (private_key_iterations IS NULL) AND (private_key_salt IS NULL) AND (private_key IS NULL)) OR ((email_id IS NOT NULL) AND (username IS NOT NULL) AND (private_key_iterations IS NOT NULL) AND (private_key_salt IS NOT NULL) AND (private_key IS NOT NULL)))),
+    CONSTRAINT users_stripe_id_check CHECK (((stripe_id IS NULL) OR (stripe_id ~~ 'cus_%'::text))),
+    CONSTRAINT users_username_check CHECK ((public.strpos(username, '#'::public.citext) = 0))
+);
+
+
+ALTER TABLE public.users OWNER TO thommcgrath;
+
+--
+-- Name: services; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.services (
+    service_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    game_id public.game_identifier NOT NULL,
+    access_key_hash text NOT NULL,
+    access_key text NOT NULL,
+    is_connected boolean DEFAULT false NOT NULL,
+    connection_change_time timestamp with time zone,
+    name text NOT NULL,
+    nickname text,
+    display_name text GENERATED ALWAYS AS (COALESCE(nickname, name)) STORED NOT NULL,
+    color public.color DEFAULT 'None'::public.color NOT NULL,
+    platform sentinel.game_platform NOT NULL,
+    game_specific jsonb DEFAULT '{}'::jsonb NOT NULL,
+    game_clock numeric(17,6) DEFAULT 0 NOT NULL,
+    current_players integer DEFAULT 0 NOT NULL,
+    max_players integer DEFAULT '-1'::integer NOT NULL,
+    cluster_id uuid DEFAULT '00000000-0000-0000-0000-000000000000'::uuid NOT NULL,
+    allow_cluster_id_change boolean DEFAULT true NOT NULL,
+    ip_address inet,
+    rcon_connected boolean DEFAULT false NOT NULL,
+    mini_name public.citext,
+    mini_name_display public.citext GENERATED ALWAYS AS (COALESCE((mini_name)::text, nickname, name)) STORED NOT NULL,
+    difficulty numeric(16,6) DEFAULT 5.0 NOT NULL,
+    connected_to public.citext,
+    kick_untracked_players boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE sentinel.services OWNER TO thommcgrath;
+
+--
+-- Name: TABLE services; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.services IS 'Also known as a server, services are the starting point for most other functionality.';
+
+
+--
+-- Name: user_subscriptions; Type: VIEW; Schema: public; Owner: thommcgrath
+--
+
+CREATE VIEW public.user_subscriptions AS
+ SELECT subscriptions.subscription_id,
+    subscriptions.stripe_id,
+    subscriptions.product_id,
+    subscriptions.date_created,
+    subscriptions.date_expires,
+    purchases.purchase_id,
+    users.user_id,
+    users.email_id,
+    products.product_name,
+    products.game_id,
+    products.flags,
+        CASE products.game_id
+            WHEN 'Sentinel'::public.citext THEN ( SELECT count(*) AS count
+               FROM sentinel.services
+              WHERE (services.user_id = users.user_id))
+            ELSE (0)::bigint
+        END AS units_used,
+        CASE products.game_id
+            WHEN 'Sentinel'::public.citext THEN subscriptions.product_quantity
+            ELSE 0
+        END AS units_allowed,
+    products.metadata
+   FROM (((public.subscriptions
+     JOIN public.purchases ON ((subscriptions.last_purchase_id = purchases.purchase_id)))
+     JOIN public.products ON ((subscriptions.product_id = products.product_id)))
+     JOIN public.users ON ((purchases.purchaser_email = users.email_id)));
+
+
+ALTER VIEW public.user_subscriptions OWNER TO thommcgrath;
+
+--
 -- Name: usercloud; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -5750,31 +7228,6 @@ CREATE TABLE public.usercloud_queue (
 ALTER TABLE public.usercloud_queue OWNER TO thommcgrath;
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: thommcgrath
---
-
-CREATE TABLE public.users (
-    user_id uuid NOT NULL,
-    public_key text NOT NULL,
-    private_key public.hex,
-    private_key_salt public.hex,
-    private_key_iterations integer,
-    email_id uuid,
-    username public.citext,
-    usercloud_key public.hex,
-    banned boolean DEFAULT false NOT NULL,
-    parent_account_id uuid,
-    enabled boolean DEFAULT true NOT NULL,
-    require_password_change boolean DEFAULT false NOT NULL,
-    two_factor_key text,
-    CONSTRAINT users_check CHECK ((((email_id IS NULL) AND (username IS NULL) AND (private_key_iterations IS NULL) AND (private_key_salt IS NULL) AND (private_key IS NULL)) OR ((email_id IS NOT NULL) AND (username IS NOT NULL) AND (private_key_iterations IS NOT NULL) AND (private_key_salt IS NOT NULL) AND (private_key IS NOT NULL)))),
-    CONSTRAINT users_username_check CHECK ((public.strpos(username, '#'::public.citext) = 0))
-);
-
-
-ALTER TABLE public.users OWNER TO thommcgrath;
-
---
 -- Name: wordlist; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -5810,6 +7263,1071 @@ INHERITS (sdtd.objects);
 
 
 ALTER TABLE sdtd.config_options OWNER TO thommcgrath;
+
+--
+-- Name: group_bans; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.group_bans (
+    group_ban_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    group_id uuid NOT NULL,
+    player_id uuid NOT NULL,
+    expiration timestamp with time zone,
+    issuer_id uuid NOT NULL,
+    comments text NOT NULL
+);
+
+
+ALTER TABLE sentinel.group_bans OWNER TO thommcgrath;
+
+--
+-- Name: TABLE group_bans; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.group_bans IS 'Bans which apply to every server in the group.';
+
+
+--
+-- Name: group_services; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.group_services (
+    group_service_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    group_id uuid NOT NULL,
+    service_id uuid NOT NULL,
+    permissions_mask bigint DEFAULT 0 NOT NULL,
+    CONSTRAINT group_services_permissions_mask_check CHECK (((permissions_mask & (1)::bigint) = 1))
+);
+
+
+ALTER TABLE sentinel.group_services OWNER TO thommcgrath;
+
+--
+-- Name: TABLE group_services; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.group_services IS 'Group service members';
+
+
+--
+-- Name: COLUMN group_services.permissions_mask; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON COLUMN sentinel.group_services.permissions_mask IS 'Group user permissions will be masked (binary AND) with this value.';
+
+
+--
+-- Name: service_bans; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.service_bans (
+    service_ban_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    service_id uuid NOT NULL,
+    player_id uuid NOT NULL,
+    expiration timestamp with time zone,
+    comments text NOT NULL
+);
+
+
+ALTER TABLE sentinel.service_bans OWNER TO thommcgrath;
+
+--
+-- Name: TABLE service_bans; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.service_bans IS 'Bans which apply to only this server.';
+
+
+--
+-- Name: active_bans; Type: VIEW; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE VIEW sentinel.active_bans AS
+ SELECT service_bans.service_id,
+    'Service'::text AS source,
+    service_bans.service_ban_id AS ban_id,
+    service_bans.player_id,
+    service_bans.expiration,
+    services.user_id AS issuer_id,
+    service_bans.comments
+   FROM (sentinel.service_bans
+     JOIN sentinel.services ON ((service_bans.service_id = services.service_id)))
+  WHERE ((service_bans.expiration IS NULL) OR (service_bans.expiration > CURRENT_TIMESTAMP))
+UNION
+ SELECT group_services.service_id,
+    'Group'::text AS source,
+    group_bans.group_ban_id AS ban_id,
+    group_bans.player_id,
+    group_bans.expiration,
+    group_bans.issuer_id,
+    group_bans.comments
+   FROM (sentinel.group_bans
+     JOIN sentinel.group_services ON ((group_bans.group_id = group_services.group_id)))
+  WHERE ((group_bans.expiration IS NULL) OR (group_bans.expiration > CURRENT_TIMESTAMP));
+
+
+ALTER VIEW sentinel.active_bans OWNER TO thommcgrath;
+
+--
+-- Name: VIEW active_bans; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON VIEW sentinel.active_bans IS 'Non-expired bans resolved by service.';
+
+
+--
+-- Name: player_sessions; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.player_sessions (
+    player_session_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    player_id uuid NOT NULL,
+    service_id uuid NOT NULL,
+    active_times tstzrange NOT NULL,
+    CONSTRAINT player_sessions_active_times_check CHECK ((lower_inf(active_times) = false))
+);
+
+
+ALTER TABLE sentinel.player_sessions OWNER TO thommcgrath;
+
+--
+-- Name: TABLE player_sessions; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.player_sessions IS 'Tracks player activity. Null disconnect time means the player is still connected.';
+
+
+--
+-- Name: players; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.players (
+    player_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name public.citext NOT NULL,
+    do_not_track boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE sentinel.players OWNER TO thommcgrath;
+
+--
+-- Name: TABLE players; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.players IS 'Basic player information.';
+
+
+--
+-- Name: active_players; Type: VIEW; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE VIEW sentinel.active_players AS
+ SELECT players.player_id,
+    players.name AS player_name,
+    player_sessions.service_id,
+    services.display_name AS service_display_name,
+    lower(player_sessions.active_times) AS connected_at,
+    (CURRENT_TIMESTAMP - lower(player_sessions.active_times)) AS time_playing
+   FROM ((sentinel.player_sessions
+     JOIN sentinel.players ON ((player_sessions.player_id = players.player_id)))
+     JOIN sentinel.services ON ((player_sessions.service_id = services.service_id)))
+  WHERE ((upper_inf(player_sessions.active_times) = true) AND (players.do_not_track = false));
+
+
+ALTER VIEW sentinel.active_players OWNER TO thommcgrath;
+
+--
+-- Name: VIEW active_players; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON VIEW sentinel.active_players IS 'Shows players currently online.';
+
+
+--
+-- Name: group_scripts; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.group_scripts (
+    group_script_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    group_id uuid NOT NULL,
+    script_id uuid NOT NULL,
+    parameter_values jsonb DEFAULT '{}'::jsonb NOT NULL,
+    permissions_mask bigint DEFAULT 0 NOT NULL,
+    revision_number integer,
+    CONSTRAINT group_scripts_parameter_values_check CHECK ((jsonb_typeof(parameter_values) = 'object'::text)),
+    CONSTRAINT group_scripts_permissions_mask_check CHECK (((permissions_mask & (1)::bigint) = 1))
+);
+
+
+ALTER TABLE sentinel.group_scripts OWNER TO thommcgrath;
+
+--
+-- Name: TABLE group_scripts; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.group_scripts IS 'Scripts assigned to a group.';
+
+
+--
+-- Name: COLUMN group_scripts.permissions_mask; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON COLUMN sentinel.group_scripts.permissions_mask IS 'Group user permissions will be masked (binary AND) with this value.';
+
+
+--
+-- Name: script_hashes; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.script_hashes (
+    hash text NOT NULL,
+    status sentinel.script_approval_status,
+    request_sent boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE sentinel.script_hashes OWNER TO thommcgrath;
+
+--
+-- Name: script_revisions; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.script_revisions (
+    script_id uuid NOT NULL,
+    revision_number integer NOT NULL,
+    revision_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    code text NOT NULL,
+    parameters text NOT NULL,
+    hash text GENERATED ALWAYS AS (encode(public.digest(((code || ':'::text) || parameters), 'sha384'::text), 'base64'::text)) STORED NOT NULL
+);
+
+
+ALTER TABLE sentinel.script_revisions OWNER TO thommcgrath;
+
+--
+-- Name: script_approved_revisions; Type: VIEW; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE VIEW sentinel.script_approved_revisions AS
+ SELECT script_revisions.script_id,
+    script_revisions.revision_number,
+    script_hashes.status
+   FROM (sentinel.script_revisions
+     JOIN sentinel.script_hashes ON ((script_revisions.hash = script_hashes.hash)))
+  WHERE (script_hashes.status = ANY (ARRAY['Probation'::sentinel.script_approval_status, 'Approved'::sentinel.script_approval_status]));
+
+
+ALTER VIEW sentinel.script_approved_revisions OWNER TO thommcgrath;
+
+--
+-- Name: scripts; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.scripts (
+    script_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    name public.citext NOT NULL,
+    context sentinel.event_name NOT NULL,
+    parameters jsonb DEFAULT '{}'::jsonb NOT NULL,
+    code text NOT NULL,
+    language sentinel.script_language NOT NULL,
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    date_modified timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    enabled boolean DEFAULT true NOT NULL,
+    latest_revision integer NOT NULL,
+    command_keyword public.citext,
+    command_arguments jsonb,
+    CONSTRAINT scripts_check CHECK ((((command_keyword IS NULL) AND (command_arguments IS NULL)) OR ((context = ANY (ARRAY['serviceScriptRun'::sentinel.event_name, 'slashCommand'::sentinel.event_name])) AND (jsonb_typeof(command_arguments) = 'array'::text)))),
+    CONSTRAINT scripts_parameters_check CHECK ((jsonb_typeof(parameters) = 'array'::text))
+);
+
+
+ALTER TABLE sentinel.scripts OWNER TO thommcgrath;
+
+--
+-- Name: TABLE scripts; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.scripts IS 'Scipt definitions that can be assigned to servers, groups, or users. Bit 1 / Dec 1.';
+
+
+--
+-- Name: service_scripts; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.service_scripts (
+    service_script_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    service_id uuid NOT NULL,
+    script_id uuid NOT NULL,
+    parameter_values jsonb DEFAULT '{}'::jsonb NOT NULL,
+    revision_number integer,
+    CONSTRAINT service_scripts_parameter_values_check CHECK ((jsonb_typeof(parameter_values) = 'object'::text))
+);
+
+
+ALTER TABLE sentinel.service_scripts OWNER TO thommcgrath;
+
+--
+-- Name: TABLE service_scripts; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.service_scripts IS 'Scripts assigned to a service.';
+
+
+--
+-- Name: active_scripts; Type: VIEW; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE VIEW sentinel.active_scripts AS
+ SELECT service_scripts.service_id,
+    scripts.script_id,
+    scripts.name,
+    scripts.context,
+    scripts.language,
+    script_revisions.code,
+    script_revisions.parameters,
+    service_scripts.parameter_values,
+    script_revisions.revision_number,
+    script_hashes.hash,
+    script_hashes.status,
+    script_hashes.request_sent AS approval_request_sent,
+    scripts.command_keyword,
+    scripts.command_arguments
+   FROM ((((sentinel.service_scripts
+     JOIN sentinel.scripts ON ((service_scripts.script_id = scripts.script_id)))
+     JOIN sentinel.script_revisions ON ((scripts.script_id = script_revisions.script_id)))
+     JOIN sentinel.script_hashes ON ((script_revisions.hash = script_hashes.hash)))
+     JOIN LATERAL ( SELECT max(script_approved_revisions.revision_number) AS best_revision
+           FROM sentinel.script_approved_revisions
+          WHERE ((script_approved_revisions.script_id = scripts.script_id) AND (script_approved_revisions.revision_number <= COALESCE(service_scripts.revision_number, scripts.latest_revision)))) revisions ON ((script_revisions.revision_number = revisions.best_revision)))
+  WHERE (scripts.enabled = true)
+UNION
+ SELECT group_services.service_id,
+    scripts.script_id,
+    scripts.name,
+    scripts.context,
+    scripts.language,
+    script_revisions.code,
+    script_revisions.parameters,
+    group_scripts.parameter_values,
+    script_revisions.revision_number,
+    script_hashes.hash,
+    script_hashes.status,
+    script_hashes.request_sent AS approval_request_sent,
+    scripts.command_keyword,
+    scripts.command_arguments
+   FROM (((((sentinel.group_scripts
+     JOIN sentinel.group_services ON ((group_services.group_id = group_scripts.group_id)))
+     JOIN sentinel.scripts ON ((group_scripts.script_id = scripts.script_id)))
+     JOIN sentinel.script_revisions ON ((scripts.script_id = script_revisions.script_id)))
+     JOIN sentinel.script_hashes ON ((script_revisions.hash = script_hashes.hash)))
+     JOIN LATERAL ( SELECT max(script_approved_revisions.revision_number) AS best_revision
+           FROM sentinel.script_approved_revisions
+          WHERE ((script_approved_revisions.script_id = scripts.script_id) AND (script_approved_revisions.revision_number <= COALESCE(group_scripts.revision_number, scripts.latest_revision)))) revisions ON ((script_revisions.revision_number = revisions.best_revision)))
+  WHERE (scripts.enabled = true);
+
+
+ALTER VIEW sentinel.active_scripts OWNER TO thommcgrath;
+
+--
+-- Name: VIEW active_scripts; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON VIEW sentinel.active_scripts IS 'Enabled scripts resolved by service.';
+
+
+--
+-- Name: buckets; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.buckets (
+    bucket_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    name public.citext NOT NULL
+);
+
+
+ALTER TABLE sentinel.buckets OWNER TO thommcgrath;
+
+--
+-- Name: TABLE buckets; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.buckets IS 'Bucket definitions that can be assigned to servers, groups, or users. Bit 2 / Dec 2. Also used when assigning a script.';
+
+
+--
+-- Name: group_buckets; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.group_buckets (
+    group_bucket_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    group_id uuid NOT NULL,
+    bucket_id uuid NOT NULL,
+    permissions_mask bigint DEFAULT 0 NOT NULL,
+    CONSTRAINT group_buckets_permissions_mask_check CHECK (((permissions_mask & (1)::bigint) = 1))
+);
+
+
+ALTER TABLE sentinel.group_buckets OWNER TO thommcgrath;
+
+--
+-- Name: TABLE group_buckets; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.group_buckets IS 'buckets assigned to a group.';
+
+
+--
+-- Name: COLUMN group_buckets.permissions_mask; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON COLUMN sentinel.group_buckets.permissions_mask IS 'Group user permissions will be masked (binary AND) with this value.';
+
+
+--
+-- Name: group_users; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.group_users (
+    group_user_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    group_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    permissions bigint DEFAULT 0 NOT NULL,
+    CONSTRAINT group_users_permissions_check CHECK (((permissions & (1)::bigint) = 1))
+);
+
+
+ALTER TABLE sentinel.group_users OWNER TO thommcgrath;
+
+--
+-- Name: TABLE group_users; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.group_users IS 'Group user members';
+
+
+--
+-- Name: COLUMN group_users.permissions; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON COLUMN sentinel.group_users.permissions IS 'Permission bits that are added to the group for the user.';
+
+
+--
+-- Name: groups; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.groups (
+    group_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    name public.citext NOT NULL,
+    color public.color DEFAULT 'None'::public.color NOT NULL,
+    enable_group_chat boolean DEFAULT false NOT NULL,
+    discord_invite text,
+    discord_link_code public.citext,
+    discord_guild_id text,
+    discord_chat_channel_id text,
+    is_cluster_group boolean GENERATED ALWAYS AS ((enable_group_chat OR (discord_invite IS NOT NULL) OR (discord_link_code IS NOT NULL) OR (discord_guild_id IS NOT NULL))) STORED NOT NULL
+);
+
+
+ALTER TABLE sentinel.groups OWNER TO thommcgrath;
+
+--
+-- Name: TABLE groups; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.groups IS 'Group definitions';
+
+
+--
+-- Name: bucket_permissions; Type: VIEW; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE VIEW sentinel.bucket_permissions AS
+ SELECT bucket_id,
+    user_id,
+    bit_or(permissions) AS permissions
+   FROM ( SELECT buckets.bucket_id,
+            buckets.user_id,
+            ('00011111111111111111111111111111111111111111111111111111'::"bit")::bigint AS permissions
+           FROM sentinel.buckets
+        UNION
+         SELECT group_buckets.bucket_id,
+            group_users.user_id,
+            (group_buckets.permissions_mask & group_users.permissions)
+           FROM (sentinel.group_buckets
+             JOIN sentinel.group_users ON ((group_buckets.group_id = group_users.group_id)))
+        UNION
+         SELECT group_buckets.bucket_id,
+            groups.user_id,
+            group_buckets.permissions_mask
+           FROM (sentinel.group_buckets
+             JOIN sentinel.groups ON ((group_buckets.group_id = groups.group_id)))) resolved
+  GROUP BY bucket_id, user_id;
+
+
+ALTER VIEW sentinel.bucket_permissions OWNER TO thommcgrath;
+
+--
+-- Name: VIEW bucket_permissions; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON VIEW sentinel.bucket_permissions IS 'Lists resolved permissions by user for each bucket.';
+
+
+--
+-- Name: bucket_values; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.bucket_values (
+    bucket_value_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    bucket_id uuid NOT NULL,
+    player_id uuid,
+    key public.citext NOT NULL,
+    value text NOT NULL
+);
+
+
+ALTER TABLE sentinel.bucket_values OWNER TO thommcgrath;
+
+--
+-- Name: TABLE bucket_values; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.bucket_values IS 'Key-value store for the buckets';
+
+
+--
+-- Name: characters; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.characters (
+    character_id uuid NOT NULL,
+    player_id uuid NOT NULL,
+    service_id uuid NOT NULL,
+    tribe_id uuid NOT NULL,
+    specimen_id integer NOT NULL,
+    name public.citext NOT NULL,
+    name_vector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, (name)::text)) STORED NOT NULL,
+    is_active boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE sentinel.characters OWNER TO thommcgrath;
+
+--
+-- Name: TABLE characters; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.characters IS 'These are the playable characters inside the game.';
+
+
+--
+-- Name: chat_message_queue; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.chat_message_queue (
+    message_id uuid NOT NULL,
+    origin_type sentinel.chat_message_origin NOT NULL,
+    origin_id text NOT NULL,
+    sender_name text NOT NULL,
+    sender_info jsonb DEFAULT '{}'::jsonb NOT NULL,
+    scope sentinel.chat_message_scope NOT NULL,
+    message_content text NOT NULL,
+    message_time timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE sentinel.chat_message_queue OWNER TO thommcgrath;
+
+--
+-- Name: dinos; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.dinos (
+    dino_id uuid NOT NULL,
+    service_id uuid NOT NULL,
+    tribe_id uuid,
+    dino_number numeric(20,0) NOT NULL,
+    visual_dino_number text NOT NULL,
+    name public.citext NOT NULL,
+    species public.citext NOT NULL,
+    species_path public.citext NOT NULL,
+    level integer NOT NULL,
+    age real NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cryopod_data bytea,
+    status sentinel.dino_status DEFAULT 'Deployed'::sentinel.dino_status NOT NULL,
+    display_name public.citext GENERATED ALWAYS AS (
+CASE
+    WHEN (name OPERATOR(public.=) ''::public.citext) THEN species
+    ELSE name
+END) STORED NOT NULL,
+    name_vector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, (
+CASE
+    WHEN (name OPERATOR(public.=) ''::public.citext) THEN species
+    ELSE name
+END)::text)) STORED NOT NULL,
+    name_tag public.citext DEFAULT ''::public.citext NOT NULL,
+    gender sentinel.dino_gender DEFAULT 'None'::sentinel.dino_gender NOT NULL
+);
+
+
+ALTER TABLE sentinel.dinos OWNER TO thommcgrath;
+
+--
+-- Name: TABLE dinos; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.dinos IS 'Tamed dinos.';
+
+
+--
+-- Name: group_permissions; Type: VIEW; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE VIEW sentinel.group_permissions AS
+ SELECT group_id,
+    user_id,
+    bit_or(permissions) AS permissions
+   FROM ( SELECT groups.group_id,
+            groups.user_id,
+            ('00011111111111111111111111111111111111111111111111111111'::"bit")::bigint AS permissions
+           FROM sentinel.groups
+        UNION
+         SELECT group_users.group_id,
+            group_users.user_id,
+            group_users.permissions
+           FROM sentinel.group_users) resolved
+  GROUP BY group_id, user_id;
+
+
+ALTER VIEW sentinel.group_permissions OWNER TO thommcgrath;
+
+--
+-- Name: VIEW group_permissions; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON VIEW sentinel.group_permissions IS 'Lists resolved permissions by user for each group.';
+
+
+--
+-- Name: ip_address_cache; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.ip_address_cache (
+    ip_address inet NOT NULL,
+    country_code text NOT NULL,
+    continent_code text NOT NULL,
+    is_vpn boolean NOT NULL,
+    timezone text NOT NULL,
+    expiration timestamp with time zone DEFAULT (CURRENT_TIMESTAMP + '30 days'::interval) NOT NULL
+);
+
+
+ALTER TABLE sentinel.ip_address_cache OWNER TO thommcgrath;
+
+--
+-- Name: TABLE ip_address_cache; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.ip_address_cache IS 'Caches IP address lookups for performance and usage savings.';
+
+
+--
+-- Name: message_moderation_scores; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.message_moderation_scores (
+    score_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    original_message text NOT NULL,
+    scores jsonb NOT NULL,
+    platform sentinel.moderation_platform NOT NULL
+);
+
+
+ALTER TABLE sentinel.message_moderation_scores OWNER TO thommcgrath;
+
+--
+-- Name: message_translations; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.message_translations (
+    translation_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    original_message text NOT NULL,
+    original_language text NOT NULL,
+    translated_message text NOT NULL,
+    translated_language text NOT NULL
+);
+
+
+ALTER TABLE sentinel.message_translations OWNER TO thommcgrath;
+
+--
+-- Name: player_identifiers; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.player_identifiers (
+    player_identifier_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    player_id uuid NOT NULL,
+    provider public.citext NOT NULL,
+    identifier public.citext NOT NULL,
+    name public.citext NOT NULL
+);
+
+
+ALTER TABLE sentinel.player_identifiers OWNER TO thommcgrath;
+
+--
+-- Name: TABLE player_identifiers; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.player_identifiers IS 'For games with cross play, allows players across multiple platforms to be associated together.';
+
+
+--
+-- Name: player_name_history; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.player_name_history (
+    history_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    player_id uuid NOT NULL,
+    name public.citext NOT NULL,
+    name_vector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, (name)::text)) STORED NOT NULL,
+    change_time timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE sentinel.player_name_history OWNER TO thommcgrath;
+
+--
+-- Name: TABLE player_name_history; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.player_name_history IS 'Keeps track of changes players make to their names.';
+
+
+--
+-- Name: player_note_edits; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.player_note_edits (
+    edit_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    note_id uuid NOT NULL,
+    previous_timestamp timestamp with time zone NOT NULL,
+    previous_content text NOT NULL,
+    previous_content_vector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, previous_content)) STORED NOT NULL
+);
+
+
+ALTER TABLE sentinel.player_note_edits OWNER TO thommcgrath;
+
+--
+-- Name: TABLE player_note_edits; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.player_note_edits IS 'Keeps a history of all versions of a player note.';
+
+
+--
+-- Name: player_notes; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.player_notes (
+    note_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    player_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    date_modified timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    content text NOT NULL,
+    content_vector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, content)) STORED NOT NULL
+);
+
+
+ALTER TABLE sentinel.player_notes OWNER TO thommcgrath;
+
+--
+-- Name: TABLE player_notes; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.player_notes IS 'Player notes are comments that can be left on players and viewable by anybody.';
+
+
+--
+-- Name: script_permissions; Type: VIEW; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE VIEW sentinel.script_permissions AS
+ SELECT script_id,
+    user_id,
+    bit_or(permissions) AS permissions
+   FROM ( SELECT scripts.script_id,
+            scripts.user_id,
+            ('00011111111111111111111111111111111111111111111111111111'::"bit")::bigint AS permissions
+           FROM sentinel.scripts
+        UNION
+         SELECT group_scripts.script_id,
+            group_users.user_id,
+            (group_scripts.permissions_mask & group_users.permissions)
+           FROM (sentinel.group_scripts
+             JOIN sentinel.group_users ON ((group_scripts.group_id = group_users.group_id)))
+        UNION
+         SELECT group_scripts.script_id,
+            groups.user_id,
+            group_scripts.permissions_mask
+           FROM (sentinel.group_scripts
+             JOIN sentinel.groups ON ((group_scripts.group_id = groups.group_id)))) resolved
+  GROUP BY script_id, user_id;
+
+
+ALTER VIEW sentinel.script_permissions OWNER TO thommcgrath;
+
+--
+-- Name: VIEW script_permissions; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON VIEW sentinel.script_permissions IS 'Lists resolved permissions by user for each script.';
+
+
+--
+-- Name: script_tests; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.script_tests (
+    request_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    script_data jsonb NOT NULL,
+    user_id uuid NOT NULL,
+    queue_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    completed_time timestamp with time zone,
+    output text
+);
+
+
+ALTER TABLE sentinel.script_tests OWNER TO thommcgrath;
+
+--
+-- Name: script_webhooks; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.script_webhooks (
+    webhook_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    script_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    purpose text NOT NULL,
+    access_key text NOT NULL,
+    access_key_hash text NOT NULL
+);
+
+
+ALTER TABLE sentinel.script_webhooks OWNER TO thommcgrath;
+
+--
+-- Name: service_event_queue; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.service_event_queue (
+    queue_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    service_id uuid NOT NULL,
+    cluster_id uuid,
+    queue_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    version integer NOT NULL,
+    event_data text NOT NULL,
+    status sentinel.event_queue_status DEFAULT 'Waiting'::sentinel.event_queue_status NOT NULL
+);
+
+
+ALTER TABLE sentinel.service_event_queue OWNER TO thommcgrath;
+
+--
+-- Name: TABLE service_event_queue; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.service_event_queue IS 'Stores events from game servers to be processed by workers.';
+
+
+--
+-- Name: service_languages; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.service_languages (
+    service_id uuid NOT NULL,
+    language sentinel.lang_shortcode NOT NULL
+);
+
+
+ALTER TABLE sentinel.service_languages OWNER TO thommcgrath;
+
+--
+-- Name: TABLE service_languages; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.service_languages IS 'Determines the languages of processed log messages.';
+
+
+--
+-- Name: service_log_messages; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.service_log_messages (
+    message_id uuid NOT NULL,
+    language character(2) NOT NULL,
+    message text NOT NULL,
+    vector tsvector GENERATED ALWAYS AS (to_tsvector(sentinel.language_shortcode_to_regconfig((language)::text), message)) STORED NOT NULL
+);
+
+
+ALTER TABLE sentinel.service_log_messages OWNER TO thommcgrath;
+
+--
+-- Name: TABLE service_log_messages; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.service_log_messages IS 'Processed log messages.';
+
+
+--
+-- Name: service_logs; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.service_logs (
+    message_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    service_id uuid NOT NULL,
+    type sentinel.log_type NOT NULL,
+    log_time timestamp with time zone NOT NULL,
+    event_name sentinel.event_name NOT NULL,
+    level sentinel.log_level DEFAULT 'Informational'::sentinel.log_level NOT NULL,
+    analyzer_status sentinel.log_analyzer_status DEFAULT 'Skipped'::sentinel.log_analyzer_status NOT NULL,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
+    grouping_key text
+);
+
+
+ALTER TABLE sentinel.service_logs OWNER TO thommcgrath;
+
+--
+-- Name: service_permissions; Type: VIEW; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE VIEW sentinel.service_permissions AS
+ SELECT service_id,
+    user_id,
+    bit_or(permissions) AS permissions
+   FROM ( SELECT services.service_id,
+            services.user_id,
+            ('00011111111111111111111111111111111111111111111111111111'::"bit")::bigint AS permissions
+           FROM sentinel.services
+        UNION
+         SELECT group_services.service_id,
+            group_users.user_id,
+            (group_services.permissions_mask & group_users.permissions)
+           FROM (sentinel.group_services
+             JOIN sentinel.group_users ON ((group_services.group_id = group_users.group_id)))
+        UNION
+         SELECT group_services.service_id,
+            groups.user_id,
+            group_services.permissions_mask
+           FROM (sentinel.group_services
+             JOIN sentinel.groups ON ((group_services.group_id = groups.group_id)))) resolved
+  GROUP BY service_id, user_id;
+
+
+ALTER VIEW sentinel.service_permissions OWNER TO thommcgrath;
+
+--
+-- Name: VIEW service_permissions; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON VIEW sentinel.service_permissions IS 'Lists resolved permissions by user for each service.';
+
+
+--
+-- Name: tribe_characters; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.tribe_characters (
+    tribe_id uuid NOT NULL,
+    character_id uuid NOT NULL
+);
+
+
+ALTER TABLE sentinel.tribe_characters OWNER TO thommcgrath;
+
+--
+-- Name: TABLE tribe_characters; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.tribe_characters IS 'Stores tribe character memberships, even after transfer to another server.';
+
+
+--
+-- Name: tribe_dinos; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.tribe_dinos (
+    tribe_id uuid NOT NULL,
+    dino_id uuid NOT NULL
+);
+
+
+ALTER TABLE sentinel.tribe_dinos OWNER TO thommcgrath;
+
+--
+-- Name: TABLE tribe_dinos; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.tribe_dinos IS 'Stores tribe dino memberships, even after transfer to another server.';
+
+
+--
+-- Name: tribes; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.tribes (
+    tribe_id uuid NOT NULL,
+    service_id uuid NOT NULL,
+    tribe_number integer NOT NULL,
+    name public.citext NOT NULL,
+    name_vector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, (name)::text)) STORED NOT NULL
+);
+
+
+ALTER TABLE sentinel.tribes OWNER TO thommcgrath;
+
+--
+-- Name: TABLE tribes; Type: COMMENT; Schema: sentinel; Owner: thommcgrath
+--
+
+COMMENT ON TABLE sentinel.tribes IS 'In-game tribes use to group characters and dinos.';
+
+
+--
+-- Name: watcher_logs; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.watcher_logs (
+    message_id uuid NOT NULL,
+    message text NOT NULL,
+    message_time timestamp with time zone NOT NULL,
+    hostname public.citext NOT NULL
+);
+
+
+ALTER TABLE sentinel.watcher_logs OWNER TO thommcgrath;
+
+--
+-- Name: watcher_releases; Type: TABLE; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TABLE sentinel.watcher_releases (
+    release_id integer NOT NULL,
+    download_url text NOT NULL,
+    content_type text NOT NULL
+);
+
+
+ALTER TABLE sentinel.watcher_releases OWNER TO thommcgrath;
 
 --
 -- Name: creatures object_id; Type: DEFAULT; Schema: ark; Owner: thommcgrath
@@ -6421,6 +8939,41 @@ ALTER TABLE ONLY arksa.templates ALTER COLUMN tags SET DEFAULT '{}'::public.cite
 
 
 --
+-- Name: traits object_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.traits ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: traits min_version; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.traits ALTER COLUMN min_version SET DEFAULT 20000000;
+
+
+--
+-- Name: traits last_update; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.traits ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: traits content_pack_id; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.traits ALTER COLUMN content_pack_id SET DEFAULT 'b32a3d73-9406-56f2-bd8f-936ee0275249'::uuid;
+
+
+--
+-- Name: traits tags; Type: DEFAULT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.traits ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: ini_options object_id; Type: DEFAULT; Schema: palworld; Owner: thommcgrath
 --
 
@@ -6861,6 +9414,14 @@ ALTER TABLE ONLY arksa.color_sets
 
 
 --
+-- Name: colors colors_color_name_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.colors
+    ADD CONSTRAINT colors_color_name_key UNIQUE (color_name);
+
+
+--
 -- Name: colors colors_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
 --
 
@@ -7037,14 +9598,6 @@ ALTER TABLE ONLY arksa.loot_item_sets
 
 
 --
--- Name: maps maps_ark_identifier_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
---
-
-ALTER TABLE ONLY arksa.maps
-    ADD CONSTRAINT maps_ark_identifier_key UNIQUE (ark_identifier);
-
-
---
 -- Name: maps maps_mask_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
 --
 
@@ -7058,6 +9611,14 @@ ALTER TABLE ONLY arksa.maps
 
 ALTER TABLE ONLY arksa.maps
     ADD CONSTRAINT maps_pkey PRIMARY KEY (map_id);
+
+
+--
+-- Name: maps maps_world_name_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.maps
+    ADD CONSTRAINT maps_world_name_key UNIQUE (world_name);
 
 
 --
@@ -7149,6 +9710,22 @@ ALTER TABLE ONLY arksa.templates
 
 
 --
+-- Name: traits traits_path_content_pack_id_key; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.traits
+    ADD CONSTRAINT traits_path_content_pack_id_key UNIQUE (path, content_pack_id);
+
+
+--
+-- Name: traits traits_pkey; Type: CONSTRAINT; Schema: arksa; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY arksa.traits
+    ADD CONSTRAINT traits_pkey PRIMARY KEY (object_id);
+
+
+--
 -- Name: game_variables game_variables_pkey; Type: CONSTRAINT; Schema: palworld; Owner: thommcgrath
 --
 
@@ -7178,6 +9755,14 @@ ALTER TABLE ONLY public.access_tokens
 
 ALTER TABLE ONLY public.affiliate_links
     ADD CONSTRAINT affiliate_links_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: affiliate_products affiliate_products_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_products
+    ADD CONSTRAINT affiliate_products_pkey PRIMARY KEY (affiliate_id, product_id);
 
 
 --
@@ -7306,6 +9891,46 @@ ALTER TABLE ONLY public.corrupt_files
 
 ALTER TABLE ONLY public.currencies
     ADD CONSTRAINT currencies_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: device_auth_flows device_auth_flows_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.device_auth_flows
+    ADD CONSTRAINT device_auth_flows_pkey PRIMARY KEY (device_code);
+
+
+--
+-- Name: device_auth_flows device_auth_flows_verifier_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.device_auth_flows
+    ADD CONSTRAINT device_auth_flows_verifier_hash_key UNIQUE (verifier_hash);
+
+
+--
+-- Name: discord_bots discord_bots_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.discord_bots
+    ADD CONSTRAINT discord_bots_pkey PRIMARY KEY (bot_id);
+
+
+--
+-- Name: discord_channels discord_channels_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.discord_channels
+    ADD CONSTRAINT discord_channels_pkey PRIMARY KEY (channel_id);
+
+
+--
+-- Name: discord_guilds discord_guilds_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.discord_guilds
+    ADD CONSTRAINT discord_guilds_pkey PRIMARY KEY (guild_id);
 
 
 --
@@ -7469,6 +10094,78 @@ ALTER TABLE ONLY public.payment_methods
 
 
 --
+-- Name: policies policies_lookup_key_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policies
+    ADD CONSTRAINT policies_lookup_key_key UNIQUE (lookup_key);
+
+
+--
+-- Name: policies policies_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policies
+    ADD CONSTRAINT policies_pkey PRIMARY KEY (policy_id);
+
+
+--
+-- Name: policy_revisions policy_revisions_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_revisions
+    ADD CONSTRAINT policy_revisions_pkey PRIMARY KEY (revision_id);
+
+
+--
+-- Name: policy_revisions policy_revisions_policy_id_revision_number_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_revisions
+    ADD CONSTRAINT policy_revisions_policy_id_revision_number_key UNIQUE (policy_id, revision_number);
+
+
+--
+-- Name: policy_signatures policy_signatures_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_signatures
+    ADD CONSTRAINT policy_signatures_pkey PRIMARY KEY (signature_id);
+
+
+--
+-- Name: policy_signatures policy_signatures_user_id_policy_id_revision_number_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_signatures
+    ADD CONSTRAINT policy_signatures_user_id_policy_id_revision_number_key UNIQUE (user_id, policy_id, revision_number);
+
+
+--
+-- Name: policy_signing_requests policy_signing_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_signing_requests
+    ADD CONSTRAINT policy_signing_requests_pkey PRIMARY KEY (policy_signing_request_id);
+
+
+--
+-- Name: policy_signing_requests policy_signing_requests_user_id_policy_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_signing_requests
+    ADD CONSTRAINT policy_signing_requests_user_id_policy_id_key UNIQUE (user_id, policy_id);
+
+
+--
+-- Name: processed_webhooks processed_webhooks_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.processed_webhooks
+    ADD CONSTRAINT processed_webhooks_pkey PRIMARY KEY (event_id);
+
+
+--
 -- Name: product_prices product_prices_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -7482,6 +10179,14 @@ ALTER TABLE ONLY public.product_prices
 
 ALTER TABLE ONLY public.products
     ADD CONSTRAINT products_pkey PRIMARY KEY (product_id);
+
+
+--
+-- Name: project_invites project_invites_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.project_invites
+    ADD CONSTRAINT project_invites_pkey PRIMARY KEY (invite_code);
 
 
 --
@@ -7573,6 +10278,14 @@ ALTER TABLE ONLY public.search_sync
 
 
 --
+-- Name: service_token_aliases service_token_aliases_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.service_token_aliases
+    ADD CONSTRAINT service_token_aliases_pkey PRIMARY KEY (old_service_token_id);
+
+
+--
 -- Name: service_tokens service_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -7602,6 +10315,38 @@ ALTER TABLE ONLY public.stw_applicants
 
 ALTER TABLE ONLY public.stw_purchases
     ADD CONSTRAINT stw_purchases_pkey PRIMARY KEY (stw_id);
+
+
+--
+-- Name: subscription_purchases subscription_purchases_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscription_purchases
+    ADD CONSTRAINT subscription_purchases_pkey PRIMARY KEY (subscription_purchase_id);
+
+
+--
+-- Name: subscription_purchases subscription_purchases_subscription_id_purchase_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscription_purchases
+    ADD CONSTRAINT subscription_purchases_subscription_id_purchase_id_key UNIQUE (subscription_id, purchase_id);
+
+
+--
+-- Name: subscriptions subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscriptions
+    ADD CONSTRAINT subscriptions_pkey PRIMARY KEY (subscription_id);
+
+
+--
+-- Name: subscriptions subscriptions_stripe_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscriptions
+    ADD CONSTRAINT subscriptions_stripe_id_key UNIQUE (stripe_id);
 
 
 --
@@ -7818,6 +10563,358 @@ ALTER TABLE ONLY sdtd.config_options
 
 ALTER TABLE ONLY sdtd.objects
     ADD CONSTRAINT objects_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: bucket_values bucket_values_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.bucket_values
+    ADD CONSTRAINT bucket_values_pkey PRIMARY KEY (bucket_value_id);
+
+
+--
+-- Name: buckets buckets_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.buckets
+    ADD CONSTRAINT buckets_pkey PRIMARY KEY (bucket_id);
+
+
+--
+-- Name: characters characters_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.characters
+    ADD CONSTRAINT characters_pkey PRIMARY KEY (character_id);
+
+
+--
+-- Name: chat_message_queue chat_message_queue_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.chat_message_queue
+    ADD CONSTRAINT chat_message_queue_pkey PRIMARY KEY (message_id);
+
+
+--
+-- Name: dinos dinos_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.dinos
+    ADD CONSTRAINT dinos_pkey PRIMARY KEY (dino_id);
+
+
+--
+-- Name: group_bans group_bans_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_bans
+    ADD CONSTRAINT group_bans_pkey PRIMARY KEY (group_ban_id);
+
+
+--
+-- Name: group_buckets group_buckets_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_buckets
+    ADD CONSTRAINT group_buckets_pkey PRIMARY KEY (group_bucket_id);
+
+
+--
+-- Name: group_scripts group_scripts_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_scripts
+    ADD CONSTRAINT group_scripts_pkey PRIMARY KEY (group_script_id);
+
+
+--
+-- Name: group_services group_services_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_services
+    ADD CONSTRAINT group_services_pkey PRIMARY KEY (group_service_id);
+
+
+--
+-- Name: group_users group_users_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_users
+    ADD CONSTRAINT group_users_pkey PRIMARY KEY (group_user_id);
+
+
+--
+-- Name: groups groups_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.groups
+    ADD CONSTRAINT groups_pkey PRIMARY KEY (group_id);
+
+
+--
+-- Name: ip_address_cache ip_address_cache_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.ip_address_cache
+    ADD CONSTRAINT ip_address_cache_pkey PRIMARY KEY (ip_address);
+
+
+--
+-- Name: message_moderation_scores message_moderation_scores_original_message_platform_key; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.message_moderation_scores
+    ADD CONSTRAINT message_moderation_scores_original_message_platform_key UNIQUE (original_message, platform);
+
+
+--
+-- Name: message_moderation_scores message_moderation_scores_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.message_moderation_scores
+    ADD CONSTRAINT message_moderation_scores_pkey PRIMARY KEY (score_id);
+
+
+--
+-- Name: message_translations message_translations_original_message_translated_language_key; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.message_translations
+    ADD CONSTRAINT message_translations_original_message_translated_language_key UNIQUE (original_message, translated_language);
+
+
+--
+-- Name: message_translations message_translations_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.message_translations
+    ADD CONSTRAINT message_translations_pkey PRIMARY KEY (translation_id);
+
+
+--
+-- Name: player_identifiers player_identifiers_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_identifiers
+    ADD CONSTRAINT player_identifiers_pkey PRIMARY KEY (player_identifier_id);
+
+
+--
+-- Name: player_identifiers player_identifiers_provider_identifier_key; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_identifiers
+    ADD CONSTRAINT player_identifiers_provider_identifier_key UNIQUE (provider, identifier);
+
+
+--
+-- Name: player_name_history player_name_history_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_name_history
+    ADD CONSTRAINT player_name_history_pkey PRIMARY KEY (history_id);
+
+
+--
+-- Name: player_note_edits player_note_edits_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_note_edits
+    ADD CONSTRAINT player_note_edits_pkey PRIMARY KEY (edit_id);
+
+
+--
+-- Name: player_notes player_notes_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_notes
+    ADD CONSTRAINT player_notes_pkey PRIMARY KEY (note_id);
+
+
+--
+-- Name: player_sessions player_sessions_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_sessions
+    ADD CONSTRAINT player_sessions_pkey PRIMARY KEY (player_session_id);
+
+
+--
+-- Name: player_sessions player_sessions_player_id_active_times_excl; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_sessions
+    ADD CONSTRAINT player_sessions_player_id_active_times_excl EXCLUDE USING gist (player_id WITH =, active_times WITH &&);
+
+
+--
+-- Name: players players_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.players
+    ADD CONSTRAINT players_pkey PRIMARY KEY (player_id);
+
+
+--
+-- Name: script_hashes script_hashes_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_hashes
+    ADD CONSTRAINT script_hashes_pkey PRIMARY KEY (hash);
+
+
+--
+-- Name: script_revisions script_revisions_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_revisions
+    ADD CONSTRAINT script_revisions_pkey PRIMARY KEY (script_id, revision_number);
+
+
+--
+-- Name: script_tests script_tests_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_tests
+    ADD CONSTRAINT script_tests_pkey PRIMARY KEY (request_id);
+
+
+--
+-- Name: script_tests script_tests_user_id_key; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_tests
+    ADD CONSTRAINT script_tests_user_id_key UNIQUE (user_id);
+
+
+--
+-- Name: script_webhooks script_webhooks_access_key_hash_key; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_webhooks
+    ADD CONSTRAINT script_webhooks_access_key_hash_key UNIQUE (access_key_hash);
+
+
+--
+-- Name: script_webhooks script_webhooks_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_webhooks
+    ADD CONSTRAINT script_webhooks_pkey PRIMARY KEY (webhook_id);
+
+
+--
+-- Name: scripts scripts_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.scripts
+    ADD CONSTRAINT scripts_pkey PRIMARY KEY (script_id);
+
+
+--
+-- Name: service_bans service_bans_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_bans
+    ADD CONSTRAINT service_bans_pkey PRIMARY KEY (service_ban_id);
+
+
+--
+-- Name: service_event_queue service_event_queue_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_event_queue
+    ADD CONSTRAINT service_event_queue_pkey PRIMARY KEY (queue_id);
+
+
+--
+-- Name: service_languages service_languages_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_languages
+    ADD CONSTRAINT service_languages_pkey PRIMARY KEY (service_id, language);
+
+
+--
+-- Name: service_log_messages service_log_messages_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_log_messages
+    ADD CONSTRAINT service_log_messages_pkey PRIMARY KEY (message_id, language);
+
+
+--
+-- Name: service_logs service_logs_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_logs
+    ADD CONSTRAINT service_logs_pkey PRIMARY KEY (message_id);
+
+
+--
+-- Name: service_scripts service_scripts_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_scripts
+    ADD CONSTRAINT service_scripts_pkey PRIMARY KEY (service_script_id);
+
+
+--
+-- Name: services services_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.services
+    ADD CONSTRAINT services_pkey PRIMARY KEY (service_id);
+
+
+--
+-- Name: tribe_characters tribe_characters_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.tribe_characters
+    ADD CONSTRAINT tribe_characters_pkey PRIMARY KEY (tribe_id, character_id);
+
+
+--
+-- Name: tribe_dinos tribe_dinos_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.tribe_dinos
+    ADD CONSTRAINT tribe_dinos_pkey PRIMARY KEY (tribe_id, dino_id);
+
+
+--
+-- Name: tribes tribes_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.tribes
+    ADD CONSTRAINT tribes_pkey PRIMARY KEY (tribe_id);
+
+
+--
+-- Name: watcher_logs watcher_logs_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.watcher_logs
+    ADD CONSTRAINT watcher_logs_pkey PRIMARY KEY (message_id);
+
+
+--
+-- Name: watcher_releases watcher_releases_download_url_key; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.watcher_releases
+    ADD CONSTRAINT watcher_releases_download_url_key UNIQUE (download_url);
+
+
+--
+-- Name: watcher_releases watcher_releases_pkey; Type: CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.watcher_releases
+    ADD CONSTRAINT watcher_releases_pkey PRIMARY KEY (release_id);
 
 
 --
@@ -8227,6 +11324,13 @@ CREATE INDEX spawn_points_path_idx ON arksa.spawn_points USING btree (path);
 
 
 --
+-- Name: traits_path_idx; Type: INDEX; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE INDEX traits_path_idx ON arksa.traits USING btree (path);
+
+
+--
 -- Name: ini_options_file_header_struct_key_idx; Type: INDEX; Schema: palworld; Owner: thommcgrath
 --
 
@@ -8273,6 +11377,34 @@ CREATE UNIQUE INDEX content_packs_marketplace_marketplace_id_confirmed_idx ON pu
 --
 
 CREATE UNIQUE INDEX content_packs_marketplace_marketplace_id_user_id_idx ON public.content_packs USING btree (marketplace, marketplace_id, user_id);
+
+
+--
+-- Name: device_auth_flows_application_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX device_auth_flows_application_id_idx ON public.device_auth_flows USING btree (application_id);
+
+
+--
+-- Name: device_auth_flows_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX device_auth_flows_user_id_idx ON public.device_auth_flows USING btree (user_id);
+
+
+--
+-- Name: device_auth_flows_verifier_hash_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX device_auth_flows_verifier_hash_idx ON public.device_auth_flows USING btree (verifier_hash);
+
+
+--
+-- Name: discord_bots_instance_key_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX discord_bots_instance_key_idx ON public.discord_bots USING btree (instance_key);
 
 
 --
@@ -8339,6 +11471,13 @@ CREATE UNIQUE INDEX product_prices_product_id_currency_idx ON public.product_pri
 
 
 --
+-- Name: products_least_greatest_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX products_least_greatest_idx ON public.products USING btree (LEAST(monthly_price_id, yearly_price_id), GREATEST(monthly_price_id, yearly_price_id)) NULLS NOT DISTINCT WHERE ((product_type = 'Subscription'::public.product_type) AND (active = true));
+
+
+--
 -- Name: project_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -8346,10 +11485,17 @@ CREATE INDEX project_id_idx ON public.project_members USING btree (project_id);
 
 
 --
--- Name: project_id_user_id_role_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+-- Name: project_members_project_id_role_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
-CREATE UNIQUE INDEX project_id_user_id_role_idx ON public.project_members USING btree (project_id, user_id, role) WHERE (role = 'Owner'::public.project_role);
+CREATE UNIQUE INDEX project_members_project_id_role_idx ON public.project_members USING btree (project_id, role) WHERE (role = 'Owner'::public.project_role);
+
+
+--
+-- Name: project_members_project_id_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX project_members_project_id_user_id_idx ON public.project_members USING btree (project_id, user_id);
 
 
 --
@@ -8462,6 +11608,475 @@ CREATE INDEX user_id_idx ON public.project_members USING btree (user_id);
 --
 
 CREATE UNIQUE INDEX usercloud_cache_remote_path_hostname_idx ON public.usercloud_cache USING btree (remote_path, hostname);
+
+
+--
+-- Name: bucket_values_bucket_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX bucket_values_bucket_id_idx ON sentinel.bucket_values USING btree (bucket_id);
+
+
+--
+-- Name: bucket_values_bucket_id_player_id_key_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX bucket_values_bucket_id_player_id_key_idx ON sentinel.bucket_values USING btree (bucket_id, player_id, key) NULLS NOT DISTINCT;
+
+
+--
+-- Name: buckets_bucket_id_user_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX buckets_bucket_id_user_id_idx ON sentinel.buckets USING btree (bucket_id, user_id);
+
+
+--
+-- Name: buckets_user_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX buckets_user_id_idx ON sentinel.buckets USING btree (user_id);
+
+
+--
+-- Name: characters_name_vector_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX characters_name_vector_idx ON sentinel.characters USING gin (name_vector);
+
+
+--
+-- Name: characters_player_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX characters_player_id_idx ON sentinel.characters USING btree (player_id);
+
+
+--
+-- Name: characters_player_id_is_active_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX characters_player_id_is_active_idx ON sentinel.characters USING btree (player_id, is_active) WHERE (is_active = true);
+
+
+--
+-- Name: characters_service_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX characters_service_id_idx ON sentinel.characters USING btree (service_id);
+
+
+--
+-- Name: characters_service_id_specimen_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX characters_service_id_specimen_id_idx ON sentinel.characters USING btree (service_id, specimen_id);
+
+
+--
+-- Name: dinos_display_name_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX dinos_display_name_idx ON sentinel.dinos USING btree (display_name);
+
+
+--
+-- Name: dinos_name_vector_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX dinos_name_vector_idx ON sentinel.dinos USING gin (name_vector);
+
+
+--
+-- Name: dinos_service_id_dino_number_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX dinos_service_id_dino_number_idx ON sentinel.dinos USING btree (service_id, dino_number);
+
+
+--
+-- Name: dinos_service_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX dinos_service_id_idx ON sentinel.dinos USING btree (service_id);
+
+
+--
+-- Name: dinos_service_id_visual_dino_number_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX dinos_service_id_visual_dino_number_idx ON sentinel.dinos USING btree (service_id, visual_dino_number);
+
+
+--
+-- Name: dinos_status_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX dinos_status_idx ON sentinel.dinos USING btree (status);
+
+
+--
+-- Name: group_bans_group_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_bans_group_id_idx ON sentinel.group_bans USING btree (group_id);
+
+
+--
+-- Name: group_bans_group_id_player_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX group_bans_group_id_player_id_idx ON sentinel.group_bans USING btree (group_id, player_id);
+
+
+--
+-- Name: group_bans_player_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_bans_player_id_idx ON sentinel.group_bans USING btree (player_id);
+
+
+--
+-- Name: group_buckets_bucket_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_buckets_bucket_id_idx ON sentinel.group_buckets USING btree (bucket_id);
+
+
+--
+-- Name: group_buckets_group_id_bucket_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX group_buckets_group_id_bucket_id_idx ON sentinel.group_buckets USING btree (group_id, bucket_id);
+
+
+--
+-- Name: group_buckets_group_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_buckets_group_id_idx ON sentinel.group_buckets USING btree (group_id);
+
+
+--
+-- Name: group_scripts_group_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_scripts_group_id_idx ON sentinel.group_scripts USING btree (group_id);
+
+
+--
+-- Name: group_scripts_group_id_script_id_parameter_values_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX group_scripts_group_id_script_id_parameter_values_idx ON sentinel.group_scripts USING btree (group_id, script_id, md5((parameter_values)::text));
+
+
+--
+-- Name: group_scripts_script_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_scripts_script_id_idx ON sentinel.group_scripts USING btree (script_id);
+
+
+--
+-- Name: group_services_group_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_services_group_id_idx ON sentinel.group_services USING btree (group_id);
+
+
+--
+-- Name: group_services_group_id_service_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX group_services_group_id_service_id_idx ON sentinel.group_services USING btree (group_id, service_id);
+
+
+--
+-- Name: group_services_service_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_services_service_id_idx ON sentinel.group_services USING btree (service_id);
+
+
+--
+-- Name: group_users_group_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_users_group_id_idx ON sentinel.group_users USING btree (group_id);
+
+
+--
+-- Name: group_users_group_id_user_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX group_users_group_id_user_id_idx ON sentinel.group_users USING btree (group_id, user_id);
+
+
+--
+-- Name: group_users_user_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX group_users_user_id_idx ON sentinel.group_users USING btree (user_id);
+
+
+--
+-- Name: groups_discord_chat_channel_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX groups_discord_chat_channel_id_idx ON sentinel.groups USING btree (discord_chat_channel_id);
+
+
+--
+-- Name: groups_discord_guild_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX groups_discord_guild_id_idx ON sentinel.groups USING btree (discord_guild_id);
+
+
+--
+-- Name: groups_discord_link_code_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX groups_discord_link_code_idx ON sentinel.groups USING btree (discord_link_code);
+
+
+--
+-- Name: groups_user_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX groups_user_id_idx ON sentinel.groups USING btree (user_id);
+
+
+--
+-- Name: groups_user_id_name_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX groups_user_id_name_idx ON sentinel.groups USING btree (user_id, name);
+
+
+--
+-- Name: message_moderation_scores_original_message_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX message_moderation_scores_original_message_idx ON sentinel.message_moderation_scores USING btree (original_message);
+
+
+--
+-- Name: message_translations_original_message_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX message_translations_original_message_idx ON sentinel.message_translations USING btree (original_message);
+
+
+--
+-- Name: player_identifiers_player_id_provider_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX player_identifiers_player_id_provider_idx ON sentinel.player_identifiers USING btree (player_id, provider);
+
+
+--
+-- Name: player_name_history_name_vector_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX player_name_history_name_vector_idx ON sentinel.player_name_history USING gin (name_vector);
+
+
+--
+-- Name: player_name_history_player_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX player_name_history_player_id_idx ON sentinel.player_name_history USING btree (player_id);
+
+
+--
+-- Name: player_note_edits_note_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX player_note_edits_note_id_idx ON sentinel.player_note_edits USING btree (note_id);
+
+
+--
+-- Name: player_note_edits_previous_content_vector_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX player_note_edits_previous_content_vector_idx ON sentinel.player_note_edits USING gin (previous_content_vector);
+
+
+--
+-- Name: player_notes_content_vector_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX player_notes_content_vector_idx ON sentinel.player_notes USING gin (content_vector);
+
+
+--
+-- Name: player_notes_player_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX player_notes_player_id_idx ON sentinel.player_notes USING btree (player_id);
+
+
+--
+-- Name: scripts_user_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX scripts_user_id_idx ON sentinel.scripts USING btree (user_id);
+
+
+--
+-- Name: scripts_user_id_name_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX scripts_user_id_name_idx ON sentinel.scripts USING btree (user_id, name);
+
+
+--
+-- Name: service_bans_player_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_bans_player_id_idx ON sentinel.service_bans USING btree (player_id);
+
+
+--
+-- Name: service_bans_service_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_bans_service_id_idx ON sentinel.service_bans USING btree (service_id);
+
+
+--
+-- Name: service_bans_service_id_player_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX service_bans_service_id_player_id_idx ON sentinel.service_bans USING btree (service_id, player_id);
+
+
+--
+-- Name: service_event_queue_queue_time_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_event_queue_queue_time_idx ON sentinel.service_event_queue USING btree (queue_time);
+
+
+--
+-- Name: service_event_queue_service_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_event_queue_service_id_idx ON sentinel.service_event_queue USING btree (service_id);
+
+
+--
+-- Name: service_event_queue_status_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_event_queue_status_idx ON sentinel.service_event_queue USING btree (status);
+
+
+--
+-- Name: service_log_messages_vector_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_log_messages_vector_idx ON sentinel.service_log_messages USING gin (vector);
+
+
+--
+-- Name: service_logs_metadata_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_logs_metadata_idx ON sentinel.service_logs USING gin (((metadata)::text) public.gin_trgm_ops);
+
+
+--
+-- Name: service_logs_service_id_event_name_log_time_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_logs_service_id_event_name_log_time_idx ON sentinel.service_logs USING btree (service_id, event_name, log_time);
+
+
+--
+-- Name: service_scripts_script_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_scripts_script_id_idx ON sentinel.service_scripts USING btree (script_id);
+
+
+--
+-- Name: service_scripts_service_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX service_scripts_service_id_idx ON sentinel.service_scripts USING btree (service_id);
+
+
+--
+-- Name: service_scripts_service_id_script_id_parameter_values_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX service_scripts_service_id_script_id_parameter_values_idx ON sentinel.service_scripts USING btree (service_id, script_id, md5((parameter_values)::text));
+
+
+--
+-- Name: services_access_key_hash_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX services_access_key_hash_idx ON sentinel.services USING btree (access_key_hash);
+
+
+--
+-- Name: services_cluster_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX services_cluster_id_idx ON sentinel.services USING btree (cluster_id);
+
+
+--
+-- Name: tribe_characters_character_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX tribe_characters_character_id_idx ON sentinel.tribe_characters USING btree (character_id);
+
+
+--
+-- Name: tribe_characters_tribe_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX tribe_characters_tribe_id_idx ON sentinel.tribe_characters USING btree (tribe_id);
+
+
+--
+-- Name: tribe_dinos_dino_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX tribe_dinos_dino_id_idx ON sentinel.tribe_dinos USING btree (dino_id);
+
+
+--
+-- Name: tribe_dinos_tribe_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX tribe_dinos_tribe_id_idx ON sentinel.tribe_dinos USING btree (tribe_id);
+
+
+--
+-- Name: tribes_name_vector_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX tribes_name_vector_idx ON sentinel.tribes USING gin (name_vector);
+
+
+--
+-- Name: tribes_service_id_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE INDEX tribes_service_id_idx ON sentinel.tribes USING btree (service_id);
+
+
+--
+-- Name: tribes_service_id_tribe_number_idx; Type: INDEX; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX tribes_service_id_tribe_number_idx ON sentinel.tribes USING btree (service_id, tribe_number);
 
 
 --
@@ -8615,7 +12230,7 @@ CREATE TRIGGER engrams_search_sync_trigger BEFORE INSERT OR DELETE ON ark.engram
 -- Name: engrams engrams_search_sync_update_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
 --
 
-CREATE TRIGGER engrams_search_sync_update_trigger BEFORE UPDATE ON ark.engrams FOR EACH ROW WHEN (((old.label IS DISTINCT FROM new.label) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
+CREATE TRIGGER engrams_search_sync_update_trigger BEFORE UPDATE ON ark.engrams FOR EACH ROW WHEN ((((old.label)::text IS DISTINCT FROM (new.label)::text) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
 
 
 --
@@ -9063,7 +12678,7 @@ CREATE TRIGGER engrams_search_sync_trigger BEFORE INSERT OR DELETE ON arksa.engr
 -- Name: engrams engrams_search_sync_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
 --
 
-CREATE TRIGGER engrams_search_sync_update_trigger BEFORE UPDATE ON arksa.engrams FOR EACH ROW WHEN (((old.label IS DISTINCT FROM new.label) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.content_pack_id IS DISTINCT FROM new.content_pack_id))) EXECUTE FUNCTION arksa.objects_search_sync();
+CREATE TRIGGER engrams_search_sync_update_trigger BEFORE UPDATE ON arksa.engrams FOR EACH ROW WHEN ((((old.label)::text IS DISTINCT FROM (new.label)::text) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.content_pack_id IS DISTINCT FROM new.content_pack_id))) EXECUTE FUNCTION arksa.objects_search_sync();
 
 
 --
@@ -9368,6 +12983,27 @@ CREATE TRIGGER templates_json_sync_trigger BEFORE INSERT OR UPDATE ON arksa.temp
 
 
 --
+-- Name: traits traits_after_delete_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER traits_after_delete_trigger AFTER DELETE ON arksa.traits FOR EACH ROW EXECUTE FUNCTION arksa.object_delete_trigger();
+
+
+--
+-- Name: traits traits_before_insert_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER traits_before_insert_trigger BEFORE INSERT ON arksa.traits FOR EACH ROW EXECUTE FUNCTION arksa.blueprint_insert_trigger();
+
+
+--
+-- Name: traits traits_before_update_trigger; Type: TRIGGER; Schema: arksa; Owner: thommcgrath
+--
+
+CREATE TRIGGER traits_before_update_trigger BEFORE UPDATE ON arksa.traits FOR EACH ROW EXECUTE FUNCTION arksa.object_update_trigger();
+
+
+--
 -- Name: deletions deletions_delete_trigger; Type: TRIGGER; Schema: palworld; Owner: thommcgrath
 --
 
@@ -9441,7 +13077,7 @@ CREATE TRIGGER content_packs_search_sync_trigger BEFORE INSERT OR DELETE ON publ
 -- Name: content_packs content_packs_search_sync_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER content_packs_search_sync_update_trigger BEFORE UPDATE ON public.content_packs FOR EACH ROW WHEN (((old.name IS DISTINCT FROM new.name) OR (old.confirmed IS DISTINCT FROM new.confirmed))) EXECUTE FUNCTION public.content_packs_search_sync();
+CREATE TRIGGER content_packs_search_sync_update_trigger BEFORE UPDATE ON public.content_packs FOR EACH ROW WHEN ((((old.name)::text IS DISTINCT FROM (new.name)::text) OR (old.confirmed IS DISTINCT FROM new.confirmed))) EXECUTE FUNCTION public.content_packs_search_sync();
 
 
 --
@@ -9508,6 +13144,20 @@ CREATE TRIGGER legacy_session_update_trigger INSTEAD OF UPDATE ON public.session
 
 
 --
+-- Name: policies policies_after_write_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER policies_after_write_trigger AFTER INSERT OR UPDATE ON public.policies FOR EACH ROW EXECUTE FUNCTION public.policies_after_write();
+
+
+--
+-- Name: policies policies_before_write_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER policies_before_write_trigger BEFORE INSERT OR UPDATE ON public.policies FOR EACH ROW EXECUTE FUNCTION public.policies_before_write();
+
+
+--
 -- Name: projects projects_search_sync_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -9518,7 +13168,7 @@ CREATE TRIGGER projects_search_sync_insert_trigger AFTER INSERT ON public.projec
 -- Name: projects projects_search_sync_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER projects_search_sync_update_trigger AFTER UPDATE ON public.projects FOR EACH ROW WHEN (((old.title IS DISTINCT FROM new.title) OR (old.description IS DISTINCT FROM new.description) OR (old.published IS DISTINCT FROM new.published))) EXECUTE FUNCTION public.projects_search_sync();
+CREATE TRIGGER projects_search_sync_update_trigger AFTER UPDATE ON public.projects FOR EACH ROW WHEN ((((old.title)::text IS DISTINCT FROM (new.title)::text) OR ((old.description)::text IS DISTINCT FROM (new.description)::text) OR (old.published IS DISTINCT FROM new.published))) EXECUTE FUNCTION public.projects_search_sync();
 
 
 --
@@ -9624,6 +13274,69 @@ CREATE TRIGGER before_insert_trigger BEFORE INSERT ON sdtd.config_options FOR EA
 --
 
 CREATE TRIGGER before_update_trigger BEFORE UPDATE ON sdtd.config_options FOR EACH ROW EXECUTE FUNCTION sdtd.object_update_trigger();
+
+
+--
+-- Name: script_tests check_user_script_test_trigger; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER check_user_script_test_trigger BEFORE INSERT ON sentinel.script_tests FOR EACH ROW EXECUTE FUNCTION sentinel.check_script_test();
+
+
+--
+-- Name: dinos dinos_set_last_update; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER dinos_set_last_update BEFORE UPDATE ON sentinel.dinos FOR EACH ROW EXECUTE FUNCTION sentinel.dino_update_trigger();
+
+
+--
+-- Name: group_services group_services_after_edit_trigger; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER group_services_after_edit_trigger AFTER INSERT OR UPDATE ON sentinel.group_services FOR EACH ROW EXECUTE FUNCTION sentinel.group_services_after_edit();
+
+
+--
+-- Name: groups groups_after_edit_trigger; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER groups_after_edit_trigger AFTER INSERT OR UPDATE ON sentinel.groups FOR EACH ROW EXECUTE FUNCTION sentinel.groups_after_edit();
+
+
+--
+-- Name: player_notes player_notes_edit_log_trigger; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER player_notes_edit_log_trigger BEFORE UPDATE ON sentinel.player_notes FOR EACH ROW EXECUTE FUNCTION sentinel.save_player_note_history();
+
+
+--
+-- Name: scripts scripts_before_insert_trigger; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER scripts_before_insert_trigger BEFORE INSERT ON sentinel.scripts FOR EACH ROW EXECUTE FUNCTION sentinel.before_script_insert();
+
+
+--
+-- Name: scripts scripts_before_update_trigger; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER scripts_before_update_trigger BEFORE UPDATE ON sentinel.scripts FOR EACH ROW EXECUTE FUNCTION sentinel.before_script_update();
+
+
+--
+-- Name: players track_player_name_trigger; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER track_player_name_trigger AFTER INSERT OR UPDATE ON sentinel.players FOR EACH ROW EXECUTE FUNCTION sentinel.track_player_name();
+
+
+--
+-- Name: service_logs wake_chat_thread_trigger; Type: TRIGGER; Schema: sentinel; Owner: thommcgrath
+--
+
+CREATE TRIGGER wake_chat_thread_trigger AFTER INSERT OR UPDATE ON sentinel.service_logs FOR EACH ROW EXECUTE FUNCTION sentinel.notify_chat_trigger();
 
 
 --
@@ -9839,7 +13552,7 @@ ALTER TABLE ONLY ark.loot_sources
 --
 
 ALTER TABLE ONLY ark.maps
-    ADD CONSTRAINT maps_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT maps_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -10183,7 +13896,7 @@ ALTER TABLE ONLY arksa.loot_item_sets
 --
 
 ALTER TABLE ONLY arksa.maps
-    ADD CONSTRAINT maps_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT maps_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -10331,11 +14044,35 @@ ALTER TABLE ONLY public.access_tokens
 
 
 --
+-- Name: access_tokens access_tokens_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.access_tokens
+    ADD CONSTRAINT access_tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: affiliate_links affiliate_links_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.affiliate_links
     ADD CONSTRAINT affiliate_links_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: affiliate_products affiliate_products_affiliate_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_products
+    ADD CONSTRAINT affiliate_products_affiliate_id_fkey FOREIGN KEY (affiliate_id) REFERENCES public.affiliate_links(code) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: affiliate_products affiliate_products_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_products
+    ADD CONSTRAINT affiliate_products_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -10391,7 +14128,47 @@ ALTER TABLE ONLY public.applications
 --
 
 ALTER TABLE ONLY public.content_packs
-    ADD CONSTRAINT content_packs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE;
+    ADD CONSTRAINT content_packs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: device_auth_flows device_auth_flows_application_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.device_auth_flows
+    ADD CONSTRAINT device_auth_flows_application_id_fkey FOREIGN KEY (application_id) REFERENCES public.applications(application_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: device_auth_flows device_auth_flows_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.device_auth_flows
+    ADD CONSTRAINT device_auth_flows_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: discord_channels discord_channels_channel_parent_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.discord_channels
+    ADD CONSTRAINT discord_channels_channel_parent_id_fkey FOREIGN KEY (channel_parent_id) REFERENCES public.discord_channels(channel_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: discord_channels discord_channels_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.discord_channels
+    ADD CONSTRAINT discord_channels_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.discord_guilds(guild_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: discord_guilds discord_guilds_bot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.discord_guilds
+    ADD CONSTRAINT discord_guilds_bot_id_fkey FOREIGN KEY (bot_id) REFERENCES public.discord_bots(bot_id) ON UPDATE CASCADE;
 
 
 --
@@ -10539,11 +14316,67 @@ ALTER TABLE ONLY public.payment_method_currencies
 
 
 --
+-- Name: policy_revisions policy_revisions_policy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_revisions
+    ADD CONSTRAINT policy_revisions_policy_id_fkey FOREIGN KEY (policy_id) REFERENCES public.policies(policy_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: policy_signatures policy_signatures_policy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_signatures
+    ADD CONSTRAINT policy_signatures_policy_id_fkey FOREIGN KEY (policy_id) REFERENCES public.policies(policy_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: policy_signatures policy_signatures_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_signatures
+    ADD CONSTRAINT policy_signatures_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: policy_signing_requests policy_signing_requests_policy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_signing_requests
+    ADD CONSTRAINT policy_signing_requests_policy_id_fkey FOREIGN KEY (policy_id) REFERENCES public.policies(policy_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: policy_signing_requests policy_signing_requests_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.policy_signing_requests
+    ADD CONSTRAINT policy_signing_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: product_prices product_prices_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.product_prices
     ADD CONSTRAINT product_prices_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: project_invites project_invites_creator_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.project_invites
+    ADD CONSTRAINT project_invites_creator_id_fkey FOREIGN KEY (creator_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: project_invites project_invites_project_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.project_invites
+    ADD CONSTRAINT project_invites_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(project_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -10683,6 +14516,46 @@ ALTER TABLE ONLY public.stw_purchases
 
 
 --
+-- Name: subscription_purchases subscription_purchases_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscription_purchases
+    ADD CONSTRAINT subscription_purchases_purchase_id_fkey FOREIGN KEY (purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: subscription_purchases subscription_purchases_subscription_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscription_purchases
+    ADD CONSTRAINT subscription_purchases_subscription_id_fkey FOREIGN KEY (subscription_id) REFERENCES public.subscriptions(subscription_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: subscriptions subscriptions_initial_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscriptions
+    ADD CONSTRAINT subscriptions_initial_purchase_id_fkey FOREIGN KEY (initial_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: subscriptions subscriptions_last_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscriptions
+    ADD CONSTRAINT subscriptions_last_purchase_id_fkey FOREIGN KEY (last_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: subscriptions subscriptions_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.subscriptions
+    ADD CONSTRAINT subscriptions_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE;
+
+
+--
 -- Name: support_articles support_articles_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -10763,6 +14636,406 @@ ALTER TABLE ONLY sdtd.objects
 
 
 --
+-- Name: bucket_values bucket_values_bucket_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.bucket_values
+    ADD CONSTRAINT bucket_values_bucket_id_fkey FOREIGN KEY (bucket_id) REFERENCES sentinel.buckets(bucket_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bucket_values bucket_values_player_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.bucket_values
+    ADD CONSTRAINT bucket_values_player_id_fkey FOREIGN KEY (player_id) REFERENCES sentinel.players(player_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: buckets buckets_user_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.buckets
+    ADD CONSTRAINT buckets_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: characters characters_player_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.characters
+    ADD CONSTRAINT characters_player_id_fkey FOREIGN KEY (player_id) REFERENCES sentinel.players(player_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: characters characters_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.characters
+    ADD CONSTRAINT characters_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: characters characters_tribe_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.characters
+    ADD CONSTRAINT characters_tribe_id_fkey FOREIGN KEY (tribe_id) REFERENCES sentinel.tribes(tribe_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: dinos dinos_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.dinos
+    ADD CONSTRAINT dinos_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: dinos dinos_tribe_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.dinos
+    ADD CONSTRAINT dinos_tribe_id_fkey FOREIGN KEY (tribe_id) REFERENCES sentinel.tribes(tribe_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: group_bans group_bans_group_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_bans
+    ADD CONSTRAINT group_bans_group_id_fkey FOREIGN KEY (group_id) REFERENCES sentinel.groups(group_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: group_bans group_bans_issuer_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_bans
+    ADD CONSTRAINT group_bans_issuer_id_fkey FOREIGN KEY (issuer_id) REFERENCES public.users(user_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: group_bans group_bans_player_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_bans
+    ADD CONSTRAINT group_bans_player_id_fkey FOREIGN KEY (player_id) REFERENCES sentinel.players(player_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: group_buckets group_buckets_bucket_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_buckets
+    ADD CONSTRAINT group_buckets_bucket_id_fkey FOREIGN KEY (bucket_id) REFERENCES sentinel.buckets(bucket_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: group_buckets group_buckets_group_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_buckets
+    ADD CONSTRAINT group_buckets_group_id_fkey FOREIGN KEY (group_id) REFERENCES sentinel.groups(group_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: group_scripts group_scripts_group_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_scripts
+    ADD CONSTRAINT group_scripts_group_id_fkey FOREIGN KEY (group_id) REFERENCES sentinel.groups(group_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: group_scripts group_scripts_script_id_revision_number_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_scripts
+    ADD CONSTRAINT group_scripts_script_id_revision_number_fkey FOREIGN KEY (script_id, revision_number) REFERENCES sentinel.script_revisions(script_id, revision_number) ON UPDATE CASCADE;
+
+
+--
+-- Name: group_services group_services_group_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_services
+    ADD CONSTRAINT group_services_group_id_fkey FOREIGN KEY (group_id) REFERENCES sentinel.groups(group_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: group_services group_services_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_services
+    ADD CONSTRAINT group_services_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: group_users group_users_group_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_users
+    ADD CONSTRAINT group_users_group_id_fkey FOREIGN KEY (group_id) REFERENCES sentinel.groups(group_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: group_users group_users_user_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.group_users
+    ADD CONSTRAINT group_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: groups groups_discord_chat_channel_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.groups
+    ADD CONSTRAINT groups_discord_chat_channel_id_fkey FOREIGN KEY (discord_chat_channel_id) REFERENCES public.discord_channels(channel_id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
+
+
+--
+-- Name: groups groups_discord_guild_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.groups
+    ADD CONSTRAINT groups_discord_guild_id_fkey FOREIGN KEY (discord_guild_id) REFERENCES public.discord_guilds(guild_id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
+
+
+--
+-- Name: groups groups_user_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.groups
+    ADD CONSTRAINT groups_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: player_identifiers player_identifiers_player_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_identifiers
+    ADD CONSTRAINT player_identifiers_player_id_fkey FOREIGN KEY (player_id) REFERENCES sentinel.players(player_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: player_name_history player_name_history_player_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_name_history
+    ADD CONSTRAINT player_name_history_player_id_fkey FOREIGN KEY (player_id) REFERENCES sentinel.players(player_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: player_note_edits player_note_edits_note_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_note_edits
+    ADD CONSTRAINT player_note_edits_note_id_fkey FOREIGN KEY (note_id) REFERENCES sentinel.player_notes(note_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: player_notes player_notes_player_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_notes
+    ADD CONSTRAINT player_notes_player_id_fkey FOREIGN KEY (player_id) REFERENCES sentinel.players(player_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: player_notes player_notes_user_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_notes
+    ADD CONSTRAINT player_notes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: player_sessions player_sessions_player_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_sessions
+    ADD CONSTRAINT player_sessions_player_id_fkey FOREIGN KEY (player_id) REFERENCES sentinel.players(player_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: player_sessions player_sessions_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.player_sessions
+    ADD CONSTRAINT player_sessions_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: script_revisions script_revisions_hash_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_revisions
+    ADD CONSTRAINT script_revisions_hash_fkey FOREIGN KEY (hash) REFERENCES sentinel.script_hashes(hash) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: script_revisions script_revisions_script_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_revisions
+    ADD CONSTRAINT script_revisions_script_id_fkey FOREIGN KEY (script_id) REFERENCES sentinel.scripts(script_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: script_tests script_tests_user_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_tests
+    ADD CONSTRAINT script_tests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: script_webhooks script_webhooks_script_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_webhooks
+    ADD CONSTRAINT script_webhooks_script_id_fkey FOREIGN KEY (script_id) REFERENCES sentinel.scripts(script_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: script_webhooks script_webhooks_user_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.script_webhooks
+    ADD CONSTRAINT script_webhooks_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: scripts scripts_script_id_latest_revision_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.scripts
+    ADD CONSTRAINT scripts_script_id_latest_revision_fkey FOREIGN KEY (script_id, latest_revision) REFERENCES sentinel.script_revisions(script_id, revision_number) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: scripts scripts_user_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.scripts
+    ADD CONSTRAINT scripts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: service_bans service_bans_player_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_bans
+    ADD CONSTRAINT service_bans_player_id_fkey FOREIGN KEY (player_id) REFERENCES sentinel.players(player_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: service_bans service_bans_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_bans
+    ADD CONSTRAINT service_bans_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: service_event_queue service_event_queue_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_event_queue
+    ADD CONSTRAINT service_event_queue_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: service_languages service_languages_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_languages
+    ADD CONSTRAINT service_languages_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: service_log_messages service_log_messages_message_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_log_messages
+    ADD CONSTRAINT service_log_messages_message_id_fkey FOREIGN KEY (message_id) REFERENCES sentinel.service_logs(message_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: service_logs service_logs_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_logs
+    ADD CONSTRAINT service_logs_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: service_scripts service_scripts_script_id_revision_number_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_scripts
+    ADD CONSTRAINT service_scripts_script_id_revision_number_fkey FOREIGN KEY (script_id, revision_number) REFERENCES sentinel.script_revisions(script_id, revision_number) ON UPDATE CASCADE;
+
+
+--
+-- Name: service_scripts service_scripts_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.service_scripts
+    ADD CONSTRAINT service_scripts_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: services services_user_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.services
+    ADD CONSTRAINT services_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: tribe_characters tribe_characters_character_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.tribe_characters
+    ADD CONSTRAINT tribe_characters_character_id_fkey FOREIGN KEY (character_id) REFERENCES sentinel.characters(character_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: tribe_characters tribe_characters_tribe_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.tribe_characters
+    ADD CONSTRAINT tribe_characters_tribe_id_fkey FOREIGN KEY (tribe_id) REFERENCES sentinel.tribes(tribe_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: tribe_dinos tribe_dinos_dino_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.tribe_dinos
+    ADD CONSTRAINT tribe_dinos_dino_id_fkey FOREIGN KEY (dino_id) REFERENCES sentinel.dinos(dino_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: tribe_dinos tribe_dinos_tribe_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.tribe_dinos
+    ADD CONSTRAINT tribe_dinos_tribe_id_fkey FOREIGN KEY (tribe_id) REFERENCES sentinel.tribes(tribe_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: tribes tribes_service_id_fkey; Type: FK CONSTRAINT; Schema: sentinel; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sentinel.tribes
+    ADD CONSTRAINT tribes_service_id_fkey FOREIGN KEY (service_id) REFERENCES sentinel.services(service_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: SCHEMA ark; Type: ACL; Schema: -; Owner: thommcgrath
 --
 
@@ -10778,6 +15051,7 @@ GRANT USAGE ON SCHEMA ark TO beacon_readonly;
 GRANT USAGE ON SCHEMA arksa TO thezaz_website;
 GRANT USAGE ON SCHEMA arksa TO beacon_updater;
 GRANT USAGE ON SCHEMA arksa TO beacon_readonly;
+GRANT USAGE ON SCHEMA arksa TO sentinel_watcher;
 
 
 --
@@ -10790,12 +15064,29 @@ GRANT USAGE ON SCHEMA palworld TO beacon_readonly;
 
 
 --
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE USAGE ON SCHEMA public FROM PUBLIC;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
 -- Name: SCHEMA sdtd; Type: ACL; Schema: -; Owner: thommcgrath
 --
 
 GRANT USAGE ON SCHEMA sdtd TO thezaz_website;
 GRANT USAGE ON SCHEMA sdtd TO beacon_updater;
 GRANT USAGE ON SCHEMA sdtd TO beacon_readonly;
+
+
+--
+-- Name: SCHEMA sentinel; Type: ACL; Schema: -; Owner: thommcgrath
+--
+
+GRANT USAGE ON SCHEMA sentinel TO thezaz_website;
+GRANT USAGE ON SCHEMA sentinel TO beacon_readonly;
+GRANT USAGE ON SCHEMA sentinel TO sentinel_watcher;
 
 
 --
@@ -11149,6 +15440,7 @@ GRANT SELECT ON TABLE arksa.objects TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.creatures TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.creatures TO beacon_updater;
 GRANT SELECT ON TABLE arksa.creatures TO beacon_readonly;
+GRANT SELECT ON TABLE arksa.creatures TO sentinel_watcher;
 
 
 --
@@ -11158,6 +15450,7 @@ GRANT SELECT ON TABLE arksa.creatures TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.engrams TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.engrams TO beacon_updater;
 GRANT SELECT ON TABLE arksa.engrams TO beacon_readonly;
+GRANT SELECT ON TABLE arksa.engrams TO sentinel_watcher;
 
 
 --
@@ -11182,9 +15475,8 @@ GRANT SELECT ON TABLE arksa.spawn_points TO beacon_readonly;
 -- Name: TABLE blueprints; Type: ACL; Schema: arksa; Owner: thommcgrath
 --
 
-GRANT SELECT ON TABLE arksa.blueprints TO thezaz_website;
-GRANT SELECT ON TABLE arksa.blueprints TO beacon_updater;
 GRANT SELECT ON TABLE arksa.blueprints TO beacon_readonly;
+GRANT SELECT ON TABLE arksa.blueprints TO thezaz_website;
 
 
 --
@@ -11429,6 +15721,14 @@ GRANT SELECT ON TABLE arksa.templates TO beacon_readonly;
 
 
 --
+-- Name: TABLE traits; Type: ACL; Schema: arksa; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE arksa.traits TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE arksa.traits TO thezaz_website;
+
+
+--
 -- Name: TABLE content_packs; Type: ACL; Schema: palworld; Owner: thommcgrath
 --
 
@@ -11485,11 +15785,35 @@ GRANT SELECT ON TABLE public.affiliate_links TO beacon_readonly;
 
 
 --
+-- Name: TABLE affiliate_products; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.affiliate_products TO beacon_readonly;
+GRANT SELECT ON TABLE public.affiliate_products TO thezaz_website;
+
+
+--
 -- Name: TABLE affiliate_tracking; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
 GRANT SELECT,INSERT,UPDATE ON TABLE public.affiliate_tracking TO thezaz_website;
 GRANT SELECT ON TABLE public.affiliate_tracking TO beacon_readonly;
+
+
+--
+-- Name: TABLE purchases; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,UPDATE ON TABLE public.purchases TO thezaz_website;
+GRANT SELECT ON TABLE public.purchases TO beacon_readonly;
+
+
+--
+-- Name: TABLE affiliate_purchases; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.affiliate_purchases TO beacon_readonly;
+GRANT SELECT ON TABLE public.affiliate_purchases TO thezaz_website;
 
 
 --
@@ -11586,6 +15910,55 @@ GRANT SELECT ON TABLE public.corrupt_files TO beacon_readonly;
 
 GRANT SELECT ON TABLE public.currencies TO beacon_readonly;
 GRANT SELECT,UPDATE ON TABLE public.currencies TO thezaz_website;
+
+
+--
+-- Name: TABLE device_auth_flows; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.device_auth_flows TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.device_auth_flows TO thezaz_website;
+
+
+--
+-- Name: TABLE discord_bots; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.discord_bots TO beacon_readonly;
+GRANT SELECT ON TABLE public.discord_bots TO thezaz_website;
+GRANT SELECT ON TABLE public.discord_bots TO sentinel_watcher;
+
+
+--
+-- Name: COLUMN discord_bots.shards; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT UPDATE(shards) ON TABLE public.discord_bots TO sentinel_watcher;
+
+
+--
+-- Name: COLUMN discord_bots.shards_connected; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT UPDATE(shards_connected) ON TABLE public.discord_bots TO sentinel_watcher;
+
+
+--
+-- Name: TABLE discord_channels; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.discord_channels TO beacon_readonly;
+GRANT SELECT ON TABLE public.discord_channels TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.discord_channels TO sentinel_watcher;
+
+
+--
+-- Name: TABLE discord_guilds; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.discord_guilds TO beacon_readonly;
+GRANT SELECT ON TABLE public.discord_guilds TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.discord_guilds TO sentinel_watcher;
 
 
 --
@@ -11772,6 +16145,46 @@ GRANT SELECT ON TABLE public.payment_method_currencies TO beacon_readonly;
 
 
 --
+-- Name: TABLE policies; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.policies TO beacon_readonly;
+GRANT SELECT ON TABLE public.policies TO thezaz_website;
+
+
+--
+-- Name: TABLE policy_revisions; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.policy_revisions TO beacon_readonly;
+GRANT SELECT ON TABLE public.policy_revisions TO thezaz_website;
+
+
+--
+-- Name: TABLE policy_signatures; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.policy_signatures TO beacon_readonly;
+GRANT SELECT,INSERT ON TABLE public.policy_signatures TO thezaz_website;
+
+
+--
+-- Name: TABLE policy_signing_requests; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.policy_signing_requests TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.policy_signing_requests TO thezaz_website;
+
+
+--
+-- Name: TABLE processed_webhooks; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.processed_webhooks TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE ON TABLE public.processed_webhooks TO thezaz_website;
+
+
+--
 -- Name: TABLE product_prices; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -11785,6 +16198,14 @@ GRANT SELECT ON TABLE public.product_prices TO beacon_readonly;
 
 GRANT SELECT ON TABLE public.products TO thezaz_website;
 GRANT SELECT ON TABLE public.products TO beacon_readonly;
+
+
+--
+-- Name: TABLE project_invites; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.project_invites TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.project_invites TO thezaz_website;
 
 
 --
@@ -11807,7 +16228,7 @@ GRANT SELECT ON TABLE public.projects TO beacon_readonly;
 -- Name: TABLE purchase_items; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT ON TABLE public.purchase_items TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.purchase_items TO thezaz_website;
 GRANT SELECT ON TABLE public.purchase_items TO beacon_readonly;
 
 
@@ -11817,14 +16238,6 @@ GRANT SELECT ON TABLE public.purchase_items TO beacon_readonly;
 
 GRANT SELECT,INSERT ON TABLE public.purchase_items_old TO thezaz_website;
 GRANT SELECT ON TABLE public.purchase_items_old TO beacon_readonly;
-
-
---
--- Name: TABLE purchases; Type: ACL; Schema: public; Owner: thommcgrath
---
-
-GRANT SELECT,INSERT,UPDATE ON TABLE public.purchases TO thezaz_website;
-GRANT SELECT ON TABLE public.purchases TO beacon_readonly;
 
 
 --
@@ -11863,8 +16276,8 @@ GRANT SELECT ON TABLE public.support_videos TO beacon_readonly;
 -- Name: TABLE search_contents; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT ON TABLE public.search_contents TO thezaz_website;
 GRANT SELECT ON TABLE public.search_contents TO beacon_readonly;
+GRANT SELECT ON TABLE public.search_contents TO thezaz_website;
 
 
 --
@@ -11874,6 +16287,14 @@ GRANT SELECT ON TABLE public.search_contents TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.search_sync TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.search_sync TO beacon_updater;
 GRANT SELECT ON TABLE public.search_sync TO beacon_readonly;
+
+
+--
+-- Name: TABLE service_token_aliases; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.service_token_aliases TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.service_token_aliases TO thezaz_website;
 
 
 --
@@ -11906,6 +16327,22 @@ GRANT SELECT ON TABLE public.stw_applicants TO beacon_readonly;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.stw_purchases TO thezaz_website;
 GRANT SELECT ON TABLE public.stw_purchases TO beacon_readonly;
+
+
+--
+-- Name: TABLE subscription_purchases; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.subscription_purchases TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.subscription_purchases TO thezaz_website;
+
+
+--
+-- Name: TABLE subscriptions; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.subscriptions TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.subscriptions TO thezaz_website;
 
 
 --
@@ -11997,6 +16434,32 @@ GRANT SELECT ON TABLE public.user_challenges TO beacon_readonly;
 
 
 --
+-- Name: TABLE users; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.users TO thezaz_website;
+GRANT SELECT ON TABLE public.users TO beacon_readonly;
+
+
+--
+-- Name: TABLE services; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.services TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.services TO thezaz_website;
+GRANT SELECT,UPDATE ON TABLE sentinel.services TO sentinel_watcher;
+
+
+--
+-- Name: TABLE user_subscriptions; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.user_subscriptions TO beacon_readonly;
+GRANT SELECT ON TABLE public.user_subscriptions TO thezaz_website;
+GRANT SELECT ON TABLE public.user_subscriptions TO sentinel_watcher;
+
+
+--
 -- Name: TABLE usercloud; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -12021,19 +16484,12 @@ GRANT SELECT ON TABLE public.usercloud_queue TO beacon_readonly;
 
 
 --
--- Name: TABLE users; Type: ACL; Schema: public; Owner: thommcgrath
---
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.users TO thezaz_website;
-GRANT SELECT ON TABLE public.users TO beacon_readonly;
-
-
---
 -- Name: TABLE wordlist; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
 GRANT SELECT ON TABLE public.wordlist TO thezaz_website;
 GRANT SELECT ON TABLE public.wordlist TO beacon_readonly;
+GRANT SELECT ON TABLE public.wordlist TO sentinel_watcher;
 
 
 --
@@ -12042,6 +16498,395 @@ GRANT SELECT ON TABLE public.wordlist TO beacon_readonly;
 
 GRANT SELECT ON TABLE sdtd.config_options TO beacon_readonly;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sdtd.config_options TO thezaz_website;
+
+
+--
+-- Name: TABLE group_bans; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.group_bans TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.group_bans TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.group_bans TO sentinel_watcher;
+
+
+--
+-- Name: TABLE group_services; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.group_services TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.group_services TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.group_services TO sentinel_watcher;
+
+
+--
+-- Name: TABLE service_bans; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.service_bans TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_bans TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_bans TO sentinel_watcher;
+
+
+--
+-- Name: TABLE active_bans; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.active_bans TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.active_bans TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.active_bans TO sentinel_watcher;
+
+
+--
+-- Name: TABLE player_sessions; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.player_sessions TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.player_sessions TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.player_sessions TO sentinel_watcher;
+
+
+--
+-- Name: TABLE players; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.players TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.players TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE sentinel.players TO sentinel_watcher;
+
+
+--
+-- Name: TABLE active_players; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.active_players TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.active_players TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.active_players TO sentinel_watcher;
+
+
+--
+-- Name: TABLE group_scripts; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.group_scripts TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.group_scripts TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.group_scripts TO sentinel_watcher;
+
+
+--
+-- Name: TABLE script_hashes; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.script_hashes TO beacon_readonly;
+GRANT SELECT,INSERT,UPDATE ON TABLE sentinel.script_hashes TO thezaz_website;
+GRANT SELECT,UPDATE ON TABLE sentinel.script_hashes TO sentinel_watcher;
+
+
+--
+-- Name: TABLE script_revisions; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.script_revisions TO beacon_readonly;
+GRANT SELECT,INSERT ON TABLE sentinel.script_revisions TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.script_revisions TO sentinel_watcher;
+
+
+--
+-- Name: TABLE script_approved_revisions; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.script_approved_revisions TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.script_approved_revisions TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.script_approved_revisions TO sentinel_watcher;
+
+
+--
+-- Name: TABLE scripts; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.scripts TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.scripts TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.scripts TO sentinel_watcher;
+
+
+--
+-- Name: TABLE service_scripts; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.service_scripts TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_scripts TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.service_scripts TO sentinel_watcher;
+
+
+--
+-- Name: TABLE active_scripts; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.active_scripts TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.active_scripts TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.active_scripts TO sentinel_watcher;
+
+
+--
+-- Name: TABLE buckets; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.buckets TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.buckets TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.buckets TO sentinel_watcher;
+
+
+--
+-- Name: TABLE group_buckets; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.group_buckets TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.group_buckets TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.group_buckets TO sentinel_watcher;
+
+
+--
+-- Name: TABLE group_users; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.group_users TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.group_users TO thezaz_website;
+
+
+--
+-- Name: TABLE groups; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.groups TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.groups TO thezaz_website;
+GRANT SELECT,UPDATE ON TABLE sentinel.groups TO sentinel_watcher;
+
+
+--
+-- Name: TABLE bucket_permissions; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.bucket_permissions TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.bucket_permissions TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.bucket_permissions TO sentinel_watcher;
+
+
+--
+-- Name: TABLE bucket_values; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.bucket_values TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.bucket_values TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.bucket_values TO sentinel_watcher;
+
+
+--
+-- Name: TABLE characters; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.characters TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.characters TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.characters TO sentinel_watcher;
+
+
+--
+-- Name: TABLE chat_message_queue; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.chat_message_queue TO beacon_readonly;
+GRANT SELECT,INSERT ON TABLE sentinel.chat_message_queue TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.chat_message_queue TO sentinel_watcher;
+
+
+--
+-- Name: TABLE dinos; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.dinos TO beacon_readonly;
+GRANT SELECT,DELETE,UPDATE ON TABLE sentinel.dinos TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.dinos TO sentinel_watcher;
+
+
+--
+-- Name: TABLE group_permissions; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.group_permissions TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.group_permissions TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.group_permissions TO sentinel_watcher;
+
+
+--
+-- Name: TABLE ip_address_cache; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.ip_address_cache TO sentinel_watcher;
+
+
+--
+-- Name: TABLE message_moderation_scores; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.message_moderation_scores TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.message_moderation_scores TO thezaz_website;
+GRANT SELECT,INSERT ON TABLE sentinel.message_moderation_scores TO sentinel_watcher;
+
+
+--
+-- Name: TABLE message_translations; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.message_translations TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.message_translations TO thezaz_website;
+GRANT SELECT,INSERT ON TABLE sentinel.message_translations TO sentinel_watcher;
+
+
+--
+-- Name: TABLE player_identifiers; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.player_identifiers TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.player_identifiers TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.player_identifiers TO sentinel_watcher;
+
+
+--
+-- Name: TABLE player_name_history; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.player_name_history TO beacon_readonly;
+GRANT SELECT,INSERT ON TABLE sentinel.player_name_history TO thezaz_website;
+GRANT SELECT,INSERT,DELETE ON TABLE sentinel.player_name_history TO sentinel_watcher;
+
+
+--
+-- Name: TABLE player_note_edits; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.player_note_edits TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.player_note_edits TO thezaz_website;
+
+
+--
+-- Name: TABLE player_notes; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.player_notes TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.player_notes TO thezaz_website;
+GRANT SELECT,INSERT ON TABLE sentinel.player_notes TO sentinel_watcher;
+
+
+--
+-- Name: TABLE script_permissions; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.script_permissions TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.script_permissions TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.script_permissions TO sentinel_watcher;
+
+
+--
+-- Name: TABLE script_tests; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.script_tests TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.script_tests TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.script_tests TO sentinel_watcher;
+
+
+--
+-- Name: TABLE script_webhooks; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.script_webhooks TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.script_webhooks TO thezaz_website;
+
+
+--
+-- Name: TABLE service_event_queue; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_event_queue TO sentinel_watcher;
+GRANT SELECT,INSERT ON TABLE sentinel.service_event_queue TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.service_event_queue TO beacon_readonly;
+
+
+--
+-- Name: TABLE service_languages; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.service_languages TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_languages TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.service_languages TO sentinel_watcher;
+
+
+--
+-- Name: TABLE service_log_messages; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.service_log_messages TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_log_messages TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_log_messages TO sentinel_watcher;
+
+
+--
+-- Name: TABLE service_logs; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.service_logs TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_logs TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.service_logs TO sentinel_watcher;
+
+
+--
+-- Name: TABLE service_permissions; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.service_permissions TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.service_permissions TO thezaz_website;
+GRANT SELECT ON TABLE sentinel.service_permissions TO sentinel_watcher;
+
+
+--
+-- Name: TABLE tribe_characters; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.tribe_characters TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.tribe_characters TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.tribe_characters TO sentinel_watcher;
+
+
+--
+-- Name: TABLE tribe_dinos; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.tribe_dinos TO beacon_readonly;
+GRANT SELECT ON TABLE sentinel.tribe_dinos TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.tribe_dinos TO sentinel_watcher;
+
+
+--
+-- Name: TABLE tribes; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.tribes TO beacon_readonly;
+GRANT SELECT,DELETE,UPDATE ON TABLE sentinel.tribes TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.tribes TO sentinel_watcher;
+
+
+--
+-- Name: TABLE watcher_logs; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE sentinel.watcher_logs TO sentinel_watcher;
+GRANT SELECT,DELETE ON TABLE sentinel.watcher_logs TO thezaz_website;
+
+
+--
+-- Name: TABLE watcher_releases; Type: ACL; Schema: sentinel; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sentinel.watcher_releases TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sentinel.watcher_releases TO thezaz_website;
 
 
 --
