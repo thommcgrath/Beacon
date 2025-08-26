@@ -81,6 +81,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventPlayerUncuffed = 'playerUncuffed';
 	const EventProblemDetected = 'problemDetected';
 	const EventRollbackDetected = 'rollbackDetected';
+	const EventScriptCommand = 'scriptCommand';
 	const EventServerConnected = 'serverConnected';
 	const EventServerDisconnected = 'serverDisconnected';
 	const EventManualServiceScript = 'serviceScriptRun';
@@ -90,6 +91,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventTribeDestroyed = 'tribeDestroyed';
 	const EventTribeRenamed = 'tribeRenamed';
 	const EventManualTribeScript = 'tribeScriptRun';
+	const EventWebhook = 'webhook';
 	const Events = [
 		self::EventAdminCommand,
 		self::EventBroadcast,
@@ -126,6 +128,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventPlayerUncuffed,
 		self::EventProblemDetected,
 		self::EventRollbackDetected,
+		self::EventScriptCommand,
 		self::EventServerConnected,
 		self::EventServerDisconnected,
 		self::EventManualServiceScript,
@@ -135,6 +138,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventTribeDestroyed,
 		self::EventTribeRenamed,
 		self::EventManualTribeScript,
+		self::EventWebhook,
 	];
 
 	protected string $messageId;

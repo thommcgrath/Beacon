@@ -100,6 +100,7 @@ trait MutableDatabaseObject {
 				$sql .= ' ON CONFLICT (' . implode(', ', $upsertConflicts) . ') DO UPDATE SET ' . implode(', ', $upsertAssignments);
 			}
 			$sql .= ' RETURNING ' . $primaryKeyColumn->ColumnName() . ';';
+			echo $sql;
 
 			$database->BeginTransaction();
 			$rows = $database->Query($sql, $values);

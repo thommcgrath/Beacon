@@ -13,24 +13,18 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 	protected string $groupId;
 	protected string $scriptId;
 	protected string $scriptName;
-	protected string $scriptContext;
-	protected string $scriptLanguage;
 	protected int $permissionsMask;
 	protected array $parameterValues;
-	protected ?int $revisionNumber;
-	protected int $latestRevision;
+	protected ?string $revisionId;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->groupScriptId = $row->Field('group_script_id');
 		$this->groupId = $row->Field('group_id');
 		$this->scriptId = $row->Field('script_id');
 		$this->scriptName = $row->Field('script_name');
-		$this->scriptContext = $row->Field('script_context');
-		$this->scriptLanguage = $row->Field('script_language');
 		$this->permissionsMask = $row->Field('permissions_mask');
 		$this->parameterValues = json_decode($row->Field('parameter_values'), true);
-		$this->revisionNumber = $row->Field('revision_number');
-		$this->latestRevision = $row->Field('latest_revision');
+		$this->revisionId = $row->Field('revision_id');
 	}
 
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -46,8 +40,7 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('scriptLanguage', ['columnName' => 'script_language', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.language']),
 				new DatabaseObjectProperty('permissionsMask', ['columnName' => 'permissions_mask', 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('parameterValues', ['columnName' => 'parameter_values', 'editable' => DatabaseObjectProperty::kEditableAlways]),
-				new DatabaseObjectProperty('revisionNumber', ['columnName' => 'revision_number', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
-				new DatabaseObjectProperty('latestRevision', ['columnName' => 'latest_revision', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'scripts.latest_revision']),
+				new DatabaseObjectProperty('revisionId', ['columnName' => 'revision_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
 				'INNER JOIN sentinel.scripts ON (scripts.script_id = group_scripts.script_id)',
@@ -62,8 +55,6 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 		if (isset($filters['sortedColumn'])) {
 			switch ($filters['sortedColumn']) {
 			case 'scriptName':
-			case 'scriptContext':
-			case 'scriptLanguage':
 				$sortColumn = $filters['sortedColumn'];
 				break;
 			}
@@ -72,34 +63,6 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'groupId');
 		$parameters->AddFromFilter($schema, $filters, 'scriptId');
 		$parameters->AddFromFilter($schema, $filters, 'scriptName', 'ILIKE');
-
-		if (isset($filters['scriptContext'])) {
-			$contexts = explode(',', $filters['scriptContext']);
-			if (count($contexts) === 1) {
-				$placeholder = $parameters->AddValue($contexts[0]);
-				$parameters->clauses[] = $schema->Accessor('scriptContext') . ' = $' . $placeholder;
-			} elseif (count($contexts) > 0) {
-				$placeholders = [];
-				foreach ($contexts as $context) {
-					$placeholders[] = '$' . $parameters->AddValue($context);
-				}
-				$parameters->clauses[] = $schema->Accessor('scriptContext') . ' IN (' . implode(', ', $placeholders) . ')';
-			}
-		}
-
-		if (isset($filters['scriptLanguage'])) {
-			$languages = explode(',', $filters['scriptLanguage']);
-			if (count($languages) === 1) {
-				$placeholder = $parameters->AddValue($languages[0]);
-				$parameters->clauses[] = $schema->Accessor('scriptLanguage') . ' = $' . $placeholder;
-			} elseif (count($languages) > 0) {
-				$placeholders = [];
-				foreach ($languages as $language) {
-					$placeholders[] = '$' . $parameters->AddValue($language);
-				}
-				$parameters->clauses[] = $schema->Accessor('scriptLanguage') . ' IN (' . implode(', ', $placeholders) . ')';
-			}
-		}
 	}
 
 	public function jsonSerialize(): mixed {
@@ -108,12 +71,9 @@ class GroupScript extends DatabaseObject implements JsonSerializable {
 			'groupId' => $this->groupId,
 			'scriptId' => $this->scriptId,
 			'scriptName' => $this->scriptName,
-			'scriptContext' => $this->scriptContext,
-			'scriptLanguage' => $this->scriptLanguage,
 			'permissionsMask' => $this->permissionsMask,
 			'parameterValues' => (object) $this->parameterValues,
-			'revisionNumber' => $this->revisionNumber,
-			'latestRevision' => $this->latestRevision,
+			'revisionId' => $this->revisionId,
 		];
 	}
 

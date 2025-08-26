@@ -71,8 +71,27 @@ abstract class DatabaseObject {
 			}
 			return static::NewInstance($rows);
 		} catch (Exception $err) {
-			var_dump($err);
 			return null;
+		}
+	}
+
+	public function Refetch(): void {
+		try {
+			$schema = static::DatabaseSchema();
+			$database = BeaconCommon::Database();
+			$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';';
+			$values = [$this->PrimaryKey()];
+			if (str_contains($sql, '%%USER_ID%%')) {
+				$sql = str_replace('%%USER_ID%%', '$2', $sql);
+				$values[] = Core::UserId();
+			}
+			$rows = $database->Query($sql, $values);
+			if (is_null($rows) || $rows->RecordCount() !== 1) {
+				throw new APIException(message: 'Could not refetch object ' . $this->PrimaryKey() . ' from ' . $schema->Schema() . '.' . $schema->Table(), code: 'objectNotFound');
+			}
+			$this->__construct($rows);
+		} catch (Exception $err) {
+			throw new APIException(message: $err->getMessage(), code: 'unhandledException');
 		}
 	}
 
