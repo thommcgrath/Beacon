@@ -166,7 +166,10 @@ Core::RegisterRoutes(
 		'/sentinel/scriptWebhooks/{scriptWebhookId}/trigger' => [
 			'POST' => 'sentinel/scripts/trigger',
 		],
-		'/sentinel/scripts/run' => [
+		'/sentinel/scriptMenuItems' => [
+			'GET' => 'sentinel/scripts/menuItems',
+		],
+		'/sentinel/scriptMenuItems/{scriptEventId}' => [
 			'POST' => 'sentinel/scripts/run',
 		],
 		'/sentinel/dinos/{dinoId}/locate' => [

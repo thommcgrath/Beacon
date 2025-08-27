@@ -24,7 +24,7 @@ function handleRequest(array $context): Response {
 
 	try {
 		$database->BeginTransaction();
-		$rows = $database->Query('SELECT DISTINCT service_id, script_id, revision_id, name, parameters, parameter_values, webhook_access_key FROM sentinel.active_scripts WHERE context = $1 AND webhook_id = $2;', LogMessage::EventWebhook, $scriptWebhookId);
+		$rows = $database->Query('SELECT DISTINCT service_id, script_id, revision_id, script_event_id, name, parameters, parameter_values, webhook_access_key FROM sentinel.active_scripts WHERE context = $1 AND webhook_id = $2;', LogMessage::EventWebhook, $scriptWebhookId);
 		if ($rows->RecordCount() === 0) {
 			$database->Rollback();
 			return Response::NewJsonError(message: 'Webhook not found', httpStatus: 404, code: 'notFound', details: ['scriptWebhookId' => $scriptWebhookId]);
@@ -64,10 +64,10 @@ function handleRequest(array $context): Response {
 				$parameters[$parameterName] = $parameterValue;
 			}
 
-			$scriptName = $rows->Field('name');
 			$eventData = [
 				'scriptId' => $rows->Field('script_id'),
-				'scriptName' => $scriptName,
+				'scriptName' => $rows->Field('name'),
+				'scriptEventId' => $rows->Field('script_event_id'),
 				'timestamp' => $now->format('Y-m-d H:i:s.v'),
 				'parameters' => (object)$parameters,
 				'event' => LogMessage::EventWebhook,
