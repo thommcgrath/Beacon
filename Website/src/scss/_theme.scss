@@ -2404,6 +2404,16 @@ img.avatar {
 	.not-mini {
 		display: revert;
 	}
+
+	table.generic {
+		div.row-details {
+			display: none;
+		}
+
+		.low-priority {
+			display: table-cell;
+		}
+	}
 }
 
 div.comment-block {
@@ -2938,16 +2948,6 @@ body.no-navigation {
 			padding-right: 20px;
 			padding-top: 0px;
 			margin-top: 0px;
-		}
-	}
-
-	table.generic {
-		div.row-details {
-			display: none;
-		}
-
-		.low-priority {
-			display: table-cell;
 		}
 	}
 

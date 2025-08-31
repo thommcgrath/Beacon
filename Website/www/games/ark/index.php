@@ -16,4 +16,5 @@ echo $breadcrumbs->Render();
 	<li><a href="/Games/Ark/Mods">Mods</a></li>
 	<li><a href="/Games/Ark/Cheats">Spawn Codes</a></li>
 	<li><a href="/Games/Ark/SpawnPoints">Spawn Points</a></li>
+	<li><a href="/Games/Ark/Colors">Colors</a></li>
 </ul>
