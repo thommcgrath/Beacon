@@ -77,6 +77,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 			case LogMessage::EventManualServiceScript:
 			case LogMessage::EventManualTribeScript:
 				$filtered['menuText'] = $event['menuText'];
+				$filtered['menuArguments'] = $event['menuArguments'];
 				break;
 			case LogMessage::EventWebhook:
 				$filtered['webhookId'] = $event['webhookId'];
@@ -105,7 +106,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('approvalStatus', ['columnName' => 'approval_status', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_revisions.approval_status']),
 				new DatabaseObjectProperty('parameters', ['columnName' => 'parameters', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'script_revisions.parameters']),
 				new DatabaseObjectProperty('commonJavascript', ['columnName' => 'common_javascript', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'script_revisions.common_javascript']),
-				new DatabaseObjectProperty('events', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(events_template))) FROM (SELECT script_events.language, script_events.context, script_events.code, script_revision_events.command_keyword AS "commandKeyword", script_revision_events.command_arguments AS "commandArguments", menu_text AS "menuText", webhook_id AS "webhookId", webhook_access_key AS "webhookAccessKey" FROM sentinel.script_events INNER JOIN sentinel.script_revision_events ON (script_revision_events.script_event_id = script_events.script_event_id) WHERE script_revision_events.script_revision_id = script_revisions.script_revision_id) AS events_template), \'[]\')']),
+				new DatabaseObjectProperty('events', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(events_template))) FROM (SELECT script_events.language, script_events.context, script_events.code, script_revision_events.command_keyword AS "commandKeyword", script_revision_events.command_arguments AS "commandArguments", menu_text AS "menuText", menu_arguments AS "menuArguments", webhook_id AS "webhookId", webhook_access_key AS "webhookAccessKey" FROM sentinel.script_events INNER JOIN sentinel.script_revision_events ON (script_revision_events.script_event_id = script_events.script_event_id) WHERE script_revision_events.script_revision_id = script_revisions.script_revision_id) AS events_template), \'[]\')']),
 			],
 			joins: [
 				'INNER JOIN public.users ON (scripts.user_id = users.user_id)',
@@ -269,6 +270,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 			$eventKeyword = null;
 			$eventArguments = null;
 			$eventMenuText = null;
+			$eventMenuArguments = null;
 			$eventWebhookId = null;
 			$eventWebhookAccessKey = null;
 			switch ($eventContext) {
@@ -288,6 +290,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				}
 
 				$hashParts[] = $eventKeyword;
+				$hashParts[] = implode($eventArguments);
 				break;
 			case LogMessage::EventManualCharacterScript:
 			case LogMessage::EventManualDinoScript:
@@ -298,7 +301,15 @@ class Script extends DatabaseObject implements JsonSerializable {
 					throw new APIException(message: 'Menu text should not be empty.', code: 'emptyMenuText');
 				}
 
+				$eventMenuArguments = $event['menuArguments'] ?? [];
+				foreach ($eventMenuArguments as $parameterName) {
+					if (array_key_exists($parameterName, $parameterMap) === false) {
+						throw new APIException(message: "Menu argument {$parameterName} is not present in parameters.", code: 'badMenuArguments', httpStatus: 400);
+					}
+				}
+
 				$hashParts[] = $eventMenuText;
+				$hashParts[] = implode($eventMenuArguments);
 				break;
 			case LogMessage::EventWebhook:
 				if (BeaconCommon::HasAllKeys($event, 'webhookId', 'webhookAccessKey')) {
@@ -322,6 +333,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				'commandKeyword' => $eventKeyword,
 				'commandArguments' => $eventArguments,
 				'menuText' => $eventMenuText,
+				'menuArguments' => $eventMenuArguments,
 				'webhookId' => $eventWebhookId,
 				'webhookAccessKey' => $eventWebhookAccessKey,
 				'webhookAccessKeyHash' => null,
@@ -349,7 +361,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 						$event['webhookAccessKey'] = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $accessKey));
 					}
 
-					$database->Query('INSERT INTO sentinel.script_revision_events (script_revision_id, script_event_id, command_keyword, command_arguments, menu_text, webhook_id, webhook_access_key, webhook_access_key_hash) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);', $revisionId, $eventId, $event['commandKeyword'], is_null($event['commandArguments']) ? null : json_encode($event['commandArguments']), $event['menuText'], $event['webhookId'], $event['webhookAccessKey'], $event['webhookAccessKeyHash']);
+					$database->Query('INSERT INTO sentinel.script_revision_events (script_revision_id, script_event_id, command_keyword, command_arguments, menu_text, menu_arguments, webhook_id, webhook_access_key, webhook_access_key_hash) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', $revisionId, $eventId, $event['commandKeyword'], is_null($event['commandArguments']) ? null : json_encode($event['commandArguments']), $event['menuText'], $event['menuArguments'], $event['webhookId'], $event['webhookAccessKey'], $event['webhookAccessKeyHash']);
 					$sendApprovalRequest = true;
 				}
 			}

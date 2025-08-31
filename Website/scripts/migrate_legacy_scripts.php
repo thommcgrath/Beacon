@@ -50,6 +50,7 @@ while (!$rows->EOF()) {
 	case LogMessage::EventManualDinoScript:
 	case LogMessage::EventManualTribeScript:
 		$event['menuText'] = $scriptName;
+		$event['menuArguments'] = array_keys(json_decode($rows->Field('parameters'), true));
 		break;
 	case LogMessage::EventSlashCommand:
 		$event['commandKeyword'] = $rows->Field('command_keyword');
