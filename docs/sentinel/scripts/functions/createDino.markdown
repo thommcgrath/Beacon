@@ -15,7 +15,7 @@ parameters:
     subobject:
       - key: level
         type: Number
-        notes: The desired dino level. A random level will be chosen if ommitted.
+        notes: The desired dino level. A random level will be chosen if omitted.
       - key: age
         type: Number
         notes: To create a baby, specify a value less than 1. Baby is less than 0.1, juvenille is less than 0.5, and adolescent is less than 1. The default is 1.
@@ -47,6 +47,8 @@ examples:
     code: "const characterId = '305b1849-c7ac-5a4b-afe9-86628d91bf23';\nconst dinoPath = '/Game/PrimalEarth/Dinos/Kaprosuchus/Kaprosuchus_Character_BP.Kaprosuchus_Character_BP';\nconst dinoInfo = {\n  colors: [\n    'White',\n    'White',\n    'White',\n    'White',\n    'White',\n    'White',\n  ],\n};\nbeacon.createDino(characterId, dinoPath, dinoInfo);"
   - title: Give a player an imprinted spayed female rex
     code: "const characterId = '305b1849-c7ac-5a4b-afe9-86628d91bf23';\nconst dinoPath = '/Game/PrimalEarth/Dinos/Rex/Rex_Character_BP.Rex_Character_BP';\nconst dinoInfo = {\n  isFemale: true,\n  isSterilized: true,\n  imprint: 1.0,\n};\nbeacon.createDino(characterId, dinoPath, dinoInfo);"
+seealso:
+  - editDino
 ---
 # {{page.title}}
 
