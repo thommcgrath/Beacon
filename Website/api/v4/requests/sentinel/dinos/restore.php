@@ -64,51 +64,21 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError(message: 'Service not connected', httpStatus: 412, code: 'serviceNotConnected');
 	}
 
-	$gameSpecific = $service->GameSpecific();
-	if (isset($gameSpecific['cryopodPath'])) {
-		$cryopodPath = $gameSpecific['cryopodPath'];
-	} else {
-		$cryopodPath = '/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponEmptyCryopod.PrimalItem_WeaponEmptyCryopod';
-	}
-
-	$requestId = BeaconUUID::v4();
-	$payload = [
-		'requestId' => $requestId,
-		'type' => 'giveItem',
-		'specimenId' => $character->SpecimenId(),
-		'itemPath' => $cryopodPath,
-		'quantity' => 1,
-		'customItemData' => $dino->CryopodData(),
-	];
-
-	$metadata = [
-		'characterId' => $characterId,
+	$now = new DateTimeImmutable();
+	$event = [
+		'event' => 'dinoRestored',
+		'timestamp' => $now->format('Y-m-d H:i:s.v'),
 		'dinoId' => $dinoId,
-		'playerId' => $character->PlayerId(),
-		'tribeId' => $character->TribeId(),
+		'characterId' => $characterId,
 	];
 
-	$placeholders = [
-		'characterName' => $character->Name(),
-		'dinoName' => $dino->DescriptiveName(),
-	];
-	$templates = [
-		'en' => 'Dino `{dinoName}` was restored to `{characterName}`.',
-	];
-	$messages = [];
-	foreach ($service->Languages() as $language) {
-		$messages[$language] = LogMessage::ReplacePlaceholders($templates[$language], $placeholders);
-	}
-
-	BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $serviceId . '.gameCommand', json_encode($payload));
-
+	// Add it to the event queue
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
-	$database->Query('UPDATE sentinel.dinos SET status = $2 WHERE dino_id = $1;', $dinoId, Dino::StatusFrozen);
-	LogMessage::Create(serviceId: $serviceId, eventName: LogMessage::EventDinoRestored, type: LogMessage::LogTypeGameplay, level: LogMessage::LogLevelInfo, messages: $messages, metadata: $metadata);
+	$rows = $database->Query('INSERT INTO sentinel.service_event_queue (service_id, version, event_data) VALUES ($1, $2, $3) RETURNING queue_id;', $serviceId, 1, json_encode($event, JSON_UNESCAPED_SLASHES));
 	$database->Commit();
 
 	return Response::NewJson([
-		'requestId' => $requestId,
+		'requestId' => $rows->Field('queue_id'),
 	], 200);
 }
