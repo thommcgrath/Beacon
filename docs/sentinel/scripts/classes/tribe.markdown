@@ -19,9 +19,9 @@ The `Tribe` class represents a tribe. All survivors have a tribe, even if alone.
 
 {% capture sample_object %}
 {
-	"tribeId": "b72a9dd3-1a64-52a2-8f9c-f90409c871f0",
-	"tribeNumber": 780901340,
-	"name": "Reusable Breakfast Cereals"
+  "tribeId": "b72a9dd3-1a64-52a2-8f9c-f90409c871f0",
+  "tribeNumber": 780901340,
+  "name": "Reusable Breakfast Cereals"
 }
 {% endcapture %}
 {% include sentinelclass.markdown sample=sample_object %}

@@ -22,10 +22,10 @@ The `Group` class represents a Sentinel server group.
 
 {% capture sample_object %}
 {
-	"groupId": "29fdfe65-2299-49d5-ac35-8f4757a764de",
-	"userId": "00000000-60b4-4e15-91b1-a29ebd4651cd",
-	"name": "Servers That Do Not Exist",
-	"color": "None"
+  "groupId": "29fdfe65-2299-49d5-ac35-8f4757a764de",
+  "userId": "00000000-60b4-4e15-91b1-a29ebd4651cd",
+  "name": "Servers That Do Not Exist",
+  "color": "None"
 }
 {% endcapture %}
 {% include sentinelclass.markdown sample=sample_object %}

@@ -19,9 +19,9 @@ The `Player` class represents a real human player. It is possible for a player t
 
 {% capture sample_object %}
 {
-	"playerId": "b72a9dd3-1a64-52a2-8f9c-f90409c871f0",
-	"name": "Sentinel Sample Player",
-	"doNotTrack": false
+  "playerId": "b72a9dd3-1a64-52a2-8f9c-f90409c871f0",
+  "name": "Sentinel Sample Player",
+  "doNotTrack": false
 }
 {% endcapture %}
 {% include sentinelclass.markdown sample=sample_object %}

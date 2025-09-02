@@ -7,3 +7,5 @@ description: "The server's cluster ID has changed since the last connection. Thi
 # {{ page.title }}
 
 {{ page.description }}
+
+{% include sentinelevent.markdown %}

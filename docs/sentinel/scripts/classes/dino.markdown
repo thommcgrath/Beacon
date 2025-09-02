@@ -64,24 +64,24 @@ The `Dino` class represents a tamed creature. Sentinel does not track wild creat
 
 {% capture sample_object %}
 {
-	"dinoAge": 1.0,
-	"dinoDisplayName": "Biljak",
-	"dinoGender": "Female",
-	"dinoHasGender": true,
-	"dinoId": "8ebd16a3-6055-5d6e-8898-7021b1a19e73",
-	"dinoIsDead": false,
-	"dinoIsFemale": true,
-	"dinoIsFrozen": false,
-	"dinoIsUploaded": false,
-	"dinoLevel": 32,
-	"dinoName": "Biljak",
-	"dinoNameTag": "Dodo"
-	"dinoNumber": 183600354641289556,
-	"dinoRestoreEligible": false,
-	"dinoSpecies": "Dodo",
-	"dinoSpeciesPath": "/Game/PrimalEarth/Dinos/Dodo/Dodo_Character_BP.Dodo_Character_BP",
-	"dinoStatus": "Deployed",
-	"tribeId": "b72a9dd3-1a64-52a2-8f9c-f90409c871f0"
+  "dinoAge": 1.0,
+  "dinoDisplayName": "Biljak",
+  "dinoGender": "Female",
+  "dinoHasGender": true,
+  "dinoId": "8ebd16a3-6055-5d6e-8898-7021b1a19e73",
+  "dinoIsDead": false,
+  "dinoIsFemale": true,
+  "dinoIsFrozen": false,
+  "dinoIsUploaded": false,
+  "dinoLevel": 32,
+  "dinoName": "Biljak",
+  "dinoNameTag": "Dodo"
+  "dinoNumber": 183600354641289556,
+  "dinoRestoreEligible": false,
+  "dinoSpecies": "Dodo",
+  "dinoSpeciesPath": "/Game/PrimalEarth/Dinos/Dodo/Dodo_Character_BP.Dodo_Character_BP",
+  "dinoStatus": "Deployed",
+  "tribeId": "b72a9dd3-1a64-52a2-8f9c-f90409c871f0"
 }
 {% endcapture %}
 {% include sentinelclass.markdown sample=sample_object %}
