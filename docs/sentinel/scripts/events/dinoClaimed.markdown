@@ -6,10 +6,10 @@ description: "An unclaimed tamed dino was claimed."
 properties:
   - key: dinoId
     type: String
-    notes: The Sentinel UUID of the dino that was claimed
+    notes: The Sentinel UUID of the dino that was claimed.
   - key: tribeId
     type: String
-    notes: The Sentinel UUID of the tribe that claimed the dino
+    notes: The Sentinel UUID of the tribe that claimed the dino.
   - key: dinoName
     type: String
     notes: The name of the dino that was claimed. May be empty.
