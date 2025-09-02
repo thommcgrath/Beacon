@@ -7,3 +7,9 @@ description: "The game server has disconnected from Sentinel."
 # {{ page.title }}
 
 {{ page.description }}
+
+{% include sentinelevent.markdown %}
+
+## Notes
+
+{% include sentinelreconnect.markdown %}

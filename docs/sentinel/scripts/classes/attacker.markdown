@@ -42,6 +42,9 @@ properties:
   - key: characterId
     type: String
     notes: For player attackers, the Sentinel UUID of the survivor.
+  - key: playerId
+    type: String
+    notes: For player attackers, the Sentinel UUID of the player.
 ---
 # {{page.title}}
 
