@@ -24,14 +24,16 @@ function handleRequest(array $context): Response {
 
 	try {
 		$database->BeginTransaction();
-		$rows = $database->Query('SELECT DISTINCT service_id, script_id, revision_id, script_event_id, name, parameters, parameter_values, webhook_access_key FROM sentinel.active_scripts WHERE context = $1 AND webhook_id = $2;', LogMessage::EventWebhook, $scriptWebhookId);
+		$rows = $database->Query('SELECT DISTINCT service_id, script_id, revision_id, script_event_id, name, arguments, properties FROM sentinel.active_scripts WHERE context = $1 AND keyword = $2;', LogMessage::EventWebhook, $scriptWebhookId);
 		if ($rows->RecordCount() === 0) {
 			$database->Rollback();
 			return Response::NewJsonError(message: 'Webhook not found', httpStatus: 404, code: 'notFound', details: ['scriptWebhookId' => $scriptWebhookId]);
 		}
 
 		while (!$rows->EOF()) {
-			$accessKey = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($rows->Field('webhook_access_key'))));
+			$properties = json_decode($rows->Field('properties'), true);
+			$accessKey = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($properties['accessKey'])));
+			var_dump($accessKey);
 			$computedSignature = hash_hmac('sha256', $stringToSign, $accessKey);
 			if (isset($_SERVER['HTTP_X_BEACON_TOKEN'])) {
 				$authScheme = 'HmacSHA256';
@@ -48,20 +50,18 @@ function handleRequest(array $context): Response {
 				return Response::NewJsonError(message: 'Webhook not found', httpStatus: 404, code: 'notFound', details: ['scriptWebhookId' => $scriptWebhookId]);
 			}
 
-			$parameters = [];
-			$parameterDefinitions = json_decode($rows->Field('parameters'), true);
-			$parameterValues = json_decode($rows->Field('parameter_values'), true);
-			$requestValues = $body['parameters'] ?? [];
+			$arguments = [];
+			$argumentDefinitions = json_decode($rows->Field('arguments'), true);
+			$requestValues = $body['arguments'] ?? $body['parameters'] ?? [];
 
-			foreach ($parameterDefinitions as $definition) {
-				$parameterName = $definition['name'];
-				$parameters[$parameterName] = $definition['default'];
+			foreach ($argumentDefinitions as $definition) {
+				$argumentName = $definition['name'];
+				$arguments[$argumentName] = $definition['default'];
 			}
-			foreach ($parameterValues as $parameterName => $parameterValue) {
-				$parameters[$parameterName] = $parameterValue;
-			}
-			foreach ($requestValues as $parameterName => $parameterValue) {
-				$parameters[$parameterName] = $parameterValue;
+			foreach ($requestValues as $argumentName => $argumentValue) {
+				if (array_key_exists($argumentName, $arguments)) {
+					$arguments[$argumentName] = $argumentValue;
+				}
 			}
 
 			$eventData = [
@@ -69,7 +69,7 @@ function handleRequest(array $context): Response {
 				'scriptName' => $rows->Field('name'),
 				'scriptEventId' => $rows->Field('script_event_id'),
 				'timestamp' => $now->format('Y-m-d H:i:s.v'),
-				'parameters' => (object)$parameters,
+				'arguments' => (object)$arguments,
 				'event' => LogMessage::EventWebhook,
 			];
 

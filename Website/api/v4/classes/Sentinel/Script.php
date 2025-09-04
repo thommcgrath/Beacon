@@ -3,6 +3,7 @@
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{APIException, Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconEncryption, BeaconRecordSet, BeaconUUID, JsonSerializable;
+use Poliander\Cron\CronExpression;
 
 class Script extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -59,32 +60,17 @@ class Script extends DatabaseObject implements JsonSerializable {
 
 		$this->events = [];
 		$events = json_decode($row->Field('events'), true);
+		$eventKeyWhitelist = ['language', 'context', 'code', 'keyword', 'arguments', 'properties'];
 		foreach ($events as $event) {
-			$filtered = [
-				'language' => $event['language'],
-				'context' => $event['context'],
-				'code' => $event['code'],
-			];
-
-			switch ($event['context']) {
-			case LogMessage::EventSlashCommand:
-			case LogMessage::EventScriptCommand:
-				$filtered['commandKeyword'] = $event['commandKeyword'];
-				$filtered['commandArguments'] = $event['commandArguments'];
-				break;
-			case LogMessage::EventManualCharacterScript:
-			case LogMessage::EventManualDinoScript:
-			case LogMessage::EventManualServiceScript:
-			case LogMessage::EventManualTribeScript:
-				$filtered['menuText'] = $event['menuText'];
-				$filtered['menuArguments'] = $event['menuArguments'];
-				break;
-			case LogMessage::EventWebhook:
-				$filtered['webhookId'] = $event['webhookId'];
-				$filtered['webhookAccessKey'] = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($event['webhookAccessKey'])));
-				break;
+			$filtered = [];
+			foreach ($event as $eventKey => $eventValue) {
+				if (in_array($eventKey, $eventKeyWhitelist) && is_null($eventValue) === false) {
+					$filtered[$eventKey] = $eventValue;
+				}
 			}
-
+			if ($filtered['context'] === LogMessage::EventWebhook) {
+				$filtered['properties']['accessKey'] = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($filtered['properties']['accessKey'])));
+			}
 			$this->events[] = $filtered;
 		}
 	}
@@ -106,7 +92,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('approvalStatus', ['columnName' => 'approval_status', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_revisions.approval_status']),
 				new DatabaseObjectProperty('parameters', ['columnName' => 'parameters', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'script_revisions.parameters']),
 				new DatabaseObjectProperty('commonJavascript', ['columnName' => 'common_javascript', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'script_revisions.common_javascript']),
-				new DatabaseObjectProperty('events', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(events_template))) FROM (SELECT script_events.language, script_events.context, script_events.code, script_revision_events.command_keyword AS "commandKeyword", script_revision_events.command_arguments AS "commandArguments", menu_text AS "menuText", menu_arguments AS "menuArguments", webhook_id AS "webhookId", webhook_access_key AS "webhookAccessKey" FROM sentinel.script_events INNER JOIN sentinel.script_revision_events ON (script_revision_events.script_event_id = script_events.script_event_id) WHERE script_revision_events.script_revision_id = script_revisions.script_revision_id) AS events_template), \'[]\')']),
+				new DatabaseObjectProperty('events', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(events_template))) FROM (SELECT script_events.language, script_events.context, script_events.code, script_events.keyword, script_events.arguments, script_events.properties FROM sentinel.script_events INNER JOIN sentinel.script_revision_events ON (script_revision_events.script_event_id = script_events.script_event_id) WHERE script_revision_events.script_revision_id = script_revisions.script_revision_id) AS events_template), \'[]\')']),
 			],
 			joins: [
 				'INNER JOIN public.users ON (scripts.user_id = users.user_id)',
@@ -207,7 +193,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$scriptCommonJavascript = $properties['commonJavascript'] ?? '';
 
 		$database = BeaconCommon::Database();
-		$hashParts = [
+		$revisionHashParts = [
 			$scriptId,
 			json_encode($scriptParameters),
 			$scriptCommonJavascript,
@@ -244,11 +230,16 @@ class Script extends DatabaseObject implements JsonSerializable {
 			$eventLanguage = trim($event['language'] ?? '');
 			$eventContext = trim($event['context'] ?? '');
 			$eventCode = trim($event['code'] ?? '');
+			$eventKeyword = null;
+			$eventArguments = null;
+			$eventProperties = null;
+			$eventHashParts = [
+				$eventLanguage,
+				$eventContext,
+				$eventCode,
+			];
 
 			$usesJavaScript = $usesJavaScript || $eventLanguage === static::LanguageJavaScript;
-
-			$eventId = BeaconUUID::v5($eventLanguage . ':' . $eventContext . ':' . $eventCode, static::ScriptNamespace);
-			$hashParts[] = $eventId;
 
 			if (in_array($eventContext, LogMessage::Events) === false) {
 				throw new APIException(message: 'Context is not a valid context. See the documentation for correct values.', code: 'badContext');
@@ -267,79 +258,76 @@ class Script extends DatabaseObject implements JsonSerializable {
 				}
 			}
 
-			$eventKeyword = null;
-			$eventArguments = null;
-			$eventMenuText = null;
-			$eventMenuArguments = null;
-			$eventWebhookId = null;
-			$eventWebhookAccessKey = null;
 			switch ($eventContext) {
-			case LogMessage::EventSlashCommand:
+			case LogMessage::EventCron:
+			case LogMessage::EventManualCharacterScript:
+			case LogMessage::EventManualDinoScript:
+			case LogMessage::EventManualServiceScript:
+			case LogMessage::EventManualTribeScript:
 			case LogMessage::EventScriptCommand:
-				$eventKeyword = trim($event['commandKeyword'] ?? '');
-				$eventArguments = $event['commandArguments'] ?? [];
+			case LogMessage::EventSlashCommand:
+			case LogMessage::EventSubroutine:
+			case LogMessage::EventWebhook:
+				$eventKeyword = $event['keyword'] ?? null;
+				$eventArguments = $event['arguments'] ?? null;
 
 				if (empty($eventKeyword)) {
 					throw new APIException(message: 'Keyword should not be empty.', code: 'emptyKeyword');
 				}
 
-				foreach ($eventArguments as $parameterName) {
-					if (array_key_exists($parameterName, $parameterMap) === false) {
-						throw new APIException(message: "Command argument {$parameterName} is not present in parameters.", code: 'badCommandArguments', httpStatus: 400);
+				if (is_array($eventArguments) === false || BeaconCommon::IsAssoc($eventArguments) === true) {
+					throw new APIException(message: 'Arguments should be an array.', code: 'badArguments');
+				}
+
+				foreach ($eventArguments as $argument) {
+					if (is_array($argument) === false || count($argument) != 4 || BeaconCommon::IsAssoc($argument) === false || BeaconCommon::HasAllKeys($argument, 'name', 'type', 'default', 'required') === false) {
+						throw new APIException(message: 'Arguments should have keys name, type, default, and required.', code: 'badArguments');
 					}
 				}
 
-				$hashParts[] = $eventKeyword;
-				$hashParts[] = implode($eventArguments);
-				break;
-			case LogMessage::EventManualCharacterScript:
-			case LogMessage::EventManualDinoScript:
-			case LogMessage::EventManualServiceScript:
-			case LogMessage::EventManualTribeScript:
-				$eventMenuText = trim($event['menuText'] ?? '');
-				if (empty($eventMenuText)) {
-					throw new APIException(message: 'Menu text should not be empty.', code: 'emptyMenuText');
-				}
+				$eventHashParts[] = $eventKeyword;
+				$eventHashParts[] = json_encode($eventArguments);
 
-				$eventMenuArguments = $event['menuArguments'] ?? [];
-				foreach ($eventMenuArguments as $parameterName) {
-					if (array_key_exists($parameterName, $parameterMap) === false) {
-						throw new APIException(message: "Menu argument {$parameterName} is not present in parameters.", code: 'badMenuArguments', httpStatus: 400);
+				switch ($eventContext) {
+				case LogMessage::EventWebhook:
+					$eventProperties = $event['properties'] ?? null;
+
+					if (is_array($eventProperties) === false || BeaconCommon::IsAssoc($eventProperties) === false || isset($eventProperties['accessKey']) === false) {
+						$accessKey = BeaconEncryption::GenerateKey(256);
+					} else {
+						$accessKey = BeaconCommon::Base64UrlDecode($eventProperties['accessKey']);
 					}
+					$eventProperties = [
+						'accessKey' => BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $accessKey)),
+						'accessKeyHash' => BeaconCommon::Base64UrlEncode(hash('sha3-512', $accessKey, true)),
+					];
+
+					$eventHashParts[] = $eventProperties['accessKeyHash'];
+					break;
+				case LogMessage::EventCron:
+					$expression = new CronExpression($eventKeyword);
+					if ($expression->isValid() === false) {
+						throw new APIException(message: 'Cron expression is not valid.', code: 'badCronExpression');
+					}
+					break;
 				}
 
-				$hashParts[] = $eventMenuText;
-				$hashParts[] = implode($eventMenuArguments);
-				break;
-			case LogMessage::EventWebhook:
-				if (BeaconCommon::HasAllKeys($event, 'webhookId', 'webhookAccessKey')) {
-					$eventWebhookId = $event['webhookId'];
-					$eventWebhookAccessKey = BeaconCommon::Base64UrlDecode($event['webhookAccessKey']);
-				} else {
-					$eventWebhookId = BeaconUUID::v4();
-					$eventWebhookAccessKey = BeaconEncryption::GenerateKey(256);
-				}
-
-				$hashParts[] = $eventWebhookId;
-				$hashParts[] = $eventWebhookAccessKey;
 				break;
 			}
 
+			$eventId = BeaconUUID::v5(implode('21c3e039', $eventHashParts), static::ScriptNamespace);
+			$revisionHashParts[] = $eventId;
 			$pendingEvents[] = [
 				'scriptEventId' => $eventId,
 				'language' => $eventLanguage,
 				'context' => $eventContext,
 				'code' => $eventCode,
-				'commandKeyword' => $eventKeyword,
-				'commandArguments' => $eventArguments,
-				'menuText' => $eventMenuText,
-				'menuArguments' => $eventMenuArguments,
-				'webhookId' => $eventWebhookId,
-				'webhookAccessKey' => $eventWebhookAccessKey,
-				'webhookAccessKeyHash' => null,
+				'keyword' => $eventKeyword,
+				'arguments' => $eventArguments,
+				'properties' => $eventProperties,
 			];
 		}
-		$revisionId = BeaconUUID::v5(implode("\n", $hashParts), static::ScriptNamespace);
+		$revisionId = BeaconUUID::v5(implode('21c3e039', $revisionHashParts), static::ScriptNamespace);
 		$approvalStatus = ($usesJavaScript === false ? static::ApprovalStatusApproved : ($needsReview ? static::ApprovalStatusNeedsReview : static::ApprovalStatusProbation));
 		$sendApprovalRequest = false;
 
@@ -352,16 +340,10 @@ class Script extends DatabaseObject implements JsonSerializable {
 					$eventId = $event['scriptEventId'];
 					$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM sentinel.script_events WHERE script_event_id = $1) AS event_exists;', $eventId);
 					if ($rows->Field('event_exists') === false) {
-						$database->Query('INSERT INTO sentinel.script_events (script_event_id, language, context, code) VALUES ($1, $2, $3, $4);', $eventId, $event['language'], $event['context'], $event['code']);
+						$database->Query('INSERT INTO sentinel.script_events (script_event_id, language, context, code, keyword, arguments, properties) VALUES ($1, $2, $3, $4, $5, $6, $7);', $eventId, $event['language'], $event['context'], $event['code'], $event['keyword'], is_null($event['arguments']) ? null : json_encode($event['arguments']), is_null($event['properties']) ? null : json_encode($event['properties']));
 					}
 
-					if (is_null($event['webhookId']) === false) {
-						$accessKey = $event['webhookAccessKey'];
-						$event['webhookAccessKeyHash'] = BeaconCommon::Base64UrlEncode(hash('sha3-512', $accessKey, true));
-						$event['webhookAccessKey'] = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $accessKey));
-					}
-
-					$database->Query('INSERT INTO sentinel.script_revision_events (script_revision_id, script_event_id, command_keyword, command_arguments, menu_text, menu_arguments, webhook_id, webhook_access_key, webhook_access_key_hash) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', $revisionId, $eventId, $event['commandKeyword'], is_null($event['commandArguments']) ? null : json_encode($event['commandArguments']), $event['menuText'], $event['menuArguments'], $event['webhookId'], $event['webhookAccessKey'], $event['webhookAccessKeyHash']);
+					$database->Query('INSERT INTO sentinel.script_revision_events (script_revision_id, script_event_id) VALUES ($1, $2);', $revisionId, $eventId);
 					$sendApprovalRequest = true;
 				}
 			}

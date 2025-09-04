@@ -20,41 +20,94 @@ while (!$rows->EOF()) {
 	echo "Working on {$scriptId}...\n";
 	$scriptContext = $rows->Field('context');
 	$scriptLanguage = $rows->Field('language');
+	$scriptCode = $rows->Field('code');
+	$parameterDefinitions = json_decode($rows->Field('parameters') ?? '[]', true);
 
-	$event = [
+	$mainEvent = [
 		'language' => $scriptLanguage,
 		'context' => $scriptContext,
-		'code' => $rows->Field('code'),
+		'code' => $scriptCode,
+	];
+
+	$events = [
+		&$mainEvent,
 	];
 
 	switch ($scriptContext) {
 	case LogMessage::EventManualServiceScript:
-		if (is_null($rows->Field('command_keyword')) === false) {
-			$scriptContext = LogMessage::EventScriptCommand;
-			$event['context'] = $scriptContext;
-			$event['commandKeyword'] = $rows->Field('command_keyword');
-			$event['commandArguments'] = json_decode($rows->Field('command_arguments') ?? '[]', true);
-		} else {
-			$webhooks = $database->Query('SELECT * FROM sentinel.script_webhooks WHERE script_id = $1;', $scriptId);
-			if ($webhooks->RecordCount() > 0) {
-				$scriptContext = LogMessage::EventWebhook;
-				$event['context'] = $scriptContext;
-				$event['webhookId'] = $webhooks->Field('webhook_id');
-				$event['webhookAccessKey'] = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($webhooks->Field('access_key'))));
-			} else {
-				$event['menuText'] = $scriptName;
-			}
-		}
-		break;
 	case LogMessage::EventManualCharacterScript:
 	case LogMessage::EventManualDinoScript:
 	case LogMessage::EventManualTribeScript:
-		$event['menuText'] = $scriptName;
-		$event['menuArguments'] = array_keys(json_decode($rows->Field('parameters'), true));
+		$mainEvent['keyword'] = $scriptName;
+		$mainEvent['arguments'] = $parameterDefinitions;
+
+		if ($scriptContext === LogMessage::EventManualServiceScript && is_null($rows->Field('command_keyword')) === false) {
+			$parameterMap = [];
+			foreach ($parameterDefinitions as $parameter) {
+				$parameterName = $parameter['name'];
+				$parameterMap[$parameterName] = $parameter;
+			}
+
+			$argumentPositions = json_decode($rows->Field('command_arguments') ?? '[]', true);
+			$arguments = [];
+			foreach ($argumentPositions as $parameterName) {
+				if (array_key_exists($parameterName, $parameterMap)) {
+					$arguments[] = $parameterMap[$parameterName];
+				}
+			}
+
+			$events[] = [
+				'language' => $scriptLanguage,
+				'context' => LogMessage::EventScriptCommand,
+				'code' => $scriptCode,
+				'keyword' => $rows->Field('command_keyword'),
+				'arguments' => $arguments,
+			];
+		}
+
+		$webhooks = $database->Query('SELECT * FROM sentinel.script_webhooks WHERE script_id = $1;', $scriptId);
+		while (!$webhooks->EOF()) {
+			$events[] = [
+				'language' => $scriptLanguage,
+				'context' => LogMessage::EventWebhook,
+				'code' => $scriptCode,
+				'keyword' => $webhooks->Field('webhook_id'),
+				'arguments' => $parameterDefinitions,
+				'properties' => [
+					'accessKey' => BeaconCommon::Base64UrlEncode(BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($webhooks->Field('access_key')))),
+				],
+			];
+			$webhooks->MoveNext();
+		}
+
 		break;
 	case LogMessage::EventSlashCommand:
-		$event['commandKeyword'] = $rows->Field('command_keyword');
-		$event['commandArguments'] = json_decode($rows->Field('command_arguments') ?? '[]', true);
+		$mainEvent['keyword'] = $rows->Field('command_keyword');
+		$parameterMap = [];
+		foreach ($parameterDefinitions as $parameter) {
+			$parameterName = $parameter['name'];
+			$parameterMap[$parameterName] = $parameter;
+		}
+
+		$argumentPositions = json_decode($rows->Field('command_arguments') ?? '[]', true);
+		$arguments = [];
+		foreach ($argumentPositions as $parameterName) {
+			if (array_key_exists($parameterName, $parameterMap)) {
+				$arguments[] = $parameterMap[$parameterName];
+			}
+		}
+		$mainEvent['arguments'] = $arguments;
+		break;
+	case LogMessage::EventCron:
+		for ($idx = 0; $idx < count($parameterDefinitions); $idx++) {
+			$definition = $parameterDefinitions[$idx];
+			if ($definition['name'] === 'schedule') {
+				$mainEvent['keyword'] = $definition['default'];
+				array_splice($parameterDefinitions, $idx, 1);
+				break;
+			}
+		}
+		$mainEvent['arguments'] = [];
 		break;
 	}
 
@@ -62,14 +115,19 @@ while (!$rows->EOF()) {
 		'scriptId' => $scriptId,
 		'name' => $scriptName,
 		'description' => '',
-		'parameters' => json_decode($rows->Field('parameters'), true),
-		'events' => [
-			$event,
-		]
+		'parameters' => $parameterDefinitions,
+		'events' => $events,
 	];
 
-	echo "Saving {$scriptId}...\n";
-	Script::Create($script);
+	$eventCount = count($events);
+	echo "Saving {$scriptId} with {$eventCount} events...\n";
+	try {
+		Script::Create($script);
+	} catch (Exception $err) {
+		echo $err->getMessage();
+		$database->Rollback();
+		exit;
+	}
 	$database->Query('UPDATE sentinel.scripts SET user_id = $2, date_created = $3, date_modified = $4 WHERE script_id = $1;', $scriptId, $rows->Field('user_id'), $rows->Field('date_created'), $rows->Field('date_modified'));
 
 	$rows->MoveNext();

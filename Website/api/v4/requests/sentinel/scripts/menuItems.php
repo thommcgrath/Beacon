@@ -14,22 +14,12 @@ function handleRequest(array $context): Response {
 	if (empty($context) === false || BeaconUUID::Validate($serviceId) === false) {
 		try {
 			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT DISTINCT menu_text, script_event_id, parameters, menu_arguments FROM sentinel.active_scripts WHERE service_id = $1 AND context = $2 AND menu_text IS NOT NULL AND script_id IN (SELECT script_id FROM sentinel.script_permissions WHERE user_id = $3 AND (permissions & $4) = $4) ORDER BY menu_text', $serviceId, $context, Core::UserId(), PermissionBits::Membership | PermissionBits::ControlServices);
+			$rows = $database->Query('SELECT DISTINCT script_event_id, keyword, arguments FROM sentinel.active_scripts WHERE service_id = $1 AND context = $2 AND context IN ($5, $6, $7, $8) AND script_id IN (SELECT script_id FROM sentinel.script_permissions WHERE user_id = $3 AND (permissions & $4) = $4) ORDER BY keyword', $serviceId, $context, Core::UserId(), PermissionBits::Membership | PermissionBits::ControlServices, LogMessage::EventManualCharacterScript, LogMessage::EventManualDinoScript, LogMessage::EventManualServiceScript, LogMessage::EventManualTribeScript);
 			while (!$rows->EOF()) {
-				$parameterDefinitions = json_decode($rows->Field('parameters'), true);
-				$parameterWhitelist = json_decode($rows->Field('menu_arguments'), true);
-				$parameters = [];
-				foreach ($parameterDefinitions as $definition) {
-					$parameterName = $definition['name'];
-					if (in_array($parameterName, $parameterWhitelist)) {
-						$parameters[] = $definition;
-					}
-				}
-
 				$menuItems[] = [
-					'menuText' => $rows->Field('menu_text'),
+					'menuText' => $rows->Field('keyword'),
 					'scriptEventId' => $rows->Field('script_event_id'),
-					'parameters' => $parameters,
+					'arguments' => json_decode($rows->Field('arguments'), true),
 				];
 				$rows->MoveNext();
 			}
