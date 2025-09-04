@@ -92,7 +92,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('approvalStatus', ['columnName' => 'approval_status', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_revisions.approval_status']),
 				new DatabaseObjectProperty('parameters', ['columnName' => 'parameters', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'script_revisions.parameters']),
 				new DatabaseObjectProperty('commonJavascript', ['columnName' => 'common_javascript', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'script_revisions.common_javascript']),
-				new DatabaseObjectProperty('events', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(events_template))) FROM (SELECT script_events.language, script_events.context, script_events.code, script_events.keyword, script_events.arguments, script_events.properties FROM sentinel.script_events INNER JOIN sentinel.script_revision_events ON (script_revision_events.script_event_id = script_events.script_event_id) WHERE script_revision_events.script_revision_id = script_revisions.script_revision_id) AS events_template), \'[]\')']),
+				new DatabaseObjectProperty('events', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(events_template))) FROM (SELECT script_events.language, script_events.context, script_events.code, script_events.keyword, script_events.arguments, script_events.properties FROM sentinel.script_events INNER JOIN sentinel.script_revision_events ON (script_revision_events.script_event_id = script_events.script_event_id) WHERE script_revision_events.script_revision_id = script_revisions.script_revision_id ORDER BY script_revision_events.sort_order) AS events_template), \'[]\')']),
 			],
 			joins: [
 				'INNER JOIN public.users ON (scripts.user_id = users.user_id)',
@@ -315,6 +315,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				break;
 			}
 
+			sort($eventHashParts);
 			$eventId = BeaconUUID::v5(implode('21c3e039', $eventHashParts), static::ScriptNamespace);
 			$revisionHashParts[] = $eventId;
 			$pendingEvents[] = [
@@ -327,6 +328,8 @@ class Script extends DatabaseObject implements JsonSerializable {
 				'properties' => $eventProperties,
 			];
 		}
+
+		sort($revisionHashParts);
 		$revisionId = BeaconUUID::v5(implode('21c3e039', $revisionHashParts), static::ScriptNamespace);
 		$approvalStatus = ($usesJavaScript === false ? static::ApprovalStatusApproved : ($needsReview ? static::ApprovalStatusNeedsReview : static::ApprovalStatusProbation));
 		$sendApprovalRequest = false;
@@ -336,14 +339,15 @@ class Script extends DatabaseObject implements JsonSerializable {
 			$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM sentinel.script_revisions WHERE script_revision_id = $1) AS revision_exists;', $revisionId);
 			if ($rows->Field('revision_exists') === false) {
 				$database->Query('INSERT INTO sentinel.script_revisions (script_revision_id, script_id, parameters, common_javascript, approval_status) VALUES ($1, $2, $3, $4, $5);', $revisionId, $scriptId, json_encode($scriptParameters), $scriptCommonJavascript, $approvalStatus);
-				foreach ($pendingEvents as $event) {
+				for ($idx = 0; $idx < count($pendingEvents); $idx++) {
+					$event = $pendingEvents[$idx];
 					$eventId = $event['scriptEventId'];
 					$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM sentinel.script_events WHERE script_event_id = $1) AS event_exists;', $eventId);
 					if ($rows->Field('event_exists') === false) {
 						$database->Query('INSERT INTO sentinel.script_events (script_event_id, language, context, code, keyword, arguments, properties) VALUES ($1, $2, $3, $4, $5, $6, $7);', $eventId, $event['language'], $event['context'], $event['code'], $event['keyword'], is_null($event['arguments']) ? null : json_encode($event['arguments']), is_null($event['properties']) ? null : json_encode($event['properties']));
 					}
 
-					$database->Query('INSERT INTO sentinel.script_revision_events (script_revision_id, script_event_id) VALUES ($1, $2);', $revisionId, $eventId);
+					$database->Query('INSERT INTO sentinel.script_revision_events (script_revision_id, script_event_id, sort_order) VALUES ($1, $2, $3);', $revisionId, $eventId, $idx);
 					$sendApprovalRequest = true;
 				}
 			}
