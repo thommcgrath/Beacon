@@ -2,7 +2,7 @@
 title: Webhook
 parent: Features
 grand_parent: Scripts
-description: "Adds a webhook url and access key, useful for executing Sentinel code from outside Sentinel, such as by a website or Discord bot."
+description: "Adds code that can be triggered from a Server's webhook url, useful for executing Sentinel code from outside Sentinel, such as by a website or Discord bot."
 ---
 # {{ page.title }}
 
