@@ -133,7 +133,7 @@ class Character extends DatabaseObject implements JsonSerializable {
 		return $this->tribeId;
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		return false;
 	}
 

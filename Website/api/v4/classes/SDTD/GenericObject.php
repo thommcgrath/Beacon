@@ -200,7 +200,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $this->contentPackId, user: $user);
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		if (is_null($newObjectProperties) || isset($newObjectProperties['contentPackId']) === false) {
 			return false;
 		}

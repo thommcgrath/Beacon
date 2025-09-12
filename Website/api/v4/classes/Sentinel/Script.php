@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Sentinel;
 use BeaconAPI\v4\{APIException, Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconEncryption, BeaconRecordSet, BeaconUUID, JsonSerializable;
+use BeaconCommon, BeaconEncryption, BeaconParsedown, BeaconRecordSet, BeaconUUID, JsonSerializable;
 use Poliander\Cron\CronExpression;
 
 class Script extends DatabaseObject implements JsonSerializable {
@@ -32,44 +32,49 @@ class Script extends DatabaseObject implements JsonSerializable {
 	protected string $scriptId;
 	protected string $userId;
 	protected string $name;
+	protected string $preview;
 	protected string $description;
 	protected float $dateCreated;
 	protected float $dateModified;
-	protected string $communityStatus;
 	protected int $permissions;
 	protected string $latestRevisionId;
 	protected string $approvalStatus;
 	protected bool $approvalRequestSent;
 	protected array $parameters;
 	protected string $commonJavascript;
+	protected string $communityStatus;
+	protected ?float $communityRating;
+	protected ?float $communityAverage;
+	protected ?int $communityVotes;
 	protected array $events;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->scriptId = $row->Field('script_id');
 		$this->userId = $row->Field('user_id');
 		$this->name = $row->Field('name');
+		$this->preview = $row->Field('preview');
 		$this->description = $row->Field('description');
 		$this->dateCreated = floatval($row->Field('date_created'));
 		$this->dateModified = floatval($row->Field('date_modified'));
-		$this->communityStatus = $row->Field('community_status');
 		$this->permissions = $row->Field('permissions');
 		$this->latestRevisionId = $row->Field('latest_revision_id');
 		$this->approvalStatus = $row->Field('approval_status');
 		$this->parameters = json_decode($row->Field('parameters'), true);
 		$this->commonJavascript = $row->Field('common_javascript');
+		$this->communityStatus = $row->Field('community_status');
+		$this->communityRating = $row->Field('community_rating');
+		$this->communityAverage = $row->Field('community_average');
+		$this->communityVotes = $row->Field('community_votes');
 
 		$this->events = [];
 		$events = json_decode($row->Field('events'), true);
-		$eventKeyWhitelist = ['language', 'context', 'code', 'keyword', 'arguments', 'properties'];
+		$eventKeyWhitelist = ['scriptEventId', 'language', 'context', 'code', 'keyword', 'arguments'];
 		foreach ($events as $event) {
 			$filtered = [];
 			foreach ($event as $eventKey => $eventValue) {
 				if (in_array($eventKey, $eventKeyWhitelist) && is_null($eventValue) === false) {
 					$filtered[$eventKey] = $eventValue;
 				}
-			}
-			if ($filtered['context'] === LogMessage::EventWebhook) {
-				$filtered['properties']['accessKey'] = BeaconCommon::Base64UrlEncode(BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($filtered['properties']['accessKey'])));
 			}
 			$this->events[] = $filtered;
 		}
@@ -83,21 +88,27 @@ class Script extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('scriptId', ['columnName' => 'script_id', 'primaryKey' => true, 'required' => false]),
 				new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 				new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
+				new DatabaseObjectProperty('preview', ['editable' => DatabaseObjectProperty::kEditableAlways, 'required' => false]),
 				new DatabaseObjectProperty('description', ['editable' => DatabaseObjectProperty::kEditableAlways, 'required' => false]),
 				new DatabaseObjectProperty('dateCreated', ['columnName' => 'date_created', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)']),
 				new DatabaseObjectProperty('dateModified', ['columnName' => 'date_modified', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'EXTRACT(EPOCH FROM GREATEST(%%TABLE%%.%%COLUMN%%, script_revisions.date_created))']),
-				new DatabaseObjectProperty('communityStatus', ['columnName' => 'community_status', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 				new DatabaseObjectProperty('permissions', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_permissions.permissions']),
 				new DatabaseObjectProperty('latestRevisionId', ['columnName' => 'latest_revision_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_revisions.script_revision_id']),
 				new DatabaseObjectProperty('approvalStatus', ['columnName' => 'approval_status', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'script_revisions.approval_status']),
 				new DatabaseObjectProperty('parameters', ['columnName' => 'parameters', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'script_revisions.parameters']),
 				new DatabaseObjectProperty('commonJavascript', ['columnName' => 'common_javascript', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'script_revisions.common_javascript']),
-				new DatabaseObjectProperty('events', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(events_template))) FROM (SELECT script_events.language, script_events.context, script_events.code, script_events.keyword, script_events.arguments, script_events.properties FROM sentinel.script_events INNER JOIN sentinel.script_revision_events ON (script_revision_events.script_event_id = script_events.script_event_id) WHERE script_revision_events.script_revision_id = script_revisions.script_revision_id ORDER BY script_revision_events.sort_order) AS events_template), \'[]\')']),
+				new DatabaseObjectProperty('communityStatus', ['columnName' => 'community_status', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('communityRating', ['columnName' => 'community_rating', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('communityAverage', ['columnName' => 'community_average', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('communityVotes', ['columnName' => 'community_votes', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('events', ['required' => true, 'editable' => DatabaseObjectProperty::kEditableAlways, 'accessor' => 'COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(events_template))) FROM (SELECT script_events.script_event_id AS "scriptEventId", script_events.language, script_events.context, script_events.code, script_events.keyword, script_events.arguments FROM sentinel.script_events INNER JOIN sentinel.script_revision_events ON (script_revision_events.script_event_id = script_events.script_event_id) WHERE script_revision_events.script_revision_id = script_revisions.script_revision_id ORDER BY script_revision_events.sort_order) AS events_template), \'[]\')']),
 			],
 			joins: [
-				'INNER JOIN public.users ON (scripts.user_id = users.user_id)',
-				'INNER JOIN sentinel.script_permissions ON (scripts.script_id = script_permissions.script_id AND script_permissions.user_id = %%USER_ID%%)',
-				'INNER JOIN sentinel.script_revisions ON (scripts.script_id = script_revisions.script_id AND script_revisions.date_created = (SELECT MAX(date_created) FROM sentinel.script_revisions WHERE script_id = scripts.script_id))',
+				'permissions' => 'INNER JOIN sentinel.script_permissions ON (scripts.script_id = script_permissions.script_id AND script_permissions.user_id = %%USER_ID%%)',
+				'revisions' => 'INNER JOIN sentinel.script_revisions ON (scripts.script_id = script_revisions.script_id AND script_revisions.date_created = (SELECT MAX(date_created) FROM sentinel.script_revisions WHERE script_id = scripts.script_id))',
+			],
+			conditions: [
+				"%%TABLE%%.deleted = FALSE",
 			],
 		);
 	}
@@ -115,8 +126,9 @@ class Script extends DatabaseObject implements JsonSerializable {
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->allowAll = true;
-		$parameters->AddFromFilter($schema, $filters, 'name', 'WEBSEARCH');
-		$parameters->clauses[] = 'scripts.deleted = FALSE';
+		$parameters->AddFromFilter($schema, $filters, 'name', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'description', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'preview', 'SEARCH');
 	}
 
 	public function jsonSerialize(): mixed {
@@ -124,10 +136,14 @@ class Script extends DatabaseObject implements JsonSerializable {
 			'scriptId' => $this->scriptId,
 			'userId' => $this->userId,
 			'name' => $this->name,
+			'preview' => $this->preview,
 			'description' => $this->description,
 			'dateCreated' => $this->dateCreated,
 			'dateModified' => $this->dateModified,
 			'communityStatus' => $this->communityStatus,
+			'communityRating' => $this->communityRating,
+			'communityAverage' => $this->communityAverage,
+			'communityVotes' => $this->communityVotes,
 			'permissions' => $this->permissions,
 			'latestRevisionId' => $this->latestRevisionId,
 			'approvalStatus' => $this->approvalStatus,
@@ -144,7 +160,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		return true;
 	}
 
@@ -188,9 +204,17 @@ class Script extends DatabaseObject implements JsonSerializable {
 	protected static function Write(string $scriptId, array $properties): void {
 		$scriptName = trim($properties['name'] ?? '');
 		$scriptDescription = trim($properties['description'] ?? '');
+		$scriptDescriptionHtml = 'The author was too lazy to provide a description.';
 		$scriptEvents = $properties['events'] ?? [];
 		$scriptParameters = $properties['parameters'] ?? [];
 		$scriptCommonJavascript = $properties['commonJavascript'] ?? '';
+
+		if (!empty($scriptDescription)) {
+			$parser = new BeaconParsedown();
+			$parser->setSafeMode(true);
+			$parser->setSanitizeLinks(true);
+			$scriptDescriptionHtml = $parser->text($scriptDescription);
+		}
 
 		$database = BeaconCommon::Database();
 		$revisionHashParts = [
@@ -232,7 +256,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 			$eventCode = trim($event['code'] ?? '');
 			$eventKeyword = null;
 			$eventArguments = null;
-			$eventProperties = null;
 			$eventHashParts = [
 				$eventLanguage,
 				$eventContext,
@@ -267,7 +290,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 			case LogMessage::EventScriptCommand:
 			case LogMessage::EventSlashCommand:
 			case LogMessage::EventSubroutine:
-			case LogMessage::EventWebhook:
 				$eventKeyword = $event['keyword'] ?? null;
 				$eventArguments = $event['arguments'] ?? null;
 
@@ -289,21 +311,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 				$eventHashParts[] = json_encode($eventArguments);
 
 				switch ($eventContext) {
-				case LogMessage::EventWebhook:
-					$eventProperties = $event['properties'] ?? null;
-
-					if (is_array($eventProperties) === false || BeaconCommon::IsAssoc($eventProperties) === false || isset($eventProperties['accessKey']) === false) {
-						$accessKey = BeaconEncryption::GenerateKey(256);
-					} else {
-						$accessKey = BeaconCommon::Base64UrlDecode($eventProperties['accessKey']);
-					}
-					$eventProperties = [
-						'accessKey' => BeaconCommon::Base64UrlEncode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $accessKey)),
-						'accessKeyHash' => BeaconCommon::Base64UrlEncode(hash('sha3-512', $accessKey, true)),
-					];
-
-					$eventHashParts[] = $eventProperties['accessKeyHash'];
-					break;
 				case LogMessage::EventCron:
 					$expression = new CronExpression($eventKeyword);
 					if ($expression->isValid() === false) {
@@ -325,7 +332,6 @@ class Script extends DatabaseObject implements JsonSerializable {
 				'code' => $eventCode,
 				'keyword' => $eventKeyword,
 				'arguments' => $eventArguments,
-				'properties' => $eventProperties,
 			];
 		}
 
@@ -344,7 +350,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 					$eventId = $event['scriptEventId'];
 					$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM sentinel.script_events WHERE script_event_id = $1) AS event_exists;', $eventId);
 					if ($rows->Field('event_exists') === false) {
-						$database->Query('INSERT INTO sentinel.script_events (script_event_id, language, context, code, keyword, arguments, properties) VALUES ($1, $2, $3, $4, $5, $6, $7);', $eventId, $event['language'], $event['context'], $event['code'], $event['keyword'], is_null($event['arguments']) ? null : json_encode($event['arguments']), is_null($event['properties']) ? null : json_encode($event['properties']));
+						$database->Query('INSERT INTO sentinel.script_events (script_event_id, language, context, code, keyword, arguments) VALUES ($1, $2, $3, $4, $5, $6);', $eventId, $event['language'], $event['context'], $event['code'], $event['keyword'], is_null($event['arguments']) ? null : json_encode($event['arguments']));
 					}
 
 					$database->Query('INSERT INTO sentinel.script_revision_events (script_revision_id, script_event_id, sort_order) VALUES ($1, $2, $3);', $revisionId, $eventId, $idx);
@@ -352,7 +358,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				}
 			}
 
-			$database->Query('INSERT INTO sentinel.scripts (script_id, user_id, name, description, deleted) VALUES ($1, $2, $3, $4, FALSE) ON CONFLICT (script_id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description, date_modified = CURRENT_TIMESTAMP, deleted = FALSE;', $scriptId, Core::UserId(), $scriptName, $scriptDescription);
+			$database->Query('INSERT INTO sentinel.scripts (script_id, user_id, name, description, description_html, deleted) VALUES ($1, $2, $3, $4, $5, FALSE) ON CONFLICT (script_id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description, description_html = EXCLUDED.description_html, date_modified = CURRENT_TIMESTAMP, deleted = FALSE;', $scriptId, Core::UserId(), $scriptName, $scriptDescription, $scriptDescriptionHtml);
 			$database->Commit();
 		} catch (Exception $err) {
 			$database->Rollback();

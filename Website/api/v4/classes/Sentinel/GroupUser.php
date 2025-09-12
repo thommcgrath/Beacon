@@ -109,7 +109,7 @@ class GroupUser extends DatabaseObject implements JsonSerializable {
 		$filters['userId'] = $userId;
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		if (is_null($newObjectProperties) || isset($newObjectProperties['groupId']) === false || isset($newObjectProperties['userId']) === false) {
 			return false;
 		}

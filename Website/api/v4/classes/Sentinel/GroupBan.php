@@ -118,7 +118,7 @@ class GroupBan extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		// We don't need to approve, only reject.
 		if (isset($newObjectProperties['groupId']) === false || Group::TestSentinelPermissions($newObjectProperties['groupId'], $user->UserId(), PermissionBits::ManageBans) === false) {
 			return false;

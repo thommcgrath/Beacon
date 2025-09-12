@@ -30,29 +30,23 @@ function handleRequest(array $context): Response {
 	}
 
 	$database = BeaconCommon::Database();
-	$rows = $database->Query('SELECT name, menu_text, context, parameters, parameter_values FROM sentinel.active_scripts WHERE service_id = $1 AND script_event_id = $2 LIMIT 1;', $serviceId, $scriptEventId);
+	$rows = $database->Query('SELECT name, keyword, context, arguments FROM sentinel.active_scripts WHERE service_id = $1 AND script_event_id = $2 LIMIT 1;', $serviceId, $scriptEventId);
 	if ($rows->RecordCount() !== 1) {
 		return Response::NewJsonError(code: 'eventNotFound', httpStatus: 404, message: 'Script event does not exist.');
 	}
 	$context = $rows->Field('context');
 	$scriptName = $rows->Field('name');
-	$menuText = $rows->Field('menu_text');
-	$parameterDefinitions = json_decode($rows->Field('parameters'), true);
-	$parameterValues = json_decode($rows->Field('parameter_values'), true);
+	$menuText = $rows->Field('keyword');
+	$argumentDefinitions = json_decode($rows->Field('arguments'), true);
+	$argumentValues = $body['arguments'] ?? [];
 
-	$parameters = [];
-	foreach ($parameterDefinitions as $definition) {
-		$parameters[$definition['name']] = $definition['default'];
+	$arguments = [];
+	foreach ($argumentDefinitions as $definition) {
+		$arguments[$definition['name']] = $definition['default'];
 	}
-	foreach ($parameterValues as $parameterName => $value) {
-		if (array_key_exists($parameterName, $parameters)) {
-			$parameters[$parameterName] = $value;
-		}
-	}
-	$parameterOverrides = $body['parameters'] ?? [];
-	foreach ($parameterOverrides as $parameterName => $value) {
-		if (array_key_exists($parameterName, $parameters) && (is_string($value) === false || empty($value) === false)) {
-			$parameters[$parameterName] = $value;
+	foreach ($argumentValues as $argumentName => $value) {
+		if (array_key_exists($argumentName, $arguments)) {
+			$arguments[$argumentName] = $value;
 		}
 	}
 
@@ -61,7 +55,7 @@ function handleRequest(array $context): Response {
 	$eventData = [
 		'scriptEventId' => $scriptEventId,
 		'timestamp' => $now->format('Y-m-d H:i:s.v'),
-		'parameters' => (object)$parameters,
+		'arguments' => (object)$arguments,
 		'event' => $context,
 		'userId' => $user->UserId(),
 		'username' => $user->Username(true),

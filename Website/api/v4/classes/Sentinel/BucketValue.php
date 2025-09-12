@@ -100,7 +100,7 @@ class BucketValue extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		if (isset($newObjectProperties['bucketId']) && Bucket::TestSentinelPermissions($newObjectProperties['bucketId'], $user->UserId(), PermissionBits::Membership | PermissionBits::EditBuckets)) {
 			return true;
 		}

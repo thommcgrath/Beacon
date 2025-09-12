@@ -14,7 +14,7 @@ abstract class DatabaseObjectAuthorizer {
 		return $objectId . ':' . $user->UserId();
 	}
 
-	public static function GetPermissionsForUser(string $className, string $objectId, User $user, ?DatabaseObject $object = null, int $options = 0, ?array $newObjectProperties = null): int {
+	public static function GetPermissionsForUser(string $className, string $objectId, User $user, ?DatabaseObject $object = null, int $options = 0, ?array &$newObjectProperties = null): int {
 		$useCache = ($options & static::kOptionNoCache) === 0;
 		$fetchObject = ($options & static::kOptionNoFetch) === 0;
 		$mustExist = ($options & static::kOptionMustExist) === static::kOptionMustExist;

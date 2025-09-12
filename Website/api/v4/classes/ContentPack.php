@@ -108,7 +108,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('name');
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		return true;
 	}
 

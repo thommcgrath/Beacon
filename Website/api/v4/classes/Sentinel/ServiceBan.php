@@ -108,7 +108,7 @@ class ServiceBan extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		// We don't need to approve, only reject.
 		if (isset($newObjectProperties['serviceId']) === false || static::CheckServiceOwner($newObjectProperties['serviceId'], $user->UserId()) === false) {
 			return false;

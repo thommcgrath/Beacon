@@ -71,11 +71,8 @@ while (!$rows->EOF()) {
 				'language' => $scriptLanguage,
 				'context' => LogMessage::EventWebhook,
 				'code' => $scriptCode,
-				'keyword' => $webhooks->Field('webhook_id'),
+				'keyword' => 'Converted Webhook ' . substr($webhooks->Field('webhook_id'), 0, 8),
 				'arguments' => $parameterDefinitions,
-				'properties' => [
-					'accessKey' => BeaconCommon::Base64UrlEncode(BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), BeaconCommon::Base64UrlDecode($webhooks->Field('access_key')))),
-				],
 			];
 			$webhooks->MoveNext();
 		}
