@@ -203,6 +203,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 
 	protected static function Write(string $scriptId, array $properties): void {
 		$scriptName = trim($properties['name'] ?? '');
+		$scriptPreview = trim($properties['preview'] ?? '');
 		$scriptDescription = trim($properties['description'] ?? '');
 		$scriptDescriptionHtml = 'The author was too lazy to provide a description.';
 		$scriptEvents = $properties['events'] ?? [];
@@ -358,7 +359,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 				}
 			}
 
-			$database->Query('INSERT INTO sentinel.scripts (script_id, user_id, name, description, description_html, deleted) VALUES ($1, $2, $3, $4, $5, FALSE) ON CONFLICT (script_id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description, description_html = EXCLUDED.description_html, date_modified = CURRENT_TIMESTAMP, deleted = FALSE;', $scriptId, Core::UserId(), $scriptName, $scriptDescription, $scriptDescriptionHtml);
+			$database->Query('INSERT INTO sentinel.scripts (script_id, user_id, name, preview, description, description_html, deleted) VALUES ($1, $2, $3, $4, $5, $6, FALSE) ON CONFLICT (script_id) DO UPDATE SET name = EXCLUDED.name, preview = EXCLUDED.preview, description = EXCLUDED.description, description_html = EXCLUDED.description_html, date_modified = CURRENT_TIMESTAMP, deleted = FALSE;', $scriptId, Core::UserId(), $scriptName, $scriptPreview, $scriptDescription, $scriptDescriptionHtml);
 			$database->Commit();
 		} catch (Exception $err) {
 			$database->Rollback();
