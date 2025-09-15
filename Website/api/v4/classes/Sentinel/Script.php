@@ -64,7 +64,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 		$this->communityStatus = $row->Field('community_status');
 		$this->communityRating = $row->Field('community_rating');
 		$this->communityAverage = $row->Field('community_average');
-		$this->communityVotes = $row->Field('community_votes');
+		$this->communityVotes = $row->Field('community_votes') ?? 0;
 
 		$this->events = [];
 		$events = json_decode($row->Field('events'), true);
