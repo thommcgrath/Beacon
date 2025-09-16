@@ -1,7 +1,7 @@
 ---
 title: JavaScript
 parent: Languages
-grand_parent: Sentinel
+grand_parent: Scripts
 ---
 # {{page.title}}
 
