@@ -1,0 +1,1 @@
+If the server reconnects within 2 minutes, the log message is removed. For reasons unknown, the game server disconnects from Sentinel surprisingly often. This event is likely to trigger more often than you expect, since scripts will run immediately and not wait to see if the server reconnects.
