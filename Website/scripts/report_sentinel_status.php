@@ -13,7 +13,7 @@ define('STATUS_OPERATIONAL', 1);
 
 $status = STATUS_OPERATIONAL;
 $database = BeaconCommon::Database();
-$rows = $database->Query('SELECT COUNT(*) AS event_count FROM sentinel.service_event_queue WHERE status = $1;', 'Waiting');
+$rows = $database->Query('SELECT COUNT(*) AS event_count FROM sentinel.service_event_queue WHERE status = $1 AND wait_until <= CURRENT_TIMESTAMP;', 'Waiting');
 $waitingEventCount = $rows->Field('event_count');
 $metrics = [
 	'queued_events' => [
@@ -24,7 +24,7 @@ $metrics = [
 ];
 
 // Find the age of the oldest queue item
-$rows = $database->Query('SELECT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) - EXTRACT(EPOCH FROM queue_time) AS age FROM sentinel.service_event_queue WHERE status = $1 ORDER BY queue_time ASC LIMIT 1;', 'Waiting');
+$rows = $database->Query('SELECT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) - EXTRACT(EPOCH FROM queue_time) AS age FROM sentinel.service_event_queue WHERE status = $1 AND wait_until <= CURRENT_TIMESTAMP ORDER BY queue_time ASC LIMIT 1;', 'Waiting');
 if ($rows->RecordCount() > 0) {
 	if ($rows->Field('age') >= 60) {
 		$status = STATUS_OUTAGE;

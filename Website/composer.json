@@ -1,5 +1,7 @@
 {
 	"require": {
-		"php-amqplib/php-amqplib": "^3.2"
+		"php-amqplib/php-amqplib": "^3.2",
+		"poliander/cron": "^3.2",
+		"erusev/parsedown": "^1.7"
 	}
 }

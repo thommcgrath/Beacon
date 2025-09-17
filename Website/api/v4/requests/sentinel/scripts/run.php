@@ -9,91 +9,103 @@ function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $
 }
 
 function handleRequest(array $context): Response {
-	$body = Core::BodyAsJson();
-	if (is_array($body) === false || BeaconCommon::HasAllKeys($body, 'scriptId', 'parameters') === false || BeaconCommon::HasAnyKeys($body, 'characterId', 'tribeId', 'dinoId', 'serviceId') === false) {
-		return Response::NewJsonError(code: 'missingKeys', httpStatus: 400, message: 'Missing keys. Must include scriptId, parameters, and a target identifier.');
+	$scriptEventId = $context['pathParameters']['scriptEventId'];
+	if (BeaconUUID::Validate($scriptEventId) === false) {
+		return Response::NewJsonError(code: 'badEventId', httpStatus: 400, message: 'scriptEventId must be a UUID.');
 	}
 
-	$now = new DateTimeImmutable('now', new DateTimeZone('GMT'));
-	$eventData = [
-		'scriptId' => $body['scriptId'],
-		'timestamp' => $now->format('Y-m-d H:i:s.v'),
-		'parameters' => [],
-	];
-	foreach ($body['parameters'] as $key => $value) {
-		if (is_string($value) === false || empty($value) === false) {
-			$eventData['parameters'][$key] = $value;
-		}
+	$body = Core::BodyAsJson();
+	if (is_array($body) === false) {
+		$body = [];
+	}
+
+	$serviceId = $body['serviceId'] ?? '';
+	if (BeaconUUID::Validate($serviceId) === false) {
+		return Response::NewJsonError(code: 'missingKeys', httpStatus: 400, message: 'Missing keys. serviceId is empty or not a UUID.');
+	}
+
+	$service = Service::Fetch($serviceId);
+	if (is_null($service) || Service::TestSentinelPermissions($serviceId, Core::UserId(), PermissionBits::Membership | PermissionBits::ControlServices) === false) {
+		return Response::NewJsonError(code: 'serviceNotFound', httpStatus: 404, message: 'Service not found.');
 	}
 
 	$database = BeaconCommon::Database();
-	$scriptId = $body['scriptId'];
-	$rows = $database->Query('SELECT scripts.context, scripts.name, scripts.parameters FROM sentinel.scripts INNER JOIN sentinel.script_permissions ON (scripts.script_id = script_permissions.script_id AND script_permissions.user_id = $1) WHERE scripts.script_id = $2 AND (script_permissions.permissions & $3) = $3;', Core::UserId(), $scriptId, PermissionBits::Membership);
-	if ($rows->RecordCount() === 1) {
-		$eventData['event'] = $rows->Field('context');
-		$eventData['scriptName'] = $rows->Field('name');
-		$parameters = json_decode($rows->Field('parameters'), true);
-		foreach ($parameters as $parameter) {
-			$parameterName = $parameter['name'];
-			$parameterValue = $body['parameters'][$parameterName] ?? null;
-			switch ($parameter['type']) {
-			case 'String':
-				if (trim(strval($parameterValue)) === '') {
-					$parameterValue = null;
-				}
-				break;
-			}
-			$eventData['parameters'][$parameterName] = $parameterValue ?? $parameter['default'];
-		}
-		$eventData['parameters'] = (object) $eventData['parameters'];
-	} else {
-		return Response::NewJsonError(code: 'notFound', httpStatus: 404, message: 'Script not found');
+	$rows = $database->Query('SELECT name, keyword, context, arguments FROM sentinel.active_scripts WHERE service_id = $1 AND script_event_id = $2 LIMIT 1;', $serviceId, $scriptEventId);
+	if ($rows->RecordCount() !== 1) {
+		return Response::NewJsonError(code: 'eventNotFound', httpStatus: 404, message: 'Script event does not exist.');
 	}
+	$context = $rows->Field('context');
+	$scriptName = $rows->Field('name');
+	$menuText = $rows->Field('keyword');
+	$argumentDefinitions = json_decode($rows->Field('arguments'), true);
+	$argumentValues = $body['arguments'] ?? [];
 
-	if (isset($body['serviceId'])) {
-		$rows = $database->Query('SELECT services.cluster_id FROM sentinel.services INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = $1) WHERE services.service_id = $2 AND (service_permissions.permissions & $3) = $3;', Core::UserId(), $body['serviceId'], PermissionBits::ControlServices);
-		if ($rows->RecordCount() === 1) {
-			$serviceId = $body['serviceId'];
-			$clusterId = $rows->Field('cluster_id');
-		} else {
-			return Response::NewJsonError(code: 'notFound', httpStatus: 404, message: 'Service not found');
-		}
-	} elseif (isset($body['characterId'])) {
-		$rows = $database->Query('SELECT services.service_id, services.cluster_id FROM sentinel.characters INNER JOIN sentinel.services ON (characters.service_id = services.service_id) INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = $1) WHERE characters.character_id = $2 AND (service_permissions.permissions & $3) = $3;', Core::UserId(), $body['characterId'], PermissionBits::ControlServices);
-		if ($rows->RecordCount() === 1) {
-			$serviceId = $rows->Field('service_id');
-			$clusterId = $rows->Field('cluster_id');
-			$eventData['characterId'] = $body['characterId'];
-		} else {
-			return Response::NewJsonError(code: 'notFound', httpStatus: 404, message: 'Character not found');
-		}
-	} elseif (isset($body['tribeId'])) {
-		$rows = $database->Query('SELECT services.service_id, services.cluster_id FROM sentinel.tribes INNER JOIN sentinel.services ON (tribes.service_id = services.service_id) INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = $1) WHERE tribes.tribe_id = $2 AND (service_permissions.permissions & $3) = $3;', Core::UserId(), $body['tribeId'], PermissionBits::ControlServices);
-		if ($rows->RecordCount() === 1) {
-			$serviceId = $rows->Field('service_id');
-			$clusterId = $rows->Field('cluster_id');
-			$eventData['tribeId'] = $body['tribeId'];
-		} else {
-			return Response::NewJsonError(code: 'notFound', httpStatus: 404, message: 'Tribe not found');
-		}
-	} elseif (isset($body['dinoId'])) {
-		$rows = $database->Query('SELECT services.service_id, services.cluster_id FROM sentinel.dinos INNER JOIN sentinel.services ON (dinos.service_id = services.service_id) INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = $1) WHERE dinos.dino_id = $2 AND (service_permissions.permissions & $3) = $3;', Core::UserId(), $body['dinoId'], PermissionBits::ControlServices);
-		if ($rows->RecordCount() === 1) {
-			$serviceId = $rows->Field('service_id');
-			$clusterId = $rows->Field('cluster_id');
-			$eventData['dinoId'] = $body['dinoId'];
-		} else {
-			return Response::NewJsonError(code: 'notFound', httpStatus: 404, message: 'Dino not found');
+	$arguments = [];
+	foreach ($argumentDefinitions as $definition) {
+		$arguments[$definition['name']] = $definition['default'];
+	}
+	foreach ($argumentValues as $argumentName => $value) {
+		if (array_key_exists($argumentName, $arguments)) {
+			$arguments[$argumentName] = $value;
 		}
 	}
 
-	try {
-		$database->BeginTransaction();
-		$database->Query('INSERT INTO sentinel.service_event_queue (service_id, cluster_id, queue_time, version, event_data) VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4);', $serviceId, $clusterId, 1, json_encode($eventData));
-		$database->Commit();
-	} catch (Exception $err) {
-		return Response::NewJsonError(code: 'internalServerError', httpStatus: 500, message: $err->getMessage());
+	$now = new DateTimeImmutable('now', new DateTimeZone('GMT'));
+	$user = Core::User();
+	$eventData = [
+		'scriptEventId' => $scriptEventId,
+		'timestamp' => $now->format('Y-m-d H:i:s.v'),
+		'arguments' => (object)$arguments,
+		'event' => $context,
+		'userId' => $user->UserId(),
+		'username' => $user->Username(true),
+		'scriptName' => $scriptName,
+		'menuText' => $menuText,
+	];
+
+	switch ($context) {
+	case LogMessage::EventManualCharacterScript:
+		$characterId = $body['characterId'] ?? '';
+		if (BeaconUUID::Validate($characterId) === false) {
+			return Response::NewJsonError(code: 'missingKeys', httpStatus: 400, message: 'Missing keys. characterId is empty or not a UUID.');
+		}
+		$rows = $database->Query('SELECT service_id FROM sentinel.characters WHERE character_id = $1;', $characterId);
+		if ($rows->RecordCount() !== 1 || $rows->Field('service_id') !== $serviceId) {
+			return Response::NewJsonError(code: 'targetNotFound', httpStatus: 404, message: 'Character not found.');
+		}
+		$eventData['characterId'] = $characterId;
+		break;
+	case LogMessage::EventManualDinoScript:
+		$dinoId = $body['dinoId'] ?? '';
+		if (BeaconUUID::Validate($dinoId) === false) {
+			return Response::NewJsonError(code: 'missingKeys', httpStatus: 400, message: 'Missing keys. dinoId is empty or not a UUID.');
+		}
+		$rows = $database->Query('SELECT service_id FROM sentinel.dinos WHERE dino_id = $1;', $dinoId);
+		if ($rows->RecordCount() !== 1 || $rows->Field('service_id') !== $serviceId) {
+			return Response::NewJsonError(code: 'targetNotFound', httpStatus: 404, message: 'Dino not found.');
+		}
+		$eventData['dinoId'] = $dinoId;
+		break;
+	case LogMessage::EventManualServiceScript:
+		break;
+	case LogMessage::EventManualTribeScript:
+		$tribeId = $body['tribeId'] ?? '';
+		if (BeaconUUID::Validate($tribeId) === false) {
+			return Response::NewJsonError(code: 'missingKeys', httpStatus: 400, message: 'Missing keys. tribeId is empty or not a UUID.');
+		}
+		$rows = $database->Query('SELECT service_id FROM sentinel.tribes WHERE tribe_id = $1;', $tribeId);
+		if ($rows->RecordCount() !== 1 || $rows->Field('service_id') !== $serviceId) {
+			return Response::NewJsonError(code: 'targetNotFound', httpStatus: 404, message: 'Tribe not found.');
+		}
+		$eventData['tribeId'] = $tribeId;
+		break;
+	default:
+		return Response::NewJsonError(code: 'badContext', httpStatus: 500, message: 'Unknown event context.');
 	}
+
+	$database->BeginTransaction();
+	$database->Query('INSERT INTO sentinel.service_event_queue (service_id, queue_time, version, event_data) VALUES ($1, CURRENT_TIMESTAMP, $2, $3);', $serviceId, 1, json_encode($eventData));
+	$database->Commit();
 
 	return Response::NewNoContent();
 }

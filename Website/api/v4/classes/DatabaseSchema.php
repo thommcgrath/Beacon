@@ -11,9 +11,10 @@ class DatabaseSchema {
 	protected array $columns = [];
 	protected array $properties = [];
 	protected array $joins = [];
+	protected array $conditions = [];
 	protected bool|array $distinct = false;
 
-	public function __construct(string $schema, string $table, array $definitions, array $joins = [], bool|string|array $distinct = false) {
+	public function __construct(string $schema, string $table, array $definitions, array $joins = [], bool|string|array $distinct = false, array $conditions = []) {
 		$this->schema = $schema;
 		$this->table = $table;
 		$this->writeableTable = $table;
@@ -21,7 +22,12 @@ class DatabaseSchema {
 			$this->AddColumn($definition);
 		}
 		$this->joins = $joins;
+		$this->conditions = $conditions;
 		$this->SetDistinct($distinct);
+	}
+
+	public function ReplaceLookups(string $source): string {
+		return str_replace(['%%SCHEMA%%', '%%TABLE%%'], [$this->schema, $this->table], $source);
 	}
 
 	public function Schema(): string {
@@ -178,12 +184,8 @@ class DatabaseSchema {
 			$column = new DatabaseObjectProperty($column);
 		}
 
-		if (array_key_exists($column->PropertyName(), $this->properties) === false) {
-			$this->properties[$column->PropertyName()] = $column;
-		}
-		if (array_key_exists($column->ColumnName(), $this->columns) === false) {
-			$this->columns[$column->ColumnName()] = $column;
-		}
+		$this->properties[$column->PropertyName()] = $column;
+		$this->columns[$column->ColumnName()] = $column;
 
 		if ($column->IsPrimaryKey()) {
 			$this->primaryColumn = $column;
@@ -196,9 +198,24 @@ class DatabaseSchema {
 		}
 	}
 
-	public function AddJoin(string $join): void {
-		if (in_array($join, $this->joins) === false) {
-			$this->joins[] = $join;
+	public function AddJoin(string $join, ?string $key = null): void {
+		if (is_null($key)) {
+			if (in_array($join, $this->joins) === false) {
+				$this->joins[] = $join;
+			}
+		} else {
+			$this->joins[$key] = $join;
+		}
+	}
+
+	public function RemoveJoin(string $join): void {
+		if (array_key_exists($join, $this->joins)) {
+			unset($this->joins[$join]);
+		} else {
+			$keys = array_keys($this->joins, $join, true);
+			foreach ($keys as $key) {
+				unset($this->joins[$key]);
+			}
 		}
 	}
 
@@ -230,7 +247,14 @@ class DatabaseSchema {
 	}
 
 	public function FromClause(): string {
-		return str_replace(['%%SCHEMA%%', '%%TABLE%%'], [$this->schema, $this->table], implode(' ', array_merge(["{$this->schema}.{$this->table}"], $this->joins)));
+		return $this->ReplaceLookups(implode(' ', array_merge(["{$this->schema}.{$this->table}"], array_values($this->joins))));
+	}
+
+	public function WhereClause(): string {
+		return $this->ReplaceLookups(implode(' AND ', [
+			$this->PrimaryAccessor() . ' = ' . $this->PrimarySetter('$1'),
+			...$this->conditions,
+		]));
 	}
 
 	public function SelectColumns(): string {
@@ -304,6 +328,16 @@ class DatabaseSchema {
 			$columns[] = $definition;
 		}
 		return $columns;
+	}
+
+	public function AddCondition(string $condition): void {
+		if (in_array($condition, $this->conditions) === false) {
+			$this->conditions[] = $condition;
+		}
+	}
+
+	public function GetConditions(): array {
+		return $this->conditions;
 	}
 }
 

@@ -104,7 +104,7 @@ class ProjectInvite extends DatabaseObject implements JsonSerializable {
 		return $this->expirationDate < time();
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		if (is_null($newObjectProperties) || isset($newObjectProperties['projectId']) === false) {
 			return false;
 		}

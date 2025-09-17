@@ -51,7 +51,7 @@ abstract class DatabaseObject {
 	public static function Exists(string $uuid): bool {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM ' . $schema->Schema() . '.' . $schema->Table() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ');', $uuid);
+		$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM ' . $schema->Schema() . '.' . $schema->Table() . ' WHERE ' . $schema->WhereClause() . ');', $uuid);
 		return $rows->Field('exists');
 	}
 
@@ -59,7 +59,7 @@ abstract class DatabaseObject {
 		try {
 			$schema = static::DatabaseSchema();
 			$database = BeaconCommon::Database();
-			$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';';
+			$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->WhereClause() . ';';
 			$values = [$uuid];
 			if (str_contains($sql, '%%USER_ID%%')) {
 				$sql = str_replace('%%USER_ID%%', '$2', $sql);
@@ -71,8 +71,27 @@ abstract class DatabaseObject {
 			}
 			return static::NewInstance($rows);
 		} catch (Exception $err) {
-			var_dump($err);
 			return null;
+		}
+	}
+
+	public function Refetch(): void {
+		try {
+			$schema = static::DatabaseSchema();
+			$database = BeaconCommon::Database();
+			$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->WhereClause() . ';';
+			$values = [$this->PrimaryKey()];
+			if (str_contains($sql, '%%USER_ID%%')) {
+				$sql = str_replace('%%USER_ID%%', '$2', $sql);
+				$values[] = Core::UserId();
+			}
+			$rows = $database->Query($sql, $values);
+			if (is_null($rows) || $rows->RecordCount() !== 1) {
+				throw new APIException(message: 'Could not refetch object ' . $this->PrimaryKey() . ' from ' . $schema->Schema() . '.' . $schema->Table(), code: 'objectNotFound');
+			}
+			$this->__construct($rows);
+		} catch (Exception $err) {
+			throw new APIException(message: $err->getMessage(), code: 'unhandledException');
 		}
 	}
 
@@ -110,6 +129,11 @@ abstract class DatabaseObject {
 				$params->pageNum = $page;
 			}
 		}
+
+		$params->clauses = [
+			...$params->clauses,
+			...$schema->GetConditions(),
+		];
 
 		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
 		if (isset($filters[$primaryKeyProperty])) {
@@ -192,7 +216,7 @@ abstract class DatabaseObject {
 			$params->values[] = Core::UserId();
 		}
 		if (count($params->clauses) > 0) {
-			$clauses = ' WHERE ' . implode(' AND ', $params->clauses);
+			$clauses = ' WHERE ' . $schema->ReplaceLookups(implode(' AND ', $params->clauses));
 			if (str_contains($clauses, '%%USER_ID%%')) {
 				if ($userIdPlaceholder === 0) {
 					$userIdPlaceholder = $params->NextPlaceholder();
@@ -278,7 +302,7 @@ abstract class DatabaseObject {
 	// By default, the user cannot create objects. Return kPermissionCreate if
 	// the user should be allowed to create the object based on
 	// $newObjectProperties.
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		return false;
 	}
 

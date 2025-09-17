@@ -45,15 +45,15 @@ case 'sentinel_script':
 		ReplyError('No status button provided');
 	}
 
-	$hash = $callback_value;
-	$new_status = $buttons['status'];
+	$revisionId = $callback_value;
+	$newStatus = $buttons['status'];
 
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
-	$results = $database->Query('UPDATE sentinel.script_approvals SET status = $2 WHERE hash = $1;', $hash, $new_status);
+	$results = $database->Query('UPDATE sentinel.script_revisions SET approval_status = $2 WHERE script_revision_id = $1;', $revisionId, $newStatus);
 	$database->Commit();
 
-	echo json_encode(['text' => 'The script has been ' . strtolower($new_status) . '.']);
+	echo json_encode(['text' => 'The script has been ' . strtolower($newStatus) . '.']);
 
 	break;
 default:

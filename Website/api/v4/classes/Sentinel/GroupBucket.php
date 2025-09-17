@@ -105,7 +105,7 @@ class GroupBucket extends DatabaseObject implements JsonSerializable {
 		throw new Exception('You must filter on groupId or bucketId.');
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		if (is_null($newObjectProperties) || isset($newObjectProperties['groupId']) === false || isset($newObjectProperties['bucketId']) === false) {
 			return false;
 		}

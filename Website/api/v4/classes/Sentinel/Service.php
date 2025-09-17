@@ -224,7 +224,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('kickUntrackedPlayers', ['columnName' => 'kick_untracked_players', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			],
 			joins: [
-				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = %%USER_ID%%)',
+				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = COALESCE(%%USER_ID%%, services.user_id))',
 			],
 		);
 	}
@@ -480,7 +480,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public static function CanUserCreate(User $user, ?array $newObjectProperties): bool {
+	public static function CanUserCreate(User $user, ?array &$newObjectProperties): bool {
 		return true;
 	}
 
@@ -541,6 +541,10 @@ class Service extends DatabaseObject implements JsonSerializable {
 		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $this->serviceId . '.socketCommand', json_encode([
 			'command' => 'kick',
 		]));
+	}
+
+	public function Sign(string $input, string $algorithm = 'sha256'): string {
+		return hash_hmac($algorithm, $input, BeaconCommon::Base64UrlEncode($this->accessKey));
 	}
 }
 
