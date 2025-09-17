@@ -133,7 +133,8 @@ BeaconErrors::StartWatching();
 		],
 		'script-src' => [
 			"'self'",
-			"'nonce-" . $_SERVER['CSP_NONCE'] . "'"
+			"'nonce-" . $_SERVER['CSP_NONCE'] . "'",
+			"https://unpkg.com"
 		],
 		'font-src' => [
 			"'self'"
