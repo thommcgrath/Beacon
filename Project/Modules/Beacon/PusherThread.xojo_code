@@ -167,8 +167,7 @@ Inherits Global.Thread
 		    If ConnectionEstablished Then
 		      Var PendingMessage As JSONItem = RaiseEvent GetNextPendingMessage()
 		      If (PendingMessage Is Nil) = False Then
-		        PendingMessage.Compact = True
-		        Call Curl.WebSocketSend(PendingMessage.ToString, 0, 1)
+		        Call Curl.WebSocketSend(PendingMessage.ToString(True), 0, 1)
 		        #if DebugBuild
 		          System.DebugLog("Sent " + PendingMessage.ToString)
 		        #endif
@@ -414,6 +413,18 @@ Inherits Global.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true

@@ -27,15 +27,14 @@ Protected Module Beacon
 		  Var Wrapper As New JSONItem
 		  Wrapper.Value("type") = Type
 		  Wrapper.Value("data") = Data
-		  Wrapper.Compact = False
 		  
-		  Var Compact As Boolean = Data.Compact
-		  Data.Compact = True
+		  Var Options As New JSONOptions
+		  Options.Compact = False
+		  Options.DecimalPlaces = 6
+		  Board.Text = Wrapper.ToString(Options)
 		  
-		  Board.Text = Wrapper.ToString
-		  Board.RawData(Type) = Data.ToString
-		  
-		  Data.Compact = Compact
+		  Options.Compact = True
+		  Board.RawData(Type) = Data.ToString(Options)
 		End Sub
 	#tag EndMethod
 
@@ -733,31 +732,26 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
+		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean, DecimalPlaces As Integer = -1) As String
+		  Var Options As New JSONOptions
+		  Options.Compact = Not Pretty
+		  Options.DecimalPlaces = DecimalPlaces
+		  Return GenerateJSON(Source, Options)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GenerateJSON(Source As Variant, Options As JSONOptions) As String
 		  Const UseMBS = False
 		  
 		  #if UseMBS 
 		    Var Temp As JSONMBS = JSONMBS.Convert(Source)
-		    Return Temp.ToString(Pretty)
+		    Return Temp.ToString(Not Options.Compact)
 		  #else
 		    If Source.Type = Variant.TypeObject And Source.ObjectValue IsA JSONItem Then
-		      Var Item As JSONItem = Source
-		      Var OriginalCompact As Boolean = Item.Compact
-		      Item.Compact = Not Pretty
-		      Var Json As String = Item.ToString()
-		      Item.Compact = OriginalCompact
-		      Return Json
+		      Return JSONItem(Source).ToString(Options)
 		    End If
-		    
-		    Var Result As String = Xojo.GenerateJSON(Source, Pretty)
-		    #if TargetARM And XojoVersion < 2022.01
-		      If Pretty Then
-		        // feedback://showreport?report_id=66705
-		        Var Temp As New JSONMBS(Result)
-		        Result = Temp.ToString(True)
-		      End If
-		    #endif
-		    Return Result
+		    Return Xojo.GenerateJSON(Source, Options)
 		  #endif
 		End Function
 	#tag EndMethod

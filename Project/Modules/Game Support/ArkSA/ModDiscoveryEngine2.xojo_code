@@ -784,7 +784,7 @@ Protected Class ModDiscoveryEngine2
 		  
 		  If DefaultObject.HasKey("SerializedSparseClassData") Then
 		    #if MBS.VersionNumber >= 24.2
-		      DefaultProperties.Merge()
+		      DefaultProperties.Merge(DefaultObject.Child("SerializedSparseClassData"))
 		    #else
 		      Self.Merge(DefaultProperties, DefaultObject.Child("SerializedSparseClassData"))
 		    #endif
