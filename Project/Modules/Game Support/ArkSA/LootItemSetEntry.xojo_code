@@ -802,6 +802,40 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SentinelData() As JSONItem
+		  Var Options As New JSONItem("[]")
+		  For Each Option As ArkSA.LootItemSetEntryOption In Self.mOptions
+		    If Option.Engram Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var Temp As New JSONItem("{}")
+		    Temp.Value("path") = Option.Engram.Path
+		    Temp.Value("weight") = Option.RawWeight
+		    Options.Add(Temp)
+		  Next
+		  
+		  Var Data As New JSONItem("{}")
+		  Data.Value("blueprintChance") = Self.mChanceToBeBlueprint
+		  Data.Value("minQuantity") = Self.mMinQuantity
+		  Data.Value("maxQuantity") = Self.mMaxQuantity
+		  If Self.mUseCustomQualities And (Self.mMinQualityOverride Is Nil) = False And (Self.mMaxQualityOverride Is Nil) = False Then
+		    Data.Value("minQuality") = Self.mMinQualityOverride.DoubleValue
+		    Data.Value("maxQuality") = Self.mMaxQualityOverride.DoubleValue
+		  Else
+		    Data.Value("minQuality") = Self.mMinQuality.BaseValue
+		    Data.Value("maxQuality") = Self.mMaxQuality.BaseValue
+		  End If
+		  Data.Value("preventGrinding") = Self.mPreventGrinding
+		  Data.Value("singleItemQuantity") = Self.mSingleItemQuantity
+		  Data.Value("statClampMultiplier") = Self.mStatClampMultiplier
+		  Data.Value("weight") = Self.mWeight
+		  Data.Value("options") = Options
+		  Return Data
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Simulate() As ArkSA.LootSimulatorSelection()
 		  Var Quantity As Integer
 		  If Self.mMaxQuantity < Self.mMinQuantity Then

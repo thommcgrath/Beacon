@@ -243,6 +243,8 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -1011,6 +1013,12 @@ End
 		  Tag.Value("Overrides") = Overrides
 		  
 		  Base.AddMenu(New DesktopMenuItem("Load Default Contents", Tag))
+		  
+		  Var CopySentinelItem As New DesktopMenuItem("Copy for Sentinel")
+		  CopySentinelItem.Enabled = Overrides.Count = 1
+		  CopySentinelItem.Tag = New Dictionary("Action": "Copy Sentinel", "Overrides": Overrides)
+		  Base.AddMenu(CopySentinelItem)
+		  
 		  Return True
 		End Function
 	#tag EndEvent
@@ -1042,6 +1050,17 @@ End
 		          
 		          Self.Modified = Config.Modified
 		          Self.UpdateContainerList(Overrides)
+		        Case "Copy Sentinel"
+		          Var Overrides() As ArkSA.LootDropOverride = Tag.Value("Overrides")
+		          If Overrides.Count = 1 Then
+		            Var Loot As JSONItem = Overrides(0).SentinelData
+		            Loot.Compact = True
+		            
+		            Var Board As New Clipboard
+		            Board.Text = EncodeBase64URLMBS(Beacon.Compress(Loot.ToString()))
+		            
+		            Self.ShowAlert("Loot Drop Copied", "The loot drop has been copied and is ready to be pasted to Beacon Sentinel.")
+		          End If
 		        End Select
 		      End If
 		    End Select

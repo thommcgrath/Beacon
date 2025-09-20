@@ -473,6 +473,23 @@ Implements Beacon.Validateable,Iterable,Beacon.Countable,Beacon.NamedItem,Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SentinelData() As JSONItem
+		  Var Sets As New JSONItem("[]")
+		  For Each Set As ArkSA.LootItemSet In Self.mSets
+		    Sets.Add(Set.SentinelData)
+		  Next
+		  
+		  Var Data As New JSONItem("{}")
+		  Data.Value("version") = 1
+		  Data.Value("minItemSets") = Self.mMinItemSets
+		  Data.Value("maxItemSets") = Self.mMaxItemSets
+		  Data.Value("preventDuplicates") = Self.mPreventDuplicates
+		  Data.Value("itemSets") = Sets
+		  Return Data
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SetAt(Idx As Integer) As ArkSA.LootItemSet
 		  If Idx = -1 Then
 		    Return Nil

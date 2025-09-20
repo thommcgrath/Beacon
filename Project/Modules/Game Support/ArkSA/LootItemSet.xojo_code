@@ -647,6 +647,22 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SentinelData() As JSONItem
+		  Var Entries As New JSONItem("[]")
+		  For Each Entry As ArkSA.LootItemSetEntry In Self.mEntries
+		    Entries.Add(Entry.SentinelData)
+		  Next
+		  
+		  Var Data As New JSONItem("{}")
+		  Data.Value("minNumItems") = Self.mMinNumItems
+		  Data.Value("maxNumItems") = Self.mMaxNumItems
+		  Data.Value("weight") = Self.mSetWeight
+		  Data.Value("entries") = Entries
+		  Return Data
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Simulate() As ArkSA.LootItemSetEntry()
 		  Var SelectedEntries() As ArkSA.LootItemSetEntry
 		  If Self.mEntries.Count = 0 Then
