@@ -32,6 +32,7 @@ The **Logic**{:.ui-keyword} section is where you'll specify exactly which action
 | Ban Player | Accepts a Sentinel Player ID or EOS ID, which will automatically fill in with the `{{playerId}}` placeholder, a reason, a length in days, and the Sentinel Server ID or Group ID to ban the player from. |
 | Clear Bucket Value | Accepts a Sentinel Bucket ID and key to clear a value from. Optionally also accepts a Sentinel Player ID to remove the value from a player instead of the bucket's global value. |
 | Create Dino | Creates a new dino in a cryopod to be given to the survivor identified by their Sentinel Survivor ID. |
+| Destroy Inventory Item | Takes an item blueprint path and destroys all instances of it in all player, dino, and storage inventories.
 | Give Custom Item | Accepts a Sentinel Survivor ID, item path, and quantity. Optionally also allows specific stat values such as item rating, armor amount, and durability. The Sentinel mod will generate an item that perfectly matches the given stats, within the limitations of the game of course. This does not respect any stat clamps set on the server. |
 | Give Item | Similar to Give Custom Item, this action accepts a Sentinel Survivor ID, item path, quality, and quantity. This action behaves much like the the "GiveItem" cheat code, except that Sentinel will allow greater values than the stack size. |
 | Kick Player | Removes the player specified by Sentinel Player ID. |
