@@ -62,6 +62,7 @@
 					Call DoShellCommand("/usr/bin/plutil -insert SUEnableAutomaticChecks -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert SUScheduledCheckInterval -integer 14400 " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert SUAutomaticallyUpdate -bool YES " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert CFBundleIconName -string 'App' " + App + ".plist")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0
@@ -99,7 +100,7 @@
 				Begin IDEScriptBuildStep BuildMacAssets , AppliesTo = 0, Architecture = 0, Target = 0
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
-					Call DoShellCommand("actool --compile " + App + "/Contents/Resources --platform macosx --minimum-deployment-target 10.14 ""${PROJECT_PATH}/Assets.xcassets""")
+					Call DoShellCommand("actool --compile " + App + "/Contents/Resources --platform macosx --minimum-deployment-target 10.14 --app-icon App --output-partial-info-plist /dev/null --enable-icon-stack-fallback-generation=disabled ""${PROJECT_PATH}/Assets.xcassets"" ""${PROJECT_PATH}/App.icon""")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3, Architecture = 0, Target = 0
@@ -113,6 +114,10 @@
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
 					Call DoShellCommand("/usr/bin/curl -L 'https://usebeacon.app/download/complete?game=ark&version=" + ConstantValue("DataUpdater.Version") + "' > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
+				End
+				Begin SignProjectStep Sign
+				  DeveloperID=
+				  macOSEntitlements={"App Sandbox":"False","Hardened Runtime":"False","Notarize":"False","UserEntitlements":""}
 				End
 				Begin IDEScriptBuildStep SignCorrectly , AppliesTo = 0, Architecture = 0, Target = 0
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
@@ -128,9 +133,6 @@
 					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --force --options runtime --timestamp " + App + "/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app")
 					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --force --options runtime --timestamp " + App + "/Contents/Frameworks/Sparkle.framework")
 					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --options runtime --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" " + App)
-				End
-				Begin SignProjectStep Sign
-				  DeveloperID=
 				End
 			End
 			Begin BuildStepList Windows
