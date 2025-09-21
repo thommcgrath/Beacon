@@ -657,6 +657,7 @@ Implements Beacon.Countable,Iterable,ArkSA.Weighted,Beacon.Validateable
 		  Data.Value("minNumItems") = Self.mMinNumItems
 		  Data.Value("maxNumItems") = Self.mMaxNumItems
 		  Data.Value("weight") = Self.mSetWeight
+		  Data.Value("preventDuplicates") = Self.mItemsRandomWithoutReplacement
 		  Data.Value("entries") = Entries
 		  Return Data
 		End Function
