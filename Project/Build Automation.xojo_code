@@ -50,6 +50,7 @@
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.3.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.7.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.8.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.10.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert NSAppAccentColorName -string 'BeaconBrand' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert ATSApplicationFontsPath -string 'Fonts/' " + App + ".plist")
 					If DebugBuild = False Then
