@@ -6,9 +6,26 @@
     {
       "layers" : [
         {
-          "glass" : false,
+          "blend-mode" : "normal",
+          "fill" : "none",
+          "glass-specializations" : [
+            {
+              "value" : false
+            },
+            {
+              "appearance" : "tinted",
+              "value" : false
+            }
+          ],
+          "hidden-specializations" : [
+            {
+              "idiom" : "square",
+              "value" : false
+            }
+          ],
           "image-name" : "AvatarTransparentWhite.png",
           "name" : "AvatarTransparentWhite",
+          "opacity" : 1,
           "position-specializations" : [
             {
               "idiom" : "macOS",
@@ -23,6 +40,36 @@
           ]
         },
         {
+          "blend-mode" : "multiply",
+          "fill" : "none",
+          "glass" : false,
+          "hidden-specializations" : [
+            {
+              "value" : false
+            },
+            {
+              "idiom" : "square",
+              "value" : false
+            }
+          ],
+          "image-name" : "AvatarShadow.png",
+          "name" : "AvatarShadow",
+          "opacity-specializations" : [
+            {
+              "value" : 0
+            },
+            {
+              "appearance" : "dark",
+              "value" : 0
+            },
+            {
+              "appearance" : "tinted",
+              "value" : 1
+            }
+          ]
+        },
+        {
+          "fill" : "none",
           "glass" : false,
           "hidden" : false,
           "image-name" : "AvatarBackground.png",
@@ -46,8 +93,6 @@
     }
   ],
   "supported-platforms" : {
-    "squares" : [
-      "macOS"
-    ]
+    "squares" : "shared"
   }
 }
