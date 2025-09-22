@@ -27,6 +27,9 @@ Inherits Beacon.DeployIntegration
 		    Var Config As JSONItem = GameServer.Child("settings").Child("config")
 		    Var Map As String = Config.Value("map").StringValue
 		    Profile.Mask = ArkSA.Maps.MaskForIdentifier(Map.LastField("."))
+		  Case IsA ASAManager.HostingProvider
+		    Var StatusDetails As JSONItem = InitialStatus.UserData
+		    Profile.Mask = ArkSA.Maps.MaskForIdentifier(StatusDetails.Value("map_name").StringValue)
 		  End Select
 		  
 		  GameIniPath = Profile.GameIniPath
