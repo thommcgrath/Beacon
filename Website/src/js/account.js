@@ -837,6 +837,11 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 						staticTokenHelpField.innerText = 'On your GameServerApp.com dashboard, you will find an "API / Integrate" option where you can issue a token for Beacon. Copy the token into the field below to continue. Remember to keep your token in a safe place in case you need it again.';
 						staticTokenHelpField.classList.remove('hidden');
 						break;
+					case 'asamanager':
+						staticTokenGenerateLink.href = 'https://asamanager.app/tokens';
+						staticTokenHelpField.innerText = 'At ASA Manager, press the "Create Token" button. When asked for a name, you may choose whatever you like, but "Beacon" is recommended so you don\'t forget what it is for. You will then be shown the token so you can copy it and paste it back here.';
+						staticTokenHelpField.classList.remove('hidden');
+						break;
 					}
 					BeaconDialog.showModal('static-token-modal');
 				}
