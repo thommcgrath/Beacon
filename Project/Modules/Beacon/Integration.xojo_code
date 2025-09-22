@@ -39,6 +39,8 @@ Implements Beacon.LogProducer
 		    Self.mProvider = New Nitrado.HostingProvider(Self)
 		  Case GameServerApp.Identifier
 		    Self.mProvider = New GameServerApp.HostingProvider(Self)
+		  Case ASAManager.Identifier
+		    Self.mProvider = New ASAManager.HostingProvider(Self)
 		  Case FTP.Identifier
 		    Self.mProvider = New FTP.HostingProvider(Self)
 		  Case Local.Identifier

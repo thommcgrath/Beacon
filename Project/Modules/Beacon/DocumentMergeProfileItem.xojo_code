@@ -16,6 +16,10 @@ Inherits Beacon.DocumentMergeItem
 		    Var HostConfig As GameServerApp.HostConfig = GameServerApp.HostConfig(Profile.HostConfig)
 		    TokenId = HostConfig.TokenId
 		    TokenKey = HostConfig.TokenKey
+		  Case ASAManager.Identifier
+		    Var HostConfig As ASAManager.HostConfig = ASAManager.HostConfig(Profile.HostConfig)
+		    TokenId = HostConfig.TokenId
+		    TokenKey = HostConfig.TokenKey
 		  End Select
 		  If TokenId.IsEmpty = False And TokenKey.IsEmpty = False Then
 		    Self.mTokenId = TokenId

@@ -7,7 +7,7 @@ Implements Beacon.OAuthConsumer
 		Sub ReadSaveData(SaveData As Dictionary, Version As Integer)
 		  #Pragma Unused Version
 		  
-		  Self.mServiceId = SaveData.Lookup("serviceId", 0)
+		  Self.mContainerId = SaveData.Lookup("containerId", 0)
 		  Self.mTokenId = SaveData.Lookup("tokenId", "")
 		End Sub
 	#tag EndEvent
@@ -16,50 +16,39 @@ Implements Beacon.OAuthConsumer
 		Sub WriteSaveData(SaveData As Dictionary)
 		  // Do not store the token key
 		  
-		  SaveData.Value("serviceId") = Self.mServiceId
+		  SaveData.Value("containerId") = Self.mContainerId
 		  SaveData.Value("tokenId") = Self.mTokenId
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Function CreateProvider() As Beacon.HostingProvider
-		  Return New Nitrado.HostingProvider
+		Function ContainerId() As Integer
+		  Return Self.mContainerId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MigrateProviderToken(OldTokenId As String, NewTokenId As String)
-		  Super.MigrateProviderToken(OldTokenId, NewTokenId)
-		  
-		  If Self.mTokenId = OldTokenId Then
-		    Self.mTokenId = NewTokenId
-		    Self.Modified = True
+		Sub ContainerId(Assigns Value As Integer)
+		  If Self.mContainerId = Value Then
+		    Return
 		  End If
+		  
+		  Self.mContainerId = Value
+		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateProvider() As Beacon.HostingProvider
+		  Return New ASAManager.HostingProvider()
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ProviderId() As String
-		  Return Nitrado.Identifier
+		  Return ASAManager.Identifier
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ServiceId() As Integer
-		  Return Self.mServiceId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ServiceId(Assigns Value As Integer)
-		  If Self.mServiceId = Value Then
-		    Return
-		  End If
-		  
-		  Self.mServiceId = Value
-		  Self.Modified = True
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -95,7 +84,7 @@ Implements Beacon.OAuthConsumer
 
 
 	#tag Property, Flags = &h21
-		Private mServiceId As Integer
+		Private mContainerId As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -27,6 +27,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
    Width           =   720
    Begin Thread TokenLookupThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -35,6 +36,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
    Begin UITweaks.ResizedPushButton TokensRefreshButton
       AllowAutoDeactivate=   True
@@ -414,6 +416,9 @@ End
 		  Case GameServerApp.Identifier
 		    Config = New GameServerApp.HostConfig
 		    GameServerApp.HostConfig(Config).TokenId = Token.TokenId
+		  Case ASAManager.Identifier
+		    Config = New ASAManager.HostConfig
+		    ASAManager.HostConfig(Config).TokenId = Token.TokenId
 		  End Select
 		  
 		  Var Thread As New Beacon.Thread

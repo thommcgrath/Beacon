@@ -17,12 +17,15 @@ Begin ArkSAConfigEditor ArkSAServersEditor
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   800
    Begin ServersListbox ServerList
@@ -228,6 +231,7 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
    Begin StatusContainer Status
       AllowAutoDeactivate=   True
@@ -884,6 +888,8 @@ End
 		        View = New ArkSALocalServerView(Self.Project, Profile)
 		      Case GameServerApp.Identifier
 		        View = New ArkSAGSAServerView(Self.Project, Profile)
+		      Case ASAManager.Identifier
+		        View = New ArkSAASAManagerServerView(Self.Project, Profile)
 		      Else
 		        Self.CurrentProfileID = ""
 		        Return
@@ -1149,6 +1155,10 @@ End
 		      Provider = New GameServerApp.HostingProvider
 		      Config = New GameServerApp.HostConfig
 		      GameServerApp.HostConfig(Config).TokenId = Token.TokenId
+		    Case BeaconAPI.ProviderToken.ProviderASAManager
+		      Provider = New ASAManager.HostingProvider
+		      Config = New ASAManager.HostConfig
+		      ASAManager.HostConfig(Config).TokenId = Token.TokenId
 		    End Select
 		    If Provider Is Nil Then
 		      Continue
