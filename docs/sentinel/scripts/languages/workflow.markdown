@@ -45,6 +45,7 @@ The **Logic**{:.ui-keyword} section is where you'll specify exactly which action
 | Set Bucket Value | Saves a value to a specific bucket under the specified key. Optionally accepts a Sentinel Player ID to save the value to. |
 | Teleport Character | Teleports a survivor to a specific location or location relative to their current position and facing direction. See the [beacon.teleportCharacter](/sentinel/scripts/functions/teleportCharacter.html) JavaScript function reference for a detailed explanation of the required values. |
 | Teleport Dino | Teleports a dino to a specific location or location relative to their current position and facing direction. See the [beacon.teleportDino](/sentinel/scripts/functions/teleportDino.html) JavaScript function reference for a detailed explanation of the required values. |
+| Toggle Buff | Adds or removes a buff or debuff from a survivor or dino. |
 {:.classdefinition}
 
 ## Value Fields
