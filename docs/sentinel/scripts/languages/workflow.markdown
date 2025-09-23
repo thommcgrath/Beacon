@@ -35,6 +35,7 @@ The **Logic**{:.ui-keyword} section is where you'll specify exactly which action
 | Destroy Inventory Item | Takes an item blueprint path and destroys all instances of it in all player, dino, and storage inventories.
 | Give Custom Item | Accepts a Sentinel Survivor ID, item path, and quantity. Optionally also allows specific stat values such as item rating, armor amount, and durability. The Sentinel mod will generate an item that perfectly matches the given stats, within the limitations of the game of course. This does not respect any stat clamps set on the server. |
 | Give Item | Similar to Give Custom Item, this action accepts a Sentinel Survivor ID, item path, quality, and quantity. This action behaves much like the the "GiveItem" cheat code, except that Sentinel will allow greater values than the stack size. |
+| Give Loot | Gives the contents of a loot drop to a survivor. Get loot spec by creating a drop in Beacon, then right-click and choose the "Copy for Sentinel" item.
 | Kick Player | Removes the player specified by Sentinel Player ID. |
 | Kill Survivor | Kills a survivor by their Sentinel Survivor ID. |
 | Rename Survivor | Changes the name of the survivor specified by the Sentinel Survivor ID to the name provided. |
