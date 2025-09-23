@@ -71,6 +71,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventDinoUploaded = 'dinoUploaded';
 	const EventItemGiven = 'itemGiven';
 	const EventNoClusterId = 'noClusterId';
+	const EventPlayerBuffsChanged = 'playerBuffsChanged';
 	const EventPlayerCuffed = 'playerCuffed';
 	const EventPlayerDied = 'playerDied';
 	const EventPlayerJoined = 'playerJoined';
@@ -119,6 +120,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventDinoUploaded,
 		self::EventItemGiven,
 		self::EventNoClusterId,
+		self::EventPlayerBuffsChanged,
 		self::EventPlayerCuffed,
 		self::EventPlayerDied,
 		self::EventPlayerJoined,
