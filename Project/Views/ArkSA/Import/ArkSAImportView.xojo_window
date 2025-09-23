@@ -6,43 +6,23 @@ Begin DocumentImportView ArkSAImportView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composite       =   False
    Composited      =   False
-   DefaultLocation =   2
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
-   FullScreen      =   False
    HasBackgroundColor=   False
-   HasCloseButton  =   True
-   HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
    Height          =   480
-   ImplicitInstance=   True
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   False
-   LockLeft        =   False
+   LockLeft        =   True
    LockRight       =   False
-   LockTop         =   False
-   MacProcID       =   0
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
-   MenuBar         =   0
-   MenuBarVisible  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   Resizeable      =   True
+   LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Title           =   "Untitled"
    Tooltip         =   ""
    Top             =   0
-   Transparent     =   True
-   Type            =   0
+   Transparent     =   False
    Visible         =   True
    Width           =   720
    Begin DesktopPagePanel Views
@@ -57,7 +37,7 @@ Begin DocumentImportView ArkSAImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   8
+      PanelCount      =   9
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -67,7 +47,7 @@ Begin DocumentImportView ArkSAImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   720
       Begin FTPDiscoveryView FTPDiscoveryView1
@@ -408,7 +388,7 @@ Begin DocumentImportView ArkSAImportView
       End
       Begin DocumentImportSourcePicker SourcePicker
          AllowAutoDeactivate=   True
-         AllowedSources  =   63
+         AllowedSources  =   127
          AllowFocus      =   False
          AllowFocusRing  =   False
          AllowTabs       =   True
@@ -416,9 +396,9 @@ Begin DocumentImportView ArkSAImportView
          BackgroundColor =   &cFFFFFF
          Composited      =   False
          Enabled         =   True
-         EnabledSources  =   63
+         EnabledSources  =   127
          HasBackgroundColor=   False
-         Height          =   282
+         Height          =   314
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -551,6 +531,36 @@ Begin DocumentImportView ArkSAImportView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
+      Begin MultiSelectDiscoveryView ASAManagerDiscoveryView
+         AddressColumnLabel=   "Container Id"
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   9
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
@@ -880,6 +890,9 @@ End
 	#tag Constant, Name = MigrationMessageSingular, Type = String, Dynamic = True, Default = \"Migrating \?1 Project", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageASAManager, Type = Double, Dynamic = False, Default = \"8", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
@@ -929,6 +942,8 @@ End
 		    Self.SetPageHeight(Self.StatusPageHeight)
 		  Case Self.PageGSA
 		    Self.GSADiscoveryView1.Begin
+		  Case Self.PageASAManager
+		    Self.ASAManagerDiscoveryView.Begin
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1238,6 +1253,8 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageFTP
 		  Case Me.SourceGSA
 		    Self.Views.SelectedPanelIndex = Self.PageGSA
+		  Case Me.SourceASAManager
+		    Self.Views.SelectedPanelIndex = Self.PageASAManager
 		  Case Me.SourceFiles
 		    Self.Views.SelectedPanelIndex = Self.PageFiles
 		  Case Me.SourceClipboard
@@ -1361,6 +1378,42 @@ End
 	#tag Event
 		Function CreateHostingProvider() As Beacon.HostingProvider
 		  Return New GameServerApp.HostingProvider
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return ArkSA.Identifier
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ASAManagerDiscoveryView
+	#tag Event
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New ASAManager.HostingProvider
 		End Function
 	#tag EndEvent
 	#tag Event

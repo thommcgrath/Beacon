@@ -347,7 +347,6 @@ Protected Class ProjectController
 		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared, Beacon.ProjectURL.TypeCommunity
 		    // authenticated api request
 		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.Path, "GET"))
-		    Break
 		    If Response.HTTPStatus >= 200 And Response.HTTPStatus < 300 Then
 		      FileContent = Response.Content
 		    Else

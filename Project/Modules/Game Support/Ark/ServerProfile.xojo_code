@@ -226,7 +226,7 @@ Inherits Beacon.ServerProfile
 	#tag Method, Flags = &h0
 		Function DeployCapable() As Boolean
 		  Select Case Self.ProviderId
-		  Case Nitrado.Identifier, GameServerApp.Identifier
+		  Case Nitrado.Identifier, ASAManager.Identifier
 		    Return True
 		  Case FTP.Identifier, Local.Identifier
 		    Return (Self.GameIniPath.IsEmpty = False And Self.GameUserSettingsIniPath.IsEmpty = False)

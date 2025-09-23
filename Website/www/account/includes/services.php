@@ -34,6 +34,11 @@ if (count($connectedServices) > 0) {
 			$username = htmlentities($details['tokenName']);
 			$serviceName = $details['tokenName'];
 			break;
+		case ServiceToken::ProviderASAManager:
+			$details = $service->ProviderSpecific();
+			$username = htmlentities($details['tokenName']);
+			$serviceName = $details['tokenName'];
+			break;
 		}
 
 		echo '<div class="service service-' . $providerSimplified . '">';
@@ -61,6 +66,11 @@ if (count($connectedServices) > 0) {
 			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('gameserverapp-black.svg'); ?>" alt="GameServerApp"></div>
 			<div class="service-name">GameServerApp.com</div>
 			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="gameserverapp.com" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
+		</div>
+		<div class="service service-asamanager inactive">
+			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('asamanager-color.svg'); ?>" alt="ASA Manager"></div>
+			<div class="service-name">ASA Manager</div>
+			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="asamanager" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
 		</div>
 	</div>
 </div>

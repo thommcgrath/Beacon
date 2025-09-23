@@ -21,6 +21,12 @@ Protected Class HostConfig
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreateProvider() As Beacon.HostingProvider
+		  Raise New UnsupportedOperationException("Failed to create hosting provider")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary) As Beacon.HostConfig
 		  Var ProviderId As String = SaveData.Lookup("providerId", "")
 		  Var Version As Integer = SaveData.Lookup("version", 0)
@@ -35,6 +41,8 @@ Protected Class HostConfig
 		    Return New Nitrado.HostConfig(SaveData, Version)
 		  Case GameServerApp.Identifier
 		    Return New GameServerApp.HostConfig(SaveData, Version)
+		  Case ASAManager.Identifier
+		    Return New ASAManager.HostConfig(SaveData, Version)
 		  Case FTP.Identifier
 		    Return New FTP.HostConfig(SaveData, Version)
 		  Case Local.Identifier

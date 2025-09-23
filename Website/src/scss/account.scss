@@ -194,6 +194,17 @@ h1 span.tag {
 			color: black;
 		}
 	}
+
+	.service-asamanager {
+		background: #181818;
+		color: white;
+
+		&.inactive {
+			background: none;
+			background-color: white;
+			color: black;
+		}
+	}
 }
 
 #static-token-token-field {

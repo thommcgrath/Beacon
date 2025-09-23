@@ -33,6 +33,12 @@ Inherits Beacon.HostConfig
 
 
 	#tag Method, Flags = &h0
+		Function CreateProvider() As Beacon.HostingProvider
+		  Return New FTP.HostingProvider
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Host() As String
 		  Return Self.mHost
 		End Function

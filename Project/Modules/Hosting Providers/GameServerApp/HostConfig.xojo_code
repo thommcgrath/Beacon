@@ -23,6 +23,12 @@ Implements Beacon.OAuthConsumer
 
 
 	#tag Method, Flags = &h0
+		Function CreateProvider() As Beacon.HostingProvider
+		  Return New GameServerApp.HostingProvider
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ProviderId() As String
 		  Return GameServerApp.Identifier
 		End Function

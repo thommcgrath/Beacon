@@ -159,7 +159,7 @@ Inherits Beacon.ServerProfile
 	#tag Method, Flags = &h0
 		Function DeployCapable() As Boolean
 		  Select Case Self.ProviderId
-		  Case Nitrado.Identifier, GameServerApp.Identifier
+		  Case Nitrado.Identifier, GameServerApp.Identifier, ASAManager.Identifier
 		    Return True
 		  Case FTP.Identifier, Local.Identifier
 		    Return (Self.GameIniPath.IsEmpty = False And Self.GameUserSettingsIniPath.IsEmpty = False)
@@ -347,7 +347,12 @@ Inherits Beacon.ServerProfile
 	#tag Method, Flags = &h0
 		Function SupportedDeployPlans() As Beacon.DeployPlan()
 		  Var Config As Beacon.HostConfig = Self.HostConfig
-		  If (Config Is Nil) = False And Config IsA Nitrado.HostConfig Then
+		  Var Provider As Beacon.HostingProvider
+		  If (Config Is Nil) = False Then
+		    Provider = Config.CreateProvider()
+		  End If
+		  
+		  If (Config Is Nil) = False And (Provider Is Nil) = False And Provider.SupportsRestarting Then
 		    Return Array(Beacon.DeployPlan.StopUploadStart, Beacon.DeployPlan.UploadRestart, Beacon.DeployPlan.UploadOnly)
 		  Else
 		    Return Array(Beacon.DeployPlan.UploadOnly)

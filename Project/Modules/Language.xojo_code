@@ -262,6 +262,8 @@ Protected Module Language
 		    Return "Nitrado"
 		  Case GameServerApp.Identifier
 		    Return "GameServerApp.com"
+		  Case ASAManager.Identifier
+		    Return "ASA Manager"
 		  Case FTP.Identifier
 		    Return "FTP"
 		  Case Local.Identifier
