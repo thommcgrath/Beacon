@@ -1,5 +1,5 @@
 Type=Desktop
-RBProjectVersion=2025.021
+RBProjectVersion=2023.04
 MinIDEVersion=20210300
 OrigIDEVersion=20210200
 DesktopWindow=ArkSABlueprintEditorDialog;Views/ArkSA/Mods/ArkSABlueprintEditorDialog.xojo_window;&h000000007A71EFFF;&h000000004B8DE7FF;false
@@ -1019,6 +1019,3 @@ OptimizationLevel=0
 WindowsVersions={1f676c76-80e1-4239-95bb-83d0f6d0da78}|{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}
 WindowsRunAs=0
 MacOSMinimumVersion=10.14.0
-PlistEntries={"root":""}
-AppCategory=
-AppSpecificPassword=

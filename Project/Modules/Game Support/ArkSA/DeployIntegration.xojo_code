@@ -138,7 +138,8 @@ Inherits Beacon.DeployIntegration
 		    
 		    Select Case Self.Provider
 		    Case IsA Nitrado.HostingProvider
-		      OldFiles.Value("Config.json") = NitradoSettings.ToString(False)
+		      NitradoSettings.Compact = False
+		      OldFiles.Value("Config.json") = NitradoSettings.ToString
 		      
 		      Var NewSettings As New JSONItem(OldFiles.Value("Config.json").StringValue)
 		      For Each Entry As DictionaryEntry In NitradoChanges
@@ -154,7 +155,8 @@ Inherits Beacon.DeployIntegration
 		        End If
 		        Parent.Value(Key) = Entry.Value.StringValue
 		      Next
-		      NewFiles.Value("Config.json") = NewSettings.ToString(False)
+		      NewSettings.Compact = False
+		      NewFiles.Value("Config.json") = NewSettings.ToString
 		    End Select
 		    
 		    Self.RunBackup(OldFiles, NewFiles)

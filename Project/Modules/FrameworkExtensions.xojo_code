@@ -286,6 +286,22 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Extension(Extends File As FolderItem) As String
+		  #if XojoVersion >= 2024.01
+		    #Pragma Error "Remove this method"
+		  #endif
+		  
+		  Var Name As String = File.Name
+		  If Name.IndexOf(".") = -1 Then
+		    Return ""
+		  End If
+		  
+		  Var Parts() As String = Name.Split(".")
+		  Return Parts(Parts.LastIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ExtensionMatches(Extends File As FolderItem, PossibleExtensions() As String) As Boolean
 		  For Each Extension As String In PossibleExtensions
 		    If Extension.BeginsWith(".") Then
@@ -813,15 +829,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToString(Extends Source As JSONItem, Compact As Boolean, DecimalPlaces As Integer = -1) As String
-		  Var Options As New JSONOptions
-		  Options.Compact = Compact
-		  Options.DecimalPlaces = DecimalPlaces
-		  Return Source.ToString(Options)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ToString(Extends Source As MemoryBlock) As String
 		  If Source.Size = 0 Then
 		    Return ""
@@ -911,7 +918,7 @@ Protected Module FrameworkExtensions
 		  
 		  Select Case Value.Type
 		  Case Variant.TypeText
-		    Return Double.FromString(Value.TextValue)
+		    Return Double.FromText(Value.TextValue)
 		  Case Variant.TypeString
 		    Return Double.FromString(Value.TextValue)
 		  Case Variant.TypeInt32

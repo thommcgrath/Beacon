@@ -614,10 +614,11 @@ Protected Class ArkML
 	#tag Method, Flags = &h0
 		Function SaveData() As String
 		  Var Item As New JSONItem
+		  Item.Compact = False
 		  For Each Part As Dictionary In Self.mParts
 		    Item.Add(New JSONItem(Part))
 		  Next
-		  Return EncodeBase64URLMBS(Beacon.Compress(Item.ToString(True)))
+		  Return EncodeBase64URLMBS(Beacon.Compress(Item.ToString))
 		End Function
 	#tag EndMethod
 

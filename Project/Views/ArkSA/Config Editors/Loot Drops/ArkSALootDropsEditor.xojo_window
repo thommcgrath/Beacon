@@ -17,15 +17,12 @@ Begin ArkSAConfigEditor ArkSALootDropsEditor
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   702
    Begin FadedSeparator FadedSeparator1
@@ -1057,9 +1054,10 @@ End
 		          Var Overrides() As ArkSA.LootDropOverride = Tag.Value("Overrides")
 		          If Overrides.Count = 1 Then
 		            Var Loot As JSONItem = Overrides(0).SentinelData
+		            Loot.Compact = True
 		            
 		            Var Board As New Clipboard
-		            Board.Text = EncodeBase64URLMBS(Beacon.Compress(Loot.ToString(True)))
+		            Board.Text = EncodeBase64URLMBS(Beacon.Compress(Loot.ToString()))
 		            
 		            Self.ShowAlert("Loot Drop Copied", "The loot drop has been copied and is ready to be pasted to Beacon Sentinel.")
 		          End If

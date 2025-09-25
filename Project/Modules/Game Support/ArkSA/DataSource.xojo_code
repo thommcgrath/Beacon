@@ -2876,10 +2876,12 @@ Implements ArkSA.BlueprintProvider
 		          Var Stats() As ArkSA.EngramStat = Engram.AllStats(True)
 		          If Stats.Count > 0 Then
 		            Var StatsJSON As New JSONItem
+		            StatsJSON.Compact = True
+		            StatsJSON.DecimalFormat = "#.000000"
 		            For Each Stat As ArkSA.EngramStat In Stats
 		              StatsJSON.Add(New JSONItem(Stat.SaveData))
 		            Next
-		            Columns.Value("stats") = StatsJSON.ToString(True, 6)
+		            Columns.Value("stats") = StatsJSON.ToString
 		          Else
 		            Columns.Value("stats") = Nil
 		          End If
