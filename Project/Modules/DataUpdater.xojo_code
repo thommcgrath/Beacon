@@ -72,8 +72,14 @@ Protected Module DataUpdater
 		  If mPendingImports.Count > 0 Then
 		    If mImportThread Is Nil Then
 		      mImportThread = New Thread
-		      mImportThread.Priority = Thread.LowestPriority
 		      mImportThread.DebugIdentifier = "DataUpdater.mImportThread"
+		      #if App.UsePreemptiveThreads
+		        mImportThread.Type = Thread.Types.Preemptive
+		        mImportThread.Priority = Thread.LowestPriority
+		      #else
+		        mImportThread.Type = Thread.Types.Cooperative
+		        mImportThread.Priority = Thread.NormalPriority
+		      #endif
 		      AddHandler mImportThread.Run, AddressOf mImportThread_Run
 		    End If
 		    

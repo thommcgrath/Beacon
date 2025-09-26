@@ -159,6 +159,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Self.Log(Self.UserAgent)
 		  
+		  NotificationKit.Init
+		  
 		  #if TargetMacOS
 		    DesktopWKWebViewControlMBS.SetUsePrivateBrowsing(True)
 		  #endif
@@ -2008,11 +2010,22 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Constant, Name = Notification_AppearanceChanged, Type = String, Dynamic = False, Default = \"Appearance Changed", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = UsePreemptiveThreads, Type = Boolean, Dynamic = False, Default = \"True", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = UsePreviewMode, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
 	#tag EndConstant
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ProcessID"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=false

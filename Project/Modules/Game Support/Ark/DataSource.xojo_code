@@ -1093,6 +1093,7 @@ Inherits Beacon.DataSource
 		  
 		  If mLock Is Nil Then
 		    mLock = New CriticalSection
+		    mLock.Type = Thread.Types.Preemptive
 		  End If
 		  
 		  Super.Constructor(AllowWriting)

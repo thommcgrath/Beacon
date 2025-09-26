@@ -101,15 +101,22 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Event
 		Sub EmptyCaches()
-		  Self.mBlueprintCache = New Dictionary
-		  Self.mConfigOptionCache = New Dictionary
-		  Self.mContainerLabelCacheDict = New Dictionary
-		  Self.mContainerLabelCacheMask = 0
-		  Self.mIconCache = New Dictionary
-		  Self.mSpawnLabelCacheDict = New Dictionary
-		  Self.mSpawnLabelCacheMask = 0
-		  Self.mOfficialPlayerLevelData = Nil
-		  Self.mOfficialSinglePlayerLevelData = Nil
+		  Self.mLock.Enter
+		  Try
+		    Self.mBlueprintCache = New Dictionary
+		    Self.mConfigOptionCache = New Dictionary
+		    Self.mContainerLabelCacheDict = New Dictionary
+		    Self.mContainerLabelCacheMask = 0
+		    Self.mIconCache = New Dictionary
+		    Self.mSpawnLabelCacheDict = New Dictionary
+		    Self.mSpawnLabelCacheMask = 0
+		    Self.mOfficialPlayerLevelData = Nil
+		    Self.mOfficialSinglePlayerLevelData = Nil
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		End Sub
 	#tag EndEvent
 
@@ -242,7 +249,9 @@ Implements ArkSA.BlueprintProvider
 		      End If
 		    Next Dict
 		    If LootSourceIcons.LastIndex > -1 Then
+		      Self.mLock.Enter
 		      Self.mIconCache = New Dictionary
+		      Self.mLock.Leave
 		    End If
 		  End If
 		  
@@ -341,7 +350,9 @@ Implements ArkSA.BlueprintProvider
 		  End If
 		  
 		  If ChangeDict.HasKey("configOptions") Then
+		    Self.mLock.Enter
 		    Self.mConfigOptionCache = New Dictionary
+		    Self.mLock.Leave
 		    
 		    Var Options() As Variant = ChangeDict.Value("configOptions")
 		    For Each Dict As Dictionary In Options
@@ -544,17 +555,18 @@ Implements ArkSA.BlueprintProvider
 	#tag Event
 		Sub ImportCleanup(StatusData As Dictionary)
 		  // Do not invalidate mBlueprints, it uses timestamps
+		  Self.mLock.Enter
 		  Self.mConfigOptionCache = New Dictionary
 		  Self.mSpawnLabelCacheDict = New Dictionary
 		  Self.mIconCache = New Dictionary
 		  Self.mContainerLabelCacheDict = New Dictionary
 		  Self.mContainerLabelCacheMask = 0
+		  Self.mOfficialPlayerLevelData = Nil
+		  Self.mLock.Leave
 		  
 		  If StatusData.Lookup("Engrams Changed", False).BooleanValue Then
 		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		  End If
-		  
-		  Self.mOfficialPlayerLevelData = Nil
 		End Sub
 	#tag EndEvent
 
@@ -696,10 +708,12 @@ Implements ArkSA.BlueprintProvider
 		  Next
 		  
 		  // Do not invalidate mBlueprints. It isn't necessary because it uses timestamps.
+		  Self.mLock.Enter
 		  Self.mConfigOptionCache.RemoveAll
 		  Self.mContainerLabelCacheDict.RemoveAll
 		  Self.mIconCache.RemoveAll
 		  Self.mSpawnLabelCacheDict.RemoveAll
+		  Self.mLock.Leave
 		End Sub
 	#tag EndEvent
 
@@ -798,7 +812,14 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(Creature As ArkSA.Creature)
-		  Self.mBlueprintCache.Value(Creature.CreatureId) = Creature
+		  Self.mLock.Enter
+		  Try
+		    Self.mBlueprintCache.Value(Creature.CreatureId) = Creature
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -812,28 +833,35 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(Engram As ArkSA.Engram)
-		  Self.mBlueprintCache.Value(Engram.EngramId) = Engram
-		  
-		  If Engram.HasUnlockDetails Then
-		    Var SimilarEngrams() As ArkSA.Engram
-		    Var CacheKey As String = "EngramEntry:" + Engram.EntryString
-		    If Self.mBlueprintCache.HasKey(CacheKey) Then
-		      SimilarEngrams = Self.mBlueprintCache.Value(CacheKey)
-		    End If
+		  Self.mLock.Enter
+		  Try
+		    Self.mBlueprintCache.Value(Engram.EngramId) = Engram
 		    
-		    Var Found As Boolean
-		    For Idx As Integer = 0 To SimilarEngrams.LastIndex
-		      If SimilarEngrams(Idx).EngramId = Engram.EngramId Then
-		        SimilarEngrams(Idx) = Engram
-		        Found = True
-		        Exit For Idx
+		    If Engram.HasUnlockDetails Then
+		      Var SimilarEngrams() As ArkSA.Engram
+		      Var CacheKey As String = "EngramEntry:" + Engram.EntryString
+		      If Self.mBlueprintCache.HasKey(CacheKey) Then
+		        SimilarEngrams = Self.mBlueprintCache.Value(CacheKey)
 		      End If
-		    Next
-		    If Not Found Then
-		      SimilarEngrams.Add(Engram)
+		      
+		      Var Found As Boolean
+		      For Idx As Integer = 0 To SimilarEngrams.LastIndex
+		        If SimilarEngrams(Idx).EngramId = Engram.EngramId Then
+		          SimilarEngrams(Idx) = Engram
+		          Found = True
+		          Exit For Idx
+		        End If
+		      Next
+		      If Not Found Then
+		        SimilarEngrams.Add(Engram)
+		      End If
+		      Self.mBlueprintCache.Value(CacheKey) = SimilarEngrams
 		    End If
-		    Self.mBlueprintCache.Value(CacheKey) = SimilarEngrams
-		  End If
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -847,7 +875,14 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(LootDrop As ArkSA.LootContainer)
-		  Self.mBlueprintCache.Value(LootDrop.LootDropId) = LootDrop
+		  Self.mLock.Enter
+		  Try
+		    Self.mBlueprintCache.Value(LootDrop.LootDropId) = LootDrop
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -861,7 +896,14 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(SpawnPoint As ArkSA.SpawnPoint)
-		  Self.mBlueprintCache.Value(SpawnPoint.SpawnPointId) = SpawnPoint
+		  Self.mLock.Enter
+		  Try
+		    Self.mBlueprintCache.Value(SpawnPoint.SpawnPointId) = SpawnPoint
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -1034,26 +1076,34 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Sub Constructor(AllowWriting As Boolean)
-		  If Self.mBlueprintCache Is Nil Then
-		    Self.mBlueprintCache = New Dictionary
-		  End If
-		  If Self.mConfigOptionCache Is Nil Then
-		    Self.mConfigOptionCache = New Dictionary
-		  End If
-		  If Self.mSpawnLabelCacheDict Is Nil Then
-		    Self.mSpawnLabelCacheDict = New Dictionary
-		  End If
-		  If Self.mIconCache Is Nil Then
-		    Self.mIconCache = New Dictionary
-		  End If
-		  If Self.mContainerLabelCacheDict Is Nil Then
-		    Self.mContainerLabelCacheDict = New Dictionary
-		    Self.mContainerLabelCacheMask = 0
+		  If Self.mLock Is Nil Then
+		    Self.mLock = New CriticalSection
+		    Self.mLock.Type = Thread.Types.Preemptive
 		  End If
 		  
-		  If mLock Is Nil Then
-		    mLock = New CriticalSection
-		  End If
+		  Self.mLock.Enter
+		  Try
+		    If Self.mBlueprintCache Is Nil Then
+		      Self.mBlueprintCache = New Dictionary
+		    End If
+		    If Self.mConfigOptionCache Is Nil Then
+		      Self.mConfigOptionCache = New Dictionary
+		    End If
+		    If Self.mSpawnLabelCacheDict Is Nil Then
+		      Self.mSpawnLabelCacheDict = New Dictionary
+		    End If
+		    If Self.mIconCache Is Nil Then
+		      Self.mIconCache = New Dictionary
+		    End If
+		    If Self.mContainerLabelCacheDict Is Nil Then
+		      Self.mContainerLabelCacheDict = New Dictionary
+		      Self.mContainerLabelCacheMask = 0
+		    End If
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		  
 		  Super.Constructor(AllowWriting)
 		End Sub
@@ -1069,32 +1119,44 @@ Implements ArkSA.BlueprintProvider
 		Private Sub DeleteDataForContentPack(ContentPackId As String)
 		  Self.BeginTransaction()
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM blueprints WHERE content_pack_id = ?1;", ContentPackId)
-		  For Each Row As DatabaseRow In Rows
-		    Var BlueprintId As String = Row.Column("object_id").StringValue
-		    If Self.mBlueprintCache.HasKey(BlueprintId) Then
-		      Self.mBlueprintCache.Remove(BlueprintId)
-		    End If
-		  Next
+		  Try
+		    Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM blueprints WHERE content_pack_id = ?1;", ContentPackId)
+		    For Each Row As DatabaseRow In Rows
+		      Var BlueprintId As String = Row.Column("object_id").StringValue
+		      If Self.mBlueprintCache.HasKey(BlueprintId) Then
+		        Self.mBlueprintCache.Remove(BlueprintId)
+		      End If
+		    Next
+		    
+		    Rows = Self.SQLSelect("SELECT DISTINCT entry_string FROM engrams WHERE content_pack_id = ?1 AND entry_string IS NOT NULL;", ContentPackId)
+		    For Each Row As DatabaseRow In Rows
+		      Var EntryString As String = Row.Column("entry_string").StringValue
+		      If Self.mBlueprintCache.HasKey("EngramEntry:" + EntryString) Then
+		        Self.mBlueprintCache.Remove("EngramEntry:" + EntryString)
+		      End If
+		    Next
+		    
+		    Self.SQLExecute("DELETE FROM blueprints WHERE content_pack_id = ?1;", ContentPackId)
+		    Self.SQLExecute("DELETE FROM loot_container_selectors WHERE content_pack_id = ?1;", ContentPackId)
+		  Catch Err As RuntimeException
+		    Self.RollbackTransaction()
+		    Raise Err
+		  End Try
 		  
-		  Rows = Self.SQLSelect("SELECT DISTINCT entry_string FROM engrams WHERE content_pack_id = ?1 AND entry_string IS NOT NULL;", ContentPackId)
-		  For Each Row As DatabaseRow In Rows
-		    Var EntryString As String = Row.Column("entry_string").StringValue
-		    If Self.mBlueprintCache.HasKey("EngramEntry:" + EntryString) Then
-		      Self.mBlueprintCache.Remove("EngramEntry:" + EntryString)
-		    End If
-		  Next
-		  
-		  Self.SQLExecute("DELETE FROM blueprints WHERE content_pack_id = ?1;", ContentPackId)
-		  Self.SQLExecute("DELETE FROM loot_container_selectors WHERE content_pack_id = ?1;", ContentPackId)
 		  Self.CommitTransaction()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetBlueprint(BlueprintId As String, UseCache As Boolean = True) As ArkSA.Blueprint
-		  If UseCache And Self.mBlueprintCache.HasKey(BlueprintId) Then
-		    Return Self.mBlueprintCache.Value(BlueprintId)
+		  If UseCache Then
+		    Self.mLock.Enter
+		    If Self.mBlueprintCache.HasKey(BlueprintId) Then
+		      Var Blueprint As ArkSA.Blueprint = Self.mBlueprintCache.Value(BlueprintId)
+		      Self.mLock.Leave
+		      Return Blueprint
+		    End If
+		    Self.mLock.Leave
 		  End If
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT category FROM blueprints WHERE object_id = ?1;", BlueprintId)
@@ -1318,9 +1380,13 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetConfigOption(KeyUUID As String) As ArkSA.ConfigOption
+		  Self.mLock.Enter
 		  If Self.mConfigOptionCache.HasKey(KeyUUID) Then
-		    Return Self.mConfigOptionCache.Value(KeyUUID)
+		    Var Option As ArkSA.ConfigOption = Self.mConfigOptionCache.Value(KeyUUID)
+		    Self.mLock.Leave
+		    Return Option
 		  End If
+		  Self.mLock.Leave
 		  
 		  Var Rows As RowSet = Self.SQLSelect(Self.ConfigOptionSelectSQL + " WHERE object_id = ?1;", KeyUUID)
 		  If Rows.RowCount <> 1 Then
@@ -1330,7 +1396,7 @@ Implements ArkSA.BlueprintProvider
 		  Var Results() As ArkSA.ConfigOption = Self.RowSetToConfigOptions(Rows)
 		  If Results.Count = 1 Then
 		    Return Results(0)
-		  End If
+		    End Iff
 		End Function
 	#tag EndMethod
 
@@ -1414,8 +1480,14 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetCreature(CreatureId As String, UseCache As Boolean = True) As ArkSA.Creature
-		  If UseCache And Self.mBlueprintCache.HasKey(CreatureId) Then
-		    Return Self.mBlueprintCache.Value(CreatureId)
+		  If UseCache Then
+		    Self.mLock.Enter
+		    If Self.mBlueprintCache.HasKey(CreatureId) Then
+		      Var Creature As ArkSA.Creature = Self.mBlueprintCache.Value(CreatureId)
+		      Self.mLock.Leave
+		      Return Creature
+		    End If
+		    Self.mLock.Leave
 		  End If
 		  
 		  Try
@@ -1547,8 +1619,14 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetEngram(EngramId As String, UseCache As Boolean = True) As ArkSA.Engram
-		  If UseCache And Self.mBlueprintCache.HasKey(EngramId) Then
-		    Return Self.mBlueprintCache.Value(EngramId)
+		  If UseCache Then
+		    Self.mLock.Enter
+		    If Self.mBlueprintCache.HasKey(EngramId) Then
+		      Var Engram As ArkSA.Engram = Self.mBlueprintCache.Value(EngramId)
+		      Self.mLock.Leave
+		      Return Engram
+		    End If
+		    Self.mLock.Leave
 		  End If
 		  
 		  Try
@@ -1637,9 +1715,12 @@ Implements ArkSA.BlueprintProvider
 		  End If
 		  
 		  Var Engrams() As ArkSA.Engram
+		  Self.mLock.Enter
 		  If Self.mBlueprintCache.HasKey("EngramEntry:" + EntryString) Then
 		    Engrams = Self.mBlueprintCache.Value("EngramEntry:" + EntryString)
+		    Self.mLock.Leave
 		  Else
+		    Self.mLock.Leave
 		    Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.entry_string = ?1;"
 		    If (ContentPacks Is Nil) = False Then
 		      SQL = SQL.Left(SQL.Length - 1) + " AND engrams.content_pack_id IN (" + ContentPacks.SQLValue + ");"
@@ -1716,8 +1797,14 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetLootContainer(LootDropId As String, UseCache As Boolean = True) As ArkSA.LootContainer
-		  If UseCache And Self.mBlueprintCache.HasKey(LootDropId) Then
-		    Return Self.mBlueprintCache.Value(LootDropId)
+		  If UseCache Then
+		    Self.mLock.Enter
+		    If Self.mBlueprintCache.HasKey(LootDropId) Then
+		      Var Container As ArkSA.LootContainer = Self.mBlueprintCache.Value(LootDropId)
+		      Self.mLock.Leave
+		      Return Container
+		    End If
+		    Self.mLock.Leave
 		  End If
 		  
 		  Try
@@ -1784,9 +1871,13 @@ Implements ArkSA.BlueprintProvider
 		  AccentColor = BackgroundColor
 		  
 		  IconID = IconID + ForegroundColor.ToHex + BackgroundColor.ToHex
+		  Self.mLock.Enter
 		  If Self.mIconCache.HasKey(IconID) Then
-		    Return Self.mIconCache.Value(IconID)
+		    Var Icon As Picture = Self.mIconCache.Value(IconID)
+		    Self.mLock.Leave
+		    Return Icon
 		  End If
+		  Self.mLock.Leave
 		  
 		  Var Colors As BeaconUI.ColorPair = BeaconUI.FindContrastingColors(BackgroundColor, ForegroundColor, BeaconUI.ContrastModeForeground, BeaconUI.ContrastRequiredIcons)
 		  ForegroundColor = Colors.Foreground
@@ -1845,7 +1936,9 @@ Implements ArkSA.BlueprintProvider
 		  Next
 		  
 		  Var Icon As New Picture(Width, Height, Bitmaps)
+		  Self.mLock.Enter
 		  Self.mIconCache.Value(IconID) = Icon
+		  Self.mLock.Leave
 		  Return Icon
 		End Function
 	#tag EndMethod
@@ -2016,8 +2109,14 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPoint(SpawnPointId As String, UseCache As Boolean = True) As ArkSA.SpawnPoint
-		  If UseCache And Self.mBlueprintCache.HasKey(SpawnPointId) Then
-		    Return Self.mBlueprintCache.Value(SpawnPointId)
+		  If UseCache Then
+		    Self.mLock.Enter
+		    If Self.mBlueprintCache.HasKey(SpawnPointId) Then
+		      Var Point As ArkSA.SpawnPoint = Self.mBlueprintCache.Value(SpawnPointId)
+		      Self.mLock.Leave
+		      Return Point
+		    End If
+		    Self.mLock.Leave
 		  End If
 		  
 		  Try
@@ -2037,38 +2136,45 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPointLabels(Availability As UInt64) As Dictionary
-		  If Self.mSpawnLabelCacheMask <> Availability Then
-		    Var Points() As ArkSA.SpawnPoint = Self.GetSpawnPoints()
-		    Var Labels() As String
-		    Var Dict As New Dictionary
-		    Labels.ResizeTo(Points.LastIndex)
-		    
-		    For I As Integer = 0 To Points.LastIndex
-		      If Points(I).ValidForMask(Availability) = False Then
-		        Continue
-		      End If
+		  Self.mLock.Enter
+		  Try
+		    If Self.mSpawnLabelCacheMask <> Availability Then
+		      Var Points() As ArkSA.SpawnPoint = Self.GetSpawnPoints()
+		      Var Labels() As String
+		      Var Dict As New Dictionary
+		      Labels.ResizeTo(Points.LastIndex)
 		      
-		      Var Label As String = Points(I).Label
-		      Var Idx As Integer = Labels.IndexOf(Label)
-		      Labels(I) = Label
-		      If Idx > -1 Then
-		        Var Filtered As UInt64 = Points(Idx).Availability And Availability
-		        Var Maps() As ArkSA.Map = Self.GetMaps(Filtered)
-		        Dict.Value(Points(Idx).SpawnPointId) = Points(Idx).Label.Disambiguate(Maps.Label)
+		      For I As Integer = 0 To Points.LastIndex
+		        If Points(I).ValidForMask(Availability) = False Then
+		          Continue
+		        End If
 		        
-		        Filtered = Points(I).Availability And Availability
-		        Maps = Self.GetMaps(Filtered)
-		        Label = Label.Disambiguate(Maps.Label)
-		      End If
+		        Var Label As String = Points(I).Label
+		        Var Idx As Integer = Labels.IndexOf(Label)
+		        Labels(I) = Label
+		        If Idx > -1 Then
+		          Var Filtered As UInt64 = Points(Idx).Availability And Availability
+		          Var Maps() As ArkSA.Map = Self.GetMaps(Filtered)
+		          Dict.Value(Points(Idx).SpawnPointId) = Points(Idx).Label.Disambiguate(Maps.Label)
+		          
+		          Filtered = Points(I).Availability And Availability
+		          Maps = Self.GetMaps(Filtered)
+		          Label = Label.Disambiguate(Maps.Label)
+		        End If
+		        
+		        Dict.Value(Points(I).SpawnPointId) = Label
+		      Next
 		      
-		      Dict.Value(Points(I).SpawnPointId) = Label
-		    Next
-		    
-		    Self.mSpawnLabelCacheDict = Dict
-		    Self.mSpawnLabelCacheMask = Availability
-		  End If
-		  
-		  Return Self.mSpawnLabelCacheDict
+		      Self.mSpawnLabelCacheDict = Dict
+		      Self.mSpawnLabelCacheMask = Availability
+		    End If
+		    Var CacheDict As Dictionary = Self.mSpawnLabelCacheDict.Clone
+		    Self.mLock.Leave
+		    Return CacheDict
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -2278,28 +2384,42 @@ Implements ArkSA.BlueprintProvider
 		    Return
 		  End If
 		  
-		  If Self.mBlueprintCache.HasKey(Blueprint.BlueprintId) Then
-		    Self.mBlueprintCache.Remove(Blueprint.BlueprintId)
-		  End If
-		  
-		  If Blueprint IsA ArkSA.Engram And Self.mBlueprintCache.HasKey("EngramEntry:" + ArkSA.Engram(Blueprint).EntryString) Then
-		    Self.mBlueprintCache.Remove("EngramEntry:" + ArkSA.Engram(Blueprint).EntryString)
-		  End If
+		  Self.mLock.Enter
+		  Try
+		    If Self.mBlueprintCache.HasKey(Blueprint.BlueprintId) Then
+		      Self.mBlueprintCache.Remove(Blueprint.BlueprintId)
+		    End If
+		    
+		    If Blueprint IsA ArkSA.Engram And Self.mBlueprintCache.HasKey("EngramEntry:" + ArkSA.Engram(Blueprint).EntryString) Then
+		      Self.mBlueprintCache.Remove("EngramEntry:" + ArkSA.Engram(Blueprint).EntryString)
+		    End If
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(BlueprintId As String)
-		  If Self.mBlueprintCache.HasKey(BlueprintId) Then
-		    Self.mBlueprintCache.Remove(BlueprintId)
-		  End If
-		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT entry_string FROM engrams WHERE object_id = ?1 AND entry_string IS NOT NULL;")
-		  For Each Row As DatabaseRow In Rows
-		    If Self.mBlueprintCache.HasKey("EngramEntry:" + Row.Column("entry_string").StringValue) Then
-		      Self.mBlueprintCache.Remove("EngramEntry:" + Row.Column("entry_string").StringValue)
+		  Self.mLock.Enter
+		  Try
+		    If Self.mBlueprintCache.HasKey(BlueprintId) Then
+		      Self.mBlueprintCache.Remove(BlueprintId)
 		    End If
-		  Next
+		    
+		    Var Rows As RowSet = Self.SQLSelect("SELECT entry_string FROM engrams WHERE object_id = ?1 AND entry_string IS NOT NULL;")
+		    For Each Row As DatabaseRow In Rows
+		      If Self.mBlueprintCache.HasKey("EngramEntry:" + Row.Column("entry_string").StringValue) Then
+		        Self.mBlueprintCache.Remove("EngramEntry:" + Row.Column("entry_string").StringValue)
+		      End If
+		    Next
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -2324,17 +2444,26 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Method, Flags = &h0
 		Function OfficialPlayerLevelData(SinglePlayer As Boolean) As ArkSA.PlayerLevelData
-		  If SinglePlayer Then
-		    If Self.mOfficialSinglePlayerLevelData Is Nil Then
-		      Self.mOfficialSinglePlayerLevelData = ArkSA.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling (Single)"))
+		  Var LevelData As ArkSA.PlayerLevelData
+		  Self.mLock.Enter
+		  Try
+		    If SinglePlayer Then
+		      If Self.mOfficialSinglePlayerLevelData Is Nil Then
+		        Self.mOfficialSinglePlayerLevelData = ArkSA.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling (Single)"))
+		      End If
+		      LevelData = Self.mOfficialSinglePlayerLevelData
+		    Else
+		      If Self.mOfficialPlayerLevelData Is Nil Then
+		        Self.mOfficialPlayerLevelData = ArkSA.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))
+		      End If
+		      LevelData = Self.mOfficialPlayerLevelData
 		    End If
-		    Return Self.mOfficialSinglePlayerLevelData
-		  Else
-		    If Self.mOfficialPlayerLevelData Is Nil Then
-		      Self.mOfficialPlayerLevelData = ArkSA.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))
-		    End If
-		    Return Self.mOfficialPlayerLevelData
-		  End If
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
+		  Return LevelData
 		End Function
 	#tag EndMethod
 
@@ -2378,6 +2507,7 @@ Implements ArkSA.BlueprintProvider
 	#tag Method, Flags = &h21
 		Private Function RowSetToConfigOptions(Results As RowSet) As ArkSA.ConfigOption()
 		  Var Keys() As ArkSA.ConfigOption
+		  Self.mLock.Enter
 		  Try
 		    While Results.AfterLastRow = False
 		      Var ConfigOptionId As String = Results.Column("object_id").StringValue
@@ -2467,6 +2597,7 @@ Implements ArkSA.BlueprintProvider
 		    App.ReportException(Err)
 		    Keys.ResizeTo(-1)
 		  End Try
+		  Self.mLock.Leave
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -2474,44 +2605,50 @@ Implements ArkSA.BlueprintProvider
 	#tag Method, Flags = &h21
 		Private Function RowSetToCreature(Results As RowSet, UseCache As Boolean = True) As ArkSA.Creature()
 		  Var Creatures() As ArkSA.Creature
-		  While Not Results.AfterLastRow
-		    Var CreatureId As String = Results.Column("object_id").StringValue
-		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If UseCache = False Or Self.mBlueprintCache.HasKey(CreatureId) = False Or ArkSA.Creature(Self.mBlueprintCache.Value(CreatureId)).LastUpdate < LastUpdate Then
-		      Var Creature As New ArkSA.MutableCreature(Results.Column("path").StringValue, CreatureId)
-		      Creature.Label = Results.Column("label").StringValue
-		      If IsNull(Results.Column("alternate_label").Value) = False Then
-		        Creature.AlternateLabel = Results.Column("alternate_label").StringValue
-		      End If
-		      Creature.Availability = Results.Column("availability").Value
-		      Creature.LastUpdate = LastUpdate
-		      Creature.TagString = Results.Column("tags").StringValue
-		      Creature.ContentPackId = Results.Column("content_pack_id").StringValue
-		      Creature.ContentPackName = Results.Column("content_pack_name").StringValue
-		      If Results.Column("stats").Value <> Nil And Results.Column("used_stats").Value <> Nil Then
-		        Creature.ConsumeStats(Results.Column("stats").StringValue)
-		        Creature.StatsMask = Results.Column("used_stats").Value
+		  Self.mLock.Enter
+		  Try
+		    While Not Results.AfterLastRow
+		      Var CreatureId As String = Results.Column("object_id").StringValue
+		      Var LastUpdate As Double = Results.Column("last_update").DoubleValue
+		      If UseCache = False Or Self.mBlueprintCache.HasKey(CreatureId) = False Or ArkSA.Creature(Self.mBlueprintCache.Value(CreatureId)).LastUpdate < LastUpdate Then
+		        Var Creature As New ArkSA.MutableCreature(Results.Column("path").StringValue, CreatureId)
+		        Creature.Label = Results.Column("label").StringValue
+		        If IsNull(Results.Column("alternate_label").Value) = False Then
+		          Creature.AlternateLabel = Results.Column("alternate_label").StringValue
+		        End If
+		        Creature.Availability = Results.Column("availability").Value
+		        Creature.LastUpdate = LastUpdate
+		        Creature.TagString = Results.Column("tags").StringValue
+		        Creature.ContentPackId = Results.Column("content_pack_id").StringValue
+		        Creature.ContentPackName = Results.Column("content_pack_name").StringValue
+		        If Results.Column("stats").Value <> Nil And Results.Column("used_stats").Value <> Nil Then
+		          Creature.ConsumeStats(Results.Column("stats").StringValue)
+		          Creature.StatsMask = Results.Column("used_stats").Value
+		        End If
+		        
+		        If Results.Column("incubation_time").Value <> Nil Then
+		          Creature.IncubationTime = Results.Column("incubation_time").DoubleValue
+		        End If
+		        If Results.Column("mature_time").Value <> Nil Then
+		          Creature.MatureTime = Results.Column("mature_time").DoubleValue
+		        End If
+		        If Results.Column("mating_interval_min").Value <> Nil And Results.Column("mating_interval_max").Value <> Nil Then
+		          Creature.MinMatingInterval = Results.Column("mating_interval_min").DoubleValue
+		          Creature.MaxMatingInterval = Results.Column("mating_interval_max").DoubleValue
+		        End If
+		        
+		        Creature.NameTag = NullableString.FromVariant(Results.Column("name_tag").Value)
+		        
+		        Self.mBlueprintCache.Value(CreatureId) = Creature.ImmutableVersion
 		      End If
 		      
-		      If Results.Column("incubation_time").Value <> Nil Then
-		        Creature.IncubationTime = Results.Column("incubation_time").DoubleValue
-		      End If
-		      If Results.Column("mature_time").Value <> Nil Then
-		        Creature.MatureTime = Results.Column("mature_time").DoubleValue
-		      End If
-		      If Results.Column("mating_interval_min").Value <> Nil And Results.Column("mating_interval_max").Value <> Nil Then
-		        Creature.MinMatingInterval = Results.Column("mating_interval_min").DoubleValue
-		        Creature.MaxMatingInterval = Results.Column("mating_interval_max").DoubleValue
-		      End If
-		      
-		      Creature.NameTag = NullableString.FromVariant(Results.Column("name_tag").Value)
-		      
-		      Self.mBlueprintCache.Value(CreatureId) = Creature.ImmutableVersion
-		    End If
-		    
-		    Creatures.Add(Self.mBlueprintCache.Value(CreatureId))
-		    Results.MoveToNextRow
-		  Wend
+		      Creatures.Add(Self.mBlueprintCache.Value(CreatureId))
+		      Results.MoveToNextRow
+		    Wend
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		  End Try
+		  Self.mLock.Leave
 		  Return Creatures
 		End Function
 	#tag EndMethod
@@ -2547,49 +2684,55 @@ Implements ArkSA.BlueprintProvider
 	#tag Method, Flags = &h21
 		Private Function RowSetToEngram(Results As RowSet, UseCache As Boolean = True) As ArkSA.Engram()
 		  Var Engrams() As ArkSA.Engram
-		  While Not Results.AfterLastRow
-		    Var EngramId As String = Results.Column("object_id").StringValue
-		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If UseCache = False Or Self.mBlueprintCache.HasKey(EngramId) = False Or ArkSA.Engram(Self.mBlueprintCache.Value(EngramId)).LastUpdate < LastUpdate Then
-		      Var Engram As New ArkSA.MutableEngram(Results.Column("path").StringValue, EngramId)
-		      Engram.Label = Results.Column("label").StringValue
-		      If IsNull(Results.Column("alternate_label").Value) = False Then
-		        Engram.AlternateLabel = Results.Column("alternate_label").StringValue
-		      End If
-		      Engram.Availability = Results.Column("availability").Value
-		      Engram.LastUpdate = LastUpdate
-		      Engram.TagString = Results.Column("tags").StringValue
-		      Engram.ContentPackId = Results.Column("content_pack_id").StringValue
-		      Engram.ContentPackName = Results.Column("content_pack_name").StringValue
-		      If IsNull(Results.Column("entry_string").Value) = False And Results.Column("entry_string").StringValue.IsEmpty = False Then
-		        Engram.EntryString = Results.Column("entry_string").StringValue
-		        
-		        If IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
-		          Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
-		          Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
+		  Self.mLock.Enter
+		  Try
+		    While Not Results.AfterLastRow
+		      Var EngramId As String = Results.Column("object_id").StringValue
+		      Var LastUpdate As Double = Results.Column("last_update").DoubleValue
+		      If UseCache = False Or Self.mBlueprintCache.HasKey(EngramId) = False Or ArkSA.Engram(Self.mBlueprintCache.Value(EngramId)).LastUpdate < LastUpdate Then
+		        Var Engram As New ArkSA.MutableEngram(Results.Column("path").StringValue, EngramId)
+		        Engram.Label = Results.Column("label").StringValue
+		        If IsNull(Results.Column("alternate_label").Value) = False Then
+		          Engram.AlternateLabel = Results.Column("alternate_label").StringValue
 		        End If
-		      End If
-		      If IsNull(Results.Column("stack_size").Value) = False Then
-		        Engram.StackSize = Results.Column("stack_size").IntegerValue
-		      End If
-		      If IsNull(Results.Column("item_id").Value) = False Then
-		        Engram.ItemID = Results.Column("item_id").IntegerValue
-		      End If
-		      If IsNull(Results.Column("stats").Value) = False Then
-		        Var Stats As New JSONItem(Results.Column("stats").StringValue)
-		        For Idx As Integer = 0 To Stats.LastRowIndex
-		          Var Stat As ArkSA.EngramStat = ArkSA.EngramStat.FromSaveData(Stats.ChildAt(Idx))
-		          If (Stat Is Nil) = False Then
-		            Engram.Stat(Stat.StatIndex) = Stat
+		        Engram.Availability = Results.Column("availability").Value
+		        Engram.LastUpdate = LastUpdate
+		        Engram.TagString = Results.Column("tags").StringValue
+		        Engram.ContentPackId = Results.Column("content_pack_id").StringValue
+		        Engram.ContentPackName = Results.Column("content_pack_name").StringValue
+		        If IsNull(Results.Column("entry_string").Value) = False And Results.Column("entry_string").StringValue.IsEmpty = False Then
+		          Engram.EntryString = Results.Column("entry_string").StringValue
+		          
+		          If IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
+		            Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
+		            Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
 		          End If
-		        Next
+		        End If
+		        If IsNull(Results.Column("stack_size").Value) = False Then
+		          Engram.StackSize = Results.Column("stack_size").IntegerValue
+		        End If
+		        If IsNull(Results.Column("item_id").Value) = False Then
+		          Engram.ItemID = Results.Column("item_id").IntegerValue
+		        End If
+		        If IsNull(Results.Column("stats").Value) = False Then
+		          Var Stats As New JSONItem(Results.Column("stats").StringValue)
+		          For Idx As Integer = 0 To Stats.LastRowIndex
+		            Var Stat As ArkSA.EngramStat = ArkSA.EngramStat.FromSaveData(Stats.ChildAt(Idx))
+		            If (Stat Is Nil) = False Then
+		              Engram.Stat(Stat.StatIndex) = Stat
+		            End If
+		          Next
+		        End If
+		        Self.mBlueprintCache.Value(EngramId) = Engram.ImmutableVersion
 		      End If
-		      Self.mBlueprintCache.Value(EngramId) = Engram.ImmutableVersion
-		    End If
-		    
-		    Engrams.Add(Self.mBlueprintCache.Value(EngramId))
-		    Results.MoveToNextRow
-		  Wend
+		      
+		      Engrams.Add(Self.mBlueprintCache.Value(EngramId))
+		      Results.MoveToNextRow
+		    Wend
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		  End Try
+		  Self.mLock.Leave
 		  Return Engrams
 		End Function
 	#tag EndMethod
@@ -2614,51 +2757,57 @@ Implements ArkSA.BlueprintProvider
 	#tag Method, Flags = &h21
 		Private Function RowSetToLootContainer(Results As RowSet, UseCache As Boolean = True) As ArkSA.LootContainer()
 		  Var Sources() As ArkSA.LootContainer
-		  While Not Results.AfterLastRow
-		    Var LootDropId As String = Results.Column("object_id").StringValue
-		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If UseCache = False Or Self.mBlueprintCache.HasKey(LootDropId) = False Or ArkSA.LootContainer(Self.mBlueprintCache.Value(LootDropId)).LastUpdate < LastUpdate Then
-		      Var Requirements As Dictionary
-		      #Pragma BreakOnExceptions Off
-		      Try
-		        Requirements = Beacon.ParseJSON(Results.Column("requirements").StringValue)
-		      Catch Err As RuntimeException
-		        Requirements = New Dictionary
-		      End Try
-		      #Pragma BreakOnExceptions Default
-		      
-		      Var Source As New ArkSA.MutableLootContainer(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
-		      Source.Label = Results.Column("label").StringValue
-		      If IsNull(Results.Column("alternate_label").Value) = False Then
-		        Source.AlternateLabel = Results.Column("alternate_label").StringValue
+		  Self.mLock.Enter
+		  Try
+		    While Not Results.AfterLastRow
+		      Var LootDropId As String = Results.Column("object_id").StringValue
+		      Var LastUpdate As Double = Results.Column("last_update").DoubleValue
+		      If UseCache = False Or Self.mBlueprintCache.HasKey(LootDropId) = False Or ArkSA.LootContainer(Self.mBlueprintCache.Value(LootDropId)).LastUpdate < LastUpdate Then
+		        Var Requirements As Dictionary
+		        #Pragma BreakOnExceptions Off
+		        Try
+		          Requirements = Beacon.ParseJSON(Results.Column("requirements").StringValue)
+		        Catch Err As RuntimeException
+		          Requirements = New Dictionary
+		        End Try
+		        #Pragma BreakOnExceptions Default
+		        
+		        Var Source As New ArkSA.MutableLootContainer(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
+		        Source.Label = Results.Column("label").StringValue
+		        If IsNull(Results.Column("alternate_label").Value) = False Then
+		          Source.AlternateLabel = Results.Column("alternate_label").StringValue
+		        End If
+		        Source.Availability = Results.Column("availability").Value
+		        Source.LastUpdate = LastUpdate
+		        Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
+		        Source.UIColor = Results.Column("uicolor").StringValue.ToColor
+		        Source.SortValue = Results.Column("sort_order").IntegerValue
+		        Source.Experimental = Results.Column("experimental").BooleanValue
+		        Source.Notes = Results.Column("notes").StringValue
+		        Source.ContentPackId = Results.Column("content_pack_id").StringValue
+		        Source.ContentPackName = Results.Column("content_pack_name").StringValue
+		        Source.TagString = Results.Column("tags").StringValue
+		        Source.IconID = Results.Column("icon").StringValue
+		        Source.MinItemSets = Results.Column("min_item_sets").IntegerValue
+		        Source.MaxItemSets = Results.Column("max_item_sets").IntegerValue
+		        Source.PreventDuplicates = Results.Column("prevent_duplicates").BooleanValue
+		        Source.ContentsString = Results.Column("contents").StringValue
+		        
+		        If Requirements.HasKey("min_item_sets") And IsNull(Requirements.Value("min_item_sets")) = False Then
+		          Source.RequiredItemSetCount = Requirements.Value("min_item_sets")
+		        End If
+		        
+		        Source.Modified = False
+		        Self.mBlueprintCache.Value(Source.LootDropId) = Source.ImmutableVersion
 		      End If
-		      Source.Availability = Results.Column("availability").Value
-		      Source.LastUpdate = LastUpdate
-		      Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
-		      Source.UIColor = Results.Column("uicolor").StringValue.ToColor
-		      Source.SortValue = Results.Column("sort_order").IntegerValue
-		      Source.Experimental = Results.Column("experimental").BooleanValue
-		      Source.Notes = Results.Column("notes").StringValue
-		      Source.ContentPackId = Results.Column("content_pack_id").StringValue
-		      Source.ContentPackName = Results.Column("content_pack_name").StringValue
-		      Source.TagString = Results.Column("tags").StringValue
-		      Source.IconID = Results.Column("icon").StringValue
-		      Source.MinItemSets = Results.Column("min_item_sets").IntegerValue
-		      Source.MaxItemSets = Results.Column("max_item_sets").IntegerValue
-		      Source.PreventDuplicates = Results.Column("prevent_duplicates").BooleanValue
-		      Source.ContentsString = Results.Column("contents").StringValue
 		      
-		      If Requirements.HasKey("min_item_sets") And IsNull(Requirements.Value("min_item_sets")) = False Then
-		        Source.RequiredItemSetCount = Requirements.Value("min_item_sets")
-		      End If
-		      
-		      Source.Modified = False
-		      Self.mBlueprintCache.Value(Source.LootDropId) = Source.ImmutableVersion
-		    End If
-		    
-		    Sources.Add(Self.mBlueprintCache.Value(LootDropId))
-		    Results.MoveToNextRow
-		  Wend
+		      Sources.Add(Self.mBlueprintCache.Value(LootDropId))
+		      Results.MoveToNextRow
+		    Wend
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		  End Try
+		  Self.mLock.Leave
 		  Return Sources
 		End Function
 	#tag EndMethod
@@ -2666,29 +2815,35 @@ Implements ArkSA.BlueprintProvider
 	#tag Method, Flags = &h21
 		Private Function RowSetToSpawnPoint(Results As RowSet, UseCache As Boolean = True) As ArkSA.SpawnPoint()
 		  Var SpawnPoints() As ArkSA.SpawnPoint
-		  While Not Results.AfterLastRow
-		    Var SpawnPointId As String = Results.Column("object_id").StringValue
-		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If UseCache = False Or Self.mBlueprintCache.HasKey(SpawnPointId) = False Or ArkSA.SpawnPoint(Self.mBlueprintCache.Value(SpawnPointId)).LastUpdate < LastUpdate Then
-		      Var Point As New ArkSA.MutableSpawnPoint(Results.Column("path").StringValue, SpawnPointId)
-		      Point.Label = Results.Column("label").StringValue
-		      If IsNull(Results.Column("alternate_label").Value) = False Then
-		        Point.AlternateLabel = Results.Column("alternate_label").StringValue
+		  Self.mLock.Enter
+		  Try
+		    While Not Results.AfterLastRow
+		      Var SpawnPointId As String = Results.Column("object_id").StringValue
+		      Var LastUpdate As Double = Results.Column("last_update").DoubleValue
+		      If UseCache = False Or Self.mBlueprintCache.HasKey(SpawnPointId) = False Or ArkSA.SpawnPoint(Self.mBlueprintCache.Value(SpawnPointId)).LastUpdate < LastUpdate Then
+		        Var Point As New ArkSA.MutableSpawnPoint(Results.Column("path").StringValue, SpawnPointId)
+		        Point.Label = Results.Column("label").StringValue
+		        If IsNull(Results.Column("alternate_label").Value) = False Then
+		          Point.AlternateLabel = Results.Column("alternate_label").StringValue
+		        End If
+		        Point.Availability = Results.Column("availability").Value
+		        Point.LastUpdate = LastUpdate
+		        Point.TagString = Results.Column("tags").StringValue
+		        Point.ContentPackId = Results.Column("content_pack_id").StringValue
+		        Point.ContentPackName = Results.Column("content_pack_name").StringValue
+		        Point.LimitsString = Results.Column("limits").StringValue
+		        Point.SetsString = Results.Column("sets").StringValue
+		        Point.Modified = False
+		        Self.mBlueprintCache.Value(SpawnPointId) = Point.ImmutableVersion
 		      End If
-		      Point.Availability = Results.Column("availability").Value
-		      Point.LastUpdate = LastUpdate
-		      Point.TagString = Results.Column("tags").StringValue
-		      Point.ContentPackId = Results.Column("content_pack_id").StringValue
-		      Point.ContentPackName = Results.Column("content_pack_name").StringValue
-		      Point.LimitsString = Results.Column("limits").StringValue
-		      Point.SetsString = Results.Column("sets").StringValue
-		      Point.Modified = False
-		      Self.mBlueprintCache.Value(SpawnPointId) = Point.ImmutableVersion
-		    End If
-		    
-		    SpawnPoints.Add(Self.mBlueprintCache.Value(SpawnPointId))
-		    Results.MoveToNextRow
-		  Wend
+		      
+		      SpawnPoints.Add(Self.mBlueprintCache.Value(SpawnPointId))
+		      Results.MoveToNextRow
+		    Wend
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		  End Try
+		  Self.mLock.Leave
 		  Return SpawnPoints
 		End Function
 	#tag EndMethod

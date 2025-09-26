@@ -9,22 +9,39 @@ Implements Iterable
 		  #Pragma BackgroundTasks False
 		  
 		  Var PurgeThreads() As Integer
-		  For Each Entry As DictionaryEntry In Self.mThreads
-		    Var ThreadID As Integer = Entry.Key
-		    Var ThreadRef As WeakRef = Entry.Value
-		    
-		    If ThreadRef.Value Is Nil Then
-		      PurgeThreads.Add(ThreadID)
-		    End If
-		  Next
+		  Self.mLock.Enter
+		  Try
+		    For Each Entry As DictionaryEntry In Self.mThreads
+		      Var ThreadID As Integer = Entry.Key
+		      Var ThreadRef As WeakRef = Entry.Value
+		      
+		      If ThreadRef.Value Is Nil Then
+		        PurgeThreads.Add(ThreadID)
+		      End If
+		    Next
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Collecting thread refs")
+		  End Try
+		  Self.mLock.Leave
 		  
 		  For Each ThreadID As Integer In PurgeThreads
-		    If Self.mThreads.HasKey(ThreadID) Then
-		      Self.mThreads.Remove(ThreadID)
-		    End If
-		    If Self.mInstances.HasKey(ThreadID) Then
-		      Beacon.DataSource(Self.mInstances.Value(ThreadID)).Close
-		      Self.mInstances.Remove(ThreadID)
+		    Var CloseInstance As Beacon.DataSource
+		    Self.mLock.Enter
+		    Try
+		      If Self.mThreads.HasKey(ThreadID) Then
+		        Self.mThreads.Remove(ThreadID)
+		      End If
+		      If Self.mInstances.HasKey(ThreadID) Then
+		        CloseInstance = Self.mInstances.Value(ThreadID)
+		        Self.mInstances.Remove(ThreadID)
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Removing thread from dicts")
+		    End Try
+		    Self.mLock.Leave
+		    
+		    If (CloseInstance Is Nil) = false Then
+		      CloseInstance.Close
 		    End If
 		  Next
 		End Sub
@@ -34,13 +51,23 @@ Implements Iterable
 		Sub CloseAll()
 		  #Pragma BackgroundTasks False
 		  
-		  For Each Entry As DictionaryEntry In Self.mInstances
-		    Var Instance As Beacon.DataSource = Entry.Value
-		    Instance.Close
-		  Next
+		  Var Instances() As Beacon.DataSource
+		  Self.mLock.Enter
+		  Try
+		    For Each Entry As DictionaryEntry In Self.mInstances
+		      Instances.Add(Entry.Value)
+		    Next
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Collecting instances")
+		  End Try
 		  
 		  Self.mInstances = New Dictionary
 		  Self.mThreads = New Dictionary
+		  Self.mLock.Leave
+		  
+		  For Each Instance As Beacon.DataSource In Instances
+		    Instance.Close
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -48,6 +75,9 @@ Implements Iterable
 		Sub Constructor()
 		  Self.mInstances = New Dictionary
 		  Self.mThreads = New Dictionary
+		  
+		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  
 		  Self.mCleanupTimer = New Timer
 		  Self.mCleanupTimer.RunMode = Timer.RunModes.Multiple
@@ -76,27 +106,37 @@ Implements Iterable
 		  
 		  Var CurrentThread As Global.Thread = Thread.Current
 		  Var CurrentThreadId As Integer = CurrentThread.ThreadID
+		  Var Instance As Beacon.DataSource
 		  
-		  If Self.mInstances.HasKey(CurrentThreadId) = False Or (Writeable And Beacon.DataSource(Self.mInstances.Value(CurrentThreadId)).Writeable = False) Then
-		    Var Instance As Beacon.DataSource = RaiseEvent NewInstance(Writeable)
-		    If Instance Is Nil Then
-		      Var Err As New NilObjectException
-		      Err.Message = "DataSourcePool.NewInstance returned nil"
-		      Raise Err
-		    ElseIf Writeable = True And Instance.Writeable = False Then
-		      Var Err As New UnsupportedOperationException
-		      Err.Message = "DataSourcePool.NewInstance returned a read-only database when a writeable database was requested."
-		      Raise Err
+		  Self.mLock.Enter
+		  Try
+		    If Self.mInstances.HasKey(CurrentThreadId) = False Or (Writeable And Beacon.DataSource(Self.mInstances.Value(CurrentThreadId)).Writeable = False) Then
+		      Instance = RaiseEvent NewInstance(Writeable)
+		      If Instance Is Nil Then
+		        Var Err As New NilObjectException
+		        Err.Message = "DataSourcePool.NewInstance returned nil"
+		        Raise Err
+		      ElseIf Writeable = True And Instance.Writeable = False Then
+		        Var Err As New UnsupportedOperationException
+		        Err.Message = "DataSourcePool.NewInstance returned a read-only database when a writeable database was requested."
+		        Raise Err
+		      End If
+		      
+		      Self.mInstances.Value(CurrentThreadId) = Instance
+		    Else
+		      Instance = Self.mInstances.Value(CurrentThreadId)
 		    End If
 		    
-		    Self.mInstances.Value(CurrentThreadId) = Instance
-		  End If
+		    If Self.mThreads.HasKey(CurrentThreadId) = False Then
+		      Self.mThreads.Value(CurrentThreadId) = New WeakRef(CurrentThread)
+		    End If
+		  Catch Err As RuntimeException
+		    Self.mLock.Leave
+		    Raise Err
+		  End Try
+		  Self.mLock.Leave
 		  
-		  If Self.mThreads.HasKey(CurrentThreadId) = False Then
-		    Self.mThreads.Value(CurrentThreadId) = New WeakRef(CurrentThread)
-		  End If
-		  
-		  Return Self.mInstances.Value(CurrentThreadId)
+		  Return Instance
 		End Function
 	#tag EndMethod
 
@@ -105,21 +145,36 @@ Implements Iterable
 		  // Part of the Iterable interface.
 		  
 		  Var Items() As Variant
-		  For Each Entry As DictionaryEntry In Self.mInstances
-		    Items.Add(Entry.Value)
-		  Next
+		  Self.mLock.Enter
+		  Try
+		    For Each Entry As DictionaryEntry In Self.mInstances
+		      Items.Add(Entry.Value)
+		    Next
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Collecting instances")
+		  End Try
+		  Self.mLock.Leave
 		  Return New Beacon.GenericIterator(Items)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Main() As Beacon.DataSource
-		  If Self.mInstances.HasKey(MainThreadId) = False Then
-		    Var Instance As Beacon.DataSource = RaiseEvent NewInstance(False)
-		    NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
-		    Self.mInstances.Value(MainThreadId) = Instance
-		  End If
-		  Return Self.mInstances.Value(MainThreadId)
+		  Var Instance As Beacon.DataSource
+		  Self.mLock.Enter
+		  Try
+		    If Self.mInstances.HasKey(MainThreadId) Then
+		      Instance = Self.mInstances.Value(MainThreadId)
+		    Else
+		      Instance = RaiseEvent NewInstance(False)
+		      NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
+		      Self.mInstances.Value(MainThreadId) = Instance
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Finding main instance")
+		  End Try
+		  Self.mLock.Leave
+		  Return Instance
 		End Function
 	#tag EndMethod
 
@@ -143,6 +198,10 @@ Implements Iterable
 
 	#tag Property, Flags = &h21
 		Private mInstances As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
