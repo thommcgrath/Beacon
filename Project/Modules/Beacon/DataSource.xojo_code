@@ -241,7 +241,7 @@ Implements NotificationKit.Receiver
 		    Self.mAllowWriting = WasWriteable
 		  End If
 		  
-		  Self.mDatabase.ExecuteSQL("PRAGMA cache_size = -100000;")
+		  Self.mDatabase.ExecuteSQL("PRAGMA cache_size = -10000000;")
 		  Self.mDatabase.ExecuteSQL("PRAGMA analysis_limit = 0;")
 		  Self.ForeignKeys = True
 		  
@@ -966,6 +966,16 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function Prefix() As String
 		  Return Self.Identifier.Lowercase
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Prepare(Query As String, ParamArray Types() As Integer) As SQLitePreparedStatement
+		  Var Statement As SQLitePreparedStatement = Self.mDatabase.Prepare(Query)
+		  For Idx As Integer = 0 To Types.LastIndex
+		    Statement.BindType(Idx, Types(Idx))
+		  Next
+		  Return Statement
 		End Function
 	#tag EndMethod
 

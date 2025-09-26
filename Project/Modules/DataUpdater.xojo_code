@@ -236,6 +236,9 @@ Protected Module DataUpdater
 		  
 		  Var SourcesToOptimize As New Dictionary
 		  
+		  #if DebugBuild
+		    Var BenchmarkStart As Double = System.Microseconds
+		  #endif
 		  While mPendingImports.Count > 0
 		    Var ImportData As DataUpdater.PendingDataImport = mPendingImports(mPendingImports.FirstIndex)
 		    Var Content As String = ImportData.Content
@@ -331,6 +334,10 @@ Protected Module DataUpdater
 		      Next
 		    End If
 		  Wend
+		  #if DebugBuild
+		    Var Benchmark As Double = (System.Microseconds - BenchmarkStart) / 1000000
+		    System.DebugLog("Import process took " + Benchmark.ToString(Locale.Raw, "0.00") + " seconds")
+		  #endif
 		  
 		  For Each Source As Beacon.DataSource In Sources
 		    Source.ImportChainFinished()
