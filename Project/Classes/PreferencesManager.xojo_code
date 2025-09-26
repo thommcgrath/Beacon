@@ -4,7 +4,6 @@ Protected Class PreferencesManager
 		Sub BeginTransaction()
 		  If Self.mTransactionLevel = 0 Then
 		    Self.mSavedValues = New JSONItem(Self.mValues.ToString)
-		    Self.mSavedValues.Compact = False
 		  End If
 		  
 		  Self.mTransactionLevel = Self.mTransactionLevel + 1
@@ -153,7 +152,6 @@ Protected Class PreferencesManager
 		    Self.mValues = New JSONItem
 		    Self.mValues.Value("Existing User") = False
 		  End If
-		  Self.mValues.Compact = False
 		End Sub
 	#tag EndMethod
 
@@ -335,7 +333,7 @@ Protected Class PreferencesManager
 	#tag Method, Flags = &h1
 		Protected Sub Write()
 		  Try
-		    Call Self.mFile.Write(Self.mValues.ToString())
+		    Call Self.mFile.Write(Self.mValues.ToString(False))
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub

@@ -373,11 +373,10 @@ Implements Beacon.HostingProvider
 		  End Select
 		  
 		  Var Body As New JSONItem("{}")
-		  Body.Compact = True
 		  Body.Value("content") = Transfer.Content
 		  Body.Value("md5_hash") = EncodeHex(Crypto.MD5(Transfer.Content)).Lowercase
 		  
-		  Var Response As ASAManager.APIResponse = Self.RunRequest(New ASAManager.APIRequest("PUT", ASAManager.APIRoot + "/containers/" + ContainerId.ToString(Locale.Raw, "0") + "/config/" + FileType, Token, "application/json", Body.ToString()))
+		  Var Response As ASAManager.APIResponse = Self.RunRequest(New ASAManager.APIRequest("PUT", ASAManager.APIRoot + "/containers/" + ContainerId.ToString(Locale.Raw, "0") + "/config/" + FileType, Token, "application/json", Body.ToString(True)))
 		  If Not Response.Success Then
 		    Transfer.Success = False
 		    Transfer.ErrorMessage = Response.Error.Message

@@ -27,15 +27,10 @@ Protected Module Beacon
 		  Var Wrapper As New JSONItem
 		  Wrapper.Value("type") = Type
 		  Wrapper.Value("data") = Data
-		  Wrapper.Compact = False
 		  
-		  Var Compact As Boolean = Data.Compact
-		  Data.Compact = True
+		  Board.Text = Wrapper.ToString(False)
+		  Board.RawData(Type) = Data.ToString(True)
 		  
-		  Board.Text = Wrapper.ToString
-		  Board.RawData(Type) = Data.ToString
-		  
-		  Data.Compact = Compact
 		End Sub
 	#tag EndMethod
 
@@ -741,12 +736,7 @@ Protected Module Beacon
 		    Return Temp.ToString(Pretty)
 		  #else
 		    If Source.Type = Variant.TypeObject And Source.ObjectValue IsA JSONItem Then
-		      Var Item As JSONItem = Source
-		      Var OriginalCompact As Boolean = Item.Compact
-		      Item.Compact = Not Pretty
-		      Var Json As String = Item.ToString()
-		      Item.Compact = OriginalCompact
-		      Return Json
+		      Return JSONItem(Source).ToString(Not Pretty)
 		    End If
 		    
 		    Var Result As String = Xojo.GenerateJSON(Source, Pretty)

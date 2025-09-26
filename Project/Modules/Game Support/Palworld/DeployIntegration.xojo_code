@@ -93,9 +93,8 @@ Inherits Beacon.DeployIntegration
 		    Case IsA Nitrado.HostingProvider
 		      Var GameServer As JSONItem = InitialStatus.UserData
 		      Var Settings As JSONItem = GameServer.Child("settings")
-		      Settings.Compact = False
-		      OldFiles.Value("Config.json") = Settings.ToString
-		      NewFiles.Value("Config.json") = Settings.ToString
+		      OldFiles.Value("Config.json") = Settings.ToString(False)
+		      NewFiles.Value("Config.json") = Settings.ToString(False)
 		    End Select
 		    
 		    Self.RunBackup(OldFiles, NewFiles)
