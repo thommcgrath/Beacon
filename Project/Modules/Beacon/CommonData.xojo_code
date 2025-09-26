@@ -281,10 +281,10 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub IndexesBuilt()
 		  Self.SQLExecute("DROP VIEW IF EXISTS templates;")
-		  Self.SQLExecute("CREATE VIEW templates AS SELECT object_id, user_id, game_id, label, contents FROM custom_templates UNION SELECT object_id, '00000000-0000-0000-0000-000000000000' AS user_id, game_id, label, contents FROM official_templates WHERE object_id NOT IN (SELECT object_id FROM custom_templates);")
+		  Self.SQLExecute("CREATE VIEW templates AS SELECT object_id, user_id, game_id, label, contents FROM custom_templates UNION ALL SELECT object_id, '00000000-0000-0000-0000-000000000000' AS user_id, game_id, label, contents FROM official_templates WHERE object_id NOT IN (SELECT object_id FROM custom_templates);")
 		  
 		  Self.SQLExecute("DROP VIEW IF EXISTS template_selectors;")
-		  Self.SQLExecute("CREATE VIEW template_selectors AS SELECT object_id, user_id, game_id, label, language, code FROM custom_template_selectors UNION SELECT object_id, '00000000-0000-0000-0000-000000000000' AS user_id, game_id, label, language, code FROM official_template_selectors WHERE object_id NOT IN (SELECT object_id FROM custom_template_selectors);")
+		  Self.SQLExecute("CREATE VIEW template_selectors AS SELECT object_id, user_id, game_id, label, language, code FROM custom_template_selectors UNION ALL SELECT object_id, '00000000-0000-0000-0000-000000000000' AS user_id, game_id, label, language, code FROM official_template_selectors WHERE object_id NOT IN (SELECT object_id FROM custom_template_selectors);")
 		End Sub
 	#tag EndEvent
 

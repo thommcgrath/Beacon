@@ -650,7 +650,7 @@ Implements ArkSA.BlueprintProvider
 	#tag Event
 		Sub IndexesBuilt()
 		  Self.SQLExecute("DROP VIEW IF EXISTS blueprints;")
-		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + ArkSA.CategoryEngrams + "' AS category, last_update FROM engrams UNION SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + ArkSA.CategoryCreatures + "' AS category, last_update FROM creatures UNION SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + ArkSA.CategorySpawnPoints + "' AS category, last_update FROM spawn_points UNION SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + ArkSA.CategoryLootContainers + "' AS category, last_update FROM loot_containers")
+		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + ArkSA.CategoryEngrams + "' AS category, last_update FROM engrams UNION ALL SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + ArkSA.CategoryCreatures + "' AS category, last_update FROM creatures UNION ALL SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + ArkSA.CategorySpawnPoints + "' AS category, last_update FROM spawn_points UNION ALL SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + ArkSA.CategoryLootContainers + "' AS category, last_update FROM loot_containers")
 		  Var DeleteStatements(), Unions() As String
 		  Var Categories() As String = ArkSA.Categories
 		  For Each Category As String In Categories
@@ -660,7 +660,7 @@ Implements ArkSA.BlueprintProvider
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + String.FromArray(DeleteStatements, " ") + " END;")
 		  
 		  Self.SQLExecute("DROP VIEW IF EXISTS tags;")
-		  Self.SQLExecute("CREATE VIEW tags AS " + Unions.Join(" UNION ") + ";")
+		  Self.SQLExecute("CREATE VIEW tags AS " + Unions.Join(" UNION ALL ") + ";")
 		End Sub
 	#tag EndEvent
 
