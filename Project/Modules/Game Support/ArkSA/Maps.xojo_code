@@ -8,11 +8,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Sub ClearCache()
-		  Init()
-		  
-		  mLock.Enter
 		  mLabels = New Dictionary
-		  mLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -23,41 +19,23 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Init()
-		  If mLock Is Nil Then
-		    mLock = New CriticalSection
-		    mLock.Type = Thread.Types.Preemptive
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function LabelForMask(Mask As UInt64) As String
-		  Init()
+		  If mLabels Is Nil Then
+		    mLabels = New Dictionary
+		  End If
 		  
-		  mLock.Enter
-		  Try
-		    If mLabels Is Nil Then
-		      mLabels = New Dictionary
-		    End If
-		    
-		    If mLabels.HasKey(Mask) Then
-		      Return mLabels.Value(Mask).StringValue
-		    End If
-		    
-		    Var Label As String
-		    If Mask = CType(0, UInt64) Then
-		      Label = "Unused"
-		    Else
-		      Label = ForMask(Mask).Label
-		    End If
-		    mLabels.Value(Mask) = Label
-		    mLock.Leave
-		    Return Label
-		  Catch Err As RuntimeException
-		    mLock.Leave
-		    Raise Err
-		  End Try
+		  If mLabels.HasKey(Mask) Then
+		    Return mLabels.Value(Mask).StringValue
+		  End If
+		  
+		  Var Label As String
+		  If Mask = CType(0, UInt64) Then
+		    Label = "Unused"
+		  Else
+		    Label = ForMask(Mask).Label
+		  End If
+		  mLabels.Value(Mask) = Label
+		  Return Label
 		End Function
 	#tag EndMethod
 
@@ -87,10 +65,6 @@ Protected Module Maps
 
 	#tag Property, Flags = &h21
 		Private mLabels As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLock As CriticalSection
 	#tag EndProperty
 
 
