@@ -65,13 +65,15 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h1
 		Protected Sub EnterResourceIntenseMode()
-		  If Self.mResourceIntenseLock Is Nil Then
-		    Self.mResourceIntenseLock = New CriticalSection
-		    Self.mResourceIntenseLock.Type = Thread.Types.Preemptive
-		  End If
-		  
-		  Self.mResourceIntenseLock.Enter
-		  Self.mInResourceIntenseMode = True
+		  #if Not App.UsePreemptiveThreads
+		    If Self.mResourceIntenseLock Is Nil Then
+		      Self.mResourceIntenseLock = New CriticalSection
+		      Self.mResourceIntenseLock.Type = Global.Thread.Types.Preemptive
+		    End If
+		    
+		    Self.mResourceIntenseLock.Enter
+		    Self.mInResourceIntenseMode = True
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -89,12 +91,14 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h1
 		Protected Sub ExitResourceIntenseMode()
-		  If Self.mResourceIntenseLock Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.mInResourceIntenseMode = False
-		  Self.mResourceIntenseLock.Leave
+		  #if Not App.UsePreemptiveThreads
+		    If Self.mResourceIntenseLock Is Nil Then
+		      Return
+		    End If
+		    
+		    Self.mInResourceIntenseMode = False
+		    Self.mResourceIntenseLock.Leave
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -179,7 +183,9 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h1
 		Protected Function IsInResourceIntenseMode() As Boolean
-		  Return Self.mInResourceIntenseMode
+		  #if Not App.UsePreemptiveThreads
+		    Return Self.mInResourceIntenseMode
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -267,6 +273,8 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Function Name() As String
+		  #Pragma Warning "This will crash"
+		  
 		  Return Self.mProfile.Name
 		End Function
 	#tag EndMethod

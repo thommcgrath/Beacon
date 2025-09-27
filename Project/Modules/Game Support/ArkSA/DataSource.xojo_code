@@ -1505,7 +1505,6 @@ Implements ArkSA.BlueprintProvider
 		    EntryString = EntryString + "_C"
 		  End If
 		  
-		  
 		  If Self.Cache.HasKey("EngramEntry:" + EntryString) Then
 		    Return Self.Cache.Get("EngramEntry:" + EntryString)
 		  End If

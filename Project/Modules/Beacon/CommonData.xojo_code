@@ -180,17 +180,6 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Sub ImportCleanup(StatusData As Dictionary)
-		  If StatusData.Lookup("Imported Template", False).BooleanValue Then
-		    Self.mTemplateCache = New Dictionary
-		  End If
-		  If StatusData.Lookup("Imported Template Selector", False).BooleanValue Then
-		    Self.mSelectorCache = New Dictionary
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub ImportCloudFiles()
 		  Self.BeginTransaction()
 		  
@@ -290,26 +279,21 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ObtainLock()
-		  mLock.Enter
+		  Self.mLock.Enter
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub ReleaseLock()
-		  mLock.Leave
+		  Self.mLock.Leave
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
 		Sub Constructor(AllowWriting As Boolean)
-		  Self.mTemplateCache = New Dictionary
-		  Self.mSelectorCache = New Dictionary
-		  
-		  If mLock Is Nil Then
-		    mLock = New CriticalSection
-		    mLock.Type = Thread.Types.Preemptive
-		  End If
+		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  
 		  Super.Constructor(AllowWriting)
 		End Sub
@@ -328,9 +312,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Sub DeleteTemplate(TemplateId As String, DoCloudExport As Boolean)
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateId) Then
-		    Self.mTemplateCache.Remove(UserID + ":" + TemplateId)
-		  End If
+		  Self.Cache.Remove(UserID + ":" + TemplateId)
 		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("DELETE FROM custom_templates WHERE object_id = ?1 AND user_id = ?2;", TemplateId, UserID)
@@ -370,9 +352,7 @@ Inherits Beacon.DataSource
 		  
 		  Self.BeginTransaction()
 		  For Idx As Integer = SelectorUUIDs.FirstIndex To SelectorUUIDs.LastIndex
-		    If Self.mSelectorCache.HasKey(UserID + ":" + SelectorUUIDs(Idx)) Then
-		      Self.mSelectorCache.Remove(UserID + ":" + SelectorUUIDs(Idx))
-		    End If
+		    Self.Cache.Remove(UserID + ":" + SelectorUUIDs(Idx))
 		    Self.SQLExecute("DELETE FROM custom_template_selectors WHERE object_id = ?1 AND user_id = ?2;", SelectorUUIDs(Idx), UserID)
 		  Next Idx
 		  Self.CommitTransaction()
@@ -440,17 +420,20 @@ Inherits Beacon.DataSource
 		  Var UserID As String = App.IdentityManager.CurrentUserID
 		  Var NullUUID As String = Beacon.UUID.Null
 		  
-		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateUUID) Then
-		    Return Self.mTemplateCache.Value(UserID + ":" + TemplateUUID)
-		  ElseIf Self.mTemplateCache.HasKey(NullUUID + ":" + TemplateUUID) Then
-		    Return Self.mTemplateCache.Value(NullUUID + ":" + TemplateUUID)
+		  Var Template As Beacon.Template = Self.Cache.Get(UserID + ":" + TemplateUUID)
+		  If (Template Is Nil) = False Then
+		    Return Template
+		  End If
+		  Template = Self.Cache.Get(NullUUID + ":" + TemplateUUID)
+		  If (Template Is Nil) = False Then
+		    Return Template
 		  End If
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT contents, user_id FROM templates WHERE object_id = :object_id AND (user_id = :user_id OR user_id = '" + NullUUID + "');")
 		  If Rows.RowCount = 1 Then
-		    Var Template As Beacon.Template = Beacon.Template.FromSaveData(Rows.Column("contents").StringValue)
+		    Template = Beacon.Template.FromSaveData(Rows.Column("contents").StringValue)
 		    If (Template Is Nil) = False Then
-		      Self.mTemplateCache.Value(Rows.Column("user_id").StringValue + ":" + TemplateUUID) = Template
+		      Self.Cache.Store(Rows.Column("user_id").StringValue + ":" + TemplateUUID, Template, Self.CacheTTL)
 		      Return Template
 		    End If
 		  End If
@@ -462,7 +445,6 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetTemplates(Flags As Integer, Filter As String = "", GameId As String = "") As Beacon.Template()
 		  Var Templates() As Beacon.Template
-		  Var Rows As RowSet
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  
@@ -489,23 +471,20 @@ Inherits Beacon.DataSource
 		    Values.Add(Self.EscapeLikeValue(Filter))
 		  End If
 		  
-		  Rows = Self.SQLSelect("SELECT object_id, user_id, contents FROM templates WHERE " + String.FromArray(Clauses, " AND ") + ";", Values)
-		  While Rows.AfterLastRow = False
-		    Var TemplateUUID As String = Rows.Column("object_id").StringValue
-		    Var CacheKey As String = Rows.Column("user_id").StringValue + ":" + TemplateUUID
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, user_id, contents FROM templates WHERE " + String.FromArray(Clauses, " AND ") + ";", Values)
+		  For Each Row As DatabaseRow In Rows
+		    Var TemplateUUID As String = Row.Column("object_id").StringValue
+		    Var CacheKey As String = Row.Column("user_id").StringValue + ":" + TemplateUUID
 		    
-		    If Self.mTemplateCache.HasKey(CacheKey) Then
-		      Templates.Add(Self.mTemplateCache.Value(CacheKey))
-		    Else
-		      Var Template As Beacon.Template = Beacon.Template.FromSaveData(Rows.Column("contents").StringValue)
-		      If (Template Is Nil) = False Then
-		        Templates.Add(Template)
-		        Self.mTemplateCache.Value(CacheKey) = Template
-		      End If
+		    Var Template As Beacon.Template = Self.Cache.Get(CacheKey)
+		    If Template Is Nil Then
+		      Template = Beacon.Template.FromSaveData(Row.Column("contents").StringValue)
+		      Self.Cache.Store(CacheKey, Template, Self.CacheTTL)
 		    End If
-		    
-		    Rows.MoveToNextRow
-		  Wend
+		    If (Template Is Nil) = False Then
+		      Templates.Add(Template)
+		    End If
+		  Next
 		  
 		  Return Templates
 		End Function
@@ -522,10 +501,13 @@ Inherits Beacon.DataSource
 		  Var UserID As String = App.IdentityManager.CurrentUserID
 		  Var NullUUID As String = Beacon.UUID.Null
 		  
-		  If Self.mSelectorCache.HasKey(UserID + ":" + SelectorUUID) Then
-		    Return Self.mSelectorCache.Value(UserID + ":" + SelectorUUID)
-		  ElseIf Self.mSelectorCache.HasKey(NullUUID + ":" + SelectorUUID) Then
-		    Return Self.mSelectorCache.Value(NullUUID + ":" + SelectorUUID)
+		  Var TemplateSelector As Beacon.TemplateSelector = Self.Cache.Get(UserID + ":" + SelectorUUID)
+		  If (TemplateSelector Is Nil) = False Then
+		    Return TemplateSelector
+		  End If
+		  TemplateSelector = Self.Cache.Get(NullUUID + ":" + SelectorUUID)
+		  If (TemplateSelector Is Nil) = False Then
+		    Return TemplateSelector
 		  End If
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, user_id, game_id, label, language, code FROM template_selectors WHERE object_id = :object_id AND (user_id = :user_id OR user_id = :null_uuid);", SelectorUUID, UserId, NullUUID)
@@ -538,9 +520,9 @@ Inherits Beacon.DataSource
 		  Var Label As String = Rows.Column("label").StringValue
 		  Var Language As Beacon.TemplateSelector.Languages = Beacon.TemplateSelector.StringToLanguage(Rows.Column("language").StringValue)
 		  Var Code As String = Rows.Column("code").StringValue
-		  Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
+		  TemplateSelector = New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
 		  
-		  Self.mSelectorCache.Value(CacheKey) = TemplateSelector
+		  Self.Cache.Store(CacheKey, TemplateSelector, Self.CacheTTL)
 		  Return TemplateSelector
 		End Function
 	#tag EndMethod
@@ -548,7 +530,6 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetTemplateSelectors(Flags As Integer, Filter As String = "", GameId As String = "") As Beacon.TemplateSelector()
 		  Var Selectors() As Beacon.TemplateSelector
-		  Var Rows As RowSet
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  
@@ -575,21 +556,20 @@ Inherits Beacon.DataSource
 		    Values.Add(Self.EscapeLikeValue(Filter))
 		  End If
 		  
-		  Rows = Self.SQLSelect("SELECT object_id, user_id, game_id, label, language, code FROM template_selectors WHERE " + String.FromArray(Clauses, " AND ") + ";", Values)
-		  While Rows.AfterLastRow = False
-		    Var SelectorUUID As String = Rows.Column("object_id").StringValue
-		    Var CacheKey As String = Rows.Column("user_id").StringValue + ":" + SelectorUUID
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, user_id, game_id, label, language, code FROM template_selectors WHERE " + String.FromArray(Clauses, " AND ") + ";", Values)
+		  For Each Row As DatabaseRow In Rows
+		    Var SelectorId As String = Row.Column("object_id").StringValue
+		    Var CacheKey As String = Row.Column("user_id").StringValue + ":" + SelectorId
 		    
-		    If Self.mSelectorCache.HasKey(CacheKey) Then
-		      Selectors.Add(Self.mSelectorCache.Value(CacheKey))
-		    Else
-		      Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Rows.Column("label").StringValue, Rows.Column("game_id").StringValue, Beacon.TemplateSelector.StringToLanguage(Rows.Column("language").StringValue), Rows.Column("code").StringValue)
-		      Selectors.Add(TemplateSelector)
-		      Self.mSelectorCache.Value(CacheKey) = TemplateSelector
+		    Var TemplateSelector As Beacon.TemplateSelector = Self.Cache.Get(CacheKey)
+		    If TemplateSelector Is Nil Then
+		      TemplateSelector = New Beacon.TemplateSelector(SelectorId, Row.Column("label").StringValue, Row.Column("game_id").StringValue, Beacon.TemplateSelector.StringToLanguage(Row.Column("language").StringValue), Row.Column("code").StringValue)
+		      Self.Cache.Store(CacheKey, TemplateSelector, Self.CacheTTL)
 		    End If
-		    
-		    Rows.MoveToNextRow
-		  Wend
+		    If (TemplateSelector Is Nil) = False Then
+		      Selectors.Add(TemplateSelector)
+		    End If
+		  Next
 		  
 		  Return Selectors
 		End Function
@@ -612,20 +592,19 @@ Inherits Beacon.DataSource
 		    Return Selectors
 		  End If
 		  
-		  While Rows.AfterLastRow = False
-		    Var SelectorId As String = Rows.Column("object_id").StringValue
-		    Var CacheKey As String = Rows.Column("user_id").StringValue + ":" + SelectorId
+		  For Each Row As DatabaseRow In Rows
+		    Var SelectorId As String = Row.Column("object_id").StringValue
+		    Var CacheKey As String = Row.Column("user_id").StringValue + ":" + SelectorId
 		    
-		    If Self.mSelectorCache.HasKey(CacheKey) Then
-		      Selectors.Add(Self.mSelectorCache.Value(CacheKey))
-		    Else
-		      Var TemplateSelector As New Beacon.TemplateSelector(SelectorId, Rows.Column("label").StringValue, Rows.Column("game_id").StringValue, Beacon.TemplateSelector.StringToLanguage(Rows.Column("language").StringValue), Rows.Column("code").StringValue)
-		      Selectors.Add(TemplateSelector)
-		      Self.mSelectorCache.Value(CacheKey) = TemplateSelector
+		    Var TemplateSelector As Beacon.TemplateSelector = Self.Cache.Get(CacheKey)
+		    If TemplateSelector Is Nil Then
+		      TemplateSelector = New Beacon.TemplateSelector(SelectorId, Row.Column("label").StringValue, Row.Column("game_id").StringValue, Beacon.TemplateSelector.StringToLanguage(Row.Column("language").StringValue), Row.Column("code").StringValue)
+		      Self.Cache.Store(CacheKey, TemplateSelector, Self.CacheTTL)
 		    End If
-		    
-		    Rows.MoveToNextRow
-		  Wend
+		    If (TemplateSelector Is Nil) = False Then
+		      Selectors.Add(TemplateSelector)
+		    End If
+		  Next
 		  
 		  Return Selectors
 		End Function
@@ -650,8 +629,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function IsTemplateCustom(TemplateUUID As String) As Boolean
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  
-		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateUUID) Then
+		  If Self.Cache.HasKey(UserID + ":" + TemplateUUID) Then
 		    Return True
 		  End If
 		  
@@ -672,7 +650,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function IsTemplateOfficial(TemplateUUID As String) As Boolean
-		  If Self.mTemplateCache.HasKey(TemplateUUID) Then
+		  If Self.Cache.HasKey(TemplateUUID) Then
 		    Return True
 		  End If
 		  
@@ -694,8 +672,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function IsTemplateSelectorCustom(SelectorId As String) As Boolean
 		  Var UserId As String = App.IdentityManager.CurrentUserId
-		  
-		  If Self.mTemplateCache.HasKey(UserId + ":" + SelectorId) Then
+		  If Self.Cache.HasKey(UserId + ":" + SelectorId) Then
 		    Return True
 		  End If
 		  
@@ -716,7 +693,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function IsTemplateSelectorOfficial(SelectorId As String) As Boolean
-		  If Self.mTemplateCache.HasKey(SelectorId) Then
+		  If Self.Cache.HasKey(SelectorId) Then
 		    Return True
 		  End If
 		  
@@ -759,7 +736,7 @@ Inherits Beacon.DataSource
 		  End If
 		  Self.CommitTransaction()
 		  
-		  Self.mTemplateCache.Value(CacheKey) = Template
+		  Self.Cache.Store(CacheKey, Template, Self.CacheTTL)
 		  
 		  If Official = False And DoCloudExport Then
 		    Self.ExportCloudFiles() 
@@ -796,7 +773,7 @@ Inherits Beacon.DataSource
 		      CacheKey = UserID + ":" + TemplateSelector.UUID
 		      Self.SQLExecute("INSERT OR REPLACE INTO custom_template_selectors (object_id, game_id, label, language, code, user_id) VALUES (:object_id, :game_id, :label, :language, :code, :user_id);", TemplateSelector.UUID, TemplateSelector.GameId, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code, UserID)
 		    End If
-		    Self.mSelectorCache.Value(CacheKey) = TemplateSelector
+		    Self.Cache.Store(CacheKey, TemplateSelector, Self.CacheTTL)
 		  Next TemplateSelector
 		  Self.CommitTransaction()
 		  
@@ -929,7 +906,7 @@ Inherits Beacon.DataSource
 
 
 	#tag Property, Flags = &h21
-		Private Shared mLock As CriticalSection
+		Private mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -937,17 +914,12 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared mSelectorCache As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared mTemplateCache As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mUpdateNewsThread As Beacon.Thread
 	#tag EndProperty
 
+
+	#tag Constant, Name = CacheTTL, Type = Double, Dynamic = False, Default = \"60", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = FlagIncludeOfficialItems, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant

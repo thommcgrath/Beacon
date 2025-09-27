@@ -40,7 +40,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub EmptyCaches()
-		  Self.mConfigOptionCache = New Dictionary
+		  Self.Cache.Purge()
 		End Sub
 	#tag EndEvent
 
@@ -88,8 +88,6 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  If ChangeDict.HasKey("configOptions") Then
-		    Self.mConfigOptionCache = New Dictionary
-		    
 		    Var Options() As Variant = ChangeDict.Value("configOptions")
 		    For Each Dict As Dictionary In Options
 		      If Dict.Value("minVersion") > BuildNumber Then
@@ -202,27 +200,21 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ObtainLock()
-		  mLock.Enter
+		  Self.mLock.Enter
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub ReleaseLock()
-		  mLock.Leave
+		  Self.mLock.Leave
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
 		Sub Constructor(AllowWriting As Boolean)
-		  If Self.mConfigOptionCache Is Nil Then
-		    Self.mConfigOptionCache = New Dictionary
-		  End If
-		  
-		  If mLock Is Nil Then
-		    mLock = New CriticalSection
-		    mLock.Type = Thread.Types.Preemptive
-		  End If
+		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  
 		  Super.Constructor(AllowWriting)
 		End Sub
@@ -245,8 +237,9 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetConfigOption(KeyUUID As String) As Palworld.ConfigOption
-		  If Self.mConfigOptionCache.HasKey(KeyUUID) Then
-		    Return Self.mConfigOptionCache.Value(KeyUUID)
+		  Var Option As Palworld.ConfigOption = Self.Cache.Get(KeyUUID)
+		  If (Option Is Nil) = False Then
+		    Return Option
 		  End If
 		  
 		  Var Rows As RowSet = Self.SQLSelect(Self.ConfigOptionSelectSQL + " WHERE object_id = ?1;", KeyUUID)
@@ -424,82 +417,78 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RowSetToConfigOptions(Results As RowSet) As Palworld.ConfigOption()
+		Private Function RowSetToConfigOptions(Rows As RowSet) As Palworld.ConfigOption()
 		  Var Keys() As Palworld.ConfigOption
 		  Try
-		    While Results.AfterLastRow = False
-		      Var ConfigOptionId As String = Results.Column("object_id").StringValue
-		      If Self.mConfigOptionCache.HasKey(ConfigOptionId) Then
-		        Results.MoveToNextRow
-		        Keys.Add(Self.mConfigOptionCache.Value(ConfigOptionId))
-		        Continue
-		      End If
-		      
-		      Var Label As String = Results.Column("label").StringValue
-		      Var ConfigFile As String = Results.Column("file").StringValue
-		      Var ConfigHeader As String = Results.Column("header").StringValue
-		      Var ConfigStruct As NullableString = NullableString.FromVariant(Results.Column("struct").Value)
-		      Var ConfigKey As String = Results.Column("key").StringValue
-		      Var ValueType As Palworld.ConfigOption.ValueTypes
-		      Select Case Results.Column("value_type").StringValue
-		      Case "Numeric"
-		        ValueType = Palworld.ConfigOption.ValueTypes.TypeNumeric
-		      Case "Array"
-		        ValueType = Palworld.ConfigOption.ValueTypes.TypeArray
-		      Case "Structure"
-		        ValueType = Palworld.ConfigOption.ValueTypes.TypeStructure
-		      Case "Boolean"
-		        ValueType = Palworld.ConfigOption.ValueTypes.TypeBoolean
-		      Case "Text"
-		        ValueType = Palworld.ConfigOption.ValueTypes.TypeText
-		      End Select
-		      Var MaxAllowed As NullableDouble
-		      If IsNull(Results.Column("max_allowed").Value) = False Then
-		        MaxAllowed = Results.Column("max_allowed").IntegerValue
-		      End If
-		      Var Description As String = Results.Column("description").StringValue
-		      Var DefaultValue As Variant = Results.Column("default_value").Value
-		      Var NitradoPath As NullableString
-		      Var NitradoFormat As Palworld.ConfigOption.NitradoFormats = Palworld.ConfigOption.NitradoFormats.Unsupported
-		      Var NitradoDeployStyle As Palworld.ConfigOption.NitradoDeployStyles = Palworld.ConfigOption.NitradoDeployStyles.Unsupported
-		      If IsNull(Results.Column("nitrado_format").Value) = False Then
-		        NitradoPath = Results.Column("nitrado_path").StringValue
-		        Select Case Results.Column("nitrado_format").StringValue
-		        Case "Line"
-		          NitradoFormat = Palworld.ConfigOption.NitradoFormats.Line
-		        Case "Value"
-		          NitradoFormat = Palworld.ConfigOption.NitradoFormats.Value
+		    For Each Row As DatabaseRow In Rows
+		      Var ConfigOptionId As String = Row.Column("object_id").StringValue
+		      Var Option As Palworld.ConfigOption = Self.Cache.Get(ConfigOptionId)
+		      If Option Is Nil Then
+		        Var Label As String = Row.Column("label").StringValue
+		        Var ConfigFile As String = Row.Column("file").StringValue
+		        Var ConfigHeader As String = Row.Column("header").StringValue
+		        Var ConfigStruct As NullableString = NullableString.FromVariant(Row.Column("struct").Value)
+		        Var ConfigKey As String = Row.Column("key").StringValue
+		        Var ValueType As Palworld.ConfigOption.ValueTypes
+		        Select Case Row.Column("value_type").StringValue
+		        Case "Numeric"
+		          ValueType = Palworld.ConfigOption.ValueTypes.TypeNumeric
+		        Case "Array"
+		          ValueType = Palworld.ConfigOption.ValueTypes.TypeArray
+		        Case "Structure"
+		          ValueType = Palworld.ConfigOption.ValueTypes.TypeStructure
+		        Case "Boolean"
+		          ValueType = Palworld.ConfigOption.ValueTypes.TypeBoolean
+		        Case "Text"
+		          ValueType = Palworld.ConfigOption.ValueTypes.TypeText
 		        End Select
-		        Select Case Results.Column("nitrado_deploy_style").StringValue
-		        Case "Guided"
-		          NitradoDeployStyle = Palworld.ConfigOption.NitradoDeployStyles.Guided
-		        Case "Expert"
-		          NitradoDeployStyle = Palworld.ConfigOption.NitradoDeployStyles.Expert
-		        Case "Both"
-		          NitradoDeployStyle = Palworld.ConfigOption.NitradoDeployStyles.Both
-		        End Select
+		        Var MaxAllowed As NullableDouble
+		        If IsNull(Row.Column("max_allowed").Value) = False Then
+		          MaxAllowed = Row.Column("max_allowed").IntegerValue
+		        End If
+		        Var Description As String = Row.Column("description").StringValue
+		        Var DefaultValue As Variant = Row.Column("default_value").Value
+		        Var NitradoPath As NullableString
+		        Var NitradoFormat As Palworld.ConfigOption.NitradoFormats = Palworld.ConfigOption.NitradoFormats.Unsupported
+		        Var NitradoDeployStyle As Palworld.ConfigOption.NitradoDeployStyles = Palworld.ConfigOption.NitradoDeployStyles.Unsupported
+		        If IsNull(Row.Column("nitrado_format").Value) = False Then
+		          NitradoPath = Row.Column("nitrado_path").StringValue
+		          Select Case Row.Column("nitrado_format").StringValue
+		          Case "Line"
+		            NitradoFormat = Palworld.ConfigOption.NitradoFormats.Line
+		          Case "Value"
+		            NitradoFormat = Palworld.ConfigOption.NitradoFormats.Value
+		          End Select
+		          Select Case Row.Column("nitrado_deploy_style").StringValue
+		          Case "Guided"
+		            NitradoDeployStyle = Palworld.ConfigOption.NitradoDeployStyles.Guided
+		          Case "Expert"
+		            NitradoDeployStyle = Palworld.ConfigOption.NitradoDeployStyles.Expert
+		          Case "Both"
+		            NitradoDeployStyle = Palworld.ConfigOption.NitradoDeployStyles.Both
+		          End Select
+		        End If
+		        Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Row.Column("native_editor_version").Value)
+		        Var UIGroup As NullableString = NullableString.FromVariant(Row.Column("ui_group").Value)
+		        Var CustomSort As NullableString = NullableString.FromVariant(Row.Column("custom_sort").Value)
+		        Var ContentPackId As String = Row.Column("content_pack_id").StringValue
+		        
+		        Var Constraints As Dictionary
+		        If IsNull(Row.Column("constraints").Value) = False Then
+		          Try
+		            Var Parsed As Variant = Beacon.ParseJSON(Row.Column("constraints").StringValue)
+		            If IsNull(Parsed) = False And Parsed IsA Dictionary Then
+		              Constraints = Parsed
+		            End If
+		          Catch JSONErr As RuntimeException
+		          End Try
+		        End If
+		        
+		        Option = New Palworld.ConfigOption(ConfigOptionId, Label, ConfigFile, ConfigHeader, ConfigStruct, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId)
+		        Self.Cache.Store(ConfigOptionId, Option, Self.CacheTTL)
 		      End If
-		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Results.Column("native_editor_version").Value)
-		      Var UIGroup As NullableString = NullableString.FromVariant(Results.Column("ui_group").Value)
-		      Var CustomSort As NullableString = NullableString.FromVariant(Results.Column("custom_sort").Value)
-		      Var ContentPackId As String = Results.Column("content_pack_id").StringValue
-		      
-		      Var Constraints As Dictionary
-		      If IsNull(Results.Column("constraints").Value) = False Then
-		        Try
-		          Var Parsed As Variant = Beacon.ParseJSON(Results.Column("constraints").StringValue)
-		          If IsNull(Parsed) = False And Parsed IsA Dictionary Then
-		            Constraints = Parsed
-		          End If
-		        Catch JSONErr As RuntimeException
-		        End Try
-		      End If
-		      
-		      Var Key As New Palworld.ConfigOption(ConfigOptionId, Label, ConfigFile, ConfigHeader, ConfigStruct, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId)
-		      Self.mConfigOptionCache.Value(ConfigOptionId) = Key
-		      Keys.Add(Key)
-		      Results.MoveToNextRow
-		    Wend
+		      Keys.Add(Option)
+		    Next
 		  Catch Err As RuntimeException
 		    App.ReportException(Err)
 		    Keys.ResizeTo(-1)
@@ -516,17 +505,16 @@ Inherits Beacon.DataSource
 
 
 	#tag Property, Flags = &h21
-		Private Shared mConfigOptionCache As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared mLock As CriticalSection
+		Private mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Shared mPool As Palworld.DataSourcePool
 	#tag EndProperty
 
+
+	#tag Constant, Name = CacheTTL, Type = Double, Dynamic = False, Default = \"60", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ConfigOptionSelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C struct\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C content_pack_id FROM ini_options", Scope = Private
 	#tag EndConstant
