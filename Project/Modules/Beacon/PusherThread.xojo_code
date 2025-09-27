@@ -41,6 +41,7 @@ Inherits Global.Thread
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  Self.mState = Beacon.PusherSocket.States.Disconnected
 		End Sub
 	#tag EndMethod

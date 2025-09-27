@@ -119,6 +119,14 @@ Inherits Global.Thread
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  #if App.UsePreemptiveThreads
+		    Self.Type = Thread.Types.Preemptive
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function ConvertEncoding(Content As String, Format As ArkSA.Rewriter.EncodingFormat) As String
 		  If Format = ArkSA.Rewriter.EncodingFormat.Unicode Then
@@ -826,6 +834,18 @@ Inherits Global.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true

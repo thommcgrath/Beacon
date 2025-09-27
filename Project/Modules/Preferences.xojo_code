@@ -482,7 +482,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub ReleaseConnection()
-		  If Thread.Current Is Nil Or mConnectionLock Is Nil Then
+		  If mConnectionLock Is Nil Or Thread.Current Is Nil Or Thread.Current.Type = Thread.Types.Preemptive Then
 		    Return
 		  End If
 		  
@@ -569,7 +569,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function SignalConnection() As Boolean
-		  If Thread.Current Is Nil Then
+		  If Thread.Current Is Nil Or Thread.Current.Type = Thread.Types.Preemptive Then
 		    Return False
 		  End If
 		  

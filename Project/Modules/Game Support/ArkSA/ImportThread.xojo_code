@@ -274,6 +274,9 @@ Inherits Beacon.Thread
 		Sub Constructor(Data As ArkSA.DiscoveredData, DestinationProject As ArkSA.Project)
 		  Self.mData = Data
 		  Self.mDestinationProject = DestinationProject
+		  #if App.UsePreemptiveThreads
+		    Self.Type = Thread.Types.Preemptive
+		  #endif
 		End Sub
 	#tag EndMethod
 

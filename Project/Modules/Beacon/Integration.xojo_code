@@ -55,6 +55,9 @@ Implements Beacon.LogProducer
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
 		    Self.mThread.DebugIdentifier = Info.FullName + ".RunThread"
 		  #endif
+		  #if App.UsePreemptiveThreads
+		    Self.mThread.Type = Global.Thread.Types.Preemptive
+		  #endif
 		  AddHandler mThread.Run, WeakAddressOf mThread_Run
 		  AddHandler mThread.UserInterfaceUpdate, WeakAddressOf mThread_UserInterfaceUpdate
 		End Sub
