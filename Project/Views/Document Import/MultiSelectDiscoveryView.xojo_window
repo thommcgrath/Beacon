@@ -375,6 +375,7 @@ End
 		Sub Constructor()
 		  Self.mThreads = New Dictionary
 		  Self.mListLock = New CriticalSection
+		  Self.mListLock.Type = Thread.Types.Preemptive
 		End Sub
 	#tag EndMethod
 

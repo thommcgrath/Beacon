@@ -17,12 +17,15 @@ Begin PalworldServerViewContainer PalworldNitradoServerView
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   600
    Begin DesktopPagePanel Pages
@@ -216,7 +219,7 @@ Begin PalworldServerViewContainer PalworldNitradoServerView
          Modified        =   False
          Scope           =   2
          SettingUp       =   False
-         ShowsMapMenu    =   False
+         ShowsMapMenu    =   "False"
          TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
@@ -237,6 +240,8 @@ Begin PalworldServerViewContainer PalworldNitradoServerView
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -263,6 +268,7 @@ Begin PalworldServerViewContainer PalworldNitradoServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -271,9 +277,11 @@ Begin PalworldServerViewContainer PalworldNitradoServerView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -282,6 +290,7 @@ Begin PalworldServerViewContainer PalworldNitradoServerView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
 End
 #tag EndDesktopWindow
@@ -333,6 +342,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As Palworld.Project, Profile As Palworld.ServerProfile)
 		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  Self.mServerStatus = New Beacon.ServerStatus("Checking…")
 		  Super.Constructor(Project, Profile)
 		End Sub

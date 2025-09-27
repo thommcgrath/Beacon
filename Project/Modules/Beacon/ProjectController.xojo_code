@@ -625,6 +625,7 @@ Protected Class ProjectController
 		  
 		  If Self.mMemberUpdateLock Is Nil Then
 		    Self.mMemberUpdateLock = New CriticalSection
+		    Self.mMemberUpdateLock.Type = Thread.Types.Preemptive
 		  End If
 		  Self.mMemberUpdateLock.Enter
 		  

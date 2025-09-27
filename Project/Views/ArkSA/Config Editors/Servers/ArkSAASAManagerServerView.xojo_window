@@ -298,6 +298,7 @@ Begin ArkSAServerViewContainer ArkSAASAManagerServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -310,6 +311,7 @@ Begin ArkSAServerViewContainer ArkSAASAManagerServerView
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -371,6 +373,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
 		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  Self.mServerStatus = New Beacon.ServerStatus("Checking…")
 		  Super.Constructor(Project, Profile)
 		End Sub

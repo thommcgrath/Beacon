@@ -227,6 +227,7 @@ Protected Module Conversions
 	#tag Method, Flags = &h1
 		Protected Sub Init()
 		  mSelectorThreadLock = New CriticalSection
+		  mSelectorThreadLock.Type = Thread.Types.Preemptive
 		End Sub
 	#tag EndMethod
 
@@ -301,14 +302,6 @@ Protected Module Conversions
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mSelectorsToSave()"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

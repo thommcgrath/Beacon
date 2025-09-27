@@ -67,6 +67,7 @@ Implements Beacon.LogProducer
 		Protected Sub EnterResourceIntenseMode()
 		  If Self.mResourceIntenseLock Is Nil Then
 		    Self.mResourceIntenseLock = New CriticalSection
+		    Self.mResourceIntenseLock.Type = Thread.Types.Preemptive
 		  End If
 		  
 		  Self.mResourceIntenseLock.Enter

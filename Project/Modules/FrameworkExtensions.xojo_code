@@ -936,6 +936,7 @@ Protected Module FrameworkExtensions
 		    Lock = Locks.Value(File.NativePath)
 		  Else
 		    Lock = New CriticalSection
+		    Lock.Type = Thread.Types.Preemptive
 		    Locks.Value(File.NativePath) = Lock
 		  End If
 		  

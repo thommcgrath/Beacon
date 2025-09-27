@@ -20,8 +20,9 @@ Inherits Global.Thread
 	#tag Method, Flags = &h0
 		Sub LockUserData()
 		  #if Not TargetiOS
-		    If Self.mUserDataLock = Nil Then
+		    If Self.mUserDataLock Is Nil Then
 		      Self.mUserDataLock = New CriticalSection
+		      Self.mUserDataLock.Type = Thread.Types.Preemptive
 		    End If
 		    Self.mUserDataLock.Enter
 		  #endif
@@ -111,6 +112,18 @@ Inherits Global.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true
