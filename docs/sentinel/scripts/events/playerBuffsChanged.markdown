@@ -53,11 +53,13 @@ Not all buffs have useful names, and some buffs do not appear to the player at a
   "tribeId": "b72a9dd3-1a64-52a2-8f9c-f90409c871f0",
   "tribeName": "Reusable Breakfast Cereals",
   "tribeNumber": 780901340,
-  "buffsAdded": {
-    "path": "/Game/PrimalEarth/CoreBlueprints/Buffs/Buff_DiloPoison.Buff_DiloPoison_C",
-    "isHidden": false,
-    "name": "Dilo Venom"
-  },
+  "buffsAdded": [
+    {
+      "path": "/Game/PrimalEarth/CoreBlueprints/Buffs/Buff_DiloPoison.Buff_DiloPoison_C",
+      "isHidden": false,
+      "name": "Dilo Venom"
+    }
+  ],
   "buffsRemoved": [
   ]
 }
