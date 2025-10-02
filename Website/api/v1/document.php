@@ -15,15 +15,15 @@ if (is_null($subobject) == false) {
 	if (!BeaconCommon::IsUUID($project_id)) {
 		BeaconAPI::ReplyError('Must use a v4 UUID', null, 400);
 	}
-	
+
 	BeaconAPI::Authorize(true);
-	
+
 	$project = \Ark\Project::GetSharedDocumentByID($project_id, BeaconAPI::UserID());
 	if (is_null($project) || count($project) != 1) {
 		BeaconAPI::ReplyError('Document not found', null, 404);
 	}
 	$project = $project[0];
-	
+
 	$subject = strtolower($subobject);
 	switch ($subobject) {
 	case 'publish':
@@ -36,12 +36,12 @@ if (is_null($subobject) == false) {
 			if ($project->UserID() != BeaconAPI::UserID()) {
 				BeaconAPI::ReplyError('Not authorized', null, 403);
 			}
-			
+
 			$payload = BeaconAPI::JSONPayload();
 			$desired_status = $payload['status'];
 			$project->SetPublishStatus($desired_status);
 			BeaconAPI::ReplySuccess(array('document_id' => $project_id, 'status' => $project->PublishStatus()));
-			
+
 			break;
 		default:
 			BeaconAPI::ReplyError('Method not allowed', null, 405);
@@ -58,9 +58,9 @@ if (is_null($subobject) == false) {
 switch ($method) {
 case 'HEAD':
 	header('Content-Type: application/json');
-	
+
 	if ($project_id !== null) {
-		$results = $database->Query('SELECT project_id, user_id FROM ' . Ark\Project::FromClause() . ' WHERE project_id = $1 AND deleted = FALSE;', $project_id);
+		$results = $database->Query('SELECT projects.project_id, project_members.user_id FROM ' . Ark\Project::FromClause() . ' WHERE projects.project_id = $1 AND projects.deleted = FALSE;', $project_id);
 		if ($results->RecordCount() == 1) {
 			http_response_code(200);
 		} else {
@@ -69,14 +69,14 @@ case 'HEAD':
 	} else {
 		http_response_code(405);
 	}
-	
+
 	break;
 case 'GET':
 	BeaconAPI::Authorize(true);
 	if (BeaconAPI::Authenticated()) {
 		$user_id = BeaconAPI::UserID();
 	}
-	
+
 	if ($project_id === null) {
 		// query documents
 		$params = array();
@@ -92,7 +92,7 @@ case 'GET':
 			$clauses[] = 'published = \'Approved\' AND role = \'Owner\'';
 		}
 		$sql = 'SELECT ' . implode(', ', \Ark\Project::SQLColumns()) . ' FROM ' . Ark\Project::FromClause() . ' WHERE ' . implode(' AND ', $clauses);
-		
+
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';
 		if (isset($_GET['sort'])) {
@@ -106,7 +106,7 @@ case 'GET':
 			$sort_direction = (strtolower($_GET['direction']) === 'desc' ? 'DESC' : 'ASC');
 		}
 		$sql .= ' ORDER BY ' . $sort_column . ' ' . $sort_direction;
-			
+
 		if (isset($_GET['count'])) {
 			$sql .= ' LIMIT ::limit::';
 			$params['limit'] = $_GET['count'];
@@ -120,13 +120,13 @@ case 'GET':
 		for ($i = 0; $i < count($keys); $i++) {
 			$sql = str_replace('::' . $keys[$i] . '::', '$' . ($i + 1), $sql);
 		}
-		
+
 		$results = $database->Query($sql, $values);
 		$projects = \Ark\Project::GetFromResults($results);
 		BeaconAPI::ReplySuccess($projects);
 	} else {
 		$simple = isset($_GET['simple']);
-		
+
 		// specific document(s)
 		$projects = \Ark\Project::GetSharedDocumentByID($project_id, $user_id);
 		if (count($projects) === 0) {
@@ -134,7 +134,7 @@ case 'GET':
 		} elseif (count($projects) > 1) {
 			$simple = true;
 		}
-		
+
 		if ($simple === false) {
 			$database->BeginTransaction();
 			if (is_null($user_id)) {
@@ -148,7 +148,7 @@ case 'GET':
 			}
 			$database->Commit();
 		}
-		
+
 		if (BeaconAPI::ObjectCount() == 1) {
 			if ($simple) {
 				BeaconAPI::ReplySuccess($projects[0]);
@@ -168,14 +168,14 @@ case 'GET':
 							list($option, $quality) = explode(';', $piece, 2);
 							$quality = substr($quality, 2);
 						}
-						
+
 						if ($quality > $best_quality && in_array($option, $supported)) {
 							$best_option = $option;
 							$best_quality = $quality;
 						}
 					}
 				}
-				
+
 				$compressed = ($best_option == 'gzip');
 				if ($compressed) {
 					header('Content-Encoding: gzip');
@@ -204,25 +204,25 @@ case 'POST':
 	if (BeaconAPI::ContentType() !== 'application/json') {
 		BeaconAPI::ReplyError('Send a JSON payload');
 	}
-	
+
 	/* 2021-03-11: Had to force this to save one file at a time, no longer
 		and it no longer returns the saved document. This was done because
 		php JSON is very memory intensive, and Beacon projects have become
 		complex enough that limits were being hit. */
-		
+
 	if (BeaconCommon::IsUUID($project_id) === false) {
 		BeaconAPI::ReplyError('Specify exactly one UUID to save a document.');
 	}
-	
+
 	$file_content = BeaconAPI::Body();
 	$user = BeaconAPI::User();
 	$reason = '';
 	if (\Ark\Project::SaveFromContent($project_id, $user, $file_content, $reason) === false) {
 		BeaconAPI::ReplyError($reason);
 	}
-	
+
 	BeaconAPI::ReplySuccess();
-	
+
 	break;
 case 'DELETE':
 	BeaconAPI::Authorize();
@@ -232,7 +232,7 @@ case 'DELETE':
 	if (($project_id === null) || ($project_id === '')) {
 		BeaconAPI::ReplyError('No document specified');
 	}
-	
+
 	$paths = array();
 	$user_id = BeaconAPI::UserID();
 	$success = false;
@@ -241,7 +241,7 @@ case 'DELETE':
 		try {
 			$project_id = $results->Field('project_id');
 			$role = $results->Field('role');
-			
+
 			if ($role === 'Owner') {
 				$rows = $database->Query('SELECT user_id FROM public.project_members WHERE project_id = $1 AND user_id != $2 ORDER BY public.project_role_permissions(role) DESC LIMIT 1;', $project_id, $user_id);
 				if ($rows->RecordCount() === 1) {
@@ -263,20 +263,20 @@ case 'DELETE':
 				$database->Query('DELETE FROM public.project_members WHERE project_id = $1 AND user_id = $2;', $project_id, $user_id);
 				$database->Commit();
 			}
-			
+
 			$success = true;
 		} catch (Exception $e) {
 		}
-		
+
 		$results->MoveNext();
 	}
-	
+
 	if ($success) {
 		BeaconAPI::ReplySuccess();
 	} else {
 		BeaconAPI::ReplyError('No document was deleted.');
 	}
-	
+
 	break;
 }
 
