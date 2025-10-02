@@ -517,7 +517,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		}
 		BeaconPusher::SharedInstance()->SendEvents($events);
 
-		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $this->serviceId . '.gameCommand', json_encode(array_merge($this->gameSpecific, [
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.services.' . $this->serviceId . '.gameCommand', json_encode(array_merge($this->gameSpecific, [
 			'type' => 'configUpdated',
 		])));
 	}
@@ -538,7 +538,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 	public function Delete(): void {
 		$this->MDODelete();
 
-		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $this->serviceId . '.socketCommand', json_encode([
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.services.' . $this->serviceId . '.socketCommand', json_encode([
 			'command' => 'kick',
 		]));
 	}
