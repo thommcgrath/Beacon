@@ -184,7 +184,7 @@ function handleRequest(array $context): Response {
 			}
 		}
 
-		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.services.' . $serviceId . '.gameCommand', json_encode($command));
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $serviceId . '.gameCommand', json_encode($command));
 	}
 	if ($database->InTransaction() === true) {
 		$database->Commit();

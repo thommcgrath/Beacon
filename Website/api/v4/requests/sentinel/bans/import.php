@@ -143,7 +143,7 @@ function handleRequest(array $context): Response {
 				'type' => 'admin',
 				'command' => 'banplayer ' . $epicId,
 			];
-			BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.services.' . $id . '.gameCommand', json_encode($message));
+			BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $id . '.gameCommand', json_encode($message));
 		}
 	}
 
