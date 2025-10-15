@@ -12,9 +12,29 @@ define('STATUS_DEGRADED', 0);
 define('STATUS_OPERATIONAL', 1);
 
 $status = STATUS_OPERATIONAL;
-$database = BeaconCommon::Database();
-$rows = $database->Query('SELECT COUNT(*) AS event_count FROM sentinel.service_event_queue WHERE status = $1 AND wait_until <= CURRENT_TIMESTAMP;', 'Waiting');
-$waitingEventCount = $rows->Field('event_count');
+$overviewUrl = 'http://' . BeaconCommon::GetGlobal('RabbitMQ Host') . ':' . BeaconCommon::GetGlobal('RabbitMQ Management Port') . '/api/overview';
+$curl = curl_init($overviewUrl);
+curl_setopt($curl, CURLOPT_USERPWD, BeaconCommon::GetGlobal('RabbitMQ User') . ":" . BeaconCommon::GetGlobal('RabbitMQ Password'));
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+$responseBody = curl_exec($curl);
+$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+$responseError = curl_error($curl);
+curl_close($curl);
+
+if ($responseStatus !== 200) {
+	echo "Metrics overview request returned status {$responseStatus}:\n";
+	echo $responseError;
+	echo $responseBody;
+	return;
+}
+
+$overview = json_decode($responseBody, true);
+$queueTotals = $overview['queue_totals'];
+$waitingEventCount = $queueTotals['messages'];
+$messageStats = $overview['message_stats'];
+$publishRate = $messageStats['publish_details']['rate'] ?? 0;
+$deliverRate = $messageStats['deliver_get_details']['rate'] ?? 0;
+
 $metrics = [
 	'queued_events' => [
 		[
@@ -23,13 +43,11 @@ $metrics = [
 	],
 ];
 
-// Find the age of the oldest queue item
-$rows = $database->Query('SELECT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) - EXTRACT(EPOCH FROM queue_time) AS age FROM sentinel.service_event_queue WHERE status = $1 AND wait_until <= CURRENT_TIMESTAMP ORDER BY queue_time ASC LIMIT 1;', 'Waiting');
-if ($rows->RecordCount() > 0) {
-	if ($rows->Field('age') >= 60) {
-		$status = STATUS_OUTAGE;
-	} elseif ($rows->Field('age') >= 10) {
+if ($publishRate > $deliverRate) {
+	if ($deliverRate > 0) {
 		$status = STATUS_DEGRADED;
+	} else {
+		$status = STATUS_OUTAGE;
 	}
 }
 
@@ -40,14 +58,14 @@ curl_setopt($curl, CURLOPT_HTTPHEADER, [
 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_POSTFIELDS, ['status' => $status]);
-$response = curl_exec($curl);
-$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+$responseBody = curl_exec($curl);
+$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 curl_close($curl);
 
-if ($status === 200) {
+if ($responseStatus === 200) {
 	echo "webhook successful\n";
 } else {
-	echo "{$status}\n{$response}\n";
+	echo "{$responseStatus}\n{$responseBody}\n";
 }
 
 // Send the metrics, because this couldn't be done in one request for some dumb reason
@@ -59,15 +77,15 @@ curl_setopt($curl, CURLOPT_HTTPHEADER, [
 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(['metrics' => $metrics]));
-$response = curl_exec($curl);
-$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+$responseBody = curl_exec($curl);
+$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 curl_close($curl);
 
-if ($status === 204) {
+if ($responseStatus === 204) {
 	echo "metrics successful\n";
 	echo json_encode($metrics, JSON_PRETTY_PRINT) . "\n";
 } else {
-	echo "{$status}\n{$response}\n";
+	echo "{$responseStatus}\n{$responseBody}\n";
 }
 
 ?>
