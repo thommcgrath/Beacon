@@ -281,7 +281,7 @@ case 'customer.subscription.updated':
 	}
 
 	if ($type === 'customer.subscription.updated') {
-		BeaconRabbitMQ::SendMessage('sentinel_exchange', "sentinel.notifications.{$subscriptionId}", json_encode([
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', "sentinel.subscriptions.{$subscriptionId}", json_encode([
 			'event' => 'subscriptionUpdated',
 			'subscriptionId' => $subscriptionId,
 		]));
@@ -315,7 +315,7 @@ case 'customer.subscription.deleted':
 		}
 	}
 
-	BeaconRabbitMQ::SendMessage('sentinel_exchange', "sentinel.notifications.{$subscriptionId}", json_encode([
+	BeaconRabbitMQ::SendMessage('sentinel_exchange', "sentinel.subscriptions.{$subscriptionId}", json_encode([
 		'event' => 'subscriptionUpdated',
 		'subscriptionId' => $subscriptionId,
 	]));

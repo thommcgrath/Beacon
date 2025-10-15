@@ -42,7 +42,7 @@ function handleRequest(array $context): Response {
 		'dinoId2' => $idParts[1],
 	];
 
-	BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.' . $serviceId . '.gameCommand', json_encode($payload));
+	BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.services.' . $serviceId . '.gameCommand', json_encode($payload));
 
 	return Response::NewJson([
 		'requestId' => $requestId,

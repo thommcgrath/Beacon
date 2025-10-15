@@ -33,10 +33,10 @@ foreach ($events as $event) {
 
 	switch ($eventName) {
 	case 'channel_occupied':
-		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.pusherChannelOccupied', json_encode(['channelName' => $channelName]));
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.watchers.pusherChannelOccupied', json_encode(['channelName' => $channelName]));
 		break;
 	case 'channel_vacated':
-		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.notifications.pusherChannelVacated', json_encode(['channelName' => $channelName]));
+		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.watchers.pusherChannelVacated', json_encode(['channelName' => $channelName]));
 		break;
 	}
 }

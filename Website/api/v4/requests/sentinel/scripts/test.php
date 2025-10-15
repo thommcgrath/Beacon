@@ -75,8 +75,6 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError(message: $err->getMessage(), details: $obj, httpStatus: 412, code: 'testAlreadyRunning');
 	}
 
-	BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.queue.testScript', json_encode($obj));
-
 	return Response::NewJson(['requestId' => $requestId], 200);
 }
 
