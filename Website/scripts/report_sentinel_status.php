@@ -33,12 +33,28 @@ $queueTotals = $overview['queue_totals'];
 $waitingEventCount = $queueTotals['messages'];
 $messageStats = $overview['message_stats'];
 $publishRate = $messageStats['publish_details']['rate'] ?? 0;
-$deliverRate = $messageStats['deliver_get_details']['rate'] ?? 0;
+$deliverRate = ($messageStats['deliver_details']['rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['rate'] ?? 0);
+$ackRate = $messageStats['ack_details']['rate'] ?? 0;
 
 $metrics = [
 	'queued_events' => [
 		[
 			'y' => intval($waitingEventCount),
+		],
+	],
+	'publish_rate' => [
+		[
+			'y' => floatval($publishRate),
+		],
+	],
+	'deliver_rate' => [
+		[
+			'y' => floatval($deliverRate),
+		],
+	],
+	'ack_rate' => [
+		[
+			'y' => floatval($ackRate),
 		],
 	],
 ];
