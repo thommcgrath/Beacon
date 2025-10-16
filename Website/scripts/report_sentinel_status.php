@@ -12,7 +12,7 @@ define('STATUS_DEGRADED', 0);
 define('STATUS_OPERATIONAL', 1);
 
 $status = STATUS_OPERATIONAL;
-$overviewUrl = 'http://' . BeaconCommon::GetGlobal('RabbitMQ Host') . ':' . BeaconCommon::GetGlobal('RabbitMQ Management Port') . '/api/overview';
+$overviewUrl = 'http://' . BeaconCommon::GetGlobal('RabbitMQ Host') . ':' . BeaconCommon::GetGlobal('RabbitMQ Management Port') . '/api/overview?lengths_age=60&lengths_incr=10&msg_rates_age=60&msg_rates_incr=10';
 $curl = curl_init($overviewUrl);
 curl_setopt($curl, CURLOPT_USERPWD, BeaconCommon::GetGlobal('RabbitMQ User') . ":" . BeaconCommon::GetGlobal('RabbitMQ Password'));
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -32,9 +32,13 @@ $overview = json_decode($responseBody, true);
 $queueTotals = $overview['queue_totals'];
 $waitingEventCount = $queueTotals['messages'];
 $messageStats = $overview['message_stats'];
-$publishRate = $messageStats['publish_details']['rate'] ?? 0;
-$deliverRate = ($messageStats['deliver_details']['rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['rate'] ?? 0);
-$ackRate = ($messageStats['ack_details']['rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['rate'] ?? 0);
+$publishRate = $messageStats['publish_details']['avg_rate'] ?? 0;
+$deliverRate = ($messageStats['deliver_details']['avg_rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['avg_rate'] ?? 0);
+$ackRate = ($messageStats['ack_details']['avg_rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['avg_rate'] ?? 0);
+
+$database = BeaconCommon::Database();
+$rows = $database->Query("SELECT SUM(is_connected::INT) AS servers_connected, COUNT(*) AS total_servers FROM sentinel.services WHERE user_id IN (SELECT user_id FROM public.user_subscriptions WHERE date_expires > CURRENT_TIMESTAMP AND game_id = 'Sentinel') AND cluster_id != '00000000-0000-0000-0000-000000000000';");
+$connectionPercent = intval($rows->Field('servers_connected')) / intval($rows->Field('total_servers'));
 
 $metrics = [
 	'queued_events' => [
@@ -57,9 +61,16 @@ $metrics = [
 			'y' => floatval($ackRate),
 		],
 	],
+	'connections' => [
+		[
+			'y' => $connectionPercent * 100,
+		],
+	],
 ];
 
-if ($publishRate > ($ackRate * 1.5)) {
+if ($waitingEventCount > 0 && $ackRate === 0) {
+	$status = STATUS_OUTAGE;
+} elseif ($publishRate > ($ackRate * 1.5)) {
 	if ($deliverRate > 0) {
 		$status = STATUS_DEGRADED;
 	} else {
@@ -67,41 +78,46 @@ if ($publishRate > ($ackRate * 1.5)) {
 	}
 }
 
-$curl = curl_init('https://status.usebeacon.app/state_webhook/watchdog/68217390386fb3052b0d8fcf');
-curl_setopt($curl, CURLOPT_HTTPHEADER, [
-	'X-WEBHOOK-KEY: ' . BeaconCommon::GetGlobal('Hund Sentinel Status Key'),
-]);
-curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($curl, CURLOPT_POSTFIELDS, ['status' => $status]);
-$responseBody = curl_exec($curl);
-$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
+if (BeaconCommon::InProduction()) {
+	$curl = curl_init('https://status.usebeacon.app/state_webhook/watchdog/68217390386fb3052b0d8fcf');
+	curl_setopt($curl, CURLOPT_HTTPHEADER, [
+		'X-WEBHOOK-KEY: ' . BeaconCommon::GetGlobal('Hund Sentinel Status Key'),
+	]);
+	curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($curl, CURLOPT_POSTFIELDS, ['status' => $status]);
+	$responseBody = curl_exec($curl);
+	$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+	curl_close($curl);
 
-if ($responseStatus === 200) {
-	echo "webhook successful\n";
+	if ($responseStatus === 200) {
+		echo "webhook successful\n";
+	} else {
+		echo "{$responseStatus}\n{$responseBody}\n";
+	}
+
+	// Send the metrics, because this couldn't be done in one request for some dumb reason
+	$curl = curl_init('https://status.usebeacon.app/state_webhook/metrics/68217390386fb3052b0d8fd7');
+	curl_setopt($curl, CURLOPT_HTTPHEADER, [
+		'Content-Type: application/json',
+		'X-WEBHOOK-KEY: ' . BeaconCommon::GetGlobal('Hund Sentinel Status Key'),
+	]);
+	curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(['metrics' => $metrics]));
+	$responseBody = curl_exec($curl);
+	$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+	curl_close($curl);
+
+	if ($responseStatus === 204) {
+		echo "metrics successful\n";
+		echo json_encode($metrics, JSON_PRETTY_PRINT) . "\n";
+	} else {
+		echo "{$responseStatus}\n{$responseBody}\n";
+	}
 } else {
-	echo "{$responseStatus}\n{$responseBody}\n";
-}
-
-// Send the metrics, because this couldn't be done in one request for some dumb reason
-$curl = curl_init('https://status.usebeacon.app/state_webhook/metrics/68217390386fb3052b0d8fd7');
-curl_setopt($curl, CURLOPT_HTTPHEADER, [
-	'Content-Type: application/json',
-	'X-WEBHOOK-KEY: ' . BeaconCommon::GetGlobal('Hund Sentinel Status Key'),
-]);
-curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(['metrics' => $metrics]));
-$responseBody = curl_exec($curl);
-$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
-
-if ($responseStatus === 204) {
-	echo "metrics successful\n";
-	echo json_encode($metrics, JSON_PRETTY_PRINT) . "\n";
-} else {
-	echo "{$responseStatus}\n{$responseBody}\n";
+	echo "Status: {$status}\n";
+	echo json_encode($metrics, JSON_PRETTY_PRINT);
 }
 
 ?>
