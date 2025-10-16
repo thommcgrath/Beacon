@@ -34,7 +34,7 @@ $waitingEventCount = $queueTotals['messages'];
 $messageStats = $overview['message_stats'];
 $publishRate = $messageStats['publish_details']['rate'] ?? 0;
 $deliverRate = ($messageStats['deliver_details']['rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['rate'] ?? 0);
-$ackRate = $messageStats['ack_details']['rate'] ?? 0;
+$ackRate = ($messageStats['ack_details']['rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['rate'] ?? 0);
 
 $metrics = [
 	'queued_events' => [
@@ -59,7 +59,7 @@ $metrics = [
 	],
 ];
 
-if ($publishRate > $deliverRate) {
+if ($publishRate > ($ackRate * 1.5)) {
 	if ($deliverRate > 0) {
 		$status = STATUS_DEGRADED;
 	} else {
