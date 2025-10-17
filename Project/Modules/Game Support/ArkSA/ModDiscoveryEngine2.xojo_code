@@ -161,7 +161,7 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Function ContentPackIdForPath(Path As String) As String
 		  Var PackageName As String = Path.NthField("/", 2)
-		  Return Self.mContentPackIdsByPackage.Lookup(PackageName, Self.OfficialContentPackId)
+		  Return Self.mContentPackIdsByPackage.Lookup(PackageName, ArkSA.OfficialContentPackId)
 		End Function
 	#tag EndMethod
 
@@ -1793,7 +1793,7 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Sub SyncCreature(Path As String)
 		  Var ContentPackId As String = Self.ContentPackIdForPath(Path)
-		  If ContentPackId = Self.OfficialContentPackId Then
+		  If ContentPackId = ArkSA.OfficialContentPackId Then
 		    Return
 		  End If
 		  
@@ -1914,7 +1914,7 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Sub SyncItem(Path As String)
 		  Var ContentPackId As String = Self.ContentPackIdForPath(Path)
-		  If ContentPackId = Self.OfficialContentPackId Then
+		  If ContentPackId = ArkSA.OfficialContentPackId Then
 		    Return
 		  End If
 		  
@@ -2017,7 +2017,7 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Sub SyncLootDrop(Path As String, Type As LootDropType)
 		  Var ContentPackId As String = Self.ContentPackIdForPath(Path)
-		  If ContentPackId = Self.OfficialContentPackId Then
+		  If ContentPackId = ArkSA.OfficialContentPackId Then
 		    Return
 		  End If
 		  
@@ -2284,7 +2284,7 @@ Protected Class ModDiscoveryEngine2
 	#tag Method, Flags = &h21
 		Private Sub SyncSpawnContainer(Path As String)
 		  Var ContentPackId As String = Self.ContentPackIdForPath(Path)
-		  If ContentPackId = Self.OfficialContentPackId Then
+		  If ContentPackId = ArkSA.OfficialContentPackId Then
 		    Return
 		  End If
 		  
@@ -2624,9 +2624,6 @@ Protected Class ModDiscoveryEngine2
 	#tag EndConstant
 
 	#tag Constant, Name = ItemOptionNoSync, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = OfficialContentPackId, Type = String, Dynamic = False, Default = \"b32a3d73-9406-56f2-bd8f-936ee0275249", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnOptionLowConfidence, Type = Double, Dynamic = False, Default = \"1", Scope = Private

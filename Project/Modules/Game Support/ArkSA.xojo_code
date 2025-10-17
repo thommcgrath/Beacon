@@ -2079,6 +2079,9 @@ Protected Module ArkSA
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"ArkSA", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = OfficialContentPackId, Type = String, Dynamic = False, Default = \"b32a3d73-9406-56f2-bd8f-936ee0275249", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
 	#tag EndConstant
 

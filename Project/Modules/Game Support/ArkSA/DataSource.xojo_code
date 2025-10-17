@@ -138,7 +138,7 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 105
+		  Return 106
 		End Function
 	#tag EndEvent
 
@@ -869,7 +869,7 @@ Implements ArkSA.BlueprintProvider
 		Private Sub CleanupModPaths()
 		  Var Rows As RowSet
 		  Try
-		    Rows = Self.SQLSelect("SELECT object_id, path, category, content_pack_id FROM blueprints WHERE path LIKE '/Game/Mods/%';")
+		    Rows = Self.SQLSelect("SELECT object_id, path, category, content_pack_id FROM blueprints WHERE path LIKE '/Game/Mods/%' AND content_pack_id != ?1;", ArkSA.OfficialContentPackId)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Finding blueprint paths that need updating")
 		    Return
