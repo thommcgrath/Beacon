@@ -5,6 +5,11 @@ class BeaconSearch {
 	private $results = [];
 	private $total_result_count = 0;
 	private $raw_response = null;
+	private $applicationId;
+
+	public function __construct(string $appId) {
+		$this->applicationId = $appId;
+	}
 
 	public function SaveObject(string $object_id, bool $autocommit = true) {
 		$database = BeaconCommon::Database();
@@ -93,6 +98,22 @@ class BeaconSearch {
 	}
 
 	public function Search(string $query, int|null $client_version, int $result_count, string|null $type = null): array {
+		if (filter_var($query, FILTER_VALIDATE_EMAIL) !== false) {
+			$this->results = [];
+			$this->total_result_count = 0;
+			return $this->results;
+		}
+
+		if ($this->applicationId === '12877547-7ad0-466f-a001-77815043c96b') {
+			$clientReferer = $_SERVER['HTTP_REFERER'] ?? '';
+			$clientChallenge = $_SERVER['HTTP_X_BEACON_CHALLENGE'] ?? ''; // 4a320f02-d10a-4248-a11f-a8624196ef33
+			if (str_starts_with($clientReferer, BeaconCommon::AbsoluteURL('/')) === false || $clientChallenge !== '4a320f02-d10a-4248-a11f-a8624196ef33') {
+				$this->results = [];
+				$this->total_result_count = 0;
+				return $this->results;
+			}
+		}
+
 		$app_id = BeaconCommon::GetGlobal('Algolia Application ID');
 		$index = BeaconCommon::GetGlobal('Algolia Index Name');
 		$api_key = BeaconCommon::GetGlobal('Algolia API Key');
@@ -132,6 +153,15 @@ class BeaconSearch {
 		$response = json_decode($this->raw_response, true);
 		$this->results = array_slice($response['hits'], 0, $result_count);
 		$this->total_result_count = $response['nbHits'];
+
+		if ($this->total_result_count === 0) {
+			$clientAddress = BeaconCommon::RemoteAddr(false);
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			$database->Query('INSERT INTO public.search_empty_queries (terms, ip_address, application_id, num_searches) VALUES ($1, $2, $3, 1) ON CONFLICT (terms, ip_address, application_id) DO UPDATE SET num_searches = search_empty_queries.num_searches + 1;', $query, $clientAddress, $this->applicationId);
+			$database->Commit();
+		}
+
 		return $this->results;
 	}
 

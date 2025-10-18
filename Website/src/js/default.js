@@ -110,7 +110,7 @@ class ExplorePopover {
 		params.append('query', terms.trim());
 		params.append('count', 4);
 
-		BeaconWebRequest.get(`/search?${params.toString()}`, { Accept: 'application/json' }).then((response) => {
+		BeaconWebRequest.get(`/search?${params.toString()}`, { Accept: 'application/json', 'X-Beacon-Challenge': '4a320f02-d10a-4248-a11f-a8624196ef33' }).then((response) => {
 			try {
 				this.displayResults(JSON.parse(response.body));
 			} catch (e) {

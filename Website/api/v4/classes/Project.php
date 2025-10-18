@@ -182,7 +182,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 
 		if (isset($filters['search']) && empty($filters['search']) === false) {
 			if (array_key_exists('communityStatus', $filters)) {
-				$search = new BeaconSearch();
+				$search = new BeaconSearch(Core::ApplicationId());
 				$results = $search->Search($filters['search'], null, 100, 'Document');
 				if (count($results) > 0) {
 					$ids = [];

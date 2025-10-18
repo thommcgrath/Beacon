@@ -24,7 +24,7 @@ if (isset($_GET['count'])) {
 	$max_results = min(intval($_GET['count']), $max_results);
 }
 
-$search = new BeaconSearch();
+$search = new BeaconSearch('12877547-7ad0-466f-a001-77815043c96b');
 $results = $search->Search($terms, $version, $max_results);
 $items = [];
 foreach ($results as $result) {
@@ -75,7 +75,7 @@ foreach ($results as $result) {
 	if (isset($result['game_id'])) {
 		$item['game'] = [
 			'id' => $result['game_id'],
-			'name' => $result['game_name'],
+			'name' => $result['game_name'] ?? '',
 		];
 	}
 

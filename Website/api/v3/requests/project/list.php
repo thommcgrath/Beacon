@@ -30,7 +30,7 @@ function handle_request(array $context): void {
 		$params['mask'] = $_GET['mask'];
 	}
 	if (isset($_GET['search'])) {
-		$search = new BeaconSearch();
+		$search = new BeaconSearch('9f823fcf-eb7a-41c0-9e4b-db8ed4396f80');
 		$results = $search->Search($_GET['search'], null, 100, 'Document');
 		if (count($results) > 0) {
 			$ids = [];
@@ -44,7 +44,7 @@ function handle_request(array $context): void {
 	}
 	$clauses[] = 'projects.deleted = FALSE';
 	$sql = 'SELECT ' . implode(', ', \BeaconAPI\Project::SQLColumns()) . ' FROM ' . \BeaconAPI\Project::FromClause() . ' WHERE ' . implode(' AND ', $clauses);
-	
+
 	$sort_column = 'last_update';
 	$sort_direction = 'DESC';
 	if (isset($_GET['sort'])) {
@@ -67,7 +67,7 @@ function handle_request(array $context): void {
 		$sort_direction = (strtolower($_GET['direction']) === 'desc' ? 'DESC' : 'ASC');
 	}
 	$sql .= ' ORDER BY ' . $sort_column . ' ' . $sort_direction;
-		
+
 	if (isset($_GET['count'])) {
 		$sql .= ' LIMIT ::limit::';
 		$params['limit'] = $_GET['count'];
@@ -81,7 +81,7 @@ function handle_request(array $context): void {
 	for ($i = 0; $i < count($keys); $i++) {
 		$sql = str_replace('::' . $keys[$i] . '::', '$' . ($i + 1), $sql);
 	}
-	
+
 	$results = $database->Query($sql, $values);
 	$projects = \BeaconAPI\Project::GetFromResults($results);
 	BeaconAPI::ReplySuccess($projects);

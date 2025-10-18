@@ -36,14 +36,14 @@ if ($version !== $latest_version) {
 $include_url_version = ($stage !== 3);
 $version_formatted = BeaconCommon::BuildNumberToVersion($version);
 
-$search = new BeaconSearch();
+$search = new BeaconSearch('12877547-7ad0-466f-a001-77815043c96b');
 $results = $search->Search($query, $version, 20, 'Help');
 
 if (count($results) == 0) {
 	$html = '<h1>No Results</h1><p>Could not find anything for &quot;' . htmlentities($query) . '&quot;</p>';
 } else {
 	BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('help.css'));
-	
+
 	$html = '<h1>Search Results for &quot;' . htmlentities($query) . '&quot;</h1>';
 	foreach ($results as $result) {
 		$path = $result['uri'];
