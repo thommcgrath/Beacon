@@ -104,15 +104,15 @@ class BeaconSearch {
 			return $this->results;
 		}
 
-		if ($this->applicationId === '12877547-7ad0-466f-a001-77815043c96b') {
+		/*if ($this->applicationId === '12877547-7ad0-466f-a001-77815043c96b') {
 			$clientReferer = $_SERVER['HTTP_REFERER'] ?? '';
-			$clientChallenge = $_SERVER['HTTP_X_BEACON_CHALLENGE'] ?? ''; // 4a320f02-d10a-4248-a11f-a8624196ef33
+			$clientChallenge = $_SERVER['HTTP_X_BEACON_CHALLENGE'] ?? '';
 			if (str_starts_with($clientReferer, BeaconCommon::AbsoluteURL('/')) === false || $clientChallenge !== '4a320f02-d10a-4248-a11f-a8624196ef33') {
 				$this->results = [];
 				$this->total_result_count = 0;
 				return $this->results;
 			}
-		}
+		}*/
 
 		$app_id = BeaconCommon::GetGlobal('Algolia Application ID');
 		$index = BeaconCommon::GetGlobal('Algolia Index Name');
