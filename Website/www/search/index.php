@@ -2,6 +2,8 @@
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+header('Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate');
+
 $terms = '';
 if (isset($_GET['query'])) {
 	$terms = $_GET['query'];
