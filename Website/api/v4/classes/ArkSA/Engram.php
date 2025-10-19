@@ -54,7 +54,7 @@ class Engram extends MutableBlueprint {
 		$schema->AddColumn(new DatabaseObjectProperty('stackSize', ['columnName' => 'stack_size', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
 		$schema->AddColumn(new DatabaseObjectProperty('itemId', ['columnName' => 'item_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
 		$schema->AddColumn(new DatabaseObjectProperty('gfi', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
-		$schema->AddColumn(new DatabaseObjectProperty('stats', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(template))) FROM (SELECT stat_index AS "statIndex", randomizer_range_override AS "randomizerRangeOverride", randomizer_range_multiplier AS "randomizerRangeMultiplier", state_modifier_scale AS "stateModifierScale", rating_value_multiplier AS "ratingValueMultiplier", initial_value_constant AS "initialValueConstant" FROM arksa.engram_stats WHERE engram_stats.engram_id = engrams.object_id ORDER BY stat_index) AS template)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
+		$schema->AddColumn(new DatabaseObjectProperty('stats', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(template))) FROM (SELECT stat_index AS "statIndex", randomizer_range_override AS "randomizerRangeOverride", randomizer_range_multiplier AS "randomizerRangeMultiplier", state_modifier_scale AS "stateModifierScale", rating_value_multiplier AS "ratingValueMultiplier", initial_value_constant AS "initialValueConstant", absolute_max_value AS "absoluteMaxValue" FROM arksa.engram_stats WHERE engram_stats.engram_id = engrams.object_id ORDER BY stat_index) AS template)', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
 		return $schema;
 	}
 
@@ -148,11 +148,11 @@ class Engram extends MutableBlueprint {
 
 				if (array_key_exists($statIndex, $existingStats)) {
 					unset($existingStats[$statIndex]);
-					$sql = 'UPDATE arksa.engram_stats SET randomizer_range_override = $3, randomizer_range_multiplier = $4, state_modifier_scale = $5, rating_value_multiplier = $6, initial_value_constant = $7 WHERE engram_id = $1 AND stat_index = $2 AND (randomizer_range_override != $3::NUMERIC(16,6) OR randomizer_range_multiplier != $4::NUMERIC(16,6) OR state_modifier_scale != $5::NUMERIC(16,6) OR rating_value_multiplier != $6::NUMERIC(16,6) OR initial_value_constant != $7::NUMERIC(16,6));';
+					$sql = 'UPDATE arksa.engram_stats SET randomizer_range_override = $3, randomizer_range_multiplier = $4, state_modifier_scale = $5, rating_value_multiplier = $6, initial_value_constant = $7, absolute_max_value = $8 WHERE engram_id = $1 AND stat_index = $2 AND (randomizer_range_override != $3::NUMERIC(16,6) OR randomizer_range_multiplier != $4::NUMERIC(16,6) OR state_modifier_scale != $5::NUMERIC(16,6) OR rating_value_multiplier != $6::NUMERIC(16,6) OR initial_value_constant != $7::NUMERIC(16,6) OR absolute_max_value != $8::NUMERIC(16,6));';
 				} else {
-					$sql = 'INSERT INTO arksa.engram_stats (engram_id, stat_index, randomizer_range_override, randomizer_range_multiplier, state_modifier_scale, rating_value_multiplier, initial_value_constant) VALUES ($1, $2, $3, $4, $5, $6, $7);';
+					$sql = 'INSERT INTO arksa.engram_stats (engram_id, stat_index, randomizer_range_override, randomizer_range_multiplier, state_modifier_scale, rating_value_multiplier, initial_value_constant, absolute_max_value) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);';
 				}
-				$database->Query($sql, $this->objectId, $statIndex, $stat['randomizerRangeOverride'], $stat['randomizerRangeMultiplier'], $stat['stateModifierScale'], $stat['ratingValueMultiplier'], $stat['initialValueConstant']);
+				$database->Query($sql, $this->objectId, $statIndex, $stat['randomizerRangeOverride'] ?? 0.0, $stat['randomizerRangeMultiplier'] ?? 0.0, $stat['stateModifierScale'] ?? 0.0, $stat['ratingValueMultiplier'] ?? 0.0, $stat['initialValueConstant'] ?? 0.0, $stat['absoluteMaxValue'] ?? 0.0);
 			}
 		}
 		foreach ($existingStats as $statIndex => $true) {
