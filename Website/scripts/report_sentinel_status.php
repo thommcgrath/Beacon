@@ -33,12 +33,19 @@ $queueTotals = $overview['queue_totals'];
 $waitingEventCount = $queueTotals['messages'];
 $messageStats = $overview['message_stats'];
 $publishRate = $messageStats['publish_details']['avg_rate'] ?? 0;
+$manualAckRate = ($messageStats['ack_details']['avg_rate'] ?? 0);
 $deliverRate = ($messageStats['deliver_details']['avg_rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['avg_rate'] ?? 0);
-$ackRate = ($messageStats['ack_details']['avg_rate'] ?? 0) + ($messageStats['deliver_no_ack_details']['avg_rate'] ?? 0);
 
 $database = BeaconCommon::Database();
 $rows = $database->Query("SELECT SUM(is_connected::INT) AS servers_connected, COUNT(*) AS total_servers FROM sentinel.services WHERE user_id IN (SELECT user_id FROM public.user_subscriptions WHERE date_expires > CURRENT_TIMESTAMP AND game_id = 'Sentinel') AND cluster_id != '00000000-0000-0000-0000-000000000000';");
-$connectionPercent = intval($rows->Field('servers_connected')) / intval($rows->Field('total_servers'));
+$connectedServers = intval($rows->Field('servers_connected'));
+$totalServers = intval($rows->Field('total_servers'));
+$connectionPercent = $connectedServers / $totalServers;
+
+// Connected servers publish 1 status update per minute, so to find the minimum publish rate per second,
+// we just divide by 60. Of course an active server will throw off the average, but there's only so
+// much we can do. The manual ack rate should match at least this much as well.
+$minPublishRate = $connectedServers / 60;
 
 $metrics = [
 	'queued_events' => [
@@ -58,7 +65,7 @@ $metrics = [
 	],
 	'ack_rate' => [
 		[
-			'y' => floatval($ackRate),
+			'y' => floatval($manualAckRate),
 		],
 	],
 	'connections' => [
@@ -68,13 +75,11 @@ $metrics = [
 	],
 ];
 
-if ($waitingEventCount > 0 && $ackRate === 0) {
-	$status = STATUS_OUTAGE;
-} elseif ($publishRate > ($ackRate * 1.5)) {
-	if ($deliverRate > 0) {
-		$status = STATUS_DEGRADED;
-	} else {
+if ($publishRate < $minPublishRate || $manualAckRate < $minPublishRate) {
+	if ($publishRate === 0 || $manualAckRate === 0) {
 		$status = STATUS_OUTAGE;
+	} else {
+		$status = STATUS_DEGRADED;
 	}
 }
 
