@@ -64,6 +64,7 @@
 					Call DoShellCommand("/usr/bin/plutil -insert SUScheduledCheckInterval -integer 14400 " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert SUAutomaticallyUpdate -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleIconName -string 'App' " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert UIDesignRequiresCompatibility -bool YES " + App + ".plist")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0
