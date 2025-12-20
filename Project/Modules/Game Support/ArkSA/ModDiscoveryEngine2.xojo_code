@@ -456,13 +456,13 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Var RequiredHashes As New Dictionary
-		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "ed9d129a65450e826fde8c93cc7c5d27"
-		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "2e9cae68f2cda0c89d5d8ed38a4c4a6a"
-		  RequiredHashes.Value("CUE4Parse.pdb") = "054ce6b3df874b93187a736bd89243b2"
+		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "7dfad8413a3a297bba7ee2b99fd102c4"
+		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "d019d5da83b37911f25ba7a89d6552a0"
+		  RequiredHashes.Value("CUE4Parse.pdb") = "792da56029cf02417ca08ce9ac07ecfe"
 		  RequiredHashes.Value("blake3_dotnet.dll") = "7ce74ad9c157ec818b45fa1f0b2c1b95"
 		  RequiredHashes.Value("libSkiaSharp.dll") = "ef1fabce43fe32ca83260481253f5476"
-		  RequiredHashes.Value("mod_data_extractor.exe") = "c89763e721098d9a267736ae47dd7a29"
-		  RequiredHashes.Value("mod_data_extractor.pdb") = "8829689afc74657216133e355a64dbca"
+		  RequiredHashes.Value("mod_data_extractor.exe") = "7f259d2cd0f24c30327cc5175fb2bf99"
+		  RequiredHashes.Value("mod_data_extractor.pdb") = "319824c006744e71ac2dfc2bc3cf9fa8"
 		  Var ExtractorReady As Boolean = True
 		  For Each Entry As DictionaryEntry In RequiredHashes
 		    Var ExtractorFile As FolderItem = ExtractorRoot.Child(Entry.Key.StringValue)
@@ -488,7 +488,7 @@ Protected Class ModDiscoveryEngine2
 		    Next
 		    
 		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.1.8.zip")
+		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.2.0.zip")
 		    If DownloadSocket.HTTPStatusCode <> 200 Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Failed to download extractor tool."))
 		      Return
