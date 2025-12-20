@@ -941,6 +941,9 @@ Protected Class ModDiscoveryEngine2
 		    Var ItemPath As String = Self.NormalizePath(DefaultInventoryItems.ValueAt(Idx))
 		    Self.ScanItem(ItemPath)
 		  Next
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -1051,33 +1054,35 @@ Protected Class ModDiscoveryEngine2
 		  If Properties.HasChild("CraftingActorToSpawn") Then
 		    // Need to look for BossArenaClass (another file), OverrideBossClass, or BossClass
 		    Var ActorProperties As JSONMBS = Self.PropertiesForPath(Self.NormalizePath(Properties.Child("CraftingActorToSpawn").Value("AssetPathName")))
-		    Var BossPaths() As String
-		    If ActorProperties.HasKey("OverrideBossClass") Then
-		      BossPaths.Add(Self.NormalizePath(ActorProperties.Child("OverrideBossClass").Value("ObjectPath")))
-		    ElseIf ActorProperties.HasKey("BossClass") Then
-		      BossPaths.Add(Self.NormalizePath(ActorProperties.Child("BossClass").Value("ObjectPath")))
-		    ElseIf ActorProperties.HasKey("BossArenaClass") Then
-		      Var ArenaPath As String = Self.NormalizePath(ActorProperties.Child("BossArenaClass").Value("ObjectPath"))
-		      Var ArenaProperties As JSONMBS = Self.PropertiesForPath(ArenaPath)
-		      If ArenaProperties Is Nil Then
-		        Return
+		    If (ActorProperties Is Nil) = False Then
+		      Var BossPaths() As String
+		      If ActorProperties.HasKey("OverrideBossClass") Then
+		        BossPaths.Add(Self.NormalizePath(ActorProperties.Child("OverrideBossClass").Value("ObjectPath")))
+		      ElseIf ActorProperties.HasKey("BossClass") Then
+		        BossPaths.Add(Self.NormalizePath(ActorProperties.Child("BossClass").Value("ObjectPath")))
+		      ElseIf ActorProperties.HasKey("BossArenaClass") Then
+		        Var ArenaPath As String = Self.NormalizePath(ActorProperties.Child("BossArenaClass").Value("ObjectPath"))
+		        Var ArenaProperties As JSONMBS = Self.PropertiesForPath(ArenaPath)
+		        If ArenaProperties Is Nil Then
+		          Return
+		        End If
+		        
+		        If ArenaProperties.HasKey("BossClass") Then
+		          BossPaths.Add(Self.NormalizePath(ArenaProperties.Child("BossClass").Value("AssetPathName")))
+		        End If
+		        If ArenaProperties.HasKey("SecondBossClass") Then
+		          BossPaths.Add(Self.NormalizePath(ArenaProperties.Child("SecondBossClass").Value("AssetPathName")))
+		        End If
 		      End If
 		      
-		      If ArenaProperties.HasKey("BossClass") Then
-		        BossPaths.Add(Self.NormalizePath(ArenaProperties.Child("BossClass").Value("AssetPathName")))
+		      If BossPaths.Count > 0 Then
+		        Self.AddTagsToPath(Path, "tribute")
 		      End If
-		      If ArenaProperties.HasKey("SecondBossClass") Then
-		        BossPaths.Add(Self.NormalizePath(ArenaProperties.Child("SecondBossClass").Value("AssetPathName")))
-		      End If
+		      
+		      For Each BossPath As String In BossPaths
+		        Self.ScanCreature(BossPath, Self.CreatureOptionIsBoss)
+		      Next
 		    End If
-		    
-		    If BossPaths.Count > 0 Then
-		      Self.AddTagsToPath(Path, "tribute")
-		    End If
-		    
-		    For Each BossPath As String In BossPaths
-		      Self.ScanCreature(BossPath, Self.CreatureOptionIsBoss)
-		    Next
 		  End If
 		  
 		  If Properties.HasKey("StructureToBuild") Then
@@ -1096,6 +1101,9 @@ Protected Class ModDiscoveryEngine2
 		  If Properties.HasKey("DungeonArenaManagerClass") And Properties.Value("DungeonArenaManagerClass").IsNull = False Then
 		    Self.AddTagsToPath(Path, "tribute")
 		  End If
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -1167,6 +1175,9 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanItem(ItemPath)
 		    Next
 		  Next
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -1284,7 +1295,9 @@ Protected Class ModDiscoveryEngine2
 		    Break
 		  End If
 		  
-		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
+		    
 		End Sub
 	#tag EndMethod
 
@@ -1307,6 +1320,9 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanItem(Self.NormalizePath(ItemPaths.ValueAt(ItemIdx)), "harvestable", "resource")
 		    Next
 		  Next
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, File.NativePath)
 		End Sub
 	#tag EndMethod
 
@@ -1485,6 +1501,9 @@ Protected Class ModDiscoveryEngine2
 		      Next
 		    Next
 		  End If
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, PackageName)
 		End Sub
 	#tag EndMethod
 
@@ -1654,6 +1673,9 @@ Protected Class ModDiscoveryEngine2
 		      Self.ScanCreature(CreaturePath)
 		    Next
 		  Next
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -1713,6 +1735,9 @@ Protected Class ModDiscoveryEngine2
 		    End If
 		    Self.ScanItem(ItemPath, ItemOptions)
 		  End If
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -1908,6 +1933,9 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Creature.LastUpdate = Self.mTimestamp
 		  Self.AddBlueprint(Creature, Self.mPathsScanned.Lookup(Path, False).BooleanValue)
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -2012,6 +2040,9 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Item.LastUpdate = Self.mTimestamp
 		  Self.AddBlueprint(Item, Self.mPathsScanned.Lookup(Path, False).BooleanValue)
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -2205,6 +2236,9 @@ Protected Class ModDiscoveryEngine2
 		  
 		  Drop.LastUpdate = Self.mTimestamp
 		  Self.AddBlueprint(Drop, Self.mPathsScanned.Lookup(Path, False).BooleanValue)
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -2231,6 +2265,9 @@ Protected Class ModDiscoveryEngine2
 		  If ItemSet.Count > 0 Then
 		    Drop.Add(ItemSet)
 		  End If
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Drop.Path)
 		End Sub
 	#tag EndMethod
 
@@ -2267,7 +2304,7 @@ Protected Class ModDiscoveryEngine2
 		    Var OptionId As String = Beacon.UUID.v5(EntryId + ":" + Idx.ToString(Locale.Raw, "0"))
 		    Var WeightIdx As Integer = Min(Idx, Weights.LastRowIndex)
 		    Var Weight As Double = If(WeightIdx >= 0, Weights.ValueAt(WeightIdx).DoubleValue * 100, 50)
-		    Var EngramPath As String = Self.NormalizePath(Options.ChildAt(Idx).Value("ObjectPath"))
+		    Var EngramPath As String = Self.NormalizePath(Options.ChildAt(Idx).FirstValue("AssetPathName", "ObjectPath").StringValue)
 		    If EngramPath.IsEmpty Then
 		      Continue
 		    End If
@@ -2279,6 +2316,9 @@ Protected Class ModDiscoveryEngine2
 		  If Entry.Count > 0 Then
 		    ItemSet.Add(Entry)
 		  End If
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "")
 		End Sub
 	#tag EndMethod
 
@@ -2377,6 +2417,9 @@ Protected Class ModDiscoveryEngine2
 		  
 		  SpawnContainer.LastUpdate = Self.mTimestamp
 		  Self.AddBlueprint(SpawnContainer, Self.mPathsScanned.Lookup(Path, False).BooleanValue)
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, Path)
 		End Sub
 	#tag EndMethod
 
@@ -2478,6 +2521,9 @@ Protected Class ModDiscoveryEngine2
 		  Next
 		  
 		  SpawnContainer.AddSet(SpawnSet)
+		  
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, SpawnContainer.Path)
 		End Sub
 	#tag EndMethod
 
