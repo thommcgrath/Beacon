@@ -10,14 +10,14 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   270
+   Height          =   304
    ImplicitInstance=   False
    MacProcID       =   0
-   MaximumHeight   =   270
+   MaximumHeight   =   304
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   270
+   MinimumHeight   =   304
    MinimumWidth    =   400
    Resizeable      =   True
    Title           =   "Creature Stat Editor"
@@ -483,7 +483,7 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   230
+      Top             =   264
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -515,11 +515,84 @@ Begin BeaconDialog ArkSADefineEngramStatDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   230
+      Top             =   264
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
+   End
+   Begin UITweaks.ResizedLabel AMVLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "#FieldLabelAMV"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   222
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   203
+   End
+   Begin UITweaks.ResizedTextField AMVField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   235
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   222
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   145
    End
 End
 #tag EndDesktopWindow
@@ -533,13 +606,14 @@ End
 		  Self.RROLabel.Text = Self.FieldLabelRRO + ":"
 		  Self.RVMLabel.Text = Self.FieldLabelRVM + ":"
 		  Self.SMSLabel.Text = Self.FieldLabelSMS + ":"
-		  BeaconUI.SizeToFit(Self.StatLabel, Self.IVCLabel, Self.RRMLabel, Self.RROLabel, Self.RVMLabel, Self.SMSLabel)
+		  Self.AMVLabel.Text = Self.FieldLabelAMV + ":"
+		  BeaconUI.SizeToFit(Self.StatLabel, Self.IVCLabel, Self.RRMLabel, Self.RROLabel, Self.RVMLabel, Self.SMSLabel, Self.AMVLabel)
 		  
 		  Var FieldLeft As Integer = Self.StatLabel.Right + 12
 		  Var FieldWidth As Integer = Self.Width - (20 + FieldLeft)
 		  Self.StatMenu.Left = FieldLeft
 		  Self.StatMenu.Width = FieldWidth
-		  Var Fields() As DesktopUIControl = Array(Self.IVCField, Self.RRMField, Self.RROField, Self.RVMField, Self.SMSField)
+		  Var Fields() As DesktopUIControl = Array(Self.IVCField, Self.RRMField, Self.RROField, Self.RVMField, Self.SMSField, Self.AMVField)
 		  For Idx As Integer = 0 To Fields.LastIndex
 		    Fields(Idx).Left = FieldLeft
 		    Fields(Idx).Width = FieldWidth
@@ -563,6 +637,7 @@ End
 		    Self.RROField.Text = Self.mStat.RandomizerRangeOverride.PrettyText(True)
 		    Self.RVMField.Text = Self.mStat.RatingValueMultiplier.PrettyText(True)
 		    Self.SMSField.Text = Self.mStat.StateModifierScale.PrettyText(True)
+		    Self.AMVField.Text = Self.mStat.AbsoluteMaxValue.PrettyText(True)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -609,6 +684,9 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = FieldLabelAMV, Type = String, Dynamic = True, Default = \"Absolute Max Value", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = FieldLabelIVC, Type = String, Dynamic = True, Default = \"Initial Value Constant", Scope = Private
 	#tag EndConstant
 
@@ -642,18 +720,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events StatLabel
-#tag EndEvents
-#tag Events RROLabel
-#tag EndEvents
-#tag Events RRMLabel
-#tag EndEvents
-#tag Events SMSLabel
-#tag EndEvents
-#tag Events RVMLabel
-#tag EndEvents
-#tag Events IVCLabel
-#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
@@ -663,7 +729,7 @@ End
 		  End If
 		  
 		  Var StatIndex As Integer = Self.StatMenu.RowTagAt(Self.StatMenu.SelectedRowIndex)
-		  Var IVC, RRM, RRO, RVM, SMS As Double
+		  Var IVC, RRM, RRO, RVM, SMS, AMV As Double
 		  Try
 		    IVC = Double.FromString(Self.IVCField.Text.Trim, Locale.Current)
 		  Catch Err As RuntimeException
@@ -694,8 +760,14 @@ End
 		    Self.ShowAlert(Self.NumericFormatMessage, Language.ReplacePlaceholders(Self.NumericFormatExplanation, Self.FieldLabelSMS))
 		    Return
 		  End Try
+		  Try
+		    AMV = Double.FromString(Self.AMVField.Text.Trim, Locale.Current)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert(Self.NumericFormatMessage, Language.ReplacePlaceholders(Self.NumericFormatExplanation, Self.FieldLabelAMV))
+		    Return
+		  End Try
 		  
-		  Self.mStat = New ArkSA.EngramStat(StatIndex, RRO, RRM, SMS, RVM, IVC)
+		  Self.mStat = New ArkSA.EngramStat(StatIndex, RRO, RRM, SMS, RVM, IVC, AMV)
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub

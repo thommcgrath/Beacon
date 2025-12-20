@@ -1987,7 +1987,8 @@ Protected Class ModDiscoveryEngine2
 		      Var StateModifierScale As Double = StatInfo.Value("StateModifierScale")
 		      Var RatingValueMultiplier As Double = StatInfo.Value("RatingValueMultiplier")
 		      Var InitialValueConstant As Double = StatInfo.Value("InitialValueConstant").DoubleValue + If(StatInfo.Value("DisplayAsPercent").BooleanValue, 100.0, 0.0)
-		      Var Stat As New ArkSA.EngramStat(StatIndex, RandomizerRangeOverride, RandomizerRangeMultiplier, StateModifierScale, RatingValueMultiplier, InitialValueConstant)
+		      Var AbsoluteMaxValue As Double = StatInfo.Lookup("AbsoluteMaxValue")
+		      Var Stat As New ArkSA.EngramStat(StatIndex, RandomizerRangeOverride, RandomizerRangeMultiplier, StateModifierScale, RatingValueMultiplier, InitialValueConstant, AbsoluteMaxValue)
 		      Item.Stat(StatIndex) = Stat
 		    Next
 		  End If

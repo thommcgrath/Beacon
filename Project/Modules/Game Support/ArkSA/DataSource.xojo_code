@@ -138,7 +138,7 @@ Implements ArkSA.BlueprintProvider
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 106
+		  Return 107
 		End Function
 	#tag EndEvent
 

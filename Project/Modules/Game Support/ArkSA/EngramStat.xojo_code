@@ -1,8 +1,18 @@
 #tag Class
 Protected Class EngramStat
 	#tag Method, Flags = &h0
+		Function AbsoluteMaxValue() As Double
+		  Return Self.mAbsoluteMaxValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ComputeEffectiveLimit(Value As Double) As Double
-		  Return Self.mInitialValueConstant + (Min(Value, Self.MaxStatValue) * Self.mStateModifierScale * Self.mRandomizerRangeMultiplier * Self.mInitialValueConstant)
+		  Var EffectiveLimit As Double = Self.mInitialValueConstant + (Min(Value, Self.MaxStatValue) * Self.mStateModifierScale * Self.mRandomizerRangeMultiplier * Self.mInitialValueConstant)
+		  If Self.mAbsoluteMaxValue > 0 Then
+		    EffectiveLimit = Min(EffectiveLimit, Self.mAbsoluteMaxValue)
+		  End If
+		  Return EffectiveLimit
 		End Function
 	#tag EndMethod
 
@@ -13,13 +23,14 @@ Protected Class EngramStat
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(StatIndex As Integer, RandomizerRangeOverride As Double, RandomizerRangeMultiplier As Double, StateModifierScale As Double, RatingValueMultiplier As Double, InitialValueConstant As Double)
+		Sub Constructor(StatIndex As Integer, RandomizerRangeOverride As Double, RandomizerRangeMultiplier As Double, StateModifierScale As Double, RatingValueMultiplier As Double, InitialValueConstant As Double, AbsoluteMaxValue As Double)
 		  Self.mStatIndex = StatIndex
 		  Self.mRandomizerRangeOverride = RandomizerRangeOverride
 		  Self.mRandomizerRangeMultiplier = RandomizerRangeMultiplier
 		  Self.mStateModifierScale = StateModifierScale
 		  Self.mRatingValueMultiplier = RatingValueMultiplier
 		  Self.mInitialValueConstant = InitialValueConstant
+		  Self.mAbsoluteMaxValue = AbsoluteMaxValue
 		End Sub
 	#tag EndMethod
 
@@ -39,6 +50,12 @@ Protected Class EngramStat
 		  Stat.mRatingValueMultiplier = Source.Value("ratingValueMultiplier")
 		  Stat.mStateModifierScale = Source.Value("stateModifierScale")
 		  Stat.mStatIndex = Source.Value("statIndex")
+		  #Pragma BreakOnExceptions Off
+		  Try
+		    Stat.mAbsoluteMaxValue = Source.Value("absoluteMaxValue")
+		  Catch Err As RuntimeException
+		  End Try
+		  #Pragma BreakOnExceptions Default
 		  Return Stat
 		End Function
 	#tag EndMethod
@@ -117,12 +134,17 @@ Protected Class EngramStat
 		  Dict.Value("stateModifierScale") = Self.mStateModifierScale
 		  Dict.Value("ratingValueMultiplier") = Self.mRatingValueMultiplier
 		  Dict.Value("initialValueConstant") = Self.mInitialValueConstant
+		  Dict.Value("absoluteMaxValue") = Self.mAbsoluteMaxValue
 		  Return Dict
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SolveForDesiredLimit(Limit As Double) As Double
+		  If Self.mAbsoluteMaxValue > 0 Then
+		    Limit = Min(Limit, Self.mAbsoluteMaxValue)
+		  End If
+		  
 		  Return Min((Limit - Self.mInitialValueConstant) / (Self.mStateModifierScale * Self.mRandomizerRangeMultiplier * Self.mInitialValueConstant), Self.MaxStatValue)
 		End Function
 	#tag EndMethod
@@ -139,6 +161,10 @@ Protected Class EngramStat
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mAbsoluteMaxValue As Double
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mInitialValueConstant As Double

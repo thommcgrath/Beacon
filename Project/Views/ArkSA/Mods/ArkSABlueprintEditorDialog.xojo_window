@@ -46,7 +46,7 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   2
+      Value           =   6
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -2123,8 +2123,8 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   6
-         ColumnWidths    =   "*,70,70,70,70,70"
+         ColumnCount     =   7
+         ColumnWidths    =   "*,60,60,60,60,60,60"
          DefaultRowHeight=   -1
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -2143,7 +2143,7 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
          Height          =   333
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "Stat	RRO	RRM	SMS	RTM	IVC"
+         InitialValue    =   "Stat	RRO	RRM	SMS	RTM	IVC	AMV"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -2278,6 +2278,8 @@ Begin BeaconDialog ArkSABlueprintEditorDialog
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   38
       Index           =   -2147483648
       InitialParent   =   ""
@@ -2919,6 +2921,7 @@ End
 		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnSMS) = Stat.StateModifierScale.PrettyText(True)
 		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnRVM) = Stat.RatingValueMultiplier.PrettyText(True)
 		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnIVC) = Stat.InitialValueConstant.PrettyText(True)
+		  Self.EngramStatsList.CellTextAt(Row, Self.EngramStatColumnAMV) = Stat.AbsoluteMaxValue.PrettyText(True)
 		End Sub
 	#tag EndMethod
 
@@ -3224,6 +3227,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = CreatureWindowWidth, Type = Double, Dynamic = False, Default = \"540", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = EngramStatColumnAMV, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = EngramStatColumnIVC, Type = Double, Dynamic = False, Default = \"5", Scope = Private
@@ -3931,6 +3937,7 @@ End
 		  Me.ColumnAlignmentAt(Self.EngramStatColumnSMS) = DesktopListbox.Alignments.Right
 		  Me.ColumnAlignmentAt(Self.EngramStatColumnRVM) = DesktopListbox.Alignments.Right
 		  Me.ColumnAlignmentAt(Self.EngramStatColumnIVC) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.EngramStatColumnAMV) = DesktopListBox.Alignments.Right
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -3951,6 +3958,8 @@ End
 		    Result = CompareValues(Values1.RatingValueMultiplier, Values2.RatingValueMultiplier)
 		  Case Self.EngramStatColumnIVC
 		    Result = CompareValues(Values1.InitialValueConstant, Values2.InitialValueConstant)
+		  Case Self.EngramStatColumnAMV
+		    Result = CompareValues(Values1.AbsoluteMaxValue, Values2.AbsoluteMaxValue)
 		  Else
 		    Return False
 		  End Select
