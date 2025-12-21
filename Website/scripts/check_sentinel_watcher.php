@@ -16,16 +16,27 @@ if (file_exists($heartbeatFile) === false) {
 	exit;
 }
 
-$lastHeartbeat = file_get_contents($heartbeatFile);
+$fileContents = file_get_contents($heartbeatFile);
+if (is_numeric($fileContents)) {
+	$heartbeats = ['Main' => (float)$fileContents];
+} else {
+	$heartbeats = json_decode($fileContents, true);
+}
+
 $now = time();
-$delta = $now - (int)$lastHeartbeat;
-if ($delta > 30) {
+foreach ($heartbeats as $thread => $lastHeartbeat) {
+	$delta = $now - (int)$lastHeartbeat;
+	if ($delta <= 30) {
+		continue;
+	}
+
 	exec('killall -s 9 sentinelwatcher');
 	unlink($heartbeatFile);
 	exec(escapeshellarg("{$installPath}/startwatcher.sh"));
-	echo "Watcher has been restarted.\n";
-} else {
-	echo "Watcher is running fine.\n";
+	echo "Thread {$thread} was stuck. Watcher has been restarted.\n";
+	exit;
 }
+
+echo "Watcher is running fine.\n";
 
 ?>
