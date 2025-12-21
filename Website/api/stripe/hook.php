@@ -370,7 +370,6 @@ function CreatePurchaseFromInvoice(array $invoice): BeaconPurchase {
 		$productId = $stripeProduct['metadata']['beacon-uuid'];
 
 
-		echo json_encode($line, JSON_PRETTY_PRINT);
 		$linePrice = $line['amount_excluding_tax'];
 		$quantity = $line['quantity'] ?? 1;
 		if ($quantity === 0) {
