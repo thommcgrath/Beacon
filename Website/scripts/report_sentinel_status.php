@@ -76,8 +76,16 @@ $metrics = [
 ];
 
 if ($publishRate < $minPublishRate || $manualAckRate < $minPublishRate) {
-	if ($publishRate === 0 || $manualAckRate === 0) {
+	if ($publishRate == 0 || $manualAckRate == 0) {
+		$watcherPath = dirname(__FILE__, 2) . '/watcher/bin';
 		$status = STATUS_OUTAGE;
+		if (file_exists("{$watcherPath}/heartbeat")) {
+			echo "Attempting to terminate process…\n";
+			exec('killall -s 9 sentinelwatcher');
+			exec(escapeshellarg("{$watcherPath}/startwatcher.sh"));
+		} else {
+			echo "Process is not running.\n";
+		}
 	} else {
 		$status = STATUS_DEGRADED;
 	}
