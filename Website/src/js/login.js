@@ -3,7 +3,7 @@
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
 
-document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
+document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => {
 	if (loginParams.needsDeviceCode) {
 		const characterWhitelist = '23456789ABCDEFGHJKLMNPRSTUVWXYZabcdefghjklmnprstuvwxyz'.split('');
 
@@ -106,6 +106,13 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 		fromElement.classList.add('hidden');
 		toElement.classList.remove('hidden');
 		currentPage = newPage;
+
+		if (newPage === 'recover') {
+			if (turnstile && recoverWidgetId) {
+				turnstile.reset(recoverWidgetId);
+			}
+			recoverActionButton.disabled = true;
+		}
 	};
 
 	const focusFirst = (fieldIds, requireEmpty = true) => {
@@ -176,6 +183,9 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 	let storedRemember = false;
 	let storedEmail = null;
 	const explicitEmail = loginParams.email;
+
+	let recoverToken = null;
+	let recoverWidgetId = null;
 
 	if (!explicitEmail && localStorage) {
 		storedEmail = localStorage.getItem('email');
@@ -353,6 +363,18 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 				recoverEmailField.value = loginEmailField.value;
 			}
 
+			if (!recoverWidgetId) {
+				recoverWidgetId = turnstile.render("#login_recover_turnstile", {
+					sitekey: '0x4AAAAAACECvY8WPv-VHSJk',
+					theme: 'light',
+					appearance: 'interaction-only',
+					callback: (token) => {
+						recoverToken = token;
+						recoverActionButton.disabled = false;
+					},
+				});
+			}
+
 			showPage('recover');
 			focusFirst([recoverEmailField]);
 
@@ -390,6 +412,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 
 			const params = new URLSearchParams();
 			params.append('email', recoverEmailField.value.trim());
+			params.append('turnstileToken', recoverToken ?? '');
 			if (loginParams.loginId) {
 				params.append('flowId', loginParams.loginId);
 			}

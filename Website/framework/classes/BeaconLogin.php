@@ -6,6 +6,7 @@ class BeaconLogin {
 	public static function Show(array $params): void {
 		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('login.css'));
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
+		BeaconTemplate::AddScript('https://challenges.cloudflare.com/turnstile/v0/api.js');
 
 		$deviceId = BeaconCommon::DeviceId();
 		$session = BeaconCommon::GetSession();
@@ -65,6 +66,7 @@ class BeaconLogin {
 		document.addEventListener('DOMContentLoaded', () => {
 			const event = new Event('beaconRunLoginPage');
 			event.loginParams = <?php echo json_encode($params); ?>;
+			event.turnstile = turnstile;
 			document.dispatchEvent(event);
 		});
 		</script><?php
@@ -282,6 +284,7 @@ class BeaconLogin {
 	<p class="explanation">To create a new Beacon Account or recover an existing Beacon Account, enter your email address.</p>
 	<form id="login_recover_form" action="/account/noscript" method="post">
 		<p class="floating-label"><input class="text-field" type="email" id="recover_email_field" placeholder="E-Mail Address" autocomplete="email" required><label for="recover_email_field">E-Mail Address</label></p>
+		<div id="login_recover_turnstile"></div>
 		<ul class="buttons"><li><input type="submit" id="recover_action_button" value="Continue"></li><li><a id="recover_cancel_button" class="button" href="#<?php echo BeaconCommon::GenerateRandomKey(6); ?>">Cancel</a></li></ul>
 	</form>
 </div>

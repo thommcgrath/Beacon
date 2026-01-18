@@ -125,7 +125,8 @@ BeaconErrors::StartWatching();
 		],
 		'frame-src' => [
 			"'self'",
-			"https://player.vimeo.com"
+			"https://player.vimeo.com",
+			"https://challenges.cloudflare.com",
 		],
 		'style-src' => [
 			"'self'",

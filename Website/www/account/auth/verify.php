@@ -19,9 +19,6 @@ if (empty($email) || BeaconEmail::IsEmailValid($email) == false || (empty($code)
 	exit;
 }
 
-$email = $_POST['email'];
-$key = isset($_POST['key']) ? $_POST['key'] : null;
-$code = isset($_POST['code']) ? $_POST['code'] : null;
 $verification = null;
 if (is_null($code) === false) {
 	$verification = EmailVerificationCode::Fetch($email, $code);
@@ -48,7 +45,7 @@ $response = [
 if (is_null($verification) === false && $verification->IsVerified()) {
 	$response['verified'] = true;
 	$response['code'] = $verification->Code();
-	
+
 	$database = BeaconCommon::Database();
 	$results = $database->Query('SELECT username FROM users WHERE email_id = $1;', $verification->EmailId());
 	if ($results->RecordCount() === 1) {
