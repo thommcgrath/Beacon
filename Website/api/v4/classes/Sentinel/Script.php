@@ -291,6 +291,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 			case LogMessage::EventScriptCommand:
 			case LogMessage::EventSlashCommand:
 			case LogMessage::EventSubroutine:
+			case LogMessage::EventWebhook:
 				$eventKeyword = $event['keyword'] ?? null;
 				$eventArguments = $event['arguments'] ?? null;
 
