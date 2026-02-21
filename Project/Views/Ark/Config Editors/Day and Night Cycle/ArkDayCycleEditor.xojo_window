@@ -1342,10 +1342,10 @@ End
 		  End If
 		  
 		  If Focus <> Self.DayMultiplierField Then
-		    Self.DayMultiplierField.Text = Config.DaySpeedMultiplier.PrettyText
+		    Self.DayMultiplierField.Text = Config.DaySpeedMultiplier.PrettyText(6, True)
 		  End If
 		  If Focus <> Self.NightMultiplierField Then
-		    Self.NightMultiplierField.Text = Config.NightSpeedMultiplier.PrettyText
+		    Self.NightMultiplierField.Text = Config.NightSpeedMultiplier.PrettyText(6, True)
 		  End If
 		  If Focus <> Self.DayLengthField Then
 		    Self.DayLengthField.Text = If(DayLengthMinutes > 0, DayLengthMinutes.PrettyText(2), "∞")
@@ -1426,8 +1426,15 @@ End
 		    Return
 		  End If
 		  
+		  Var DesiredMultiplier As Double
+		  Try
+		    DesiredMultiplier = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = CDbl(Me.Text)
+		  Self.Config(True).DaySpeedMultiplier = DesiredMultiplier
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1441,8 +1448,15 @@ End
 		    Return
 		  End If
 		  
+		  Var DesiredMultiplier As Double
+		  Try
+		    DesiredMultiplier = Double.FromString(Me.Text, Locale.Current)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = CDbl(Me.Text)
+		  Self.Config(True).NightSpeedMultiplier = DesiredMultiplier
 		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False

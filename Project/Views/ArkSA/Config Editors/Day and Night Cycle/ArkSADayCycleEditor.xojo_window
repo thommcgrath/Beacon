@@ -1094,13 +1094,13 @@ End
 		  End If
 		  
 		  If Focus <> Self.DayMultiplierField Then
-		    Self.DayMultiplierField.Text = Config.DaySpeedMultiplier.PrettyText
+		    Self.DayMultiplierField.Text = Config.DaySpeedMultiplier.PrettyText(6, True)
 		  End If
 		  If Focus <> Self.NightMultiplierField Then
-		    Self.NightMultiplierField.Text = Config.NightSpeedMultiplier.PrettyText
+		    Self.NightMultiplierField.Text = Config.NightSpeedMultiplier.PrettyText(6, True)
 		  End If
 		  If Focus <> Self.ScaleMultiplierField Then
-		    Self.ScaleMultiplierField.Text = Config.ScaleMultiplier.PrettyText
+		    Self.ScaleMultiplierField.Text = Config.ScaleMultiplier.PrettyText(6, True)
 		  End If
 		  If Focus <> Self.DayLengthField Then
 		    Self.DayLengthField.Text = If(DayLengthSeconds > 0, Beacon.SecondsToString(Round(DayLengthSeconds)), "∞")
