@@ -433,14 +433,19 @@ End
 		  #Pragma Unused Sender
 		  
 		  #if TargetMacOS
-		    Var URL As String = NavigationAction.Request.URL
-		    If RaiseEvent CancelLoad(URL) Then
+		    Try
+		      Var URL As String = NavigationAction.Request.URL
+		      If RaiseEvent CancelLoad(URL) Then
+		        DecisionHandler.Cancel
+		        Return
+		      End If
+		      
+		      RaiseEvent DocumentBegin(URL)
+		      DecisionHandler.Allow()
+		    Catch Err As RuntimeException
 		      DecisionHandler.Cancel
-		      Return
-		    End If
-		    
-		    RaiseEvent DocumentBegin(URL)
-		    DecisionHandler.Allow()
+		      Raise Err
+		    End Try
 		  #else
 		    #Pragma Unused NavigationAction
 		    #Pragma Unused DecisionHandler
