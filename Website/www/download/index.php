@@ -128,6 +128,12 @@ function BuildLinks(array $update): array {
 	list($mac_major, $mac_minor, $mac_bug) = explode('.', $min_mac_version, 3);
 	$min_mac_version = ($mac_major * 10000) + ($mac_minor * 100) + $mac_bug;
 	$mac_versions = [];
+	if ($min_mac_version <= 102100) {
+		$mac_versions[] = '26 Tahoe';
+	}
+	if ($min_mac_version <= 102000) {
+		$mac_versions[] = '15 Sequoia';
+	}
 	if ($min_mac_version <= 101900) {
 		$mac_versions[] = '14 Sonoma';
 	}
