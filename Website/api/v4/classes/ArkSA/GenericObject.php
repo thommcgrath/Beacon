@@ -174,7 +174,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			$table = $schema->Table();
 			$queryPlaceholder = '$' . $parameters->AddValue($filters['label'] ?? $filters['alternateLabel']);
 			$likePlaceholder = '$' . $parameters->AddValue('%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $filters['label'] ?? $filters['alternateLabel']) . '%');
-			$parameters->clauses[] = "({$table}.label_vector @@ websearch_to_tsquery('english', {$queryPlaceholder}) OR {$table}.alternate_label_vector @@ websearch_to_tsquery('english', {$queryPlaceholder}) OR {$table}.path ILIKE {$likePlaceholder})";
+			$parameters->clauses[] = "({$table}.label_vector @@ websearch_to_tsquery('english', {$queryPlaceholder}) OR {$table}.alternate_label_vector @@ websearch_to_tsquery('english', {$queryPlaceholder}) OR COALESCE({$table}.label, '') ILIKE {$likePlaceholder} OR COALESCE({$table}.alternate_label, '') ILIKE {$likePlaceholder} OR {$table}.path ILIKE {$likePlaceholder})";
 		}
 	}
 
