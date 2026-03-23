@@ -284,6 +284,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 
 			switch ($eventContext) {
 			case LogMessage::EventCron:
+			case LogMessage::EventCustomModEvent:
 			case LogMessage::EventManualCharacterScript:
 			case LogMessage::EventManualDinoScript:
 			case LogMessage::EventManualServiceScript:

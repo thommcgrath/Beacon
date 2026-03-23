@@ -54,6 +54,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 	const EventClusterIdChanged = 'clusterIdChanged';
 	const EventCron = 'cron';
 	const EventCustomMessage = 'customMessage';
+	const EventCustomModEvent = 'customModEvent';
 	const EventDinoClaimed = 'dinoClaimed';
 	const EventDinoDied = 'dinoDied';
 	const EventDinoDownloaded = 'dinoDownloaded';
@@ -103,6 +104,7 @@ class LogMessage extends DatabaseObject implements JsonSerializable {
 		self::EventClusterIdChanged,
 		self::EventCron,
 		self::EventCustomMessage,
+		self::EventCustomModEvent,
 		self::EventDinoClaimed,
 		self::EventDinoDied,
 		self::EventDinoDownloaded,
