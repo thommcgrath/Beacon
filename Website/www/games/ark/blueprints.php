@@ -12,7 +12,7 @@ if (is_null($currentGroup)) {
 
 $tagHuman = '';
 $tag = trim($_GET['tag'] ?? '');
-$page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 1;
 $search = strtolower(trim($_GET['search'] ?? ''));
 
 $filters = [
