@@ -2,9 +2,13 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
+while (ob_get_level() > 0) {
+	ob_end_clean();
+}
 
 use BeaconAPI\v4\Sentinel\Dino;
 
+echo "Cleaning Sentinel data…\n";
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
 $rows = $database->Query("DELETE FROM sentinel.services WHERE user_id IN (SELECT user_id FROM (SELECT user_id, game_id, MAX(date_expires) + MAX((user_subscriptions.metadata->>'gracePeriod' || ' days')::INTERVAL) AS purge_date FROM public.user_subscriptions GROUP BY user_id, game_id) WHERE purge_date < CURRENT_TIMESTAMP) RETURNING service_id;");
@@ -19,5 +23,9 @@ $rows = $database->Query("DELETE FROM sentinel.scripts WHERE deleted = TRUE AND 
 echo "Deleted {$rows->RecordCount()} unused scripts.\n";
 $database->Commit();
 echo "Sentinel data cleaned\n";
+
+echo "Vacuuming…\n";
+$database->Query('VACUUM');
+echo "Finished\n";
 
 ?>
