@@ -140,7 +140,6 @@ try {
 				'sentinel.script_tests' => 'user_id',
 				'sentinel.script_webhooks' => 'user_id',
 				'sentinel.scripts' => 'user_id',
-				'sentinel.scripts_legacy' => 'user_id',
 				'sentinel.services' => 'user_id',
 			];
 			foreach ($tablesToUpdate as $table => $column) {
