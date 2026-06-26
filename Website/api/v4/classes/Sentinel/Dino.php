@@ -33,7 +33,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 	protected string $serviceColor;
 	protected string $tribeId;
 	protected string $tribeName;
-	protected ?string $cryopodData;
+	protected bool $hasCryopodData;
 	protected int $permissions;
 
 	public function __construct(BeaconRecordSet $row) {
@@ -54,7 +54,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		$this->serviceId = $row->Field('service_id');
 		$this->serviceDisplayName = $row->Field('service_display_name');
 		$this->serviceColor = $row->Field('service_color');
-		$this->cryopodData = $row->Field('cryopod_data');
+		$this->hasCryopodData = $row->Field('has_cryopod_data');
 		$this->permissions = $row->Field('permissions');
 	}
 
@@ -80,7 +80,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 				new DatabaseObjectProperty('serviceColor', ['columnName' => 'service_color', 'accessor' => 'services.color']),
 				new DatabaseObjectProperty('tribeId', ['columnName' => 'tribe_id', 'accessor' => 'tribes.tribe_id']),
 				new DatabaseObjectProperty('tribeName', ['columnName' => 'tribe_name', 'accessor' => 'tribes.name']),
-				new DatabaseObjectProperty('cryopodData', ['columnName' => 'cryopod_data', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+				new DatabaseObjectProperty('hasCryopodData', ['columnName' => 'has_cryopod_data', 'accessor' => 'dinos.has_cryopod_data', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
 				new DatabaseObjectProperty('permissions', ['columnName' => 'permissions', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever, 'accessor' => 'service_permissions.permissions']),
 			],
 			joins: [
@@ -191,14 +191,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function RestoreEligible(): bool {
-		return $this->dinoStatus === static::StatusDead && is_null($this->cryopodData) === false;
-	}
-
-	public function CryopodData(): ?array {
-		if (is_null($this->cryopodData)) {
-			return null;
-		}
-		return json_decode(gzdecode($this->cryopodData), true);
+		return $this->dinoStatus === static::StatusDead && $this->hasCryopodData === true;
 	}
 
 	public function DescriptiveName(): string {
