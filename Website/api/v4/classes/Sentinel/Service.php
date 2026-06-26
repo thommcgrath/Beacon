@@ -1,8 +1,8 @@
 <?php
 
 namespace BeaconAPI\v4\Sentinel;
-use BeaconAPI\v4\{Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, Subscription, User};
-use BeaconChannelEvent, BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRabbitMQ, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconAPI\v4\{APIException, Application, Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, ResourceLimit, Subscription, User};
+use BeaconChannelEvent, BeaconCommon, BeaconDatabase, BeaconEncryption, BeaconPusher, BeaconRabbitMQ, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
 
 class Service extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
@@ -225,6 +225,9 @@ class Service extends DatabaseObject implements JsonSerializable {
 			],
 			joins: [
 				'INNER JOIN sentinel.service_permissions ON (services.service_id = service_permissions.service_id AND service_permissions.user_id = COALESCE(%%USER_ID%%, services.user_id))',
+			],
+			conditions: [
+				"%%TABLE%%.deleted = FALSE",
 			],
 		);
 	}
@@ -536,11 +539,20 @@ class Service extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function Delete(): void {
-		$this->MDODelete();
+		try {
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			$database->Query('UPDATE sentinel.services SET deleted = TRUE WHERE service_id = $1;', $this->serviceId);
+			$database->Query('INSERT INTO sentinel.purge_jobs (job_id, service_id) VALUES ($1, $2) ON CONFLICT (service_id) DO NOTHING;', BeaconUUID::v7(), $this->serviceId);
+			$database->Commit();
 
-		BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.services.' . $this->serviceId . '.socketCommand', json_encode([
-			'command' => 'kick',
-		]));
+			BeaconRabbitMQ::SendMessage('sentinel_exchange', 'sentinel.services.' . $this->serviceId . '.socketCommand', json_encode([
+				'command' => 'kick',
+			]));
+		} catch (Exception $err) {
+			$database->Rollback();
+			throw new APIException(message: $err->getMessage(), code: 'unhandledException');
+		}
 	}
 
 	public function Sign(string $input, string $algorithm = 'sha256'): string {
