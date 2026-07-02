@@ -9,7 +9,7 @@ require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 use BeaconAPI\v4\{Ark, ArkSA, Project, User};
 
-$projectId = $_GET['projectId'] ?? $_GET['projectId'];
+$projectId = $_GET['projectId'] ?? $_GET['document_id'] ?? '';
 $project = Project::Fetch($projectId);
 if (is_null($project) || $project->IsPublic() === false) {
 	http_response_code(404);

@@ -99,35 +99,43 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	}
 
 	public static function Fetch(string $uuid): ?static {
-		$schema = static::DatabaseSchema();
-		$database = BeaconCommon::Database();
+		try {
+			$schema = static::DatabaseSchema();
+			$database = BeaconCommon::Database();
 
-		$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ' AND ' . $schema->Accessor('role') . ' = ' . $schema->Setter('role', '$2');
-		$values = [$uuid, 'Owner'];
+			$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ' AND ' . $schema->Accessor('role') . ' = ' . $schema->Setter('role', '$2');
+			$values = [$uuid, 'Owner'];
 
-		//header('Fetch: ' . $sql);
-		$rows = $database->Query($sql, $values);
-		if (is_null($rows) || $rows->RecordCount() !== 1) {
+			//header('Fetch: ' . $sql);
+			$rows = $database->Query($sql, $values);
+			if (is_null($rows) || $rows->RecordCount() !== 1) {
+				return null;
+			}
+			return static::NewInstance($rows);
+		} catch (Exception $err) {
 			return null;
 		}
-		return static::NewInstance($rows);
 	}
 
 	public static function FetchForUser(string $projectId, User|string $userId): ?static {
-		$schema = static::DatabaseSchema();
-		$database = BeaconCommon::Database();
+		try {
+			$schema = static::DatabaseSchema();
+			$database = BeaconCommon::Database();
 
-		if (!is_string($userId)) {
-			$userId = $userId->UserId();
-		}
+			if (!is_string($userId)) {
+				$userId = $userId->UserId();
+			}
 
-		$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ' AND ' . $schema->Accessor('userId') . ' = ' . $schema->Setter('userId', '$2');
-		$values = [$projectId, $userId];
-		$rows = $database->Query($sql, $values);
-		if (is_null($rows) || $rows->RecordCount() !== 1) {
+			$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ' AND ' . $schema->Accessor('userId') . ' = ' . $schema->Setter('userId', '$2');
+			$values = [$projectId, $userId];
+			$rows = $database->Query($sql, $values);
+			if (is_null($rows) || $rows->RecordCount() !== 1) {
+				return null;
+			}
+			return static::NewInstance($rows);
+		} catch (Exception $err) {
 			return null;
 		}
-		return static::NewInstance($rows);
 	}
 
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
