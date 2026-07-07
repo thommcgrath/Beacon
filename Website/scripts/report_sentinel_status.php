@@ -75,19 +75,42 @@ $metrics = [
 	],
 ];
 
-if ($publishRate < $minPublishRate || $manualAckRate < $minPublishRate) {
-	if ($publishRate == 0 || $manualAckRate == 0) {
-		$watcherPath = dirname(__FILE__, 2) . '/watcher/bin';
-		$status = STATUS_OUTAGE;
-		if (file_exists("{$watcherPath}/heartbeat")) {
-			echo "Attempting to terminate process…\n";
-			exec('killall -s 9 sentinelwatcher');
-			exec(escapeshellarg("{$watcherPath}/startwatcher.sh"));
+if ($minPublishRate > 0 && ($publishRate == 0 || $manualAckRate == 0)) {
+	$watcherPath = dirname(__FILE__, 2) . '/watcher/bin';
+	if (file_exists("{$watcherPath}/heartbeat")) {
+		echo "Attempting to terminate process…\n";
+		$originalPid = intval(exec('pidof sentinelwatcher'));
+		exec('killall -s 9 sentinelwatcher');
+		
+		// Record the the time after the stop but before the start.
+		$messageTime = microtime(true);
+		$messageId = BeaconUUID::v7($messageTime * 1000);
+		
+		exec(escapeshellarg("{$watcherPath}/startwatcher.sh"));
+		$newPid = intval(exec('pidof sentinelwatcher'));
+		$logMessage = null;
+		if ($newPid > 0 && $newPid !== $originalPid) {
+			// Restarted sucessfully
+			$logMessage = "Terminated watcher PID {$originalPid}. New watcher process is {$newPid}.";
 		} else {
-			echo "Process is not running.\n";
+			$status = STATUS_OUTAGE;
+			
+			if ($newPid === $originalPid) {
+				$logMessage = "Attempted to terminate stuck watcher {$originalPid} but the process did not stop.";
+			} else {
+				$logMessage = "Terminated stuck watcher {$originalPid} but new process did not start up.";
+			}
+		}
+		
+		if (is_null($logMessage) === false) {
+			$database->BeginTransaction();
+			$database->Query('INSERT INTO sentinel.watcher_logs (message_id, message, message_time) VALUES ($1, $2, TO_TIMESTAMP($3));', $messageId, $logMessage, $messageTime);
+			$database->CommitTransaction();
+			echo "{$logMessage}\n";
 		}
 	} else {
-		$status = STATUS_DEGRADED;
+		$status = STATUS_OUTAGE;
+		echo "Process is not running.\n";
 	}
 }
 
