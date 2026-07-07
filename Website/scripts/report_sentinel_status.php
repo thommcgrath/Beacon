@@ -104,7 +104,7 @@ if ($minPublishRate > 0 && ($publishRate == 0 || $manualAckRate == 0)) {
 		
 		if (is_null($logMessage) === false) {
 			$database->BeginTransaction();
-			$database->Query('INSERT INTO sentinel.watcher_logs (message_id, message, message_time) VALUES ($1, $2, TO_TIMESTAMP($3));', $messageId, $logMessage, $messageTime);
+			$database->Query('INSERT INTO sentinel.watcher_logs (message_id, message, message_time, hostname) VALUES ($1, $2, TO_TIMESTAMP($3), $4);', $messageId, $logMessage, $messageTime, gethostname());
 			$database->CommitTransaction();
 			echo "{$logMessage}\n";
 		}
