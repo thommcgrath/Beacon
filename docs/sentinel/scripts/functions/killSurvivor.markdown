@@ -9,7 +9,7 @@ parameters:
     type: String
     description: The Sentinel UUID of the survivor that should be killed.
 examples:
-  - title: Kick a survivor
+  - title: Kill a survivor
     code: beacon.killSurvivor('305b1849-c7ac-5a4b-afe9-86628d91bf23');
 ---
 # {{page.title}}
