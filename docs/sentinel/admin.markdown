@@ -10,5 +10,6 @@ Sentinel supports a handful of admin commands that can help with troubleshooting
 - `cheat scriptcommand sentinel restartqueue`: The Sentinel event queue uses numbered events to ensure they are processed in the correct sequence. This command restarts the queue from 1 and renumbers existing queued events accordingly.
 - `cheat scriptcommand sentinel breakqueue`: Intentionally messes up the queue to test the network's behavior of an interrupted queue.
 - `cheat scriptcommand sentinel emptyqueue`: Events are normally removed once the Sentinel network has confirmed their receipt, but the mod will continue to queue events to the map save file if disconnected. This command will delete all queued events.
-- `cheat scriptcommand sentinel disable`: Turns off the Sentinel mod. If connected to the Sentinel network, the connection will be closed. The event queue will be emptied, and no new events will be added to the queue.
+- `cheat scriptcommand sentinel disable`: Turns off the Sentinel mod. If connected to the Sentinel network, the connection will be closed. The event queue will be emptied, and no new events will be added to the queue. This effect will persist between reboots.
 - `cheat scriptcommand sentinel enable`: If Sentinel has been disabled, returns the mod to normal behavior.
+- `cheat scriptcommand sentinel debugmode`: Toggles Sentinel debug message logging to the server's log file. A private chat message will be sent confirming the new state. This change is not persistent and will be set according to GameUserSettings.ini on reboot.
