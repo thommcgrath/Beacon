@@ -3,7 +3,7 @@
 // This file signs a user out and provides "manage account" functionality to Beacon 1.6 and earlier
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 use BeaconAPI\v4\Session;
 

@@ -183,7 +183,7 @@ if (is_null($cached)) {
 header('Content-Type: application/json');
 header('Content-Disposition: attachment; filename="' . $cached['filename'] . '"');
 header('Content-MD5: ' . $cached['md5']);
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 if (BeaconCommon::CompressedResponseAllowed()) {
 	header('Content-Encoding: gzip');
 	echo $cached['body'];

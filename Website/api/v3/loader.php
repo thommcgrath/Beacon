@@ -1,7 +1,7 @@
 <?php
 	
 header('Content-Type: application/json');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 // classes local to this API will get loaded first
 spl_autoload_register(function($class_name) {

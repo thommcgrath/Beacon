@@ -1,7 +1,7 @@
 <?php
 	
 header('Content-Type: application/json');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 $api_version = 4;
 require(dirname(__FILE__, 3) . '/framework/loader.php');

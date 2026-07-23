@@ -2,7 +2,7 @@
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 BeaconTemplate::SetBodyClass('purple');
 

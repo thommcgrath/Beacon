@@ -3,7 +3,7 @@
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('reportaproblem.css'));
 
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 $method = strtoupper($_SERVER['REQUEST_METHOD']);
 switch ($method) {

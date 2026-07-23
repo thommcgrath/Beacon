@@ -3,7 +3,7 @@
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
 header('Content-Type: application/json');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 	http_response_code(405);

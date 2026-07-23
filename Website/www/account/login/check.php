@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 if (empty($_POST['email']) || empty($_POST['password'])) {
 	header('Location: ./');

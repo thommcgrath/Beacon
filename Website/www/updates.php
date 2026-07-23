@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 $stage = 3;
 if (isset($_GET['stage'])) {

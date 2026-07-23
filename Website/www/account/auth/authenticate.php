@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Content-Type: application/json');
 
 use BeaconAPI\v4\{Application, ApplicationAuthFlow, Response, Core, Session, User};

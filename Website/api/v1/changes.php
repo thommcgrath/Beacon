@@ -23,7 +23,7 @@ $arr = array(
 );
 
 header('Content-Type: application/json');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 echo json_encode($arr, JSON_PRETTY_PRINT);
 
 ?>

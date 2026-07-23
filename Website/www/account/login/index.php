@@ -4,7 +4,7 @@ require(dirname(__FILE__, 4) . '/framework/loader.php');
 
 use BeaconAPI\v4\{EmailVerificationCode, Session, User};
 
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 BeaconCommon::StartSession();
 BeaconTemplate::SetTitle('Beacon Login');
 BeaconTemplate::SetBodyClass('purple');

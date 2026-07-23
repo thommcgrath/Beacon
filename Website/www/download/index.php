@@ -1,6 +1,6 @@
 <?php
 require(dirname(__FILE__, 3) . '/framework/loader.php');
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Accept-CH: UA-Mobile, UA-Arch, UA-Platform, UA-Bitness');
 BeaconTemplate::SetTitle('Download');
 BeaconTemplate::SetPageDescription('Download Beacon for Windows and macOS');

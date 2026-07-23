@@ -15,7 +15,7 @@ $session = BeaconCommon::GetSession();
 $is_logged_in = is_null($session) === false;
 $user = $is_logged_in ? $session->User() : null;
 
-header('Cache-Control: no-cache');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 $database = BeaconCommon::Database();
 
