@@ -45,6 +45,10 @@ Implements Beacon.LogProducer
 		    Self.mProvider = New FTP.HostingProvider(Self)
 		  Case Local.Identifier
 		    Self.mProvider = New Local.HostingProvider(Self)
+		  Case BeaconHostingAPI.Identifier
+		    Self.mProvider = New BeaconHostingAPI.HostingProvider(Self)
+		  Else
+		    Break
 		  End Select
 		  
 		  Self.mProfile = Profile

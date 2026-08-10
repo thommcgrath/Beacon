@@ -46,7 +46,10 @@ Protected Class HostConfig
 		  Case FTP.Identifier
 		    Return New FTP.HostConfig(SaveData, Version)
 		  Case Local.Identifier
-		    
+		  Case BeaconHostingAPI.Identifier
+		    Return New BeaconHostingAPI.HostConfig(SaveData, Version)
+		  Else
+		    Break
 		  End Select
 		End Function
 	#tag EndMethod

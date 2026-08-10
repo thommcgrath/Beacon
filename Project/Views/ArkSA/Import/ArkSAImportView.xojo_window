@@ -1,28 +1,46 @@
 #tag DesktopWindow
 Begin DocumentImportView ArkSAImportView
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
+   AllowAutoDeactivate=   "True"
+   AllowFocus      =   "False"
+   AllowFocusRing  =   "False"
+   AllowTabs       =   "True"
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composited      =   False
-   Enabled         =   True
+   Composite       =   False
+   Composited      =   "False"
+   DefaultLocation =   2
+   Enabled         =   "True"
+   FullScreen      =   False
    HasBackgroundColor=   False
+   HasCloseButton  =   True
+   HasFullScreenButton=   False
+   HasMaximizeButton=   True
+   HasMinimizeButton=   True
    Height          =   480
-   Index           =   -2147483648
+   ImplicitInstance=   True
+   Index           =   "-2147483648"
    InitialParent   =   ""
-   Left            =   0
-   LockBottom      =   False
-   LockLeft        =   True
-   LockRight       =   False
-   LockTop         =   True
-   TabIndex        =   0
-   TabPanelIndex   =   0
-   TabStop         =   True
+   Left            =   "0"
+   LockBottom      =   "False"
+   LockLeft        =   "True"
+   LockRight       =   "False"
+   LockTop         =   "True"
+   MacProcID       =   0
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
+   MenuBar         =   0
+   MenuBarVisible  =   False
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Resizeable      =   True
+   TabIndex        =   "0"
+   TabPanelIndex   =   "0"
+   TabStop         =   "True"
+   Title           =   "Untitled"
    Tooltip         =   ""
-   Top             =   0
-   Transparent     =   False
+   Top             =   "0"
+   Transparent     =   "False"
+   Type            =   0
    Visible         =   True
    Width           =   720
    Begin DesktopPagePanel Views
@@ -37,7 +55,7 @@ Begin DocumentImportView ArkSAImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   9
+      PanelCount      =   10
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -47,10 +65,10 @@ Begin DocumentImportView ArkSAImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   720
-      Begin FTPDiscoveryView FTPDiscoveryView1
+      Begin FTPDiscoveryView FTPView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -79,7 +97,7 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
-      Begin ArkSAFilesDiscoveryView FilesDiscoveryView1
+      Begin ArkSAFilesDiscoveryView FilesView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -388,7 +406,7 @@ Begin DocumentImportView ArkSAImportView
       End
       Begin DocumentImportSourcePicker SourcePicker
          AllowAutoDeactivate=   True
-         AllowedSources  =   127
+         AllowedSources  =   255
          AllowFocus      =   False
          AllowFocusRing  =   False
          AllowTabs       =   True
@@ -396,9 +414,9 @@ Begin DocumentImportView ArkSAImportView
          BackgroundColor =   &cFFFFFF
          Composited      =   False
          Enabled         =   True
-         EnabledSources  =   127
+         EnabledSources  =   255
          HasBackgroundColor=   False
-         Height          =   314
+         Height          =   378
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -449,7 +467,7 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   False
          Width           =   80
       End
-      Begin ArkSAClipboardDiscoveryView ClipboardDiscoveryView1
+      Begin ArkSAClipboardDiscoveryView ClipboardView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -478,7 +496,7 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
-      Begin MultiSelectDiscoveryView NitradoDiscoveryView1
+      Begin MultiSelectDiscoveryView NitradoView
          AddressColumnLabel=   "Address"
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -508,7 +526,7 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
-      Begin MultiSelectDiscoveryView GSADiscoveryView1
+      Begin MultiSelectDiscoveryView GSAView
          AddressColumnLabel=   "Template Id"
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -538,7 +556,7 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
-      Begin MultiSelectDiscoveryView ASAManagerDiscoveryView
+      Begin MultiSelectDiscoveryView ASAManagerView
          AddressColumnLabel=   "Container Id"
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -568,6 +586,36 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
+      Begin MultiSelectDiscoveryView BeaconHostingView
+         AddressColumnLabel=   "Address"
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   10
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
    End
    Begin Timer DiscoveryWatcher
       Enabled         =   True
@@ -584,11 +632,12 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Cleanup()
-		  Self.ClipboardDiscoveryView1.Cleanup
-		  Self.FilesDiscoveryView1.Cleanup
-		  Self.FTPDiscoveryView1.Cleanup
-		  Self.GSADiscoveryView1.Cleanup
-		  Self.NitradoDiscoveryView1.Cleanup
+		  Self.ClipboardView.Cleanup
+		  Self.FilesView.Cleanup
+		  Self.FTPView.Cleanup
+		  Self.GSAView.Cleanup
+		  Self.NitradoView.Cleanup
+		  Self.BeaconHostingView.Cleanup
 		End Sub
 	#tag EndEvent
 
@@ -620,7 +669,7 @@ End
 		Sub ImportFile(File As FolderItem)
 		  Self.QuickCancel = True
 		  Self.Views.SelectedPanelIndex = 3
-		  Self.FilesDiscoveryView1.AddFile(File)
+		  Self.FilesView.AddFile(File)
 		End Sub
 	#tag EndEvent
 
@@ -641,11 +690,12 @@ End
 		  
 		  Var ArkProject As ArkSA.Project = ArkSA.Project(Project)
 		  Self.mDestinationProject = ArkProject
-		  Self.FTPDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.FilesDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.ClipboardDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.NitradoDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.GSADiscoveryView1.PullValuesFromProject(ArkProject)
+		  Self.FTPView.PullValuesFromProject(ArkProject)
+		  Self.FilesView.PullValuesFromProject(ArkProject)
+		  Self.ClipboardView.PullValuesFromProject(ArkProject)
+		  Self.NitradoView.PullValuesFromProject(ArkProject)
+		  Self.GSAView.PullValuesFromProject(ArkProject)
+		  Self.BeaconHostingView.PullValuesFromProject(ArkProject)
 		End Sub
 	#tag EndEvent
 
@@ -893,6 +943,9 @@ End
 	#tag Constant, Name = PageASAManager, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"9", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
@@ -931,24 +984,26 @@ End
 		    Self.SetPageHeight(Self.SourcePicker.Height)
 		    Self.SourcePicker.ActionButtonEnabled = True
 		  Case Self.PageNitrado
-		    Self.NitradoDiscoveryView1.Begin
+		    Self.NitradoView.Begin
 		  Case Self.PageFTP
-		    Self.FTPDiscoveryView1.Begin
+		    Self.FTPView.Begin
 		  Case Self.PageFiles
-		    Self.FilesDiscoveryView1.Begin
+		    Self.FilesView.Begin
 		  Case Self.PageClipboard
-		    Self.ClipboardDiscoveryView1.Begin
+		    Self.ClipboardView.Begin
 		  Case Self.PageStatus, Self.PageOtherDocuments
 		    Self.SetPageHeight(Self.StatusPageHeight)
 		  Case Self.PageGSA
-		    Self.GSADiscoveryView1.Begin
+		    Self.GSAView.Begin
 		  Case Self.PageASAManager
-		    Self.ASAManagerDiscoveryView.Begin
+		    Self.ASAManagerView.Begin
+		  Case Self.PageBeaconHostingAPI
+		    Self.BeaconHostingView.Begin
 		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events FTPDiscoveryView1
+#tag Events FTPView
 	#tag Event
 		Sub ShouldCancel()
 		  If Self.QuickCancel Then
@@ -1135,7 +1190,7 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events FilesDiscoveryView1
+#tag Events FilesView
 	#tag Event
 		Sub ShouldCancel()
 		  If Self.QuickCancel Then
@@ -1261,6 +1316,8 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageClipboard
 		  Case Me.SourceNitrado
 		    Self.Views.SelectedPanelIndex = Self.PageNitrado
+		  Case Me.SourceBeaconHostingAPI
+		    Self.Views.SelectedPanelIndex = Self.PageBeaconHostingAPI
 		  Case Me.SourceOtherProject
 		    Self.OtherDocsList.RemoveAllRows
 		    Self.OtherDocsList.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
@@ -1288,7 +1345,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ClipboardDiscoveryView1
+#tag Events ClipboardView
 	#tag Event
 		Sub Finished(Profiles() As Beacon.ServerProfile)
 		  Self.Discover(Profiles)
@@ -1314,7 +1371,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events NitradoDiscoveryView1
+#tag Events NitradoView
 	#tag Event
 		Sub ShouldCancel()
 		  If Self.QuickCancel Then
@@ -1350,7 +1407,7 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events GSADiscoveryView1
+#tag Events GSAView
 	#tag Event
 		Sub Finished(Profiles() As Beacon.ServerProfile)
 		  Self.Discover(Profiles)
@@ -1386,7 +1443,7 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events ASAManagerDiscoveryView
+#tag Events ASAManagerView
 	#tag Event
 		Sub Finished(Profiles() As Beacon.ServerProfile)
 		  Self.Discover(Profiles)
@@ -1420,6 +1477,42 @@ End
 		Function GameId() As String
 		  Return ArkSA.Identifier
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events BeaconHostingView
+	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New BeaconHostingAPI.HostingProvider
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return ArkSA.Identifier
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher

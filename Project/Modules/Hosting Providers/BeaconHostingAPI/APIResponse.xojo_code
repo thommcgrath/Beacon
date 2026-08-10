@@ -13,14 +13,20 @@ Private Class APIResponse
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As Nitrado.APIResponse
-		  Var Response As New Nitrado.APIResponse
+		Shared Function FromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As BeaconHostingAPI.APIResponse
+		  Var Response As New BeaconHostingAPI.APIResponse
 		  Response.mHTTPStatus = Socket.LastHTTPStatus
 		  Response.mUrl = Socket.LastURL
 		  Response.mError = Socket.LastException
 		  If (Socket.LastContent Is Nil) = False Then
 		    Response.mContent = Socket.LastContent
 		  End If
+		  
+		  // This is not fantastic because duplicate headers are a thing and a Dictionary won't support that
+		  Response.mHeaders = New Dictionary
+		  For Each Header As Pair In Socket.ResponseHeaders
+		    Response.mHeaders.Value(Header.Left) = Header.Right
+		  Next
 		  
 		  Select Case Response.mHTTPStatus
 		  Case 200, 201, 204
@@ -29,17 +35,17 @@ Private Class APIResponse
 		  
 		  Var SocketErr As RuntimeException = Socket.LastException
 		  If SocketErr Is Nil Then
-		    Var Err As New Nitrado.APIException
+		    Var Err As New BeaconHostingAPI.APIException
 		    Err.ErrorNumber = Response.mHTTPStatus
 		    Select Case Response.mHTTPStatus
 		    Case 401
-		      Err.Message = "The connection between your Beacon and Nitrado accounts is no longer valid and must be replaced. Use the 'Account Control Panel' option from the user menu in the top right corner of Beacon to access your account, then choose the 'Connections' section."
+		      Err.Message = "The connection between your Beacon and host is no longer valid and must be replaced. Use the 'Account Control Panel' option from the user menu in the top right corner of Beacon to access your account, then choose the 'Connections' section."
 		    Case 429
 		      Err.Message = "Rate limit has been exceeded."
 		    Case 503
-		      Err.Message = "Nitrado is offline for maintenance."
+		      Err.Message = "Your host is offline for maintenance."
 		    Case 502, 504
-		      Err.Message = "Nitrado appears to be having an unplanned outage."
+		      Err.Message = "Your host appears to be having an unplanned outage."
 		    Case 500
 		      Var TempMessage As String
 		      If Response.mContent.IsEmpty = False Then
@@ -51,12 +57,10 @@ Private Class APIResponse
 		        Catch ParseErr As RuntimeException
 		        End Try
 		      End If
-		      If TempMessage = "The service is currently in state 4 but it expecting state 2,3." Then
-		        Err.Message = TempMessage + " The service may be expired."
-		      ElseIf TempMessage.IsEmpty = False Then
+		      If TempMessage.IsEmpty = False Then
 		        Err.Message = TempMessage
 		      Else
-		        Err.Message = "Nitrado responded with an error but no message."
+		        Err.Message = "Your host responded with an error but no message."
 		      End If
 		    Else
 		      Err.Message = "Unexpected HTTP status " + Err.ErrorNumber.ToString(Locale.Raw, "0") + "."
@@ -69,7 +73,7 @@ Private Class APIResponse
 		    Response.mError = Err
 		  Else
 		    If SocketErr.Message.Contains("likely a bad url") Then
-		      SocketErr.Message = "Beacon experienced a DNS error while trying to connect to Nitrado's server. This is often an issue with your internet service provider."
+		      SocketErr.Message = "Beacon experienced a DNS error while trying to connect to your host's server. This is often an issue with your internet service provider."
 		    ElseIf SocketErr.Message.IsEmpty Then
 		      SocketErr.Message = "Connection Error #" + SocketErr.ErrorNumber.ToString(Locale.Raw, "0")
 		    Else
@@ -79,11 +83,29 @@ Private Class APIResponse
 		    Response.mError = SocketErr
 		  End If
 		  
-		  App.Log("Nitrado API Error #" + Response.mError.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Response.mError.Message)
+		  App.Log("Host API Error #" + Response.mError.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Response.mError.Message)
 		  App.Log("Url: " + Response.mUrl)
 		  App.Log("Response: " + EncodeBase64MBS(Response.mContent))
 		  
 		  Return Response
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasHeader(Key As String) As Boolean
+		  Return Self.mHeaders.HasKey(Key)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Header(Key As String) As String
+		  Return Self.mHeaders.Value(Key).StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Header(Key As String, DefaultValue As String) As String
+		  Return Self.mHeaders.Lookup(Key, DefaultValue).StringValue
 		End Function
 	#tag EndMethod
 
@@ -120,6 +142,10 @@ Private Class APIResponse
 
 	#tag Property, Flags = &h21
 		Private mError As RuntimeException
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHeaders As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

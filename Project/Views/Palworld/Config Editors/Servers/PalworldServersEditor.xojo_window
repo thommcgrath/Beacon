@@ -590,8 +590,8 @@ End
 		      // Create the view
 		      Var View As PalworldServerViewContainer
 		      Select Case Profile.ProviderId
-		      Case Nitrado.Identifier
-		        View = New PalworldNitradoServerView(Self.Project, Profile)
+		      Case Nitrado.Identifier, BeaconHostingAPI.Identifier
+		        View = New PalworldSimpleServerView(Self.Project, Profile)
 		      Case FTP.Identifier
 		        View = New PalworldFTPServerView(Self.Project, Profile)
 		      Case Local.Identifier

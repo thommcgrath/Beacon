@@ -112,7 +112,7 @@ Protected Class ProviderToken
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Building Nitrado service name")
 		    End Try
-		  Case Self.ProviderGameServerApp
+		  Case Self.ProviderGameServerApp, Self.ProviderASAManager, Self.ProviderBeaconHostingAPI, Self.ProviderGameServersPanel
 		    Try
 		      Label = Self.ProviderSpecific("tokenName", "")
 		    Catch Err As RuntimeException
@@ -124,7 +124,7 @@ Protected Class ProviderToken
 		    Label = Self.mTokenId
 		  End If
 		  If Detail >= Self.DetailHigh Then
-		    Label = Self.Provider + ": " + Label
+		    Label = Language.ProviderName(Self.Provider) + ": " + Label
 		  End If
 		  
 		  Return Label
@@ -266,7 +266,13 @@ Protected Class ProviderToken
 	#tag Constant, Name = ProviderASAManager, Type = String, Dynamic = False, Default = \"ASAManager", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = ProviderBeaconHostingAPI, Type = String, Dynamic = False, Default = \"BeaconHostingAPI", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = ProviderGameServerApp, Type = String, Dynamic = False, Default = \"GameServerApp.com", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ProviderGameServersPanel, Type = String, Dynamic = False, Default = \"GameServersPanel", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ProviderNitrado, Type = String, Dynamic = False, Default = \"Nitrado", Scope = Public

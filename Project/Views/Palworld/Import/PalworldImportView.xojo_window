@@ -57,7 +57,7 @@ Begin DocumentImportView PalworldImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   8
+      PanelCount      =   9
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -67,10 +67,10 @@ Begin DocumentImportView PalworldImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   8
       Visible         =   True
       Width           =   720
-      Begin FTPDiscoveryView FTPDiscoveryView1
+      Begin FTPDiscoveryView FTPView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -99,7 +99,7 @@ Begin DocumentImportView PalworldImportView
          Visible         =   True
          Width           =   720
       End
-      Begin PalworldFilesDiscoveryView FilesDiscoveryView1
+      Begin PalworldFilesDiscoveryView FilesView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -408,7 +408,7 @@ Begin DocumentImportView PalworldImportView
       End
       Begin DocumentImportSourcePicker SourcePicker
          AllowAutoDeactivate=   True
-         AllowedSources  =   63
+         AllowedSources  =   191
          AllowFocus      =   False
          AllowFocusRing  =   False
          AllowTabs       =   True
@@ -416,9 +416,9 @@ Begin DocumentImportView PalworldImportView
          BackgroundColor =   &cFFFFFF
          Composited      =   False
          Enabled         =   True
-         EnabledSources  =   63
+         EnabledSources  =   191
          HasBackgroundColor=   False
-         Height          =   282
+         Height          =   378
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -469,7 +469,7 @@ Begin DocumentImportView PalworldImportView
          Visible         =   False
          Width           =   80
       End
-      Begin PalworldClipboardDiscoveryView ClipboardDiscoveryView1
+      Begin PalworldClipboardDiscoveryView ClipboardView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -498,7 +498,7 @@ Begin DocumentImportView PalworldImportView
          Visible         =   True
          Width           =   720
       End
-      Begin MultiSelectDiscoveryView NitradoDiscoveryView1
+      Begin MultiSelectDiscoveryView NitradoView
          AddressColumnLabel=   "Address"
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -528,7 +528,7 @@ Begin DocumentImportView PalworldImportView
          Visible         =   True
          Width           =   720
       End
-      Begin MultiSelectDiscoveryView GSADiscoveryView1
+      Begin MultiSelectDiscoveryView GSAView
          AddressColumnLabel=   "Template Id"
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -558,6 +558,36 @@ Begin DocumentImportView PalworldImportView
          Visible         =   True
          Width           =   720
       End
+      Begin MultiSelectDiscoveryView BeaconHostingView
+         AddressColumnLabel=   "Address"
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   9
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
    End
    Begin Timer DiscoveryWatcher
       Enabled         =   True
@@ -574,11 +604,12 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Cleanup()
-		  Self.ClipboardDiscoveryView1.Cleanup
-		  Self.FilesDiscoveryView1.Cleanup
-		  Self.FTPDiscoveryView1.Cleanup
-		  Self.GSADiscoveryView1.Cleanup
-		  Self.NitradoDiscoveryView1.Cleanup
+		  Self.ClipboardView.Cleanup
+		  Self.FilesView.Cleanup
+		  Self.FTPView.Cleanup
+		  Self.GSAView.Cleanup
+		  Self.NitradoView.Cleanup
+		  Self.BeaconHostingView.Cleanup
 		End Sub
 	#tag EndEvent
 
@@ -610,7 +641,7 @@ End
 		Sub ImportFile(File As FolderItem)
 		  Self.QuickCancel = True
 		  Self.Views.SelectedPanelIndex = 3
-		  Self.FilesDiscoveryView1.AddFile(File)
+		  Self.FilesView.AddFile(File)
 		End Sub
 	#tag EndEvent
 
@@ -629,13 +660,14 @@ End
 		    Return
 		  End If
 		  
-		  Var ArkProject As Palworld.Project = Palworld.Project(Project)
-		  Self.mDestinationProject = ArkProject
-		  Self.FTPDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.FilesDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.ClipboardDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.NitradoDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.GSADiscoveryView1.PullValuesFromProject(ArkProject)
+		  Var GameProject As Palworld.Project = Palworld.Project(Project)
+		  Self.mDestinationProject = GameProject
+		  Self.FTPView.PullValuesFromProject(GameProject)
+		  Self.FilesView.PullValuesFromProject(GameProject)
+		  Self.ClipboardView.PullValuesFromProject(GameProject)
+		  Self.NitradoView.PullValuesFromProject(GameProject)
+		  Self.GSAView.PullValuesFromProject(GameProject)
+		  Self.BeaconHostingView.PullValuesFromProject(GameProject)
 		End Sub
 	#tag EndEvent
 
@@ -852,6 +884,9 @@ End
 	#tag Constant, Name = MigrationMessageSingular, Type = String, Dynamic = True, Default = \"Migrating \?1 Project", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"8", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
@@ -890,22 +925,24 @@ End
 		    Self.SetPageHeight(Self.SourcePicker.Height)
 		    Self.SourcePicker.ActionButtonEnabled = True
 		  Case Self.PageNitrado
-		    Self.NitradoDiscoveryView1.Begin
+		    Self.NitradoView.Begin
 		  Case Self.PageFTP
-		    Self.FTPDiscoveryView1.Begin
+		    Self.FTPView.Begin
 		  Case Self.PageFiles
-		    Self.FilesDiscoveryView1.Begin
+		    Self.FilesView.Begin
 		  Case Self.PageClipboard
-		    Self.ClipboardDiscoveryView1.Begin
+		    Self.ClipboardView.Begin
 		  Case Self.PageStatus, Self.PageOtherDocuments
 		    Self.SetPageHeight(Self.StatusPageHeight)
 		  Case Self.PageGSA
-		    Self.GSADiscoveryView1.Begin
+		    Self.GSAView.Begin
+		  Case Self.PageBeaconHostingAPI
+		    Self.BeaconHostingView.Begin
 		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events FTPDiscoveryView1
+#tag Events FTPView
 	#tag Event
 		Sub ShouldCancel()
 		  If Self.QuickCancel Then
@@ -1074,7 +1111,7 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events FilesDiscoveryView1
+#tag Events FilesView
 	#tag Event
 		Sub ShouldCancel()
 		  If Self.QuickCancel Then
@@ -1198,6 +1235,8 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageClipboard
 		  Case Me.SourceNitrado
 		    Self.Views.SelectedPanelIndex = Self.PageNitrado
+		  Case Me.SourceBeaconHostingAPI
+		    Self.Views.SelectedPanelIndex = Self.PageBeaconHostingAPI
 		  Case Me.SourceOtherProject
 		    Self.OtherDocsList.RemoveAllRows
 		    Self.OtherDocsList.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
@@ -1225,7 +1264,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ClipboardDiscoveryView1
+#tag Events ClipboardView
 	#tag Event
 		Sub Finished(Profiles() As Beacon.ServerProfile)
 		  Self.Discover(Profiles)
@@ -1251,7 +1290,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events NitradoDiscoveryView1
+#tag Events NitradoView
 	#tag Event
 		Sub ShouldCancel()
 		  If Self.QuickCancel Then
@@ -1287,7 +1326,7 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events GSADiscoveryView1
+#tag Events GSAView
 	#tag Event
 		Sub Finished(Profiles() As Beacon.ServerProfile)
 		  Self.Discover(Profiles)
@@ -1320,6 +1359,42 @@ End
 	#tag Event
 		Function GameId() As String
 		  Return Palworld.Identifier
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events BeaconHostingView
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return Palworld.Identifier
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New BeaconHostingAPI.HostingProvider
 		End Function
 	#tag EndEvent
 #tag EndEvents

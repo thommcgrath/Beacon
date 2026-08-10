@@ -222,7 +222,6 @@ Begin ArkSAConfigEditor ArkSAServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -231,7 +230,6 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
-      Type            =   ""
    End
    Begin StatusContainer Status
       AllowAutoDeactivate=   True
@@ -880,16 +878,14 @@ End
 		      // Create the view
 		      Var View As ArkSAServerViewContainer
 		      Select Case Profile.ProviderId
-		      Case Nitrado.Identifier
-		        View = New ArkSANitradoServerView(Self.Project, Profile)
+		      Case Nitrado.Identifier, ASAManager.Identifier, BeaconHostingAPI.Identifier
+		        View = New ArkSASimpleServerView(Self.Project, Profile)
 		      Case FTP.Identifier
 		        View = New ArkSAFTPServerView(Self.Project, Profile)
 		      Case Local.Identifier
 		        View = New ArkSALocalServerView(Self.Project, Profile)
 		      Case GameServerApp.Identifier
 		        View = New ArkSAGSAServerView(Self.Project, Profile)
-		      Case ASAManager.Identifier
-		        View = New ArkSAASAManagerServerView(Self.Project, Profile)
 		      Else
 		        Self.CurrentProfileID = ""
 		        Return

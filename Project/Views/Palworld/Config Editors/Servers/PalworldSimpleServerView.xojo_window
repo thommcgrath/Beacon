@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ArkServerViewContainer ArkNitradoServerView
+Begin PalworldServerViewContainer PalworldSimpleServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -37,7 +37,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   3
+      PanelCount      =   2
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -194,7 +194,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
          Visible         =   True
          Width           =   560
       End
-      Begin ArkCommonServerSettingsView SettingsView
+      Begin PalworldCommonServerSettingsView SettingsView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -216,41 +216,11 @@ Begin ArkServerViewContainer ArkNitradoServerView
          Modified        =   False
          Scope           =   2
          SettingUp       =   False
-         ShowsMapMenu    =   False
          TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
          Top             =   104
-         Transparent     =   True
-         Visible         =   True
-         Width           =   600
-      End
-      Begin ArkCustomServerSettingsView CustomServerSettings
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF
-         Composited      =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   559
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   41
          Transparent     =   True
          Visible         =   True
          Width           =   600
@@ -266,6 +236,8 @@ Begin ArkServerViewContainer ArkNitradoServerView
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -292,6 +264,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -303,6 +276,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -344,7 +318,6 @@ End
 		  End If
 		  
 		  Self.AdminNotesField.Text = Self.Profile.AdminNotes
-		  Self.CustomServerSettings.Content = Self.Profile.CustomGUS
 		  Self.SettingsView.RefreshUI()
 		  Self.UpdateStatusDisplay()
 		End Sub
@@ -361,9 +334,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Project As Ark.Project, Profile As Ark.ServerProfile)
+		Sub Constructor(Project As Palworld.Project, Profile As Palworld.ServerProfile)
 		  Self.mLock = New CriticalSection
 		  Self.mServerStatus = New Beacon.ServerStatus("Checking…")
+		  Self.mProviderId = Profile.ProviderId
 		  Super.Constructor(Project, Profile)
 		End Sub
 	#tag EndMethod
@@ -398,26 +372,6 @@ End
 		    Self.mRefreshKey = ""
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function StatusFromHTTPCode(HTTPStatus As Integer) As String
-		  Select Case HTTPStatus
-		  Case 401, 403
-		    Return StatusUnauthorized
-		  Case 429
-		    Return StatusRateLimited
-		  Case 502
-		    Return StatusBadGateway
-		  Case 503
-		    Return StatusMaintenance
-		  Else
-		    #if DebugBuild
-		      System.DebugLog("Nitrado status " + HTTPStatus.ToString)
-		    #endif
-		    Return StatusNitradoOther
-		  End Select
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -461,73 +415,16 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProviderId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRefreshKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mServerStatus As Beacon.ServerStatus
 	#tag EndProperty
-
-
-	#tag Constant, Name = StatusBackupCreation, Type = String, Dynamic = False, Default = \"backup_creation", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusBackupRestore, Type = String, Dynamic = False, Default = \"backup_restore", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusBadGateway, Type = String, Dynamic = False, Default = \"nitrado_bad_gateway", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusChecking, Type = String, Dynamic = False, Default = \"beacon_checking", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusEncryptedToken, Type = String, Dynamic = False, Default = \"beacon_encrypted_token", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusException, Type = String, Dynamic = False, Default = \"beacon_exception", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusGameserverInstallation, Type = String, Dynamic = False, Default = \"gs_installation", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusGuardianLocked, Type = String, Dynamic = False, Default = \"guardian_locked", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusMaintenance, Type = String, Dynamic = False, Default = \"nitrado_maintenance", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusMissingProfile, Type = String, Dynamic = False, Default = \"beacon_missing_profile", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusMissingToken, Type = String, Dynamic = False, Default = \"beacon_missing_token", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusNetworkError, Type = String, Dynamic = False, Default = \"network_error", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusNitradoOther, Type = String, Dynamic = False, Default = \"nitrado_other", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusRateLimited, Type = String, Dynamic = False, Default = \"nitrado_rate_limited", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusRestarting, Type = String, Dynamic = False, Default = \"restarting", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusStarted, Type = String, Dynamic = False, Default = \"started", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusStopped, Type = String, Dynamic = False, Default = \"stopped", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusStopping, Type = String, Dynamic = False, Default = \"stopping", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusSuspended, Type = String, Dynamic = False, Default = \"suspended", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = StatusUnauthorized, Type = String, Dynamic = False, Default = \"nitrado_unauthorized", Scope = Private
-	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -547,7 +444,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function GetProject() As Ark.Project
+		Function GetProject() As Palworld.Project
 		  Return Self.Project
 		End Function
 	#tag EndEvent
@@ -557,20 +454,11 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events CustomServerSettings
-	#tag Event
-		Sub TextChanged()
-		  Self.Profile.CustomGUS = Me.Content
-		  Self.Modified = Self.Profile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
-		  Me.Append(OmniBarItem.CreateTab("PageCustom", "Custom"))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("PowerButton", "Stop", IconToolbarPower, "Stop the server", False))
 		  Me.Item("PageGeneral").Toggled = True
@@ -585,17 +473,10 @@ End
 		    Self.Pages.SelectedPanelIndex = 0
 		    Item.Toggled = True
 		    Me.Item("PageNotes").Toggled = False
-		    Me.Item("PageCustom").Toggled = False
 		  Case "PageNotes"
 		    Self.Pages.SelectedPanelIndex = 1
 		    Item.Toggled = True
 		    Me.Item("PageGeneral").Toggled = False
-		    Me.Item("PageCustom").Toggled = False
-		  Case "PageCustom"
-		    Self.Pages.SelectedPanelIndex = 2
-		    Item.Toggled = True
-		    Me.Item("PageGeneral").Toggled = False
-		    Me.Item("PageNotes").Toggled = False
 		  Case "PowerButton"
 		    If ToggleThread.ThreadState <> Thread.ThreadStates.NotRunning Then
 		      Self.ShowAlert("An action is already running", "Wait a moment for the current action to complete.")
@@ -620,7 +501,15 @@ End
 		Sub Run()
 		  Self.mLock.Enter
 		  
-		  Var Provider As New Nitrado.HostingProvider
+		  Var Provider As Beacon.HostingProvider
+		  Select Case Self.mProviderId
+		  Case Nitrado.Identifier
+		    Provider = New Nitrado.HostingProvider
+		  Case BeaconHostingAPI.Identifier
+		    Provider = New BeaconHostingAPI.HostingProvider
+		  Else
+		    Break
+		  End Select
 		  Self.RefreshNow(Provider)
 		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
@@ -644,7 +533,15 @@ End
 		  Self.mLock.Enter
 		  Self.CancelRefresh()
 		  
-		  Var Provider As New Nitrado.HostingProvider
+		  Var Provider As Beacon.HostingProvider
+		  Select Case Self.mProviderId
+		  Case Nitrado.Identifier
+		    Provider = New Nitrado.HostingProvider
+		  Case BeaconHostingAPI.Identifier
+		    Provider = New BeaconHostingAPI.HostingProvider
+		  Else
+		    Break
+		  End Select
 		  Self.RefreshNow(Provider)
 		  
 		  Select Case Self.mServerStatus.State

@@ -35,6 +35,8 @@ Begin BeaconSubview AccountsEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       Left            =   0
@@ -423,7 +425,7 @@ End
 		      Var UsedCount As Integer = UsageCounts.Lookup(Token.TokenId, 0)
 		      
 		      Self.List.CellTextAt(RowIdx, Self.ColumnLabel) = Token.Label(BeaconAPI.ProviderToken.DetailNormal)
-		      Self.List.CellTextAt(RowIdx, Self.ColumnProvider) = Token.Provider
+		      Self.List.CellTextAt(RowIdx, Self.ColumnProvider) = Language.ProviderName(Token.Provider)
 		      If Token.IsEncrypted Then
 		        Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = "Error: Decryption key is incorrect"
 		      ElseIf UsedCount = 0 Then

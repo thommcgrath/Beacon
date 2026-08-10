@@ -268,6 +268,8 @@ Protected Module Language
 		    Return "FTP"
 		  Case Local.Identifier
 		    Return "Local"
+		  Case BeaconHostingAPI.Identifier
+		    Return "Beacon Open Hosting API"
 		  Else
 		    Return ProviderId
 		  End Select

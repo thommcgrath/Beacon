@@ -20,6 +20,13 @@ Inherits Beacon.DocumentMergeItem
 		    Var HostConfig As ASAManager.HostConfig = ASAManager.HostConfig(Profile.HostConfig)
 		    TokenId = HostConfig.TokenId
 		    TokenKey = HostConfig.TokenKey
+		  Case BeaconHostingAPI.Identifier
+		    Var HostConfig As BeaconHostingAPI.HostConfig = BeaconHostingAPI.HostConfig(Profile.HostConfig)
+		    TokenId = HostConfig.TokenId
+		    TokenKey = HostConfig.TokenKey
+		  Case Local.Identifier, FTP.Identifier
+		  Else
+		    Break
 		  End Select
 		  If TokenId.IsEmpty = False And TokenKey.IsEmpty = False Then
 		    Self.mTokenId = TokenId

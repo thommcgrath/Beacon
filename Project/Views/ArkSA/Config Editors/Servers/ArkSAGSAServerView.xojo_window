@@ -47,7 +47,7 @@ Begin ArkSAServerViewContainer ArkSAGSAServerView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin BeaconTextArea AdminNotesField
@@ -149,6 +149,7 @@ Begin ArkSAServerViewContainer ArkSAGSAServerView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
@@ -170,6 +171,8 @@ Begin ArkSAServerViewContainer ArkSAGSAServerView
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""

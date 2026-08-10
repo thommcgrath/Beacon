@@ -9,7 +9,7 @@ Begin DesktopContainer DocumentImportSourcePicker
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   316
+   Height          =   380
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -34,6 +34,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
+      InitialParent   =   ""
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -60,13 +61,14 @@ Begin DesktopContainer DocumentImportSourcePicker
    Begin DesktopRadioButton SourceRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Nitrado"
+      Caption         =   "GameServerApp.com"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   0
+      Index           =   2
+      InitialParent   =   ""
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -75,11 +77,11 @@ Begin DesktopContainer DocumentImportSourcePicker
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   52
+      Top             =   116
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -89,13 +91,198 @@ Begin DesktopContainer DocumentImportSourcePicker
    Begin DesktopRadioButton SourceRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "GameServerApp.com"
+      Caption         =   "Files on your computer"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   6
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   244
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   468
+   End
+   Begin DesktopRadioButton SourceRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Other Beacon project"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   8
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   308
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   468
+   End
+   Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   316
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   340
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Continue"
+      Default         =   False
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   408
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   340
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin DesktopRadioButton SourceRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Copy and paste"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   7
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   276
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   468
+   End
+   Begin DesktopRadioButton SourceRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "ASA Manager"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   3
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   148
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   468
+   End
+   Begin DesktopRadioButton SourceRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Beacon Open Hosting API"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
       Index           =   1
+      InitialParent   =   ""
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -118,13 +305,14 @@ Begin DesktopContainer DocumentImportSourcePicker
    Begin DesktopRadioButton SourceRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Files on your computer"
+      Caption         =   "GameServersPanel"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
       Index           =   4
+      InitialParent   =   ""
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -153,127 +341,8 @@ Begin DesktopContainer DocumentImportSourcePicker
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   3
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   148
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   468
-   End
-   Begin DesktopRadioButton SourceRadio
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "Other Beacon project"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   6
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   244
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   468
-   End
-   Begin UITweaks.ResizedPushButton CancelButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   True
-      Caption         =   "Cancel"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   316
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   276
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedPushButton ActionButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Continue"
-      Default         =   False
-      Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   408
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   276
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin DesktopRadioButton SourceRadio
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "Copy and paste"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
       Index           =   5
+      InitialParent   =   ""
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -296,13 +365,14 @@ Begin DesktopContainer DocumentImportSourcePicker
    Begin DesktopRadioButton SourceRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "ASA Manager"
+      Caption         =   "Nitrado"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   2
+      Index           =   0
+      InitialParent   =   ""
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -311,11 +381,11 @@ Begin DesktopContainer DocumentImportSourcePicker
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   116
+      Top             =   52
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -366,6 +436,10 @@ End
 		    Return Self.RadioNitrado
 		  Case Self.SourceOtherProject
 		    Return Self.RadioOtherProject
+		  Case Self.SourceBeaconHostingAPI
+		    Return Self.RadioBeaconHostingAPI
+		  Case Self.SourceGameServersPanel
+		    Return Self.RadioGameServersPanel
 		  Else
 		    Return -1
 		  End Select
@@ -386,7 +460,10 @@ End
 		Sub SelectedSource(Assigns Value As Integer)
 		  Var DesiredIndex As Integer = Self.IndexForSource(Value)
 		  For Idx As Integer = Self.FirstRadioIndex To Self.LastRadioIndex
-		    Self.SourceRadio(Idx).Value = Self.SourceRadio(Idx).Enabled And Idx = DesiredIndex
+		    Var Selected As Boolean = Self.SourceRadio(Idx).Enabled And Idx = DesiredIndex
+		    If Self.SourceRadio(Idx).Value <> Selected Then
+		      Self.SourceRadio(Idx).Value = Selected
+		    End If
 		  Next
 		End Sub
 	#tag EndMethod
@@ -404,6 +481,8 @@ End
 		  Self.SourceRadio(Self.RadioNitrado).Visible = (Self.mAllowedSources And Self.SourceNitrado) > 0
 		  Self.SourceRadio(Self.RadioOtherProject).Visible = (Self.mAllowedSources And Self.SourceOtherProject) > 0
 		  Self.SourceRadio(Self.RadioClipboard).Visible = (Self.mAllowedSources And Self.SourceClipboard) > 0
+		  Self.SourceRadio(Self.RadioBeaconHostingAPI).Visible = (Self.mAllowedSources And Self.SourceBeaconHostingAPI) > 0
+		  Self.SourceRadio(Self.RadioGameServersPanel).Visible = (Self.mAllowedSources And Self.SourceGameServersPanel) > 0
 		  
 		  Self.SourceRadio(Self.RadioFTP).Enabled = (Self.mEnabledSources And Self.SourceFTP) > 0
 		  Self.SourceRadio(Self.RadioGSA).Enabled = (Self.mEnabledSources And Self.SourceGSA) > 0
@@ -412,6 +491,8 @@ End
 		  Self.SourceRadio(Self.RadioNitrado).Enabled = (Self.mEnabledSources And Self.SourceNitrado) > 0
 		  Self.SourceRadio(Self.RadioOtherProject).Enabled = (Self.mEnabledSources And Self.SourceOtherProject) > 0
 		  Self.SourceRadio(Self.RadioClipboard).Enabled = (Self.mEnabledSources And Self.SourceClipboard) > 0
+		  Self.SourceRadio(Self.RadioBeaconHostingAPI).Enabled = (Self.mEnabledSources And Self.SourceBeaconHostingAPI) > 0
+		  Self.SourceRadio(Self.RadioGameServersPanel).Enabled = (Self.mEnabledSources And Self.SourceGameServersPanel) > 0
 		  
 		  Self.ActionButton.Enabled = Self.mActionButtonCanEnable And Self.SelectedSource > 0
 		  
@@ -445,6 +526,7 @@ End
 		  Var TargetHeight As Integer = Self.ActionButton.Bottom + 20
 		  If Self.Height <> TargetHeight Then
 		    RaiseEvent ShouldResize(TargetHeight)
+		    Self.Height = TargetHeight
 		  End If
 		End Sub
 	#tag EndMethod
@@ -466,6 +548,10 @@ End
 		    Return Self.SourceNitrado
 		  Case Self.RadioOtherProject
 		    Return Self.SourceOtherProject
+		  Case Self.RadioBeaconHostingAPI
+		    Return Self.SourceBeaconHostingAPI
+		  Case Self.RadioGameServersPanel
+		    Return Self.SourceGameServersPanel
 		  End Select
 		End Function
 	#tag EndMethod
@@ -554,7 +640,7 @@ End
 	#tag Constant, Name = FirstRadioIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LastRadioIndex, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag Constant, Name = LastRadioIndex, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = NoCompatibleProjectsOpen, Type = String, Dynamic = True, Default = \"No Compatible Projects Are Open", Scope = Private
@@ -563,28 +649,37 @@ End
 	#tag Constant, Name = OtherCompatibleProjectCaption, Type = String, Dynamic = True, Default = \"Other \?1 Project", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioASAManager, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = RadioASAManager, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioClipboard, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = RadioBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioFiles, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = RadioClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = RadioFiles, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioGSA, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioGameServersPanel, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioGSA, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RadioNitrado, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioOtherProject, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag Constant, Name = RadioOtherProject, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SourceASAManager, Type = Double, Dynamic = False, Default = \"64", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SourceBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"128", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SourceClipboard, Type = Double, Dynamic = False, Default = \"32", Scope = Public
@@ -594,6 +689,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = SourceFTP, Type = Double, Dynamic = False, Default = \"8", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SourceGameServersPanel, Type = Double, Dynamic = False, Default = \"256", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SourceGSA, Type = Double, Dynamic = False, Default = \"2", Scope = Public
@@ -613,7 +711,10 @@ End
 		Sub ValueChanged(index as Integer)
 		  // DesktopRadioButton.ValueChanged only fires when the value becomes true, either programmatically or by the user
 		  
-		  Self.ActionButton.Enabled = Self.mActionButtonCanEnable And Self.SelectedSource > 0
+		  Var Source As Integer = Self.SourceForIndex(Index)
+		  Self.SelectedSource = Source
+		  
+		  Self.ActionButton.Enabled = Self.mActionButtonCanEnable And Source > 0
 		  Self.ActionButton.Default = Self.ActionButton.Enabled
 		End Sub
 	#tag EndEvent

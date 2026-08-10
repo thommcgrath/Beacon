@@ -635,8 +635,8 @@ End
 		      // Create the view
 		      Var View As ArkServerViewContainer
 		      Select Case Profile.ProviderId
-		      Case Nitrado.Identifier
-		        View = New ArkNitradoServerView(Self.Project, Profile)
+		      Case Nitrado.Identifier, BeaconHostingAPI.Identifier
+		        View = New ArkSimpleServerView(Self.Project, Profile)
 		      Case FTP.Identifier
 		        View = New ArkFTPServerView(Self.Project, Profile)
 		      Case Local.Identifier
