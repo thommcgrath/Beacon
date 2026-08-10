@@ -1,13 +1,14 @@
 {
   "actions" : {
     "build" : {
-      "enabled" : true,
-      "script" : "node_modules\/.bin\/webpack\nnode_modules\/.bin\/sass --style compressed --no-source-map src\/scss:www\/assets\/css"
+      "script" : "\\. \"$HOME\/.nvm\/nvm.sh\"\nnode_modules\/.bin\/webpack\nnode_modules\/.bin\/sass --style compressed --no-source-map src\/scss:www\/assets\/css",
+      "shell" : "\/bin\/bash"
     },
     "run" : {
-      "script" : "node_modules\/.bin\/webpack --watch &\nnode_modules\/.bin\/sass --watch --style compressed --no-source-map src\/scss:www\/assets\/css &\nwait"
+      "script" : "trap \"trap - SIGTERM && kill -- -$$\" SIGHUP SIGINT SIGTERM EXIT\n.\/build.sh --watch",
+      "shell" : "\/bin\/bash"
     }
   },
-  "openLogOnRun" : "fail",
+  "openLogOnRun" : "start",
   "serverName" : "Beacon Local Server"
 }
