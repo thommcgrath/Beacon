@@ -170,40 +170,50 @@ h1 span.tag {
 	}
 
 	.service-nitrado {
-		background-color: black;
+		&.active {
+			background-color: black;
+			color: white;
+		}
+
+		&.inactive .service-logo img {
+			filter: brightness(0%);
+		}
+	}
+
+	.service-gameserverapp.active {
+		background: rgb(12,38,76);
+		background: linear-gradient(0deg, rgba(3,3,4,1) 0%, rgba(12,38,76,1) 100%);
+		color: white;
+	}
+
+	.service-asamanager.active {
+		background: #181818;
+		color: white;
+	}
+
+	.service-beaconhostingapi.active {
+		background: #9c0fb0;
+		background: linear-gradient(-127deg,rgba(255, 255, 0, 1) -75%, rgba(212, 12, 195, 1) 50%, rgba(17, 0, 0, 1) 175%);
 		color: white;
 
-		&.inactive {
-			background-color: white;
-			color: black;
+		.service-logo img {
+			filter: brightness(0%) invert(100%);
+		}
 
-			.service-logo img {
-				filter: brightness(0%);
+		button.red {
+			background-color: white;
+			color: #bb2d3b;
+
+			&:active {
+				background-color: #808080;
+				color: rgb(36.6666666667%,8.8235294118%,11.568627451%);
 			}
 		}
 	}
 
-	.service-gameserverapp {
-		background: rgb(12,38,76);
-		background: linear-gradient(0deg, rgba(3,3,4,1) 0%, rgba(12,38,76,1) 100%);
+	.service-gameserverspanel.active {
+		background-color: black;
 		color: white;
-
-		&.inactive {
-			background: none;
-			background-color: white;
-			color: black;
-		}
-	}
-
-	.service-asamanager {
-		background: #181818;
-		color: white;
-
-		&.inactive {
-			background: none;
-			background-color: white;
-			color: black;
-		}
 	}
 }
 
@@ -226,6 +236,22 @@ h1 span.tag {
 		.device-code-field {
 			text-align: center;
 			font-size: 1.5rem;
+		}
+	}
+}
+
+#static-token-modal {
+	#static-token-url-div {
+		display: none;
+	}
+
+	&[beacon-provider="beaconhostingapi"] {
+		#static-token-url-div {
+			display: revert;
+		}
+
+		#static-token-generate-space {
+			display: none;
 		}
 	}
 }

@@ -806,6 +806,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	const staticTokenGenerateLink = document.getElementById('static-token-generate-link');
 	const staticTokenHelpField = document.getElementById('static-token-help-field');
 	const staticTokenErrorField = document.getElementById('static-token-error-field');
+	const staticTokenEndpointField = document.getElementById('static-token-url-field');
 
 	const connectedServiceButtonAction = (event) => {
 		event.preventDefault();
@@ -826,21 +827,27 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 					staticTokenTokenField.value = '';
 					staticTokenProviderField.value = provider;
 					staticTokenErrorField.classList.add('hidden');
+					staticTokenModal.setAttribute('beacon-provider', provider);
+
 					switch (provider) {
 					case 'nitrado':
 						staticTokenGenerateLink.href = 'https://server.nitrado.net/usa/developer/tokens';
 						staticTokenHelpField.innerText = 'Beacon requires long life tokens from Nitrado to have the "service" scope enabled.';
-						staticTokenHelpField.classList.remove('hidden');
 						break;
 					case 'gameserverapp.com':
 						staticTokenGenerateLink.href = 'https://dash.gameserverapp.com/configure/api';
 						staticTokenHelpField.innerText = 'On your GameServerApp.com dashboard, you will find an "API / Integrate" option where you can issue a token for Beacon. Copy the token into the field below to continue. Remember to keep your token in a safe place in case you need it again.';
-						staticTokenHelpField.classList.remove('hidden');
 						break;
 					case 'asamanager':
 						staticTokenGenerateLink.href = 'https://asamanager.app/tokens';
 						staticTokenHelpField.innerText = 'At ASA Manager, press the "Create Token" button. When asked for a name, you may choose whatever you like, but "Beacon" is recommended so you don\'t forget what it is for. You will then be shown the token so you can copy it and paste it back here.';
-						staticTokenHelpField.classList.remove('hidden');
+						break;
+					case 'gameserverspanel':
+						staticTokenGenerateLink.href = 'https://gameserverspanel.com/api-keys/rest';
+						staticTokenHelpField.innerText = 'In the "REST API" section of your control panel you will need to create a token. Give it a name, then choose all 7 permissions: "View servers and status", "Start, stop, and restart", "Read config files", "Update config files", "Create and restore backups", "Read launch options", and "Update launch options". Requests to GameServersPanel will come from your computer, so if you would like to restrict the token by IP address, enter your IP address.';
+						break;
+					case 'beaconhostingapi':
+						staticTokenHelpField.innerText = 'Hosting providers that support the Beacon Open Hosting API will provide you with both a Discovery Endpoint and a security token. Copy and paste each into the fields below to register the host with your Beacon account.';
 						break;
 					}
 					BeaconDialog.showModal('static-token-modal');
@@ -894,6 +901,10 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 					tokenName: staticTokenNameField.value.trim(),
 				},
 			};
+
+			if (tokenInfo.provider === 'beaconhostingapi') {
+				tokenInfo.providerSpecific.endpoint = staticTokenEndpointField.value.trim();
+			}
 
 			BeaconWebRequest.post(`https://${apiDomain}/v4/user/tokens`, tokenInfo, { 'X-Beacon-Token': sessionId }).then(() => {
 				window.location.reload(true);

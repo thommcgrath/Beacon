@@ -122,6 +122,7 @@ abstract class BeaconCommon {
 		case 'png':
 		case 'gif':
 		case 'ico':
+		case 'webp':
 			$folders = ['images', 'favicon'];
 			break;
 		case 'ttf':

@@ -129,9 +129,9 @@ $button-yellow: #ffc107 !default;
 	$green: calc(color.channel($color, "green", $space: rgb) / 255);
 	$blue: calc(color.channel($color, "blue", $space: rgb) / 255);
 
-	$red: if($red <= 0.03928, calc($red / 12.92), math.pow(calc(($red + 0.055) / 1.055), 2.4));
-	$green: if($green <= 0.03928, calc($green / 12.92), math.pow(calc(($green + 0.055) / 1.055), 2.4));
-	$blue: if($blue <= 0.03928, calc($blue / 12.92), math.pow(calc(($blue + 0.055) / 1.055), 2.4));
+	$red: if(sass($red <= 0.03928): calc($red / 12.92); else: math.pow(calc(($red + 0.055) / 1.055), 2.4));
+	$green: if(sass($green <= 0.03928): calc($green / 12.92); else: math.pow(calc(($green + 0.055) / 1.055), 2.4));
+	$blue: if(sass($blue <= 0.03928): calc($blue / 12.92); else: math.pow(calc(($blue + 0.055) / 1.055), 2.4));
 
 	@return (0.2126 * $red) + (0.7152 * $green) + (0.0722 * $blue);
 }

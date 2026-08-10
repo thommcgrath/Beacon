@@ -7,6 +7,8 @@ class ServiceToken implements JsonSerializable {
 	final const ProviderNitrado = 'Nitrado';
 	final const ProviderGameServerApp = 'GameServerApp.com';
 	final const ProviderASAManager = 'ASAManager';
+	final const ProviderGameServersPanel = 'GameServersPanel';
+	final const ProviderBeaconHostingAPI = 'BeaconHostingAPI';
 
 	final const TypeOAuth = 'OAuth';
 	final const TypeStatic = 'Static';
@@ -43,6 +45,10 @@ class ServiceToken implements JsonSerializable {
 			return self::ProviderGameServerApp;
 		case strtolower(self::ProviderASAManager):
 			return self::ProviderASAManager;
+		case strtolower(self::ProviderGameServersPanel):
+			return self::ProviderGameServersPanel;
+		case strtolower(self::ProviderBeaconHostingAPI):
+			return self::ProviderBeaconHostingAPI;
 		}
 		return $provider;
 	}
