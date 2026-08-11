@@ -2411,23 +2411,23 @@ Implements ArkSA.BlueprintProvider
 		      Var Description As String = Results.Column("description").StringValue
 		      Var DefaultValue As Variant = Results.Column("default_value").Value
 		      Var NitradoPath As NullableString
-		      Var NitradoFormat As ArkSA.ConfigOption.NitradoFormats = ArkSA.ConfigOption.NitradoFormats.Unsupported
-		      Var NitradoDeployStyle As ArkSA.ConfigOption.NitradoDeployStyles = ArkSA.ConfigOption.NitradoDeployStyles.Unsupported
+		      Var NitradoFormat As Nitrado.ValueFormats = Nitrado.ValueFormats.Unsupported
+		      Var NitradoDeployStyle As Nitrado.DeployStyles = Nitrado.DeployStyles.Unsupported
 		      If IsNull(Results.Column("nitrado_format").Value) = False Then
 		        NitradoPath = Results.Column("nitrado_path").StringValue
 		        Select Case Results.Column("nitrado_format").StringValue
 		        Case "Line"
-		          NitradoFormat = ArkSA.ConfigOption.NitradoFormats.Line
+		          NitradoFormat = Nitrado.ValueFormats.Line
 		        Case "Value"
-		          NitradoFormat = ArkSA.ConfigOption.NitradoFormats.Value
+		          NitradoFormat = Nitrado.ValueFormats.Value
 		        End Select
 		        Select Case Results.Column("nitrado_deploy_style").StringValue
 		        Case "Guided"
-		          NitradoDeployStyle = ArkSA.ConfigOption.NitradoDeployStyles.Guided
+		          NitradoDeployStyle = Nitrado.DeployStyles.Guided
 		        Case "Expert"
-		          NitradoDeployStyle = ArkSA.ConfigOption.NitradoDeployStyles.Expert
+		          NitradoDeployStyle = Nitrado.DeployStyles.Expert
 		        Case "Both"
-		          NitradoDeployStyle = ArkSA.ConfigOption.NitradoDeployStyles.Both
+		          NitradoDeployStyle = Nitrado.DeployStyles.Both
 		        End Select
 		      End If
 		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Results.Column("native_editor_version").Value)

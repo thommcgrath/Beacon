@@ -58,7 +58,7 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigOption.NitradoFormats, NitradoDeployStyle As Ark.ConfigOption.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
+		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Nitrado.ValueFormats, NitradoDeployStyle As Nitrado.DeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mConfigOptionId = ConfigOptionId
@@ -127,7 +127,7 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function HasNitradoEquivalent() As Boolean
-		  Return Self.mNitradoPaths.Count > 0 And Self.mNitradoFormat <> Ark.ConfigOption.NitradoFormats.Unsupported
+		  Return Self.mNitradoPaths.Count > 0 And Self.mNitradoFormat <> Nitrado.ValueFormats.Unsupported
 		End Function
 	#tag EndMethod
 
@@ -192,20 +192,20 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NitradoDeployStyle() As Ark.ConfigOption.NitradoDeployStyles
+		Function NitradoDeployStyle() As Nitrado.DeployStyles
 		  Return Self.mNitradoDeployStyle
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NitradoFormat() As Ark.ConfigOption.NitradoFormats
+		Function NitradoFormat() As Nitrado.ValueFormats
 		  Return Self.mNitradoFormat
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function NitradoMatchesDeployStyle(ExpertMode As Boolean) As Boolean
-		  Return Self.mNitradoDeployStyle = NitradoDeployStyles.Both Or (ExpertMode = True And Self.mNitradoDeployStyle = NitradoDeployStyles.Expert) Or (ExpertMode = False And Self.mNitradoDeployStyle = NitradoDeployStyles.Guided)
+		  Return Self.mNitradoDeployStyle = Nitrado.DeployStyles.Both Or (ExpertMode = True And Self.mNitradoDeployStyle = Nitrado.DeployStyles.Expert) Or (ExpertMode = False And Self.mNitradoDeployStyle = Nitrado.DeployStyles.Guided)
 		End Function
 	#tag EndMethod
 
@@ -222,7 +222,7 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function NitradoValuesEqual(FirstValue As String, SecondValue As String) As Boolean
-		  If Self.mNitradoFormat = Ark.ConfigOption.NitradoFormats.Line Then
+		  If Self.mNitradoFormat = Nitrado.ValueFormats.Line Then
 		    Var FirstLines() As String = FirstValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
 		    FirstLines.Sort(AddressOf Beacon.CaseSensitiveSort)
 		    
@@ -414,11 +414,11 @@ Implements Beacon.GameSetting
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNitradoDeployStyle As Ark.ConfigOption.NitradoDeployStyles
+		Private mNitradoDeployStyle As Nitrado.DeployStyles
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNitradoFormat As Ark.ConfigOption.NitradoFormats
+		Private mNitradoFormat As Nitrado.ValueFormats
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -446,19 +446,6 @@ Implements Beacon.GameSetting
 		Signature As String
 	#tag EndComputedProperty
 
-
-	#tag Enum, Name = NitradoDeployStyles, Type = Integer, Flags = &h0
-		Unsupported
-		  Guided
-		  Expert
-		Both
-	#tag EndEnum
-
-	#tag Enum, Name = NitradoFormats, Type = Integer, Flags = &h0
-		Unsupported
-		  Line
-		Value
-	#tag EndEnum
 
 	#tag Enum, Name = ValueTypes, Type = Integer, Flags = &h0
 		TypeNumeric

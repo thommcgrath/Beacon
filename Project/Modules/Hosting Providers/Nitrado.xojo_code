@@ -9,6 +9,20 @@ Protected Module Nitrado
 	#tag EndConstant
 
 
+	#tag Enum, Name = DeployStyles, Type = Integer, Flags = &h1
+		Unsupported
+		  Guided
+		  Expert
+		Both
+	#tag EndEnum
+
+	#tag Enum, Name = ValueFormats, Type = Integer, Flags = &h1
+		Unsupported
+		  Line
+		Value
+	#tag EndEnum
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Name"

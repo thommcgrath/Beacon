@@ -401,7 +401,7 @@ Inherits Beacon.DeployIntegration
 		    Var NewValue As String
 		    
 		    Select Case ConfigOption.NitradoFormat
-		    Case ArkSA.ConfigOption.NitradoFormats.Line
+		    Case Nitrado.ValueFormats.Line
 		      Var Lines() As String
 		      For Each Value As ArkSA.ConfigValue In Values
 		        If ConfigOption.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Then
@@ -411,7 +411,7 @@ Inherits Beacon.DeployIntegration
 		        End If
 		      Next
 		      NewValue = String.FromArray(Lines, EndOfLine.UNIX)
-		    Case ArkSA.ConfigOption.NitradoFormats.Value
+		    Case Nitrado.ValueFormats.Value
 		      If Values.Count >= 1 Then
 		        Var Value As String = Values(Values.LastIndex).Value
 		        

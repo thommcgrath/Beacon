@@ -61,9 +61,9 @@ Inherits Beacon.DiscoverIntegration
 		        End Try
 		        
 		        Select Case Setting.NitradoFormat
-		        Case Ark.ConfigOption.NitradoFormats.Value
+		        Case Nitrado.ValueFormats.Value
 		          GuidedOrganizer.Add(New Ark.ConfigValue(Setting, Setting.Key + "=" + Value))
-		        Case Ark.ConfigOption.NitradoFormats.Line
+		        Case Nitrado.ValueFormats.Line
 		          Var Lines() As String = Value.StringValue.Split(EndOfLine.UNIX)
 		          For LineIdx As Integer = 0 To Lines.LastIndex
 		            GuidedOrganizer.Add(New Ark.ConfigValue(Setting, Lines(LineIdx), LineIdx))

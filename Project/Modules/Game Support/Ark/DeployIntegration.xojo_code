@@ -268,7 +268,7 @@ Inherits Beacon.DeployIntegration
 		  Var NewValues As New Dictionary
 		  Var SettingsForPaths As New Dictionary
 		  Var ExtraGameIniOrganizer As New Ark.ConfigOrganizer
-		  Var Style As Ark.ConfigOption.NitradoDeployStyles = If(Guided, Ark.ConfigOption.NitradoDeployStyles.Guided, Ark.ConfigOption.NitradoDeployStyles.Expert)
+		  Var Style As Nitrado.DeployStyles = If(Guided, Nitrado.DeployStyles.Guided, Nitrado.DeployStyles.Expert)
 		  
 		  // First we need to determine if guided mode *can* be supported.
 		  // Nitrado values are limited to 65,535 characters and not all GameUserSettings.ini
@@ -289,7 +289,7 @@ Inherits Beacon.DeployIntegration
 		      Continue
 		    End If
 		    
-		    Var SendToNitrado As Boolean = ConfigOption.NitradoDeployStyle = Ark.ConfigOption.NitradoDeployStyles.Both Or ConfigOption.NitradoDeployStyle = Style
+		    Var SendToNitrado As Boolean = ConfigOption.NitradoDeployStyle = Nitrado.DeployStyles.Both Or ConfigOption.NitradoDeployStyle = Style
 		    If SendToNitrado = False Then
 		      Continue
 		    End If
@@ -298,7 +298,7 @@ Inherits Beacon.DeployIntegration
 		    Var NewValue As String
 		    
 		    Select Case ConfigOption.NitradoFormat
-		    Case Ark.ConfigOption.NitradoFormats.Line
+		    Case Nitrado.ValueFormats.Line
 		      Var Lines() As String
 		      For Each Value As Ark.ConfigValue In Values
 		        If ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
@@ -308,7 +308,7 @@ Inherits Beacon.DeployIntegration
 		        End If
 		      Next
 		      NewValue = String.FromArray(Lines, EndOfLine.UNIX)
-		    Case Ark.ConfigOption.NitradoFormats.Value
+		    Case Nitrado.ValueFormats.Value
 		      If Values.Count >= 1 Then
 		        Var Value As String = Values(Values.LastIndex).Value
 		        
