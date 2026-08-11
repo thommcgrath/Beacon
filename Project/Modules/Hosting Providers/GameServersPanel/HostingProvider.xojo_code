@@ -48,7 +48,6 @@ Implements Beacon.HostingProvider
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
-		  Self.Logger
 		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("POST", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/config-deployments", Token, "application/octet-stream", Body.ToString))
 		  If Not Response.Success Then
 		    Raise Response.Error
