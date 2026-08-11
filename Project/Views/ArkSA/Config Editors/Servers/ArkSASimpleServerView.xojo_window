@@ -560,6 +560,8 @@ End
 		    Provider = New ASAManager.HostingProvider
 		  Case BeaconHostingAPI.Identifier
 		    Provider = New BeaconHostingAPI.HostingProvider
+		  Case GameServersPanel.Identifier
+		    Provider = New GameServersPanel.HostingProvider
 		  Else
 		    Break
 		  End Select
@@ -594,6 +596,8 @@ End
 		    Provider = New ASAManager.HostingProvider
 		  Case BeaconHostingAPI.Identifier
 		    Provider = New BeaconHostingAPI.HostingProvider
+		  Case GameServersPanel.Identifier
+		    Provider = New GameServersPanel.HostingProvider
 		  Else
 		    Break
 		  End Select

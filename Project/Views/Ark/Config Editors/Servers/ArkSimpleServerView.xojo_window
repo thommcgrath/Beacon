@@ -295,7 +295,6 @@ Begin ArkServerViewContainer ArkSimpleServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -307,7 +306,6 @@ Begin ArkServerViewContainer ArkSimpleServerView
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -555,6 +553,8 @@ End
 		    Provider = New Nitrado.HostingProvider
 		  Case BeaconHostingAPI.Identifier
 		    Provider = New BeaconHostingAPI.HostingProvider
+		  Case GameServersPanel.Identifier
+		    Provider = New GameServersPanel.HostingProvider
 		  Else
 		    Break
 		  End Select
@@ -587,6 +587,8 @@ End
 		    Provider = New Nitrado.HostingProvider
 		  Case BeaconHostingAPI.Identifier
 		    Provider = New BeaconHostingAPI.HostingProvider
+		  Case GameServersPanel.Identifier
+		    Provider = New GameServersPanel.HostingProvider
 		  Else
 		    Break
 		  End Select

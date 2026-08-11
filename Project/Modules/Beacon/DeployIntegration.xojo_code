@@ -241,7 +241,7 @@ Inherits Beacon.Integration
 		        Self.Log("Waiting for server to finish stopping so it can be started…")
 		      End If
 		    Else
-		      Self.SetError("Unexpected server state:" + Self.mStatus.Message)
+		      Self.SetError("Unexpected server state: " + Self.mStatus.Message)
 		      Return
 		    End Select
 		    
@@ -300,7 +300,7 @@ Inherits Beacon.Integration
 		        Self.Log("Waiting for server to finish stopping…")
 		      End If
 		    Else
-		      Self.SetError("Unexpected server state:" + Self.mStatus.Message)
+		      Self.SetError("Unexpected server state: " + Self.mStatus.Message)
 		      Return
 		    End Select
 		    

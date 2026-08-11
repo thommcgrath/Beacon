@@ -24,6 +24,10 @@ Inherits Beacon.DocumentMergeItem
 		    Var HostConfig As BeaconHostingAPI.HostConfig = BeaconHostingAPI.HostConfig(Profile.HostConfig)
 		    TokenId = HostConfig.TokenId
 		    TokenKey = HostConfig.TokenKey
+		  Case GameServersPanel.Identifier
+		    Var HostConfig As GameServersPanel.HostConfig = GameServersPanel.HostConfig(Profile.HostConfig)
+		    TokenId = HostConfig.TokenId
+		    TokenKey = HostConfig.TokenKey
 		  Case Local.Identifier, FTP.Identifier
 		  Else
 		    Break

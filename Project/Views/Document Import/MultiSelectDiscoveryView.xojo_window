@@ -420,6 +420,9 @@ End
 		  Case BeaconHostingAPI.Identifier
 		    Config = New BeaconHostingAPI.HostConfig
 		    BeaconHostingAPI.HostConfig(Config).TokenId = Token.TokenId
+		  Case GameServersPanel.Identifier
+		    Config = New GameServersPanel.HostConfig
+		    GameServersPanel.HostConfig(Config).TokenId = Token.TokenId
 		  Else
 		    Break
 		  End Select

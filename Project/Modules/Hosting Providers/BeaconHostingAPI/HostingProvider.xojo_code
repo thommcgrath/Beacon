@@ -389,7 +389,7 @@ Implements Beacon.HostingProvider
 		Function Logger() As Beacon.LogProducer
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  Return Self.mLogger
 		End Function
 	#tag EndMethod
 
@@ -422,7 +422,7 @@ Implements Beacon.HostingProvider
 		  Self.mThrottled = False
 		  Self.mActiveSocket = Socket
 		  #if DebugBuild
-		    System.DebugLog("BeaconHostingProvider.HostingProvider: " + RequestMethod + " " + Url)
+		    System.DebugLog("BeaconHostingAPI.HostingProvider: " + RequestMethod + " " + Url)
 		    Var RequestStartTime As Double = System.Microseconds
 		  #endif
 		  Socket.Send(RequestMethod, Url, 120)
@@ -628,14 +628,6 @@ Implements Beacon.HostingProvider
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mThrottled"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

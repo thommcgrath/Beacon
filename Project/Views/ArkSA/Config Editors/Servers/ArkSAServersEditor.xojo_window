@@ -17,8 +17,8 @@ Begin ArkSAConfigEditor ArkSAServersEditor
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
+   MinimumHeight   =   "64"
+   MinimumWidth    =   "64"
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -222,6 +222,7 @@ Begin ArkSAConfigEditor ArkSAServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -878,7 +879,7 @@ End
 		      // Create the view
 		      Var View As ArkSAServerViewContainer
 		      Select Case Profile.ProviderId
-		      Case Nitrado.Identifier, ASAManager.Identifier, BeaconHostingAPI.Identifier
+		      Case Nitrado.Identifier, ASAManager.Identifier, BeaconHostingAPI.Identifier, GameServersPanel.Identifier
 		        View = New ArkSASimpleServerView(Self.Project, Profile)
 		      Case FTP.Identifier
 		        View = New ArkSAFTPServerView(Self.Project, Profile)

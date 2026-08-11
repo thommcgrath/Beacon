@@ -47,6 +47,8 @@ Implements Beacon.LogProducer
 		    Self.mProvider = New Local.HostingProvider(Self)
 		  Case BeaconHostingAPI.Identifier
 		    Self.mProvider = New BeaconHostingAPI.HostingProvider(Self)
+		  Case GameServersPanel.Identifier
+		    Self.mProvider = New GameServersPanel.HostingProvider(Self)
 		  Else
 		    Break
 		  End Select

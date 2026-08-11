@@ -55,7 +55,7 @@ Begin DocumentImportView ArkSAImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   10
+      PanelCount      =   11
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -65,7 +65,7 @@ Begin DocumentImportView ArkSAImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   720
       Begin FTPDiscoveryView FTPView
@@ -406,7 +406,7 @@ Begin DocumentImportView ArkSAImportView
       End
       Begin DocumentImportSourcePicker SourcePicker
          AllowAutoDeactivate=   True
-         AllowedSources  =   255
+         AllowedSources  =   511
          AllowFocus      =   False
          AllowFocusRing  =   False
          AllowTabs       =   True
@@ -414,7 +414,7 @@ Begin DocumentImportView ArkSAImportView
          BackgroundColor =   &cFFFFFF
          Composited      =   False
          Enabled         =   True
-         EnabledSources  =   255
+         EnabledSources  =   511
          HasBackgroundColor=   False
          Height          =   378
          Index           =   -2147483648
@@ -616,6 +616,36 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
+      Begin MultiSelectDiscoveryView GameServersPanelView
+         AddressColumnLabel=   "Address"
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   480
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   11
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
    End
    Begin Timer DiscoveryWatcher
       Enabled         =   True
@@ -638,6 +668,7 @@ End
 		  Self.GSAView.Cleanup
 		  Self.NitradoView.Cleanup
 		  Self.BeaconHostingView.Cleanup
+		  Self.GameServersPanelView.Cleanup
 		End Sub
 	#tag EndEvent
 
@@ -688,14 +719,15 @@ End
 		    Return
 		  End If
 		  
-		  Var ArkProject As ArkSA.Project = ArkSA.Project(Project)
-		  Self.mDestinationProject = ArkProject
-		  Self.FTPView.PullValuesFromProject(ArkProject)
-		  Self.FilesView.PullValuesFromProject(ArkProject)
-		  Self.ClipboardView.PullValuesFromProject(ArkProject)
-		  Self.NitradoView.PullValuesFromProject(ArkProject)
-		  Self.GSAView.PullValuesFromProject(ArkProject)
-		  Self.BeaconHostingView.PullValuesFromProject(ArkProject)
+		  Var GameProject As ArkSA.Project = ArkSA.Project(Project)
+		  Self.mDestinationProject = GameProject
+		  Self.FTPView.PullValuesFromProject(GameProject)
+		  Self.FilesView.PullValuesFromProject(GameProject)
+		  Self.ClipboardView.PullValuesFromProject(GameProject)
+		  Self.NitradoView.PullValuesFromProject(GameProject)
+		  Self.GSAView.PullValuesFromProject(GameProject)
+		  Self.BeaconHostingView.PullValuesFromProject(GameProject)
+		  Self.GameServersPanelView.PullValuesFromProject(GameProject)
 		End Sub
 	#tag EndEvent
 
@@ -955,6 +987,9 @@ End
 	#tag Constant, Name = PageFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageGameServersPanel, Type = Double, Dynamic = False, Default = \"10", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageGSA, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
@@ -999,6 +1034,8 @@ End
 		    Self.ASAManagerView.Begin
 		  Case Self.PageBeaconHostingAPI
 		    Self.BeaconHostingView.Begin
+		  Case Self.PageGameServersPanel
+		    Self.GameServersPanelView.Begin
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1318,6 +1355,8 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageNitrado
 		  Case Me.SourceBeaconHostingAPI
 		    Self.Views.SelectedPanelIndex = Self.PageBeaconHostingAPI
+		  Case Me.SourceGameServersPanel
+		    Self.Views.SelectedPanelIndex = Self.PageGameServersPanel
 		  Case Me.SourceOtherProject
 		    Self.OtherDocsList.RemoveAllRows
 		    Self.OtherDocsList.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
@@ -1513,6 +1552,42 @@ End
 		Sub ShouldResize(NewHeight As Integer)
 		  Self.SetPageHeight(NewHeight)
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GameServersPanelView
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GameId() As String
+		  Return ArkSA.Identifier
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Finished(Profiles() As Beacon.ServerProfile)
+		  Self.Discover(Profiles)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CreateHostingProvider() As Beacon.HostingProvider
+		  Return New GameServersPanel.HostingProvider
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher

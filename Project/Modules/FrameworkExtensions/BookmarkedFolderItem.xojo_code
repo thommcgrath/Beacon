@@ -118,6 +118,7 @@ Inherits FolderItem
 		  #endif
 		  
 		  // Since it's not save info, let's treat it as a path
+		  #Pragma BreakOnExceptions False
 		  Try
 		    Var File As New FolderItem(SaveInfo, FolderItem.PathModes.Native)
 		    Return New BookmarkedFolderItem(File)

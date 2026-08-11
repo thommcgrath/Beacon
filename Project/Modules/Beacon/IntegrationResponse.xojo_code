@@ -1,45 +1,35 @@
 #tag Class
-Private Class APIResponse
+Protected Class IntegrationResponse
 	#tag Method, Flags = &h0
-		Function Content() As String
-		  Return Self.mContent
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Error() As RuntimeException
-		  Return Self.mError
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function FromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As BeaconHostingAPI.APIResponse
-		  Var Response As New BeaconHostingAPI.APIResponse
-		  Response.mHTTPStatus = Socket.LastHTTPStatus
-		  Response.mUrl = Socket.LastURL
-		  Response.mError = Socket.LastException
+		Sub Constructor(Socket As SimpleHTTP.SynchronousHTTPSocket)
+		  Self.mHTTPStatus = Socket.LastHTTPStatus
+		  Self.mUrl = Socket.LastURL
+		  Self.mError = Socket.LastException
 		  If (Socket.LastContent Is Nil) = False Then
-		    Response.mContent = Socket.LastContent
+		    Self.mContent = Socket.LastContent
 		  End If
 		  
 		  // This is not fantastic because duplicate headers are a thing and a Dictionary won't support that
-		  Response.mHeaders = New Dictionary
+		  Self.mHeaders = New Dictionary
 		  For Each Header As Pair In Socket.ResponseHeaders
-		    Response.mHeaders.Value(Header.Left) = Header.Right
+		    Self.mHeaders.Value(Header.Left) = Header.Right
 		  Next
 		  
-		  Select Case Response.mHTTPStatus
-		  Case 200, 201, 204
-		    Return Response
+		  Select Case Self.mHTTPStatus
+		  Case 200, 201, 202, 204
+		    Self.VerifyChecksum()
+		    Return
 		  End Select
 		  
 		  Var SocketErr As RuntimeException = Socket.LastException
 		  If SocketErr Is Nil Then
-		    Var Err As New BeaconHostingAPI.APIException
-		    Err.ErrorNumber = Response.mHTTPStatus
-		    Select Case Response.mHTTPStatus
+		    Var Err As New Beacon.IntegrationException
+		    Err.ErrorNumber = Self.mHTTPStatus
+		    
+		    Var IsUnknown As Boolean
+		    Select Case Self.mHTTPStatus
 		    Case 401
-		      Err.Message = "The connection between your Beacon and host is no longer valid and must be replaced. Use the 'Account Control Panel' option from the user menu in the top right corner of Beacon to access your account, then choose the 'Connections' section."
+		      Err.Message = "The connection between Beacon and your host is no longer valid and must be replaced. Use the 'Account Control Panel' option from the user menu in the top right corner of Beacon to access your account, then choose the 'Connections' section."
 		    Case 406
 		      Err.Message = "The file was not uploaded correctly. This usually means the connection was dropped during transfer. If this issue persists, contact your hosting provider."
 		    Case 429
@@ -49,30 +39,19 @@ Private Class APIResponse
 		    Case 502, 504
 		      Err.Message = "Your host appears to be having an unplanned outage."
 		    Case 500
-		      Var TempMessage As String
-		      If Response.mContent.IsEmpty = False Then
-		        Try
-		          Var Parsed As Variant = Beacon.ParseJSON(Response.mContent)
-		          If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary And Dictionary(Parsed.ObjectValue).HasKey("message") Then
-		            TempMessage = Dictionary(Parsed.ObjectValue).Value("message").StringValue
-		          End If
-		        Catch ParseErr As RuntimeException
-		        End Try
-		      End If
-		      If TempMessage.IsEmpty = False Then
-		        Err.Message = TempMessage
-		      Else
-		        Err.Message = "Your host responded with an error but no message."
-		      End If
+		      Err.Message = "Internal server error."
 		    Else
+		      IsUnknown = True
 		      Err.Message = "Unexpected HTTP status " + Err.ErrorNumber.ToString(Locale.Raw, "0") + "."
 		    End Select
+		    
+		    RaiseEvent CustomizeError(Err, Socket, IsUnknown)
 		    
 		    If Err.Message.EndsWith(".") = False Then
 		      Err.Message = Err.Message + "."
 		    End If
 		    
-		    Response.mError = Err
+		    Self.mError = Err
 		  Else
 		    If SocketErr.Message.Contains("likely a bad url") Then
 		      SocketErr.Message = "Beacon experienced a DNS error while trying to connect to your host's server. This is often an issue with your internet service provider."
@@ -82,14 +61,24 @@ Private Class APIResponse
 		      SocketErr.Message = "Connection Error #" + SocketErr.ErrorNumber.ToString(Locale.Raw, "0") + ": " + SocketErr.Message
 		    End If
 		    
-		    Response.mError = SocketErr
+		    Self.mError = SocketErr
 		  End If
 		  
-		  App.Log("Host API Error #" + Response.mError.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Response.mError.Message)
-		  App.Log("Url: " + Response.mUrl)
-		  App.Log("Response: " + EncodeBase64MBS(Response.mContent))
-		  
-		  Return Response
+		  App.Log("Host API Error #" + Self.mError.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Self.mError.Message)
+		  App.Log("Url: " + Self.mUrl)
+		  App.Log("Response: " + EncodeBase64MBS(Self.mContent))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Content() As String
+		  Return Self.mContent
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Error() As RuntimeException
+		  Return Self.mError
 		End Function
 	#tag EndMethod
 
@@ -137,25 +126,75 @@ Private Class APIResponse
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub VerifyChecksum()
+		  If Self.mHeaders.HasKey("Repr-Digest") = False Then
+		    Return
+		  End If
+		  
+		  
+		  Var Header As String = Self.mHeaders.Value("Repr-Digest")
+		  Var Parts() As String = Header.Split(",")
+		  For Each Part As String In Parts
+		    Var Pos As Integer = Part.IndexOf("=")
+		    If Pos = -1 Then
+		      Self.mError = New Beacon.IntegrationException("Host sent a malformed Repr-Digest header.")
+		      Return
+		    End If
+		    
+		    Var Algo As String = Header.Left(Pos).Trim
+		    Var ExpectedHash As String = Header.Middle(Pos + 1).Trim
+		    If ExpectedHash.BeginsWith(":") Then
+		      ExpectedHash = ExpectedHash.Middle(1)
+		    End If
+		    If ExpectedHash.EndsWith(":") Then
+		      ExpectedHash = ExpectedHash.Left(ExpectedHash.Length - 1)
+		    End If
+		    
+		    Var ComputedHash As String
+		    Select Case Algo
+		    Case "sha-512"
+		      ComputedHash = EncodeBase64MBS(Crypto.SHA2_512(Content))
+		    Case "sha-256"
+		      ComputedHash = EncodeBase64MBS(Crypto.SHA2_256(Content))
+		    Else
+		      Continue
+		    End Select
+		    
+		    If ExpectedHash.Compare(ComputedHash, ComparisonOptions.CaseSensitive) = 0 Then
+		      Exit
+		    Else
+		      Self.mError = New Beacon.IntegrationException("Checksum does not match. This usually means the connection was interrupted. If this problem persists, please contact your hosting provider. Expected " + ExpectedHash + " but received " + ComputedHash + ".")
+		      Return
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
 
-	#tag Property, Flags = &h21
-		Private mContent As String
+
+	#tag Hook, Flags = &h0
+		Event CustomizeError(Err As Beacon.IntegrationException, Socket As SimpleHTTP.SynchronousHTTPSocket, IsUnknown As Boolean)
+	#tag EndHook
+
+
+	#tag Property, Flags = &h1
+		Protected mContent As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mError As RuntimeException
+	#tag Property, Flags = &h1
+		Protected mError As RuntimeException
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mHeaders As Dictionary
+	#tag Property, Flags = &h1
+		Protected mHeaders As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mHTTPStatus As Integer
+	#tag Property, Flags = &h1
+		Protected mHTTPStatus As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUrl As String
+	#tag Property, Flags = &h1
+		Protected mUrl As String
 	#tag EndProperty
 
 

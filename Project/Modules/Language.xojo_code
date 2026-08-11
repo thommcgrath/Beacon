@@ -270,6 +270,8 @@ Protected Module Language
 		    Return "Local"
 		  Case BeaconHostingAPI.Identifier
 		    Return "Beacon Open Hosting API"
+		  Case GameServersPanel.Identifier
+		    Return "GameServersPanel"
 		  Else
 		    Return ProviderId
 		  End Select

@@ -48,6 +48,8 @@ Protected Class HostConfig
 		  Case Local.Identifier
 		  Case BeaconHostingAPI.Identifier
 		    Return New BeaconHostingAPI.HostConfig(SaveData, Version)
+		  Case GameServersPanel.Identifier
+		    Return New GameServersPanel.HostConfig(SaveData, Version)
 		  Else
 		    Break
 		  End Select
