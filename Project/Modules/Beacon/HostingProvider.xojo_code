@@ -13,6 +13,18 @@ Protected Interface HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DeployPostflight(Project As Beacon.Project, Profile As Beacon.ServerProfile)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeployPreflight(Project As Beacon.Project, Profile As Beacon.ServerProfile)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub DownloadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  
 		End Sub

@@ -33,6 +33,12 @@ Protected Class ServerStatus
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsInActiveState() As Boolean
+		  Return Self.mState = States.Running Or Self.mState = States.Starting
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Message() As String
 		  Return Self.mMessage
 		End Function

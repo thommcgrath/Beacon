@@ -5,6 +5,7 @@ Inherits Beacon.Integration
 	#tag Event
 		Sub Run()
 		  Self.Log("Starting deploy of " + Self.Profile.Name)
+		  Self.Provider.DeployPreflight(Self.Project, Self.Profile)
 		  
 		  // Start by querying the server
 		  Self.RefreshServerStatus(True)
@@ -35,6 +36,9 @@ Inherits Beacon.Integration
 		  If Self.Finished Then
 		    Return
 		  End If
+		  
+		  Self.Log("Running deploy postflight…")
+		  Self.Provider.DeployPostflight(Self.Project, Self.Profile)
 		  
 		  Self.Log("Finished")
 		  Self.Finish()

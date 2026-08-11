@@ -91,6 +91,24 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DeployPostflight(Project As Beacon.Project, Profile As Beacon.ServerProfile)
+		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeployPreflight(Project As Beacon.Project, Profile As Beacon.ServerProfile)
+		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub DownloadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
 		  

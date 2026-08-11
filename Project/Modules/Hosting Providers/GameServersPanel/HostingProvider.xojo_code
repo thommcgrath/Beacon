@@ -22,8 +22,63 @@ Implements Beacon.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DeployPostflight(Project As Beacon.Project, Profile As Beacon.ServerProfile)
+		  // Part of the Beacon.HostingProvider interface.
+		  
+		  Var FileKeys() As Variant = Self.mFiles.Keys
+		  Var Files As New JSONItem("[]")
+		  For Each FileKey As String In FileKeys
+		    Var File As New JSONItem("{}")
+		    File.Value("fileKey") = FileKey
+		    File.Value("content") = Self.mFiles.Value(FileKey)
+		    Files.Add(File)
+		  Next
+		  
+		  Var Body As New JSONItem("{}")
+		  Body.Value("files") = Files
+		  Body.Value("reason") = "Deploy from Beacon"
+		  
+		  If (Self.mOverrideStatus Is Nil) = False And Self.mOverrideStatus.IsInActiveState And Self.mWasRunning = True Then
+		    Body.Value("restartPolicy") = "restart_always"
+		  Else
+		    Body.Value("restartPolicy") = "manual"
+		  End If
+		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
+		  
+		  Self.Logger
+		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("POST", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/config-deployments", Token, "application/octet-stream", Body.ToString))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeployPreflight(Project As Beacon.Project, Profile As Beacon.ServerProfile)
+		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  
+		  // GameServersPanel does everything in a batch, so we want to not actually start or stop
+		  // the server during deploy. Actual changes will be made in PostFlight.
+		  Self.mDeployMode = True
+		  Self.mFiles = New Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub DownloadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
+		  
+		  If Self.mDeployMode = True And Self.mFiles.HasKey(Transfer.Path) Then
+		    Transfer.Success = True
+		    Transfer.Content = Self.mFiles.Value(Transfer.Path)
+		    Return
+		  End If
 		  
 		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
@@ -87,6 +142,10 @@ Implements Beacon.HostingProvider
 		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  If Self.mDeployMode = True And (Self.mOverrideStatus Is Nil) = False Then
+		    Return Self.mOverrideStatus
+		  End If
+		  
 		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Project, Profile, ServerId, Token)
@@ -118,6 +177,10 @@ Implements Beacon.HostingProvider
 		  Else
 		    Status = New Beacon.ServerStatus("Unknown server status: " + StatusCode, StatusCode)
 		  End Select
+		  
+		  If Self.mDeployMode Then
+		    Self.mWasRunning = Status.IsInActiveState
+		  End If
 		  
 		  Return Status
 		End Function
@@ -316,6 +379,11 @@ Implements Beacon.HostingProvider
 		Sub StartServer(Project As Beacon.Project, Profile As Beacon.ServerProfile)
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  If Self.mDeployMode Then
+		    Self.mOverrideStatus = New Beacon.ServerStatus(Beacon.ServerStatus.States.Running)
+		    Return
+		  End If
+		  
 		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Project, Profile, ServerId, Token)
@@ -330,6 +398,11 @@ Implements Beacon.HostingProvider
 	#tag Method, Flags = &h0
 		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
+		  
+		  If Self.mDeployMode Then
+		    Self.mOverrideStatus = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopped)
+		    Return
+		  End If
 		  
 		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
@@ -386,6 +459,11 @@ Implements Beacon.HostingProvider
 		Sub UploadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
 		  
+		  If Self.mDeployMode Then
+		    Self.mFiles.Value(Transfer.Path) = Transfer.Content
+		    Return
+		  End If
+		  
 		  Var Body As New JSONItem("{}")
 		  Body.Value("content") = Transfer.Content
 		  Body.Value("restartPolicy") = "manual"
@@ -407,13 +485,71 @@ Implements Beacon.HostingProvider
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDeployMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFiles As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLogger As Beacon.LogProducer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOverrideStatus As Beacon.ServerStatus
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mThrottled As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mWasRunning As Boolean
+	#tag EndProperty
 
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

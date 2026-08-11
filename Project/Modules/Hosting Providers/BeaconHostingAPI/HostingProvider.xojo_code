@@ -72,6 +72,24 @@ Implements Beacon.HostingProvider
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub DeployPostflight(Project As Beacon.Project, Profile As Beacon.ServerProfile)
+		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeployPreflight(Project As Beacon.Project, Profile As Beacon.ServerProfile)
+		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Shared Function DiscoverHost(Config As BeaconHostingAPI.HostConfig) As Boolean
 		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Config.TokenId, Nil, True)
