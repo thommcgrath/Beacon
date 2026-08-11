@@ -132,11 +132,8 @@ Implements Beacon.HostingProvider
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
 		  
-		  Var Headers As New Dictionary
-		  Headers.Value("Want-Repr-Digest") = "sha-512=10,sha-256=9,md5=0,sha=0,unixsum=0,unixcksum=0,adler=0,crc32c=0"
-		  
 		  Var Path As String = Self.CleanupPath(Transfer.Path)
-		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", BaseUrl + "/servers/" + ServerId + "/files/" + Path, Token, Headers))
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", BaseUrl + "/servers/" + ServerId + "/files/" + Path, Token))
 		  If Not Response.Success Then
 		    Select Case FailureMode
 		    Case Beacon.Integration.DownloadFailureMode.MissingAllowed
@@ -156,49 +153,8 @@ Implements Beacon.HostingProvider
 		    Return
 		  End If
 		  
-		  Var Content As String = Response.Content
-		  
-		  If Response.HasHeader("Repr-Digest") Then
-		    Var Header As String = Response.Header("Repr-Digest")
-		    Var Parts() As String = Header.Split(",")
-		    For Each Part As String In Parts
-		      Var Pos As Integer = Part.IndexOf("=")
-		      If Pos = -1 Then
-		        Var Err As New UnsupportedOperationException
-		        Err.Message = "Host sent a malformed Repr-Digest header."
-		        Raise Err
-		      End If
-		      
-		      Var Algo As String = Header.Left(Pos).Trim
-		      Var ExpectedHash As String = Header.Middle(Pos + 1).Trim
-		      If ExpectedHash.BeginsWith(":") Then
-		        ExpectedHash = ExpectedHash.Middle(1)
-		      End If
-		      If ExpectedHash.EndsWith(":") Then
-		        ExpectedHash = ExpectedHash.Left(ExpectedHash.Length - 1)
-		      End If
-		      
-		      Var ComputedHash As String
-		      Select Case Algo
-		      Case "sha-512"
-		        ComputedHash = EncodeBase64MBS(Crypto.SHA2_512(Content))
-		      Case "sha-256"
-		        ComputedHash = EncodeBase64MBS(Crypto.SHA2_256(Content))
-		      Else
-		        Continue
-		      End Select
-		      
-		      If ExpectedHash.Compare(ComputedHash, ComparisonOptions.CaseSensitive) = 0 Then
-		        Exit
-		      Else
-		        Transfer.SetError("Checksum does not match. This usually means the connection was interrupted. If this problem persists, please contact your hosting provider. Expected " + ExpectedHash + " but received " + ComputedHash + ".")
-		        Return
-		      End If
-		    Next
-		  End If
-		  
 		  Transfer.Success = True
-		  Transfer.Content = Content
+		  Transfer.Content = Response.Content
 		End Sub
 	#tag EndMethod
 
@@ -434,7 +390,7 @@ Implements Beacon.HostingProvider
 		  If Locked Then
 		    Preferences.ReleaseConnection()
 		  End If
-		  Return BeaconHostingAPI.APIResponse.FromSocket(Socket)
+		  Return New BeaconHostingAPI.APIResponse(Socket)
 		End Function
 	#tag EndMethod
 
@@ -554,16 +510,8 @@ Implements Beacon.HostingProvider
 		  Var Token As BeaconAPI.ProviderToken
 		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
 		  
-		  Var Content As String = Transfer.Content
-		  Var Hashes() As String
-		  Hashes.Add("sha-512=:" + EncodeBase64MBS(Crypto.SHA2_512(Content)) + ":")
-		  Hashes.Add("sha-256=:" + EncodeBase64MBS(Crypto.SHA2_256(Content)) + ":")
-		  
-		  Var Headers As New Dictionary
-		  Headers.Value("Repr-Digest") = String.FromArray(Hashes, ",")
-		  
 		  Var Path As String = Self.CleanupPath(Transfer.Path)
-		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("PUT", BaseUrl + "/servers/" + ServerId + "/files/" + Path, Token, Headers, "application/octet-stream", Content))
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("PUT", BaseUrl + "/servers/" + ServerId + "/files/" + Path, Token, "application/octet-stream", Transfer.Content))
 		  If Not Response.Success Then
 		    Select Case Response.HTTPStatus
 		    Case 406
