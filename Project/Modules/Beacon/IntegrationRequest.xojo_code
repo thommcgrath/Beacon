@@ -28,7 +28,7 @@ Protected Class IntegrationRequest
 		  
 		  Headers.Value("Cache-Control") = "no-cache"
 		  Headers.Value("User-Agent") = App.UserAgent
-		  Headers.Value("Want-Repr-Digest") = "sha-512=10,sha-256=9,md5=0,sha=0,unixsum=0,unixcksum=0,adler=0,crc32c=0"
+		  Headers.Value("Want-Content-Digest") = "sha-512=10,sha-256=9,md5=0,sha=0,unixsum=0,unixcksum=0,adler=0,crc32c=0"
 		  If ContentType.IsEmpty = False And (Content Is Nil) = False Then
 		    Headers.Value("Content-Type") = ContentType
 		  End If
@@ -38,11 +38,11 @@ Protected Class IntegrationRequest
 		  Self.mMethod = RequestMethod
 		  Self.mUrl = Url
 		  
-		  If (Content Is Nil) = False And Content.Size > 0 And Headers.HasKey("Repr-Digest") = False Then
+		  If (Content Is Nil) = False And Content.Size > 0 And Headers.HasKey("Content-Digest") = False Then
 		    Var Hashes() As String
 		    Hashes.Add("sha-512=:" + EncodeBase64MBS(Crypto.SHA2_512(Content)) + ":")
 		    Hashes.Add("sha-256=:" + EncodeBase64MBS(Crypto.SHA2_256(Content)) + ":")
-		    Headers.Value("Repr-Digest") = String.FromArray(Hashes, ",")
+		    Headers.Value("Content-Digest") = String.FromArray(Hashes, ",")
 		  End If
 		  
 		  If (Token Is Nil) = False Then

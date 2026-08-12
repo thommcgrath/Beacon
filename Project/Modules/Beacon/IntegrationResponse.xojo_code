@@ -128,17 +128,17 @@ Protected Class IntegrationResponse
 
 	#tag Method, Flags = &h21
 		Private Sub VerifyChecksum()
-		  If Self.mHeaders.HasKey("Repr-Digest") = False Then
+		  If Self.mHeaders.HasKey("Content-Digest") = False Then
 		    Return
 		  End If
 		  
 		  
-		  Var Header As String = Self.mHeaders.Value("Repr-Digest")
+		  Var Header As String = Self.mHeaders.Value("Content-Digest")
 		  Var Parts() As String = Header.Split(",")
 		  For Each Part As String In Parts
 		    Var Pos As Integer = Part.IndexOf("=")
 		    If Pos = -1 Then
-		      Self.mError = New Beacon.IntegrationException("Host sent a malformed Repr-Digest header.")
+		      Self.mError = New Beacon.IntegrationException("Host sent a malformed Content-Digest header.")
 		      Return
 		    End If
 		    
