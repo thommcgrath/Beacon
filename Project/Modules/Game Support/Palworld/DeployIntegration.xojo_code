@@ -8,23 +8,10 @@ Inherits Beacon.DeployIntegration
 		  Var Project As Palworld.Project = Self.Project
 		  Var Profile As Palworld.ServerProfile = Self.Profile
 		  
-		  Var SettingsIniPath As String
+		  Var Provider As Palworld.HostingProvider = Palworld.HostingProvider(Self.Provider)
+		  Provider.RefreshProfile(Project, Profile)
 		  
-		  Select Case Self.Provider
-		  Case IsA Nitrado.HostingProvider
-		    Var GameServer As JSONItem = InitialStatus.UserData
-		    Var GamePath As String = GameServer.Child("game_specific").Value("path").StringValue
-		    If GamePath.EndsWith("/") Then
-		      GamePath = GamePath.Left(GamePath.Length - 1)
-		    End If
-		    
-		    Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
-		    Profile.BasePath = GamePath
-		    Profile.SettingsIniPath = GamePath + "/Pal/Saved/Config/WindowsServer/PalWorldSettings.ini"
-		    Profile.LogsPath = GamePath + "/Pal/Saved/Logs"
-		  End Select
-		  
-		  SettingsIniPath = Profile.SettingsIniPath
+		  Var SettingsIniPath As String = Profile.SettingsIniPath
 		  
 		  Self.EnterResourceIntenseMode()
 		  Var Organizer As Palworld.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Profile)
@@ -89,7 +76,7 @@ Inherits Beacon.DeployIntegration
 		    Var NewFiles As New Dictionary
 		    NewFiles.Value(Palworld.ConfigFileSettings) = SettingsIniRewritten
 		    
-		    Select Case Self.Provider
+		    Select Case Provider
 		    Case IsA Nitrado.HostingProvider
 		      Var GameServer As JSONItem = InitialStatus.UserData
 		      Var Settings As JSONItem = GameServer.Child("settings")
@@ -111,7 +98,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Wait if necessary
-		  If InitialStatus.State <> Beacon.ServerStatus.States.Stopped And Self.Provider IsA Nitrado.HostingProvider Then
+		  If InitialStatus.State <> Beacon.ServerStatus.States.Stopped And Provider IsA Nitrado.HostingProvider Then
 		    Self.NitradoCooldownWait()
 		  End If
 		  

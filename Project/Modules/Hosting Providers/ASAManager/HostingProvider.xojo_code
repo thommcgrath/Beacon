@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider
+Implements Beacon.HostingProvider, ArkSA.HostingProvider
 	#tag Method, Flags = &h0
 		Sub Constructor(Logger As Beacon.LogProducer = Nil)
 		  If Logger Is Nil Then
@@ -8,6 +8,8 @@ Implements Beacon.HostingProvider
 		  Else
 		    Self.mLogger = Logger
 		  End If
+		  
+		  Self.mServerDetailCache = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -137,6 +139,8 @@ Implements Beacon.HostingProvider
 		  End If
 		  
 		  Var StatusData As JSONItem = Parsed.Child("data")
+		  Self.mServerDetailCache.Value(Profile.ProfileId) = StatusData
+		  
 		  Var StatusMessage As String = StatusData.Value("status")
 		  Var Status As Beacon.ServerStatus
 		  Select Case StatusMessage
@@ -248,6 +252,19 @@ Implements Beacon.HostingProvider
 		  
 		  Return (Token Is Nil) = False And Token.Provider = BeaconAPI.ProviderToken.ProviderASAManager
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
+		    Call Self.GetServerStatus(Project, Profile)
+		  End If
+		  
+		  Var StatusDetails As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
+		  Profile.Mask = ArkSA.Maps.MaskForIdentifier(StatusDetails.Value("map_name").StringValue)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -423,9 +440,63 @@ Implements Beacon.HostingProvider
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mServerDetailCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mThrottled As Boolean
 	#tag EndProperty
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mServerDetailCache"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

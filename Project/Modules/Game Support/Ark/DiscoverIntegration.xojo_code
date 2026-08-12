@@ -4,33 +4,20 @@ Inherits Beacon.DiscoverIntegration
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Function Run() As Beacon.Project
-		  Var Project As Beacon.Project = Self.Project
-		  Var Provider As Beacon.HostingProvider = Self.Provider
-		  Var DownloadIniFiles, GatherGameSettings As Boolean = True
-		  Var GetMapFromLogs As Boolean = True
-		  
+		  Var Project As Ark.Project = Self.Project
 		  Var Profile As Ark.ServerProfile = Self.Profile
+		  
+		  Self.Log("Checking server status…")
+		  Var Provider As Ark.HostingProvider = Ark.HostingProvider(Self.Provider)
+		  Provider.RefreshProfile(Project, Profile)
+		  
 		  Var Data As New Ark.DiscoveredData
 		  Data.Profile = Profile
+		  
+		  Var DownloadIniFiles, GatherGameSettings As Boolean = True
+		  
 		  Select Case Provider
 		  Case IsA Nitrado.HostingProvider
-		    Self.Log("Checking server status…")
-		    Try
-		      Profile.BasePath = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "/game_specific.path")
-		    Catch Err As RuntimeException
-		      Self.SetError("Could not find server base path: " + Err.Message)
-		      Return Nil
-		    End Try
-		    
-		    Try
-		      Var MapIdentifier As String = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "config.map")
-		      Profile.Mask = Ark.Maps.MaskForIdentifier(MapIdentifier.LastField(","))
-		      GetMapFromLogs = False
-		    Catch Err As RuntimeException
-		      Self.SetError("Could not find server map: " + Err.Message)
-		      Return Nil
-		    End Try
-		    
 		    Var ExpertMode As Boolean
 		    Try
 		      ExpertMode = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "general.expertMode")
@@ -105,7 +92,7 @@ Inherits Beacon.DiscoverIntegration
 		            // Here's the command line
 		            Var CommandLine As String = Line.Middle(13)
 		            Var Options As Dictionary = Ark.ParseCommandLine(CommandLine)
-		            If GetMapFromLogs Then
+		            If Profile.Mask = 0 Then
 		              Profile.Mask = Ark.Maps.MaskForIdentifier(Options.Value("Map"))
 		            End If
 		            Data.CommandLineOptions = Options
@@ -213,6 +200,12 @@ Inherits Beacon.DiscoverIntegration
 	#tag Method, Flags = &h0
 		Function Profile() As Ark.ServerProfile
 		  Return Ark.ServerProfile(Super.Profile)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Project() As Ark.Project
+		  Return Ark.Project(Super.Project)
 		End Function
 	#tag EndMethod
 

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider
+Implements Beacon.HostingProvider, ArkSA.HostingProvider, Ark.HostingProvider, Palworld.HostingProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Constructor(Logger As Beacon.LogProducer = Nil)
@@ -443,6 +443,79 @@ Implements Beacon.HostingProvider
 		Function MatchesToken(Token As BeaconAPI.ProviderToken) As Boolean
 		  Return (Token Is Nil) = False And Token.Provider = BeaconAPI.ProviderToken.ProviderNitrado
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As Ark.Project, Profile As Ark.ServerProfile)
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
+		    Call Self.GetServerStatus(Project, Profile)
+		  End If
+		  
+		  Var GameServer As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
+		  Var GamePath As String = GameServer.Child("game_specific").Value("path").StringValue
+		  If GamePath.EndsWith("/") Then
+		    GamePath = GamePath.Left(GamePath.Length - 1)
+		  End If
+		  
+		  Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
+		  Profile.BasePath = GamePath
+		  Profile.GameIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/Game.ini"
+		  Profile.GameUserSettingsIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini"
+		  Profile.LogsPath = GamePath + "/ShooterGame/Saved/Logs"
+		  
+		  Var Config As JSONItem = GameServer.Child("settings").Child("config")
+		  Var Map As String = Config.Value("map").StringValue
+		  Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField("."))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
+		    Call Self.GetServerStatus(Project, Profile)
+		  End If
+		  
+		  Var GameServer As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
+		  Var GamePath As String = GameServer.Child("game_specific").Value("path").StringValue
+		  If GamePath.EndsWith("/") Then
+		    GamePath = GamePath.Left(GamePath.Length - 1)
+		  End If
+		  
+		  Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
+		  Profile.BasePath = GamePath
+		  Profile.GameIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/Game.ini"
+		  Profile.GameUserSettingsIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini"
+		  Profile.LogsPath = GamePath + "/ShooterGame/Saved/Logs"
+		  
+		  Var Config As JSONItem = GameServer.Child("settings").Child("config")
+		  Var Map As String = Config.Value("map").StringValue
+		  Profile.Mask = ArkSA.Maps.MaskForIdentifier(Map.LastField("."))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As Palworld.Project, Profile As Palworld.ServerProfile)
+		  // Part of the Palworld.HostingProvider interface.
+		  
+		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
+		    Call Self.GetServerStatus(Project, Profile)
+		  End If
+		  
+		  Var GameServer As JSONItem = Self.mServerDetailCache.Value(Profile.ProfileId)
+		  Var GamePath As String = GameServer.Child("game_specific").Value("path").StringValue
+		  If GamePath.EndsWith("/") Then
+		    GamePath = GamePath.Left(GamePath.Length - 1)
+		  End If
+		  
+		  Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
+		  Profile.BasePath = GamePath
+		  Profile.SettingsIniPath = GamePath + "/Pal/Saved/Config/WindowsServer/PalWorldSettings.ini"
+		  Profile.LogsPath = GamePath + "/Pal/Saved/Logs"
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

@@ -40,8 +40,8 @@ Implements Beacon.OAuthConsumer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateProvider() As Beacon.HostingProvider
-		  Return New ASAManager.HostingProvider()
+		Function CreateProvider(Logger As Beacon.LogProducer = Nil) As Beacon.HostingProvider
+		  Return New ASAManager.HostingProvider(Logger)
 		End Function
 	#tag EndMethod
 

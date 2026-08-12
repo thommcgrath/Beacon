@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider
+Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h21
 		Private Function BaseUrl(Config As FTP.HostConfig) As String
@@ -287,6 +287,30 @@ Implements Beacon.HostingProvider
 		  #Pragma Unused Token
 		  Return False
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As Ark.Project, Profile As Ark.ServerProfile)
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As Palworld.Project, Profile As Palworld.ServerProfile)
+		  // Part of the Palworld.HostingProvider interface.
+		  
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

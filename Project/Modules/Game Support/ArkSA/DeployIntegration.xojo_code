@@ -8,32 +8,11 @@ Inherits Beacon.DeployIntegration
 		  Var Project As ArkSA.Project = Self.Project
 		  Var Profile As ArkSA.ServerProfile = Self.Profile
 		  
-		  Var GameIniPath, GameUserSettingsIniPath As String
+		  Var Provider As ArkSA.HostingProvider = ArkSA.HostingProvider(Self.Provider)
+		  Provider.RefreshProfile(Project, Profile)
 		  
-		  Select Case Self.Provider
-		  Case IsA Nitrado.HostingProvider
-		    Var GameServer As JSONItem = InitialStatus.UserData
-		    Var GamePath As String = GameServer.Child("game_specific").Value("path").StringValue
-		    If GamePath.EndsWith("/") Then
-		      GamePath = GamePath.Left(GamePath.Length - 1)
-		    End If
-		    
-		    Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
-		    Profile.BasePath = GamePath
-		    Profile.GameIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/Game.ini"
-		    Profile.GameUserSettingsIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini"
-		    Profile.LogsPath = GamePath + "/ShooterGame/Saved/Logs"
-		    
-		    Var Config As JSONItem = GameServer.Child("settings").Child("config")
-		    Var Map As String = Config.Value("map").StringValue
-		    Profile.Mask = ArkSA.Maps.MaskForIdentifier(Map.LastField("."))
-		  Case IsA ASAManager.HostingProvider
-		    Var StatusDetails As JSONItem = InitialStatus.UserData
-		    Profile.Mask = ArkSA.Maps.MaskForIdentifier(StatusDetails.Value("map_name").StringValue)
-		  End Select
-		  
-		  GameIniPath = Profile.GameIniPath
-		  GameUserSettingsIniPath = Profile.GameUserSettingsIniPath
+		  Var GameIniPath As String = Profile.GameIniPath
+		  Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
 		  
 		  Self.EnterResourceIntenseMode()
 		  Var Organizer As ArkSA.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Profile)
@@ -68,7 +47,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  Var UWPMode As ArkSA.Project.UWPCompatibilityModes = Project.UWPMode
-		  If Self.Provider IsA Nitrado.HostingProvider Then
+		  If Provider IsA Nitrado.HostingProvider Then
 		    UWPMode = ArkSA.Project.UWPCompatibilityModes.Never
 		  End If
 		  
@@ -120,7 +99,7 @@ Inherits Beacon.DeployIntegration
 		  
 		  Var NitradoChanges As Dictionary
 		  Var NitradoSettings As JSONItem
-		  If Self.Provider IsA Nitrado.HostingProvider Then
+		  If Provider IsA Nitrado.HostingProvider Then
 		    Var GameServer As JSONItem = InitialStatus.UserData
 		    NitradoSettings = GameServer.Child("settings")
 		    NitradoChanges = Self.NitradoPrepareChanges(NitradoSettings, Organizer)
@@ -136,7 +115,7 @@ Inherits Beacon.DeployIntegration
 		    NewFiles.Value(ArkSA.ConfigFileGame) = GameIniRewritten
 		    NewFiles.Value(ArkSA.ConfigFileGameUserSettings) = GameUserSettingsIniRewritten
 		    
-		    Select Case Self.Provider
+		    Select Case Provider
 		    Case IsA Nitrado.HostingProvider
 		      NitradoSettings.Compact = False
 		      OldFiles.Value("Config.json") = NitradoSettings.ToString
@@ -171,7 +150,7 @@ Inherits Beacon.DeployIntegration
 		    Self.StopServer()
 		    
 		    // Let the implementor do any final work
-		    If Self.Provider IsA Nitrado.HostingProvider Then
+		    If Provider IsA Nitrado.HostingProvider Then
 		      Self.NitradoCooldownWait()
 		    End If
 		  End If
@@ -187,7 +166,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Make command line changes
-		  Select Case Self.Provider
+		  Select Case Provider
 		  Case IsA Nitrado.HostingProvider
 		    Call Self.NitradoApplySettings(NitradoChanges)
 		    If Self.Finished Then

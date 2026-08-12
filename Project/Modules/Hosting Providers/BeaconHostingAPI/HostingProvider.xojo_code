@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider
+Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
 	#tag Method, Flags = &h21
 		Private Shared Function CleanupPath(Path As String) As String
 		  Var Query As String
@@ -234,19 +234,19 @@ Implements Beacon.HostingProvider
 		  Var Status As Beacon.ServerStatus
 		  Select Case StatusCode
 		  Case "running", "started"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Running, StatusCode)
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Running, JSON)
 		  Case "starting"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Starting, StatusCode)
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Starting, JSON)
 		  Case "stopped"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopped, StatusCode)
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopped, JSON)
 		  Case "stopping"
-		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopping, StatusCode)
+		    Status = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopping, JSON)
 		  Case "suspended"
-		    Status = New Beacon.ServerStatus("The server has been suspended. Contact your hosting provider for more information.", StatusCode)
+		    Status = New Beacon.ServerStatus("The server has been suspended. Contact your hosting provider for more information.", JSON)
 		  Case "updating"
-		    Status = New Beacon.ServerStatus("The server is installing an update.", StatusCode)
+		    Status = New Beacon.ServerStatus("The server is installing an update.", JSON)
 		  Else
-		    Status = New Beacon.ServerStatus("Unknown server status: " + StatusCode, StatusCode)
+		    Status = New Beacon.ServerStatus("Unknown server status: " + StatusCode, JSON)
 		  End Select
 		  
 		  Return Status
@@ -373,6 +373,30 @@ Implements Beacon.HostingProvider
 		  
 		  Return (Token Is Nil) = False And Token.Provider = BeaconAPI.ProviderToken.ProviderBeaconHostingAPI
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As Ark.Project, Profile As Ark.ServerProfile)
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshProfile(Project As Palworld.Project, Profile As Palworld.ServerProfile)
+		  // Part of the Palworld.HostingProvider interface.
+		  
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

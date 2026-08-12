@@ -21,7 +21,7 @@ Protected Class HostConfig
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateProvider() As Beacon.HostingProvider
+		Function CreateProvider(Logger As Beacon.LogProducer = Nil) As Beacon.HostingProvider
 		  Raise New UnsupportedOperationException("Failed to create hosting provider")
 		End Function
 	#tag EndMethod

@@ -4,22 +4,15 @@ Inherits Beacon.DiscoverIntegration
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Function Run() As Beacon.Project
-		  Var Project As Beacon.Project = Self.Project
-		  Var Provider As Beacon.HostingProvider = Self.Provider
-		  
+		  Var Project As Palworld.Project = Self.Project
 		  Var Profile As Palworld.ServerProfile = Self.Profile
+		  
+		  Self.Log("Checking server status…")
+		  Var Provider As Palworld.HostingProvider = Palworld.HostingProvider(Self.Provider)
+		  Provider.RefreshProfile(Project, Profile)
+		  
 		  Var Data As New Palworld.DiscoveredData
 		  Data.Profile = Profile
-		  Select Case Provider
-		  Case IsA Nitrado.HostingProvider
-		    Self.Log("Checking server status…")
-		    Try
-		      Profile.BasePath = Nitrado.HostingProvider(Provider).GameSetting(Project, Profile, "/game_specific.path")
-		    Catch Err As RuntimeException
-		      Self.SetError("Could not find server base path: " + Err.Message)
-		      Return Nil
-		    End Try
-		  End Select
 		  
 		  Var SettingsIniPath As String = Profile.SettingsIniPath
 		  If SettingsIniPath.IsEmpty = False Then
@@ -56,6 +49,12 @@ Inherits Beacon.DiscoverIntegration
 	#tag Method, Flags = &h0
 		Function Profile() As Palworld.ServerProfile
 		  Return Palworld.ServerProfile(Super.Profile)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Project() As Palworld.Project
+		  Return Palworld.Project(Super.Project)
 		End Function
 	#tag EndMethod
 

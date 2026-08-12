@@ -8,29 +8,11 @@ Inherits Beacon.DeployIntegration
 		  Var Project As Ark.Project = Self.Project
 		  Var Profile As Ark.ServerProfile = Self.Profile
 		  
-		  Var GameIniPath, GameUserSettingsIniPath As String
+		  Var Provider As Ark.HostingProvider = Ark.HostingProvider(Self.Provider)
+		  Provider.RefreshProfile(Project, Profile)
 		  
-		  Select Case Self.Provider
-		  Case IsA Nitrado.HostingProvider
-		    Var GameServer As JSONItem = InitialStatus.UserData
-		    Var GamePath As String = GameServer.Child("game_specific").Value("path").StringValue
-		    If GamePath.EndsWith("/") Then
-		      GamePath = GamePath.Left(GamePath.Length - 1)
-		    End If
-		    
-		    Profile.SecondaryName = GameServer.Value("ip").StringValue + ":" + GameServer.Value("port").IntegerValue.ToString(Locale.Raw, "0") + " (" + GameServer.Value("service_id").IntegerValue.ToString(Locale.Raw, "0") + ")"
-		    Profile.BasePath = GamePath
-		    Profile.GameIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/Game.ini"
-		    Profile.GameUserSettingsIniPath = GamePath + "/ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini"
-		    Profile.LogsPath = GamePath + "/ShooterGame/Saved/Logs"
-		    
-		    Var Config As JSONItem = GameServer.Child("settings").Child("config")
-		    Var Map As String = Config.Value("map").StringValue
-		    Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField("."))
-		  End Select
-		  
-		  GameIniPath = Profile.GameIniPath
-		  GameUserSettingsIniPath = Profile.GameUserSettingsIniPath
+		  Var GameIniPath As String = Profile.GameIniPath
+		  Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
 		  
 		  Self.EnterResourceIntenseMode()
 		  Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Profile)
@@ -40,7 +22,7 @@ Inherits Beacon.DeployIntegration
 		    Return
 		  End If
 		  
-		  If Self.Provider IsA Nitrado.HostingProvider Then
+		  If Provider IsA Nitrado.HostingProvider Then
 		    Var GameServer As JSONItem = InitialStatus.UserData
 		    Var Settings As JSONItem = GameServer.Child("settings")
 		    Var General As JSONItem = Settings.Child("general")
@@ -54,7 +36,7 @@ Inherits Beacon.DeployIntegration
 		      
 		      If GuidedSuccess Then
 		        // Restart the server if it is running
-		        If Self.Provider.SupportsRestarting And (InitialStatus = Beacon.ServerStatus.States.Running Or InitialStatus = Beacon.ServerStatus.States.Starting) Then
+		        If Provider.SupportsRestarting And (InitialStatus = Beacon.ServerStatus.States.Running Or InitialStatus = Beacon.ServerStatus.States.Starting) Then
 		          Self.StopServer()
 		          // The starting is handled automatically by Beacon.DeployIntegration.Run
 		        End If
@@ -89,7 +71,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  Var UWPMode As Ark.Project.UWPCompatibilityModes = Project.UWPMode
-		  If Self.Provider IsA Nitrado.HostingProvider Then
+		  If Provider IsA Nitrado.HostingProvider Then
 		    UWPMode = Ark.Project.UWPCompatibilityModes.Never
 		  End If
 		  
@@ -160,7 +142,7 @@ Inherits Beacon.DeployIntegration
 		  Self.StopServer()
 		  
 		  // Let the implementor do any final work
-		  If Self.Provider IsA Nitrado.HostingProvider Then
+		  If Provider IsA Nitrado.HostingProvider Then
 		    Self.NitradoCooldownWait()
 		  End If
 		  
@@ -175,7 +157,7 @@ Inherits Beacon.DeployIntegration
 		  End If
 		  
 		  // Make command line changes
-		  Select Case Self.Provider
+		  Select Case Provider
 		  Case IsA Nitrado.HostingProvider
 		    Call Self.NitradoApplySettings(Organizer, False)
 		  Case IsA GameServerApp.HostingProvider
