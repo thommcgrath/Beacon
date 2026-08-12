@@ -3,6 +3,44 @@ Protected Class HostingProvider
 Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
+		Function CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile) As Dictionary
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile, Assigns Options As Dictionary)
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Options
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CommandLineOptions(Project As ArkSA.Project, Profile As ArkSA.ServerProfile) As Dictionary
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CommandLineOptions(Project As ArkSA.Project, Profile As ArkSA.ServerProfile, Assigns Options As Dictionary)
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Options
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Logger As Beacon.LogProducer = Nil)
 		  If Logger Is Nil Then
 		    Self.mLogger = New Beacon.DummyLogProducer
@@ -230,7 +268,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As Ark.Project, Profile As Ark.ServerProfile)
 		  // Part of the Ark.HostingProvider interface.
 		  
-		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		End Sub
 	#tag EndMethod
 
@@ -238,7 +277,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
 		  // Part of the ArkSA.HostingProvider interface.
 		  
-		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		End Sub
 	#tag EndMethod
 
@@ -246,7 +286,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As Palworld.Project, Profile As Palworld.ServerProfile)
 		  // Part of the Palworld.HostingProvider interface.
 		  
-		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		End Sub
 	#tag EndMethod
 

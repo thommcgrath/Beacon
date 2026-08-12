@@ -193,6 +193,33 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CommandLineOptions() As Dictionary
+		  // Options are key value pairs, flags are just keys
+		  Var Options() As ArkSA.ConfigValue = Self.FilteredValues("CommandLineOption")
+		  Var Flags() As ArkSA.ConfigValue = Self.FilteredValues("CommandLineFlag")
+		  Var CommandLine As New Dictionary
+		  
+		  For Each Option As ArkSA.ConfigValue In Options
+		    Var Key As String = Option.Header + Option.AttributedKey
+		    CommandLine.Value(Key) = Option.Command
+		  Next
+		  
+		  For Each Flag As ArkSA.ConfigValue In Flags
+		    Var Key As String = Flag.Header + Flag.AttributedKey
+		    If Flag.Details.ValueType = ArkSA.ConfigOption.ValueTypes.TypeBoolean Then
+		      If Flag.Value = "True" Then
+		        CommandLine.Value(Key) = Flag.AttributedKey
+		      ElseIf CommandLine.HasKey(Key) Then
+		        CommandLine.Remove(Key)
+		      End If
+		    End If
+		  Next
+		  
+		  Return CommandLine
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mValues = New Dictionary
 		  Self.mExtraBeaconKeys = New Dictionary

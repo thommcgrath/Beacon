@@ -43,6 +43,38 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile) As Dictionary
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile, Assigns Options As Dictionary)
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CommandLineOptions(Project As ArkSA.Project, Profile As ArkSA.ServerProfile) As Dictionary
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CommandLineOptions(Project As ArkSA.Project, Profile As ArkSA.ServerProfile, Assigns Options As Dictionary)
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Logger As Beacon.LogProducer = Nil)
 		  // Part of the Beacon.HostingProvider interface.
 		  

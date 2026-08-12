@@ -3,6 +3,8 @@ Private Class APIResponse
 Inherits Beacon.IntegrationResponse
 	#tag Event
 		Sub CustomizeError(Err As Beacon.IntegrationException, Socket As SimpleHTTP.SynchronousHTTPSocket, IsUnknown As Boolean)
+		  #Pragma Unused Socket
+		  
 		  If IsUnknown = False Then
 		    Return
 		  End If

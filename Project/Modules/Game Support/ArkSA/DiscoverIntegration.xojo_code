@@ -129,6 +129,8 @@ Inherits Beacon.DiscoverIntegration
 		      CommandLine.Remove("Map")
 		    End If
 		    Data.CommandLineOptions = CommandLine
+		  Else
+		    Data.CommandLineOptions = Provider.CommandLineOptions(Project, Profile)
 		  End Select
 		  
 		  Self.mImportProgress = New Beacon.DummyProgressDisplayer

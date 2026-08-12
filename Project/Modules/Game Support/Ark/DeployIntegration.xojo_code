@@ -162,6 +162,8 @@ Inherits Beacon.DeployIntegration
 		    Call Self.NitradoApplySettings(Organizer, False)
 		  Case IsA GameServerApp.HostingProvider
 		    Call Self.GameServerAppApplySettings(Organizer)
+		  Else
+		    Provider.CommandLineOptions(Project, Profile) = Organizer.CommandLineOptions()
 		  End Select
 		End Sub
 	#tag EndEvent

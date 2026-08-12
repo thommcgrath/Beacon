@@ -174,6 +174,8 @@ Inherits Beacon.DeployIntegration
 		    End If
 		  Case IsA GameServerApp.HostingProvider
 		    Call Self.GameServerAppApplySettings(Organizer)
+		  Else
+		    Provider.CommandLineOptions(Project, Profile) = Organizer.CommandLineOptions()
 		  End Select
 		End Sub
 	#tag EndEvent

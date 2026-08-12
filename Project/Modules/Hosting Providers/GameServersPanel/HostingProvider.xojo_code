@@ -2,6 +2,94 @@
 Protected Class HostingProvider
 Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
 	#tag Method, Flags = &h0
+		Function CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile) As Dictionary
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
+		  
+		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("GET", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/startup", Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var JSON As New JSONItem(Response.Content)
+		  
+		  // Parameter 0 is the executable
+		  Var Launch As String = JSON.Value("rawPreview").StringValue
+		  Var Pos As Integer = Launch.IndexOf(" ")
+		  If Pos > -1 Then
+		    Launch = Launch.Middle(Pos + 1)
+		  End If
+		  
+		  Var CommandLine As Dictionary = Ark.ParseCommandLine(Launch, False)
+		  
+		  // These values are hidden from the API
+		  If CommandLine.HasKey("ServerPassword") Then
+		    CommandLine.Remove("ServerPassword")
+		  End If
+		  If CommandLine.HasKey("ServerAdminPassword") Then
+		    CommandLine.Remove("ServerAdminPassword")
+		  End If
+		  
+		  Return CommandLine
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile, Assigns Options As Dictionary)
+		  // Part of the Ark.HostingProvider interface.
+		  
+		  Self.SetArkCommandLineOptions(Project, Profile, Profile.ServerPassword, Profile.AdminPassword, Options)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CommandLineOptions(Project As ArkSA.Project, Profile As ArkSA.ServerProfile) As Dictionary
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
+		  
+		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("GET", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/startup", Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var JSON As New JSONItem(Response.Content)
+		  
+		  // Parameter 0 is the executable
+		  Var Launch As String = JSON.Value("rawPreview").StringValue
+		  Var Pos As Integer = Launch.IndexOf(" ")
+		  If Pos > -1 Then
+		    Launch = Launch.Middle(Pos + 1)
+		  End If
+		  
+		  Var CommandLine As Dictionary = ArkSA.ParseCommandLine(Launch, False)
+		  
+		  // These values are hidden from the API
+		  If CommandLine.HasKey("ServerPassword") Then
+		    CommandLine.Remove("ServerPassword")
+		  End If
+		  If CommandLine.HasKey("ServerAdminPassword") Then
+		    CommandLine.Remove("ServerAdminPassword")
+		  End If
+		  
+		  Return CommandLine
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CommandLineOptions(Project As ArkSA.Project, Profile As ArkSA.ServerProfile, Assigns Options As Dictionary)
+		  // Part of the ArkSA.HostingProvider interface.
+		  
+		  Self.SetArkCommandLineOptions(Project, Profile, Profile.ServerPassword, Profile.AdminPassword, Options)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Logger As Beacon.LogProducer = Nil)
 		  // Part of the Beacon.HostingProvider interface.
 		  
@@ -17,7 +105,9 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  #Pragma Unused Name
 		End Sub
 	#tag EndMethod
 
@@ -310,7 +400,31 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As Ark.Project, Profile As Ark.ServerProfile)
 		  // Part of the Ark.HostingProvider interface.
 		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
+		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("GET", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/startup", Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var JSON As New JSONItem(Response.Content)
+		  Var Vars As JSONItem = JSON.Value("variables")
+		  
+		  Var Map As String
+		  For Idx As Integer = 0 To Vars.LastRowIndex
+		    Var Item As JSONItem = Vars.ValueAt(Idx)
+		    If Item.Value("key").StringValue <> "MAP" Then
+		      Continue
+		    End If
+		    
+		    Map = Item.Value("value")
+		    Exit
+		  Next
+		  If Map.IsEmpty = False Then
+		    Profile.Mask = Ark.Maps.MaskForIdentifier(Map)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -318,7 +432,31 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
 		  // Part of the ArkSA.HostingProvider interface.
 		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
+		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("GET", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/startup", Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var JSON As New JSONItem(Response.Content)
+		  Var Vars As JSONItem = JSON.Value("variables")
+		  
+		  Var Map As String
+		  For Idx As Integer = 0 To Vars.LastRowIndex
+		    Var Item As JSONItem = Vars.ValueAt(Idx)
+		    If Item.Value("key").StringValue <> "MAP" Then
+		      Continue
+		    End If
+		    
+		    Map = Item.Value("value")
+		    Exit
+		  Next
+		  If Map.IsEmpty = False Then
+		    Profile.Mask = ArkSA.Maps.MaskForIdentifier(Map)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -326,7 +464,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As Palworld.Project, Profile As Palworld.ServerProfile)
 		  // Part of the Palworld.HostingProvider interface.
 		  
-		  
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
 		End Sub
 	#tag EndMethod
 
@@ -365,6 +504,112 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  End If
 		  Return New GameServersPanel.APIResponse(Socket)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetArkCommandLineOptions(Project As Beacon.Project, Profile As Beacon.ServerProfile, ServerPassword As NullableString, AdminPassword As NullableString, Options As Dictionary)
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
+		  
+		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("GET", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/startup", Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var Original As New JSONItem(Response.Content)
+		  Var Args As JSONItem = Original.Value("options")
+		  Var OriginalArgs As New Dictionary
+		  For Idx As Integer = 0 To Args.LastRowIndex
+		    Var Arg As JSONItem = Args.ValueAt(Idx)
+		    Var Key As String = Arg.Value("key")
+		    Var Value As Variant = Arg.Value("value")
+		    OriginalArgs.Value(Key) = Value
+		  Next
+		  
+		  Var Vars As New JSONItem("{}")
+		  Vars.Value("SERVER_NAME") = Profile.Name
+		  If (ServerPassword Is Nil) = False Then
+		    Vars.Value("SERVER_PASSWORD") = ServerPassword.StringValue
+		  End If
+		  If (AdminPassword Is Nil) = False Then
+		    Vars.Value("ADMIN_PASSWORD") = AdminPassword.StringValue
+		  End If
+		  If Options.HasKey("-WinLiveMaxPlayers") Then
+		    Var Value As String = Options.Value("-WinLiveMaxPlayers")
+		    Var Pos As Integer = Value.Indexof("=")
+		    Var MaxPlayers As Integer = Integer.FromString(Value.Middle(Pos + 1), Locale.Raw)
+		    Vars.Value("MAX_PLAYERS") = MaxPlayers
+		  End If
+		  
+		  Var ExtraArgs As String
+		  Args = New JSONItem("{}")
+		  For Each Entry As DictionaryEntry In Options
+		    Var Key As String = Entry.Key
+		    Var First As String = Key.Left(1)
+		    Key = Key.Middle(1)
+		    
+		    If Key = "ServerAdminPassword" Or Key = "ServerPassword" Or Key = "WinLiveMaxPlayers" Then
+		      // Skip these, they are handled by the variables section
+		      Continue
+		    End If
+		    
+		    Var Value As String = Entry.Value.StringValue.Middle(Key.Length + 1)
+		    If First = "-" And Value.IsEmpty Then
+		      Value = "True"
+		    End If
+		    
+		    Var IsBoolean As Boolean = Value = "true" Or Value = "false"
+		    If OriginalArgs.HasKey(Key) Then
+		      Var OriginalValue As Variant = OriginalArgs.Value(Key)
+		      Select Case OriginalValue.Type
+		      Case Variant.TypeNil
+		        Args.Value(Key) = Value
+		      Case Variant.TypeBoolean
+		        If (OriginalValue.BooleanValue = True And Value <> "true") Or (OriginalValue.BooleanValue = False And Value <> "false") Then
+		          Args.Value(Key) = (Value = "true")
+		        End If
+		      Case Variant.TypeString
+		        If Value.Compare(OriginalValue.StringValue, ComparisonOptions.CaseSensitive) <> 0 Then
+		          Args.Value(Key) = Value
+		        End If
+		      Case Variant.TypeInt32, Variant.TypeInt64
+		        Try
+		          Var NewValue As Integer = Integer.FromString(Value, Locale.Raw)
+		          Var CompareValue As Integer = OriginalValue.IntegerValue
+		          If NewValue <> CompareValue Then
+		            Args.Value(Key) = NewValue
+		          End If
+		        Catch Err As RuntimeException
+		        End Try
+		      Case Variant.TypeDouble
+		        Try
+		          Var NewValue As Double = Double.FromString(Value, Locale.Raw)
+		          Var CompareValue As Double = OriginalValue.DoubleValue
+		          If NewValue <> CompareValue Then
+		            Args.Value(Key) = NewValue
+		          End If
+		        Catch Err As RuntimeException
+		        End Try
+		      End Select
+		    ElseIf First = "-" And IsBoolean Then
+		      ExtraArgs = ExtraArgs + " -" + Key
+		    Else
+		      ExtraArgs = ExtraArgs + " " + First + Key + "=" + Value
+		    End If
+		  Next
+		  
+		  Var Body As New JSONItem("{}")
+		  Body.Value("variables") = Vars
+		  Body.Value("options") = Args
+		  Body.Value("extraArgs") = ExtraArgs.Trim
+		  Body.Value("restartPolicy") = "manual"
+		  
+		  Response = Self.RunRequest(New GameServersPanel.APIRequest("PATCH", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/startup", Token, "application/json", Body.ToString))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -421,6 +666,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 	#tag Method, Flags = &h0
 		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused StopMessage
 		  
 		  If Self.mDeployMode Then
 		    Self.mOverrideStatus = New Beacon.ServerStatus(Beacon.ServerStatus.States.Stopped)
