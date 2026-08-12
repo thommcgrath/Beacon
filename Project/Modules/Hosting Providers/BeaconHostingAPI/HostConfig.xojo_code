@@ -9,7 +9,6 @@ Implements Beacon.OAuthConsumer
 		  
 		  Self.mServerId = SaveData.Lookup("serverId", "")
 		  Self.mTokenId = SaveData.Lookup("tokenId", "")
-		  Self.mEndpoint = SaveData.Lookup("endpoint", "")
 		End Sub
 	#tag EndEvent
 
@@ -19,7 +18,6 @@ Implements Beacon.OAuthConsumer
 		  
 		  SaveData.Value("serverId") = Self.mServerId
 		  SaveData.Value("tokenId") = Self.mTokenId
-		  SaveData.Value("endpoint") = Self.mEndpoint
 		End Sub
 	#tag EndEvent
 
@@ -28,27 +26,6 @@ Implements Beacon.OAuthConsumer
 		Function CreateProvider(Logger As Beacon.LogProducer = Nil) As Beacon.HostingProvider
 		  Return New BeaconHostingAPI.HostingProvider(Logger)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Endpoint() As String
-		  Return Self.mEndpoint
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Endpoint(Assigns Value As String)
-		  If Value.EndsWith("/") Then
-		    Value = Value.Left(Value.Length - 1)
-		  End If
-		  
-		  If Self.mEndpoint = Value Then
-		    Return
-		  End If
-		  
-		  Self.mEndpoint = Value
-		  Self.Modified = True
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -105,10 +82,6 @@ Implements Beacon.OAuthConsumer
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mEndpoint As String
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mServerId As String

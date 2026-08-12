@@ -254,6 +254,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #endif
 		  
 		  Conversions.Init
+		  BeaconHostingAPI.Init
 		  
 		  #if DebugBuild And TargetMacOS
 		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_DebugWait)

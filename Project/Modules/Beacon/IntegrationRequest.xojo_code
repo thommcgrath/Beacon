@@ -32,12 +32,6 @@ Protected Class IntegrationRequest
 		  If ContentType.IsEmpty = False And (Content Is Nil) = False Then
 		    Headers.Value("Content-Type") = ContentType
 		  End If
-		  If (Token Is Nil) = False Then
-		    Var AuthValue As String = RaiseEvent GetAuthHeader(Token)
-		    If AuthValue.IsEmpty = False Then
-		      Headers.Value("Authorization") = AuthValue
-		    End If
-		  End If
 		  
 		  Self.mContent = Content
 		  Self.mHeaders = Headers
@@ -49,6 +43,10 @@ Protected Class IntegrationRequest
 		    Hashes.Add("sha-512=:" + EncodeBase64MBS(Crypto.SHA2_512(Content)) + ":")
 		    Hashes.Add("sha-256=:" + EncodeBase64MBS(Crypto.SHA2_256(Content)) + ":")
 		    Headers.Value("Repr-Digest") = String.FromArray(Hashes, ",")
+		  End If
+		  
+		  If (Token Is Nil) = False Then
+		    RaiseEvent Authorize(Token, Headers)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -97,7 +95,7 @@ Protected Class IntegrationRequest
 
 
 	#tag Hook, Flags = &h0
-		Event GetAuthHeader(Token As BeaconAPI.ProviderToken) As String
+		Event Authorize(Token As BeaconAPI.ProviderToken, Headers As Dictionary)
 	#tag EndHook
 
 
@@ -118,5 +116,47 @@ Protected Class IntegrationRequest
 	#tag EndProperty
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

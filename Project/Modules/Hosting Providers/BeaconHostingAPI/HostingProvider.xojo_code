@@ -1,6 +1,21 @@
 #tag Class
 Protected Class HostingProvider
 Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
+	#tag Method, Flags = &h1
+		Protected Function BuildUrl(Profile As Beacon.ServerProfile, Token As BeaconAPI.ProviderToken, Path As String) As String
+		  Var Holder As New Beacon.LockHolder(mBaseUrlLock)
+		  #Pragma Unused Holder
+		  If mBaseUrls.HasKey(Profile.ProfileId) = False Then
+		    mBaseUrls.Value(Profile.ProfileId) = Self.GetBaseUrl(Token)
+		  End If
+		  
+		  If Path.BeginsWith("/") = False Then
+		    Path = "/" + Path
+		  End If
+		  Return mBaseUrls.Value(Profile.ProfileId).StringValue + Path
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function CleanupPath(Path As String) As String
 		  Var Query As String
@@ -46,7 +61,18 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Function CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile) As Dictionary
 		  // Part of the Ark.HostingProvider interface.
 		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/launchOptions"), Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var JSON As New JSONItem(Response.Content)
+		  Var Launch As String = JSON.Value("raw").StringValue
+		  Return Ark.ParseCommandLine(Launch, False)
 		End Function
 	#tag EndMethod
 
@@ -54,7 +80,48 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile, Assigns Options As Dictionary)
 		  // Part of the Ark.HostingProvider interface.
 		  
+		  Var Body As New JSONItem("{}")
+		  Var Chain() As String
+		  Var Flags() As String
 		  
+		  For Each Entry As DictionaryEntry In Options
+		    Var Key As String = Entry.Key
+		    Var First As String = Key.Left(1)
+		    Key = Key.Middle(1)
+		    
+		    Select Case First
+		    Case "?"
+		      Chain.Add(Entry.Value)
+		    Case "-"
+		      Flags.Add(Entry.Value)
+		    End Select
+		  Next
+		  
+		  Var Maps() As Ark.Map = Ark.Maps.ForMask(Profile.Mask)
+		  Var Map As String
+		  If Maps.Count > 0 Then
+		    Map = Maps(0).Identifier
+		  Else
+		    Map = "TheIsland"
+		  End If
+		  
+		  Var Raw As String = """" + Map + "?listen?" + String.FromArray(Chain, "?") + """"
+		  If Flags.Count > 0 Then
+		    Raw = Raw + " -" + String.FromArray(Flags, " -")
+		  End If
+		  
+		  Body.Value("raw") = Raw
+		  Body.Value("chain") = Chain
+		  Body.Value("flags") = Flags
+		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
+		  
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("PUT", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/launchOptions"), Token, "application/json", Body.ToString))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -62,7 +129,18 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Function CommandLineOptions(Project As ArkSA.Project, Profile As ArkSA.ServerProfile) As Dictionary
 		  // Part of the ArkSA.HostingProvider interface.
 		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/launchOptions"), Token))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
+		  
+		  Var JSON As New JSONItem(Response.Content)
+		  Var Launch As String = JSON.Value("raw").StringValue
+		  Return ArkSA.ParseCommandLine(Launch, False)
 		End Function
 	#tag EndMethod
 
@@ -70,7 +148,48 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub CommandLineOptions(Project As ArkSA.Project, Profile As ArkSA.ServerProfile, Assigns Options As Dictionary)
 		  // Part of the ArkSA.HostingProvider interface.
 		  
+		  Var Body As New JSONItem("{}")
+		  Var Chain() As String
+		  Var Flags() As String
 		  
+		  For Each Entry As DictionaryEntry In Options
+		    Var Key As String = Entry.Key
+		    Var First As String = Key.Left(1)
+		    Key = Key.Middle(1)
+		    
+		    Select Case First
+		    Case "?"
+		      Chain.Add(Entry.Value)
+		    Case "-"
+		      Flags.Add(Entry.Value)
+		    End Select
+		  Next
+		  
+		  Var Maps() As ArkSA.Map = ArkSA.Maps.ForMask(Profile.Mask)
+		  Var Map As String
+		  If Maps.Count > 0 Then
+		    Map = Maps(0).Identifier
+		  Else
+		    Map = "TheIsland_WP"
+		  End If
+		  
+		  Var Raw As String = """" + Map + "?listen?" + String.FromArray(Chain, "?") + """"
+		  If Flags.Count > 0 Then
+		    Raw = Raw + " -" + String.FromArray(Flags, " -")
+		  End If
+		  
+		  Body.Value("raw") = Raw
+		  Body.Value("chain") = Chain
+		  Body.Value("flags") = Flags
+		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
+		  
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("PUT", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/launchOptions"), Token, "application/json", Body.ToString))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -90,14 +209,15 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServerId, BaseUrl As String
+		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
 		  Var Body As New JSONItem("{}")
 		  Body.Value("backupName") = Name
+		  Body.Value("level") = "config-only"
 		  
-		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("POST", BaseUrl + "/servers/" + ServerId + "/backup", Token, "application/json", Body.ToString))
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("POST", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/backup"), Token, "application/json", Body.ToString))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -122,68 +242,16 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Shared Function DiscoverHost(Config As BeaconHostingAPI.HostConfig) As Boolean
-		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Config.TokenId, Nil, True)
-		  If Token Is Nil Then
-		    Return False
-		  End If
-		  Config.TokenKey = Token.EncryptionKey
-		  
-		  Return DiscoverHost(Config, Token)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Shared Function DiscoverHost(Config As BeaconHostingAPI.HostConfig, Token As BeaconAPI.ProviderToken) As Boolean
-		  Var DiscoveryUrl As String = Token.ProviderSpecific("endpoint", "")
-		  If DiscoveryUrl.IsEmpty Then
-		    Return False
-		  End If
-		  
-		  Var Connection As New URLConnection
-		  Connection.RequestHeader("User-Agent") = App.UserAgent
-		  Connection.RequestHeader("Authorization") = "KEY " + Token.AccessToken
-		  
-		  Var Response As String
-		  Try
-		    Response = Connection.SendSync("GET", DiscoveryUrl, 30)
-		  Catch Err As RuntimeException
-		    Return False
-		  End Try
-		  
-		  If Connection.HTTPStatusCode < 200 Or Connection.HTTPStatusCode >= 300 Then
-		    Return False
-		  End If
-		  
-		  Var Discovery As JSONItem
-		  Try
-		    Discovery = New JSONItem(Response)
-		  Catch Err As RuntimeException
-		    Return False
-		  End Try
-		  
-		  Try
-		    Var BaseUrl As String = Discovery.Value("baseUrl")
-		    Config.Endpoint = BaseUrl
-		  Catch Err As RuntimeException
-		    Return False
-		  End Try
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub DownloadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer, FailureMode As Beacon.Integration.DownloadFailureMode)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServerId, BaseUrl As String
+		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
 		  Var Path As String = Self.CleanupPath(Transfer.Path)
-		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", BaseUrl + "/servers/" + ServerId + "/files/" + Path, Token))
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/files/" + Path), Token))
 		  If Not Response.Success Then
 		    Select Case FailureMode
 		    Case Beacon.Integration.DownloadFailureMode.MissingAllowed
@@ -208,8 +276,39 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Shared Function GetBaseUrl(Token As BeaconAPI.ProviderToken) As String
+		  Var DiscoveryUrl As String = Token.ProviderSpecific("endpoint", "")
+		  If DiscoveryUrl.IsEmpty Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Auth token does not contain a discovery endpoint."
+		    Raise Err
+		  End If
+		  
+		  Var Connection As New SimpleHTTP.SynchronousHTTPSocket
+		  Connection.RequestHeader("User-Agent") = App.UserAgent
+		  Connection.RequestHeader("Authorization") = "KEY " + Token.AccessToken
+		  Connection.Send("GET", DiscoveryUrl, 30)
+		  
+		  If Connection.LastHTTPStatus < 200 Or Connection.LastHTTPStatus >= 300 Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Could not find API information at the provided endpoint."
+		    Raise Err
+		  End If
+		  
+		  Var Response As String = Connection.LastContent
+		  Var Discovery As JSONItem = New JSONItem(Response)
+		  Var BaseUrl As String = Discovery.Value("baseUrl")
+		  If BaseUrl.EndsWith("/") Then
+		    BaseUrl = BaseUrl.Left(BaseUrl.Length - 1)
+		  End If
+		  
+		  Return BaseUrl
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
-		Private Shared Sub GetCredentials(Project As Beacon.Project, Profile As Beacon.ServerProfile, ByRef BaseUrl As String, ByRef ServerId As String, ByRef Token As BeaconAPI.ProviderToken)
+		Private Shared Sub GetCredentials(Project As Beacon.Project, Profile As Beacon.ServerProfile, ByRef ServerId As String, ByRef Token As BeaconAPI.ProviderToken)
 		  Var Config As Beacon.HostConfig = Profile.HostConfig
 		  If Config Is Nil Or (Config IsA BeaconHostingAPI.HostConfig) = False Then
 		    Var Err As New UnsupportedOperationException
@@ -218,8 +317,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  End If
 		  
 		  Var APIConfig As BeaconHostingAPI.HostConfig = BeaconHostingAPI.HostConfig(Config)
+		  
 		  ServerId = APIConfig.ServerId
-		  BaseUrl = APIConfig.Endpoint
 		  Token = BeaconAPI.GetProviderToken(APIConfig.TokenId, Project, True)
 		  If (Token Is Nil) = False Then
 		    If Token.IsEncrypted Then
@@ -241,14 +340,14 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServerId, BaseUrl As String
+		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
 		  Var Response As BeaconHostingAPI.APIResponse
 		  Var RetriesRemaining As Integer = 3
 		  Do
-		    Response = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", BaseUrl + "/servers/" + ServerId + "/status", Token))
+		    Response = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/servers/" + ServerId), Token))
 		    If Response.Success = False Then
 		      If RetriesRemaining > 0 Then
 		        RetriesRemaining = RetriesRemaining - 1
@@ -289,7 +388,7 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Function Identifier() As String
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  
+		  Return BeaconHostingAPI.Identifier
 		End Function
 	#tag EndMethod
 
@@ -297,13 +396,13 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Function ListFiles(Project As Beacon.Project, Profile As Beacon.ServerProfile, StartingPath As String) As String()
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServerId, BaseUrl As String
+		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
 		  StartingPath = Self.CleanupPath(StartingPath)
 		  
-		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", BaseUrl + "/servers/" + ServerId + "/files/" + StartingPath, Token))
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/files/" + StartingPath), Token))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -333,11 +432,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(APIConfig.TokenId, Nil, True)
 		  APIConfig.TokenKey = Token.EncryptionKey
 		  
-		  If APIConfig.Endpoint.IsEmpty And Self.DiscoverHost(APIConfig, Token) = False Then
-		    Raise New BeaconHostingAPI.APIException("Could not find the hosts's API")
-		  End
-		  
-		  Var ListUrl As String = APIConfig.Endpoint + "/servers"
+		  Var BaseUrl As String = Self.GetBaseUrl(Token)
+		  Var ListUrl As String = BaseUrl + "/servers"
 		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", ListUrl, Token))
 		  If Not Response.Success Then
 		    Raise Response.Error
@@ -348,7 +444,12 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  Var Servers As JSONItem = JSON.Value("servers")
 		  For Idx As Integer = 0 To Servers.LastRowIndex
 		    Var ServerJSON As JSONItem = Servers.ValueAt(Idx)
-		    If ServerJSON Is Nil Or ServerJSON.Value("gameId") <> GameId Then
+		    If ServerJSON Is Nil Or ServerJSON.HasKey("game") = False Then
+		      Continue
+		    End If
+		    
+		    Var GameJSON As JSONItem = ServerJSON.Value("game")
+		    If GameJSON Is Nil Or GameJSON.Value("id") <> GameId Then
 		      Continue
 		    End If
 		    
@@ -358,8 +459,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Var Platform As Integer = ServerJSON.Lookup("platform", Beacon.PlatformUnknown)
 		    
 		    Var SecondaryName As String
-		    If ServerJSON.HasKey("ip_address") And ServerJSON.HasKey("port") Then
-		      SecondaryName = ServerJSON.Value("ip_address").StringValue + ":" + ServerJSON.Value("port").IntegerValue.ToString(Locale.Raw, "0")
+		    If ServerJSON.HasKey("ipAddress") And ServerJSON.HasKey("port") Then
+		      SecondaryName = ServerJSON.Value("ipAddress").StringValue + ":" + ServerJSON.Value("port").IntegerValue.ToString(Locale.Raw, "0")
 		    End If
 		    
 		    Var ProfileId As String = Beacon.UUID.v5(Self.Identifier + ":" + ServerId)
@@ -385,6 +486,10 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Profile.Modified = False
 		    
 		    Profiles.Add(Profile)
+		    
+		    Var Holder As New Beacon.LockHolder(mBaseUrlLock)
+		    #Pragma Unused Holder
+		    mBaseUrls.Value(Profile.ProfileId) = BaseUrl
 		  Next
 		  
 		  Return Profiles
@@ -411,7 +516,37 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As Ark.Project, Profile As Ark.ServerProfile)
 		  // Part of the Ark.HostingProvider interface.
 		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
+		  Var Response As BeaconHostingAPI.APIResponse
+		  Var RetriesRemaining As Integer = 3
+		  Do
+		    Response = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/servers/" + ServerId), Token))
+		    If Response.Success = False Then
+		      If RetriesRemaining > 0 Then
+		        RetriesRemaining = RetriesRemaining - 1
+		        Thread.Current.Sleep(3000)
+		        Continue
+		      Else
+		        Raise Response.Error
+		      End If
+		    End If
+		  Loop Until (Response Is Nil) = False And Response.Success = True
+		  
+		  Var JSON As JSONItem = New JSONItem(Response.Content)
+		  
+		  Var Game As JSONItem = JSON.Value("game")
+		  Var Map As String = Game.Value("map")
+		  Profile.Mask = Ark.Maps.MaskForIdentifier(Map)
+		  
+		  If JSON.HasKey("ipAddress") And JSON.HasKey("port") Then
+		    Profile.SecondaryName = JSON.Value("ipAddress").StringValue + ":" + JSON.Value("port").IntegerValue.ToString(Locale.Raw, "0")
+		  End If
+		  
+		  Profile.GameIniPath = Ark.ConfigFileGame
+		  Profile.GameUserSettingsIniPath = Ark.ConfigFileGameUserSettings
 		End Sub
 	#tag EndMethod
 
@@ -419,7 +554,37 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
 		  // Part of the ArkSA.HostingProvider interface.
 		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
+		  Var Response As BeaconHostingAPI.APIResponse
+		  Var RetriesRemaining As Integer = 3
+		  Do
+		    Response = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/servers/" + ServerId), Token))
+		    If Response.Success = False Then
+		      If RetriesRemaining > 0 Then
+		        RetriesRemaining = RetriesRemaining - 1
+		        Thread.Current.Sleep(3000)
+		        Continue
+		      Else
+		        Raise Response.Error
+		      End If
+		    End If
+		  Loop Until (Response Is Nil) = False And Response.Success = True
+		  
+		  Var JSON As JSONItem = New JSONItem(Response.Content)
+		  
+		  Var Game As JSONItem = JSON.Value("game")
+		  Var Map As String = Game.Value("map")
+		  Profile.Mask = ArkSA.Maps.MaskForIdentifier(Map)
+		  
+		  If JSON.HasKey("ipAddress") And JSON.HasKey("port") Then
+		    Profile.SecondaryName = JSON.Value("ipAddress").StringValue + ":" + JSON.Value("port").IntegerValue.ToString(Locale.Raw, "0")
+		  End If
+		  
+		  Profile.GameIniPath = ArkSA.ConfigFileGame
+		  Profile.GameUserSettingsIniPath = ArkSA.ConfigFileGameUserSettings
 		End Sub
 	#tag EndMethod
 
@@ -427,7 +592,32 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub RefreshProfile(Project As Palworld.Project, Profile As Palworld.ServerProfile)
 		  // Part of the Palworld.HostingProvider interface.
 		  
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
+		  Var Response As BeaconHostingAPI.APIResponse
+		  Var RetriesRemaining As Integer = 3
+		  Do
+		    Response = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/servers/" + ServerId), Token))
+		    If Response.Success = False Then
+		      If RetriesRemaining > 0 Then
+		        RetriesRemaining = RetriesRemaining - 1
+		        Thread.Current.Sleep(3000)
+		        Continue
+		      Else
+		        Raise Response.Error
+		      End If
+		    End If
+		  Loop Until (Response Is Nil) = False And Response.Success = True
+		  
+		  Var JSON As JSONItem = New JSONItem(Response.Content)
+		  
+		  If JSON.HasKey("ipAddress") And JSON.HasKey("port") Then
+		    Profile.SecondaryName = JSON.Value("ipAddress").StringValue + ":" + JSON.Value("port").IntegerValue.ToString(Locale.Raw, "0")
+		  End If
+		  
+		  Profile.SettingsIniPath = Palworld.ConfigFileSettings
 		End Sub
 	#tag EndMethod
 
@@ -503,14 +693,14 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub StartServer(Project As Beacon.Project, Profile As Beacon.ServerProfile)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServerId, BaseUrl As String
+		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
 		  Var Body As New JSONItem("{}")
 		  Body.Value("logMessage") = "Started by Beacon"
 		  
-		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("POST", BaseUrl + "/servers/" + ServerId + "/start", Token, "application/json", Body.ToString))
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("POST", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/start"), Token, "application/json", Body.ToString))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -521,15 +711,15 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServerId, BaseUrl As String
+		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
 		  Var Body As New JSONItem("{}")
 		  Body.Value("logMessage") = "Stopped by Beacon"
 		  Body.Value("announceMessage") = StopMessage
 		  
-		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("POST", BaseUrl + "/servers/" + ServerId + "/stop", Token, "application/json", Body.ToString))
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("POST", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/stop"), Token, "application/json", Body.ToString))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
@@ -580,12 +770,12 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub UploadFile(Project As Beacon.Project, Profile As Beacon.ServerProfile, Transfer As Beacon.IntegrationTransfer)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  Var ServerId, BaseUrl As String
+		  Var ServerId As String
 		  Var Token As BeaconAPI.ProviderToken
-		  Self.GetCredentials(Project, Profile, BaseUrl, ServerId, Token)
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
 		  
 		  Var Path As String = Self.CleanupPath(Transfer.Path)
-		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("PUT", BaseUrl + "/servers/" + ServerId + "/files/" + Path, Token, "application/octet-stream", Transfer.Content))
+		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("PUT", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/files/" + Path), Token, "application/octet-stream", Transfer.Content))
 		  If Not Response.Success Then
 		    Select Case Response.HTTPStatus
 		    Case 406

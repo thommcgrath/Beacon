@@ -2,9 +2,9 @@
 Private Class APIRequest
 Inherits Beacon.IntegrationRequest
 	#tag Event
-		Function GetAuthHeader(Token As BeaconAPI.ProviderToken) As String
-		  Return "Bearer " + Token.AccessToken
-		End Function
+		Sub Authorize(Token As BeaconAPI.ProviderToken, Headers As Dictionary)
+		  Headers.Value("Authorization") = "Bearer " + Token.AccessToken
+		End Sub
 	#tag EndEvent
 
 
