@@ -105,9 +105,18 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
 		  // Part of the Beacon.HostingProvider interface.
 		  
-		  #Pragma Unused Project
-		  #Pragma Unused Profile
-		  #Pragma Unused Name
+		  Var ServerId As String
+		  Var Token As BeaconAPI.ProviderToken
+		  Self.GetCredentials(Project, Profile, ServerId, Token)
+		  
+		  Var Body As New JSONItem("{}")
+		  Body.Value("label") = Name
+		  Body.Value("detail") = "config_only"
+		  
+		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("POST", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/backups", Token, "application/json", Body.ToString))
+		  If Not Response.Success Then
+		    Raise Response.Error
+		  End If
 		End Sub
 	#tag EndMethod
 
