@@ -65,7 +65,7 @@ Implements Beacon.HostingProvider,  Palworld.HostingProvider, Ark.HostingProvide
 		  Self.GetCredentials(Project, Profile, ServiceId, Token)
 		  
 		  Var FormData As New Dictionary
-		  FormData.Value("name") = "Beacon " + Name
+		  FormData.Value("name") = Name
 		  
 		  Var Response As Nitrado.APIResponse = Self.RunRequest(New Nitrado.APIRequest("POST", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "0") + "/gameservers/settings/sets", Token, "application/x-www-form-urlencoded", SimpleHTTP.BuildFormData(FormData)))
 		  If Not Response.Success Then

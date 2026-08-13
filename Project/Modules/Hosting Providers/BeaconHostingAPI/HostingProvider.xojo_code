@@ -30,7 +30,10 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Err.Message = "Paths containing '../' are not allowed"
 		    Raise Err
 		  End If
-		  Path = Path.ReplaceAll("./", "")
+		  Path = Path.ReplaceAll("./", "/")
+		  While Path.Contains("//")
+		    Path = Path.ReplaceAll("//", "/")
+		  Wend
 		  While Path.BeginsWith("/")
 		    Path = Path.Middle(1)
 		  Wend
@@ -215,7 +218,7 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  
 		  Var Body As New JSONItem("{}")
 		  Body.Value("backupName") = Name
-		  Body.Value("level") = "config-only"
+		  Body.Value("level") = "configOnly"
 		  
 		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("POST", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/backup"), Token, "application/json", Body.ToString))
 		  If Not Response.Success Then
