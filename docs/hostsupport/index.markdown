@@ -6,15 +6,23 @@ nav_order: 1
 
 Beacon works with nearly any host, as long as the host provides the ability to edit the `Game.ini` and `GameUserSettings.ini` files. However, Beacon works with some hosts better than others.
 
-## Supported Hosts
+## Directly Supported Hosts
 
-### Nitrado
+Beacon supports a handful of hosts that it can communicate directly with. Not every host supports every feature, so see the feature matrix below to see which hosts supports which Beacon features. Every host listed here supports basic import and deploy, so those features are not listed here.
 
-Nitrado and Beacon work better together than any other host, thanks to Nitrado's API. Beacon can discover, start, stop, and otherwise fully control Nitrado servers.
+| Host | Start, Stop, & Status | Shutdown Message | Launch Options | Config Snapshots |
+| -- | -- | -- | -- | -- |
+| Nitrado | Yes | Yes[^1] | Partial[^2] | Yes |
+| GameServerApp.com | No | No | Yes | No |
+| GameServersPanel | Yes | No | Yes | Yes |
+| ASA Manager | Yes | No | No | No |
+| Beacon Open Hosting API[^3] | Yes | Yes | Yes | Yes |
+| FTP & SFTP | No | No | No | No |
+| Local Files | No | No | No | No |
 
-### GameServerApp.com
-
-Beacon's has excellent support for GameServerApp.com, which allows it to update the ini files and launch options for a template. But since Beacon works with GSA templates instead of servers directly, Beacon is unable to start, stop, or restart GSA servers.
+[^1]: Nitrado claims to support a stop message, and it works for some users, but not others. We've worked directly with Nitrado to figure this out without a resolution. Beacon is sending the stop message correctly, but there's no guarantee it will actually appear in-game.
+[^2]: Nitrado does not provide direct access to the game's launch options, so Beacon can only control the options Nitrado exposes.
+[^3]: The Beacon Open Hosting API supports these features, but hosts that implement the API ultimately have control over these behaviors.
 
 ### Other Hosts
 
@@ -28,4 +36,4 @@ GPORTAL, while popular, has a few bad behaviors that do not work well with Beaco
 
 ## Supporting More Hosts
 
-If you are a hosting provider with an API that Beacon could use to interact with customer servers, please [get in touch](mailto:help@usebeacon.app)! We'd love to improve Beacon's support for your host. We'll support any host that has the technical capability.
+If you are a hosting provider, consider implementing Beacon's [Open Hosting API](/hostingapi). Your users will immediately gain full import and deploy capabilities with Beacon. If this isn't practical, reach out at [get in touch](mailto:help@usebeacon.app) and we'll see what we can do.

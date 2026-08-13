@@ -223,3 +223,16 @@ table.classdefinition {
 		}
 	}
 }
+
+.footnotes {
+	margin-top: 2.0rem;
+	padding-top: 1.0rem;
+	font-size: 0.8rem;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: $border-color;
+}
+
+div.highlighter-rouge div.highlight {
+	border-color: $border-color;
+}
