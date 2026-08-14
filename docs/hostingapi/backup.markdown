@@ -2,7 +2,7 @@
 title: Start a Backup
 has_children: false
 parent: Beacon Open Hosting API
-backup: 7
+nav_order: 10
 ---
 # {{page.title}}
 
