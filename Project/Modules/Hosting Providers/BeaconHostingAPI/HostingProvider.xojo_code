@@ -73,8 +73,31 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Raise Response.Error
 		  End If
 		  
+		  // We have the "raw" value, but the docs say we don't read from it, so let's not read from it.
+		  
 		  Var JSON As New JSONItem(Response.Content)
-		  Var Launch As String = JSON.Value("raw").StringValue
+		  
+		  Var Options() As String
+		  Var OptionsSource As JSONItem = JSON.Value("chain")
+		  For Idx As Integer = 0 To OptionsSource.LastRowIndex
+		    Var Option As String = OptionsSource.ValueAt(Idx)
+		    If Option.BeginsWith("?") Then
+		      Option = Option.Middle(1)
+		    End If
+		    Options.Add(Option)
+		  Next
+		  
+		  Var Flags() As String
+		  Var FlagsSource As JSONItem = JSON.Value("flags")
+		  For Idx As Integer = 0 To FlagsSource.LastRowIndex
+		    Var Flag As String = FlagsSource.ValueAt(Idx)
+		    If Flag.BeginsWith("-") = False Then
+		      Flag = "-" + Flag
+		    End If
+		    Flags.Add(Flag)
+		  Next
+		  
+		  Var Launch As String = """" + String.FromArray(Options, "?") + """ " + String.FromArray(Flags, " ")
 		  Return Ark.ParseCommandLine(Launch, False)
 		End Function
 	#tag EndMethod
@@ -141,8 +164,31 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Raise Response.Error
 		  End If
 		  
+		  // We have the "raw" value, but the docs say we don't read from it, so let's not read from it.
+		  
 		  Var JSON As New JSONItem(Response.Content)
-		  Var Launch As String = JSON.Value("raw").StringValue
+		  
+		  Var Options() As String
+		  Var OptionsSource As JSONItem = JSON.Value("chain")
+		  For Idx As Integer = 0 To OptionsSource.LastRowIndex
+		    Var Option As String = OptionsSource.ValueAt(Idx)
+		    If Option.BeginsWith("?") Then
+		      Option = Option.Middle(1)
+		    End If
+		    Options.Add(Option)
+		  Next
+		  
+		  Var Flags() As String
+		  Var FlagsSource As JSONItem = JSON.Value("flags")
+		  For Idx As Integer = 0 To FlagsSource.LastRowIndex
+		    Var Flag As String = FlagsSource.ValueAt(Idx)
+		    If Flag.BeginsWith("-") = False Then
+		      Flag = "-" + Flag
+		    End If
+		    Flags.Add(Flag)
+		  Next
+		  
+		  Var Launch As String = """" + String.FromArray(Options, "?") + """ " + String.FromArray(Flags, " ")
 		  Return ArkSA.ParseCommandLine(Launch, False)
 		End Function
 	#tag EndMethod

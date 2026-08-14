@@ -58,7 +58,7 @@ If there are errors, review the log messages by choosing the server (or servers)
 
 ## Nitrado Server Notes
 
-- Beacon can update Nitrado servers even if they are not in expert mode. However, some changes will require export mode be turned on. Beacon knows what these changes are and will ask you for permission turning on expert mode. It will do this safely by performing a restart to ensure your latest control panel changes are present in your ini files.
+- Beacon can update Nitrado servers even if they are not in expert mode. However, some changes will require expert mode be turned on. Beacon knows what these changes are and will ask you for permission turning on expert mode. It will do this safely by performing a restart to ensure your latest control panel changes are present in your ini files.
 - Nitrado tech support recommends waiting 5 minutes after the server has stopped before updating the ini files. Beacon waits 3 minutes, or the server's configured shutdown time, whichever is longer.
 
 ## Tips and Troubleshooting
