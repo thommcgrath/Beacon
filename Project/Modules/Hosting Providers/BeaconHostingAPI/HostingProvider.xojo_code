@@ -3,16 +3,16 @@ Protected Class HostingProvider
 Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
 	#tag Method, Flags = &h1
 		Protected Function BuildUrl(Profile As Beacon.ServerProfile, Token As BeaconAPI.ProviderToken, Path As String) As String
-		  Var Holder As New Beacon.LockHolder(mBaseUrlLock)
+		  Var Holder As New Beacon.LockHolder(mDetailsLock)
 		  #Pragma Unused Holder
-		  If mBaseUrls.HasKey(Profile.ProfileId) = False Then
-		    mBaseUrls.Value(Profile.ProfileId) = Self.GetBaseUrl(Token)
+		  If mEndpointDetails.HasKey(Profile.ProfileId) = False Then
+		    mEndpointDetails.Value(Profile.ProfileId) = Self.GetEndpointDetails(Token)
 		  End If
 		  
 		  If Path.BeginsWith("/") = False Then
 		    Path = "/" + Path
 		  End If
-		  Return mBaseUrls.Value(Profile.ProfileId).StringValue + Path
+		  Return EndpointDetails(mEndpointDetails.Value(Profile.ProfileId).ObjectValue).BaseUrl + Path
 		End Function
 	#tag EndMethod
 
@@ -279,34 +279,17 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Shared Function GetBaseUrl(Token As BeaconAPI.ProviderToken) As String
-		  Var DiscoveryUrl As String = Token.ProviderSpecific("endpoint", "")
-		  If DiscoveryUrl.IsEmpty Then
-		    Var Err As New UnsupportedOperationException
-		    Err.Message = "Auth token does not contain a discovery endpoint."
-		    Raise Err
+	#tag Method, Flags = &h0
+		Function FeatureFlags(Project As Beacon.Project, Profile As Beacon.ServerProfile) As UInt64
+		  Var Holder As New Beacon.LockHolder(mDetailsLock)
+		  #Pragma Unused Holder
+		  If mEndpointDetails.HasKey(Profile.ProfileId) = False Then
+		    Var ServerId As String
+		    Var Token As BeaconAPI.ProviderToken
+		    Self.GetCredentials(Project, Profile, ServerId, Token)
+		    mEndpointDetails.Value(Profile.ProfileId) = Self.GetEndpointDetails(Token)
 		  End If
-		  
-		  Var Connection As New SimpleHTTP.SynchronousHTTPSocket
-		  Connection.RequestHeader("User-Agent") = App.UserAgent
-		  Connection.RequestHeader("Authorization") = "KEY " + Token.AccessToken
-		  Connection.Send("GET", DiscoveryUrl, 30)
-		  
-		  If Connection.LastHTTPStatus < 200 Or Connection.LastHTTPStatus >= 300 Then
-		    Var Err As New UnsupportedOperationException
-		    Err.Message = "Could not find API information at the provided endpoint."
-		    Raise Err
-		  End If
-		  
-		  Var Response As String = Connection.LastContent
-		  Var Discovery As JSONItem = New JSONItem(Response)
-		  Var BaseUrl As String = Discovery.Value("baseUrl")
-		  If BaseUrl.EndsWith("/") Then
-		    BaseUrl = BaseUrl.Left(BaseUrl.Length - 1)
-		  End If
-		  
-		  Return BaseUrl
+		  Return EndpointDetails(mEndpointDetails.Value(Profile.ProfileId).ObjectValue).FeatureFlags
 		End Function
 	#tag EndMethod
 
@@ -337,6 +320,63 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Raise Err
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Shared Function GetEndpointDetails(Token As BeaconAPI.ProviderToken) As BeaconHostingAPI.EndpointDetails
+		  Var DiscoveryUrl As String = Token.ProviderSpecific("endpoint", "")
+		  If DiscoveryUrl.IsEmpty Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Auth token does not contain a discovery endpoint."
+		    Raise Err
+		  End If
+		  
+		  Var Connection As New SimpleHTTP.SynchronousHTTPSocket
+		  Connection.RequestHeader("User-Agent") = App.UserAgent
+		  Connection.RequestHeader("Authorization") = "KEY " + Token.AccessToken
+		  Connection.Send("GET", DiscoveryUrl, 30)
+		  
+		  If Connection.LastHTTPStatus < 200 Or Connection.LastHTTPStatus >= 300 Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Could not find API information at the provided endpoint."
+		    Raise Err
+		  End If
+		  
+		  Var Response As String = Connection.LastContent
+		  Var Discovery As JSONItem = New JSONItem(Response)
+		  Var BaseUrl As String = Discovery.Value("baseUrl")
+		  If BaseUrl.EndsWith("/") Then
+		    BaseUrl = BaseUrl.Left(BaseUrl.Length - 1)
+		  End If
+		  
+		  Var FeatureFlags As UInt64
+		  If Discovery.HasKey("capabilities") Then
+		    Var Capabilities As JSONItem = Discovery.Value("capabilities")
+		    For Idx As Integer = 0 To Capabilities.LastRowIndex
+		      Var Key As String = Capabilities.ValueAt(Idx)
+		      Select Case Key
+		      Case "status"
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureStatus
+		      Case "restarts"
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureRestarts
+		      Case "stopMessages"
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureStopMessages
+		      Case "fullBackups"
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureFullBackups
+		      Case "configBackups"
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureConfigBackups
+		      Case "saveBackups"
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureSaveBackups
+		      Case "launchOptions"
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureLaunchOptions
+		      End Select
+		    Next
+		  Else
+		    FeatureFlags = -1
+		  End If
+		  
+		  Return New EndpointDetails(BaseUrl, FeatureFlags)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -414,7 +454,13 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  Var Files As JSONItem = JSON.Value("files")
 		  Var Paths() As String
 		  For Idx As Integer = 0 To Files.LastRowIndex
-		    Paths.Add(Files.ValueAt(Idx))
+		    Var FileInfo As JSONItem = Files.ValueAt(Idx)
+		    Var Filename As String = FileInfo.Value("name")
+		    Var IsDirectory As Boolean = FileInfo.Value("directory")
+		    If IsDirectory Then
+		      Filename = Filename + "/"
+		    End If
+		    Paths.Add(Filename)
 		  Next
 		  
 		  Return Paths
@@ -435,7 +481,8 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(APIConfig.TokenId, Nil, True)
 		  APIConfig.TokenKey = Token.EncryptionKey
 		  
-		  Var BaseUrl As String = Self.GetBaseUrl(Token)
+		  Var Details As EndpointDetails = Self.GetEndpointDetails(Token)
+		  Var BaseUrl As String = Details.BaseUrl
 		  Var ListUrl As String = BaseUrl + "/servers"
 		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", ListUrl, Token))
 		  If Not Response.Success Then
@@ -490,9 +537,9 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    
 		    Profiles.Add(Profile)
 		    
-		    Var Holder As New Beacon.LockHolder(mBaseUrlLock)
+		    Var Holder As New Beacon.LockHolder(mDetailsLock)
 		    #Pragma Unused Holder
-		    mBaseUrls.Value(Profile.ProfileId) = BaseUrl
+		    mEndpointDetails.Value(Profile.ProfileId) = Details
 		  Next
 		  
 		  Return Profiles
@@ -550,6 +597,16 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  
 		  Profile.GameIniPath = Ark.ConfigFileGame
 		  Profile.GameUserSettingsIniPath = Ark.ConfigFileGameUserSettings
+		  
+		  If JSON.HasKey("configPaths") Then
+		    Var ConfigPaths As JSONItem = JSON.Value("configPaths")
+		    If ConfigPaths.HasKey(Ark.ConfigFileGame) Then
+		      Profile.GameIniPath = ConfigPaths.Value(Ark.ConfigFileGame)
+		    End If
+		    If ConfigPaths.HasKey(Ark.ConfigFileGameUserSettings) Then
+		      Profile.GameUserSettingsIniPath = ConfigPaths.Value(Ark.ConfigFileGameUserSettings)
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -588,6 +645,16 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  
 		  Profile.GameIniPath = ArkSA.ConfigFileGame
 		  Profile.GameUserSettingsIniPath = ArkSA.ConfigFileGameUserSettings
+		  
+		  If JSON.HasKey("configPaths") Then
+		    Var ConfigPaths As JSONItem = JSON.Value("configPaths")
+		    If ConfigPaths.HasKey(ArkSA.ConfigFileGame) Then
+		      Profile.GameIniPath = ConfigPaths.Value(ArkSA.ConfigFileGame)
+		    End If
+		    If ConfigPaths.HasKey(ArkSA.ConfigFileGameUserSettings) Then
+		      Profile.GameUserSettingsIniPath = ConfigPaths.Value(ArkSA.ConfigFileGameUserSettings)
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -621,6 +688,13 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  End If
 		  
 		  Profile.SettingsIniPath = Palworld.ConfigFileSettings
+		  
+		  If JSON.HasKey("configPaths") Then
+		    Var ConfigPaths As JSONItem = JSON.Value("configPaths")
+		    If ConfigPaths.HasKey(Palworld.ConfigFileSettings) Then
+		      Profile.SettingsIniPath = ConfigPaths.Value(Palworld.ConfigFileSettings)
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -727,38 +801,6 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Raise Response.Error
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsCheckpoints() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsRestarting() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStatus() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStopMessage() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return True
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

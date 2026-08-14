@@ -31,6 +31,12 @@ Protected Interface HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FeatureFlags(Project As Beacon.Project, Profile As Beacon.ServerProfile) As UInt64
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetServerStatus(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.ServerStatus
 		  
 		End Function
@@ -82,30 +88,6 @@ Protected Interface HostingProvider
 		Sub StopServer(Project As Beacon.Project, Profile As Beacon.ServerProfile, StopMessage As String)
 		  
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsCheckpoints() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsRestarting() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStatus() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStopMessage() As Boolean
-		  
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

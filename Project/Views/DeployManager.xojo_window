@@ -1064,7 +1064,7 @@ End
 		  Var StopMessage As String
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.DeployIntegration = Entry.Key
-		    If Not Engine.Provider.SupportsStopMessage Then
+		    If Not Engine.Provider.SupportsStopMessages(Self.Project, Engine.Profile) Then
 		      Continue
 		    End If
 		    
@@ -1301,6 +1301,7 @@ End
 		Private Sub UpdateDeployPlans(SelectedPlan As Beacon.DeployPlan)
 		  Var PlanCounts As New Dictionary
 		  Var RequiredPlanCount As Integer
+		  Var Project As Beacon.Project = Self.Project
 		  
 		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
 		    If Self.ServerList.CellCheckBoxValueAt(Idx, 0) = False Then
@@ -1309,7 +1310,7 @@ End
 		    RequiredPlanCount = RequiredPlanCount + 1
 		    
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(Idx)
-		    Var Plans() As Beacon.DeployPlan = Profile.SupportedDeployPlans
+		    Var Plans() As Beacon.DeployPlan = Profile.SupportedDeployPlans(Project)
 		    For Each Plan As Beacon.DeployPlan In Plans
 		      PlanCounts.Value(Plan) = PlanCounts.Lookup(Plan, 0) + 1
 		    Next
@@ -1709,7 +1710,7 @@ End
 		      Exit
 		    End If
 		    
-		    If Engine.Provider.SupportsStopMessage Then
+		    If Engine.Provider.SupportsStopMessages(Self.Project, Engine.Profile) Then
 		      UseStopMessage = True
 		      Exit
 		    End If

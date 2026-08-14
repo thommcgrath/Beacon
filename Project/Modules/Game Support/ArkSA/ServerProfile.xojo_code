@@ -347,14 +347,14 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SupportedDeployPlans() As Beacon.DeployPlan()
+		Function SupportedDeployPlans(Project As Beacon.Project) As Beacon.DeployPlan()
 		  Var Config As Beacon.HostConfig = Self.HostConfig
 		  Var Provider As Beacon.HostingProvider
 		  If (Config Is Nil) = False Then
 		    Provider = Config.CreateProvider()
 		  End If
 		  
-		  If (Config Is Nil) = False And (Provider Is Nil) = False And Provider.SupportsRestarting Then
+		  If (Config Is Nil) = False And (Provider Is Nil) = False And Provider.SupportsRestarts(Project, Self) Then
 		    Return Array(Beacon.DeployPlan.StopUploadStart, Beacon.DeployPlan.UploadRestart, Beacon.DeployPlan.UploadOnly)
 		  Else
 		    Return Array(Beacon.DeployPlan.UploadOnly)

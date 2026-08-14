@@ -132,6 +132,15 @@ Implements Beacon.HostingProvider, ArkSA.HostingProvider
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function FeatureFlags(Project As Beacon.Project, Profile As Beacon.ServerProfile) As UInt64
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  
+		  Return Beacon.HostFeatureRestarts Or Beacon.HostFeatureStatus
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Sub GetCredentials(Project As Beacon.Project, Profile As Beacon.ServerProfile, ByRef ContainerId As Integer, ByRef Token As BeaconAPI.ProviderToken)
 		  Var Config As Beacon.HostConfig = Profile.HostConfig
@@ -383,38 +392,6 @@ Implements Beacon.HostingProvider, ArkSA.HostingProvider
 		    Raise New ASAManager.APIException(Parsed.Value("message").StringValue)
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsCheckpoints() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsRestarting() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStatus() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStopMessage() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return False
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

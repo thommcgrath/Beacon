@@ -535,7 +535,9 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SupportedDeployPlans() As Beacon.DeployPlan()
+		Function SupportedDeployPlans(Project As Beacon.Project) As Beacon.DeployPlan()
+		  #Pragma Unused Project
+		  
 		  Return Array(Beacon.DeployPlan.UploadOnly)
 		End Function
 	#tag EndMethod

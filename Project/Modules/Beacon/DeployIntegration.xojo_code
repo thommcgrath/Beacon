@@ -81,7 +81,7 @@ Inherits Beacon.Integration
 
 	#tag Method, Flags = &h1
 		Protected Sub CreateCheckpoint()
-		  If Self.BackupEnabled = False Or Self.Provider.SupportsCheckpoints = False Or Self.mCheckpointCreated = True Then
+		  If Self.BackupEnabled = False Or Self.Provider.SupportsCheckpoints(Self.Project, Self.Profile) = False Or Self.mCheckpointCreated = True Then
 		    Return
 		  End If
 		  
@@ -148,7 +148,7 @@ Inherits Beacon.Integration
 
 	#tag Method, Flags = &h1
 		Protected Sub RefreshServerStatus(Verbose As Boolean = False)
-		  If Self.Provider.SupportsStatus = False Then
+		  If Self.Provider.SupportsStatus(Self.Project, Self.Profile) = False Then
 		    Self.mStatus = New Beacon.ServerStatus(Beacon.ServerStatus.States.Unsupported)
 		    Return
 		  End If
@@ -203,7 +203,7 @@ Inherits Beacon.Integration
 
 	#tag Method, Flags = &h1
 		Protected Sub StartServer(Verbose As Boolean = True)
-		  If Self.Provider.SupportsRestarting = False Then
+		  If Self.Provider.SupportsRestarts(Self.Project, Self.Profile) = False Then
 		    Return
 		  End If
 		  
@@ -262,7 +262,7 @@ Inherits Beacon.Integration
 
 	#tag Method, Flags = &h1
 		Protected Sub StopServer(Verbose As Boolean = True)
-		  If Self.Provider.SupportsRestarting = False Then
+		  If Self.Provider.SupportsRestarts(Self.Project, Self.Profile) = False Then
 		    Return
 		  End If
 		  

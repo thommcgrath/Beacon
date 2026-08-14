@@ -174,6 +174,15 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function FeatureFlags(Project As Beacon.Project, Profile As Beacon.ServerProfile) As UInt64
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  
+		  Return 0
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetConfig(Profile As Beacon.ServerProfile) As FTP.HostConfig
 		  If Profile Is Nil Then
@@ -409,38 +418,6 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  #Pragma Unused Profile
 		  #Pragma Unused StopMessage
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsCheckpoints() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsRestarting() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStatus() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStopMessage() As Boolean
-		  // Part of the Beacon.HostingProvider interface.
-		  
-		  Return False
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

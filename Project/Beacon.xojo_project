@@ -993,6 +993,7 @@ Interface=HostingProvider;Modules/Game Support/ArkSA/HostingProvider.xojo_code;&
 Interface=HostingProvider;Modules/Game Support/Ark/HostingProvider.xojo_code;&h0000000049062FFF;&h0000000016B997FF;false
 Interface=HostingProvider;Modules/Game Support/Palworld/HostingProvider.xojo_code;&h000000000F12B7FF;&h000000005F9A17FF;false
 Class=LockHolder;Modules/Beacon/LockHolder.xojo_code;&h000000006C9617FF;&h0000000055ADDFFF;false
+Class=EndpointDetails;Modules/Hosting Providers/BeaconHostingAPI/EndpointDetails.xojo_code;&h0000000019566FFF;&h000000001974D7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=3

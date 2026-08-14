@@ -1003,6 +1003,12 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function HasFeatures(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile, Features As UInt64) As Boolean
+		  Return (Provider.FeatureFlags(Project, Profile) And Features) = Features
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Hash(Block As MemoryBlock) As String
 		  Return EncodeHex(Crypto.SHA2_512(Block)).DefineEncoding(Encodings.UTF8).Lowercase
@@ -1697,6 +1703,48 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsCheckpoints(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
+		  Return (Provider.FeatureFlags(Project, Profile) And (HostFeatureFullBackups Or HostFeatureConfigBackups)) <> 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsFullBackups(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
+		  Return Provider.HasFeatures(Project, Profile, HostFeatureFullBackups)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsLaunchOptions(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
+		  Return Provider.HasFeatures(Project, Profile, HostFeatureLaunchOptions)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsRestarts(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
+		  Return Provider.HasFeatures(Project, Profile, HostFeatureStatus And HostFeatureRestarts)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsSaveBackups(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
+		  Return (Provider.FeatureFlags(Project, Profile) And (HostFeatureFullBackups Or HostFeatureSaveBackups)) <> 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsStatus(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
+		  Return Provider.HasFeatures(Project, Profile, HostFeatureStatus)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsStopMessages(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
+		  Return Provider.HasFeatures(Project, Profile, HostFeatureStatus And HostFeatureRestarts And HostFeatureStopMessages)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function SystemAccountName() As String
 		  Return SystemInformationMBS.ShortUsername
@@ -1853,6 +1901,27 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = FTPModeSSH, Type = String, Dynamic = False, Default = \"sftp", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HostFeatureConfigBackups, Type = Double, Dynamic = False, Default = \"16", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HostFeatureFullBackups, Type = Double, Dynamic = False, Default = \"8", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HostFeatureLaunchOptions, Type = Double, Dynamic = False, Default = \"64", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HostFeatureRestarts, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HostFeatureSaveBackups, Type = Double, Dynamic = False, Default = \"32", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HostFeatureStatus, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HostFeatureStopMessages, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = MapTypeCanon, Type = String, Dynamic = False, Default = \"Official Canon", Scope = Protected

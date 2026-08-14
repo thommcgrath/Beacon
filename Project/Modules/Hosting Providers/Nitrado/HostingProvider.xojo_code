@@ -201,6 +201,15 @@ Implements Beacon.HostingProvider,  Palworld.HostingProvider, Ark.HostingProvide
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FeatureFlags(Project As Beacon.Project, Profile As Beacon.ServerProfile) As UInt64
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  
+		  Return Beacon.HostFeatureConfigBackups Or Beacon.HostFeatureLaunchOptions Or Beacon.HostFeatureRestarts Or Beacon.HostFeatureStatus Or Beacon.HostFeatureStopMessages
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameSetting(Project As Beacon.Project, Profile As Beacon.ServerProfile, Path As String) As Variant
 		  If Self.mServerDetailCache.HasKey(Profile.ProfileId) = False Then
 		    Call Self.GetServerStatus(Project, Profile)
@@ -702,30 +711,6 @@ Implements Beacon.HostingProvider,  Palworld.HostingProvider, Ark.HostingProvide
 		    Raise Response.Error
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsCheckpoints() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsRestarting() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStatus() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsStopMessage() As Boolean
-		  Return True
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

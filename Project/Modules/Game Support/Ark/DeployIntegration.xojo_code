@@ -36,7 +36,7 @@ Inherits Beacon.DeployIntegration
 		      
 		      If GuidedSuccess Then
 		        // Restart the server if it is running
-		        If Provider.SupportsRestarting And (InitialStatus = Beacon.ServerStatus.States.Running Or InitialStatus = Beacon.ServerStatus.States.Starting) Then
+		        If Provider.SupportsRestarts(Project, Profile) And (InitialStatus = Beacon.ServerStatus.States.Running Or InitialStatus = Beacon.ServerStatus.States.Starting) Then
 		          Self.StopServer()
 		          // The starting is handled automatically by Beacon.DeployIntegration.Run
 		        End If

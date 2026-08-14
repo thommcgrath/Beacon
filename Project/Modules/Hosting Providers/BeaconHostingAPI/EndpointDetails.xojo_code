@@ -1,24 +1,32 @@
-#tag Module
-Protected Module BeaconHostingAPI
-	#tag Method, Flags = &h1
-		Protected Sub Init()
-		  mDetailsLock = New CriticalSection
-		  mEndpointDetails = New Dictionary
+#tag Class
+Private Class EndpointDetails
+	#tag Method, Flags = &h0
+		Function BaseUrl() As String
+		  Return Self.mBaseUrl
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(BaseUrl As String, FeatureFlags As UInt64)
+		  Self.mBaseUrl = BaseUrl
+		  Self.mFeatureFlags = FeatureFlags
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FeatureFlags() As UInt64
+		  Return Self.mFeatureFlags
+		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mDetailsLock As CriticalSection
+		Private mBaseUrl As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEndpointDetails As Dictionary
+		Private mFeatureFlags As UInt64
 	#tag EndProperty
-
-
-	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"BeaconHostingAPI", Scope = Protected
-	#tag EndConstant
 
 
 	#tag ViewBehavior
@@ -62,6 +70,14 @@ Protected Module BeaconHostingAPI
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mBaseUrl"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
-End Module
-#tag EndModule
+End Class
+#tag EndClass
