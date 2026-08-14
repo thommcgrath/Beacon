@@ -136,7 +136,7 @@ Begin BeaconAutopositionWindow DeployManager
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   500
       Begin DesktopLabel OptionsMessageLabel
@@ -186,7 +186,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   699
+         Left            =   700
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -194,11 +194,11 @@ Begin BeaconAutopositionWindow DeployManager
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   13
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   393
+         Top             =   425
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -307,7 +307,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   6
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
@@ -339,7 +339,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   5
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
@@ -397,7 +397,7 @@ Begin BeaconAutopositionWindow DeployManager
          Scope           =   2
          SelectionLength =   0
          ShowInfoBar     =   False
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
@@ -460,7 +460,7 @@ Begin BeaconAutopositionWindow DeployManager
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   5
+         TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
@@ -490,7 +490,7 @@ Begin BeaconAutopositionWindow DeployManager
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   6
+         TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
@@ -552,7 +552,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   14
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   "Copies a link to perform this deploy using automation tools."
@@ -574,7 +574,7 @@ Begin BeaconAutopositionWindow DeployManager
          InitialParent   =   "Pages"
          InitialValue    =   ""
          Italic          =   False
-         Left            =   520
+         Left            =   521
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -582,11 +582,11 @@ Begin BeaconAutopositionWindow DeployManager
          LockTop         =   True
          Scope           =   2
          SelectedRowIndex=   0
-         TabIndex        =   8
+         TabIndex        =   12
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   "#TooltipDeployPlan"
-         Top             =   361
+         Top             =   393
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -603,7 +603,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   320
+         Left            =   321
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -612,14 +612,14 @@ Begin BeaconAutopositionWindow DeployManager
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   9
+         TabIndex        =   11
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "#CaptionDeployPlan"
          TextAlignment   =   3
          TextColor       =   &c000000
          Tooltip         =   "#TooltipDeployPlan"
-         Top             =   361
+         Top             =   393
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -645,7 +645,7 @@ Begin BeaconAutopositionWindow DeployManager
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   10
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "#CaptionBackupConfigFiles"
@@ -669,7 +669,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   320
+         Left            =   321
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -678,14 +678,14 @@ Begin BeaconAutopositionWindow DeployManager
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   11
+         TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "#CaptionReviewChanges"
          TextAlignment   =   3
          TextColor       =   &c000000
          Tooltip         =   "#TooltipReviewChanges"
-         Top             =   265
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -702,7 +702,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   320
+         Left            =   321
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -711,14 +711,14 @@ Begin BeaconAutopositionWindow DeployManager
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   12
+         TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "#CaptionRunAdvisor"
          TextAlignment   =   3
          TextColor       =   &c000000
          Tooltip         =   "#TooltipRunAdvisor"
-         Top             =   297
+         Top             =   329
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -735,7 +735,7 @@ Begin BeaconAutopositionWindow DeployManager
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   320
+         Left            =   321
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -744,14 +744,14 @@ Begin BeaconAutopositionWindow DeployManager
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   13
+         TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "#CaptionEraseConfigFiles"
          TextAlignment   =   3
          TextColor       =   &c000000
          Tooltip         =   "#TooltipEraseConfigFiles"
-         Top             =   329
+         Top             =   361
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -778,7 +778,7 @@ Begin BeaconAutopositionWindow DeployManager
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   14
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   "#TooltipBackupConfigFiles"
@@ -798,7 +798,7 @@ Begin BeaconAutopositionWindow DeployManager
          Height          =   20
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   520
+         Left            =   521
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -808,11 +808,11 @@ Begin BeaconAutopositionWindow DeployManager
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   15
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   "#TooltipReviewChanges"
-         Top             =   265
+         Top             =   297
          Transparent     =   True
          Visible         =   True
          Width           =   40
@@ -828,7 +828,7 @@ Begin BeaconAutopositionWindow DeployManager
          Height          =   20
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   520
+         Left            =   521
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -838,16 +838,79 @@ Begin BeaconAutopositionWindow DeployManager
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   16
+         TabIndex        =   8
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   "#TooltipRunAdvisor"
-         Top             =   297
+         Top             =   329
          Transparent     =   True
          Visible         =   True
          Width           =   40
       End
       Begin SwitchControl NukeConfigSwitch
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   521
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   10
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "#TooltipEraseConfigFiles"
+         Top             =   361
+         Transparent     =   True
+         Visible         =   True
+         Width           =   40
+      End
+      Begin DesktopLabel BackupSaveDataLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   320
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "#CaptionBackupSaveData"
+         TextAlignment   =   3
+         TextColor       =   &c000000
+         Tooltip         =   "#TooltipBackupSaveData"
+         Top             =   265
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   188
+      End
+      Begin SwitchControl BackupSaveDataSwitch
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   True
@@ -868,11 +931,11 @@ Begin BeaconAutopositionWindow DeployManager
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   17
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   "#TooltipEraseConfigFiles"
-         Top             =   329
+         Tooltip         =   "#TooltipBackupSaveData"
+         Top             =   265
          Transparent     =   True
          Visible         =   True
          Width           =   40
@@ -921,7 +984,7 @@ End
 		Sub Opening()
 		  Self.Title = "Deploy: " + Self.Project.Title
 		  
-		  Var OptionLabels() As DesktopLabel = Array(Self.CreateBackupLabel, Self.ReviewChangesLabel, Self.NukeConfigLabel, DesktopLabel(Self.PlanLabel))
+		  Var OptionLabels() As DesktopLabel = Array(Self.CreateBackupLabel, Self.BackupSaveDataLabel, Self.ReviewChangesLabel, Self.NukeConfigLabel, DesktopLabel(Self.PlanLabel))
 		  #if Self.AdvisorEnabled
 		    OptionLabels.Add(Self.RunAdvisorLabel)
 		  #else
@@ -931,12 +994,14 @@ End
 		  BeaconUI.SizeToFit(OptionLabels)
 		  Var OptionControlsLeft As Integer = Self.CreateBackupLabel.Right + 12
 		  Self.CreateBackupSwitch.Left = OptionControlsLeft
+		  Self.BackupSaveDataSwitch.Left = OptionControlsLeft
 		  Self.ReviewChangesSwitch.Left = OptionControlsLeft
 		  Self.NukeConfigSwitch.Left = OptionControlsLeft
 		  Self.PlanMenu.Left = OptionControlsLeft
 		  Self.RunAdvisorSwitch.Left = OptionControlsLeft
 		  
 		  Self.CreateBackupSwitch.Value(False) = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionBackup, UInt64)
+		  Self.BackupSaveDataSwitch.Value(False) = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup Or Beacon.DeploySettings.OptionFullBackup, UInt64)) = CType(Beacon.DeploySettings.OptionBackup Or Beacon.DeploySettings.OptionFullBackup, UInt64)
 		  Self.ReviewChangesSwitch.Value(False) = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionReview, UInt64)
 		  Self.RunAdvisorSwitch.Value(False) = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  
@@ -944,8 +1009,8 @@ End
 		  Self.ServerList.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		  Self.ServerList.UpdateList()
 		  
-		  Self.CheckOptionsActionEnabled
-		  
+		  Self.UpdateFeatures()
+		  Self.CheckOptionsActionEnabled()
 		  Self.UpdateDeployPlans(Self.Settings.Plan)
 		  
 		  If (Self.Settings.Options And CType(Beacon.DeploySettings.OptionRunImmediately, UInt64)) = CType(Beacon.DeploySettings.OptionRunImmediately, UInt64) Then
@@ -958,11 +1023,14 @@ End
 		Sub UpdateControlPositions()
 		  Const MinOptionsWidth = 460
 		  Const MaxOptionsWidth = 560
-		  Var OptionsWidth As Integer = Max(Min(Self.Pages.Width - 40, MaxOptionsWidth), MinOptionsWidth)
+		  Var OptionsWidth As Integer = Clamp(Self.Pages.Width - 40, MinOptionsWidth, MaxOptionsWidth)
 		  
 		  Var Groups() As ControlGroup
 		  If Self.CreateBackupLabel.Visible Then
 		    Groups.Add(New ControlGroup(Self.CreateBackupLabel, Self.CreateBackupSwitch))
+		  End If
+		  If Self.BackupSaveDataLabel.Visible Then
+		    Groups.Add(New ControlGroup(Self.BackupSaveDataLabel, Self.BackupSaveDataSwitch))
 		  End If
 		  If Self.NukeConfigLabel.Visible Then
 		    Groups.Add(New ControlGroup(Self.NukeConfigLabel, Self.NukeConfigSwitch))
@@ -990,6 +1058,7 @@ End
 		  
 		  Var MasterGroup As New ControlGroup(Self.OptionsMessageLabel, Self.OptionsActionButton)
 		  For Each Group As ControlGroup In Groups
+		    Group.Left = MasterGroup.Left
 		    MasterGroup.Append(Group)
 		  Next
 		  MasterGroup.Left = Self.Pages.Left + Round((Self.Pages.Width - MasterGroup.Width) / 2)
@@ -1062,12 +1131,7 @@ End
 		  
 		  // Prompt for the stop message
 		  Var StopMessage As String
-		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.DeployIntegration = Entry.Key
-		    If Not Engine.Provider.SupportsStopMessages(Self.Project, Engine.Profile) Then
-		      Continue
-		    End If
-		    
+		  If (Self.mSupportedFeatures And Beacon.HostFeatureStopMessages) = Beacon.HostFeatureStopMessages Then
 		    If (Self.Settings Is Nil) = False And Self.Settings.StopMessage.IsEmpty = False Then
 		      StopMessage = Self.Settings.StopMessage
 		    Else
@@ -1075,10 +1139,8 @@ End
 		    End If
 		    If StopMessage.IsEmpty Then
 		      Return
-		    Else
-		      Exit
 		    End If
-		  Next
+		  End If
 		  
 		  // Hide the checkbox column
 		  Self.ServerList.ColumnWidths = "0,*"
@@ -1154,6 +1216,9 @@ End
 		  Var Settings As New Beacon.DeploySettings
 		  If Self.CreateBackupSwitch.Value Then
 		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
+		    If Self.BackupSaveDataSwitch.Visible And Self.BackupSaveDataSwitch.Value Then
+		      Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionFullBackup, UInt64)
+		    End If
 		  End If
 		  If Self.NukeConfigSwitch.Value Then
 		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionErase, UInt64)
@@ -1167,6 +1232,16 @@ End
 		  If Self.PlanMenu.SelectedRowIndex > -1 Then
 		    Settings.Plan = Self.PlanMenu.SelectedRowTag
 		  End If
+		  
+		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
+		    If Self.ServerList.CellCheckBoxValueAt(Idx, 0) = False Then
+		      Continue
+		    End If
+		    
+		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(Idx)
+		    Settings.Servers.Add(Profile)
+		  Next
+		  
 		  Return Settings
 		End Function
 	#tag EndMethod
@@ -1357,6 +1432,31 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateFeatures()
+		  Self.mSupportedFeatures = 0
+		  Var Project As Beacon.Project = Self.Project
+		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
+		    If Self.ServerList.CellCheckBoxValueAt(Idx, 0) = False Then
+		      Continue
+		    End If
+		    
+		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(Idx)
+		    Try
+		      Var Provider As Beacon.HostingProvider = Profile.HostConfig.CreateProvider()
+		      Var Flags As UInt64 = Provider.FeatureFlags(Project, Profile)
+		      Self.mSupportedFeatures = Self.mSupportedFeatures Or Flags
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Self.BackupSaveDataLabel.Visible = (Self.mSupportedFeatures And (Beacon.HostFeatureFullBackups Or Beacon.HostFeatureSaveBackups)) <> 0
+		  Self.BackupSaveDataSwitch.Visible = Self.BackupSaveDataLabel.Visible
+		  
+		  Self.UpdateControlPositions()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateLogsView()
 		  If Self.Pages.SelectedPanelIndex <> Self.PageLog Then
 		    Return
@@ -1459,6 +1559,10 @@ End
 		Private Engines As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSupportedFeatures As UInt64
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
@@ -1485,6 +1589,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = CaptionBackupConfigFiles, Type = String, Dynamic = True, Default = \"Back up config files:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CaptionBackupSaveData, Type = String, Dynamic = True, Default = \"Back up save data:", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = CaptionDeployPlan, Type = String, Dynamic = True, Default = \"Update strategy:", Scope = Private
@@ -1514,7 +1621,10 @@ End
 	#tag Constant, Name = PageWaitingAuth, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = TooltipBackupConfigFiles, Type = String, Dynamic = True, Default = \"Beacon will keep a copy of your config files from before it makes any changes\x2C as well as after it makes changes. This not only provides a recovery mechanism\x2C but can also help Beacon support diagnose deploy issues.", Scope = Private
+	#tag Constant, Name = TooltipBackupConfigFiles, Type = String, Dynamic = True, Default = \"Beacon will keep a copy of your config files from before it makes any changes\x2C as well as after it makes changes. This not only provides a recovery mechanism\x2C but can also help Beacon support diagnose deploy issues. If the host supports config file backups\x2C Beacon will instruct the server to produce a config file backup.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipBackupSaveData, Type = String, Dynamic = True, Default = \"Instructs the server to produce a backup of the map / save data before performing the deploy.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = TooltipDeployPlan, Type = String, Dynamic = True, Default = \"Controls how Beacon will update the server\x2C such as when the server should be started or stopped.", Scope = Private
@@ -1542,8 +1652,9 @@ End
 		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Row)
 		  Profile.Enabled = Me.CellCheckBoxValueAt(Row, Column)
 		  
-		  Self.CheckOptionsActionEnabled
-		  Self.UpdateDeployPlans
+		  Self.UpdateFeatures()
+		  Self.CheckOptionsActionEnabled()
+		  Self.UpdateDeployPlans()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1695,27 +1806,7 @@ End
 		  Var Settings As Beacon.DeploySettings = Self.CreateSettings
 		  Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionRunImmediately
 		  
-		  Var UseStopMessage As Boolean
-		  For I As Integer = 0 To Self.ServerList.LastRowIndex
-		    If Not Self.ServerList.CellCheckBoxValueAt(I, 0) Then
-		      Continue
-		    End If
-		    
-		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
-		    Settings.Servers.Add(Profile)
-		    
-		    Var Engine As Beacon.DeployIntegration = Self.CreateEngine(Self.Project, Profile)
-		    If Engine Is Nil Then
-		      Self.ShowAlert("The developer messed up.", "There is no DeployIntegration defined for server profile " + Profile.Name + ".")
-		      Exit
-		    End If
-		    
-		    If Engine.Provider.SupportsStopMessages(Self.Project, Engine.Profile) Then
-		      UseStopMessage = True
-		      Exit
-		    End If
-		  Next
-		  
+		  Var UseStopMessage As Boolean = (Self.mSupportedFeatures And Beacon.HostFeatureStopMessages) = Beacon.HostFeatureStopMessages
 		  If UseStopMessage Then
 		    Var StopMessage As String = StopMessageDialog.Present(Self)
 		    If StopMessage.IsEmpty Then
@@ -1755,6 +1846,7 @@ End
 		  End If
 		  If Me.Value = False Then
 		    Self.NukeConfigSwitch.Value = False
+		    Self.BackupSaveDataSwitch.Value = False
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1780,6 +1872,18 @@ End
 #tag Events NukeConfigSwitch
 	#tag Event
 		Sub Pressed()
+		  If Me.Value Then
+		    Self.CreateBackupSwitch.Value = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BackupSaveDataSwitch
+	#tag Event
+		Sub Pressed()
+		  If Self.Opened Then
+		    Preferences.DeployFullBackup = Me.Value
+		  End If
 		  If Me.Value Then
 		    Self.CreateBackupSwitch.Value = True
 		  End If

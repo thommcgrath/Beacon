@@ -255,7 +255,7 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
+		Sub CreateBackup(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String, ConfigFiles As Boolean, SaveData As Boolean)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var ServerId As String
@@ -264,12 +264,64 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  
 		  Var Body As New JSONItem("{}")
 		  Body.Value("backupName") = Name
-		  Body.Value("level") = "configOnly"
+		  If ConfigFiles And SaveData Then
+		    Body.Value("level") = "full"
+		  ElseIf ConfigFiles Then
+		    Body.Value("level") = "configOnly"
+		  ElseIf SaveData Then
+		    Body.Value("level") = "saveOnly"
+		  Else
+		    Return
+		  End If
 		  
 		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("POST", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/backup"), Token, "application/json", Body.ToString))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
+		  
+		  Select Case Response.HTTPStatus
+		  Case 200, 204
+		    // The job is already complete or the API does not report a status
+		  Case 202
+		    // The job will complete asynchronously
+		    Var JSON As New JSONItem(Response.Content)
+		    If JSON.Value("status") = "completed" Then
+		      // No need to continue I wait
+		      Return
+		    End If
+		    
+		    If (Self.Logger Is Nil) = False Then
+		      Self.Logger.Log("Backup job queued, waiting for completion…")
+		    End If
+		    
+		    Var CurrentThread As Thread = Thread.Current
+		    Var BackupId As String = JSON.Value("backupId")
+		    Var ErrorCount As Integer
+		    Var SleepTime As Integer = If(SaveData, 5000, 250)
+		    
+		    Do
+		      CurrentThread.Sleep(SleepTime)
+		      SleepTime = 5000
+		      
+		      Response = Self.RunRequest(New BeaconHostingAPI.APIRequest("GET", Self.BuildUrl(Profile, Token, "/backups/" + BackupId), Token))
+		      If Not Response.Success Then
+		        ErrorCount = ErrorCount + 1
+		        If ErrorCount >= 3 Then
+		          Raise Response.Error
+		        End If
+		        Continue
+		      End If
+		      
+		      JSON = New JSONItem(Response.Content)
+		      Var Status As String = JSON.Value("status")
+		      Select Case Status
+		      Case "completed"
+		        Return
+		      Case "failed"
+		        Raise New BeaconHostingAPI.APIException("The backup has failed.")
+		      End Select
+		    Loop
+		  End Select
 		End Sub
 	#tag EndMethod
 

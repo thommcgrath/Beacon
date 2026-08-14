@@ -393,6 +393,9 @@ Protected Module Preferences
 		  Var Settings As New Beacon.DeploySettings
 		  If Preferences.DeployCreateBackup Then
 		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
+		    If Preferences.DeployFullBackup Then
+		      Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionFullBackup, UInt64)
+		    End If
 		  End If
 		  If Preferences.DeployReviewChanges Then
 		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionReview, UInt64)
@@ -984,6 +987,22 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected DeployCreateBackup As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Deploy: Backup Save Data", True)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Deploy: Backup Save Data") = Value
+			End Set
+		#tag EndSetter
+		Protected DeployFullBackup As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

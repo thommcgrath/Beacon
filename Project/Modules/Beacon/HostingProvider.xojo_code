@@ -7,7 +7,7 @@ Protected Interface HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
+		Sub CreateBackup(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String, ConfigFiles As Boolean, SaveData As Boolean)
 		  
 		End Sub
 	#tag EndMethod

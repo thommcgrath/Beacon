@@ -57,6 +57,6 @@ Host: api.example.com
 
 ### Response
 ```http
-204 No Content HTTP/1.1
+HTTP/1.1 204 No Content
 
 ```

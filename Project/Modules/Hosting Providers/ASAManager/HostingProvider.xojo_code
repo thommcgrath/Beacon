@@ -52,12 +52,14 @@ Implements Beacon.HostingProvider, ArkSA.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
+		Sub CreateBackup(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String, ConfigFiles As Boolean, SaveData As Boolean)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  #Pragma Unused Name
+		  #Pragma Unused ConfigFiles
+		  #Pragma Unused SaveData
 		End Sub
 	#tag EndMethod
 

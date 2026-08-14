@@ -124,6 +124,15 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clamp(Value As Double, MinValue As Double, MaxValue As Double) As Double
+		  // Just in case min and max are reversed
+		  Var TrueMin As Double = Min(MinValue, MaxValue)
+		  Var TrueMax As Double = Max(MinValue, MaxValue)
+		  Return Max(Min(Value, TrueMax), TrueMin)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ClassName(Extends Err As RuntimeException) As String
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  If Info Is Nil Then

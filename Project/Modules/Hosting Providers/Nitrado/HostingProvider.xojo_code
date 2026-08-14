@@ -57,8 +57,11 @@ Implements Beacon.HostingProvider,  Palworld.HostingProvider, Ark.HostingProvide
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
+		Sub CreateBackup(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String, ConfigFiles As Boolean, SaveData As Boolean)
 		  // Part of the Beacon.HostingProvider interface.
+		  
+		  #Pragma Unused ConfigFiles
+		  #Pragma Unused SaveData
 		  
 		  Var ServiceId As Integer
 		  Var Token As BeaconAPI.ProviderToken

@@ -66,9 +66,9 @@ Both Ark: Survival Evolved and Ark: Survival Ascended servers **must** contain a
 
 By default, Beacon will ask for a game's config file by name using the [Download a File](getFile) request. Should this behavior need to be overridden, the `configPaths` key can be used to customize the behavior.
 
-For example, by default an Ark will attempt to download the file using the request `GET /servers/{serverId}/files/Game.ini`. If a `configPaths` object exists with a `Game.ini` entry whose value is `ShooterGame/Saved/Config/WindowsServer/Game.ini`, Beacon will attempt to download the file using `GET /servers/{serverId}/files/ShooterGame/Saved/Config/WindowsServer/Game.ini`.
+For example, by default Beacon will attempt to download an Ark server's Game.ini file using the request `GET /servers/{serverId}/files/Game.ini`. If a `configPaths` object exists with a `Game.ini` entry whose value is `ShooterGame/Saved/Config/WindowsServer/Game.ini`, Beacon will attempt to download the file using `GET /servers/{serverId}/files/ShooterGame/Saved/Config/WindowsServer/Game.ini`.
 
-See [Download a File](getFile) documentation for path restrictions.
+See [Download a File](getFile#request-path-rules) documentation for path restrictions.
 
 ## Example Exchange
 

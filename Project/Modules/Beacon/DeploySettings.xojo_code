@@ -26,6 +26,9 @@ Protected Class DeploySettings
 	#tag Constant, Name = OptionErase, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = OptionFullBackup, Type = Double, Dynamic = False, Default = \"32", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = OptionReview, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
@@ -89,6 +92,14 @@ Protected Class DeploySettings
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Plan"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Beacon.DeployPlan"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -81,18 +81,32 @@ Inherits Beacon.Integration
 
 	#tag Method, Flags = &h1
 		Protected Sub CreateCheckpoint()
-		  If Self.BackupEnabled = False Or Self.Provider.SupportsCheckpoints(Self.Project, Self.Profile) = False Or Self.mCheckpointCreated = True Then
+		  If Self.BackupEnabled = False Then
 		    Return
 		  End If
 		  
 		  Try
-		    Self.Log("Saving previous configuration as profile…")
+		    Var ConfigBackup As Boolean = Self.mConfigBackupCreated = False And Self.Provider.SupportsConfigBackups(Self.Project, Self.Profile)
+		    Var SaveBackup As Boolean = Self.SaveBackupEnabled And Self.mSaveBackupCreated = False And Self.Provider.SupportsFullBackups(Self.Project, Self.Profile)
+		    
+		    If ConfigBackup And SaveBackup Then
+		      Self.Log("Asking server to back up data and config…")
+		    ElseIf ConfigBackup Then
+		      Self.Log("Asking server to back up config…")
+		    ElseIf SaveBackup Then
+		      Self.Log("Asking server to back up save data…")
+		    Else
+		      Return
+		    End If
+		    
 		    Var CheckpointName As String = "Beacon " + Self.Label
-		    Self.Provider.CreateCheckpoint(Self.Project, Self.Profile, CheckpointName)
-		    Self.Log("Created configuration profile """ + CheckpointName + """")
-		    Self.mCheckpointCreated = True
+		    Self.Provider.CreateBackup(Self.Project, Self.Profile, CheckpointName, ConfigBackup, SaveBackup)
+		    
+		    Self.Log("Backup created as """ + CheckpointName + """")
+		    Self.mConfigBackupCreated = Self.mConfigBackupCreated Or ConfigBackup
+		    Self.mSaveBackupCreated = Self.mSaveBackupCreated Or SaveBackup
 		  Catch Err As RuntimeException
-		    Self.SetError("Failed to create configuration backup: " + Err.Message)
+		    Self.SetError("Failed to create backup: " + Err.Message)
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -199,6 +213,12 @@ Inherits Beacon.Integration
 		  
 		  Self.CreateCheckpoint()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveBackupEnabled() As Boolean
+		  Return Self.OptionEnabled(Beacon.DeploySettings.OptionBackup Or Beacon.DeploySettings.OptionFullBackup)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -324,7 +344,7 @@ Inherits Beacon.Integration
 
 
 	#tag Property, Flags = &h21
-		Private mCheckpointCreated As Boolean
+		Private mConfigBackupCreated As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -345,6 +365,10 @@ Inherits Beacon.Integration
 
 	#tag Property, Flags = &h21
 		Private mPlan As Beacon.DeployPlan
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSaveBackupCreated As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

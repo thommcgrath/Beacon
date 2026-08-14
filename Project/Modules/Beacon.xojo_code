@@ -1704,7 +1704,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SupportsCheckpoints(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
+		Function SupportsConfigBackups(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
 		  Return (Provider.FeatureFlags(Project, Profile) And (HostFeatureFullBackups Or HostFeatureConfigBackups)) <> 0
 		End Function
 	#tag EndMethod

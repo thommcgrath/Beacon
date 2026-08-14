@@ -1,5 +1,5 @@
 #tag Class
 Protected Class APIException
-Inherits RuntimeException
+Inherits Beacon.IntegrationException
 End Class
 #tag EndClass

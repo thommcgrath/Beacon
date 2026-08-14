@@ -88,3 +88,4 @@ These are the other endpoints the Beacon Open Hosting API will look for. The `ba
 | [Get Launch Options](getLaunchOptions) | `GET /servers/{serverId}/launchOptions` |
 | [Set Launch Options](setLaunchOptions) | `PUT /servers/{serverId}/launchOptions` |
 | [Start a Backup](backup) | `POST /servers/{serverId}/backup` |
+| [Get Backup Status](backup#asynchronous-backups) | `GET /backups/{backupId}` |

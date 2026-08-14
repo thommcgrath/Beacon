@@ -102,7 +102,7 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreateCheckpoint(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String)
+		Sub CreateBackup(Project As Beacon.Project, Profile As Beacon.ServerProfile, Name As String, ConfigFiles As Boolean, SaveData As Boolean)
 		  // Part of the Beacon.HostingProvider interface.
 		  
 		  Var ServerId As String
@@ -111,12 +111,54 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  
 		  Var Body As New JSONItem("{}")
 		  Body.Value("label") = Name
-		  Body.Value("detail") = "config_only"
+		  If ConfigFiles And SaveData Then
+		    Body.Value("detail") = "all"
+		  ElseIf ConfigFiles Then
+		    Body.Value("detail") = "config_only"
+		  ElseIf SaveData Then
+		    Body.Value("detail") = "saves_only"
+		  Else
+		    Return
+		  End If
 		  
 		  Var Response As GameServersPanel.APIResponse = Self.RunRequest(New GameServersPanel.APIRequest("POST", "https://gameserverspanel.com/api/v1/servers/" + ServerId + "/backups", Token, "application/json", Body.ToString))
 		  If Not Response.Success Then
 		    Raise Response.Error
 		  End If
+		  
+		  Var JSON As New JSONItem(Response.Content)
+		  Var JobId As String = JSON.Value("jobId")
+		  Var CurrentThread As Thread = Thread.Current
+		  Var ErrorCount As Integer
+		  Var SleepTime As Integer = If(SaveData, 5000, 250)
+		  
+		  If (Self.Logger Is Nil) = False Then
+		    Self.Logger.Log("Backup job queued, waiting for completion…")
+		  End If
+		  
+		  Do
+		    CurrentThread.Sleep(SleepTime)
+		    SleepTime = 5000
+		    
+		    Response = Self.RunRequest(New GameServersPanel.APIRequest("GET", "https://gameserverspanel.com/api/v1/jobs/" + JobId, Token))
+		    If Not Response.Success Then
+		      ErrorCount = ErrorCount + 1
+		      If ErrorCount >= 3 Then
+		        Raise Response.Error
+		      End If
+		      Continue
+		    End If
+		    
+		    JSON = New JSONItem(Response.Content)
+		    Var Status As String = JSON.Value("status")
+		    Select Case Status
+		    Case "completed", "expired"
+		      // We should never get an expired, but let's treat it as success.
+		      Return
+		    Case "failed"
+		      Raise New Beacon.IntegrationException("The backup has failed.")
+		    End Select
+		  Loop
 		End Sub
 	#tag EndMethod
 
