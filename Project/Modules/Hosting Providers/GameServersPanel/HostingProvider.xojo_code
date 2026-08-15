@@ -178,6 +178,7 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  Var Body As New JSONItem("{}")
 		  Body.Value("files") = Files
 		  Body.Value("reason") = "Deploy from Beacon"
+		  Body.Value("stageIfRunning") = True
 		  
 		  If (Self.mOverrideStatus Is Nil) = False And Self.mOverrideStatus.IsInActiveState And Self.mWasRunning = True Then
 		    Body.Value("restartPolicy") = "restart_always"
