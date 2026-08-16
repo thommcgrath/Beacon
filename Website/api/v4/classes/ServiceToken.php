@@ -458,11 +458,63 @@ class ServiceToken implements JsonSerializable {
 		$this->needsReplacing = true;
 	}
 
+	public function DisplayName(bool $withHtml = false) {
+		switch ($this->provider) {
+		case ServiceToken::ProviderNitrado:
+			$details = $this->providerSpecific;
+			$username = $details['user']['username'];
+			$userId = $details['user']['id'];
+
+			if (array_key_exists('tokenName', $details)) {
+				$tokenName = $details['tokenName'];
+				if ($withHtml) {
+					return htmlentities($serviceName) . ' <span class="service-uid">(' . htmlentities($username) . ', ' . htmlentities($userId) . ')</span>';
+				} else {
+					return $tokenName . ' (' . $username . ', ' . $userId . ')';
+				}
+			} else {
+				if ($withHtml) {
+					return htmlentities($username) . ' <span class="service-uid">(' . htmlentities($userId) . ')</span>';
+				} else {
+					return $username . ' (' . $userId . ')';
+				}
+			}
+
+			break;
+		case ServiceToken::ProviderGameServersPanel:
+			$details = $this->providerSpecific;
+			if (is_array($details) && array_key_exists('tokenName', $details)) {
+				$displayName = $details['tokenName'];
+			} elseif (is_array($details) && array_key_exists('user', $details)) {
+				$displayName = $details['user']['username'];
+			} else {
+				$displayName = 'GameServersPanel';
+			}
+			if ($withHtml) {
+				return htmlentities($displayName);
+			} else {
+				return $displayName;
+			}
+			break;
+		case ServiceToken::ProviderGameServerApp:
+		case ServiceToken::ProviderASAManager:
+		case ServiceToken::ProviderBeaconHostingAPI:
+			$details = $this->providerSpecific;
+			if ($withHtml) {
+				return htmlentities($details['tokenName']);
+			} else {
+				return $details['tokenName'];
+			}
+			break;
+		}
+	}
+
 	public function JSON(bool $decrypted): array {
 		$json = [
 			'tokenId' => $this->tokenId,
 			'userId' => $this->userId,
 			'userName' => $this->userName,
+			'displayName' => $this->DisplayName(false),
 			'provider' => $this->provider,
 			'type' => $this->type,
 			'accessToken' => $this->AccessToken($decrypted),

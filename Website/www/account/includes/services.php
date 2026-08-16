@@ -18,36 +18,9 @@ if (count($connectedServices) > 0) {
 		$username = $provider;
 		$buttonClass = 'red';
 		$buttonCaption = $type === ServiceToken::TypeOAuth ? 'Disconnect' : 'Discard';
-		$serviceName = '';
 		switch ($provider) {
-		case ServiceToken::ProviderNitrado:
-			$details = $service->ProviderSpecific();
-			$username = htmlentities($details['user']['username']) . ' <span class="service-uid">(' . htmlentities($details['user']['id']) . ')</span>';
-			$serviceName = $details['user']['username'];
-
-			if (array_key_exists('tokenName', $details)) {
-				$serviceName = $details['tokenName'];
-				$username = htmlentities($serviceName) . '<br>' . $username;
-			}
-			break;
 		case ServiceToken::ProviderGameServersPanel:
-			$details = $service->ProviderSpecific();
 			$imageNames = ['gameserverspanel.webp', 'gameserverspanel@2x.webp', 'gameserverspanel@3x.webp'];
-			if (is_array($details) && array_key_exists('tokenName', $details)) {
-				$serviceName = $details['tokenName'];
-			} elseif (is_array($details) && array_key_exists('user', $details)) {
-				$serviceName = $details['user']['username'];
-			} else {
-				$serviceName = 'GameServersPanel';
-			}
-			$username = htmlentities($serviceName);
-			break;
-		case ServiceToken::ProviderGameServerApp:
-		case ServiceToken::ProviderASAManager:
-		case ServiceToken::ProviderBeaconHostingAPI:
-			$details = $service->ProviderSpecific();
-			$username = htmlentities($details['tokenName']);
-			$serviceName = $details['tokenName'];
 			break;
 		}
 
@@ -57,11 +30,11 @@ if (count($connectedServices) > 0) {
 		} else {
 			echo '<div class="service-logo"><img src="' . BeaconCommon::AssetURI($imageNames[0]) . '" srcset="' . BeaconCommon::AssetURI($imageNames[0]) . ' 1x, ' . BeaconCommon::AssetURI($imageNames[1]) . ' 2x, ' . BeaconCommon::AssetURI($imageNames[2]) . ' 3x" alt="' . $provider . '"></div>';
 		}
-		echo '<div class="service-name">' . $username . '</div>';
+		echo '<div class="service-name">' . $service->DisplayName(true) . '</div>';
 		if ($service->NeedsReplacing()) {
 			echo '<div class="service-error">This service is no longer usable due to an authentication error and should be replaced.</div>';
 		}
-		echo '<div class="service-action"><div class="button-group"><button class="' . $buttonClass . '" beacon-provider="' . $providerLower . '" beacon-provider-type="' . strtolower($service->Type()) . '" beacon-token-id="' . htmlentities($service->TokenId()) . '" beacon-token-name="' . htmlentities($serviceName) . '">' . htmlentities($buttonCaption) . '</button></div></div>';
+		echo '<div class="service-action"><div class="button-group"><button class="' . $buttonClass . '" beacon-provider="' . $providerLower . '" beacon-provider-type="' . strtolower($service->Type()) . '" beacon-token-id="' . htmlentities($service->TokenId()) . '" beacon-token-name="' . htmlentities($service->DisplayName(false)) . '">' . htmlentities($buttonCaption) . '</button></div></div>';
 		echo '</div>';
 	}
 
