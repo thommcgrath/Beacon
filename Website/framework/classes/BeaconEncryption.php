@@ -219,6 +219,30 @@ abstract class BeaconEncryption {
 		$ivSize = ($version == 2) ? 16 : 8;
 		return substr($data, 0, 10 + $ivSize);
 	}
+
+	public static function GeneratePKCE(int $length = 128): string {
+		$bytes = str_split(random_bytes(128));
+		for ($idx = 0; $idx < count($bytes); $idx++) {
+			$byte = ord($bytes[$idx]) % 66;
+			if ($byte === 0) {
+				$byte = 45; // -
+			} elseif ($byte === 1) {
+				$byte = 46; // .
+			} elseif ($byte === 2) {
+				$byte = 95; // _
+			} elseif ($byte === 3) {
+				$byte = 126; // ~
+			} elseif ($byte < 14) {
+				$byte = ($byte - 4) + 48; // Digits
+			} elseif ($byte < 40) {
+				$byte = ($byte - 14) + 65; // Uppercase characters
+			} else {
+				$byte = ($byte - 40) + 97; // Lowercase characters
+			}
+			$bytes[$idx] = chr($byte);
+		}
+		return implode('', $bytes);
+	}
 }
 
 ?>

@@ -19,8 +19,13 @@ if (is_null($session)) {
 	BeaconCommon::Redirect('/account/login/?return=' . urlencode($_SERVER['REQUEST_URI']));
 }
 
+$codeVerifier = '';
+if (ServiceToken::IsConfidentialClient($provider) === false) {
+	$codeVerifier = BeaconEncryption::GeneratePKCE(128);
+}
+
 $state = BeaconCommon::GenerateUUID();
-$url = ServiceToken::Begin($provider, $state);
+$url = ServiceToken::Begin($provider, $state, $codeVerifier);
 setcookie('beacon_oauth_state', $state, [
 	'path' => '/account',
 	'domain' => BeaconCommon::Domain(),
@@ -28,8 +33,16 @@ setcookie('beacon_oauth_state', $state, [
 	'httponly' => true,
 	'samesite' => 'Lax'
 ]);
+if (empty($codeVerifier) === false) {
+	setcookie('beacon_oauth_verifier', $codeVerifier, [
+		'path' => '/account',
+		'domain' => BeaconCommon::Domain(),
+		'secure' => true,
+		'httponly' => true,
+		'samesite' => 'Lax'
+	]);
+}
 
-$url = ServiceToken::Begin($provider, $state);
 BeaconCommon::Redirect($url);
 
 ?>

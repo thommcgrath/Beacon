@@ -57,6 +57,8 @@ class ServiceToken implements JsonSerializable {
 		switch ($provider) {
 		case self::ProviderNitrado:
 			return 'https://oauth.nitrado.net/oauth/v2/token';
+		case self::ProviderGameServersPanel:
+			return 'https://gameserverspanel.com/api/v1/oauth/token';
 		default:
 			throw new Exception("Unknown endpoint for provider {$provider}.");
 		}
@@ -66,6 +68,8 @@ class ServiceToken implements JsonSerializable {
 		switch ($provider) {
 		case self::ProviderNitrado:
 			return BeaconCommon::GetGlobal('Nitrado_Client_ID');
+		case self::ProviderGameServersPanel:
+			return BeaconCommon::GetGlobal('GameServersPanel_Client_ID');
 		default:
 			throw new Exception("Unknown client id for provider {$provider}.");
 		}
@@ -75,9 +79,15 @@ class ServiceToken implements JsonSerializable {
 		switch ($provider) {
 		case self::ProviderNitrado:
 			return BeaconCommon::GetGlobal('Nitrado_Client_Secret');
+		case self::ProviderGameServersPanel:
+			return BeaconCommon::GetGlobal('GameServersPanel_Client_Secret');
 		default:
 			throw new Exception("Unknown client secret for provider {$provider}.");
 		}
+	}
+
+	public static function IsConfidentialClient(string $provider): bool {
+		return empty(static::ClientSecret($provider)) === false;
 	}
 
 	protected function __construct(BeaconRecordSet $row) {
@@ -106,8 +116,11 @@ class ServiceToken implements JsonSerializable {
 			$userId,
 			$provider
 		];
-		if ($provider === self::ProviderNitrado) {
+		switch ($provider) {
+		case self::ProviderNitrado:
+		case self::ProviderGameServersPanel:
 			$uuidParts[] = $providerSpecific['user']['id'];
+			break;
 		}
 		return BeaconUUID::v5(implode('|', $uuidParts));
 	}
@@ -188,26 +201,6 @@ class ServiceToken implements JsonSerializable {
 		return static::Fetch($tokenId);
 	}
 
-	public static function ImportOAuth(string|User $user, string $provider, string $accessToken, string $refreshToken): ?static {
-		$userId = is_string($user) ? $user : $user->UserId();
-
-		$accessTokenExpiration = time();
-		$refreshTokenExpiration = time();
-		$providerSpecific = [];
-		if (static::UpdateOAuthProperties($provider, $accessToken, $accessTokenExpiration, $refreshTokenExpiration, $providerSpecific)) {
-			return static::StoreOAuth($userId, $provider, $accessToken, $refreshToken, $accessTokenExpiration, $refreshTokenExpiration, $providerSpecific, false);
-		} else {
-			$fields = [
-				'grant_type' => 'refresh_token',
-				'client_id' => static::ClientID($provider),
-				'refresh_token' => $refreshToken,
-				'redirect_url' => static::RedirectURI($provider),
-			];
-
-			return static::Redeem($userId, $provider, $fields, false);
-		}
-	}
-
 	public static function Fetch(string $tokenId): ?static {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM ' . self::FromClause . ' WHERE service_tokens.token_id = $1;', $tokenId);
@@ -267,28 +260,48 @@ class ServiceToken implements JsonSerializable {
 		return $tokens;
 	}
 
-	public static function Begin(string $provider, string $state): string {
+	public static function Begin(string $provider, string $state, string $codeVerifier = ''): string {
+		$clientId = static::ClientId($provider); // Will throw an exception if unknown provider;
+		$baseUrl = '';
+		$queryParams = [
+			'redirect_uri' => static::RedirectURI($provider),
+			'client_id' => $clientId,
+			'response_type' => 'code',
+			'scope' => '',
+			'state' => $state,
+		];
+		if (static::IsConfidentialClient($provider) === false) {
+			if (empty($codeVerifier)) {
+				throw new Exception('Missing code verifier');
+			}
+			$queryParams['code_challenge'] = BeaconCommon::Base64UrlEncode(hash('sha256', $codeVerifier, true));
+			$queryParams['code_challenge_method'] = 'S256';
+		}
+
 		switch ($provider) {
 		case self::ProviderNitrado:
+			$baseUrl = 'https://oauth.nitrado.net/oauth/v2/auth';
+			$queryParams['scope'] = 'service';
+			break;
+		case self::ProviderGameServersPanel:
+			$baseUrl = 'https://gameserverspanel.com/oauth/authorize';
+			$queryParams['scope'] = 'servers:read files:read files:write backups:write power:write startup:read startup:write';
 			break;
 		default:
-			throw new Exception("Unknown provider $provider.");
+			throw new Exception("Unknown scopes for provider {$provider}.");
 		}
 
-		$clientId = static::ClientId($provider);
-
-		switch ($provider) {
-		case self::ProviderNitrado:
-			return 'https://oauth.nitrado.net/oauth/v2/auth?redirect_uri=' . urlencode(static::RedirectURI($provider)) . '&client_id=' . urlencode($clientId) . '&response_type=code&scope=service&state=' . urlencode($state);
-		}
+		return $baseUrl . '?' . http_build_query($queryParams);
 	}
 
-	public static function Complete(string $userId, string $provider, string $code): ?static {
+	public static function Complete(string $userId, string $provider, string $code, string $codeVerifier = ''): ?static {
 		$fields = [
 			'grant_type' => 'authorization_code',
 			'client_id' => static::ClientId($provider),
 			'client_secret' => static::ClientSecret($provider),
 			'code' => $code,
+			'code_verifier' => $codeVerifier,
+			'redirect_uri' => static::RedirectURI($provider),
 		];
 
 		return static::Redeem($userId, $provider, $fields);
@@ -486,6 +499,9 @@ class ServiceToken implements JsonSerializable {
 		case self::ProviderNitrado:
 			$endpoint = 'https://oauth.nitrado.net/token';
 			break;
+		case self::ProviderGameServersPanel:
+			$endpoint = 'https://gameserverspanel.com/api/v1/me';
+			break;
 		default:
 			return true;
 		}
@@ -526,22 +542,41 @@ class ServiceToken implements JsonSerializable {
 	}
 
 	public function Delete(): bool {
-		$status = 0;
 		if ($this->type === static::TypeOAuth) {
-			$curl = curl_init(static::ProviderEndpoint($this->provider));
-			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-			curl_setopt($curl, CURLOPT_HTTPHEADER, [
-				'Authorization: Bearer ' . $this->accessToken
-			]);
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-			$response = curl_exec($curl);
-			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-			curl_close($curl);
+			switch ($this->provider) {
+			case self::ProviderGameServersPanel:
+				$fields = [
+					'token' => $this->accessToken,
+					'client_id' => static::ClientId($this->provider),
+				];
+
+				$curl = curl_init('https://gameserverspanel.com/api/v1/oauth/revoke');
+				curl_setopt($curl, CURLOPT_POST, true);
+				curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($fields));
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+				$response = curl_exec($curl);
+				$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+				curl_close($curl);
+				$success = ($status === 200);
+				break;
+			default:
+				$curl = curl_init(static::ProviderEndpoint($this->provider));
+				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+				curl_setopt($curl, CURLOPT_HTTPHEADER, [
+					'Authorization: Bearer ' . $this->accessToken
+				]);
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+				$response = curl_exec($curl);
+				$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+				curl_close($curl);
+				$success = ($status === 200 || $status === 204 || $status = 401);
+				break;
+			}
 		} else {
-			$status = 200;
+			$success = true;
 		}
 
-		if ($status === 200 || $status === 204 || $status = 401) {
+		if ($success) {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
 			$database->Query('DELETE FROM public.service_tokens WHERE token_id = $1;', $this->tokenId);
@@ -550,7 +585,6 @@ class ServiceToken implements JsonSerializable {
 				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($this->userId), eventName: 'service-tokens-updated', body: null),
 				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($this->userId), eventName: 'serviceTokensUpdated', body: null),
 			]);
-
 			return true;
 		}
 
@@ -577,14 +611,14 @@ class ServiceToken implements JsonSerializable {
 		$refreshTokenExpiration = time();
 		$providerSpecific = [];
 
-		if (static::UpdateOAuthProperties($provider, $accessToken, $accessTokenExpiration, $refreshTokenExpiration, $providerSpecific) === false) {
+		if (static::UpdateOAuthProperties($response, $provider, $accessToken, $accessTokenExpiration, $refreshTokenExpiration, $providerSpecific) === false) {
 			throw new Exception('Invalid access token or provider.');
 		}
 
 		return static::StoreOAuth($userId, $provider, $accessToken, $refreshToken, $accessTokenExpiration, $refreshTokenExpiration, $providerSpecific, $updateExisting);
 	}
 
-	protected static function UpdateOAuthProperties(string $provider, string $accessToken, int &$accessTokenExpiration, int &$refreshTokenExpiration, array &$providerSpecific): bool {
+	protected static function UpdateOAuthProperties(array $authResponse, string $provider, string $accessToken, int &$accessTokenExpiration, int &$refreshTokenExpiration, array &$providerSpecific): bool {
 		switch ($provider) {
 		case self::ProviderNitrado:
 			$curl = curl_init('https://api.nitrado.net/token');
@@ -604,6 +638,25 @@ class ServiceToken implements JsonSerializable {
 			$providerSpecific['user'] = $response['data']['token']['user'];
 			$accessTokenExpiration = $response['data']['token']['expires_at'];
 			$refreshTokenExpiration = $accessTokenExpiration + 2592000; // This is a guess, 30 days
+			return true;
+		case self::ProviderGameServersPanel:
+			$curl = curl_init('https://gameserverspanel.com/api/v1/me');
+			curl_setopt($curl, CURLOPT_HTTPHEADER, [
+				'Authorization: Bearer ' . $accessToken,
+			]);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($curl);
+			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+			curl_close($curl);
+
+			if ($status !== 200) {
+				return false;
+			}
+
+			$response = json_decode($response, true);
+			$providerSpecific['user'] = ['username' => $response['user']['username'], 'id' => $response['sub']];
+			$accessTokenExpiration = $accessTokenExpiration + $authResponse['expires_in'];
+			$refreshTokenExpiration = $refreshTokenExpiration + 7776000; // Docs say 90 days
 			return true;
 		}
 

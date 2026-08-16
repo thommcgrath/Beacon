@@ -17,7 +17,8 @@ function handleRequest(array $context): Response {
 	switch ($type) {
 	case ServiceToken::TypeStatic:
 		$providerSpecific = $tokenData['providerSpecific'];
-		if ($provider === ServiceToken::ProviderNitrado) {
+		switch ($provider) {
+		case ServiceToken::ProviderNitrado:
 			try {
 				$curl = curl_init('https://api.nitrado.net/token');
 				curl_setopt($curl, CURLOPT_HTTPHEADER, [
@@ -55,6 +56,7 @@ function handleRequest(array $context): Response {
 			} catch (Exception $err) {
 				return Response::NewJsonError($err->getMessage() ?: 'Unhandled exception checking Nitrado token', null, 400);
 			}
+			break;
 		}
 		try {
 			$token = ServiceToken::StoreStatic($userId, $provider, $accessToken, $providerSpecific, false);
@@ -66,16 +68,7 @@ function handleRequest(array $context): Response {
 		}
 		break;
 	case ServiceToken::TypeOAuth:
-		$refreshToken = $tokenData['refreshToken'];
-		try {
-			$token = ServiceToken::ImportOAuth($userId, $provider, $accessToken, $refreshToken);
-			if (is_null($token)) {
-				return Response::NewJsonError('Token was not imported. The refresh token may be expired.', null, 400);
-			}
-		} catch (Exception $err) {
-			return Response::NewJsonError($err->getMessage() ?: 'Unhandled exception saving OAuth token', null, 400);
-		}
-		break;
+		return Response::NewJsonError('You cannot import an OAuth token.', null, 400);
 	default:
 		return Response::NewJsonError("Unknown provider {$provider}.", null, 400);
 	}
