@@ -216,7 +216,7 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Tokens() As BeaconAPI.ProviderToken)
-		  Self.mTokens = Tokens.Sort(BeaconAPI.ProviderToken.DetailNormal)
+		  Self.mTokens = Tokens.Sort()
 		  Super.Constructor
 		  
 		End Sub
@@ -282,7 +282,7 @@ End
 	#tag Event
 		Sub Opening()
 		  For Each Token As BeaconAPI.ProviderToken In Self.mTokens
-		    Me.AddRow(Token.Label(BeaconAPI.ProviderToken.DetailHigh), Token)
+		    Me.AddRow(Language.ProviderName(Token.Provider) + ": " + Token.DisplayName, Token)
 		  Next
 		  
 		  If Me.RowCount = 1 Then

@@ -40,6 +40,7 @@ Protected Class ProviderToken
 		  Self.mTokenId = Dict.Value("tokenId").StringValue
 		  Self.mUserId = Dict.Value("userId").StringValue
 		  Self.mUserName = Dict.Value("userName").StringValue
+		  Self.mDisplayName = Dict.Value("displayName").StringValue
 		  Self.mProvider = Dict.Value("provider").StringValue
 		  Self.mType = Dict.Value("type").StringValue
 		  Self.mAccessToken = Dict.Value("accessToken").StringValue
@@ -77,6 +78,12 @@ Protected Class ProviderToken
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DisplayName() As String
+		  Return Self.mDisplayName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function EncryptionKey() As String
 		  Return Self.mEncryptionKey
 		End Function
@@ -89,51 +96,8 @@ Protected Class ProviderToken
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Label(Detail As Integer) As String
-		  Var Label As String
-		  
-		  Select Case Self.Provider
-		  Case Self.ProviderNitrado
-		    Try
-		      Var TokenName As String = Self.ProviderSpecific("tokenName", "")
-		      Var UserDict As Dictionary = Self.ProviderSpecific("user", Nil)
-		      Var Username As String = UserDict.Value("username")
-		      Var Id As Integer = UserDict.Value("id")
-		      
-		      Label = Username
-		      
-		      If Detail >= Self.DetailNormal Then
-		        Label = Label + " (" + Id.ToString(Locale.Current, "0") + ")"
-		      End If
-		      
-		      If Detail >= Self.DetailHigh And TokenName.IsEmpty = False Then
-		        Label = TokenName + " - " + Label
-		      End If
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Building Nitrado service name")
-		    End Try
-		  Case Self.ProviderGameServerApp, Self.ProviderASAManager, Self.ProviderBeaconHostingAPI, Self.ProviderGameServersPanel
-		    Try
-		      Label = Self.ProviderSpecific("tokenName", "")
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Building GameServerApp service name")
-		    End Try
-		  End Select
-		  
-		  If Label.IsEmpty Then
-		    Label = Self.mTokenId
-		  End If
-		  If Detail >= Self.DetailHigh Then
-		    Label = Language.ProviderName(Self.Provider) + ": " + Label
-		  End If
-		  
-		  Return Label
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function Load(Dict As Dictionary) As BeaconAPI.ProviderToken
-		  If Dict.HasAllKeys("tokenId", "userId", "userName", "provider", "type", "accessToken", "accessTokenExpiration", "providerSpecific", "automatic", "providesServers") = False Then
+		  If Dict.HasAllKeys("tokenId", "userId", "userName", "displayName", "provider", "type", "accessToken", "accessTokenExpiration", "providerSpecific", "automatic", "providesServers") = False Then
 		    Return Nil
 		  End If
 		  
@@ -222,6 +186,10 @@ Protected Class ProviderToken
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDisplayName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mEncryptionKey As String
 	#tag EndProperty
 
@@ -253,15 +221,6 @@ Protected Class ProviderToken
 		Private mUserName As String
 	#tag EndProperty
 
-
-	#tag Constant, Name = DetailHigh, Type = Double, Dynamic = False, Default = \"3", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = DetailLow, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = DetailNormal, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = ProviderASAManager, Type = String, Dynamic = False, Default = \"ASAManager", Scope = Public
 	#tag EndConstant

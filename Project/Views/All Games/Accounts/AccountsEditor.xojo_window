@@ -424,7 +424,7 @@ End
 		      Var Token As BeaconAPI.ProviderToken = Self.mTokens.Value(TokenId)
 		      Var UsedCount As Integer = UsageCounts.Lookup(Token.TokenId, 0)
 		      
-		      Self.List.CellTextAt(RowIdx, Self.ColumnLabel) = Token.Label(BeaconAPI.ProviderToken.DetailNormal)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnLabel) = Token.DisplayName
 		      Self.List.CellTextAt(RowIdx, Self.ColumnProvider) = Language.ProviderName(Token.Provider)
 		      If Token.IsEncrypted Then
 		        Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = "Error: Decryption key is incorrect"
@@ -557,7 +557,7 @@ End
 		    Var TokenId As String = Me.RowTagAt(I)
 		    TokenIds.Add(TokenId)
 		    If Self.mTokens.HasKey(TokenId) Then
-		      ServiceNames.Add(BeaconAPI.ProviderToken(Self.mTokens.Value(TokenId)).Label(BeaconAPI.ProviderToken.DetailLow))
+		      ServiceNames.Add(BeaconAPI.ProviderToken(Self.mTokens.Value(TokenId)).DisplayName)
 		    Else
 		      ServiceNames.Add(Me.CellTextAt(I, Self.ColumnLabel))
 		    End If

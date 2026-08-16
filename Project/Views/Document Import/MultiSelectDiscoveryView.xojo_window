@@ -27,6 +27,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
    Width           =   720
    Begin Thread TokenLookupThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -747,7 +748,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.mTokens = Tokens.Sort(BeaconAPI.ProviderToken.DetailNormal)
+		  Self.mTokens = Tokens.Sort()
 		  Self.mFetchingTokens = False
 		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": True, "Finished": True))
 		End Sub
@@ -778,7 +779,7 @@ End
 		      Self.AccountMenu.AddRow(Self.AccountMenuAllAccountsCaption)
 		      Self.AccountMenu.AddSeparator()
 		      For Each Token As BeaconAPI.ProviderToken In Self.mTokens
-		        Self.AccountMenu.AddRow(Token.Label(BeaconAPI.ProviderToken.DetailNormal))
+		        Self.AccountMenu.AddRow(Token.DisplayName)
 		        Self.AccountMenu.RowTagAt(Self.AccountMenu.LastAddedRowIndex) = Token
 		        If Token.TokenId = SelectedTokenId Then
 		          Self.AccountMenu.SelectedRowIndex = Self.AccountMenu.LastAddedRowIndex

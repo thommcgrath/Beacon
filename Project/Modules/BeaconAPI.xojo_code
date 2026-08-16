@@ -223,12 +223,12 @@ Protected Module BeaconAPI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Sort(Extends Tokens() As BeaconAPI.ProviderToken, Detail As Integer) As BeaconAPI.ProviderToken()
+		Function Sort(Extends Tokens() As BeaconAPI.ProviderToken) As BeaconAPI.ProviderToken()
 		  Var Sorted() As BeaconAPI.ProviderToken
 		  Var Labels() As String
 		  For Each Token As BeaconAPI.ProviderToken In Tokens
 		    Sorted.Add(Token)
-		    Labels.Add(Token.Label(Detail))
+		    Labels.Add(Token.DisplayName)
 		  Next
 		  Labels.SortWith(Sorted)
 		  Return Sorted
