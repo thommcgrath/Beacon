@@ -134,6 +134,10 @@ h1 span.tag {
 		margin-left: auto;
 		margin-right: auto;
 
+		a {
+			color: rgb(14.0674318508%,44.8637015782%,79.4619799139%);
+		}
+
 		@media (min-width: calc(500px + 1rem + 80px)) {
 			margin-left: 0;
 			margin-right: 0;

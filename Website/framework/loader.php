@@ -161,7 +161,8 @@ BeaconErrors::StartWatching();
 			'allow-same-origin',
 			'allow-scripts',
 			'allow-downloads',
-			'allow-popups'
+			'allow-popups',
+			'allow-popups-to-escape-sandbox',
 		],
 		'upgrade-insecure-requests' => []
 	];
