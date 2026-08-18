@@ -285,12 +285,18 @@ Inherits Global.Thread
 		        End If
 		        Var ManagedSection As String = ManagedKey.Value.Middle(ManagedSectionStartPos, ManagedSectionEndPos - ManagedSectionStartPos)
 		        
-		        Var KeysStartPos As Integer = ManagedKey.Value.IndexOf("Keys=(")
+		        Var LegacyMode As Boolean
+		        Var KeysStartPos As Integer = ManagedKey.Value.IndexOf("Keys=""")
 		        If KeysStartPos = -1 Then
-		          Continue
+		          KeysStartPos = ManagedKey.Value.IndexOf("Keys=(")
+		          If KeysStartPos = -1 Then
+		            Continue
+		          Else
+		            LegacyMode = True
+		          End If
 		        End If
 		        KeysStartPos = KeysStartPos + 6
-		        Var KeysEndPos As Integer = ManagedKey.Value.IndexOf(KeysStartPos, ")")
+		        Var KeysEndPos As Integer = ManagedKey.Value.IndexOf(KeysStartPos, If(LegacyMode, ")", """"))
 		        If KeysEndPos = -1 Then
 		          Continue
 		        End If
@@ -353,7 +359,7 @@ Inherits Global.Thread
 		        End If
 		        
 		        Var Keys() As String = FinalOrganizer.Keys(File, Header)
-		        FinalOrganizer.Add(New ArkSA.ConfigValue(File, "Beacon", "ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))", "ManagedKeys:" + Header))
+		        FinalOrganizer.Add(New ArkSA.ConfigValue(File, "Beacon", "ManagedKeys=(Section=""" + Header + """,Keys=""" + Keys.Join(",") + """)", "ManagedKeys:" + Header))
 		      Next
 		      
 		      Var BeaconKeys() As String = Organizer.BeaconKeys
