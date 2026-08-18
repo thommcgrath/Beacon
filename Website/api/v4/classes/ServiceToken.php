@@ -125,12 +125,24 @@ class ServiceToken implements JsonSerializable {
 		return BeaconUUID::v5(implode('|', $uuidParts));
 	}
 
-	protected static function StaticTokenId(string $userId, string $provider, string $accessToken): string {
+	protected static function StaticTokenId(string $userId, string $provider, array $providerSpecific, string $accessToken): string {
 		$uuidParts = [
 			$userId,
 			$provider,
-			$accessToken
 		];
+		switch ($provider) {
+		case self::ProviderBeaconHostingAPI:
+			$uuidParts[] = $providerSpecific['endpoint'];
+			if (array_key_exists('user', $providerSpecific)) {
+				$uuidParts[] = $providerSpecific['user']['id'];
+			} else {
+				$uuidParts[] = $accessToken;
+			}
+			break;
+		default:
+			$uuidParts[] = $accessToken;
+			break;
+		}
 		return BeaconUUID::v5(implode('|', $uuidParts));
 	}
 
@@ -170,7 +182,7 @@ class ServiceToken implements JsonSerializable {
 
 	public static function StoreStatic(string|User $user, string $provider, string $accessToken, array $providerSpecific, bool $updateExisting = true): ?static {
 		$userId = is_string($user) ? $user : $user->UserId();
-		$tokenId = static::StaticTokenId($user, $provider, $accessToken);
+		$tokenId = static::StaticTokenId($user, $provider, $providerSpecific, $accessToken);
 
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT encryption_key FROM public.service_tokens WHERE token_id = $1;', $tokenId);
@@ -342,7 +354,7 @@ class ServiceToken implements JsonSerializable {
 			$newTokenId = static::OAuthTokenId($userId, $this->provider, $this->providerSpecific);
 			break;
 		case self::TypeStatic:
-			$newTokenId = static::StaticTokenId($userId, $this->provider, $this->accessToken);
+			$newTokenId = static::StaticTokenId($userId, $this->provider, $this->providerSpecific, $this->accessToken);
 			break;
 		default:
 			return;
@@ -459,9 +471,9 @@ class ServiceToken implements JsonSerializable {
 	}
 
 	public function DisplayName(bool $withHtml = false) {
+		$details = $this->providerSpecific;
 		switch ($this->provider) {
 		case ServiceToken::ProviderNitrado:
-			$details = $this->providerSpecific;
 			$username = $details['user']['username'];
 			$userId = $details['user']['id'];
 
@@ -482,7 +494,6 @@ class ServiceToken implements JsonSerializable {
 
 			break;
 		case ServiceToken::ProviderGameServersPanel:
-			$details = $this->providerSpecific;
 			if (is_array($details) && array_key_exists('tokenName', $details)) {
 				$displayName = $details['tokenName'];
 			} elseif (is_array($details) && array_key_exists('user', $details)) {
@@ -496,10 +507,26 @@ class ServiceToken implements JsonSerializable {
 				return $displayName;
 			}
 			break;
+		case ServiceToken::ProviderBeaconHostingAPI:
+			$tokenName = $details['tokenName'];
+			if (array_key_exists('user', $details)) {
+				$username = $details['user']['username'];
+				if ($withHtml) {
+					return htmlentities($tokenName) . ' <span class="service-uid">(' . htmlentities($username) . ')</span>';
+				} else {
+					return $tokenName . ' (' . $username . ')';
+				}
+			} else {
+				if ($withHtml) {
+					return htmlentities($tokenName);
+				} else {
+					return $tokenName;
+				}
+			}
+			break;
 		case ServiceToken::ProviderGameServerApp:
 		case ServiceToken::ProviderASAManager:
 		case ServiceToken::ProviderBeaconHostingAPI:
-			$details = $this->providerSpecific;
 			if ($withHtml) {
 				return htmlentities($details['tokenName']);
 			} else {

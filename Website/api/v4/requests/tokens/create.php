@@ -57,6 +57,31 @@ function handleRequest(array $context): Response {
 				return Response::NewJsonError($err->getMessage() ?: 'Unhandled exception checking Nitrado token', null, 400);
 			}
 			break;
+		case ServiceToken::ProviderBeaconHostingAPI:
+			// Do not stop the user
+			try {
+				$curl = curl_init($providerSpecific['endpoint']);
+				curl_setopt($curl, CURLOPT_HTTPHEADER, [
+					'Authorization: KEY ' . $accessToken,
+				]);
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+				$response = curl_exec($curl);
+				$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+				curl_close($curl);
+
+				switch ($status) {
+				case 200:
+					$parsedResponse = json_decode($response, true);
+					if (array_key_exists('user', $parsedResponse) && is_array($parsedResponse['user']) && array_key_exists('id', $parsedResponse['user']) && array_key_exists('name', $parsedResponse['user'])) {
+						$providerSpecific['user'] = ['id' => $parsedResponse['user']['id'], 'username' => $parsedResponse['user']['name']];
+					}
+					break;
+				default:
+					break;
+				}
+			} catch (Exception $err) {
+			}
+			break;
 		}
 		try {
 			$token = ServiceToken::StoreStatic($userId, $provider, $accessToken, $providerSpecific, false);
