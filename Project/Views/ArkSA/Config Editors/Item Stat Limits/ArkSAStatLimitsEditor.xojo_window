@@ -958,7 +958,7 @@ End
 		      
 		      Var ColumnIdx As Integer = Self.StatToColumn(Stat.StatIndex)
 		      Var Limit As Double = Stat.ComputeEffectiveLimit(Value.DoubleValue)
-		      Var CellValue As String = Limit.PrettyText(2, True)
+		      Var CellValue As String = Limit.PrettyText(1, True)
 		      If Self.ColumnIsPercentage(ColumnIdx) Then
 		        CellValue = CellValue + "%"
 		      End If

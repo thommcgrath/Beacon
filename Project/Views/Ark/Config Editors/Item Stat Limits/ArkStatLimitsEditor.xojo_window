@@ -1109,7 +1109,7 @@ End
 		      Var StateModifierScale As Double = Stats.Value("SMS")
 		      Var RandomizerRangeMultiplier As Double = Stats.Value("RRM")
 		      Var Limit As Double = Ark.Configs.StatLimits.ComputeEffectiveLimit(Value, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
-		      Var CellValue As String = Limit.PrettyText(2)
+		      Var CellValue As String = Limit.PrettyText(1)
 		      If Self.ColumnIsPercentage(Column) Then
 		        CellValue = CellValue + "%"
 		      End If
