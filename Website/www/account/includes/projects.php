@@ -27,9 +27,9 @@ if (count($projects) > 0) {
 			break;
 		}
 
-		$projectUrl = 'beacon://' . BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->ProjectId()) . '?name=' . urlencode($project->Title());
+		$projectUrl = BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->ProjectId()) . '?name=' . urlencode($project->Title());
 
-		$delete_link = '<a href="delete/' . htmlentities($project->ProjectId()) . '" beacon-action="delete" beacon-resource-name="' . htmlentities($project->Title()) .'" beacon-resource-url="' . htmlentities($projectUrl) . '">Delete</a>';
+		$delete_link = '<a href="delete/' . htmlentities($project->ProjectId()) . '" beacon-action="delete" beacon-resource-name="' . htmlentities($project->Title()) .'" beacon-resource-url="https://' . htmlentities($projectUrl) . '">Delete</a>';
 		$details = [
 			'Game: ' . htmlentities($project->GameName()),
 			'Downloads: ' . number_format($project->DownloadCount()),
@@ -38,7 +38,7 @@ if (count($projects) > 0) {
 		];
 
 		echo '<tr>';
-		echo '<td><a href="' . htmlentities($projectUrl) . '">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . htmlentities($project->Description()) . '</span><div class="row-details"><span class="detail">' . implode('</span><span class="detail">', $details) . '</span></div></td>';
+		echo '<td><a href="beacon://' . htmlentities($projectUrl) . '">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . htmlentities($project->Description()) . '</span><div class="row-details"><span class="detail">' . implode('</span><span class="detail">', $details) . '</span></div></td>';
 		echo '<td class="low-priority text-left nowrap">' . htmlentities($project->GameName()) . '</td>';
 		echo '<td class="low-priority text-right nowrap">' . number_format($project->DownloadCount()) . '</td>';
 		echo '<td class="low-priority text-right nowrap">' . number_format($project->Revision()) . '</td>';
