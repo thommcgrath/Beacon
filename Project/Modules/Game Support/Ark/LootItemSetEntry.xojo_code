@@ -972,7 +972,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		      Options.Compact = True
 		      CustomDataString = CustomData.ToString(Options)
 		    #else
-		      CustomData.DecimalFormat = "#.000000"
+		      CustomData.DecimalFormat = "-#.000000"
 		      CustomData.Compact = True
 		      CustomDataString = CustomData.ToString()
 		    #endif

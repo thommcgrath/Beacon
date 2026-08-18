@@ -2877,7 +2877,7 @@ Implements ArkSA.BlueprintProvider
 		          If Stats.Count > 0 Then
 		            Var StatsJSON As New JSONItem
 		            StatsJSON.Compact = True
-		            StatsJSON.DecimalFormat = "#.000000"
+		            StatsJSON.DecimalFormat = "-#.000000"
 		            For Each Stat As ArkSA.EngramStat In Stats
 		              StatsJSON.Add(New JSONItem(Stat.SaveData))
 		            Next
