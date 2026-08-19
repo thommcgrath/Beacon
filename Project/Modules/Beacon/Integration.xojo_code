@@ -36,7 +36,7 @@ Implements Beacon.LogProducer
 		  End If
 		  
 		  Var Lock As New CriticalSection
-		  Lock.Type = Global.Thread.Types.Preemptive
+		  Lock.Type = Thread.Types.Preemptive
 		  Self.mLock = Lock
 		  
 		  Self.mProject = Project
@@ -64,11 +64,12 @@ Implements Beacon.LogProducer
 		  
 		  If Self.mResourceIntenseLock Is Nil Then
 		    Self.mResourceIntenseLock = New CriticalSection
-		    Self.mResourceIntenseLock.Type = Global.Thread.Types.Preemptive
+		    Self.mResourceIntenseLock.Type = Thread.Types.Preemptive
 		  End If
 		  
-		  Self.mThread = New Global.Thread
+		  Self.mThread = New Thread
 		  #if DebugBuild
+		    Self.mThread.Type = Thread.Types.Preemptive
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
 		    Self.mThread.DebugIdentifier = Info.FullName + ".RunThread"
 		  #endif
@@ -231,7 +232,7 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_Run(Sender As Global.Thread)
+		Private Sub mThread_Run(Sender As Thread)
 		  Sender.YieldToNext
 		  
 		  Self.mLock.Enter
@@ -257,7 +258,7 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_UserInterfaceUpdate(Sender As Global.Thread, Updates() As Dictionary)
+		Private Sub mThread_UserInterfaceUpdate(Sender As Thread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates
@@ -415,16 +416,10 @@ Implements Beacon.LogProducer
 		    Self.SetError("Terminated")
 		  End If
 		  
-		  If (Self.mThread Is Nil) = False And Self.mThread.ThreadState <> Global.Thread.ThreadStates.NotRunning Then
+		  If (Self.mThread Is Nil) = False And Self.mThread.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Self.mThread.Stop
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Thread() As Global.Thread
-		  Return Self.mThread
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -473,6 +468,12 @@ Implements Beacon.LogProducer
 		  
 		  Thread.Current.Sleep(Milliseconds, False)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function WorkThread() As Thread
+		  Return Self.mThread
+		End Function
 	#tag EndMethod
 
 
@@ -553,7 +554,7 @@ Implements Beacon.LogProducer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mThread As Global.Thread
+		Private mThread As Thread
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -587,13 +588,13 @@ Implements Beacon.LogProducer
 			Get
 			  Var Lock As New Beacon.LockHolder(Self.mLock)
 			  If Self.mThread Is Nil Then
-			    Return Global.Thread.ThreadStates.NotRunning
+			    Return Thread.ThreadStates.NotRunning
 			  End If
 			  
 			  Return Self.mThread.ThreadState
 			End Get
 		#tag EndGetter
-		ThreadState As Global.Thread.ThreadStates
+		ThreadState As Thread.ThreadStates
 	#tag EndComputedProperty
 
 

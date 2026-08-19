@@ -12,7 +12,7 @@ Protected Class ModDiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_Run(Sender As Beacon.Thread)
+		Private Sub mThread_Run(Sender As Beacon.CommonThread)
 		  Sender.YieldToNext
 		  
 		  Self.StatusMessage = "Building server…"
@@ -111,7 +111,7 @@ Protected Class ModDiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub mThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates
@@ -429,7 +429,7 @@ Protected Class ModDiscoveryEngine
 		  Self.mSuccess = False
 		  Self.mCancelled = False
 		  
-		  Self.mThread = New Beacon.Thread
+		  Self.mThread = New Beacon.CommonThread
 		  Self.mThread.DebugIdentifier = "ArkSA.ModDiscoveryEngine"
 		  AddHandler mThread.Run, WeakAddressOf mThread_Run
 		  AddHandler mThread.UserInterfaceUpdate, WeakAddressOf mThread_UserInterfaceUpdate
@@ -528,7 +528,7 @@ Protected Class ModDiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mThread As Beacon.Thread
+		Private mThread As Beacon.CommonThread
 	#tag EndProperty
 
 

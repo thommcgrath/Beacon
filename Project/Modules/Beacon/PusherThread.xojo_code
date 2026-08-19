@@ -1,6 +1,6 @@
 #tag Class
 Protected Class PusherThread
-Inherits Global.Thread
+Inherits Thread
 	#tag Event
 		Sub Run()
 		  Try

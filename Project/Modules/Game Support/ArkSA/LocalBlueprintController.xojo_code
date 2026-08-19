@@ -4,7 +4,7 @@ Inherits ArkSA.BlueprintController
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub FetchBlueprints(Task As ArkSA.BlueprintControllerFetchTask)
-		  Var FetchThread As New Beacon.Thread
+		  Var FetchThread As New Beacon.CommonThread
 		  FetchThread.DebugIdentifier = CurrentMethodName
 		  FetchThread.UserData = Task
 		  AddHandler FetchThread.Run, WeakAddressOf FetchThread_Run
@@ -18,7 +18,7 @@ Inherits ArkSA.BlueprintController
 	#tag Event
 		Sub Publish(Tasks() As ArkSA.BlueprintControllerPublishTask)
 		  For Each Task As ArkSA.BlueprintControllerPublishTask In Tasks
-		    Var PublishThread As New Beacon.Thread
+		    Var PublishThread As New Beacon.CommonThread
 		    PublishThread.DebugIdentifier = CurrentMethodName
 		    PublishThread.UserData = Task
 		    AddHandler PublishThread.Run, WeakAddressOf PublishThread_Run
@@ -32,7 +32,7 @@ Inherits ArkSA.BlueprintController
 
 
 	#tag Method, Flags = &h21
-		Private Sub FetchThread_Run(Sender As Beacon.Thread)
+		Private Sub FetchThread_Run(Sender As Beacon.CommonThread)
 		  Var Task As ArkSA.BlueprintControllerFetchTask = Sender.UserData
 		  Var Mods As New Beacon.StringList(Self.ContentPack.ContentPackId)
 		  Var DataSource As ArkSA.DataSource = ArkSA.DataSource.Pool.Get(False)
@@ -54,7 +54,7 @@ Inherits ArkSA.BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub FetchThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub FetchThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  For Each Update As Dictionary In Updates
 		    Var Finished As Boolean = Update.Value("Finished")
 		    If Finished = False Then
@@ -141,7 +141,7 @@ Inherits ArkSA.BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PublishThread_Run(Sender As Beacon.Thread)
+		Private Sub PublishThread_Run(Sender As Beacon.CommonThread)
 		  Var Task As ArkSA.BlueprintControllerPublishTask = Sender.UserData
 		  Try
 		    If Task.DeleteMode Then
@@ -159,7 +159,7 @@ Inherits ArkSA.BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PublishThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub PublishThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  For Each Update As Dictionary In Updates
 		    Var Finished As Boolean = Update.Value("Finished")
 		    If Finished = False Then
@@ -187,7 +187,7 @@ Inherits ArkSA.BlueprintController
 
 
 	#tag Property, Flags = &h21
-		Private mThreads() As Beacon.Thread
+		Private mThreads() As Beacon.CommonThread
 	#tag EndProperty
 
 

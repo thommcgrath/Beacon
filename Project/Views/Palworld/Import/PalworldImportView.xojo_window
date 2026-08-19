@@ -734,7 +734,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub MigrateThread_Run(Sender As Beacon.Thread)
+		Private Sub MigrateThread_Run(Sender As Beacon.CommonThread)
 		  Var SourceProject As Ark.Project = Sender.UserData
 		  Var NewProject As New Palworld.Project
 		  Var ConfigSets() As Beacon.ConfigSet = SourceProject.ConfigSets
@@ -801,7 +801,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub MigrateThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub MigrateThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  For Each Update As Dictionary In Updates
 		    Var EventName As String = Update.Lookup("Event", "").StringValue
 		    Select Case EventName
@@ -868,7 +868,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMigrationThreads() As Beacon.Thread
+		Private mMigrationThreads() As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -995,7 +995,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+		Function Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.CommonThread) As Beacon.ServerProfile()
 		  // Do not trap exceptions here. The caller has its own handler so that error messages can reach the user.
 		  
 		  #Pragma Unused SenderThread
@@ -1174,7 +1174,7 @@ End
 		      Self.mSourceProjects.Add(Palworld.Project(SourceProject).Clone(App.IdentityManager.CurrentIdentity))
 		    Case IsA Ark.Project
 		      // We need to export to ini, then import from that, and finally prune it.
-		      Var MigrateThread As New Beacon.Thread
+		      Var MigrateThread As New Beacon.CommonThread
 		      MigrateThread.UserData = SourceProject
 		      MigrateThread.DebugIdentifier = "Palworld Migrator Thread"
 		      AddHandler MigrateThread.Run, WeakAddressOf MigrateThread_Run

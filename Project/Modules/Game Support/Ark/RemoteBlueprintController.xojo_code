@@ -9,7 +9,7 @@ Inherits Ark.BlueprintController
 		    Return
 		  End If
 		  
-		  Var FetchThread As New Beacon.Thread
+		  Var FetchThread As New Beacon.CommonThread
 		  FetchThread.DebugIdentifier = CurrentMethodName
 		  FetchThread.UserData = Task
 		  AddHandler FetchThread.Run, WeakAddressOf FetchThread_Run
@@ -29,7 +29,7 @@ Inherits Ark.BlueprintController
 		  End If
 		  
 		  For Each Task As Ark.BlueprintControllerPublishTask In Tasks
-		    Var PublishThread As New Beacon.Thread
+		    Var PublishThread As New Beacon.CommonThread
 		    PublishThread.DebugIdentifier = CurrentMethodName
 		    PublishThread.UserData = Task
 		    AddHandler PublishThread.Run, WeakAddressOf PublishThread_Run
@@ -43,7 +43,7 @@ Inherits Ark.BlueprintController
 
 
 	#tag Method, Flags = &h21
-		Private Sub FetchThread_Run(Sender As Beacon.Thread)
+		Private Sub FetchThread_Run(Sender As Beacon.CommonThread)
 		  Var Task As Ark.BlueprintControllerFetchTask = Sender.UserData
 		  Var PathComponent As String = Self.PathComponent(Task)
 		  
@@ -102,7 +102,7 @@ Inherits Ark.BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub FetchThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub FetchThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  For Each Update As Dictionary In Updates
 		    Var Finished As Boolean = Update.Value("Finished")
 		    If Finished = False Then
@@ -204,7 +204,7 @@ Inherits Ark.BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PublishThread_Run(Sender As Beacon.Thread)
+		Private Sub PublishThread_Run(Sender As Beacon.CommonThread)
 		  Var Task As Ark.BlueprintControllerPublishTask = Sender.UserData
 		  If Task.DeleteMode Then
 		    Self.PublishDelete(Task)
@@ -217,7 +217,7 @@ Inherits Ark.BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PublishThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub PublishThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  For Each Update As Dictionary In Updates
 		    Var Finished As Boolean = Update.Value("Finished")
 		    If Finished = False Then
@@ -239,7 +239,7 @@ Inherits Ark.BlueprintController
 
 
 	#tag Property, Flags = &h21
-		Private mThreads() As Beacon.Thread
+		Private mThreads() As Beacon.CommonThread
 	#tag EndProperty
 
 

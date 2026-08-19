@@ -115,7 +115,7 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  Self.mActiveThread = New Beacon.Thread
+		  Self.mActiveThread = New Beacon.CommonThread
 		  Self.mActiveThread.Priority = Thread.LowestPriority
 		  Self.mActiveThread.DebugIdentifier = CurrentMethodName
 		  AddHandler Self.mActiveThread.Run, AddressOf Thread_Delete
@@ -215,7 +215,7 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  Self.mActiveThread = New Beacon.Thread
+		  Self.mActiveThread = New Beacon.CommonThread
 		  Self.mActiveThread.Priority = Thread.LowestPriority
 		  Self.mActiveThread.DebugIdentifier = CurrentMethodName
 		  AddHandler Self.mActiveThread.Run, AddressOf Thread_Load
@@ -302,7 +302,7 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Delete(Sender As Beacon.Thread)
+		Private Sub Thread_Delete(Sender As Beacon.CommonThread)
 		  If Not Self.CanWrite Then
 		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Project is not writeable")
 		    Return
@@ -340,7 +340,7 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Load(Sender As Beacon.Thread)
+		Private Sub Thread_Load(Sender As Beacon.CommonThread)
 		  Var FileContent As MemoryBlock
 		  
 		  Select Case Self.mProjectURL.Type
@@ -442,14 +442,14 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_UpdateProjectMembers(Sender As Beacon.Thread)
+		Private Sub Thread_UpdateProjectMembers(Sender As Beacon.CommonThread)
 		  Self.UpdateProjectMembers()
 		  RemoveHandler Sender.Run, AddressOf Thread_UpdateProjectMembers
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Upload(Sender As Beacon.Thread)
+		Private Sub Thread_Upload(Sender As Beacon.CommonThread)
 		  Var SaveData As MemoryBlock
 		  Var Saved As Boolean
 		  Var Message As String
@@ -517,7 +517,7 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Write(Sender As Beacon.Thread)
+		Private Sub Thread_Write(Sender As Beacon.CommonThread)
 		  Var SaveData As MemoryBlock
 		  Var Saved As Boolean
 		  Var Message As String
@@ -612,8 +612,8 @@ Protected Class ProjectController
 		Sub UpdateProjectMembers()
 		  // This routine will download the member list and update the project if necessary
 		  
-		  If Global.Thread.Current Is Nil Then
-		    Var UpdaterThread As New Beacon.Thread
+		  If Thread.Current Is Nil Then
+		    Var UpdaterThread As New Beacon.CommonThread
 		    UpdaterThread.DebugIdentifier = CurrentMethodName
 		    AddHandler UpdaterThread.Run, AddressOf Thread_UpdateProjectMembers
 		    UpdaterThread.Retain
@@ -621,7 +621,7 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  Var CurrentThread As Global.Thread = Global.Thread.Current
+		  Var CurrentThread As Thread = Thread.Current
 		  
 		  If Self.mMemberUpdateLock Is Nil Then
 		    Self.mMemberUpdateLock = New CriticalSection
@@ -667,8 +667,8 @@ Protected Class ProjectController
 		  
 		  Self.mMemberUpdateLock.Leave
 		  
-		  If CurrentThread IsA Beacon.Thread Then
-		    Beacon.Thread(CurrentThread).Release
+		  If CurrentThread IsA Beacon.CommonThread Then
+		    Beacon.CommonThread(CurrentThread).Release
 		  End If
 		End Sub
 	#tag EndMethod
@@ -757,13 +757,13 @@ Protected Class ProjectController
 		  
 		  Select Case Destination.Type
 		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared
-		    Self.mActiveThread = New Beacon.Thread
+		    Self.mActiveThread = New Beacon.CommonThread
 		    Self.mActiveThread.DebugIdentifier = CurrentMethodName
 		    Self.mActiveThread.Priority = Thread.LowestPriority
 		    AddHandler Self.mActiveThread.Run, AddressOf Thread_Upload
 		    Self.mActiveThread.Start
 		  Case Beacon.ProjectURL.TypeLocal
-		    Self.mActiveThread = New Beacon.Thread
+		    Self.mActiveThread = New Beacon.CommonThread
 		    Self.mActiveThread.DebugIdentifier = CurrentMethodName
 		    Self.mActiveThread.Priority = Thread.LowestPriority
 		    AddHandler Self.mActiveThread.Run, AddressOf Thread_Write
@@ -815,7 +815,7 @@ Protected Class ProjectController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mActiveThread As Beacon.Thread
+		Private mActiveThread As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -859,7 +859,7 @@ Protected Class ProjectController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUploadThread As Beacon.Thread
+		Private mUploadThread As Beacon.CommonThread
 	#tag EndProperty
 
 

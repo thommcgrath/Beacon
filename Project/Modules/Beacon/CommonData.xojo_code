@@ -820,7 +820,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Var Th As New Beacon.Thread
+		  Var Th As New Beacon.CommonThread
 		  Th.Priority = Thread.LowestPriority
 		  Th.DebugIdentifier = CurrentMethodName
 		  AddHandler Th.Run, AddressOf UpdateNewsThread_Run
@@ -830,7 +830,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateNewsThread_Run(Sender As Beacon.Thread)
+		Private Sub UpdateNewsThread_Run(Sender As Beacon.CommonThread)
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  Socket.RequestHeader("User-Agent") = App.UserAgent
 		  Var Content As String
@@ -945,7 +945,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdateNewsThread As Beacon.Thread
+		Private mUpdateNewsThread As Beacon.CommonThread
 	#tag EndProperty
 
 

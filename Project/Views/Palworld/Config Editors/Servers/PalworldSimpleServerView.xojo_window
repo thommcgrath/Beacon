@@ -278,7 +278,7 @@ Begin PalworldServerViewContainer PalworldSimpleServerView
       ThreadState     =   0
       Type            =   ""
    End
-   Begin Beacon.Thread ToggleThread
+   Begin Beacon.CommonThread ToggleThread
       DebugIdentifier =   ""
       Enabled         =   True
       Index           =   -2147483648

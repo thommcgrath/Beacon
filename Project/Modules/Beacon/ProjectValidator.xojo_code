@@ -2,7 +2,7 @@
 Protected Class ProjectValidator
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mThread = New Beacon.Thread
+		  Self.mThread = New Beacon.CommonThread
 		  Self.mThread.DebugIdentifier = CurrentMethodName
 		  AddHandler mThread.Run, AddressOf mThread_Run
 		  AddHandler mThread.UserInterfaceUpdate, AddressOf mThread_UserInterfaceUpdate
@@ -22,7 +22,7 @@ Protected Class ProjectValidator
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_Run(Sender As Beacon.Thread)
+		Private Sub mThread_Run(Sender As Beacon.CommonThread)
 		  Var Issues As Beacon.ProjectValidationResults = Self.mProject.Validate
 		  
 		  If Issues.Count = 0 Then
@@ -64,7 +64,7 @@ Protected Class ProjectValidator
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub mThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  For Idx As Integer = 0 To Updates.LastIndex
 		    Var Dict As Dictionary = Updates(Idx)
 		    If Dict.HasKey("Issues") Then
@@ -109,7 +109,7 @@ Protected Class ProjectValidator
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mThread As Thread
+		Private mThread As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

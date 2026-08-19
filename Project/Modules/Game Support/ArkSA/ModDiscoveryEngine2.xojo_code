@@ -263,7 +263,7 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_Run(Sender As Beacon.Thread)
+		Private Sub mThread_Run(Sender As Beacon.CommonThread)
 		  Self.mSuccess = False
 		  Self.mTimestamp = Round(DateTime.Now.SecondsFrom1970)
 		  Self.ClearDictionaries()
@@ -677,7 +677,7 @@ Protected Class ModDiscoveryEngine2
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub mThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates
@@ -1776,7 +1776,7 @@ Protected Class ModDiscoveryEngine2
 		  Self.mSuccess = False
 		  Self.mCancelled = False
 		  
-		  Self.mThread = New Beacon.Thread
+		  Self.mThread = New Beacon.CommonThread
 		  Self.mThread.DebugIdentifier = "ArkSA.ModDiscoveryEngine2"
 		  Self.mThread.Priority = Thread.LowestPriority
 		  AddHandler mThread.Run, WeakAddressOf mThread_Run
@@ -2646,7 +2646,7 @@ Protected Class ModDiscoveryEngine2
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mThread As Beacon.Thread
+		Private mThread As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -194,7 +194,7 @@ End
 		Private Sub FetchToken(TokenId As String)
 		  Self.StartTask()
 		  
-		  Var FetchThread As New Beacon.Thread
+		  Var FetchThread As New Beacon.CommonThread
 		  AddHandler FetchThread.Run, AddressOf Thread_FetchToken
 		  AddHandler FetchThread.UserInterfaceUpdate, AddressOf Thread_UserInterfaceUpdate
 		  FetchThread.DebugIdentifier = CurrentMethodName
@@ -209,7 +209,7 @@ End
 		Private Sub FetchUserTokens(Silent As Boolean)
 		  Self.StartTask()
 		  
-		  Var FetchThread As New Beacon.Thread
+		  Var FetchThread As New Beacon.CommonThread
 		  AddHandler FetchThread.Run, AddressOf Thread_FetchTokens
 		  AddHandler FetchThread.UserInterfaceUpdate, AddressOf Thread_UserInterfaceUpdate
 		  FetchThread.DebugIdentifier = CurrentMethodName
@@ -269,7 +269,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_FetchToken(Sender As Beacon.Thread)
+		Private Sub Thread_FetchToken(Sender As Beacon.CommonThread)
 		  Var UpdateDict As New Dictionary("finished": true)
 		  
 		  Try
@@ -288,7 +288,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_FetchTokens(Sender As Beacon.Thread)
+		Private Sub Thread_FetchTokens(Sender As Beacon.CommonThread)
 		  Var UpdateDict As New Dictionary("finished": true)
 		  Try
 		    UpdateDict.Value("silent") = Sender.UserData
@@ -306,7 +306,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub Thread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  For Each Update As Dictionary In Updates
 		    Try
 		      If Update.HasKey("tokens") Then
@@ -489,7 +489,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mThreads() As Beacon.Thread
+		Private mThreads() As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

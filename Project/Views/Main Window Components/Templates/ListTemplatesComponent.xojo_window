@@ -151,7 +151,7 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       Visible         =   True
       Width           =   576
    End
-   Begin Beacon.Thread AscendedConversionThread
+   Begin Beacon.CommonThread AscendedConversionThread
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

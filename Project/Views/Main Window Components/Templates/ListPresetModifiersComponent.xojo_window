@@ -151,7 +151,7 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       Visible         =   True
       Width           =   630
    End
-   Begin Beacon.Thread AscendedConversionThread
+   Begin Beacon.CommonThread AscendedConversionThread
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

@@ -715,7 +715,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ListFiles(Path As String)
-		  Var Thread As New Beacon.Thread
+		  Var Thread As New Beacon.CommonThread
 		  Thread.DebugIdentifier = CurrentMethodName
 		  Thread.UserData = Path
 		  AddHandler Thread.Run, WeakAddressOf ListThread_Run
@@ -729,7 +729,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ListThread_Run(Sender As Beacon.Thread)
+		Private Sub ListThread_Run(Sender As Beacon.CommonThread)
 		  Try
 		    Var Filenames() As String = Self.Provider.ListFiles(Nil, Self.mProfile, Sender.UserData.StringValue)
 		    Var Dict As New Dictionary
@@ -748,7 +748,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ListThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub ListThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates
@@ -774,7 +774,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mDiscoverThread_Run(Sender As Beacon.Thread)
+		Private Sub mDiscoverThread_Run(Sender As Beacon.CommonThread)
 		  Var Provider As FTP.HostingProvider = FTP.HostingProvider(Self.Provider)
 		  Var Profile As Beacon.ServerProfile = Self.mProfile
 		  Var Dict As New Dictionary
@@ -792,7 +792,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mDiscoverThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub mDiscoverThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates
@@ -863,7 +863,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+		Event Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.CommonThread) As Beacon.ServerProfile()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -900,7 +900,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDiscoverThread As Beacon.Thread
+		Private mDiscoverThread As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1069,7 +1069,7 @@ End
 		  
 		  Self.Browser.Reset
 		  
-		  Var Thread As New Beacon.Thread
+		  Var Thread As New Beacon.CommonThread
 		  Thread.DebugIdentifier = CurrentMethodName
 		  AddHandler Thread.Run, WeakAddressOf mDiscoverThread_Run
 		  AddHandler Thread.UserInterfaceUpdate, WeakAddressOf mDiscoverThread_UserInterfaceUpdate

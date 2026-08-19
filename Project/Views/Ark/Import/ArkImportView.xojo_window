@@ -891,7 +891,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+		Function Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.CommonThread) As Beacon.ServerProfile()
 		  // Do not trap exceptions here. The caller has its own handler so that error messages can reach the user.
 		  
 		  #Pragma Unused SenderThread

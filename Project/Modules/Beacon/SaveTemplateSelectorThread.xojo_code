@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SaveTemplateSelectorThread
-Inherits Thread
+Inherits Beacon.CommonThread
 	#tag Event
 		Sub Run()
 		  Self.Retain
@@ -28,6 +28,7 @@ Inherits Thread
 	#tag Method, Flags = &h0
 		Sub Constructor(Selectors() As Beacon.TemplateSelector)
 		  Self.mSelectors = Selectors
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 

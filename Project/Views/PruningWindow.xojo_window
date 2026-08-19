@@ -24,7 +24,7 @@ Begin BeaconDialog PruningWindow
    Type            =   8
    Visible         =   True
    Width           =   400
-   Begin Beacon.Thread PrunerThread
+   Begin Beacon.CommonThread PrunerThread
       DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False

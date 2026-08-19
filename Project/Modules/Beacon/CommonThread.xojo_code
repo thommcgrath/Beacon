@@ -1,6 +1,6 @@
 #tag Class
-Protected Class Thread
-Inherits Global.Thread
+Protected Class CommonThread
+Inherits Thread
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Run()
@@ -10,7 +10,10 @@ Inherits Global.Thread
 		    End If
 		  #endif
 		  
+		  Self.mLock.Enter
 		  Self.mShouldStop = False
+		  Self.mLock.Leave
+		  
 		  Self.YieldToNext // The first iteration always happens on the main thread.
 		  RaiseEvent Run
 		End Sub
@@ -18,15 +21,16 @@ Inherits Global.Thread
 
 
 	#tag Method, Flags = &h0
-		Sub LockUserData()
-		  #if Not TargetiOS
-		    If Self.mUserDataLock = Nil Then
-		      Self.mUserDataLock = New CriticalSection
-		      Self.mUserDataLock.Type = Thread.Types.Preemptive
-		    End If
-		    Self.mUserDataLock.Enter
-		  #endif
+		Sub Constructor()
+		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Lock() As Beacon.LockHolder
+		  Return New Beacon.LockHolder(Self.mLock)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -48,18 +52,30 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ShouldStop() As Boolean
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
+		  Return Self.mShouldStop
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Stop()
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Self.mShouldStop = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UnlockUserData()
-		  #if Not TargetiOS
-		    If Self.mUserDataLock <> Nil Then
-		      Self.mUserDataLock.Leave
-		    End If
-		  #endif
+		Function UserData() As Variant
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
+		  Return Self.mUserData
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UserData(Assigns Value As Variant)
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
+		  Self.mUserData = Value
 		End Sub
 	#tag EndMethod
 
@@ -73,6 +89,10 @@ Inherits Global.Thread
 		Private Shared mInstances As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Private mLock As CriticalSection
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mShouldStop As Boolean
 	#tag EndProperty
@@ -80,35 +100,6 @@ Inherits Global.Thread
 	#tag Property, Flags = &h21
 		Private mUserData As Variant
 	#tag EndProperty
-
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private mUserDataLock As CriticalSection
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Return Self.mShouldStop
-			End Get
-		#tag EndGetter
-		Protected ShouldStop As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mUserData
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.LockUserData()
-			  Self.mUserData = Value
-			  Self.UnlockUserData()
-			End Set
-		#tag EndSetter
-		UserData As Variant
-	#tag EndComputedProperty
 
 
 	#tag ViewBehavior

@@ -136,7 +136,7 @@ Protected Module Conversions
 		        mSelectorThreadLock.Enter
 		        mSelectorsToSave.Add(ConvertedSelector)
 		        If mSelectorSaveThread Is Nil Then
-		          mSelectorSaveThread = New Beacon.Thread
+		          mSelectorSaveThread = New Beacon.CommonThread
 		          mSelectorSaveThread.DebugIdentifier = "Conversions.mSelectorSaveThread"
 		          AddHandler mSelectorSaveThread.Run, AddressOf mSelectorSaveThread_Run
 		        End If
@@ -232,7 +232,7 @@ Protected Module Conversions
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSelectorSaveThread_Run(Sender As Beacon.Thread)
+		Private Sub mSelectorSaveThread_Run(Sender As Beacon.CommonThread)
 		  #Pragma Unused Sender
 		  
 		  mSelectorThreadLock.Enter
@@ -252,7 +252,7 @@ Protected Module Conversions
 
 
 	#tag Property, Flags = &h21
-		Private mSelectorSaveThread As Beacon.Thread
+		Private mSelectorSaveThread As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

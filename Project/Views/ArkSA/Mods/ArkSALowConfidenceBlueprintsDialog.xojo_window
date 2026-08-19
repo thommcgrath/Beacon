@@ -236,7 +236,7 @@ Begin BeaconDialog ArkSALowConfidenceBlueprintsDialog
       Visible         =   False
       Width           =   242
    End
-   Begin Beacon.Thread SaveThread
+   Begin Beacon.CommonThread SaveThread
       DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False

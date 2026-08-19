@@ -437,7 +437,7 @@ Inherits Beacon.DeployIntegration
 		    End Try
 		    
 		    // So we don't go nuts
-		    Self.Thread.Sleep(100)
+		    Self.WorkThread.Sleep(100)
 		  Next
 		  
 		  Return True

@@ -430,7 +430,7 @@ End
 		    Break
 		  End Select
 		  
-		  Var Thread As New Beacon.Thread
+		  Var Thread As New Beacon.CommonThread
 		  Thread.DebugIdentifier = CurrentMethodName
 		  Thread.UserData = Config
 		  AddHandler Thread.Run, WeakAddressOf Thread_Run
@@ -462,7 +462,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Run(Sender As Beacon.Thread)
+		Private Sub Thread_Run(Sender As Beacon.CommonThread)
 		  Try
 		    Var Config As Beacon.HostConfig = Sender.UserData
 		    Self.mListLock.Enter
@@ -482,7 +482,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub Thread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates
