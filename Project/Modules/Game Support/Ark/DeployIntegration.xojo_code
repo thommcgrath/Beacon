@@ -14,9 +14,9 @@ Inherits Beacon.DeployIntegration
 		  Var GameIniPath As String = Profile.GameIniPath
 		  Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
 		  
-		  Self.EnterResourceIntenseMode()
+		  Var IntenseMode As Beacon.LockHolder = Self.EnterResourceIntenseMode()
 		  Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Profile)
-		  Self.ExitResourceIntenseMode()
+		  IntenseMode = Nil
 		  If Organizer Is Nil Then
 		    Self.SetError("Could not generate new config data. Log files may have more info.")
 		    Return
@@ -77,17 +77,17 @@ Inherits Beacon.DeployIntegration
 		  
 		  Var RewriteError As RuntimeException
 		  
-		  Self.EnterResourceIntenseMode()
+		  IntenseMode = Self.EnterResourceIntenseMode()
 		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameIniOriginal, Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
-		  Self.ExitResourceIntenseMode()
+		  IntenseMode = Nil
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
-		  Self.EnterResourceIntenseMode()
+		  IntenseMode = Self.EnterResourceIntenseMode()
 		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
-		  Self.ExitResourceIntenseMode()
+		  IntenseMode = Nil
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return

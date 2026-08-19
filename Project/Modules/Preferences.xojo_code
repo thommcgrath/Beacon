@@ -2,6 +2,8 @@
 Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Sub AddToRecentDocuments(URL As Beacon.ProjectURL)
+		  Var Lock As New Beacon.LockHolder(mLock)
+		  
 		  If URL.Type = Beacon.ProjectURL.TypeTransient Then
 		    Return
 		  End If
@@ -24,7 +26,8 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function ArkRecentBlueprints(Category As String, Subgroup As String) As String()
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
+		  
 		  Category = Category.Lowercase
 		  Subgroup = Subgroup.Lowercase
 		  
@@ -58,7 +61,8 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub ArkRecentBlueprints(Category As String, Subgroup As String, Assigns Paths() As String)
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
+		  
 		  Category = Category.Lowercase
 		  Subgroup = Subgroup.Lowercase
 		  
@@ -89,7 +93,8 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function ArkSARecentBlueprints(Category As String, Subgroup As String) As String()
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
+		  
 		  Category = Category.Lowercase
 		  Subgroup = Subgroup.Lowercase
 		  
@@ -123,7 +128,8 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub ArkSARecentBlueprints(Category As String, Subgroup As String, Assigns Paths() As String)
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
+		  
 		  Category = Category.Lowercase
 		  Subgroup = Subgroup.Lowercase
 		  
@@ -154,6 +160,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h21
 		Private Sub EncryptPrivateKey()
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(mDevicePublicKey), 0)
 		  mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, DecodeHex(mDevicePrivateKey))
 		End Sub
@@ -161,14 +168,14 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function HardwareIdVersion() As Integer
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Return mManager.IntegerValue("Hardware Id Version", 6)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub HardwareIdVersion(Force As Boolean = False, Assigns NewValue As Integer)
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  
 		  If Force = False And mManager.IntegerValue("Hardware Id Version", 0) = NewValue Then
 		    Return
@@ -183,14 +190,14 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function HiddenTags() As String()
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Return mManager.StringValue("Hidden Tags", DefaultHiddenTags).Split(",")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub HiddenTags(Assigns Value() As String)
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.StringValue("Hidden Tags") = String.FromArray(Value, ",")
 		End Sub
 	#tag EndMethod
@@ -199,7 +206,7 @@ Protected Module Preferences
 		Protected Function IgnoredLicenseIds() As String()
 		  Var LicenseIds() As String
 		  
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Var Licenses As JSONItem = mManager.JSONValue("Ignored Licenses")
 		  If Licenses Is Nil Then
 		    Return LicenseIds
@@ -219,19 +226,24 @@ Protected Module Preferences
 		    Licenses.Add(LicenseId)
 		  Next
 		  
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.JSONValue("Ignored Licenses") = Licenses
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub Init()
+	#tag Method, Flags = &h1
+		Protected Sub Init()
 		  If (mManager Is Nil) = False Then
 		    Return
 		  End If
 		  
 		  mManager = New PreferencesManager(App.ApplicationSupport.Child("Preferences.json"))
 		  mManager.ClearValue("Last Used Config")
+		  
+		  mLock = New CriticalSection
+		  mLock.Type = Thread.Types.Preemptive
+		  
+		  mConnectionLock = New Semaphore(MaxConnections)
 		  
 		  // Cleanup project states
 		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
@@ -320,28 +332,28 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ListSortColumn(Key As String, Assigns Idx As Integer)
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.IntegerValue(Key + " Sort Column") = Idx
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ListSortColumn(Key As String, Default As Integer) As Integer
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Return mManager.IntegerValue(Key + " Sort Column", Default)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ListSortDirection(Key As String, Assigns Direction As DesktopListBox.SortDirections)
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.IntegerValue(Key + " Sort Direction") = CType(Direction, Integer)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ListSortDirection(Key As String, Default As DesktopListBox.SortDirections) As DesktopListbox.SortDirections
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Return CType(mManager.IntegerValue(Key + " Sort Direction", CType(Default, Integer)), DesktopListbox.SortDirections)
 		End Function
 	#tag EndMethod
@@ -349,8 +361,7 @@ Protected Module Preferences
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub LoadWindowPosition(Extends Win As DesktopWindow)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
-		  
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  
 		  Var Bounds As Rect = mManager.RectValue(Info.Name + " Position")
 		  If Bounds <> Nil Then
@@ -390,6 +401,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function NewDeploySettings() As Beacon.DeploySettings
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Var Settings As New Beacon.DeploySettings
 		  If Preferences.DeployCreateBackup Then
 		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
@@ -410,6 +422,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub ProjectState(ProjectId As String, Key As String, Assigns Value As Variant)
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
 		  If States Is Nil Or States.IsArray Then
 		    States = New JSONItem
@@ -430,6 +443,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function ProjectState(ProjectId As String, Key As String, Default As Variant) As Variant
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Var States As JSONItem = mManager.JSONValue("Project State", Nil)
 		  If States Is Nil Or States.IsArray Then
 		    Return Default
@@ -450,7 +464,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function RecentDocuments() As Beacon.ProjectURL()
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  
 		  Var Urls As JSONItem = mManager.JSONValue("Documents")
 		  Var Values() As Beacon.ProjectURL
@@ -477,7 +491,7 @@ Protected Module Preferences
 		    Urls.Add(Value.JSONValue)
 		  Next
 		  
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.JSONValue("Documents") = Urls
 		  NotificationKit.Post(Notification_RecentsChanged, Values)
 		End Sub
@@ -485,7 +499,8 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub ReleaseConnection()
-		  If Thread.Current Is Nil Or mConnectionLock Is Nil Then
+		  Var Lock As New Beacon.LockHolder(mLock)
+		  If Thread.Current Is Nil Then
 		    Return
 		  End If
 		  
@@ -496,7 +511,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub RestoreHiddenTags()
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.ClearValue("Hidden Tags")
 		End Sub
 	#tag EndMethod
@@ -509,7 +524,7 @@ Protected Module Preferences
 		  End If
 		  Key = Key + " Tags"
 		  
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.ClearValue(Key)
 		End Sub
 	#tag EndMethod
@@ -518,7 +533,7 @@ Protected Module Preferences
 		Sub SaveWindowPosition(Extends Win As DesktopWindow)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  mManager.RectValue(Info.Name + " Position") = Win.Bounds
 		End Sub
 	#tag EndMethod
@@ -549,7 +564,7 @@ Protected Module Preferences
 		    Default = "{""required"":[],""excluded"":[""minion"",""boss"",""event"",""generic""]}"
 		  End Select
 		  
-		  Init
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  Return Beacon.TagSpec.FromString(mManager.StringValue(Key, Default))
 		End Function
 	#tag EndMethod
@@ -562,6 +577,7 @@ Protected Module Preferences
 		  End If
 		  Key = Key + " Tags"
 		  
+		  Var Lock As New Beacon.LockHolder(mLock)
 		  If Value Is Nil Then
 		    mManager.ClearValue(Key)
 		  Else
@@ -572,12 +588,8 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function SignalConnection() As Boolean
-		  If Thread.Current Is Nil Then
+		  If Thread.Current Is Nil Or Thread.Current.Type = Thread.Types.Preemptive Then
 		    Return False
-		  End If
-		  
-		  If mConnectionLock Is Nil Then
-		    mConnectionLock = New Semaphore(MaxConnections)
 		  End If
 		  
 		  mConnectionLock.Signal
@@ -591,7 +603,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  If mManager.HasKey("Last Preset Map Filter") Then
 			    Var IntegerValue As Integer = mManager.IntegerValue("Last Preset Map Filter")
@@ -613,7 +625,7 @@ Protected Module Preferences
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  Var StringValue As String
 			  Try
@@ -630,13 +642,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.JSONValue("Ark Loot Item Set Entry Defaults", Nil)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.JSONValue("Ark Loot Item Set Entry Defaults") = Value
 			End Set
 		#tag EndSetter
@@ -646,7 +658,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Var Default As String
 			  #if TargetWindows
 			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK Survival Ascended Dedicated Server"
@@ -674,13 +686,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return ArkSA.ModDiscoverySettings.FromJSONItem(mManager.JSONValue("ArkSA Mod Discovery Settings"))
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  If Value Is Nil Then
 			    mManager.ClearValue("ArkSA Mod Discovery Settings")
 			  Else
@@ -694,7 +706,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  Var StringValue As String = mManager.StringValue("ArkSA Last Template Map Filter")
 			  If StringValue.IsEmpty Then
@@ -710,7 +722,7 @@ Protected Module Preferences
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  Var StringValue As String
 			  Try
@@ -727,13 +739,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.JSONValue("ArkSA Loot Item Set Entry Defaults", Nil)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.JSONValue("ArkSA Loot Item Set Entry Defaults") = Value
 			End Set
 		#tag EndSetter
@@ -743,13 +755,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("ArkSA Spawn Point Editor Limits Splitter Position", ArkSpawnPointEditor.LimitsListDefaultHeight)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("ArkSA Spawn Point Editor Limits Splitter Position") = Value
 			End Set
 		#tag EndSetter
@@ -759,13 +771,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("ArkSA Spawn Point Editor Sets Splitter Position", ArkSpawnPointEditor.SetsListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("ArkSA Spawn Point Editor Sets Splitter Position") = Value
 			End Set
 		#tag EndSetter
@@ -775,13 +787,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Spawn Point Editor Limits Splitter Position", ArkSpawnPointEditor.LimitsListDefaultHeight)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Spawn Point Editor Limits Splitter Position") = Value
 			End Set
 		#tag EndSetter
@@ -791,13 +803,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Spawn Point Editor Sets Splitter Position", ArkSpawnPointEditor.SetsListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Spawn Point Editor Sets Splitter Position") = Value
 			End Set
 		#tag EndSetter
@@ -807,7 +819,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Var Default As String
 			  #if TargetWindows
 			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK"
@@ -835,13 +847,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Automatically Downloads Updates", True)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.BooleanValue("Automatically Downloads Updates") = Value
 			  UpdatesKit.RefreshSettings()
 			End Set
@@ -852,7 +864,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  If mAuthToken Is Nil Then
 			    Var AccountName As String = Beacon.SystemAccountName
@@ -879,7 +891,7 @@ Protected Module Preferences
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  Try
 			    If (Value Is Nil) = False Then
@@ -900,7 +912,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.StringValue("Breeding Tuner Creatures", "*")
 			End Get
 		#tag EndGetter
@@ -919,13 +931,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Crafting Costs Splitter Position", ArkCraftingCostsEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Crafting Costs Splitter Position") = Value
 			End Set
 		#tag EndSetter
@@ -935,7 +947,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  Var Default As Integer = CType(DarkModeOptions.FollowSystem, Integer)
 			  #if TargetWindows
@@ -976,13 +988,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Deploy: Create Backup", True)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.BooleanValue("Deploy: Create Backup") = Value
 			End Set
 		#tag EndSetter
@@ -992,13 +1004,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Deploy: Backup Save Data", True)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.BooleanValue("Deploy: Backup Save Data") = Value
 			End Set
 		#tag EndSetter
@@ -1008,7 +1020,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  If mManager.HasKey("Deploy: Plan") Then
 			    Try
@@ -1022,7 +1034,7 @@ Protected Module Preferences
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Deploy: Plan") = CType(Value, Integer)
 			End Set
 		#tag EndSetter
@@ -1032,13 +1044,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Deploy: Review Changes", False)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.BooleanValue("Deploy: Review Changes") = Value
 			End Set
 		#tag EndSetter
@@ -1048,13 +1060,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Deploy: Run Advisor", False)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.BooleanValue("Deploy: Run Advisor") = Value
 			End Set
 		#tag EndSetter
@@ -1082,7 +1094,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  If mDeviceSalt.IsEmpty Then
 			    If mManager.HasKey("Device Salt") Then
@@ -1099,16 +1111,32 @@ Protected Module Preferences
 		Protected DeviceSalt As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Var Lock As New Beacon.LockHolder(mLock)
+			  Return mManager.BooleanValue("Multicore", False)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var Lock As New Beacon.LockHolder(mLock)
+			  mManager.BooleanValue("Multicore") = Value
+			End Set
+		#tag EndSetter
+		Protected EnableMulticore As Boolean
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.SizeValue("Entry Editor Size", New Size(900, 500))
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.SizeValue("Entry Editor Size") = Value
 			End Set
 		#tag EndSetter
@@ -1118,13 +1146,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Has Shown Experimental Warning", False)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.BooleanValue("Has Shown Experimental Warning") = Value
 			End Set
 		#tag EndSetter
@@ -1134,13 +1162,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Item Sets Splitter Position", ArkLootDropEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Item Sets Splitter Position") = Value
 			End Set
 		#tag EndSetter
@@ -1150,13 +1178,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.StringValue("Last Stop Message", "Server is now stopping for a few minutes for changes.")
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.StringValue("Last Stop Message") = Value
 			End Set
 		#tag EndSetter
@@ -1166,13 +1194,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.SizeValue("Last Used Screen Size", Nil)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.SizeValue("Last Used Screen Size") = Value
 			End Set
 		#tag EndSetter
@@ -1182,13 +1210,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.RectValue("Main Window Size", Nil)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.RectValue("Main Window Size") = Value
 			End Set
 		#tag EndSetter
@@ -1202,12 +1230,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Max Connections", 3)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  If MaxConnections = Value Then
 			    Return
 			  End If
@@ -1243,6 +1272,10 @@ Protected Module Preferences
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mManager As PreferencesManager
 	#tag EndProperty
 
@@ -1272,14 +1305,14 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Var HasLaunchedBefore As Boolean = mManager.BooleanValue("Has Shown Subscribe Dialog", False)
 			  Return mManager.IntegerValue("Newest Used Build", If(HasLaunchedBefore, 10408304, 0))
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  // Don't need Init here because NewestUsedBuild will do that
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Var OldValue As Integer = NewestUsedBuild
 			  If Value > OldValue Then
 			    mManager.IntegerValue("Newest Used Build") = Value
@@ -1292,13 +1325,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.StringValue("New Project Game Id", "")
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.StringValue("New Project Game Id") = Value
 			End Set
 		#tag EndSetter
@@ -1308,7 +1341,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Online Enabled", False)
 			End Get
 		#tag EndGetter
@@ -1329,7 +1362,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Play Sound After Deploy", True)
 			End Get
 		#tag EndGetter
@@ -1344,7 +1377,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Play Sound After Import", True)
 			End Get
 		#tag EndGetter
@@ -1359,7 +1392,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Play Sound For Update", True)
 			End Get
 		#tag EndGetter
@@ -1374,13 +1407,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.SizeValue("Preset Selector Editor Size", New Size(600, 400))
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.SizeValue("Preset Selector Editor Size") = Value
 			End Set
 		#tag EndSetter
@@ -1390,13 +1423,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.JSONValue("Presets Enabled Mods", Nil)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.JSONValue("Presets Enabled Mods") = Value
 			End Set
 		#tag EndSetter
@@ -1406,7 +1439,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  
 			  Var Default As Integer = CType(ProfileIconChoices.WithoutPonytail, Integer)
 			  Var IntValue As Integer = mManager.IntegerValue("Profile Icon", Default)
@@ -1429,7 +1462,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.JSONValue("Saved Passwords", New JSONItem)
 			End Get
 		#tag EndGetter
@@ -1439,7 +1472,7 @@ Protected Module Preferences
 			    Value = New JSONItem
 			  End If
 			  
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.JSONValue("Saved Passwords") = Value
 			End Set
 		#tag EndSetter
@@ -1449,7 +1482,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.StringValue("Servers List Name Style", ServersListbox.NamesFull)
 			End Get
 		#tag EndGetter
@@ -1464,7 +1497,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Servers List Show Ids", False)
 			End Get
 		#tag EndGetter
@@ -1479,7 +1512,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.StringValue("Servers List Sorted Value", ServersListbox.SortByName)
 			End Get
 		#tag EndGetter
@@ -1494,7 +1527,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Show Experimental Sources", False)
 			End Get
 		#tag EndGetter
@@ -1513,13 +1546,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Simulator Size", 200)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Simulator Size") = Value
 			End Set
 		#tag EndSetter
@@ -1529,13 +1562,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Simulator Visible")
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.BooleanValue("Simulator Visible") = Value
 			End Set
 		#tag EndSetter
@@ -1545,13 +1578,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Sources Splitter Position", ArkLootDropsEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Sources Splitter Position") = Value
 			End Set
 		#tag EndSetter
@@ -1561,13 +1594,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Spawn Points Splitter Position", ArkCreatureSpawnsEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Spawn Points Splitter Position") = Value
 			End Set
 		#tag EndSetter
@@ -1577,7 +1610,7 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.BooleanValue("Switches Show Captions")
 			End Get
 		#tag EndGetter
@@ -1597,13 +1630,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return CType(mManager.IntegerValue("Updates Architecture", CType(UpdatesKit.Architectures.Unknown, Integer)), UpdatesKit.Architectures)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Updates Architecture") = CType(Value, Integer)
 			  UpdatesKit.RefreshSettings()
 			End Set
@@ -1614,13 +1647,13 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  Return mManager.IntegerValue("Updates Channel", 0)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  Var Lock As New Beacon.LockHolder(mLock)
 			  mManager.IntegerValue("Updates Channel") = Value
 			  UpdatesKit.RefreshSettings()
 			End Set

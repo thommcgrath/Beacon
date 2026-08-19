@@ -17,12 +17,15 @@ Begin PalworldServerViewContainer PalworldSimpleServerView
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   600
    Begin DesktopPagePanel Pages
@@ -273,6 +276,7 @@ Begin PalworldServerViewContainer PalworldSimpleServerView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
@@ -285,6 +289,7 @@ Begin PalworldServerViewContainer PalworldSimpleServerView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
 End
 #tag EndDesktopWindow
@@ -336,6 +341,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As Palworld.Project, Profile As Palworld.ServerProfile)
 		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  Self.mServerStatus = New Beacon.ServerStatus("Checking…")
 		  Self.mProviderId = Profile.ProviderId
 		  Super.Constructor(Project, Profile)

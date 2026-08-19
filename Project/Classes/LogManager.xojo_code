@@ -3,6 +3,7 @@ Protected Class LogManager
 	#tag Method, Flags = &h0
 		Sub Claim(File As FolderItem)
 		  #if SimpleDebugMode = False Or DebugBuild = False
+		    Var Holder As New Beacon.LockHolder(Self.mLock)
 		    If File Is Nil Or File.Exists = False Or Self.mFolder Is Nil Then
 		      Return
 		    End If
@@ -35,6 +36,7 @@ Protected Class LogManager
 	#tag Method, Flags = &h0
 		Sub Cleanup()
 		  #if SimpleDebugMode = False Or DebugBuild = False
+		    Var Holder As New Beacon.LockHolder(Self.mLock)
 		    Var Filter As New Regex
 		    Filter.SearchPattern = "^(\d{4})-(\d{2})-(\d{2})\.log$"
 		    
@@ -71,11 +73,15 @@ Protected Class LogManager
 		  AddHandler mFlushTimer.Action, WeakAddressOf mFlushTimer_Action
 		  
 		  Self.mPendingMessages = New Dictionary
+		  
+		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Destination() As FolderItem
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mFolder
 		End Function
 	#tag EndMethod
@@ -91,6 +97,7 @@ Protected Class LogManager
 		    End If
 		  #endif
 		  
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Self.mFolder = Parent
 		End Sub
 	#tag EndMethod
@@ -100,6 +107,7 @@ Protected Class LogManager
 		  #Pragma BackgroundTasks False
 		  
 		  #if SimpleDebugMode = False Or DebugBuild = False
+		    Var Holder As New Beacon.LockHolder(Self.mLock)
 		    If Self.mFolder Is Nil Then
 		      Return
 		    End If
@@ -159,6 +167,7 @@ Protected Class LogManager
 		Sub Log(Message As String)
 		  #if SimpleDebugMode = False Or DebugBuild = False
 		    // Use local time for the actual log message
+		    Var Holder As New Beacon.LockHolder(Self.mLock)
 		    Var Now As DateTime = DateTime.Now
 		    Var Fraction As Double = Now.Nanosecond / 1000000000
 		    Var DetailedMessage As String = Now.ToString(Locale.Raw) + Fraction.ToString(Locale.Raw, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
@@ -200,6 +209,10 @@ Protected Class LogManager
 
 	#tag Property, Flags = &h21
 		Private mFolder As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

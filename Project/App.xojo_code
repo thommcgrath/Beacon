@@ -213,6 +213,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Call UpdatesFolder.DeepDelete
 		  End If
 		  
+		  SystemColors.Init
+		  Conversions.Init
+		  BeaconHostingAPI.Init
+		  FrameworkExtensions.InitWriters
+		  NotificationKit.Init
+		  Preferences.Init
+		  
 		  #if TargetMacOS
 		    //Help.Visible = False
 		  #endif
@@ -234,8 +241,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    #endif
 		  End If
 		  
-		  SystemColors.Init
-		  
 		  NotificationKit.Watch(Self, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped, IdentityManager.Notification_IdentityChanged)
 		  
 		  Self.mIdentityManager = New IdentityManager()
@@ -252,9 +257,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      EditPreferences.Text = "Settings"
 		    End If
 		  #endif
-		  
-		  Conversions.Init
-		  BeaconHostingAPI.Init
 		  
 		  #if DebugBuild And TargetMacOS
 		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_DebugWait)
@@ -2017,6 +2019,14 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ProcessID"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=false

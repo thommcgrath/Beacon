@@ -42,6 +42,12 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function Cache() As Beacon.CacheManager
+		  Return Self.mCache
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub CleanForeignKeyViolations()
 		  Var Tables As New Dictionary
 		  Try
@@ -161,6 +167,7 @@ Implements NotificationKit.Receiver
 		  Const YieldInterval = 75
 		  
 		  Self.mAllowWriting = AllowWriting
+		  Self.mCache = New Beacon.CacheManager
 		  
 		  Var SchemaVersion As Integer = RaiseEvent GetSchemaVersion
 		  Var DatafileName As String = Self.Identifier + ".sqlite"
@@ -1327,6 +1334,10 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mAllowWriting As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCache As Beacon.CacheManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -44,11 +44,11 @@ Inherits Beacon.Thread
 
 
 	#tag Method, Flags = &h21
-		Private Shared Sub AddCharactersParsed(CharacterCount As Integer, TotalCharacters As Integer, Progress As Beacon.ProgressDisplayer, ByRef CharactersProcessed As Integer)
+		Private Shared Sub AddCharactersParsed(CharacterCount As Integer, TotalCharacters As Integer, Progress As Beacon.ProgressDisplayer, Locale As Locale, ByRef CharactersProcessed As Integer)
 		  CharactersProcessed = CharactersProcessed + CharacterCount
 		  Var Percent As Double = CharactersProcessed / TotalCharacters
 		  Progress.Progress = Percent
-		  Progress.Detail = "Parsing files (" + Percent.ToString(Locale.Current, "0%") + ")…"
+		  Progress.Detail = "Parsing files (" + Percent.ToString(Locale, "0%") + ")…"
 		End Sub
 	#tag EndMethod
 
@@ -266,7 +266,7 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function Import(Content As String, TotalCharacters As Integer, Progress As Beacon.ProgressDisplayer, ByRef CharactersProcessed As Integer) As Variant
+		Private Shared Function Import(Content As String, TotalCharacters As Integer, Progress As Beacon.ProgressDisplayer, Locale As Locale, ByRef CharactersProcessed As Integer) As Variant
 		  Var Parser As New Ark.ConfigParser
 		  Var Value As Variant
 		  Var Characters() As String = Content.Split("")
@@ -280,7 +280,7 @@ Inherits Beacon.Thread
 		      Exit
 		    End If
 		    
-		    AddCharactersParsed(1, TotalCharacters, Progress, CharactersProcessed)
+		    AddCharactersParsed(1, TotalCharacters, Progress, Locale, CharactersProcessed)
 		  Next
 		  
 		  Return ToXojoType(Value)
@@ -338,6 +338,7 @@ Inherits Beacon.Thread
 		  Progress.ShowSubProgress = False
 		  
 		  Var LineEnding As String = LineEndingChar()
+		  Var Locale As Locale = Locale.Current
 		  
 		  // Normalize line endings
 		  Var Content As String
@@ -381,7 +382,7 @@ Inherits Beacon.Thread
 		  CharactersTotal = CharactersTotal + ((Lines.LastIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
 		  
 		  Progress.Detail = "Parsing files…"
-		  AddCharactersParsed(0, CharactersTotal, Progress, CharactersProcessed)
+		  AddCharactersParsed(0, CharactersTotal, Progress, Locale, CharactersProcessed)
 		  
 		  For Each Line As String In Lines
 		    If Progress.CancelPressed Then
@@ -419,17 +420,17 @@ Inherits Beacon.Thread
 		      Catch Err As RuntimeException
 		      End Try
 		      
-		      AddCharactersParsed(CharacterCount, CharactersTotal, Progress, CharactersProcessed)
+		      AddCharactersParsed(CharacterCount, CharactersTotal, Progress, Locale, CharactersProcessed)
 		      Continue
 		    End If
 		    
 		    If Line.IsEmpty Or Line.BeginsWith(";") Then
-		      AddCharactersParsed(CharacterCount, CharactersTotal, Progress, CharactersProcessed)
+		      AddCharactersParsed(CharacterCount, CharactersTotal, Progress, Locale, CharactersProcessed)
 		      Continue
 		    End If
 		    
 		    Try
-		      Var Value As Variant = Import(Line + LineEnding, CharactersTotal, Progress, CharactersProcessed)
+		      Var Value As Variant = Import(Line + LineEnding, CharactersTotal, Progress, Locale, CharactersProcessed)
 		      If Value = Nil Then
 		        Continue
 		      End If
@@ -473,8 +474,6 @@ Inherits Beacon.Thread
 		    Catch Err As RuntimeException
 		      // Don't let an error halt processing, skip and move on
 		    End Try
-		    
-		    Thread.SleepCurrent(10)
 		  Next
 		  CharactersProcessed = CharactersTotal
 		  
@@ -603,6 +602,18 @@ Inherits Beacon.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true

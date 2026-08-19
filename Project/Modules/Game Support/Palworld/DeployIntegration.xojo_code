@@ -13,9 +13,9 @@ Inherits Beacon.DeployIntegration
 		  
 		  Var SettingsIniPath As String = Profile.SettingsIniPath
 		  
-		  Self.EnterResourceIntenseMode()
+		  Var IntenseMode As Beacon.LockHolder = Self.EnterResourceIntenseMode()
 		  Var Organizer As Palworld.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Profile)
-		  Self.ExitResourceIntenseMode()
+		  IntenseMode = Nil
 		  If Organizer Is Nil Then
 		    Self.SetError("Could not generate new config data. Log files may have more info.")
 		    Return
@@ -36,9 +36,9 @@ Inherits Beacon.DeployIntegration
 		  Var Format As Palworld.Rewriter.EncodingFormat = Palworld.Rewriter.EncodingFormat.ASCII
 		  Var RewriteError As RuntimeException
 		  
-		  Self.EnterResourceIntenseMode()
+		  IntenseMode = Self.EnterResourceIntenseMode()
 		  Var SettingsIniRewritten As String = Palworld.Rewriter.Rewrite(Palworld.Rewriter.Sources.Deploy, SettingsIniOriginal, Palworld.HeaderPalworldSettings, Palworld.ConfigFileSettings, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, Self.NukeEnabled, RewriteError)
-		  Self.ExitResourceIntenseMode()
+		  IntenseMode = Nil
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return

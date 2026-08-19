@@ -3,6 +3,7 @@ Protected Module BeaconHostingAPI
 	#tag Method, Flags = &h1
 		Protected Sub Init()
 		  mDetailsLock = New CriticalSection
+		  mDetailsLock.Type = Thread.Types.Preemptive
 		  mEndpointDetails = New Dictionary
 		End Sub
 	#tag EndMethod

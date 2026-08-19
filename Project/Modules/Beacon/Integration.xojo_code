@@ -9,6 +9,7 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Self.mCancelled = True
 		  Self.mFinished = True
 		  Self.Log("Cancelled")
@@ -17,6 +18,7 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Function Cancelled() As Boolean
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mCancelled
 		End Function
 	#tag EndMethod
@@ -32,6 +34,10 @@ Implements Beacon.LogProducer
 		    Err.Message = "Nil project"
 		    Raise Err
 		  End If
+		  
+		  Var Lock As New CriticalSection
+		  Lock.Type = Global.Thread.Types.Preemptive
+		  Self.mLock = Lock
 		  
 		  Self.mProject = Project
 		  Select Case Profile.ProviderId
@@ -56,6 +62,11 @@ Implements Beacon.LogProducer
 		  Self.mProfile = Profile
 		  Self.mIntegrationId = Profile.ProfileId.Left(8)
 		  
+		  If Self.mResourceIntenseLock Is Nil Then
+		    Self.mResourceIntenseLock = New CriticalSection
+		    Self.mResourceIntenseLock.Type = Global.Thread.Types.Preemptive
+		  End If
+		  
 		  Self.mThread = New Global.Thread
 		  #if DebugBuild
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
@@ -67,47 +78,35 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub EnterResourceIntenseMode()
-		  If Self.mResourceIntenseLock Is Nil Then
-		    Self.mResourceIntenseLock = New CriticalSection
-		  End If
-		  
-		  Self.mResourceIntenseLock.Enter
-		  Self.mInResourceIntenseMode = True
-		End Sub
+		Protected Function EnterResourceIntenseMode() As Beacon.LockHolder
+		  Return New Beacon.LockHolder(Self.mResourceIntenseLock)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Errored() As Boolean
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mErrored
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ErrorMessage() As String
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mErrorMessage
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ExitResourceIntenseMode()
-		  If Self.mResourceIntenseLock Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.mInResourceIntenseMode = False
-		  Self.mResourceIntenseLock.Leave
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Sub Finish()
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Self.mFinished = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Finished() As Boolean
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mFinished
 		End Function
 	#tag EndMethod
@@ -174,14 +173,15 @@ Implements Beacon.LogProducer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IntegrationId() As String
-		  Return Self.mIntegrationId
+		Function GetLock() As Beacon.LockHolder
+		  Return New Beacon.LockHolder(Self.mLock)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function IsInResourceIntenseMode() As Boolean
-		  Return Self.mInResourceIntenseMode
+	#tag Method, Flags = &h0
+		Function IntegrationId() As String
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
+		  Return Self.mIntegrationId
 		End Function
 	#tag EndMethod
 
@@ -189,6 +189,7 @@ Implements Beacon.LogProducer
 		Protected Sub Log(Message As String, ReplaceLast As Boolean = False)
 		  // Part of the Beacon.LogProducer interface.
 		  
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Var Lines() As String = Message.Trim.Split(EndOfLine)
 		  For Each Line As String In Lines
 		    Line = Line.Trim
@@ -216,6 +217,7 @@ Implements Beacon.LogProducer
 		Function Logs(MostRecent As Boolean = False) As String
 		  // Part of the Beacon.LogProducer interface.
 		  
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  If Self.mLogMessages.Count = 0 Then
 		    Return "Getting started…"
 		  End If
@@ -232,7 +234,9 @@ Implements Beacon.LogProducer
 		Private Sub mThread_Run(Sender As Global.Thread)
 		  Sender.YieldToNext
 		  
+		  Self.mLock.Enter
 		  Self.mRunning = True
+		  Self.mLock.Leave
 		  #if TargetMacOS
 		    Var ProcessInfo As NSProcessInfoMBS = NSProcessInfoMBS.ProcessInfo
 		    Var Activity As NSProcessInfoActivityMBS = ProcessInfo.BeginActivity(NSProcessInfoMBS.NSActivityUserInitiated, "Interacting with a game server")
@@ -246,7 +250,9 @@ Implements Beacon.LogProducer
 		  #if TargetMacOS
 		    ProcessInfo.EndActivity(Activity)
 		  #endif
+		  Self.mLock.Enter
 		  Self.mFinished = True
+		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -269,24 +275,28 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Function Name() As String
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mProfile.Name
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mProfile
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Project() As Beacon.Project
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mProject
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Provider() As Beacon.HostingProvider
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mProvider
 		End Function
 	#tag EndMethod
@@ -340,6 +350,7 @@ Implements Beacon.LogProducer
 		Protected Sub RemoveLastLog()
 		  // Part of the Beacon.LogProducer interface.
 		  
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  If Self.mLogMessages.Count > 0 Then
 		    Self.mLogMessages.RemoveAt(Self.mLogMessages.LastIndex)
 		  End If
@@ -348,6 +359,7 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Function Running() As Boolean
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mRunning
 		End Function
 	#tag EndMethod
@@ -368,6 +380,7 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h1
 		Protected Sub SetError(Message As String)
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Self.Log(Message)
 		  Self.mErrorMessage = Message
 		  Self.mErrored = True
@@ -377,6 +390,7 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Function StatusMessage() As String
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  If Self.Cancelled Then
 		    Return "Cancelled"
 		  ElseIf Self.Finished And Self.Errored = False Then
@@ -396,6 +410,7 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Sub Terminate()
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  If Not Self.mFinished Then
 		    Self.SetError("Terminated")
 		  End If
@@ -414,6 +429,7 @@ Implements Beacon.LogProducer
 
 	#tag Method, Flags = &h0
 		Function Throttled() As Boolean
+		  Var Holder As New Beacon.LockHolder(Self.mLock)
 		  Return Self.Provider.Throttled
 		End Function
 	#tag EndMethod
@@ -509,6 +525,10 @@ Implements Beacon.LogProducer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLogMessages() As String
 	#tag EndProperty
 
@@ -539,6 +559,7 @@ Implements Beacon.LogProducer
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Var Lock As New Beacon.LockHolder(Self.mLock)
 			  If Self.mThread Is Nil Then
 			    Return Thread.NormalPriority
 			  End If
@@ -548,11 +569,14 @@ Implements Beacon.LogProducer
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Var Lock As New Beacon.LockHolder(Self.mLock)
 			  If Self.mThread Is Nil Then
 			    Return
 			  End If
 			  
-			  Self.mThread.Priority = Value
+			  If Self.mThread.Priority <> Value Then
+			    Self.mThread.Priority = Value
+			  End If
 			End Set
 		#tag EndSetter
 		ThreadPriority As Integer
@@ -561,6 +585,7 @@ Implements Beacon.LogProducer
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Var Lock As New Beacon.LockHolder(Self.mLock)
 			  If Self.mThread Is Nil Then
 			    Return Global.Thread.ThreadStates.NotRunning
 			  End If

@@ -36,6 +36,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
    Begin UITweaks.ResizedPushButton TokensRefreshButton
       AllowAutoDeactivate=   True
@@ -374,6 +375,7 @@ End
 		Sub Constructor()
 		  Self.mThreads = New Dictionary
 		  Self.mListLock = New CriticalSection
+		  Self.mListLock.Type = Thread.Types.Preemptive
 		End Sub
 	#tag EndMethod
 

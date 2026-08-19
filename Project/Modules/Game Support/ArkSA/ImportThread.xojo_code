@@ -511,8 +511,6 @@ Inherits Beacon.Thread
 		    Catch Err As RuntimeException
 		      // Don't let an error halt processing, skip and move on
 		    End Try
-		    
-		    Thread.SleepCurrent(10)
 		  Next
 		  CharactersProcessed = CharactersTotal
 		  
@@ -641,6 +639,18 @@ Inherits Beacon.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true

@@ -10,6 +10,7 @@ Begin BeaconWindow PreferencesWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
+   HasTitleBar     =   True
    Height          =   420
    ImplicitInstance=   False
    MacProcID       =   0
@@ -149,7 +150,7 @@ Begin BeaconWindow PreferencesWindow
    Begin DesktopGroupBox ConnectionsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Connection Performance"
+      Caption         =   "Performance"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -668,7 +669,7 @@ Begin BeaconWindow PreferencesWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         SelectedRowIndex=   0
+         SelectedRowIndex=   -1
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
@@ -730,24 +731,28 @@ End
 		  Var DarkModeSupported As Boolean = BeaconUI.DarkModeSupported
 		  Var MultiGameSupported As Boolean = Beacon.Games.Count > 1
 		  
-		  Var Labels() As DesktopLabel
-		  Labels.Add(Self.ChannelLabel)
-		  Labels.Add(Self.ProfileIconLabel)
+		  Var LeftLabels() As DesktopLabel
+		  LeftLabels.Add(Self.ChannelLabel)
+		  LeftLabels.Add(Self.ProfileIconLabel)
 		  If MultiGameSupported Then
-		    Labels.Add(Self.NewProjectGameLabel)
+		    LeftLabels.Add(Self.NewProjectGameLabel)
 		  End If
 		  If DarkModeSupported Then
-		    Labels.Add(Self.DarkModeLabel)
+		    LeftLabels.Add(Self.DarkModeLabel)
 		  End If
 		  #if TargetWindows
-		    Labels.Add(Self.ArchLabel)
+		    LeftLabels.Add(Self.ArchLabel)
 		  #else
 		    Self.ArchLabel.Visible = False
 		    Self.ArchMenu.Visible = False
 		    Self.AutoupdateCheckbox.Top = Self.AutoupdateCheckbox.Top - 32
 		    Self.UpdatesGroup.Height = Self.UpdatesGroup.Height - 32
 		  #endif
-		  BeaconUI.SizeToFit(Labels)
+		  BeaconUI.SizeToFit(LeftLabels)
+		  
+		  Var RightLabels() As DesktopLabel
+		  RightLabels.Add(Self.MaxConnectionsLabel)
+		  BeaconUI.SizeToFit(RightLabels)
 		  
 		  Var LeftMenusLeft As Integer = Self.ChannelLabel.Right + 12
 		  Var LeftMenusWidth As Integer = Self.ChannelMenu.Right - LeftMenusLeft
@@ -769,6 +774,11 @@ End
 		  Self.SwitchesShowCaptionsCheck.Width = LeftMenusWidth
 		  Self.AutoupdateCheckbox.Left = LeftMenusLeft
 		  Self.AutoupdateCheckbox.Width = LeftMenusWidth
+		  
+		  Var RightMenusLeft As Integer = Self.MaxConnectionsLabel.Right + 12
+		  Var RightMenusWidth As Integer = Self.MaxConnectionsField.Right - RightMenusLeft
+		  Self.MaxConnectionsField.Left = RightMenusLeft
+		  Self.MaxConnectionsField.Width = RightMenusWidth
 		  
 		  Var Delta As Integer
 		  Var LeftGroups() As DesktopGroupBox = Array(Self.AppearanceGroup, Self.UpdatesGroup)
@@ -916,15 +926,6 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Text = Preferences.MaxConnections.ToString(Locale.Raw, "0")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxConnectionsLabel
-	#tag Event
-		Sub Opening()
-		  Me.SizeToFit
-		  Self.MaxConnectionsField.Left = Me.Right + 12
-		  Self.MaxConnectionsField.Width = Self.ConnectionsGroup.Width - (Me.Width + 52)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1114,6 +1115,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Modified"
 		Visible=false

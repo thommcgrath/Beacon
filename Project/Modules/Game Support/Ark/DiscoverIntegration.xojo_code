@@ -213,6 +213,7 @@ Inherits Beacon.DiscoverIntegration
 
 	#tag Method, Flags = &h0
 		Function StatusMessage() As String
+		  Var Lock As Beacon.LockHolder = Self.GetLock()
 		  If (Self.mImportProgress Is Nil) = False Then
 		    Return Self.mImportProgress.Detail
 		  Else

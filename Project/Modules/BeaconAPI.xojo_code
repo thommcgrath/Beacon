@@ -118,6 +118,7 @@ Protected Module BeaconAPI
 		    Else
 		      If mTokenLock Is Nil Then
 		        mTokenLock = New CriticalSection
+		        mTokenLock.Type = Thread.Types.Preemptive
 		      End If
 		      mTokenLock.Enter
 		      

@@ -1,47 +1,28 @@
 #tag DesktopWindow
 Begin DocumentImportView ArkImportView
-   AllowAutoDeactivate=   "True"
-   AllowFocus      =   "False"
-   AllowFocusRing  =   "False"
-   AllowTabs       =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composite       =   False
-   DefaultLocation =   2
-   DoubleBuffer    =   "False"
-   Enabled         =   "True"
-   EraseBackground =   "True"
-   FullScreen      =   False
+   Composited      =   False
+   Enabled         =   True
    HasBackgroundColor=   False
-   HasCloseButton  =   True
-   HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
    Height          =   480
-   ImplicitInstance=   True
-   Index           =   "-2147483648"
+   Index           =   -2147483648
    InitialParent   =   ""
-   Left            =   "0"
-   LockBottom      =   "False"
-   LockLeft        =   "False"
-   LockRight       =   "False"
-   LockTop         =   "False"
-   MacProcID       =   0
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
-   MenuBar         =   0
-   MenuBarVisible  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   Resizeable      =   True
-   TabIndex        =   "0"
-   TabPanelIndex   =   "0"
-   TabStop         =   "True"
-   Title           =   "Untitled"
+   Left            =   0
+   LockBottom      =   False
+   LockLeft        =   False
+   LockRight       =   False
+   LockTop         =   False
+   TabIndex        =   0
+   TabPanelIndex   =   0
+   TabStop         =   True
    Tooltip         =   ""
-   Top             =   "0"
-   Transparent     =   "True"
-   Type            =   0
+   Top             =   0
+   Transparent     =   True
    Visible         =   True
    Width           =   720
    Begin DesktopPagePanel Views
@@ -661,7 +642,6 @@ End
 		    Self.StatusList.RowTagAt(Idx) = Integration
 		  Next
 		  
-		  Self.SetThreadPriorities()
 		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
 		  Self.Views.SelectedPanelIndex = Self.PageStatus
 		End Sub
@@ -761,8 +741,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetThreadPriorities()
-		  // Dynamically adjusts thread priority depending on the number that are actively running
+		Private Sub SetThreadPriorities(ActiveCount As Integer)
+		  Var Priority As Integer = Max(4 / Max(ActiveCount, 1), 1)
 		  
 		  Var ActiveIntegrations() As Ark.DiscoverIntegration
 		  For Each Integration As Ark.DiscoverIntegration In Self.mIntegrations
@@ -770,16 +750,7 @@ End
 		      Continue
 		    End If
 		    
-		    If Integration.ThreadState <> Global.Thread.ThreadStates.NotRunning Then
-		      ActiveIntegrations.Add(Integration)
-		    End If
-		  Next
-		  
-		  Var Priority As Integer = If(ActiveIntegrations.Count > 3, Global.Thread.LowestPriority, Global.Thread.NormalPriority)
-		  For Each Integration As Ark.DiscoverIntegration In ActiveIntegrations
-		    If Integration.ThreadPriority <> Priority Then
-		      Integration.ThreadPriority = Priority
-		    End If
+		    Integration.ThreadPriority = Priority
 		  Next
 		End Sub
 	#tag EndMethod
@@ -800,6 +771,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mIntegrations() As Ark.DiscoverIntegration
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastActiveCount As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1372,13 +1347,9 @@ End
 #tag Events DiscoveryWatcher
 	#tag Event
 		Sub Action()
-		  Self.SetThreadPriorities()
-		  
-		  Var AllFinished As Boolean = True
-		  Var ErrorCount, SuccessCount As Integer
+		  Var ActiveCount, ErrorCount, SuccessCount As Integer
 		  For I As Integer = 0 To Self.StatusList.LastRowIndex
 		    Var Integration As Ark.DiscoverIntegration = Self.StatusList.RowTagAt(I)
-		    AllFinished = AllFinished And Integration.Finished
 		    Self.StatusList.CellTextAt(I, 0) = Integration.Name + EndOfLine + Integration.StatusMessage
 		    
 		    If Integration.Finished Then
@@ -1387,33 +1358,42 @@ End
 		      Else
 		        SuccessCount = SuccessCount + 1
 		      End If
+		    Else
+		      ActiveCount = ActiveCount + 1
 		    End If
 		  Next
 		  
-		  If AllFinished Then
-		    Me.RunMode = Timer.RunModes.Off
-		    If ErrorCount = 0 Then
-		      If Preferences.PlaySoundAfterImport Then
-		        SoundDeploySuccess.Play
-		      End If
-		      Self.Finish()
-		    ElseIf SuccessCount > 0 Then
-		      If Preferences.PlaySoundAfterImport Then
-		        SoundDeployFailed.Play
-		      End If
-		      If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then
-		        Self.Finish()
-		      Else
-		        Self.StatusActionButton.Visible = True
-		        Self.StatusActionButton.Default = True
-		        UITweaks.SwapButtons(Self.StatusActionButton, Self.StatusCancelButton)
-		      End If
-		    Else
-		      If Preferences.PlaySoundAfterImport Then
-		        SoundDeployFailed.Play
-		      End If
-		      Self.ShowAlert("No files imported.", "Beacon was not able to import anything from the selected files.")
+		  If Self.mLastActiveCount <> ActiveCount Then
+		    Self.SetThreadPriorities(ActiveCount)
+		    Self.mLastActiveCount = ActiveCount
+		  End If
+		  
+		  If ActiveCount > 1 Then
+		    Return
+		  End If
+		  
+		  Me.RunMode = Timer.RunModes.Off
+		  If ErrorCount = 0 Then
+		    If Preferences.PlaySoundAfterImport Then
+		      SoundDeploySuccess.Play
 		    End If
+		    Self.Finish()
+		  ElseIf SuccessCount > 0 Then
+		    If Preferences.PlaySoundAfterImport Then
+		      SoundDeployFailed.Play
+		    End If
+		    If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then
+		      Self.Finish()
+		    Else
+		      Self.StatusActionButton.Visible = True
+		      Self.StatusActionButton.Default = True
+		      UITweaks.SwapButtons(Self.StatusActionButton, Self.StatusCancelButton)
+		    End If
+		  Else
+		    If Preferences.PlaySoundAfterImport Then
+		      SoundDeployFailed.Play
+		    End If
+		    Self.ShowAlert("No files imported.", "Beacon was not able to import anything from the selected files.")
 		  End If
 		End Sub
 	#tag EndEvent
