@@ -175,10 +175,9 @@ Protected Class TagSpec
 		  Next
 		  
 		  Var Dict As New JSONItem
-		  Dict.Compact = True
 		  Dict.Value("required") = Required
 		  Dict.Value("excluded") = Excluded
-		  Return Dict.ToString
+		  Return Dict.ToString(True)
 		End Function
 	#tag EndMethod
 

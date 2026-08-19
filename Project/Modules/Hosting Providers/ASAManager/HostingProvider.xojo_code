@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider, ArkSA.HostingProvider
+Implements Beacon.HostingProvider,ArkSA.HostingProvider
 	#tag Method, Flags = &h0
 		Function CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile) As Dictionary
 		  // Part of the Ark.HostingProvider interface.
@@ -425,11 +425,10 @@ Implements Beacon.HostingProvider, ArkSA.HostingProvider
 		  End Select
 		  
 		  Var Body As New JSONItem("{}")
-		  Body.Compact = True
 		  Body.Value("content") = Transfer.Content
 		  Body.Value("md5_hash") = EncodeHex(Crypto.MD5(Transfer.Content)).Lowercase
 		  
-		  Var Response As ASAManager.APIResponse = Self.RunRequest(New ASAManager.APIRequest("PUT", ASAManager.APIRoot + "/containers/" + ContainerId.ToString(Locale.Raw, "0") + "/config/" + FileType, Token, "application/json", Body.ToString()))
+		  Var Response As ASAManager.APIResponse = Self.RunRequest(New ASAManager.APIRequest("PUT", ASAManager.APIRoot + "/containers/" + ContainerId.ToString(Locale.Raw, "0") + "/config/" + FileType, Token, "application/json", Body.ToString(True)))
 		  If Not Response.Success Then
 		    Transfer.Success = False
 		    Transfer.ErrorMessage = Response.Error.Message
@@ -503,14 +502,6 @@ Implements Beacon.HostingProvider, ArkSA.HostingProvider
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mServerDetailCache"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
