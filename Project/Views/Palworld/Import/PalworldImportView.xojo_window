@@ -1471,7 +1471,7 @@ End
 		    Self.mLastActiveCount = ActiveCount
 		  End If
 		  
-		  If ActiveCount > 1 Then
+		  If ActiveCount > 0 Then
 		    Return
 		  End If
 		  
