@@ -1,21 +1,15 @@
 #tag DesktopWindow
 Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
-   AcceptFocus     =   "False"
-   AcceptTabs      =   "True"
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
-   AutoDeactivate  =   "True"
-   BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   464
-   HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -29,7 +23,6 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   598
    Begin BeaconListbox SetList
@@ -135,6 +128,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
          LockRight       =   True
          LockTop         =   True
          Modified        =   False
+         ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -288,6 +282,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      ReadOnly        =   False
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -308,6 +303,8 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""

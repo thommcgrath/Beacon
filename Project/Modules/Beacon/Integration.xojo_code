@@ -69,7 +69,6 @@ Implements Beacon.LogProducer
 		  
 		  Self.mThread = New Thread
 		  #if DebugBuild
-		    Self.mThread.Type = Thread.Types.Preemptive
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
 		    Self.mThread.DebugIdentifier = Info.FullName + ".RunThread"
 		  #endif
@@ -653,6 +652,21 @@ Implements Beacon.LogProducer
 			InitialValue=""
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ThreadState"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Thread.ThreadStates"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Paused"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
