@@ -8,6 +8,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
    FullScreen      =   False
    FullScreenButton=   True
    HasBackColor    =   False
+   HasTitleBar     =   True
    Height          =   820
    ImplicitInstance=   False
    LiveResize      =   "True"
@@ -37,6 +38,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   38
       Index           =   -2147483648
       InitialParent   =   ""
@@ -461,6 +464,13 @@ End
 		    Var ZoomButton As NSButtonMBS = Win.StandardWindowButton(NSWindowMBS.NSWindowZoomButton)
 		    If (CloseButton Is Nil Or ZoomButton Is Nil) = False Then
 		      Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		      
+		      Var ButtonHeight As Double = Max(CloseButton.Frame.Height, ZoomButton.Frame.Height)
+		      Var ButtonMargin As Double = CloseButton.Superview.Frame.Height - CloseButton.Frame.MaxY
+		      Var ToolbarHeight As Integer = Round((ButtonMargin * 2) + ButtonHeight)
+		      Self.NavBar.Height = ToolbarHeight
+		      Self.Pages.Top = Self.NavBar.Bottom
+		      Self.Pages.Height = Self.Height - Self.Pages.Top
 		    End If
 		  #endif
 		  
@@ -1321,6 +1331,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Modified"
 		Visible=false
