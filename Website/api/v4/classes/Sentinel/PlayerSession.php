@@ -68,7 +68,7 @@ class PlayerSession extends DatabaseObject implements JsonSerializable {
 
 		if (isset($filters['groupId'])) {
 			$groupIdPlaceholder = $parameters->AddValue($filters['groupId']);
-			$parameters->clauses[] = 'player_sessions.service_id IN (SELECT service_id FROM sentinel.group_services WHERE service_id = $' . $groupIdPlaceholder . ')';
+			$parameters->clauses[] = 'player_sessions.service_id IN (SELECT service_id FROM sentinel.group_services WHERE group_id = $' . $groupIdPlaceholder . ')';
 		}
 
 		if (isset($filters['isConnected'])) {
