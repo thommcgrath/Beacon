@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider,  Palworld.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider
+Implements Beacon.HostingProvider,Palworld.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Function CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile) As Dictionary
@@ -517,7 +517,7 @@ Implements Beacon.HostingProvider,  Palworld.HostingProvider, Ark.HostingProvide
 		  
 		  Var Config As JSONItem = GameServer.Child("settings").Child("config")
 		  Var Map As String = Config.Value("map").StringValue
-		  Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField("."))
+		  Profile.Mask = Ark.Maps.MaskForIdentifier(Map.LastField(","))
 		End Sub
 	#tag EndMethod
 
@@ -543,7 +543,10 @@ Implements Beacon.HostingProvider,  Palworld.HostingProvider, Ark.HostingProvide
 		  
 		  Var Config As JSONItem = GameServer.Child("settings").Child("config")
 		  Var Map As String = Config.Value("map").StringValue
-		  Profile.Mask = ArkSA.Maps.MaskForIdentifier(Map.LastField("."))
+		  If Map = "AstraeosDLC" Or Map = "Mod:988598:Astraeos_WP" Then
+		    Map = "Astraeos_WP"
+		  End If
+		  Profile.Mask = ArkSA.Maps.MaskForIdentifier(Map)
 		End Sub
 	#tag EndMethod
 
