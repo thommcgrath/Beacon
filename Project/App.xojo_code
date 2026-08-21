@@ -219,6 +219,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  FrameworkExtensions.InitWriters
 		  NotificationKit.Init
 		  Preferences.Init
+		  UITweaks.Init
 		  
 		  #if TargetMacOS
 		    //Help.Visible = False

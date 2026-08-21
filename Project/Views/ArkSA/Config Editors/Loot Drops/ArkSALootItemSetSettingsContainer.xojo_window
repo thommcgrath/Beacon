@@ -354,11 +354,13 @@ Begin DesktopContainer ArkSALootItemSetSettingsContainer
       Visible         =   True
       Width           =   82
    End
-   Begin DesktopUpDownArrows WeightStepper
-      Active          =   False
+   Begin StepperControl WeightStepper
       AllowAutoDeactivate=   True
       AllowFocus      =   False
-      AllowTabStop    =   True
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -369,25 +371,26 @@ Begin DesktopContainer ArkSALootItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      PanelIndex      =   0
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
       TabIndex        =   10
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   104
       Transparent     =   False
       Visible         =   True
-      Width           =   13
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
+      Width           =   12
    End
-   Begin DesktopUpDownArrows MaxEntriesStepper
-      Active          =   False
+   Begin StepperControl MaxEntriesStepper
       AllowAutoDeactivate=   True
       AllowFocus      =   False
-      AllowTabStop    =   True
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -398,25 +401,26 @@ Begin DesktopContainer ArkSALootItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      PanelIndex      =   0
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Visible         =   True
-      Width           =   13
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
+      Width           =   12
    End
-   Begin DesktopUpDownArrows MinEntriesStepper
-      Active          =   False
+   Begin StepperControl MinEntriesStepper
       AllowAutoDeactivate=   True
       AllowFocus      =   False
-      AllowTabStop    =   True
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -427,19 +431,18 @@ Begin DesktopContainer ArkSALootItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      PanelIndex      =   0
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Visible         =   True
-      Width           =   13
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
+      Width           =   12
    End
    Begin SwitchControl PreventDuplicatesCheck
       AllowAutoDeactivate=   True
@@ -526,43 +529,57 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
-		  Const Gap = 6
-		  Const RowHeight = 20
-		  Const ContainerHeight = (RowHeight * 5) + (Gap * 6) + 1
+		  Const Gap As Integer = 6
 		  
 		  BeaconUI.SizeToFit(Self.NameLabel, Self.MinEntriesLabel, Self.MaxEntriesLabel, Self.WeightLabel, Self.PreventDuplicatesLabel)
 		  
 		  Self.NameLabel.Left = Gap
-		  Self.NameLabel.Top = Gap
 		  Self.MinEntriesLabel.Left = Gap
-		  Self.MinEntriesLabel.Top = Self.NameLabel.Bottom + Gap
 		  Self.MaxEntriesLabel.Left = Gap
-		  Self.MaxEntriesLabel.Top = Self.MinEntriesLabel.Bottom + Gap
 		  Self.WeightLabel.Left = Gap
-		  Self.WeightLabel.Top = Self.MaxEntriesLabel.Bottom + Gap
 		  Self.PreventDuplicatesLabel.Left = Gap
-		  Self.PreventDuplicatesLabel.Top = Self.WeightLabel.Bottom + Gap
 		  
-		  Self.NameField.Left = Self.NameLabel.Right + Gap
-		  Self.NameField.Top = Self.NameLabel.Top
-		  Self.NameField.Width = Self.Width - (Self.NameField.Left + Gap)
-		  Self.MinEntriesField.Left = Self.MinEntriesLabel.Right + Gap
-		  Self.MinEntriesField.Top = Self.MinEntriesLabel.Top
-		  Self.MaxEntriesField.Left = Self.MaxEntriesLabel.Right + Gap
-		  Self.MaxEntriesField.Top = Self.MaxEntriesLabel.Top
-		  Self.WeightField.Left = Self.WeightLabel.Right + Gap
-		  Self.WeightField.Top = Self.WeightLabel.Top
-		  Self.PreventDuplicatesCheck.Left = Self.PreventDuplicatesLabel.Right + Gap
-		  Self.PreventDuplicatesCheck.Top = Self.PreventDuplicatesLabel.Top
+		  Var FieldsLeft As Integer = Self.NameLabel.Right + Gap
+		  Var FieldsWidth As Integer = Self.Width - (Gap + FieldsLeft)
 		  
+		  Self.NameField.Top = Gap
+		  Self.NameField.Left = FieldsLeft
+		  Self.NameField.Width = FieldsWidth
+		  Self.NameLabel.Top = Self.NameField.Top
+		  Self.NameLabel.Height = Self.NameField.Height
+		  
+		  Self.MinEntriesField.Top = Self.NameField.Bottom + Gap
+		  Self.MinEntriesField.Left = FieldsLeft
 		  Self.MinEntriesStepper.Left = Self.MinEntriesField.Right + 2
 		  Self.MinEntriesStepper.Top = Self.MinEntriesField.Top
+		  Self.MinEntriesStepper.Height = Self.MinEntriesField.Height
+		  Self.MinEntriesLabel.Top = Self.MinEntriesField.Top
+		  Self.MinEntriesLabel.Height = Self.MinEntriesField.Height
+		  
+		  Self.MaxEntriesField.Top = Self.MinEntriesField.Bottom + Gap
+		  Self.MaxEntriesField.Left = FieldsLeft
 		  Self.MaxEntriesStepper.Left = Self.MaxEntriesField.Right + 2
 		  Self.MaxEntriesStepper.Top = Self.MaxEntriesField.Top
+		  Self.MaxEntriesStepper.Height = Self.MaxEntriesField.Height
+		  Self.MaxEntriesLabel.Top = Self.MaxEntriesField.Top
+		  Self.MaxEntriesLabel.Height = Self.MaxEntriesField.Height
+		  
+		  Self.WeightField.Top = Self.MaxEntriesField.Bottom + Gap
+		  Self.WeightField.Left = FieldsLeft
 		  Self.WeightStepper.Left = Self.WeightField.Right + 2
 		  Self.WeightStepper.Top = Self.WeightField.Top
+		  Self.WeightStepper.Height = Self.WeightField.Height
+		  Self.WeightLabel.Top = Self.WeightField.Top
+		  Self.WeightLabel.Height = Self.WeightField.Height
 		  
-		  Self.BottomBorder.Top = ContainerHeight - 1
+		  Self.PreventDuplicatesCheck.Top = Self.WeightField.Bottom + Gap
+		  Self.PreventDuplicatesCheck.Left = FieldsLeft
+		  Self.PreventDuplicatesLabel.Top = Self.PreventDuplicatesCheck.Top
+		  Self.PreventDuplicatesLabel.Height = Self.PreventDuplicatesCheck.Height
+		  
+		  Self.BottomBorder.Top = Self.PreventDuplicatesCheck.Bottom + Gap
+		  
+		  Var ContainerHeight As Integer = Self.BottomBorder.Bottom
 		  If Self.Height <> ContainerHeight Then
 		    Self.Height = ContainerHeight
 		  End If
@@ -1069,6 +1086,14 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ReadOnly"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

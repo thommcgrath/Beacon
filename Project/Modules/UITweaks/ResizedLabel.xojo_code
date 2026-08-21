@@ -3,12 +3,7 @@ Protected Class ResizedLabel
 Inherits DesktopLabel
 	#tag Event
 		Sub Opening()
-		  If Self.TopDelta <> 0 Then
-		    Self.Top = Self.Top + Self.TopDelta
-		  End If
-		  If Self.HeightDelta <> 0 Then
-		    Self.Height = Self.Height + Self.HeightDelta
-		  End If
+		  UITweaks.Resize(Self)
 		  
 		  RaiseEvent Opening
 		End Sub
@@ -18,16 +13,6 @@ Inherits DesktopLabel
 	#tag Hook, Flags = &h0
 		Event Opening()
 	#tag EndHook
-
-
-	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"1"
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"4"
-	#tag EndConstant
-
-	#tag Constant, Name = TopDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"-2"
-	#tag EndConstant
 
 
 	#tag ViewBehavior

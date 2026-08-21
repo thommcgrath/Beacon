@@ -90,6 +90,15 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreateScaledPic(Extends G As Graphics, Width As Integer, Height As Integer) As Picture
+		  Var Pic As New Picture(Width * G.ScaleX, Height * G.ScaleY)
+		  Pic.Graphics.ScaleX = G.ScaleX
+		  Pic.Graphics.ScaleY = G.ScaleY
+		  Return Pic
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Darker(Extends Source As Color, Percent As Double) As Color
 		  Return Color.HSV(Source.Hue, Source.Saturation, Source.Value * (1 - Percent))
 		End Function
@@ -281,6 +290,24 @@ Protected Module BeaconUI
 		  End Select
 		  
 		  Return New Xojo.Point(Target.Left + Offset.X, Target.Top + Offset.Y)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IconFromPoints(Points() As Xojo.Point) As FigureShape
+		  Var Shape As New FigureShape
+		  For Idx As Integer = Points.FirstIndex To Points.LastIndex
+		    Var ThisPoint As Xojo.Point = Points(Idx)
+		    Var NextPoint As Xojo.Point
+		    If Idx = Points.LastIndex Then
+		      NextPoint = Points(0)
+		    Else
+		      NextPoint = Points(Idx + 1)
+		    End If
+		    
+		    Shape.AddLine(ThisPoint.X, ThisPoint.Y, NextPoint.X, NextPoint.Y)
+		  Next
+		  Return Shape
 		End Function
 	#tag EndMethod
 

@@ -3,12 +3,7 @@ Protected Class ResizedPushButton
 Inherits DesktopButton
 	#tag Event
 		Sub Opening()
-		  If Self.TopDelta <> 0 Then
-		    Self.Top = Self.Top + Self.TopDelta
-		  End If
-		  If Self.HeightDelta <> 0 Then
-		    Self.Height = Self.Height + Self.HeightDelta
-		  End If
+		  UITweaks.Resize(Self)
 		  
 		  RaiseEvent Opening
 		End Sub
@@ -18,17 +13,6 @@ Inherits DesktopButton
 	#tag Hook, Flags = &h0
 		Event Opening()
 	#tag EndHook
-
-
-	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"5"
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"6"
-	#tag EndConstant
-
-	#tag Constant, Name = TopDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"-2"
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"-3"
-	#tag EndConstant
 
 
 	#tag ViewBehavior
