@@ -7,9 +7,7 @@ Begin DocumentEditorView ArkDocumentEditorView
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "True"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   528
    Index           =   -2147483648
@@ -25,8 +23,34 @@ Begin DocumentEditorView ArkDocumentEditorView
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   858
+   Begin PopoverOriginRect PopoverTarget
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   50
+      Index           =   -2147483648
+      Left            =   -189
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -143
+      Transparent     =   True
+      Visible         =   False
+      Width           =   52
+   End
    Begin DesktopPagePanel PagePanel1
       AllowAutoDeactivate=   True
       Enabled         =   True
@@ -154,6 +178,8 @@ Begin DocumentEditorView ArkDocumentEditorView
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -767,18 +793,6 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  If (Self.mMapsPopoverController Is Nil) = False Then
-		    RemoveHandler mMapsPopoverController.Finished, WeakAddressOf MapsPopoverController_Finished
-		    Self.mModsPopoverController.Dismiss(True)
-		    Self.mMapsPopoverController = Nil
-		  End If
-		  
-		  If (Self.mModsPopoverController Is Nil) = False Then
-		    RemoveHandler mModsPopoverController.Finished, WeakAddressOf ModsPopoverController_Finished
-		    Self.mModsPopoverController.Dismiss(True)
-		    Self.mModsPopoverController = Nil
-		  End If
-		  
 		  If (Self.mValidationResultsDialog Is Nil) = False And (Self.mValidationResultsDialog.Value Is Nil) = False Then
 		    ResolveIssuesDialog(Self.mValidationResultsDialog.Value).Close
 		  End If
@@ -810,18 +824,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub MapsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
-		  If Not Cancelled Then
-		    Self.Project.MapMask = Ark.Maps.MaskForMaps(MapSelectionGrid(Sender.Container).CheckedMaps)
-		    Self.Modified = Self.Project.Modified
-		  End If
+		Private Sub MapSelector_Finished(Sender As MapSelectionGrid)
+		  Self.Project.MapMask = Ark.Maps.MaskForMaps(Sender.CheckedMaps)
+		  Self.Modified = Self.Project.Modified
 		  
 		  If (Self.CurrentPanel Is Nil) = False Then
 		    Self.CurrentPanel.SetupUI()
 		  End If
 		  
 		  Self.OmniBar1.Item("MapsButton").Toggled = False
-		  Self.mMapsPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -870,24 +881,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
-		  If Not Cancelled Then
-		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
-		    Var ContentPackIds() As String = Editor.ContentPackIds
-		    For Each ContentPackId As String In ContentPackIds
-		      Self.Project.ContentPackEnabled(ContentPackId) = Editor.ModEnabled(ContentPackId)
-		    Next
-		    
-		    Self.Project.MigrateModContent(Ark.DataSource.Pool)
-		    Self.Modified = Self.Project.Modified
-		  End If
+		Private Sub ModSelector_Finished(Sender As ModSelectionGrid)
+		  Var ContentPackIds() As String = Sender.ContentPackIds
+		  For Each ContentPackId As String In ContentPackIds
+		    Self.Project.ContentPackEnabled(ContentPackId) = Sender.ModEnabled(ContentPackId)
+		  Next
+		  
+		  Self.Project.MigrateModContent(Ark.DataSource.Pool)
+		  Self.Modified = Self.Project.Modified
 		  
 		  If (Self.CurrentPanel Is Nil) = False Then
 		    Self.CurrentPanel.SetupUI()
 		  End If
 		  
 		  Self.OmniBar1.Item("ModsButton").Toggled = False
-		  Self.mModsPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -1082,22 +1089,42 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowMapPicker(Item As OmniBarItem, ItemRect As Rect)
-		  If (Self.mMapsPopoverController Is Nil) = False And Self.mMapsPopoverController.Visible Then
-		    Self.mMapsPopoverController.Dismiss(False)
-		    Self.mMapsPopoverController = Nil
-		    Item.Toggled = False
+		  Self.PopoverTarget.Left = Self.OmniBar1.Left + ItemRect.Left
+		  Self.PopoverTarget.Top = Self.OmniBar1.Top + ItemRect.Top
+		  Self.PopoverTarget.Width = ItemRect.Width
+		  Self.PopoverTarget.Height = ItemRect.Height
+		  
+		  Var Editor As New MapSelectionGrid(Ark.Maps.All)
+		  Editor.SetWithMaps(Ark.Maps.ForMask(Self.Project.MapMask))
+		  AddHandler Editor.Finished, WeakAddressOf MapSelector_Finished
+		  Editor.ShowPopover(Self.PopoverTarget, DesktopWindow.DisplaySides.Bottom, False, True)
+		  Item.Toggled = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowModsPicker()
+		  Var Item As OmniBarItem = Self.OmniBar1.Item("ModsButton")
+		  If Item Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Editor As New MapSelectionGrid(Ark.Maps.All)
-		  Var Controller As New PopoverController("Select Maps", Editor)
-		  Editor.SetWithMaps(Ark.Maps.ForMask(Self.Project.MapMask))
-		  Controller.Show(Self.OmniBar1, ItemRect)
+		  Var ItemRect As Rect = Self.OmniBar1.RectForItem(Item)
+		  Self.ShowModsPicker(Item, ItemRect)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowModsPicker(Item As OmniBarItem, ItemRect As Rect)
+		  Self.PopoverTarget.Left = Self.OmniBar1.Left + ItemRect.Left
+		  Self.PopoverTarget.Top = Self.OmniBar1.Top + ItemRect.Top
+		  Self.PopoverTarget.Width = ItemRect.Width
+		  Self.PopoverTarget.Height = ItemRect.Height
 		  
+		  Var Editor As New ModSelectionGrid(Self.Project)
+		  AddHandler Editor.Finished, WeakAddressOf ModSelector_Finished
+		  Editor.ShowPopover(Self.PopoverTarget, DesktopWindow.DisplaySides.Bottom, False, True)
 		  Item.Toggled = True
-		  
-		  AddHandler Controller.Finished, WeakAddressOf MapsPopoverController_Finished
-		  Self.mMapsPopoverController = Controller
 		End Sub
 	#tag EndMethod
 
@@ -1167,14 +1194,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mImportWindow As DocumentImportWindow
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMapsPopoverController As PopoverController
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mModsPopoverController As PopoverController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1303,21 +1322,7 @@ End
 		  Case "MapsButton"
 		    Self.ShowMapPicker(Item, ItemRect)
 		  Case "ModsButton"
-		    If (Self.mModsPopoverController Is Nil) = False And Self.mModsPopoverController.Visible Then
-		      Self.mModsPopoverController.Dismiss(False)
-		      Self.mModsPopoverController = Nil
-		      Item.Toggled = False
-		      Return
-		    End If
-		    
-		    Var Editor As New ModSelectionGrid(Self.Project)
-		    Var Controller As New PopoverController("Select Mods", Editor)
-		    Controller.Show(Me, ItemRect)
-		    
-		    Item.Toggled = True
-		    
-		    AddHandler Controller.Finished, WeakAddressOf ModsPopoverController_Finished
-		    Self.mModsPopoverController = Controller
+		    Self.ShowModsPicker(Item, ItemRect)
 		  Case "ToolsButton"
 		    Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
 		    Var LastEditor As String

@@ -10,6 +10,7 @@ Begin BeaconDialog GameSelectorWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
+   HasTitleBar     =   True
    Height          =   400
    ImplicitInstance=   False
    MacProcID       =   0
@@ -319,6 +320,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

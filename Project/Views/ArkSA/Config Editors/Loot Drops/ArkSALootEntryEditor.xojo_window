@@ -1,30 +1,28 @@
 #tag DesktopWindow
 Begin BeaconDialog ArkSALootEntryEditor
-   BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   False
+   BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   1
    FullScreen      =   False
-   FullScreenButton=   False
-   HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
+   HasTitleBar     =   True
    Height          =   600
    ImplicitInstance=   False
-   LiveResize      =   "False"
    MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   False
-   MaxWidth        =   32000
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   600
-   MinimizeButton  =   False
-   MinWidth        =   900
-   Placement       =   1
-   Resizable       =   "True"
+   MinimumHeight   =   600
+   MinimumWidth    =   900
    Resizeable      =   True
-   SystemUIVisible =   "True"
    Title           =   "Set Entry"
+   Type            =   8
    Visible         =   True
    Width           =   900
    Begin DesktopGroupBox EngramsGroup
@@ -605,29 +603,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mModSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
-		  If Not Cancelled Then
-		    Var ContentPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks
-		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
-		    Var ModList As New Beacon.StringList
-		    Var PrefsDict As New Dictionary
-		    For Each Pack As Beacon.ContentPack In ContentPacks
-		      If Editor.ModEnabled(Pack.ContentPackId) Then
-		        ModList.Append(Pack.ContentPackId)
-		        PrefsDict.Value(Pack.ContentPackId) = True
-		      Else
-		        PrefsDict.Value(Pack.ContentPackId) = False
-		      End If
-		    Next
-		    Self.mMods = ModList
-		    Preferences.PresetsEnabledMods = PrefsDict
-		    Var Spec As Beacon.TagSpec = Self.Picker.Spec
-		    Self.Picker.Tags = ArkSA.DataSource.Pool.Get(False).GetTags(Self.mMods, ArkSA.CategoryEngrams)
-		    Self.Picker.Spec = Spec
-		    Self.UpdateFilter
-		  End If
-		  
-		  Self.mModSelectionController = Nil
+		Private Sub ModPicker_Finished(Sender As ModSelectionGrid)
+		  Var ContentPacks() As Beacon.ContentPack = ArkSA.DataSource.Pool.Get(False).GetContentPacks
+		  Var ModList As New Beacon.StringList
+		  Var PrefsDict As New Dictionary
+		  For Each Pack As Beacon.ContentPack In ContentPacks
+		    If Sender.ModEnabled(Pack.ContentPackId) Then
+		      ModList.Append(Pack.ContentPackId)
+		      PrefsDict.Value(Pack.ContentPackId) = True
+		    Else
+		      PrefsDict.Value(Pack.ContentPackId) = False
+		    End If
+		  Next
+		  Self.mMods = ModList
+		  Preferences.PresetsEnabledMods = PrefsDict
+		  Var Spec As Beacon.TagSpec = Self.Picker.Spec
+		  Self.Picker.Tags = ArkSA.DataSource.Pool.Get(False).GetTags(Self.mMods, ArkSA.CategoryEngrams)
+		  Self.Picker.Spec = Spec
+		  Self.UpdateFilter
 		End Sub
 	#tag EndMethod
 
@@ -829,10 +822,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModSelectionController As PopoverController
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mOriginalEntry As ArkSA.LootItemSetEntry
 	#tag EndProperty
 
@@ -998,18 +987,9 @@ End
 #tag Events ModsButton
 	#tag Event
 		Sub Pressed()
-		  If (Self.mModSelectionController Is Nil) = False And Self.mModSelectionController.Visible Then
-		    Self.mModSelectionController.Dismiss(False)
-		    Self.mModSelectionController = Nil
-		    Return
-		  End If
-		  
 		  Var ModPicker As New ModSelectionGrid(ArkSA.DataSource.Pool.Get(False), Self.mMods, Nil)
-		  Var Controller As New PopoverController("Select Mods", ModPicker)
-		  Controller.Show(Me)
-		  
-		  AddHandler Controller.Finished, WeakAddressOf mModSelectionController_Finished
-		  Self.mModSelectionController = Controller
+		  AddHandler ModPicker.Finished, WeakAddressOf ModPicker_Finished
+		  ModPicker.ShowPopover(Me, DesktopWindow.DisplaySides.Bottom, False, True)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1117,6 +1097,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
 		Visible=true

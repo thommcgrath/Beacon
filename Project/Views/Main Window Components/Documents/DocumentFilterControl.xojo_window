@@ -230,16 +230,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mMapSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
-		  If Not Cancelled Then
-		    Var NewMaps() As Beacon.Map = MapSelectionGrid(Sender.Container).CheckedMaps
-		    If Self.Hash(NewMaps) <> Self.Hash(Self.mMaps) Then
-		      Self.mMaps = NewMaps
-		      RaiseEvent Changed()
-		    End If
+		Private Sub MapSelection_Finished(Sender As MapSelectionGrid)
+		  Var NewMaps() As Beacon.Map = Sender.CheckedMaps
+		  If Self.Hash(NewMaps) <> Self.Hash(Self.mMaps) Then
+		    Self.mMaps = NewMaps
+		    RaiseEvent Changed()
 		  End If
-		  
-		  Self.mMapSelectionController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -333,10 +329,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMapSelectionController As PopoverController
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mOpened As Boolean
 	#tag EndProperty
 
@@ -423,12 +415,6 @@ End
 #tag Events MapPickerButton
 	#tag Event
 		Sub Pressed()
-		  If (Self.mMapSelectionController Is Nil) = False And Self.mMapSelectionController.Visible Then
-		    Self.mMapSelectionController.Dismiss(False)
-		    Self.mMapSelectionController = Nil
-		    Return
-		  End If
-		  
 		  Var AllMaps() As Beacon.Map
 		  Select Case Self.mGameId
 		  Case Ark.Identifier
@@ -440,12 +426,9 @@ End
 		  End Select
 		  
 		  Var Editor As New MapSelectionGrid(AllMaps)
-		  Var Controller As New PopoverController("Select Maps", Editor)
 		  Editor.SetWithMaps(Self.mMaps)
-		  Controller.Show(Me)
-		  
-		  AddHandler Controller.Finished, WeakAddressOf mMapSelectionController_Finished
-		  Self.mMapSelectionController = Controller
+		  AddHandler Editor.Finished, WeakAddressOf MapSelection_Finished
+		  Editor.ShowPopover(Me, DesktopWindow.DisplaySides.Bottom, False, True)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

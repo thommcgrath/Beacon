@@ -7,9 +7,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   672
    Index           =   -2147483648
@@ -19,14 +17,42 @@ Begin ArkConfigEditor ArkEngramControlEditor
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   982
+   Begin PopoverOriginRect PopoverTarget
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   -164
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   61
+      Transparent     =   True
+      Visible         =   False
+      Width           =   20
+   End
    Begin FadedSeparator PointsListSeparator
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -183,6 +209,8 @@ Begin ArkConfigEditor ArkEngramControlEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -217,6 +245,8 @@ Begin ArkConfigEditor ArkEngramControlEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -510,17 +540,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SettingsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
-		  If Not Cancelled Then
-		    Var Config As Ark.Configs.EngramControl = Self.Config(True)
-		    Config.OnlyAllowSpecifiedEngrams = ArkEngramControlSettingsView(Sender.Container).OnlyAllowSpecifiedEngrams
-		    Config.AutoUnlockAllEngrams = ArkEngramControlSettingsView(Sender.Container).AutoUnlockEngrams
-		    Self.SetupEngramsList
-		    Self.Modified = Self.Project.Modified
-		  End If
+		Private Sub SettingsPopover_Finished(Sender As ArkEngramControlSettingsView)
+		  Var Config As Ark.Configs.EngramControl = Self.Config(True)
+		  Config.OnlyAllowSpecifiedEngrams = Sender.OnlyAllowSpecifiedEngrams
+		  Config.AutoUnlockAllEngrams = Sender.AutoUnlockEngrams
+		  Self.SetupEngramsList
+		  Self.Modified = Self.Project.Modified
 		  
 		  Self.EngramToolbar.Item("SettingsButton").Toggled = False
-		  Self.mSettingsPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -687,11 +714,6 @@ End
 		  Self.PointsListStatus.CenterCaption = Self.PointsList.StatusMessage("Level", "Levels")
 		End Sub
 	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mSettingsPopoverController As PopoverController
-	#tag EndProperty
 
 
 	#tag Constant, Name = kEngramsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.engramoverride", Scope = Private
@@ -1030,24 +1052,19 @@ End
 		      Self.Modified = Self.Config(False).Modified
 		    End If
 		  Case "SettingsButton"
-		    If (Self.mSettingsPopoverController Is Nil) = False And Self.mSettingsPopoverController.Visible Then
-		      Self.mSettingsPopoverController.Dismiss(False)
-		      Self.mSettingsPopoverController = Nil
-		      Item.Toggled = False
-		      Return
-		    End If
+		    Self.PopoverTarget.Left = Me.Left + ItemRect.Left
+		    Self.PopoverTarget.Top = Me.Top + ItemRect.Top
+		    Self.PopoverTarget.Width = ItemRect.Width
+		    Self.PopoverTarget.Height = ItemRect.Height
 		    
 		    Var Config As Ark.Configs.EngramControl = Self.Config(False)
 		    Var SettingsView As New ArkEngramControlSettingsView
-		    Var Controller As New PopoverController("Advanced Engram Options", SettingsView)
+		    AddHandler SettingsView.Finished, WeakAddressOf SettingsPopover_Finished
 		    SettingsView.AutoUnlockEngrams = Config.AutoUnlockAllEngrams
 		    SettingsView.OnlyAllowSpecifiedEngrams = Config.OnlyAllowSpecifiedEngrams
-		    Controller.Show(Me, ItemRect)
+		    SettingsView.ShowPopover(Self.PopoverTarget, DesktopWindow.DisplaySides.Bottom, False, True)
 		    
 		    Item.Toggled = True
-		    
-		    AddHandler Controller.Finished, WeakAddressOf SettingsPopoverController_Finished
-		    Self.mSettingsPopoverController = Controller
 		  End Select
 		End Sub
 	#tag EndEvent
