@@ -521,7 +521,7 @@ Begin DiscoveryView FTPDiscoveryView
          Visible         =   True
          Width           =   600
       End
-      Begin DesktopButton ServerLoadSpecButton
+      Begin UITweaks.ResizedPushButton ServerLoadSpecButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
