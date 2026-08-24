@@ -39,7 +39,7 @@ Private Class APIResponse
 		    Case 429
 		      Err.Message = "GameServerApp.com rate limit exceeded."
 		    Case 500
-		      Err.Message= "GameServerApp.com internal server error."
+		      Err.Message = "GameServerApp.com internal server error."
 		    Else
 		      Err.Message = "Unexpected HTTP status " + Err.ErrorNumber.ToString(Locale.Raw, "0")
 		    End Select
