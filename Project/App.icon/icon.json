@@ -1,63 +1,15 @@
 {
   "fill" : {
-    "automatic-gradient" : "extended-srgb:0.00000,0.47843,1.00000,1.00000"
+    "automatic-gradient" : "srgb:0.61176,0.05882,0.69020,1.00000"
   },
   "groups" : [
     {
       "layers" : [
         {
-          "blend-mode" : "normal",
-          "fill" : "none",
-          "glass-specializations" : [
-            {
-              "value" : false
-            },
-            {
-              "appearance" : "tinted",
-              "value" : false
-            }
-          ],
-          "hidden-specializations" : [
-            {
-              "idiom" : "square",
-              "value" : false
-            }
-          ],
-          "image-name" : "AvatarTransparentWhite.png",
-          "name" : "AvatarTransparentWhite",
-          "opacity" : 1,
-          "position-specializations" : [
-            {
-              "idiom" : "macOS",
-              "value" : {
-                "scale" : 1,
-                "translation-in-points" : [
-                  0,
-                  0
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "blend-mode" : "multiply",
-          "fill" : "none",
           "glass" : false,
-          "hidden-specializations" : [
-            {
-              "value" : false
-            },
-            {
-              "idiom" : "square",
-              "value" : false
-            }
-          ],
-          "image-name" : "AvatarShadow.png",
-          "name" : "AvatarShadow",
+          "image-name" : "AvatarTransparentWhite.svg",
+          "name" : "AvatarTransparentWhite",
           "opacity-specializations" : [
-            {
-              "value" : 0
-            },
             {
               "appearance" : "dark",
               "value" : 0
@@ -69,12 +21,49 @@
           ]
         },
         {
-          "fill" : "none",
           "glass" : false,
-          "hidden" : false,
+          "image-name" : "AvatarTransparentDark.png",
+          "name" : "AvatarTransparentDark",
+          "opacity-specializations" : [
+            {
+              "value" : 0
+            },
+            {
+              "appearance" : "dark",
+              "value" : 1
+            },
+            {
+              "appearance" : "tinted",
+              "value" : 0
+            }
+          ]
+        },
+        {
+          "glass" : false,
+          "image-name" : "AvatarShadow.png",
+          "name" : "AvatarShadow"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "layers" : [
+        {
+          "glass" : false,
           "image-name" : "AvatarBackground.png",
           "name" : "AvatarBackground",
           "opacity-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : 0
+            },
             {
               "appearance" : "tinted",
               "value" : 0

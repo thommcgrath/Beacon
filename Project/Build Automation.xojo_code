@@ -101,7 +101,7 @@
 				Begin IDEScriptBuildStep BuildMacAssets , AppliesTo = 0, Architecture = 0, Target = 0
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
-					Call DoShellCommand("actool --compile " + App + "/Contents/Resources --platform macosx --minimum-deployment-target 10.14 --app-icon App --output-partial-info-plist /dev/null --enable-icon-stack-fallback-generation=disabled ""${PROJECT_PATH}/Assets.xcassets"" ""${PROJECT_PATH}/App.icon""")
+					Call DoShellCommand("actool --compile " + App + "/Contents/Resources --platform macosx --minimum-deployment-target 11.0 --app-icon App --output-partial-info-plist /dev/null --enable-icon-stack-fallback-generation=disabled ""${PROJECT_PATH}/Assets.xcassets"" ""${PROJECT_PATH}/App.icon""")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3, Architecture = 0, Target = 0
