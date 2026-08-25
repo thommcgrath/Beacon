@@ -128,22 +128,25 @@ function BuildLinks(array $update): array {
 	list($mac_major, $mac_minor, $mac_bug) = explode('.', $min_mac_version, 3);
 	$min_mac_version = ($mac_major * 10000) + ($mac_minor * 100) + $mac_bug;
 	$mac_versions = [];
-	if ($min_mac_version <= 102100) {
+	if ($min_mac_version <= 270000) {
+		$mac_versions[] = '27 Golden Gate';
+	}
+	if ($min_mac_version <= 260000) {
 		$mac_versions[] = '26 Tahoe';
 	}
-	if ($min_mac_version <= 102000) {
+	if ($min_mac_version <= 150000) {
 		$mac_versions[] = '15 Sequoia';
 	}
-	if ($min_mac_version <= 101900) {
+	if ($min_mac_version <= 140000) {
 		$mac_versions[] = '14 Sonoma';
 	}
-	if ($min_mac_version <= 101800 && $build >= 10602000) {
+	if ($min_mac_version <= 130000 && $build >= 10602000) {
 		$mac_versions[] = '13 Ventura';
 	}
-	if ($min_mac_version <= 101700) {
+	if ($min_mac_version <= 120000) {
 		$mac_versions[] = '12 Monterey';
 	}
-	if ($min_mac_version <= 101600) {
+	if ($min_mac_version <= 110000) {
 		$mac_versions[] = '11 Big Sur';
 	}
 	if ($min_mac_version <= 101500) {
