@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
+Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palworld.HostingProvider
 	#tag Method, Flags = &h1
 		Protected Function BuildUrl(Profile As Beacon.ServerProfile, Token As BeaconAPI.ProviderToken, Path As String) As String
 		  Var Holder As New Beacon.LockHolder(mDetailsLock)
@@ -899,6 +899,16 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Raise Response.Error
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportedDeployPlans(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.DeployPlan
+		  If Self.SupportsRestarts(Project, Profile) Then
+		    Return Beacon.DeployPlan.UploadOnly Or Beacon.DeployPlan.UploadRestart Or Beacon.DeployPlan.StopUploadStart
+		  Else
+		    Return Beacon.DeployPlan.UploadOnly
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

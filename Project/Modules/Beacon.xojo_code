@@ -1978,7 +1978,7 @@ Protected Module Beacon
 	#tag EndConstant
 
 
-	#tag Enum, Name = DeployPlan, Type = Integer, Flags = &h1
+	#tag Enum, Name = DeployPlan, Type = Integer, Flags = &h1, Binary = True
 		StopUploadStart
 		  UploadRestart
 		UploadOnly

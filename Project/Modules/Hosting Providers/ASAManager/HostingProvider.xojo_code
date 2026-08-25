@@ -397,6 +397,15 @@ Implements Beacon.HostingProvider,ArkSA.HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SupportedDeployPlans(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.DeployPlan
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  
+		  Return Beacon.DeployPlan.UploadOnly Or Beacon.DeployPlan.UploadRestart Or Beacon.DeployPlan.StopUploadStart
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Throttled() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  

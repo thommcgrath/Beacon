@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
+Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palworld.HostingProvider
 	#tag Method, Flags = &h0
 		Function CommandLineOptions(Project As Ark.Project, Profile As Ark.ServerProfile) As Dictionary
 		  // Part of the Ark.HostingProvider interface.
@@ -744,6 +744,15 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		    Raise Response.Error
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportedDeployPlans(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.DeployPlan
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  
+		  Return Beacon.DeployPlan.UploadOnly Or Beacon.DeployPlan.UploadRestart Or Beacon.DeployPlan.StopUploadStart
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

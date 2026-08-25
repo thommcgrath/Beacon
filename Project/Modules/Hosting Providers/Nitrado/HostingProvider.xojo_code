@@ -720,6 +720,19 @@ Implements Beacon.HostingProvider,Palworld.HostingProvider,Ark.HostingProvider,A
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SupportedDeployPlans(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.DeployPlan
+		  #Pragma Unused Profile
+		  
+		  Select Case Project.GameId
+		  Case ArkSA.Identifier
+		    Return Beacon.DeployPlan.UploadOnly Or Beacon.DeployPlan.UploadRestart Or Beacon.DeployPlan.StopUploadStart
+		  Else
+		    Return Beacon.DeployPlan.StopUploadStart
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Throttled() As Boolean
 		  Return Self.mThrottled
 		End Function

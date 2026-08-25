@@ -535,10 +535,18 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SupportedDeployPlans(Project As Beacon.Project) As Beacon.DeployPlan()
-		  #Pragma Unused Project
+		Function SupportedDeployPlans(Project As Beacon.Project) As UInt64
+		  Var Config As Beacon.HostConfig = Self.HostConfig
+		  Var Provider As Beacon.HostingProvider
+		  If (Config Is Nil) = False Then
+		    Provider = Config.CreateProvider()
+		  End If
 		  
-		  Return Array(Beacon.DeployPlan.UploadOnly)
+		  If (Config Is Nil) = False And (Provider Is Nil) = False Then
+		    Return Provider.SupportedDeployPlans(Project, Self)
+		  Else
+		    Return Beacon.DeployPlan.UploadOnly
+		  End If
 		End Function
 	#tag EndMethod
 

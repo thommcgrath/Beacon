@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
+Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palworld.HostingProvider
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h21
 		Private Function BaseUrl(Config As FTP.HostConfig) As String
@@ -420,6 +420,15 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  #Pragma Unused Profile
 		  #Pragma Unused StopMessage
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportedDeployPlans(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.DeployPlan
+		  #Pragma Unused Project
+		  #Pragma Unused Profile
+		  
+		  Return Beacon.DeployPlan.UploadOnly
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

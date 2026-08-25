@@ -91,6 +91,12 @@ Protected Interface HostingProvider
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SupportedDeployPlans(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.DeployPlan
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Throttled() As Boolean
 		  
 		End Function
