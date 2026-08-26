@@ -139,25 +139,40 @@ $button-yellow: #ffc107 !default;
 @function contrast-against($backcolor, $forecolor) {
 	$backlum: luminance($backcolor);
 	$forelum: luminance($forecolor);
-	@if $backlum > $forelum {
-		@return calc(($backlum + 0.05) / ($forelum + 0.05));
-	} @else {
-		@return calc(($forelum + 0.05) / ($backlum + 0.05));
-	}
+	@return math.div((math.max($backlum, $forelum) + 0.05), (math.min($backlum, $forelum) + 0.05));
 }
 
-@function contrasting-color($backcolor, $forecolor) {
-	@for $percent from 0 through 20 {
-		$darker: color.adjust($forecolor, $lightness: -($percent * 5%));
-		$lighter: color.adjust($forecolor, $lightness: $percent * 5%);
-		@if contrast-against($backcolor, $darker) >= 4.5 {
-			@return $darker;
-		} @else if contrast-against($backcolor, $lighter) >= 4.5 {
-			@return $lighter;
+@function contrasting-color($backcolor, $forecolor, $desiredContrast: 4.5) {
+	$initialContrast: contrast-against($backcolor, $forecolor);
+	@if ($initialContrast >= $desiredContrast) {
+		@return $forecolor;
+	}
+
+	$forecolor: color.to-space($forecolor, hsl);
+	$lightness: color.channel($forecolor, 'lightness');
+	@for $percent from 1 through 20 {
+		$darkerAmount: $lightness - ($percent * 5);
+		@if ($darkerAmount >= 0%) {
+			$darker: color.to-space(color.change($forecolor, $lightness: $darkerAmount), rgb);
+			$contrast: contrast-against($backcolor, $darker);
+			@if ($contrast >= $desiredContrast) {
+				@return $darker;
+			}
+		}
+
+		$lighterAmount: $lightness + ($percent * 5);
+		@if ($lighterAmount <= 100%) {
+			$lighter: color.to-space(color.change($forecolor, $lightness: $lighterAmount), rgb);
+			$contrast: contrast-against($backcolor, $lighter);
+			@if ($contrast >= $desiredContrast) {
+				@return $lighter;
+			}
 		}
 	}
 
-	@if contrast-against($backcolor, #ffffff) > contrast-against($backcolor, #000000) {
+	$whiteContrast: contrast-against($backcolor, #ffffff);
+	$blackContrast: contrast-against($backcolor, #000000);
+	@if $whiteContrast > $blackContrast {
 		@return #ffffff;
 	} @else {
 		@return #000000;
