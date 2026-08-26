@@ -82,6 +82,7 @@ End
 		    Viewer.UserAgent = App.UserAgent
 		    Viewer.UserDataFolder = SpecialFolder.Temporary.Child(Beacon.UUID.v4).NativePath
 		    Viewer.IsPasswordAutosaveEnabled = False
+		    Viewer.AllowTabStop = True
 		    #if MBS.VersionNumber >= 24.5
 		      Viewer.AreBrowserExtensionsEnabled = False
 		    #endif
@@ -106,6 +107,8 @@ End
 		    Viewer.Visible = True
 		    Viewer.Enabled = True
 		    Viewer.CustomUserAgent = App.UserAgent
+		    Viewer.AllowTabStop = True
+		    Viewer.AcceptTabs = True
 		    Self.AddControl(Viewer)
 		    
 		    AddHandler Viewer.CreateWebView, WeakAddressOf WKWebView_CreateWebView
@@ -128,6 +131,7 @@ End
 		    Viewer.Visible = True
 		    Viewer.Enabled = True
 		    Viewer.UserAgent = App.UserAgent
+		    Viewer.AllowTabStop = True
 		    Self.AddControl(Viewer)
 		    
 		    AddHandler Viewer.CancelLoad, WeakAddressOf DesktopViewer_CancelLoad
