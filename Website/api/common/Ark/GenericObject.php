@@ -261,6 +261,7 @@ class GenericObject implements \JsonSerializable {
 		);
 		
 		$c = 3;
+		$database = null;
 		foreach ($values as $column => $list) {
 			if ($column == 'tags') {
 				$tags = explode(',', substr($list, 1, -1));
@@ -269,7 +270,10 @@ class GenericObject implements \JsonSerializable {
 					$parameters[] = $tag;
 				}
 			} else {
-				$clauses[] = $column . ' = ANY($' . $c++ . ')';
+				if (is_null($database)) {
+					$database = \BeaconCommon::Database();
+				}
+				$clauses[] = $database->EscapeIdentifier($column) . ' = ANY($' . $c++ . ')';
 				$parameters[] = $list;
 			}
 		}
