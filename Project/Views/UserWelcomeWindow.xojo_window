@@ -10,6 +10,7 @@ Begin DesktopWindow UserWelcomeWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
+   HasTitleBar     =   True
    Height          =   360
    ImplicitInstance=   False
    MacProcID       =   0
@@ -339,34 +340,157 @@ Begin DesktopWindow UserWelcomeWindow
          Visible         =   True
          Width           =   384
       End
-      Begin WebContentViewer LoginView
+      Begin ReactionButton AuthShowAgainButton
          AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF
-         Composited      =   False
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Open Again"
+         Default         =   False
          Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   360
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
-         Left            =   216
+         Italic          =   False
+         Left            =   508
          LockBottom      =   True
          LockedInPosition=   False
-         LockLeft        =   True
+         LockLeft        =   False
          LockRight       =   True
-         LockTop         =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
+         Top             =   320
+         Transparent     =   False
+         Underline       =   False
          Visible         =   True
-         Width           =   424
+         Width           =   112
+      End
+      Begin UITweaks.ResizedPushButton AuthCancelButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   372
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   168
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   112
+      End
+      Begin DesktopLabel AuthWaitingLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   236
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Waiting for authorization…"
+         TextAlignment   =   2
+         TextColor       =   &c000000
+         Tooltip         =   ""
+         Top             =   108
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   384
+      End
+      Begin DesktopProgressWheel AuthSpinner
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
+         Enabled         =   True
+         Height          =   16
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   420
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   3
+         Tooltip         =   ""
+         Top             =   140
+         Transparent     =   False
+         Visible         =   True
+         Width           =   16
+      End
+      Begin DesktopLabel AuthTipLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   236
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "A browser tab was opened to login"
+         TextAlignment   =   0
+         TextColor       =   &c000000
+         Tooltip         =   ""
+         Top             =   320
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   260
       End
    End
    Begin DesktopCanvas SidebarCanvas
@@ -395,16 +519,9 @@ Begin DesktopWindow UserWelcomeWindow
       Visible         =   True
       Width           =   216
    End
-   Begin URLConnection OAuthStartSocket
+   Begin URLConnection AnonSocket
       AllowCertificateValidation=   False
-      HTTPStatusCode  =   0
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin URLConnection OAuthRedeemSocket
-      AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -421,6 +538,28 @@ Begin DesktopWindow UserWelcomeWindow
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   0
+   End
+   Begin URLConnection AuthSocket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin Timer AuthPollTimer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   1000
+      RunMode         =   0
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin URLConnection AuthPollSocket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
    End
 End
 #tag EndDesktopWindow
@@ -441,7 +580,7 @@ End
 		  #endif
 		  
 		  If Self.mLoginOnly Then
-		    Self.StartOAuth(Nil)
+		    Self.StartAuthenticated()
 		  Else
 		    Preferences.OnlineEnabled = False
 		  End If
@@ -453,49 +592,6 @@ End
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Sub Collapse()
-		  For Idx As Integer = Self.mAnimationTasks.LastIndex DownTo 0
-		    Self.mAnimationTasks(Idx).Cancel
-		    Self.mAnimationTasks.RemoveAt(Idx)
-		  Next
-		  
-		  Var CollapsedWidth As Integer = 640
-		  Var CollapsedHeight As Integer = 360
-		  If Self.Width = CollapsedWidth And Self.Height = CollapsedHeight Then
-		    Return
-		  End If
-		  
-		  Var Task As AnimationKit.MoveTask
-		  
-		  Task = New AnimationKit.MoveTask(Self)
-		  Task.Width = CollapsedWidth
-		  Task.Height = CollapsedHeight
-		  Task.Left = Self.Left + ((Self.Width - Task.Width) / 2)
-		  Task.DurationInSeconds = Self.AnimationTime
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		  
-		  Task = New AnimationKit.MoveTask(Self.SidebarCanvas)
-		  Task.Left = 0
-		  Task.Height = CollapsedHeight
-		  Task.DurationInSeconds = Self.AnimationTime
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		  
-		  Task = New AnimationKit.MoveTask(Self.PagePanel1)
-		  Task.Left = Self.SidebarCanvas.Width
-		  Task.Width = CollapsedWidth - Self.SidebarCanvas.Width
-		  Task.Height = CollapsedHeight
-		  Task.DurationInSeconds = Self.AnimationTime
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
@@ -517,49 +613,6 @@ End
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ExecuteAfterPresentDelegate(WelcomeWindow As UserWelcomeWindow)
 	#tag EndDelegateDeclaration
-
-	#tag Method, Flags = &h21
-		Private Sub Expand()
-		  For Idx As Integer = Self.mAnimationTasks.LastIndex DownTo 0
-		    Self.mAnimationTasks(Idx).Cancel
-		    Self.mAnimationTasks.RemoveAt(Idx)
-		  Next
-		  
-		  Var ExpandedWidth As Integer = 800
-		  Var ExpandedHeight As Integer = (ExpandedWidth / 1.6) + Self.LoginView.Top
-		  If Self.Width = ExpandedWidth And Self.Height = ExpandedHeight Then
-		    Return
-		  End If
-		  
-		  Var Task As AnimationKit.MoveTask
-		  
-		  Task = New AnimationKit.MoveTask(Self)
-		  Task.Width = ExpandedWidth
-		  Task.Height = ExpandedHeight
-		  Task.Left = Self.Left + ((Self.Width - Task.Width) / 2)
-		  Task.DurationInSeconds = Self.AnimationTime
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		  
-		  Task = New AnimationKit.MoveTask(Self.SidebarCanvas)
-		  Task.Left = Self.SidebarCanvas.Width * -1
-		  Task.Height = ExpandedHeight
-		  Task.DurationInSeconds = Self.AnimationTime
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		  
-		  Task = New AnimationKit.MoveTask(Self.PagePanel1)
-		  Task.Left = 0
-		  Task.Width = ExpandedWidth
-		  Task.Height = ExpandedHeight
-		  Task.DurationInSeconds = Self.AnimationTime
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Shared Function GenerateCodeVerifier() As String
@@ -594,7 +647,7 @@ End
 		  Preferences.BeaconAuth = Nil
 		  
 		  Var Identity As Beacon.Identity = App.IdentityManager.FetchAnonymous(True)
-		  Self.StartOAuth(Identity)
+		  Self.StartAnonymous(Identity)
 		End Sub
 	#tag EndMethod
 
@@ -608,7 +661,7 @@ End
 		  Preferences.OnlineEnabled = True
 		  Preferences.BeaconAuth = Nil
 		  
-		  Self.StartOAuth(Nil)
+		  Self.StartAuthenticated()
 		End Sub
 	#tag EndMethod
 
@@ -642,21 +695,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RedeemOAuth(Code As String)
-		  Var Params As New Dictionary
-		  Params.Value("client_id") = BeaconAPI.ClientId
-		  Params.Value("code") = Code
-		  Params.Value("grant_type") = "authorization_code"
-		  Params.Value("redirect_uri") = Self.RedirectUri
-		  Params.Value("code_verifier") = Self.mOAuthChallenge
-		  
-		  Self.OAuthRedeemSocket.RequestHeader("User-Agent") = App.UserAgent
-		  Self.OAuthRedeemSocket.SetRequestContent(Beacon.GenerateJSON(Params, False), "application/json")
-		  Self.OAuthRedeemSocket.Send("POST", BeaconAPI.URL("/login"))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub SaveOAuthResponse(Response As String)
 		  Var Token As BeaconAPI.OAuthToken = BeaconAPI.OAuthToken.Load(Response)
 		  Preferences.OnlineEnabled = (Token Is Nil) = False
@@ -664,7 +702,6 @@ End
 		  
 		  Self.InitializingMessage.Text = "Downloading user details…"
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageInitializing
-		  Self.Collapse()
 		  
 		  Self.RefreshAndCloseThread.Start
 		End Sub
@@ -755,68 +792,74 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub StartOAuth(WithIdentity As Beacon.Identity = Nil)
-		  If Not WebContentViewer.Available Then
-		    Var Message As String = "Web content is not supported on this device."
-		    #if TargetWindows
-		      If Self.ShowConfirm(Message, "Please download and install the Microsoft Edge WebView2 Runtime.", "Download", "Cancel") Then
-		        System.GotoURL("https://go.microsoft.com/fwlink/p/?LinkId=2124703")
-		      End If
-		    #else
-		      Self.ShowAlert(Message, "I'm as confused as you are, this shouldn't be possible.")
-		    #endif
-		    Return
-		  End If
-		  
-		  Self.mOAuthState = Beacon.UUID.v4
+		Private Sub StartAnonymous(Identity As Beacon.Identity)
 		  Self.InitializingMessage.Text = "Starting authentication…"
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageInitializing
 		  
+		  Var Scopes() As String = Array("auth.public_key:create", "common", "users:read")
+		  Var Expiration As String = Ceiling(DateTime.Now.SecondsFrom1970 + 90).ToString(Locale.Raw, "0")
+		  Var StringToSign As String = Identity.UserId + ";" + Expiration
+		  Var Signature As String = EncodeBase64URLMBS(Identity.Sign(StringToSign))
+		  
 		  Var Params As New Dictionary
-		  Params.Value("state") = Self.mOAuthState
 		  Params.Value("client_id") = BeaconAPI.ClientId
 		  Params.Value("no_redirect") = "true"
 		  Params.Value("device_id") = Beacon.HardwareId
-		  
-		  Var Scopes() As String = Array("common", "users:read")
-		  If WithIdentity Is Nil Then
-		    Scopes.Add("users.private_key:read")
-		    Scopes.Add("users:delete")
-		    Scopes.Add("users:update")
-		    Scopes.Add("sentinel:read")
-		    Scopes.Add("sentinel:write")
-		    
-		    Self.mOAuthChallenge = Self.GenerateCodeVerifier()
-		    
-		    Params.Value("redirect_uri") = Self.RedirectUri
-		    Params.Value("response_type") = "code"
-		    Params.Value("code_challenge") = EncodeBase64URLMBS(Crypto.Hash(Self.mOAuthChallenge, Crypto.HashAlgorithms.SHA2_256))
-		    Params.Value("code_challenge_method") = "S256"
-		    Params.Value("public_key") = Preferences.DevicePublicKey
-		  Else
-		    Scopes.Add("auth.public_key:create")
-		    
-		    Var Expiration As String = Ceiling(DateTime.Now.SecondsFrom1970 + 90).ToString(Locale.Raw, "0")
-		    Var StringToSign As String = WithIdentity.UserId + ";" + Expiration
-		    Var Signature As String = EncodeBase64URLMBS(WithIdentity.Sign(StringToSign))
-		    
-		    Params.Value("user_id") = WithIdentity.UserId
-		    Params.Value("expiration") = Expiration
-		    Params.Value("signature") = Signature
-		    Params.Value("public_key") = WithIdentity.PublicKey()
-		  End If
-		  Scopes.Sort
+		  Params.Value("user_id") = Identity.UserId
+		  Params.Value("expiration") = Expiration
+		  Params.Value("signature") = Signature
+		  Params.Value("public_key") = Identity.PublicKey()
 		  Params.Value("scope") = String.FromArray(Scopes, " ")
 		  
 		  Var Query As String = SimpleHTTP.BuildFormData(Params)
-		  Self.OAuthStartSocket.RequestHeader("User-Agent") = App.UserAgent
-		  Self.OAuthStartSocket.Send("GET", BeaconAPI.URL("/login?" + Query))
+		  Self.AnonSocket.ClearRequestHeaders()
+		  Self.AnonSocket.RequestHeader("User-Agent") = App.UserAgent
+		  Self.AnonSocket.Send("GET", BeaconAPI.URL("/login?" + Query))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartAuthenticated()
+		  Self.InitializingMessage.Text = "Starting authentication…"
+		  Self.PagePanel1.SelectedPanelIndex = Self.PageInitializing
+		  
+		  Var Scopes() As String = Array("common", "sentinel:read", "sentinel:write", "users:delete", "users.private_key:read", "users:read", "users:update")
+		  Self.mOAuthChallenge = Self.GenerateCodeVerifier()
+		  
+		  Var Params As New Dictionary
+		  Params.Value("client_id") = BeaconAPI.ClientId
+		  Params.Value("no_redirect") = "true"
+		  Params.Value("device_id") = Beacon.HardwareId
+		  Params.Value("redirect_uri") = Self.RedirectUri
+		  Params.Value("response_type") = "code"
+		  Params.Value("code_challenge") = EncodeBase64URLMBS(Crypto.Hash(Self.mOAuthChallenge, Crypto.HashAlgorithms.SHA2_256))
+		  Params.Value("code_challenge_method") = "S256"
+		  Params.Value("public_key") = Preferences.DevicePublicKey
+		  Params.Value("scope") = String.FromArray(Scopes, " ")
+		  
+		  Var Query As String = SimpleHTTP.BuildFormData(Params)
+		  Self.AuthSocket.ClearRequestHeaders()
+		  Self.AuthSocket.RequestHeader("User-Agent") = App.UserAgent
+		  Self.AuthSocket.SetRequestContent(Query, "application/x-www-form-urlencoded")
+		  Self.AuthSocket.Send("POST", BeaconAPI.URL("/device"))
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
 		Private mAnimationTasks() As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAuthExpiration As DateTime
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAuthId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAuthUrl As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -833,10 +876,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mOAuthChallenge As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOAuthState As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -903,72 +942,24 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events LoginView
+#tag Events AuthShowAgainButton
 	#tag Event
-		Function CancelLoad(URL As String) As Boolean
-		  If Url.BeginsWith(Self.RedirectUri) Then
-		    Var Query As String = Url.Middle(Url.IndexOf("?") + 1)
-		    Var Params As New Dictionary
-		    Var QueryVars() As String = Query.Split("&")
-		    For Each QueryVar As String In QueryVars
-		      Var Pos As Integer = QueryVar.IndexOf("=")
-		      Var Key As String = QueryVar.Left(Pos)
-		      Var Value As String = QueryVar.Middle(Pos + 1)
-		      Params.Value(DecodeURLComponent(Key).DefineEncoding(Encodings.ASCII)) = DecodeURLComponent(Value).DefineEncoding(Encodings.ASCII)
-		    Next
-		    
-		    Var State As String = Params.Lookup("state", "")
-		    Var Code As String = Params.Lookup("code", "")
-		    If State <> Self.mOAuthState Then
-		      Self.ShowAlert("There was an error with the authorization process.", "The authorization did not finish correctly.")
-		      Self.Close
-		      Return True
-		    End If
-		    
-		    Self.InitializingMessage.Text = "Finishing login…"
-		    Self.PagePanel1.SelectedPanelIndex = Self.PageInitializing
-		    Self.Collapse()
-		    
-		    Self.RedeemOAuth(Code)
-		    
-		    Return True
-		  ElseIf Url = "beacon://dismiss" Then
-		    If Self.mLoginOnly Then
-		      Self.Close
-		    Else
-		      Self.Collapse
-		      Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
-		    End If
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub DocumentComplete(URL As String)
-		  #Pragma Unused URL
-		  
-		  If Self.PagePanel1.SelectedPanelIndex <> Self.PageLogin Then
-		    Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
-		  End If
+		Sub Pressed()
+		  Me.Caption = "Opened!"
+		  System.GotoURL(Self.mAuthUrl)
 		End Sub
 	#tag EndEvent
+#tag EndEvents
+#tag Events AuthCancelButton
 	#tag Event
-		Sub Error(Error As RuntimeException)
-		  Self.ShowConnectionError(Error)
+		Sub Pressed()
+		  Self.AuthPollTimer.RunMode = Timer.RunModes.Off
+		  Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
 		  
-		  If Self.mLoginOnly Then
-		    Self.Close
-		  Else
-		    Self.Collapse
-		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
-		  End If
+		  Self.mAuthExpiration = Nil
+		  Self.mAuthId = ""
+		  Self.mAuthUrl = ""
 		End Sub
-	#tag EndEvent
-	#tag Event
-		Function NewWindow(URL As String) As WebContentViewer
-		  System.GotoURL(URL)
-		  Return Nil
-		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events SidebarCanvas
@@ -992,7 +983,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events OAuthStartSocket
+#tag Events AnonSocket
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  Self.ContinueAnonymousButton.Enabled = True
@@ -1000,29 +991,12 @@ End
 		  Self.DisableOnlineButton.Enabled = True
 		  Self.WelcomePageSpinner.Visible = False
 		  
-		  If HTTPStatus = 200 Or HTTPStatus = 302 Or HTTPStatus = 301 Then
-		    // Show html viewer
-		    Var LoginUrl As String
-		    If HTTPStatus = 200 Then
-		      If Me.ResponseHeader("Content-Type").BeginsWith("application/json") Then
-		        Var Parsed As Dictionary = Beacon.ParseJSON(Content)
-		        LoginUrl = Parsed.Value("login_url")
-		      Else
-		        LoginUrl = URL
-		      End If
-		    ElseIf HTTPStatus = 302 Or HTTPStatus = 301 Then
-		      LoginUrl = Me.ResponseHeader("Location")
-		    End If
-		    
-		    Self.InitializingMessage.Text = "Loading login form…"
-		    Self.LoginView.LoadURL(LoginURL)
-		    Self.Expand()
-		  ElseIf HTTPStatus = 201 Then
+		  If HTTPStatus = 201 Then
 		    // Session started
 		    Self.SaveOAuthResponse(Content)
 		  Else
 		    // Something else
-		    App.Log("OAuthStartSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
+		    App.Log("AnonSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
 		    Self.ShowAPIError(HTTPStatus, Content)
 		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
 		  End If
@@ -1035,41 +1009,9 @@ End
 		  Self.DisableOnlineButton.Enabled = True
 		  Self.WelcomePageSpinner.Visible = False
 		  
-		  App.Log(e, CurrentMethodName, "Trying to start an OAuth request")
+		  App.Log(e, CurrentMethodName, "Trying to start an anonymous login request")
 		  Self.ShowConnectionError(e)
 		  Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events OAuthRedeemSocket
-	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
-		  If HTTPStatus = 201 Then
-		    Self.SaveOAuthResponse(Content)
-		  Else
-		    App.Log("OAuthRedeemSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
-		    Self.ShowAPIError(HTTPStatus, Content)
-		    
-		    If Self.mLoginOnly Then
-		      Self.Close
-		    Else
-		      Self.Collapse
-		      Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
-		    End If
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Error(e As RuntimeException)
-		  App.Log(e, CurrentMethodName, "Trying to redeem an OAuth code")
-		  Self.ShowConnectionError(e)
-		  
-		  If Self.mLoginOnly Then
-		    Self.Close
-		  Else
-		    Self.Collapse
-		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1090,7 +1032,130 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events AuthSocket
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  Self.ContinueAnonymousButton.Enabled = True
+		  Self.ContinueAuthenticatedButton.Enabled = True
+		  Self.DisableOnlineButton.Enabled = True
+		  Self.WelcomePageSpinner.Visible = False
+		  
+		  App.Log(e, CurrentMethodName, "Trying to start an authenticated login request")
+		  Self.ShowConnectionError(e)
+		  Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  Self.ContinueAnonymousButton.Enabled = True
+		  Self.ContinueAuthenticatedButton.Enabled = True
+		  Self.DisableOnlineButton.Enabled = True
+		  Self.WelcomePageSpinner.Visible = False
+		  
+		  If HTTPStatus = 201 Then
+		    // Device auth flow started
+		    Try
+		      Var Flow As New JSONItem(Content)
+		      Var FlowId As String = Flow.Value("device_code").StringValue
+		      Var AuthUrl As String = Flow.Value("verification_uri_complete").StringValue
+		      Var PollRate As Integer = Flow.Value("interval").DoubleValue * 1000
+		      Var Expiration As DateTime = New DateTime(Flow.Value("expires_in").DoubleValue + DateTime.Now.SecondsFrom1970)
+		      
+		      Self.AuthPollTimer.Reset
+		      Self.AuthPollTimer.Period = PollRate
+		      Self.AuthPollTimer.RunMode = Timer.RunModes.Single
+		      
+		      Self.mAuthId = FlowId
+		      Self.mAuthUrl = AuthUrl
+		      Self.mAuthExpiration = Expiration
+		      
+		      System.GotoURL(AuthUrl)
+		      Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
+		    Catch Err As RuntimeException
+		      App.Log("AuthSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
+		      Self.ShowAPIError(HTTPStatus, Content)
+		      Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		    End Try
+		  Else
+		    // Something else
+		    App.Log("AuthSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
+		    Self.ShowAPIError(HTTPStatus, Content)
+		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AuthPollTimer
+	#tag Event
+		Sub Action()
+		  If Self.mAuthExpiration Is Nil Or DateTime.Now > Self.mAuthExpiration Then
+		    Me.RunMode = Timer.RunModes.Off
+		    Self.mAuthExpiration = Nil
+		    Self.mAuthId = ""
+		    Self.mAuthUrl = ""
+		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		    Self.ShowAlert("Are you still there?", "The login session has expired.")
+		    Return
+		  End If
+		  
+		  Var Body As New JSONItem("{}")
+		  Body.Value("grant_type") = "device_code"
+		  Body.Value("client_id") = BeaconAPI.ClientId
+		  Body.Value("device_code") = Self.mAuthId
+		  Body.Value("code_verifier") = Self.mOAuthChallenge
+		  
+		  Self.AuthPollSocket.ClearRequestHeaders()
+		  Self.AuthPollSocket.RequestHeader("User-Agent") = App.UserAgent
+		  Self.AuthPollSocket.SetRequestContent(Body.ToString, "application/json")
+		  Self.AuthPollSocket.Send("POST", BeaconAPI.URL("/login"))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AuthPollSocket
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  App.Log(e, CurrentMethodName, "Polling a login session")
+		  Self.ShowConnectionError(e)
+		  Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  Var Errored As Boolean = True
+		  Try
+		    Select Case HTTPStatus
+		    Case 201
+		      Self.SaveOAuthResponse(Content)
+		      Errored = False
+		    Case 400
+		      // Not ready yet
+		      Self.AuthPollTimer.Reset
+		      Self.AuthPollTimer.RunMode = Timer.RunModes.Single
+		      Errored = False
+		    End Select
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  If Errored Then
+		    App.Log("AuthPollSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
+		    Self.mAuthExpiration = Nil
+		    Self.mAuthId = ""
+		    Self.mAuthUrl = ""
+		    Self.ShowAPIError(HTTPStatus, Content)
+		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false
