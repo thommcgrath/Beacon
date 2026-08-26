@@ -50,7 +50,7 @@ class Generator {
 		$configSets = $contents['configSetData'];
 		$baseConfigSet = $configSets['94c9797d-857d-574a-bdb9-30ee6543ed12'];
 		if (isset($baseConfigSet['ArkSA.LootDrops'])) {
-			$lootDrops = $baseConfigSet['ArkSA.LootDrops']['Contents'];
+			$lootDrops = $baseConfigSet['ArkSA.LootDrops']['overrides'] ?? $baseConfigSet['ArkSA.LootDrops']['Contents'] ?? [];
 		} else {
 			$lootDrops = [];
 		}
@@ -61,7 +61,7 @@ class Generator {
 
 		foreach ($lootDrops as $drop) {
 			$definition = null;
-			$dropId = $drop['lootDropId'];
+			$dropId = $drop['definition']['blueprintId'] ?? $drop['lootDropId'];
 			$definition = LootDrop::Fetch($dropId);
 			if (is_null($definition)) {
 				continue;
@@ -73,11 +73,12 @@ class Generator {
 			$randomWithoutReplacement = filter_var($drop['preventDuplicates'], FILTER_VALIDATE_BOOL);
 			$minItemSets = filter_var($drop['minItemSets'], FILTER_VALIDATE_INT);
 			$maxItemSets = filter_var($drop['maxItemSets'], FILTER_VALIDATE_INT);
-			$appendMode = filter_var($drop['appendMode'], FILTER_VALIDATE_BOOL);
+			$appendMode = filter_var($drop['addToDefaults'] ?? $drop['appendMode'], FILTER_VALIDATE_BOOL);
 
 			$sets = [];
-			$totalWeight = $this->SumOfItemSetWeights($drop['itemSets']);
-			foreach ($drop['itemSets'] as $itemSet) {
+			$itemSets = $drop['sets'] ?? $drop['itemSets'] ?? [];
+			$totalWeight = $this->SumOfItemSetWeights($itemSets);
+			foreach ($itemSets as $itemSet) {
 				$sets[] = $this->RenderItemSet($definition, $itemSet, $totalWeight);
 			}
 
@@ -256,7 +257,7 @@ class Generator {
 			$optionsWeightSum = $optionsWeightSum + max(filter_var($item['weight'], FILTER_VALIDATE_FLOAT), 0.0001);
 		}
 		foreach ($items as $item) {
-			$engramId = $item['engramId'];
+			$engramId = $item['engram']['blueprintId'] ?? $item['engramId'];
 			$engram = Engram::Fetch($engramId);
 			if (is_null($engram)) {
 				continue;
