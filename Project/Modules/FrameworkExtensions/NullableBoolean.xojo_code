@@ -2,6 +2,7 @@
 Class NullableBoolean
 	#tag Method, Flags = &h0
 		Function BooleanValue() As Boolean
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue
 		End Function
 	#tag EndMethod
@@ -29,6 +30,7 @@ Class NullableBoolean
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Boolean) As Integer
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  If Self.mValue <> Other Then
 		    Return -1
 		  Else
@@ -41,7 +43,11 @@ Class NullableBoolean
 		Function Operator_Compare(Other As NullableBoolean) As Integer
 		  If Other Is Nil Then
 		    Return 1
-		  ElseIf Self.mValue <> Other.mValue Then
+		  End If
+		  
+		  Var MyLock As New Beacon.LockHolder(Self.mLock)
+		  Var OtherLock As New Beacon.LockHolder(Other.mLock)
+		  If Self.mValue <> Other.mValue Then
 		    Return -1
 		  Else
 		    Return 0
@@ -51,12 +57,15 @@ Class NullableBoolean
 
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As Boolean
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Operator_Convert(Value As Boolean)
+		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  Self.mValue = Value
 		End Sub
 	#tag EndMethod
@@ -71,6 +80,10 @@ Class NullableBoolean
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mValue As Boolean
