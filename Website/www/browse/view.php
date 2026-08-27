@@ -30,7 +30,6 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 $authorId = $project->UserId();
 $author = User::Fetch($authorId);
 $authorName = $author->IsAnonymous() ? 'Anonymous' : $author->Username();
-$baseUrl = BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->ProjectId());
 $gameId = $project->GameId();
 
 $maps = [];
@@ -181,7 +180,7 @@ BeaconTemplate::SetCanonicalPath('/browse/' . urlencode($project->ProjectId()), 
 </div>
 <h3>Download</h3>
 <div class="indent">
-	<p><a href="https://<?php echo htmlentities($baseUrl); ?>" rel="nofollow">Download original project</a> or <a href="beacon://<?php echo htmlentities($baseUrl . '?name=' . urlencode($project->Title())); ?>" rel="nofollow">Open project in Beacon</a></p>
+	<p><a href="https://<?php echo htmlentities(BeaconCommon::APIDomain() . '/v3/project/' . urlencode($project->ProjectId())); ?>" rel="nofollow">Download original project</a> or <a href="beacon://<?php echo htmlentities(BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->ProjectId()) . '?name=' . urlencode($project->Title())); ?>" rel="nofollow">Open project in Beacon</a></p>
 </div>
 <h3>Create Game.ini</h3>
 <div class="indent">
