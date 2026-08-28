@@ -40,16 +40,13 @@
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + "/Contents/Info"""
 					Call DoShellCommand("/usr/bin/defaults write " + App + " ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.0.UTTypeIcons -json '{""UTTypeIconBackgroundName"":""ProjectBackgroundFill"",""UTTypeIconBadgeName"":""ProjectCenterIcon""}' " + App + ".plist")
-					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.2.UTTypeIcons -json '{""UTTypeIconText"":""Preset"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
-					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.3.UTTypeIcons -json '{""UTTypeIconText"":""Auth"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
-					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.4.UTTypeIcons -json '{""UTTypeIconText"":""Data"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
-					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.5.UTTypeIcons -json '{""UTTypeIconText"":""Script"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.1.UTTypeIcons -json '{""UTTypeIconText"":""Preset"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.2.UTTypeIcons -json '{""UTTypeIconText"":""Data"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.3.UTTypeIcons -json '{""UTTypeIconText"":""Script"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.0.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.2.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
-					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.3.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
-					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.7.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.6.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.8.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
-					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.10.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert NSAppAccentColorName -string 'BeaconBrand' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert ATSApplicationFontsPath -string 'Fonts/' " + App + ".plist")
 					If DebugBuild = False Then
@@ -146,7 +143,6 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vRm9udHMv
 					FolderItem = Li4vLi4vQXJ0d29yay9BcHAuaWNv
-					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25BdXRoLmljbw==
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25EYXRhLmljbw==
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25Eb2N1bWVudC5pY28=
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25QcmVzZXQuaWNv

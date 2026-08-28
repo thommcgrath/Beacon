@@ -113,11 +113,6 @@ Root: HKA; Subkey: "Software\Classes\BeaconPreset"; ValueData: "{#MyAppName} Pre
 Root: HKA; Subkey: "Software\Classes\BeaconPreset\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconPreset.ico,0"; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconPreset\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
-Root: HKA; Subkey: "Software\Classes\.beaconauth"; ValueData: "BeaconAuth"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKA; Subkey: "Software\Classes\BeaconAuth"; ValueData: "{#MyAppName} Preset"; ValueType: string; ValueName: ""
-Root: HKA; Subkey: "Software\Classes\BeaconAuth\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconAuth.ico,0"; ValueType: string; ValueName: ""
-Root: HKA; Subkey: "Software\Classes\BeaconAuth\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
-
 Root: HKA; Subkey: "Software\Classes\.beacondata"; ValueData: "BeaconData"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconData"; ValueData: "{#MyAppName} Preset"; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconData\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconData.ico,0"; ValueType: string; ValueName: ""
