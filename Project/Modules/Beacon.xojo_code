@@ -1850,9 +1850,6 @@ Protected Module Beacon
 	#tag Constant, Name = FileExtensionDelta, Type = String, Dynamic = False, Default = \".beacondata", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = FileExtensionIdentity, Type = String, Dynamic = False, Default = \".beaconidentity", Scope = Protected
-	#tag EndConstant
-
 	#tag Constant, Name = FileExtensionINI, Type = String, Dynamic = False, Default = \".ini", Scope = Protected
 	#tag EndConstant
 

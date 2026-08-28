@@ -314,7 +314,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.XmlFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
+		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.XmlFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData
 		  Dialog.AllowMultipleSelections = True
 		  
 		  Var File As FolderItem = Dialog.ShowModal
@@ -1034,29 +1034,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ImportIdentityFile(File As FolderItem, ParentWindow As DesktopWindow = Nil)
-		  If ParentWindow Is Nil Then
-		    ParentWindow = MainWindow
-		  End If
-		  
-		  Var Identity As Beacon.Identity = Self.mIdentityManager.Import(File)
-		  If Identity Is Nil Then
-		    // Try with password
-		    Var Password As String = IdentityDecryptDialog.Present(ParentWindow)
-		    If Password.IsEmpty Then
-		      Return
-		    End If
-		    
-		    Identity = Self.mIdentityManager.Import(File, Password)
-		  End If
-		  
-		  If (Identity Is Nil) = False Then
-		    Self.mIdentityManager.CurrentIdentity = Identity
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ImportScript(File As FolderItem)
 		  Try
 		    Var FileContent As String = File.Read(Encodings.UTF8)
@@ -1620,11 +1597,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If File.ExtensionMatches(Beacon.FileExtensionIdentity) Then
-		    Call Self.ImportIdentityFile(File)
-		    Return
-		  End If
-		  
 		  If File.ExtensionMatches(Beacon.FileExtensionScript) Then
 		    Self.ImportScript(File)
 		    Return
@@ -1795,7 +1767,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h0
 		Sub ShowOpenDocument(Parent As DesktopWindow = Nil)
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
+		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
 		  
 		  Var File As FolderItem
 		  If Parent Is Nil Then

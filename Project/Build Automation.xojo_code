@@ -40,7 +40,6 @@
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + "/Contents/Info"""
 					Call DoShellCommand("/usr/bin/defaults write " + App + " ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.0.UTTypeIcons -json '{""UTTypeIconBackgroundName"":""ProjectBackgroundFill"",""UTTypeIconBadgeName"":""ProjectCenterIcon""}' " + App + ".plist")
-					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.1.UTTypeIcons -json '{""UTTypeIconText"":""Identity"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.2.UTTypeIcons -json '{""UTTypeIconText"":""Preset"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.3.UTTypeIcons -json '{""UTTypeIconText"":""Auth"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.4.UTTypeIcons -json '{""UTTypeIconText"":""Data"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
@@ -150,7 +149,6 @@
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25BdXRoLmljbw==
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25EYXRhLmljbw==
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25Eb2N1bWVudC5pY28=
-					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25JZGVudGl0eS5pY28=
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25QcmVzZXQuaWNv
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25TY3JpcHQuaWNv
 				End

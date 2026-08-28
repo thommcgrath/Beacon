@@ -33,25 +33,8 @@
 	#tag EndFileType
 
 	#tag FileType
-		CodeName=BeaconIdentity
-		DocIcon=Beacon.xojo_resources;&h67446
-		Extension=.beaconidentity
-		Flags=&h5
-		MacCreator=
-		MacType=
-		Name=Beacon Identity
-		UTI=com.thezaz.beacon.identity
-		UTIConformsTo=public.text, public.data
-		Description=
-		MimeType=
-		Imported=False
-		HandlerRank=&h11
-		UTIPhysicalType=public.data
-	#tag EndFileType
-
-	#tag FileType
 		CodeName=BeaconPreset
-		DocIcon=Beacon.xojo_resources;&hA688B
+		DocIcon=Beacon.xojo_resources;&h6745D
 		Extension=.beacontemplate;.beaconpreset
 		Flags=&h5
 		MacCreator=
@@ -116,7 +99,7 @@
 
 	#tag FileType
 		CodeName=BeaconAuth
-		DocIcon=Beacon.xojo_resources;&hE657C
+		DocIcon=Beacon.xojo_resources;&hA7166
 		Extension=.beaconauth
 		Flags=&h9
 		MacCreator=
@@ -133,7 +116,7 @@
 
 	#tag FileType
 		CodeName=BeaconData
-		DocIcon=Beacon.xojo_resources;&h125526
+		DocIcon=Beacon.xojo_resources;&hE611D
 		Extension=.beacondata
 		Flags=&h9
 		MacCreator=
@@ -182,7 +165,7 @@
 
 	#tag FileType
 		CodeName=BeaconScript
-		DocIcon=Beacon.xojo_resources;&h164D06
+		DocIcon=Beacon.xojo_resources;&h125929
 		Extension=.beaconscript
 		Flags=&h9
 		MacCreator=
