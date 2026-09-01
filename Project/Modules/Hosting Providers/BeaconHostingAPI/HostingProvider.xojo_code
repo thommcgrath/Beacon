@@ -930,12 +930,6 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		  Var Path As String = Self.CleanupPath(Transfer.Path)
 		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("PUT", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/files/" + Path), Token, "application/octet-stream", Transfer.Content))
 		  If Not Response.Success Then
-		    Select Case Response.HTTPStatus
-		    Case 406
-		      Response.Error.Message = "The host could not verify the provided checksum. This usually indicates the connection was dropped during upload. If this problem persists, contact your hosting provider."
-		    Else
-		      Response.Error.Message = "Unexpected " + Response.HTTPStatus.ToString(Locale.Raw, "0") + " status from host: " + Response.Error.Message
-		    End Select
 		    Raise Response.Error
 		  End If
 		End Sub
