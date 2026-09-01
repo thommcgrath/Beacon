@@ -53,7 +53,7 @@ Inherits Beacon.DiscoverIntegration
 		  Var GameIniPath As String = Profile.GameIniPath
 		  If GameIniPath.IsEmpty = False Then
 		    Var DownloadSuccess As Boolean
-		    Var IniContent As String = Self.GetFile(GameIniPath, ArkSA.ConfigFileGame, Beacon.Integration.DownloadFailureMode.Required, Profile, False, DownloadSuccess)
+		    Var IniContent As String = Self.GetFile(GameIniPath, ArkSA.ConfigFileGame, Beacon.Integration.DownloadFailureMode.MissingAllowed, Profile, False, DownloadSuccess)
 		    If DownloadSuccess Then
 		      Data.GameIniContent = IniContent.GuessEncoding("/script/")
 		    Else
