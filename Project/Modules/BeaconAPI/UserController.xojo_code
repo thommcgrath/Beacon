@@ -1,18 +1,21 @@
 #tag Class
 Protected Class UserController
 	#tag Method, Flags = &h21
-		Private Function Callback_RefreshUserDetails_Common(Request As BeaconAPI.Request, Response As BeaconAPI.Response) As Boolean
+		Private Function Callback_RefreshUserDetails_Common(Request As BeaconAPI.Request, Response As BeaconAPI.Response) As IdentityResponse
 		  // True = Show login window
 		  
 		  #Pragma Unused Request
 		  
 		  Try
-		    Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
+		    Var Parsed As New JSONItem(Response.Content)
 		    Select Case Response.HTTPStatus
 		    Case 200
-		      Var Identity As Beacon.Identity = App.IdentityManager.Import(Parsed)
-		      If (Identity Is Nil) = False And Identity.IsValid Then
-		        App.IdentityManager.CurrentIdentity = Identity
+		      Var Result As IdentityImportResponse = App.IdentityManager.Import(Parsed, "")
+		      If Result.Success Then
+		        App.IdentityManager.CurrentIdentity = Result.Identity
+		        Return IdentityResponse.Success(Result.Identity)
+		      ElseIf Result.Status = IdentityImportResponse.Statuses.SecretNeeded Then
+		        Return IdentityResponse.SecretNeeded(Parsed)
 		      Else
 		        Var Err As New UnsupportedOperationException
 		        Err.Message = "Could not load user profile."
@@ -20,7 +23,7 @@ Protected Class UserController
 		      End If
 		    Case 401, 403
 		      App.Log("Login window will be presented because user details returned an unauthorized or forbidden response.")
-		      Return True
+		      Return IdentityResponse.Failed()
 		    End Select
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Importing identity")
@@ -32,9 +35,9 @@ Protected Class UserController
 	#tag Method, Flags = &h21
 		Private Sub Callback_RefreshUserDetails_WithUI(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  Var Verbosity As Integer = Request.Tag
-		  Var ShowLoginWindow As Boolean
+		  Var NextStep As IdentityResponse
 		  Try
-		    ShowLoginWindow = Self.Callback_RefreshUserDetails_Common(Request, Response)
+		    NextStep = Self.Callback_RefreshUserDetails_Common(Request, Response)
 		  Catch Err As RuntimeException
 		    If Verbosity = BeaconAPI.UserController.VerbosityFull Then
 		      Self.ShowRefreshResponse(Err)
@@ -42,16 +45,22 @@ Protected Class UserController
 		    Return
 		  End Try
 		  
-		  Select Case Verbosity
-		  Case BeaconAPI.UserController.VerbosityLoginOnly
-		    If ShowLoginWindow Then
-		      Self.ShowLoginWindow()
-		    End If
-		  Case BeaconAPI.UserController.VerbosityFull
-		    If ShowLoginWindow Then
-		      Self.ShowLoginWindow()
-		    Else
+		  Select Case NextStep.Mode
+		  Case BeaconAPI.IdentityResponse.Modes.Success
+		    If Verbosity = BeaconAPI.UserController.VerbosityFull Then
 		      Self.ShowRefreshResponse(Response)
+		    End If
+		  Case BeaconAPI.IdentityResponse.Modes.SecretNeeded
+		    If Verbosity <> BeaconAPI.UserController.VerbositySilent Then
+		      Var Params As New Dictionary
+		      Params.Value("nextStep") = NextStep
+		      Params.Value("verbosity") = Verbosity
+		      Params.Value("apiResponse") = Response
+		      Self.ShowSecretWindow(Params)
+		    End If
+		  Case BeaconAPI.IdentityResponse.Modes.LoginNeeded
+		    If Verbosity <> BeaconAPI.UserController.VerbositySilent Then
+		      Self.ShowLoginWindow()
 		    End If
 		  End Select
 		End Sub
@@ -63,9 +72,9 @@ Protected Class UserController
 		  If (Thread.Current Is Nil) = False Then
 		    Var Request As New BeaconAPI.Request(Url, "GET")
 		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
-		    Var ShowLoginWindow As Boolean
+		    Var NextStep As BeaconAPI.IdentityResponse
 		    Try
-		      ShowLoginWindow = Self.Callback_RefreshUserDetails_Common(Request, Response)
+		      NextStep = Self.Callback_RefreshUserDetails_Common(Request, Response)
 		    Catch Err As RuntimeException
 		      If Verbosity = BeaconAPI.UserController.VerbosityFull Then
 		        Call CallLater.Schedule(1, AddressOf ShowRefreshResponse, Err)
@@ -73,18 +82,25 @@ Protected Class UserController
 		      Return
 		    End Try
 		    
-		    Select Case Verbosity
-		    Case BeaconAPI.UserController.VerbosityLoginOnly
-		      If ShowLoginWindow Then
-		        Call CallLater.Schedule(1, AddressOf ShowLoginWindow)
-		      End If
-		    Case BeaconAPI.UserController.VerbosityFull
-		      If ShowLoginWindow Then
-		        Call CallLater.Schedule(1, AddressOf ShowLoginWindow)
-		      Else
+		    Select Case NextStep.Mode
+		    Case BeaconAPI.IdentityResponse.Modes.Success
+		      If Verbosity = BeaconAPI.UserController.VerbosityFull Then
 		        Call CallLater.Schedule(1, AddressOf ShowRefreshResponse, Response)
 		      End If
+		    Case BeaconAPI.IdentityResponse.Modes.SecretNeeded
+		      If Verbosity <> BeaconAPI.UserController.VerbositySilent Then
+		        Var Params As New Dictionary
+		        Params.Value("nextStep") = NextStep
+		        Params.Value("verbosity") = Verbosity
+		        Params.Value("apiResponse") = Response
+		        Call CallLater.Schedule(1, AddressOf ShowSecretWindow, Params)
+		      End If
+		    Case BeaconAPI.IdentityResponse.Modes.LoginNeeded
+		      If Verbosity <> BeaconAPI.UserController.VerbositySilent Then
+		        Call CallLater.Schedule(1, AddressOf ShowLoginWindow)
+		      End If
 		    End Select
+		    
 		    Return
 		  End If
 		  
@@ -119,6 +135,38 @@ Protected Class UserController
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowSecretWindow(Param As Variant)
+		  Var Params As Dictionary = Param
+		  Var NextStep As IdentityResponse = Params.Value("nextStep")
+		  Var Verbosity As Integer = Params.Value("verbosity")
+		  Var Response As BeaconAPI.Response = Params.Value("apiResponse")
+		  
+		  Var Secret As String = UserSecretWindow.Present(Nil)
+		  If Secret.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var Result As IdentityImportResponse = App.IdentityManager.Import(NextStep.PendingIdentity, Secret)
+		  If Result.Success Then
+		    App.IdentityManager.CurrentIdentity = Result.Identity
+		    If Verbosity = BeaconAPI.UserController.VerbosityFull Then
+		      Call CallLater.Schedule(1, AddressOf ShowRefreshResponse, Response)
+		    End If
+		  ElseIf Result.Status = IdentityImportResponse.Statuses.SecretNeeded Then
+		    Var NextParams As New Dictionary
+		    NextParams.Value("nextStep") = IdentityResponse.SecretNeeded(NextStep.PendingIdentity)
+		    NextParams.Value("verbosity") = Verbosity
+		    NextParams.Value("apiResponse") = Response
+		    Self.ShowSecretWindow(NextParams)
+		  Else
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Could not load user profile."
+		    Raise Err
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Constant, Name = VerbosityFull, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
@@ -128,6 +176,13 @@ Protected Class UserController
 
 	#tag Constant, Name = VerbositySilent, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
+
+
+	#tag Enum, Name = RefreshResults, Type = Integer, Flags = &h21
+		Silent
+		  ShowLoginWindow
+		ShowSecretWindow
+	#tag EndEnum
 
 
 	#tag ViewBehavior
