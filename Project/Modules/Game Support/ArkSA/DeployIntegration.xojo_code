@@ -173,7 +173,9 @@ Inherits Beacon.DeployIntegration
 		  Case IsA GameServerApp.HostingProvider
 		    Call Self.GameServerAppApplySettings(Organizer)
 		  Else
-		    Provider.CommandLineOptions(Project, Profile) = Organizer.CommandLineOptions()
+		    If Provider.SupportsLaunchOptions(Project, Profile) Then
+		      Provider.CommandLineOptions(Project, Profile) = Organizer.CommandLineOptions()
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -512,6 +514,21 @@ Inherits Beacon.DeployIntegration
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ThreadState"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Thread.ThreadStates"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Paused"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ThreadPriority"
 			Visible=false
