@@ -438,6 +438,7 @@ Begin DesktopWindow UserWelcomeWindow
          Width           =   384
       End
       Begin DesktopProgressWheel AuthSpinner
+         Active          =   False
          AllowAutoDeactivate=   True
          AllowTabStop    =   True
          Enabled         =   True
@@ -450,6 +451,7 @@ Begin DesktopWindow UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   3
@@ -458,6 +460,10 @@ Begin DesktopWindow UserWelcomeWindow
          Transparent     =   False
          Visible         =   True
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin DesktopLabel AuthTipLabel
          AllowAutoDeactivate=   True
@@ -541,6 +547,9 @@ Begin DesktopWindow UserWelcomeWindow
       Type            =   0
    End
    Begin URLConnection AuthSocket
+      AllowCertificateValidation=   False
+      FollowRedirects =   False
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -556,6 +565,9 @@ Begin DesktopWindow UserWelcomeWindow
       TabPanelIndex   =   0
    End
    Begin URLConnection AuthPollSocket
+      AllowCertificateValidation=   False
+      FollowRedirects =   False
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
