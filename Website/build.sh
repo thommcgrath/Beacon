@@ -1,7 +1,7 @@
 #!/bin/bash
 \. "$HOME/.nvm/nvm.sh"
 
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT MSG_CHANNEL_CLOSE
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 case $1 in
 	-w | --watch)

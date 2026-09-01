@@ -2913,6 +2913,69 @@ body.no-navigation {
 	height: 10em;
 }
 
+.security_model_group {
+	padding: 0px;
+	$cornerRadius: 0.6rem;
+	$groupPadding: $cornerRadius * 2;
+
+	p {
+		margin-top: $groupPadding;
+		margin-bottom: $groupPadding;
+	}
+
+	p:first-child {
+		margin-top: 0px;
+	}
+
+	p:last-child {
+		margin-bottom: 0px;
+	}
+
+	& > li {
+		margin: 0px;
+		list-style: none;
+		border: 1px solid $separator-color;
+		border-top-width: 0px;
+		padding: $groupPadding;
+		background-color: $background-color;
+
+		&:first-child {
+			border-top-width: 1px;
+			border-top-left-radius: $cornerRadius;
+			border-top-right-radius: $cornerRadius;
+		}
+
+		&:last-child {
+			border-bottom-left-radius: $cornerRadius;
+			border-bottom-right-radius: $cornerRadius;
+		}
+	}
+
+	.security_model_row {
+		display: flex;
+		align-items: center;
+		gap: $groupPadding;
+
+		.security_model_radio {
+
+		}
+
+		.security_model_explain {
+			color: color.mix($background-color, $foreground-color, 20%);
+
+			label {
+				font-weight: bold;
+				color: $foreground-color;
+				font-size: 1.2rem;
+			}
+
+			label+.tag {
+				margin-left: 0.5rem;
+			}
+		}
+	}
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;

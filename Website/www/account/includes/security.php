@@ -1,10 +1,13 @@
 <?php
 
-use BeaconAPI\v4\Authenticator;
+use BeaconAPI\v4\{Authenticator, User, UserCredential};
 
 $two_factor_enabled = BeaconCommon::GetGlobal('2FA Enabled');
 $authenticators = Authenticator::Search(['userId' => $user->UserId()], true);
 $has_authenticators = count($authenticators) > 0;
+$credentials = UserCredential::Search(['userId' => $user->UserId()], true);
+$securityModel = $user->SecurityModel();
+$securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? false;
 
 ?><div class="visual-group">
 	<h3>Change Password</h3>
@@ -77,6 +80,58 @@ $has_authenticators = count($authenticators) > 0;
 	<p class="text-right"><button id="replace-backup-codes-button" class="yellow">Replace Backup Codes</button></p>
 </div>
 <?php } ?>
+<?php if ($securityModelsEnabled && $securityModel !== User::SecurityModelAnonymous) { ?><div class="visual-group">
+	<h3>Security Model</h3>
+	<p>Your choice of security model affects how Beacon stores private data and features available to your account.</p>
+	<form id="security_model_form" action="" method="post">
+		<ul class="security_model_group">
+			<?php if ($securityModel === User::SecurityModelLegacy) { ?><li>
+				<div class="security_model_row">
+					<div class="security_model_radio"><div class="input-radio"><input type="radio" name="security_model" value="<?php echo htmlentities(User::SecurityModelLegacy); ?>" id="security_model_legacy" checked></div></div>
+					<div class="security_model_explain">
+						<p><label for="security_model_legacy">Legacy</label><span class="tag green">High Security</span></p>
+						<p>In Beacon's original security model, your account's private data is encrypted using your account password and other information, so that only you can access it. Nobody, not even the creator of Beacon, can access your private data. However, since your account password is required for decryption, features such as passkeys are unavailable for your account. If you lose or reset your password, all your encrypted data will be lost too. This includes passwords and server entries inside projects, as well as cloud data. <strong>Once you have switched off this model, it is gone for good. You will not be able to switch back to the legacy model</strong>.</p>
+						<p><span class="text-green bold">Pros</span>: Most familiar. Nobody can access your private data without your account password.<br>
+						<span class="text-red bold">Cons</span>: There are no passwordless logins, such as passkeys and 'sign in with' options. Forgetting your password means losing some data.</p>
+					</div>
+				</div>
+			</li><?php } ?>
+			<li>
+				<div class="security_model_row">
+					<div class="security_model_radio"><div class="input-radio"><input type="radio" name="security_model" value="<?php echo htmlentities(User::SecurityModelStandard); ?>" id="security_model_standard"<?php echo $securityModel === User::SecurityModelStandard ? ' checked' : '' ?>></div></div>
+					<div class="security_model_explain">
+						<p><label for="security_model_standard">Standard</label><span class="tag yellow">Reasonable Security</span></p>
+						<p>This model is the default for new Beacon accounts and encrypts private data using a key controlled by Beacon. This is formally known as 'encryption at rest' and is considered to provide a reasonable level of security. It allows you to use passwordless logins, such as passkeys and 'sign in with' options. A password reset will not result in any data loss.</p>
+						<p><span class="text-green bold">Pros</span>: Most convenient. Log in with a passkey or external account.<br>
+						<span class="text-red bold">Cons</span>: If Beacon were ever breached, your projects and cloud files could be decrypted, revealing sensitive information such as server admin passwords.</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="security_model_row">
+					<div class="security_model_radio"><div class="input-radio"><input type="radio" name="security_model" value="<?php echo htmlentities(User::SecurityModelEnhanced); ?>" id="security_model_enhanced"<?php echo $securityModel === User::SecurityModelEnhanced ? ' checked' : '' ?>></div></div>
+					<div class="security_model_explain">
+						<p><label for="security_model_enhanced">Enhanced</label><span class="tag green">Highest Security</span></p>
+						<p>This model encrypts your private data using a secret key provided by Beacon when you enable the model. <strong>You must keep this secret safe</strong>. You will need this secret when signing into the Beacon app. If it is lost, it will need to be replaced and all your private data will be lost.</p>
+						<p><span class="text-green bold">Pros</span>: Highly flexible. You can log in with a passkey or an external account, but you will need a password-like secret during the login process. Nobody can access your private data without your account secret.<br>
+						<span class="text-red bold">Cons</span>: Secrets are almost impossible to remember. Losing your secret means losing some data.</p>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<ul class="security_model_group">
+			<li>
+				<p><span class="bold">What is considered private data?</span><br>Beacon encrypts the following data:</p>
+				<ul>
+					<li>Cloud files, excluding projects. These include both custom and discovered mod data, as well as templates.</li>
+					<li>The &quot;Servers&quot; section of all projects.</li>
+					<li>Any text in &quot;Custom Config&quot; that is surrounded in <code>$$BeaconEncrypted$$</code> tags in all projects.</li>
+				</ul>
+				<p>A lost password (in legacy mode) or secret (in enhanced mode) would require discarding all private data.</p>
+			</li>
+		</ul>
+	</form>
+</div><?php } ?>
 <?php BeaconTemplate::StartModal('add-authenticator-modal'); ?>
 <div class="modal-content">
 	<div class="title-bar">Add Authenticator</div>

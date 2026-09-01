@@ -7,7 +7,8 @@ abstract class UserGenerator {
 	public static function CreateAnonymous(string $publicKeyPem, string $cloudKey): User {
 		return User::Create([
 			'publicKey' => $publicKeyPem,
-			'cloudKey' => $cloudKey
+			'cloudKey' => $cloudKey,
+			'securityModel' => User::SecurityModelAnonymous,
 		]);
 	}
 
@@ -16,25 +17,55 @@ abstract class UserGenerator {
 		$privateKeyPem = null;
 		BeaconEncryption::GenerateKeyPair($publicKeyPem, $privateKeyPem);
 		$encryptedCloudKey = BeaconEncryption::RSAEncrypt($publicKeyPem, User::GenerateCloudKey());
+		$securityModel = (BeaconCommon::GetGlobal('Enable Security Models') ?? false) ? User::SecurityModelStandard : User::SecurityModelLegacy;
 
-		$userProperties = array_merge([
+		$userProperties = [
 			'email' => $email,
 			'username' => $username,
 			'publicKey' => $publicKeyPem,
-			'cloudKey' => bin2hex($encryptedCloudKey)
-		], static::EncryptPrivateKey($password, $privateKeyPem));
+			'cloudKey' => bin2hex($encryptedCloudKey),
+			'securityModel' => $securityModel,
+		];
+		switch ($securityModel) {
+		case User::SecurityModelLegacy:
+			$userProperties = array_merge($userProperties, static::EncryptPrivateKey($password, $privateKeyPem));
+			break;
+		case User::SecurityModelStandard:
+			$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('PrivateKeySecret'));
+			$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
+			$userProperties['privateKey'] = bin2hex($encryptedPrivateKey);
+			break;
+		}
 
-		return User::Create($userProperties);
+		$user = null;
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		try {
+			$user = User::Create($userProperties);
+			if ($securityModel !== User::SecurityModelLegacy) {
+				UserCredential::SetUserPassword($user->UserId(), $password);
+			}
+		} catch (Exception $err) {
+			$database->Rollback();
+			throw $err;
+		}
+		$database->Commit();
+
+		return $user;
 	}
 
 	// Alias for ChangePassword with a null $oldPassword;
 	public static function ReplacePassword(User $user, string $password): void {
-		static::ChangePassword($user, null, $password, null, true);
+		static::ChangePassword($user, null, $password, null, $user->UsesModernSecurity() === false);
 	}
 
 	// With string $oldPassword: graceful password change, deletes all sessions except one
 	// With null $oldPassword: forceful password change, generates a new key, deletes all sessions, deletes all encrypted cloud files, untrusts all devices
 	public static function ChangePassword(User $user, string|null $oldPassword, string $newPassword, string|Session|null $retainSession = null, bool $regenerateKey = false): void {
+		if ($user->UsesModernSecurity()) {
+			throw new Exception('This process has not been updated for the new security models.');
+		}
+
 		$userProperties = [];
 		$regenerateKey = $regenerateKey || is_null($oldPassword);
 		$oldPrivateKey = null;
@@ -133,7 +164,7 @@ abstract class UserGenerator {
 
 	protected static function EncryptPrivateKey(string $password, string $privateKeyPem): array {
 		$privateKeySalt = BeaconEncryption::GenerateSalt();
-		$privateKeyIterations = rand(100000, 111111);
+		$privateKeyIterations = 450000;
 		$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
 		$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
 

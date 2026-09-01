@@ -189,7 +189,7 @@ class DeviceAuthFlow extends DatabaseObject {
 		}
 
 		$privateKey = null;
-		if ($this->HasScope(Application::kScopeUsersPrivateKeyRead)) {
+		if ($this->HasScope(Application::kScopeUsersPrivateKeyRead) && $user->SecurityModel() === User::SecurityModelLegacy) {
 			try {
 				if (is_string($userPassword)) {
 					$privateKey = $user->DecryptPrivateKey($userPassword);
@@ -206,7 +206,7 @@ class DeviceAuthFlow extends DatabaseObject {
 
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("UPDATE public.device_auth_flows SET user_id = $2, private_key_encrypted = $3 WHERE device_code = $1 AND expiration > CURRENT_TIMESTAMP;", $this->deviceCode, $user->UserId(), $privateKey);
+		$database->Query("UPDATE public.device_auth_flows SET user_id = $2, private_key_encrypted = $3, public_key = NULL WHERE device_code = $1 AND expiration > CURRENT_TIMESTAMP;", $this->deviceCode, $user->UserId(), $privateKey);
 		$database->Commit();
 
 		$this->userId = $user->UserId();
@@ -240,6 +240,10 @@ class DeviceAuthFlow extends DatabaseObject {
 		$database->Commit();
 
 		return $session;
+	}
+
+	public function SupportedExperiences(): int {
+		return 0;
 	}
 }
 

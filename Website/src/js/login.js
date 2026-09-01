@@ -141,6 +141,8 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 	const loginRecoverButton = document.getElementById('login_recover_button');
 	const loginCancelButton = document.getElementById('login_cancel_button');
 	const loginActionButton = document.getElementById('login_action_button');
+	const loginPasskeysSupported = document.getElementById('login_passkeys_supported');
+	const loginUsePasskeyButton = document.getElementById('login_use_passkey_button');
 
 	const totpForm = document.getElementById('login_form_totp');
 	const totpCodeField = document.getElementById('totp_code_field');
@@ -210,6 +212,65 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 	}
 	if (loginRememberCheck) {
 		loginRememberCheck.checked = storedRemember;
+	}
+	if (loginPasskeysSupported) {
+		const startPasskeySignin = (optional) => {
+			return new Promise((resolve, reject) => {
+				BeaconWebRequest.get('/account/auth/passkeyOptions').then((response) => {
+					const options = PublicKeyCredential.parseRequestOptionsFromJSON(JSON.parse(response.body));
+
+					const abortController = new AbortController();
+					navigator.credentials.get({
+						publicKey: options,
+						signal: abortController.signal,
+						mediation: optional ? 'conditional' : 'required',
+					}).then((credential) => {
+						if (!credential) {
+							reject({reason: 'Sorry, your browser did not return a valid passkey. This usually happens if there are multiple valid passkeys.', isSiteError: false});
+						} else {
+							resolve();
+						}
+					}).catch(() => {
+						reject({reason: 'Could not get credentials', isSiteError: false});
+					});
+				}).catch(() => {
+					reject({reason: 'Could not get passkey options', isSiteError: true});
+				});
+			});
+		};
+
+		if (window.PublicKeyCredential && PublicKeyCredential.getClientCapabilities) {
+			PublicKeyCredential.getClientCapabilities().then((capabilities) => {
+				if (capabilities.conditionalGet === true && capabilities.passkeyPlatformAuthenticator === true) {
+					const originalCaption = loginActionButton.value;
+					loginActionButton.value = 'Login With Password';
+					loginPasskeysSupported.classList.remove('hidden');
+					startPasskeySignin(true).catch((reason) => {
+						console.log(reason);
+						loginActionButton.value = originalCaption;
+						loginPasskeysSupported.classList.add('hidden');
+					});
+				}
+			}).catch(() => {
+				console.log('Passkeys not supported');
+			});
+		}
+
+		if (loginUsePasskeyButton) {
+			loginUsePasskeyButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				ev.target.disabled = true;
+
+				startPasskeySignin(false).then(() => {
+					ev.target.disabled = true;
+				}).catch(({reason, isSiteError}) => {
+					ev.target.disabled = false;
+					if (isSiteError) {
+						BeaconDialog.show('Passkey Login Failed', reason);
+					}
+				});
+			});
+		}
 	}
 	if (loginForm || totpForm) {
 		const loginFunction = (ev) => {
@@ -304,7 +365,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 						}
 						switch(code) {
 						case 'CHALLENGE_TIMEOUT':
-							loginErrorExplanation = 'The login process timed out. Please try again.';
+							loginErrorExplanation = 'The login process timed out. Please close this tab and start over.';
 							break;
 						case 'COMPLETED':
 							loginErrorExplanation = 'This authorization has already been completed. Please start again.';

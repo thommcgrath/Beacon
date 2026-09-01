@@ -39,11 +39,27 @@ function handleRequest(array $context): Response {
 		$userInfo = $user->jsonSerialize();
 
 		$session = Core::Session();
-		$privateKey = $session->PrivateKeyEncrypted();
-		if (is_null($privateKey) === false) {
-			$userInfo['privateKey'] = json_decode($privateKey, true);
+		if ($session->HasScope(Application::kScopeUsersPrivateKeyRead)) {
+			$userInfo['securityModel'] = $user->SecurityModel();
+			$userInfo['cloudKey'] = base64_encode(hex2bin($user->CloudKey()));
+
+			switch ($user->SecurityModel()) {
+			case User::SecurityModelLegacy:
+				$privateKey = $session->PrivateKeyEncrypted();
+				if (is_null($privateKey) === false) {
+					$userInfo['privateKey'] = json_decode($privateKey, true);
+				}
+				break;
+			case User::SecurityModelEnhanced:
+				$userInfo['privateKey'] = $user->PrivateKey();
+				$userInfo['privateKeySalt'] = $user->PrivateKeySalt();
+				$userInfo['privateKeyIterations'] = $user->PrivateKeyIterations();
+				break;
+			case User::SecurityModelStandard:
+				$userInfo['privateKey'] = $user->DecryptPrivateKey('');
+				break;
+			}
 		}
-		$userInfo['cloudKey'] = base64_encode(hex2bin($user->CloudKey()));
 	} else {
 		// don't use the regular method that includes lots of values
 		$userInfo = [

@@ -190,7 +190,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		}
 
 		$privateKey = null;
-		if ($this->HasScope(Application::kScopeUsersPrivateKeyRead)) {
+		if ($this->HasScope(Application::kScopeUsersPrivateKeyRead) && $user->SecurityModel() === User::SecurityModelLegacy) {
 			try {
 				if (is_string($userPassword)) {
 					$privateKey = $user->DecryptPrivateKey($userPassword);
@@ -209,7 +209,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		$codeHash = static::PrepareCodeHash($this->applicationId, $this->Application()->Secret(), $this->callback, $code);
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("UPDATE public.application_auth_flows SET code_hash = $2, user_id = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL, private_key_encrypted = $4 WHERE flow_id = $1 AND expiration > CURRENT_TIMESTAMP AND code_hash IS NULL;", $this->flowId, $codeHash, $user->UserId(), $privateKey);
+		$database->Query("UPDATE public.application_auth_flows SET code_hash = $2, user_id = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL, private_key_encrypted = $4, public_key = NULL WHERE flow_id = $1 AND expiration > CURRENT_TIMESTAMP AND code_hash IS NULL;", $this->flowId, $codeHash, $user->UserId(), $privateKey);
 		$database->Commit();
 
 		$this->codeHash = $codeHash;
@@ -261,6 +261,10 @@ class ApplicationAuthFlow extends DatabaseObject {
 			$applicationId = "{$applicationId}.{$applicationSecret}";
 		}
 		return BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$applicationId}.{$redirectUri}.{$code}", true));
+	}
+
+	public function SupportedExperiences(): int {
+		return Application::kExperienceAppWebView;
 	}
 }
 

@@ -5,14 +5,33 @@ abstract class BeaconEncryption {
 	const SymmetricVersion = 2;
 
 	public static function GenerateSalt(): string {
-		return random_bytes(128);
+		return random_bytes(16);
 	}
 
 	public static function GenerateKey(int $bits = 256): string {
 		return random_bytes($bits / 8);
 	}
 
+	public static function GeneratePasswordHash(string $password): string {
+		$algo = BeaconCommon::GetGlobal('PasswordHashAlgo');
+		$options = BeaconCommon::GetGlobal('PasswordHashOptions');
+		$pepper = BeaconCommon::GetGlobal('PasswordHashPepper');
+
+		$peppered = hash_hmac('sha256', $password, $pepper);
+		return password_hash($peppered, $algo, $options);
+	}
+
+	public static function VerifyPasswordHash(string $password, string $hash): bool {
+		$pepper = BeaconCommon::GetGlobal('PasswordHashPepper');
+
+		$peppered = hash_hmac('sha256', $password, $pepper);
+		return password_verify($peppered, $hash);
+	}
+
 	public static function HashFromPassword(string $password, string $salt, int $iterations): string {
+		// This is ok for the key size to be greater than necessary. AES-256 maxes out at a 256 bit / 32 byte key.
+		// Any length greater will simply be truncated. So use the 56 byte key size for the legacy blowfish
+		// encryption and it'll be fine. AES will chop it down later anyway.
 		return hash_pbkdf2('sha512', $password, $salt, $iterations, 56, true);
 	}
 
@@ -242,6 +261,38 @@ abstract class BeaconEncryption {
 			$bytes[$idx] = chr($byte);
 		}
 		return implode('', $bytes);
+	}
+
+	public static function GenerateTOTP(string $secret, bool $rawSecret, int|null $timestamp = null): string {
+		if (is_null($timestamp)) {
+			$timestamp = time();
+		}
+
+		if ($rawSecret === false) {
+			$secret = BeaconCommon::Base32Decode($secret);
+		}
+
+		$timestamp = floor($timestamp / 30);
+		$binary = pack('N*', 0) . pack('N*', $timestamp);
+		$hash = hash_hmac('sha1', $binary, $secret, true);
+		$offset = ord($hash[19]) & 0xf;
+		$code = (((ord($hash[$offset]) & 0x7f) << 24) | ((ord($hash[$offset + 1]) & 0xff) << 16) | ((ord($hash[$offset + 2]) & 0xff) << 8) | (ord($hash[$offset + 3]) & 0xff)) % pow(10, 6);
+		return str_pad($code, 6, '0', STR_PAD_LEFT);
+	}
+
+	public static function TestTOTP(string $secret, bool $rawSecret, string $code): bool {
+		if (strlen($code) !== 6) {
+			return false;
+		}
+
+		if ($rawSecret === false) {
+			$secret = BeaconCommon::Base32Decode($secret);
+		}
+
+		$now = time();
+		$future = $now + 30;
+		$past = $now - 30;
+		return ($code === static::GenerateTOTP($secret, true, $now) || $code === static::GenerateTOTP($secret, true, $past) || $code === static::GenerateTOTP($secret, true, $future));
 	}
 }
 

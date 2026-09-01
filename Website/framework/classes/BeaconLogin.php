@@ -11,7 +11,12 @@ class BeaconLogin {
 		$deviceId = BeaconCommon::DeviceId();
 		$session = BeaconCommon::GetSession();
 		$flowId = $params['flowId'] ?? null;
+		$user = null;
+		if (is_null($session) === false) {
+			$user = $session->User();
+		}
 
+		$passkeysEnabled = BeaconCommon::GetGlobal('Enable Passkeys') ?? false;
 		$params['apiDomain'] = BeaconCommon::APIDomain();
 		$params['deviceId'] = $deviceId;
 		$params['flowRequiresPassword'] = false;
@@ -31,21 +36,22 @@ class BeaconLogin {
 			}
 			$app = $flow->Application();
 
-			if (($app->Experience() & Application::kExperienceAppWebView) === Application::kExperienceAppWebView) {
+			if ((($app->Experience() & $flow->SupportedExperiences()) & Application::kExperienceAppWebView) === Application::kExperienceAppWebView) {
 				BeaconTemplate::SetVar('No Navigation', true);
 				$params['useAppCancelBehavior'] = true;
 				$params['withCancel'] = true;
 			}
 		}
 
-		if (is_null($session) === false) {
+		if (is_null($user) === false) {
 			if (is_null($flow)) {
 				// We're not authorizing an app, so there's nothing to do here.
 				BeaconCommon::Redirect($params['return']);
 				return;
 			}
 
-			$params['challenge'] = $flow->NewChallenge($deviceId, $session->User(), $params['challengeExpiration']);
+			$params['challenge'] = $flow->NewChallenge($deviceId, $user, $params['challengeExpiration']);
+			$params['flowRequiresPassword'] = $flow->HasScope(Application::kScopeUsersPrivateKeyRead) && $user->UsesModernSecurity() === false;
 		} else {
 			$challengeSecret = Application::Fetch(BeaconCommon::BeaconWebsiteAppId)->Secret();
 			$challengeRaw = $deviceId . $params['challengeExpiration'] . $challengeSecret;
@@ -53,12 +59,6 @@ class BeaconLogin {
 				$challengeRaw .= $flow->FlowId();
 			}
 			$params['challenge'] = base64_encode(hash('sha3-512', $challengeRaw, true));
-		}
-
-		$flowRequiresPassword = false;
-		if (is_null($flow) === false) {
-			$flowRequiresPassword = $flow->HasScope(Application::kScopeUsersPrivateKeyRead);
-			$params['flowRequiresPassword'] = $flowRequiresPassword;
 		}
 
 		BeaconTemplate::StartScript();
@@ -88,7 +88,7 @@ class BeaconLogin {
 			<?php
 			return;
 		} elseif (is_null($session) === false && is_null($flow) === false) {
-			$user = $session->User();
+			$requestedPrivateKey = $flow->HasScope(Application::kScopeUsersPrivateKeyRead);
 			?><div id="page_authorize">
 				<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services as <?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span>?</h3>
 				<div class="app_id">
@@ -100,7 +100,7 @@ class BeaconLogin {
 				<ul>
 					<?php
 
-					if ($flowRequiresPassword) {
+					if ($requestedPrivateKey) {
 						echo '<li>Decrypt user files and project data.</li>';
 					}
 
@@ -190,7 +190,7 @@ class BeaconLogin {
 				</ul>
 				<p class="explanation"><?php echo htmlentities($app->Name()); ?> will <strong>not</strong> be able to:</p>
 				<ul>
-					<?php if ($flowRequiresPassword === false) { ?><li>Decrypt user files and project data.</li><?php } ?>
+					<?php if ($requestedPrivateKey === false) { ?><li>Decrypt user files and project data.</li><?php } ?>
 					<li>Know your account email or password.</li>
 					<li><?php
 
@@ -212,6 +212,9 @@ class BeaconLogin {
 						'Divide by zero.',
 						'Sneeze.',
 						'Stop the army of cloned grandmothers threatening Norway.',
+						'Give you that raise you wanted.',
+						'Eat a banjo.',
+						'Dochvam Damugh \'e\' yImev.',
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);
@@ -263,13 +266,13 @@ class BeaconLogin {
 <div id="page_login" class="scriptonly">
 	<form id="login_form_intro" action="/account/noscript" method="post">
 		<?php if (is_null($user) === false) { ?>
-		<p class="floating-label"><input class="text-field" type="email" name="username" placeholder="Username" id="login_username_field" autocomplete="username" value="<?php echo htmlentities($user->Username(true)); ?>" required readonly><label for="login_username_field">Username</label></p>
+		<p class="floating-label"><input class="text-field" type="email" name="username" placeholder="Username" id="login_username_field" autocomplete="username webauthn" autofocus value="<?php echo htmlentities($user->Username(true)); ?>" required readonly><label for="login_username_field">Username</label></p>
 		<?php } else { ?>
-		<p class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email" required><label for="login_email_field">E-Mail Address</label></p>
+		<p class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email webauthn" autofocus required><label for="login_email_field">E-Mail Address</label></p>
 		<?php } ?>
 		<p class="floating-label"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></p>
 		<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
-		<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button" class="red">Cancel</button></li><?php } ?></ul>
+		<ul class="buttons"><li><input id="login_action_button" type="submit" value="Login"></li><?php if ($passkeysEnabled) { ?><li id="login_passkeys_supported" class="hidden"><button id="login_use_passkey_button">Login With Passkey</button></li><?php } ?><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button" class="red">Cancel</button></li><?php } ?></ul>
 	</form>
 </div>
 <div id="page_totp" class="scriptonly">
