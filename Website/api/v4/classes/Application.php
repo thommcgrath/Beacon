@@ -31,6 +31,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 	const kScopeSentinelRead = 'sentinel:read';
 	const kScopeSentinelWrite = 'sentinel:write';
 	const kScopeUsersBilling = 'users.billing';
+	const kScopeUsersCredentials = 'users.credentials';
 
 	const kExperienceAppWebView = 1;
 
@@ -52,6 +53,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeSentinelRead,
 			self::kScopeSentinelWrite,
 			self::kScopeUsersBilling,
+			self::kScopeUsersCredentials,
 		];
 	}
 
@@ -67,6 +69,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeAppsDelete,
 			self::kScopeAuthPublicKey,
 			self::kScopeUsersBilling,
+			self::kScopeUsersCredentials,
 		];
 	}
 

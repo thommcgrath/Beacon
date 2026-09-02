@@ -15,6 +15,7 @@ class User extends DatabaseObject implements JsonSerializable {
 	const VerifyWithAuthenticators = 1;
 	const VerifyWithBackupCodes = 2;
 	const VerifyWithTrustedDevices = 4;
+	const VerifyOptionReplaceUsedCode = 8;
 	const VerifyAny = 7;
 
 	const SecurityModelAnonymous = 'Anonymous';
@@ -355,102 +356,33 @@ class User extends DatabaseObject implements JsonSerializable {
 	/* !Two Factor Authentication */
 
 	public function Is2FAProtected(): bool {
-		return Authenticator::UserIdHasAuthenticators($this->userId);
+		return Authenticator::UserHasAuthenticators($this);
 	}
 
 	// $code may be a TOTP, backup code, or trusted device id
 	public function Verify2FACode(string $code, bool $verifyOnly = false, int $verificationOptions = self::VerifyAny): bool {
-		$authenticators = Authenticator::Search(['userId' => $this->userId], true);
-		if (count($authenticators) === 0) {
-			// If there are no authenticators, the account is not 2FA protected
-			return false;
+		$options = 0;
+		if ($verifyOnly === false) {
+			$options = $options | Authenticator::VerifyOptionReplaceUsedCode;
 		}
-
-		// Try regular authenticators first
-		if (($verificationOptions & self::VerifyWithAuthenticators) === self::VerifyWithAuthenticators) {
-			foreach ($authenticators as $authenticator) {
-				if ($authenticator->TestCode($code)) {
-					return true;
-				}
-			}
-		}
-
-		// If it's a UUID, it's obviously not a backup code
 		if (($verificationOptions & self::VerifyWithTrustedDevices) === self::VerifyWithTrustedDevices) {
-			if (BeaconCommon::IsUUID($code) === true) {
-				return $this->IsDeviceTrusted($code);
-			}
+			$options = $options | Authenticator::VerifyOptionAllowTrustedDevices;
 		}
-
-		// Finally, try backup codes
+		if (($verificationOptions & self::VerifyWithAuthenticators) === self::VerifyWithAuthenticators) {
+			$options = $options | Authenticator::VerifyOptionAllowTOTP;
+		}
 		if (($verificationOptions & self::VerifyWithBackupCodes) === self::VerifyWithBackupCodes) {
-			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT * FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
-			if ($rows->RecordCount() === 1) {
-				if ($verifyOnly === false) {
-					$database->BeginTransaction();
-					$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
-					$newCode = BeaconCommon::GenerateRandomKey(6);
-					$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->userId, $newCode);
-					$database->Commit();
-					if (is_null($this->backupCodes) === false) {
-						$this->backupCodes = null;
-						$this->Get2FABackupCodes(); // refreshes the cache
-					}
-				}
-				return true;
-			}
+			$options = $options | Authenticator::VerifyOptionAllowBackupCodes;
 		}
-
-		return false;
-	}
-
-	// Returns true when there are changes that need to be committed
-	public function Create2FABackupCodes(): bool {
-		// Cache the current codes
-		$this->Get2FABackupCodes();
-
-		if (count($this->backupCodes) >= 10) {
-			return false;
-		}
-
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		while (count($this->backupCodes) < 10) {
-			$code = BeaconCommon::GenerateRandomKey(6);
-			$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->userId, $code);
-			$this->backupCodes[] = $code;
-		}
-		$database->Commit();
-		return true;
+		return Authenticator::VerifyCode($this, $code, $options);
 	}
 
 	public function Get2FABackupCodes(): array {
-		if (is_null($this->backupCodes)) {
-			$this->backupCodes = [];
-			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT code FROM public.user_backup_codes WHERE user_id = $1;', $this->userId);
-			while (!$rows->EOF()) {
-				$this->backupCodes[] = $rows->Field('code');
-				$rows->MoveNext();
-			}
-		}
-		return $this->backupCodes;
+		return Authenticator::GetBackupCodes($this);
 	}
 
-	public function Clear2FABackupCodes(): void {
-		$codes = $this->Get2FABackupCodes();
-
-		if (count($codes) === 0) {
-			return;
-		}
-
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1;', $this->userId);
-		$database->Commit();
-
-		$this->backupCodes = [];
+	public function Replace2FABackupCodes(): array {
+		return Authenticator::ReplaceBackupCodes($this);
 	}
 
 	/* !Cloud Files */

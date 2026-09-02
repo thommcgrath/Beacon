@@ -342,7 +342,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 					url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
 					url = url.replace('{{temporary}}', (loginRemember === false ? 'true' : 'false'));
 
-					if (loginParams.flowRequiresPassword && sessionStorage) {
+					if (loginParams.flowRequiresPassword && sessionStorage && loginParams.securityModel === 'Legacy') {
 						sessionStorage.setItem('account_password', sessionBody.password);
 					}
 

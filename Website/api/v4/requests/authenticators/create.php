@@ -1,6 +1,10 @@
 <?php
 
-use BeaconAPI\v4\{Authenticator, Core, Response, User};
+use BeaconAPI\v4\{Application, Authenticator, Core, Response, User};
+
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeUsersCredentials;
+}
 
 function handleRequest(array $context): Response {
 	$user = Core::User();
@@ -16,6 +20,7 @@ function handleRequest(array $context): Response {
 		$type = $objectData['type'];
 		$nickname = $objectData['nickname'];
 		$metadata = $objectData['metadata'];
+		$authenticator = null;
 
 		if ($user->Is2FAProtected()) {
 			$authCode = $objectData['password'] ?? '';
@@ -35,35 +40,25 @@ function handleRequest(array $context): Response {
 				BeaconAPI::ReplyError('For TOTP authenticators, metadata must include the secret.', $metadata, 400);
 			}
 
-			if (isset($metadata['setup']) === false ||  empty($metadata['setup'])) {
-				$setupId = $user->Username() . '#' . $user->Suffix() . ' (' . $authenticatorId . ')';
-				$setup = 'otpauth://totp/' . urlencode('Beacon:' . $setupId);
-				$setup .= '?secret=' . urlencode($metadata['secret']);
-				$setup .= '&issuer=Beacon';
-				$metadata['setup'] = $setup;
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			try {
+				$authenticator = Authenticator::CreateTOTP($user, $metadata['secret'], $nickname);
+			} catch (Exception $err) {
+				$database->Rollback();
+				return Response::NewJsonError($err->getMessage(), $objectData, 400);
 			}
+			if ($authenticator->TestCode($objectData['verificationCode']) === false) {
+				$database->Rollback();
+				return Response::NewJsonError('Incorrect verification code.', $objectData, 400);
+			}
+			$database->Commit();
 
 			break;
 		default:
 			return Response::NewJsonError('Unknown authenticator type.', $objectData, 400);
 			break;
 		}
-
-		$objectData['userId'] = $userId;
-		$objectData['metadata'] = json_encode($objectData['metadata']);
-		$objectData['dateAdded'] = time();
-
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$transactionStarted = true;
-		$authenticator = Authenticator::Create($objectData);
-		if ($authenticator->TestCode($objectData['verificationCode']) === false) {
-			$database->Rollback();
-			return Response::NewJsonError('Incorrect verification code.', $objectData, 400);
-		}
-		$user->Create2FABackupCodes();
-		$database->Commit();
-		$transactionStarted = false;
 
 		return Response::NewJson($authenticator, 201);
 	} catch (Exception $err) {

@@ -14,6 +14,9 @@ class BeaconLogin {
 		$user = null;
 		if (is_null($session) === false) {
 			$user = $session->User();
+			$params['securityModel'] = $user->SecurityModel();
+		} else {
+			$params['securityModel'] = null;
 		}
 
 		$passkeysEnabled = BeaconCommon::GetGlobal('Enable Passkeys') ?? false;
@@ -51,7 +54,7 @@ class BeaconLogin {
 			}
 
 			$params['challenge'] = $flow->NewChallenge($deviceId, $user, $params['challengeExpiration']);
-			$params['flowRequiresPassword'] = $flow->HasScope(Application::kScopeUsersPrivateKeyRead) && $user->UsesModernSecurity() === false;
+			$params['flowRequiresPassword'] = $flow->HasScope(Application::kScopeUsersPrivateKeyRead) && ($user->SecurityModel() === User::SecurityModelLegacy || $user->SecurityModel() === User::SecurityModelEnhanced);
 		} else {
 			$challengeSecret = Application::Fetch(BeaconCommon::BeaconWebsiteAppId)->Secret();
 			$challengeRaw = $deviceId . $params['challengeExpiration'] . $challengeSecret;
@@ -224,13 +227,22 @@ class BeaconLogin {
 				<ul class="buttons"><li><button class="default" id="authorize_action_button">Allow</button></li><li><button id="authorize_cancel_button" class="red">Cancel</button></li><li><button id="authorize_switch_button">Switch User</button></li></ul>
 			</div><?php
 
+			$authDialogTitle = 'Confirm Password';
+			$authDialogMessage = 'To authorize this app, please confirm your password.';
+			$authDialogFieldLabel = 'Password';
+			if ($user->SecurityModel() === User::SecurityModelEnchanced) {
+				$authDialogTitle = 'Enter Account Secret';
+				$authDialogMessage = 'To authorize this app, please enter your account secret.';
+				$authDialogFieldLabel = 'Secret';
+			}
+
 			BeaconTemplate::StartModal('authorizePasswordDialog');
 			?>
 			<div class="modal-content">
-				<div class="title-bar">Confirm Password</div>
+				<div class="title-bar"><?php echo htmlentities($authDialogTitle) ?></div>
 				<div class="content">
-					<p>To authorize this app, please confirm your password.</p>
-					<p><div class="floating-label" id="authorizePasswordFieldGroup"><input type="password" id="authorizePasswordField" placeholder="Confirm Password" class="text-field" autocomplete="current-password"><label for="authorizePasswordField">Confirm Password</label></div></p>
+					<p><?php echo htmlentities($authDialogMessage); ?></p>
+					<p><div class="floating-label" id="authorizePasswordFieldGroup"><input type="password" id="authorizePasswordField" placeholder="<?php echo htmlentities($authDialogFieldLabel); ?>" class="text-field" autocomplete="current-password"><label for="authorizePasswordField"><?php echo htmlentities($authDialogFieldLabel); ?></label></div></p>
 				</div>
 				<div class="button-bar">
 					<div class="left"&nbsp;</div>

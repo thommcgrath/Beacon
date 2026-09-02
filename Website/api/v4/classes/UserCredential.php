@@ -4,6 +4,10 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconEncryption, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
 
 class UserCredential extends DatabaseObject implements JsonSerializable {
+	use MutableDatabaseObject {
+		PreparePropertyValue as protected MutableDatabaseObjectPreparePropertyValue;
+	}
+
 	const TypePassword = 'Password';
 	const TypePasskey = 'Passkey';
 
@@ -33,7 +37,7 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('dateAdded', ['columnName' => 'date_added', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('dateModified', ['columnName' => 'date_modified', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
-			new DatabaseObjectProperty('metadata'),
+			new DatabaseObjectProperty('metadata', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 		]);
 	}
 
@@ -58,6 +62,57 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 		}
 
 		$parameters->AddFromFilter($schema, $filters, 'userId');
+		$parameters->AddFromFilter($schema, $filters, 'type');
+	}
+
+	public static function GetPasswordRecord(string $userId): ?static {
+		$records = static::Search(['userId' => $userId, 'type' => self::TypePassword], true);
+		if (count($records) === 1) {
+			return $records[0];
+		} else {
+			return null;
+		}
+	}
+
+	public function CredentialId(): string {
+		return $this->credentialId;
+	}
+
+	public function UserId(): string {
+		return $this->userId;
+	}
+
+	public function Type(): string {
+		return $this->type;
+	}
+
+	public function Name(): string {
+		return $this->name;
+	}
+
+	public function DateAdded(): float {
+		return $this->dateAdded;
+	}
+
+	public function DateModified(): float {
+		return $this->dateModified;
+	}
+
+	public function Metadata(): array {
+		return $this->metadata;
+	}
+
+	public function SetMetadata(array $metadata): void {
+		$this->SetProperty('metadata', $metadata);
+	}
+
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value, array $otherProperties): mixed {
+		switch ($definition->PropertyName()) {
+		case 'metadata':
+			return json_encode($value);
+		default:
+			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value, $otherProperties);
+		}
 	}
 
 	public static function SetUserPassword(string $userId, string $password): static {
@@ -74,7 +129,9 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 					'type' => $authRows->Field('type'),
 					'nickname' => $authRows->Field('nickname'),
 					'dateAdded' => floatval($authRows->Field('date_added')),
-					'secret' => $authROws->Field('secret'),
+					'metadata' => [
+						'secret' => $authRows->Field('secret')
+					],
 				];
 				$authRows->MoveNext();
 			}
@@ -105,7 +162,7 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 		return static::Fetch($credentialId);
 	}
 
-	public static function VerifyUserPassword(string $userId, string $password, array &$authenticators = null, array &$backupCodes = null): bool {
+	public static function VerifyUserPassword(string $userId, string $password): bool {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT metadata FROM public.user_credentials WHERE user_id = $1 AND type = $2;', $userId, self::TypePassword);
 		if ($rows->RecordCount() === 0) {
@@ -116,22 +173,7 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 		if (BeaconEncryption::VerifyPasswordHash($password, $hash) === false) {
 			return false;
 		}
-
-		$authenticators = $metadata['authenticators'] ?? [];
-		$backupCodes = $metadata['backupCodes'] ?? [];
 		return true;
-	}
-
-	public static function Get2FADetails(string $userId, array &$authenticators, array &$backupCodes): bool {
-		$rows = $database->Query('SELECT metadata FROM public.user_credentials WHERE user_id = $1 AND type = $2;', $userId, self::TypePassword);
-		if ($rows->RecordCount() === 0) {
-			return false;
-		}
-
-		$metadata = json_decode($rows->Field('metadata'), true);
-		$authenticators = $metadata['authenticators'] ?? [];
-		$backupCodes = $metadata['backupCodes'] ?? [];
-		return count($authenticators) > 0;
 	}
 }
 

@@ -2,9 +2,9 @@
 
 use BeaconAPI\v4\{Authenticator, User, UserCredential};
 
-$two_factor_enabled = BeaconCommon::GetGlobal('2FA Enabled');
-$authenticators = Authenticator::Search(['userId' => $user->UserId()], true);
-$has_authenticators = count($authenticators) > 0;
+$twoFactorEnabled = BeaconCommon::GetGlobal('2FA Enabled');
+$authenticators = Authenticator::FetchForUser($user);
+$hasAuthenticators = count($authenticators) > 0;
 $credentials = UserCredential::Search(['userId' => $user->UserId()], true);
 $securityModel = $user->SecurityModel();
 $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? false;
@@ -45,16 +45,17 @@ $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? fa
 		<p class="text-right"><input type="submit" id="password_action_button" value="Save Password" disabled></p>
 	</form>
 </div>
-<?php if ($has_authenticators || $two_factor_enabled) { ?>
+<?php if ($hasAuthenticators || $twoFactorEnabled) { ?>
 <div class="visual-group">
 	<h3>Two Step Authentication</h3>
 	<?php
 
-	if ($has_authenticators) {
+	if ($hasAuthenticators) {
 		echo '<p>Two step authentication is <strong>enabled</strong> for your account. You will need an authenticator code to sign in on an untrusted device or to change or reset your password.</p>';
 		echo '<table class="generic" id="authenticators-table"><thead><tr><th>Nickname</th><th class="low-priority">Date Added (<span id="authenticators_time_zone_name">UTC</span>)</th><th class="min-width">Actions</th></tr></thead><tbody>';
 		foreach ($authenticators as $authenticator) {
-			echo '<tr id="authenticator-' . htmlentities($authenticator->AuthenticatorId()) . '"><td>' . htmlentities($authenticator->Nickname()) . '<div class="row-details">Date Added: <time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></div></td><td class="low-priority"><time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></td><td class="min-width"><button beacon-authenticator-id="' . htmlentities($authenticator->AuthenticatorId()) . '" beacon-authenticator-name="' . html_entity_decode($authenticator->Nickname()) . '" class="delete_authenticator_button destructive red">Delete</a></td></tr>';
+			$dateAdded = (int)$authenticator->DateAdded();
+			echo '<tr id="authenticator-' . htmlentities($authenticator->AuthenticatorId()) . '"><td>' . htmlentities($authenticator->Nickname()) . '<div class="row-details">Date Added: <time datetime="' . date('c', $dateAdded) . '">' . date('M jS, Y \a\t g:i A e', $dateAdded) . '</time></div></td><td class="low-priority"><time datetime="' . date('c', $dateAdded) . '">' . date('M jS, Y \a\t g:i A e', $dateAdded) . '</time></td><td class="min-width"><button beacon-authenticator-id="' . htmlentities($authenticator->AuthenticatorId()) . '" beacon-authenticator-name="' . html_entity_decode($authenticator->Nickname()) . '" class="delete_authenticator_button destructive red">Delete</a></td></tr>';
 		}
 		echo '</table></table>';
 	} else {
@@ -64,7 +65,7 @@ $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? fa
 	?>
 	<p class="text-right"><button id="add-authenticator-button">Add Authenticator</button></p>
 </div>
-<?php if ($has_authenticators) { ?>
+<?php if ($hasAuthenticators) { ?>
 <div class="visual-group">
 	<h3>Backup Codes</h3>
 	<p>Here are your backup codes. Keep them in a safe place. If there is a problem with your authenticator, you can use a backup code instead. Once used, a backup code is invalidated and replaced with a new code.</p>

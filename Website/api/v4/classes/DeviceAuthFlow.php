@@ -189,7 +189,7 @@ class DeviceAuthFlow extends DatabaseObject {
 		}
 
 		$privateKey = null;
-		if ($this->HasScope(Application::kScopeUsersPrivateKeyRead) && $user->SecurityModel() === User::SecurityModelLegacy) {
+		if ($this->HasScope(Application::kScopeUsersPrivateKeyRead) && $user->SecurityModel() !== User::SecurityModelStandard) {
 			try {
 				if (is_string($userPassword)) {
 					$privateKey = $user->DecryptPrivateKey($userPassword);

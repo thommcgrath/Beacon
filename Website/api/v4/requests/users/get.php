@@ -45,15 +45,11 @@ function handleRequest(array $context): Response {
 
 			switch ($user->SecurityModel()) {
 			case User::SecurityModelLegacy:
+			case User::SecurityModelEnhanced:
 				$privateKey = $session->PrivateKeyEncrypted();
 				if (is_null($privateKey) === false) {
 					$userInfo['privateKey'] = json_decode($privateKey, true);
 				}
-				break;
-			case User::SecurityModelEnhanced:
-				$userInfo['privateKey'] = $user->PrivateKey();
-				$userInfo['privateKeySalt'] = $user->PrivateKeySalt();
-				$userInfo['privateKeyIterations'] = $user->PrivateKeyIterations();
 				break;
 			case User::SecurityModelStandard:
 				$userInfo['privateKey'] = $user->DecryptPrivateKey('');

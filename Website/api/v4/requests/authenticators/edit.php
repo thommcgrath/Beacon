@@ -1,6 +1,10 @@
 <?php
 
-use BeaconAPI\v4\{Authenticator, Core, Response};
+use BeaconAPI\v4\{Application, Authenticator, Core, Response};
+
+function setupAuthParameters(string &$authScheme, array &$requiredScopes, bool $editable): void {
+	$requiredScopes[] = Application::kScopeUsersCredentials;
+}
 
 function handleRequest(array $context): Response {
 	$userId = Core::UserId();

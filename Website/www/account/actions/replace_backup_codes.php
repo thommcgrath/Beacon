@@ -18,12 +18,7 @@ header('Expires: 0');
 http_response_code(500);
 
 $user = $session->User();
-$database = BeaconCommon::Database();
-$database->BeginTransaction();
-$user->Clear2FABackupCodes();
-$user->Create2FABackupCodes();
-$database->Commit();
-$codes = $user->Get2FABackupCodes();
+$codes = $user->Replace2FABackupCodes();
 
 http_response_code(200);
 echo json_encode(['codes' => $codes], JSON_PRETTY_PRINT);

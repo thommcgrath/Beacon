@@ -44,15 +44,6 @@ BeaconAPI::RegisterRoutes(
 			'GET' => 'ark/mod/get',
 			'DELETE' => 'ark/mod/delete'
 		],
-		'/authenticator' => [
-			'POST' => 'authenticator/create',
-			'GET' => 'authenticator/list'
-		],
-		'/authenticator/{authenticator_id}' => [
-			'POST' => 'authenticator/edit',
-			'GET' => 'authenticator/get',
-			'DELETE' => 'authenticator/delete'
-		],
 		'/challenge/{user_id}' => [
 			'GET' => 'challenge'
 		],
