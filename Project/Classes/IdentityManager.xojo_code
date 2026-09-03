@@ -181,27 +181,38 @@ Protected Class IdentityManager
 		    Var SignatureFields As String = Beacon.GenerateJson(SignatureDetails.Value("fields"), False)
 		    Var Licenses As String = Beacon.GenerateJSON(Dict.Value("licenses"), False)
 		    Var Subscriptions As String = Beacon.GenerateJSON(Dict.Value("subscriptions"), False)
+		    Var SecurityModel As String
+		    If Dict.HasKey("securityModel") Then
+		      SecurityModel = Dict.Value("securityModel")
+		    Else
+		      SecurityModel = If(IsAnonymous, Self.SecurityModelAnonymous, Self.SecurityModelLegacy)
+		    End If
 		    
 		    Var PrivateKey, CloudKey As String
 		    If Dict.HasKey("privateKey") Then
-		      Var PrivateKeyDict As Dictionary = Dict.Value("privateKey")
-		      Var EncryptionVersion As Integer = PrivateKeyDict.Value("version")
-		      If EncryptionVersion > 1 Then
-		        App.Log("Unable to import identity because encryption version is too new.")
-		        Return Nil
-		      End If
-		      
-		      Var KeyEncrypted As String = PrivateKeyDict.Value("key")
-		      Var PrivateKeyEncrypted As String = PrivateKeyDict.Value("message")
-		      
-		      Try
-		        Var Key As String = Crypto.RSADecrypt(DecodeBase64(KeyEncrypted), Preferences.DevicePrivateKey)
-		        PrivateKey = BeaconEncryption.PEMDecodePrivateKey(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKeyEncrypted)))
-		        CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
-		      Catch Err As RuntimeException
-		        App.Log("Unable to import identity because private key could not be decrypted.")
-		        Return Nil
-		      End Try
+		      Select Case SecurityModel
+		      Case Self.SecurityModelLegacy, Self.SecurityModelEnhanced
+		        Var PrivateKeyDict As Dictionary = Dict.Value("privateKey")
+		        Var EncryptionVersion As Integer = PrivateKeyDict.Value("version")
+		        If EncryptionVersion > 1 Then
+		          App.Log("Unable to import identity because encryption version is too new.")
+		          Return Nil
+		        End If
+		        
+		        Var KeyEncrypted As String = PrivateKeyDict.Value("key")
+		        Var PrivateKeyEncrypted As String = PrivateKeyDict.Value("message")
+		        
+		        Try
+		          Var Key As String = Crypto.RSADecrypt(DecodeBase64(KeyEncrypted), Preferences.DevicePrivateKey)
+		          PrivateKey = BeaconEncryption.PEMDecodePrivateKey(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKeyEncrypted)))
+		        Catch Err As RuntimeException
+		          App.Log("Unable to import identity because private key could not be decrypted.")
+		          Return Nil
+		        End Try
+		      Case Self.SecurityModelStandard
+		        PrivateKey = BeaconEncryption.PEMDecodePrivateKey(Dict.Value("privateKey").StringValue)
+		      End Select
+		      CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
 		    Else
 		      Var ExistingIdentity As Beacon.Identity = Self.Fetch(UserId)
 		      If ExistingIdentity Is Nil Then
@@ -325,6 +336,18 @@ Protected Class IdentityManager
 
 
 	#tag Constant, Name = Notification_IdentityChanged, Type = Text, Dynamic = False, Default = \"Identity Changed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SecurityModelAnonymous, Type = String, Dynamic = False, Default = \"Anonymous", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SecurityModelEnhanced, Type = String, Dynamic = False, Default = \"Enhanced", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SecurityModelLegacy, Type = String, Dynamic = False, Default = \"Legacy", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SecurityModelStandard, Type = String, Dynamic = False, Default = \"Standard", Scope = Private
 	#tag EndConstant
 
 
