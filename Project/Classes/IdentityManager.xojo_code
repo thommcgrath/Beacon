@@ -34,20 +34,15 @@ Protected Class IdentityManager
 		      Self.mDatabase = Database
 		      
 		      Var Columns As RowSet = Database.TableColumns("identities")
-		      Var HasSubscriptionsColumn, HasSecretColumn As Boolean
+		      Var HasSubscriptionsColumn As Boolean
 		      For Each Row As DatabaseRow In Columns
-		        Select Case Row.Column("ColumnName").StringValue
-		        Case "subscriptions"
+		        If Row.Column("ColumnName").StringValue = "subscriptions" Then
 		          HasSubscriptionsColumn = True
-		        Case "secret"
-		          HasSecretColumn = True
-		        End Select
+		          Exit
+		        End If
 		      Next
 		      If Not HasSubscriptionsColumn Then
 		        Database.ExecuteSQL("ALTER TABLE identities ADD COLUMN subscriptions TEXT NOT NULL DEFAULT '[]';")
-		      End If
-		      If Not HasSecretColumn Then
-		        Database.ExecuteSQL("ALTER TABLE identities ADD COLUMN secret TEXT NOT NULL DEFAULT '';")
 		      End If
 		      
 		      Return
@@ -69,7 +64,7 @@ Protected Class IdentityManager
 		    Database.EncryptionKey = Self.GenerateKey
 		  #endif
 		  Database.CreateDatabase
-		  Database.ExecuteSQL("CREATE TABLE identities (user_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, public_key TEXT COLLATE NOCASE NOT NULL, private_key TEXT COLLATE NOCASE NOT NULL, cloud_key TEXT NOT NULL DEFAULT '', licenses TEXT NOT NULL DEFAULT '[]', username TEXT COLLATE NOCASE NOT NULL DEFAULT '', anonymous BOOLEAN NOT NULL DEFAULT TRUE, banned BOOLEAN NOT NULL DEFAULT FALSE, signature TEXT NOT NULL DEFAULT '', signature_fields TEXT NOT NULL DEFAULT '[]', expiration TEXT NOT NULL DEFAULT '', active BOOLEAN NOT NULL DEFAULT FALSE, merged BOOLEAN NOT NULL DEFAULT FALSE, subscriptions TEXT NOT NULL DEFAULT '[]', secret TEXT NOT NULL DEFAULT '');")
+		  Database.ExecuteSQL("CREATE TABLE identities (user_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, public_key TEXT COLLATE NOCASE NOT NULL, private_key TEXT COLLATE NOCASE NOT NULL, cloud_key TEXT NOT NULL DEFAULT '', licenses TEXT NOT NULL DEFAULT '[]', username TEXT COLLATE NOCASE NOT NULL DEFAULT '', anonymous BOOLEAN NOT NULL DEFAULT TRUE, banned BOOLEAN NOT NULL DEFAULT FALSE, signature TEXT NOT NULL DEFAULT '', signature_fields TEXT NOT NULL DEFAULT '[]', expiration TEXT NOT NULL DEFAULT '', active BOOLEAN NOT NULL DEFAULT FALSE, merged BOOLEAN NOT NULL DEFAULT FALSE, subscriptions TEXT NOT NULL DEFAULT '[]');")
 		  Self.mDatabase = Database
 		End Sub
 	#tag EndMethod
@@ -173,94 +168,50 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Import(Source As JSONItem, Secret As String) As IdentityImportResponse
+		Function Import(Dict As Dictionary) As Beacon.Identity
 		  Try
-		    Var Options As New JSONOptions
-		    Options.Compact = True
-		    Options.DecimalPlaces = 6
-		    
-		    Var UserId As String = Source.Value("userId").StringValue
-		    Var Username As String = Source.Value("username").StringValue
-		    Var IsAnonymous As Boolean = Source.Value("isAnonymous").BooleanValue
-		    Var PublicKey As String = BeaconEncryption.PEMDecodePublicKey(Source.Value("publicKey").StringValue)
-		    Var Banned As Boolean = Source.Value("banned").BooleanValue
-		    Var Expiration As String = Source.Lookup("expiration", "").StringValue
-		    Var SignatureDetails As JSONItem = Source.Value("signature")
+		    Var UserId As String = Dict.Value("userId").StringValue
+		    Var Username As String = Dict.Value("username").StringValue
+		    Var IsAnonymous As Boolean = Dict.Value("isAnonymous").BooleanValue
+		    Var PublicKey As String = BeaconEncryption.PEMDecodePublicKey(Dict.Value("publicKey").StringValue)
+		    Var Banned As Boolean = Dict.Value("banned").BooleanValue
+		    Var Expiration As String = Dict.Lookup("expiration", "").StringValue
+		    Var SignatureDetails As Dictionary = Dict.Value("signature")
 		    Var Signature As String = SignatureDetails.Value("signed")
-		    Var SignatureFields As String = JSONItem(SignatureDetails.Value("fields")).ToString(Options)
-		    Var Licenses As String = JSONItem(Source.Value("licenses")).ToString(Options)
-		    Var Subscriptions As String = JSONItem(Source.Value("subscriptions")).ToString(Options)
-		    Var SecurityModel As String
-		    If Source.HasKey("securityModel") Then
-		      SecurityModel = Source.Value("securityModel")
-		    Else
-		      SecurityModel = If(IsAnonymous, Self.SecurityModelAnonymous, Self.SecurityModelLegacy)
-		    End If
+		    Var SignatureFields As String = Beacon.GenerateJson(SignatureDetails.Value("fields"), False)
+		    Var Licenses As String = Beacon.GenerateJSON(Dict.Value("licenses"), False)
+		    Var Subscriptions As String = Beacon.GenerateJSON(Dict.Value("subscriptions"), False)
 		    
 		    Var PrivateKey, CloudKey As String
-		    If Source.HasKey("privateKey") Then
-		      Select Case SecurityModel
-		      Case Self.SecurityModelLegacy
-		        Var PrivateKeyDict As JSONItem = Source.Value("privateKey")
-		        Var EncryptionVersion As Integer = PrivateKeyDict.Value("version")
-		        If EncryptionVersion > 1 Then
-		          App.Log("Unable to import identity because encryption version is too new.")
-		          Return IdentityImportResponse.Statuses.IncompatibleEncryption
-		        End If
-		        
-		        Var KeyEncrypted As String = PrivateKeyDict.Value("key")
-		        Var PrivateKeyEncrypted As String = PrivateKeyDict.Value("message")
-		        
-		        Try
-		          Var Key As String = Crypto.RSADecrypt(DecodeBase64(KeyEncrypted), Preferences.DevicePrivateKey)
-		          PrivateKey = BeaconEncryption.PEMDecodePrivateKey(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKeyEncrypted)))
-		        Catch Err As RuntimeException
-		          App.Log("Unable to import identity because private key could not be decrypted.")
-		          Return IdentityImportResponse.Statuses.GeneralError
-		        End Try
-		      Case SecurityModelStandard
-		        PrivateKey = BeaconEncryption.PEMDecodePrivateKey(Source.Value("privateKey").StringValue)
-		      Case SecurityModelEnhanced
-		        Try
-		          If Secret.IsEmpty Then
-		            // See if we already have a secret stored
-		            Var Results As RowSet = Self.mDatabase.SelectSQL("SELECT secret FROM identities WHERE user_id = ?1;", UserId)
-		            If Results.RowCount = 1 Then
-		              Secret = Results.Column("secret").StringValue
-		            End If
-		            If Secret.IsEmpty Then
-		              App.Log("Unable to import identity because secret is unknown.")
-		              Return IdentityImportResponse.Statuses.SecretNeeded
-		            End If
-		          End If
-		          
-		          Var PrivateKeyEncrypted As String = DecodeHex(Source.Value("privateKey").StringValue)
-		          Var Salt As String = DecodeHex(Source.Value("privateKeySalt").StringValue)
-		          Var Iterations As Integer = Source.Value("privateKeyIterations").IntegerValue
-		          Var Key As MemoryBlock = Crypto.PBKDF2(Salt, Secret, Iterations, 32, Crypto.HashAlgorithms.SHA512)
-		          PrivateKey = BeaconEncryption.SymmetricDecrypt(Key, PrivateKeyEncrypted)
-		        Catch Err As RuntimeException
-		          App.Log("Unable to import identity because private key could not be decrypted.")
-		          Return IdentityImportResponse.Statuses.SecretNeeded
-		        End Try
-		      End Select
+		    If Dict.HasKey("privateKey") Then
+		      Var PrivateKeyDict As Dictionary = Dict.Value("privateKey")
+		      Var EncryptionVersion As Integer = PrivateKeyDict.Value("version")
+		      If EncryptionVersion > 1 Then
+		        App.Log("Unable to import identity because encryption version is too new.")
+		        Return Nil
+		      End If
+		      
+		      Var KeyEncrypted As String = PrivateKeyDict.Value("key")
+		      Var PrivateKeyEncrypted As String = PrivateKeyDict.Value("message")
 		      
 		      Try
-		        CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Source.Value("cloudKey").StringValue), PrivateKey), 0)
+		        Var Key As String = Crypto.RSADecrypt(DecodeBase64(KeyEncrypted), Preferences.DevicePrivateKey)
+		        PrivateKey = BeaconEncryption.PEMDecodePrivateKey(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKeyEncrypted)))
+		        CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
 		      Catch Err As RuntimeException
-		        App.Log("Unable to import identity because cloud key did not decrypt.")
-		        Return IdentityImportResponse.Statuses.GeneralError
+		        App.Log("Unable to import identity because private key could not be decrypted.")
+		        Return Nil
 		      End Try
 		    Else
 		      Var ExistingIdentity As Beacon.Identity = Self.Fetch(UserId)
 		      If ExistingIdentity Is Nil Then
 		        App.Log("Unable to import identity because the profile is anonymous and the private key is not known.")
-		        Return IdentityImportResponse.Statuses.NoPrivateKey
+		        Return Nil
 		      End
 		      
 		      PrivateKey = ExistingIdentity.PrivateKey
 		      Try
-		        CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Source.Value("cloudKey").StringValue), PrivateKey), 0)
+		        CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
 		      Catch Err As RuntimeException
 		        CloudKey = EncodeBase64(ExistingIdentity.UserCloudKey)
 		      End Try
@@ -269,19 +220,15 @@ Protected Class IdentityManager
 		    Self.mDatabase.BeginTransaction
 		    Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT user_id FROM identities WHERE user_id = ?1;", UserId)
 		    If Rows.RowCount = 0 Then
-		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_fields, expiration, subscriptions, secret) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration, Subscriptions, Secret)
+		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_fields, expiration, subscriptions) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration, Subscriptions)
 		    Else
-		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_fields = ?10, expiration = ?11, subscriptions = ?12, secret = ?13 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration, Subscriptions, Secret)
+		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_fields = ?10, expiration = ?11, subscriptions = ?12 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration, Subscriptions)
 		    End If
 		    Self.mDatabase.CommitTransaction
 		    
-		    Var Identity As Beacon.Identity = Self.Fetch(UserId)
-		    If (Identity Is Nil) = False Then
-		      Return Identity
-		    End If
+		    Return Self.Fetch(UserId)
 		  Catch Err As RuntimeException
 		  End Try
-		  Return IdentityImportResponse.Statuses.GeneralError
 		End Function
 	#tag EndMethod
 
@@ -378,18 +325,6 @@ Protected Class IdentityManager
 
 
 	#tag Constant, Name = Notification_IdentityChanged, Type = Text, Dynamic = False, Default = \"Identity Changed", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = SecurityModelAnonymous, Type = String, Dynamic = False, Default = \"Anonymous", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = SecurityModelEnhanced, Type = String, Dynamic = False, Default = \"Enhanced", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = SecurityModelLegacy, Type = String, Dynamic = False, Default = \"Legacy", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = SecurityModelStandard, Type = String, Dynamic = False, Default = \"Standard", Scope = Public
 	#tag EndConstant
 
 
