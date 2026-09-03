@@ -8,21 +8,25 @@ $hasAuthenticators = count($authenticators) > 0;
 $credentials = UserCredential::Search(['userId' => $user->UserId()], true);
 $securityModel = $user->SecurityModel();
 $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? false;
+$hasPassword = $securityModel === User::SecurityModelLegacy;
+foreach ($credentials as $credential) {
+	$hasPassword = $hasPassword || $credential->Type() === UserCredential::TypePassword;
+}
 
 ?><div class="visual-group">
 	<h3>Change Password</h3>
 	<p class="notice-block notice-warning"><strong>Important</strong>: Never give any user access to your Beacon account, under any circumstances. The only way for someone to be forcefully removed from your account is for your private key to be replaced. See below for reasons why you should avoid doing this. To safely share access to one or more of your Beacon documents, follow <a href="/help/sharing_beacon_documents">these instructions</a>.</p>
 	<form id="change_password_form" action="" method="post">
 		<div class="floating-label">
-			<input type="password" class="text-field" id="password_current_field" placeholder="Current Password">
+			<input type="password" class="text-field" id="password_current_field" placeholder="Current Password" autocomplete="current-password">
 			<label for="password_current_field">Current Password</label>
 		</div>
 		<div class="floating-label">
-			<input type="password" class="text-field" id="password_initial_field" placeholder="New Password" minlength="8">
+			<input type="password" class="text-field" id="password_initial_field" placeholder="New Password" minlength="8" autocomplete="new-password">
 			<label for="password_initial_field">New Password</label>
 		</div>
 		<div class="floating-label">
-			<input type="password" class="text-field" id="password_confirm_field" placeholder="Confirm New Password" minlength="8">
+			<input type="password" class="text-field" id="password_confirm_field" placeholder="Confirm New Password" minlength="8" autocomplete="new-password">
 			<label for="password_confirm_field">Confirm New Password</label>
 		</div>
 		<?php if ($user->Is2FAProtected()) { ?>
@@ -112,7 +116,7 @@ $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? fa
 				<div class="security_model_row">
 					<div class="security_model_radio"><div class="input-radio"><input type="radio" name="security_model" value="<?php echo htmlentities(User::SecurityModelEnhanced); ?>" id="security_model_enhanced"<?php echo $securityModel === User::SecurityModelEnhanced ? ' checked' : '' ?>></div></div>
 					<div class="security_model_explain">
-						<p><label for="security_model_enhanced">Enhanced</label><span class="tag green">Highest Security</span></p>
+						<p><label for="security_model_enhanced">Enhanced</label><span class="tag green">High Security</span></p>
 						<p>This model encrypts your private data using a secret key provided by Beacon when you enable the model. <strong>You must keep this secret safe</strong>. You will need this secret when signing into the Beacon app. If it is lost, it will need to be replaced and all your private data will be lost.</p>
 						<p><span class="text-green bold">Pros</span>: Highly flexible. You can log in with a passkey or an external account, but you will need a password-like secret during the login process. Nobody can access your private data without your account secret.<br>
 						<span class="text-red bold">Cons</span>: Secrets are almost impossible to remember. Losing your secret means losing some data.</p>
@@ -131,6 +135,7 @@ $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? fa
 				<p>A lost password (in legacy mode) or secret (in enhanced mode) would require discarding all private data.</p>
 			</li>
 		</ul>
+		<p class="text-right"><input type="submit" id="security_model_save_button" value="Save Security Model" disabled></p>
 	</form>
 </div><?php } ?>
 <?php BeaconTemplate::StartModal('add-authenticator-modal'); ?>
@@ -143,12 +148,12 @@ $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? fa
 			<p class="notice-block notice-warning hidden" id="add-authenticator-error-message"></p>
 			<?php if ($user->Is2FAProtected()) { ?>
 			<div class="floating-label">
-				<input type="text" class="text-field" id="add-authenticator-password-field" placeholder="Other Authenticator Code" value="">
+				<input type="text" class="text-field" id="add-authenticator-password-field" placeholder="Other Authenticator Code" autocomplete="one-time-code" value="">
 				<label for="add-authenticator-password-field">Other Authenticator Code</label>
 			</div>
 			<?php } else { ?>
 			<div class="floating-label">
-				<input type="password" class="text-field" id="add-authenticator-password-field" placeholder="Account Password" value="">
+				<input type="password" class="text-field" id="add-authenticator-password-field" placeholder="Account Password" autocomplete="current-password" value="">
 				<label for="add-authenticator-password-field">Account Password</label>
 			</div>
 			<?php } ?>
@@ -169,6 +174,65 @@ $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? fa
 			<div class="button-group">
 				<button id="add-authenticator-cancel-button">Cancel</button>
 				<button id="add-authenticator-action-button" class="default" disabled>Verify</button>
+			</div>
+		</div>
+	</div>
+</div>
+<?php BeaconTemplate::FinishModal(); ?>
+<?php BeaconTemplate::StartModal('security-model-modal'); ?>
+<div class="modal-content">
+	<div class="title-bar">Change Security Model</div>
+	<div id="security-model-content" class="content">
+		<p class="notice-block notice-warning hidden" id="security-model-error-message"></p>
+		<?php if ($hasPassword) { ?>
+		<div class="floating-label">
+			<input type="password" class="text-field" id="security-model-password-field" placeholder="Account Password" value="" autocomplete="current-password">
+			<label for="security-model-password-field">Account Password</label>
+		</div>
+		<?php } ?>
+		<?php if ($securityModel === User::SecurityModelEnhanced) { ?>
+		<div class="floating-label">
+			<input type="password" class="text-field" id="security-model-secret-field" placeholder="Account Secret" value="" autocomplete="off">
+			<label for="security-model-secret-field">Account Secret</label>
+		</div>
+		<?php } ?>
+		<?php if ($hasAuthenticators) { ?>
+		<div class="floating-label">
+			<input type="text" class="text-field" id="security-model-totp-field" placeholder="Authenticator Code" value="" autocomplete="one-time-code">
+			<label for="security-model-totp-field">Authenticator Code</label>
+		</div>
+		<?php } ?>
+	</div>
+	<div class="button-bar">
+		<div class="left">&nbsp;</div>
+		<div class="middle">&nbsp;</div>
+		<div class="right">
+			<div class="button-group">
+				<button id="security-model-cancel-button">Cancel</button>
+				<button id="security-model-action-button" class="default" disabled>Continue</button>
+			</div>
+		</div>
+	</div>
+</div>
+<?php BeaconTemplate::FinishModal(); ?>
+<?php BeaconTemplate::StartModal('account-secret-modal'); ?>
+<div class="modal-content">
+	<div class="title-bar">Your Account Secret</div>
+	<div id="account-secret-content" class="content">
+		<p>Here is your new account secret. <span class="bold text-red">You must save this secret. If it is lost, your account's private data is lost with it.</span> You will also need this secret to change security models.</p>
+		<p class="text-red bold">This secret cannot be shown again.</p>
+		<div class="floating-label">
+			<input type="text" class="text-field" id="account-secret-field" value="" readonly>
+			<label for="account-secret-field">Account Secret</label>
+			<button class="blue" id="account-secret-copy-button">Copy</button>
+		</div>
+	</div>
+	<div class="button-bar">
+		<div class="left">&nbsp;</div>
+		<div class="middle">&nbsp;</div>
+		<div class="right">
+			<div class="button-group">
+				<button id="account-secret-action-button" class="default" disabled>I Have Copied My Secret</button>
 			</div>
 		</div>
 	</div>

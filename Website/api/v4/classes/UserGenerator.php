@@ -31,7 +31,7 @@ abstract class UserGenerator {
 			$userProperties = array_merge($userProperties, static::EncryptPrivateKey($password, $privateKeyPem));
 			break;
 		case User::SecurityModelStandard:
-			$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('PrivateKeySecret'));
+			$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('Private Key Secret'));
 			$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
 			$userProperties['privateKey'] = bin2hex($encryptedPrivateKey);
 			break;

@@ -1151,6 +1151,13 @@ textarea {
 		transform: scale(.85) translateY(-.5rem) translateX(.15rem);
 		color: #ffffff;
 	}
+
+	& > button {
+		position: absolute;
+		right: 0.7rem;
+		top: 50%;
+		margin-top: -19px;
+	}
 }
 
 .input-group {

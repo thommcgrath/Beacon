@@ -320,7 +320,7 @@ class Authenticator implements JsonSerializable {
 
 		$authenticators = static::FetchForUser($user);
 		if (count($authenticators) === 0) {
-			return false;
+			return true;
 		}
 
 		// If it's a UUID, it has to be a trusted device id
@@ -376,6 +376,8 @@ class Authenticator implements JsonSerializable {
 				break;
 			}
 		}
+
+		return false;
 	}
 
 	protected function __construct(string $authenticatorId, string $username, string $type, string $nickname, float $dateAdded, array $metadata) {

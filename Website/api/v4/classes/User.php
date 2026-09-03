@@ -88,7 +88,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('enabled'),
 			new DatabaseObjectProperty('requirePasswordChange', ['columnName' => 'require_password_change']),
 			new DatabaseObjectProperty('stripeId', ['columnName' => 'stripe_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('securityModel', ['columnName' => 'security_model', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('securityModel', ['columnName' => 'security_model', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 		]);
 	}
 
@@ -413,7 +413,7 @@ class User extends DatabaseObject implements JsonSerializable {
 		return $this->requirePasswordChange;
 	}
 
-	public function DecryptPrivateKey(string $password): string {
+	public function DecryptPrivateKey(?string $password = null): string {
 		switch ($this->securityModel) {
 		case self::SecurityModelLegacy:
 			try {
@@ -451,7 +451,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			break;
 		case self::SecurityModelStandard:
 			try {
-				$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('PrivateKeySecret'));
+				$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('Private Key Secret'));
 				return BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($this->privateKey));
 			} catch (Exception $err) {
 				throw new Exception('Failed to decrypt private key');
@@ -496,13 +496,13 @@ class User extends DatabaseObject implements JsonSerializable {
 			$privateKey = $this->DecryptPrivateKey($password);
 			break;
 		case self::SecurityModelStandard:
-			if (UserCredenial::VerifyUserPassword($this->userId, $password) === false) {
+			if (UserCredential::VerifyUserPassword($this->userId, $password) === false) {
 				throw new Exception('Incorrect account password');
 			}
 			$privateKey = $this->DecryptPrivateKey();
 			break;
 		case self::SecurityModelEnhanced:
-			if (UserCredenial::VerifyUserPassword($this->userId, $password) === false) {
+			if (UserCredential::VerifyUserPassword($this->userId, $password) === false) {
 				throw new Exception('Incorrect account password');
 			}
 			$privateKey = $this->DecryptPrivateKey($secret);
@@ -523,7 +523,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			switch ($newModel) {
 			case self::SecurityModelStandard:
 				$secret = '';
-				$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('PrivateKeySecret'));
+				$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('Private Key Secret'));
 				$changes['privateKey'] = bin2hex(BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKey, false));
 				$changes['privateKeySalt'] = null;
 				$changes['privateKeyIterations'] = null;
@@ -533,7 +533,7 @@ class User extends DatabaseObject implements JsonSerializable {
 				$privateKeySalt = BeaconEncryption::GenerateSalt();
 				$privateKeyIterations = 450000;
 				$privateKeySecret = BeaconEncryption::HashFromPassword($secret, $privateKeySalt, $privateKeyIterations);
-				$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
+				$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKey, false);
 
 				$changes['privateKey'] = bin2hex($encryptedPrivateKey);
 				$changes['privateKeySalt'] = bin2hex($privateKeySalt);

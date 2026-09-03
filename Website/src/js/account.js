@@ -931,7 +931,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 		window.history.replaceState(null, document.title, url.toString());
 	}
 
-	/* Billing */
+	/* ! Billing */
 	const portalButton = document.getElementById('openBillingPortalButton');
 	if (portalButton) {
 		portalButton.addEventListener('click', (ev) => {
@@ -953,6 +953,188 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				portalButton.disabled = false;
 				BeaconDialog.show('Could not open your billing portal.', 'Sorry about that. This can happen with older logins. Try signing out and signing back in.');
 			});
+		});
+	}
+
+	/* ! Security Models */
+	const securityModelSaveButton = document.getElementById('security_model_save_button');
+	if (securityModelSaveButton) {
+		const securityModelLegacyRadio = document.getElementById('security_model_legacy');
+		const securityModelStandardRadio = document.getElementById('security_model_standard');
+		const securityModelEnhancedRadio = document.getElementById('security_model_enhanced');
+		const securityModelChangePasswordField = document.getElementById('security-model-password-field');
+		const securityModelChangeSecretField = document.getElementById('security-model-secret-field');
+		const securityModelChangeTOTPField = document.getElementById('security-model-totp-field');
+		const securityModelChangeActionButton = document.getElementById('security-model-action-button');
+		const securityModelChangeCancelButton = document.getElementById('security-model-cancel-button');
+		const securityModelChangeErrorMessage = document.getElementById('security-model-error-message');
+		const securityModelSecretRevealField = document.getElementById('account-secret-field');
+		const securityModelSecretConfirmButton = document.getElementById('account-secret-action-button');
+		const securityModelSecretCopyButton = document.getElementById('account-secret-copy-button');
+
+		const initialSecurityModel = [securityModelLegacyRadio, securityModelStandardRadio, securityModelEnhancedRadio].reduce((value, field) => {
+			if (field && field.checked) {
+				return field.value;
+			} else {
+				return value;
+			}
+		}, '');
+		let newSecurityModel = initialSecurityModel;
+		const securityModelRadioFunction = (ev) => {
+			ev.preventDefault();
+			if (ev.target.checked) {
+				securityModelSaveButton.disabled = (ev.target.value === initialSecurityModel);
+				newSecurityModel = ev.target.value;
+			}
+		};
+		if (securityModelLegacyRadio) {
+			securityModelLegacyRadio.addEventListener('change', securityModelRadioFunction);
+		}
+		if (securityModelStandardRadio) {
+			securityModelStandardRadio.addEventListener('change', securityModelRadioFunction);
+		}
+		if (securityModelEnhancedRadio) {
+			securityModelEnhancedRadio.addEventListener('change', securityModelRadioFunction);
+		}
+
+		const submitModelChange = (password, secret, totp) => {
+			if (newSecurityModel === initialSecurityModel) {
+				return;
+			}
+
+			securityModelChangeErrorMessage.classList.add('hidden');
+			if (securityModelChangePasswordField) {
+				securityModelChangePasswordField.readOnly = true;
+			}
+			if (securityModelChangeSecretField) {
+				securityModelChangePasswordField.readOnly = true;
+			}
+			if (securityModelChangeTOTPField) {
+				securityModelChangeTOTPField.readOnly = true;
+			}
+			if (securityModelChangeActionButton) {
+				securityModelChangeActionButton.disabled = true;
+			}
+
+			const requestBody = new URLSearchParams();
+			requestBody.append('securityModel', newSecurityModel);
+			if (password) {
+				requestBody.append('password', password);
+			}
+			if (secret) {
+				requestBody.append('secret', secret);
+			}
+			if (totp) {
+				requestBody.append('totp', totp);
+			}
+
+			BeaconWebRequest.post(`/account/actions/setSecurityModel`, requestBody).then((response) => {
+				try {
+					const parsed = JSON.parse(response.body);
+					const newSecret = parsed.secret;
+					if (newSecret !== '') {
+						BeaconDialog.hideModal().then(() => {
+							securityModelSecretConfirmButton.disabled = true;
+							securityModelSecretRevealField.value = newSecret;
+							BeaconDialog.showModal('account-secret-modal');
+							setTimeout(() => {
+								securityModelSecretConfirmButton.disabled = false;
+							}, 3000);
+						});
+					} else {
+						window.location.reload();
+					}
+				} catch {
+					securityModelChangeErrorMessage.innerText = 'This is a problem. The change was accepted, but the response containing your new secret could not be read.';
+					securityModelChangeErrorMessage.classList.remove('hidden');
+				}
+			}).catch((response) => {
+				if (securityModelChangePasswordField) {
+					securityModelChangePasswordField.readOnly = false;
+				}
+				if (securityModelChangeSecretField) {
+					securityModelChangePasswordField.readOnly = false;
+				}
+				if (securityModelChangeTOTPField) {
+					securityModelChangeTOTPField.readOnly = false;
+				}
+				if (securityModelChangeActionButton) {
+					securityModelChangeActionButton.disabled = false;
+				}
+				try {
+					const parsed = JSON.parse(response.body);
+					securityModelChangeErrorMessage.innerText = parsed.message;
+				} catch {
+					securityModelChangeErrorMessage.innerText = 'Could not save security model.';
+				}
+				securityModelChangeErrorMessage.classList.remove('hidden');
+			});
+		};
+
+		securityModelSaveButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+
+			const needsUserInput = securityModelChangePasswordField || securityModelChangeSecretField || securityModelChangeTOTPField;
+			if (needsUserInput) {
+				if (securityModelChangePasswordField) {
+					securityModelChangePasswordField.value = '';
+					securityModelChangePasswordField.readOnly = false;
+				}
+				if (securityModelChangeSecretField) {
+					securityModelChangePasswordField.value = '';
+					securityModelChangePasswordField.readOnly = false;
+				}
+				if (securityModelChangeTOTPField) {
+					securityModelChangeTOTPField.value = '';
+					securityModelChangeTOTPField.readOnly = false;
+				}
+				securityModelChangeErrorMessage.classList.add('hidden');
+				securityModelChangeActionButton.disabled = true;
+				BeaconDialog.showModal('security-model-modal');
+			} else {
+				submitModelChange(null, null, null);
+			}
+		});
+
+		const changeFieldEditHandler = (ev) => {
+			const enabled = ((securityModelChangePasswordField?.value ?? 'x') !== '') && ((securityModelChangeSecretField?.value.trim() ?? 'x') !== '') && ((securityModelChangeTOTPField?.value.trim() ?? 'x') !== '');
+			securityModelChangeActionButton.disabled = !enabled;
+		};
+		if (securityModelChangePasswordField) {
+			securityModelChangePasswordField.addEventListener('input', changeFieldEditHandler);
+		}
+		if (securityModelChangeSecretField) {
+			securityModelChangeSecretField.addEventListener('input', changeFieldEditHandler);
+		}
+		if (securityModelChangeTOTPField) {
+			securityModelChangeTOTPField.addEventListener('input', changeFieldEditHandler);
+		}
+
+		securityModelChangeActionButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+
+			const password = securityModelChangePasswordField?.value ?? null;
+			const secret = securityModelChangeSecretField?.value ?? null;
+			const totp = securityModelChangeTOTPField?.value ?? null;
+
+			submitModelChange(password, secret, totp);
+		});
+
+		securityModelChangeCancelButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			BeaconDialog.hideModal();
+		});
+
+		securityModelSecretConfirmButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			window.location.reload();
+		});
+
+		securityModelSecretCopyButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			securityModelSecretRevealField.select();
+			securityModelSecretRevealField.setSelectionRange(0, 99999);
+			navigator.clipboard.writeText(securityModelSecretRevealField.value);
 		});
 	}
 });

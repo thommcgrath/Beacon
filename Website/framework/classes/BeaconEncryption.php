@@ -13,16 +13,16 @@ abstract class BeaconEncryption {
 	}
 
 	public static function GeneratePasswordHash(string $password): string {
-		$algo = BeaconCommon::GetGlobal('PasswordHashAlgo');
-		$options = BeaconCommon::GetGlobal('PasswordHashOptions');
-		$pepper = BeaconCommon::GetGlobal('PasswordHashPepper');
+		$algo = BeaconCommon::GetGlobal('Password Hash Algorithm');
+		$options = BeaconCommon::GetGlobal('Password Hash Options');
+		$pepper = BeaconCommon::GetGlobal('Password Hash Pepper');
 
 		$peppered = hash_hmac('sha256', $password, $pepper);
 		return password_hash($peppered, $algo, $options);
 	}
 
 	public static function VerifyPasswordHash(string $password, string $hash): bool {
-		$pepper = BeaconCommon::GetGlobal('PasswordHashPepper');
+		$pepper = BeaconCommon::GetGlobal('Password Hash Pepper');
 
 		$peppered = hash_hmac('sha256', $password, $pepper);
 		return password_verify($peppered, $hash);

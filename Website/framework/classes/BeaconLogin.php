@@ -230,10 +230,12 @@ class BeaconLogin {
 			$authDialogTitle = 'Confirm Password';
 			$authDialogMessage = 'To authorize this app, please confirm your password.';
 			$authDialogFieldLabel = 'Password';
-			if ($user->SecurityModel() === User::SecurityModelEnchanced) {
+			$authAutocomplete = 'current-password';
+			if ($user->SecurityModel() === User::SecurityModelEnhanced) {
 				$authDialogTitle = 'Enter Account Secret';
 				$authDialogMessage = 'To authorize this app, please enter your account secret.';
 				$authDialogFieldLabel = 'Secret';
+				$authAutocomplete = 'off';
 			}
 
 			BeaconTemplate::StartModal('authorizePasswordDialog');
@@ -242,7 +244,7 @@ class BeaconLogin {
 				<div class="title-bar"><?php echo htmlentities($authDialogTitle) ?></div>
 				<div class="content">
 					<p><?php echo htmlentities($authDialogMessage); ?></p>
-					<p><div class="floating-label" id="authorizePasswordFieldGroup"><input type="password" id="authorizePasswordField" placeholder="<?php echo htmlentities($authDialogFieldLabel); ?>" class="text-field" autocomplete="current-password"><label for="authorizePasswordField"><?php echo htmlentities($authDialogFieldLabel); ?></label></div></p>
+					<p><div class="floating-label" id="authorizePasswordFieldGroup"><input type="password" id="authorizePasswordField" placeholder="<?php echo htmlentities($authDialogFieldLabel); ?>" class="text-field" autocomplete="<?php echo $authAutocomplete; ?>"><label for="authorizePasswordField"><?php echo htmlentities($authDialogFieldLabel); ?></label></div></p>
 				</div>
 				<div class="button-bar">
 					<div class="left"&nbsp;</div>
