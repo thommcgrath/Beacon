@@ -3,8 +3,6 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
-use Firebase\JWT\{JWT, Key};
-
 while (ob_get_level() > 0) {
 	ob_end_clean();
 }
