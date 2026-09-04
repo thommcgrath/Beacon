@@ -44,24 +44,30 @@ trait SignInButtonContainer {
 class SignInOption {
 	use SignInButtonContainer;
 
-	protected string $svg = '';
 	protected string $title = 'Option';
+	protected string $optionId = '';
+	protected string $svg = '';
+	protected bool $enabled = false;
 	protected array $tags = [];
 	protected array $rows = [];
-	protected bool $enabled = false;
 
-	public function __construct(string $title, string $svg, bool $enabled = true) {
-		$this->svg = $svg;
+	public function __construct(string $title, string $optionId, string $svg, bool $enabled = true) {
 		$this->title = $title;
+		$this->optionId = $optionId;
+		$this->svg = $svg;
 		$this->enabled = $enabled;
-	}
-
-	public function SVG(): string {
-		return $this->svg;
 	}
 
 	public function Title(): string {
 		return $this->title;
+	}
+
+	public function OptionId(): string {
+		return $this->optionId;
+	}
+
+	public function SVG(): string {
+		return $this->svg;
 	}
 
 	public function Enabled(): bool {

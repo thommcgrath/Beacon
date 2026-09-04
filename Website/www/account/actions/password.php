@@ -16,12 +16,12 @@ if (is_null($activeSession)) {
 	exit;
 }
 
-if (empty($_POST['current_password']) || empty($_POST['password'])) {
+if (empty($_POST['password'])) {
 	Response::NewJsonError('Missing parameters', null, 400)->Flush();
 	exit;
 }
 
-$currentPassword = $_POST['current_password'];
+$currentPassword = $_POST['current_password'] ?? '';
 $password = $_POST['password'];
 $allowVulnerable = filter_var($_POST['allow_vulnerable'] ?? false, FILTER_VALIDATE_BOOLEAN);
 $regenerateKey = filter_var($_POST['regenerate_key'] ?? false, FILTER_VALIDATE_BOOLEAN);

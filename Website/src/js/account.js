@@ -580,6 +580,93 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 		}
 	}
 
+	/* ! Passkeys */
+	const passkeysGroup = document.getElementById('sign-in-option-passkeys');
+	if (passkeysGroup && passkeysGroup.classList.contains('sign-in-option-unavailable') === false) {
+		const addPasskeyButton = document.getElementById('option-button-add-passkey');
+		const removePasskeyButtons = document.querySelectorAll('button.passkey-remove-button');
+
+		const updatePasskeysUI = (passkeysSupported) => {
+			const tagContainers = document.querySelectorAll('#sign-in-option-passkeys .sign-in-option-tags');
+			const tagContainer = (tagContainers.length > 0) ? tagContainers[0] : null;
+			if (passkeysSupported) {
+				if (tagContainer) {
+					tagContainer.classList.add('hidden');
+				}
+				return;
+			}
+
+			passkeysGroup.classList.add('sign-in-option-unavailable');
+			if (addPasskeyButton) {
+				addPasskeyButton.classList.add('hidden');
+			}
+			if (tagContainer) {
+				tagContainer.firstChild.innerText = 'Your browser does not support passkeys';
+			}
+
+			removePasskeyButtons.forEach((button) => {
+				button.classList.add('hidden');
+			});
+		};
+
+		if (window.PublicKeyCredential && PublicKeyCredential.getClientCapabilities) {
+			PublicKeyCredential.getClientCapabilities().then((capabilities) => {
+				updatePasskeysUI(capabilities.conditionalGet === true && capabilities.passkeyPlatformAuthenticator === true);
+			}).catch(() => {
+				updatePasskeysUI(false);
+			});
+		} else {
+			updatePasskeysUI(false);
+		}
+
+		addPasskeyButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+
+			BeaconWebRequest.get('/account/actions/passkeyInit').then((initResponse) => {
+				const rawOptions = JSON.parse(initResponse.body);
+				try {
+					const options = PublicKeyCredential.parseCreationOptionsFromJSON(rawOptions);
+					navigator.credentials.create({
+						publicKey: options,
+					}).then((passkey) => {
+						BeaconWebRequest.post('/account/actions/passkeySave', passkey.toJSON()).then((saveResponse) => {
+							setTimeout(() => {
+								window.location.reload();
+							}, 3000);
+						}).catch((saveErr) => {
+							console.log('Passkey save error');
+							if (PublicKeyCredential.signalUnknownCredential) {
+								console.log('Browser supports passkey cancelling');
+								PublicKeyCredential.signalUnknownCredential({
+									rpId: rawOptions.rp.id,
+									credentialId: passkey.id,
+								}).then(() => {
+									console.log('Browser successfully cancelled the passkey');
+								}).catch(() => {
+									console.log('Browser did not cancel the passkey');
+								});
+							} else {
+								console.log('Browser does not support cancelling passkeys');
+							}
+							BeaconDialog.show('Could not save passkey', saveErr.message);
+						});
+					}).catch(() => {
+					});
+				} catch (setupErr) {
+					BeaconDialog.show('Could not start passkey setup', setupErr.message);
+				}
+			}).catch((initErr) => {
+				BeaconDialog.show('Could not start passkey setup', initErr.message);
+			});
+		});
+
+		removePasskeyButtons.forEach((button) => {
+			button.addEventListener('click', (ev) => {
+				ev.preventDefault();
+			});
+		});
+	}
+
 	/* ! Sessions */
 
 	const revokeAction = (event) => {

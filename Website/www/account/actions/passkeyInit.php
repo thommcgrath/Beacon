@@ -8,20 +8,24 @@ http_response_code(500);
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-use BeaconAPI\v4\{Response, Session, User};
+use BeaconAPI\v4\{Application, Response, Session, User};
 
 $activeSession = BeaconCommon::GetSession();
 if (is_null($activeSession)) {
 	Response::NewJsonError('Unauthorized', null, 401)->Flush();
 	exit;
 }
+if ($activeSession->HasScope(Application::kScopeUsersCredentials) === false) {
+	Response::NewJsonError('Forbidden', null, 403);
+	exit;
+}
 
 $user = $activeSession->User();
 $obj = [
-	'challenge' => BeaconCommon::Base64UrlEncode(random_bytes(128)),
+	'challenge' => BeaconCommon::Base64UrlEncode(random_bytes(32)),
 	'rp' => [
-		'Beacon',
-		'usebeacon.app',
+		'name' => 'Beacon',
+		'id' => 'usebeacon.app',
 	],
 	'user' => [
 		'id' => $user->UserId(),

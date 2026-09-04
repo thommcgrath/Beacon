@@ -2995,8 +2995,8 @@ body.no-navigation {
 
 .security_model_group {
 	padding: 0px;
-	$cornerRadius: 0.6rem;
-	$groupPadding: $cornerRadius * 2;
+	$cornerRadius: 0.25rem;
+	$groupPadding: 1.2rem;
 
 	p {
 		margin-top: $groupPadding;

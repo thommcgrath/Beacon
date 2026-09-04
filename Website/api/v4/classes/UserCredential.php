@@ -149,7 +149,6 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 			}
 			$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1;', $userId);
 
-			echo "building credential data";
 			$credentialData = [
 				'userId' => $userId,
 				'type' => self::TypePassword,
@@ -160,13 +159,9 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 					'backupCodes' => (array)$backupCodes,
 				],
 			];
-			echo "done building credential data";
 			try {
-				echo "creating credential";
 				$credential = static::Create($credentialData);
-				echo "credential created";
 			} catch (Exception $err) {
-				echo "exception";
 				$database->Rollback();
 				throw $err;
 			}
@@ -195,6 +190,18 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 			return false;
 		}
 		return true;
+	}
+
+	public static function CreatePasskey(string $userId, string $passkeyName, string $passkeyData): static {
+		$credentialData = [
+			'userId' => $userId,
+			'type' => self::TypePasskey,
+			'name' => $passkeyName,
+			'metadata' => [
+				'raw' => $passkeyData,
+			]
+		];
+		return static::Create($credentialData);
 	}
 }
 
