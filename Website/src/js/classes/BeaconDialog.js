@@ -73,8 +73,9 @@ export class BeaconDialog {
 				};
 				dialogCancelButton.addEventListener('click', dialogCancelButton.clickHandler);
 				dialogCancelButton.innerText = cancelCaption;
+				dialogCancelButton.classList.remove('hidden');
 			} else {
-				dialogCancelButton.className = 'hidden';
+				dialogCancelButton.classList.add('hidden');
 			}
 		});
 	}

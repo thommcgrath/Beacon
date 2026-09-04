@@ -1,9 +1,9 @@
 "use strict";
 
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
-import { BeaconDialog, SecureOptionAnyAuthenticator } from "./classes/BeaconDialog.js";
+import { BeaconDialog, SecureOptionPassword, SecureOptionAnyAuthenticator } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
-import { formatDates, randomUUID, readFile } from "./common.js";
+import { randomUUID, readFile } from "./common.js";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	let knownVulnerablePassword = '';
@@ -236,55 +236,63 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 		}
 	}
 
-	/* ! Security */
-
-	const passwordActionButton = document.getElementById('password_action_button');
-	const passwordRegenerateCheck = document.getElementById('password_regenerate_check');
+	/* ! Passwords */
+	const showPasswordChangeButton = document.getElementById('option-button-change-password');
+	const passwordActionButton = document.getElementById('password-change-action-button');
+	const passwordCancelButton = document.getElementById('password-change-cancel-button');
 	const changePasswordForm = document.getElementById('change_password_form');
 	const currentPasswordField = document.getElementById('password_current_field');
 	const newPasswordField = document.getElementById('password_initial_field');
 	const confirmPasswordField = document.getElementById('password_confirm_field');
 	const passwordAuthField = document.getElementById('password_auth_field');
-	const addAuthenticatorButton = document.getElementById('add-authenticator-button');
-	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
-	const addAuthenticatorPasswordField = document.getElementById('add-authenticator-password-field');
-	const addAuthenticatorNicknameField = document.getElementById('add-authenticator-nickname-field');
-	const addAuthenticatorActionButton = document.getElementById('add-authenticator-action-button');
-	const addAuthenticatorCancelButton = document.getElementById('add-authenticator-cancel-button');
-	const addAuthenticatorQRCode = document.getElementById('add-authenticator-qrcode');
-	const addAuthenticatorErrorMessage = document.getElementById('add-authenticator-error-message');
-	const timeZoneName = document.getElementById('authenticators_time_zone_name');
-	const replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
+	if (showPasswordChangeButton && passwordActionButton && passwordCancelButton && changePasswordForm && newPasswordField && confirmPasswordField) {
+		showPasswordChangeButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			changePasswordForm.reset();
+			BeaconDialog.showModal('password-change-modal');
+		});
 
-	if (passwordActionButton && passwordRegenerateCheck && changePasswordForm) {
+		passwordCancelButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			BeaconDialog.hideModal().then(() => {
+				changePasswordForm.reset();
+			});
+		});
+
 		passwordActionButton.addEventListener('click', (event) => {
 			event.preventDefault();
 
-			const currentPassword = (currentPasswordField) ? currentPasswordField.value : '';
-			const password = (newPasswordField) ? newPasswordField.value : '';
-			const passwordConfirm = (confirmPasswordField) ? confirmPasswordField.value : '';
+			const currentPassword = currentPasswordField?.value ?? '';
+			const password = newPasswordField.value;
+			const passwordConfirm = confirmPasswordField.value;
 			const allowVulnerable = password === knownVulnerablePassword;
-			const regenerateKey = passwordRegenerateCheck.checked;
-			const terminateSessions = regenerateKey;
+			const terminateSessions = true;
 
 			if (password.length < 8) {
-				BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.');
+				BeaconDialog.hideModal().then(() => {
+					BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.').then(() => {
+						BeaconDialog.showModal('password-change-modal');
+					});
+				});
 				return false;
 			}
 			if (password !== passwordConfirm) {
-				BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.');
+				BeaconDialog.hideModal().then(() => {
+					BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.').then(() => {
+						BeaconDialog.showModal('password-change-modal');
+					});
+				});
 				return false;
 			}
 
 			const body = new URLSearchParams();
-			body.append('current_password', currentPassword);
+			if (currentPasswordField) {
+				body.append('current_password', currentPassword);
+			}
 			body.append('password', password);
 			body.append('allow_vulnerable', allowVulnerable);
 			if (terminateSessions) {
 				body.append('terminate_sessions', true);
-			}
-			if (regenerateKey) {
-				body.append('regenerate_key', true);
 			}
 			if (passwordAuthField) {
 				body.append('auth_code', passwordAuthField.value);
@@ -295,16 +303,18 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 
 				try {
 					const msg = {};
-					if (regenerateKey) {
-						msg.message = 'Your password and private key have been changed.';
-					} else {
-						msg.message = 'Your password has been changed.';
-					}
+					msg.message = 'Your password has been changed.';
 					msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
-					BeaconDialog.show(msg.message, msg.explanation);
+					BeaconDialog.hideModal().then(() => {
+						BeaconDialog.show(msg.message, msg.explanation);
+					});
 				} catch (e) {
 					console.log(e);
-					BeaconDialog.show('There was an error. Your password may or may not have been changed.');
+					BeaconDialog.hideModal().then(() => {
+						BeaconDialog.show('There was an error. Your password may or may not have been changed.').then(() => {
+							BeaconDialog.showModal('password-change-modal');
+						});
+					});
 				}
 			}).catch((error) => {
 				let errorMessage = 'Unable to change password';
@@ -329,37 +339,53 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 					break;
 				}
 
-				BeaconDialog.show(errorMessage, errorExplanation);
+				BeaconDialog.hideModal().then(() => {
+					BeaconDialog.show(errorMessage, errorExplanation).then(() => {
+						BeaconDialog.showModal('password-change-modal');
+					});
+				});
 			});
 
 			return false;
 		});
-	}
 
-	const passwordConfirmCheck = () => {
-		if (!passwordActionButton) {
-			return;
+		const passwordConfirmCheck = () => {
+			if (!passwordActionButton) {
+				return;
+			}
+
+			if (!(newPasswordField && confirmPasswordField)) {
+				console.log('Missing page fields');
+				passwordActionButton.disabled = true;
+				return;
+			}
+
+			passwordActionButton.disabled = (currentPasswordField?.value.trim() ?? 'x') === '' || newPasswordField.value.trim() === '' || newPasswordField.value !== confirmPasswordField.value || (passwordAuthField?.value.trim() ?? 'x') === '';
+		};
+
+		if (currentPasswordField) {
+			currentPasswordField.addEventListener('input', passwordConfirmCheck);
 		}
-
-		if (!(currentPasswordField && newPasswordField && confirmPasswordField)) {
-			console.log('Missing page fields');
-			passwordActionButton.disabled = true;
-			return;
+		if (newPasswordField) {
+			newPasswordField.addEventListener('input', passwordConfirmCheck);
 		}
-
-		passwordActionButton.disabled = currentPasswordField.value.trim() === '' || newPasswordField.value.trim() === '' || newPasswordField.value !== confirmPasswordField.value;
-	};
-
-	if (currentPasswordField) {
-		currentPasswordField.addEventListener('input', passwordConfirmCheck);
-	}
-	if (newPasswordField) {
-		newPasswordField.addEventListener('input', passwordConfirmCheck);
-	}
-	if (confirmPasswordField) {
-		confirmPasswordField.addEventListener('input', passwordConfirmCheck);
+		if (confirmPasswordField) {
+			confirmPasswordField.addEventListener('input', passwordConfirmCheck);
+		}
+		if (passwordAuthField) {
+			passwordAuthField.addEventListener('input', passwordConfirmCheck);
+		}
 	}
 
+	/* ! Authenticators */
+	const addAuthenticatorButton = document.getElementById('option-button-add-authenticator');
+	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
+	const addAuthenticatorPasswordField = document.getElementById('add-authenticator-password-field');
+	const addAuthenticatorNicknameField = document.getElementById('add-authenticator-nickname-field');
+	const addAuthenticatorActionButton = document.getElementById('add-authenticator-action-button');
+	const addAuthenticatorCancelButton = document.getElementById('add-authenticator-cancel-button');
+	const addAuthenticatorQRCode = document.getElementById('add-authenticator-qrcode');
+	const addAuthenticatorErrorMessage = document.getElementById('add-authenticator-error-message');
 	if (addAuthenticatorButton && addAuthenticatorPasswordField && addAuthenticatorCodeField && addAuthenticatorNicknameField && addAuthenticatorActionButton && addAuthenticatorCancelButton) {
 		try {
 			const generateSecret = () => {
@@ -392,7 +418,9 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			addAuthenticatorPasswordField.addEventListener('input', updateAddAuthenticatorButton);
 			addAuthenticatorNicknameField.addEventListener('input', updateAddAuthenticatorButton);
 
-			addAuthenticatorButton.addEventListener('click', () => {
+			addAuthenticatorButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+
 				authenticator.metadata.secret = generateSecret();
 				authenticator.metadata.setup = `otpauth://totp/${encodeURIComponent('Beacon:' + userFullName + ' (' + authenticator.authenticatorId + ')')}?secret=${authenticator.metadata.secret}&issuer=Beacon`;
 
@@ -406,7 +434,8 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				BeaconDialog.showModal('add-authenticator-modal');
 			});
 
-			addAuthenticatorCancelButton.addEventListener('click', () => {
+			addAuthenticatorCancelButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
 				BeaconDialog.hideModal();
 			});
 
@@ -437,109 +466,118 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				BeaconDialog.show('Sorry, this browser is not supported', 'There was an error generating the authenticator, which means your browser does not support modern cryptography features. Try again with an updated browser.');
 			});
 		}
-	}
 
-	const authenticatorRows = document.querySelectorAll('#authenticators-table tbody tr');
-	let numAuthenticators = authenticatorRows.length;
-	if (numAuthenticators > 0) {
-		formatDates(true, false);
+		const numAuthenticators = parseInt(addAuthenticatorButton.getAttribute('beacon-authenticator-count'));
+		if (numAuthenticators > 0) {
+			const deleteButtons = document.querySelectorAll('button.authenticator-remove-button');
+			for (const deleteButton of deleteButtons) {
+				deleteButton.addEventListener('click', (event) => {
+					const authenticatorId = event.target.getAttribute('beacon-authenticator-id');
+					const nickname = event.target.getAttribute('beacon-authenticator-name');
 
-		if (timeZoneName) {
-			timeZoneName.innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		}
-
-		const deleteButtons = document.querySelectorAll('button.delete_authenticator_button');
-		for (const deleteButton of deleteButtons) {
-			deleteButton.addEventListener('click', (event) => {
-				const authenticatorId = event.target.getAttribute('beacon-authenticator-id');
-				const nickname = event.target.getAttribute('beacon-authenticator-name');
-
-				const confirm = {
-					message: `Are you sure you want to delete the authenticator ${nickname}?`,
-				};
-				if (numAuthenticators > 1) {
-					const remainingAuthenticators = numAuthenticators - 1;
-					const authentictorWord = (remainingAuthenticators === 1) ? 'authenticator' : 'authenticators';
-					confirm.explanation = `You will have ${remainingAuthenticators} ${authentictorWord} remaining. Your account will still be protected by two factor authentication.`;
-				} else {
-					confirm.explanation = 'This is your only authenticator. Deleting it will disable two factor authentication for your account. You will be able to add a new authenticator to enable two factor authentication again.';
-				}
-				confirm.explanation += ' To delete this authenticator, please use it to generate a code';
-
-				BeaconDialog.secureConfirm(SecureOptionAnyAuthenticator, confirm.message, confirm.explanation).then((authCode) => {
-					BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/authenticators`, JSON.stringify({
-						authenticatorId: authenticatorId,
-						authCode: authCode,
-					}), {
-						'X-Beacon-Token': sessionId,
-						'Content-Type': 'application/json',
-					}).then(() => {
-						const row = document.getElementById(`authenticator-${authenticatorId}`);
-						if (row && numAuthenticators > 1) {
-							row.remove();
-							numAuthenticators--;
-						} else {
-							window.location.reload(true);
-						}
-					}).catch((error) => {
-						const reason = {
-							message: 'The authenticator was not deleted',
-							explanation: `There was a ${error.status} error.`,
-						};
-						try {
-							const obj = JSON.parse(error.body);
-							if (obj.message) {
-								reason.explanation = obj.message;
-							}
-						} catch (e) {
-							//
-						}
-						BeaconDialog.show(reason.message, reason.explanation);
-					});
-				}).catch(() => {
-					// Do nothing
-				});
-			});
-		}
-	}
-
-	if (replaceBackupCodesButton) {
-		replaceBackupCodesButton.addEventListener('click', () => {
-			BeaconDialog.confirm('Replace backup codes?', 'This will replace all of your backup codes with new ones.').then(() => {
-				BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {'X-Beacon-Token': sessionId}).then((response) => {
-					try {
-						const backupCodesTable = document.getElementById('backup-codes');
-						const obj = JSON.parse(response.body);
-						const codes = obj.codes;
-						backupCodesTable.innerHTML = '';
-						for (const code of codes) {
-							const codeElement = document.createElement('div');
-							codeElement.innerText = code;
-							codeElement.className = 'flex-grid-item';
-							backupCodesTable.appendChild(codeElement);
-						}
-					} catch (e) {
-						window.location.reload(true);
-					}
-				}).catch((error) => {
-					console.log(JSON.stringify(error));
-					const reason = {
-						message: 'Backup codes not replaced',
-						explanation: `There was a ${error.status} error.`,
+					const confirm = {
+						message: `Are you sure you want to delete the authenticator ${nickname}?`,
 					};
-					try {
-						const obj = JSON.parse(error.body);
-						if (obj.message) {
-							reason.explanation = obj.message;
-						}
-					} catch (e) {
+					if (numAuthenticators > 1) {
+						const remainingAuthenticators = numAuthenticators - 1;
+						const authentictorWord = (remainingAuthenticators === 1) ? 'authenticator' : 'authenticators';
+						confirm.explanation = `You will have ${remainingAuthenticators} ${authentictorWord} remaining. Your account will still be protected by two factor authentication.`;
+					} else {
+						confirm.explanation = 'This is your only authenticator. Deleting it will disable two factor authentication for your account. You will be able to add a new authenticator to enable two factor authentication again.';
 					}
-					BeaconDialog.show(reason.message, reason.explanation);
-				});
-			}).catch(() => {
+					confirm.explanation += ' To delete this authenticator, please use it to generate a code';
 
+					BeaconDialog.secureConfirm(SecureOptionAnyAuthenticator, confirm.message, confirm.explanation, 'Delete', 'Cancel').then((authCode) => {
+						BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/authenticators`, JSON.stringify({
+							authenticatorId: authenticatorId,
+							authCode: authCode,
+						}), {
+							'X-Beacon-Token': sessionId,
+							'Content-Type': 'application/json',
+						}).then(() => {
+							window.location.reload();
+						}).catch((error) => {
+							const reason = {
+								message: 'The authenticator was not deleted',
+								explanation: `There was a ${error.status} error.`,
+							};
+							try {
+								const obj = JSON.parse(error.body);
+								if (obj.message) {
+									reason.explanation = obj.message;
+								}
+							} catch (e) {
+								//
+							}
+							BeaconDialog.show(reason.message, reason.explanation);
+						});
+					}).catch(() => {
+						// Do nothing
+					});
+				});
+			}
+		}
+
+		const viewBackupCodesButton = document.getElementById('option-button-view-backup-codes');
+		if (viewBackupCodesButton) {
+			viewBackupCodesButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				BeaconDialog.showModal('manage-backup-codes-modal');
 			});
-		});
+		}
+
+		const replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
+		if (replaceBackupCodesButton) {
+			replaceBackupCodesButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+
+				BeaconDialog.hideModal().then(() => {
+					BeaconDialog.confirm('Replace backup codes?', 'This will replace all of your backup codes with new ones.').then(() => {
+						BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {'X-Beacon-Token': sessionId}).then((response) => {
+							try {
+								const backupCodesTable = document.getElementById('backup-codes');
+								const obj = JSON.parse(response.body);
+								const codes = obj.codes;
+								backupCodesTable.innerHTML = '';
+								for (const code of codes) {
+									const codeElement = document.createElement('div');
+									codeElement.innerText = code;
+									codeElement.className = 'flex-grid-item';
+									backupCodesTable.appendChild(codeElement);
+								}
+								BeaconDialog.showModal('manage-backup-codes-modal');
+							} catch (e) {
+								window.location.reload();
+							}
+						}).catch((error) => {
+							console.log(JSON.stringify(error));
+							const reason = {
+								message: 'Backup codes not replaced',
+								explanation: `There was a ${error.status} error.`,
+							};
+							try {
+								const obj = JSON.parse(error.body);
+								if (obj.message) {
+									reason.explanation = obj.message;
+								}
+							} catch (e) {
+							}
+							BeaconDialog.show(reason.message, reason.explanation);
+						});
+					}).catch(() => {
+						BeaconDialog.showModal('manage-backup-codes-modal');
+					});
+				});
+			});
+		}
+
+		const closeBackupCodesButton = document.getElementById('backup-codes-action-button');
+		if (closeBackupCodesButton) {
+			closeBackupCodesButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				BeaconDialog.hideModal();
+			});
+		}
 	}
 
 	/* ! Sessions */
@@ -648,7 +686,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			event.preventDefault();
 
 			const applicationId = event.currentTarget.getAttribute('beacon-app-id');
-			BeaconDialog.secureConfirm(SecureOptionAnyAuthenticator, 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.').then((authCode) => {
+			BeaconDialog.secureConfirm(SecureOptionAnyAuthenticator, 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.', 'Delete', 'Cancel').then((authCode) => {
 				BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/applications`, JSON.stringify({
 					applicationId: applicationId,
 					authCode: authCode,

@@ -651,17 +651,26 @@ blockquote {
 }
 
 div.visual-group {
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
-	background-color: color.mix($foreground-color, $background-color, 5%);
+	h1 {
+		font-size: 1.6rem;
+	}
+
+	h2 {
+		font-size: 1.4rem;
+	}
+
+	h3 {
+		font-size: 1.2rem;
+	}
 
 	h1, h2, h3 {
 		margin-bottom: 20px;
+		border-bottom: 1px solid $separator-color;
+		padding-bottom: 0.3em;
 	}
 
 	&+& {
-		margin-top: 20px;
+		margin-top: 4rem;
 	}
 }
 
@@ -2096,6 +2105,7 @@ ul.no-markings, ol.no-markings {
 .notice-block {
 	border-width: 1px;
 	border-style: solid;
+	border-radius: 0.25rem;
 	text-align: center;
 	padding: 16px;
 
@@ -2119,6 +2129,69 @@ ul.no-markings, ol.no-markings {
 		border-color: color.mix($text-blue, $background-color, 35%);
 		color: $text-blue;
 		background-color: color.mix($text-blue, $background-color, 3%);
+	}
+}
+
+.notice-lighter {
+	position: relative;
+
+	&:after {
+		content: '';
+		background-color: $separator-color;
+		border-radius: 9999px;
+		position: absolute;
+		top: 0px;
+		left: -4px;
+		bottom: 0px;
+		width: 4px;
+	}
+
+	&.red {
+		color: $text-red;
+
+		&:after {
+			border-color: $text-red;
+		}
+	}
+
+	&.blue {
+		color: $text-blue;
+
+		&:after {
+			border-color: $text-blue;
+		}
+	}
+
+	&.green {
+		color: $text-green;
+
+		&:after {
+			border-color: $text-green;
+		}
+	}
+
+	&.purple {
+		color: $text-purple;
+
+		&:after {
+			border-color: $text-purple;
+		}
+	}
+
+	&.yellow {
+		color: $text-yellow;
+
+		&:after {
+			border-color: $text-yellow;
+		}
+	}
+
+	&.accent {
+		color: $text-accent-color;
+
+		&:after {
+			background-color: $text-accent-color;
+		}
 	}
 }
 
@@ -2256,7 +2329,7 @@ div.page-panel {
 
 			a {
 				text-decoration: none;
-				display: inline-block;
+				display: block;
 				padding: $input-padding-y $input-padding-x;
 				border-radius: $border-radius;
 				white-space: nowrap;
@@ -2983,6 +3056,196 @@ body.no-navigation {
 	}
 }
 
+.sign-in-option {
+	$option-color: #5e9dff;
+	$option-shape-color: contrasting-color($background-color, $option-color, 4.5);
+	$option-text-color: contrasting-color($background-color, $option-color, 7.0);
+
+	display: flex;
+	border: 1px solid $option-shape-color;
+	align-items: center;
+	border-radius: 0.25rem;
+	padding: 0.5rem 0.75rem;
+	gap: 1rem;
+
+	&.sign-in-option-unavailable {
+		$option-disabled-color: color.mix($background-color, $foreground-color, 50%);
+		$option-disabled-shape-color: contrasting-color($background-color, $option-disabled-color, 4.5);
+		$option-disabled-text-color: contrasting-color($background-color, $option-disabled-color, 7.0);
+		border-color: $option-disabled-shape-color;
+
+		.sign-in-option-title {
+			color: $option-disabled-text-color;
+		}
+
+		.sign-in-option-icon {
+			svg {
+				fill: $option-disabled-shape-color;
+			}
+		}
+	}
+
+	.sign-in-option-icon {
+		svg {
+			fill: $option-shape-color;
+			height: 48px;
+			max-width: 48px;
+			display: block;
+		}
+	}
+
+	.sign-in-option-rows {
+		flex-grow: 1;
+	}
+
+	.sign-in-option-row {
+		flex-grow: 1;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.sign-in-option-content {
+		flex-grow: 1;
+	}
+
+	.sign-in-option-title {
+		color: $option-text-color;
+		font-weight: bold;
+	}
+
+	.sign-in-option-buttons {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+
+		button {
+			margin: 0px;
+			display: block;
+		}
+	}
+
+	.sign-in-option-row+.sign-in-option-row {
+		margin-top: 0.5rem;
+		border-top: 1px solid color.mix($background-color, $separator-color, 40%);
+		padding-top: 0.5rem;
+	}
+
+	.sign-in-option-tag {
+		color: color.mix($background-color, $foreground-color, 40%);
+		font-size: 0.9em;
+	}
+
+	&+& {
+		margin-top: 0.75rem;
+	}
+}
+
+.services-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+
+	.service {
+		width: 250px;
+		border-radius: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem;
+		box-sizing: border-box;
+		background-color: color.mix($background-color, $foreground-color, 95%);
+		color: black;
+		position: relative;
+		margin-left: auto;
+		margin-right: auto;
+
+		@media (min-width: calc(500px + 1rem + 80px)) {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		.service-logo {
+			img {
+				width: 100%;
+				height: auto;
+				display: block;
+				max-height: 75px;
+			}
+
+			flex: 1 1 auto;
+		}
+
+		.service-name {
+			font-weight: bold;
+			word-break: break-all;
+			text-align: center;
+		}
+
+		.service-error {
+			text-align: center;
+			font-size: 0.9em;
+		}
+
+		.service-uid {
+			word-break: keep-all;
+		}
+
+		.service-action {
+
+		}
+	}
+
+	.service-nitrado {
+		&.active {
+			background-color: black;
+			color: white;
+		}
+
+		&.inactive .service-logo img {
+			//filter: brightness(0%);
+		}
+	}
+
+	.service-gameserverapp.active {
+		background: rgb(12,38,76);
+		background: linear-gradient(0deg, rgba(3,3,4,1) 0%, rgba(12,38,76,1) 100%);
+		color: white;
+	}
+
+	.service-asamanager.active {
+		background: #181818;
+		color: white;
+	}
+
+	.service-beaconhostingapi.active {
+		background: #9c0fb0;
+		background: linear-gradient(-127deg,rgba(255, 255, 0, 1) -75%, rgba(212, 12, 195, 1) 50%, rgba(17, 0, 0, 1) 175%);
+		color: white;
+
+		.service-logo img {
+			filter: brightness(0%) invert(100%);
+		}
+
+		button.red {
+			background-color: white;
+			color: #bb2d3b;
+
+			&:active {
+				background-color: #808080;
+				color: rgb(36.6666666667%,8.8235294118%,11.568627451%);
+			}
+		}
+	}
+
+	.service-gameserverspanel.active {
+		background-color: black;
+		color: white;
+	}
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;
@@ -3062,7 +3325,7 @@ body.no-navigation {
 				flex-direction: column;
 
 				li {
-					text-align: right;
+					text-align: left;
 				}
 			}
 		}

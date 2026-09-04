@@ -1,8 +1,6 @@
 #!/bin/bash
 \. "$HOME/.nvm/nvm.sh"
 
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
-
 case $1 in
 	-w | --watch)
 		node_modules/.bin/webpack --watch &

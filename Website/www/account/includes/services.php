@@ -22,11 +22,14 @@ if (count($connectedServices) > 0) {
 		case ServiceToken::ProviderGameServersPanel:
 			$imageNames = ['gameserverspanel.webp', 'gameserverspanel@2x.webp', 'gameserverspanel@3x.webp'];
 			break;
+		case ServiceToken::ProviderBeaconHostingAPI:
+			$imageNames = ['beacon-hostingapi-logotype-white.svg'];
+			break;
 		}
 
 		echo '<div class="service service-' . $providerSimplified . ' active">';
 		if (count($imageNames) === 1) {
-			echo '<div class="service-logo"><img src="' . BeaconCommon::AssetURI($providerSimplified . '-color.svg') . '" alt="' . $provider . '"></div>';
+			echo '<div class="service-logo"><img src="' . BeaconCommon::AssetURI($imageNames[0]) . '" alt="' . $provider . '"></div>';
 		} else {
 			echo '<div class="service-logo"><img src="' . BeaconCommon::AssetURI($imageNames[0]) . '" srcset="' . BeaconCommon::AssetURI($imageNames[0]) . ' 1x, ' . BeaconCommon::AssetURI($imageNames[1]) . ' 2x, ' . BeaconCommon::AssetURI($imageNames[2]) . ' 3x" alt="' . $provider . '"></div>';
 		}
@@ -45,12 +48,14 @@ if (count($connectedServices) > 0) {
 	<h3>Available Services</h3>
 	<div class="services-grid">
 		<div class="service service-nitrado inactive">
-			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('nitrado-color.svg'); ?>" alt="Nitrado"></div>
+			<div class="service-logo light-only"><img src="<?php echo BeaconCommon::AssetURI('nitrado-black.svg'); ?>" alt="Nitrado"></div>
+			<div class="service-logo dark-only"><img src="<?php echo BeaconCommon::AssetURI('nitrado-color.svg'); ?>" alt="Nitrado"></div>
 			<div class="service-name"><a href="https://nitrado.net" target="_blank" rel="nofollow noopener noreferrer">Nitrado</a></div>
 			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="<?php echo strtolower(ServiceToken::ProviderNitrado); ?>" beacon-provider-type="oauth" beacon-token-id="">Connect</button><button beacon-provider="<?php echo strtolower(ServiceToken::ProviderNitrado); ?>" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
 		</div>
 		<div class="service service-gameserverapp inactive">
-			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('gameserverapp-black.svg'); ?>" alt="GameServerApp"></div>
+			<div class="service-logo light-only"><img src="<?php echo BeaconCommon::AssetURI('gameserverapp-black.svg'); ?>" alt="GameServerApp"></div>
+			<div class="service-logo dark-only"><img src="<?php echo BeaconCommon::AssetURI('gameserverapp-color.svg'); ?>" alt="GameServerApp"></div>
 			<div class="service-name"><a href="https://gameserverapp.com" target="_blank" rel="nofollow noopener noreferrer">GameServerApp.com</a></div>
 			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="<?php echo strtolower(ServiceToken::ProviderGameServerApp); ?>" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
 		</div>
@@ -65,7 +70,8 @@ if (count($connectedServices) > 0) {
 			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="<?php echo strtolower(ServiceToken::ProviderGameServersPanel); ?>" beacon-provider-type="oauth" beacon-token-id="">Connect</button><button beacon-provider="<?php echo strtolower(ServiceToken::ProviderGameServersPanel); ?>" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
 		</div>
 		<div class="service service-beaconhostingapi inactive">
-			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('beaconhostingapi-color.svg'); ?>" alt="Beacon Hosting API"></div>
+			<div class="service-logo light-only"><img src="<?php echo BeaconCommon::AssetURI('beacon-hostingapi-logotype.svg'); ?>" alt="Beacon Hosting API"></div>
+			<div class="service-logo dark-only"><img src="<?php echo BeaconCommon::AssetURI('beacon-hostingapi-logotype-dark.svg'); ?>" alt="Beacon Hosting API"></div>
 			<div class="service-name"><a href="https://help.usebeacon.app/hostingapi/" target="_blank" rel="nofollow noopener noreferrer">Beacon Open Hosting API</a></div>
 			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="<?php echo strtolower(ServiceToken::ProviderBeaconHostingAPI); ?>" beacon-provider-type="static" beacon-token-id="">Add Host</button></div></div>
 		</div>
