@@ -3,7 +3,7 @@
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
 import { BeaconDialog, SecureOptionPassword, SecureOptionAnyAuthenticator } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
-import { randomUUID, readFile } from "./common.js";
+import { randomUUID, readFile, recursiveBase64StrToArrayBuffer, arrayBufferToBase64, testPasskeySupport, verifyPasskey } from "./common.js";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	let knownVulnerablePassword = '';
@@ -609,15 +609,9 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			});
 		};
 
-		if (window.PublicKeyCredential && PublicKeyCredential.getClientCapabilities) {
-			PublicKeyCredential.getClientCapabilities().then((capabilities) => {
-				updatePasskeysUI(capabilities.conditionalGet === true && capabilities.passkeyPlatformAuthenticator === true);
-			}).catch(() => {
-				updatePasskeysUI(false);
-			});
-		} else {
-			updatePasskeysUI(false);
-		}
+		testPasskeySupport().then((supported) => {
+			updatePasskeysUI(supported);
+		});
 
 		addPasskeyButton.addEventListener('click', (ev) => {
 			ev.preventDefault();
@@ -625,11 +619,15 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			BeaconWebRequest.get('/account/actions/passkeyInit').then((initResponse) => {
 				const rawOptions = JSON.parse(initResponse.body);
 				try {
-					const options = PublicKeyCredential.parseCreationOptionsFromJSON(rawOptions);
-					navigator.credentials.create({
-						publicKey: options,
-					}).then((passkey) => {
-						BeaconWebRequest.post('/account/actions/passkeySave', passkey.toJSON()).then((saveResponse) => {
+					const options = recursiveBase64StrToArrayBuffer(rawOptions);
+					navigator.credentials.create(options).then((passkey) => {
+						const saveData = {
+							transports: passkey.response.getTransports ? passkey.response.getTransports() : null,
+							clientDataJSON: passkey.response.clientDataJSON ? arrayBufferToBase64(passkey.response.clientDataJSON) : null,
+							attestationObject: passkey.response.attestationObject ? arrayBufferToBase64(passkey.response.attestationObject) : null,
+						};
+
+						BeaconWebRequest.post('/account/actions/passkeySave', saveData).then((saveResponse) => {
 							setTimeout(() => {
 								window.location.reload();
 							}, 3000);
@@ -650,7 +648,8 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 							}
 							BeaconDialog.show('Could not save passkey', saveErr.message);
 						});
-					}).catch(() => {
+					}).catch((createErr) => {
+						console.log(createErr);
 					});
 				} catch (setupErr) {
 					BeaconDialog.show('Could not start passkey setup', setupErr.message);

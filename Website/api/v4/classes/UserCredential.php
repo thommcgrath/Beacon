@@ -29,6 +29,9 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 
 		$metadataKey = base64_decode(BeaconCommon::GetGlobal('Credential Secret'));
 		$metadata = BeaconEncryption::SymmetricDecrypt($metadataKey, $row->Field('metadata'));
+		if (BeaconCommon::IsCompressed($metadata)) {
+			$metadata = gzdecode($metadata);
+		}
 		$this->metadata = json_decode($metadata, true);
 	}
 
@@ -113,7 +116,7 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 		switch ($definition->PropertyName()) {
 		case 'metadata':
 			$metadataKey = base64_decode(BeaconCommon::GetGlobal('Credential Secret'));
-			return bin2hex(BeaconEncryption::SymmetricEncrypt($metadataKey, json_encode($value), false));
+			return bin2hex(BeaconEncryption::SymmetricEncrypt($metadataKey, gzencode(json_encode($value)), false));
 		default:
 			return static::MutableDatabaseObjectPreparePropertyValue($definition, $value, $otherProperties);
 		}
@@ -192,14 +195,13 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 		return true;
 	}
 
-	public static function CreatePasskey(string $userId, string $passkeyName, string $passkeyData): static {
+	public static function CreatePasskey(string $userId, string $passkeyId, string $passkeyName, string $passkeyData): static {
 		$credentialData = [
+			'credentialId' => $passkeyId,
 			'userId' => $userId,
 			'type' => self::TypePasskey,
 			'name' => $passkeyName,
-			'metadata' => [
-				'raw' => $passkeyData,
-			]
+			'metadata' => json_decode($passkeyData, true),
 		];
 		return static::Create($credentialData);
 	}

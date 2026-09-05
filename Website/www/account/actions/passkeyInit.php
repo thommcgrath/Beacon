@@ -8,7 +8,7 @@ http_response_code(500);
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-use BeaconAPI\v4\{Application, Response, Session, User};
+use BeaconAPI\v4\{Application, Response, Session, User, UserCredential};
 
 $activeSession = BeaconCommon::GetSession();
 if (is_null($activeSession)) {
@@ -19,38 +19,29 @@ if ($activeSession->HasScope(Application::kScopeUsersCredentials) === false) {
 	Response::NewJsonError('Forbidden', null, 403);
 	exit;
 }
-
 $user = $activeSession->User();
-$obj = [
-	'challenge' => BeaconCommon::Base64UrlEncode(random_bytes(32)),
-	'rp' => [
-		'name' => 'Beacon',
-		'id' => 'usebeacon.app',
-	],
-	'user' => [
-		'id' => $user->UserId(),
-		'name' => $user->Username(true),
-		'displayName' => $user->Username(false),
-	],
-	'pubKeyCredParams' => [
-		[
-			'alg' => -7,
-			'type' => 'public-key',
-		],
-		[
-			'alg' => -257,
-			'type' => 'public-key',
-		],
-	],
-	'excludeCredentials' => [
-	],
-	'authenticatorSelection' => [
-		'authenticatorAttachment' => 'platform',
-		'requireResidentKey' => true,
-	],
-];
+
+BeaconCommon::StartSession();
+
+use ReportUri\Passkeys\WebAuthn;
+$auth = new WebAuthn('Beacon', 'usebeacon.app');
+
+$existingPasskeyIds = [];
+$passkeys = UserCredential::Search(['userId' => $user->UserId(), 'type' => UserCredential::TypePasskey], true);
+foreach ($passkeys as $passkey) {
+	try {
+		$metadata = $passkey->Metadata();
+		if (array_key_exists('credentialId', $metadata)) {
+			$existingPasskeyIds[] = BeaconCommon::Base64UrlDecode($metadata['credentialId']);
+		}
+	} catch (Exception $err) {
+	}
+}
+
+$args = $auth->getCreateArgs(userId: $user->UserId(), userName: $user->Username(true), userDisplayName: $user->Username(false), timeout: 300, excludeCredentialIds: $existingPasskeyIds);
+$_SESSION['challenge'] = $auth->getChallenge();
 
 http_response_code(200);
-echo json_encode($obj, JSON_PRETTY_PRINT);
+echo json_encode($args, JSON_PRETTY_PRINT);
 
 ?>
