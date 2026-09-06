@@ -54,60 +54,113 @@ abstract class UserGenerator {
 		return $user;
 	}
 
-	// Alias for ChangePassword with a null $oldPassword;
-	public static function ReplacePassword(User $user, string $password): void {
-		static::ChangePassword($user, null, $password, null, $user->UsesModernSecurity() === false);
-	}
-
-	// With string $oldPassword: graceful password change, deletes all sessions except one
-	// With null $oldPassword: forceful password change, generates a new key, deletes all sessions, deletes all encrypted cloud files, untrusts all devices
-	public static function ChangePassword(User $user, string|null $oldPassword, string $newPassword, string|Session|null $retainSession = null, bool $regenerateKey = false): void {
-		if ($user->UsesModernSecurity()) {
-			throw new Exception('This process has not been updated for the new security models.');
+	public static function ReplacePrivateKey(string|User $user, ?string &$newPassword = null): void {
+		if (is_string($user)) {
+			$userId = $user;
+			$user = User::Fetch($userId);
+		} else {
+			$userId = $user->UserId();
 		}
 
-		$userProperties = [];
-		$regenerateKey = $regenerateKey || is_null($oldPassword);
-		$oldPrivateKey = null;
-		$publicKeyPem = $user->PublicKey();
-
-		// If the old password is provided, it *must* match. SymmetricDecrypt will throw an exception if it does not.
-		if (is_string($oldPassword)) {
-			$privateKeySalt = hex2bin($user->PrivateKeySalt());
-			$privateKeyIterations = $user->PrivateKeyIterations();
-			$privateKeySecret = BeaconEncryption::HashFromPassword($oldPassword, $privateKeySalt, $privateKeyIterations);
-			try {
-				$privateKeyPem = BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($user->PrivateKey()));
-				$oldPrivateKey = $privateKeyPem;
-			} catch (Exception $err) {
-				// Make a nicer exception
-				throw new Exception('Old password is not correct.');
-			}
+		$generateHash = true;
+		$secret = null;
+		switch ($user->SecurityModel()) {
+		case User::SecurityModelAnonymous:
+			throw new Exception('Anonymous accounts are anonymous. There is no private key to replace.');
+		case User::SecurityModelStandard:
+			$secret = base64_decode(BeaconCommon::GetGlobal('Private Key Secret'));
+			$generateHash = false;
+			break;
+		case User::SecurityModelLegacy:
+			$secret = $newPassword;
+			break;
+		case User::SecurityModelEnhanced:
+			$newPassword = BeaconCommon::GenerateRandomKey(32);
+			$secret = $newPassword;
+			break;
 		}
 
-		// The user can do a graceful password change and still generate a new key.
-		if ($regenerateKey) {
-			$publicKeyPem = null;
-			$privateKeyPem = null;
-			BeaconEncryption::GenerateKeyPair($publicKeyPem, $privateKeyPem);
-			$encryptedCloudKey = BeaconEncryption::RSAEncrypt($publicKeyPem, User::GenerateCloudKey());
+		$publicKeyPem = null;
+		$privateKeyPem = null;
+		BeaconEncryption::GenerateKeyPair($publicKeyPem, $privateKeyPem);
+		$encryptedCloudKey = BeaconEncryption::RSAEncrypt($publicKeyPem, User::GenerateCloudKey());
 
-			$userProperties['publicKey'] = $publicKeyPem;
-			$userProperties['cloudKey'] = bin2hex($encryptedCloudKey);
-		}
-
-		$userProperties = array_merge($userProperties, static::EncryptPrivateKey($newPassword, $privateKeyPem));
+		$userProperties = array_merge([
+			'publicKey' => $publicKeyPem,
+			'cloudKey' => bin2hex($encryptedCloudKey),
+		], static::EncryptPrivateKey($secret, $privateKeyPem, $generateHash));
 
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		try {
 			$user->Edit($userProperties);
 
-			// delete all sessions
-			if (is_null($retainSession) === false && is_string($retainSession)) {
-				$retainSession = Session::Fetch($retainSession);
+			// delete encrypted cloud files
+			$cloudFiles = BeaconCloudStorage::ListFiles('/' . $userId . '/');
+			foreach ($cloudFiles as $file) {
+				if ($file['deleted'] === false && is_null($file['header']) === false) {
+					BeaconCloudStorage::DeleteFile($file['path']);
+				}
 			}
-			$sessions = Session::Search(['userId' => $user->UserId()], true);
+
+			// clear all project passwords
+			$database->Query('UPDATE public.project_members SET encrypted_password = NULL, fingerprint = NULL WHERE user_id = $1;', $user->UserId());
+
+			$database->Commit();
+		} catch (Exception $err) {
+			$database->Rollback();
+			throw $err;
+		}
+	}
+
+	public static function GracefulPasswordChange(string|User $user, string $oldPassword, string $newPassword): bool {
+		if (is_string($user)) {
+			$userId = $user;
+			$user = User::Fetch($userId);
+		} else {
+			$userId = $user->UserId();
+		}
+
+		if ($user->UsesModernSecurity()) {
+			UserCredential::SetUserPassword($userId, $newPassword);
+			return true;
+		}
+
+		try {
+			$privateKey = $user->DecryptPrivateKey($oldPassword);
+		} catch (Exception $err) {
+			return false;
+		}
+
+		$userProperties = static::EncryptPrivateKey($newPassword, $privateKey);
+
+		try {
+			$user->Edit($userProperties);
+			return true;
+		} catch (Exception $err) {
+			return false;
+		}
+	}
+
+	public static function HardPasswordReset(string|User $user, string $newPassword): bool {
+		if (is_string($user)) {
+			$userId = $user;
+			$user = User::Fetch($userId);
+		} else {
+			$userId = $user->UserId();
+		}
+
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		try {
+			if ($user->UsesModernSecurity()) {
+				UserCredential::SetUserPassword($userId, $newPassword);
+			} else {
+				static::ReplacePrivateKey($user, $newPassword);
+			}
+
+			// clear all sessions
+			$sessions = Session::Search(['userId' => $userId], true);
 			foreach ($sessions as $session) {
 				if (is_null($retainSession) == false && $session->SessionHash() === $retainSession->SessionHash()) {
 					continue;
@@ -116,56 +169,31 @@ abstract class UserGenerator {
 				$session->Delete();
 			}
 
-			if ($regenerateKey) {
-				// delete encrypted cloud files
-				$cloudFiles = BeaconCloudStorage::ListFiles('/' . $user->UserId() . '/');
-				foreach ($cloudFiles as $file) {
-					if ($file['deleted'] === false && is_null($file['header']) === false) {
-						BeaconCloudStorage::DeleteFile($file['path']);
-					}
-				}
-
-				// untrust all devices
-				$user->UntrustAllDevices();
-			}
-			if (is_null($oldPrivateKey) === false && $oldPrivateKey !== $privateKeyPem) {
-				// re-encrypt project passwords
-				$rows = $database->Query('SELECT project_id, encrypted_password FROM public.project_members WHERE user_id = $1 AND encrypted_password IS NOT NULL;', $user->UserId());
-				while (!$rows->EOF()) {
-					$encryptedPassword = base64_decode($rows->Field('encrypted_password'));
-					$projectId = $rows->Field('project_id');
-
-					try {
-						$decryptedPassword = BeaconEncryption::RSADecrypt($oldPrivateKey, $encryptedPassword);
-						$encryptedPassword = BeaconEncryption::RSAEncrypt($publicKeyPem, $decryptedPassword);
-						$fingerprint = ProjectMember::GenerateFingerprint($user->UserId(), $user->Username(false), $publicKeyPem, $decryptedPassword);
-						$rows = $database->Query('UPDATE public.project_members SET encrypted_password = $3, fingerprint = $4 WHERE user_id = $1 AND project_id = $2;', $user->UserId(), $projectId, base64_encode($encryptedPassword), $fingerprint);
-					} catch (Exception $passwordErr) {
-						$rows = $database->Query('UPDATE public.project_members SET encrypted_password = NULL, fingerprint = NULL WHERE user_id = $1 AND project_id = $2;', $user->UserId(), $projectId);
-					}
-					$rows->MoveNext();
-				}
-			} else {
-				// clear encrypted project passwords
-				$database->Query('UPDATE public.project_members SET encrypted_password = NULL, fingerprint = NULL WHERE user_id = $1;', $user->UserId());
-			}
+			// untrust all devices
+			$user->UntrustAllDevices();
 
 			$database->Commit();
 
 			BeaconPusher::SharedInstance()->SendEvents([
-				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($user->UserId()), eventName: 'user-updated', body: ''),
-				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($user->UserId()), eventName: 'userUpdated', body: ''),
+				new BeaconChannelEvent(channelName: BeaconPusher::UserChannelName($userId), eventName: 'user-updated', body: ''),
+				new BeaconChannelEvent(channelName: BeaconPusher::PrivateUserChannelName($userId), eventName: 'userUpdated', body: ''),
 			]);
+
+			return true;
 		} catch (Exception $err) {
 			$database->Rollback();
-			throw $err;
+			return false;
 		}
 	}
 
-	protected static function EncryptPrivateKey(string $password, string $privateKeyPem): array {
-		$privateKeySalt = BeaconEncryption::GenerateSalt();
-		$privateKeyIterations = 450000;
-		$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
+	protected static function EncryptPrivateKey(string $password, string $privateKeyPem, bool $generateHash = true): array {
+		if ($generateHash) {
+			$privateKeySalt = BeaconEncryption::GenerateSalt();
+			$privateKeyIterations = 450000;
+			$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
+		} else {
+			$privateKeySecret = $password;
+		}
 		$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
 
 		return [

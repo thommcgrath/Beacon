@@ -127,7 +127,7 @@ export const testPasskeySupport = () => {
 	});
 };
 
-export const verifyPasskey = () => {
+export const verifyPasskey = (destinationUrl = '/account/auth/authenticate') => {
 	return new Promise((resolve, reject) => {
 		BeaconWebRequest.get('/account/auth/passkeyOptions').then((initResponse) => {
 			if (!initResponse.success) {
@@ -146,7 +146,7 @@ export const verifyPasskey = () => {
 					userHandle: passkey.response.userHandle ? arrayBufferToBase64(passkey.response.userHandle) : null
 				}
 
-				BeaconWebRequest.post('/account/auth/passkeyVerify', authenticatorAttestationResponse).then((verifyResponse) => {
+				BeaconWebRequest.post(destinationUrl, authenticatorAttestationResponse).then((verifyResponse) => {
 					if (!verifyResponse.success) {
 						if (PublicKeyCredential.signalUnknownCredential) {
 							PublicKeyCredential.signalUnknownCredential({
@@ -162,8 +162,7 @@ export const verifyPasskey = () => {
 						return;
 					}
 
-					const session = JSON.parse(verifyResponse.body);
-					resolve({verified: true, session: session});
+					resolve({verified: true, response: JSON.parse(verifyResponse.body)});
 				}).catch((err) => {
 					reject(err);
 				});

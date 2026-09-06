@@ -1112,6 +1112,23 @@ abstract class BeaconCommon {
 		}
 		return true;
 	}
+
+	public static function GetIdentityChallenge(Session $session): string {
+		static::StartSession();
+		$challenge = random_bytes(32);
+		$_SESSION['identityChallenge'] = hash('sha256', $challenge . ':' . $session->UserId() . ':' . $session->AccessToken());
+		return static::Base64UrlEncode($challenge);
+	}
+
+	public static function VerifyIdentityChallenge(Session $session, string $challenge): bool {
+		static::StartSession();
+		$expectedHash = hash('sha256', static::Base64UrlDecode($challenge) . ':' . $session->UserId() . ':' . $session->AccessToken());
+		if (($_SESSION['identityChallenge'] ?? '') == $expectedHash) {
+			unset($_SESSION['identityChallenge']);
+			return true;
+		}
+		return false;
+	}
 }
 
 ?>

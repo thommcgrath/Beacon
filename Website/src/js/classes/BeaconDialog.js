@@ -1,5 +1,9 @@
-export const SecureOptionPassword = 'password';
-export const SecureOptionAnyAuthenticator = 'anyAuthenticator';
+export const SecureOptionPassword = 1;
+export const SecureOptionAnyAuthenticator = 2;
+export const SecureOptionPasskeys = 4;
+
+import { BeaconWebRequest } from "./BeaconWebRequest.js";
+import { testPasskeySupport, verifyPasskey } from "../common.js";
 
 export class BeaconDialog {
 	static activeModal = null;
@@ -9,7 +13,7 @@ export class BeaconDialog {
 		return this.confirm(message, explanation, actionCaption, null);
 	}
 
-	static confirm(message, explanation = null, actionCaption = 'Ok', cancelCaption = 'Cancel', slotHtml = null) {
+	static confirm(message, explanation = null, actionCaption = 'Ok', cancelCaption = 'Cancel', slotNode = null) {
 		return new Promise((resolve, reject) => {
 			const overlay = document.getElementById('overlay');
 			const dialogFrame = document.getElementById('dialog');
@@ -39,11 +43,11 @@ export class BeaconDialog {
 				dialogExplanation.classList.add('hidden');
 			}
 			if (dialogSlot) {
-				if (slotHtml) {
-					dialogSlot.innerHTML = slotHtml;
+				dialogSlot.replaceChildren();
+				if (slotNode) {
+					dialogSlot.appendChild(slotNode);
 					dialogSlot.classList.remove('hidden');
 				} else {
-					dialogSlot.innerText = '';
 					dialogSlot.classList.add('hidden');
 				}
 			}
@@ -69,7 +73,7 @@ export class BeaconDialog {
 					this.hide();
 					setTimeout(() => {
 						reject();
-					}, 300);
+					}, 200);
 				};
 				dialogCancelButton.addEventListener('click', dialogCancelButton.clickHandler);
 				dialogCancelButton.innerText = cancelCaption;
@@ -80,42 +84,139 @@ export class BeaconDialog {
 		});
 	}
 
-	static secureConfirm = (requireMethod, message, explanation = null, actionCaption = 'Ok', cancelCaption = 'Cancel') => {
-		return new Promise((resolve, reject) => {
-			let confirm;
-			switch (requireMethod) {
-			case SecureOptionPassword:
-				confirm = this.confirm(message, explanation, actionCaption, cancelCaption, '<div class="floating-label"><input type="password" class="text-field" id="dialog_confirm_field" placeholder="Account Password"><label for="dialog_confirm_field">Account Password</label></div>');
-				break;
-			case SecureOptionAnyAuthenticator:
-				confirm = this.confirm(message, explanation, actionCaption, cancelCaption, '<div class="floating-label"><input type="text" class="text-field" id="dialog_confirm_field" placeholder="Two Step Code"><label for="dialog_confirm_field">Two Step Code</label></div>');
-				break;
-			default:
-				console.log(`Unknown security option ${requireMethod}`);
-				reject('Unknown security option');
+	static secureConfirm = (availableMethods, message, explanation = null, actionCaption = 'Ok', cancelCaption = 'Cancel') => {
+		return new Promise(async (resolve, reject) => {
+			const verifyValues = {};
+			const optionNodes = [];
+			if ((availableMethods & SecureOptionAnyAuthenticator) === SecureOptionAnyAuthenticator) {
+				const floatingLabel = document.createElement('div');
+				floatingLabel.classList.add('floating-label');
+
+				const field = document.createElement('input');
+				field.classList.add('text-field');
+				field.setAttribute('id', 'dialog_confirm_totp');
+				field.setAttribute('type', 'text');
+				field.setAttribute('placeholder', 'Two Step Code');
+				field.setAttribute('autocomplete', 'one-time-code');
+
+				const label = document.createElement('label');
+				label.setAttribute('for', field.getAttribute('id'));
+				label.appendChild(document.createTextNode(field.getAttribute('placeholder')));
+
+				floatingLabel.appendChild(field);
+				floatingLabel.appendChild(label);
+				optionNodes.push(floatingLabel);
+			} else if ((availableMethods & SecureOptionPassword) === SecureOptionPassword) {
+				const floatingLabel = document.createElement('div');
+				floatingLabel.classList.add('floating-label');
+
+				const field = document.createElement('input');
+				field.classList.add('text-field');
+				field.setAttribute('id', 'dialog_confirm_password');
+				field.setAttribute('type', 'password');
+				field.setAttribute('placeholder', 'Account Password');
+				field.setAttribute('autocomplete', 'current-password');
+
+				const label = document.createElement('label');
+				label.setAttribute('for', field.getAttribute('id'));
+				label.appendChild(document.createTextNode(field.getAttribute('placeholder')));
+
+				floatingLabel.appendChild(field);
+				floatingLabel.appendChild(label);
+				optionNodes.push(floatingLabel);
+			}
+			if ((availableMethods & SecureOptionPasskeys) === SecureOptionPasskeys) {
+				const supported = await testPasskeySupport();
+				if (supported) {
+					const button = document.createElement('button');
+					button.classList.add('blue');
+					button.appendChild(document.createTextNode('Verify With Passkey'));
+					button.addEventListener('click', (ev) => {
+						ev.preventDefault();
+
+						verifyPasskey('/account/actions/verifyIdentity').then(({verified, response}) => {
+							if (verified) {
+								this.hide().then(() => {
+									resolve({
+										challenge: response.identityChallenge,
+										requestValues: {},
+									});
+								});
+							}
+						}).catch(() => {
+							this.hide();
+							reject();
+						});
+					});
+					optionNodes.push(button);
+				}
 			}
 
-			confirm.then(() => {
-				const confirmField = document.getElementById('dialog_confirm_field');
-				resolve(confirmField.value);
-			}).catch(() => {
+			if (optionNodes.length > 0) {
+				const nodes = document.createElement('div');
+				nodes.classList.add('dialog_confirm_options');
+
+				optionNodes.forEach((node) => {
+					const optionNode = document.createElement('div');
+					optionNode.classList.add('dialog_confirm_option');
+					optionNode.appendChild(node);
+					nodes.appendChild(optionNode);
+
+					const separator = document.createElement('div');
+					separator.classList.add('dialog_confirm_or');
+					separator.appendChild(document.createTextNode('Or'));
+					nodes.appendChild(separator);
+				});
+				nodes.removeChild(nodes.lastChild); // Remove the trailing separator
+
+				try {
+					await this.confirm(message, explanation, actionCaption, cancelCaption, nodes);
+
+					const totpField = document.getElementById('dialog_confirm_totp');
+					if (totpField) {
+						verifyValues.verificationCode = totpField.value.trim();
+					}
+
+					const passwordField = document.getElementById('dialog_confirm_password');
+					if (passwordField) {
+						verifyValues.password = passwordField.value;
+					}
+				} catch {
+					reject();
+					return;
+				}
+			}
+
+			try {
+				const response = await BeaconWebRequest.post('/account/actions/verifyIdentity', verifyValues);
+				const responseValues = JSON.parse(response.body);
+				resolve({
+					challenge: responseValues.identityChallenge,
+					requestValues: verifyValues,
+				});
+				return;
+			} catch {
+				await this.show('Identity verification failed', 'Beacon was unable to verify your identity. You are welcome to try again.');
 				reject();
-			});
+			}
 		});
 	};
 
 	static hide() {
-		var overlay = document.getElementById('overlay');
-		var dialogFrame = document.getElementById('dialog');
-		if (!(overlay && dialogFrame)) {
-			return;
-		}
-		overlay.className = 'exist';
-		dialogFrame.className = 'exist';
-		setTimeout(() => {
-			overlay.className = '';
-			dialogFrame.className = '';
-		}, 300);
+		return new Promise((resolve) => {
+			var overlay = document.getElementById('overlay');
+			var dialogFrame = document.getElementById('dialog');
+			if (!(overlay && dialogFrame)) {
+				return;
+			}
+			overlay.className = 'exist';
+			dialogFrame.className = 'exist';
+			setTimeout(() => {
+				overlay.className = '';
+				dialogFrame.className = '';
+				resolve();
+			}, 200);
+		});
 	}
 
 	static showModal(elementId) {

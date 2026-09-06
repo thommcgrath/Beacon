@@ -21,15 +21,6 @@ Core::RegisterRoutes(
 			'GET' => 'arksa/generate',
 			'PUT' => 'arksa/generate',
 		],
-		'/authenticators' => [
-			'POST' => 'authenticators/create',
-			'GET' => 'authenticators/list',
-			'DELETE' => 'authenticators/delete',
-		],
-		'/authenticators/{authenticatorId}' => [
-			'POST' => 'authenticators/edit',
-			'GET' => 'authenticators/get',
-		],
 		'/contentPacks/{contentPackId}/confirm' => [
 			'GET' => 'contentPacks/confirm',
 		],

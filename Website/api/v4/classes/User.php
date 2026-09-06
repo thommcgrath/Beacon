@@ -462,7 +462,7 @@ class User extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public function TestPassword(string $password): bool {
+	public function TestPassword(string $password, bool $noPasswordAllowed = false): bool {
 		if ($this->enabled !== true) {
 			return false;
 		}
@@ -475,7 +475,7 @@ class User extends DatabaseObject implements JsonSerializable {
 				return false;
 			}
 		} else {
-			return UserCredential::VerifyUserPassword($this->userId, $password);
+			return UserCredential::VerifyUserPassword($this->userId, $password, $noPasswordAllowed);
 		}
 	}
 

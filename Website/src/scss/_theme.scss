@@ -1732,11 +1732,12 @@ div.results {
 	right: 0px;
 	z-index: 2001;
 	opacity: 0;
-	transition-duration: 0.25s;
+	transition-duration: 0.15s;
 	transition-timing-function: ease-out;
-	transition-property: opacity, filter;
+	transition-property: opacity, filter, box-shadow;
 	filter: blur(30px);
 	background-color: $background-color;
+	box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 
 	&.exist {
 		display: block;
@@ -1745,10 +1746,7 @@ div.results {
 	&.visible {
 		opacity: 1;
 		filter: none;
-	}
-
-	p {
-		margin: 20px;
+		box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
 	}
 }
 
@@ -1756,20 +1754,25 @@ div.results {
 	width: 300px;
 	margin-left: auto;
 	margin-right: auto;
+
+	p, div {
+		margin: 2rem 0px;
+	}
 }
 
 #dialog_message {
 	font-weight: 600;
 	text-align: left;
+	font-size: 1.2rem;
 }
 
 #dialog_explanation {
 	text-align: left;
-	font-size: smaller;
+	font-size: 1.0rem;
 }
 
 #dialog_buttons {
-	text-align: center;
+	text-align: right;
 }
 
 .modal {
@@ -3420,6 +3423,11 @@ body.no-navigation {
 				top: 50%;
 			}
 		}
+	}
+
+	#dialog_inner {
+		width: 80vw;
+		max-width: 560px;
 	}
 }
 

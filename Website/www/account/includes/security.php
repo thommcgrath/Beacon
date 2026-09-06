@@ -9,25 +9,40 @@ $hasAuthenticators = count($authenticators) > 0;
 $credentials = UserCredential::Search(['userId' => $user->UserId()], true);
 $securityModel = $user->SecurityModel();
 $securityModelsEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? false;
+$passkeysEnabled = BeaconCommon::GetGlobal('Enable Passkeys') ?? false;
 $passwordlessAvailable = $securityModel === User::SecurityModelStandard || $securityModel === User::SecurityModelEnhanced;
 
 $signInOptions = [];
 $passkeys = [];
-$withRemoveButtons = false;
+$credentialCount = 0;
 $hasPassword = false;
+$availableIdentityOptions = 0;
 if ($securityModel === User::SecurityModelLegacy) {
 	$hasPassword = true;
+	$credentialCount = 1;
 } else {
 	$withRemoveButtons = count($credentials) > 1;
 	foreach ($credentials as $credential) {
 		switch ($credential->Type()) {
 		case UserCredential::TypePassword:
 			$hasPassword = true;
+			$credentialCount++;
 			break;
 		case UserCredential::TypePasskey:
-			$passkeys[] = $credential;
+			if ($passkeysEnabled) {
+				$credentialCount++;
+				$passkeys[] = $credential;
+			}
+			break;
 		}
 	}
+}
+$withRemoveButtons = $credentialCount > 1;
+if ($hasPassword) {
+	$availableIdentityOptions = $availableIdentityOptions | 1;
+}
+if ($passkeysEnabled && $passwordlessAvailable && count($passkeys) > 0) {
+	$availableIdentityOptions = $availableIdentityOptions | 4;
 }
 
 $passwordSignIn = new SignInOption(title: 'Password', optionId: 'password',  svg: '<path d="M0,44.159581v-24.378256c0-2.777363.743585-4.885008,2.230754-6.322933s3.619436-2.156888,6.396799-2.156888h46.715346c2.797061,0,4.939176.718963,6.426346,2.156888s2.230754,3.54557,2.230754,6.322933v24.378256c0,2.797061-.743585,4.919478-2.230754,6.367253s-3.629285,2.171662-6.426346,2.171662H8.627554c-2.777363,0-4.90963-.723887-6.396799-2.171662s-2.230754-3.570192-2.230754-6.367253ZM4.756973,44.395953c0,1.221252.334859,2.166737,1.004578,2.836456s1.615204,1.004578,2.836456,1.004578h46.803986c1.221252,0,2.166737-.334859,2.836456-1.004578s1.004578-1.615204,1.004578-2.836456v-24.850998c0-2.560689-1.280345-3.841034-3.841034-3.841034H8.598007c-2.560689,0-3.841034,1.280345-3.841034,3.841034v24.850998ZM18.259685,36.23868c-1.181857,0-2.191359-.418574-3.028508-1.255723s-1.255723-1.846651-1.255723-3.028508.418574-2.191359,1.255723-3.028508,1.846651-1.255723,3.028508-1.255723c1.162159,0,2.166737.418574,3.013734,1.255723s1.270496,1.846651,1.270496,3.028508-.418574,2.191359-1.255723,3.028508-1.846651,1.255723-3.028508,1.255723ZM32.030778,36.23868c-1.162159,0-2.161813-.418574-2.998961-1.255723s-1.255723-1.846651-1.255723-3.028508.418574-2.191359,1.255723-3.028508,1.836802-1.255723,2.998961-1.255723c1.181857,0,2.191359.418574,3.028508,1.255723s1.255723,1.846651,1.255723,3.028508-.418574,2.191359-1.255723,3.028508-1.846651,1.255723-3.028508,1.255723ZM45.828954,36.23868c-1.181857,0-2.191359-.418574-3.028508-1.255723s-1.255723-1.846651-1.255723-3.028508.418574-2.191359,1.255723-3.028508,1.846651-1.255723,3.028508-1.255723,2.191359.418574,3.028508,1.255723,1.255723,1.846651,1.255723,3.028508-.418574,2.191359-1.255723,3.028508-1.846651,1.255723-3.028508,1.255723Z"/>');
@@ -38,6 +53,7 @@ if ($hasPassword) {
 
 	if ($hasAuthenticators) {
 		$passwordSignIn->AddButton(new SignInOptionButton('view-backup-codes', 'View Backup Codes'));
+		$availableIdentityOptions = $availableIdentityOptions | 2;
 
 		foreach ($authenticators as $authenticator) {
 			$authenticatorRow = new SignInOptionRow('Authenticator: ' . $authenticator->Nickname());
@@ -59,7 +75,7 @@ if ($hasPassword) {
 }
 $signInOptions[] = $passwordSignIn;
 
-if (BeaconCommon::GetGlobal('Enable Passkeys') ?? false) {
+if ($passkeysEnabled) {
 	$passkeySignIn = new SignInOption(title: 'Passkeys', optionId: 'passkeys', enabled: $passwordlessAvailable, svg:'<path d="M8.971933,55.776556c-1.410871,0-2.517524-.313037-3.319957-.939111s-1.20365-1.485824-1.20365-2.579249c0-1.710682.51585-3.505134,1.54755-5.383356s2.513115-3.641812,4.444245-5.290768,4.267886-2.989284,7.010267-4.020983,5.833071-1.54755,9.27207-1.54755c2.398481,0,4.63824.268947,6.719275.806842s3.968076,1.256557,5.661121,2.155988c.123451,1.922312.656937,3.685902,1.600457,5.290768s2.19126,2.91874,3.743218,3.941622v7.565798H8.971933ZM26.722459,31.280302c-1.88704,0-3.632994-.51585-5.23786-1.54755s-2.896695-2.424935-3.875487-4.179707c-.978792-1.756976-1.468188-3.727787-1.468188-5.914637,0-2.151579.489396-4.091527,1.468188-5.819844s2.270621-3.095099,3.875487-4.100345,3.35082-1.507869,5.23786-1.507869,3.632994.493805,5.23786,1.481415,2.896695,2.341165,3.875487,4.060664,1.468188,3.663857,1.468188,5.833071c0,2.204487-.489396,4.188524-1.468188,5.954318-.978792,1.763589-2.270621,3.161234-3.875487,4.192933s-3.35082,1.54755-5.23786,1.54755ZM51.139352,29.719525c1.551959,0,2.967239.379172,4.245841,1.137515s2.292666,1.776816,3.042191,3.055418,1.124288,2.685065,1.124288,4.219387c0,1.834133-.551122,3.469862-1.653365,4.907187s-2.667429,2.570431-4.695556,3.399318l3.544814,3.518361c.158723.158723.238085.330673.238085.51585s-.061726.330673-.185177.436488l-3.624176,3.544814,2.61893,2.61893c.141087.141087.211631.295401.211631.462942s-.070544.321855-.211631.462942l-4.20616,4.179707c-.141087.141087-.29981.207222-.476169.198404s-.326264-.074953-.449715-.198404l-2.222122-2.222122c-.246902-.282174-.370354-.555531-.370354-.820069v-13.09465c-1.622502-.634892-2.923149-1.662183-3.901941-3.081872s-1.468188-3.028965-1.468188-4.827826c0-1.551959.374763-2.96283,1.124288-4.232614s1.763589-2.283848,3.042191-3.042191,2.702701-1.137515,4.272295-1.137515ZM51.112898,33.158524c-.723072,0-1.335919.251311-1.838542.753934s-.753934,1.106652-.753934,1.812088c0,.723072.25572,1.340328.767161,1.851769s1.119879.767161,1.825315.767161,1.309465-.25572,1.812088-.767161.753934-1.128697.753934-1.851769c0-.705436-.251311-1.309465-.753934-1.812088s-1.106652-.753934-1.812088-.753934Z"/>');
 	if ($passwordlessAvailable) {
 		$passkeySignIn->AddButton(new SignInOptionButton('add-passkey', 'Add Passkey'));
@@ -82,7 +98,7 @@ if (BeaconCommon::GetGlobal('Enable Passkeys') ?? false) {
 
 ?><div class="visual-group">
 	<h3>Sign In Options</h3>
-	<div class="notice-lighter m-4 p-3 accent">Instead of giving someone access to your account, see &quot;<a href="https://help.usebeacon.app/core/sharing/" target="_blank">Sharing Beacon Projects With Other Users</a>&quot; if you need to share projects with another user.</div>
+	<div class="notice-lighter m-4 p-3 accent"><input type="hidden" id="identity-verification-options" value="<?php echo $availableIdentityOptions; ?>">Instead of giving someone access to your account, see &quot;<a href="https://help.usebeacon.app/core/sharing/" target="_blank">Sharing Beacon Projects With Other Users</a>&quot; if you need to share projects with another user.</div>
 	<?php foreach ($signInOptions as $option) { ?><div class="sign-in-option <?php if ($option->Enabled() === false) { echo 'sign-in-option-unavailable'; } ?>" id="sign-in-option-<?php echo htmlentities($option->OptionId()); ?>">
 		<div class="sign-in-option-icon"><svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><?php echo $option->SVG(); ?></svg></div>
 		<div class="sign-in-option-rows">
@@ -167,7 +183,7 @@ if (BeaconCommon::GetGlobal('Enable Passkeys') ?? false) {
 	<div class="title-bar">Set Account Password</div>
 	<div class="content">
 		<form id="change_password_form" action="" method="post">
-			<?php if ($hasPassword) { ?><div class="floating-label">
+			<?php if ($hasPassword && $passwordlessAvailable === false) { ?><div class="floating-label">
 				<input type="password" class="text-field" id="password_current_field" placeholder="Current Password" autocomplete="current-password">
 				<label for="password_current_field">Current Password</label>
 			</div><?php } ?>
@@ -239,17 +255,6 @@ if (BeaconCommon::GetGlobal('Enable Passkeys') ?? false) {
 		<div id="add-authenticator-content-right">
 			<p>Scan this code with your authenticator app, then enter the code it generates.</p>
 			<p class="notice-block notice-warning hidden" id="add-authenticator-error-message"></p>
-			<?php if ($user->Is2FAProtected()) { ?>
-			<div class="floating-label">
-				<input type="text" class="text-field" id="add-authenticator-password-field" placeholder="Other Authenticator Code" autocomplete="one-time-code" value="">
-				<label for="add-authenticator-password-field">Other Authenticator Code</label>
-			</div>
-			<?php } else { ?>
-			<div class="floating-label">
-				<input type="password" class="text-field" id="add-authenticator-password-field" placeholder="Account Password" autocomplete="current-password" value="">
-				<label for="add-authenticator-password-field">Account Password</label>
-			</div>
-			<?php } ?>
 			<div class="floating-label">
 				<input type="text" class="text-field" id="add-authenticator-code-field" placeholder="Verification Code">
 				<label for="add-authenticator-code-field">Verification Code</label>

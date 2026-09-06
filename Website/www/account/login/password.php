@@ -66,25 +66,6 @@ if ($allowVulnerable == false) {
 	}
 }
 
-$publicKeyPem = null;
-$privateKeyPem = null;
-BeaconEncryption::GenerateKeyPair($publicKeyPem, $privateKeyPem);
-
-$privateKeySalt = BeaconEncryption::GenerateSalt();
-$privateKeyIterations = 100000;
-$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
-$privateKey = bin2hex(BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false));
-$privateKeySalt = bin2hex($privateKeySalt);
-$cloudKey = bin2hex(BeaconEncryption::RSAEncrypt($publicKeyPem, User::GenerateCloudKey()));
-
-$userProperties = [
-	'publicKey' => $publicKeyPem,
-	'privateKey' => $privateKey,
-	'privateKeySalt' => $privateKeySalt,
-	'privateKeyIterations' => $privateKeyIterations,
-	'cloudKey' => $cloudKey
-];
-
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
 
@@ -92,9 +73,6 @@ try {
 	$sendWelcomeEmail = false;
 	$user = User::Fetch($email);
 	if (is_null($user)) {
-		$userProperties['email'] = $email;
-		$userProperties['username'] = $username;
-
 		$user = UserGenerator::CreateNamed($email, $username, $password);
 		$sendWelcomeEmail = true;
 	} else {
@@ -105,7 +83,7 @@ try {
 			exit;
 		}
 
-		UserGenerator::ReplacePassword($user, $password);
+		UserGenerator::HardPasswordReset($user, $password);
 	}
 
 	// Remove the verification codes for this user

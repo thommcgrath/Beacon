@@ -1,12 +1,13 @@
 "use strict";
 
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
-import { BeaconDialog, SecureOptionPassword, SecureOptionAnyAuthenticator } from "./classes/BeaconDialog.js";
+import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
 import { randomUUID, readFile, recursiveBase64StrToArrayBuffer, arrayBufferToBase64, testPasskeySupport, verifyPasskey } from "./common.js";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	let knownVulnerablePassword = '';
+	let identityChallenge = '';
 
 	const sessionId = accountProperties.sessionId;
 	const apiDomain = accountProperties.apiDomain;
@@ -44,6 +45,9 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			window.location.hash = ev.panel.currentPageName;
 		});
 	}
+
+	const optionsInput = document.getElementById('identity-verification-options');
+	const identityVerificationOptions = (optionsInput) ? parseInt(optionsInput.value) : 0;
 
 	/* ! Projects */
 
@@ -246,109 +250,6 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	const confirmPasswordField = document.getElementById('password_confirm_field');
 	const passwordAuthField = document.getElementById('password_auth_field');
 	if (showPasswordChangeButton && passwordActionButton && passwordCancelButton && changePasswordForm && newPasswordField && confirmPasswordField) {
-		showPasswordChangeButton.addEventListener('click', (ev) => {
-			ev.preventDefault();
-			changePasswordForm.reset();
-			BeaconDialog.showModal('password-change-modal');
-		});
-
-		passwordCancelButton.addEventListener('click', (ev) => {
-			ev.preventDefault();
-			BeaconDialog.hideModal().then(() => {
-				changePasswordForm.reset();
-			});
-		});
-
-		passwordActionButton.addEventListener('click', (event) => {
-			event.preventDefault();
-
-			const currentPassword = currentPasswordField?.value ?? '';
-			const password = newPasswordField.value;
-			const passwordConfirm = confirmPasswordField.value;
-			const allowVulnerable = password === knownVulnerablePassword;
-			const terminateSessions = true;
-
-			if (password.length < 8) {
-				BeaconDialog.hideModal().then(() => {
-					BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.').then(() => {
-						BeaconDialog.showModal('password-change-modal');
-					});
-				});
-				return false;
-			}
-			if (password !== passwordConfirm) {
-				BeaconDialog.hideModal().then(() => {
-					BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.').then(() => {
-						BeaconDialog.showModal('password-change-modal');
-					});
-				});
-				return false;
-			}
-
-			const body = new URLSearchParams();
-			if (currentPasswordField) {
-				body.append('current_password', currentPassword);
-			}
-			body.append('password', password);
-			body.append('allow_vulnerable', allowVulnerable);
-			if (terminateSessions) {
-				body.append('terminate_sessions', true);
-			}
-			if (passwordAuthField) {
-				body.append('auth_code', passwordAuthField.value);
-			}
-
-			BeaconWebRequest.post('/account/actions/password', body).then(() => {
-				changePasswordForm.reset();
-
-				try {
-					const msg = {};
-					msg.message = 'Your password has been changed.';
-					msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
-					BeaconDialog.hideModal().then(() => {
-						BeaconDialog.show(msg.message, msg.explanation);
-					});
-				} catch (e) {
-					console.log(e);
-					BeaconDialog.hideModal().then(() => {
-						BeaconDialog.show('There was an error. Your password may or may not have been changed.').then(() => {
-							BeaconDialog.showModal('password-change-modal');
-						});
-					});
-				}
-			}).catch((error) => {
-				let errorMessage = 'Unable to change password';
-				let errorExplanation = `There was a ${error.status} error while trying to change your password.`;
-				try {
-					const obj = JSON.parse(error.body);
-					if (obj.message) {
-						errorExplanation = obj.message;
-					}
-				} catch (e) {
-				}
-
-				switch (error.status) {
-				case 403:
-					errorMessage = 'Incorrect Two Step Verification Code';
-					errorExplanation = 'Please get a new code from your authenticator app.';
-					break;
-				case 438:
-					knownVulnerablePassword = password;
-					errorMessage = 'Your password is vulnerable.';
-					errorExplanation = 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.';
-					break;
-				}
-
-				BeaconDialog.hideModal().then(() => {
-					BeaconDialog.show(errorMessage, errorExplanation).then(() => {
-						BeaconDialog.showModal('password-change-modal');
-					});
-				});
-			});
-
-			return false;
-		});
-
 		const passwordConfirmCheck = () => {
 			if (!passwordActionButton) {
 				return;
@@ -362,6 +263,151 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 
 			passwordActionButton.disabled = (currentPasswordField?.value.trim() ?? 'x') === '' || newPasswordField.value.trim() === '' || newPasswordField.value !== confirmPasswordField.value || (passwordAuthField?.value.trim() ?? 'x') === '';
 		};
+
+		showPasswordChangeButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			changePasswordForm.reset();
+
+			BeaconDialog.secureConfirm(identityVerificationOptions, 'Please verify your identity to change your password').then(({challenge, requestValues}) => {
+				identityChallenge = challenge;
+				if (currentPasswordField) {
+					if (requestValues.password) {
+						currentPasswordField.value = requestValues.password;
+						currentPasswordField.parentElement.classList.add('hidden');
+					} else {
+						currentPasswordField.value = '';
+						currentPasswordField.parentElement.classList.remove('hidden');
+					}
+				}
+
+				passwordConfirmCheck();
+				BeaconDialog.showModal('password-change-modal');
+			}).catch(() => {
+			});
+		});
+
+		passwordCancelButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			BeaconDialog.hideModal().then(() => {
+				changePasswordForm.reset();
+			});
+		});
+
+		passwordActionButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+
+			const currentPassword = currentPasswordField?.value ?? '';
+			const password = newPasswordField.value;
+			const passwordConfirm = confirmPasswordField.value;
+			const allowVulnerable = password === knownVulnerablePassword;
+			const terminateSessions = true;
+
+			if (password.length < 8) {
+				BeaconDialog.hideModal().then(() => {
+					BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.').then(() => {
+						passwordConfirmCheck();
+						BeaconDialog.showModal('password-change-modal');
+					});
+				});
+				return false;
+			}
+			if (password !== passwordConfirm) {
+				BeaconDialog.hideModal().then(() => {
+					BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.').then(() => {
+						passwordConfirmCheck();
+						BeaconDialog.showModal('password-change-modal');
+					});
+				});
+				return false;
+			}
+
+			const body = new URLSearchParams();
+			if (currentPasswordField) {
+				body.append('currentPassword', currentPassword);
+			}
+			body.append('newPassword', password);
+			body.append('allowVulnerable', allowVulnerable);
+			body.append('identityChallenge', identityChallenge);
+
+			ev.target.disabled = true;
+			BeaconWebRequest.post('/account/actions/changePassword', body).then(() => {
+				changePasswordForm.reset();
+
+				try {
+					const msg = {};
+					msg.message = 'Your password has been changed.';
+					msg.explanation = 'No sessions have been revoked. Use the Sessions page if you need to revoke access to your account.';
+					BeaconDialog.hideModal().then(() => {
+						BeaconDialog.show(msg.message, msg.explanation).then(() => {
+							window.location.reload();
+						});
+					});
+				} catch (e) {
+					console.log(e);
+					BeaconDialog.hideModal().then(() => {
+						BeaconDialog.show('There was an error. Your password may or may not have been changed.').then(() => {
+							passwordConfirmCheck();
+							BeaconDialog.showModal('password-change-modal');
+						});
+					});
+				}
+			}).catch((error) => {
+				let errorMessage = 'Unable to change password';
+				let errorExplanation = `There was a ${error.status} error while trying to change your password.`;
+				let errorCode = '';
+				try {
+					const obj = JSON.parse(error.body);
+					if (obj.message) {
+						errorExplanation = obj.message;
+					}
+					if (obj.details && obj.details.code) {
+						errorCode = obj.details.code;
+					}
+				} catch (e) {
+				}
+
+				switch (errorCode) {
+				case 'UNAUTHORIZED':
+					errorMessage = 'Unauthorized';
+					errorExplanation = 'Your session is not valid. Reload this page.';
+					break;
+				case 'FORBIDDEN':
+					errorMessage = 'Forbidden';
+					errorExplanation = 'You probably shouldn\'t be doing that.';
+					break;
+				case 'BAD_PASSWORD':
+					errorMessage = 'Password Not Secure Enough';
+					errorExplanation = 'Your password must be at least 8 characters long.';
+					break;
+				case 'FUNNY_PASSWORD':
+					errorMessage = 'Smartass Detected';
+					errorExplanation = 'Yes, that\'s a funny joke. Don\'t use it as your password.';
+					break;
+				case 'VULNERABLE_PASSWORD':
+					knownVulnerablePassword = password;
+					errorMessage = 'Your password is vulnerable.';
+					errorExplanation = 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.';
+					break;
+				case 'INCORRECT_PASSWORD':
+					errorMessage = 'Incorrect Password';
+					errorExplanation = 'Your account password is incorrect.';
+					break;
+				case 'INCORRECT_CHALLENGE':
+					errorMessage = 'Incorrect Challenge';
+					errorExplanation = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
+					break;
+				}
+
+				BeaconDialog.hideModal().then(() => {
+					BeaconDialog.show(errorMessage, errorExplanation).then(() => {
+						passwordConfirmCheck();
+						BeaconDialog.showModal('password-change-modal');
+					});
+				});
+			});
+
+			return false;
+		});
 
 		if (currentPasswordField) {
 			currentPasswordField.addEventListener('input', passwordConfirmCheck);
@@ -380,13 +426,12 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	/* ! Authenticators */
 	const addAuthenticatorButton = document.getElementById('option-button-add-authenticator');
 	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
-	const addAuthenticatorPasswordField = document.getElementById('add-authenticator-password-field');
 	const addAuthenticatorNicknameField = document.getElementById('add-authenticator-nickname-field');
 	const addAuthenticatorActionButton = document.getElementById('add-authenticator-action-button');
 	const addAuthenticatorCancelButton = document.getElementById('add-authenticator-cancel-button');
 	const addAuthenticatorQRCode = document.getElementById('add-authenticator-qrcode');
 	const addAuthenticatorErrorMessage = document.getElementById('add-authenticator-error-message');
-	if (addAuthenticatorButton && addAuthenticatorPasswordField && addAuthenticatorCodeField && addAuthenticatorNicknameField && addAuthenticatorActionButton && addAuthenticatorCancelButton) {
+	if (addAuthenticatorButton && addAuthenticatorCodeField && addAuthenticatorNicknameField && addAuthenticatorActionButton && addAuthenticatorCancelButton) {
 		try {
 			const generateSecret = () => {
 				const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -400,38 +445,34 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				return token;
 			};
 
-			const authenticator = {
-				authenticatorId: randomUUID(),
-				type: 'TOTP',
-				nickname: 'Google Authenticator',
-				metadata: {
-					secret: null,
-					setup: null,
-				},
-			};
+			let authenticatorSecret = '';
 
 			const updateAddAuthenticatorButton = () => {
-				addAuthenticatorActionButton.disabled = addAuthenticatorCodeField.value.trim() === '' || addAuthenticatorPasswordField.value === '' || addAuthenticatorNicknameField.value === '';
+				addAuthenticatorActionButton.disabled = addAuthenticatorCodeField.value.trim() === '' || addAuthenticatorNicknameField.value === '';
 			};
 
 			addAuthenticatorCodeField.addEventListener('input', updateAddAuthenticatorButton);
-			addAuthenticatorPasswordField.addEventListener('input', updateAddAuthenticatorButton);
 			addAuthenticatorNicknameField.addEventListener('input', updateAddAuthenticatorButton);
 
 			addAuthenticatorButton.addEventListener('click', (ev) => {
 				ev.preventDefault();
 
-				authenticator.metadata.secret = generateSecret();
-				authenticator.metadata.setup = `otpauth://totp/${encodeURIComponent('Beacon:' + userFullName + ' (' + authenticator.authenticatorId + ')')}?secret=${authenticator.metadata.secret}&issuer=Beacon`;
+				BeaconDialog.secureConfirm(identityVerificationOptions, 'Please verify your identity to add an authenticator').then(({challenge}) => {
+					identityChallenge = challenge;
 
-				if (addAuthenticatorQRCode) {
-					addAuthenticatorQRCode.src = `/account/assets/qr.php?content=${btoa(authenticator.metadata.setup)}`;
-					addAuthenticatorQRCode.setAttribute('alt', authenticator.metadata.setup);
-					addAuthenticatorQRCode.setAttribute('title', authenticator.metadata.setup);
-				}
-				addAuthenticatorCodeField.value = '';
+					authenticatorSecret = generateSecret();
+					const setupUrl = `otpauth://totp/${encodeURIComponent('Beacon:' + userFullName)}?secret=${authenticatorSecret}&issuer=Beacon`;
 
-				BeaconDialog.showModal('add-authenticator-modal');
+					if (addAuthenticatorQRCode) {
+						addAuthenticatorQRCode.src = `/account/assets/qr.php?content=${btoa(setupUrl)}`;
+						addAuthenticatorQRCode.setAttribute('alt', setupUrl);
+						addAuthenticatorQRCode.setAttribute('title', setupUrl);
+					}
+					addAuthenticatorCodeField.value = '';
+
+					BeaconDialog.showModal('add-authenticator-modal');
+				}).catch(() => {
+				});
 			});
 
 			addAuthenticatorCancelButton.addEventListener('click', (ev) => {
@@ -442,16 +483,45 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			addAuthenticatorActionButton.addEventListener('click', () => {
 				addAuthenticatorErrorMessage.innerText = '';
 				addAuthenticatorErrorMessage.classList.add('hidden');
-				authenticator.nickname = addAuthenticatorNicknameField.value.trim();
-				authenticator.verificationCode = addAuthenticatorCodeField.value.trim();
-				authenticator.password = addAuthenticatorPasswordField.value;
 
-				BeaconWebRequest.post(`https://${apiDomain}/v4/authenticators`, authenticator, { 'X-Beacon-Token': sessionId }).then(() => {
-					window.location.reload(true);
+				const params = new URLSearchParams();
+				params.append('secret', authenticatorSecret);
+				params.append('nickname', addAuthenticatorNicknameField.value.trim())
+				params.append('code', addAuthenticatorCodeField.value.trim());
+				params.append('identityChallenge', identityChallenge);
+
+				BeaconWebRequest.post(`/account/actions/addAuthenticator`, params).then(() => {
+					window.location.reload();
 				}).catch((error) => {
 					const errorMessage = () => {
 						try {
-							return JSON.parse(error.body).message;
+							const obj = JSON.parse(error.body);
+							let message = `There was a ${error.status} error.`;
+							let code = '';
+							if (obj.message) {
+								message = obj.message;
+							}
+							if (obj.details && obj.details.code) {
+								code = obj.details.code;
+							}
+							switch (code) {
+							case 'UNAUTHORIZED':
+								message = 'Your session is not valid. Reload this page.';
+								break;
+							case 'FORBIDDEN':
+								message = 'You probably shouldn\'t be doing that.';
+								break;
+							case 'EMPTY_SECRET':
+								message = 'No secret was submitted. Which doesn\'t make sense. Try reloading the page.';
+								break;
+							case 'INCORRECT_CODE':
+								message = 'The provided code does not match. This is likely a timing issue. Try again with a new code.';
+								break;
+							case 'INCORRECT_CHALLENGE':
+								message = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
+								break;
+							}
+							return message;
 						} catch (e) {
 							return 'Incorrect verification code';
 						}
@@ -483,32 +553,47 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 						const authentictorWord = (remainingAuthenticators === 1) ? 'authenticator' : 'authenticators';
 						confirm.explanation = `You will have ${remainingAuthenticators} ${authentictorWord} remaining. Your account will still be protected by two factor authentication.`;
 					} else {
-						confirm.explanation = 'This is your only authenticator. Deleting it will disable two factor authentication for your account. You will be able to add a new authenticator to enable two factor authentication again.';
+						confirm.explanation = 'This is your only authenticator. Deleting it will disable two step authentication for your account. You will be able to add a new authenticator to enable two step authentication again.';
 					}
-					confirm.explanation += ' To delete this authenticator, please use it to generate a code';
+					confirm.explanation += ' To delete this authenticator, please use it to generate a code.';
 
-					BeaconDialog.secureConfirm(SecureOptionAnyAuthenticator, confirm.message, confirm.explanation, 'Delete', 'Cancel').then((authCode) => {
-						BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/authenticators`, JSON.stringify({
-							authenticatorId: authenticatorId,
-							authCode: authCode,
-						}), {
-							'X-Beacon-Token': sessionId,
-							'Content-Type': 'application/json',
-						}).then(() => {
+					BeaconDialog.secureConfirm(identityVerificationOptions, confirm.message, confirm.explanation, 'Delete', 'Cancel').then(({challenge}) => {
+						const params = new URLSearchParams();
+						params.append('authenticatorId', authenticatorId);
+						params.append('identityChallenge', challenge);
+
+						BeaconWebRequest.start('DELETE', `/account/actions/deleteAuthenticator?authenticatorId=${authenticatorId}&identityChallenge=${challenge}`).then(() => {
 							window.location.reload();
 						}).catch((error) => {
 							const reason = {
 								message: 'The authenticator was not deleted',
 								explanation: `There was a ${error.status} error.`,
+								code: null,
 							};
 							try {
 								const obj = JSON.parse(error.body);
 								if (obj.message) {
 									reason.explanation = obj.message;
 								}
+								if (obj.details && obj.details.code) {
+									reason.code = obj.details.code;
+								}
 							} catch (e) {
 								//
 							}
+
+							switch (reason.code) {
+							case 'UNAUTHORIZED':
+								reason.explanation = 'Your session is not valid. Reload this page.';
+								break;
+							case 'FORBIDDEN':
+								reason.explanation = 'You probably shouldn\'t be doing that.';
+								break;
+							case 'INCORRECT_CHALLENGE':
+								reason.explanation = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
+								break;
+							}
+
 							BeaconDialog.show(reason.message, reason.explanation);
 						});
 					}).catch(() => {
@@ -772,7 +857,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			event.preventDefault();
 
 			const applicationId = event.currentTarget.getAttribute('beacon-app-id');
-			BeaconDialog.secureConfirm(SecureOptionAnyAuthenticator, 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.', 'Delete', 'Cancel').then((authCode) => {
+			BeaconDialog.secureConfirm(identityVerificationOptions, 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.', 'Delete', 'Cancel').then((authCode) => {
 				BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/applications`, JSON.stringify({
 					applicationId: applicationId,
 					authCode: authCode,

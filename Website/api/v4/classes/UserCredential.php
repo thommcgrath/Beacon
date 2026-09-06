@@ -182,10 +182,10 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 		return $credential;
 	}
 
-	public static function VerifyUserPassword(string $userId, string $password): bool {
+	public static function VerifyUserPassword(string $userId, string $password, bool $noPasswodAllowed = false): bool {
 		$credential = static::GetPasswordRecord($userId);
 		if (is_null($credential)) {
-			return false;
+			return $noPasswodAllowed;
 		}
 		$metadata = $credential->Metadata();
 		$hash = $metadata['hash'];
