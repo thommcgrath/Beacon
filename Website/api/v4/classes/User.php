@@ -496,15 +496,9 @@ class User extends DatabaseObject implements JsonSerializable {
 			$privateKey = $this->DecryptPrivateKey($password);
 			break;
 		case self::SecurityModelStandard:
-			if (UserCredential::VerifyUserPassword($this->userId, $password) === false) {
-				throw new Exception('Incorrect account password');
-			}
 			$privateKey = $this->DecryptPrivateKey();
 			break;
 		case self::SecurityModelEnhanced:
-			if (UserCredential::VerifyUserPassword($this->userId, $password) === false) {
-				throw new Exception('Incorrect account password');
-			}
 			$privateKey = $this->DecryptPrivateKey($secret);
 			break;
 		}

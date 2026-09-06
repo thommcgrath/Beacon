@@ -32,7 +32,7 @@ if (is_null($newSecurityModel)) {
 
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
-$user = $session->User();
+$user = $activeSession->User();
 try {
 	$user->ChangeSecurityModel($newSecurityModel, $password, $secret);
 

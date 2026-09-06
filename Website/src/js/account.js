@@ -1,7 +1,7 @@
 "use strict";
 
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
-import { BeaconDialog } from "./classes/BeaconDialog.js";
+import { BeaconDialog, SecureOptionForcePassword, SecureOptionUseSecret } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
 import { randomUUID, readFile, recursiveBase64StrToArrayBuffer, arrayBufferToBase64, testPasskeySupport, verifyPasskey, signalRemovedPasskey } from "./common.js";
 
@@ -1257,12 +1257,6 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 		const securityModelLegacyRadio = document.getElementById('security_model_legacy');
 		const securityModelStandardRadio = document.getElementById('security_model_standard');
 		const securityModelEnhancedRadio = document.getElementById('security_model_enhanced');
-		const securityModelChangePasswordField = document.getElementById('security-model-password-field');
-		const securityModelChangeSecretField = document.getElementById('security-model-secret-field');
-		const securityModelChangeTOTPField = document.getElementById('security-model-totp-field');
-		const securityModelChangeActionButton = document.getElementById('security-model-action-button');
-		const securityModelChangeCancelButton = document.getElementById('security-model-cancel-button');
-		const securityModelChangeErrorMessage = document.getElementById('security-model-error-message');
 		const securityModelSecretRevealField = document.getElementById('account-secret-field');
 		const securityModelSecretConfirmButton = document.getElementById('account-secret-action-button');
 		const securityModelSecretCopyButton = document.getElementById('account-secret-copy-button');
@@ -1292,132 +1286,80 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			securityModelEnhancedRadio.addEventListener('change', securityModelRadioFunction);
 		}
 
-		const submitModelChange = (password, secret, totp) => {
-			if (newSecurityModel === initialSecurityModel) {
-				return;
-			}
+		securityModelSaveButton.addEventListener('click', async (ev) => {
+			ev.preventDefault();
 
-			securityModelChangeErrorMessage.classList.add('hidden');
-			if (securityModelChangePasswordField) {
-				securityModelChangePasswordField.readOnly = true;
-			}
-			if (securityModelChangeSecretField) {
-				securityModelChangePasswordField.readOnly = true;
-			}
-			if (securityModelChangeTOTPField) {
-				securityModelChangeTOTPField.readOnly = true;
-			}
-			if (securityModelChangeActionButton) {
-				securityModelChangeActionButton.disabled = true;
+			let accountPassword;
+			try {
+				let options = identityVerificationOptions;
+				switch (initialSecurityModel) {
+				case 'Legacy':
+					options = options | SecureOptionForcePassword;
+					break;
+				case 'Enhanced':
+					options = options | SecureOptionForcePassword | SecureOptionUseSecret;
+					break;
+				}
+
+				const {challenge, requestValues} = await BeaconDialog.secureConfirm(options, 'changeSecurityModel', 'Are you sure you want to change your security model?', 'Please confirm your identity to continue.');
+				identityChallenge = challenge;
+				accountPassword = requestValues.password;
+			} catch {
+				return;
 			}
 
 			const requestBody = new URLSearchParams();
 			requestBody.append('securityModel', newSecurityModel);
-			if (password) {
-				requestBody.append('password', password);
-			}
-			if (secret) {
-				requestBody.append('secret', secret);
-			}
-			if (totp) {
-				requestBody.append('totp', totp);
+			requestBody.append('identityChallenge', identityChallenge);
+			switch (initialSecurityModel) {
+			case 'Legacy':
+				requestBody.append('password', accountPassword);
+				break;
+			case 'Enhanced':
+				requestBody.append('secret', accountPassword);
+				break;
 			}
 
-			BeaconWebRequest.post(`/account/actions/changeSecurityModel`, requestBody).then((response) => {
+			try {
+				const response = await BeaconWebRequest.post(`/account/actions/changeSecurityModel`, requestBody);
 				try {
 					const parsed = JSON.parse(response.body);
 					const newSecret = parsed.secret;
 					if (newSecret !== '') {
-						BeaconDialog.hideModal().then(() => {
-							securityModelSecretConfirmButton.disabled = true;
-							securityModelSecretRevealField.value = newSecret;
-							BeaconDialog.showModal('account-secret-modal');
-							setTimeout(() => {
-								securityModelSecretConfirmButton.disabled = false;
-							}, 3000);
-						});
+						securityModelSecretConfirmButton.disabled = true;
+						securityModelSecretRevealField.value = newSecret;
+						BeaconDialog.showModal('account-secret-modal');
+						setTimeout(() => {
+							securityModelSecretConfirmButton.disabled = false;
+						}, 3000);
 					} else {
 						window.location.reload();
 					}
 				} catch {
-					securityModelChangeErrorMessage.innerText = 'This is a problem. The change was accepted, but the response containing your new secret could not be read.';
-					securityModelChangeErrorMessage.classList.remove('hidden');
+					if (newSecurityModel === 'Enhanced') {
+						BeaconDialog.show('There was an error reading your new secret', 'This is a problem. The change was accepted, but the response containing your new secret could not be read.');
+					} else {
+						window.location.reload();
+					}
 				}
-			}).catch((response) => {
-				if (securityModelChangePasswordField) {
-					securityModelChangePasswordField.readOnly = false;
-				}
-				if (securityModelChangeSecretField) {
-					securityModelChangePasswordField.readOnly = false;
-				}
-				if (securityModelChangeTOTPField) {
-					securityModelChangeTOTPField.readOnly = false;
-				}
-				if (securityModelChangeActionButton) {
-					securityModelChangeActionButton.disabled = false;
-				}
-				try {
-					const parsed = JSON.parse(response.body);
-					securityModelChangeErrorMessage.innerText = parsed.message;
-				} catch {
-					securityModelChangeErrorMessage.innerText = 'Could not save security model.';
-				}
-				securityModelChangeErrorMessage.classList.remove('hidden');
-			});
-		};
+			} catch (requestErr) {
+				let errorMessage = requestErr.message;
+				const errorCode = requestErr.parsed?.details?.code ?? '';
 
-		securityModelSaveButton.addEventListener('click', (ev) => {
-			ev.preventDefault();
+				switch (errorCode) {
+				case 'UNAUTHORIZED':
+					errorMessage = 'Your session is not valid. Reload this page.';
+					break;
+				case 'FORBIDDEN':
+					errorMessage = 'You probably shouldn\'t be doing that.';
+					break;
+				case 'INCORRECT_CHALLENGE':
+					errorMessage = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
+					break;
+				}
 
-			const needsUserInput = securityModelChangePasswordField || securityModelChangeSecretField || securityModelChangeTOTPField;
-			if (needsUserInput) {
-				if (securityModelChangePasswordField) {
-					securityModelChangePasswordField.value = '';
-					securityModelChangePasswordField.readOnly = false;
-				}
-				if (securityModelChangeSecretField) {
-					securityModelChangePasswordField.value = '';
-					securityModelChangePasswordField.readOnly = false;
-				}
-				if (securityModelChangeTOTPField) {
-					securityModelChangeTOTPField.value = '';
-					securityModelChangeTOTPField.readOnly = false;
-				}
-				securityModelChangeErrorMessage.classList.add('hidden');
-				securityModelChangeActionButton.disabled = true;
-				BeaconDialog.showModal('security-model-modal');
-			} else {
-				submitModelChange(null, null, null);
+				BeaconDialog.show('Security model not changed', errorMessage);
 			}
-		});
-
-		const changeFieldEditHandler = (ev) => {
-			const enabled = ((securityModelChangePasswordField?.value ?? 'x') !== '') && ((securityModelChangeSecretField?.value.trim() ?? 'x') !== '') && ((securityModelChangeTOTPField?.value.trim() ?? 'x') !== '');
-			securityModelChangeActionButton.disabled = !enabled;
-		};
-		if (securityModelChangePasswordField) {
-			securityModelChangePasswordField.addEventListener('input', changeFieldEditHandler);
-		}
-		if (securityModelChangeSecretField) {
-			securityModelChangeSecretField.addEventListener('input', changeFieldEditHandler);
-		}
-		if (securityModelChangeTOTPField) {
-			securityModelChangeTOTPField.addEventListener('input', changeFieldEditHandler);
-		}
-
-		securityModelChangeActionButton.addEventListener('click', (ev) => {
-			ev.preventDefault();
-
-			const password = securityModelChangePasswordField?.value ?? null;
-			const secret = securityModelChangeSecretField?.value ?? null;
-			const totp = securityModelChangeTOTPField?.value ?? null;
-
-			submitModelChange(password, secret, totp);
-		});
-
-		securityModelChangeCancelButton.addEventListener('click', (ev) => {
-			ev.preventDefault();
-			BeaconDialog.hideModal();
 		});
 
 		securityModelSecretConfirmButton.addEventListener('click', (ev) => {

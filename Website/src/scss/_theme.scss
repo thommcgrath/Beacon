@@ -1147,12 +1147,13 @@ textarea {
 		top: 0;
 		left: 0;
 		height: 100%;
-		padding: 1rem 0.75rem;
+		padding: 1.125rem 0.75rem;
 		pointer-events: none;
 		border: 1px solid transparent;
 		transform-origin: 0 0;
 		box-sizing: border-box;
 		opacity: $input-placeholder-opacity;
+		line-height: 1.25rem;
 		@include transition(opacity .1s ease-in-out, transform .1s ease-in-out);
 	}
 
@@ -1762,6 +1763,21 @@ div.results {
 
 	p, div {
 		margin: 2rem 0px;
+	}
+
+	.dialog_confirm_group > .dialog_confirm_group {
+		padding: 1rem;
+		background-color: color.mix($background-color, $foreground-color, 97%);
+		border: 1px solid color.mix($background-color, $foreground-color, 80%);
+		border-radius: 0.25rem;
+
+		& > *:first-child {
+			margin-top: 0;
+		}
+
+		& > *:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.dialog_confirm_or {

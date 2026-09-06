@@ -1,6 +1,8 @@
 export const SecureOptionPassword = 1;
 export const SecureOptionAnyAuthenticator = 2;
 export const SecureOptionPasskeys = 4;
+export const SecureOptionForcePassword = 8;
+export const SecureOptionUseSecret = 16;
 
 import { BeaconWebRequest } from "./BeaconWebRequest.js";
 import { testPasskeySupport, verifyPasskey } from "../common.js";
@@ -87,10 +89,42 @@ export class BeaconDialog {
 	static secureConfirm = (availableMethods, jobName, message, explanation = null, actionCaption = 'Ok', cancelCaption = 'Cancel') => {
 		return new Promise(async (resolve, reject) => {
 			const verifyValues = {jobName};
-			const optionNodes = [];
-			if ((availableMethods & SecureOptionAnyAuthenticator) === SecureOptionAnyAuthenticator) {
+			const passwordRequired = (availableMethods & SecureOptionForcePassword) === SecureOptionForcePassword
+			const withTOTP = (availableMethods & SecureOptionAnyAuthenticator) === SecureOptionAnyAuthenticator;
+			const withPassword = ((availableMethods & SecureOptionPassword) === SecureOptionPassword && withTOTP === false) || passwordRequired;
+			const withPasskeys = (availableMethods & SecureOptionPasskeys) === SecureOptionPasskeys;
+			const useSecretTerminology = withPassword && (availableMethods & SecureOptionUseSecret) === SecureOptionUseSecret;
+
+			let identityChallenge, passwordNode, totpNode, passkeyNode;
+
+			if (withPassword) {
 				const floatingLabel = document.createElement('div');
 				floatingLabel.classList.add('floating-label');
+				floatingLabel.classList.add('m-0');
+
+				const field = document.createElement('input');
+				field.classList.add('text-field');
+				field.setAttribute('id', 'dialog_confirm_password');
+				field.setAttribute('type', 'password');
+				if (useSecretTerminology) {
+					field.setAttribute('placeholder', 'Account Secret');
+				} else {
+					field.setAttribute('placeholder', 'Account Password');
+				}
+				field.setAttribute('autocomplete', 'current-password');
+
+				const label = document.createElement('label');
+				label.setAttribute('for', field.getAttribute('id'));
+				label.appendChild(document.createTextNode(field.getAttribute('placeholder')));
+
+				floatingLabel.appendChild(field);
+				floatingLabel.appendChild(label);
+				passwordNode = floatingLabel;
+			}
+			if (withTOTP) {
+				const floatingLabel = document.createElement('div');
+				floatingLabel.classList.add('floating-label');
+				floatingLabel.classList.add('m-0');
 
 				const field = document.createElement('input');
 				field.classList.add('text-field');
@@ -105,27 +139,9 @@ export class BeaconDialog {
 
 				floatingLabel.appendChild(field);
 				floatingLabel.appendChild(label);
-				optionNodes.push(floatingLabel);
-			} else if ((availableMethods & SecureOptionPassword) === SecureOptionPassword) {
-				const floatingLabel = document.createElement('div');
-				floatingLabel.classList.add('floating-label');
-
-				const field = document.createElement('input');
-				field.classList.add('text-field');
-				field.setAttribute('id', 'dialog_confirm_password');
-				field.setAttribute('type', 'password');
-				field.setAttribute('placeholder', 'Account Password');
-				field.setAttribute('autocomplete', 'current-password');
-
-				const label = document.createElement('label');
-				label.setAttribute('for', field.getAttribute('id'));
-				label.appendChild(document.createTextNode(field.getAttribute('placeholder')));
-
-				floatingLabel.appendChild(field);
-				floatingLabel.appendChild(label);
-				optionNodes.push(floatingLabel);
+				totpNode = floatingLabel;
 			}
-			if ((availableMethods & SecureOptionPasskeys) === SecureOptionPasskeys) {
+			if (withPasskeys) {
 				const supported = await testPasskeySupport();
 				if (supported) {
 					const button = document.createElement('button');
@@ -136,12 +152,23 @@ export class BeaconDialog {
 
 						verifyPasskey('/account/actions/verifyIdentity', {jobName}).then(({verified, response}) => {
 							if (verified) {
-								this.hide().then(() => {
-									resolve({
-										challenge: response.identityChallenge,
-										requestValues: {},
+								if (passwordRequired) {
+									identityChallenge = response.identityChallenge;
+									ev.target.disabled = true;
+									ev.target.innerText = 'Verified';
+
+									if (totpNode) {
+										totpNode.firstChild.value = '';
+										totpNode.firstChild.disabled = true;
+									}
+								} else {
+									this.hide().then(() => {
+										resolve({
+											challenge: response.identityChallenge,
+											requestValues: {},
+										});
 									});
-								});
+								}
 							}
 						}).catch(() => {
 							console.log('Verify rejected');
@@ -154,27 +181,70 @@ export class BeaconDialog {
 					wrapper.classList.add('m-0');
 					wrapper.classList.add('text-center');
 					wrapper.appendChild(button);
-
-					optionNodes.push(wrapper);
+					passkeyNode = wrapper;
 				}
 			}
 
-			if (optionNodes.length > 0) {
+			// AND is outer, OR is inner
+			// [password, [totp, passkey]] = password AND (totp or passkey)
+			// [[totp, passkey]] = totp or passkey
+			const andNodes = [];
+			if (withPassword && withTOTP) {
+				andNodes.push(passwordNode);
+				if (withPasskeys) {
+					andNodes.push([totpNode, passkeyNode]);
+				} else {
+					andNodes.push(totpNode);
+				}
+			} else {
+				const orNodes = [];
+				if (passwordNode) {
+					orNodes.push(passwordNode);
+				}
+				if (totpNode) {
+					orNodes.push(totpNode);
+				}
+				if (passkeyNode) {
+					orNodes.push(passkeyNode);
+				}
+				andNodes.push(orNodes);
+			}
+
+			const buildOptionGroup = (sourceNodes, destinationNodes, separatorText) => {
+				const group = document.createElement('div');
+				group.classList.add('dialog_confirm_group');
+
+				for (let idx = 0; idx < sourceNodes.length; idx++) {
+					if (idx > 0) {
+						const separator = document.createElement('div');
+						separator.classList.add('dialog_confirm_or');
+						separator.appendChild(document.createTextNode(separatorText));
+						group.appendChild(separator);
+					}
+
+					const sourceNode = sourceNodes[idx];
+					if (Array.isArray(sourceNode)) {
+						buildOptionGroup(sourceNode, group, 'Or');
+					} else {
+						const optionNode = document.createElement('div');
+						optionNode.classList.add('dialog_confirm_option');
+						optionNode.appendChild(sourceNode);
+						group.appendChild(optionNode);
+					}
+				}
+
+				destinationNodes.appendChild(group);
+			};
+
+			if (andNodes.length > 0) {
 				const nodes = document.createElement('div');
 				nodes.classList.add('dialog_confirm_options');
 
-				optionNodes.forEach((node) => {
-					const optionNode = document.createElement('div');
-					optionNode.classList.add('dialog_confirm_option');
-					optionNode.appendChild(node);
-					nodes.appendChild(optionNode);
-
-					const separator = document.createElement('div');
-					separator.classList.add('dialog_confirm_or');
-					separator.appendChild(document.createTextNode('Or'));
-					nodes.appendChild(separator);
-				});
-				nodes.removeChild(nodes.lastChild); // Remove the trailing separator
+				if (andNodes.length === 1) {
+					buildOptionGroup(andNodes[0], nodes, 'Or');
+				} else {
+					buildOptionGroup(andNodes, nodes, 'And');
+				}
 
 				try {
 					await this.confirm(message, explanation, actionCaption, cancelCaption, nodes);
@@ -192,6 +262,15 @@ export class BeaconDialog {
 					reject();
 					return;
 				}
+			}
+
+			if (identityChallenge) {
+				// Passkey verification doesn't actually test to make sure the other values are correct
+				resolve({
+					challenge: identityChallenge,
+					requestValues: verifyValues,
+				});
+				return;
 			}
 
 			try {
