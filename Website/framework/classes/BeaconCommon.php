@@ -1113,17 +1113,18 @@ abstract class BeaconCommon {
 		return true;
 	}
 
-	public static function GetIdentityChallenge(Session $session): string {
+	public static function GetIdentityChallenge(Session $session, string $jobName): string {
 		static::StartSession();
 		$challenge = random_bytes(32);
-		$_SESSION['identityChallenge'] = hash('sha256', $challenge . ':' . $session->UserId() . ':' . $session->AccessToken());
+		$_SESSION['identityChallengeHash'] = hash('sha256', $challenge . ':' . $session->UserId() . ':' . $session->AccessToken() . ':' . $jobName);
+		$_SESSION['identityChallengeJob'] = $jobName;
 		return static::Base64UrlEncode($challenge);
 	}
 
-	public static function VerifyIdentityChallenge(Session $session, string $challenge): bool {
+	public static function VerifyIdentityChallenge(Session $session, string $challenge, string $jobName): bool {
 		static::StartSession();
-		$expectedHash = hash('sha256', static::Base64UrlDecode($challenge) . ':' . $session->UserId() . ':' . $session->AccessToken());
-		if (($_SESSION['identityChallenge'] ?? '') == $expectedHash) {
+		$expectedHash = hash('sha256', static::Base64UrlDecode($challenge) . ':' . $session->UserId() . ':' . $session->AccessToken() . ':' . $jobName);
+		if (($_SESSION['identityChallengeHash'] ?? '') == $expectedHash) {
 			unset($_SESSION['identityChallenge']);
 			return true;
 		}

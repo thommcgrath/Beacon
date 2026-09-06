@@ -84,9 +84,9 @@ export class BeaconDialog {
 		});
 	}
 
-	static secureConfirm = (availableMethods, message, explanation = null, actionCaption = 'Ok', cancelCaption = 'Cancel') => {
+	static secureConfirm = (availableMethods, jobName, message, explanation = null, actionCaption = 'Ok', cancelCaption = 'Cancel') => {
 		return new Promise(async (resolve, reject) => {
-			const verifyValues = {};
+			const verifyValues = {jobName};
 			const optionNodes = [];
 			if ((availableMethods & SecureOptionAnyAuthenticator) === SecureOptionAnyAuthenticator) {
 				const floatingLabel = document.createElement('div');
@@ -134,7 +134,7 @@ export class BeaconDialog {
 					button.addEventListener('click', (ev) => {
 						ev.preventDefault();
 
-						verifyPasskey('/account/actions/verifyIdentity').then(({verified, response}) => {
+						verifyPasskey('/account/actions/verifyIdentity', {jobName}).then(({verified, response}) => {
 							if (verified) {
 								this.hide().then(() => {
 									resolve({
@@ -144,11 +144,18 @@ export class BeaconDialog {
 								});
 							}
 						}).catch(() => {
+							console.log('Verify rejected');
 							this.hide();
 							reject();
 						});
 					});
-					optionNodes.push(button);
+
+					const wrapper = document.createElement('div');
+					wrapper.classList.add('m-0');
+					wrapper.classList.add('text-center');
+					wrapper.appendChild(button);
+
+					optionNodes.push(wrapper);
 				}
 			}
 

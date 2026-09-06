@@ -21,8 +21,8 @@ if ($activeSession->HasScope(Application::kScopeUsersCredentials) === false) {
 }
 
 $user = $activeSession->User();
-$authenticatorId = $_GET['authenticatorId'] ?? '';
-$identityChallenge = $_GET['identityChallenge'] ?? '';
+$authenticatorId = $_POST['authenticatorId'] ?? '';
+$identityChallenge = $_POST['identityChallenge'] ?? '';
 
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
@@ -33,7 +33,7 @@ try {
 	Response::NewJsonError($err->getMessage(), ['code' => 'OTHER_ERROR'], 400)->Flush();
 	exit;
 }
-if (BeaconCommon::VerifyIdentityChallenge($activeSession, $identityChallenge) === false) {
+if (BeaconCommon::VerifyIdentityChallenge($activeSession, $identityChallenge, 'deleteAuthenticator') === false) {
 	$database->Rollback();
 	Response::NewJsonError('Identity not confirmed.' . $identityChallenge, ['code' => 'INCORRECT_CHALLENGE'], 400)->Flush();
 	exit;

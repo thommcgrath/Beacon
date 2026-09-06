@@ -3,7 +3,7 @@
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
-import { randomUUID, readFile, recursiveBase64StrToArrayBuffer, arrayBufferToBase64, testPasskeySupport, verifyPasskey } from "./common.js";
+import { randomUUID, readFile, recursiveBase64StrToArrayBuffer, arrayBufferToBase64, testPasskeySupport, verifyPasskey, signalRemovedPasskey } from "./common.js";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	let knownVulnerablePassword = '';
@@ -268,7 +268,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			ev.preventDefault();
 			changePasswordForm.reset();
 
-			BeaconDialog.secureConfirm(identityVerificationOptions, 'Please verify your identity to change your password').then(({challenge, requestValues}) => {
+			BeaconDialog.secureConfirm(identityVerificationOptions, 'passwordChange', 'Please verify your identity to change your password').then(({challenge, requestValues}) => {
 				identityChallenge = challenge;
 				if (currentPasswordField) {
 					if (requestValues.password) {
@@ -421,6 +421,44 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 		if (passwordAuthField) {
 			passwordAuthField.addEventListener('input', passwordConfirmCheck);
 		}
+
+		const passwordRemoveButton = document.getElementById('option-button-remove-password');
+		if (passwordRemoveButton) {
+			passwordRemoveButton.addEventListener('click', async (ev) => {
+				ev.preventDefault();
+
+				try {
+					const {challenge} = await BeaconDialog.secureConfirm(identityVerificationOptions, 'passwordRemove', 'Are you sure you want to remove your password?', 'Please confirm your identity to continue.');
+					identityChallenge = challenge;
+				} catch {
+					return;
+				}
+
+				try {
+					const params = new URLSearchParams();
+					params.append('identityChallenge', identityChallenge);
+
+					await BeaconWebRequest.post('/account/actions/deletePassword', params);
+					window.location.reload();
+				} catch (replaceErr) {
+					let errorMessage = replaceErr.message;
+					const errorCode = replaceErr.parsed?.details?.code ?? '';
+
+					switch (errorCode) {
+					case 'UNAUTHORIZED':
+						errorMessage = 'Your session is not valid. Reload this page.';
+						break;
+					case 'FORBIDDEN':
+						errorMessage = 'You probably shouldn\'t be doing that.';
+						break;
+					case 'INCORRECT_CHALLENGE':
+						errorMessage = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
+						break;
+					}
+					await BeaconDialog.show('Password not removed', errorMessage);
+				}
+			});
+		}
 	}
 
 	/* ! Authenticators */
@@ -457,7 +495,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			addAuthenticatorButton.addEventListener('click', (ev) => {
 				ev.preventDefault();
 
-				BeaconDialog.secureConfirm(identityVerificationOptions, 'Please verify your identity to add an authenticator').then(({challenge}) => {
+				BeaconDialog.secureConfirm(identityVerificationOptions, 'addAuthenticator', 'Please verify your identity to add an authenticator').then(({challenge}) => {
 					identityChallenge = challenge;
 
 					authenticatorSecret = generateSecret();
@@ -557,12 +595,12 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 					}
 					confirm.explanation += ' To delete this authenticator, please use it to generate a code.';
 
-					BeaconDialog.secureConfirm(identityVerificationOptions, confirm.message, confirm.explanation, 'Delete', 'Cancel').then(({challenge}) => {
+					BeaconDialog.secureConfirm(identityVerificationOptions, 'deleteAuthenticator', confirm.message, confirm.explanation, 'Delete', 'Cancel').then(({challenge}) => {
 						const params = new URLSearchParams();
 						params.append('authenticatorId', authenticatorId);
 						params.append('identityChallenge', challenge);
 
-						BeaconWebRequest.start('DELETE', `/account/actions/deleteAuthenticator?authenticatorId=${authenticatorId}&identityChallenge=${challenge}`).then(() => {
+						BeaconWebRequest.post('/account/actions/deleteAuthenticator', params).then(() => {
 							window.location.reload();
 						}).catch((error) => {
 							const reason = {
@@ -613,46 +651,58 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 
 		const replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
 		if (replaceBackupCodesButton) {
-			replaceBackupCodesButton.addEventListener('click', (ev) => {
+			replaceBackupCodesButton.addEventListener('click', async (ev) => {
 				ev.preventDefault();
 
-				BeaconDialog.hideModal().then(() => {
-					BeaconDialog.confirm('Replace backup codes?', 'This will replace all of your backup codes with new ones.').then(() => {
-						BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {'X-Beacon-Token': sessionId}).then((response) => {
-							try {
-								const backupCodesTable = document.getElementById('backup-codes');
-								const obj = JSON.parse(response.body);
-								const codes = obj.codes;
-								backupCodesTable.innerHTML = '';
-								for (const code of codes) {
-									const codeElement = document.createElement('div');
-									codeElement.innerText = code;
-									codeElement.className = 'flex-grid-item';
-									backupCodesTable.appendChild(codeElement);
-								}
-								BeaconDialog.showModal('manage-backup-codes-modal');
-							} catch (e) {
-								window.location.reload();
-							}
-						}).catch((error) => {
-							console.log(JSON.stringify(error));
-							const reason = {
-								message: 'Backup codes not replaced',
-								explanation: `There was a ${error.status} error.`,
-							};
-							try {
-								const obj = JSON.parse(error.body);
-								if (obj.message) {
-									reason.explanation = obj.message;
-								}
-							} catch (e) {
-							}
-							BeaconDialog.show(reason.message, reason.explanation);
-						});
-					}).catch(() => {
+				await BeaconDialog.hideModal();
+
+				try {
+					const {challenge} = await BeaconDialog.secureConfirm(identityVerificationOptions, 'replaceBackupCodes', 'Are you sure you want to replace all your backup codes?', 'Please confirm your identity to continue.');
+					identityChallenge = challenge;
+				} catch {
+					return;
+				}
+
+				try {
+					const params = new URLSearchParams();
+					params.append('identityChallenge', identityChallenge);
+
+					const response = await BeaconWebRequest.post('/account/actions/replaceBackupCodes', params);
+					try {
+						const backupCodesTable = document.getElementById('backup-codes');
+						const obj = JSON.parse(response.body);
+						const codes = obj.codes;
+						backupCodesTable.innerHTML = '';
+						for (const code of codes) {
+							const codeElement = document.createElement('div');
+							codeElement.innerText = code;
+							codeElement.className = 'flex-grid-item';
+							backupCodesTable.appendChild(codeElement);
+						}
+						await BeaconDialog.show('Backup codes have been replaced', 'You are about to be shown the new backup codes. Be sure to keep them in a safe place. Beacon support cannot remove a lost authenticator.');
 						BeaconDialog.showModal('manage-backup-codes-modal');
-					});
-				});
+					} catch (rebuildErr) {
+						window.location.reload();
+						return;
+					}
+				} catch (replaceErr) {
+					let errorMessage = replaceErr.message;
+					const errorCode = replaceErr.parsed?.details?.code ?? '';
+
+					switch (errorCode) {
+					case 'UNAUTHORIZED':
+						errorMessage = 'Your session is not valid. Reload this page.';
+						break;
+					case 'FORBIDDEN':
+						errorMessage = 'You probably shouldn\'t be doing that.';
+						break;
+					case 'INCORRECT_CHALLENGE':
+						errorMessage = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
+						break;
+					}
+					await BeaconDialog.show('Backup codes not replaced', errorMessage);
+					BeaconDialog.showModal('manage-backup-codes-modal');
+				}
 			});
 		}
 
@@ -698,55 +748,91 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			updatePasskeysUI(supported);
 		});
 
-		addPasskeyButton.addEventListener('click', (ev) => {
+		addPasskeyButton.addEventListener('click', async (ev) => {
 			ev.preventDefault();
 
-			BeaconWebRequest.get('/account/actions/passkeyInit').then((initResponse) => {
-				const rawOptions = JSON.parse(initResponse.body);
-				try {
-					const options = recursiveBase64StrToArrayBuffer(rawOptions);
-					navigator.credentials.create(options).then((passkey) => {
-						const saveData = {
-							transports: passkey.response.getTransports ? passkey.response.getTransports() : null,
-							clientDataJSON: passkey.response.clientDataJSON ? arrayBufferToBase64(passkey.response.clientDataJSON) : null,
-							attestationObject: passkey.response.attestationObject ? arrayBufferToBase64(passkey.response.attestationObject) : null,
-						};
+			try {
+				const {challenge} = await BeaconDialog.secureConfirm(identityVerificationOptions, 'addPasskey', 'Confirm your identity to register a new passkey');
+				identityChallenge = challenge;
+			} catch {
+				return;
+			}
 
-						BeaconWebRequest.post('/account/actions/passkeySave', saveData).then((saveResponse) => {
-							setTimeout(() => {
-								window.location.reload();
-							}, 3000);
-						}).catch((saveErr) => {
-							console.log('Passkey save error');
-							if (PublicKeyCredential.signalUnknownCredential) {
-								console.log('Browser supports passkey cancelling');
-								PublicKeyCredential.signalUnknownCredential({
-									rpId: rawOptions.rp.id,
-									credentialId: passkey.id,
-								}).then(() => {
-									console.log('Browser successfully cancelled the passkey');
-								}).catch(() => {
-									console.log('Browser did not cancel the passkey');
-								});
-							} else {
-								console.log('Browser does not support cancelling passkeys');
-							}
-							BeaconDialog.show('Could not save passkey', saveErr.message);
-						});
-					}).catch((createErr) => {
-						console.log(createErr);
-					});
-				} catch (setupErr) {
-					BeaconDialog.show('Could not start passkey setup', setupErr.message);
+			try {
+				const initResponse = await BeaconWebRequest.get('/account/actions/passkeyInit');
+				const rawOptions = JSON.parse(initResponse.body);
+				const options = recursiveBase64StrToArrayBuffer(rawOptions);
+				try {
+					const passkey = await navigator.credentials.create(options);
+					const saveData = {
+						transports: passkey.response.getTransports ? passkey.response.getTransports() : null,
+						clientDataJSON: passkey.response.clientDataJSON ? arrayBufferToBase64(passkey.response.clientDataJSON) : null,
+						attestationObject: passkey.response.attestationObject ? arrayBufferToBase64(passkey.response.attestationObject) : null,
+						identityChallenge: identityChallenge,
+					};
+
+					try {
+						const saveResponse = await BeaconWebRequest.post('/account/actions/addPasskey', saveData);
+						setTimeout(() => {
+							window.location.reload();
+						}, 1500);
+					} catch (saveErr) {
+						signalRemovedPasskey(rawOptions.rp.id, passkey.id);
+						BeaconDialog.show('Could not save passkey', saveErr.message);
+					};
+				} catch {
+					// Nothing to do, the user cancelled
 				}
-			}).catch((initErr) => {
+			} catch (initErr) {
 				BeaconDialog.show('Could not start passkey setup', initErr.message);
-			});
+			};
 		});
 
 		removePasskeyButtons.forEach((button) => {
-			button.addEventListener('click', (ev) => {
+			button.addEventListener('click', async (ev) => {
 				ev.preventDefault();
+
+				try {
+					const passkeyName = ev.target.getAttribute('beacon-passkey-name');
+					const {challenge} = await BeaconDialog.secureConfirm(identityVerificationOptions, 'deletePasskey', `Are you sure you want to delete the passkey "${passkeyName}?"`, 'Please confirm your identity to delete the passkey.');
+					identityChallenge = challenge;
+				} catch {
+					return;
+				}
+
+				try {
+					const passkeyId = ev.target.getAttribute('beacon-passkey-id');
+					const params = new URLSearchParams();
+					params.append('passkeyId', passkeyId);
+					params.append('identityChallenge', identityChallenge);
+
+					const response = await BeaconWebRequest.post('/account/actions/deletePasskey', params);
+					try {
+						const parsed = JSON.parse(response.body);
+						signalRemovedPasskey(parsed.rpId, parsed.credentialId);
+						setTimeout(() => {
+							window.location.reload();
+						}, 1500);
+					} catch {
+					}
+				} catch (deleteErr) {
+					let errorMessage = deleteErr.message;
+					const errorCode = deleteErr.parsed?.details?.code ?? '';
+
+					switch (errorCode) {
+					case 'UNAUTHORIZED':
+						errorMessage = 'Your session is not valid. Reload this page.';
+						break;
+					case 'FORBIDDEN':
+						errorMessage = 'You probably shouldn\'t be doing that.';
+						break;
+					case 'INCORRECT_CHALLENGE':
+						errorMessage = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
+						break;
+					}
+
+					BeaconDialog.show('Passkey not removed', errorMessage);
+				}
 			});
 		});
 	}
@@ -857,7 +943,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			event.preventDefault();
 
 			const applicationId = event.currentTarget.getAttribute('beacon-app-id');
-			BeaconDialog.secureConfirm(identityVerificationOptions, 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.', 'Delete', 'Cancel').then((authCode) => {
+			BeaconDialog.secureConfirm(identityVerificationOptions, 'deleteApplication', 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.', 'Delete', 'Cancel').then((authCode) => {
 				BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/applications`, JSON.stringify({
 					applicationId: applicationId,
 					authCode: authCode,
@@ -1237,7 +1323,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				requestBody.append('totp', totp);
 			}
 
-			BeaconWebRequest.post(`/account/actions/setSecurityModel`, requestBody).then((response) => {
+			BeaconWebRequest.post(`/account/actions/changeSecurityModel`, requestBody).then((response) => {
 				try {
 					const parsed = JSON.parse(response.body);
 					const newSecret = parsed.secret;

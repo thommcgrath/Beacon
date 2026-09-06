@@ -11,6 +11,7 @@ export class BeaconWebRequest {
 		if (!obj.success) {
 			try {
 				const parsed = JSON.parse(obj.body);
+				obj.parsed = parsed;
 				if (parsed.message) {
 					obj.message = parsed.message;
 				}

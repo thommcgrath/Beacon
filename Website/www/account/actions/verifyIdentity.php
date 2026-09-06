@@ -23,6 +23,7 @@ if ($activeSession->HasScope(Application::kScopeUsersCredentials) === false) {
 $user = $activeSession->User();
 $userId = $user->UserId();
 $obj = Core::BodyAsJson();
+$jobName = $obj['jobName'] ?? BeaconUUID::v4();
 
 if (array_key_exists('clientDataJSON', $obj)) {
 	// authenticate with passkey / webauthn
@@ -65,7 +66,7 @@ if (array_key_exists('clientDataJSON', $obj)) {
 }
 
 Response::NewJson([
-	'identityChallenge' => BeaconCommon::GetIdentityChallenge($activeSession),
+	'identityChallenge' => BeaconCommon::GetIdentityChallenge($activeSession, $jobName),
 ], 201)->Flush();
 exit;
 

@@ -62,7 +62,7 @@ try {
 		exit;
 	}
 
-	if (BeaconCommon::VerifyIdentityChallenge($activeSession, $identityChallenge) === false) {
+	if (BeaconCommon::VerifyIdentityChallenge($activeSession, $identityChallenge, 'changePassword') === false) {
 		$database->Rollback();
 		Response::NewJsonError('Identity not confirmed.', ['code' => 'INCORRECT_CHALLENGE'], 400)->Flush();
 		exit;

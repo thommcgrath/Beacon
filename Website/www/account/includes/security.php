@@ -85,6 +85,7 @@ if ($passkeysEnabled) {
 			if ($withRemoveButtons || $hasMultiplePasskeys) {
 				$passkeyRemoveButton = new SignInOptionButton('remove-passkey-' . $passkey->CredentialId(), 'Remove Passkey', 'red passkey-remove-button');
 				$passkeyRemoveButton->SetAttribute('beacon-passkey-id', $passkey->CredentialId());
+				$passkeyRemoveButton->SetAttribute('beacon-passkey-name', $passkey->Name());
 				$passkeyRow->AddButton($passkeyRemoveButton);
 			}
 			$passkeySignIn->AddRow($passkeyRow);

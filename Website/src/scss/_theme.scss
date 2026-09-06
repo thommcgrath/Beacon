@@ -1731,6 +1731,7 @@ div.results {
 	left: 0px;
 	right: 0px;
 	z-index: 2001;
+	transform: translate(0, -30%);
 	opacity: 0;
 	transition-duration: 0.15s;
 	transition-timing-function: ease-out;
@@ -1748,6 +1749,10 @@ div.results {
 		filter: none;
 		box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
 	}
+
+	button {
+		min-width: 80px;
+	}
 }
 
 #dialog_inner {
@@ -1757,6 +1762,14 @@ div.results {
 
 	p, div {
 		margin: 2rem 0px;
+	}
+
+	.dialog_confirm_or {
+		text-align: center;
+		font-weight: bold;
+		color: color.mix($background-color, $foreground-color, 10%);
+		margin-top: -0.75rem;
+		margin-bottom: -0.75rem;
 	}
 }
 

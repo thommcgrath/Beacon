@@ -8,7 +8,7 @@ http_response_code(500);
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-use BeaconAPI\v4\{Application, Authenticator, Response, User};
+use BeaconAPI\v4\{Application, Response, User};
 
 $activeSession = BeaconCommon::GetSession();
 if (is_null($activeSession)) {
@@ -20,39 +20,39 @@ if ($activeSession->HasScope(Application::kScopeUsersCredentials) === false) {
 	exit;
 }
 
-$user = $activeSession->User();
+$password = $_POST['password'] ?? '';
 $secret = $_POST['secret'] ?? '';
-$nickname = $_POST['nickname'] ?? '↑↓←→';
+$newSecurityModel = $_POST['securityModel'] ?? null;
 $identityChallenge = $_POST['identityChallenge'] ?? '';
-$code = $_POST['code'] ?? '';
 
-if (empty($secret)) {
-	Response::NewJsonError('Forbidden', ['code' => 'EMPTY_SECRET'], 400)->Flush();;
+if (is_null($newSecurityModel)) {
+	Response::NewJsonError('A new security model was not requested.', ['code' => 'NO_MODEL'], 400)->Flush();;
 	exit;
 }
 
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
+$user = $session->User();
 try {
-	$authenticator = Authenticator::CreateTOTP($user, $secret, $nickname);
+	$user->ChangeSecurityModel($newSecurityModel, $password, $secret);
+
+	if (BeaconCommon::VerifyIdentityChallenge($activeSession, $identityChallenge, 'changeSecurityModel') === false) {
+		$database->Rollback();
+		Response::NewJsonError('Identity not confirmed.' . $identityChallenge, ['code' => 'INCORRECT_CHALLENGE'], 400)->Flush();
+		exit;
+	}
+
+	$database->Commit();
+
+	Response::NewJson([
+		'securityModel' => $newSecurityModel,
+		'secret' => $secret,
+	], 200)->Flush();
+	exit;
 } catch (Exception $err) {
 	$database->Rollback();
 	Response::NewJsonError($err->getMessage(), ['code' => 'OTHER_ERROR'], 400)->Flush();
 	exit;
 }
-if ($authenticator->TestCode($code) === false) {
-	$database->Rollback();
-	Response::NewJsonError('Incorrect verification code.', ['code' => 'INCORRECT_CODE'], 400)->Flush();
-	exit;
-}
-if (BeaconCommon::VerifyIdentityChallenge($activeSession, $identityChallenge, 'addAuthenticator') === false) {
-	$database->Rollback();
-	Response::NewJsonError('Identity not confirmed.' . $identityChallenge, ['code' => 'INCORRECT_CHALLENGE'], 400)->Flush();
-	exit;
-}
-$database->Commit();
-
-Response::NewNoContent()->Flush();
-exit;
 
 ?>

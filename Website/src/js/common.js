@@ -127,47 +127,43 @@ export const testPasskeySupport = () => {
 	});
 };
 
-export const verifyPasskey = (destinationUrl = '/account/auth/authenticate') => {
+export const signalRemovedPasskey = async (rpId, credentialId) => {
+	if (!PublicKeyCredential.signalUnknownCredential) {
+		console.log('Browser does not support unknown credential signalling');
+		return;
+	}
+
+	try {
+		console.log(`Telling the browser to cancel passkey ${credentialId}…`);
+		await PublicKeyCredential.signalUnknownCredential({rpId, credentialId});
+		console.log('Browser successfully cancelled the passkey');
+	} catch {
+		console.log('Browser did not cancel the passkey');
+	}
+};
+
+export const verifyPasskey = (destinationUrl = '/account/auth/authenticate', additionalValues = {}) => {
 	return new Promise((resolve, reject) => {
 		BeaconWebRequest.get('/account/auth/passkeyOptions').then((initResponse) => {
-			if (!initResponse.success) {
-				reject({message: initResponse.message});
-				return;
-			}
-
 			const rawOptions = JSON.parse(initResponse.body);
 			const options = recursiveBase64StrToArrayBuffer(rawOptions);
 			navigator.credentials.get(options).then((passkey) => {
-				const authenticatorAttestationResponse = {
+				const authenticatorAttestationResponse = Object.assign(additionalValues, {
 					id: passkey.rawId ? arrayBufferToBase64(passkey.rawId) : null,
 					clientDataJSON: passkey.response.clientDataJSON  ? arrayBufferToBase64(passkey.response.clientDataJSON) : null,
 					authenticatorData: passkey.response.authenticatorData ? arrayBufferToBase64(passkey.response.authenticatorData) : null,
 					signature: passkey.response.signature ? arrayBufferToBase64(passkey.response.signature) : null,
 					userHandle: passkey.response.userHandle ? arrayBufferToBase64(passkey.response.userHandle) : null
-				}
+				});
 
 				BeaconWebRequest.post(destinationUrl, authenticatorAttestationResponse).then((verifyResponse) => {
-					if (!verifyResponse.success) {
-						if (PublicKeyCredential.signalUnknownCredential) {
-							PublicKeyCredential.signalUnknownCredential({
-								rpId: rawOptions.rp.id,
-								credentialId: passkey.id,
-							}).then(() => {
-								resolve({verified: false});
-							});
-						} else {
-							resolve({verified: false});
-							return;
-						}
-						return;
-					}
-
 					resolve({verified: true, response: JSON.parse(verifyResponse.body)});
 				}).catch((err) => {
+					signalRemovedPasskey(options.publicKey.rpId, passkey.id);
 					reject(err);
 				});
-			}).catch((err) => {
-				reject(err);
+			}).catch(() => {
+				resolve({verified: false});
 			});
 		}).catch((err) => {
 			reject(err);
