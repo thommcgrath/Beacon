@@ -15,6 +15,9 @@ export class BeaconWebRequest {
 				if (parsed.message) {
 					obj.message = parsed.message;
 				}
+				if (parsed.details && parsed.details.code) {
+					obj.code = parsed.details.code;
+				}
 			} catch {
 			}
 			if (!obj.message) {

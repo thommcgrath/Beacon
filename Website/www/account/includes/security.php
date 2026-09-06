@@ -196,12 +196,6 @@ if ($passkeysEnabled) {
 				<input type="password" class="text-field" id="password_confirm_field" placeholder="Confirm New Password" minlength="8" autocomplete="new-password">
 				<label for="password_confirm_field">Confirm New Password</label>
 			</div>
-			<?php if ($hasAuthenticators) { ?>
-			<div class="floating-label">
-				<input type="text" class="text-field" id="password_auth_field" placeholder="Two Step Code">
-				<label for="password_auth_field">Two Step Code</label>
-			</div>
-			<?php } ?>
 		</form>
 	</div>
 	<div class="button-bar">

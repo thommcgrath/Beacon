@@ -162,10 +162,6 @@ abstract class UserGenerator {
 			// clear all sessions
 			$sessions = Session::Search(['userId' => $userId], true);
 			foreach ($sessions as $session) {
-				if (is_null($retainSession) == false && $session->SessionHash() === $retainSession->SessionHash()) {
-					continue;
-				}
-
 				$session->Delete();
 			}
 

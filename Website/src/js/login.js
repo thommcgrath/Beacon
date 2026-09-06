@@ -2,6 +2,7 @@
 
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
+import { testPasskeySupport, signalRemovedPasskey, verifyPasskey } from "./common.js";
 
 document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => {
 	if (loginParams.needsDeviceCode) {
@@ -141,7 +142,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 	const loginRecoverButton = document.getElementById('login_recover_button');
 	const loginCancelButton = document.getElementById('login_cancel_button');
 	const loginActionButton = document.getElementById('login_action_button');
-	const loginPasskeysSupported = document.getElementById('login_passkeys_supported');
+	const loginPasskeysCell = document.getElementById('login_passkeys_cell');
 	const loginUsePasskeyButton = document.getElementById('login_use_passkey_button');
 
 	const totpForm = document.getElementById('login_form_totp');
@@ -203,6 +204,26 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 	}
 
 	// !Login Page
+	const processLogin = (session, loginPassword = undefined) => {
+		let url = loginParams.redeemUrl;
+		url = url.replace('{{session_id}}', encodeURIComponent(session.accessToken));
+		if (loginParams.flowId) {
+			url = url.replace('{{return_uri}}', encodeURIComponent(window.location.href));
+		} else {
+			url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
+		}
+		url = url.replace('{{temporary}}', (loginRemember === false ? 'true' : 'false'));
+
+		if (loginPassword) {
+			url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
+			if (loginParams.flowRequiresPassword && sessionStorage && loginParams.securityModel === 'Legacy') {
+				sessionStorage.setItem('account_password', loginPassword);
+			}
+		}
+
+		window.location = url;
+	};
+
 	if (loginEmailField) {
 		if (explicitEmail) {
 			loginEmailField.value = explicitEmail;
@@ -213,62 +234,59 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 	if (loginRememberCheck) {
 		loginRememberCheck.checked = storedRemember;
 	}
-	if (loginPasskeysSupported) {
-		const startPasskeySignin = (optional) => {
-			return new Promise((resolve, reject) => {
-				BeaconWebRequest.get('/account/auth/passkeyOptions').then((response) => {
-					const options = PublicKeyCredential.parseRequestOptionsFromJSON(JSON.parse(response.body));
-
-					const abortController = new AbortController();
-					navigator.credentials.get({
-						publicKey: options,
-						signal: abortController.signal,
+	if (loginPasskeysCell) {
+		const startPasskeySignin = async (optional) => {
+			try {
+				const {verified, response} = await verifyPasskey({
+					additionalValues: {
+						challenge: loginParams.challenge,
+						challengeExpiration: loginParams.challengeExpiration,
+						deviceId: loginParams.deviceId,
+						flowId: loginParams.flowId,
+					},
+					options: {
 						mediation: optional ? 'conditional' : 'required',
-					}).then((credential) => {
-						if (!credential) {
-							reject({reason: 'Sorry, your browser did not return a valid passkey. This usually happens if there are multiple valid passkeys.', isSiteError: false});
-						} else {
-							resolve();
-						}
-					}).catch(() => {
-						reject({reason: 'Could not get credentials', isSiteError: false});
-					});
-				}).catch(() => {
-					reject({reason: 'Could not get passkey options', isSiteError: true});
+					},
 				});
-			});
+
+				if (!verified) {
+					return;
+				}
+
+				processLogin(response);
+			} catch (err) {
+				let errorMessage = err?.message ?? 'Unknown Error';
+				const errorCode = err?.code ?? '';
+
+				switch (errorCode) {
+				case 'CHALLENGE_TIMEOUT':
+					errorMessage = 'Try reloading the page. The login challenge was rejected, which can happen if the page is open too long.';
+					break;
+				case 'BAD_LOGIN':
+					errorMessage = 'Passkey not found. You should remove it from your device.';
+					break;
+				}
+
+				BeaconDialog.show('Passkey Login Failed', errorMessage);
+			}
 		};
 
-		if (window.PublicKeyCredential && PublicKeyCredential.getClientCapabilities) {
-			PublicKeyCredential.getClientCapabilities().then((capabilities) => {
-				if (capabilities.conditionalGet === true && capabilities.passkeyPlatformAuthenticator === true) {
-					const originalCaption = loginActionButton.value;
-					loginActionButton.value = 'Login With Password';
-					loginPasskeysSupported.classList.remove('hidden');
-					startPasskeySignin(true).catch((reason) => {
-						console.log(reason);
-						loginActionButton.value = originalCaption;
-						loginPasskeysSupported.classList.add('hidden');
-					});
-				}
-			}).catch(() => {
-				console.log('Passkeys not supported');
-			});
-		}
+		testPasskeySupport().then((passkeysSupported) => {
+			if (!passkeysSupported) {
+				return;
+			}
+
+			loginActionButton.value = "Login With Password";
+			loginPasskeysCell.classList.remove('hidden');
+			startPasskeySignin(true);
+		});
 
 		if (loginUsePasskeyButton) {
-			loginUsePasskeyButton.addEventListener('click', (ev) => {
+			loginUsePasskeyButton.addEventListener('click', async (ev) => {
 				ev.preventDefault();
 				ev.target.disabled = true;
-
-				startPasskeySignin(false).then(() => {
-					ev.target.disabled = true;
-				}).catch(({reason, isSiteError}) => {
-					ev.target.disabled = false;
-					if (isSiteError) {
-						BeaconDialog.show('Passkey Login Failed', reason);
-					}
-				});
+				await startPasskeySignin(false);
+				ev.target.disabled = false;
 			});
 		}
 	}
@@ -320,7 +338,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 				sessionBody.trust = totpRememberCheck.checked;
 			}
 
-			BeaconWebRequest.post(`/account/auth/authenticate`, sessionBody).then((response) => {
+			BeaconWebRequest.post('/account/auth/authenticate', sessionBody).then((response) => {
 				if (!forcedUserId) {
 					if (localStorage && loginRemember && loginUser) {
 						localStorage.setItem('email', loginUser);
@@ -330,78 +348,28 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 					}
 				}
 
-				try {
-					const obj = JSON.parse(response.body);
-					let url = loginParams.redeemUrl;
-					url = url.replace('{{session_id}}', encodeURIComponent(obj.accessToken));
-					if (loginParams.flowId) {
-						url = url.replace('{{return_uri}}', encodeURIComponent(window.location.href));
-					} else {
-						url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
-					}
-					url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
-					url = url.replace('{{temporary}}', (loginRemember === false ? 'true' : 'false'));
+				const session = JSON.parse(response.body);
+				processLogin(session, loginPassword);
+			}).catch((err) => {
+				let errorMessage = err?.message ?? `Sorry, there was a ${error.status} error.`;
+				const errorCode = err?.code ?? '';
 
-					if (loginParams.flowRequiresPassword && sessionStorage && loginParams.securityModel === 'Legacy') {
-						sessionStorage.setItem('account_password', sessionBody.password);
-					}
-
-					window.location = url;
-				} catch (e) {
-					console.log(e);
+				switch (errorCode) {
+				case 'CHALLENGE_TIMEOUT':
+					errorMessage = 'Try reloading the page. The login challenge was rejected, which can happen if the page is open too long.';
+					break;
+				case 'BAD_LOGIN':
+					errorMessage = 'Email or password is not correct.';
+					break;
+				case '2FA_ENABLED':
+					showPage('totp');
+					focusFirst([totpCodeField]);
+					return;
 				}
-			}).catch((error) => {
-				console.log(JSON.stringify(error));
 
-				let loginErrorExplanation;
-				switch (error.status) {
-				case 400:
-					loginErrorExplanation = 'There was an expected error.';
-					try {
-						const obj = JSON.parse(error.body);
-						const code = obj.details.code;
-						if (obj.message) {
-							loginErrorExplanation = obj.message;
-						}
-						switch(code) {
-						case 'CHALLENGE_TIMEOUT':
-							loginErrorExplanation = 'The login process timed out. Please close this tab and start over.';
-							break;
-						case 'COMPLETED':
-							loginErrorExplanation = 'This authorization has already been completed. Please start again.';
-							break;
-						}
-					} catch (e) {
-					}
-
-					BeaconDialog.show('Unable to complete login', loginErrorExplanation).then(() => {
-						showPage('login');
-					});
-
-					break;
-				case 401:
-				case 403:
-					try {
-						const obj = JSON.parse(error.body);
-						const code = obj.details.code;
-						if (code === '2FA_ENABLED') {
-							showPage('totp');
-							focusFirst([totpCodeField]);
-							break;
-						}
-					} catch (e) {
-					}
-
-					BeaconDialog.show('Incorrect Login', 'Email or password is not correct.').then(() => {
-						showPage('login');
-					});
-					break;
-				default:
-					BeaconDialog.show('Unable to complete login', `Sorry, there was a ${error.status} error.`).then(() => {
-						showPage('login');
-					});
-					break;
-				}
+				BeaconDialog.show('Unable to complete login', errorMessage).then(() => {
+					showPage('login');
+				});
 			});
 
 			return false;

@@ -150,7 +150,7 @@ export class BeaconDialog {
 					button.addEventListener('click', (ev) => {
 						ev.preventDefault();
 
-						verifyPasskey('/account/actions/verifyIdentity', {jobName}).then(({verified, response}) => {
+						verifyPasskey({destinationUrl: '/account/actions/verifyIdentity', additionalValues: {jobName}}).then(({verified, response}) => {
 							if (verified) {
 								if (passwordRequired) {
 									identityChallenge = response.identityChallenge;

@@ -50,6 +50,8 @@ if (array_key_exists('clientDataJSON', $obj)) {
 		Response::NewJsonError('Passkey not found', ['code' => 'BAD_LOGIN'], 401)->Flush();
 		exit;
 	}
+
+	$user = User::Fetch($passkey->UserId());
 } else {
 	$email = $obj['email'] ?? '';
 	$user = User::Fetch($email);

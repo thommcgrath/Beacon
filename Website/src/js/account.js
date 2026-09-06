@@ -3,7 +3,7 @@
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
 import { BeaconDialog, SecureOptionForcePassword, SecureOptionUseSecret } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
-import { randomUUID, readFile, recursiveBase64StrToArrayBuffer, arrayBufferToBase64, testPasskeySupport, verifyPasskey, signalRemovedPasskey } from "./common.js";
+import { randomUUID, readFile, recursiveBase64StrToArrayBuffer, arrayBufferToBase64, testPasskeySupport, signalRemovedPasskey } from "./common.js";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	let knownVulnerablePassword = '';
@@ -268,7 +268,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			ev.preventDefault();
 			changePasswordForm.reset();
 
-			BeaconDialog.secureConfirm(identityVerificationOptions, 'passwordChange', 'Please verify your identity to change your password').then(({challenge, requestValues}) => {
+			BeaconDialog.secureConfirm(identityVerificationOptions, 'changePassword', 'Please verify your identity to change your password').then(({challenge, requestValues}) => {
 				identityChallenge = challenge;
 				if (currentPasswordField) {
 					if (requestValues.password) {

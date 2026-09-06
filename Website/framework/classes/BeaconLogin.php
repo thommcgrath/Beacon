@@ -218,6 +218,7 @@ class BeaconLogin {
 						'Give you that raise you wanted.',
 						'Eat a banjo.',
 						'Dochvam Damugh \'e\' yImev.',
+						'Transmogrify Mount Rushmore.',
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);
@@ -286,7 +287,7 @@ class BeaconLogin {
 		<?php } ?>
 		<p class="floating-label"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></p>
 		<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
-		<ul class="buttons"><li><input id="login_action_button" type="submit" value="Login"></li><?php if ($passkeysEnabled) { ?><li id="login_passkeys_supported" class="hidden"><button id="login_use_passkey_button">Login With Passkey</button></li><?php } ?><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button" class="red">Cancel</button></li><?php } ?></ul>
+		<ul class="buttons"><li><input id="login_action_button" type="submit" value="Login"></li><?php if ($passkeysEnabled) { ?><li id="login_passkeys_cell" class="hidden"><button id="login_use_passkey_button">Login With Passkey</button></li><?php } ?><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button" class="red">Cancel</button></li><?php } ?></ul>
 	</form>
 </div>
 <div id="page_totp" class="scriptonly">

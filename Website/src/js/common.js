@@ -142,13 +142,19 @@ export const signalRemovedPasskey = async (rpId, credentialId) => {
 	}
 };
 
-export const verifyPasskey = (destinationUrl = '/account/auth/authenticate', additionalValues = {}) => {
+export const verifyPasskey = (params = {}) => {
 	return new Promise((resolve, reject) => {
+		const defaults = Object.assign({
+			destinationUrl: '/account/auth/authenticate',
+			additionalValues: {},
+			options: {},
+		}, params);
+
 		BeaconWebRequest.get('/account/auth/passkeyOptions').then((initResponse) => {
 			const rawOptions = JSON.parse(initResponse.body);
-			const options = recursiveBase64StrToArrayBuffer(rawOptions);
+			const options = Object.assign(defaults.options, recursiveBase64StrToArrayBuffer(rawOptions));
 			navigator.credentials.get(options).then((passkey) => {
-				const authenticatorAttestationResponse = Object.assign(additionalValues, {
+				const authenticatorAttestationResponse = Object.assign(defaults.additionalValues, {
 					id: passkey.rawId ? arrayBufferToBase64(passkey.rawId) : null,
 					clientDataJSON: passkey.response.clientDataJSON  ? arrayBufferToBase64(passkey.response.clientDataJSON) : null,
 					authenticatorData: passkey.response.authenticatorData ? arrayBufferToBase64(passkey.response.authenticatorData) : null,
@@ -156,14 +162,14 @@ export const verifyPasskey = (destinationUrl = '/account/auth/authenticate', add
 					userHandle: passkey.response.userHandle ? arrayBufferToBase64(passkey.response.userHandle) : null
 				});
 
-				BeaconWebRequest.post(destinationUrl, authenticatorAttestationResponse).then((verifyResponse) => {
+				BeaconWebRequest.post(defaults.destinationUrl, authenticatorAttestationResponse).then((verifyResponse) => {
 					resolve({verified: true, response: JSON.parse(verifyResponse.body)});
 				}).catch((err) => {
 					signalRemovedPasskey(options.publicKey.rpId, passkey.id);
 					reject(err);
 				});
 			}).catch(() => {
-				resolve({verified: false});
+				resolve({verified: false, response: null});
 			});
 		}).catch((err) => {
 			reject(err);
