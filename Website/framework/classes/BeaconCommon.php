@@ -963,34 +963,38 @@ abstract class BeaconCommon {
 			return self::$session;
 		}
 
-		if (isset($_COOKIE[self::AuthCookieName]) === false) {
-			return null;
-		}
+		$accessToken = null;
+		if (isset($_SERVER['HTTP_X_BEACON_TOKEN'])) {
+			$accessToken = $_SERVER['HTTP_X_BEACON_TOKEN'];
+		} elseif (isset($_COOKIE[self::AuthCookieName])) {
+			$cookieValue = $_COOKIE[self::AuthCookieName];
+			if (static::IsUUID($cookieValue)) {
+				// Legacy value
+				$session = Session::Fetch($cookieValue);
+				if (is_null($session)) {
+					return null;
+				}
+				self::$session = $session;
+				return $session;
+			}
 
-		$cookieValue = $_COOKIE[self::AuthCookieName];
-		if (static::IsUUID($cookieValue)) {
-			// Legacy value
-			$session = Session::Fetch($cookieValue);
-			if (is_null($session)) {
+			$cookieData = json_decode(static::Base64UrlDecode($cookieValue), true);
+			if ($cookieData === false || is_null($cookieData)) {
 				return null;
 			}
-			self::$session = $session;
-			return $session;
-		}
 
-		$cookieData = json_decode(static::Base64UrlDecode($cookieValue), true);
-		if ($cookieData === false || is_null($cookieData)) {
+			$params = $cookieData['params'];
+			$signature = $cookieData['signature'];
+			$computedSignature = static::Base64UrlEncode(BeaconEncryption::RSASign(static::GetGlobal('Beacon_Private_Key'), json_encode($params)));
+			if ($signature !== $computedSignature) {
+				return null;
+			}
+
+			$accessToken = $params['access_token'];
+		} else {
 			return null;
 		}
 
-		$params = $cookieData['params'];
-		$signature = $cookieData['signature'];
-		$computedSignature = static::Base64UrlEncode(BeaconEncryption::RSASign(static::GetGlobal('Beacon_Private_Key'), json_encode($params)));
-		if ($signature !== $computedSignature) {
-			return null;
-		}
-
-		$accessToken = $params['access_token'];
 		$session = Session::Fetch($accessToken);
 		if (is_null($session)) {
 			return null;

@@ -134,6 +134,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 	};
 
 	let knownVulnerablePassword = '';
+	let passkeyAbortController;
 
 	const loginForm = document.getElementById('login_form_intro');
 	const loginEmailField = document.getElementById('login_email_field');
@@ -237,7 +238,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 	if (loginPasskeysCell) {
 		const startPasskeySignin = async (optional) => {
 			try {
-				const {verified, response} = await verifyPasskey({
+				const passkeyOptions = {
 					additionalValues: {
 						challenge: loginParams.challenge,
 						challengeExpiration: loginParams.challengeExpiration,
@@ -247,13 +248,20 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 					options: {
 						mediation: optional ? 'conditional' : 'required',
 					},
-				});
+				};
+
+				try {
+					passkeyAbortController = new AbortController();
+					passkeyOptions.options.signal = passkeyAbortController.signal;
+				} catch {
+				}
+				const {verified, response} = await verifyPasskey(passkeyOptions);
 
 				if (!verified) {
 					return;
 				}
 
-				processLogin(response);
+				processLogin(response.session);
 			} catch (err) {
 				let errorMessage = err?.message ?? 'Unknown Error';
 				const errorCode = err?.code ?? '';
@@ -338,7 +346,12 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 				sessionBody.trust = totpRememberCheck.checked;
 			}
 
-			BeaconWebRequest.post('/account/auth/authenticate', sessionBody).then((response) => {
+			// Tell the passkey to stop the conditional get
+			if (passkeyAbortController) {
+				passkeyAbortController.abort();
+			}
+
+			BeaconWebRequest.post('/account/auth/authenticate', sessionBody).then(async (response) => {
 				if (!forcedUserId) {
 					if (localStorage && loginRemember && loginUser) {
 						localStorage.setItem('email', loginUser);
@@ -348,7 +361,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 					}
 				}
 
-				const session = JSON.parse(response.body);
+				const {session} = JSON.parse(response.body);
 				processLogin(session, loginPassword);
 			}).catch((err) => {
 				let errorMessage = err?.message ?? `Sorry, there was a ${error.status} error.`;

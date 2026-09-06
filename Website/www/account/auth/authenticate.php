@@ -89,6 +89,9 @@ if (array_key_exists('clientDataJSON', $obj)) {
 
 $session = Session::Create($user, $app);
 http_response_code(201);
-echo json_encode($session, JSON_PRETTY_PRINT);
+echo json_encode([
+	'session' => $session,
+	'identityChallenge' => BeaconCommon::GetIdentityChallenge($session, 'addPasskey'),
+], JSON_PRETTY_PRINT);
 
 ?>
