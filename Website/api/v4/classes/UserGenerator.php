@@ -12,7 +12,7 @@ abstract class UserGenerator {
 		]);
 	}
 
-	public static function CreateNamed(string $email, string $username, string $password): User {
+	public static function CreateNamed(string $email, string $username, string $password = ''): User {
 		$publicKeyPem = null;
 		$privateKeyPem = null;
 		BeaconEncryption::GenerateKeyPair($publicKeyPem, $privateKeyPem);
@@ -42,7 +42,7 @@ abstract class UserGenerator {
 		$database->BeginTransaction();
 		try {
 			$user = User::Create($userProperties);
-			if ($securityModel !== User::SecurityModelLegacy) {
+			if ($securityModel !== User::SecurityModelLegacy && empty($password) === false) {
 				UserCredential::SetUserPassword($user->UserId(), $password);
 			}
 		} catch (Exception $err) {

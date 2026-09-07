@@ -240,7 +240,7 @@ abstract class BeaconEncryption {
 	}
 
 	public static function GeneratePKCE(int $length = 128): string {
-		$bytes = str_split(random_bytes(128));
+		$bytes = str_split(random_bytes($length));
 		for ($idx = 0; $idx < count($bytes); $idx++) {
 			$byte = ord($bytes[$idx]) % 66;
 			if ($byte === 0) {

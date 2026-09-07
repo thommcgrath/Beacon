@@ -10,6 +10,7 @@ class UserCredential extends DatabaseObject implements JsonSerializable {
 
 	const TypePassword = 'Password';
 	const TypePasskey = 'Passkey';
+	const TypeNitrado = 'Nitrado';
 
 	protected string $credentialId = '';
 	protected string $userId = '';

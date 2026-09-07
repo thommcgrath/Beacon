@@ -207,36 +207,38 @@ export class BeaconDialog {
 				if (passkeyNode) {
 					orNodes.push(passkeyNode);
 				}
-				andNodes.push(orNodes);
+				if (orNodes.length > 0) {
+					andNodes.push(orNodes);
+				}
 			}
 
-			const buildOptionGroup = (sourceNodes, destinationNodes, separatorText) => {
-				const group = document.createElement('div');
-				group.classList.add('dialog_confirm_group');
-
-				for (let idx = 0; idx < sourceNodes.length; idx++) {
-					if (idx > 0) {
-						const separator = document.createElement('div');
-						separator.classList.add('dialog_confirm_or');
-						separator.appendChild(document.createTextNode(separatorText));
-						group.appendChild(separator);
-					}
-
-					const sourceNode = sourceNodes[idx];
-					if (Array.isArray(sourceNode)) {
-						buildOptionGroup(sourceNode, group, 'Or');
-					} else {
-						const optionNode = document.createElement('div');
-						optionNode.classList.add('dialog_confirm_option');
-						optionNode.appendChild(sourceNode);
-						group.appendChild(optionNode);
-					}
-				}
-
-				destinationNodes.appendChild(group);
-			};
-
 			if (andNodes.length > 0) {
+				const buildOptionGroup = (sourceNodes, destinationNodes, separatorText) => {
+					const group = document.createElement('div');
+					group.classList.add('dialog_confirm_group');
+
+					for (let idx = 0; idx < sourceNodes.length; idx++) {
+						if (idx > 0) {
+							const separator = document.createElement('div');
+							separator.classList.add('dialog_confirm_or');
+							separator.appendChild(document.createTextNode(separatorText));
+							group.appendChild(separator);
+						}
+
+						const sourceNode = sourceNodes[idx];
+						if (Array.isArray(sourceNode)) {
+							buildOptionGroup(sourceNode, group, 'Or');
+						} else {
+							const optionNode = document.createElement('div');
+							optionNode.classList.add('dialog_confirm_option');
+							optionNode.appendChild(sourceNode);
+							group.appendChild(optionNode);
+						}
+					}
+
+					destinationNodes.appendChild(group);
+				};
+
 				const nodes = document.createElement('div');
 				nodes.classList.add('dialog_confirm_options');
 

@@ -19,7 +19,8 @@ class BeaconLogin {
 			$params['securityModel'] = null;
 		}
 
-		$passkeysEnabled = BeaconCommon::GetGlobal('Enable Passkeys') ?? false;
+		$passwordlessEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? false;
+		$passkeysEnabled = $passwordlessEnabled && (BeaconCommon::GetGlobal('Enable Passkeys') ?? false);
 		$params['apiDomain'] = BeaconCommon::APIDomain();
 		$params['deviceId'] = $deviceId;
 		$params['flowRequiresPassword'] = false;
@@ -280,14 +281,40 @@ class BeaconLogin {
 </div>
 <div id="page_login" class="scriptonly">
 	<form id="login_form_intro" action="/account/noscript" method="post">
-		<?php if (is_null($user) === false) { ?>
-		<p class="floating-label"><input class="text-field" type="email" name="username" placeholder="Username" id="login_username_field" autocomplete="username webauthn" autofocus value="<?php echo htmlentities($user->Username(true)); ?>" required readonly><label for="login_username_field">Username</label></p>
-		<?php } else { ?>
-		<p class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email webauthn" autofocus required><label for="login_email_field">E-Mail Address</label></p>
-		<?php } ?>
-		<p class="floating-label"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></p>
-		<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
-		<ul class="buttons"><li><input id="login_action_button" type="submit" value="Login"></li><?php if ($passkeysEnabled) { ?><li id="login_passkeys_cell" class="hidden"><button id="login_use_passkey_button">Login With Passkey</button></li><?php } ?><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button" class="red">Cancel</button></li><?php } ?></ul>
+		<div class="login-space login-group">
+			<div class="login-field login-field-user">
+				<?php if (is_null($user) === false) { ?>
+				<div class="floating-label"><input class="text-field" type="email" name="username" placeholder="Username" id="login_username_field" autocomplete="username webauthn" autofocus value="<?php echo htmlentities($user->Username(true)); ?>" required readonly><label for="login_username_field">Username</label></div>
+				<?php } else { ?>
+				<div class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email webauthn" autofocus required><label for="login_email_field">E-Mail Address</label></div>
+				<?php } ?>
+			</div>
+			<div class="login-field login-field-password">
+				<div class="floating-label mb-0"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></div>
+				<div class="text-right"><a href="#" id="login_recover_button">Forgot Password?</a></div>
+			</div>
+			<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
+			<ul class="buttons">
+				<li><input id="login_action_button" type="submit" value="Sign In"></li>
+			</ul>
+		</div>
+		<?php if ($passwordlessEnabled) {?><div class="login-space login-separator">
+			<div class="login-separator-bar">&nbsp;</div>
+			<div class="login-separator-text">Or</div>
+			<div class="login-separator-bar">&nbsp;</div>
+		</div>
+		<div class="login-space login-group">
+			<ul class="buttons">
+				<?php if ($passkeysEnabled) { ?><li id="login_passkeys_cell" class="hidden"><button id="login_use_passkey_button">Sign In With Passkey</button></li><?php } ?>
+				<li><button id="login_auth_nitrado">Sign In With Nitrado</button></li>
+			</ul>
+		</div><?php } ?>
+		<div class="login-space login-group text-center">Don't have an account? <a href="#" id="login_signup_button">Sign Up</a></div>
+		<?php if ($withCancel) { ?><div class="login-space login-group">
+			<ul class="buttons">
+				<li><button id="login_cancel_button" class="red">Cancel</button></li>
+			</ul>
+		</div><?php } ?>
 	</form>
 </div>
 <div id="page_totp" class="scriptonly">

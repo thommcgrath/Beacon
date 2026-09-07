@@ -135,12 +135,19 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 
 	let knownVulnerablePassword = '';
 	let passkeyAbortController;
+	const abortPasskey = () => {
+		if (passkeyAbortController) {
+			passkeyAbortController.abort();
+			passkeyAbortController = undefined;
+		}
+	};
 
 	const loginForm = document.getElementById('login_form_intro');
 	const loginEmailField = document.getElementById('login_email_field');
 	const loginPasswordField = document.getElementById('login_password_field');
 	const loginRememberCheck = document.getElementById('login_remember_check');
 	const loginRecoverButton = document.getElementById('login_recover_button');
+	const loginSignupButton = document.getElementById('login_signup_button');
 	const loginCancelButton = document.getElementById('login_cancel_button');
 	const loginActionButton = document.getElementById('login_action_button');
 	const loginPasskeysCell = document.getElementById('login_passkeys_cell');
@@ -234,6 +241,9 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 	}
 	if (loginRememberCheck) {
 		loginRememberCheck.checked = storedRemember;
+		loginRememberCheck.addEventListener('change', (ev) => {
+			loginRemember = ev.target.checked;
+		});
 	}
 	if (loginPasskeysCell) {
 		const startPasskeySignin = async (optional) => {
@@ -284,7 +294,6 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 				return;
 			}
 
-			loginActionButton.value = "Login With Password";
 			loginPasskeysCell.classList.remove('hidden');
 			startPasskeySignin(true);
 		});
@@ -347,9 +356,7 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 			}
 
 			// Tell the passkey to stop the conditional get
-			if (passkeyAbortController) {
-				passkeyAbortController.abort();
-			}
+			abortPasskey();
 
 			BeaconWebRequest.post('/account/auth/authenticate', sessionBody).then(async (response) => {
 				if (!forcedUserId) {
@@ -397,9 +404,10 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 		}
 	}
 
-	if (loginRecoverButton) {
-		loginRecoverButton.addEventListener('click', (ev) => {
+	if (loginRecoverButton || loginSignupButton) {
+		const recoverHandler = (ev) => {
 			ev.preventDefault();
+			abortPasskey();
 
 			if (recoverEmailField && loginEmailField) {
 				recoverEmailField.value = loginEmailField.value;
@@ -421,8 +429,16 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 			focusFirst([recoverEmailField]);
 
 			return false;
-		});
+		};
+
+		if (loginRecoverButton) {
+			loginRecoverButton.addEventListener('click', recoverHandler);
+		}
+		if (loginSignupButton) {
+			loginSignupButton.addEventListener('click', recoverHandler);
+		}
 	}
+
 	if (loginCancelButton) {
 		loginCancelButton.addEventListener('click', (ev) => {
 			ev.preventDefault();
@@ -438,6 +454,19 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams, turnstile }) => 
 		});
 	}
 
+	const startSignInWith = (provider) => {
+		abortPasskey();
+		const url = `/account/oauth/v4/signInWith?provider=${encodeURIComponent(provider)}&remember=${encodeURIComponent(loginRemember)}&return=${encodeURIComponent(loginReturnURI)}`;
+		window.location.href = url;
+	};
+
+	const loginWithNitradoButton = document.getElementById('login_auth_nitrado');
+	if (loginWithNitradoButton) {
+		loginWithNitradoButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			startSignInWith('nitrado');
+		});
+	}
 
 	// !Recovery Page
 	if (recoverForm) {

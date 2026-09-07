@@ -1,5 +1,7 @@
 <?php
 
+use BeaconAPI\v4\UserCredential;
+
 trait SignInButtonContainer {
 	protected array $buttons = [];
 
@@ -192,6 +194,14 @@ class SignInOptionButton {
 
 	public function SetAttribute(string $key, string $value): void {
 		$this->attributes[$key] = $value;
+	}
+}
+
+class SignInOptionRevokeButton extends SignInOptionButton {
+	public function __construct(string $caption, UserCredential $credential) {
+		parent::__construct('revoke-button-' . $credential->CredentialId(), $caption, 'red revoke-credential-button revoke-' . strtolower($credential->Type()) . '-button');
+		$this->SetAttribute('beacon-credential-id', $credential->CredentialId());
+		$this->SetAttribute('beacon-credential-name', $credential->Name());
 	}
 }
 

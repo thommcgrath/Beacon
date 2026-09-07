@@ -6,7 +6,6 @@
       "shell" : "\/bin\/bash"
     },
     "run" : {
-      "enabled" : true,
       "script" : ".\/build.sh --watch",
       "shell" : "\/bin\/bash"
     }

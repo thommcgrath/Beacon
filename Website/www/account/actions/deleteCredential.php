@@ -21,40 +21,48 @@ if ($activeSession->HasScope(Application::kScopeUsersCredentials) === false) {
 }
 
 $user = $activeSession->User();
+$credentialId = $_POST['credentialId'] ?? '';
 $identityChallenge = $_POST['identityChallenge'] ?? '';
 
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
 try {
-	$password = UserCredential::GetPasswordRecord($user->UserId());
+	$credential = UserCredential::Fetch($credentialId);
 } catch (Exception $err) {
 	$database->Rollback();
 	Response::NewJsonError($err->getMessage(), ['code' => 'OTHER_ERROR'], 400)->Flush();
 	exit;
 }
 
-if (is_null($password)) {
+if (is_null($credential) || $credential->UserId() !== $user->UserId()) {
 	$database->Rollback();
 	Response::NewJsonError($err->getMessage(), ['code' => 'NOT_FOUND'], 404)->Flush();
 	exit;
 }
 
 try {
-	$password->Delete();
+	$credential->Delete();
 } catch (Exception $err) {
 	$database->Rollback();
 	Response::NewJsonError($err->getMessage(), ['code' => 'OTHER_ERROR'], 400)->Flush();
 	exit;
 }
 
-if (BeaconCommon::VerifyIdentityChallenge($activeSession, $identityChallenge, 'deletePassword') === false) {
+if (BeaconCommon::VerifyIdentityChallenge($activeSession, $identityChallenge, 'deleteCredential') === false) {
 	$database->Rollback();
-	Response::NewJsonError('Identity not confirmed.' . $identityChallenge, ['code' => 'INCORRECT_CHALLENGE'], 400)->Flush();
+	Response::NewJsonError('Identity not confirmed.', ['code' => 'INCORRECT_CHALLENGE'], 400)->Flush();
 	exit;
 }
 $database->Commit();
 
-Response::NewNoContent()->Flush();
+$response = [];
+if ($credential->Type() === UserCredential::TypePasskey) {
+	$metadata = $passkey->Metadata();
+	$response['rpId'] = 'usebeacon.app';
+	$response['credentialId'] = $metadata['credentialId'];
+}
+
+Response::NewJson($response, 200)->Flush();
 exit;
 
 ?>

@@ -581,11 +581,11 @@ div.medium_section {
 }
 
 h1 {
-	font-size: $font-size-sm * 1.2;
+	font-size: $font-size-sm * 1.4;
 }
 
 h2 {
-	font-size: $font-size-sm * 1.1;
+	font-size: $font-size-sm * 1.2;
 }
 
 h3 {
@@ -2469,11 +2469,11 @@ img.avatar {
 	}
 
 	h1 {
-		font-size: $font-size * 1.2;
+		font-size: $font-size * 1.4;
 	}
 
 	h2 {
-		font-size: $font-size * 1.1;
+		font-size: $font-size * 1.2;
 	}
 
 	h3 {
@@ -3275,6 +3275,70 @@ body.no-navigation {
 	.service-gameserverspanel.active {
 		background-color: black;
 		color: white;
+	}
+}
+
+#login_container {
+	$loginSpacing: 1rem;
+
+	width: 400px;
+	max-width: 90vw;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
+
+	ul.buttons {
+		margin: 0px;
+		padding: 0px;
+		list-style: none;
+
+		li {
+			text-align: center;
+			width: auto;
+
+			&+li {
+				margin-top: $loginSpacing;
+			}
+		}
+	}
+
+	.login-space {
+		padding: $loginSpacing;
+		border-radius: 0.25rem;
+		box-sizing: border-box;
+
+		.floating-label {
+			margin: 0px;
+		}
+	}
+
+	.login-group {
+		background-color: color.mix($background-color, $foreground-color, 96%);
+		border: 1px solid color.mix($background-color, $foreground-color, 88%);
+	}
+
+	.login-space+.login-space, .login-field+.login-field {
+		margin-top: $loginSpacing;
+	}
+
+	.login-separator {
+		padding: 0px;
+		text-align: center;
+		height: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.login-separator-text {
+			padding: 0 2rem;
+		}
+
+		.login-separator-bar {
+			flex-grow: 1;
+			height: 1rem;
+			transform: translateY(0.5rem);
+			border-top: 1px solid color.mix($background-color, $foreground-color, 50%);
+		}
 	}
 }
 

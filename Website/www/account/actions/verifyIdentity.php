@@ -53,10 +53,16 @@ if (array_key_exists('clientDataJSON', $obj)) {
 	if ($user->Is2FAProtected()) {
 		$verificationCode = $obj['verificationCode'] ?? '';
 		if ($user->Verify2FACode(code: $verificationCode, verifyOnly: true, verificationOptions: User::VerifyWithAuthenticators) === false) {
-			Response::NewJsonError('Incorrected authenticator code. Backup codes are not allowed here.', null, 401)->Flush();
+			Response::NewJsonError('Incorrect authenticator code. Backup codes are not allowed here.', null, 401)->Flush();
 			exit;
 		}
 	} else {
+		$passkeys = UserCredential::Search(['userId' => $userId, 'type' => UserCredential::TypePasskey], true);
+		if (count($passkeys) > 0) {
+			Response::NewJsonError('You must verify your identity with an authenticator or passkey.', null, 401)->Flush();
+			exit;
+		}
+
 		$password = $obj['password'] ?? '';
 		if ($user->TestPassword($password, true) === false) {
 			Response::NewJsonError('Incorrect username or password.', null, 401)->Flush();

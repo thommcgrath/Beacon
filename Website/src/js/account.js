@@ -719,7 +719,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	const passkeysGroup = document.getElementById('sign-in-option-passkeys');
 	if (passkeysGroup && passkeysGroup.classList.contains('sign-in-option-unavailable') === false) {
 		const addPasskeyButton = document.getElementById('option-button-add-passkey');
-		const removePasskeyButtons = document.querySelectorAll('button.passkey-remove-button');
+		const removePasskeyButtons = document.querySelectorAll('button.revoke-passkey-button');
 
 		const updatePasskeysUI = (passkeysSupported) => {
 			const tagContainers = document.querySelectorAll('#sign-in-option-passkeys .sign-in-option-tags');
@@ -787,55 +787,81 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				BeaconDialog.show('Could not start passkey setup', initErr.message);
 			};
 		});
-
-		removePasskeyButtons.forEach((button) => {
-			button.addEventListener('click', async (ev) => {
-				ev.preventDefault();
-
-				try {
-					const passkeyName = ev.target.getAttribute('beacon-passkey-name');
-					const {challenge} = await BeaconDialog.secureConfirm(identityVerificationOptions, 'deletePasskey', `Are you sure you want to delete the passkey "${passkeyName}?"`, 'Please confirm your identity to delete the passkey.');
-					identityChallenge = challenge;
-				} catch {
-					return;
-				}
-
-				try {
-					const passkeyId = ev.target.getAttribute('beacon-passkey-id');
-					const params = new URLSearchParams();
-					params.append('passkeyId', passkeyId);
-					params.append('identityChallenge', identityChallenge);
-
-					const response = await BeaconWebRequest.post('/account/actions/deletePasskey', params);
-					try {
-						const parsed = JSON.parse(response.body);
-						signalRemovedPasskey(parsed.rpId, parsed.credentialId);
-						setTimeout(() => {
-							window.location.reload();
-						}, 1500);
-					} catch {
-					}
-				} catch (deleteErr) {
-					let errorMessage = deleteErr.message;
-					const errorCode = deleteErr.parsed?.details?.code ?? '';
-
-					switch (errorCode) {
-					case 'UNAUTHORIZED':
-						errorMessage = 'Your session is not valid. Reload this page.';
-						break;
-					case 'FORBIDDEN':
-						errorMessage = 'You probably shouldn\'t be doing that.';
-						break;
-					case 'INCORRECT_CHALLENGE':
-						errorMessage = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
-						break;
-					}
-
-					BeaconDialog.show('Passkey not removed', errorMessage);
-				}
-			});
-		});
 	}
+
+	/* ! Credentials */
+	const identitySetupButtons = document.querySelectorAll('button.add-identity-button');
+	identitySetupButtons.forEach((button) => {
+		button.addEventListener('click', async (ev) => {
+			ev.preventDefault();
+
+			try {
+				const identityName = ev.target.getAttribute('beacon-identity-name');
+				const {challenge} = await BeaconDialog.secureConfirm(identityVerificationOptions, 'signInWith', `Please confirm your identity to set up "Sign In With ${identityName}."`);
+				identityChallenge = challenge;
+			} catch {
+				return;
+			}
+
+			try {
+				const provider = ev.target.getAttribute('beacon-identity-provider');
+				window.location.href = `/account/oauth/v4/signInWith?provider=${provider}&identityChallenge=${encodeURIComponent(identityChallenge)}&return=${encodeURIComponent(window.location.href)}`;
+			} catch {
+				return;
+			}
+		});
+	});
+
+	const credentialRevokeButtons = document.querySelectorAll('button.revoke-credential-button');
+	credentialRevokeButtons.forEach((button) => {
+		button.addEventListener('click', async (ev) => {
+			ev.preventDefault();
+
+			try {
+				const credentialName = ev.target.getAttribute('beacon-credential-name');
+				const {challenge} = await BeaconDialog.secureConfirm(identityVerificationOptions, 'deleteCredential', `Are you sure you want to delete "${credentialName}?"`, 'Please confirm your identity to continue.');
+				identityChallenge = challenge;
+			} catch {
+				return;
+			}
+
+			try {
+				const credentialId = ev.target.getAttribute('beacon-credential-id');
+				const params = new URLSearchParams();
+				params.append('credentialId', credentialId);
+				params.append('identityChallenge', identityChallenge);
+
+				const response = await BeaconWebRequest.post('/account/actions/deleteCredential', params);
+				try {
+					const parsed = JSON.parse(response.body);
+					if (parsed.rpId && parsed.credentialId) {
+						signalRemovedPasskey(parsed.rpId, parsed.credentialId);
+					}
+					setTimeout(() => {
+						window.location.reload();
+					}, 1500);
+				} catch {
+				}
+			} catch (deleteErr) {
+				let errorMessage = deleteErr.message;
+				const errorCode = deleteErr.parsed?.details?.code ?? '';
+
+				switch (errorCode) {
+				case 'UNAUTHORIZED':
+					errorMessage = 'Your session is not valid. Reload this page.';
+					break;
+				case 'FORBIDDEN':
+					errorMessage = 'You probably shouldn\'t be doing that.';
+					break;
+				case 'INCORRECT_CHALLENGE':
+					errorMessage = 'In a normal world, you would not be seeing this message. Yet here we are. Reload the page to try the process again to start a new identity verification.';
+					break;
+				}
+
+				BeaconDialog.show('Credential not removed', errorMessage);
+			}
+		});
+	});
 
 	/* ! Sessions */
 

@@ -62,7 +62,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 ?>
 <div id="login_container">
-	<h1>Beacon Login</h1>
+	<h1>Beacon Sign In</h1>
 	<?php BeaconLogin::Show($loginParams); ?>
 </div><?php
 
