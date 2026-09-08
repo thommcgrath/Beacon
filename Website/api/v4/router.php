@@ -7,7 +7,6 @@ Core::RegisterRoutes(
 		'/applications' => [
 			'GET' => 'applications/list',
 			'POST' => 'applications/create',
-			'DELETE' => 'applications/delete',
 		],
 		'/applications/{applicationId}' => [
 			'GET' => 'applications/get',

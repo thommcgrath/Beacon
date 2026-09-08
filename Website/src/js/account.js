@@ -934,32 +934,26 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			});
 		};
 
-		const deleteAppAction = (event) => {
+		const deleteAppAction = async (event) => {
 			event.preventDefault();
 
-			const applicationId = event.currentTarget.getAttribute('beacon-app-id');
-			BeaconDialog.secureConfirm(identityVerificationOptions, 'deleteApplication', 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.', 'Delete', 'Cancel').then((authCode) => {
-				BeaconWebRequest.start('DELETE', `https://${apiDomain}/v4/applications`, JSON.stringify({
-					applicationId: applicationId,
-					authCode: authCode,
-				}), {
-					'X-Beacon-Token': sessionId,
-					'Content-Type': 'application/json',
-				}).then(() => {
-					BeaconDialog.show('The application has been deleted').then(() => {
-						location.reload();
-					});
-				}).catch((response) => {
-					const err = JSON.parse(response.body);
-					let message = err.message;
-					if (err.code === 'invalidAuthCode') {
-						message = 'The authenticator code is not correct. Please provide a code from any of your authenticator apps, not a backup code.';
-					}
-					BeaconDialog.show('The application could not be deleted', message);
-				});
-			}).catch(() => {
-				console.log('App delete was cancelled');
-			});
+			try {
+				const applicationId = event.currentTarget.getAttribute('beacon-app-id');
+				const {challenge} = await BeaconDialog.secureConfirm(identityVerificationOptions, 'deleteApplication', 'Are you sure you want to delete this application?', 'All user logins created by this application will be invalidated. To delete this application, please enter a code from your authenticator app.', 'Delete', 'Cancel');
+
+				try {
+					const params = new URLSearchParams();
+					params.append('applicationId', applicationId);
+					params.append('identityChallenge', challenge);
+
+					await BeaconWebRequest.post('/account/actions/deleteApplication', params);
+					await BeaconDialog.show('The application has been deleted');
+					window.location.reload();
+				} catch (deleteErr) {
+					BeaconDialog.show('The application could not be deleted', deleteErr?.message ?? 'Unknown error');
+				}
+			} catch {
+			}
 		};
 
 		const editAppButtons = document.querySelectorAll('#panel-account div[page="apps"] button.apps-edit-button');
