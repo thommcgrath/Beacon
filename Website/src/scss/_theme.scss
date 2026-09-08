@@ -142,6 +142,16 @@ $button-yellow: #ffc107 !default;
 	@return math.div((math.max($backlum, $forelum) + 0.05), (math.min($backlum, $forelum) + 0.05));
 }
 
+@function better-of($backgroundColor, $colorOne: #ffffff, $colorTwo: #000000) {
+	$contrastOne: contrast-against($backgroundColor, $colorOne);
+	$contrastTwo: contrast-against($backgroundColor, $colorTwo);
+	@if ($contrastOne >= $contrastTwo) {
+		@return $colorOne;
+	} @else {
+		@return $colorTwo;
+	}
+}
+
 @function contrasting-color($backcolor, $forecolor, $desiredContrast: 4.5) {
 	$initialContrast: contrast-against($backcolor, $forecolor);
 	@if ($initialContrast >= $desiredContrast) {
@@ -170,13 +180,7 @@ $button-yellow: #ffc107 !default;
 		}
 	}
 
-	$whiteContrast: contrast-against($backcolor, #ffffff);
-	$blackContrast: contrast-against($backcolor, #000000);
-	@if $whiteContrast > $blackContrast {
-		@return #ffffff;
-	} @else {
-		@return #000000;
-	}
+	@return better-of($backcolor, #ffffff, #000000);
 }
 
 @mixin create-spinner-size($size) {
@@ -202,20 +206,38 @@ $button-yellow: #ffc107 !default;
 	}
 }
 
-$pc-fill: contrasting-color($background-color, #c27c0e);
-$xbox-fill: contrasting-color($background-color, #107c10);
-$playstation-fill: contrasting-color($background-color, #003791);
-$switch-fill: contrasting-color($background-color, #e60012);
-$pc-text: contrasting-color($pc-fill, #ffffff);
-$xbox-text: contrasting-color($xbox-fill, #ffffff);
-$playstation-text: contrasting-color($playstation-fill, #ffffff);
-$switch-text: contrasting-color($switch-fill, #ffffff);
-$text-red: contrasting-color($background-color, #ff3b30);
-$text-green: contrasting-color($background-color, #28cd41);
-$text-blue: contrasting-color($background-color, #007aff);
-$text-purple: contrasting-color($background-color, #af52de);
-$text-yellow: contrasting-color($background-color, #ffcc00);
-$link-color: contrasting-color($background-color, #2e7fda);
+@mixin tag-colors ($fillColor, $textColor: #ffffff) {
+	background-color: $fillColor;
+	color: $textColor;
+	border-width: 1px;
+	border-style: solid;
+	
+	@if (contrast-against($background-color, $fillColor) < 4.5) {
+		border-color: color.mix($fillColor, $foreground-color, 75%);
+	} @else {
+		border-color: $fillColor;
+	}
+}
+
+$tag-pc: #FACA04;
+$tag-xbox: #107c10;
+$tag-playstation: #003791;
+$tag-switch: #e60012;
+$tag-red: #dc3545;
+$tag-grey: #6c757d;
+$tag-blue: #0d6efd;
+$tag-green: #198754;
+$tag-yellow: #f1f100;
+$tag-cyan: #0dcaf0;
+$tag-orange: #ff8000;
+$tag-purple: #800080;
+
+$text-red: contrasting-color($background-color, #ff3b30, 7.0);
+$text-green: contrasting-color($background-color, #28cd41, 7.0);
+$text-blue: contrasting-color($background-color, #007aff, 7.0);
+$text-purple: contrasting-color($background-color, #af52de, 7.0);
+$text-yellow: contrasting-color($background-color, #ffcc00, 7.0);
+$link-color: contrasting-color($background-color, #2e7fda, 7.0);
 $accent-text-color: contrasting-color($accent-color, $background-color); // Text color used when the background is the accent color
 $text-accent-color: contrasting-color($background-color, $accent-color); // Text color based on the accent color
 $pressed-accent-color: color.adjust($accent-color, $lightness: -20%);
@@ -223,18 +245,33 @@ $pressed-accent-text-color: color.adjust($accent-text-color, $lightness: -20%);
 $separator-color: color.mix($foreground-color, $background-color, 15%);
 $explore-color: $background-color;
 $explore-border-color: $separator-color;
-$tag-red-fill: contrasting-color($background-color, #dc3545);
-$tag-red-text: contrasting-color($tag-red-fill, #ffffff);
-$tag-grey-fill: contrasting-color($background-color, #6c757d);
-$tag-grey-text: contrasting-color($tag-grey-fill, #ffffff);
-$tag-blue-fill: contrasting-color($background-color, #0d6efd);
-$tag-blue-text: contrasting-color($tag-blue-fill, #ffffff);
-$tag-green-fill: contrasting-color($background-color, #198754);
-$tag-green-text: contrasting-color($tag-green-fill, #ffffff);
-$tag-yellow-fill: contrasting-color($background-color, #ffc107);
-$tag-yellow-text: contrasting-color($tag-yellow-fill, #212529);
-$tag-cyan-fill: contrasting-color($background-color, #0dcaf0);
-$tag-cyan-text: contrasting-color($tag-cyan-fill, #212529);
+$tag-contrast: 7.0;
+$tag-pc-fill: $tag-pc;
+$tag-pc-text: #000000;
+$tag-xbox-fill: $tag-xbox;
+$tag-xbox-text: #ffffff;
+$tag-playstation-fill: $tag-playstation;
+$tag-playstation-text: #ffffff;
+$tag-switch-fill: $tag-switch;
+$tag-switch-text: #ffffff;
+$tag-red-text: #ffffff;
+$tag-red-fill: contrasting-color($tag-red-text, $tag-red, $tag-contrast);
+$tag-grey-text: #ffffff;
+$tag-grey-fill: contrasting-color($tag-grey-text, $tag-grey, $tag-contrast);
+$tag-green-text: #ffffff;
+$tag-green-fill: contrasting-color($tag-green-text, $tag-green, $tag-contrast);
+$tag-blue-text: #ffffff;
+$tag-blue-fill: contrasting-color($tag-blue-text, $tag-blue, $tag-contrast);
+$tag-green-text: #ffffff;
+$tag-green-fill: contrasting-color($tag-green-text, $tag-green, $tag-contrast);
+$tag-yellow-text: #000000;
+$tag-yellow-fill: contrasting-color($tag-yellow-text, $tag-yellow, $tag-contrast);
+$tag-cyan-text: #ffffff;
+$tag-cyan-fill: contrasting-color($tag-cyan-text, $tag-cyan, $tag-contrast);
+$tag-orange-text: #ffffff;
+$tag-orange-fill: contrasting-color($tag-orange-text, $tag-orange, $tag-contrast);
+$tag-purple-text: #ffffff;
+$tag-purple-fill: contrasting-color($tag-purple-text, $tag-purple, $tag-contrast);
 $button-primary-color: $accent-color;
 $button-primary-text-color: $accent-text-color;
 $button-secondary-color: color.mix($foreground-color, $background-color, 7%);
@@ -345,6 +382,7 @@ a {
 	display: inline-block;
 	padding: 0.35em 0.65em;
 	font-size: 0.75em;
+	vertical-align: top;
 
 	&+& {
 		margin-left: 6px;
@@ -359,53 +397,51 @@ a {
 	}
 
 	&.xbox {
-		background-color: $xbox-fill;
-		color: $xbox-text;
+		@include tag-colors($tag-xbox-fill, $tag-xbox-text);
 	}
 
 	&.playstation {
-		background-color: $playstation-fill;
-		color: $playstation-text;
+		@include tag-colors($tag-playstation-fill, $tag-playstation-text);
 	}
 
 	&.pc {
-		background-color: $pc-fill;
-		color: $pc-text;
+		@include tag-colors($tag-pc-fill, $tag-pc-text);
 	}
 
-	&.nintendo {
-		background-color: $switch-fill;
-		color: $switch-text;
+	&.nintendo, &.switch {
+		@include tag-colors($tag-switch-fill, $tag-switch-text);
 	}
 
 	&.red {
-		background-color: $tag-red-fill;
-		color: $tag-red-text;
+		@include tag-colors($tag-red-fill, $tag-red-text);
 	}
 
 	&.grey {
-		background-color: $tag-grey-fill;
-		color: $tag-grey-text;
+		@include tag-colors($tag-grey-fill, $tag-grey-text);
 	}
 
 	&.blue {
-		background-color: $tag-blue-fill;
-		color: $tag-blue-text;
+		@include tag-colors($tag-blue-fill, $tag-blue-text);
 	}
 
 	&.green {
-		background-color: $tag-green-fill;
-		color: $tag-green-text;
+		@include tag-colors($tag-green-fill, $tag-green-text);
 	}
 
 	&.yellow {
-		background-color: $tag-yellow-fill;
-		color: $tag-yellow-text;
+		@include tag-colors($tag-yellow-fill, $tag-yellow-text);
 	}
 
 	&.cyan {
-		background-color: $tag-cyan-fill;
-		color: $tag-cyan-text;
+		@include tag-colors($tag-cyan-fill, $tag-cyan-text);
+	}
+
+	&.orange {
+		@include tag-colors($tag-orange-fill, $tag-orange-text);
+	}
+
+	&.purple {
+		@include tag-colors($tag-purple-fill, $tag-purple-text);
 	}
 }
 
