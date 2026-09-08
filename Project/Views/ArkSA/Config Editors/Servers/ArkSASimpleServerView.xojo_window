@@ -559,8 +559,6 @@ End
 		  Select Case Self.mProviderId
 		  Case Nitrado.Identifier
 		    Provider = New Nitrado.HostingProvider
-		  Case ASAManager.Identifier
-		    Provider = New ASAManager.HostingProvider
 		  Case BeaconHostingAPI.Identifier
 		    Provider = New BeaconHostingAPI.HostingProvider
 		  Case GameServersPanel.Identifier
@@ -595,8 +593,6 @@ End
 		  Select Case Self.mProviderId
 		  Case Nitrado.Identifier
 		    Provider = New Nitrado.HostingProvider
-		  Case ASAManager.Identifier
-		    Provider = New ASAManager.HostingProvider
 		  Case BeaconHostingAPI.Identifier
 		    Provider = New BeaconHostingAPI.HostingProvider
 		  Case GameServersPanel.Identifier

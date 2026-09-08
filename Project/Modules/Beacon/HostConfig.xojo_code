@@ -43,8 +43,6 @@ Protected Class HostConfig
 		    Return New Nitrado.HostConfig(SaveData, Version)
 		  Case GameServerApp.Identifier
 		    Return New GameServerApp.HostConfig(SaveData, Version)
-		  Case ASAManager.Identifier
-		    Return New ASAManager.HostConfig(SaveData, Version)
 		  Case FTP.Identifier
 		    Return New FTP.HostConfig(SaveData, Version)
 		  Case Local.Identifier

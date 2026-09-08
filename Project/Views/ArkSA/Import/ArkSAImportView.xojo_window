@@ -37,7 +37,7 @@ Begin DocumentImportView ArkSAImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   11
+      PanelCount      =   10
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -47,7 +47,7 @@ Begin DocumentImportView ArkSAImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   4
+      Value           =   8
       Visible         =   True
       Width           =   720
       Begin FTPDiscoveryView FTPView
@@ -538,36 +538,6 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
-      Begin MultiSelectDiscoveryView ASAManagerView
-         AddressColumnLabel=   "Container Id"
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF
-         Composited      =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   480
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   9
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   720
-      End
       Begin MultiSelectDiscoveryView BeaconHostingView
          AddressColumnLabel=   "Address"
          AllowAutoDeactivate=   True
@@ -590,7 +560,7 @@ Begin DocumentImportView ArkSAImportView
          LockTop         =   True
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   10
+         TabPanelIndex   =   9
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
@@ -620,7 +590,7 @@ Begin DocumentImportView ArkSAImportView
          LockTop         =   True
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   11
+         TabPanelIndex   =   10
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
@@ -948,10 +918,7 @@ End
 	#tag Constant, Name = MigrationMessageSingular, Type = String, Dynamic = True, Default = \"Migrating \?1 Project", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageASAManager, Type = Double, Dynamic = False, Default = \"8", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"9", Scope = Private
+	#tag Constant, Name = PageBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
@@ -963,7 +930,7 @@ End
 	#tag Constant, Name = PageFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageGameServersPanel, Type = Double, Dynamic = False, Default = \"10", Scope = Private
+	#tag Constant, Name = PageGameServersPanel, Type = Double, Dynamic = False, Default = \"9", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageGSA, Type = Double, Dynamic = False, Default = \"6", Scope = Private
@@ -1006,8 +973,6 @@ End
 		    Self.SetPageHeight(Self.StatusPageHeight)
 		  Case Self.PageGSA
 		    Self.GSAView.Begin
-		  Case Self.PageASAManager
-		    Self.ASAManagerView.Begin
 		  Case Self.PageBeaconHostingAPI
 		    Self.BeaconHostingView.Begin
 		  Case Self.PageGameServersPanel
@@ -1321,8 +1286,6 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageFTP
 		  Case Me.SourceGSA
 		    Self.Views.SelectedPanelIndex = Self.PageGSA
-		  Case Me.SourceASAManager
-		    Self.Views.SelectedPanelIndex = Self.PageASAManager
 		  Case Me.SourceFiles
 		    Self.Views.SelectedPanelIndex = Self.PageFiles
 		  Case Me.SourceClipboard
@@ -1450,42 +1413,6 @@ End
 	#tag Event
 		Function CreateHostingProvider() As Beacon.HostingProvider
 		  Return New GameServerApp.HostingProvider
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function GameId() As String
-		  Return ArkSA.Identifier
-		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events ASAManagerView
-	#tag Event
-		Sub Finished(Profiles() As Beacon.ServerProfile)
-		  Self.Discover(Profiles)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.QuickCancel Then
-		    Self.Dismiss
-		  Else
-		    Views.SelectedPanelIndex = 0
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  Self.SetPageHeight(NewHeight)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function GetDestinationProject() As Beacon.Project
-		  Return Self.mDestinationProject
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CreateHostingProvider() As Beacon.HostingProvider
-		  Return New ASAManager.HostingProvider
 		End Function
 	#tag EndEvent
 	#tag Event
