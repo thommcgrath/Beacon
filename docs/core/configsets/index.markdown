@@ -2,6 +2,8 @@
 title: Using Config Sets
 parent: Core Features
 nav_order: 0
+redirect_from:
+  - /config_sets
 ---
 # Using Config Sets
 Anyone who manages a cluster, or even a server with occasional special events, can benefit from using Config Sets.

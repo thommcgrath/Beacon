@@ -1,6 +1,8 @@
 ---
 title: Welcome to Beacon
 nav_order: 0
+redirect_from:
+  - /about_user_privacy
 ---
 # Getting Started
 New users should [watch this introductory video](https://usebeacon.app/videos/welcome_to_beacon) to familiarize themselves with how Beacon works with servers. It'll be well worth the time.

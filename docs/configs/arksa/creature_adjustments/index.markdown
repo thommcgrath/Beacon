@@ -16,6 +16,8 @@ configkeys:
 supportedgames:
   - "Ark: Survival Ascended"
 requiresomni: true
+redirect_from:
+  - /creature_adjustments_editor
 ---
 {% include editortitle.markdown %}
 

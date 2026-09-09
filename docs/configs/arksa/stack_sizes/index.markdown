@@ -7,6 +7,8 @@ configkeys:
   - ItemStackSizeMultiplier
 supportedgames:
   - "Ark: Survival Ascended"
+redirect_from:
+  - /stack_sizes_editor
 ---
 {% include editortitle.markdown %}
 

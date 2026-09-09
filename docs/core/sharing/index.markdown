@@ -2,6 +2,8 @@
 title: Sharing Beacon Projects With Other Users
 parent: Core Features
 nav_order: 1
+redirect_from:
+  - /sharing_beacon_documents
 ---
 # {{page.title}}
 

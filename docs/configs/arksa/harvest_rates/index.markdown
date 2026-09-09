@@ -13,6 +13,8 @@ configkeys:
 supportedgames:
   - "Ark: Survival Ascended"
 requiresomni: true
+redirect_from:
+  - /harvest_rates_editor
 ---
 {% include editortitle.markdown %}
 

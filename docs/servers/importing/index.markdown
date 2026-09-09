@@ -2,6 +2,8 @@
 title: Importing an Existing Config
 parent: Server Management
 nav_order: 0
+redirect_from:
+  - /importing_existing_config
 ---
 # {{page.title}}
 Importing is a very powerful feature of Beacon. For Nitrado and FTP servers, importing provides a way to link a server to a project to enable Beacon's deploy feature. For everybody else, importing is a way to bring existing config data into Beacon so you don't start from scratch.
@@ -15,20 +17,30 @@ This option will prompt for your Nitrado username and password on Nitrado's webs
 
 > Your username and password are never available to Beacon or its developer.
 
-After you sign in, your Ark servers will be listed. Simply check off the servers you want to import and continue. Cluster servers should often be imported into the same project.
+### Beacon Open Hosting API
+
+Any host that supports the [Beacon Open Hosting API](/hostingapi/) can be used as an import source. You will need to obtain the correct details from your hosting provider.
 
 ### GameServerApp.com
 To connect a Beacon project to GameServerApp.com, you must first generate an API token from [the GameServerApp.com dashboard](https://dash.gameserverapp.com/configure/api). Keep this token safe, it is essentially a password to your GameServerApp.com account. You will not be able to retrieve the token later, only revoke or replace it. Paste your token into the large space, and just for organization, give a name to the token. Most projects will only have one token, but a good name will help should another GameServerApp.com account need to be linked to the project.
 
 > Community member MooseJuice has a video about [linking a GameServerApp.com template to Beacon](https://youtu.be/N35NyETlY6w).
 
+### GameServersPanel
+
+This option will prompt for your GameServersPanel username and password on the GameServersPanel website and allow you to grant Beacon access to your servers.
+
+> Your username and password are never available to Beacon or its developer.
+
+### Server With FTP Access
+If your server has FTP (File Transfer Protocol) access, Beacon can import the config files from your server directly. Beacon supports password-based plain FTP, FTP with TLS/SSL, and SFTP. After you enter your server details, Beacon will attempt to automatically find your config files. If it cannot find them, you'll be presented with your server's file list where you can find your Game.ini file.
+
+[See the Beacon FTP guide for more details](/guides/ftp/)
+
 ### Single Player, Local Files, or Copy + Paste
 If your server does not support FTP - which most console servers do not - then you can manually import your files. The next screen will allow you to input the contents of your Game.ini and GameUserSettings.ini files. You do not need to import both, but Beacon can do a better job with both. When selecting a file or using drag-and-drop, Beacon will automatically look for the sibling file. So if you add Game.ini, Beacon will try to import GameUserSettings.ini too. Unfortunately, if you're using copy and paste.
 
 > Mac users: due to macOS sandboxing, Beacon cannot automatically import the sibling config file. Instead, you'll be prompted to select it yourself. You may cancel the file selection dialog without harm.
-
-### Server With FTP Access
-If your server has FTP (File Transfer Protocol) access, Beacon can import the config files from your server directly. Beacon supports password-based plain FTP, FTP with TLS/SSL, and SFTP. After you enter your server details, Beacon will attempt to automatically find your config files. If it cannot find them, you'll be presented with your server's file list where you can find your Game.ini file.
 
 ### Other Beacon Project
 Beacon can even import config parts from other projects. So if you've setup your project but found a loot drop setup in the project library that you'd like to use, you can just select the "Other Beacon Pocument" and choose to import only loot drops from the other project.

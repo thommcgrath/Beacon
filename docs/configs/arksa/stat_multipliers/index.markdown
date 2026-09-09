@@ -13,6 +13,8 @@ configkeys:
   - PlayerBaseStatMultipliers
 supportedgames:
   - "Ark: Survival Ascended"
+redirect_from:
+  - /stat_multipliers_editor
 ---
 {% include editortitle.markdown %}
 

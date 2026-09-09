@@ -24,6 +24,8 @@ configkeys:
   - PvPStructureDecay
 supportedgames:
   - "Ark: Survival Ascended"
+redirect_from:
+  - /decay_and_spoil_editor
 ---
 {% include editortitle.markdown %}
 
