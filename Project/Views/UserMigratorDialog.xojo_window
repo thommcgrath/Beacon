@@ -211,7 +211,7 @@ Begin BeaconDialog UserMigratorDialog
          Width           =   560
       End
    End
-   Begin Beacon.Thread MigratorThread
+   Begin Beacon.CommonThread MigratorThread
       DebugIdentifier =   ""
       Enabled         =   True
       Index           =   -2147483648

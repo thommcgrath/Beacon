@@ -10,7 +10,8 @@ Begin BeaconDialog GameSelectorWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   400
+   HasTitleBar     =   True
+   Height          =   124
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -49,7 +50,7 @@ Begin BeaconDialog GameSelectorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   360
+      Top             =   84
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -80,7 +81,7 @@ Begin BeaconDialog GameSelectorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   360
+      Top             =   84
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -188,8 +189,6 @@ End
 		  Self.ActionButton.Top = NextTop + 8
 		  Self.CancelButton.Top = Self.ActionButton.Top
 		  Self.Height = Self.ActionButton.Bottom + 20
-		  Self.MaximumHeight = Self.Height
-		  Self.MinimumHeight = Self.Height
 		End Sub
 	#tag EndEvent
 
@@ -201,6 +200,7 @@ End
 		    Self.mAllowedGameIds.Value(GameId) = True
 		  Next
 		  Self.mHideOthers = HideOthers
+		  Self.mCancelled = True
 		  
 		  Super.Constructor
 		End Sub
@@ -319,6 +319,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

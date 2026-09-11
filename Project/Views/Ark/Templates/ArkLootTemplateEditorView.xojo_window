@@ -7,9 +7,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   556
    Index           =   -2147483648
@@ -25,6 +23,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   740
    Begin DesktopPagePanel Pages
@@ -49,7 +48,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   740
       Begin DesktopLabel LockExplanationLabel
@@ -85,11 +84,13 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          Visible         =   True
          Width           =   700
       End
-      Begin DesktopUpDownArrows MaxItemsStepper
-         Active          =   False
+      Begin StepperControl MaxItemsStepper
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowTabStop    =   True
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   23
          Index           =   -2147483648
@@ -100,25 +101,26 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         PanelIndex      =   0
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
          TabIndex        =   9
          TabPanelIndex   =   1
+         TabStop         =   True
          Tooltip         =   ""
          Top             =   163
          Transparent     =   False
          Visible         =   True
-         Width           =   13
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
+         Width           =   12
       End
-      Begin DesktopUpDownArrows MinItemsStepper
-         Active          =   False
+      Begin StepperControl MinItemsStepper
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowTabStop    =   True
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   23
          Index           =   -2147483648
@@ -129,19 +131,18 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         PanelIndex      =   0
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
          TabIndex        =   6
          TabPanelIndex   =   1
+         TabStop         =   True
          Tooltip         =   ""
          Top             =   129
          Transparent     =   False
          Visible         =   True
-         Width           =   13
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
+         Width           =   12
       End
       Begin UITweaks.ResizedTextField MaxItemsField
          AllowAutoDeactivate=   True
@@ -659,6 +660,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   True
+         AllowMultipleRows=   True
          AllowMultipleSelection=   True
          AllowTabs       =   False
          Backdrop        =   0
@@ -698,6 +700,8 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""

@@ -5,8 +5,8 @@ For details and support, see the official website at [https://usebeacon.app/](ht
 
 ## Required Xojo Plugins
 
-### MBS 24.0:
-Grab https://www.monkeybreadsoftware.de/xojo/download/plugin/MBS-Xojo-Plugins-plugins240.zip
+### MBS 26.2:
+Grab https://www.monkeybreadsoftware.de/xojo/download/plugin/MBS-Xojo-Plugins-plugins262.zip
 
 #### Specific Plugins
 - Compression

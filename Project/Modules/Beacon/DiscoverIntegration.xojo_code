@@ -21,7 +21,7 @@ Inherits Beacon.Integration
 		  Var Dict As New Dictionary
 		  Dict.Value("Event") = "Discovered"
 		  Dict.Value("Project") = Project
-		  Self.Thread.AddUserInterfaceUpdate(Dict)
+		  Self.WorkThread.AddUserInterfaceUpdate(Dict)
 		  Self.mProject = Project
 		End Sub
 	#tag EndEvent

@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin DesktopContainer ModFilterView
+Begin PopoverContainer ModFilterView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -13,9 +13,9 @@ Begin DesktopContainer ModFilterView
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
+   LockBottom      =   True
    LockLeft        =   True
-   LockRight       =   False
+   LockRight       =   True
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
@@ -229,7 +229,7 @@ End
 		  Next
 		  
 		  Self.GamesGroup.Height = (Games.Count * 20) + ((Games.Count - 1) * 12) + 56
-		  Self.Height = 52 + Self.TypesGroup.Height + Self.GamesGroup.Height
+		  Self.SetContentSize(Self.Width, 52 + Self.TypesGroup.Height + Self.GamesGroup.Height)
 		  
 		  Self.TypeLocalCheck.Value = Self.mSettings.Enabled(CType(ModsListView.ViewModes.Local, Integer))
 		  Self.TypeLocalReadOnlyCheck.Value = Self.mSettings.Enabled(CType(ModsListView.ViewModes.LocalReadOnly, Integer))

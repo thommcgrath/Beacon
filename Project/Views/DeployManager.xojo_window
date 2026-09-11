@@ -10,6 +10,7 @@ Begin BeaconAutopositionWindow DeployManager
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
+   HasTitleBar     =   True
    Height          =   550
    ImplicitInstance=   False
    MacProcID       =   0
@@ -581,7 +582,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         SelectedRowIndex=   0
+         SelectedRowIndex=   -1
          TabIndex        =   12
          TabPanelIndex   =   1
          TabStop         =   True
@@ -1374,57 +1375,47 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateDeployPlans(SelectedPlan As Beacon.DeployPlan)
-		  Var PlanCounts As New Dictionary
-		  Var RequiredPlanCount As Integer
 		  Var Project As Beacon.Project = Self.Project
+		  Var Plans As Beacon.DeployPlan = Beacon.DeployPlan.StopUploadStart Or Beacon.DeployPlan.UploadOnly Or Beacon.DeployPlan.UploadRestart
 		  
 		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
 		    If Self.ServerList.CellCheckBoxValueAt(Idx, 0) = False Then
 		      Continue
 		    End If
-		    RequiredPlanCount = RequiredPlanCount + 1
 		    
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(Idx)
-		    Var Plans() As Beacon.DeployPlan = Profile.SupportedDeployPlans(Project)
-		    For Each Plan As Beacon.DeployPlan In Plans
-		      PlanCounts.Value(Plan) = PlanCounts.Lookup(Plan, 0) + 1
-		    Next
-		  Next
-		  
-		  Var CommonPlans() As Beacon.DeployPlan
-		  For Each Entry As DictionaryEntry In PlanCounts
-		    Var Plan As Beacon.DeployPlan = Entry.Key
-		    Var Count As Integer = Entry.Value
-		    If Count <> RequiredPlanCount Then
-		      Continue
-		    End If
-		    CommonPlans.Add(Plan)
+		    Plans = Plans And Profile.SupportedDeployPlans(Project)
 		  Next
 		  
 		  Self.PlanMenu.RemoveAllRows
 		  
-		  For Each Plan As Beacon.DeployPlan In CommonPlans
-		    Var Caption As String
-		    Select Case Plan
-		    Case Beacon.DeployPlan.StopUploadStart
-		      Caption = "Stop server, update config files, then start server."
-		    Case Beacon.DeployPlan.UploadRestart
-		      Caption = "Update config files, then restart the server."
-		    Case Beacon.DeployPlan.UploadOnly
-		      Caption = "Update config files. The server will not be restarted."
-		    End Select
-		    
-		    Self.PlanMenu.AddRow(Caption)
-		    Self.PlanMenu.RowTagAt(Self.PlanMenu.LastAddedRowIndex) = Plan
-		    If SelectedPlan = Plan Then
-		      Self.PlanMenu.SelectedRowIndex = Self.PlanMenu.LastAddedRowIndex
+		  Var SelectedIndex As Integer = -1
+		  If (Plans And Beacon.DeployPlan.StopUploadStart) = Beacon.DeployPlan.StopUploadStart Then
+		    Self.PlanMenu.AddRow(New DesktopMenuItem("Stop server, update config files, then start server.", Beacon.DeployPlan.StopUploadStart))
+		    If SelectedPlan = Beacon.DeployPlan.StopUploadStart Then
+		      SelectedIndex = Self.PlanMenu.LastAddedRowIndex
 		    End If
-		  Next
+		  End If
+		  If (Plans And Beacon.DeployPlan.UploadRestart) = Beacon.DeployPlan.UploadRestart Then
+		    Self.PlanMenu.AddRow(New DesktopMenuItem("Update config files, then restart the server.", Beacon.DeployPlan.UploadRestart))
+		    If SelectedPlan = Beacon.DeployPlan.UploadRestart Then
+		      SelectedIndex = Self.PlanMenu.LastAddedRowIndex
+		    End If
+		  End If
+		  If (Plans And Beacon.DeployPlan.UploadOnly) = Beacon.DeployPlan.UploadOnly Then
+		    Self.PlanMenu.AddRow(New DesktopMenuItem("Update config files. The server will not be restarted.", Beacon.DeployPlan.UploadOnly))
+		    If SelectedPlan = Beacon.DeployPlan.UploadOnly Then
+		      SelectedIndex = Self.PlanMenu.LastAddedRowIndex
+		    End If
+		  End If
 		  
-		  Self.PlanMenu.Enabled = CommonPlans.Count > 1
+		  Self.PlanMenu.Enabled = Self.PlanMenu.RowCount > 1
 		  Self.PlanLabel.Enabled = Self.PlanMenu.Enabled
+		  
 		  If Self.PlanMenu.RowCount = 1 Then
 		    Self.PlanMenu.SelectedRowIndex = 0
+		  ElseIf Self.PlanMenu.SelectedRowIndex <> SelectedIndex Then
+		    Self.PlanMenu.SelectedRowIndex = SelectedIndex
 		  End If
 		  
 		  Self.UpdateControlPositions()
@@ -1975,6 +1966,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Modified"
 		Visible=false

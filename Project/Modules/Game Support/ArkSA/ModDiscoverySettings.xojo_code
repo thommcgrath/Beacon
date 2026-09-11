@@ -125,9 +125,7 @@ Protected Class ModDiscoverySettings
 
 	#tag Method, Flags = &h0
 		Function ToString() As String
-		  Var SaveData As JSONItem = Self.ToJSONItem
-		  SaveData.Compact = True
-		  Return SaveData.ToString
+		  Return Self.ToJSONItem.ToString(True)
 		End Function
 	#tag EndMethod
 

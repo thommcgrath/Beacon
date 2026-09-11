@@ -10,6 +10,7 @@ Begin DesktopWindow ExceptionWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
+   HasTitleBar     =   True
    Height          =   400
    ImplicitInstance=   False
    MacProcID       =   0
@@ -938,6 +939,7 @@ End
 		  
 		  If SubmitLock Is Nil Then
 		    SubmitLock = New CriticalSection
+		    SubmitLock.Type = Thread.Types.Preemptive
 		  End If
 		  
 		  SubmitLock.Enter
@@ -1090,6 +1092,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false

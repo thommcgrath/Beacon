@@ -1,23 +1,32 @@
 #tag Class
-Protected Class BeaconPopover
-Inherits NSPopoverMBS
-	#tag Event
-		Sub popoverWillClose(notification as NSNotificationMBS)
-		  RaiseEvent PopoverWillClose(Notification)
+Private Class ControlTweak
+	#tag Method, Flags = &h0
+		Sub Constructor(TopDelta As Integer, HeightDelta As Integer)
+		  Self.mTopDelta = TopDelta
+		  Self.mHeightDelta = HeightDelta
 		End Sub
-	#tag EndEvent
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HeightDelta() As Integer
+		  Return Self.mHeightDelta
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TopDelta() As Integer
+		  Return Self.mTopDelta
+		End Function
+	#tag EndMethod
 
 
-	#tag Hook, Flags = &h0
-		Event PopoverWillClose(notification as NSNotificationMBS)
-	#tag EndHook
+	#tag Property, Flags = &h21
+		Private mHeightDelta As Integer
+	#tag EndProperty
 
-
-	#tag Note, Name = WTF
-		Why does this useless class exist? It seems like the MBS plugin doesn't watch for the notification
-		unless the event is implemented. Using AddHandler doesn't trigger it.
-		
-	#tag EndNote
+	#tag Property, Flags = &h21
+		Private mTopDelta As Integer
+	#tag EndProperty
 
 
 	#tag ViewBehavior
@@ -33,7 +42,7 @@ Inherits NSPopoverMBS
 			Name="Index"
 			Visible=true
 			Group="ID"
-			InitialValue=""
+			InitialValue="-2147483648"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -49,7 +58,7 @@ Inherits NSPopoverMBS
 			Name="Left"
 			Visible=true
 			Group="Position"
-			InitialValue=""
+			InitialValue="0"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -57,7 +66,7 @@ Inherits NSPopoverMBS
 			Name="Top"
 			Visible=true
 			Group="Position"
-			InitialValue=""
+			InitialValue="0"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -2,7 +2,7 @@
 Protected Class Socket
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mQueueThread = New Beacon.Thread
+		  Self.mQueueThread = New Beacon.CommonThread
 		  Self.mQueueThread.DebugIdentifier = "BeaconAPI.Socket.QueueThread"
 		  AddHandler mQueueThread.Run, WeakAddressOf mQueueThread_Run
 		  AddHandler mQueueThread.UserInterfaceUpdate, WeakAddressOf mQueueThread_UserInterfaceUpdate
@@ -10,7 +10,7 @@ Protected Class Socket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mQueueThread_Run(Sender As Beacon.Thread)
+		Private Sub mQueueThread_Run(Sender As Beacon.CommonThread)
 		  While True
 		    If Self.mQueue.Count = 0 Then
 		      If Self.mWorking Then
@@ -48,7 +48,7 @@ Protected Class Socket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mQueueThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub mQueueThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates
@@ -98,7 +98,7 @@ Protected Class Socket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mQueueThread As Beacon.Thread
+		Private mQueueThread As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1,48 +1,29 @@
 #tag DesktopWindow
 Begin TemplateEditorView ArkSALootTemplateEditorView
-   AllowAutoDeactivate=   "True"
-   AllowFocus      =   "False"
-   AllowFocusRing  =   "False"
-   AllowTabs       =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composite       =   False
-   Composited      =   "False"
-   DefaultLocation =   2
-   DoubleBuffer    =   "False"
-   Enabled         =   "True"
-   EraseBackground =   "True"
-   FullScreen      =   False
+   Composited      =   False
+   Enabled         =   True
    HasBackgroundColor=   False
-   HasCloseButton  =   True
-   HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
    Height          =   556
-   ImplicitInstance=   True
-   Index           =   "-2147483648"
+   Index           =   -2147483648
    InitialParent   =   ""
-   Left            =   "0"
-   LockBottom      =   "True"
-   LockLeft        =   "True"
-   LockRight       =   "True"
-   LockTop         =   "True"
-   MacProcID       =   0
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
-   MenuBar         =   0
-   MenuBarVisible  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   Resizeable      =   True
-   TabIndex        =   "0"
-   TabPanelIndex   =   "0"
-   TabStop         =   "True"
-   Title           =   "Untitled"
+   Left            =   0
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
+   TabIndex        =   0
+   TabPanelIndex   =   0
+   TabStop         =   True
    Tooltip         =   ""
-   Top             =   "0"
-   Transparent     =   "True"
-   Type            =   0
+   Top             =   0
+   Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   740
    Begin DesktopPagePanel Pages
@@ -67,7 +48,7 @@ Begin TemplateEditorView ArkSALootTemplateEditorView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   740
       Begin DesktopLabel LockExplanationLabel
@@ -103,11 +84,13 @@ Begin TemplateEditorView ArkSALootTemplateEditorView
          Visible         =   True
          Width           =   700
       End
-      Begin DesktopUpDownArrows MaxItemsStepper
-         Active          =   False
+      Begin StepperControl MaxItemsStepper
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowTabStop    =   True
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   23
          Index           =   -2147483648
@@ -118,25 +101,26 @@ Begin TemplateEditorView ArkSALootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         PanelIndex      =   0
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
          TabIndex        =   9
          TabPanelIndex   =   1
+         TabStop         =   True
          Tooltip         =   ""
          Top             =   163
          Transparent     =   False
          Visible         =   True
-         Width           =   13
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
+         Width           =   12
       End
-      Begin DesktopUpDownArrows MinItemsStepper
-         Active          =   False
+      Begin StepperControl MinItemsStepper
          AllowAutoDeactivate=   True
          AllowFocus      =   False
-         AllowTabStop    =   True
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   23
          Index           =   -2147483648
@@ -147,19 +131,18 @@ Begin TemplateEditorView ArkSALootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         PanelIndex      =   0
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
          TabIndex        =   6
          TabPanelIndex   =   1
+         TabStop         =   True
          Tooltip         =   ""
          Top             =   129
          Transparent     =   False
          Visible         =   True
-         Width           =   13
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
+         Width           =   12
       End
       Begin UITweaks.ResizedTextField MaxItemsField
          AllowAutoDeactivate=   True
@@ -677,6 +660,7 @@ Begin TemplateEditorView ArkSALootTemplateEditorView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   True
+         AllowMultipleRows=   True
          AllowMultipleSelection=   True
          AllowTabs       =   False
          Backdrop        =   0
@@ -716,6 +700,8 @@ Begin TemplateEditorView ArkSALootTemplateEditorView
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""

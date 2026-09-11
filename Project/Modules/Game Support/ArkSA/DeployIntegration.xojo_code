@@ -14,9 +14,9 @@ Inherits Beacon.DeployIntegration
 		  Var GameIniPath As String = Profile.GameIniPath
 		  Var GameUserSettingsIniPath As String = Profile.GameUserSettingsIniPath
 		  
-		  Self.EnterResourceIntenseMode()
+		  Var IntenseMode As Beacon.LockHolder = Self.EnterResourceIntenseMode()
 		  Var Organizer As ArkSA.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Profile)
-		  Self.ExitResourceIntenseMode()
+		  IntenseMode = Nil
 		  If Organizer Is Nil Then
 		    Self.SetError("Could not generate new config data. Log files may have more info.")
 		    Return
@@ -53,17 +53,17 @@ Inherits Beacon.DeployIntegration
 		  
 		  Var RewriteError As RuntimeException
 		  
-		  Self.EnterResourceIntenseMode()
+		  IntenseMode = Self.EnterResourceIntenseMode()
 		  Var GameIniRewritten As String = ArkSA.Rewriter.Rewrite(ArkSA.Rewriter.Sources.Deploy, GameIniOriginal, ArkSA.HeaderShooterGame, ArkSA.ConfigFileGame, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
-		  Self.ExitResourceIntenseMode()
+		  IntenseMode = Nil
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
-		  Self.EnterResourceIntenseMode()
+		  IntenseMode = Self.EnterResourceIntenseMode()
 		  Var GameUserSettingsIniRewritten As String = ArkSA.Rewriter.Rewrite(ArkSA.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, ArkSA.HeaderServerSettings, ArkSA.ConfigFileGameUserSettings, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
-		  Self.ExitResourceIntenseMode()
+		  IntenseMode = Nil
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return
@@ -117,8 +117,7 @@ Inherits Beacon.DeployIntegration
 		    
 		    Select Case Provider
 		    Case IsA Nitrado.HostingProvider
-		      NitradoSettings.Compact = False
-		      OldFiles.Value("Config.json") = NitradoSettings.ToString
+		      OldFiles.Value("Config.json") = NitradoSettings.ToString(False)
 		      
 		      Var NewSettings As New JSONItem(OldFiles.Value("Config.json").StringValue)
 		      For Each Entry As DictionaryEntry In NitradoChanges
@@ -134,8 +133,7 @@ Inherits Beacon.DeployIntegration
 		        End If
 		        Parent.Value(Key) = Entry.Value.StringValue
 		      Next
-		      NewSettings.Compact = False
-		      NewFiles.Value("Config.json") = NewSettings.ToString
+		      NewFiles.Value("Config.json") = NewSettings.ToString(False)
 		    End Select
 		    
 		    Self.RunBackup(OldFiles, NewFiles)
@@ -175,7 +173,9 @@ Inherits Beacon.DeployIntegration
 		  Case IsA GameServerApp.HostingProvider
 		    Call Self.GameServerAppApplySettings(Organizer)
 		  Else
-		    Provider.CommandLineOptions(Project, Profile) = Organizer.CommandLineOptions()
+		    If Provider.SupportsLaunchOptions(Project, Profile) Then
+		      Provider.CommandLineOptions(Project, Profile) = Organizer.CommandLineOptions()
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -279,7 +279,7 @@ Inherits Beacon.DeployIntegration
 		    End Try
 		    
 		    // So we don't go nuts
-		    Self.Thread.Sleep(100)
+		    Self.WorkThread.Sleep(100)
 		  Next
 		  
 		  Return True
@@ -514,6 +514,21 @@ Inherits Beacon.DeployIntegration
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ThreadState"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Thread.ThreadStates"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Paused"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ThreadPriority"
 			Visible=false

@@ -222,9 +222,6 @@ Protected Class ProviderToken
 	#tag EndProperty
 
 
-	#tag Constant, Name = ProviderASAManager, Type = String, Dynamic = False, Default = \"ASAManager", Scope = Public
-	#tag EndConstant
-
 	#tag Constant, Name = ProviderBeaconHostingAPI, Type = String, Dynamic = False, Default = \"BeaconHostingAPI", Scope = Public
 	#tag EndConstant
 

@@ -47,7 +47,7 @@ Begin DesktopContainer ArkLootDropSettingsContainer
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       MaximumCharactersAllowed=   0
       Password        =   False
@@ -122,7 +122,7 @@ Begin DesktopContainer ArkLootDropSettingsContainer
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       MaximumCharactersAllowed=   0
       Password        =   False
@@ -175,11 +175,13 @@ Begin DesktopContainer ArkLootDropSettingsContainer
       Visible         =   True
       Width           =   85
    End
-   Begin DesktopUpDownArrows MinItemSetsStepper
-      Active          =   False
+   Begin StepperControl MinItemSetsStepper
       AllowAutoDeactivate=   True
       AllowFocus      =   False
-      AllowTabStop    =   True
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -187,28 +189,29 @@ Begin DesktopContainer ArkLootDropSettingsContainer
       Left            =   167
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
-      PanelIndex      =   0
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Visible         =   True
-      Width           =   13
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
+      Width           =   12
    End
-   Begin DesktopUpDownArrows MaxItemSetsStepper
-      Active          =   False
+   Begin StepperControl MaxItemSetsStepper
       AllowAutoDeactivate=   True
       AllowFocus      =   False
-      AllowTabStop    =   True
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -216,22 +219,21 @@ Begin DesktopContainer ArkLootDropSettingsContainer
       Left            =   167
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
-      PanelIndex      =   0
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   26
       Transparent     =   False
       Visible         =   True
-      Width           =   13
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
+      Width           =   12
    End
    Begin SwitchControl NoDuplicatesCheck
       AllowAutoDeactivate=   True
@@ -481,39 +483,51 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
-		  Const Gap = 6
-		  Const RowHeight = 20
-		  Const OverrideHeight = (RowHeight * 4) + (Gap * 5) + 1
+		  Const Gap As Integer = 6
 		  
 		  BeaconUI.SizeToFit(Self.MinItemSetsLabel, Self.MaxItemSetsLabel, Self.NoDuplicatesLabel, Self.AppendModeLabel)
 		  
 		  Self.MinItemSetsLabel.Left = Gap
-		  Self.MinItemSetsLabel.Top = Gap
 		  Self.MaxItemSetsLabel.Left = Gap
-		  Self.MaxItemSetsLabel.Top = Self.MinItemSetsLabel.Bottom + Gap
 		  Self.NoDuplicatesLabel.Left = Gap
-		  Self.NoDuplicatesLabel.Top = Self.MaxItemSetsLabel.Bottom + Gap
 		  Self.AppendModeLabel.Left = Gap
-		  Self.AppendModeLabel.Top = Self.NoDuplicatesLabel.Bottom + Gap
 		  
-		  Self.MinItemSetsField.Left = Self.MinItemSetsLabel.Right + Gap
-		  Self.MinItemSetsField.Top = Self.MinItemSetsLabel.Top
-		  Self.MaxItemSetsField.Left = Self.MaxItemSetsLabel.Right + Gap
-		  Self.MaxItemSetsField.Top = Self.MaxItemSetsLabel.Top
-		  Self.NoDuplicatesCheck.Left = Self.NoDuplicatesLabel.Right + Gap
-		  Self.NoDuplicatesCheck.Top = Self.NoDuplicatesLabel.Top
-		  Self.AppendModeCheck.Left = Self.AppendModeLabel.Right + Gap
-		  Self.AppendModeCheck.Top = Self.AppendModeLabel.Top
+		  Var FieldsLeft As Integer = Self.MinItemSetsLabel.Right + Gap
+		  Var FieldsWidth As Integer = Self.Width - (Gap + FieldsLeft)
 		  
+		  Self.MinItemSetsField.Top = Gap
+		  Self.MinItemSetsField.Left = FieldsLeft
+		  Self.MinItemSetsLabel.Top = Self.MinItemSetsField.Top
+		  Self.MinItemSetsLabel.Height = Self.MinItemSetsField.Height
+		  Self.MinItemSetsField.Width = FieldsWidth - (2 + Self.MinItemSetsStepper.Width)
 		  Self.MinItemSetsStepper.Left = Self.MinItemSetsField.Right + 2
 		  Self.MinItemSetsStepper.Top = Self.MinItemSetsField.Top
+		  Self.MinItemSetsStepper.Height = Self.MinItemSetsField.Height
+		  
+		  Self.MaxItemSetsField.Top = Self.MinItemSetsField.Bottom + Gap
+		  Self.MaxItemSetsField.Left = FieldsLeft
+		  Self.MaxItemSetsLabel.Top = Self.MaxItemSetsField.Top
+		  Self.MaxItemSetsLabel.Height = Self.MaxItemSetsField.Height
+		  Self.MaxItemSetsField.Width = FieldsWidth - (2 + Self.MaxItemSetsStepper.Width)
 		  Self.MaxItemSetsStepper.Left = Self.MaxItemSetsField.Right + 2
 		  Self.MaxItemSetsStepper.Top = Self.MaxItemSetsField.Top
+		  Self.MaxItemSetsStepper.Height = Self.MaxItemSetsField.Height
 		  
-		  Self.BottomSeparator.Top = OverrideHeight - 1
+		  Self.NoDuplicatesCheck.Top = Self.MaxItemSetsField.Bottom + Gap
+		  Self.NoDuplicatesCheck.Left = FieldsLeft
+		  Self.NoDuplicatesLabel.Top = Self.NoDuplicatesCheck.Top
+		  Self.NoDuplicatesLabel.Height = Self.NoDuplicatesCheck.Height
 		  
-		  If Self.Height <> OverrideHeight Then
-		    Self.Height = OverrideHeight
+		  Self.AppendModeCheck.Top = Self.NoDuplicatesCheck.Bottom + Gap
+		  Self.AppendModeCheck.Left = FieldsLeft
+		  Self.AppendModeLabel.Top = Self.AppendModeCheck.Top
+		  Self.AppendModeLabel.Height = Self.AppendModeCheck.Height
+		  
+		  Self.BottomSeparator.Top = Self.AppendModeCheck.Bottom + Gap
+		  
+		  Var ContainerHeight As Integer = Self.BottomSeparator.Bottom
+		  If Self.Height <> ContainerHeight Then
+		    Self.Height = ContainerHeight
 		  End If
 		End Sub
 	#tag EndMethod
@@ -942,6 +956,14 @@ End
 		Group="Position"
 		InitialValue=""
 		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ReadOnly"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

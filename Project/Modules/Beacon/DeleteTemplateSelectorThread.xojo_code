@@ -1,6 +1,6 @@
 #tag Class
 Protected Class DeleteTemplateSelectorThread
-Inherits Thread
+Inherits Beacon.CommonThread
 	#tag Event
 		Sub Run()
 		  Self.Retain
@@ -28,6 +28,7 @@ Inherits Thread
 	#tag Method, Flags = &h0
 		Sub Constructor(Selectors() As Beacon.TemplateSelector)
 		  Self.mSelectors = Selectors
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
@@ -74,6 +75,18 @@ Inherits Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true

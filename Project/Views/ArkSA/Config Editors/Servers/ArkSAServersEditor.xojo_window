@@ -17,8 +17,8 @@ Begin ArkSAConfigEditor ArkSAServersEditor
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
-   MinimumHeight   =   "64"
-   MinimumWidth    =   "64"
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -231,6 +231,7 @@ Begin ArkSAConfigEditor ArkSAServersEditor
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
    Begin StatusContainer Status
       AllowAutoDeactivate=   True
@@ -879,7 +880,7 @@ End
 		      // Create the view
 		      Var View As ArkSAServerViewContainer
 		      Select Case Profile.ProviderId
-		      Case Nitrado.Identifier, ASAManager.Identifier, BeaconHostingAPI.Identifier, GameServersPanel.Identifier
+		      Case Nitrado.Identifier, BeaconHostingAPI.Identifier, GameServersPanel.Identifier
 		        View = New ArkSASimpleServerView(Self.Project, Profile)
 		      Case FTP.Identifier
 		        View = New ArkSAFTPServerView(Self.Project, Profile)
@@ -1152,10 +1153,6 @@ End
 		      Provider = New GameServerApp.HostingProvider
 		      Config = New GameServerApp.HostConfig
 		      GameServerApp.HostConfig(Config).TokenId = Token.TokenId
-		    Case BeaconAPI.ProviderToken.ProviderASAManager
-		      Provider = New ASAManager.HostingProvider
-		      Config = New ASAManager.HostConfig
-		      ASAManager.HostConfig(Config).TokenId = Token.TokenId
 		    End Select
 		    If Provider Is Nil Then
 		      Continue

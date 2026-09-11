@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ImportThread
-Inherits Beacon.Thread
+Inherits Beacon.CommonThread
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Run()
@@ -97,7 +97,7 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
-		  
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
@@ -114,6 +114,8 @@ Inherits Beacon.Thread
 		  
 		  Self.mData = Data
 		  Self.mDestinationProject = DestinationProject
+		  
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
@@ -218,6 +220,18 @@ Inherits Beacon.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true

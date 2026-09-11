@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HostingProvider
-Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, Palworld.HostingProvider
+Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palworld.HostingProvider
 	#tag Method, Flags = &h1
 		Protected Function BuildUrl(Profile As Beacon.ServerProfile, Token As BeaconAPI.ProviderToken, Path As String) As String
 		  Var Holder As New Beacon.LockHolder(mDetailsLock)
@@ -902,6 +902,16 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SupportedDeployPlans(Project As Beacon.Project, Profile As Beacon.ServerProfile) As Beacon.DeployPlan
+		  If Self.SupportsRestarts(Project, Profile) Then
+		    Return Beacon.DeployPlan.UploadOnly Or Beacon.DeployPlan.UploadRestart Or Beacon.DeployPlan.StopUploadStart
+		  Else
+		    Return Beacon.DeployPlan.UploadOnly
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Throttled() As Boolean
 		  // Part of the Beacon.HostingProvider interface.
 		  
@@ -920,12 +930,6 @@ Implements Beacon.HostingProvider, Ark.HostingProvider, ArkSA.HostingProvider, P
 		  Var Path As String = Self.CleanupPath(Transfer.Path)
 		  Var Response As BeaconHostingAPI.APIResponse = Self.RunRequest(New BeaconHostingAPI.APIRequest("PUT", Self.BuildUrl(Profile, Token, "/servers/" + ServerId + "/files/" + Path), Token, "application/octet-stream", Transfer.Content))
 		  If Not Response.Success Then
-		    Select Case Response.HTTPStatus
-		    Case 406
-		      Response.Error.Message = "The host could not verify the provided checksum. This usually indicates the connection was dropped during upload. If this problem persists, contact your hosting provider."
-		    Else
-		      Response.Error.Message = "Unexpected " + Response.HTTPStatus.ToString(Locale.Raw, "0") + " status from host: " + Response.Error.Message
-		    End Select
 		    Raise Response.Error
 		  End If
 		End Sub

@@ -2,9 +2,7 @@
 Protected Module NotificationKit
 	#tag Method, Flags = &h1
 		Protected Sub Ignore(Receiver As NotificationKit.Receiver, ParamArray Keys() As String)
-		  If mReceivers = Nil Then
-		    Return
-		  End If
+		  Var Holder As New Beacon.LockHolder(mLock)
 		  
 		  For Each Key As String In Keys
 		    Var Refs() As WeakRef
@@ -27,8 +25,23 @@ Protected Module NotificationKit
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Init()
+		  If (mLock Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  mLock = New CriticalSection
+		  mLock.Type = Thread.Types.Preemptive
+		  
+		  mReceivers = New Dictionary
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mQueueTimer_Action(Sender As Timer)
+		  Var Holder As New Beacon.LockHolder(mLock)
+		  
 		  If mPendingNotifications.LastIndex = -1 Then
 		    Sender.RunMode = Timer.RunModes.Off
 		    Return
@@ -37,13 +50,17 @@ Protected Module NotificationKit
 		  Var Notification As NotificationKit.Invocation = mPendingNotifications(0)
 		  mPendingNotifications.RemoveAt(0)
 		  
+		  Holder = Nil
+		  
 		  Notification.Invoke
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Post(Notification As NotificationKit.Notification)
-		  If mReceivers = Nil Or mReceivers.HasKey(Notification.Name) = False Then
+		  Var Holder As New Beacon.LockHolder(mLock)
+		  
+		  If mReceivers.HasKey(Notification.Name) = False Then
 		    Return
 		  End If
 		  
@@ -89,9 +106,7 @@ Protected Module NotificationKit
 
 	#tag Method, Flags = &h1
 		Protected Sub Watch(Receiver As NotificationKit.Receiver, ParamArray Keys() As String)
-		  If mReceivers = Nil Then
-		    mReceivers = New Dictionary
-		  End If
+		  Var Holder As New Beacon.LockHolder(mLock)
 		  
 		  For Each Key As String In Keys
 		    Var Refs() As WeakRef
@@ -112,6 +127,10 @@ Protected Module NotificationKit
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mPendingNotifications() As NotificationKit.Invocation

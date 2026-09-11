@@ -213,6 +213,14 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Call UpdatesFolder.DeepDelete
 		  End If
 		  
+		  SystemColors.Init
+		  Conversions.Init
+		  BeaconHostingAPI.Init
+		  FrameworkExtensions.InitWriters
+		  NotificationKit.Init
+		  Preferences.Init
+		  UITweaks.Init
+		  
 		  #if TargetMacOS
 		    //Help.Visible = False
 		  #endif
@@ -234,8 +242,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    #endif
 		  End If
 		  
-		  SystemColors.Init
-		  
 		  NotificationKit.Watch(Self, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped, IdentityManager.Notification_IdentityChanged)
 		  
 		  Self.mIdentityManager = New IdentityManager()
@@ -252,9 +258,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      EditPreferences.Text = "Settings"
 		    End If
 		  #endif
-		  
-		  Conversions.Init
-		  BeaconHostingAPI.Init
 		  
 		  #if DebugBuild And TargetMacOS
 		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_DebugWait)
@@ -311,7 +314,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.XmlFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
+		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.XmlFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData
 		  Dialog.AllowMultipleSelections = True
 		  
 		  Var File As FolderItem = Dialog.ShowModal
@@ -1031,29 +1034,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ImportIdentityFile(File As FolderItem, ParentWindow As DesktopWindow = Nil)
-		  If ParentWindow Is Nil Then
-		    ParentWindow = MainWindow
-		  End If
-		  
-		  Var Identity As Beacon.Identity = Self.mIdentityManager.Import(File)
-		  If Identity Is Nil Then
-		    // Try with password
-		    Var Password As String = IdentityDecryptDialog.Present(ParentWindow)
-		    If Password.IsEmpty Then
-		      Return
-		    End If
-		    
-		    Identity = Self.mIdentityManager.Import(File, Password)
-		  End If
-		  
-		  If (Identity Is Nil) = False Then
-		    Self.mIdentityManager.CurrentIdentity = Identity
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ImportScript(File As FolderItem)
 		  Try
 		    Var FileContent As String = File.Read(Encodings.UTF8)
@@ -1617,11 +1597,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If File.ExtensionMatches(Beacon.FileExtensionIdentity) Then
-		    Call Self.ImportIdentityFile(File)
-		    Return
-		  End If
-		  
 		  If File.ExtensionMatches(Beacon.FileExtensionScript) Then
 		    Self.ImportScript(File)
 		    Return
@@ -1792,7 +1767,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h0
 		Sub ShowOpenDocument(Parent As DesktopWindow = Nil)
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
+		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
 		  
 		  Var File As FolderItem
 		  If Parent Is Nil Then
@@ -2017,6 +1992,14 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ProcessID"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=false

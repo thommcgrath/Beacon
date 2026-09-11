@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin DesktopContainer ArkSAEngramControlSettingsView
+Begin PopoverContainer ArkSAEngramControlSettingsView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False

@@ -295,22 +295,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Extension(Extends File As FolderItem) As String
-		  #if XojoVersion >= 2024.01
-		    #Pragma Error "Remove this method"
-		  #endif
-		  
-		  Var Name As String = File.Name
-		  If Name.IndexOf(".") = -1 Then
-		    Return ""
-		  End If
-		  
-		  Var Parts() As String = Name.Split(".")
-		  Return Parts(Parts.LastIndex)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ExtensionMatches(Extends File As FolderItem, PossibleExtensions() As String) As Boolean
 		  For Each Extension As String In PossibleExtensions
 		    If Extension.BeginsWith(".") Then
@@ -500,6 +484,18 @@ Protected Module FrameworkExtensions
 		  
 		  Return IdealScreen
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub InitWriters()
+		  If (mWriterLocks Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  mWriterLocks = New Dictionary
+		  mWriterLocksLock = New CriticalSection
+		  mWriterLocksLock.Type = Thread.Types.Preemptive
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -850,6 +846,16 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ToString(Extends JSON As JSONItem, Compact As Boolean) As String
+		  Var Options As New JSONOptions
+		  Options.Compact = Compact
+		  Options.DecimalPlaces = 6
+		  Options.IndentSpacing = 2
+		  Return JSON.ToString(Options)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ToString(Extends Source As MemoryBlock) As String
 		  If Source.Size = 0 Then
 		    Return ""
@@ -938,8 +944,6 @@ Protected Module FrameworkExtensions
 		  End Try
 		  
 		  Select Case Value.Type
-		  Case Variant.TypeText
-		    Return Double.FromText(Value.TextValue)
 		  Case Variant.TypeString
 		    Return Double.FromString(Value.TextValue)
 		  Case Variant.TypeInt32
@@ -957,21 +961,19 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Sub Write(Extends File As FolderItem, Contents As MemoryBlock)
-		  Static Locks As Dictionary
-		  If Locks = Nil Then
-		    Locks = New Dictionary
-		  End If
+		  Var WritersHolder As New Beacon.LockHolder(mWriterLocksLock)
 		  Var Lock As CriticalSection
-		  If Locks.HasKey(File.NativePath) Then
-		    Lock = Locks.Value(File.NativePath)
+		  If mWriterLocks.HasKey(File.NativePath) Then
+		    Lock = mWriterLocks.Value(File.NativePath)
 		  Else
 		    Lock = New CriticalSection
-		    Locks.Value(File.NativePath) = Lock
+		    Lock.Type = Thread.Types.Preemptive
+		    mWriterLocks.Value(File.NativePath) = Lock
 		  End If
+		  WritersHolder = Nil
 		  
+		  Var Holder As New Beacon.LockHolder(Lock)
 		  Try
-		    Lock.Enter
-		    
 		    Var Stream As BinaryStream
 		    If File.Exists Then
 		      Stream = BinaryStream.Open(File, True)
@@ -995,15 +997,21 @@ Protected Module FrameworkExtensions
 		    Stream.Close
 		    
 		    File.ModificationDateTime = DateTime.Now
-		    
-		    Lock.Leave
 		  Catch Err As RuntimeException
 		    App.Log("Unable to write " + File.NativePath + ": " + Err.Message + " (" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ")")
-		    Lock.Leave
 		    Raise Err
 		  End Try
 		End Sub
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mWriterLocks As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWriterLocksLock As CriticalSection
+	#tag EndProperty
 
 
 	#tag ViewBehavior

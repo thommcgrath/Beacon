@@ -24,7 +24,7 @@ Begin BeaconWindow DebugWindow Implements NotificationKit.Receiver
    Type            =   0
    Visible         =   True
    Width           =   600
-   Begin Beacon.Thread CollectionThread
+   Begin Beacon.CommonThread CollectionThread
       DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False

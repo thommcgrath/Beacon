@@ -2,6 +2,7 @@
 Class NullableDouble
 	#tag Method, Flags = &h0
 		Function DoubleValue() As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue
 		End Function
 	#tag EndMethod
@@ -49,24 +50,28 @@ Class NullableDouble
 
 	#tag Method, Flags = &h0
 		Function IntegerValue() As Integer
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Round(Self.mValue)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Add(RHS As Double) As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue + RHS
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_AddRight(LHS As Double) As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return LHS + Self.mValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Double) As Integer
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  If Self.mValue > Other Then
 		    Return 1
 		  ElseIf Self.mValue < Other Then
@@ -79,7 +84,13 @@ Class NullableDouble
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As NullableDouble) As Integer
-		  If Other Is Nil Or Self.mValue > Other.mValue Then
+		  If Other Is Nil Then
+		    Return 1
+		  End If
+		  
+		  Var MyLock As New Beacon.LockHolder(Self.mLock)
+		  Var OtherLock As New Beacon.LockHolder(Other.mLock)
+		  If Self.mValue > Other.mValue Then
 		    Return 1
 		  ElseIf Self.mValue < Other.mValue Then
 		    Return -1
@@ -91,60 +102,71 @@ Class NullableDouble
 
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Operator_Convert(Value As Double)
+		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  Self.mValue = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Divide(RHS As Double) As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue / RHS
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_DivideRight(LHS As Double) As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return LHS / Self.mValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Multiply(RHS As Double) As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue * RHS
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_MultiplyRight(LHS As Double) As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return LHS * Self.mValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_SubstractRight(LHS As Double) As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return LHS - Self.mValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Subtract(RHS As Double) As Double
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue - RHS
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function StringValue(Locale As Locale = Nil) As String
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue.ToString(Locale)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function StringValue(Locale As Locale = Nil, Format As String) As String
+		  Var Lock As New Beacon.LockHolder(Self.mLock)
 		  Return Self.mValue.ToString(Locale, Format)
 		End Function
 	#tag EndMethod
@@ -159,6 +181,10 @@ Class NullableDouble
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mValue As Double

@@ -23,8 +23,34 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   600
+   Begin PopoverOriginRect PopoverTarget
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   -164
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   61
+      Transparent     =   True
+      Visible         =   False
+      Width           =   20
+   End
    Begin BeaconListbox ModsList
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
@@ -93,6 +119,8 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
@@ -127,6 +155,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   0
    End
    Begin DelayedSearchField FilterField
       Active          =   False
@@ -504,12 +533,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub FilterPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
-		  If Not Cancelled Then
-		    Var Settings As ModFilterSettings = ModFilterView(Sender.Container).Settings
-		    Preferences.ModFilters = Settings
-		    Self.UpdateModsList()
-		  End If
+		Private Sub FilterPopover_Finished(Sender As ModFilterView)
+		  Var Settings As ModFilterSettings = Sender.Settings
+		  Preferences.ModFilters = Settings
+		  Self.UpdateModsList()
 		  
 		  Var FilterModsButton As OmniBarItem = Self.ModsToolbar.Item("FilterMods")
 		  If (FilterModsButton Is Nil) = False Then
@@ -519,8 +546,6 @@ End
 		    FilterModsButton.ActiveColor = If(IsFiltered, OmniBarItem.ActiveColors.Blue, OmniBarItem.ActiveColors.Accent)
 		    FilterModsButton.Icon = If(IsFiltered, IconToolbarFilterActive, IconToolbarFilter)
 		  End If
-		  
-		  Self.mFilterPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -957,10 +982,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFilterPopoverController As PopoverController
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mModUUIDsToDelete() As String
 	#tag EndProperty
 
@@ -1242,21 +1263,16 @@ End
 		      End Select
 		    End If
 		  Case "FilterMods"
-		    If (Self.mFilterPopoverController Is Nil) = False And Self.mFilterPopoverController.Visible Then
-		      Self.mFilterPopoverController.Dismiss(False)
-		      Self.mFilterPopoverController = Nil
-		      Item.Toggled = False
-		      Return
-		    End If
+		    Self.PopoverTarget.Left = Me.Left + ItemRect.Left
+		    Self.PopoverTarget.Top = Me.Top + ItemRect.Top
+		    Self.PopoverTarget.Width = ItemRect.Width
+		    Self.PopoverTarget.Height = ItemRect.Height
 		    
 		    Var SettingsView As New ModFilterView(Preferences.ModFilters)
-		    Var Controller As New PopoverController("Mod Filters", SettingsView)
-		    Controller.Show(Me, ItemRect)
+		    AddHandler SettingsView.Finished, WeakAddressOf FilterPopover_Finished
+		    SettingsView.ShowPopover(Self.PopoverTarget, DesktopWindow.DisplaySides.Bottom, False, True)
 		    
 		    Item.Toggled = True
-		    
-		    AddHandler Controller.Finished, WeakAddressOf FilterPopoverController_Finished
-		    Self.mFilterPopoverController = Controller
 		  End Select
 		End Sub
 	#tag EndEvent

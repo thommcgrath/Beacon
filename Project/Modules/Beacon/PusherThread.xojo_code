@@ -1,6 +1,6 @@
 #tag Class
 Protected Class PusherThread
-Inherits Global.Thread
+Inherits Thread
 	#tag Event
 		Sub Run()
 		  Try
@@ -41,6 +41,7 @@ Inherits Global.Thread
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  Self.mState = Beacon.PusherSocket.States.Disconnected
 		End Sub
 	#tag EndMethod
@@ -167,10 +168,9 @@ Inherits Global.Thread
 		    If ConnectionEstablished Then
 		      Var PendingMessage As JSONItem = RaiseEvent GetNextPendingMessage()
 		      If (PendingMessage Is Nil) = False Then
-		        PendingMessage.Compact = True
-		        Call Curl.WebSocketSend(PendingMessage.ToString, 0, 1)
+		        Call Curl.WebSocketSend(PendingMessage.ToString(True), 0, 1)
 		        #if DebugBuild
-		          System.DebugLog("Sent " + PendingMessage.ToString)
+		          System.DebugLog("Sent " + PendingMessage.ToString(True))
 		        #endif
 		      End If
 		    End If
@@ -414,6 +414,18 @@ Inherits Global.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Type"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Cooperative"
+				"1 - Preemptive"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true

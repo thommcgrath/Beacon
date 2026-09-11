@@ -57,7 +57,7 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Struct As NullableString, Key As String, ValueType As Palworld.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Palworld.ConfigOption.NitradoFormats, NitradoDeployStyle As Palworld.ConfigOption.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String)
+		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Struct As NullableString, Key As String, ValueType As Palworld.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Nitrado.ValueFormats, NitradoDeployStyle As Nitrado.DeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String)
 		  Self.Constructor(File, Header, Struct, Key)
 		  
 		  Self.mConfigOptionId = ConfigOptionId
@@ -118,7 +118,7 @@ Implements Beacon.GameSetting
 
 	#tag Method, Flags = &h0
 		Function HasNitradoEquivalent() As Boolean
-		  Return Self.mNitradoPaths.Count > 0 And Self.mNitradoFormat <> Palworld.ConfigOption.NitradoFormats.Unsupported
+		  Return Self.mNitradoPaths.Count > 0 And Self.mNitradoFormat <> Nitrado.ValueFormats.Unsupported
 		End Function
 	#tag EndMethod
 
@@ -183,13 +183,13 @@ Implements Beacon.GameSetting
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NitradoDeployStyle() As Palworld.ConfigOption.NitradoDeployStyles
+		Function NitradoDeployStyle() As Nitrado.DeployStyles
 		  Return Self.mNitradoDeployStyle
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NitradoFormat() As Palworld.ConfigOption.NitradoFormats
+		Function NitradoFormat() As Nitrado.ValueFormats
 		  Return Self.mNitradoFormat
 		End Function
 	#tag EndMethod
@@ -323,11 +323,11 @@ Implements Beacon.GameSetting
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNitradoDeployStyle As Palworld.ConfigOption.NitradoDeployStyles
+		Private mNitradoDeployStyle As Nitrado.DeployStyles
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNitradoFormat As Palworld.ConfigOption.NitradoFormats
+		Private mNitradoFormat As Nitrado.ValueFormats
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -355,19 +355,6 @@ Implements Beacon.GameSetting
 		Signature As String
 	#tag EndComputedProperty
 
-
-	#tag Enum, Name = NitradoDeployStyles, Type = Integer, Flags = &h0
-		Unsupported
-		  Guided
-		  Expert
-		Both
-	#tag EndEnum
-
-	#tag Enum, Name = NitradoFormats, Type = Integer, Flags = &h0
-		Unsupported
-		  Line
-		Value
-	#tag EndEnum
 
 	#tag Enum, Name = ValueTypes, Type = Integer, Flags = &h0
 		TypeNumeric

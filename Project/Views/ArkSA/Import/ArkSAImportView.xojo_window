@@ -1,46 +1,28 @@
 #tag DesktopWindow
 Begin DocumentImportView ArkSAImportView
-   AllowAutoDeactivate=   "True"
-   AllowFocus      =   "False"
-   AllowFocusRing  =   "False"
-   AllowTabs       =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composite       =   False
-   Composited      =   "False"
-   DefaultLocation =   2
-   Enabled         =   "True"
-   FullScreen      =   False
+   Composited      =   False
+   Enabled         =   True
    HasBackgroundColor=   False
-   HasCloseButton  =   True
-   HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
    Height          =   480
-   ImplicitInstance=   True
-   Index           =   "-2147483648"
+   Index           =   -2147483648
    InitialParent   =   ""
-   Left            =   "0"
-   LockBottom      =   "False"
-   LockLeft        =   "True"
-   LockRight       =   "False"
-   LockTop         =   "True"
-   MacProcID       =   0
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
-   MenuBar         =   0
-   MenuBarVisible  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   Resizeable      =   True
-   TabIndex        =   "0"
-   TabPanelIndex   =   "0"
-   TabStop         =   "True"
-   Title           =   "Untitled"
+   Left            =   0
+   LockBottom      =   False
+   LockLeft        =   True
+   LockRight       =   False
+   LockTop         =   True
+   TabIndex        =   0
+   TabPanelIndex   =   0
+   TabStop         =   True
    Tooltip         =   ""
-   Top             =   "0"
-   Transparent     =   "False"
-   Type            =   0
+   Top             =   0
+   Transparent     =   False
    Visible         =   True
    Width           =   720
    Begin DesktopPagePanel Views
@@ -55,7 +37,7 @@ Begin DocumentImportView ArkSAImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   11
+      PanelCount      =   10
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -65,7 +47,7 @@ Begin DocumentImportView ArkSAImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   8
       Visible         =   True
       Width           =   720
       Begin FTPDiscoveryView FTPView
@@ -556,36 +538,6 @@ Begin DocumentImportView ArkSAImportView
          Visible         =   True
          Width           =   720
       End
-      Begin MultiSelectDiscoveryView ASAManagerView
-         AddressColumnLabel=   "Container Id"
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF
-         Composited      =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   480
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   9
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   720
-      End
       Begin MultiSelectDiscoveryView BeaconHostingView
          AddressColumnLabel=   "Address"
          AllowAutoDeactivate=   True
@@ -608,7 +560,7 @@ Begin DocumentImportView ArkSAImportView
          LockTop         =   True
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   10
+         TabPanelIndex   =   9
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
@@ -638,7 +590,7 @@ Begin DocumentImportView ArkSAImportView
          LockTop         =   True
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   11
+         TabPanelIndex   =   10
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
@@ -690,7 +642,6 @@ End
 		    Self.StatusList.RowTagAt(Idx) = Integration
 		  Next
 		  
-		  Self.SetThreadPriorities()
 		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
 		  Self.Views.SelectedPanelIndex = Self.PageStatus
 		End Sub
@@ -783,7 +734,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub MigrateThread_Run(Sender As Beacon.Thread)
+		Private Sub MigrateThread_Run(Sender As Beacon.CommonThread)
 		  Var SourceProject As Ark.Project = Sender.UserData
 		  Var NewProject As New ArkSA.Project
 		  Var ConfigSets() As Beacon.ConfigSet = SourceProject.ConfigSets
@@ -878,7 +829,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub MigrateThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub MigrateThread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  For Each Update As Dictionary In Updates
 		    Var EventName As String = Update.Lookup("Event", "").StringValue
 		    Select Case EventName
@@ -904,8 +855,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetThreadPriorities()
-		  // Dynamically adjusts thread priority depending on the number that are actively running
+		Private Sub SetThreadPriorities(ActiveCount As Integer)
+		  Var Priority As Integer = Max(4 / Max(ActiveCount, 1), 1)
 		  
 		  Var ActiveIntegrations() As ArkSA.DiscoverIntegration
 		  For Each Integration As ArkSA.DiscoverIntegration In Self.mIntegrations
@@ -913,16 +864,7 @@ End
 		      Continue
 		    End If
 		    
-		    If Integration.ThreadState <> Global.Thread.ThreadStates.NotRunning Then
-		      ActiveIntegrations.Add(Integration)
-		    End If
-		  Next
-		  
-		  Var Priority As Integer = If(ActiveIntegrations.Count > 3, Global.Thread.LowestPriority, Global.Thread.NormalPriority)
-		  For Each Integration As ArkSA.DiscoverIntegration In ActiveIntegrations
-		    If Integration.ThreadPriority <> Priority Then
-		      Integration.ThreadPriority = Priority
-		    End If
+		    Integration.ThreadPriority = Priority
 		  Next
 		End Sub
 	#tag EndMethod
@@ -946,11 +888,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLastActiveCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMigrationProgress As ProgressWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMigrationThreads() As Beacon.Thread
+		Private mMigrationThreads() As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -972,10 +918,7 @@ End
 	#tag Constant, Name = MigrationMessageSingular, Type = String, Dynamic = True, Default = \"Migrating \?1 Project", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageASAManager, Type = Double, Dynamic = False, Default = \"8", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"9", Scope = Private
+	#tag Constant, Name = PageBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
@@ -987,7 +930,7 @@ End
 	#tag Constant, Name = PageFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageGameServersPanel, Type = Double, Dynamic = False, Default = \"10", Scope = Private
+	#tag Constant, Name = PageGameServersPanel, Type = Double, Dynamic = False, Default = \"9", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageGSA, Type = Double, Dynamic = False, Default = \"6", Scope = Private
@@ -1030,8 +973,6 @@ End
 		    Self.SetPageHeight(Self.StatusPageHeight)
 		  Case Self.PageGSA
 		    Self.GSAView.Begin
-		  Case Self.PageASAManager
-		    Self.ASAManagerView.Begin
 		  Case Self.PageBeaconHostingAPI
 		    Self.BeaconHostingView.Begin
 		  Case Self.PageGameServersPanel
@@ -1082,7 +1023,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.Thread) As Beacon.ServerProfile()
+		Function Discover(Provider As FTP.HostingProvider, InitialProfile As Beacon.ServerProfile, SenderThread As Beacon.CommonThread) As Beacon.ServerProfile()
 		  // Do not trap exceptions here. The caller has its own handler so that error messages can reach the user.
 		  
 		  #Pragma Unused SenderThread
@@ -1279,7 +1220,7 @@ End
 		      Self.mSourceProjects.Add(ArkSA.Project(SourceProject).Clone(App.IdentityManager.CurrentIdentity))
 		    Case IsA Ark.Project
 		      // We need to export to ini, then import from that, and finally prune it.
-		      Var MigrateThread As New Beacon.Thread
+		      Var MigrateThread As New Beacon.CommonThread
 		      MigrateThread.UserData = SourceProject
 		      MigrateThread.DebugIdentifier = "ArkSA Migrator Thread"
 		      AddHandler MigrateThread.Run, WeakAddressOf MigrateThread_Run
@@ -1345,8 +1286,6 @@ End
 		    Self.Views.SelectedPanelIndex = Self.PageFTP
 		  Case Me.SourceGSA
 		    Self.Views.SelectedPanelIndex = Self.PageGSA
-		  Case Me.SourceASAManager
-		    Self.Views.SelectedPanelIndex = Self.PageASAManager
 		  Case Me.SourceFiles
 		    Self.Views.SelectedPanelIndex = Self.PageFiles
 		  Case Me.SourceClipboard
@@ -1482,42 +1421,6 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events ASAManagerView
-	#tag Event
-		Sub Finished(Profiles() As Beacon.ServerProfile)
-		  Self.Discover(Profiles)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.QuickCancel Then
-		    Self.Dismiss
-		  Else
-		    Views.SelectedPanelIndex = 0
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  Self.SetPageHeight(NewHeight)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function GetDestinationProject() As Beacon.Project
-		  Return Self.mDestinationProject
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CreateHostingProvider() As Beacon.HostingProvider
-		  Return New ASAManager.HostingProvider
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function GameId() As String
-		  Return ArkSA.Identifier
-		End Function
-	#tag EndEvent
-#tag EndEvents
 #tag Events BeaconHostingView
 	#tag Event
 		Function CreateHostingProvider() As Beacon.HostingProvider
@@ -1593,13 +1496,9 @@ End
 #tag Events DiscoveryWatcher
 	#tag Event
 		Sub Action()
-		  Self.SetThreadPriorities()
-		  
-		  Var AllFinished As Boolean = True
-		  Var ErrorCount, SuccessCount As Integer
+		  Var ActiveCount, ErrorCount, SuccessCount As Integer
 		  For I As Integer = 0 To Self.StatusList.LastRowIndex
 		    Var Integration As ArkSA.DiscoverIntegration = Self.StatusList.RowTagAt(I)
-		    AllFinished = AllFinished And Integration.Finished
 		    Self.StatusList.CellTextAt(I, 0) = Integration.Name + EndOfLine + Integration.StatusMessage
 		    
 		    If Integration.Finished Then
@@ -1608,33 +1507,42 @@ End
 		      Else
 		        SuccessCount = SuccessCount + 1
 		      End If
+		    Else
+		      ActiveCount = ActiveCount + 1
 		    End If
 		  Next
 		  
-		  If AllFinished Then
-		    Me.RunMode = Timer.RunModes.Off
-		    If ErrorCount = 0 Then
-		      If Preferences.PlaySoundAfterImport Then
-		        SoundDeploySuccess.Play
-		      End If
-		      Self.Finish()
-		    ElseIf SuccessCount > 0 Then
-		      If Preferences.PlaySoundAfterImport Then
-		        SoundDeployFailed.Play
-		      End If
-		      If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then
-		        Self.Finish()
-		      Else
-		        Self.StatusActionButton.Visible = True
-		        Self.StatusActionButton.Default = True
-		        UITweaks.SwapButtons(Self.StatusActionButton, Self.StatusCancelButton)
-		      End If
-		    Else
-		      If Preferences.PlaySoundAfterImport Then
-		        SoundDeployFailed.Play
-		      End If
-		      Self.ShowAlert("No files imported.", "Beacon was not able to import anything from the selected files.")
+		  If Self.mLastActiveCount <> ActiveCount Then
+		    Self.SetThreadPriorities(ActiveCount)
+		    Self.mLastActiveCount = ActiveCount
+		  End If
+		  
+		  If ActiveCount > 0 Then
+		    Return
+		  End If
+		  
+		  Me.RunMode = Timer.RunModes.Off
+		  If ErrorCount = 0 Then
+		    If Preferences.PlaySoundAfterImport Then
+		      SoundDeploySuccess.Play
 		    End If
+		    Self.Finish()
+		  ElseIf SuccessCount > 0 Then
+		    If Preferences.PlaySoundAfterImport Then
+		      SoundDeployFailed.Play
+		    End If
+		    If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then
+		      Self.Finish()
+		    Else
+		      Self.StatusActionButton.Visible = True
+		      Self.StatusActionButton.Default = True
+		      UITweaks.SwapButtons(Self.StatusActionButton, Self.StatusCancelButton)
+		    End If
+		  Else
+		    If Preferences.PlaySoundAfterImport Then
+		      SoundDeployFailed.Play
+		    End If
+		    Self.ShowAlert("No files imported.", "Beacon was not able to import anything from the selected files.")
 		  End If
 		End Sub
 	#tag EndEvent

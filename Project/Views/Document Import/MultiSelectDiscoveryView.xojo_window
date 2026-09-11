@@ -27,7 +27,6 @@ Begin DiscoveryView MultiSelectDiscoveryView
    Width           =   720
    Begin Thread TokenLookupThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -36,6 +35,7 @@ Begin DiscoveryView MultiSelectDiscoveryView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   0
    End
    Begin UITweaks.ResizedPushButton TokensRefreshButton
       AllowAutoDeactivate=   True
@@ -374,6 +374,7 @@ End
 		Sub Constructor()
 		  Self.mThreads = New Dictionary
 		  Self.mListLock = New CriticalSection
+		  Self.mListLock.Type = Thread.Types.Preemptive
 		End Sub
 	#tag EndMethod
 
@@ -415,9 +416,6 @@ End
 		  Case GameServerApp.Identifier
 		    Config = New GameServerApp.HostConfig
 		    GameServerApp.HostConfig(Config).TokenId = Token.TokenId
-		  Case ASAManager.Identifier
-		    Config = New ASAManager.HostConfig
-		    ASAManager.HostConfig(Config).TokenId = Token.TokenId
 		  Case BeaconHostingAPI.Identifier
 		    Config = New BeaconHostingAPI.HostConfig
 		    BeaconHostingAPI.HostConfig(Config).TokenId = Token.TokenId
@@ -428,7 +426,7 @@ End
 		    Break
 		  End Select
 		  
-		  Var Thread As New Beacon.Thread
+		  Var Thread As New Beacon.CommonThread
 		  Thread.DebugIdentifier = CurrentMethodName
 		  Thread.UserData = Config
 		  AddHandler Thread.Run, WeakAddressOf Thread_Run
@@ -460,7 +458,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_Run(Sender As Beacon.Thread)
+		Private Sub Thread_Run(Sender As Beacon.CommonThread)
 		  Try
 		    Var Config As Beacon.HostConfig = Sender.UserData
 		    Self.mListLock.Enter
@@ -480,7 +478,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Thread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		Private Sub Thread_UserInterfaceUpdate(Sender As Beacon.CommonThread, Updates() As Dictionary)
 		  #Pragma Unused Sender
 		  
 		  For Each Update As Dictionary In Updates

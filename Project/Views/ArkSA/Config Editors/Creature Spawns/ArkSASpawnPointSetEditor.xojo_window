@@ -7,9 +7,7 @@ Begin BeaconContainer ArkSASpawnPointSetEditor
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   678
    Index           =   -2147483648
@@ -432,7 +430,7 @@ Begin BeaconContainer ArkSASpawnPointSetEditor
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   472
+      Width           =   473
    End
    Begin RangeField WeightField
       AllowAutoDeactivate=   True
@@ -452,7 +450,7 @@ Begin BeaconContainer ArkSASpawnPointSetEditor
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   670
+      Left            =   671
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -520,7 +518,7 @@ Begin BeaconContainer ArkSASpawnPointSetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   587
+      Left            =   588
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -542,34 +540,35 @@ Begin BeaconContainer ArkSASpawnPointSetEditor
       Visible         =   True
       Width           =   71
    End
-   Begin DesktopUpDownArrows WeightStepper
-      Active          =   False
+   Begin StepperControl WeightStepper
       AllowAutoDeactivate=   True
       AllowFocus      =   False
-      AllowTabStop    =   True
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   751
+      Left            =   752
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      PanelIndex      =   0
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Visible         =   True
-      Width           =   13
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
+      Width           =   12
    End
    Begin DesktopGroupBox AdvancedGroup
       AllowAutoDeactivate=   True
@@ -1224,7 +1223,7 @@ Begin BeaconContainer ArkSASpawnPointSetEditor
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         SelectedRowIndex=   0
+         SelectedRowIndex=   -1
          TabIndex        =   18
          TabPanelIndex   =   0
          TabStop         =   True
@@ -1279,6 +1278,8 @@ Begin BeaconContainer ArkSASpawnPointSetEditor
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""

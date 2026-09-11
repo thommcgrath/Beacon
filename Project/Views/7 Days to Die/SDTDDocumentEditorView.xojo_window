@@ -23,8 +23,34 @@ Begin DocumentEditorView SDTDDocumentEditorView
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   800
+   Begin PopoverOriginRect PopoverTarget
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   50
+      Index           =   -2147483648
+      Left            =   -189
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -143
+      Transparent     =   True
+      Visible         =   False
+      Width           =   52
+   End
    Begin OmniBar ProjectToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -35,6 +61,8 @@ Begin DocumentEditorView SDTDDocumentEditorView
       BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       Index           =   -2147483648
       Left            =   0
@@ -648,23 +676,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
-		  If Not Cancelled Then
-		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
-		    Var ContentPacks() As Beacon.ContentPack = SDTD.DataSource.Pool.Get(False).GetContentPacks
-		    For Each Pack As Beacon.ContentPack In ContentPacks
-		      Self.Project.ContentPackEnabled(Pack.ContentPackId) = Editor.ModEnabled(Pack.ContentPackId)
-		    Next
-		    
-		    Self.Modified = Self.Project.Modified
-		  End If
+		Private Sub ModSelector_Finished(Sender As ModSelectionGrid)
+		  Var ContentPackIds() As String = Sender.ContentPackIds
+		  For Each ContentPackId As String In ContentPackIds
+		    Self.Project.ContentPackEnabled(ContentPackId) = Sender.ModEnabled(ContentPackId)
+		  Next
+		  
+		  Self.Project.MigrateModContent(SDTD.DataSource.Pool)
+		  Self.Modified = Self.Project.Modified
 		  
 		  If (Self.CurrentPanel Is Nil) = False Then
 		    Self.CurrentPanel.SetupUI()
 		  End If
 		  
 		  Self.ProjectToolbar.Item("ModsButton").Toggled = False
-		  Self.mModsPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -791,6 +816,32 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ShowModsPicker()
+		  Var Item As OmniBarItem = Self.ProjectToolbar.Item("ModsButton")
+		  If Item Is Nil Then
+		    Return
+		  End If
+		  
+		  Var ItemRect As Rect = Self.ProjectToolbar.RectForItem(Item)
+		  Self.ShowModsPicker(Item, ItemRect)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowModsPicker(Item As OmniBarItem, ItemRect As Rect)
+		  Self.PopoverTarget.Left = Self.ProjectToolbar.Left + ItemRect.Left
+		  Self.PopoverTarget.Top = Self.ProjectToolbar.Top + ItemRect.Top
+		  Self.PopoverTarget.Width = ItemRect.Width
+		  Self.PopoverTarget.Height = ItemRect.Height
+		  
+		  Var Editor As New ModSelectionGrid(Self.Project)
+		  AddHandler Editor.Finished, WeakAddressOf ModSelector_Finished
+		  Editor.ShowPopover(Self.PopoverTarget, DesktopWindow.DisplaySides.Bottom, False, True)
+		  Item.Toggled = True
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub UpdateConfigList()
 		  Var Labels(), Tags() As String
@@ -854,10 +905,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mImportWindow As DocumentImportWindow
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mModsPopoverController As PopoverController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -963,21 +1010,7 @@ End
 		  Case "DeployButton"
 		    Self.BeginDeploy()
 		  Case "ModsButton"
-		    If (Self.mModsPopoverController Is Nil) = False And Self.mModsPopoverController.Visible Then
-		      Self.mModsPopoverController.Dismiss(False)
-		      Self.mModsPopoverController = Nil
-		      Item.Toggled = False
-		      Return
-		    End If
-		    
-		    Var Editor As New ModSelectionGrid(Self.Project)
-		    Var Controller As New PopoverController("Select Mods", Editor)
-		    Controller.Show(Me, ItemRect)
-		    
-		    Item.Toggled = True
-		    
-		    AddHandler Controller.Finished, WeakAddressOf ModsPopoverController_Finished
-		    Self.mModsPopoverController = Controller
+		    Self.ShowModsPicker(Item, ItemRect)
 		  Case "ToolsButton"
 		    Var Tools() As SDTD.ProjectTool = SDTD.Configs.AllTools
 		    Var LastEditor As String

@@ -9,7 +9,7 @@ Begin DesktopContainer DocumentImportSourcePicker
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   380
+   Height          =   348
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -97,7 +97,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   6
+      Index           =   5
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
@@ -111,7 +111,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   244
+      Top             =   212
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -127,7 +127,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   8
+      Index           =   7
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
@@ -141,7 +141,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   308
+      Top             =   276
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -174,7 +174,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   340
+      Top             =   308
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -206,7 +206,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   340
+      Top             =   308
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -221,7 +221,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   7
+      Index           =   6
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
@@ -235,37 +235,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   276
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   468
-   End
-   Begin DesktopRadioButton SourceRadio
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "ASA Manager"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   3
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   148
+      Top             =   244
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -311,7 +281,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   4
+      Index           =   3
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
@@ -325,7 +295,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   180
+      Top             =   148
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -341,7 +311,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
-      Index           =   5
+      Index           =   4
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
@@ -355,7 +325,7 @@ Begin DesktopContainer DocumentImportSourcePicker
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   212
+      Top             =   180
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -426,8 +396,6 @@ End
 		    Return Self.RadioFTP
 		  Case Self.SourceGSA
 		    Return Self.RadioGSA
-		  Case Self.SourceASAManager
-		    Return Self.RadioASAManager
 		  Case Self.SourceFiles
 		    Return Self.RadioFiles
 		  Case Self.SourceClipboard
@@ -476,7 +444,6 @@ End
 		  
 		  Self.SourceRadio(Self.RadioFTP).Visible = (Self.mAllowedSources And Self.SourceFTP) > 0
 		  Self.SourceRadio(Self.RadioGSA).Visible = (Self.mAllowedSources And Self.SourceGSA) > 0
-		  Self.SourceRadio(Self.RadioASAManager).Visible = (Self.mAllowedSources And Self.SourceASAManager) > 0
 		  Self.SourceRadio(Self.RadioFiles).Visible = (Self.mAllowedSources And Self.SourceFiles) > 0
 		  Self.SourceRadio(Self.RadioNitrado).Visible = (Self.mAllowedSources And Self.SourceNitrado) > 0
 		  Self.SourceRadio(Self.RadioOtherProject).Visible = (Self.mAllowedSources And Self.SourceOtherProject) > 0
@@ -486,7 +453,6 @@ End
 		  
 		  Self.SourceRadio(Self.RadioFTP).Enabled = (Self.mEnabledSources And Self.SourceFTP) > 0
 		  Self.SourceRadio(Self.RadioGSA).Enabled = (Self.mEnabledSources And Self.SourceGSA) > 0
-		  Self.SourceRadio(Self.RadioASAManager).Enabled = (Self.mEnabledSources And Self.SourceASAManager) > 0
 		  Self.SourceRadio(Self.RadioFiles).Enabled = (Self.mEnabledSources And Self.SourceFiles) > 0
 		  Self.SourceRadio(Self.RadioNitrado).Enabled = (Self.mEnabledSources And Self.SourceNitrado) > 0
 		  Self.SourceRadio(Self.RadioOtherProject).Enabled = (Self.mEnabledSources And Self.SourceOtherProject) > 0
@@ -538,8 +504,6 @@ End
 		    Return Self.SourceFTP
 		  Case Self.RadioGSA
 		    Return Self.SourceGSA
-		  Case Self.RadioASAManager
-		    Return Self.SourceASAManager
 		  Case Self.RadioFiles
 		    Return Self.SourceFiles
 		  Case Self.RadioClipboard
@@ -640,7 +604,7 @@ End
 	#tag Constant, Name = FirstRadioIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LastRadioIndex, Type = Double, Dynamic = False, Default = \"8", Scope = Private
+	#tag Constant, Name = LastRadioIndex, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = NoCompatibleProjectsOpen, Type = String, Dynamic = True, Default = \"No Compatible Projects Are Open", Scope = Private
@@ -649,22 +613,19 @@ End
 	#tag Constant, Name = OtherCompatibleProjectCaption, Type = String, Dynamic = True, Default = \"Other \?1 Project", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioASAManager, Type = Double, Dynamic = False, Default = \"3", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = RadioBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioClipboard, Type = Double, Dynamic = False, Default = \"7", Scope = Private
+	#tag Constant, Name = RadioClipboard, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioFiles, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag Constant, Name = RadioFiles, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioGameServersPanel, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = RadioGameServersPanel, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RadioGSA, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -673,10 +634,7 @@ End
 	#tag Constant, Name = RadioNitrado, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioOtherProject, Type = Double, Dynamic = False, Default = \"8", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = SourceASAManager, Type = Double, Dynamic = False, Default = \"64", Scope = Public
+	#tag Constant, Name = RadioOtherProject, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SourceBeaconHostingAPI, Type = Double, Dynamic = False, Default = \"128", Scope = Public

@@ -17,8 +17,8 @@ Begin ArkSAServerViewContainer ArkSASimpleServerView
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
-   MinimumHeight   =   "64"
-   MinimumWidth    =   "64"
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -307,8 +307,9 @@ Begin ArkSAServerViewContainer ArkSASimpleServerView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
-   Begin Beacon.Thread ToggleThread
+   Begin Beacon.CommonThread ToggleThread
       DebugIdentifier =   ""
       Enabled         =   True
       Index           =   -2147483648
@@ -319,6 +320,7 @@ Begin ArkSAServerViewContainer ArkSASimpleServerView
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   ""
    End
 End
 #tag EndDesktopWindow
@@ -371,6 +373,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Project As ArkSA.Project, Profile As ArkSA.ServerProfile)
 		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		  Self.mServerStatus = New Beacon.ServerStatus("Checking…")
 		  Self.mProviderId = Profile.HostConfig.ProviderId
 		  Super.Constructor(Project, Profile)
@@ -556,8 +559,6 @@ End
 		  Select Case Self.mProviderId
 		  Case Nitrado.Identifier
 		    Provider = New Nitrado.HostingProvider
-		  Case ASAManager.Identifier
-		    Provider = New ASAManager.HostingProvider
 		  Case BeaconHostingAPI.Identifier
 		    Provider = New BeaconHostingAPI.HostingProvider
 		  Case GameServersPanel.Identifier
@@ -592,8 +593,6 @@ End
 		  Select Case Self.mProviderId
 		  Case Nitrado.Identifier
 		    Provider = New Nitrado.HostingProvider
-		  Case ASAManager.Identifier
-		    Provider = New ASAManager.HostingProvider
 		  Case BeaconHostingAPI.Identifier
 		    Provider = New BeaconHostingAPI.HostingProvider
 		  Case GameServersPanel.Identifier

@@ -45,7 +45,7 @@ Inherits Beacon.Integration
 		  
 		  Var Dict As New Dictionary
 		  Dict.Value("Event") = "Finished"
-		  Self.Thread.AddUserInterfaceUpdate(Dict)
+		  Self.WorkThread.AddUserInterfaceUpdate(Dict)
 		End Sub
 	#tag EndEvent
 
@@ -171,7 +171,7 @@ Inherits Beacon.Integration
 		  
 		  Const WaitTime = 3.0
 		  If SecondsSinceLastRefresh < WaitTime Then
-		    Self.Thread.Sleep((WaitTime - SecondsSinceLastRefresh) * 1000, False)
+		    Self.WorkThread.Sleep((WaitTime - SecondsSinceLastRefresh) * 1000, False)
 		  End If
 		  
 		  If Verbose Then

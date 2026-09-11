@@ -264,7 +264,7 @@ Begin DesktopWindow ModSettingsDialog
       Visible         =   True
       Width           =   80
    End
-   Begin Beacon.Thread EditThread
+   Begin Beacon.CommonThread EditThread
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

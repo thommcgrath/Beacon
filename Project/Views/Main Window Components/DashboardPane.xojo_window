@@ -1,21 +1,15 @@
 #tag DesktopWindow
 Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
-   AcceptFocus     =   "False"
-   AcceptTabs      =   "True"
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
-   AutoDeactivate  =   "True"
-   BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   556
-   HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -29,7 +23,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   "False"
+   ViewTitle       =   "Untitled"
    Visible         =   True
    Width           =   808
    Begin UITweaks.ResizedPushButton NewFileButton

@@ -58,6 +58,7 @@ Protected Class PusherSocket
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mLock = New CriticalSection
+		  Self.mLock.Type = Thread.Types.Preemptive
 		End Sub
 	#tag EndMethod
 

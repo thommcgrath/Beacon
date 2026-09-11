@@ -42,6 +42,12 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function Cache() As Beacon.CacheManager
+		  Return Self.mCache
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub CleanForeignKeyViolations()
 		  Var Tables As New Dictionary
 		  Try
@@ -161,6 +167,7 @@ Implements NotificationKit.Receiver
 		  Const YieldInterval = 75
 		  
 		  Self.mAllowWriting = AllowWriting
+		  Self.mCache = New Beacon.CacheManager
 		  
 		  Var SchemaVersion As Integer = RaiseEvent GetSchemaVersion
 		  Var DatafileName As String = Self.Identifier + ".sqlite"
@@ -779,7 +786,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Var Th As New Beacon.Thread
+		  Var Th As New Beacon.CommonThread
 		  Th.DebugIdentifier = CurrentMethodName
 		  Th.Retain
 		  AddHandler Th.Run, AddressOf ImportCloudFiles_Threaded
@@ -788,7 +795,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ImportCloudFiles_Threaded(Sender As Beacon.Thread)
+		Private Sub ImportCloudFiles_Threaded(Sender As Beacon.CommonThread)
 		  Var Database As Beacon.DataSource = Self.WriteableInstance()
 		  If (Database Is Nil) = False Then
 		    Database.ImportCloudFiles()
@@ -902,7 +909,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mOptimizeThread_Run(Sender As Beacon.Thread)
+		Private Sub mOptimizeThread_Run(Sender As Beacon.CommonThread)
 		  #Pragma Unused Sender
 		  
 		  Self.Optimize()
@@ -1157,7 +1164,7 @@ Implements NotificationKit.Receiver
 		    Return PerformanceResults.RepairsNecessary
 		  ElseIf Self.mAllowWriting = False Then
 		    If Self.mOptimizeThread Is Nil Or Self.mOptimizeThread.ThreadState = Thread.ThreadStates.NotRunning Then
-		      Self.mOptimizeThread = New Beacon.Thread
+		      Self.mOptimizeThread = New Beacon.CommonThread
 		      Self.mOptimizeThread.DebugIdentifier = Self.Identifier + ".DataSource.mOptimizeThread"
 		      AddHandler mOptimizeThread.Run, WeakAddressOf mOptimizeThread_Run
 		      Self.mOptimizeThread.Start
@@ -1330,6 +1337,10 @@ Implements NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCache As Beacon.CacheManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private Shared mConnectionCounts As Dictionary
 	#tag EndProperty
 
@@ -1354,7 +1365,7 @@ Implements NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOptimizeThread As Beacon.Thread
+		Private mOptimizeThread As Beacon.CommonThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

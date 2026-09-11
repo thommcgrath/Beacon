@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin DesktopContainer MapSelectionGrid
+Begin PopoverContainer MapSelectionGrid
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -13,9 +13,9 @@ Begin DesktopContainer MapSelectionGrid
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
+   LockBottom      =   True
    LockLeft        =   True
-   LockRight       =   False
+   LockRight       =   True
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
@@ -179,8 +179,8 @@ End
 		  Self.mDesiredHeight = Max(LeftGroup.Height, MiddleGroup.Height, RightGroup.Height) + (Self.EdgeSpacing * 2)
 		  Self.mDesiredWidth = Widths.Sum + ((Widths.Count - 1) * Self.CellSpacing) + (Self.EdgeSpacing * 2)
 		  
-		  Self.Height = Self.mDesiredHeight
-		  Self.Width = Self.mDesiredWidth
+		  Self.SetContentSize(Self.mDesiredWidth, Self.mDesiredHeight)
+		  Self.UpdateCheckboxes()
 		  
 		  RaiseEvent Open
 		  Self.mSettingUp = False
@@ -231,38 +231,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetMapStates(Maps() As Beacon.Map, State As DesktopCheckbox.VisualStates)
-		  Var Dict As New Dictionary
-		  If (Maps Is Nil) = False Then
-		    For Each Map As Beacon.Map In Maps
-		      Dict.Value(Map.MapId) = True
-		    Next
-		  End If
-		  
-		  For Each Box As MapCheckBox In Self.mBoxes
-		    If Dict.HasKey(Box.Map.MapId) Then
-		      Box.VisualState = State
-		    End If
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub SetWithMaps(Maps() As Beacon.Map)
-		  Var Dict As New Dictionary
-		  If (Maps Is Nil) = False Then
-		    For Each Map As Beacon.Map In Maps
-		      Dict.Value(Map.MapId) = True
-		    Next
-		  End If
-		  
-		  For Each Box As MapCheckBox In Self.mBoxes
-		    If Dict.HasKey(Box.Map.MapId) Then
-		      Box.VisualState = DesktopCheckbox.VisualStates.Checked
-		    Else
-		      Box.VisualState = DesktopCheckbox.VisualStates.Unchecked
-		    End If
-		  Next
+		  Self.mSelectedMaps = Maps
+		  Self.UpdateCheckboxes()
 		End Sub
 	#tag EndMethod
 
@@ -276,6 +247,25 @@ End
 		  Next
 		  Return Maps
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateCheckboxes()
+		  Var Dict As New Dictionary
+		  If (Self.mSelectedMaps Is Nil) = False Then
+		    For Each Map As Beacon.Map In Self.mSelectedMaps
+		      Dict.Value(Map.MapId) = True
+		    Next
+		  End If
+		  
+		  For Each Box As MapCheckBox In Self.mBoxes
+		    If Dict.HasKey(Box.Map.MapId) Then
+		      Box.VisualState = DesktopCheckbox.VisualStates.Checked
+		    Else
+		      Box.VisualState = DesktopCheckbox.VisualStates.Unchecked
+		    End If
+		  Next
+		End Sub
 	#tag EndMethod
 
 
@@ -328,6 +318,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mMaps() As Beacon.Map
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedMaps() As Beacon.Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

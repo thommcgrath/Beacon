@@ -27,15 +27,9 @@ Protected Module Beacon
 		  Var Wrapper As New JSONItem
 		  Wrapper.Value("type") = Type
 		  Wrapper.Value("data") = Data
-		  Wrapper.Compact = False
 		  
-		  Var Compact As Boolean = Data.Compact
-		  Data.Compact = True
-		  
-		  Board.Text = Wrapper.ToString
-		  Board.RawData(Type) = Data.ToString
-		  
-		  Data.Compact = Compact
+		  Board.Text = Wrapper.ToString(False)
+		  Board.RawData(Type) = Data.ToString(True)
 		End Sub
 	#tag EndMethod
 
@@ -741,12 +735,7 @@ Protected Module Beacon
 		    Return Temp.ToString(Pretty)
 		  #else
 		    If Source.Type = Variant.TypeObject And Source.ObjectValue IsA JSONItem Then
-		      Var Item As JSONItem = Source
-		      Var OriginalCompact As Boolean = Item.Compact
-		      Item.Compact = Not Pretty
-		      Var Json As String = Item.ToString()
-		      Item.Compact = OriginalCompact
-		      Return Json
+		      Return JSONItem(Source).ToString(Not Pretty)
 		    End If
 		    
 		    Var Result As String = Xojo.GenerateJSON(Source, Pretty)
@@ -1852,16 +1841,10 @@ Protected Module Beacon
 	#tag Constant, Name = DefaultPrettyLocalized, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = FileExtensionAuth, Type = String, Dynamic = False, Default = \".beaconauth", Scope = Protected
-	#tag EndConstant
-
 	#tag Constant, Name = FileExtensionCSV, Type = String, Dynamic = False, Default = \".csv", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FileExtensionDelta, Type = String, Dynamic = False, Default = \".beacondata", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = FileExtensionIdentity, Type = String, Dynamic = False, Default = \".beaconidentity", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FileExtensionINI, Type = String, Dynamic = False, Default = \".ini", Scope = Protected
@@ -1989,7 +1972,7 @@ Protected Module Beacon
 	#tag EndConstant
 
 
-	#tag Enum, Name = DeployPlan, Type = Integer, Flags = &h1
+	#tag Enum, Name = DeployPlan, Type = Integer, Flags = &h1, Binary = True
 		StopUploadStart
 		  UploadRestart
 		UploadOnly

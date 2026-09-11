@@ -101,7 +101,6 @@ Protected Class ModFilterSettings
 		  Next
 		  
 		  Var Data As New JSONItem
-		  Data.Compact = True
 		  Data.Value("types") = Self.mTypes
 		  Data.Child("gameIds") = SavedGameIds
 		  Return Data
@@ -162,14 +161,6 @@ Protected Class ModFilterSettings
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mTypes"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin DesktopContainer ModSelectionGrid
+Begin PopoverContainer ModSelectionGrid
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -13,9 +13,9 @@ Begin DesktopContainer ModSelectionGrid
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
+   LockBottom      =   True
    LockLeft        =   True
-   LockRight       =   False
+   LockRight       =   True
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
@@ -334,8 +334,8 @@ End
 		  
 		  Self.NoResultsLabel.Visible = (Packs.Count = 0)
 		  
-		  Self.Width = Max(MinWidth, (ColumnCount * CheckboxWidth) + ((ColumnCount - 1) * 12) + PaddingLeft + PaddingRight)
-		  Self.Height = ViewHeight
+		  Var ViewWidth As Integer = Max(MinWidth, (ColumnCount * CheckboxWidth) + ((ColumnCount - 1) * 12) + PaddingLeft + PaddingRight)
+		  Self.SetContentSize(ViewWidth, ViewHeight)
 		  
 		  Var TopBarWidth As Integer = Self.ViewSelector.Width + 12 + Self.FilterField.Width
 		  Self.ViewSelector.Left = (Self.Width - TopBarWidth) / 2
