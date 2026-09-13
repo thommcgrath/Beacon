@@ -471,7 +471,7 @@ Inherits Beacon.CommonThread
 		    Var IsDict As Boolean
 		    Do
 		      Var Child As Variant = ReadValue(Content)
-		      If Child Is Nil Then
+		      If Child.IsNull Or (Child.Type = Variant.TypeString And Child.StringValue.IsEmpty) Then
 		        Exit
 		      End If
 		      IsDict = IsDict Or (Child.Type = Variant.TypeObject And Child.ObjectValue IsA Beacon.KeyValuePair)
