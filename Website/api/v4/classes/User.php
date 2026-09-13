@@ -15,7 +15,13 @@ class User extends DatabaseObject implements JsonSerializable {
 	const VerifyWithAuthenticators = 1;
 	const VerifyWithBackupCodes = 2;
 	const VerifyWithTrustedDevices = 4;
+	const VerifyOptionReplaceUsedCode = 8;
 	const VerifyAny = 7;
+
+	const SecurityModelAnonymous = 'Anonymous';
+	const SecurityModelLegacy = 'Legacy';
+	const SecurityModelStandard = 'Standard';
+	const SecurityModelEnhanced = 'Enhanced';
 
 	protected $backupCodes = null;
 	protected $banned = false;
@@ -36,6 +42,7 @@ class User extends DatabaseObject implements JsonSerializable {
 	protected $username = null;
 	protected ?array $subscriptions = null;
 	protected ?string $stripeId = null;
+	protected string $securityModel = self::SecurityModelAnonymous;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->backupCodes = null;
@@ -56,6 +63,7 @@ class User extends DatabaseObject implements JsonSerializable {
 		$this->userId = $row->Field('user_id');
 		$this->username = $row->Field('username') ?? 'Anonymous';
 		$this->stripeId = $row->Field('stripe_id');
+		$this->securityModel = $row->Field('security_model');
 
 		if (is_null($this->username) === false && is_null($this->cloudKey) === true) {
 			$this->cloudKey = bin2hex(BeaconEncryption::RSAEncrypt($this->publicKey, static::GenerateCloudKey()));
@@ -80,6 +88,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('enabled'),
 			new DatabaseObjectProperty('requirePasswordChange', ['columnName' => 'require_password_change']),
 			new DatabaseObjectProperty('stripeId', ['columnName' => 'stripe_id', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('securityModel', ['columnName' => 'security_model', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 		]);
 	}
 
@@ -125,16 +134,24 @@ class User extends DatabaseObject implements JsonSerializable {
 		$userId = $properties['userId'] ?? BeaconCommon::GenerateUUID();
 		$database = BeaconCommon::Database();
 
-		if (BeaconCommon::HasAnyKeys($properties, 'email', 'username', 'privateKey', 'privateKeySalt', 'privateKeyIterations') === false) {
-			// Anonymous
+		$securityModel = $properties['securityModel'] ?? self::SecurityModelLegacy;
+		switch ($securityModel) {
+		case self::SecurityModelAnonymous:
 			$database->BeginTransaction();
-			$database->Query("INSERT INTO public.users (user_id, public_key, usercloud_key) VALUES ($1, $2, $3);", $userId, $publicKey, $cloudKey);
+			$database->Query("INSERT INTO public.users (user_id, public_key, usercloud_key, security_model) VALUES ($1, $2, $3, $4);", $userId, $publicKey, $cloudKey, $securityModel);
 			$database->Commit();
 			return static::Fetch($userId);
-		}
-
-		if (BeaconCommon::HasAllKeys($properties, 'email', 'username', 'privateKey', 'privateKeySalt', 'privateKeyIterations') === false) {
-			throw new Exception('Missing required properties.');
+		case self::SecurityModelLegacy:
+		case self::SecurityModelEnhanced:
+			if (BeaconCommon::HasAllKeys($properties, 'email', 'username', 'privateKey', 'privateKeySalt', 'privateKeyIterations') === false) {
+				throw new Exception('Missing required properties.');
+			}
+			break;
+		case self::SecurityModelStandard:
+			if (BeaconCommon::HasAllKeys($properties, 'email', 'username', 'privateKey') === false) {
+				throw new Exception('Missing required properties.');
+			}
+			break;
 		}
 
 		$username = $properties['username'];
@@ -152,14 +169,22 @@ class User extends DatabaseObject implements JsonSerializable {
 			throw new Exception('Private key is not encrypted.');
 		}
 
-		$privateKeySalt = $properties['privateKeySalt'];
-		$privateKeyIterations = filter_var($properties['privateKeyIterations'], FILTER_VALIDATE_INT);
-		if ($privateKeyIterations === false) {
-			throw new Exception('Property privateKeyIterations should be a number');
+		switch ($securityModel) {
+		case self::SecurityModelLegacy:
+		case self::SecurityModelEnhanced:
+			$privateKeySalt = $properties['privateKeySalt'];
+			$privateKeyIterations = filter_var($properties['privateKeyIterations'], FILTER_VALIDATE_INT);
+			if ($privateKeyIterations === false) {
+				throw new Exception('Property privateKeyIterations should be a number');
+			}
+			break;
+		default:
+			$privateKeySalt = null;
+			$privateKeyIterations = null;
 		}
 
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.users (user_id, public_key, usercloud_key, email_id, username, private_key, private_key_salt, private_key_iterations) VALUES ($1, $2, $3, uuid_for_email($4, TRUE), $5, $6, $7, $8);", $userId, $publicKey, $cloudKey, $email, $username, $privateKey, $privateKeySalt, $privateKeyIterations);
+		$database->Query("INSERT INTO public.users (user_id, public_key, usercloud_key, email_id, username, private_key, private_key_salt, private_key_iterations, security_model) VALUES ($1, $2, $3, uuid_for_email($4, TRUE), $5, $6, $7, $8, $9);", $userId, $publicKey, $cloudKey, $email, $username, $privateKey, $privateKeySalt, $privateKeyIterations, $securityModel);
 		$database->Commit();
 
 		return static::Fetch($userId);
@@ -196,6 +221,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			'requirePasswordChange' => $this->requirePasswordChange,
 			'userId' => $this->userId,
 			'username' => $this->username,
+			'securityModel' => $this->securityModel,
 		];
 	}
 
@@ -272,7 +298,7 @@ class User extends DatabaseObject implements JsonSerializable {
 	}
 
 	public function IsAnonymous(): bool {
-		return empty($this->emailId);
+		return $this->securityModel === self::SecurityModelAnonymous;
 	}
 
 	public function Licenses(): array {
@@ -319,105 +345,44 @@ class User extends DatabaseObject implements JsonSerializable {
 		return $this->stripeId;
 	}
 
+	public function SecurityModel(): string {
+		return $this->securityModel;
+	}
+
+	public function UsesModernSecurity(): bool {
+		return ($this->securityModel === self::SecurityModelStandard || $this->securityModel === self::SecurityModelEnhanced);
+	}
+
 	/* !Two Factor Authentication */
 
 	public function Is2FAProtected(): bool {
-		return Authenticator::UserIdHasAuthenticators($this->userId);
+		return Authenticator::UserHasAuthenticators($this);
 	}
 
 	// $code may be a TOTP, backup code, or trusted device id
 	public function Verify2FACode(string $code, bool $verifyOnly = false, int $verificationOptions = self::VerifyAny): bool {
-		$authenticators = Authenticator::Search(['userId' => $this->userId], true);
-		if (count($authenticators) === 0) {
-			// If there are no authenticators, the account is not 2FA protected
-			return false;
+		$options = 0;
+		if ($verifyOnly === false) {
+			$options = $options | Authenticator::VerifyOptionReplaceUsedCode;
 		}
-
-		// Try regular authenticators first
-		if (($verificationOptions & self::VerifyWithAuthenticators) === self::VerifyWithAuthenticators) {
-			foreach ($authenticators as $authenticator) {
-				if ($authenticator->TestCode($code)) {
-					return true;
-				}
-			}
-		}
-
-		// If it's a UUID, it's obviously not a backup code
 		if (($verificationOptions & self::VerifyWithTrustedDevices) === self::VerifyWithTrustedDevices) {
-			if (BeaconCommon::IsUUID($code) === true) {
-				return $this->IsDeviceTrusted($code);
-			}
+			$options = $options | Authenticator::VerifyOptionAllowTrustedDevices;
 		}
-
-		// Finally, try backup codes
+		if (($verificationOptions & self::VerifyWithAuthenticators) === self::VerifyWithAuthenticators) {
+			$options = $options | Authenticator::VerifyOptionAllowTOTP;
+		}
 		if (($verificationOptions & self::VerifyWithBackupCodes) === self::VerifyWithBackupCodes) {
-			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT * FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
-			if ($rows->RecordCount() === 1) {
-				if ($verifyOnly === false) {
-					$database->BeginTransaction();
-					$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
-					$newCode = BeaconCommon::GenerateRandomKey(6);
-					$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->userId, $newCode);
-					$database->Commit();
-					if (is_null($this->backupCodes) === false) {
-						$this->backupCodes = null;
-						$this->Get2FABackupCodes(); // refreshes the cache
-					}
-				}
-				return true;
-			}
+			$options = $options | Authenticator::VerifyOptionAllowBackupCodes;
 		}
-
-		return false;
-	}
-
-	// Returns true when there are changes that need to be committed
-	public function Create2FABackupCodes(): bool {
-		// Cache the current codes
-		$this->Get2FABackupCodes();
-
-		if (count($this->backupCodes) >= 10) {
-			return false;
-		}
-
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		while (count($this->backupCodes) < 10) {
-			$code = BeaconCommon::GenerateRandomKey(6);
-			$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->userId, $code);
-			$this->backupCodes[] = $code;
-		}
-		$database->Commit();
-		return true;
+		return Authenticator::VerifyCode($this, $code, $options);
 	}
 
 	public function Get2FABackupCodes(): array {
-		if (is_null($this->backupCodes)) {
-			$this->backupCodes = [];
-			$database = BeaconCommon::Database();
-			$rows = $database->Query('SELECT code FROM public.user_backup_codes WHERE user_id = $1;', $this->userId);
-			while (!$rows->EOF()) {
-				$this->backupCodes[] = $rows->Field('code');
-				$rows->MoveNext();
-			}
-		}
-		return $this->backupCodes;
+		return Authenticator::GetBackupCodes($this);
 	}
 
-	public function Clear2FABackupCodes(): void {
-		$codes = $this->Get2FABackupCodes();
-
-		if (count($codes) === 0) {
-			return;
-		}
-
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1;', $this->userId);
-		$database->Commit();
-
-		$this->backupCodes = [];
+	public function Replace2FABackupCodes(): array {
+		return Authenticator::ReplaceBackupCodes($this);
 	}
 
 	/* !Cloud Files */
@@ -448,45 +413,134 @@ class User extends DatabaseObject implements JsonSerializable {
 		return $this->requirePasswordChange;
 	}
 
-	public function DecryptPrivateKey(string $password): string {
-		$privateKeySalt = hex2bin($this->privateKeySalt);
-		$privateKeyIterations = $this->privateKeyIterations;
-		$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
-		try {
-			$privateKeyPem = BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($this->privateKey));
-
-			if (strtolower(substr($privateKeyPem, 0, 4)) === '8a01') {
-				$privateKeySalt = BeaconEncryption::GenerateSalt();
-				$privateKeyIterations = rand(100000, 111111);
+	public function DecryptPrivateKey(?string $password = null): string {
+		switch ($this->securityModel) {
+		case self::SecurityModelLegacy:
+			try {
+				$privateKeySalt = hex2bin($this->privateKeySalt);
+				$privateKeyIterations = $this->privateKeyIterations;
 				$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
-				$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
+				$privateKeyPem = BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($this->privateKey));
+				if (substr($this->privateKey, 0, 4) === '8a01') {
+					$privateKeySalt = BeaconEncryption::GenerateSalt();
+					$privateKeyIterations = rand(100000, 111111);
+					$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
+					$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
 
-				$changes = [
-					'privateKey' => bin2hex($encryptedPrivateKey),
-					'privateKeySalt' => bin2hex($privateKeySalt),
-					'privateKeyIterations' => $privateKeyIterations
-				];
+					$changes = [
+						'privateKey' => bin2hex($encryptedPrivateKey),
+						'privateKeySalt' => bin2hex($privateKeySalt),
+						'privateKeyIterations' => $privateKeyIterations
+					];
 
-				$this->Edit($changes);
+					$this->Edit($changes);
+				}
+				return $privateKeyPem;
+			} catch (Exception $err) {
+				throw new Exception('Incorrect password');
 			}
-
-			return $privateKeyPem;
-		} catch (Exception $err) {
-			throw new Exception('Incorrect password');
+		case self::SecurityModelEnhanced:
+			try {
+				$privateKeySalt = hex2bin($this->privateKeySalt);
+				$privateKeyIterations = $this->privateKeyIterations;
+				$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
+				return BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($this->privateKey));
+			} catch (Exception $err) {
+				throw new Exception('Incorrect secret');
+			}
+			break;
+		case self::SecurityModelStandard:
+			try {
+				$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('Private Key Secret'));
+				return BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($this->privateKey));
+			} catch (Exception $err) {
+				throw new Exception('Failed to decrypt private key');
+			}
+			break;
+		default:
+			throw new Exception('Unknown security model');
 		}
 	}
 
-	public function TestPassword(string $password): bool {
+	public function TestPassword(string $password, bool $noPasswordAllowed = false): bool {
 		if ($this->enabled !== true) {
 			return false;
 		}
 
-		try {
-			$this->DecryptPrivateKey($password);
-			return true;
-		} catch (Exception $err) {
-			return false;
+		if ($this->securityModel === self::SecurityModelLegacy) {
+			try {
+				$this->DecryptPrivateKey($password);
+				return true;
+			} catch (Exception $err) {
+				return false;
+			}
+		} else {
+			return UserCredential::VerifyUserPassword($this->userId, $password, $noPasswordAllowed);
 		}
+	}
+
+	public function ChangeSecurityModel(string $newModel, string $password, string &$secret = null): void {
+		if ($newModel === $this->securityModel) {
+			return;
+		}
+
+		if ($newModel === self::SecurityModelAnonymous) {
+			throw new Exception('Cannot switch to anonymous security');
+		} else if ($newModel === self::SecurityModelLegacy) {
+			throw new Exception('Cannot switch to legacy security');
+		}
+
+		// DecryptPrivateKey throws exceptions on error
+		switch ($this->securityModel) {
+		case self::SecurityModelLegacy:
+			$privateKey = $this->DecryptPrivateKey($password);
+			break;
+		case self::SecurityModelStandard:
+			$privateKey = $this->DecryptPrivateKey();
+			break;
+		case self::SecurityModelEnhanced:
+			$privateKey = $this->DecryptPrivateKey($secret);
+			break;
+		}
+
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		try {
+			if ($this->securityModel === self::SecurityModelLegacy) {
+				UserCredential::SetUserPassword($this->userId, $password);
+			}
+
+			$changes = [
+				'securityModel' => $newModel,
+			];
+
+			switch ($newModel) {
+			case self::SecurityModelStandard:
+				$secret = '';
+				$privateKeySecret = base64_decode(BeaconCommon::GetGlobal('Private Key Secret'));
+				$changes['privateKey'] = bin2hex(BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKey, false));
+				$changes['privateKeySalt'] = null;
+				$changes['privateKeyIterations'] = null;
+				break;
+			case self::SecurityModelEnhanced:
+				$secret = BeaconCommon::GenerateRandomKey(32);
+				$privateKeySalt = BeaconEncryption::GenerateSalt();
+				$privateKeyIterations = 450000;
+				$privateKeySecret = BeaconEncryption::HashFromPassword($secret, $privateKeySalt, $privateKeyIterations);
+				$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKey, false);
+
+				$changes['privateKey'] = bin2hex($encryptedPrivateKey);
+				$changes['privateKeySalt'] = bin2hex($privateKeySalt);
+				$changes['privateKeyIterations'] = $privateKeyIterations;
+				break;
+			}
+
+			$this->Edit($changes);
+		} catch (Exception $err) {
+			$database->Rollback();
+			throw $err;
+		}
+		$database->Commit();
 	}
 
 	/* !User Lookup */

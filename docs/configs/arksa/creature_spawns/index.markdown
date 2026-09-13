@@ -10,6 +10,8 @@ configkeys:
 supportedgames:
   - "Ark: Survival Ascended"
 requiresomni: true
+redirect_from:
+  - /creature_spawns_editor
 ---
 {% include editortitle.markdown %}
 

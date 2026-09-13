@@ -11,7 +11,16 @@ class BeaconLogin {
 		$deviceId = BeaconCommon::DeviceId();
 		$session = BeaconCommon::GetSession();
 		$flowId = $params['flowId'] ?? null;
+		$user = null;
+		if (is_null($session) === false) {
+			$user = $session->User();
+			$params['securityModel'] = $user->SecurityModel();
+		} else {
+			$params['securityModel'] = null;
+		}
 
+		$passwordlessEnabled = BeaconCommon::GetGlobal('Enable Security Models') ?? false;
+		$passkeysEnabled = $passwordlessEnabled && (BeaconCommon::GetGlobal('Enable Passkeys') ?? false);
 		$params['apiDomain'] = BeaconCommon::APIDomain();
 		$params['deviceId'] = $deviceId;
 		$params['flowRequiresPassword'] = false;
@@ -31,21 +40,22 @@ class BeaconLogin {
 			}
 			$app = $flow->Application();
 
-			if (($app->Experience() & Application::kExperienceAppWebView) === Application::kExperienceAppWebView) {
+			if ((($app->Experience() & $flow->SupportedExperiences()) & Application::kExperienceAppWebView) === Application::kExperienceAppWebView) {
 				BeaconTemplate::SetVar('No Navigation', true);
 				$params['useAppCancelBehavior'] = true;
 				$params['withCancel'] = true;
 			}
 		}
 
-		if (is_null($session) === false) {
+		if (is_null($user) === false) {
 			if (is_null($flow)) {
 				// We're not authorizing an app, so there's nothing to do here.
 				BeaconCommon::Redirect($params['return']);
 				return;
 			}
 
-			$params['challenge'] = $flow->NewChallenge($deviceId, $session->User(), $params['challengeExpiration']);
+			$params['challenge'] = $flow->NewChallenge($deviceId, $user, $params['challengeExpiration']);
+			$params['flowRequiresPassword'] = $flow->HasScope(Application::kScopeUsersPrivateKeyRead) && ($user->SecurityModel() === User::SecurityModelLegacy || $user->SecurityModel() === User::SecurityModelEnhanced);
 		} else {
 			$challengeSecret = Application::Fetch(BeaconCommon::BeaconWebsiteAppId)->Secret();
 			$challengeRaw = $deviceId . $params['challengeExpiration'] . $challengeSecret;
@@ -53,12 +63,6 @@ class BeaconLogin {
 				$challengeRaw .= $flow->FlowId();
 			}
 			$params['challenge'] = base64_encode(hash('sha3-512', $challengeRaw, true));
-		}
-
-		$flowRequiresPassword = false;
-		if (is_null($flow) === false) {
-			$flowRequiresPassword = $flow->HasScope(Application::kScopeUsersPrivateKeyRead);
-			$params['flowRequiresPassword'] = $flowRequiresPassword;
 		}
 
 		BeaconTemplate::StartScript();
@@ -88,7 +92,7 @@ class BeaconLogin {
 			<?php
 			return;
 		} elseif (is_null($session) === false && is_null($flow) === false) {
-			$user = $session->User();
+			$requestedPrivateKey = $flow->HasScope(Application::kScopeUsersPrivateKeyRead);
 			?><div id="page_authorize">
 				<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services as <?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span>?</h3>
 				<div class="app_id">
@@ -100,7 +104,7 @@ class BeaconLogin {
 				<ul>
 					<?php
 
-					if ($flowRequiresPassword) {
+					if ($requestedPrivateKey) {
 						echo '<li>Decrypt user files and project data.</li>';
 					}
 
@@ -190,7 +194,7 @@ class BeaconLogin {
 				</ul>
 				<p class="explanation"><?php echo htmlentities($app->Name()); ?> will <strong>not</strong> be able to:</p>
 				<ul>
-					<?php if ($flowRequiresPassword === false) { ?><li>Decrypt user files and project data.</li><?php } ?>
+					<?php if ($requestedPrivateKey === false) { ?><li>Decrypt user files and project data.</li><?php } ?>
 					<li>Know your account email or password.</li>
 					<li><?php
 
@@ -212,6 +216,10 @@ class BeaconLogin {
 						'Divide by zero.',
 						'Sneeze.',
 						'Stop the army of cloned grandmothers threatening Norway.',
+						'Give you that raise you wanted.',
+						'Eat a banjo.',
+						'Dochvam Damugh \'e\' yImev.',
+						'Transmogrify Mount Rushmore.',
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);
@@ -221,13 +229,24 @@ class BeaconLogin {
 				<ul class="buttons"><li><button class="default" id="authorize_action_button">Allow</button></li><li><button id="authorize_cancel_button" class="red">Cancel</button></li><li><button id="authorize_switch_button">Switch User</button></li></ul>
 			</div><?php
 
+			$authDialogTitle = 'Confirm Password';
+			$authDialogMessage = 'To authorize this app, please confirm your password.';
+			$authDialogFieldLabel = 'Password';
+			$authAutocomplete = 'current-password';
+			if ($user->SecurityModel() === User::SecurityModelEnhanced) {
+				$authDialogTitle = 'Enter Account Secret';
+				$authDialogMessage = 'To authorize this app, please enter your account secret.';
+				$authDialogFieldLabel = 'Secret';
+				$authAutocomplete = 'off';
+			}
+
 			BeaconTemplate::StartModal('authorizePasswordDialog');
 			?>
 			<div class="modal-content">
-				<div class="title-bar">Confirm Password</div>
+				<div class="title-bar"><?php echo htmlentities($authDialogTitle) ?></div>
 				<div class="content">
-					<p>To authorize this app, please confirm your password.</p>
-					<p><div class="floating-label" id="authorizePasswordFieldGroup"><input type="password" id="authorizePasswordField" placeholder="Confirm Password" class="text-field" autocomplete="current-password"><label for="authorizePasswordField">Confirm Password</label></div></p>
+					<p><?php echo htmlentities($authDialogMessage); ?></p>
+					<p><div class="floating-label" id="authorizePasswordFieldGroup"><input type="password" id="authorizePasswordField" placeholder="<?php echo htmlentities($authDialogFieldLabel); ?>" class="text-field" autocomplete="<?php echo $authAutocomplete; ?>"><label for="authorizePasswordField"><?php echo htmlentities($authDialogFieldLabel); ?></label></div></p>
 				</div>
 				<div class="button-bar">
 					<div class="left"&nbsp;</div>
@@ -262,14 +281,40 @@ class BeaconLogin {
 </div>
 <div id="page_login" class="scriptonly">
 	<form id="login_form_intro" action="/account/noscript" method="post">
-		<?php if (is_null($user) === false) { ?>
-		<p class="floating-label"><input class="text-field" type="email" name="username" placeholder="Username" id="login_username_field" autocomplete="username" value="<?php echo htmlentities($user->Username(true)); ?>" required readonly><label for="login_username_field">Username</label></p>
-		<?php } else { ?>
-		<p class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email" required><label for="login_email_field">E-Mail Address</label></p>
-		<?php } ?>
-		<p class="floating-label"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></p>
-		<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
-		<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button" class="red">Cancel</button></li><?php } ?></ul>
+		<div class="login-space login-group">
+			<div class="login-field login-field-user">
+				<?php if (is_null($user) === false) { ?>
+				<div class="floating-label"><input class="text-field" type="email" name="username" placeholder="Username" id="login_username_field" autocomplete="username webauthn" autofocus value="<?php echo htmlentities($user->Username(true)); ?>" required readonly><label for="login_username_field">Username</label></div>
+				<?php } else { ?>
+				<div class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email webauthn" autofocus required><label for="login_email_field">E-Mail Address</label></div>
+				<?php } ?>
+			</div>
+			<div class="login-field login-field-password">
+				<div class="floating-label mb-0"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></div>
+				<div class="text-right"><a href="#" id="login_recover_button">Forgot Password?</a></div>
+			</div>
+			<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
+			<ul class="buttons">
+				<li><input id="login_action_button" type="submit" value="Sign In"></li>
+			</ul>
+		</div>
+		<?php if ($passwordlessEnabled) {?><div class="login-space login-separator">
+			<div class="login-separator-bar">&nbsp;</div>
+			<div class="login-separator-text">Or</div>
+			<div class="login-separator-bar">&nbsp;</div>
+		</div>
+		<div class="login-space login-group">
+			<ul class="buttons">
+				<?php if ($passkeysEnabled) { ?><li id="login_passkeys_cell" class="hidden"><button id="login_use_passkey_button">Sign In With Passkey</button></li><?php } ?>
+				<li><button id="login_auth_nitrado">Sign In With Nitrado</button></li>
+			</ul>
+		</div><?php } ?>
+		<div class="login-space login-group text-center">Don't have an account? <a href="#" id="login_signup_button">Sign Up</a></div>
+		<?php if ($withCancel) { ?><div class="login-space login-group">
+			<ul class="buttons">
+				<li><button id="login_cancel_button" class="red">Cancel</button></li>
+			</ul>
+		</div><?php } ?>
 	</form>
 </div>
 <div id="page_totp" class="scriptonly">

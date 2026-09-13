@@ -7,7 +7,6 @@ Core::RegisterRoutes(
 		'/applications' => [
 			'GET' => 'applications/list',
 			'POST' => 'applications/create',
-			'DELETE' => 'applications/delete',
 		],
 		'/applications/{applicationId}' => [
 			'GET' => 'applications/get',
@@ -20,15 +19,6 @@ Core::RegisterRoutes(
 		'/arksa/projects/{projectId}/Game.ini' => [
 			'GET' => 'arksa/generate',
 			'PUT' => 'arksa/generate',
-		],
-		'/authenticators' => [
-			'POST' => 'authenticators/create',
-			'GET' => 'authenticators/list',
-			'DELETE' => 'authenticators/delete',
-		],
-		'/authenticators/{authenticatorId}' => [
-			'POST' => 'authenticators/edit',
-			'GET' => 'authenticators/get',
 		],
 		'/contentPacks/{contentPackId}/confirm' => [
 			'GET' => 'contentPacks/confirm',

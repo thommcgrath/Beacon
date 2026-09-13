@@ -7,6 +7,8 @@ configkeys:
   - ItemStatClamps
 supportedgames:
   - "Ark: Survival Ascended"
+redirect_from:
+  - /item_stat_limits_editor
 ---
 {% include editortitle.markdown %}
 

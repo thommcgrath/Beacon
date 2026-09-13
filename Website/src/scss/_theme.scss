@@ -142,6 +142,16 @@ $button-yellow: #ffc107 !default;
 	@return math.div((math.max($backlum, $forelum) + 0.05), (math.min($backlum, $forelum) + 0.05));
 }
 
+@function better-of($backgroundColor, $colorOne: #ffffff, $colorTwo: #000000) {
+	$contrastOne: contrast-against($backgroundColor, $colorOne);
+	$contrastTwo: contrast-against($backgroundColor, $colorTwo);
+	@if ($contrastOne >= $contrastTwo) {
+		@return $colorOne;
+	} @else {
+		@return $colorTwo;
+	}
+}
+
 @function contrasting-color($backcolor, $forecolor, $desiredContrast: 4.5) {
 	$initialContrast: contrast-against($backcolor, $forecolor);
 	@if ($initialContrast >= $desiredContrast) {
@@ -170,13 +180,7 @@ $button-yellow: #ffc107 !default;
 		}
 	}
 
-	$whiteContrast: contrast-against($backcolor, #ffffff);
-	$blackContrast: contrast-against($backcolor, #000000);
-	@if $whiteContrast > $blackContrast {
-		@return #ffffff;
-	} @else {
-		@return #000000;
-	}
+	@return better-of($backcolor, #ffffff, #000000);
 }
 
 @mixin create-spinner-size($size) {
@@ -202,20 +206,38 @@ $button-yellow: #ffc107 !default;
 	}
 }
 
-$pc-fill: contrasting-color($background-color, #c27c0e);
-$xbox-fill: contrasting-color($background-color, #107c10);
-$playstation-fill: contrasting-color($background-color, #003791);
-$switch-fill: contrasting-color($background-color, #e60012);
-$pc-text: contrasting-color($pc-fill, #ffffff);
-$xbox-text: contrasting-color($xbox-fill, #ffffff);
-$playstation-text: contrasting-color($playstation-fill, #ffffff);
-$switch-text: contrasting-color($switch-fill, #ffffff);
-$text-red: contrasting-color($background-color, #ff3b30);
-$text-green: contrasting-color($background-color, #28cd41);
-$text-blue: contrasting-color($background-color, #007aff);
-$text-purple: contrasting-color($background-color, #af52de);
-$text-yellow: contrasting-color($background-color, #ffcc00);
-$link-color: contrasting-color($background-color, #2e7fda);
+@mixin tag-colors ($fillColor, $textColor: #ffffff) {
+	background-color: $fillColor;
+	color: $textColor;
+	border-width: 1px;
+	border-style: solid;
+
+	@if (contrast-against($background-color, $fillColor) < 4.5) {
+		border-color: color.mix($fillColor, $foreground-color, 75%);
+	} @else {
+		border-color: $fillColor;
+	}
+}
+
+$tag-pc: #FACA04;
+$tag-xbox: #107c10;
+$tag-playstation: #003791;
+$tag-switch: #e60012;
+$tag-red: #dc3545;
+$tag-grey: #6c757d;
+$tag-blue: #0d6efd;
+$tag-green: #198754;
+$tag-yellow: #f1f100;
+$tag-cyan: #0dcaf0;
+$tag-orange: #ff8000;
+$tag-purple: #800080;
+
+$text-red: contrasting-color($background-color, #ff3b30, 7.0);
+$text-green: contrasting-color($background-color, #28cd41, 7.0);
+$text-blue: contrasting-color($background-color, #007aff, 7.0);
+$text-purple: contrasting-color($background-color, #af52de, 7.0);
+$text-yellow: contrasting-color($background-color, #ffcc00, 7.0);
+$link-color: contrasting-color($background-color, #2e7fda, 7.0);
 $accent-text-color: contrasting-color($accent-color, $background-color); // Text color used when the background is the accent color
 $text-accent-color: contrasting-color($background-color, $accent-color); // Text color based on the accent color
 $pressed-accent-color: color.adjust($accent-color, $lightness: -20%);
@@ -223,18 +245,33 @@ $pressed-accent-text-color: color.adjust($accent-text-color, $lightness: -20%);
 $separator-color: color.mix($foreground-color, $background-color, 15%);
 $explore-color: $background-color;
 $explore-border-color: $separator-color;
-$tag-red-fill: contrasting-color($background-color, #dc3545);
-$tag-red-text: contrasting-color($tag-red-fill, #ffffff);
-$tag-grey-fill: contrasting-color($background-color, #6c757d);
-$tag-grey-text: contrasting-color($tag-grey-fill, #ffffff);
-$tag-blue-fill: contrasting-color($background-color, #0d6efd);
-$tag-blue-text: contrasting-color($tag-blue-fill, #ffffff);
-$tag-green-fill: contrasting-color($background-color, #198754);
-$tag-green-text: contrasting-color($tag-green-fill, #ffffff);
-$tag-yellow-fill: contrasting-color($background-color, #ffc107);
-$tag-yellow-text: contrasting-color($tag-yellow-fill, #212529);
-$tag-cyan-fill: contrasting-color($background-color, #0dcaf0);
-$tag-cyan-text: contrasting-color($tag-cyan-fill, #212529);
+$tag-contrast: 7.0;
+$tag-pc-fill: $tag-pc;
+$tag-pc-text: #000000;
+$tag-xbox-fill: $tag-xbox;
+$tag-xbox-text: #ffffff;
+$tag-playstation-fill: $tag-playstation;
+$tag-playstation-text: #ffffff;
+$tag-switch-fill: $tag-switch;
+$tag-switch-text: #ffffff;
+$tag-red-text: #ffffff;
+$tag-red-fill: contrasting-color($tag-red-text, $tag-red, $tag-contrast);
+$tag-grey-text: #ffffff;
+$tag-grey-fill: contrasting-color($tag-grey-text, $tag-grey, $tag-contrast);
+$tag-green-text: #ffffff;
+$tag-green-fill: contrasting-color($tag-green-text, $tag-green, $tag-contrast);
+$tag-blue-text: #ffffff;
+$tag-blue-fill: contrasting-color($tag-blue-text, $tag-blue, $tag-contrast);
+$tag-green-text: #ffffff;
+$tag-green-fill: contrasting-color($tag-green-text, $tag-green, $tag-contrast);
+$tag-yellow-text: #000000;
+$tag-yellow-fill: contrasting-color($tag-yellow-text, $tag-yellow, $tag-contrast);
+$tag-cyan-text: #ffffff;
+$tag-cyan-fill: contrasting-color($tag-cyan-text, $tag-cyan, $tag-contrast);
+$tag-orange-text: #ffffff;
+$tag-orange-fill: contrasting-color($tag-orange-text, $tag-orange, $tag-contrast);
+$tag-purple-text: #ffffff;
+$tag-purple-fill: contrasting-color($tag-purple-text, $tag-purple, $tag-contrast);
 $button-primary-color: $accent-color;
 $button-primary-text-color: $accent-text-color;
 $button-secondary-color: color.mix($foreground-color, $background-color, 7%);
@@ -345,6 +382,7 @@ a {
 	display: inline-block;
 	padding: 0.35em 0.65em;
 	font-size: 0.75em;
+	vertical-align: top;
 
 	&+& {
 		margin-left: 6px;
@@ -359,53 +397,51 @@ a {
 	}
 
 	&.xbox {
-		background-color: $xbox-fill;
-		color: $xbox-text;
+		@include tag-colors($tag-xbox-fill, $tag-xbox-text);
 	}
 
 	&.playstation {
-		background-color: $playstation-fill;
-		color: $playstation-text;
+		@include tag-colors($tag-playstation-fill, $tag-playstation-text);
 	}
 
 	&.pc {
-		background-color: $pc-fill;
-		color: $pc-text;
+		@include tag-colors($tag-pc-fill, $tag-pc-text);
 	}
 
-	&.nintendo {
-		background-color: $switch-fill;
-		color: $switch-text;
+	&.nintendo, &.switch {
+		@include tag-colors($tag-switch-fill, $tag-switch-text);
 	}
 
 	&.red {
-		background-color: $tag-red-fill;
-		color: $tag-red-text;
+		@include tag-colors($tag-red-fill, $tag-red-text);
 	}
 
 	&.grey {
-		background-color: $tag-grey-fill;
-		color: $tag-grey-text;
+		@include tag-colors($tag-grey-fill, $tag-grey-text);
 	}
 
 	&.blue {
-		background-color: $tag-blue-fill;
-		color: $tag-blue-text;
+		@include tag-colors($tag-blue-fill, $tag-blue-text);
 	}
 
 	&.green {
-		background-color: $tag-green-fill;
-		color: $tag-green-text;
+		@include tag-colors($tag-green-fill, $tag-green-text);
 	}
 
 	&.yellow {
-		background-color: $tag-yellow-fill;
-		color: $tag-yellow-text;
+		@include tag-colors($tag-yellow-fill, $tag-yellow-text);
 	}
 
 	&.cyan {
-		background-color: $tag-cyan-fill;
-		color: $tag-cyan-text;
+		@include tag-colors($tag-cyan-fill, $tag-cyan-text);
+	}
+
+	&.orange {
+		@include tag-colors($tag-orange-fill, $tag-orange-text);
+	}
+
+	&.purple {
+		@include tag-colors($tag-purple-fill, $tag-purple-text);
 	}
 }
 
@@ -581,11 +617,11 @@ div.medium_section {
 }
 
 h1 {
-	font-size: $font-size-sm * 1.2;
+	font-size: $font-size-sm * 1.4;
 }
 
 h2 {
-	font-size: $font-size-sm * 1.1;
+	font-size: $font-size-sm * 1.2;
 }
 
 h3 {
@@ -651,17 +687,26 @@ blockquote {
 }
 
 div.visual-group {
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
-	background-color: color.mix($foreground-color, $background-color, 5%);
+	h1 {
+		font-size: 1.6rem;
+	}
+
+	h2 {
+		font-size: 1.4rem;
+	}
+
+	h3 {
+		font-size: 1.2rem;
+	}
 
 	h1, h2, h3 {
 		margin-bottom: 20px;
+		border-bottom: 1px solid $separator-color;
+		padding-bottom: 0.3em;
 	}
 
 	&+& {
-		margin-top: 20px;
+		margin-top: 4rem;
 	}
 }
 
@@ -1138,18 +1183,26 @@ textarea {
 		top: 0;
 		left: 0;
 		height: 100%;
-		padding: 1rem 0.75rem;
+		padding: 1.125rem 0.75rem;
 		pointer-events: none;
 		border: 1px solid transparent;
 		transform-origin: 0 0;
 		box-sizing: border-box;
 		opacity: $input-placeholder-opacity;
+		line-height: 1.25rem;
 		@include transition(opacity .1s ease-in-out, transform .1s ease-in-out);
 	}
 
 	& > div.select+label {
 		transform: scale(.85) translateY(-.5rem) translateX(.15rem);
 		color: #ffffff;
+	}
+
+	& > button {
+		position: absolute;
+		right: 0.7rem;
+		top: 50%;
+		margin-top: -19px;
 	}
 }
 
@@ -1715,12 +1768,14 @@ div.results {
 	left: 0px;
 	right: 0px;
 	z-index: 2001;
+	transform: translate(0, -30%);
 	opacity: 0;
-	transition-duration: 0.25s;
+	transition-duration: 0.15s;
 	transition-timing-function: ease-out;
-	transition-property: opacity, filter;
+	transition-property: opacity, filter, box-shadow;
 	filter: blur(30px);
 	background-color: $background-color;
+	box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 
 	&.exist {
 		display: block;
@@ -1729,10 +1784,11 @@ div.results {
 	&.visible {
 		opacity: 1;
 		filter: none;
+		box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
 	}
 
-	p {
-		margin: 20px;
+	button {
+		min-width: 80px;
 	}
 }
 
@@ -1740,20 +1796,48 @@ div.results {
 	width: 300px;
 	margin-left: auto;
 	margin-right: auto;
+
+	p, div {
+		margin: 2rem 0px;
+	}
+
+	.dialog_confirm_group > .dialog_confirm_group {
+		padding: 1rem;
+		background-color: color.mix($background-color, $foreground-color, 97%);
+		border: 1px solid color.mix($background-color, $foreground-color, 80%);
+		border-radius: 0.25rem;
+
+		& > *:first-child {
+			margin-top: 0;
+		}
+
+		& > *:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.dialog_confirm_or {
+		text-align: center;
+		font-weight: bold;
+		color: color.mix($background-color, $foreground-color, 10%);
+		margin-top: -0.75rem;
+		margin-bottom: -0.75rem;
+	}
 }
 
 #dialog_message {
 	font-weight: 600;
 	text-align: left;
+	font-size: 1.2rem;
 }
 
 #dialog_explanation {
 	text-align: left;
-	font-size: smaller;
+	font-size: 1.0rem;
 }
 
 #dialog_buttons {
-	text-align: center;
+	text-align: right;
 }
 
 .modal {
@@ -2063,6 +2147,12 @@ div.results {
 			}
 		}
 	}
+
+	&.blog {
+		img {
+			width: 100%;
+		}
+	}
 }
 
 p.help-summary {
@@ -2089,6 +2179,7 @@ ul.no-markings, ol.no-markings {
 .notice-block {
 	border-width: 1px;
 	border-style: solid;
+	border-radius: 0.25rem;
 	text-align: center;
 	padding: 16px;
 
@@ -2112,6 +2203,69 @@ ul.no-markings, ol.no-markings {
 		border-color: color.mix($text-blue, $background-color, 35%);
 		color: $text-blue;
 		background-color: color.mix($text-blue, $background-color, 3%);
+	}
+}
+
+.notice-lighter {
+	position: relative;
+
+	&:after {
+		content: '';
+		background-color: $separator-color;
+		border-radius: 9999px;
+		position: absolute;
+		top: 0px;
+		left: -4px;
+		bottom: 0px;
+		width: 4px;
+	}
+
+	&.red {
+		color: $text-red;
+
+		&:after {
+			border-color: $text-red;
+		}
+	}
+
+	&.blue {
+		color: $text-blue;
+
+		&:after {
+			border-color: $text-blue;
+		}
+	}
+
+	&.green {
+		color: $text-green;
+
+		&:after {
+			border-color: $text-green;
+		}
+	}
+
+	&.purple {
+		color: $text-purple;
+
+		&:after {
+			border-color: $text-purple;
+		}
+	}
+
+	&.yellow {
+		color: $text-yellow;
+
+		&:after {
+			border-color: $text-yellow;
+		}
+	}
+
+	&.accent {
+		color: $text-accent-color;
+
+		&:after {
+			background-color: $text-accent-color;
+		}
 	}
 }
 
@@ -2249,7 +2403,7 @@ div.page-panel {
 
 			a {
 				text-decoration: none;
-				display: inline-block;
+				display: block;
 				padding: $input-padding-y $input-padding-x;
 				border-radius: $border-radius;
 				white-space: nowrap;
@@ -2357,11 +2511,11 @@ img.avatar {
 	}
 
 	h1 {
-		font-size: $font-size * 1.2;
+		font-size: $font-size * 1.4;
 	}
 
 	h2 {
-		font-size: $font-size * 1.1;
+		font-size: $font-size * 1.2;
 	}
 
 	h3 {
@@ -2913,6 +3067,323 @@ body.no-navigation {
 	height: 10em;
 }
 
+.security_model_group {
+	padding: 0px;
+	$cornerRadius: 0.25rem;
+	$groupPadding: 1.2rem;
+
+	p {
+		margin-top: $groupPadding;
+		margin-bottom: $groupPadding;
+	}
+
+	p:first-child {
+		margin-top: 0px;
+	}
+
+	p:last-child {
+		margin-bottom: 0px;
+	}
+
+	& > li {
+		margin: 0px;
+		list-style: none;
+		border: 1px solid $separator-color;
+		border-top-width: 0px;
+		padding: $groupPadding;
+		background-color: $background-color;
+
+		&:first-child {
+			border-top-width: 1px;
+			border-top-left-radius: $cornerRadius;
+			border-top-right-radius: $cornerRadius;
+		}
+
+		&:last-child {
+			border-bottom-left-radius: $cornerRadius;
+			border-bottom-right-radius: $cornerRadius;
+		}
+	}
+
+	.security_model_row {
+		display: flex;
+		align-items: center;
+		gap: $groupPadding;
+
+		.security_model_radio {
+
+		}
+
+		.security_model_explain {
+			color: color.mix($background-color, $foreground-color, 20%);
+
+			label {
+				font-weight: bold;
+				color: $foreground-color;
+				font-size: 1.2rem;
+			}
+
+			label+.tag {
+				margin-left: 0.5rem;
+			}
+		}
+	}
+}
+
+.sign-in-option {
+	$option-color: #5e9dff;
+	$option-shape-color: contrasting-color($background-color, $option-color, 4.5);
+	$option-text-color: contrasting-color($background-color, $option-color, 7.0);
+
+	display: flex;
+	border: 1px solid $option-shape-color;
+	align-items: center;
+	border-radius: 0.25rem;
+	padding: 0.5rem 0.75rem;
+	gap: 1rem;
+
+	&.sign-in-option-unavailable {
+		$option-disabled-color: color.mix($background-color, $foreground-color, 50%);
+		$option-disabled-shape-color: contrasting-color($background-color, $option-disabled-color, 4.5);
+		$option-disabled-text-color: contrasting-color($background-color, $option-disabled-color, 7.0);
+		border-color: $option-disabled-shape-color;
+
+		.sign-in-option-title {
+			color: $option-disabled-text-color;
+		}
+
+		.sign-in-option-icon {
+			svg {
+				fill: $option-disabled-shape-color;
+			}
+		}
+	}
+
+	.sign-in-option-icon {
+		svg {
+			fill: $option-shape-color;
+			height: 48px;
+			max-width: 48px;
+			display: block;
+		}
+	}
+
+	.sign-in-option-rows {
+		flex-grow: 1;
+	}
+
+	.sign-in-option-row {
+		flex-grow: 1;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.sign-in-option-content {
+		flex-grow: 1;
+	}
+
+	.sign-in-option-title {
+		color: $option-text-color;
+		font-weight: bold;
+	}
+
+	.sign-in-option-buttons {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+
+		button {
+			margin: 0px;
+			display: block;
+		}
+	}
+
+	.sign-in-option-row+.sign-in-option-row {
+		margin-top: 0.5rem;
+		border-top: 1px solid color.mix($background-color, $separator-color, 40%);
+		padding-top: 0.5rem;
+	}
+
+	.sign-in-option-tag {
+		color: color.mix($background-color, $foreground-color, 40%);
+		font-size: 0.9em;
+	}
+
+	&+& {
+		margin-top: 0.75rem;
+	}
+}
+
+.services-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+
+	.service {
+		width: 250px;
+		border-radius: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem;
+		box-sizing: border-box;
+		background-color: color.mix($background-color, $foreground-color, 95%);
+		color: black;
+		position: relative;
+		margin-left: auto;
+		margin-right: auto;
+
+		@media (min-width: calc(500px + 1rem + 80px)) {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		.service-logo {
+			img {
+				width: 100%;
+				height: auto;
+				display: block;
+				max-height: 75px;
+			}
+
+			flex: 1 1 auto;
+		}
+
+		.service-name {
+			font-weight: bold;
+			word-break: break-all;
+			text-align: center;
+		}
+
+		.service-error {
+			text-align: center;
+			font-size: 0.9em;
+		}
+
+		.service-uid {
+			word-break: keep-all;
+		}
+
+		.service-action {
+
+		}
+	}
+
+	.service-nitrado {
+		&.active {
+			background-color: black;
+			color: white;
+		}
+
+		&.inactive .service-logo img {
+			//filter: brightness(0%);
+		}
+	}
+
+	.service-gameserverapp.active {
+		background: rgb(12,38,76);
+		background: linear-gradient(0deg, rgba(3,3,4,1) 0%, rgba(12,38,76,1) 100%);
+		color: white;
+	}
+
+	.service-asamanager.active {
+		background: #181818;
+		color: white;
+	}
+
+	.service-beaconhostingapi.active {
+		background: #9c0fb0;
+		background: linear-gradient(-127deg,rgba(255, 255, 0, 1) -75%, rgba(212, 12, 195, 1) 50%, rgba(17, 0, 0, 1) 175%);
+		color: white;
+
+		.service-logo img {
+			filter: brightness(0%) invert(100%);
+		}
+
+		button.red {
+			background-color: white;
+			color: #bb2d3b;
+
+			&:active {
+				background-color: #808080;
+				color: rgb(36.6666666667%,8.8235294118%,11.568627451%);
+			}
+		}
+	}
+
+	.service-gameserverspanel.active {
+		background-color: black;
+		color: white;
+	}
+}
+
+#login_container {
+	$loginSpacing: 1rem;
+
+	width: 400px;
+	max-width: 90vw;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
+
+	ul.buttons {
+		margin: 0px;
+		padding: 0px;
+		list-style: none;
+
+		li {
+			text-align: center;
+			width: auto;
+
+			&+li {
+				margin-top: $loginSpacing;
+			}
+		}
+	}
+
+	.login-space {
+		padding: $loginSpacing;
+		border-radius: 0.25rem;
+		box-sizing: border-box;
+
+		.floating-label {
+			margin: 0px;
+		}
+	}
+
+	.login-group {
+		background-color: color.mix($background-color, $foreground-color, 96%);
+		border: 1px solid color.mix($background-color, $foreground-color, 88%);
+	}
+
+	.login-space+.login-space, .login-field+.login-field {
+		margin-top: $loginSpacing;
+	}
+
+	.login-separator {
+		padding: 0px;
+		text-align: center;
+		height: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.login-separator-text {
+			padding: 0 2rem;
+		}
+
+		.login-separator-bar {
+			flex-grow: 1;
+			height: 1rem;
+			transform: translateY(0.5rem);
+			border-top: 1px solid color.mix($background-color, $foreground-color, 50%);
+		}
+	}
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;
@@ -2992,7 +3463,7 @@ body.no-navigation {
 				flex-direction: column;
 
 				li {
-					text-align: right;
+					text-align: left;
 				}
 			}
 		}
@@ -3087,6 +3558,11 @@ body.no-navigation {
 				top: 50%;
 			}
 		}
+	}
+
+	#dialog_inner {
+		width: 80vw;
+		max-width: 560px;
 	}
 }
 

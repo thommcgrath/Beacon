@@ -5,6 +5,8 @@ has_children: true
 nav_order: 3
 redirect_from:
   - /core/blueprints/
+  - /adding_blueprints_to_beacon
+  - /registering_your_mod_with_beacon
 ---
 # {{page.title}}
 

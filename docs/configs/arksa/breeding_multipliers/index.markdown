@@ -18,6 +18,8 @@ configkeys:
   - MatingSpeedMultiplier
 supportedgames:
   - "Ark: Survival Ascended"
+redirect_from:
+  - /breeding_multipliers_editor
 ---
 {% include editortitle.markdown %}
 

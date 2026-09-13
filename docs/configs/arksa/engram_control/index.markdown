@@ -12,6 +12,8 @@ configkeys:
 supportedgames:
   - "Ark: Survival Ascended"
 requiresomni: true
+redirect_from:
+  - /engram_control_editor
 ---
 {% include editortitle.markdown %}
 

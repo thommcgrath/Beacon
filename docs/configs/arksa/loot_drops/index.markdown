@@ -6,6 +6,8 @@ configkeys:
   - ConfigOverrideSupplyCrateItems
 supportedgames:
   - "Ark: Survival Ascended"
+redirect_from:
+  - /loot_drops_editor
 ---
 {% include editortitle.markdown %}
 

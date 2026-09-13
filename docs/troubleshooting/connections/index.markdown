@@ -2,6 +2,8 @@
 title: Solving Connection Problems to Beacon or Nitrado
 parent: Troubleshooting
 nav_order: 3
+redirect_from:
+  - /solving_connection_problems_to
 ---
 # Solving Connection Problems to Beacon or Nitrado
 

@@ -2,6 +2,8 @@
 title: Create or Recover Your Account
 parent: User Accounts
 nav_order: 0
+redirect_from:
+  - /create_or_recover_your_account
 ---
 # Create or Recover Your Account
 

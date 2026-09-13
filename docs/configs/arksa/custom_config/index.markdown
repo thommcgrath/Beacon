@@ -4,6 +4,8 @@ parent: "Ark: Survival Ascended"
 grand_parent: Config Editors
 supportedgames:
   - "Ark: Survival Ascended"
+redirect_from:
+  - /custom_config_editor
 ---
 {% include editortitle.markdown %}
 

@@ -2,6 +2,9 @@
 title: Updating Your Server With Deploy
 parent: Server Management
 nav_order: 1
+redirect_from:
+  - /updating_your_nitrado_server
+  - /updating_your_server_with_ftp
 ---
 # {{page.title}}
 

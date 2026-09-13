@@ -1,5 +1,7 @@
 "use strict";
 
+import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
+
 export const getCurrencyFormatter = (currencyCode) => {
 	return Intl.NumberFormat('en-US', {
 		style: 'currency',
@@ -62,5 +64,115 @@ export const readFile = (file) => {
 		};
 		reader.onerror = reject;
 		reader.readAsBinaryString(file);
+	});
+};
+
+export const recursiveBase64StrToArrayBuffer = (obj) => {
+	switch (typeof obj) {
+	case 'object':
+		if (Array.isArray(obj)) {
+			return obj.reduce((newArray, value) => {
+				newArray.push(recursiveBase64StrToArrayBuffer(value));
+				return newArray;
+			}, []);
+		} else {
+			return Object.keys(obj).reduce((newObj, key) => {
+				newObj[key] = recursiveBase64StrToArrayBuffer(obj[key]);
+				return newObj;
+			}, {});
+		}
+	case 'string':
+		const prefix = '=?BINARY?B?';
+		const suffix = '?=';
+
+		if (obj.startsWith(prefix) === false || obj.endsWith(suffix) === false) {
+			return obj;
+		}
+
+		const binaryString = window.atob(obj.substring(prefix.length, obj.length - suffix.length));
+		const length = binaryString.length;
+		const bytes = new Uint8Array(length);
+		for (let idx = 0; idx < length; idx++) {
+			bytes[idx] = binaryString.charCodeAt(idx);
+		}
+		return bytes.buffer;
+	default:
+		return obj;
+	}
+};
+
+export const arrayBufferToBase64 = (buffer) => {
+	let binary = '';
+	const bytes = new Uint8Array(buffer);
+	const len = bytes.byteLength;
+	for (let i = 0; i < len; i++) {
+		binary += String.fromCharCode(bytes[i]);
+	}
+	return window.btoa(binary);
+};
+
+export const testPasskeySupport = () => {
+	return new Promise((resolve) => {
+		if (window.PublicKeyCredential && PublicKeyCredential.getClientCapabilities) {
+			PublicKeyCredential.getClientCapabilities().then((capabilities) => {
+				if (capabilities.conditionalGet === true && capabilities.passkeyPlatformAuthenticator === true) {
+					resolve(true);
+				}
+			}).catch(() => {
+				resolve(false);
+			});
+		} else {
+			resolve(false);
+		}
+	});
+};
+
+export const signalRemovedPasskey = async (rpId, credentialId) => {
+	if (!PublicKeyCredential.signalUnknownCredential) {
+		console.log('Browser does not support unknown credential signalling');
+		return;
+	}
+
+	try {
+		console.log(`Telling the browser to cancel passkey ${credentialId}…`);
+		await PublicKeyCredential.signalUnknownCredential({rpId, credentialId});
+		console.log('Browser successfully cancelled the passkey');
+	} catch {
+		console.log('Browser did not cancel the passkey');
+	}
+};
+
+export const verifyPasskey = (params = {}) => {
+	return new Promise((resolve, reject) => {
+		const defaults = Object.assign({
+			destinationUrl: '/account/auth/authenticate',
+			additionalValues: {},
+			options: {},
+		}, params);
+
+		BeaconWebRequest.get('/account/auth/passkeyOptions').then((initResponse) => {
+			const rawOptions = JSON.parse(initResponse.body);
+			const options = Object.assign(defaults.options, recursiveBase64StrToArrayBuffer(rawOptions));
+			navigator.credentials.get(options).then((passkey) => {
+				const authenticatorAttestationResponse = Object.assign(defaults.additionalValues, {
+					id: passkey.rawId ? arrayBufferToBase64(passkey.rawId) : null,
+					clientDataJSON: passkey.response.clientDataJSON  ? arrayBufferToBase64(passkey.response.clientDataJSON) : null,
+					authenticatorData: passkey.response.authenticatorData ? arrayBufferToBase64(passkey.response.authenticatorData) : null,
+					signature: passkey.response.signature ? arrayBufferToBase64(passkey.response.signature) : null,
+					userHandle: passkey.response.userHandle ? arrayBufferToBase64(passkey.response.userHandle) : null
+				});
+
+				BeaconWebRequest.post(defaults.destinationUrl, authenticatorAttestationResponse).then((verifyResponse) => {
+					resolve({verified: true, response: JSON.parse(verifyResponse.body)});
+				}).catch((err) => {
+					signalRemovedPasskey(options.publicKey.rpId, passkey.id);
+					reject(err);
+				});
+			}).catch(() => {
+				resolve({verified: false, response: null});
+			});
+		}).catch((err) => {
+			reject(err);
+		});
 	});
 };

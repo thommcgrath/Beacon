@@ -7,6 +7,8 @@ configkeys:
 supportedgames:
   - "Ark: Survival Ascended"
 requiresomni: true
+redirect_from:
+  - /crafting_costs_editor
 ---
 {% include editortitle.markdown %}
 

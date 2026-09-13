@@ -2,6 +2,8 @@
 title: Item Quality Is Different Than Expected
 parent: Troubleshooting
 nav_order: 1
+redirect_from:
+  - /item_quality_is_different_than
 ---
 # {{page.title}}
 

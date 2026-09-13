@@ -68,43 +68,34 @@ if ($user->IsAnonymous() === false) {
 	</div>
 	<div class="page-panel-pages">
 		<div class="page-panel-page page-panel-visible" page="projects">
-			<h1>Projects</h1>
 			<?php include('includes/projects.php'); ?>
 		</div>
 		<?php if ($user->IsAnonymous() === false) { ?>
 		<div class="page-panel-page" page="omni">
-			<h1>Beacon Omni</h1>
 			<?php include('includes/omni.php'); ?>
 		</div>
 		<div class="page-panel-page" page="profile">
-			<h1>Profile</h1>
 			<?php include('includes/profile.php'); ?>
 		</div>
 		<div class="page-panel-page" page="security">
-			<h1>Security</h1>
 			<?php include('includes/security.php'); ?>
 		</div>
 		<div class="page-panel-page" page="billing">
-			<h1>Billing</h1>
 			<?php include('includes/billing.php'); ?>
 		</div>
 		<div class="page-panel-page" page="sessions">
-			<h1>Sessions</h1>
 			<?php include('includes/sessions.php'); ?>
 		</div>
 		<?php } ?>
 		<div class="page-panel-page" page="services">
-			<h1>Connected Services</h1>
 			<?php include('includes/services.php'); ?>
 		</div>
 		<?php if ($isAffiliate) { ?>
 		<div class="page-panel-page" page="affiliate">
-			<h1>Affiliate Summary</h1>
 			<?php include('includes/affiliate.php'); ?>
 		</div>
 		<?php } ?>
 		<div class="page-panel-page" page="apps">
-			<h1>API Keys</h1>
 			<?php include('includes/apps.php'); ?>
 		</div>
 	</div>

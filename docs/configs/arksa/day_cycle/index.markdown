@@ -8,6 +8,8 @@ configkeys:
   - NightTimeSpeedScale
 supportedgames:
   - "Ark: Survival Ascended"
+redirect_from:
+  - /day_and_night_cycle_editor
 ---
 {% include editortitle.markdown %}
 

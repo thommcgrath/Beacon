@@ -9,6 +9,8 @@ configkeys:
 supportedgames:
   - "Ark: Survival Ascended"
 requiresomni: true
+redirect_from:
+  - /levels_and_xp_editor
 ---
 {% include editortitle.markdown %}
 

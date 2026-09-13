@@ -2,6 +2,8 @@
 title: Activating Beacon Omni
 parent: User Accounts
 nav_order: 2
+redirect_from:
+  - /activating_beacon_omni
 ---
 # Activating Beacon Omni
 

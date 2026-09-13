@@ -2,6 +2,8 @@
 title: Frequently Asked Questions
 parent: Troubleshooting
 nav_order: 1
+redirect_from:
+  - /some_drops_are_edited_others_are
 ---
 # {{page.title}}
 {: .no_toc }
@@ -27,7 +29,3 @@ When you set your project's maps in Beacon, the **New Drop**{:.ui-keyword} butto
 Take a look at the [Loot Drops guide](/configs/lootdrops/) for a refresher on all the options. Specifically pay attention to the **Minimum Item Sets**{:.ui-keyword}, **Maximum Item Sets**{:.ui-keyword}, **Minimum Entries**{:.ui-keyword}, and **Maximum Entries**{:.ui-keyword} settings. For example, if you want your drop to always contain all item sets, make sure **Minimum Item Sets**{:.ui-keyword} is at least equal to the number of item sets in the drop. Use the **Simulator**{:.ui-keyword} at the bottom of the **Item Sets**{:.ui-keyword} column to preview your settings.
 
 If the **Add Item Sets to Default**{:.ui-keyword} option is enabled, Beacon's default item set weights are much higher than the weights in Ark's default loot. This option also gives up a lot of control. Instead of turning this on, you should consider turning on the **Load Default Contents When Available**{:.ui-keyword} option in the **New Drop**{:.ui-keyword} window. This will load the default loot so you can make changes.
-
-## Question 2
-
-## Question 3

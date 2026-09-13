@@ -2,6 +2,7 @@
 	"require": {
 		"php-amqplib/php-amqplib": "^3.2",
 		"poliander/cron": "^3.2",
-		"erusev/parsedown": "^1.7"
+		"erusev/parsedown": "^1.7",
+		"report-uri/passkeys-php": "^2.0"
 	}
 }

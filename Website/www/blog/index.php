@@ -36,16 +36,16 @@ $article_data = BeaconCache::Get($article_hash);
 if (is_null($article_data)) {
 	$results = $database->Query('SELECT subject, content_markdown, preview FROM blog_articles WHERE article_id = $1;', $article_id);
 	$parser = new Parsedown();
-	
+
 	$format = 'F jS, Y \a\t g:i A \U\T\C';
 	$published = new DateTime('@' . $article_date);
 	$headline = '<h1>' . htmlentities($results->Field('subject')) . '<br><span class="subtitle text-lighter">Published <time datetime="' . htmlentities($published->format('c')) . '">' . htmlentities($published->format($format)) . '</time>';
 	if ($article_update_date - 3600 > $article_date) {
 		$updated = new DateTime('@' . $article_update_date);
-		$headline .= ' (Updated <time datetime="' . htmlentities($updated->format('c')) . '">' . htmlentities($updated->format($format)) . '</time>)';	
+		$headline .= ' (Updated <time datetime="' . htmlentities($updated->format('c')) . '">' . htmlentities($updated->format($format)) . '</time>)';
 	}
 	$headline .= '</span></h1>';
-	
+
 	$article_data = [
 		'title' => $results->Field('subject'),
 		'preview' => $results->Field('preview'),
@@ -53,7 +53,7 @@ if (is_null($article_data)) {
 		'updated' => $article_update_date,
 		'html' => $headline . "\n" . $parser->text($results->Field('content_markdown'))
 	];
-	
+
 	BeaconCache::Set($article_hash, $article_data, 86400);
 }
 
@@ -64,12 +64,12 @@ BeaconTemplate::SetIsArticle(true);
 
 $results = $database->Query('SELECT article_id, article_slug, subject FROM blog_articles WHERE publish_date < CURRENT_TIMESTAMP ORDER BY publish_date DESC LIMIT 10;');
 
-?><div id="knowledge_wrapper">
+?><div id="knowledge_wrapper" class="blog">
 	<div id="knowledge_contents">
 		<p>Recent Entries</p>
 		<ul>
 			<?php
-			
+
 			while (!$results->EOF()) {
 				if ($results->Field('article_id') == $article_id) {
 					echo '<li class="current">' . htmlentities($results->Field('subject')) . '</li>';
@@ -78,7 +78,7 @@ $results = $database->Query('SELECT article_id, article_slug, subject FROM blog_
 				}
 				$results->MoveNext();
 			}
-				
+
 			?>
 		</ul>
 		<p>Feeds</p>
@@ -123,15 +123,15 @@ if ($page > 1 || $total > $bound) {
 	} else {
 		echo '<div id="pagenav-newer">&laquo; Newer</div>';
 	}
-	
+
 	echo '<div id="pagenav-current">Page ' . $page . '</div>';
-	
+
 	if ($total > $bound) {
 		echo '<div id="pagenav-older"><a href="?page=' . ($page + 1) . '">Older &raquo;</a></div>';
 	} else {
 		echo '<div id="pagenav-older">Older &raquo;</div>';
 	}
-	
+
 	echo '</div>';
 }
 
