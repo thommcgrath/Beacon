@@ -10,14 +10,15 @@ Begin DesktopWindow EditorWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   578
+   HasTitleBar     =   True
+   Height          =   602
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   1391144959
    MenuBarVisible  =   True
-   MinimumHeight   =   578
+   MinimumHeight   =   602
    MinimumWidth    =   720
    Resizeable      =   True
    Title           =   "Publisher"
@@ -26,6 +27,7 @@ Begin DesktopWindow EditorWindow
    Width           =   720
    Begin URLConnection UploadSocket
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -42,7 +44,7 @@ Begin DesktopWindow EditorWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   20
+      Height          =   26
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -71,7 +73,7 @@ Begin DesktopWindow EditorWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   22
+      Height          =   26
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -91,7 +93,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   260
+      Top             =   268
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -110,7 +112,7 @@ Begin DesktopWindow EditorWindow
       FontUnit        =   0
       Format          =   ""
       HasBorder       =   True
-      Height          =   22
+      Height          =   26
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
@@ -131,7 +133,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   260
+      Top             =   268
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -159,7 +161,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   334
+      Top             =   352
       Transparent     =   False
       Visible         =   True
       Width           =   720
@@ -174,7 +176,7 @@ Begin DesktopWindow EditorWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   20
+      Height          =   26
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -190,7 +192,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   294
+      Top             =   306
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -212,7 +214,7 @@ Begin DesktopWindow EditorWindow
       HasBorder       =   False
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   243
+      Height          =   249
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -235,7 +237,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   335
+      Top             =   353
       Transparent     =   True
       Underline       =   False
       UnicodeMode     =   0
@@ -250,7 +252,7 @@ Begin DesktopWindow EditorWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   22
+      Height          =   26
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -289,7 +291,7 @@ Begin DesktopWindow EditorWindow
       FontUnit        =   0
       Format          =   ""
       HasBorder       =   True
-      Height          =   22
+      Height          =   26
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
@@ -324,7 +326,7 @@ Begin DesktopWindow EditorWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   22
+      Height          =   26
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -344,7 +346,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   226
+      Top             =   230
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -363,7 +365,7 @@ Begin DesktopWindow EditorWindow
       FontUnit        =   0
       Format          =   ""
       HasBorder       =   True
-      Height          =   22
+      Height          =   26
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
@@ -384,7 +386,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   226
+      Top             =   230
       Transparent     =   True
       Underline       =   False
       ValidationMask  =   ""
@@ -449,7 +451,7 @@ Begin DesktopWindow EditorWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   20
+      Height          =   26
       Index           =   -2147483648
       Italic          =   False
       Left            =   620
@@ -480,6 +482,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+      Type            =   0
    End
 End
 #tag EndDesktopWindow
@@ -670,6 +673,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Finish()
+		  Const Beacon24 = 20400000
 		  Const Beacon20 = 20000000
 		  Const Beacon16 = 10600000
 		  Const Beacon15 = 10500000
@@ -703,7 +707,10 @@ End
 		  InsertData.Value("notes") = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
 		  InsertData.Value("stage") = Self.mStageCode.ToString(Locale.Raw, "0")
 		  InsertData.Value("preview") = "'" + Self.mBannerText.ReplaceAll("'", "''") + "'"
-		  If Self.mBuildNumber >= Beacon20 Then
+		  If Self.mBuildNumber >= Beacon24 Then
+		    InsertData.Value("min_mac_version") = "'11.0.0'"
+		    InsertData.Value("min_win_version") = "'10.0.10240'"
+		  ElseIf Self.mBuildNumber >= Beacon20 Then
 		    InsertData.Value("min_mac_version") = "'10.14.0'"
 		    InsertData.Value("min_win_version") = "'10.0.10240'"
 		  Else
@@ -1048,6 +1055,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
