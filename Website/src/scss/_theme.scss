@@ -211,7 +211,7 @@ $button-yellow: #ffc107 !default;
 	color: $textColor;
 	border-width: 1px;
 	border-style: solid;
-	
+
 	@if (contrast-against($background-color, $fillColor) < 4.5) {
 		border-color: color.mix($fillColor, $foreground-color, 75%);
 	} @else {
@@ -2145,6 +2145,12 @@ div.results {
 					}
 				}
 			}
+		}
+	}
+
+	&.blog {
+		img {
+			width: 100%;
 		}
 	}
 }
