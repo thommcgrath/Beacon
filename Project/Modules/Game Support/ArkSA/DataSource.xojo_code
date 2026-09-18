@@ -934,7 +934,7 @@ Implements ArkSA.BlueprintProvider
 		  
 		  Rows = Self.SQLSelect("SELECT DISTINCT entry_string FROM engrams WHERE content_pack_id = ?1 AND entry_string IS NOT NULL;", ContentPackId)
 		  For Each Row As DatabaseRow In Rows
-		    Self.Cache.Remove(Row.Column("object_id").StringValue)
+		    Self.Cache.Remove("EngramEntry:" + Row.Column("entry_string").StringValue)
 		  Next
 		  
 		  Self.SQLExecute("DELETE FROM blueprints WHERE content_pack_id = ?1;", ContentPackId)
