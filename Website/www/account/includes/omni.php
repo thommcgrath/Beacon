@@ -8,7 +8,7 @@ if (!$has_purchased) {
 	echo '<p class="text-center">You have not purchased Beacon Omni.<br><a href="/omni/">Learn more about Beacon Omni here.</a></p>';
 
 	if (is_null($user->EmailId())) {
-		echo '<div class="notice-block notice-info w-600px wm-100 m-auto text-left"><strong>Your Account Does Not Have an Email Address</strong><br /><br />Purchases are tracked by email address. Without an email address, your account will not know which purchases to look for. If you have made a purchase that you do not see here, <a href="#profile">add the matching email address</a>, and the purchase will be linked to your account instantly.</div>';
+		echo '<div class="notice-block notice-info w-600px wm-100 m-auto text-left"><strong>Your Account Does Not Have an Email Address</strong><br /><br />Purchases are tracked by email address. Without an email address, your account will not know which purchases to look for. If you made a purchase that is not listed here, <a href="#profile">add the email address</a> associated with that purchase to your account, and it will be linked instantly.</div>';
 	}
 
 	ShowGiftCodes();
