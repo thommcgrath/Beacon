@@ -294,7 +294,7 @@ class BeaconLogin {
 				<div class="text-right"><a href="#" id="login_recover_button">Forgot Password?</a></div>
 			</div>
 			<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
-			<ul class="buttons">
+			<ul class="buttons vertical">
 				<li><input id="login_action_button" type="submit" value="Sign In"></li>
 			</ul>
 		</div>
@@ -304,14 +304,14 @@ class BeaconLogin {
 			<div class="login-separator-bar">&nbsp;</div>
 		</div>
 		<div class="login-space login-group">
-			<ul class="buttons">
+			<ul class="buttons vertical">
 				<?php if ($passkeysEnabled) { ?><li id="login_passkeys_cell" class="hidden"><button id="login_use_passkey_button">Sign In With Passkey</button></li><?php } ?>
 				<li><button id="login_auth_nitrado">Sign In With Nitrado</button></li>
 			</ul>
 		</div><?php } ?>
 		<div class="login-space login-group text-center">Don't have an account? <a href="#" id="login_signup_button">Sign Up</a></div>
 		<?php if ($withCancel) { ?><div class="login-space login-group">
-			<ul class="buttons">
+			<ul class="buttons vertical">
 				<li><button id="login_cancel_button" class="red">Cancel</button></li>
 			</ul>
 		</div><?php } ?>

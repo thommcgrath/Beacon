@@ -3342,6 +3342,32 @@ body.no-navigation {
 				margin-top: $loginSpacing;
 			}
 		}
+
+		@media (min-width: 635px) {
+			&:not(.vertical) {
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-ms-flex-wrap: nowrap;
+				flex-wrap: nowrap;
+				-webkit-box-orient: horizontal;
+				-webkit-box-direction: normal;
+				-ms-flex-direction: row;
+				flex-direction: row;
+				-webkit-box-pack: center;
+				-ms-flex-pack: center;
+				justify-content: center;
+
+				li {
+					margin-top: 0px;
+					margin-bottom: 0px;
+
+					&+li {
+						margin-left: $loginSpacing;
+					}
+				}
+			}
+		}
 	}
 
 	.login-space {
