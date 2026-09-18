@@ -110,7 +110,7 @@ case 'login':
 
 	$providerAccountId = '';
 	$providerAccountName = '';
-	$providerAccountEmail = '';
+	$providerAccountEmail = null;
 	$providerDisplayName = $provider;
 	switch ($provider) {
 	case 'Nitrado':
@@ -214,13 +214,13 @@ try {
 			'name' => $providerDisplayName,
 			'metadata' => $metadata,
 		]);
-	} elseif (empty($providerAccountEmail)) {
-		$providerAccountEmail = $provider . '+' . $providerAccountId . '@oauth.usebeacon.app';
 	}
 
 	if (is_null($user)) {
 		// See if we have a user with the same email address.
-		$user = User::Fetch($providerAccountEmail);
+		if (is_null($providerAccountEmail) === false) {
+			$user = User::Fetch($providerAccountEmail);
+		}
 		if (is_null($user)) {
 			if (empty($providerAccountName)) {
 				$providerAccountName = BeaconLogin::GenerateUsername();

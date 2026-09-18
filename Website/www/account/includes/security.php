@@ -77,7 +77,12 @@ if ($hasPassword) {
 		$passwordSignIn->AddButton(new SignInOptionRevokeButton('Remove Password', $credentialMap[UserCredential::TypePassword]));
 	}
 } else {
-	$passwordSignIn->AddButton(new SignInOptionButton('change-password', 'Set Up'));
+	if (is_null($user->EmailId())) {
+		$passwordSignIn->SetIsEnabled(false);
+		$passwordSignIn->AddTag('Add Email Address To Set Up Password');
+	} else {
+		$passwordSignIn->AddButton(new SignInOptionButton('change-password', 'Set Up'));
+	}
 }
 $signInOptions[] = $passwordSignIn;
 

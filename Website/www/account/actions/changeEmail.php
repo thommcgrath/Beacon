@@ -54,7 +54,7 @@ case 'POST':
 		exit;
 	}
 
-	$verifier = EmailVerificationCode::Create($newEmail, ['emailId' => $user->EmailId()], EmailVerificationCode::kTemplateConfirmChange);
+	$verifier = EmailVerificationCode::Create($newEmail, ['emailId' => ($user->EmailId() ?? $user->UserId())], EmailVerificationCode::kTemplateConfirmChange);
 
 	http_response_code(200);
 	echo json_encode(['message' => 'Email Sent.'], JSON_PRETTY_PRINT);
@@ -94,7 +94,7 @@ case 'GET':
 	$newEmailId = $rows->Field('email_id');
 
 	$database->Query('UPDATE public.purchases SET purchaser_email = $1 WHERE purchaser_email = $2;', $newEmailId, $oldEmailId);
-	$database->Query('UPDATE public.users SET email_id = $1 WHERE email_id = $2;', $newEmailId, $oldEmailId);
+	$database->Query('UPDATE public.users SET email_id = $2 WHERE user_id = $1;', $user->UserId(), $newEmailId);
 
 	$rows = $database->Query('SELECT merchant_reference FROM purchases WHERE purchaser_email = $1;', $newEmailId);
 	$stripeApi = null;

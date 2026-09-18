@@ -76,6 +76,10 @@ class SignInOption {
 		return $this->enabled;
 	}
 
+	public function SetIsEnabled(bool $value): void {
+		$this->enabled = $value;
+	}
+
 	public function HasTags(): bool {
 		return count($this->tags) > 0;
 	}

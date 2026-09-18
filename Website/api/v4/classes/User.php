@@ -159,9 +159,16 @@ class User extends DatabaseObject implements JsonSerializable {
 			throw new Exception('Username must not contain a # character.');
 		}
 
-		$email = strtolower($properties['email']);
-		if (BeaconEmail::IsEmailValid($email) === false) {
-			throw new Exception('Email address is not valid.');
+		$email = $properties['email'];
+		if (is_null($email)) {
+			if ($securityModel === self::SecurityModelLegacy) {
+				throw new Exception('Email address is not valid.');
+			}
+		} else {
+			$email = strtolower($email);
+			if (BeaconEmail::IsEmailValid($email) === false) {
+				throw new Exception('Email address is not valid.');
+			}
 		}
 
 		$privateKey = $properties['privateKey'];
@@ -184,7 +191,7 @@ class User extends DatabaseObject implements JsonSerializable {
 		}
 
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.users (user_id, public_key, usercloud_key, email_id, username, private_key, private_key_salt, private_key_iterations, security_model) VALUES ($1, $2, $3, uuid_for_email($4, TRUE), $5, $6, $7, $8, $9);", $userId, $publicKey, $cloudKey, $email, $username, $privateKey, $privateKeySalt, $privateKeyIterations, $securityModel);
+		$database->Query("INSERT INTO public.users (user_id, public_key, usercloud_key, email_id, username, private_key, private_key_salt, private_key_iterations, security_model) VALUES ($1, $2, $3, CASE WHEN $4::TEXT IS NULL THEN NULL ELSE uuid_for_email($4::EMAIL, TRUE) END, $5, $6, $7, $8, $9);", $userId, $publicKey, $cloudKey, $email, $username, $privateKey, $privateKeySalt, $privateKeyIterations, $securityModel);
 		$database->Commit();
 
 		return static::Fetch($userId);

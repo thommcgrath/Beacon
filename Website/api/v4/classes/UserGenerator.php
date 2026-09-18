@@ -12,7 +12,7 @@ abstract class UserGenerator {
 		]);
 	}
 
-	public static function CreateNamed(string $email, string $username, string $password = ''): User {
+	public static function CreateNamed(?string $email, string $username, string $password = ''): User {
 		$publicKeyPem = null;
 		$privateKeyPem = null;
 		BeaconEncryption::GenerateKeyPair($publicKeyPem, $privateKeyPem);

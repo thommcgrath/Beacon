@@ -2180,11 +2180,15 @@ ul.no-markings, ol.no-markings {
 	border-width: 1px;
 	border-style: solid;
 	border-radius: 0.25rem;
-	text-align: center;
 	padding: 16px;
+	box-sizing: border-box;
 
 	&+& {
 		margin-top: 1rem;
+	}
+
+	&:not(.text-left, .text-right) {
+		text-align: center;
 	}
 
 	&.notice-warning {
