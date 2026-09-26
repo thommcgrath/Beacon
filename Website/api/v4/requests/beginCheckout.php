@@ -24,6 +24,7 @@ function handleRequest(array $context): Response {
 	$trialDays = min(filter_var($cart['trialDays'] ?? 1, FILTER_VALIDATE_INT), 30);
 	$cancelUrl = $cart['cancelUrl'] ?? '';
 	$hostOverride = $cart['host'] ?? 'https://' . BeaconCommon::Domain();
+	$userId = $cart['userId'] ?? null;
 
 	if (count($bundles) === 0) {
 		return Response::NewJsonError(message: 'The cart is empty.', code: 'emptyCart', httpStatus: 400);
@@ -43,22 +44,31 @@ function handleRequest(array $context): Response {
 	$userIsSuspect = false;
 	$user = null;
 	$licenses = [];
+	$verifyEmail = true;
 	try {
-		$rows = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
-		$emailId = $rows->Field('email_id');
+		$user = User::Fetch($email);
+		$emailId = null;
+		if (is_null($user) && is_null($userId) === false) {
+			$user = User::Fetch($userId);
+			$emailId = $user->EmailId();
+		}
+
+		if (is_null($emailId)) {
+			$rows = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+			$emailId = $rows->Field('email_id');
+		} else {
+			$verifyEmail = false;
+		}
 		$licenses = License::Search(['emailId' => $emailId], true);
 
-		$user = User::Fetch($email);
-		if (is_null($user) === false) {
-			if ($user->IsBanned()) {
-				return Response::NewJsonError(message: 'Stripe was unable to start the checkout session.', code: 'checkoutSessionFailed', httpStatus: 400);
-			}
+		if (is_null($user) === false && $user->IsBanned()) {
+			return Response::NewJsonError(message: 'Stripe was unable to start the checkout session.', code: 'checkoutSessionFailed', httpStatus: 400);
 		}
 	} catch (Exception $err) {
 	}
 
 	try {
-		if (is_null($user)) {
+		if ($verifyEmail) {
 			$url = 'https://api.cleantalk.org/?method_name=email_check&auth_key=' . urlencode(BeaconCommon::GetGlobal('CleanTalk Email Check Key')) . '&email=' . urlencode($email);
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -113,8 +123,8 @@ function handleRequest(array $context): Response {
 		'automatic_tax' => ['enabled' => 'true'],
 		'line_items' => [],
 	];
-	if (is_null($user) === false) {
-		$payment['metadata']['Beacon User UUID'] = $user->UserId();
+	if (is_null($userId) === false) {
+		$payment['metadata']['Beacon User UUID'] = $userId;
 	}
 
 	try {

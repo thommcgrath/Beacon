@@ -106,30 +106,40 @@ while (!$paymentMethodRows->EOF()) {
 	$paymentMethodRows->MoveNext();
 }
 
-$forceEmail = null;
-if (isset($_GET['licenseId'])) {
+$session = BeaconCommon::GetSession();
+$userId = null;
+$emailId = null;
+if (is_null($session) === false) {
+	$user = $session->User();
+	$userId = $user->UserId();
+	$emailId = $user->EmailId();
+} elseif (isset($_GET['licenseId'])) {
 	$licenseId = $_GET['licenseId'];
 	if (BeaconUUID::Validate($licenseId)) {
 		$license = BeaconAPI\v4\License::Fetch($licenseId);
 		if (is_null($license) === false) {
 			$emailId = $license->EmailId();
-			$results = $database->Query('SELECT merchant_reference FROM public.purchases WHERE purchaser_email = $1 AND refunded = FALSE;', $emailId);
-			$stripeApi = null;
-			while (!$results->EOF()) {
-				$merchantReference = $results->Field('merchant_reference');
-				if (str_starts_with($merchantReference, 'pi_')) {
-					if (is_null($stripeApi)) {
-						$stripeApi = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'), '2022-08-01');
-					}
-					$email = $stripeApi->EmailForPaymentIntent($merchantReference);
-					if (is_null($email) === false) {
-						$forceEmail = $email;
-						break;
-					}
-				}
-				$results->MoveNext();
+		}
+	}
+}
+
+$forceEmail = null;
+if (is_null($emailId) === false) {
+	$results = $database->Query('SELECT merchant_reference FROM public.purchases WHERE purchaser_email = $1 AND refunded = FALSE;', $emailId);
+	$stripeApi = null;
+	while (!$results->EOF()) {
+		$merchantReference = $results->Field('merchant_reference');
+		if (str_starts_with($merchantReference, 'pi_')) {
+			if (is_null($stripeApi)) {
+				$stripeApi = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'), '2022-08-01');
+			}
+			$email = $stripeApi->EmailForPaymentIntent($merchantReference);
+			if (is_null($email) === false) {
+				$forceEmail = $email;
+				break;
 			}
 		}
+		$results->MoveNext();
 	}
 }
 
@@ -137,7 +147,6 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 BeaconTemplate::StartScript();
 ?>
 <script>
-
 document.addEventListener('DOMContentLoaded', () => {
 	const event = new Event('beaconRunCheckout');
 	event.checkoutProperties = <?php echo json_encode([
@@ -152,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		'successUrl' => BeaconCommon::AbsoluteURL('/omni/welcome/?session={CHECKOUT_SESSION_ID}'),
 		'cancelUrl' => BeaconCommon::AbsoluteURL('/omni#checkout'),
 		'affiliateId' => ($_COOKIE['beacon_affiliate'] ?? null),
+		'userId' => $userId,
 	]); ?>;
 	document.dispatchEvent(event);
 });

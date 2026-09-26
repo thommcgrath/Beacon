@@ -1255,6 +1255,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 						cancelUrl: checkoutProperties.cancelUrl,
 						currencyCode: checkoutProperties.currencyCode,
 						affiliateId: checkoutProperties.affiliateId,
+						userId: checkoutProperties.userId,
 					}).then((response) => {
 						try {
 							const parsed = JSON.parse(response.body);

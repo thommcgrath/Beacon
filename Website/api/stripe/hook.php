@@ -83,9 +83,19 @@ case 'checkout.session.completed':
 	$database->BeginTransaction();
 	$purchase = CreatePurchaseFromCheckoutSession($session);
 	$customerId = $session['customer'];
-
+	$user = null;
+	$userId = $session['metadata']['Beacon User UUID'] ?? null;
 	$email = $session['customer_details']['email'];
-	$user = User::Fetch($purchase->Email());
+
+	if (is_null($userId) === false) {
+		$user = User::Fetch($userId);
+		if (is_null($user) === false && is_null($user->EmailId())) {
+			$user->SetEmailAddress($email);
+			$user->Save();
+		}
+	} else {
+		$user = User::Fetch($purchase->Email());
+	}
 	if (is_null($user)) {
 		EmailVerificationCode::Create($email);
 	}
