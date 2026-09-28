@@ -83,19 +83,8 @@ case 'checkout.session.completed':
 	$database->BeginTransaction();
 	$purchase = CreatePurchaseFromCheckoutSession($session);
 	$customerId = $session['customer'];
-	$user = null;
-	$userId = $session['metadata']['Beacon User UUID'] ?? null;
 	$email = $session['customer_details']['email'];
-
-	if (is_null($userId) === false) {
-		$user = User::Fetch($userId);
-		if (is_null($user) === false && is_null($user->EmailId())) {
-			$user->SetEmailAddress($email);
-			$user->Save();
-		}
-	} else {
-		$user = User::Fetch($purchase->Email());
-	}
+	$user = User::Fetch($purchase->Email()); // This will usually return a UUID
 	if (is_null($user)) {
 		EmailVerificationCode::Create($email);
 	}
@@ -474,6 +463,19 @@ function CreatePurchaseFromCheckoutSession(array $session): BeaconPurchase {
 		$purchase = BeaconPurchase::Load($database, $intentId);
 		if (is_null($purchase)) {
 			$email = $session['customer_details']['email'];
+			$userId = $session['metadata']['Beacon User UUID'] ?? null;
+			if (is_null($userId) === false) {
+				$user = User::Fetch($userId);
+				if (is_null($user) === false) {
+					$emailId = $user->EmailId();
+					if (is_null($emailId) === false) {
+						$email = $user->EmailId();
+					} else {
+						$user->SetEmailAddress($email);
+						$user->Save();
+					}
+				}
+			}
 			$billingLocality = $session['customer_details']['address']['country'];
 			if (isset($session['customer_details']['address']['state'])) {
 				$billingLocality .= ' ' . $session['customer_details']['address']['state'];
