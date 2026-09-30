@@ -256,7 +256,7 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  
-		  Return Beacon.HostFeatureFullBackups Or Beacon.HostFeatureLaunchOptions Or Beacon.HostFeatureRestarts Or Beacon.HostFeatureStatus
+		  Return Beacon.HostFeatures.FullBackups Or Beacon.HostFeatures.LaunchOptions Or Beacon.HostFeatures.Restarts Or Beacon.HostFeatures.Status
 		End Function
 	#tag EndMethod
 

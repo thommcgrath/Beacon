@@ -1083,8 +1083,10 @@ End
 		Private Sub Begin()
 		  If Self.PlanMenu.RowCount = 0 Then
 		    Self.ShowAlert("No common update strategy is available.", "The chosen servers do not share any common update strategy. Try choosing servers from the same hosting provider.")
+		    Return
 		  ElseIf Self.PlanMenu.SelectedRowIndex = -1 Then
 		    Self.ShowAlert("An update strategy must be chosen.", "Beacon uses the update strategy to determine when to start or stop servers.")
+		    Return
 		  End If
 		  
 		  Var NowGMT As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
@@ -1132,7 +1134,7 @@ End
 		  
 		  // Prompt for the stop message
 		  Var StopMessage As String
-		  If (Self.mSupportedFeatures And Beacon.HostFeatureStopMessages) = Beacon.HostFeatureStopMessages Then
+		  If (Self.mSupportedFeatures And Beacon.HostFeatures.StopMessages) = Beacon.HostFeatures.StopMessages Then
 		    If (Self.Settings Is Nil) = False And Self.Settings.StopMessage.IsEmpty = False Then
 		      StopMessage = Self.Settings.StopMessage
 		    Else
@@ -1160,6 +1162,7 @@ End
 		  End If
 		  
 		  // Start the engines!
+		  NotificationKit.Post(Self.Notification_DeployStarted, Nil)
 		  Var Settings As Beacon.DeploySettings = Self.CreateSettings
 		  Settings.StopMessage = StopMessage
 		  For Each Entry As DictionaryEntry In Self.Engines
@@ -1440,7 +1443,7 @@ End
 		    End Try
 		  Next
 		  
-		  Self.BackupSaveDataLabel.Visible = (Self.mSupportedFeatures And (Beacon.HostFeatureFullBackups Or Beacon.HostFeatureSaveBackups)) <> 0
+		  Self.BackupSaveDataLabel.Visible = (Self.mSupportedFeatures And (Beacon.HostFeatures.FullBackups Or Beacon.HostFeatures.SaveBackups)) <> 0
 		  Self.BackupSaveDataSwitch.Visible = Self.BackupSaveDataLabel.Visible
 		  
 		  Self.UpdateControlPositions()
@@ -1595,6 +1598,12 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = CaptionRunAdvisor, Type = String, Dynamic = True, Default = \"Run advisor:", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_DeployEnded, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.deploy.ended", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_DeployStarted, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.deploy.started", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageLog, Type = Double, Dynamic = False, Default = \"1", Scope = Private
@@ -1797,7 +1806,7 @@ End
 		  Var Settings As Beacon.DeploySettings = Self.CreateSettings
 		  Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionRunImmediately
 		  
-		  Var UseStopMessage As Boolean = (Self.mSupportedFeatures And Beacon.HostFeatureStopMessages) = Beacon.HostFeatureStopMessages
+		  Var UseStopMessage As Boolean = (Self.mSupportedFeatures And Beacon.HostFeatures.StopMessages) = Beacon.HostFeatures.StopMessages
 		  If UseStopMessage Then
 		    Var StopMessage As String = StopMessageDialog.Present(Self)
 		    If StopMessage.IsEmpty Then
@@ -1927,6 +1936,7 @@ End
 		    Self.Modified = False
 		    Self.DeployFinished = True
 		    Me.RunMode = Timer.RunModes.Off
+		    NotificationKit.Post(Self.Notification_DeployEnded, Nil)
 		    
 		    If AnyCancelled Then
 		      Return

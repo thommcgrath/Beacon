@@ -9,6 +9,7 @@ Implements Beacon.OAuthConsumer
 		  
 		  Self.mServerId = SaveData.Lookup("serverId", "")
 		  Self.mTokenId = SaveData.Lookup("tokenId", "")
+		  Self.mFeatureFlags = SaveData.Lookup("featureFlags", Beacon.HostFeatures.Unknown)
 		End Sub
 	#tag EndEvent
 
@@ -18,14 +19,40 @@ Implements Beacon.OAuthConsumer
 		  
 		  SaveData.Value("serverId") = Self.mServerId
 		  SaveData.Value("tokenId") = Self.mTokenId
+		  SaveData.Value("featureFlags") = Self.mFeatureFlags
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  // Calling the overridden superclass constructor.
+		  Super.Constructor
+		  Self.mFeatureFlags = Beacon.HostFeatures.Unknown
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CreateProvider(Logger As Beacon.LogProducer = Nil) As Beacon.HostingProvider
 		  Return New BeaconHostingAPI.HostingProvider(Logger)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FeatureFlags() As UInt64
+		  Return Self.mFeatureFlags
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub FeatureFlags(Assigns Value As UInt64)
+		  If Self.mFeatureFlags = Value Then
+		    Return
+		  End If
+		  
+		  Self.mFeatureFlags = Value
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -82,6 +109,10 @@ Implements Beacon.OAuthConsumer
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mFeatureFlags As UInt64
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mServerId As String

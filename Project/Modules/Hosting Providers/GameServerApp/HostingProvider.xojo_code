@@ -107,7 +107,7 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  
-		  Return Beacon.HostFeatureLaunchOptions
+		  Return Beacon.HostFeatures.LaunchOptions
 		End Function
 	#tag EndMethod
 

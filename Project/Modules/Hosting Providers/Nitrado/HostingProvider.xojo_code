@@ -208,7 +208,7 @@ Implements Beacon.HostingProvider,Palworld.HostingProvider,Ark.HostingProvider,A
 		  #Pragma Unused Project
 		  #Pragma Unused Profile
 		  
-		  Return Beacon.HostFeatureConfigBackups Or Beacon.HostFeatureLaunchOptions Or Beacon.HostFeatureRestarts Or Beacon.HostFeatureStatus Or Beacon.HostFeatureStopMessages
+		  Return Beacon.HostFeatures.ConfigBackups Or Beacon.HostFeatures.LaunchOptions Or Beacon.HostFeatures.Restarts Or Beacon.HostFeatures.Status Or Beacon.HostFeatures.StopMessages
 		End Function
 	#tag EndMethod
 

@@ -6,7 +6,11 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		  Var Holder As New Beacon.LockHolder(mDetailsLock)
 		  #Pragma Unused Holder
 		  If mEndpointDetails.HasKey(Profile.ProfileId) = False Then
-		    mEndpointDetails.Value(Profile.ProfileId) = Self.GetEndpointDetails(Token)
+		    Var Details As EndpointDetails = Self.GetEndpointDetails(Token)
+		    mEndpointDetails.Value(Profile.ProfileId) = Details
+		    If Profile.HostConfig IsA BeaconHostingAPI.HostConfig Then
+		      BeaconHostingAPI.HostConfig(Profile.HostConfig).FeatureFlags = Details.FeatureFlags
+		    End If
 		  End If
 		  
 		  If Path.BeginsWith("/") = False Then
@@ -379,13 +383,34 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 
 	#tag Method, Flags = &h0
 		Function FeatureFlags(Project As Beacon.Project, Profile As Beacon.ServerProfile) As UInt64
+		  Var Flags As UInt64 = Beacon.HostFeatures.Unknown
+		  If Profile.HostConfig IsA BeaconHostingAPI.HostConfig Then
+		    Flags = BeaconHostingAPI.HostConfig(Profile.HostConfig).FeatureFlags
+		  End If
+		  If (Flags And Beacon.HostFeatures.Unknown) = 0 Then
+		    Return Flags
+		  End If
+		  
 		  Var Holder As New Beacon.LockHolder(mDetailsLock)
 		  #Pragma Unused Holder
 		  If mEndpointDetails.HasKey(Profile.ProfileId) = False Then
+		    If Thread.Current Is Nil Then
+		      // Cannot lookup details right now
+		      Return -1 Xor Beacon.HostFeatures.Unknown
+		    End If
+		    
 		    Var ServerId As String
 		    Var Token As BeaconAPI.ProviderToken
 		    Self.GetCredentials(Project, Profile, ServerId, Token)
-		    mEndpointDetails.Value(Profile.ProfileId) = Self.GetEndpointDetails(Token)
+		    
+		    Var Details As EndpointDetails = Self.GetEndpointDetails(Token)
+		    If Details Is Nil Then
+		      Return -1 Xor Beacon.HostFeatures.Unknown
+		    End If
+		    mEndpointDetails.Value(Profile.ProfileId) = Details
+		    If Profile.HostConfig IsA BeaconHostingAPI.HostConfig Then
+		      BeaconHostingAPI.HostConfig(Profile.HostConfig).FeatureFlags = Details.FeatureFlags
+		    End If
 		  End If
 		  Return EndpointDetails(mEndpointDetails.Value(Profile.ProfileId).ObjectValue).FeatureFlags
 		End Function
@@ -454,23 +479,23 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		      Var Key As String = Capabilities.ValueAt(Idx)
 		      Select Case Key
 		      Case "status"
-		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureStatus
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatures.Status
 		      Case "restarts"
-		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureRestarts
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatures.Restarts
 		      Case "stopMessages"
-		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureStopMessages
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatures.StopMessages
 		      Case "fullBackups"
-		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureFullBackups
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatures.FullBackups
 		      Case "configBackups"
-		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureConfigBackups
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatures.ConfigBackups
 		      Case "saveBackups"
-		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureSaveBackups
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatures.SaveBackups
 		      Case "launchOptions"
-		        FeatureFlags = FeatureFlags Or Beacon.HostFeatureLaunchOptions
+		        FeatureFlags = FeatureFlags Or Beacon.HostFeatures.LaunchOptions
 		      End Select
 		    Next
 		  Else
-		    FeatureFlags = -1
+		    FeatureFlags = -1 Xor Beacon.HostFeatures.Unknown
 		  End If
 		  
 		  Return New EndpointDetails(BaseUrl, FeatureFlags)
@@ -629,6 +654,7 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		    ProfileConfig.ServerId = ServerId
 		    ProfileConfig.TokenId = Token.TokenId
 		    ProfileConfig.TokenKey = Token.EncryptionKey
+		    ProfileConfig.FeatureFlags = Details.FeatureFlags
 		    Profile.HostConfig = ProfileConfig
 		    Profile.Platform = Platform
 		    Profile.Modified = False

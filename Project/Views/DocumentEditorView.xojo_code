@@ -15,7 +15,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		Sub Closing()
 		  RaiseEvent Closing
 		  
-		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged, DeployManager.Notification_DeployEnded)
 		  
 		  If (Self.Project Is Nil) = False Then
 		    Self.Project.RemoveObserver(Self, "Title")
@@ -46,7 +46,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Event
 		Sub Opening()
-		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged, DeployManager.Notification_DeployEnded)
 		  
 		  If (Self.Project Is Nil) = False Then
 		    Self.Project.AddObserver(Self, "Title")
@@ -419,6 +419,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    
 		    Self.mSubscribedToProjectChannel = False
 		    Self.SubscribeToProjectChannel()
+		  Case DeployManager.Notification_DeployEnded
+		    Self.Modified = Self.Project.Modified
 		  End Select
 		End Sub
 	#tag EndMethod

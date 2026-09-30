@@ -1694,43 +1694,43 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function SupportsConfigBackups(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
-		  Return (Provider.FeatureFlags(Project, Profile) And (HostFeatureFullBackups Or HostFeatureConfigBackups)) <> 0
+		  Return (Provider.FeatureFlags(Project, Profile) And (HostFeatures.FullBackups Or HostFeatures.ConfigBackups)) <> 0
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsFullBackups(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
-		  Return Provider.HasFeatures(Project, Profile, HostFeatureFullBackups)
+		  Return Provider.HasFeatures(Project, Profile, HostFeatures.FullBackups)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsLaunchOptions(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
-		  Return Provider.HasFeatures(Project, Profile, HostFeatureLaunchOptions)
+		  Return Provider.HasFeatures(Project, Profile, HostFeatures.LaunchOptions)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsRestarts(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
-		  Return Provider.HasFeatures(Project, Profile, HostFeatureStatus And HostFeatureRestarts)
+		  Return Provider.HasFeatures(Project, Profile, HostFeatures.Status And HostFeatures.Restarts)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsSaveBackups(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
-		  Return (Provider.FeatureFlags(Project, Profile) And (HostFeatureFullBackups Or HostFeatureSaveBackups)) <> 0
+		  Return (Provider.FeatureFlags(Project, Profile) And (HostFeatures.FullBackups Or HostFeatures.SaveBackups)) <> 0
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsStatus(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
-		  Return Provider.HasFeatures(Project, Profile, HostFeatureStatus)
+		  Return Provider.HasFeatures(Project, Profile, HostFeatures.Status)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsStopMessages(Extends Provider As Beacon.HostingProvider, Project As Beacon.Project, Profile As Beacon.ServerProfile) As Boolean
-		  Return Provider.HasFeatures(Project, Profile, HostFeatureStatus And HostFeatureRestarts And HostFeatureStopMessages)
+		  Return Provider.HasFeatures(Project, Profile, HostFeatures.Status And HostFeatures.Restarts And HostFeatures.StopMessages)
 		End Function
 	#tag EndMethod
 
@@ -1886,27 +1886,6 @@ Protected Module Beacon
 	#tag Constant, Name = FTPModeSSH, Type = String, Dynamic = False, Default = \"sftp", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = HostFeatureConfigBackups, Type = Double, Dynamic = False, Default = \"16", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = HostFeatureFullBackups, Type = Double, Dynamic = False, Default = \"8", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = HostFeatureLaunchOptions, Type = Double, Dynamic = False, Default = \"64", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = HostFeatureRestarts, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = HostFeatureSaveBackups, Type = Double, Dynamic = False, Default = \"32", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = HostFeatureStatus, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = HostFeatureStopMessages, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
-	#tag EndConstant
-
 	#tag Constant, Name = MapTypeCanon, Type = String, Dynamic = False, Default = \"Official Canon", Scope = Protected
 	#tag EndConstant
 
@@ -1976,6 +1955,17 @@ Protected Module Beacon
 		StopUploadStart
 		  UploadRestart
 		UploadOnly
+	#tag EndEnum
+
+	#tag Enum, Name = HostFeatures, Type = Integer, Flags = &h1, Binary = True
+		Unknown
+		  Status
+		  Restarts
+		  StopMessages
+		  FullBackups
+		  ConfigBackups
+		  SaveBackups
+		LaunchOptions
 	#tag EndEnum
 
 
