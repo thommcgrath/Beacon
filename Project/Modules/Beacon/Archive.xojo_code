@@ -234,7 +234,11 @@ Protected Class Archive
 		      Var Offset As Int64
 		      Var FileContents As New MemoryBlock(0)
 		      While FileContents.Size <> CType(TargetSize, Integer)
-		        FileContents = FileContents +  Self.mReader.ReadDataBlockMemory(Offset)
+		        Var Chunk As MemoryBlock = Self.mReader.ReadDataBlockMemory(Offset)
+		        If Chunk Is Nil Or Chunk.Size = 0 Then
+		          Raise New UnsupportedFormatException("Archive entry does not contain enough data. Expected " + Beacon.BytesToString(TargetSize, Locale.Current) + ", but loaded only " + Beacon.BytesToString(FileContents.Size, Locale.Current) + ".")
+		        End If
+		        FileContents = FileContents + Chunk
 		      Wend
 		      
 		      Self.mFileContents.Value(Entry.PathName) = FileContents
