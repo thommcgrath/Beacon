@@ -90,7 +90,7 @@ class Authenticator implements JsonSerializable {
 				'secret' => $secret,
 			];
 			$database->BeginTransaction();
-			$database->Query('INSERT INTO public.user_authenticators (authenticator_id, user_id, type, nickname, date_added, metadata) VALUES ($1, $2, $3, $4, TO_TIMESTAMP($5), $6);', $authenticatorId, $userId, $nickname, $dateAdded, json_encode($metadata));
+			$database->Query('INSERT INTO public.user_authenticators (authenticator_id, user_id, type, nickname, date_added, metadata) VALUES ($1, $2, $3, $4, TO_TIMESTAMP($5), $6);', $authenticatorId, $userId, 'TOTP', $nickname, $dateAdded, json_encode($metadata));
 			$rows = $database->Query('SELECT code FROM public.user_backup_codes WHERE user_id = $1;', $userId);
 			$backupCodes = [];
 			while (!$rows->EOF()) {
