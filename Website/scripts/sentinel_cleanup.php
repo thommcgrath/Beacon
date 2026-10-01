@@ -21,6 +21,8 @@ $rows = $database->Query("DELETE FROM sentinel.watcher_logs WHERE message_time <
 echo "Deleted {$rows->RecordCount()} watcher messages.\n";
 $rows = $database->Query("DELETE FROM sentinel.scripts WHERE deleted = TRUE AND date_modified < CURRENT_TIMESTAMP - '30 days'::INTERVAL AND script_id NOT IN (SELECT DISTINCT script_id FROM sentinel.active_scripts) RETURNING script_id;");
 echo "Deleted {$rows->RecordCount()} unused scripts.\n";
+$rows = $database->Query("DELETE FROM sentinel.player_sessions WHERE UPPER_INF(active_times) = FALSE AND UPPER(active_times) < CURRENT_TIMESTAMP - '30 days'::INTERVAL RETURNING player_session_id;");
+echo "Deleted {$rows->RecordCount()} player sessions.\n";
 $database->Commit();
 echo "Sentinel data cleaned\n";
 
