@@ -99,7 +99,7 @@ class Dino extends DatabaseObject implements JsonSerializable {
 			switch ($filters['sortedColumn']) {
 			case 'dinoName':
 			case 'dinoDisplayName':
-				$sortColumn = 'dinoName';
+				$sortColumn = 'dinoDisplayName';
 				break;
 			case 'serviceDisplayName':
 			case 'tribeName':
