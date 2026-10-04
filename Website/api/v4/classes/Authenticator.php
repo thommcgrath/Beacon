@@ -173,7 +173,7 @@ class Authenticator implements JsonSerializable {
 			if ($remainingAuthenticators <= 0) {
 				$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1;', $userId);
 			}
-			$datbase->Commit();
+			$database->Commit();
 			break;
 		default:
 			$database->BeginTransaction();
