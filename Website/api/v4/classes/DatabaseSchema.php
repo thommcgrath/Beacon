@@ -166,15 +166,18 @@ class DatabaseSchema {
 			$placeholder = '$' . $placeholder;
 		}
 
-		if ($operator === 'ILIKE') {
+		switch ($operator) {
+		case 'ILIKE':
 			$value = '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $value ?? '') . '%';
 			return $column->Accessor($this->table) . ' ILIKE ' . $placeholder;
-		} elseif ($operator === 'LIKE') {
+		case 'LIKE':
 			$value = '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $value ?? '') . '%';
 			return $column->Accessor($this->table) . ' LIKE ' . $placeholder;
-		} elseif ($operator === 'SEARCH') {
-			return 'public.websearch(' . $column->Accessor($this->table) . ', ' . $placeholder . ')';
-		} else {
+		case 'VECTOR':
+			return $column->Accessor($this->table) . " @@ websearch_to_tsquery('english', " . $placeholder . ")";
+		case 'SEARCH':
+			return "to_tsvector('english', " . $column->Accessor($this->table) . ") @@ websearch_to_tsquery('english', " . $placeholder . ")";
+		default:
 			return $column->Accessor($this->table) . ' ' . $operator . ' ' . $placeholder;
 		}
 	}

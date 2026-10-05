@@ -46,7 +46,7 @@ class CommunityScript extends Script {
 		$parameters->allowAll = true;
 		if (isset($filters['search'])) {
 			$placeholder = $parameters->AddValue($filters['search']);
-			$parameters->clauses[] = "(public.websearch(scripts.name, \${$placeholder}) OR public.websearch(scripts.preview, \${$placeholder}) OR public.websearch(scripts.description, \${$placeholder}))";
+			$parameters->clauses[] = "(to_tsvector('english', scripts.name) @@ websearch_to_tsquery('english', \${$placeholder}) OR to_tsvector('english', scripts.preview) @@ websearch_to_tsquery('english', \${$placeholder}) OR to_tsvector('english', scripts.description) @@ websearch_to_tsquery('english', \${$placeholder}))";
 		} else {
 			$parameters->AddFromFilter($schema, $filters, 'name', 'SEARCH');
 			$parameters->AddFromFilter($schema, $filters, 'description', 'SEARCH');

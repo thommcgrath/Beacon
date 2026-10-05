@@ -273,7 +273,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 
 		if (isset($filters['searchableName'])) {
 			$placeholder = $parameters->AddValue($filters['searchableName']);
-			$parameters->clauses[] = '(public.websearch(services.name, $' . $placeholder . ') OR public.websearch(services.nickname, $' . $placeholder . ') OR public.websearch(services.mini_name, $' . $placeholder . '))';
+			$parameters->clauses[] = "(to_tsvector('english', services.name) @@ websearch_to_tsquery('english', \${$placeholder}) OR to_tsvector('english', services.nickname) @@ websearch_to_tsquery('english', \${$placeholder}) OR to_tsvector('english', services.mini_name) @@ websearch_to_tsquery('english', \${$placeholder}))";
 		} else {
 			$parameters->AddFromFilter($schema, $filters, 'displayName', 'SEARCH');
 			$parameters->AddFromFilter($schema, $filters, 'miniDisplayName', 'SEARCH');
