@@ -275,7 +275,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 			$placeholder = $parameters->AddValue($filters['searchableName']);
 			$parameters->clauses[] = "(to_tsvector('english', services.name) @@ websearch_to_tsquery('english', \${$placeholder}) OR to_tsvector('english', services.nickname) @@ websearch_to_tsquery('english', \${$placeholder}) OR to_tsvector('english', services.mini_name) @@ websearch_to_tsquery('english', \${$placeholder}))";
 		} else {
-			$parameters->AddFromFilter($schema, $filters, 'displayName', 'SEARCH');
+			$parameters->AddFromFilter($schema, $filters, 'displayName', 'ILIKE');
 			$parameters->AddFromFilter($schema, $filters, 'miniDisplayName', 'SEARCH');
 			$parameters->AddFromFilter($schema, $filters, 'nickname', 'SEARCH');
 			$parameters->AddFromFilter($schema, $filters, 'miniName', 'SEARCH');

@@ -76,10 +76,10 @@ class Character extends DatabaseObject implements JsonSerializable {
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->allowAll = true;
-		$parameters->AddFromFilter($schema, $filters, 'characterName', 'SEARCH');
-		$parameters->AddFromFilter($schema, $filters, 'playerName', 'SEARCH');
-		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'SEARCH');
-		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'characterName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'playerName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
 		$parameters->AddFromFilter($schema, $filters, 'specimenId');
 		$parameters->AddFromFilter($schema, $filters, 'playerId');

@@ -61,8 +61,8 @@ class Tribe extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'SEARCH');
-		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'tribeNumber');
 	}
 

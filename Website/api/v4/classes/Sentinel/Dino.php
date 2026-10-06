@@ -112,27 +112,18 @@ class Dino extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = "{$sortColumn} {$sortDirection}, dinos.level {$sortDirection}, dinos.species {$sortDirection}";
 		$parameters->allowAll = true;
 
-		$parameters->AddFromFilter($schema, $filters, 'dinoNumber');
-		$parameters->AddFromFilter($schema, $filters, 'serviceId');
-		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'SEARCH');
-		$parameters->AddFromFilter($schema, $filters, 'dinoStatus', 'IN');
-		$parameters->AddFromFilter($schema, $filters, 'dinoNameTag');
-
 		if (isset($filters['dinoName']) && !isset($filters['dinoDisplayName'])) {
 			$filters['dinoDisplayName'] = $filters['dinoName'];
 		}
-		if (isset($filters['dinoDisplayName'])) {
-			$vectorPlaceholder = $parameters->AddValue($filters['dinoDisplayName']);
-			$parameters->clauses[] = "dinos.name_vector @@ websearch_to_tsquery('english', \${$vectorPlaceholder})";
-		}
-		if (isset($filters['tribeName'])) {
-			$vectorPlaceholder = $parameters->AddValue($filters['tribeName']);
-			$parameters->clauses[] = "tribes.name_vector @@ websearch_to_tsquery('english', \${$vectorPlaceholder})";
-		}
-		if (isset($filters['dinoSpecies'])) {
-			$vectorPlaceholder = $parameters->AddValue($filters['dinoSpecies']);
-			$parameters->clauses[] = "dinos.species_vector @@ websearch_to_tsquery('english', \${$vectorPlaceholder})";
-		}
+
+		$parameters->AddFromFilter($schema, $filters, 'dinoDisplayName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'dinoNameTag');
+		$parameters->AddFromFilter($schema, $filters, 'dinoNumber');
+		$parameters->AddFromFilter($schema, $filters, 'dinoSpecies', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'dinoStatus', 'IN');
+		$parameters->AddFromFilter($schema, $filters, 'serviceDisplayName', 'ILIKE');
+		$parameters->AddFromFilter($schema, $filters, 'serviceId');
+		$parameters->AddFromFilter($schema, $filters, 'tribeName', 'ILIKE');
 
 		if (isset($filters['dinoIsDead'])) {
 			$placeholder = $parameters->AddValue(static::StatusDead);
