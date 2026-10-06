@@ -37,7 +37,7 @@ class Player extends DatabaseObject implements JsonSerializable {
 			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.characters WHERE name ILIKE public.escape_like_value($' . $namePlaceholder . '))';
 		} elseif (isset($filters['playerName'])) {
 			$namePlaceholder = $parameters->AddValue($filters['playerName']);
-			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_name_history WHERE name_vector ILIKE public.escape_like_value($' . $namePlaceholder . '))';
+			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_name_history WHERE name ILIKE public.escape_like_value($' . $namePlaceholder . '))';
 		}
 		if (isset($filters['serviceId'])) {
 			$placeholder = $parameters->AddValue($filters['serviceId']);
