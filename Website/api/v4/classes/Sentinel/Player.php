@@ -31,16 +31,13 @@ class Player extends DatabaseObject implements JsonSerializable {
 		}
 		if (isset($filters['name'])) {
 			$namePlaceholder = $parameters->AddValue($filters['name']);
-			$languagePlaceholder = $parameters->AddValue('english');
-			$parameters->clauses[] = '(' . $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_name_history WHERE name_vector @@ websearch_to_tsquery($' . $languagePlaceholder . ', $' . $namePlaceholder . ')) OR ' . $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.characters WHERE name_vector @@ websearch_to_tsquery($' . $languagePlaceholder . ', $' . $namePlaceholder . ')))';
+			$parameters->clauses[] = '(' . $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_name_history WHERE name ILIKE public.escape_like_value($' . $namePlaceholder . ')) OR ' . $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.characters WHERE name ILIKE public.escape_like_value($' . $namePlaceholder . ')))';
 		} elseif (isset($filters['characterName'])) {
 			$namePlaceholder = $parameters->AddValue($filters['characterName']);
-			$languagePlaceholder = $parameters->AddValue('english');
-			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.characters WHERE name_vector @@ websearch_to_tsquery($' . $languagePlaceholder . ', $' . $namePlaceholder . '))';
+			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.characters WHERE name ILIKE public.escape_like_value($' . $namePlaceholder . '))';
 		} elseif (isset($filters['playerName'])) {
 			$namePlaceholder = $parameters->AddValue($filters['playerName']);
-			$languagePlaceholder = $parameters->AddValue('english');
-			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_name_history WHERE name_vector @@ websearch_to_tsquery($' . $languagePlaceholder . ', $' . $namePlaceholder . '))';
+			$parameters->clauses[] = $schema->Accessor('playerId') . ' IN (SELECT player_id FROM sentinel.player_name_history WHERE name_vector ILIKE public.escape_like_value($' . $namePlaceholder . '))';
 		}
 		if (isset($filters['serviceId'])) {
 			$placeholder = $parameters->AddValue($filters['serviceId']);

@@ -126,7 +126,7 @@ class Script extends DatabaseObject implements JsonSerializable {
 		}
 		$parameters->orderBy = $schema->Accessor($sortColumn) . ' ' . $sortDirection;
 		$parameters->allowAll = true;
-		$parameters->AddFromFilter($schema, $filters, 'name', 'SEARCH');
+		$parameters->AddFromFilter($schema, $filters, 'name', 'ILIKE');
 		$parameters->AddFromFilter($schema, $filters, 'description', 'SEARCH');
 		$parameters->AddFromFilter($schema, $filters, 'preview', 'SEARCH');
 	}
