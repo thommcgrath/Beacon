@@ -60,7 +60,27 @@ function handleRequest(array $context): Response {
 		case ServiceToken::ProviderBeaconHostingAPI:
 			// Do not stop the user
 			try {
-				$curl = curl_init($providerSpecific['endpoint']);
+				$endpointUrl = $providerSpecific['endpoint'];
+				$endpointUrlDetails = parse_url($endpointUrl);
+				$endpointScheme = strtolower($endpointUrlDetails['scheme'] ?? '');
+				$allowSelfSigned = false;
+				if ($endpointScheme === 'https') {
+					$endpointHost = $endpointUrlDetails['host'];
+					if (str_starts_with($endpointHost, '[') && str_ends_with($endpointHost, ']')) {
+						$endpointHost = substr($endpointHost, 1, -1);
+					}
+					$isIpAddress = filter_var($endpointHost, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6) !== false;
+					if ($isIpAddress) {
+						$allowSelfSigned = true;
+						$providerSpecific['noCertificateValidation'] = true;
+					}
+				}
+
+				$curl = curl_init($endpointUrl);
+				if ($allowSelfSigned) {
+					curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+					curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+				}
 				curl_setopt($curl, CURLOPT_HTTPHEADER, [
 					'Authorization: KEY ' . $accessToken,
 				]);
