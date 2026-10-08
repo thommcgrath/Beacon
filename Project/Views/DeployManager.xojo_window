@@ -1387,7 +1387,10 @@ End
 		    End If
 		    
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(Idx)
-		    Plans = Plans And Profile.SupportedDeployPlans(Project)
+		    Try
+		      Plans = Plans And Profile.SupportedDeployPlans(Project)
+		    Catch Err As RuntimeException
+		    End Try
 		  Next
 		  
 		  Self.PlanMenu.RemoveAllRows
