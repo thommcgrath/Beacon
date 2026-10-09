@@ -1686,6 +1686,43 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ShouldValidateCertificates(ByRef Url As String) As Boolean
+		  Static Parser As CURLSURLMBS
+		  If Parser Is Nil Then
+		    Parser = New CURLSURLMBS
+		    Parser.Flags = Parser.Flags Or CURLSURLMBS.kFlagsNonSupportScheme Or CURLSURLMBS.kFlagsURLDecode
+		  End If
+		  Parser.URL = Url
+		  
+		  If Parser.LastError <> CURLSURLMBS.kErrorOk Then
+		    Return True
+		  End If
+		  
+		  // Reformat the url
+		  Url = Parser.URL
+		  
+		  // This seems backwards, but we should always validate unless we are 100% certain we should not.
+		  If Parser.Scheme <> "https" Then
+		    Return True
+		  End If
+		  
+		  Var Host As String = Parser.Host
+		  If Host.BeginsWith("[") And Host.EndsWith("]") Then
+		    Host = Host.Middle(1, Host.Length - 2)
+		  End If
+		  
+		  Static Validator As Regex
+		  If Validator Is Nil Then
+		    Validator = New Regex
+		    Validator.SearchPattern = "^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])|(([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|([0-9A-Fa-f]{1,4}:){1,7}:|:(:[0-9A-Fa-f]{1,4}){1,7}|([0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|([0-9A-Fa-f]{1,4}:){1,5}(:[0-9A-Fa-f]{1,4}){1,2}|([0-9A-Fa-f]{1,4}:){1,4}(:[0-9A-Fa-f]{1,4}){1,3}|([0-9A-Fa-f]{1,4}:){1,3}(:[0-9A-Fa-f]{1,4}){1,4}|([0-9A-Fa-f]{1,4}:){1,2}(:[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(:[0-9A-Fa-f]{1,4}){1,6}|:(:[0-9A-Fa-f]{1,4}){1,6}))$"
+		  End If
+		  
+		  Var Matches As RegexMatch = Validator.Search(Host)
+		  Return Matches Is Nil
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function StringValue(Extends Dict As Dictionary, Key As Variant, Default As String, AllowArray As Boolean = False) As String
 		  Return GetValueAsType(Dict, Key, "String", Default, AllowArray, AddressOf CoerceToString)

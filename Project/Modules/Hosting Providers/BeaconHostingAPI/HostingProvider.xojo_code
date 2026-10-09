@@ -457,9 +457,7 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		  Var Connection As New SimpleHTTP.SynchronousHTTPSocket
 		  Connection.RequestHeader("User-Agent") = App.UserAgent
 		  Connection.RequestHeader("Authorization") = "KEY " + Token.AccessToken
-		  If Token.ProviderSpecific("noCertificateValidation", False).BooleanValue = True Then
-		    Connection.AllowCertificateValidation = False
-		  End If
+		  Connection.AllowCertificateValidation = Beacon.ShouldValidateCertificates(DiscoveryUrl)
 		  Connection.Send("GET", DiscoveryUrl, 30)
 		  
 		  If Connection.LastHTTPStatus < 200 Or Connection.LastHTTPStatus >= 300 Then
@@ -833,6 +831,7 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		  Var Url As String = Request.Url
 		  
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		  Socket.AllowCertificateValidation = Beacon.ShouldValidateCertificates(Url)
 		  For Each Entry As DictionaryEntry In Headers
 		    Socket.RequestHeader(Entry.Key) = Entry.Value
 		  Next
