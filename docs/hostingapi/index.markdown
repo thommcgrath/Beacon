@@ -111,3 +111,16 @@ These are the other endpoints the Beacon Open Hosting API will look for. The `ba
 ## License
 
 See [License](license).
+
+## Security and HTTPS
+
+If the discovery endpoint or `baseUrl` use HTTPS, the presented certificate **must** pass validation if the host is a domain name. For hosts using IPv4 or IPv6 addresses, certificate validation will be skipped. If attempting to use `localhost`, use `127.0.0.1` or `::1` instead.
+
+{:.caution .titled}
+> HEADS UP
+> 
+> Beacon 2.4.0.3 and earlier will not connect to HTTPS servers that present an untrusted certificate. The user should update their copy of Beacon.
+
+### App Transport Security
+
+On macOS, Apple's [App Transport Security](https://developer.apple.com/documentation/security/preventing-insecure-network-connections) security feature will block insecure requests. Beacon does not and will not utilize any policy exceptions.
