@@ -784,6 +784,22 @@ Protected Module Preferences
 		Protected ArkSASpawnPointEditorSetsSplitterPosition As Integer
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Var Lock As New Beacon.LockHolder(mLock)
+			  Return mManager.JSONValue("ArkSA Template Mod States", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var Lock As New Beacon.LockHolder(mLock)
+			  mManager.JSONValue("ArkSA Template Mod States") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSATemplateModStates As JSONItem
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
@@ -842,6 +858,22 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected ArkSteamPath As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Var Lock As New Beacon.LockHolder(mLock)
+			  Return mManager.JSONValue("Ark Template Mod States", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var Lock As New Beacon.LockHolder(mLock)
+			  mManager.JSONValue("Ark Template Mod States") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkTemplateModStates As JSONItem
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -1418,22 +1450,6 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected PresetSelectorEditorSize As Size
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Var Lock As New Beacon.LockHolder(mLock)
-			  Return mManager.JSONValue("Presets Enabled Mods", Nil)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Var Lock As New Beacon.LockHolder(mLock)
-			  mManager.JSONValue("Presets Enabled Mods") = Value
-			End Set
-		#tag EndSetter
-		Protected PresetsEnabledMods As JSONItem
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

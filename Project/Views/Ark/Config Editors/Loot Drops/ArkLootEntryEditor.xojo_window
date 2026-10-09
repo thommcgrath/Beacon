@@ -114,7 +114,7 @@ Begin BeaconDialog ArkLootEntryEditor
          Top             =   56
          Transparent     =   False
          Visible         =   True
-         Width           =   263
+         Width           =   340
          _mIndex         =   0
          _mInitialParent =   ""
          _mName          =   ""
@@ -211,38 +211,6 @@ Begin BeaconDialog ArkLootEntryEditor
          Transparent     =   True
          Visible         =   True
          Width           =   340
-      End
-      Begin UITweaks.ResizedPushButton ModsButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Mods"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "EngramsGroup"
-         Italic          =   False
-         Left            =   315
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   57
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   65
       End
       Begin DesktopCheckBox SingleItemCheckbox
          AllowAutoDeactivate=   True
@@ -531,15 +499,6 @@ End
 		  Self.Width = Max(PreferredSize.Width, Self.MinimumWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
 		  
-		  If Self.mShowModsButton = False Then
-		    Self.ModsButton.Visible = False
-		    Self.FilterField.Width = Self.EngramsGroup.Width - 40
-		  Else
-		    #if TargetMacOS
-		      Self.ModsButton.Top = Self.FilterField.Top
-		    #endif
-		  End If
-		  
 		  Self.SwapButtons()
 		  Self.mSettingUp = False
 		End Sub
@@ -566,11 +525,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Mods As Beacon.StringList, WithModsButton As Boolean)
+		Private Sub Constructor(Mods As Beacon.StringList)
 		  Self.mSelectedEngrams = New Dictionary
 		  Self.mMods = Mods
 		  Self.mSettingUp = True
-		  Self.mShowModsButton = WithModsButton
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -602,60 +560,14 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub ModPicker_Finished(Sender As ModSelectionGrid)
-		  Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
-		  Var ModList As New Beacon.StringList
-		  Var PrefsDict As New Dictionary
-		  For Each Pack As Beacon.ContentPack In ContentPacks
-		    If Sender.ModEnabled(Pack.ContentPackId) Then
-		      ModList.Append(Pack.ContentPackId)
-		      PrefsDict.Value(Pack.ContentPackId) = True
-		    Else
-		      PrefsDict.Value(Pack.ContentPackId) = False
-		    End If
-		  Next
-		  Self.mMods = ModList
-		  Preferences.PresetsEnabledMods = PrefsDict
-		  Var Spec As Beacon.TagSpec = Self.Picker.Spec
-		  Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(Self.mMods, Ark.CategoryEngrams)
-		  Self.Picker.Spec = Spec
-		  Self.UpdateFilter
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Sources() As Ark.LootItemSetEntry = Nil, Prefilter As String = "") As Ark.LootItemSetEntry()
-		  Var TemplatePacksDict As JSONItem = Preferences.PresetsEnabledMods
-		  If TemplatePacksDict Is Nil Then
-		    TemplatePacksDict = New JSONItem
-		  End If
-		  Var PackList As New Beacon.StringList
-		  Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
-		  For Each Pack As Beacon.ContentPack In ContentPacks
-		    If TemplatePacksDict.Lookup(Pack.ContentPackId, Pack.IsDefaultEnabled).BooleanValue = True Then
-		      PackList.Append(Pack.ContentPackId)
-		    End If
-		  Next
-		  
-		  Return Present(Parent, PackList, True, Sources, Prefilter)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As DesktopWindow, ContentPacks As Beacon.StringList, Sources() As Ark.LootItemSetEntry = Nil, Prefilter As String = "") As Ark.LootItemSetEntry()
-		  Return Present(Parent, ContentPacks, False, Sources, Prefilter)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function Present(Parent As DesktopWindow, ContentPacks As Beacon.StringList, WithModsButton As Boolean, Sources() As Ark.LootItemSetEntry, Prefilter As String) As Ark.LootItemSetEntry()
 		  If Sources <> Nil And Sources.Count > 1 Then
 		    // Need to use the multi-edit window
 		    Return ArkLootEntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
-		  Var Win As New ArkLootEntryEditor(ContentPacks, WithModsButton)
+		  Var Win As New ArkLootEntryEditor(ContentPacks)
 		  
 		  If Sources <> Nil And Sources.LastIndex = 0 Then
 		    Win.mOriginalEntry = New Ark.LootItemSetEntry(Sources(0))
@@ -833,10 +745,6 @@ End
 		Private mSettingUp As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mShowModsButton As Boolean
-	#tag EndProperty
-
 
 	#tag Constant, Name = ColumnIncluded, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
@@ -981,15 +889,6 @@ End
 		Sub RestoreDefaults()
 		  Preferences.RestoreTags(Ark.CategoryEngrams, "Looting")
 		  Me.Spec = Preferences.SelectedTag(Ark.CategoryEngrams, "Looting")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ModsButton
-	#tag Event
-		Sub Pressed()
-		  Var ModPicker As New ModSelectionGrid(Ark.DataSource.Pool.Get(False), Self.mMods, Nil)
-		  AddHandler ModPicker.Finished, WeakAddressOf ModPicker_Finished
-		  ModPicker.ShowPopover(Me, DesktopWindow.DisplaySides.Bottom, False, True)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

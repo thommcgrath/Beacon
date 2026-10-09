@@ -726,6 +726,31 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       Visible         =   True
       Width           =   740
    End
+   Begin PopoverOriginRect PopoverTarget
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   50
+      Index           =   -2147483648
+      Left            =   -169
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -123
+      Transparent     =   True
+      Visible         =   False
+      Width           =   52
+   End
 End
 #tag EndDesktopWindow
 
@@ -846,6 +871,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function ContentPacks() As Beacon.StringList
+		  Var TemplatePacksDict As JSONItem = Preferences.ArkTemplateModStates
+		  If TemplatePacksDict Is Nil Then
+		    TemplatePacksDict = New JSONItem
+		  End If
+		  Var PackList As New Beacon.StringList
+		  Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
+		  For Each Pack As Beacon.ContentPack In ContentPacks
+		    If TemplatePacksDict.Lookup(Pack.ContentPackId, Pack.IsDefaultEnabled).BooleanValue = True Then
+		      PackList.Append(Pack.ContentPackId)
+		    End If
+		  Next
+		  Return PackList
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub DeleteSelectedEntries(Warn As Boolean)
 		  If Self.ContentsList.SelectedRowCount = 0 Then
 		    Return
@@ -887,7 +929,7 @@ End
 		    Return
 		  End If
 		  
-		  Var NewEntries() As Ark.LootItemSetEntry = ArkLootEntryEditor.Present(Self.TrueWindow, Entries)
+		  Var NewEntries() As Ark.LootItemSetEntry = ArkLootEntryEditor.Present(Self.TrueWindow, Self.ContentPacks(), Entries)
 		  If NewEntries Is Nil Or NewEntries.Count <> Entries.Count Then
 		    Return
 		  End If
@@ -956,6 +998,24 @@ End
 		Function MinWidth() As UInteger
 		  Return 740
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ModSelector_Finished(Sender As ModSelectionGrid)
+		  Var TemplatePacksDict As JSONItem = Preferences.ArkTemplateModStates
+		  If TemplatePacksDict Is Nil Then
+		    TemplatePacksDict = New JSONItem
+		  End If
+		  
+		  Var ContentPackIds() As String = Sender.ContentPackIds
+		  For Each ContentPackId As String In ContentPackIds
+		    TemplatePacksDict.Value(ContentPackId) = Sender.ModEnabled(ContentPackId)
+		  Next
+		  
+		  Preferences.ArkTemplateModStates = TemplatePacksDict
+		  
+		  Self.TemplateToolbar.Item("ModsButton").Toggled = False
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1050,7 +1110,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
-		  Var Entries() As Ark.LootItemSetEntry = ArkLootEntryEditor.Present(Self.TrueWindow)
+		  Var Entries() As Ark.LootItemSetEntry = ArkLootEntryEditor.Present(Self.TrueWindow, Self.ContentPacks())
 		  If Entries = Nil Or Entries.LastIndex = -1 Then
 		    Return
 		  End If
@@ -1079,6 +1139,32 @@ End
 		    Self.UpdateUI
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowModsPicker()
+		  Var Item As OmniBarItem = Self.TemplateToolbar.Item("ModsButton")
+		  If Item Is Nil Then
+		    Return
+		  End If
+		  
+		  Var ItemRect As Rect = Self.TemplateToolbar.RectForItem(Item)
+		  Self.ShowModsPicker(Item, ItemRect)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowModsPicker(Item As OmniBarItem, ItemRect As Rect)
+		  Self.PopoverTarget.Left = Self.TemplateToolbar.Left + ItemRect.Left
+		  Self.PopoverTarget.Top = Self.TemplateToolbar.Top + ItemRect.Top
+		  Self.PopoverTarget.Width = ItemRect.Width
+		  Self.PopoverTarget.Height = ItemRect.Height
+		  
+		  Var Editor As New ModSelectionGrid(Ark.DataSource.Pool.Get(False), Self.ContentPacks(), Nil)
+		  AddHandler Editor.Finished, WeakAddressOf ModSelector_Finished
+		  Editor.ShowPopover(Self.PopoverTarget, DesktopWindow.DisplaySides.Bottom, False, True)
+		  Item.Toggled = True
 		End Sub
 	#tag EndMethod
 
@@ -1748,6 +1834,8 @@ End
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AddEntriesButton", "New Entry", IconToolbarAdd, "Add engrams to this template."))
 		  Me.Append(OmniBarItem.CreateButton("EditEntriesButton", "Edit", IconToolbarEdit, "Edit the selected entries.", False))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods."))
 		  
 		  Me.Item("GeneralTab").Toggled = True
 		End Sub
@@ -1767,6 +1855,8 @@ End
 		    Self.Pages.SelectedPanelIndex = Self.PageContents
 		  Case "ModifiersTab"
 		    Self.Pages.SelectedPanelIndex = Self.PageModifiers
+		  Case "ModsButton"
+		    Self.ShowModsPicker(Item, ItemRect)
 		  End Select
 		End Sub
 	#tag EndEvent
