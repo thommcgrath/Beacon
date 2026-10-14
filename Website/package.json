@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@babel/cli": "^7.27.2",
+    "@babel/cli": "^8.0.6",
     "@babel/core": "^7.27.3",
     "@babel/eslint-parser": "^7.27.1",
     "@babel/preset-env": "^7.27.2",
@@ -10,5 +10,8 @@
     "sass": "^1.89.0",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true
   }
 }
