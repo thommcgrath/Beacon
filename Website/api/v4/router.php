@@ -238,6 +238,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Character', 'sentin
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\CommunityScript', 'sentinel/communityScripts', 'scriptId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Dino', 'sentinel/dinos', 'dinoId', DatabaseObjectManager::kFeatureAll & ~DatabaseObjectManager::kFeatureCreate);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Group', 'sentinel/groups', 'groupId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupAdmin', 'sentinel/groupAdmins', 'groupAdminId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupBan', 'sentinel/groupBans', 'groupBanId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupBucket', 'sentinel/groupBuckets', 'groupBucketId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\GroupScript', 'sentinel/groupScripts', 'groupScriptId');
@@ -252,6 +253,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerSession', 'se
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Script', 'sentinel/scripts', 'scriptId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ScriptTest', 'sentinel/scriptTests', 'requestId', DatabaseObjectManager::kFeatureCreate | DatabaseObjectManager::kFeatureRead | DatabaseObjectManager::kFeatureSingle | DatabaseObjectManager::kFeatureBulk);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceAdmin', 'sentinel/serviceAdmins', 'serviceAdminId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceBan', 'sentinel/serviceBans', 'serviceBanId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceScript', 'sentinel/serviceScripts', 'serviceScriptId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceUser', 'sentinel/serviceUsers', 'serviceUserId', DatabaseObjectManager::kFeatureReadOnly);

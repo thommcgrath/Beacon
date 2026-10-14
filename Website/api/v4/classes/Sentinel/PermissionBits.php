@@ -9,6 +9,7 @@ abstract class PermissionBits {
 	const EditGroup = 8;
 	const EditScripts = 16;
 	const EditServices = 32;
+	const ManageAdmins = 16384;
 	const ManageBans = 64;
 	const ManageBuckets = 128;
 	const ManageScripts = 256;
