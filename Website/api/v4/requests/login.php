@@ -278,7 +278,8 @@ function HandlePublicKeyAuth(string $clientId, &$application, &$publicKey, array
 			$user = User::Create([
 				'userId' => $userId,
 				'publicKey' => $publicKey,
-				'cloudKey' => bin2hex(BeaconEncryption::RSAEncrypt($publicKey, User::GenerateCloudKey()))
+				'cloudKey' => bin2hex(BeaconEncryption::RSAEncrypt($publicKey, User::GenerateCloudKey())),
+				'securityModel' => User::SecurityModelAnonymous,
 			]);
 		}
 
