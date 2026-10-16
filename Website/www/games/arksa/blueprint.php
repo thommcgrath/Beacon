@@ -218,7 +218,7 @@ function PrepareCreatureTable(Creature $creature, array &$properties) {
 			}
 		}
 
-		$lnks = [];
+		$links = [];
 		foreach ($drops as $drop) {
 			$weight = $drop['weight'];
 			$dropClass = $drop['classString'];
@@ -283,6 +283,20 @@ function PrepareEngramTable(Engram $engram, array &$properties) {
 function PrepareLootDropTable(LootDrop $lootDrop, array &$properties) {
 	$properties['Multipliers'] = sprintf('%F - %F', $lootDrop->MultiplierMin(), $lootDrop->MultiplierMax());
 	$properties['Spawn Code'] = '`' . $lootDrop->SpawnCode() . '`';
+
+	$creatures = $lootDrop->Creatures();
+	if (count($creatures) > 0) {
+		$links = [];
+		foreach ($creatures as $creature) {
+			$creatureClass = $creature['classString'];
+			$creatureLabel = $creature['label'];
+			$creatureMod = $creature['marketplaceId'];
+
+			$href = '/Games/ArkSA/Mods/' . urlencode($creatureMod) . '/' . urlencode($creatureClass);
+			$links[] = '[' . $creatureLabel . '](' . $href . ')';
+		}
+		$properties['Dropped By'] = implode(', ', $links);
+	}
 }
 
 function PrepareSpawnPointTable(SpawnPoint $spawnPoint, array &$properties) {

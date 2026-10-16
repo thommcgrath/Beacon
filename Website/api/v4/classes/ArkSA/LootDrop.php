@@ -148,6 +148,22 @@ class LootDrop extends MutableBlueprint {
 		return $json;
 	}
 
+	public function Creatures(): array {
+		$database = BeaconCommon::Database();
+		$arr = [];
+		$results = $database->Query('SELECT creature_drops.creature_id, creatures.label, creatures.class_string, content_packs.marketplace_id FROM arksa.creature_drops INNER JOIN arksa.creatures ON (creature_drops.creature_id = creatures.object_id) INNER JOIN public.content_packs ON (creatures.content_pack_id = content_packs.content_pack_id) WHERE creature_drops.drop_id = $1 ORDER BY creatures.label;', $this->UUID());
+		while (!$results->EOF()) {
+			$arr[] = [
+				'creatureId' => $results->Field('creature_id'),
+				'label' => $results->Field('label'),
+				'classString' => $results->Field('class_string'),
+				'marketplaceId' => $results->Field('marketplace_id'),
+			];
+			$results->MoveNext();
+		}
+		return $arr;
+	}
+
 	public function MultiplierMin(): float {
 		return $this->multiplierMin;
 	}
