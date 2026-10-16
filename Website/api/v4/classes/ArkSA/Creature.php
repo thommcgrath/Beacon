@@ -81,6 +81,23 @@ class Creature extends MutableBlueprint {
 		return $arr;
 	}
 
+	public function Drops(): array {
+		$database = BeaconCommon::Database();
+		$arr = [];
+		$results = $database->Query('SELECT creature_drops.drop_id, creature_drops.weight, loot_drops.label, loot_drops.class_string, content_packs.marketplace_id FROM arksa.creature_drops INNER JOIN arksa.loot_drops ON (creature_drops.drop_id = loot_drops.object_id) INNER JOIN public.content_packs ON (loot_drops.content_pack_id = content_packs.content_pack_id) WHERE creature_drops.creature_id = $1 ORDER BY loot_drops.label;', $this->UUID());
+		while (!$results->EOF()) {
+			$arr[] = [
+				'lootDropId' => $results->Field('drop_id'),
+				'label' => $results->Field('label'),
+				'classString' => $results->Field('class_string'),
+				'marketplaceId' => $results->Field('marketplace_id'),
+				'weight' => $results->Field('weight'),
+			];
+			$results->MoveNext();
+		}
+		return $arr;
+	}
+
 	public function IncubationTimeSeconds(): ?int {
 		return $this->incubationTime;
 	}

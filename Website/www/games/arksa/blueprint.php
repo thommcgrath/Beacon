@@ -207,6 +207,40 @@ function PrepareCreatureTable(Creature $creature, array &$properties) {
 	}
 
 	$properties['Level Range'] = number_format($creature->MinBaseLevel()) . ' to ' . number_format($creature->MaxBaseLevel()) . ' (' . number_format($creature->MinBaseLevel() * 5) . ' to ' . number_format($creature->MaxBaseLevel() * 5) . ' at 5.0 difficulty)';
+
+	$drops = $creature->Drops();
+	if (count($drops) > 0) {
+		$withProbability = count($drops) > 1;
+		$weightSum = 1;
+		if ($withProbability) {
+			foreach ($drops as $drop) {
+				$weightSum = $weightSum + $drop['weight'];
+			}
+		}
+
+		$lnks = [];
+		foreach ($drops as $drop) {
+			$weight = $drop['weight'];
+			$dropClass = $drop['classString'];
+			$dropLabel = $drop['label'];
+			$dropMod = $drop['marketplaceId'];
+
+			$href = '/Games/ArkSA/Mods/' . urlencode($dropMod) . '/' . urlencode($dropClass);
+			$link = '[' . $dropLabel . '](' . $href . ')';
+
+			if ($withProbability) {
+				$link .= ' ' . number_format(($weight / $weightSum) * 100) . '%';
+			}
+
+			$links[] = $link;
+		}
+
+		if (count($drops) > 1) {
+			$properties['Dropped Inventories'] = implode(', ', $links);
+		} else {
+			$properties['Dropped Inventory'] = implode(', ', $links);
+		}
+	}
 }
 
 function PrepareEngramTable(Engram $engram, array &$properties) {
