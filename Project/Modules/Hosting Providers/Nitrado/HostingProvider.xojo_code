@@ -108,7 +108,7 @@ Implements Beacon.HostingProvider,Palworld.HostingProvider,Ark.HostingProvider,A
 		    Select Case FailureMode
 		    Case Beacon.Integration.DownloadFailureMode.MissingAllowed
 		      Var Status As Integer = Response.HTTPStatus
-		      If Status = 500 And Response.Message.Contains("File doesn't exist") Then
+		      If Status = 500 And Response.Message.Contains("File") And Response.Message.Contains("exist") Then
 		        // Nitrado reports a 404 as a 500
 		        Status = 404
 		      End If
