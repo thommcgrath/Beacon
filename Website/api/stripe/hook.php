@@ -466,7 +466,7 @@ function CreatePurchaseFromCheckoutSession(array $session): BeaconPurchase {
 			$userId = $session['metadata']['Beacon User UUID'] ?? null;
 			if (is_null($userId) === false) {
 				$user = User::Fetch($userId);
-				if (is_null($user) === false) {
+				if (is_null($user) === false && $user->IsAnonymous() === false) {
 					$emailId = $user->EmailId();
 					if (is_null($emailId) === false) {
 						$email = $user->EmailId();
