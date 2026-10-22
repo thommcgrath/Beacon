@@ -91,13 +91,12 @@ Implements Beacon.HostingProvider,Ark.HostingProvider,ArkSA.HostingProvider,Palw
 		  Case Beacon.FTPModeOptionalTLS, Beacon.FTPModeExplicitTLS, Beacon.FTPModeImplicitTLS
 		    If Config.VerifyHost Then
 		      #if TargetLinux
-		        #if DebugBuild
-		          #Pragma Warning "Linux cannot load system certificates"
-		        #else
-		          #Pragma Error "Linux cannot load system certificates"
-		        #endif
+		        Var CACerts As New FolderItem("/etc/ssl/certs/ca-certificates.crt")
+		        Socket.SetPathCAInfo(CACerts)
+		        Socket.SetPathCAPath(CACerts)
+		      #else
+		        Call Socket.UseSystemCertificates()
 		      #endif
-		      Call Socket.UseSystemCertificates
 		      
 		      Socket.OptionSSLVerifyHost = 2
 		      Socket.OptionSSLVerifyPeer = 1

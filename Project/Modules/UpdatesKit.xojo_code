@@ -586,6 +586,7 @@ Protected Module UpdatesKit
 		        Location = Dict.Value("lin")
 		      Else
 		        NotificationKit.Post(Notification_NoUpdates, Nil)
+		        Return
 		      End If
 		    #endif
 		    mAvailableDownloadURL = Location.Value("url")
@@ -664,7 +665,7 @@ Protected Module UpdatesKit
 		    BugVersion = SystemInformationMBS.WinBuildNumber
 		  #elseif TargetLinux
 		    // System version numbers are pretty pointless on Linux since every distro will have
-		    // different values. There's no way to every make this make sense, so just set to 0.
+		    // different values. There's no way to ever make this make sense, so just set to 0.
 		    MajorVersion = 0
 		    MinorVersion = 0
 		    BugVersion = 0

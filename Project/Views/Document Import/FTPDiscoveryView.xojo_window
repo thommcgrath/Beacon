@@ -1115,6 +1115,13 @@ End
 		  Call Self.SettingsView.ImportFileZillaSpec(SpecFile)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Top = Self.ServerActionButton.Top
+		  Me.Height = Self.ServerActionButton.Height
+		  Me.SizeToFit()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events URLWatcher
 	#tag Event
