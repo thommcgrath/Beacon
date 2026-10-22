@@ -577,6 +577,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return Self.mDataFolder
 		  End If
 		  
+		  #if TargetLinux
+		    Var DataHomePath As String = System.EnvironmentVariable("XDG_DATA_HOME")
+		    If DataHomePath.IsEmpty = False Then
+		      Try
+		        Self.mDataFolder = New FolderItem(DataHomePath)
+		        Call Self.mDataFolder.CheckIsFolder
+		        Return Self.mDataFolder
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		  #endif
+		  
 		  Var FolderName As String = "Beacon"
 		  #if DebugBuild
 		    FolderName = "Beacon Dev"
