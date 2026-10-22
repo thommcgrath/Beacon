@@ -888,7 +888,7 @@ End
 		    Return
 		  End If
 		  
-		  PalworldExportWindow.Present(Self, Self.Project, Keyboard.AsyncOptionKey And Keyboard.AsyncShiftKey)
+		  PalworldExportWindow.Present(Self, Self.Project, Keyboard.OptionKey And Keyboard.ShiftKey)
 		End Sub
 	#tag EndMethod
 

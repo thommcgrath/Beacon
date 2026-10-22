@@ -801,7 +801,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue - (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
+		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue - (If(Keyboard.ShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -810,7 +810,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue + (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
+		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue + (If(Keyboard.ShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

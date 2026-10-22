@@ -3,9 +3,9 @@ Protected Class ModifierWatcher
 Inherits Timer
 	#tag Event
 		Sub Action()
-		  Self.OptionHeld = Keyboard.AsyncAltKey
-		  Self.ShiftHeld = Keyboard.AsyncShiftKey
-		  Self.SuperHeld = Keyboard.AsyncOSKey
+		  Self.OptionHeld = Keyboard.AltKey
+		  Self.ShiftHeld = Keyboard.ShiftKey
+		  Self.SuperHeld = Keyboard.OSKey
 		End Sub
 	#tag EndEvent
 

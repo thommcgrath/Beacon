@@ -757,7 +757,7 @@ End
 		    Return
 		  End If
 		  
-		  SDTDExportWindow.Present(Self, Self.Project, Keyboard.AsyncOptionKey And Keyboard.AsyncShiftKey)
+		  SDTDExportWindow.Present(Self, Self.Project, Keyboard.OptionKey And Keyboard.ShiftKey)
 		End Sub
 	#tag EndMethod
 

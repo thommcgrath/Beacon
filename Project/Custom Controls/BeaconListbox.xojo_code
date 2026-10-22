@@ -13,7 +13,7 @@ Inherits DesktopListBox
 		  RaiseEvent BulkColumnChangeStarted(Column)
 		  RaiseEvent CellAction(Row, Column)
 		  
-		  If Self.CellTypeAt(Row, Column) = DesktopListbox.CellTypes.CheckBox And (TargetMacOS And Keyboard.AsyncCommandKey) Or (Not TargetMacOS And Keyboard.AsyncControlKey) Then
+		  If Self.CellTypeAt(Row, Column) = DesktopListbox.CellTypes.CheckBox And (TargetMacOS And Keyboard.CommandKey) Or (Not TargetMacOS And Keyboard.ControlKey) Then
 		    Var DesiredValue As Boolean = Self.CellCheckBoxValueAt(Row, Column)
 		    For Idx As Integer = Self.LastRowIndex DownTo 0
 		      If Idx <> Row And Self.CellCheckBoxValueAt(Idx, Column) <> DesiredValue Then

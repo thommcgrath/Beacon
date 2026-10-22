@@ -1079,7 +1079,7 @@ End
 		    Return
 		  End If
 		  
-		  ArkSAExportWindow.Present(Self, Self.Project, Keyboard.AsyncOptionKey And Keyboard.AsyncShiftKey)
+		  ArkSAExportWindow.Present(Self, Self.Project, Keyboard.OptionKey And Keyboard.ShiftKey)
 		End Sub
 	#tag EndMethod
 
