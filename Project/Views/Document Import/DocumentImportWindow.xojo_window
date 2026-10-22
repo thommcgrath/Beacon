@@ -10,6 +10,7 @@ Begin DesktopWindow DocumentImportWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
+   HasTitleBar     =   True
    Height          =   480
    ImplicitInstance=   False
    MacProcID       =   0
@@ -101,7 +102,15 @@ End
 		  #Pragma Unused Sender
 		  
 		  If Self.Height <> Height Then
+		    If Self.MinimumHeight > Height Then
+		      Self.MinimumHeight = Height
+		    End If
+		    
 		    Self.Height = Height
+		    
+		    If Self.MinimumHeight < Height Then
+		      Self.MinimumHeight = Height
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -147,6 +156,14 @@ End
 #tag EndWindowCode
 
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false
