@@ -4,3 +4,4 @@ ConstantValue("Beacon.CurseForgeApiKeyEncoded") = Trim(DoShellCommand("cat ""${P
 PropertyValue("App.OptimizationLevel") = "4"
 Call BuildApp(9, False)
 Call DoShellCommand("""${PROJECT_PATH}/../Installers/Mac/Build.sh""")
+Print("Mac Build Complete")

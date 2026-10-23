@@ -5,3 +5,4 @@ PropertyValue("App.OptimizationLevel") = "4"
 Call BuildApp(17, False) // x64
 Call BuildApp(26, False) // arm64
 Call DoShellCommand("""${PROJECT_PATH}/../Installers/Linux/build.sh""")
+Print("Linux Build Complete")
