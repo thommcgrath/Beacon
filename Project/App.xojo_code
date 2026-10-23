@@ -224,6 +224,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #if TargetMacOS
 		    //Help.Visible = False
 		  #endif
+		  #if Not UpdatesKit.Available
+		    HelpCheckforUpdates.Visible = False
+		  #endif
 		  Self.RebuildRecentMenu
 		  
 		  If BeaconUI.DarkModeSupported Then

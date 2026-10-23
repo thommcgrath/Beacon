@@ -3,3 +3,4 @@ ConstantValue("GameServerApp.HostingProvider.GSAIDEncoded") = Trim(DoShellComman
 ConstantValue("Beacon.CurseForgeApiKeyEncoded") = Trim(DoShellCommand("cat ""${PROJECT_PATH}/CurseForge.txt"""))
 PropertyValue("App.OptimizationLevel") = "4"
 Call BuildApp(9, False)
+Call DoShellCommand("""${PROJECT_PATH}/../Installers/Mac/Build.sh""")

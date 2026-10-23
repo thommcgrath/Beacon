@@ -26,7 +26,9 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h1
 		Protected Function AutomaticallyDownloadsUpdates() As Boolean
-		  Return Preferences.AutomaticallyDownloadsUpdates And (mAvailableVersionExpiredLicenses.Count = 0 Or mAvailableUpdateRequired)
+		  #if Available
+		    Return Preferences.AutomaticallyDownloadsUpdates And (mAvailableVersionExpiredLicenses.Count = 0 Or mAvailableUpdateRequired)
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -103,68 +105,72 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h1
 		Protected Sub Cancel()
-		  #if Not UseSparkle
-		    If (mSocket Is Nil) = False Then
-		      mSocket.Disconnect
-		      mSocket = Nil
-		    End If
-		    If (mDownloader Is Nil) = False Then
-		      mDownloader.Disconnect
-		      mDownloader = Nil
-		    End If
-		    
-		    mChecking = False
+		  #if Available
+		    #if Not UseSparkle
+		      If (mSocket Is Nil) = False Then
+		        mSocket.Disconnect
+		        mSocket = Nil
+		      End If
+		      If (mDownloader Is Nil) = False Then
+		        mDownloader.Disconnect
+		        mDownloader = Nil
+		      End If
+		      
+		      mChecking = False
+		    #endif
 		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Check()
-		  #if UseSparkle
-		    #if TargetMacOS
-		      If mMacSparkle Is Nil Then
+		  #if Available
+		    #if UseSparkle
+		      #if TargetMacOS
+		        If mMacSparkle Is Nil Then
+		          Return
+		        End If
+		        
+		        mMacSparkle.CheckForUpdates
+		      #elseif TargetWindows
+		        If mWinSparkle Is Nil Then
+		          Return
+		        End If
+		        
+		        mWinSparkle.CheckUpdateWithUI
+		      #endif
+		    #else
+		      If mChecking Then
 		        Return
 		      End If
 		      
-		      mMacSparkle.CheckForUpdates
-		    #elseif TargetWindows
-		      If mWinSparkle Is Nil Then
-		        Return
-		      End If
-		      
-		      mWinSparkle.CheckUpdateWithUI
+		      Var OldLastCheckTime As DateTime = mLastCheckTime
+		      Try
+		        mChecking = True
+		        mLastCheckTime = DateTime.Now
+		        
+		        mSocket = New URLConnection
+		        mSocket.AllowCertificateValidation = True
+		        AddHandler mSocket.Error, AddressOf mSocket_Error
+		        AddHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
+		        AddHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
+		        mSocket.RequestHeader("Cache-Control") = "no-cache"
+		        mSocket.RequestHeader("User-Agent") = App.UserAgent
+		        
+		        Var URL As String = CheckURL()
+		        App.Log("Checking for updates from " + URL)
+		        mSocket.Send("GET", URL)
+		      Catch Err As RuntimeException
+		        mChecking = False
+		        mLastCheckTime = OldLastCheckTime
+		        RemoveHandler mSocket.Error, AddressOf mSocket_Error
+		        RemoveHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
+		        RemoveHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
+		        mSocket = Nil
+		        App.Log(Err, CurrentMethodName, "Initiating update check")
+		        NotificationKit.Post(Notification_Error, Err.Message)
+		      End Try
 		    #endif
-		  #else
-		    If mChecking Then
-		      Return
-		    End If
-		    
-		    Var OldLastCheckTime As DateTime = mLastCheckTime
-		    Try
-		      mChecking = True
-		      mLastCheckTime = DateTime.Now
-		      
-		      mSocket = New URLConnection
-		      mSocket.AllowCertificateValidation = True
-		      AddHandler mSocket.Error, AddressOf mSocket_Error
-		      AddHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
-		      AddHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
-		      mSocket.RequestHeader("Cache-Control") = "no-cache"
-		      mSocket.RequestHeader("User-Agent") = App.UserAgent
-		      
-		      Var URL As String = CheckURL()
-		      App.Log("Checking for updates from " + URL)
-		      mSocket.Send("GET", URL)
-		    Catch Err As RuntimeException
-		      mChecking = False
-		      mLastCheckTime = OldLastCheckTime
-		      RemoveHandler mSocket.Error, AddressOf mSocket_Error
-		      RemoveHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
-		      RemoveHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
-		      mSocket = Nil
-		      App.Log(Err, CurrentMethodName, "Initiating update check")
-		      NotificationKit.Post(Notification_Error, Err.Message)
-		    End Try
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -182,10 +188,12 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h1
 		Protected Sub Cleanup()
-		  #if UseSparkle And TargetWindows
-		    If (mWinSparkle Is Nil) = False Then
-		      mWinSparkle.Cleanup
-		    End If
+		  #if Available
+		    #if UseSparkle And TargetWindows
+		      If (mWinSparkle Is Nil) = False Then
+		        mWinSparkle.Cleanup
+		      End If
+		    #endif
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -246,62 +254,64 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h1
 		Protected Sub Init()
-		  #if UseSparkle
-		    Var CheckInterval As Integer
-		    #if DebugBuild
-		      CheckInterval = 3600
-		    #else
-		      CheckInterval = 14400
-		    #endif
-		    
-		    Var URL As String = CheckURL()
-		    App.Log("Update check URI is " + URL)
-		    
-		    #if TargetMacOS
-		      If SUUpdaterMBS.IsFrameworkLoaded = False Then
-		        Var SparkleFramework As FolderItem = App.FrameworksFolder.Child("Sparkle.framework")
-		        If Not SUUpdaterMBS.LoadFramework(SparkleFramework) Then
-		          App.Log("Unable to load Sparkle framework")
+		  #if Available
+		    #if UseSparkle
+		      Var CheckInterval As Integer
+		      #if DebugBuild
+		        CheckInterval = 3600
+		      #else
+		        CheckInterval = 14400
+		      #endif
+		      
+		      Var URL As String = CheckURL()
+		      App.Log("Update check URI is " + URL)
+		      
+		      #if TargetMacOS
+		        If SUUpdaterMBS.IsFrameworkLoaded = False Then
+		          Var SparkleFramework As FolderItem = App.FrameworksFolder.Child("Sparkle.framework")
+		          If Not SUUpdaterMBS.LoadFramework(SparkleFramework) Then
+		            App.Log("Unable to load Sparkle framework")
+		            Return
+		          End If
+		        End If
+		        
+		        If (mMacSparkle Is Nil) = False Then
 		          Return
 		        End If
-		      End If
-		      
-		      If (mMacSparkle Is Nil) = False Then
-		        Return
-		      End If
-		      
-		      Var Updater As New SUUpdaterMBS
-		      Updater.FeedURL = URL
-		      Updater.AutomaticallyChecksForUpdates = Preferences.OnlineEnabled
-		      Updater.AutomaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
-		      Updater.UpdateCheckInterval = CheckInterval
-		      Updater.SendsSystemProfile = False
-		      Updater.UserAgentString = App.UserAgent
-		      AddHandler Updater.didFindValidUpdate, AddressOf MacSparkle_DidFindValidUpdate
-		      If Updater.AutomaticallyChecksForUpdates And (Updater.LastUpdateCheckDateTime Is Nil Or DateTime.Now.SecondsFrom1970 - Updater.LastUpdateCheckDateTime.SecondsFrom1970 >= Updater.UpdateCheckInterval) Then 
-		        Updater.CheckForUpdatesInBackground
-		      End If
-		      mMacSparkle = Updater
-		    #elseif TargetWindows
-		      Var SparkleDLL As FolderItem = App.FrameworksFolder.Child("WinSparkle.dll")
-		      If WinSparkleMBS.LoadLibrary(SparkleDLL) = False Then
-		        App.Log("Could not load Sparkle framework from " + SparkleDLL.NativePath)
-		        Return
-		      End If
-		      
-		      Var Updater As New WinSparkleMBS
-		      AddHandler Updater.ShutdownRequest, AddressOf mWinSparkle_ShutdownRequest
-		      Updater.AppCastURL = CheckURL()
-		      Updater.AppName = "Beacon"
-		      Updater.AppVersion = App.Version
-		      Updater.AutomaticCheckForUpdates = Preferences.OnlineEnabled
-		      Updater.BuildVersion = App.MajorVersion.ToString(Locale.Raw, "0") + "." + App.MinorVersion.ToString(Locale.Raw, "0") + "." + App.BugVersion.ToString(Locale.Raw, "0") + "." + App.StageCode.ToString(Locale.Raw, "0") + "." + App.NonReleaseVersion.ToString(Locale.Raw, "0")
-		      Updater.CanShutdown = True
-		      Updater.CompanyName = "The ZAZ Studios"
-		      Updater.DSAPubPEM = WinSparklePublicKey
-		      Updater.UpdateCheckInterval = CheckInterval
-		      Updater.Initialize
-		      mWinSparkle = Updater
+		        
+		        Var Updater As New SUUpdaterMBS
+		        Updater.FeedURL = URL
+		        Updater.AutomaticallyChecksForUpdates = Preferences.OnlineEnabled
+		        Updater.AutomaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
+		        Updater.UpdateCheckInterval = CheckInterval
+		        Updater.SendsSystemProfile = False
+		        Updater.UserAgentString = App.UserAgent
+		        AddHandler Updater.didFindValidUpdate, AddressOf MacSparkle_DidFindValidUpdate
+		        If Updater.AutomaticallyChecksForUpdates And (Updater.LastUpdateCheckDateTime Is Nil Or DateTime.Now.SecondsFrom1970 - Updater.LastUpdateCheckDateTime.SecondsFrom1970 >= Updater.UpdateCheckInterval) Then 
+		          Updater.CheckForUpdatesInBackground
+		        End If
+		        mMacSparkle = Updater
+		      #elseif TargetWindows
+		        Var SparkleDLL As FolderItem = App.FrameworksFolder.Child("WinSparkle.dll")
+		        If WinSparkleMBS.LoadLibrary(SparkleDLL) = False Then
+		          App.Log("Could not load Sparkle framework from " + SparkleDLL.NativePath)
+		          Return
+		        End If
+		        
+		        Var Updater As New WinSparkleMBS
+		        AddHandler Updater.ShutdownRequest, AddressOf mWinSparkle_ShutdownRequest
+		        Updater.AppCastURL = CheckURL()
+		        Updater.AppName = "Beacon"
+		        Updater.AppVersion = App.Version
+		        Updater.AutomaticCheckForUpdates = Preferences.OnlineEnabled
+		        Updater.BuildVersion = App.MajorVersion.ToString(Locale.Raw, "0") + "." + App.MinorVersion.ToString(Locale.Raw, "0") + "." + App.BugVersion.ToString(Locale.Raw, "0") + "." + App.StageCode.ToString(Locale.Raw, "0") + "." + App.NonReleaseVersion.ToString(Locale.Raw, "0")
+		        Updater.CanShutdown = True
+		        Updater.CompanyName = "The ZAZ Studios"
+		        Updater.DSAPubPEM = WinSparklePublicKey
+		        Updater.UpdateCheckInterval = CheckInterval
+		        Updater.Initialize
+		        mWinSparkle = Updater
+		      #endif
 		    #endif
 		  #endif
 		End Sub
@@ -325,58 +335,62 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h1
 		Protected Function IsCheckingAutomatically() As Boolean
-		  #if UseSparkle
-		    #if TargetMacOS
-		      If (mMacSparkle Is Nil) = False Then
-		        Return mMacSparkle.AutomaticallyChecksForUpdates
-		      End If
-		    #elseif TargetWindows
-		      If (mWinSparkle Is Nil) = False Then
-		        Return mWinSparkle.AutomaticCheckForUpdates
-		      End If
+		  #if Available
+		    #if UseSparkle
+		      #if TargetMacOS
+		        If (mMacSparkle Is Nil) = False Then
+		          Return mMacSparkle.AutomaticallyChecksForUpdates
+		        End If
+		      #elseif TargetWindows
+		        If (mWinSparkle Is Nil) = False Then
+		          Return mWinSparkle.AutomaticCheckForUpdates
+		        End If
+		      #endif
+		    #else
+		      Return (mAutoCheckTimer Is Nil) = False And mAutoCheckTimer.RunMode = Timer.RunModes.Multiple
 		    #endif
-		  #else
-		    Return (mAutoCheckTimer Is Nil) = False And mAutoCheckTimer.RunMode = Timer.RunModes.Multiple
 		  #endif
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub IsCheckingAutomatically(Assigns Value As Boolean)
-		  #if UseSparkle
-		    #if TargetMacOS
-		      If (mMacSparkle Is Nil) = False Then
-		        mMacSparkle.AutomaticallyChecksForUpdates = Value
-		      End If
-		    #elseif TargetWindows
-		      If (mWinSparkle Is Nil) = False Then
-		        mWinSparkle.AutomaticCheckForUpdates = Value
-		      End If
-		    #endif
-		  #else
-		    If IsCheckingAutomatically = Value Then
-		      // No changes necessary
-		      Return
-		    End If
-		    
-		    If mAutoCheckTimer Is Nil Then
-		      If Value = False Then
+		  #if Available
+		    #if UseSparkle
+		      #if TargetMacOS
+		        If (mMacSparkle Is Nil) = False Then
+		          mMacSparkle.AutomaticallyChecksForUpdates = Value
+		        End If
+		      #elseif TargetWindows
+		        If (mWinSparkle Is Nil) = False Then
+		          mWinSparkle.AutomaticCheckForUpdates = Value
+		        End If
+		      #endif
+		    #else
+		      If IsCheckingAutomatically = Value Then
+		        // No changes necessary
 		        Return
 		      End If
 		      
-		      mAutoCheckTimer = New Timer
-		      mAutoCheckTimer.Period = 60000 // Does not actually check every minute, that is throttled by the event
-		      AddHandler mAutoCheckTimer.Action, AddressOf mAutoCheckTimer_Action
-		    End If
-		    
-		    If Value And mAutoCheckTimer.RunMode <> Timer.RunModes.Multiple Then
-		      App.Log("Automatic update checking is enabled.")
-		      mAutoCheckTimer_Action(mAutoCheckTimer) // Force fire it now to catch up
-		      mAutoCheckTimer.RunMode = Timer.RunModes.Multiple
-		    ElseIf Value = False And mAutoCheckTimer.RunMode <> Timer.RunModes.Off Then
-		      App.Log("Automatic update checking has been stopped.")
-		      mAutoCheckTimer.RunMode = Timer.RunModes.Off
-		    End If
+		      If mAutoCheckTimer Is Nil Then
+		        If Value = False Then
+		          Return
+		        End If
+		        
+		        mAutoCheckTimer = New Timer
+		        mAutoCheckTimer.Period = 60000 // Does not actually check every minute, that is throttled by the event
+		        AddHandler mAutoCheckTimer.Action, AddressOf mAutoCheckTimer_Action
+		      End If
+		      
+		      If Value And mAutoCheckTimer.RunMode <> Timer.RunModes.Multiple Then
+		        App.Log("Automatic update checking is enabled.")
+		        mAutoCheckTimer_Action(mAutoCheckTimer) // Force fire it now to catch up
+		        mAutoCheckTimer.RunMode = Timer.RunModes.Multiple
+		      ElseIf Value = False And mAutoCheckTimer.RunMode <> Timer.RunModes.Off Then
+		        App.Log("Automatic update checking has been stopped.")
+		        mAutoCheckTimer.RunMode = Timer.RunModes.Off
+		      End If
+		    #endif
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -704,21 +718,23 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h1
 		Protected Sub RefreshSettings()
-		  IsCheckingAutomatically = Preferences.OnlineEnabled
-		  
-		  #if UseSparkle
-		    Var URL As String = CheckURL()
-		    App.Log("Update check URI changed to " + URL)
+		  #if Available
+		    IsCheckingAutomatically = Preferences.OnlineEnabled
 		    
-		    #if TargetMacOS
-		      If (mMacSparkle Is Nil) = False Then
-		        mMacSparkle.FeedURL = URL
-		        mMacSparkle.automaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
-		      End If
-		    #elseif TargetWindows
-		      If (mWinSparkle Is Nil) = False Then
-		        mWinSparkle.AppCastURL = URL
-		      End If
+		    #if UseSparkle
+		      Var URL As String = CheckURL()
+		      App.Log("Update check URI changed to " + URL)
+		      
+		      #if TargetMacOS
+		        If (mMacSparkle Is Nil) = False Then
+		          mMacSparkle.FeedURL = URL
+		          mMacSparkle.automaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
+		        End If
+		      #elseif TargetWindows
+		        If (mWinSparkle Is Nil) = False Then
+		          mWinSparkle.AppCastURL = URL
+		        End If
+		      #endif
 		    #endif
 		  #endif
 		End Sub
@@ -896,6 +912,11 @@ Protected Module UpdatesKit
 		Private mWinSparkle As WinSparkleMBS
 	#tag EndProperty
 
+
+	#tag Constant, Name = Available, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
+		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"True"
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"True"
+	#tag EndConstant
 
 	#tag Constant, Name = Notification_DownloadError, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.error", Scope = Protected
 	#tag EndConstant
