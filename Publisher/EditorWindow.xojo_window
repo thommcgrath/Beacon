@@ -11,14 +11,14 @@ Begin DesktopWindow EditorWindow
    HasMaximizeButton=   True
    HasMinimizeButton=   True
    HasTitleBar     =   True
-   Height          =   602
+   Height          =   678
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   1391144959
    MenuBarVisible  =   True
-   MinimumHeight   =   602
+   MinimumHeight   =   678
    MinimumWidth    =   720
    Resizeable      =   True
    Title           =   "Publisher"
@@ -90,7 +90,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Banner Text:"
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   268
@@ -161,7 +161,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   352
+      Top             =   428
       Transparent     =   False
       Visible         =   True
       Width           =   720
@@ -192,7 +192,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   306
+      Top             =   382
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -237,7 +237,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   353
+      Top             =   429
       Transparent     =   True
       Underline       =   False
       UnicodeMode     =   0
@@ -269,7 +269,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Short Version:"
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -343,7 +343,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Build:"
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   230
@@ -484,12 +484,176 @@ Begin DesktopWindow EditorWindow
       ThreadState     =   0
       Type            =   0
    End
+   Begin DesktopTextField ManifestPathField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   26
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   179
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   306
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   521
+   End
+   Begin DesktopTextField MetaInfoPathField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   26
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   179
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   344
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   521
+   End
+   Begin DesktopLabel ShortPreviewLabel1
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   26
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Manifest:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   306
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   147
+   End
+   Begin DesktopLabel ShortPreviewLabel2
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   26
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "MetaInfo:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   344
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   147
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
+		Sub DropObject(obj As DragItem, action As DragItem.Types)
+		  #Pragma Unused Action
+		  Do
+		    If Obj.FolderItemAvailable = False Then
+		      Continue
+		    End If
+		    
+		    If Obj.FolderItem.IsFolder Then
+		      Self.VersionField.Text = Obj.FolderItem.Name
+		    End If
+		    Self.AddFiles(Obj.FolderItem)
+		  Loop Until Obj.NextItem = False
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
+		  Self.AcceptFileDrop(AppFileTypes.DiskImage + AppFileTypes.WindowsExecutable + AppFileTypes.TextPlain)
+		  
 		  #if TargetMacOS
 		    Var Win As NSWindowMBS = Self.NSWindowMBS
 		    Win.TitlebarAppearsTransparent = True
@@ -502,11 +666,24 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddFile(File As FolderItem, Arch As Integer = 0)
+		  Select Case File.Name
+		  Case "com.thezaz.beacon.json"
+		    Self.mFlatpakManfiestFile = File
+		    Self.ManifestPathField.Text = File.NativePath
+		    Return
+		  Case "com.thezaz.beacon.metainfo.xml"
+		    Self.mMetaInfoFile = File
+		    Self.MetaInfoPathField.Text = File.NativePath
+		    Return
+		  End Select
+		  
 		  Var Platform As String
 		  If File.Name.EndsWith(".exe") Then
 		    Platform = Download.PlatformWindows
 		  ElseIf File.Name.EndsWith(".dmg") Then
 		    Platform = Download.PlatformMac
+		  ElseIf File.Name.EndsWith(".tgz") Then
+		    Platform = Download.PlatformLinux
 		  End If
 		  
 		  Var Version As String = Self.VersionField.Text.Trim
@@ -546,7 +723,7 @@ End
 		  
 		  For Each File As FolderItem In Folder.Children
 		    Select Case File.Name
-		    Case "Beacon.dmg"
+		    Case "Beacon.dmg", "beacon.tgz"
 		      Self.AddFile(File, If(Arch <> 0, Arch, Download.ArchARM64 Or Download.ArchIntel64))
 		    Case "Install_Beacon.exe"
 		      Self.AddFile(File, If(Arch <> 0, Arch, Download.ArchIntel32 Or Download.ArchIntel64))
@@ -567,8 +744,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Begin()
-		  Var HumanVersion As String = Self.VersionField.Text.Trim
+		  Self.mWithLinux = False
 		  
+		  Var HumanVersion As String = Self.VersionField.Text.Trim
 		  Var Queue As New Dictionary
 		  Var Downloads() As Download
 		  For RowIdx As Integer = 0 To Self.FileList.LastRowIndex
@@ -585,12 +763,21 @@ End
 		      Arch = Arch Or Download.ArchIntel64
 		    End If
 		    
+		    If Platform = Download.PlatformLinux Then
+		      Self.mWithLinux = True
+		    End If
+		    
 		    Var Path As String = Download.SuggestedPath(Arch, Platform)
 		    Var URL As String = "https://releases.usebeacon.app/" + If(DebugBuild, "Debug/", "") + HumanVersion + "/" + Path
 		    Var DownloadObj As New Download(File, URL, Arch, Platform)
 		    Queue.Value(DownloadObj.UUID) = DownloadObj
 		    Downloads.Add(DownloadObj)
 		  Next RowIdx
+		  
+		  If Self.mWithLinux And (Self.mMetaInfoFile Is Nil Or Self.mMetaInfoFile.Exists = False Or Self.mFlatpakManfiestFile Is Nil Or Self.mFlatpakManfiestFile.Exists = False) Then
+		    MessageBox("Missing metainfo or flatpak manifest")
+		    Return
+		  End If
 		  
 		  Self.mUploadQueue = Queue
 		  Self.mDownloads = Downloads
@@ -754,6 +941,19 @@ End
 		  Var Board As New Clipboard
 		  Board.Text = String.FromArray(Statements, EndOfLine)
 		  
+		  If Self.mWithLinux Then
+		    Try
+		      Self.UpdateFlatpakManifest()
+		    Catch Err As RuntimeException
+		      MessageBox("Could not generate manifest")
+		    End Try
+		    Try
+		      Self.UpdateMetaInfo()
+		    Catch Err As RuntimeException
+		      MessageBox("Could not generate meta info")
+		    End Try
+		  End If
+		  
 		  MessageBox("Insert statements have been copied to the clipboard.")
 		  
 		  Self.CheckEnabled
@@ -762,8 +962,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub NextQueueItem()
-		  Break
-		  
 		  If Self.mUploadQueue.KeyCount = 0 Then
 		    Self.Finish()
 		    Return
@@ -790,6 +988,151 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateFlatpakManifest()
+		  Var InStream As TextInputStream = TextInputStream.Open(Self.mFlatpakManfiestFile)
+		  Var OriginalSource As String = InStream.ReadAll(Encodings.UTF8)
+		  InStream.Close
+		  
+		  Var Manifest As New JSONItem(OriginalSource)
+		  Var Modules As JSONItem = Manifest.Child("modules")
+		  For ModuleIdx As Integer = 0 To Modules.LastRowIndex
+		    Var ModuleItem As JSONItem = Modules.ChildAt(ModuleIdx)
+		    Var ModuleName As String = ModuleItem.Value("name").StringValue
+		    If ModuleName <> "Beacon" Then
+		      Continue
+		    End If
+		    
+		    Var Sources As JSONItem = ModuleItem.Child("sources")
+		    For SourceIdx As Integer = 0 To Sources.LastRowIndex
+		      Var Source As JSONItem = Sources.ChildAt(SourceIdx)
+		      Var Type As String = Source.Value("type").StringValue
+		      If Type <> "archive" Or Source.HasKey("only-arches") = False Then
+		        Continue
+		      End If
+		      
+		      Var Arches As JSONItem = Source.Child("only-arches")
+		      If Arches.Count <> 1 Then
+		        Continue
+		      End If
+		      
+		      Var Arch As Integer
+		      Select Case Arches.ValueAt(0).StringValue
+		      Case "aarch64"
+		        Arch = Download.ArchARM64
+		      Case "x86_64"
+		        Arch = Download.ArchIntel64
+		      Else
+		        Continue
+		      End Select
+		      
+		      For Each Download As Download In Self.mDownloads
+		        If Download.Platform = Download.PlatformLinux And Download.Arch = Arch Then
+		          Source.Value("url") = Download.URL
+		          Source.Value("sha256") = Download.Checksum
+		          Exit
+		        End If
+		      Next
+		    Next
+		  Next
+		  
+		  Var Options As New JSONOptions
+		  Options.Compact = False
+		  Options.IndentSpacing = 2
+		  Options.DecimalPlaces = 6
+		  
+		  Var OutStream As TextOutputStream = TextOutputStream.Create(Self.mFlatpakManfiestFile)
+		  OutStream.Write(Manifest.ToString(Options))
+		  OutStream.Close
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateMetaInfo()
+		  Var InStream As TextInputStream = TextInputStream.Open(Self.mMetaInfoFile)
+		  Var OriginalSource As String = InStream.ReadAll(Encodings.UTF8)
+		  InStream.Close
+		  
+		  Var Doc As New XMLDocument(OriginalSource)
+		  Var Root As XMLElement = Doc.DocumentElement
+		  Var Releases As XMLNode
+		  
+		  Var Node As XMLNode = Root.FirstChild
+		  While (Node Is Nil) = False
+		    If Node.Name = "releases" Then
+		      Releases = Node
+		      Exit
+		    End If
+		    
+		    Node = Node.NextSibling
+		  Wend
+		  
+		  If Releases Is Nil Then
+		    MessageBox("Could not find releases element in metainfo")
+		    Return
+		  End If
+		  
+		  Var Stage As Integer = Floor(Self.mBuildNumber / 100) - (Floor(Self.mBuildNumber / 1000) * 10)
+		  
+		  Var ReleaseUrl As XMLNode = Doc.CreateElement("url")
+		  ReleaseUrl.SetAttribute("type", "details")
+		  ReleaseUrl.AppendChild(Doc.CreateTextNode("https://usebeacon.app/history?stage=" + Stage.ToString(Locale.Raw, "0") + "#build" + Self.mBuildNumber.ToString(Locale.Raw, "0")))
+		  
+		  Var Description As XMLNode
+		  Var Notes As New MarkdownDocumentMBS(Self.mNotesText)
+		  If Notes.Compile Then
+		    Var Compiled As String = Notes.Document
+		    Var Html As New XMLDocument("<description>" + Compiled.ReplaceAll("<h2>", "<p>**").ReplaceAll("</h2>", "**</p>") + "</description>")
+		    Description = Doc.ImportNode(Html.DocumentElement, True)
+		  Else
+		    Description = Doc.CreateElement("description")
+		    Description.AppendChild(Doc.CreateTextNode(Self.mNotesText))
+		  End If
+		  
+		  Var Release As XMLNode
+		  Var AddRelease As Boolean = True
+		  If Releases.ChildCount > 0 Then
+		    Node = Releases.FirstChild
+		    While (Node Is Nil) = False
+		      If Node.Name = "release" And Node.GetAttribute("version") = Self.mDisplayVersion Then
+		        Release = Node
+		        Exit
+		      End If
+		      
+		      Node = Node.NextSibling
+		    Wend
+		  End If
+		  
+		  If Release Is Nil Then
+		    Release = Doc.CreateElement("release")
+		  Else
+		    While Release.ChildCount > 0
+		      Release.RemoveChild(Release.FirstChild)
+		    Wend
+		    AddRelease = False
+		  End If
+		  Release.AppendChild(ReleaseUrl)
+		  Release.AppendChild(Description)
+		  Release.SetAttribute("version", Self.mDisplayVersion)
+		  Release.SetAttribute("date", DateTime.Now.SQLDate)
+		  
+		  If AddRelease Then
+		    If Releases.ChildCount > 0 Then
+		      Releases.Insert(Release, Releases.FirstChild)
+		    Else
+		      Releases.AppendChild(Release)
+		    End If
+		  End If
+		  
+		  // Use this intermediate to avoid getting namespaces on the added classes
+		  Var Intermediate As New XMLDocument(Doc.ToString)
+		  
+		  Var OutStream As TextOutputStream = TextOutputStream.Create(Self.mMetaInfoFile)
+		  OutStream.Write(Intermediate.Transform(PrettyPrintXSL))
+		  OutStream.Close
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mBannerText As String
@@ -808,6 +1151,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mFlatpakManfiestFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMetaInfoFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mNotesText As String
 	#tag EndProperty
 
@@ -821,6 +1172,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mUploadQueue As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWithLinux As Boolean
 	#tag EndProperty
 
 
@@ -837,6 +1192,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnPlatform, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PrettyPrintXSL, Type = String, Dynamic = False, Default = \"<\?xml version\x3D\"1.0\" encoding\x3D\"UTF-8\"\?>\n<xsl:transform version\x3D\"1.0\" xmlns:xsl\x3D\"http://www.w3.org/1999/XSL/Transform\">\n  <xsl:output method\x3D\"xml\" indent\x3D\"yes\" />\n  <xsl:template match\x3D\"/\">\n    <xsl:copy-of select\x3D\"/\" />\n  </xsl:template>\n</xsl:transform>", Scope = Private
 	#tag EndConstant
 
 
@@ -961,8 +1319,6 @@ End
 #tag Events FileList
 	#tag Event
 		Sub Opening()
-		  Me.AcceptFileDrop(AppFileTypes.DiskImage + AppFileTypes.WindowsExecutable)
-		  
 		  Me.ColumnTypeAt(Self.ColumnARM64) = DesktopListBox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnIntel32) = DesktopListbox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnIntel64) = DesktopListbox.CellTypes.CheckBox
@@ -970,22 +1326,6 @@ End
 		  Me.ColumnAlignmentAt(Self.ColumnARM64) = DesktopListbox.Alignments.Center
 		  Me.ColumnAlignmentAt(Self.ColumnIntel32) = DesktopListbox.Alignments.Center
 		  Me.ColumnAlignmentAt(Self.ColumnIntel64) = DesktopListbox.Alignments.Center
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DropObject(obj As DragItem, action As DragItem.Types)
-		  #Pragma Unused Action
-		  Do
-		    If Obj.FolderItemAvailable = False Then
-		      Continue
-		    End If
-		    
-		    If Obj.FolderItem.IsFolder Then
-		      Self.VersionField.Text = Obj.FolderItem.Name
-		    End If
-		    Self.AddFiles(Obj.FolderItem)
-		    Return
-		  Loop Until Obj.NextItem = False
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1053,6 +1393,10 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
+#tag EndEvents
+#tag Events ManifestPathField
+#tag EndEvents
+#tag Events MetaInfoPathField
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

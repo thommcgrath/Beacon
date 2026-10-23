@@ -80,6 +80,10 @@ Protected Class Download
 		  Wend
 		  Stream.Close
 		  
+		  If Contents.Size = 0 Then
+		    Return False
+		  End If
+		  
 		  Self.mContents = Contents
 		  Self.mChecksum = EncodeHex(Crypto.SHA2_256(Contents)).Lowercase
 		  
@@ -196,7 +200,7 @@ Protected Class Download
 		  Case PlatformWindows
 		    Return Path + "/Install_Beacon.exe"
 		  Case PlatformLinux
-		    Return Path + "/Beacon.rpm" // No idea...
+		    Return Path + "/beacon.tgz"
 		  End Select
 		End Function
 	#tag EndMethod

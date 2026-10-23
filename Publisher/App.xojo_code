@@ -67,13 +67,17 @@ Inherits DesktopApplication
 		      Raise New CryptoException
 		    End If
 		    
+		    Var Options As New JSONOptions
+		    Options.Compact = False
+		    Options.IndentSpacing = 2
+		    Options.DecimalPlaces = 6
+		    
 		    Var Item As New JSONItem()
 		    Item.Value("private") = PrivateKey
 		    Item.Value("public") = PublicKey
-		    Item.Compact = False
 		    
 		    Var Stream As TextOutputStream = TextOutputStream.Create(File)
-		    Stream.Write(Item.ToString)
+		    Stream.Write(Item.ToString(Options))
 		    Stream.Close
 		    
 		    Return PrivateKey
@@ -104,6 +108,14 @@ Inherits DesktopApplication
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ProcessID"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=false

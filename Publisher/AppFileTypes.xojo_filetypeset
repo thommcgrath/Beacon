@@ -7,7 +7,7 @@
 		MacType=
 		Name=Apple Disk Image
 		UTI=com.apple.disk-image
-		UTIConformsTo=,public.data
+		UTIConformsTo=, public.data
 		Description=
 		MimeType=application/x-apple-diskimage
 		Imported=True
@@ -23,9 +23,25 @@
 		MacType=
 		Name=Windows Executable
 		UTI=
-		UTIConformsTo=,public.data
+		UTIConformsTo=, public.data
 		Description=
 		MimeType=application/vnd.microsoft.portable-executable
+		Imported=True
+		HandlerRank=&h9
+		UTIPhysicalType=public.data
+	#tag EndFileType
+
+	#tag FileType
+		CodeName=TextPlain
+		Extension=.asc;.ascii;.bas;.c;.class;.cp;.cpp;.h;.hp;.hpp;.i3;.java;.m2;.m3;.mak;.text;.txt
+		Flags=&h2
+		MacCreator=
+		MacType=TEXT
+		Name=text/plain
+		UTI=public.text
+		UTIConformsTo=,public.data
+		Description=
+		MimeType=
 		Imported=True
 		HandlerRank=&h9
 		UTIPhysicalType=public.data
