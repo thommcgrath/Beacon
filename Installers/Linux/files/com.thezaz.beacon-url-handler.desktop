@@ -1,0 +1,11 @@
+[Desktop Entry]
+Categories=Utility;GameTool
+Comment=Beacon Server Manager
+Exec=com.thezaz.beacon.sh %u
+Icon=com.thezaz.beacon
+MimeType=x-scheme-handler/beacon
+Name=Beacon URL Handler
+NoDisplay=true
+StartupNotify=true
+Type=Application
+Version=1.0

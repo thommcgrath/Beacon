@@ -16,5 +16,5 @@ if [ -e "${ARCHIVE_ARM64}" ]; then
 	rm "${ARCHIVE_ARM64}";
 fi
 
-tar -czvhf "${ARCHIVE_X64}" --exclude='.DS_Store' -C "files" "." -C "../../../Project/Builds - ${APPNAME}/Linux 64 bit" "${APPNAME}";
-tar -czvhf "${ARCHIVE_ARM64}" --exclude='.DS_Store' -C "files" "." -C "../../../Project/Builds - ${APPNAME}/Linux ARM64" "${APPNAME}";
+tar -czvhf "${ARCHIVE_X64}" --exclude='.DS_Store' --disable-copyfile --no-xattrs -C "files" "." -C "../../../Project/Builds - ${APPNAME}/Linux 64 bit" "${APPNAME}";
+tar -czvhf "${ARCHIVE_ARM64}" --exclude='.DS_Store' --disable-copyfile --no-xattrs -C "files" "." -C "../../../Project/Builds - ${APPNAME}/Linux ARM64" "${APPNAME}";

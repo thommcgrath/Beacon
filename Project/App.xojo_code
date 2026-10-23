@@ -21,6 +21,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Event
 		Sub Closing()
+		  If (Self.mHandoffSocket Is Nil) = False Then
+		    Self.mHandoffSocket.Close
+		  End If
+		  
 		  Try
 		    Self.UninstallTemporaryFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
 		  Catch Err As RuntimeException
@@ -284,7 +288,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.NextLaunchQueueTask
 		  
 		  #if Not TargetMacOS
-		    Self.HandleCommandLineData(System.CommandLine, True)
+		    Self.HandleCommandLineData(System.CommandLine)
 		  #endif
 		  
 		  Self.AllowAutoQuit = True
@@ -753,7 +757,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub HandleCommandLineData(Data As String, URLOnly As Boolean)
+		Private Sub HandleCommandLineData(Data As String)
 		  Var Char, BreakChar, Arg As String
 		  Var Args() As String
 		  
@@ -777,23 +781,32 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  Next
 		  
-		  If Arg <> "" Then
+		  If Arg.IsEmpty = False Then
 		    Args.Add(Arg)
 		  End If
+		  
+		  // No empty arguments
+		  For Idx As Integer = Args.LastIndex DownTo Args.FirstIndex
+		    If Args(Idx).IsEmpty Then
+		      Args.RemoveAt(Idx)
+		    End If
+		  Next
 		  
 		  If Args.LastIndex > 0 Then
 		    Var Path As String = DefineEncoding(Args(1), Encodings.UTF8)
 		    If Beacon.IsBeaconURL(Path) Then
 		      // Given a url
 		      Call Self.HandleURL(Path, True)
-		    ElseIf URLOnly = False Then
+		    Else
 		      // Given a file
 		      Var File As FolderItem
+		      #Pragma BreakOnExceptions False
 		      Try
 		        File = New FolderItem(Path, FolderItem.PathModes.Native)
 		      Catch Err As RuntimeException
 		        Self.Log("Tried to open " + Path + " but got an exception: " + Err.Message)
 		      End Try
+		      #Pragma BreakOnExceptions Default
 		      If File <> Nil And File.Exists Then
 		        Self.OpenFile(File, False)
 		      End If
@@ -1439,7 +1452,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Var Command As String = DefineEncoding(Sender.Read(Pos), Encodings.UTF8)
 		    Call Sender.Read(1) // To drop the null byte from the buffer
 		    Self.Log("Received command line data: " + Command)
-		    Self.HandleCommandLineData(Command, False)
+		    Self.HandleCommandLineData(Command)
 		  Loop
 		End Sub
 	#tag EndMethod
@@ -1447,11 +1460,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub mHandoffSocket_Error(Sender As IPCSocket, Err As RuntimeException)
 		  Var Code As Integer = Err.ErrorNumber
-		  If Code = 102 Then
+		  Select Case Code
+		  Case 102
 		    Call CallLater.Schedule(100, AddressOf Sender.Listen)
+		  Case 105
+		    App.Log("IPC address in use, waiting…")
+		    Self.mHandoffSocket = Nil
 		  Else
 		    App.Log("IPC error " + Code.ToString(Locale.Raw, "0"))
-		  End If
+		    Self.mHandoffSocket = Nil
+		  End Select
 		End Sub
 	#tag EndMethod
 
