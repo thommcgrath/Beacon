@@ -1,5 +1,5 @@
 [Desktop Entry]
-Categories=Utility;GameTool
+Categories=Utility
 Comment=Beacon Server Manager
 Exec=com.thezaz.beacon.sh %f
 Icon=com.thezaz.beacon
