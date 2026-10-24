@@ -4,9 +4,6 @@
 		<comment>Beacon Project</comment>
 		<icon name="com.thezaz.beacon.document" />
 		<glob pattern="*.beacon" />
-		<magic priority="50">
-			<match type="bequad" value="3470482855257601832" offset="0" />
-		</magic>
 	</mime-type>
 	<mime-type type="application/x-beacon-preset">
 		<comment>Beacon Template</comment>
