@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\ArkSA;
 use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema};
-use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
+use BeaconCommon, BeaconDatabase, BeaconRecordSet, BeaconUUID, Exception;
 
 class SpawnPoint extends MutableBlueprint {
 	protected ?array $sets;
@@ -96,13 +96,10 @@ class SpawnPoint extends MutableBlueprint {
 		$spawnPointId = $this->ObjectID();
 		$setsList = [];
 		if (is_null($this->sets) === false) {
+			$setIdx = 0;
 			foreach ($this->sets as $set) {
-				$spawnPointSetId = $set['spawnPointSetId'];
-				if (BeaconCommon::IsUUID($spawnPointSetId)) {
-					$setsList[] = $spawnPointSetId;
-				} else {
-					throw new Exception('Spawn point set id is not a uuid.');
-				}
+				$spawnPointSetId = BeaconUUID::v5($spawnPointId . ':' . $setIdx);
+				$setIdx++;
 
 				$columnMap = [
 					'label' => 'label',
@@ -148,9 +145,10 @@ class SpawnPoint extends MutableBlueprint {
 	protected function SaveSetEntries(BeaconDatabase $database, string $spawnPointSetId, ?array $entries) {
 		$keepEntries = [];
 		if (is_null($entries) === false) {
+			$entryIdx = 0;
 			foreach ($entries as $entry) {
 				$inserted = $database->Upsert('arksa.spawn_point_set_entries', [
-					'spawn_point_set_entry_id' => $entry['spawnPointSetEntryId'],
+					'spawn_point_set_entry_id' => BeaconUUID::v5($spawnPointSetId . ':' . $entryIdx),
 					'spawn_point_set_id' => $spawnPointSetId,
 					'creature_id' => $entry['creatureId'],
 					'weight' => $entry['weight'] ?? null,
@@ -162,6 +160,7 @@ class SpawnPoint extends MutableBlueprint {
 					'spawn_offset' => (isset($entry['spawnOffset']) === false || is_null($entry['spawnOffset']) ? null : ('(' . $entry['spawnOffset']['x'] . ',' . $entry['spawnOffset']['y'] . ',' . $entry['spawnOffset']['z'] . ')'))
 				], ['spawn_point_set_entry_id']);
 				$keepEntries[] = $inserted->Field('spawn_point_set_entry_id');
+				$entryIdx++;
 
 				$this->SaveSetEntryLevels($database, $entry['spawnPointSetEntryId'], $entry['levelOverrides'] ?? null);
 			}

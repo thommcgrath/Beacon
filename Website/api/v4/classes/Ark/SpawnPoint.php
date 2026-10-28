@@ -104,6 +104,11 @@ class SpawnPoint extends MutableBlueprint {
 					throw new Exception('Spawn point set id is not a uuid.');
 				}
 
+				$rows = $database->Query('SELECT spawn_point_id FROM ark.spawn_point_sets WHERE spawn_point_set_id = $1;', $spawnPointSetId);
+				if ($rows->RecordCount() === 1 && $rows->Field('spawn_point_id') != $spawnPointId) {
+					throw new Exception('Spawn set ' . $spawnPointSetId . ' already exists. It cannot be updated because it belongs to another spawn point.');
+				}
+
 				$columnMap = [
 					'label' => 'label',
 					'weight' => 'weight',
@@ -149,8 +154,18 @@ class SpawnPoint extends MutableBlueprint {
 		$keepEntries = [];
 		if (is_null($entries) === false) {
 			foreach ($entries as $entry) {
+				$spawnPointSetEntryId = $entry['spawnPointSetEntryId'];
+				if (BeaconCommon::IsUUID($spawnPointSetEntryId) === false) {
+					throw new Exception('Spawn point set entry id is not a uuid.');
+				}
+
+				$rows = $database->Query('SELECT spawn_point_set_id FROM ark.spawn_point_set_entries WHERE spawn_point_set_entry_id = $1;', $spawnPointSetEntryId);
+				if ($rows->RecordCount() === 1 && $rows->Field('spawn_point_set_id') != $spawnPointSetId) {
+					throw new Exception('Spawn set entry ' . $spawnPointSetEntryId . ' already exists. It cannot be updated because it belongs to another spawn set.');
+				}
+
 				$inserted = $database->Upsert('ark.spawn_point_set_entries', [
-					'spawn_point_set_entry_id' => $entry['spawnPointSetEntryId'],
+					'spawn_point_set_entry_id' => $spawnPointSetEntryId,
 					'spawn_point_set_id' => $spawnPointSetId,
 					'creature_id' => $entry['creatureId'],
 					'weight' => $entry['weight'],

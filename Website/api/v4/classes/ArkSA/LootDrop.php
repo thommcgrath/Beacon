@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\ArkSA;
 use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
-use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
+use BeaconCommon, BeaconDatabase, BeaconRecordSet, BeaconUUID, Exception;
 
 class LootDrop extends MutableBlueprint {
 	protected float $multiplierMin;
@@ -319,11 +319,10 @@ class LootDrop extends MutableBlueprint {
 		}
 
 		if (is_null($this->itemSets) === false) {
+			$itemSetIdx = 0;
 			foreach ($this->itemSets as $itemSet) {
-				$itemSetId = $itemSet['lootItemSetId'];
-				if (BeaconCommon::IsUUID($itemSetId) === false) {
-					throw new Exception('Item set ID "' . $itemSetId . '" is not a UUID.');
-				}
+				$itemSetId = BeaconUUID::v5($lootContainerId . ':' . $itemSetIdx);
+				$itemSetIdx++;
 
 				if ($this->SaveItemSetEntries($database, $itemSetId, $itemSet['entries']) === false) {
 					continue;
@@ -366,11 +365,10 @@ class LootDrop extends MutableBlueprint {
 		}
 
 		if (is_null($entries) === false) {
+			$entryIdx = 0;
 			foreach ($entries as $entry) {
-				$entryId = $entry['lootItemSetEntryId'];
-				if (BeaconCommon::IsUUID($entryId) === false) {
-					throw new Exception('Entry ID "' . $entryId . '" is not a UUID.');
-				}
+				$entryId = BeaconUUID::v5($lootItemSetId . ':' . $entryIdx);
+				$entryIdx++;
 
 				if ($this->SaveItemSetEntryOptions($database, $entryId, $entry['options']) === false) {
 					continue;
@@ -420,11 +418,10 @@ class LootDrop extends MutableBlueprint {
 		}
 
 		if (is_null($options) === false) {
+			$optionIdx = 0;
 			foreach ($options as $option) {
-				$optionId = $option['lootItemSetEntryOptionId'];
-				if (BeaconCommon::IsUUID($optionId) === false) {
-					throw new Exception('Option ID "' . $optionId . '" is not a UUID.');
-				}
+				$optionId = BeaconUUID::v5($lootItemSetEntryId . ':' . $optionIdx);
+				$optionIdx++;
 
 				$values = [
 					$optionId,

@@ -295,6 +295,11 @@ class LootDrop extends MutableBlueprint {
 					throw new Exception('Item set ID is not a v4 UUID.');
 				}
 
+				$rows = $database->Query('SELECT loot_source_id FROM ark.loot_item_sets WHERE loot_item_set_id = $1;', $lootItemSetId);
+				if ($rows->RecordCount() === 1 && $rows->Field('loot_source_id') != $lootContainerId) {
+					throw new Exception('Item set ' . $lootItemSetId . ' already exists. It cannot be updated because it belongs to another loot container.');
+				}
+
 				$columnMap = [
 					'label' => 'label',
 					'minEntries' => 'min_entries',
@@ -338,6 +343,11 @@ class LootDrop extends MutableBlueprint {
 					$keepEntries[] = $lootItemSetEntryId;
 				} else {
 					throw new Exception('Entry ID is not a v4 UUID.');
+				}
+
+				$rows = $database->Query('SELECT loot_item_set_id FROM ark.loot_item_set_entries WHERE loot_item_set_entry_id = $1;', $lootItemSetEntryId);
+				if ($rows->RecordCount() === 1 && $rows->Field('loot_item_set_id') != $lootItemSetId) {
+					throw new Exception('Item set entry ' . $lootItemSetEntryId . ' already exists. It cannot be updated because it belongs to another item set.');
 				}
 
 				$columnMap = [
@@ -390,6 +400,11 @@ class LootDrop extends MutableBlueprint {
 					$keepOptions[] = $lootItemSetEntryOptionId;
 				} else {
 					throw new Exception('Option ID is not a v4 UUID.');
+				}
+
+				$rows = $database->Query('SELECT loot_item_set_entry_id FROM ark.loot_Item_set_entry_options WHERE loot_item_set_entry_option_id = $1;', $lootItemSetEntryOptionId);
+				if ($rows->RecordCount() === 1 && $rows->Field('loot_item_set_entry_id') != $lootItemSetEntryId) {
+					throw new Exception('Item set entry option ' . $lootItemSetEntryOptionId . ' already exists. It cannot be updated because it belongs to another item set entry.');
 				}
 
 				$engramRow = $database->Query('SELECT class_string FROM ark.engrams WHERE object_id = $1;', $option['engramId']);
