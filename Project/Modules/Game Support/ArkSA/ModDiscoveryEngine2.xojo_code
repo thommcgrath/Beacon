@@ -456,13 +456,20 @@ Protected Class ModDiscoveryEngine2
 		  End If
 		  
 		  Var RequiredHashes As New Dictionary
-		  RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "7dfad8413a3a297bba7ee2b99fd102c4"
-		  RequiredHashes.Value("CUE4Parse-Natives.dll") = "d019d5da83b37911f25ba7a89d6552a0"
-		  RequiredHashes.Value("CUE4Parse.pdb") = "792da56029cf02417ca08ce9ac07ecfe"
-		  RequiredHashes.Value("blake3_dotnet.dll") = "7ce74ad9c157ec818b45fa1f0b2c1b95"
-		  RequiredHashes.Value("libSkiaSharp.dll") = "ef1fabce43fe32ca83260481253f5476"
-		  RequiredHashes.Value("mod_data_extractor.exe") = "7f259d2cd0f24c30327cc5175fb2bf99"
-		  RequiredHashes.Value("mod_data_extractor.pdb") = "319824c006744e71ac2dfc2bc3cf9fa8"
+		  #if TargetWindows
+		    RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "09d8882a9945b490b4f42ba7a05db09d"
+		    RequiredHashes.Value("CUE4Parse-Natives.dll") = "f430e4f9690d16fdc5020ac4c81f9b10"
+		    RequiredHashes.Value("CUE4Parse.pdb") = "a64eaff7d362e96cfaba4748e4273fad"
+		    RequiredHashes.Value("libSkiaSharp.dll") = "ef1fabce43fe32ca83260481253f5476"
+		    RequiredHashes.Value("mod_data_extractor.exe") = "4ff07ce90919ddfe4dc2184d821f4b20"
+		    RequiredHashes.Value("mod_data_extractor.pdb") = "4702442d6d5a1581e8c4618242fc3b93"
+		  #elseif TargetLinux
+		    RequiredHashes.Value("CUE4Parse-Conversion.pdb") = "50c6aa11e134fe7c691bf042ed2c90d6"
+		    RequiredHashes.Value("CUE4Parse-Natives.so") = "144a0c3de714b0f75f0f93426a77b912"
+		    RequiredHashes.Value("CUE4Parse.pdb") = "59e8b69dab35bb19e5dd9ad3b5391813"
+		    RequiredHashes.Value("mod_data_extractor") = "b254260b5f36b386d87c66d7dec676d7"
+		    RequiredHashes.Value("mod_data_extractor.pdb") = "19786dc8e3547296b93c8979ac430c82"
+		  #endif
 		  Var ExtractorReady As Boolean = True
 		  For Each Entry As DictionaryEntry In RequiredHashes
 		    Var ExtractorFile As FolderItem = ExtractorRoot.Child(Entry.Key.StringValue)
@@ -487,8 +494,15 @@ Protected Class ModDiscoveryEngine2
 		      End If
 		    Next
 		    
+		    Var DownloadUrl As String = "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.3.0"
+		    #if TargetWindows
+		      DownloadUrl = DownloadUrl + ".zip"
+		    #elseif TargetLinux
+		      DownloadUrl = DownloadUrl + ".tar.gz"
+		    #endif
+		    
 		    Var DownloadSocket As New SimpleHTTP.SynchronousHTTPSocket
-		    DownloadSocket.Send("GET", "https://updates.usebeacon.app/tools/arksa_data_extractor/v1.2.0.zip")
+		    DownloadSocket.Send("GET", DownloadUrl)
 		    If DownloadSocket.HTTPStatusCode <> 200 Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Error": True, "Message": "Failed to download extractor tool."))
 		      Return
