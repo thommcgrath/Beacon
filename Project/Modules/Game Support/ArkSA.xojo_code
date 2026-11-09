@@ -542,7 +542,7 @@ Protected Module ArkSA
 		  
 		  If mModFilenameSearcher Is Nil Then
 		    mModFilenameSearcher = New RegEx
-		    mModFilenameSearcher.SearchPattern = "^(.+)-([a-z+]+) (\d+)\.zip$"
+		    mModFilenameSearcher.SearchPattern = "^(.+)-(windows|windowsserver)[\-\s](\d+)\.zip$"
 		  End If
 		  
 		  Var ModId As String = ModInfo.ModId.ToString(Locale.Raw, "0")
@@ -593,7 +593,7 @@ Protected Module ArkSA
 		    Var FileList As JSONItem = ResponseJson.Value("data")
 		    
 		    // Now look through for the windowsserver file
-		    Var DesiredFilename As String = FilenameBase + "-windowsserver " + FilenameVersion + ".zip"
+		    Var DesiredFilename As String = FilenameBase + "-windowsserver-" + FilenameVersion + ".zip"
 		    Var FileInfo As JSONItem
 		    For Idx As Integer = 0 To FileList.Count - 1
 		      Var File As JSONItem = FileList.ChildAt(Idx)
