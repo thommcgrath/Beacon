@@ -1143,7 +1143,7 @@ End
 		  Parts.Add("Content-Disposition: form-data; name=""host""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketHost)
 		  Parts.Add("Content-Disposition: form-data; name=""body""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketBody)
 		  Parts.Add("Content-Disposition: form-data; name=""user""" + EndOfLine.Windows + EndOfLine.Windows + Self.mUserID)
-		  Parts.Add("Content-Disposition: form-data; name=""archive""; filename=""" + Self.mTicketEmail.Left(Self.mTicketEmail.IndexOf("@")) + ".zip""" + EndOfLine.Windows + "Content-Type: application/zip" + EndOfLine.Windows + EndOfLine.Windows + ArchiveBytes.StringValue(0, ArchiveBytes.Size))
+		  Parts.Add("Content-Disposition: form-data; name=""archive""; filename=""ticket-" + Self.mTicketEmail.Left(Self.mTicketEmail.IndexOf("@")) + ".zip""" + EndOfLine.Windows + "Content-Type: application/zip" + EndOfLine.Windows + EndOfLine.Windows + ArchiveBytes.StringValue(0, ArchiveBytes.Size))
 		  #if Self.EncryptArchive
 		    Parts.Add("Content-Disposition: form-data; name=""archive_key""" + EndOfLine.Windows + EndOfLine.Windows + EncryptedPassword)
 		  #endif
