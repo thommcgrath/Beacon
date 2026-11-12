@@ -23,6 +23,8 @@ $rows = $database->Query("DELETE FROM sentinel.scripts WHERE deleted = TRUE AND 
 echo "Deleted {$rows->RecordCount()} unused scripts.\n";
 $rows = $database->Query("DELETE FROM sentinel.player_sessions WHERE UPPER_INF(active_times) = FALSE AND UPPER(active_times) < CURRENT_TIMESTAMP - '30 days'::INTERVAL RETURNING player_session_id;");
 echo "Deleted {$rows->RecordCount()} player sessions.\n";
+$rows = $database->Query("DELETE FROM sentinel.dinos WHERE tribe_id IN (SELECT tribe_id FROM sentinel.tribes WHERE tribe_number = 2000000000) last_update < CURRENT_TIMESTAMP - '1 week'::INTERVAL RETURNING dinos.dino_id;");
+echo "Deleted {$rows->RecordCount()} stale unclaimed dinos.\n";
 $database->Commit();
 echo "Sentinel data cleaned\n";
 
