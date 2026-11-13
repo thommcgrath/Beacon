@@ -147,6 +147,10 @@ Core::RegisterRoutes(
 		'/sentinel/services/{serviceId}/webhook' => [
 			'POST' => 'sentinel/services/webhook',
 		],
+		'/sentinel/services/{serviceId}/purge' => [
+			'GET' => 'sentinel/services/purge',
+			'POST' => 'sentinel/services/purge',
+		],
 		'/sentinel/groups/{groupId}/bans.txt' => [
 			'POST' => 'sentinel/bans/import',
 		],
