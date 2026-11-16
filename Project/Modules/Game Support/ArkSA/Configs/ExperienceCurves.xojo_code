@@ -50,7 +50,7 @@ Inherits ArkSA.ConfigGroup
 		    Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "LevelExperienceRampOverrides=(" + Chunks.Join(",") + ")", 0))
 		    Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "OverrideMaxExperiencePointsPlayer=" + MaxXP.ToString))
 		  ElseIf MatchesPlayerDefault = True And MatchesDinoDefault = False Then
-		    Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "LevelExperienceRampOverrides=", 0))
+		    Values.Add(New ArkSA.ConfigValue(ArkSA.ConfigFileGame, ArkSA.HeaderShooterGame, "LevelExperienceRampOverrides=-1", 0))
 		  Else
 		    Return Values
 		  End If
