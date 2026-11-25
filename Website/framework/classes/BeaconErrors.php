@@ -1,5 +1,7 @@
 <?php
 
+use BeaconAPI\v4\Core;
+
 abstract class BeaconErrors {
 	private static $handlers = [];
 	private static $secure_mode = true;
@@ -90,44 +92,39 @@ abstract class BeaconErrors {
 
 		// notify
 		if (static::$secure_mode) {
-			$attachments = [
-				[
-					'title' => 'Stack Details',
-					'fields' => [
-						[
-							'title' => 'Trace',
-							'value' => implode("\n", $trace)
-						],
-						[
-							'title' => 'Request URI',
-							'value' => $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-						],
-						[
-							'title' => 'Hostname',
-							'value' => gethostname(),
-							'short' => true
-						],
-						[
-							'title' => 'GET',
-							'value' => isset($_GET) ? var_export($_GET, true) : 'null'
-						],
-						[
-							'title' => 'POST',
-							'value' => isset($_POST) ? var_export($_POST, true) : 'null'
-						],
-						[
-							'title' => 'SESSION',
-							'value' => isset($_SESSION) ? var_export($_SESSION, true) : 'null'
-						],
-						[
-							'title' => 'COOKIE',
-							'value' => isset($_COOKIE) ? var_export($_COOKIE, true) : 'null'
-						]
+			$attachment = [
+				'title' => 'Stack Details',
+				'fields' => [
+					[
+						'title' => 'Trace',
+						'value' => "```\n" . implode("\n", $trace) . "```",
 					],
-					'ts' => time()
-				]
+					[
+						'title' => 'Request URI',
+						'value' => "```\n" . $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "```",
+					],
+					[
+						'title' => 'Hostname',
+						'value' => '`' . gethostname() . '`',
+						'short' => true,
+					],
+					[
+						'title' => 'GET',
+						'value' => isset($_GET) ? "```\n" .  json_encode($_GET, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "```" : 'null',
+					],
+				],
+				'ts' => time(),
 			];
-			BeaconCommon::PostSlackRaw(json_encode(['text' => $description, 'attachments' => $attachments]));
+
+			$app = Core::Application();
+			if (is_null($app) === false) {
+				$attachment['fields'][] = [
+					'title' => 'Application',
+					'value' => $app->Name() . ' (' . $app->ApplicationId() . ')',
+				];
+			}
+
+			BeaconCommon::PostSlackRaw(json_encode(['text' => $description, 'attachments' => [$attachment]]));
 		}
 
 		// pass to handlers
