@@ -41,7 +41,6 @@ curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($turnstileParams));
 $turnstileBody = curl_exec($curl);
 $turnstileStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
 
 if ($turnstileStatus !== 200) {
 	http_response_code(400);

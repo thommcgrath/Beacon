@@ -11,7 +11,7 @@ class GameVariable implements \JsonSerializable {
 		$this->value = $results->Field('value');
 	}
 
-	public static function GetAll(\DateTime $updated_since = null) {
+	public static function GetAll(?\DateTime $updated_since = null) {
 		if ($updated_since === null) {
 			$updated_since = new \DateTime('2000-01-01');
 		}

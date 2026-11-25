@@ -2,11 +2,11 @@
 
 class BeaconWorkshopItem {
 	const BASE_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id=';
-	
+
 	protected $mod_id;
 	protected $name;
 	protected $body;
-	
+
 	public static function URLForModID(int $mod_id): string {
 		if ($mod_id < 0) {
 			return 'http://store.steampowered.com/app/' . abs($mod_id);
@@ -14,30 +14,29 @@ class BeaconWorkshopItem {
 			return self::BASE_URL . $mod_id;
 		}
 	}
-	
+
 	public static function Load(int $mod_id): ?static {
 		$http = curl_init();
 		curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($http, CURLOPT_URL, self::URLForModID($mod_id));
 		$body = curl_exec($http);
-		curl_close($http);
-		
+
 		libxml_use_internal_errors(true);
-		
+
 		$dom = new DOMDocument;
 		if (!@$dom->loadHTML($body)) {
 			return null;
 		}
-		
+
 		$description = $dom->getElementById('highlightContent');
 		if ($description === null) {
 			return null;
 		}
-		
+
 		$xpath = new DOMXPath($dom);
 		$breadcrumbs = $xpath->query("//div[@class='breadcrumbs']");
 		$titles = $xpath->query("//div[@class='workshopItemTitle']");
-		
+
 		if ($breadcrumbs->length === 0) {
 			return null;
 		}
@@ -46,34 +45,34 @@ class BeaconWorkshopItem {
 		if (strpos($breadcrumbs_html, 'https://steamcommunity.com/app/346110') === false) {
 			return null;
 		}
-		
+
 		if ($titles->length === 0) {
 			return null;
 		}
 		$title = $titles->item(0);
 		$name = html_entity_decode($title->nodeValue);
-		
+
 		$description_html = $description->ownerDocument->saveHTML($description);
-		
+
 		$item = new static();
 		$item->mod_id = $mod_id;
 		$item->name = $name;
 		$item->body = $description_html;
 		return $item;
 	}
-	
+
 	public function ModID(): string {
 		return $this->mod_id;
 	}
-	
+
 	public function Name(): string {
 		return $this->name;
 	}
-	
+
 	public function Body(): string {
 		return $this->body;
 	}
-	
+
 	public function ContainsString(string $needle): bool {
 		return strpos($this->body, $needle) !== false;
 	}

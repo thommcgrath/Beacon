@@ -249,7 +249,7 @@ abstract class BeaconCommon {
 	public static function PostSlackRaw(string $raw): void {
 		$url = self::GetGlobal('Slack_WebHook_URL');
 		if (is_null($url)) {
-			trigger_error('Config file did not specify Slack_WebHook_URL', E_USER_ERROR);
+			throw new Exception('Config file did not specify Slack_WebHook_URL');
 		}
 
 		$ch = curl_init($url);
@@ -258,7 +258,6 @@ abstract class BeaconCommon {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 		curl_exec($ch);
-		curl_close($ch);
 	}
 
 	public static function IsMacOS(): bool {

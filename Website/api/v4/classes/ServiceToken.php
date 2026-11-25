@@ -592,7 +592,6 @@ class ServiceToken implements JsonSerializable {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($curl);
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		return $status === 200;
 	}
@@ -635,7 +634,6 @@ class ServiceToken implements JsonSerializable {
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				$response = curl_exec($curl);
 				$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-				curl_close($curl);
 				$success = ($status === 200);
 				break;
 			default:
@@ -647,7 +645,6 @@ class ServiceToken implements JsonSerializable {
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				$response = curl_exec($curl);
 				$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-				curl_close($curl);
 				$success = ($status === 200 || $status === 204 || $status = 401);
 				break;
 			}
@@ -677,7 +674,6 @@ class ServiceToken implements JsonSerializable {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($curl);
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		if ($status !== 200) {
 			throw new Exception('Invalid authorization code.');
@@ -707,7 +703,6 @@ class ServiceToken implements JsonSerializable {
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			$response = curl_exec($curl);
 			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-			curl_close($curl);
 
 			if ($status !== 200) {
 				return false;
@@ -726,7 +721,6 @@ class ServiceToken implements JsonSerializable {
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			$response = curl_exec($curl);
 			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-			curl_close($curl);
 
 			if ($status !== 200) {
 				return false;

@@ -34,7 +34,7 @@ function handle_request(array $context): void {
 		$workshop_id = abs(intval($workshop_id));
 		$pull_url = null;
 		if (isset($item['pull_url'])) {
-			$pull_url = filter_var($item['pull_url'], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED);
+			$pull_url = filter_var($item['pull_url'], FILTER_VALIDATE_URL);
 			if ($pull_url === false) {
 				$database->Rollback();
 				BeaconAPI::ReplyError('Pull URL is not valid.', $item['pull_url']);

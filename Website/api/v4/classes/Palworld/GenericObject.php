@@ -219,7 +219,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		return ($change_time >= $delete_time) ? $change_time : $delete_time;
 	}
 
-	public static function Deletions(int $min_version = -1, DateTime $since = null): array {
+	public static function Deletions(int $min_version = -1, ?DateTime $since = null): array {
 		if ($since === null) {
 			$since = new DateTime('2000-01-01');
 		}

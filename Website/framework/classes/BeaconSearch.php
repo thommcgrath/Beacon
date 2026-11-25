@@ -87,7 +87,6 @@ class BeaconSearch {
 		curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode(['requests' => $this->requests]));
 		$this->raw_response = curl_exec($handle);
 		$status = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-		curl_close($handle);
 
 		if ($status === 200) {
 			$this->Rollback(); // Don't panic
@@ -142,7 +141,6 @@ class BeaconSearch {
 			curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 			$this->raw_response = curl_exec($handle);
 			$status = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-			curl_close($handle);
 			if ($status !== 200) {
 				return [];
 			}

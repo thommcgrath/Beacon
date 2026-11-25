@@ -51,14 +51,13 @@ curl_setopt($curl, CURLOPT_POSTFIELDS, implode('&', $fields));
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($curl);
 $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
 
 if ($status == 200) {
 	$requestid = $_SESSION['OAUTH_REQUESTID'];
 	$response = json_decode($response, true);
 	$forward_to = 'beacon://oauth/' . urlencode($_SESSION['OAUTH_PROVIDER']) . '?access_token=' . urlencode($response['access_token']) . '&refresh_token=' . urlencode($response['refresh_token']) . '&expires_in=' . urlencode($response['expires_in']);
 	unset($_SESSION['OAUTH_REQUESTID'], $_SESSION['OAUTH_AUTH_STATE'], $_SESSION['OAUTH_PROVIDER']);
-	
+
 	if ($requestid != '') {
 		$forward_to = $forward_to . '&requestid=' . urlencode($requestid);
 		header('Content-Type: text/html');

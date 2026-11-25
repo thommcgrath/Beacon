@@ -34,7 +34,7 @@ abstract class BeaconTemplate {
 		$templateName = preg_replace('/[^a-zA-Z0-9]+/', '', $templateName);
 		$file = BeaconCommon::FrameworkPath() . '/templates/' . $templateName . '.php';
 		if (!file_exists($file)) {
-			trigger_error('No such template ' . $file, E_USER_ERROR);
+			throw new Exception('No such template ' . $file);
 		}
 		self::$templateName = $templateName;
 	}

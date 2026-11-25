@@ -89,7 +89,6 @@ case 'login':
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 	$response = curl_exec($curl);
 	$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
 	if ($status !== 200) {
 		http_response_code(400);
 		echo '<p><strong>Error</strong>: Invalid authorization code.</p>';
@@ -121,7 +120,6 @@ case 'login':
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($curl);
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 		if ($status !== 200) {
 			http_response_code(500);
 			echo '<p><strong>Error</strong>: Could not get user info from Nitrado.</p>';

@@ -27,7 +27,6 @@ function handleRequest(array $context): Response {
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				$response = curl_exec($curl);
 				$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-				curl_close($curl);
 
 				switch ($status) {
 				case 200:
@@ -87,7 +86,6 @@ function handleRequest(array $context): Response {
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				$response = curl_exec($curl);
 				$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-				curl_close($curl);
 
 				switch ($status) {
 				case 200:

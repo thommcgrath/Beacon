@@ -12,9 +12,9 @@ class GenericObject implements \JsonSerializable {
 	protected $mod_name;
 	protected $mod_workshop_id;
 	protected $tags = [];
-	
+
 	const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
-	
+
 	public function __construct($object_id = null) {
 		if ($object_id === null) {
 			$this->object_id = \BeaconCommon::GenerateUUID();
@@ -22,7 +22,7 @@ class GenericObject implements \JsonSerializable {
 			$this->object_id = $object_id;
 		}
 	}
-	
+
 	protected static function SQLColumns() {
 		$table = static::TableName();
 		return [
@@ -36,24 +36,24 @@ class GenericObject implements \JsonSerializable {
 			'ABS(ark.mods.workshop_id) AS mod_workshop_id'
 		];
 	}
-	
+
 	protected static function SortColumn() {
 		return 'label';
 	}
-	
+
 	protected static function SchemaName() {
 		return 'ark';
 	}
-	
+
 	protected static function TableName() {
 		return 'objects';
 	}
-	
+
 	protected static function BuildSQL(...$clauses) {
 		if ((count($clauses) == 1) && (is_array($clauses[0]))) {
 			$clauses = $clauses[0];
 		}
-		
+
 		$schema = static::SchemaName();
 		$table = static::TableName();
 		$sql = 'SELECT SUBSTRING(' . $table . '.tableoid::regclass::TEXT, 5) AS table_name, ' . implode(', ', static::SQLColumns()) . ' FROM ' . $schema . '.' . $table . ' INNER JOIN ark.mods ON (' . $table . '.mod_id = mods.mod_id)';
@@ -63,7 +63,7 @@ class GenericObject implements \JsonSerializable {
 		$sql .= ' ORDER BY ' . static::SortColumn() . ';';
 		return $sql;
 	}
-	
+
 	protected function GetColumnValue(string $column) {
 		switch ($column) {
 		case 'object_id':
@@ -82,7 +82,7 @@ class GenericObject implements \JsonSerializable {
 			return self::COLUMN_NOT_EXISTS;
 		}
 	}
-	
+
 	public function ConsumeJSON(array $json) {
 		if (array_key_exists('label', $json)) {
 			$this->label = $json['label'];
@@ -104,23 +104,23 @@ class GenericObject implements \JsonSerializable {
 			$this->tags = $tags;
 		}
 	}
-	
+
 	public static function FromJSON(array $json) {
 		if (array_key_exists('id', $json)) {
 			$object_id = $json['id'];
 		} else {
 			$object_id = null;
 		}
-		
+
 		$obj = new static($object_id);
 		$obj->ConsumeJSON($json);
 		return $obj;
 	}
-	
+
 	public function Save() {
 		$schema = static::SchemaName();
 		$table = static::TableName();
-		
+
 		$database = \BeaconCommon::Database();
 		$results = $database->Query("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2;", $schema, $table);
 		$types = [];
@@ -128,7 +128,7 @@ class GenericObject implements \JsonSerializable {
 			$types[$results->Field('column_name')] = $results->Field('data_type');
 			$results->MoveNext();
 		}
-		
+
 		$c = 1;
 		$values = [];
 		$active_columns = [];
@@ -138,11 +138,11 @@ class GenericObject implements \JsonSerializable {
 			if ($value === self::COLUMN_NOT_EXISTS) {
 				continue;
 			}
-			
+
 			$type = isset($types[$column]) ? $types[$column] : 'text';
 			$active_columns[] = $column;
 			$placeholder = '$' . $c++;
-			
+
 			switch ($type) {
 			case 'bytea':
 				$placeholder = 'decode(' . $placeholder . ', \'hex\')';
@@ -152,13 +152,13 @@ class GenericObject implements \JsonSerializable {
 				$values[$placeholder] = $value;
 				break;
 			}
-			
+
 			$set_pairs[] = $column . ' = ' . $placeholder;
 		}
-		
+
 		$placeholders = array_keys($values);
 		$values = array_values($values);
-		
+
 		$database->BeginTransaction();
 		$results = $database->Query('SELECT object_id FROM ' . $this->SchemaName() . '.' . $this->TableName() . ' WHERE object_id = $1;', $this->object_id);
 		if ($results->RecordCount() == 0) {
@@ -169,10 +169,10 @@ class GenericObject implements \JsonSerializable {
 		$this->SaveChildrenHook($database);
 		$database->Commit();
 	}
-	
+
 	protected function SaveChildrenHook(\BeaconDatabase $database) {
 	}
-	
+
 	protected static function PrepareLists($value_list) {
 		if (is_string($value_list)) {
 			$value_list = explode(',', $value_list);
@@ -180,13 +180,13 @@ class GenericObject implements \JsonSerializable {
 		if (!is_array($value_list)) {
 			throw new \Exception('Must supply an array or comma-separated string.');
 		}
-		
+
 		$values = array();
 		foreach ($value_list as $value) {
 			if (is_string($value)) {
 				$value = trim($value);
 			}
-			
+
 			$possible_columns = array();
 			$converted_value = static::ListValueToParameter($value, $possible_columns);
 			if ($converted_value !== null) {
@@ -199,14 +199,14 @@ class GenericObject implements \JsonSerializable {
 				}
 			}
 		}
-		
+
 		foreach ($values as $column => $elements) {
 			$values[$column] = '{' . implode(',', array_unique($elements)) . '}';
 		}
-		
+
 		return $values;
 	}
-	
+
 	protected static function ListValueToParameter($value, array &$possible_columns) {
 		if ($value instanceof self) {
 			$possible_columns[] = 'object_id';
@@ -231,35 +231,35 @@ class GenericObject implements \JsonSerializable {
 				return $value;
 			}
 		}
-		
+
 		return null;
 	}
-	
-	public static function GetAll(int $min_version = -1, \DateTime $updated_since = null, bool $confirmed_only = false) {
+
+	public static function GetAll(int $min_version = -1, ?\DateTime $updated_since = null, bool $confirmed_only = false) {
 		return static::Get(null, $min_version, $updated_since, $confirmed_only);
 	}
-	
-	public static function Get($values = null, int $min_version = -1, \DateTime $updated_since = null, bool $confirmed_only = false) {
+
+	public static function Get($values = null, int $min_version = -1, ?\DateTime $updated_since = null, bool $confirmed_only = false) {
 		if ($values !== null) {
 			$values = static::PrepareLists($values);
 		} else {
 			$values = array();
 		}
-		
+
 		if ($updated_since === null) {
 			$updated_since = new \DateTime('2000-01-01');
 		}
-		
+
 		if ($min_version == -1) {
 			$min_version = \BeaconCommon::MinVersion();
 		}
-		
+
 		$clauses = array();
 		$parameters = array(
 			$min_version,
 			$updated_since->format('Y-m-d H:i:sO')
 		);
-		
+
 		$c = 3;
 		$database = null;
 		foreach ($values as $column => $list) {
@@ -284,30 +284,30 @@ class GenericObject implements \JsonSerializable {
 		if ($confirmed_only == true) {
 			$clauses[] = 'ark.mods.confirmed = TRUE';
 		}
-		
+
 		$database = \BeaconCommon::Database();
 		$sql = static::BuildSQL($clauses);
 		$results = $database->Query($sql, $parameters);
 		return static::FromResults($results);
 	}
-	
-	public static function GetByObjectID(string $object_id, int $min_version = -1, \DateTime $updated_since = null) {
+
+	public static function GetByObjectID(string $object_id, int $min_version = -1, ?\DateTime $updated_since = null) {
 		$objects = static::Get($object_id, $min_version, $updated_since);
 		if (count($objects) == 1) {
 			return $objects[0];
 		}
 	}
-	
-	public static function GetWithTag(string $tag, int $min_version = -1, \DateTime $updated_since = null) {
+
+	public static function GetWithTag(string $tag, int $min_version = -1, ?\DateTime $updated_since = null) {
 		$tag = self::NormalizeTag($tag);
 		return static::Get('tags:' . $tag, $min_version, $updated_since);
 	}
-	
+
 	protected static function FromResults(\BeaconRecordSet $results) {
 		if (($results === null) || ($results->RecordCount() == 0)) {
 			return array();
 		}
-		
+
 		$objects = array();
 		while (!$results->EOF()) {
 			$object = static::FromRow($results);
@@ -318,7 +318,7 @@ class GenericObject implements \JsonSerializable {
 		}
 		return $objects;
 	}
-	
+
 	protected static function FromRow(\BeaconRecordSet $row) {
 		$tags = substr($row->Field('tags'), 1, -1);
 		if (strlen($tags) > 0) {
@@ -327,7 +327,7 @@ class GenericObject implements \JsonSerializable {
 			$tags = array();
 		}
 		asort($tags);
-		
+
 		$obj = new static($row->Field('object_id'));
 		$obj->object_group = $row->Field('table_name');
 		$obj->label = $row->Field('label');
@@ -339,23 +339,23 @@ class GenericObject implements \JsonSerializable {
 		$obj->tags = array_values($tags);
 		return $obj;
 	}
-	
+
 	public static function LastUpdate(int $min_version = -1) {
 		$database = \BeaconCommon::Database();
 		$schema = static::SchemaName();
 		$table = static::TableName();
-		
+
 		if ($min_version == -1) {
 			$min_version = \BeaconCommon::MinVersion();
 		}
-		
+
 		$results = $database->Query('SELECT MAX(last_update) AS most_recent_change FROM ' . $schema . '.' . $table . ' WHERE min_version <= $1;', $min_version);
 		if ($results->Field('most_recent_change') !== null) {
 			$change_time = new \DateTime($results->Field('most_recent_change'));
 		} else {
 			$change_time = new \DateTime('2000-01-01');
 		}
-		
+
 		if ($table == self::TableName()) {
 			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM ' . $schema . '.deletions WHERE min_version <= $1;', $min_version);
 		} else {
@@ -368,20 +368,20 @@ class GenericObject implements \JsonSerializable {
 		}
 		return ($change_time >= $delete_time) ? $change_time : $delete_time;
 	}
-	
-	public static function Deletions(int $min_version = -1, \DateTime $since = null) {
+
+	public static function Deletions(int $min_version = -1, ?\DateTime $since = null) {
 		if ($since === null) {
 			$since = new \DateTime('2000-01-01');
 		}
-		
+
 		if ($min_version == -1) {
 			$min_version = \BeaconCommon::MinVersion();
 		}
-		
+
 		$database = \BeaconCommon::Database();
 		$schema = static::SchemaName();
 		$table = static::TableName();
-		
+
 		if ($table == self::TableName()) {
 			$results = $database->Query('SELECT * FROM ' . $schema . '.deletions WHERE min_version <= $1 AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
 		} else {
@@ -400,7 +400,7 @@ class GenericObject implements \JsonSerializable {
 		}
 		return $arr;
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		return array(
 			'id' => $this->object_id,
@@ -415,71 +415,71 @@ class GenericObject implements \JsonSerializable {
 			'min_version' => $this->min_version
 		);
 	}
-	
+
 	public function ObjectID() {
 		return $this->object_id;
 	}
-	
+
 	public function ObjectGroup() {
 		return $this->object_group;
 	}
-	
+
 	public function Label() {
 		return $this->label;
 	}
-	
+
 	public function SetLabel(string $label) {
 		$this->label = $label;
 	}
-	
+
 	public function AlternateLabel() {
 		return $this->alternate_label;
 	}
-	
+
 	public function SetAlternateLabel(string $alternate_label) {
 		$this->alternate_label = $alternate_label;
 	}
-	
+
 	public function MinVersion() {
 		return $this->min_version;
 	}
-	
+
 	public function ModID() {
 		return $this->mod_id;
 	}
-	
+
 	public function ModName() {
 		return $this->mod_name;
 	}
-	
+
 	public function ModWorkshopID() {
 		return $this->mod_workshop_id;
 	}
-	
+
 	public function Delete() {
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM ' . static::TableName() . ' WHERE object_id = $1;', $this->object_id);
 		$database->Commit();
 	}
-	
+
 	public static function NormalizeTag(string $tag) {
 		$tag = strtolower($tag);
 		$tag = preg_replace('/[^\w]/', '', $tag);
 		return $tag;
 	}
-	
+
 	public function Tags() {
 		return $this->tags;
 	}
-	
+
 	public function AddTag(string $tag) {
 		$tag = self::NormalizeTag($tag);
 		if (!in_array($tag, $this->tags)) {
 			$this->tags[] = $tag;
 		}
 	}
-	
+
 	public function RemoveTag(string $tag) {
 		$tag = self::NormalizeTag($tag);
 		if (in_array($tag, $this->tags)) {
@@ -492,16 +492,16 @@ class GenericObject implements \JsonSerializable {
 			$this->tags = $arr;
 		}
 	}
-	
+
 	public function IsTagged(string $tag) {
 		return in_array(self::NormalizeTag($tag), $this->tags);
 	}
-	
+
 	public static function DeleteObjects(string $object_id, string $user_id) {
 		$database = \BeaconCommon::Database();
 		$escaped_schema = $database->EscapeIdentifier(static::SchemaName());
 		$escaped_table = $database->EscapeIdentifier(static::TableName());
-		
+
 		$database->BeginTransaction();
 		$results = $database->Query('SELECT mods.user_id, ' . $escaped_table . '.object_id FROM ' . $escaped_schema . '.' . $escaped_table . ' INNER JOIN ' . $escaped_schema . '.mods ON (' . $escaped_table . '.mod_id = mods.mod_id) WHERE ' . $escaped_table . '.object_id = ANY($1) FOR UPDATE OF ' . $escaped_table . ';', '{' . $object_id . '}');
 		$objects = array();

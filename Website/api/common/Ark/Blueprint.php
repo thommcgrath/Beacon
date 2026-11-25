@@ -1,19 +1,19 @@
 <?php
-	
+
 namespace BeaconAPI\Ark;
 
 class Blueprint extends \Ark\GenericObject {
 	protected $availability;
 	protected $path;
 	protected $class_string;
-	
-	public static function GetByObjectPath(string $path, int $min_version = -1, DateTime $updated_since = null) {
+
+	public static function GetByObjectPath(string $path, int $min_version = -1, ?DateTime $updated_since = null) {
 		$objects = static::Get('path:' . $path, $min_version, $updated_since);
 		if (count($objects) == 1) {
 			return $objects[0];
 		}
 	}
-	
+
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
 		$columns[] = 'availability';
@@ -21,11 +21,11 @@ class Blueprint extends \Ark\GenericObject {
 		$columns[] = 'class_string';
 		return $columns;
 	}
-	
+
 	protected static function TableName() {
 		return 'blueprints';
 	}
-	
+
 	protected function GetColumnValue(string $column) {
 		switch ($column) {
 		case 'availability':
@@ -38,10 +38,10 @@ class Blueprint extends \Ark\GenericObject {
 			return parent::GetColumnValue($column);
 		}
 	}
-	
+
 	public function ConsumeJSON(array $json) {
 		parent::ConsumeJSON($json);
-			
+
 		if (array_key_exists('path', $json)) {
 			$this->path = $json['path'];
 		}
@@ -49,7 +49,7 @@ class Blueprint extends \Ark\GenericObject {
 			$this->availability = intval($json['availability']);
 		}
 	}
-	
+
 	protected static function FromRow(\BeaconRecordSet $row) {
 		$obj = parent::FromRow($row);
 		if ($obj === null) {
@@ -60,7 +60,7 @@ class Blueprint extends \Ark\GenericObject {
 		$obj->class_string = $row->Field('class_string');
 		return $obj;
 	}
-	
+
 	protected static function ListValueToParameter($value, array &$possible_columns) {
 		if (is_string($value)) {
 			if (strtoupper(substr($value, -2)) == '_C') {
@@ -74,54 +74,54 @@ class Blueprint extends \Ark\GenericObject {
 				return $value;
 			}
 		}
-		
+
 		return parent::ListValueToParameter($value, $possible_columns);
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['availability'] = intval($this->availability);
 		$json['path'] = $this->path;
 		$json['class_string'] = $this->class_string;
 		$json['spawn'] = $this->SpawnCode();
-		
+
 		return $json;
 	}
-	
+
 	public function Path() {
 		return $this->path;
 	}
-	
+
 	public function Hash() {
 		return md5(strtolower($this->path));
 	}
-	
+
 	public function SetPath(string $path) {
 		$this->path = $path;
 		$this->class_string = self::ClassFromPath($path);
 	}
-	
+
 	public function ClassString() {
 		return $this->class_string;
 	}
-	
+
 	public function IsAmbiguous() {
 		// deprecated
 		return false;
 	}
-	
+
 	public function Availability() {
 		return $this->availability;
 	}
-	
+
 	public function SetAvailability(int $availability) {
 		$this->availability = $availability;
 	}
-	
+
 	public function AvailableTo(int $mask) {
 		return ($this->availability & $mask) !== 0;
 	}
-	
+
 	public function SetAvailableTo(int $mask, bool $available) {
 		if ($available) {
 			$this->availability = $this->availability | $mask;
@@ -129,11 +129,11 @@ class Blueprint extends \Ark\GenericObject {
 			$this->availability = $this->availability & ~$mask;
 		}
 	}
-	
+
 	public function SpawnCode() {
 		return 'cheat summon ' . $this->ClassString();
 	}
-	
+
 	protected static function ClassFromPath(string $path) {
 		$components = explode('/', $path);
 		$tail = array_pop($components);
@@ -141,11 +141,11 @@ class Blueprint extends \Ark\GenericObject {
 		$class = array_pop($components);
 		return $class . '_C';
 	}
-	
+
 	public function RelatedObjectIDs() {
 		return array();
 	}
-	
+
 	public function FindGFICode(bool &$perfect) {
 		$database = \BeaconCommon::Database();
 		$words = explode('_', $this->class_string);
@@ -154,7 +154,7 @@ class Blueprint extends \Ark\GenericObject {
 			array_shift($words);
 		}
 		$simple_class_string = strtolower(implode('_', $words));
-		
+
 		$min_match_len = strlen($simple_class_string);
 		$min_match = '';
 		$found = false;
@@ -171,7 +171,7 @@ class Blueprint extends \Ark\GenericObject {
 				}
 			}
 		}
-		
+
 		$perfect = false;
 		return $min_match;
 	}

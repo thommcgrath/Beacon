@@ -29,7 +29,6 @@ class BeaconCDN {
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		if ($http_status !== 200) {
 			throw new Exception($response);
@@ -62,10 +61,8 @@ class BeaconCDN {
 		]);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		if ($http_status !== 201) {
 			throw new Exception('File was not accepted by BunnyCDN');
@@ -80,7 +77,6 @@ class BeaconCDN {
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 	}
 
 	public function DeleteFile(string $path): void {
@@ -96,7 +92,6 @@ class BeaconCDN {
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		if ($http_status !== 200) {
 			throw new Exception($response);
@@ -116,7 +111,6 @@ class BeaconCDN {
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		if ($http_status !== 200) {
 			throw new Exception($response);

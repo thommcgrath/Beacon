@@ -12,7 +12,6 @@ curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 $result = curl_exec($curl);
 $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
 
 $parsed = json_decode($result, true);
 if (count($parsed) === 0) {

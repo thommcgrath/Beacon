@@ -90,7 +90,7 @@ class Core {
 	}
 
 	// deprecated
-	public static function ReplyError(string $message, mixed $payload = null, int $code) {
+	public static function ReplyError(string $message, mixed $payload = null, int $code = 500) {
 		Response::NewJsonError($message, $payload, $code)->Flush();
 		exit;
 	}
@@ -353,7 +353,7 @@ class Core {
 		}
 	}
 
-	public static function Deletions(int $minVersion = -1, DateTime $since = null): array {
+	public static function Deletions(int $minVersion = -1, ?DateTime $since = null): array {
 		if ($since === null) {
 			$since = new DateTime('2000-01-01');
 		}

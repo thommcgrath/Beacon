@@ -68,7 +68,6 @@ curl_setopt($curl, CURLOPT_HTTPHEADER, [
 ]);
 curl_exec($curl);
 $downloadStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
 fclose($handle);
 
 if ($downloadStatus !== 200) {

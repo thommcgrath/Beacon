@@ -256,7 +256,6 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 				curl_setopt($http, CURLOPT_URL, "https://api.curseforge.com/v1/mods/{$this->marketplaceId}/description");
 				$body = curl_exec($http);
 				$status = curl_getinfo($http, CURLINFO_HTTP_CODE);
-				curl_close($http);
 
 				if ($status !== 200) {
 					return false;

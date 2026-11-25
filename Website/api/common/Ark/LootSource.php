@@ -191,28 +191,28 @@ class LootSource extends \Ark\Blueprint {
 			$this->icon_color = ucfirst($json['icon_color']);
 		} elseif (array_key_exists('ui_color', $json)) {
 			switch (strtoupper($json['ui_color'])) {
-			case 'FFFFFF00';
+			case 'FFFFFF00':
 				$this->icon_color = 'White';
 				break;
-			case '00FF0000';
+			case '00FF0000':
 				$this->icon_color = 'Green';
 				break;
-			case '88C8FF00';
+			case '88C8FF00':
 				$this->icon_color = 'Blue';
 				break;
-			case 'E6BAFF00';
+			case 'E6BAFF00':
 				$this->icon_color = 'Purple';
 				break;
-			case 'FFF02A00';
+			case 'FFF02A00':
 				$this->icon_color = 'Yellow';
 				break;
-			case 'FFBABA00';
+			case 'FFBABA00':
 				$this->icon_color = 'Red';
 				break;
-			case '00FFFF00';
+			case '00FFFF00':
 				$this->icon_color = 'Cyan';
 				break;
-			case 'FFA50000';
+			case 'FFA50000':
 				$this->icon_color = 'Orange';
 				break;
 			default:

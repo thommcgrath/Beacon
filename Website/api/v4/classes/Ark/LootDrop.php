@@ -234,28 +234,28 @@ class LootDrop extends MutableBlueprint {
 			if (array_key_exists('iconColor', $properties) === false) {
 				$iconColor = 'White';
 				switch (strtoupper($properties['uiColor'])) {
-				case 'FFFFFF00';
+				case 'FFFFFF00':
 					$iconColor = 'White';
 					break;
-				case '00FF0000';
+				case '00FF0000':
 					$iconColor = 'Green';
 					break;
-				case '88C8FF00';
+				case '88C8FF00':
 					$iconColor = 'Blue';
 					break;
-				case 'E6BAFF00';
+				case 'E6BAFF00':
 					$iconColor = 'Purple';
 					break;
-				case 'FFF02A00';
+				case 'FFF02A00':
 					$iconColor = 'Yellow';
 					break;
-				case 'FFBABA00';
+				case 'FFBABA00':
 					$iconColor = 'Red';
 					break;
-				case '00FFFF00';
+				case '00FFFF00':
 					$iconColor = 'Cyan';
 					break;
-				case 'FFA50000';
+				case 'FFA50000':
 					$iconColor = 'Orange';
 					break;
 				}

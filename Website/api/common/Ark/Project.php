@@ -6,12 +6,12 @@ class Project extends \BeaconAPI\Project {
 	public function MapMask(): int {
 		return array_key_exists('map', $this->game_specific) ? intval($this->game_specific['map']) : 0;
 	}
-	
+
 	public function DifficultyValue(): float {
 		return array_key_exists('difficulty', $this->game_specific) ? floatval($this->game_specific['difficulty']) : 0;
 		return $this->difficulty_value;
 	}
-	
+
 	public function RequiredMods(bool $as_array): array|string {
 		if (array_key_exists('mods', $this->game_specific)) {
 			$mods = $this->game_specific['mods'];
@@ -28,7 +28,7 @@ class Project extends \BeaconAPI\Project {
 			}
 		}
 	}
-	
+
 	public function ImplementedConfigs(bool $as_array): array|string {
 		if (array_key_exists('included_editors', $this->game_specific)) {
 			$editors = $this->game_specific['included_editors'];
@@ -45,7 +45,7 @@ class Project extends \BeaconAPI\Project {
 			}
 		}
 	}
-	
+
 	protected static function HookHandleSearchKey(string $column, $value, array &$clauses, array &$values, int &$next_placeholder) {
 		switch ($column) {
 		case 'map':
@@ -60,24 +60,24 @@ class Project extends \BeaconAPI\Project {
 			break;
 		}
 	}
-	
+
 	protected static function HookValidateMultipart(array &$required_vars, string &$reason) {
 		parent::HookValidateMultipart($required_vars, $reason);
-		
+
 		$required_vars[] = 'difficulty';
 		$required_vars[] = 'editors';
 		$required_vars[] = 'map';
 		$required_vars[] = 'mods';
-		
+
 		return true;
 	}
-	
+
 	protected static function HookMultipartAddProjectValues(array &$project, string &$reason) {
 		$project['Map'] = intval($_POST['map']);
 		$project['DifficultyValue'] = floatval($_POST['difficulty']);
 		$project['EditorNames'] = array_unique(explode(',', $_POST['editors']));
 		sort($project['EditorNames']);
-		
+
 		$mods_members = explode(',', $_POST['mods']);
 		$mods = [];
 		foreach ($mods_members as $mod_id) {
@@ -88,13 +88,13 @@ class Project extends \BeaconAPI\Project {
 			$mods[$mod_id] = true;
 		}
 		$project['ModSelections'] = $mods;
-		
+
 		return true;
 	}
-	
+
 	public static function HookRowSaveData(array $project, array &$row_values) {
 		$database = \BeaconCommon::Database();
-		
+
 		$mod_ids = [];
 		if (isset($project['ModSelections'])) {
 			$console_safe = true;
@@ -117,17 +117,17 @@ class Project extends \BeaconAPI\Project {
 		} else {
 			$console_safe = false;
 		}
-		
+
 		$editor_names = [];
 		foreach ($project['EditorNames'] as $editor_name) {
 			if ($editor_name === 'Difficulty' || $editor_name === 'Metadata') {
 				continue;
 			}
-			
+
 			$editor_names[] = $editor_name;
 		}
 		$project['EditorNames'] = $editor_names;
-		
+
 		$row_values['game_specific'] = json_encode([
 			'map' => isset($project['Map']) ? $project['Map'] : 4,
 			'difficulty' => isset($project['DifficultyValue']) ? $project['DifficultyValue'] : 4,
@@ -136,27 +136,27 @@ class Project extends \BeaconAPI\Project {
 		]);
 		$row_values['console_safe'] = $console_safe;
 	}
-	
+
 	public static function SaveFromContent(string $project_id, \BeaconUser $user, $file_content, string &$reason) {
 		if (empty($file_content)) {
 			$reason = 'File is empty';
 			return false;
 		}
-		
+
 		if (\BeaconCommon::IsCompressed($file_content)) {
 			$file_content_compressed = $file_content;
 			$file_content = gzdecode($file_content_compressed);
 		} else {
 			$file_content_compressed = null;
 		}
-		
+
 		try {
 			$iter = \JsonMachine\JsonMachine::fromString($file_content, '', new \JsonMachine\JsonDecoder\PassThruDecoder);
 		} catch (\Exception $err) {
 			$reason = 'Unable to parse JSON.';
 			return false;
 		}
-		
+
 		$project = ['EditorNames' => []];
 		foreach ($iter as $key => $value) {
 			switch ($key) {
@@ -168,7 +168,7 @@ class Project extends \BeaconAPI\Project {
 			case 'Title':
 			case 'DifficultyValue':
 			case 'ModSelections':
-			case 'ConsoleModsOnly';
+			case 'ConsoleModsOnly':
 				$project[$key] = json_decode($value, true);
 				break;
 			case 'Configs':
@@ -211,7 +211,7 @@ class Project extends \BeaconAPI\Project {
 		}
 		$project['EditorNames'] = array_unique($project['EditorNames']);
 		sort($project['EditorNames']);
-		
+
 		// Catch some common errors
 		if (!\BeaconCommon::HasAllKeys($project, 'Version', 'Identifier')) {
 			$reason = 'Not all keys are present.';
@@ -221,11 +221,11 @@ class Project extends \BeaconAPI\Project {
 			$reason = 'Document UUID of ' . strtolower($project['Identifier']) . ' in content does not match the resource UUID of ' . strtolower($project_id) . '.';
 			return false;
 		}
-		
+
 		if (is_null($file_content_compressed)) {
 			$file_content_compressed = gzencode($file_content);
 		}
-		
+
 		return self::SaveFromArray($project, $user, $file_content_compressed, $reason);
 	}
 }

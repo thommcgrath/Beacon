@@ -67,7 +67,6 @@ class BeaconPusher {
 			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 			$errorNumber = curl_errno($curl);
 			$errorMessage = curl_error($curl);
-			curl_close($curl);
 
 			if ($response === false) {
 				throw new Exception("CURL Error {$errorNumber}: {$errorMessage}");

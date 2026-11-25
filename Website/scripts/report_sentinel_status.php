@@ -19,7 +19,6 @@ curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 $responseBody = curl_exec($curl);
 $responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 $responseError = curl_error($curl);
-curl_close($curl);
 
 if ($responseStatus !== 200) {
 	echo "Metrics overview request returned status {$responseStatus}:\n";
@@ -81,11 +80,11 @@ if ($minPublishRate > 0 && ($publishRate == 0 || $manualAckRate == 0)) {
 		echo "Attempting to terminate process…\n";
 		$originalPid = intval(exec('pidof sentinelwatcher'));
 		exec('killall -s 9 sentinelwatcher');
-		
+
 		// Record the the time after the stop but before the start.
 		$messageTime = microtime(true);
 		$messageId = BeaconUUID::v7($messageTime * 1000);
-		
+
 		exec(escapeshellarg("{$watcherPath}/startwatcher.sh"));
 		$newPid = intval(exec('pidof sentinelwatcher'));
 		$logMessage = null;
@@ -94,14 +93,14 @@ if ($minPublishRate > 0 && ($publishRate == 0 || $manualAckRate == 0)) {
 			$logMessage = "Terminated watcher PID {$originalPid}. New watcher process is {$newPid}.";
 		} else {
 			$status = STATUS_OUTAGE;
-			
+
 			if ($newPid === $originalPid) {
 				$logMessage = "Attempted to terminate stuck watcher {$originalPid} but the process did not stop.";
 			} else {
 				$logMessage = "Terminated stuck watcher {$originalPid} but new process did not start up.";
 			}
 		}
-		
+
 		if (is_null($logMessage) === false) {
 			$database->BeginTransaction();
 			$database->Query('INSERT INTO sentinel.watcher_logs (message_id, message, message_time, hostname) VALUES ($1, $2, TO_TIMESTAMP($3), $4);', $messageId, $logMessage, $messageTime, gethostname());
@@ -124,7 +123,6 @@ if (BeaconCommon::InProduction()) {
 	curl_setopt($curl, CURLOPT_POSTFIELDS, ['status' => $status]);
 	$responseBody = curl_exec($curl);
 	$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
 
 	if ($responseStatus === 200) {
 		echo "webhook successful\n";
@@ -143,7 +141,6 @@ if (BeaconCommon::InProduction()) {
 	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(['metrics' => $metrics]));
 	$responseBody = curl_exec($curl);
 	$responseStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
 
 	if ($responseStatus === 204) {
 		echo "metrics successful\n";

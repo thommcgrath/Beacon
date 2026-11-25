@@ -28,7 +28,6 @@ class BeaconStripeAPI {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$body = curl_exec($curl);
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		if ($status != 200) {
 			return null;
@@ -56,7 +55,6 @@ class BeaconStripeAPI {
 		curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($formdata));
 		$body = curl_exec($curl);
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		if ($status === 200) {
 			return json_decode($body, true);
@@ -76,7 +74,6 @@ class BeaconStripeAPI {
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
 		$body = curl_exec($curl);
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
 
 		if ($status === 200) {
 			return json_decode($body, true);
@@ -253,7 +250,7 @@ class BeaconStripeAPI {
 
 		$customerId = $piJson['customer'];
 		$customerJson = $this->GetCustomer($customerId);
-		if (is_null($customerJson)) {
+		if (is_null($customerJson) || array_key_exists('email', $customerJson) === false) {
 			return null;
 		}
 

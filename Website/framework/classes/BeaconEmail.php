@@ -3,26 +3,26 @@
 use BeaconAPI\v4\User;
 
 abstract class BeaconEmail {
-	public static function SendMail(string $recipient, string $subject, string $body_plain, string $body_html = null): bool {
+	public static function SendMail(string $recipient, string $subject, string $body_plain, ?string $body_html = null): bool {
 		if (is_null($body_html)) {
 			$body_html = nl2br(htmlentities($body_plain));
 			while (preg_match('/&lt;(http[^>]+)&gt;/', $body_html, $matches) === 1) {
 				$body_html = str_replace($matches[0], '<a href="' . $matches[1] . '">' . $matches[1] . '</a>', $body_html);
 			}
 		}
-		
+
 		$boundary = BeaconCommon::GenerateUUID();
-		
+
 		ob_start();
 		include(BeaconCommon::FrameworkPath() . '/templates/email.php');
 		$body_html = ob_get_contents();
 		ob_end_clean();
-		
+
 		$headers = [
 			'X-Postmark-Server-Token: ' . BeaconCommon::GetGlobal('Postmark_Key'),
 			'Content-Type: application/json'
 		];
-		
+
 		$body = [
 			'From' => '"Beacon" <help@usebeacon.app>',
 			'To' => $recipient,
@@ -32,7 +32,7 @@ abstract class BeaconEmail {
 			'TrackOpens' => false,
 			'TrackLinks' => 'None'
 		];
-		
+
 		$curl = curl_init('https://api.postmarkapp.com/email');
 		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -40,20 +40,19 @@ abstract class BeaconEmail {
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		$response = curl_exec($curl);
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-		
+
 		if ($status < 200 || $status >= 300) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	// Checks if the address is syntactically valid.
 	public static function IsEmailValid(string $email): bool {
 		return filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
-	
+
 	// Checks with CleanTalk if the address is valid
 	public static function QuickVerify(string $email, bool $whitelistRegisteredUsers = true): bool {
 		if ($whitelistRegisteredUsers) {
@@ -62,7 +61,7 @@ abstract class BeaconEmail {
 				return true;
 			}
 		}
-		
+
 		$cache_key = sha1('CleanTalk Result ' . strtolower($email));
 		$url = 'https://api.cleantalk.org/?method_name=email_check&auth_key=' . urlencode(BeaconCommon::GetGlobal('CleanTalk Email Check Key')) . '&email=' . urlencode($email);
 		$body = BeaconCache::Get($cache_key);
@@ -77,7 +76,7 @@ abstract class BeaconEmail {
 			}
 			BeaconCache::Set($cache_key, $body);
 		}
-		
+
 		$parsed = json_decode($body, TRUE);
 		$data = $parsed['data'];
 		$result = $data[$email]['result'];
@@ -88,7 +87,7 @@ abstract class BeaconEmail {
 			// Confirmed failure
 			return false;
 		}
-		
+
 		return true;
 	}
 }

@@ -372,7 +372,7 @@ class Service extends DatabaseObject implements JsonSerializable {
 		case 'gameSpecific':
 			return json_encode((object) $value);
 		case 'languages':
-			return '{' . implode(',', $this->languages) . '}';
+			return '{' . implode(',', $value) . '}';
 		default:
 			return static::MDOPreparePropertyValue($definition, $value, $otherProperties);
 		}

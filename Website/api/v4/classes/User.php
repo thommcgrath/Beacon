@@ -486,7 +486,7 @@ class User extends DatabaseObject implements JsonSerializable {
 		}
 	}
 
-	public function ChangeSecurityModel(string $newModel, string $password, string &$secret = null): void {
+	public function ChangeSecurityModel(string $newModel, string $password, ?string &$secret = null): void {
 		if ($newModel === $this->securityModel) {
 			return;
 		}

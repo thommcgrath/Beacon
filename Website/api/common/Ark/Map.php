@@ -11,12 +11,12 @@ class Map implements \JsonSerializable {
 	protected $is_official = null;
 	protected $mask = null;
 	protected $sort = null;
-	
+
 	public function __construct($source) {
 		if (is_null($source)) {
 			throw new Exception('Cannot create a \Ark\Map from null');
 		}
-		
+
 		if ($source instanceof Map) {
 			$this->map_id = $source->map_id;
 			$this->mod_id = $source->mod_id;
@@ -39,51 +39,51 @@ class Map implements \JsonSerializable {
 			throw new Exception('Cannot create \Ark\Map from ' . get_class($source));
 		}
 	}
-	
+
 	public function Name() {
 		return $this->label;
 	}
-	
+
 	public function Label() {
 		return $this->label;
 	}
-	
+
 	public function MapID() {
 		return $this->map_id;
 	}
-	
+
 	public function ObjectID() {
 		return $this->map_id;
 	}
-	
+
 	public function Identifier() {
 		return $this->ark_identifier;
 	}
-	
+
 	public function Difficulty() {
 		return $this->difficulty_scale;
 	}
-	
+
 	public function DifficultyScale() {
 		return $this->difficulty_scale;
 	}
-	
+
 	public function Official() {
 		return $this->is_official;
 	}
-	
+
 	public function IsOfficial() {
 		return $this->is_official;
 	}
-	
+
 	public function Mask() {
 		return $this->mask;
 	}
-	
+
 	public function Sort() {
 		return $this->sort;
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		return [
 			'map_id' => $this->map_id,
@@ -96,12 +96,12 @@ class Map implements \JsonSerializable {
 			'sort' => $this->sort
 		];
 	}
-	
+
 	protected static function SQLColumns() {
 		return ['maps.map_id', 'maps.mod_id', 'maps.label', 'maps.ark_identifier', 'maps.difficulty_scale', 'maps.official', 'maps.mask', 'maps.sort'];
 	}
-	
-	public static function GetAll(\DateTime $since = null) {
+
+	public static function GetAll(?\DateTime $since = null) {
 		if (is_null($since)) {
 			$since = new \DateTime('2000-01-01');
 		}
@@ -114,7 +114,7 @@ class Map implements \JsonSerializable {
 		}
 		return $maps;
 	}
-	
+
 	public static function GetForMapID(string $map_id) {
 		$database = \BeaconCommon::Database();
 		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE AND maps.map_id = $1 ORDER BY maps.official DESC, maps.sort;', $map_id);
@@ -123,14 +123,14 @@ class Map implements \JsonSerializable {
 			$maps[] = new static($results);
 			$results->MoveNext();
 		}
-		return $maps;	
+		return $maps;
 	}
-	
+
 	public static function GetForMask(int $mask) {
 		if ($mask === 0) {
 			return static::GetAll();
 		}
-		
+
 		$database = \BeaconCommon::Database();
 		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE AND (maps.mask & $1) = maps.mask ORDER BY maps.official DESC, maps.sort;', $mask);
 		$maps = [];
@@ -140,7 +140,7 @@ class Map implements \JsonSerializable {
 		}
 		return $maps;
 	}
-	
+
 	public static function GetNamed(string $name) {
 		$database = \BeaconCommon::Database();
 		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE AND maps.label = $1 OR maps.ark_identifier = $1 ORDER BY maps.official DESC, maps.sort;', $name);
@@ -151,7 +151,7 @@ class Map implements \JsonSerializable {
 		}
 		return $maps;
 	}
-	
+
 	public static function CombinedMask(array $maps) {
 		$combined = 0;
 		foreach ($maps as $map) {

@@ -8,7 +8,7 @@ while (ob_get_level() > 0) {
 }
 
 $database = BeaconCommon::Database();
-	
+
 $currency_codes = [];
 $results = $database->Query("SELECT code FROM public.currencies WHERE code != 'USD';");
 while ($results->EOF() === false) {
@@ -23,7 +23,6 @@ curl_setopt($curl, CURLOPT_HTTPHEADER, [
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 $body = curl_exec($curl);
 $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
 if ($status !== 200) {
 	echo "Could not retrieve exchange rate info: $body\n";
 	BeaconCommon::PostSlackMessage('Could not retrieve exchange rate info');

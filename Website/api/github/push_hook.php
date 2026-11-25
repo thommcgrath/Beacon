@@ -18,7 +18,6 @@ curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Safari/605.1.15');
 $response = curl_exec($curl);
 $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
 
 if ($status !== 200) {
 	echo "Unable to branches\n";

@@ -226,7 +226,6 @@ abstract class BeaconCloudStorage {
 					curl_setopt($curl, CURLOPT_FILE, $localHandle);
 					curl_exec($curl);
 					$httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-					curl_close($curl);
 					fclose($localHandle);
 					if ($httpStatus === 200) {
 						$fileDownloaded = true;
@@ -369,7 +368,6 @@ abstract class BeaconCloudStorage {
 			}
 
 			$database->Commit();
-			curl_close($curl);
 
 			usleep(10000);
 		}
@@ -591,7 +589,6 @@ abstract class BeaconCloudStorage {
 			$httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 			$success = $httpStatus >= 200 && $httpStatus < 300;
 		}
-		curl_close($curl);
 
 		if ($success === false) {
 			$nextBucket = static::NextBucket($bucketPath);
