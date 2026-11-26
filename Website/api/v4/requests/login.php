@@ -152,6 +152,7 @@ function handleRequest(array $context): Response {
 		case 'refresh_token':
 			$refreshToken = $obj['refresh_token'] ?? null;
 			$scopes = explode(' ', $obj['scope']) ?? null;
+
 			$session = Session::Fetch($refreshToken);
 			if (is_null($session) || $session->IsRefreshTokenExpired()) {
 				return Response::NewJsonError('Unauthorized', ['code' => 'EXPIRED'], 403);
@@ -167,7 +168,12 @@ function handleRequest(array $context): Response {
 			if ($app->IsConfidential() && (is_null($clientId) || is_null($clientSecret) || $app->ApplicationId() !== $clientId || $app->Secret() !== $clientSecret)) {
 				return Response::NewJsonError('Invalid client', ['code' => 'INVALID_CLIENT'], 400);
 			}
-			$newSession = $session->Renew(true);
+
+			$newSession = Session::Renew($refreshToken);
+			if (is_null($newSession)) {
+				return Response::NewJsonError('Unauthorized', ['code' => 'EXPIRED'], 400);
+			}
+
 			Core::SetSession($newSession);
 			return Response::NewJson($newSession->OAuthResponse(), 201);
 		default:

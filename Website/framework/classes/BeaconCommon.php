@@ -963,6 +963,8 @@ abstract class BeaconCommon {
 		}
 
 		$accessToken = null;
+		$refreshToken = null;
+		$rememberMe = false;
 		if (isset($_SERVER['HTTP_X_BEACON_TOKEN'])) {
 			$accessToken = $_SERVER['HTTP_X_BEACON_TOKEN'];
 		} elseif (isset($_COOKIE[self::AuthCookieName])) {
@@ -990,6 +992,8 @@ abstract class BeaconCommon {
 			}
 
 			$accessToken = $params['access_token'];
+			$refreshToken = $params['refresh_token'];
+			$rememberMe = $params['remember'];
 		} else {
 			return null;
 		}
@@ -998,10 +1002,13 @@ abstract class BeaconCommon {
 		if (is_null($session)) {
 			return null;
 		}
-
-		if ($session->ShouldRenew()) {
-			$newSession = $session->Renew();
-			static::SetSession($newSession, $params['remember']);
+		if ($session->IsAccessTokenExpired()) {
+			if (is_null($refreshToken)) {
+				return null;
+			}
+			$newSession = Session::Renew($refreshToken);
+			static::SetSession($newSession, $rememberMe);
+			self::$session = $newSession;
 			return $newSession;
 		} else {
 			self::$session = $session;
@@ -1032,7 +1039,7 @@ abstract class BeaconCommon {
 			'access_token_expiration' => $session->AccessTokenExpiration(),
 			'refresh_token' => $session->RefreshToken(),
 			'refresh_token_expiration' => $session->RefreshTokenExpiration(),
-			'remember' => $remember
+			'remember' => $remember,
 		];
 		$signature = static::Base64UrlEncode(BeaconEncryption::RSASign(static::GetGlobal('Beacon_Private_Key'), json_encode($params)));
 

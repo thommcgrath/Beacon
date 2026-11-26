@@ -203,7 +203,17 @@ class Session extends DatabaseObject implements JsonSerializable {
 		return BeaconCommon::Base64UrlEncode(hash('sha3-512', $token, true));
 	}
 
-	public static function Create(User $user, Application|string $app, ?array $scopes = null, ?string $privateKey = null): static {
+	public static function Create(User|string $user, Application|string $app, ?array $scopes = null, ?string $privateKey = null): static {
+		if (is_string($user)) {
+			if (BeaconCommon::IsUUID($user) === false) {
+				throw new Exception('User ID is not a UUID');
+			}
+			$user = User::Fetch($user);
+			if (is_null($user)) {
+				throw new Exception('Unknown user UUID');
+			}
+		}
+
 		if (is_string($app)) {
 			if (BeaconCommon::IsUUID($app) === false) {
 				throw new Exception('Application ID is not a UUID');
@@ -354,24 +364,6 @@ class Session extends DatabaseObject implements JsonSerializable {
 		return empty($this->accessTokenEncrypted) || (empty($this->accessToken) === false && empty($this->refreshToken) === false);
 	}
 
-	public function Renew(bool $force = false): Session {
-		if ($this->IsRefreshTokenExpired()) {
-			return false;
-		}
-
-		if ($force === true || $this->ShouldRenew()) {
-			$database = BeaconCommon::Database();
-			$database->BeginTransaction();
-			$newSession = static::Create($this->User(), $this->ApplicationId(), $this->Scopes(), $this->PrivateKeyEncrypted());
-			$this->Delete();
-			$database->Commit();
-
-			return $newSession;
-		} else {
-			return $this;
-		}
-	}
-
 	public function Scopes(): array {
 		return $this->scopes;
 	}
@@ -442,6 +434,33 @@ class Session extends DatabaseObject implements JsonSerializable {
 		$database->BeginTransaction();
 		$database->Query("DELETE FROM {$table} WHERE {$column} = {$setter};", $this->sessionId);
 		$database->Commit();
+	}
+
+	public static function Renew(string $refreshToken): ?static {
+		$hash = static::PrepareHash($refreshToken);
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$rows = $database->Query('SELECT session_id, user_id, scopes, application_id, private_key_encrypted FROM public.session_tokens WHERE refresh_token_hash = $1 AND refresh_token_expiration > CURRENT_TIMESTAMP;', $hash);
+		if ($rows->RecordCount() !== 1) {
+			$database->Rollback();
+			return null;
+		}
+
+		$sessionId = $rows->Field('session_id');
+		$userId = $rows->Field('user_id');
+		$applicationId = $rows->Field('application_id');
+		$scopes = explode(' ', $rows->Field('scopes'));
+		$privateKeyEncrypted = $rows->Field('private_key_encrypted');
+
+		$newSession = static::Create($userId, $applicationId, $scopes, $privateKeyEncrypted);
+		if (is_null($newSession)) {
+			$database->Rollback();
+			return null;
+		}
+		$database->Query('DELETE FROM public.session_tokens WHERE session_id = $1;', $sessionId);
+		$database->Commit();
+
+		return $newSession;
 	}
 }
 

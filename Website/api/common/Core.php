@@ -8,36 +8,36 @@ abstract class Core {
 	protected static $body_raw = null;
 	protected static $auth_style = null;
 	protected static $routes = [];
-	
+
 	const AUTH_STYLE_PUBLIC_KEY = 'public key';
 	const AUTH_STYLE_EMAIL_WITH_PASSWORD = 'email+password';
 	const AUTH_STYLE_SESSION = 'session';
-	
+
 	const AUTH_OPTIONAL = 1;
 	const AUTH_PERMISSIVE = 2;
-	
+
 	public static function HandleCORS(): void {
 		header('Access-Control-Allow-Origin: *');
 		header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS');
 		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');
 		header('Access-Control-Expose-Headers: Content-Length,Content-Range');
 		header('Vary: Origin');
-		
+
 		if (static::Method() === 'OPTIONS') {
 			header('Access-Control-Max-Age: 1728000');
 			http_response_code(204);
 			exit;
 		}
 	}
-	
+
 	public static function APIVersion() {
 		return 'v0';
 	}
-	
+
 	public static function UsesLegacyEncryption() {
 		return true;
 	}
-	
+
 	public static function Body() {
 		if (self::$body_raw === null) {
 			if (self::Method() == 'GET') {
@@ -51,14 +51,14 @@ abstract class Core {
 		}
 		return self::$body_raw;
 	}
-	
+
 	public static function JSONPayload() {
 		if (self::$payload === null) {
 			self::$payload = json_decode(self::Body(), true);
 		}
 		return self::$payload;
 	}
-	
+
 	public static function ReplySuccess($payload = null, int $code = 200) {
 		header('Content-Type: application/json');
 		http_response_code($code);
@@ -72,14 +72,14 @@ abstract class Core {
 		}
 		exit;
 	}
-	
+
 	public static function ReplyError(string $message, $payload = null, $code = 400) {
 		header('Content-Type: application/json');
 		http_response_code($code);
 		echo json_encode(array('message' => $message, 'details' => $payload), JSON_PRETTY_PRINT);
 		exit;
 	}
-	
+
 	public static function RequireKeys(string ...$keys) {
 		$request = self::JSONPayload();
 		$missing = array();
@@ -92,7 +92,7 @@ abstract class Core {
 			self::ReplyError('Missing required keys.', $missing);
 		}
 	}
-	
+
 	public static function RequireParams(string ...$keys) {
 		$missing = array();
 		foreach ($keys as $key) {
@@ -104,11 +104,11 @@ abstract class Core {
 			self::ReplyError('Missing required parameters.', $missing);
 		}
 	}
-	
+
 	public static function Method() {
 		return strtoupper($_SERVER['REQUEST_METHOD']);
 	}
-	
+
 	public static function ContentType() {
 		$pos = strpos($_SERVER['CONTENT_TYPE'], ';');
 		if ($pos === false) {
@@ -117,7 +117,7 @@ abstract class Core {
 			return substr(strtolower($_SERVER['CONTENT_TYPE']), 0, $pos);
 		}
 	}
-	
+
 	protected static function AuthorizeWithSessionID(string $session_id) {
 		$session = \BeaconSession::GetBySessionID($session_id);
 		if (is_null($session) == false) {
@@ -125,17 +125,15 @@ abstract class Core {
 			if (is_null($user) || $user->CanSignIn() === false) {
 				return false;
 			}
-			
+
 			self::$user_id = $session->UserID();
 			self::$auth_style = self::AUTH_STYLE_SESSION;
-			
-			$session->Renew();
-			
+
 			return true;
 		}
 		return false;
 	}
-	
+
 	protected static function AuthorizeWithPassword(string $username, string $password) {
 		$user = \BeaconUser::GetByEmail($username);
 		if (is_null($user) == false && $user->TestPassword($password)) {
@@ -151,40 +149,40 @@ abstract class Core {
 		}
 		return false;
 	}
-	
+
 	protected static function AuthorizeWithSignature(\BeaconUser $user, string $challenge, string $signature) {
 		if (is_null($user) || $user->CanSignIn() === false) {
 			return false;
 		}
-		
+
 		if (\BeaconCommon::IsHex($signature)) {
 			$signature = hex2bin($signature);
 		}
-		
+
 		if ($user->CheckSignature($challenge, $signature)) {
 			self::$user_id = $user->UserID();
 			self::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static function Authorize(bool|int $flags = 0) {
 		if ($flags === true) {
 			$flags = self::AUTH_OPTIONAL;
 		} else if ($flags === false) {
 			$flags = 0;
-		}	
-		
+		}
+
 		$optional = ($flags & self::AUTH_OPTIONAL) === self::AUTH_OPTIONAL;
 		$permissive = ($flags & self::AUTH_PERMISSIVE) === self::AUTH_PERMISSIVE;
-		
+
 		$authorized = false;
 		$content = '';
 		self::$user_id = \BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
 		$http_fail_status = 401;
-		
+
 		if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 			$http_fail_status = 403;
 			$optional = false; // if authorization included, it is no longer optional
@@ -192,7 +190,7 @@ abstract class Core {
 			$pos = strpos($authorization, ' ');
 			$auth_type = strtolower(substr($authorization, 0, $pos));
 			$auth_value = substr($authorization, $pos + 1);
-			
+
 			switch ($auth_type) {
 			case 'session':
 				$authorized = self::AuthorizeWithSessionID($auth_value);
@@ -201,11 +199,11 @@ abstract class Core {
 				if ($permissive) {
 					$decoded = base64_decode($auth_value);
 					list($username, $password) = explode(':', $decoded, 2);
-					
+
 					if (\BeaconCommon::IsUUID($username)) {
 						// public key authorization
 						$user = \BeaconUser::GetByUserID($username);
-						
+
 						// with 2FA enabled, only session tokens and challenges are accepted
 						if (is_null($user) === false && $user->Is2FAProtected() === false) {
 							$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -213,7 +211,7 @@ abstract class Core {
 							if (self::Method() !== 'GET') {
 								$content .= chr(10) . self::Body();
 							}
-							
+
 							$authorized = self::AuthorizeWithSignature($user, $content, $password);
 						}
 					} elseif (\BeaconUser::ValidateEmail($username)) {
@@ -226,7 +224,7 @@ abstract class Core {
 				if ($permissive) {
 					$decoded = base64_decode($auth_value);
 					list($user_id, $signature) = explode(':', $decoded, 2);
-					
+
 					if (\BeaconCommon::IsUUID($user_id)) {
 						$user = \BeaconUser::GetByUserID($user_id);
 						$database = \BeaconCommon::Database();
@@ -263,59 +261,59 @@ abstract class Core {
 		} elseif (empty($_SERVER['HTTP_X_BEACON_TOKEN']) === false) {
 			$authorized = self::AuthorizeWithSessionID($_SERVER['HTTP_X_BEACON_TOKEN']);
 		}
-		
+
 		if ($authorized) {
 			$database = \BeaconCommon::Database();
 			$database->BeginTransaction();
 			$database->Query('DELETE FROM user_challenges WHERE user_id = $1;', self::$user_id);
 			$database->Commit();
 		}
-		
+
 		if ((!$authorized) && (!$optional)) {
 			header('WWW-Authenticate: Basic realm="Beacon API"');
 			self::ReplyError('Unauthorized', $content, $http_fail_status);
 		}
 	}
-	
+
 	public static function Authenticated() {
 		return is_null(self::$auth_style) == false;
 	}
-	
+
 	public static function AuthenticationMethod() {
 		return self::$auth_style;
 	}
-	
+
 	public static function UserID() {
 		return self::$user_id;
 	}
-	
+
 	public static function User() {
 		return \BeaconUser::GetByUserID(self::$user_id);
 	}
-	
+
 	public static function ObjectID(int $place = 0) {
 		if (!isset($_SERVER['PATH_INFO'])) {
 			return null;
 		}
-		
+
 		$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 		if ((is_array($request) === false) || (count($request) == 0)) {
 			return null;
 		}
-		
+
 		if (empty($request[$place])) {
 			return null;
 		}
-		
+
 		return $request[$place];
 	}
-	
+
 	public static function ObjectCount() {
 		$object_id = self::ObjectID();
 		$arr = explode(',', $object_id);
 		return count($arr);
 	}
-	
+
 	public static function URL(string $path = '/') {
 		if (strlen($path) == 0 || substr($path, 0, 1) != '/') {
 			$path = '/' . $path;
@@ -323,11 +321,11 @@ abstract class Core {
 		$domain = \BeaconCommon::APIDomain();
 		return 'https://' . $domain . '/' . static::APIVersion() . $path;
 	}
-	
+
 	public static function RegisterRoutes(array $routes): void {
 		foreach ($routes as $route => $handlers) {
 			preg_match_all('/\{((\.\.\.)?[a-zA-Z0-9\-_]+?)\}/', $route, $placeholders);
-			
+
 			$route_expression = str_replace('/', '\\/', $route);
 			$match_count = count($placeholders[0]);
 			$variables = [];
@@ -345,7 +343,7 @@ abstract class Core {
 				$route_expression = str_replace($original, $pattern, $route_expression);
 			}
 			$route_expression = '/^' . $route_expression . '$/';
-			
+
 			self::$routes[$route] = [
 				'expression' => $route_expression,
 				'handlers' => $handlers,
@@ -353,20 +351,20 @@ abstract class Core {
 			];
 		}
 	}
-	
+
 	public static function HandleRequest(string $root): void {
 		static::HandleRateLimiting();
-		
+
 		$request_route = '/' . $_GET['route'];
 		foreach (self::$routes as $route => $route_info) {
 			$route_expression = $route_info['expression'];
 			$handlers = $route_info['handlers'];
 			$variables = $route_info['variables'];
-			
+
 			if (preg_match($route_expression, $request_route, $matches) !== 1) {
 				continue;
 			}
-			
+
 			$request_method = strtoupper($_SERVER['REQUEST_METHOD']);
 			if ($request_method === 'PUT') {
 				$request_method = 'POST';
@@ -374,7 +372,7 @@ abstract class Core {
 			if (isset($handlers[$request_method]) === false) {
 				static::ReplyError('Method not allowed', null, 405);
 			}
-			
+
 			$handler = $handlers[$request_method];
 			if (is_string($handler)) {
 				$handler_file = $root . '/' . $handler . '.php';
@@ -393,13 +391,13 @@ abstract class Core {
 			} else {
 				static::ReplyError('Endpoint not found', null, 404);
 			}
-			
+
 			$route_key = $request_method . ' ' . $route;
 			$path_parameters = [];
 			foreach ($variables as $variable_name) {
 				$path_parameters[$variable_name] = $matches[$variable_name];
 			}
-			
+
 			$context = [
 				'path_parameters' => $path_parameters,
 				'route_key' => $route_key
@@ -409,17 +407,17 @@ abstract class Core {
 		}
 		static::ReplyError('Endpoint not found: Route not registered.', null, 404);
 	}
-	
+
 	public static function HandleRateLimiting(): void {
 		$limit = 300;
-		
+
 		$usage = \BeaconRateLimits::IncrementUsage(\BeaconCommon::RemoteAddr(false));
 		$remaining = max($limit - $usage, 0);
-		
+
 		header('X-RateLimit-Limit: ' . $limit);
 		header('X-RateLimit-Remaining: ' . $remaining);
 		header('X-RateLimit-Reset: 60');
-		
+
 		if ($usage > $limit) {
 			header('Retry-After: 10');
 			static::ReplyError('Rate limit exceeded', null, 429);
