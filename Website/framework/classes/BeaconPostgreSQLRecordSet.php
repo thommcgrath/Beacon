@@ -58,7 +58,7 @@ class BeaconPostgreSQLRecordSet extends BeaconRecordSet {
 			throw new Exception('Column ' . $columnOrIndex . ' not found');
 		}
 
-		if (pg_field_is_null($this->result, null, $index)) {
+		if (pg_field_is_null($this->result, $this->offset, $index)) {
 			return null;
 		}
 
