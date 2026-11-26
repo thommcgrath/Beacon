@@ -92,6 +92,6 @@ http_response_code(201);
 echo json_encode([
 	'session' => $session,
 	'identityChallenge' => BeaconCommon::GetIdentityChallenge($session, 'addPasskey'),
-], JSON_PRETTY_PRINT);
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
 ?>

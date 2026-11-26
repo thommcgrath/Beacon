@@ -1127,7 +1127,7 @@ abstract class BeaconCommon {
 	public static function GetIdentityChallenge(Session $session, string $jobName): string {
 		static::StartSession();
 		$challenge = random_bytes(32);
-		$_SESSION['identityChallengeHash'] = hash('sha256', $challenge . ':' . $session->UserId() . ':' . $session->AccessToken() . ':' . $jobName);
+		$_SESSION['identityChallengeHash'] = hash('sha256', $challenge . ':' . $session->UserId() . ':' . $session->SessionId() . ':' . $jobName);
 		$_SESSION['identityChallengeJob'] = $jobName;
 		return static::Base64UrlEncode($challenge);
 	}

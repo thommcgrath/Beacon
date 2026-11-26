@@ -27,26 +27,26 @@ foreach ($sessions as $session) {
 	} else {
 		$app = null;
 	}
-	
+
 	$remote_ip = $session->RemoteAddr();
 	if (is_null($remote_ip)) {
 		continue;
 	}
-	
+
 	$self = ($remote_ip === $user_addr);
-	
+
 	$address_html = '<span class="remote-address">' . str_replace(':', ':<wbr>', htmlentities($session->RemoteAddr())) . '</span>';
 	if ($self) {
 		$address_html .= '<span class="self text-lighter"><br>(This is your current network)</span>';
 	}
-	
+
 	$flag_html = '<span class="flag-icon flag-icon-' . strtolower($session->RemoteCountry()) . '"></span>' . $session->RemoteCountry();
-	
+
 	$appName = '';
 	if (is_null($app) === false) {
 		$appName = $app->Name();
 	}
-	
+
 	$agentString = $session->RemoteAgent();
 	if (empty($agentString)) {
 		$agentString = 'Unknown, probably an older version of Beacon';
@@ -72,7 +72,7 @@ foreach ($sessions as $session) {
 			}
 		}
 	}
-	
+
 	$deviceInfo = '';
 	if (is_null($app) === false) {
 		$deviceInfo = '<div class="session-app-card"><div class="session-app-icon">' . $app->IconHtml(32) . '</div><div class="session-app-name">' . htmlentities($appName) . '</div></div>';
@@ -80,18 +80,18 @@ foreach ($sessions as $session) {
 	if (empty($agentString) === false) {
 		$deviceInfo .= '<div class="session-app-agent">' . $agentString . '</div>';
 	}
-	
+
 	$expires = $session->RefreshTokenExpiration();
 	$expiration_html = 'Expires <time datetime="' . date('c', $expires) . '">' . date('F jS, Y', $expires) . ' at ' . date('g:i:s A', $expires) . ' UTC</time>';
-	
-	if ($current_session->SessionHash() === $session->SessionHash()) {
+
+	if ($current_session->SessionId() === $session->SessionId()) {
 		$revoke_html = '<span class="self text-lighter">This is your active session</span>';
 	} else {
-		$revoke_html = '<a href="#" sessionHash="' . htmlentities($session->AccessTokenHash()) . '" class="revokeLink">Revoke</a>';
+		$revoke_html = '<a href="https://api.usebeacon.app/v4/session/' . htmlentities($session->SessionId()) . '" sessionHash="' . htmlentities($session->SessionId()) . '" class="revokeLink">Revoke</a>';
 	}
-	
+
 	$actions = [$flag_html, $revoke_html, 'Address: ' . $address_html];
-	
+
 	echo '<tr><td>' . $deviceInfo . '<div class="row-details"><span class="detail">' . implode('</span><span class="detail">', $actions) . '</span></div></td><td class="address_column low-priority">' . $address_html . '</td><td class="country_column low-priority">' . $flag_html . '</td><td class="revoke_column low-priority">' . $revoke_html . '</td></tr>';
 }
 
