@@ -1,8 +1,10 @@
 {
 	"require": {
-		"php-amqplib/php-amqplib": "^3.2",
-		"poliander/cron": "^3.2",
-		"erusev/parsedown": "^1.7",
-		"report-uri/passkeys-php": "^2.0"
+		"php-amqplib/php-amqplib": "^3.7",
+		"poliander/cron": "^3.4",
+		"erusev/parsedown": "^1.8",
+		"report-uri/passkeys-php": "^2.0",
+		"stripe/stripe-php": "^23.1",
+		"halaxa/json-machine": "^1.2"
 	}
 }
